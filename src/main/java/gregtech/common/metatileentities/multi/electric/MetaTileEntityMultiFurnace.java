@@ -120,7 +120,6 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             IItemHandlerModifiable importInventory = getInputInventory();
             IMultipleTankHandler importFluids = getInputTank();
 
-            boolean inputsChanged = checkRecipeInputsDirty(importInventory, importFluids);
             if (this.isOutputsFull) {
                 IItemHandlerModifiable exportInventory = getOutputInventory();
                 IMultipleTankHandler exportFluids = getOutputTank();
@@ -133,18 +132,24 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             //for MultiSmelter, we can reuse previous recipe if inputs didn't change
             //otherwise, we need to recompute it for new ingredients
             //but technically, it means we can cache multi smelter recipe, but changing inputs have more priority
-            if (inputsChanged || (!invalidInputsForRecipes && !this.isOutputsFull) || this.forceRecipeRecheck) {
+            if (checkRecipeInputsDirty(importInventory, importFluids) || this.forceRecipeRecheck) {
                 this.forceRecipeRecheck = false;
                 //else, try searching new recipe for given inputs
                 currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.DEFAULT);
                 if (currentRecipe != null) {
                     this.previousRecipe = currentRecipe;
                 }
-                if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe)) {
-                    setupRecipe(currentRecipe);
+            } else if (!invalidInputsForRecipes && !this.isOutputsFull) {
+                if (previousRecipe != null && previousRecipe.matches(false, importInventory, importFluids)) {
+                    //if previous recipe still matches inputs, try to use it
+                    currentRecipe = previousRecipe;
                 }
             }
+            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe)) {
+                setupRecipe(currentRecipe);
+            }
         }
+
 
         @Override
         protected Recipe findRecipe(long maxVoltage,
