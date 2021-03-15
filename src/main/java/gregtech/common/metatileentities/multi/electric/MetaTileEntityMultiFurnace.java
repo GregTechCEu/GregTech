@@ -119,24 +119,30 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             Recipe currentRecipe = null;
             IItemHandlerModifiable importInventory = getInputInventory();
             IMultipleTankHandler importFluids = getInputTank();
-            boolean dirty = checkRecipeInputsDirty(importInventory, importFluids);
+
+            boolean inputsChanged = checkRecipeInputsDirty(importInventory, importFluids);
+            if (this.isOutputsFull) {
+                IItemHandlerModifiable exportInventory = getOutputInventory();
+                IMultipleTankHandler exportFluids = getOutputTank();
+                if (hasMachineOutputChanged(exportInventory, exportFluids)) {
+                    this.isOutputsFull = false;
+                }
+            }
+
             //inverse of logic in normal AbstractRecipeLogic
             //for MultiSmelter, we can reuse previous recipe if inputs didn't change
             //otherwise, we need to recompute it for new ingredients
             //but technically, it means we can cache multi smelter recipe, but changing inputs have more priority
-            if (dirty || forceRecipeRecheck) {
+            if (inputsChanged || (!invalidInputsForRecipes && !this.isOutputsFull) || this.forceRecipeRecheck) {
                 this.forceRecipeRecheck = false;
                 //else, try searching new recipe for given inputs
                 currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.DEFAULT);
                 if (currentRecipe != null) {
                     this.previousRecipe = currentRecipe;
                 }
-            } else if (previousRecipe != null && previousRecipe.matches(false, importInventory, importFluids)) {
-                //if previous recipe still matches inputs, try to use it
-                currentRecipe = previousRecipe;
-            }
-            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe)) {
-                setupRecipe(currentRecipe);
+                if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe)) {
+                    setupRecipe(currentRecipe);
+                }
             }
         }
 
@@ -152,7 +158,8 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             /* Iterate over the input items looking for more things to add until we run either out of input items
              * or we have exceeded the number of items permissible from the smelting bonus
              */
-            for (int index = 0; index < inputs.getSlots() && currentItemsEngaged < maxItemsLimit; index++) {
+            this.invalidInputsForRecipes = true;
+            for(int index = 0; index < inputs.getSlots() && currentItemsEngaged < maxItemsLimit; index++) {
 
                 // Skip this slot if it is empty.
                 final ItemStack currentInputItem = inputs.getStackInSlot(index);
@@ -164,8 +171,10 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
                         Collections.singletonList(currentInputItem),
                         Collections.emptyList(), 0, MatchingMode.DEFAULT);
                 CountableIngredient inputIngredient;
-                if (matchingRecipe != null)
+                if(matchingRecipe != null) {
                     inputIngredient = matchingRecipe.getInputs().get(0);
+                    this.invalidInputsForRecipes = false;
+                }
                 else
                     continue;
 
