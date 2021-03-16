@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
+import net.minecraft.world.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
@@ -119,7 +120,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
     @Override
     public void update() {
-        if (!getMetaTileEntity().getWorld().isRemote) {
+        World world = getMetaTileEntity().getWorld();
+        if (world == null || !world.isRemote) {
             if (workingEnabled) {
                 if (progressTime > 0) {
                     updateRecipeProgress();
@@ -163,39 +165,34 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         IItemHandlerModifiable importInventory = getInputInventory();
         IMultipleTankHandler importFluids = getInputTank();
 
-        // if the output is full check if the output changed so we can process recipes results again.
-        if (this.isOutputsFull) {
-            IItemHandlerModifiable exportInventory = getOutputInventory();
-            IMultipleTankHandler exportFluids = getOutputTank();
-            if (hasMachineOutputChanged(exportInventory, exportFluids)) {
-                this.isOutputsFull = false;
-            }
+        // If a recheck is forced, skip the fail-fast options
+        if (!this.forceRecipeRecheck) {
+            // if the output is full check if the output changed so we can process recipes results again.
+            if (this.isOutputsFull && !hasMachineOutputChanged(getOutputInventory(), getOutputTank())) return;
+            else this.isOutputsFull = false;
+
+            // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
+            if (this.invalidInputsForRecipes && !checkRecipeInputsDirty(importInventory, importFluids)) return;
+
+            // see if the last recipe we used still works
+            if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids))
+                currentRecipe = this.previousRecipe;
         }
 
-        if (!invalidInputsForRecipes && !this.isOutputsFull) {
-            if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids)) {
-                //if previous recipe still matches inputs, try to use it
-                currentRecipe = this.previousRecipe;
-            }
-        }
+        // If there is no active recipe, then we need to find one.
         if (currentRecipe == null) {
-            if (checkRecipeInputsDirty(importInventory, importFluids) || this.forceRecipeRecheck) {
-                this.forceRecipeRecheck = false;
-                //else, try searching new recipe for given inputs
-                currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.DEFAULT);
-                if (currentRecipe != null) {
-                    this.previousRecipe = currentRecipe;
-                    this.invalidInputsForRecipes = false;
-                } else {
-                    //no recipe found for the current inputs.
-                    //search again when inputs change
-                    this.invalidInputsForRecipes = true;
-                }
-            }
+            this.forceRecipeRecheck = false;
+            currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
         }
-        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe)) {
+
+        // If a recipe was found, then inputs were valid.
+        if(!(this.invalidInputsForRecipes = currentRecipe == null))
+            // replace old recipe with new one
+            this.previousRecipe = currentRecipe;
+
+        // proceed if we have a usable recipe.
+        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))
             setupRecipe(currentRecipe);
-        }
     }
 
     public void forceRecipeRecheck() {
@@ -404,9 +401,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.itemOutputs = null;
         this.hasNotEnoughEnergy = false;
         this.wasActiveAndNeedsUpdate = true;
-        //force recipe recheck because inputs could have changed since last time
-        //we checked them before starting our recipe, especially if recipe took long time
-        this.forceRecipeRecheck = true;
     }
 
     public double getProgressPercent() {
@@ -439,7 +433,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected void setActive(boolean active) {
         this.isActive = active;
         metaTileEntity.markDirty();
-        if (!metaTileEntity.getWorld().isRemote) {
+        World world = metaTileEntity.getWorld();
+        if (world != null && world.isRemote) {
             writeCustomData(1, buf -> buf.writeBoolean(active));
         }
     }
