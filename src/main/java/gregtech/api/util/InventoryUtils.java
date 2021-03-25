@@ -45,6 +45,21 @@ public final class InventoryUtils {
     }
 
     /**
+     * Creates a copy of the partial stacks in target inventory
+     *
+     * @param inventory the target inventory
+     * @return a copy of the partial stacks of the inventory.
+     */
+    public static List<ItemStack> copyPartialStacks(final IItemHandler inventory) {
+
+        return streamFrom(inventory)
+            .filter(not(ItemStack::isEmpty))
+            .filter(not(itemStack -> itemStack.getCount() == itemStack.getMaxStackSize()))
+            .map(ItemStack::copy)
+            .collect(Collectors.toList());
+    }
+
+    /**
      * Determines whether all specified items will fit into a target inventory by
      * simulating merging like items into existing stacks, then checking if there
      * are enough empty stacks left to accommodate the remaining items.
@@ -76,7 +91,7 @@ public final class InventoryUtils {
         itemStacks.sort(Comparator.comparingInt(ItemStack::getCount));
 
         // Deep copy the contents of the target inventory, skipping empty stacks
-        final List<ItemStack> inventoryStacks = deepCopy(inventory, false);
+        final List<ItemStack> inventoryStacks = copyPartialStacks(inventory);
 
         // Perform a merge of the ItemStacks
         mergeItemStacks(itemStacks, inventoryStacks);
