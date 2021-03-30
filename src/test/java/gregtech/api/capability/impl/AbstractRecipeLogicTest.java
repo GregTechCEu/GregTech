@@ -42,13 +42,14 @@ public class AbstractRecipeLogicTest {
                                                    Textures.CHEMICAL_REACTOR_OVERLAY,
                                                    1));
 
+        MetaTileEntity atte = new MetaTileEntityHolder().setMetaTileEntity(at);
         map.recipeBuilder()
            .inputs(new ItemStack(Blocks.COBBLESTONE))
            .outputs(new ItemStack(Blocks.STONE))
            .EUt(1).duration(1)
            .buildAndRegister();
 
-        AbstractRecipeLogic arl = new AbstractRecipeLogic(at, map) {
+        AbstractRecipeLogic arl = new AbstractRecipeLogic(atte, map) {
             @Override
             protected long getEnergyStored() { return Long.MAX_VALUE; }
             @Override
@@ -59,10 +60,6 @@ public class AbstractRecipeLogicTest {
             protected long getMaxVoltage() { return 32; }
         };
 
-        arl.lastItemInputs = null;
-        arl.lastItemOutputs = null;
-        arl.lastFluidInputs = null;
-        arl.lastFluidOutputs = null;
         arl.isOutputsFull = false;
         arl.invalidInputsForRecipes = false;
         arl.trySearchNewRecipe();
@@ -74,11 +71,15 @@ public class AbstractRecipeLogicTest {
 
         // put an item in the inventory that will trigger recipe recheck
         arl.getInputInventory().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
+        // Inputs change. did we detect it ?
+        assertTrue(arl.getMetaTileEntity().isInputsDirty());
         arl.trySearchNewRecipe();
         assertFalse(arl.invalidInputsForRecipes);
         assertNotNull(arl.previousRecipe);
         assertTrue(arl.isActive);
         assertEquals(15, arl.getInputInventory().getStackInSlot(0).getCount());
+        //assert the consumption of the inputs did not mark the arl to look for a new recipe
+        assertFalse(arl.getMetaTileEntity().isInputsDirty());
 
         // Save a reference to the old recipe so we can make sure it's getting reused
         Recipe prev = arl.previousRecipe;
@@ -107,5 +108,7 @@ public class AbstractRecipeLogicTest {
         arl.update();
         assertTrue(arl.isActive);
         assertFalse(arl.isOutputsFull);
+        assertTrue(AbstractRecipeLogic.areItemStacksEqual(arl.getOutputInventory().getStackInSlot(0),
+                new ItemStack(Blocks.STONE, 1)));
     }
 }

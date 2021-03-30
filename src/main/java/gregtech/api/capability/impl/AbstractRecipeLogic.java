@@ -25,7 +25,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.function.LongSupplier;
@@ -38,10 +37,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     public final RecipeMap<?> recipeMap;
 
     protected boolean forceRecipeRecheck;
-    protected ItemStack[] lastItemInputs;
-    protected FluidStack[] lastFluidInputs;
-    protected ItemStack[] lastItemOutputs;
-    protected FluidStack[] lastFluidOutputs;
     protected Recipe previousRecipe;
     protected boolean allowOverclocking = true;
     private long overclockVoltage = 0;
@@ -58,8 +53,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected boolean workingEnabled = true;
     protected boolean hasNotEnoughEnergy;
     protected boolean wasActiveAndNeedsUpdate;
-    protected boolean isOutputsFull = false;
-    protected boolean invalidInputsForRecipes = false;
+    protected boolean isOutputsFull;
+    protected boolean invalidInputsForRecipes;
 
     protected boolean hasPerfectOC = false;
 
@@ -126,7 +121,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
                 if (progressTime > 0) {
                     updateRecipeProgress();
                 }
-                if (progressTime == 0) {
+                //check everything that would make a recipe never start here.
+                if (progressTime == 0 && shouldSearchForRecipes()){
                     trySearchNewRecipe();
                 }
             }
@@ -135,6 +131,24 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
                 setActive(false);
             }
         }
+    }
+
+    boolean shouldSearchForRecipes() {
+        return canWorkWithInputs() && canFitNewOutputs();
+    }
+
+    boolean canFitNewOutputs() {
+        // if the output is full check if the output changed so we can process recipes results again.
+        if (this.isOutputsFull && !metaTileEntity.isOutputsDirty()) return false;
+        else { this.isOutputsFull = false; metaTileEntity.setOutputsDirty(false); }
+        return true;
+    }
+
+    boolean canWorkWithInputs() {
+        // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
+        if (this.invalidInputsForRecipes && !metaTileEntity.isInputsDirty()) return false;
+        else { this.invalidInputsForRecipes = false; }
+        return true;
     }
 
     protected void updateRecipeProgress() {
@@ -165,34 +179,27 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         IItemHandlerModifiable importInventory = getInputInventory();
         IMultipleTankHandler importFluids = getInputTank();
 
-        // If a recheck is forced, skip the fail-fast options
-        if (!this.forceRecipeRecheck) {
-            // if the output is full check if the output changed so we can process recipes results again.
-            if (this.isOutputsFull && !hasMachineOutputChanged(getOutputInventory(), getOutputTank())) return;
-            else this.isOutputsFull = false;
-
-            // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
-            if (this.invalidInputsForRecipes && !checkRecipeInputsDirty(importInventory, importFluids)) return;
-
-            // see if the last recipe we used still works
-            if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids))
-                currentRecipe = this.previousRecipe;
-        }
-
+        // see if the last recipe we used still works
+        if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids))
+            currentRecipe = this.previousRecipe;
         // If there is no active recipe, then we need to find one.
-        if (currentRecipe == null) {
-            this.forceRecipeRecheck = false;
+        else {
+            metaTileEntity.setInputsDirty(false);
             currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
         }
-
         // If a recipe was found, then inputs were valid.
-        if(!(this.invalidInputsForRecipes = currentRecipe == null))
+        // recipe multiplying machines may not be able to fit
+        // the multiplied recipes. in that case the inputs are valid
+        if (!(this.invalidInputsForRecipes = (currentRecipe == null && !this.isOutputsFull)))
             // replace old recipe with new one
             this.previousRecipe = currentRecipe;
 
         // proceed if we have a usable recipe.
-        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))
+        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe)) {
             setupRecipe(currentRecipe);
+            //avoid new recipe lookup caused by item consumption from input
+            metaTileEntity.setInputsDirty(false);
+        }
     }
 
     public void forceRecipeRecheck() {
@@ -214,85 +221,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         return recipeMap.findRecipe(maxVoltage, inputs, fluidInputs, getMinTankCapacity(getOutputTank()), mode);
     }
 
+    @Deprecated
     protected boolean checkRecipeInputsDirty(IItemHandler inputs, IMultipleTankHandler fluidInputs) {
-        boolean shouldRecheckRecipe = false;
-        if (lastItemInputs == null || lastItemInputs.length != inputs.getSlots()) {
-            this.lastItemInputs = new ItemStack[inputs.getSlots()];
-            Arrays.fill(lastItemInputs, ItemStack.EMPTY);
-        }
-        if (lastFluidInputs == null || lastFluidInputs.length != fluidInputs.getTanks()) {
-            this.lastFluidInputs = new FluidStack[fluidInputs.getTanks()];
-        }
-        for (int i = 0; i < lastItemInputs.length; i++) {
-            ItemStack currentStack = inputs.getStackInSlot(i);
-            ItemStack lastStack = lastItemInputs[i];
-            if (!areItemStacksEqual(currentStack, lastStack)) {
-                this.lastItemInputs[i] = currentStack.isEmpty() ? ItemStack.EMPTY : currentStack.copy();
-                shouldRecheckRecipe = true;
-            } else if (currentStack.getCount() != lastStack.getCount()) {
-                lastStack.setCount(currentStack.getCount());
-                shouldRecheckRecipe = true;
-            }
-            if (shouldRecheckRecipe)
-                return true;
-        }
-        for (int i = 0; i < lastFluidInputs.length; i++) {
-            FluidStack currentStack = fluidInputs.getTankAt(i).getFluid();
-            FluidStack lastStack = lastFluidInputs[i];
-            if ((currentStack == null && lastStack != null) ||
-                    (currentStack != null && !currentStack.isFluidEqual(lastStack))) {
-                this.lastFluidInputs[i] = currentStack == null ? null : currentStack.copy();
-                shouldRecheckRecipe = true;
-            } else if (currentStack != null && lastStack != null &&
-                    currentStack.amount != lastStack.amount) {
-                lastStack.amount = currentStack.amount;
-                shouldRecheckRecipe = true;
-            }
-            if (shouldRecheckRecipe)
-                return true;
-        }
-        return false;
-    }
-
-    protected boolean hasMachineOutputChanged(IItemHandler outputs, IMultipleTankHandler fluidOutputs) {
-        boolean outputChanged = false;
-        if (lastItemOutputs == null || lastItemOutputs.length != outputs.getSlots()) {
-            this.lastItemOutputs = new ItemStack[outputs.getSlots()];
-            Arrays.fill(lastItemOutputs, ItemStack.EMPTY);
-        }
-        if (lastFluidOutputs == null || lastFluidOutputs.length != fluidOutputs.getTanks()) {
-            this.lastFluidOutputs = new FluidStack[fluidOutputs.getTanks()];
-        }
-        for (int i = 0; i < lastItemOutputs.length; i++) {
-            ItemStack currentStack = outputs.getStackInSlot(i);
-            ItemStack lastStack = lastItemOutputs[i];
-            if (!areItemStacksEqual(currentStack, lastStack)) {
-                this.lastItemOutputs[i] = currentStack.isEmpty() ? ItemStack.EMPTY : currentStack.copy();
-                outputChanged = true;
-            } else if (currentStack.getCount() != lastStack.getCount()) {
-                lastStack.setCount(currentStack.getCount());
-                outputChanged = true;
-            }
-            if (outputChanged)
-                return true;
-        }
-
-        for (int i = 0; i < lastFluidOutputs.length; i++) {
-            FluidStack currentStack = fluidOutputs.getTankAt(i).getFluid();
-            FluidStack lastStack = lastFluidOutputs[i];
-            if ((currentStack == null && lastStack != null) ||
-                (currentStack != null && !currentStack.isFluidEqual(lastStack))) {
-                this.lastFluidOutputs[i] = currentStack == null ? null : currentStack.copy();
-                outputChanged = true;
-            } else if (currentStack != null && lastStack != null &&
-                    currentStack.amount != lastStack.amount) {
-                lastStack.amount = currentStack.amount;
-                outputChanged = true;
-            }
-            if (outputChanged)
-                return true;
-        }
-        return false;
+        return this.getMetaTileEntity().isInputsDirty();
     }
 
     protected static boolean areItemStacksEqual(ItemStack stackA, ItemStack stackB) {

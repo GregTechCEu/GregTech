@@ -118,35 +118,28 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             long maxVoltage = getMaxVoltage();
             Recipe currentRecipe = null;
             IItemHandlerModifiable importInventory = getInputInventory();
-            IMultipleTankHandler importFluids = getInputTank();
-
-            if (this.isOutputsFull) {
-                IItemHandlerModifiable exportInventory = getOutputInventory();
-                IMultipleTankHandler exportFluids = getOutputTank();
-                if (hasMachineOutputChanged(exportInventory, exportFluids)) {
-                    this.isOutputsFull = false;
-                }
-            }
 
             //inverse of logic in normal AbstractRecipeLogic
             //for MultiSmelter, we can reuse previous recipe if inputs didn't change
             //otherwise, we need to recompute it for new ingredients
             //but technically, it means we can cache multi smelter recipe, but changing inputs have more priority
-            if (checkRecipeInputsDirty(importInventory, importFluids) || this.forceRecipeRecheck) {
-                this.forceRecipeRecheck = false;
-                //else, try searching new recipe for given inputs
-                currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.DEFAULT);
-                if (currentRecipe != null) {
-                    this.previousRecipe = currentRecipe;
-                }
-            } else if (!invalidInputsForRecipes && !this.isOutputsFull) {
-                if (previousRecipe != null && previousRecipe.matches(false, importInventory, importFluids)) {
-                    //if previous recipe still matches inputs, try to use it
-                    currentRecipe = previousRecipe;
-                }
+            if (metaTileEntity.isInputsDirty()) {
+                metaTileEntity.setInputsDirty(false);
+                //Inputs changed, try searching new recipe for given inputs
+                currentRecipe = findRecipe(maxVoltage, importInventory, null);
+            } else if (previousRecipe != null && previousRecipe.matches(false, importInventory, null)) {
+                //if previous recipe still matches inputs, try to use it
+                currentRecipe = previousRecipe;
             }
+            if ( currentRecipe != null)
+                // replace old recipe with new one
+                this.previousRecipe = currentRecipe;
+
+            // proceed if we have a usable recipe.
             if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe)) {
                 setupRecipe(currentRecipe);
+                //avoid new recipe lookup caused by item consumption from input
+                metaTileEntity.setInputsDirty(false);
             }
         }
 
@@ -225,9 +218,12 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             }
 
             // If there were no accepted ingredients, then there is no recipe to process.
-            if (recipeInputs.isEmpty()) {
+            // the output may be filled up
+            if(recipeInputs.isEmpty() && !invalidInputsForRecipes) {
                 //Set here to prevent recipe deadlock on world load with full output bus
-                forceRecipeRecheck = true;
+                this.isOutputsFull = true;
+                return null;
+            } else if (recipeInputs.isEmpty()) {
                 return null;
             }
 
