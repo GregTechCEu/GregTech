@@ -118,6 +118,7 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             long maxVoltage = getMaxVoltage();
             Recipe currentRecipe = null;
             IItemHandlerModifiable importInventory = getInputInventory();
+            IMultipleTankHandler importFluids = getInputTank();
 
             //inverse of logic in normal AbstractRecipeLogic
             //for MultiSmelter, we can reuse previous recipe if inputs didn't change
@@ -126,8 +127,8 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             if (metaTileEntity.isInputsDirty()) {
                 metaTileEntity.setInputsDirty(false);
                 //Inputs changed, try searching new recipe for given inputs
-                currentRecipe = findRecipe(maxVoltage, importInventory, null);
-            } else if (previousRecipe != null && previousRecipe.matches(false, importInventory, null)) {
+                currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
+            } else if (previousRecipe != null && previousRecipe.matches(false, importInventory, importFluids)) {
                 //if previous recipe still matches inputs, try to use it
                 currentRecipe = previousRecipe;
             }
