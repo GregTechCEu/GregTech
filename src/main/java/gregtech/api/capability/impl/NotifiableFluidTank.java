@@ -24,7 +24,7 @@ public class NotifiableFluidTank extends FluidTank implements INotifiableHandler
     }
 
     @Override
-    public HashSet<MetaTileEntity> getNotifiableMetaTileEntities(){
+    public HashSet<MetaTileEntity> getNotifiableMetaTileEntities() {
         return this.entitiesToNotify;
     }
 }

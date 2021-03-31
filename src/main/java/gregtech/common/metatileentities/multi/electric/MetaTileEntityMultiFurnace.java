@@ -131,7 +131,7 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
                 //if previous recipe still matches inputs, try to use it
                 currentRecipe = previousRecipe;
             }
-            if ( currentRecipe != null)
+            if (currentRecipe != null)
                 // replace old recipe with new one
                 this.previousRecipe = currentRecipe;
 
@@ -219,7 +219,7 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
 
             // If there were no accepted ingredients, then there is no recipe to process.
             // the output may be filled up
-            if(recipeInputs.isEmpty() && !invalidInputsForRecipes) {
+            if (recipeInputs.isEmpty() && !invalidInputsForRecipes) {
                 //Set here to prevent recipe deadlock on world load with full output bus
                 this.isOutputsFull = true;
                 return null;

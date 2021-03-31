@@ -124,7 +124,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
                     updateRecipeProgress();
                 }
                 //check everything that would make a recipe never start here.
-                if (progressTime == 0 && shouldSearchForRecipes()){
+                if (progressTime == 0 && shouldSearchForRecipes()) {
                     trySearchNewRecipe();
                 }
             }
@@ -142,14 +142,19 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected boolean canFitNewOutputs() {
         // if the output is full check if the output changed so we can process recipes results again.
         if (this.isOutputsFull && !metaTileEntity.isOutputsDirty()) return false;
-        else { this.isOutputsFull = false; metaTileEntity.setOutputsDirty(false); }
+        else {
+            this.isOutputsFull = false;
+            metaTileEntity.setOutputsDirty(false);
+        }
         return true;
     }
 
     protected boolean canWorkWithInputs() {
         // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
         if (this.invalidInputsForRecipes && !metaTileEntity.isInputsDirty()) return false;
-        else { this.invalidInputsForRecipes = false; }
+        else {
+            this.invalidInputsForRecipes = false;
+        }
         return true;
     }
 
@@ -190,11 +195,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
         }
         // If a recipe was found, then inputs were valid.
-        // recipe multiplying machines may not be able to fit
-        // the multiplied recipes. in that case the inputs are valid
-        if (!(this.invalidInputsForRecipes = (currentRecipe == null && !this.isOutputsFull)))
-            // replace old recipe with new one
+        if (currentRecipe != null) {
+            this.invalidInputsForRecipes = false;
             this.previousRecipe = currentRecipe;
+        // Add-ons may Override findRecipe method but not trySearchNewRecipe, in that case
+        // they may return a null recipe. Since we only check for items and fluid here, having
+        // findRecipe return a null recipe with isOutputsFull being true, means we have a valid
+        // recipe in the input waiting for space in the output.
+        } else this.invalidInputsForRecipes = !this.isOutputsFull;
 
         // proceed if we have a usable recipe.
         if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe)) {
