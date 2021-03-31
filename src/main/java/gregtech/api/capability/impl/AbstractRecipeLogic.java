@@ -37,6 +37,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     public final RecipeMap<?> recipeMap;
 
     protected boolean forceRecipeRecheck;
+    @Deprecated protected ItemStack[] lastItemInputs;
+    @Deprecated protected FluidStack[] lastFluidInputs;
     protected Recipe previousRecipe;
     protected boolean allowOverclocking = true;
     private long overclockVoltage = 0;
@@ -133,18 +135,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         }
     }
 
-    boolean shouldSearchForRecipes() {
+    protected boolean shouldSearchForRecipes() {
         return canWorkWithInputs() && canFitNewOutputs();
     }
 
-    boolean canFitNewOutputs() {
+    protected boolean canFitNewOutputs() {
         // if the output is full check if the output changed so we can process recipes results again.
         if (this.isOutputsFull && !metaTileEntity.isOutputsDirty()) return false;
         else { this.isOutputsFull = false; metaTileEntity.setOutputsDirty(false); }
         return true;
     }
 
-    boolean canWorkWithInputs() {
+    protected boolean canWorkWithInputs() {
         // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
         if (this.invalidInputsForRecipes && !metaTileEntity.isInputsDirty()) return false;
         else { this.invalidInputsForRecipes = false; }
@@ -221,6 +223,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         return recipeMap.findRecipe(maxVoltage, inputs, fluidInputs, getMinTankCapacity(getOutputTank()), mode);
     }
 
+    /**
+     * @deprecated Use {@link MetaTileEntity#isInputsDirty() } instead
+     * Left here for binary compatibility purposes
+     */
     @Deprecated
     protected boolean checkRecipeInputsDirty(IItemHandler inputs, IMultipleTankHandler fluidInputs) {
         return this.getMetaTileEntity().isInputsDirty();

@@ -9,12 +9,12 @@ import java.util.HashSet;
 
 public class NotifiableItemStackHandler extends ItemStackHandler implements IItemHandlerModifiable, INotifiableHandler {
 
-    HashSet<MetaTileEntity> entityToSetDirty = new HashSet<>();
+    HashSet<MetaTileEntity> entitiesToNotify = new HashSet<>();
     private final boolean isExport;
 
-    public NotifiableItemStackHandler(int slots, MetaTileEntity entityToSetDirty, boolean isExport) {
+    public NotifiableItemStackHandler(int slots, MetaTileEntity entityToNotify, boolean isExport) {
         super(slots);
-        this.entityToSetDirty.add(entityToSetDirty);
+        this.entitiesToNotify.add(entityToNotify);
         this.isExport = isExport;
     }
 
@@ -26,6 +26,6 @@ public class NotifiableItemStackHandler extends ItemStackHandler implements IIte
 
     @Override
     public HashSet<MetaTileEntity> getNotifiableMetaTileEntities() {
-        return this.entityToSetDirty;
+        return this.entitiesToNotify;
     }
 }

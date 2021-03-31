@@ -7,12 +7,12 @@ import java.util.HashSet;
 
 public class NotifiableFilteredFluidHandler extends FilteredFluidHandler implements INotifiableHandler {
 
-    HashSet<MetaTileEntity> entityToSetDirty = new HashSet<>();
+    HashSet<MetaTileEntity> entitiesToNotify = new HashSet<>();
     private final boolean isExport;
 
-    public NotifiableFilteredFluidHandler(int capacity, MetaTileEntity entityToSetDirty, boolean isExport) {
+    public NotifiableFilteredFluidHandler(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
         super(capacity);
-        this.entityToSetDirty.add(entityToSetDirty);
+        this.entitiesToNotify.add(entityToNotify);
         this.isExport = isExport;
     }
 
@@ -24,6 +24,6 @@ public class NotifiableFilteredFluidHandler extends FilteredFluidHandler impleme
 
     @Override
     public HashSet<MetaTileEntity> getNotifiableMetaTileEntities() {
-        return this.entityToSetDirty;
+        return this.entitiesToNotify;
     }
 }

@@ -88,7 +88,7 @@ public abstract class MetaTileEntity implements ICoverable {
     private int cachedLightValue;
     protected boolean isFragile = false;
 
-    private CoverBehavior[] coverBehaviors = new CoverBehavior[6];
+    private final CoverBehavior[] coverBehaviors = new CoverBehavior[6];
     protected boolean outputDirty;
     protected boolean inputDirty;
 
@@ -250,19 +250,19 @@ public abstract class MetaTileEntity implements ICoverable {
         return getMetaName() + ".name";
     }
 
-    public final void setInputsDirty(boolean dirty) {
+    public void setInputsDirty(boolean dirty) {
         this.inputDirty = dirty;
     }
 
-    public final boolean isInputsDirty() {
+    public boolean isInputsDirty() {
         return this.inputDirty;
     }
 
-    public final void setOutputsDirty(boolean dirty) {
+    public void setOutputsDirty(boolean dirty) {
         this.outputDirty = dirty;
     }
 
-    public final boolean isOutputsDirty() {
+    public boolean isOutputsDirty() {
         return this.outputDirty;
     }
 

@@ -91,11 +91,15 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
 
     @Override
     public void addEntityToDirtyableHandlers(MetaTileEntity metaTileEntity) {
-        NotifiableItemStackHandler handler;
-        if (isExportHatch) handler = (NotifiableItemStackHandler) getExportItems();
-        else handler = (NotifiableItemStackHandler) getImportItems();
-        handler.addNotifiableMetaTileEntity(metaTileEntity);
-        handler.notifyMetaTileEntitiesOfChange(isExportHatch);
+        NotifiableItemStackHandler handler = null;
+        if (isExportHatch && getExportItems() instanceof NotifiableItemStackHandler)
+            handler = (NotifiableItemStackHandler) getExportItems();
+        else if (!isExportHatch && getImportItems() instanceof NotifiableItemStackHandler)
+            handler = (NotifiableItemStackHandler) getImportItems();
+        if (handler != null) {
+            handler.addNotifiableMetaTileEntity(metaTileEntity);
+            handler.notifyMetaTileEntitiesOfChange(isExportHatch);
+        }
     }
 
     @Override
