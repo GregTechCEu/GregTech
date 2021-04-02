@@ -4,11 +4,12 @@ import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraftforge.fluids.FluidTank;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotifiableFluidTank extends FluidTank implements INotifiableHandler {
 
-    HashSet<MetaTileEntity> entitiesToNotify = new HashSet<>();
+    List<MetaTileEntity> entitiesToNotify = new ArrayList<>();
     private final boolean isExport;
 
     public NotifiableFluidTank(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
@@ -24,7 +25,7 @@ public class NotifiableFluidTank extends FluidTank implements INotifiableHandler
     }
 
     @Override
-    public HashSet<MetaTileEntity> getNotifiableMetaTileEntities() {
+    public List<MetaTileEntity> getNotifiableMetaTileEntities() {
         return this.entitiesToNotify;
     }
 }

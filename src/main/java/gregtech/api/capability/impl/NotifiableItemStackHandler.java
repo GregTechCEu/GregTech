@@ -5,11 +5,12 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotifiableItemStackHandler extends ItemStackHandler implements IItemHandlerModifiable, INotifiableHandler {
 
-    HashSet<MetaTileEntity> entitiesToNotify = new HashSet<>();
+    List<MetaTileEntity> entitiesToNotify = new ArrayList<>();
     private final boolean isExport;
 
     public NotifiableItemStackHandler(int slots, MetaTileEntity entityToNotify, boolean isExport) {
@@ -25,7 +26,7 @@ public class NotifiableItemStackHandler extends ItemStackHandler implements IIte
     }
 
     @Override
-    public HashSet<MetaTileEntity> getNotifiableMetaTileEntities() {
+    public List<MetaTileEntity> getNotifiableMetaTileEntities() {
         return this.entitiesToNotify;
     }
 }

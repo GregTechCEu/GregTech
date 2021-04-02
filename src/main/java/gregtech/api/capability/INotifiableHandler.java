@@ -2,8 +2,8 @@ package gregtech.api.capability;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * For Item and Fluid handlers capable of notifying entities when
@@ -20,10 +20,10 @@ public interface INotifiableHandler {
     default void notifyMetaTileEntitiesOfChange(boolean isExport) {
         Iterator<MetaTileEntity> iterator = getNotifiableMetaTileEntities().iterator();
         while (iterator.hasNext()) {
-            MetaTileEntity mte = iterator.next();
-            if (mte != null && mte.isValid()) {
-                if (isExport) mte.setOutputsDirty(true);
-                else mte.setInputsDirty(true);
+            MetaTileEntity metaTileEntity = iterator.next();
+            if (metaTileEntity != null && metaTileEntity.isValid()) {
+                if (isExport) metaTileEntity.setOutputsDirty(true);
+                else metaTileEntity.setInputsDirty(true);
             } else {
                 iterator.remove();
             }
@@ -31,10 +31,10 @@ public interface INotifiableHandler {
     }
 
     /**
-     * returns a HashSet containing the notifiable MetaTileEntities
+     * returns a List containing the notifiable MetaTileEntities
      * @return
      */
-    HashSet<MetaTileEntity> getNotifiableMetaTileEntities();
+    List<MetaTileEntity> getNotifiableMetaTileEntities();
 
     /**
      *
