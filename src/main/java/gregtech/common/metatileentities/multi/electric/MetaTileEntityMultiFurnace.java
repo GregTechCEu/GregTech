@@ -131,6 +131,9 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             } else if (previousRecipe != null && previousRecipe.matches(false, importInventory, importFluids)) {
                 //if previous recipe still matches inputs, try to use it
                 currentRecipe = previousRecipe;
+            } else {
+                metaTileEntity.setInputsDirty(false);
+                currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
             }
             if (currentRecipe != null)
                 // replace old recipe with new one
