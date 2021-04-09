@@ -3,12 +3,11 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 public class NotifiableFilteredFluidHandler extends FilteredFluidHandler implements INotifiableHandler {
 
-    List<MetaTileEntity> entitiesToNotify = new ArrayList<>();
+    LinkedList<MetaTileEntity> entitiesToNotify = new LinkedList<>();
     private final boolean isExport;
 
     public NotifiableFilteredFluidHandler(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
@@ -24,7 +23,7 @@ public class NotifiableFilteredFluidHandler extends FilteredFluidHandler impleme
     }
 
     @Override
-    public List<MetaTileEntity> getNotifiableMetaTileEntities() {
+    public LinkedList<MetaTileEntity> getNotifiableMetaTileEntities() {
         return this.entitiesToNotify;
     }
 }
