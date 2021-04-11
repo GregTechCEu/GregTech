@@ -10,7 +10,7 @@ public interface IMultiblockPart {
 
     void removeFromMultiBlock(MultiblockControllerBase controllerBase);
 
-    default void addEntityToDirtyableHandlers(MetaTileEntity metaTileEntity) {
+    default void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
 
     }
 }
