@@ -118,7 +118,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     @Override
     public void update() {
         World world = getMetaTileEntity().getWorld();
-        if (world == null || !world.isRemote) {
+        if (world != null && !world.isRemote) {
             if (workingEnabled) {
                 if (progressTime > 0) {
                     updateRecipeProgress();
@@ -191,7 +191,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             currentRecipe = this.previousRecipe;
         // If there is no active recipe, then we need to find one.
         else {
-            metaTileEntity.setInputsDirty(false);
             currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
         }
         // If a recipe was found, then inputs were valid.
@@ -205,11 +204,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         } else this.invalidInputsForRecipes = !this.isOutputsFull;
 
         // proceed if we have a usable recipe.
-        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe)) {
+        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))
             setupRecipe(currentRecipe);
-            //avoid new recipe lookup caused by item consumption from input
-            metaTileEntity.setInputsDirty(false);
-        }
+        // Inputs have been inspected.
+        metaTileEntity.setInputsDirty(false);
     }
 
     public void forceRecipeRecheck() {
