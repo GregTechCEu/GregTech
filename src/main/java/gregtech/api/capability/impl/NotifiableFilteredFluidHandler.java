@@ -17,7 +17,7 @@ public class NotifiableFilteredFluidHandler extends FilteredFluidHandler impleme
     @Override
     protected void onContentsChanged() {
         super.onContentsChanged();
-        notifyMetaTileEntityOfChange(notifiableEntity, isExport);
+        addToNotifiedList(notifiableEntity, this, isExport);
     }
 
     @Override

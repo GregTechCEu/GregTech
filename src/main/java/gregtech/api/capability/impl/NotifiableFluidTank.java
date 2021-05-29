@@ -18,7 +18,7 @@ public class NotifiableFluidTank extends FluidTank implements INotifiableHandler
     @Override
     protected void onContentsChanged() {
         super.onContentsChanged();
-        notifyMetaTileEntityOfChange(notifiableEntity, isExport);
+        addToNotifiedList(notifiableEntity, this, isExport);
     }
 
     @Override

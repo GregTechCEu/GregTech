@@ -124,7 +124,7 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             //for MultiSmelter, we can reuse previous recipe if inputs didn't change
             //otherwise, we need to recompute it for new ingredients
             //but technically, it means we can cache multi smelter recipe, but changing inputs have more priority
-            if (metaTileEntity.isInputsDirty() ||
+            if (hasNotifiedInputs() ||
                 previousRecipe == null ||
                 !previousRecipe.matches(false,importInventory,importFluids)) {
                 //Inputs changed, try searching new recipe for given inputs
@@ -140,7 +140,8 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))
                 setupRecipe(currentRecipe);
             // Inputs have been inspected.
-            metaTileEntity.setInputsDirty(false);
+            metaTileEntity.getNotifiedItemInputList().clear();
+            metaTileEntity.getNotifiedFluidOutputList().clear();
         }
 
         @Override

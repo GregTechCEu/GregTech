@@ -139,19 +139,30 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         return canWorkWithInputs() && canFitNewOutputs();
     }
 
+    protected boolean hasNotifiedInputs() {
+        return (metaTileEntity.getNotifiedItemInputList().size() > 0 ||
+                metaTileEntity.getNotifiedFluidInputList().size() > 0);
+    }
+
+    protected boolean hasNotifiedOutputs() {
+        return (metaTileEntity.getNotifiedItemOutputList().size() > 0 ||
+                metaTileEntity.getNotifiedFluidOutputList().size() > 0);
+    }
+
     protected boolean canFitNewOutputs() {
         // if the output is full check if the output changed so we can process recipes results again.
-        if (this.isOutputsFull && !metaTileEntity.isOutputsDirty()) return false;
+        if (this.isOutputsFull && !hasNotifiedOutputs()) return false;
         else {
             this.isOutputsFull = false;
-            metaTileEntity.setOutputsDirty(false);
+            metaTileEntity.removeNotifiedOutput(getOutputInventory());
+            metaTileEntity.removeNotifiedOutput(getOutputTank());
         }
         return true;
     }
 
     protected boolean canWorkWithInputs() {
         // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
-        if (this.invalidInputsForRecipes && !metaTileEntity.isInputsDirty()) return false;
+        if (this.invalidInputsForRecipes && !hasNotifiedInputs()) return false;
         else {
             this.invalidInputsForRecipes = false;
         }
@@ -207,7 +218,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))
             setupRecipe(currentRecipe);
         // Inputs have been inspected.
-        metaTileEntity.setInputsDirty(false);
+        metaTileEntity.removeNotifiedInput(importInventory);
+        metaTileEntity.removeNotifiedInput(importFluids);
     }
 
     public void forceRecipeRecheck() {
@@ -230,12 +242,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     }
 
     /**
-     * @deprecated Use {@link MetaTileEntity#isInputsDirty() } instead
+     * @deprecated Use {@link #hasNotifiedInputs() } instead
      * Left here for binary compatibility purposes
      */
     @Deprecated
     protected boolean checkRecipeInputsDirty(IItemHandler inputs, IMultipleTankHandler fluidInputs) {
-        return this.getMetaTileEntity().isInputsDirty();
+        return this.hasNotifiedInputs();
     }
 
     protected static boolean areItemStacksEqual(ItemStack stackA, ItemStack stackB) {
@@ -377,7 +389,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.isActive = active;
         metaTileEntity.markDirty();
         World world = metaTileEntity.getWorld();
-        if (world != null && world.isRemote) {
+        if (world != null && !world.isRemote) {
             writeCustomData(1, buf -> buf.writeBoolean(active));
         }
     }

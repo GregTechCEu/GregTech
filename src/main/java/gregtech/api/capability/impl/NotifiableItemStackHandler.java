@@ -19,7 +19,7 @@ public class NotifiableItemStackHandler extends ItemStackHandler implements IIte
     @Override
     public void onContentsChanged(int slot) {
         super.onContentsChanged(slot);
-        notifyMetaTileEntityOfChange(notifiableEntity, isExport);
+        addToNotifiedList(notifiableEntity, this, isExport);
     }
 
     @Override
