@@ -5,9 +5,12 @@ import gregtech.api.metatileentity.*;
 import gregtech.api.recipes.*;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.render.*;
+import gregtech.api.util.world.DummyWorld;
 import net.minecraft.init.*;
 import net.minecraft.item.*;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.world.World;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -21,6 +24,8 @@ public class AbstractRecipeLogicTest {
 
     @Test
     public void trySearchNewRecipe() {
+
+        World world = DummyWorld.INSTANCE;
 
         // Create an empty recipe map to work with
         RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("chemical_reactor",
@@ -43,6 +48,7 @@ public class AbstractRecipeLogicTest {
                                                    1));
 
         MetaTileEntity atte = new MetaTileEntityHolder().setMetaTileEntity(at);
+        atte.getHolder().setWorld(world);
         map.recipeBuilder()
            .inputs(new ItemStack(Blocks.COBBLESTONE))
            .outputs(new ItemStack(Blocks.STONE))
@@ -72,14 +78,14 @@ public class AbstractRecipeLogicTest {
         // put an item in the inventory that will trigger recipe recheck
         arl.getInputInventory().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
         // Inputs change. did we detect it ?
-        assertTrue(arl.getMetaTileEntity().isInputsDirty());
+        assertTrue(arl.hasNotifiedInputs());
         arl.trySearchNewRecipe();
         assertFalse(arl.invalidInputsForRecipes);
         assertNotNull(arl.previousRecipe);
         assertTrue(arl.isActive);
         assertEquals(15, arl.getInputInventory().getStackInSlot(0).getCount());
         //assert the consumption of the inputs did not mark the arl to look for a new recipe
-        assertFalse(arl.getMetaTileEntity().isInputsDirty());
+        assertFalse(arl.hasNotifiedInputs());
 
         // Save a reference to the old recipe so we can make sure it's getting reused
         Recipe prev = arl.previousRecipe;

@@ -11,6 +11,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
+import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityItemBus;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
@@ -20,6 +21,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.junit.BeforeClass;
@@ -42,6 +44,8 @@ public class MultiblockRecipeLogicTest {
 
     @Test
     public void trySearchNewRecipe() {
+
+        World world = DummyWorld.INSTANCE;
 
         // Create an empty recipe map to work with
         RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("blast_furnace",
@@ -93,6 +97,8 @@ public class MultiblockRecipeLogicTest {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+
+        mbt.getHolder().setWorld(world);
 
         //Controller and isAttachedToMultiBlock need the world so we fake it here.
         MetaTileEntityItemBus importItemBus = new MetaTileEntityItemBus(gregtechId("item_bus.export.lv"), 1, false) {
@@ -209,14 +215,14 @@ public class MultiblockRecipeLogicTest {
         // put an item in the inventory that will trigger recipe recheck
         mbl.getInputInventory().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
         // Inputs change. did we detect it ?
-        assertTrue(mbt.isInputsDirty());
+        assertTrue(mbl.hasNotifiedInputs());
         mbl.trySearchNewRecipe();
         assertFalse(mbl.invalidInputsForRecipes);
         assertNotNull(mbl.previousRecipe);
         assertTrue(mbl.isActive);
         assertEquals(15, mbl.getInputInventory().getStackInSlot(0).getCount());
         //assert the consumption of the inputs did not mark the arl to look for a new recipe
-        assertFalse(mbt.isInputsDirty());
+        assertFalse(mbl.hasNotifiedInputs());
 
         // Save a reference to the old recipe so we can make sure it's getting reused
         Recipe prev = mbl.previousRecipe;
@@ -244,7 +250,7 @@ public class MultiblockRecipeLogicTest {
 
         // Some room is freed in the output bus, so we can continue now.
         mbl.getOutputInventory().setStackInSlot(1, ItemStack.EMPTY);
-        assertTrue(mbt.isOutputsDirty());
+        assertTrue(mbl.hasNotifiedOutputs());
         mbl.updateWorkable();
         assertTrue(mbl.isActive);
         assertFalse(mbl.isOutputsFull);
