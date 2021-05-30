@@ -71,12 +71,12 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return isExportHatch ? new NotifiableItemStackHandler(getInventorySize(),getController(),true) : new ItemStackHandler(0);
+        return isExportHatch ? new NotifiableItemStackHandler(getInventorySize(), getController(), true) : new ItemStackHandler(0);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return isExportHatch ? new ItemStackHandler(0) : new NotifiableItemStackHandler(getInventorySize(),getController(), false);
+        return isExportHatch ? new ItemStackHandler(0) : new NotifiableItemStackHandler(getInventorySize(), getController(), false);
     }
 
     @Override
@@ -92,10 +92,11 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
     @Override
     public void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
         NotifiableItemStackHandler handler = null;
-        if (isExportHatch && getExportItems() instanceof NotifiableItemStackHandler)
+        if (isExportHatch && getExportItems() instanceof NotifiableItemStackHandler) {
             handler = (NotifiableItemStackHandler) getExportItems();
-        else if (!isExportHatch && getImportItems() instanceof NotifiableItemStackHandler)
+        } else if (!isExportHatch && getImportItems() instanceof NotifiableItemStackHandler) {
             handler = (NotifiableItemStackHandler) getImportItems();
+        }
         if (handler != null) {
             handler.setNotifiableMetaTileEntity(metaTileEntity);
             handler.addToNotifiedList(this, handler, isExportHatch);

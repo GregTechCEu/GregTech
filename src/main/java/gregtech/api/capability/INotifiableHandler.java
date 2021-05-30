@@ -17,8 +17,11 @@ public interface INotifiableHandler {
 
     default <T> void addToNotifiedList(MetaTileEntity metaTileEntity, T handler, boolean isExport) {
         if (metaTileEntity != null && metaTileEntity.isValid()) {
-            if (isExport) metaTileEntity.addNotifiedOutput(handler);
-            else metaTileEntity.addNotifiedInput(handler);
+            if (isExport) {
+                metaTileEntity.addNotifiedOutput(handler);
+            } else {
+                metaTileEntity.addNotifiedInput(handler);
+            }
         }
     }
 

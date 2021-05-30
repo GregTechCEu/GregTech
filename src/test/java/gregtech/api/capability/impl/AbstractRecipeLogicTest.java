@@ -29,41 +29,52 @@ public class AbstractRecipeLogicTest {
 
         // Create an empty recipe map to work with
         RecipeMap<SimpleRecipeBuilder> map = new RecipeMap<>("chemical_reactor",
-                                                             0,
-                                                             2,
-                                                             0,
-                                                             2,
-                                                             0,
-                                                             3,
-                                                             0,
-                                                             2,
-                                                             new SimpleRecipeBuilder().EUt(30));
+                0,
+                2,
+                0,
+                2,
+                0,
+                3,
+                0,
+                2,
+                new SimpleRecipeBuilder().EUt(30));
 
         MetaTileEntity at =
-            GregTechAPI.registerMetaTileEntity(190,
-                                               new SimpleMachineMetaTileEntity(
-                                                   new ResourceLocation(GTValues.MODID,"chemical_reactor.lv"),
-                                                   map,
-                                                   Textures.CHEMICAL_REACTOR_OVERLAY,
-                                                   1));
+                GregTechAPI.registerMetaTileEntity(190,
+                        new SimpleMachineMetaTileEntity(
+                                new ResourceLocation(GTValues.MODID, "chemical_reactor.lv"),
+                                map,
+                                Textures.CHEMICAL_REACTOR_OVERLAY,
+                                1));
 
         MetaTileEntity atte = new MetaTileEntityHolder().setMetaTileEntity(at);
         atte.getHolder().setWorld(world);
         map.recipeBuilder()
-           .inputs(new ItemStack(Blocks.COBBLESTONE))
-           .outputs(new ItemStack(Blocks.STONE))
-           .EUt(1).duration(1)
-           .buildAndRegister();
+                .inputs(new ItemStack(Blocks.COBBLESTONE))
+                .outputs(new ItemStack(Blocks.STONE))
+                .EUt(1).duration(1)
+                .buildAndRegister();
 
         AbstractRecipeLogic arl = new AbstractRecipeLogic(atte, map) {
             @Override
-            protected long getEnergyStored() { return Long.MAX_VALUE; }
+            protected long getEnergyStored() {
+                return Long.MAX_VALUE;
+            }
+
             @Override
-            protected long getEnergyCapacity() { return Long.MAX_VALUE; }
+            protected long getEnergyCapacity() {
+                return Long.MAX_VALUE;
+            }
+
             @Override
-            protected boolean drawEnergy(int recipeEUt) { return true; }
+            protected boolean drawEnergy(int recipeEUt) {
+                return true;
+            }
+
             @Override
-            protected long getMaxVoltage() { return 32; }
+            protected long getMaxVoltage() {
+                return 32;
+            }
         };
 
         arl.isOutputsFull = false;
@@ -94,7 +105,7 @@ public class AbstractRecipeLogicTest {
         arl.update();
         assertEquals(prev, arl.previousRecipe);
         assertTrue(AbstractRecipeLogic.areItemStacksEqual(arl.getOutputInventory().getStackInSlot(0),
-                                                          new ItemStack(Blocks.STONE, 1)));
+                new ItemStack(Blocks.STONE, 1)));
         assertTrue(arl.isActive);
 
         // Complete the second iteration, but the machine stops because its output is now full

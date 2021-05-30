@@ -74,13 +74,13 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.recipeMap.getMaxInputs(), this,false);
+        return new NotifiableItemStackHandler(workable.recipeMap.getMaxInputs(), this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.recipeMap.getMaxOutputs(), this,true);
+        return new NotifiableItemStackHandler(workable.recipeMap.getMaxOutputs(), this, true);
     }
 
     @Override
@@ -88,7 +88,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         if (workable == null) return new FluidTankList(false);
         FilteredFluidHandler[] fluidImports = new FilteredFluidHandler[workable.recipeMap.getMaxFluidInputs()];
         for (int i = 0; i < fluidImports.length; i++) {
-            NotifiableFilteredFluidHandler filteredFluidHandler = new NotifiableFilteredFluidHandler(getInputTankCapacity(i),this,false);
+            NotifiableFilteredFluidHandler filteredFluidHandler = new NotifiableFilteredFluidHandler(getInputTankCapacity(i), this, false);
             filteredFluidHandler.setFillPredicate(this::canInputFluid);
             fluidImports[i] = filteredFluidHandler;
         }
@@ -100,7 +100,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         if (workable == null) return new FluidTankList(false);
         FluidTank[] fluidExports = new FluidTank[workable.recipeMap.getMaxFluidOutputs()];
         for (int i = 0; i < fluidExports.length; i++) {
-            fluidExports[i] = new NotifiableFluidTank(getOutputTankCapacity(i),this,true);
+            fluidExports[i] = new NotifiableFluidTank(getOutputTankCapacity(i), this, true);
         }
         return new FluidTankList(false, fluidExports);
     }

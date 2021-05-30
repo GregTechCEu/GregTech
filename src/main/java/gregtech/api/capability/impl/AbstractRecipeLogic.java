@@ -200,7 +200,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         // see if the last recipe we used still works
         if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids))
             currentRecipe = this.previousRecipe;
-        // If there is no active recipe, then we need to find one.
+            // If there is no active recipe, then we need to find one.
         else {
             currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
         }
@@ -208,10 +208,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         if (currentRecipe != null) {
             this.invalidInputsForRecipes = false;
             this.previousRecipe = currentRecipe;
-        // Add-ons may Override findRecipe method but not trySearchNewRecipe, in that case
-        // they may return a null recipe. Since we only check for items and fluid here, having
-        // findRecipe return a null recipe with isOutputsFull being true, means we have a valid
-        // recipe in the input waiting for space in the output.
+            // Add-ons may Override findRecipe method but not trySearchNewRecipe, in that case
+            // they may return a null recipe. Since we only check for items and fluid here, having
+            // findRecipe return a null recipe with isOutputsFull being true, means we have a valid
+            // recipe in the input waiting for space in the output.
         } else this.invalidInputsForRecipes = !this.isOutputsFull;
 
         // proceed if we have a usable recipe.

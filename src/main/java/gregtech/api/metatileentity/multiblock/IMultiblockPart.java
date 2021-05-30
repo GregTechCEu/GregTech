@@ -11,6 +11,6 @@ public interface IMultiblockPart {
     void removeFromMultiBlock(MultiblockControllerBase controllerBase);
 
     default void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-
     }
+
 }

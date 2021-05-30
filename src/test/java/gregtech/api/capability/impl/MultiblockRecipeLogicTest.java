@@ -26,6 +26,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import java.lang.reflect.Field;
 
 import static org.junit.Assert.*;
@@ -49,15 +50,15 @@ public class MultiblockRecipeLogicTest {
 
         // Create an empty recipe map to work with
         RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("blast_furnace",
-                                                            1,
-                                                            3,
-                                                            1,
-                                                            2,
-                                                            0,
-                                                            1,
-                                                            0,
-                                                            1,
-                                                            new BlastRecipeBuilder().EUt(32));
+                1,
+                3,
+                1,
+                2,
+                0,
+                1,
+                0,
+                1,
+                new BlastRecipeBuilder().EUt(32));
 
         RecipeMaps.BLAST_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
@@ -68,19 +69,21 @@ public class MultiblockRecipeLogicTest {
 
         RecipeMapMultiblockController mbt =
                 GregTechAPI.registerMetaTileEntity(511,
-                                                    new MetaTileEntityElectricBlastFurnace(
-                                                            // super function calls the world, which equal null in test
-                                                            new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
-                                                        @Override
-                                                        protected IBlockState getCasingState() {
-                                                            return null;
-                                                        }
-                                                        // function checks for the temperature of the recipe against the coils
-                                                        @Override
-                                                        public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
-                                                            return true;
-                                                        }
-                                                    });
+                        new MetaTileEntityElectricBlastFurnace(
+                                // super function calls the world, which equal null in test
+                                new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
+                            @Override
+                            protected void reinitializeStructurePattern() {
+
+                            }
+
+                            // function checks for the temperature of the recipe against the coils
+                            @Override
+                            public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
+                                return true;
+                            }
+                        });
+
         //isValid() check in the dirtying logic requires both a metatileentity and a holder
         try {
             Field field = MetaTileEntity.class.getDeclaredField("holder");
@@ -179,6 +182,7 @@ public class MultiblockRecipeLogicTest {
             protected long getMaxVoltage() {
                 return 32;
             }
+
             // since the hatches were not really added to a valid multiblock structure,
             // refer to their inventories directly
             @Override
