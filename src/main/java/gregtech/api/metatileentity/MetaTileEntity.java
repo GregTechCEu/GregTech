@@ -276,20 +276,6 @@ public abstract class MetaTileEntity implements ICoverable {
         }
     }
 
-    public <T> void removeNotifiedInput(T input) {
-        if (input instanceof IItemHandlerModifiable)
-            this.notifiedItemInputList.remove(input);
-        else if (input instanceof FluidTank)
-            this.notifiedFluidInputList.remove(input);
-    }
-
-    public <T> void removeNotifiedOutput(T input) {
-        if (input instanceof IItemHandlerModifiable)
-            this.notifiedItemOutputList.remove(input);
-        else if (input instanceof FluidTank)
-            this.notifiedFluidOutputList.remove(input);
-    }
-
     /**
      * Adds a trait to this meta tile entity
      * traits are objects linked with meta tile entity and performing certain
