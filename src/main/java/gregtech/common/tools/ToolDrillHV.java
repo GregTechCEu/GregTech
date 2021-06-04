@@ -43,9 +43,7 @@ public class ToolDrillHV extends ToolDrillLV {
     }
 
     @Override
-    public float getMaxDurabilityMultiplier(ItemStack stack) {
-        return 40.0F;
-    }
+    public float getMaxDurabilityMultiplier(ItemStack stack) { return 4.0F; }
 
     @Override
     public ItemStack getBrokenStack(ItemStack stack) {

@@ -14,7 +14,7 @@ public class ToolScrewdriverLV extends ToolScrewdriver {
 
     @Override
     public float getMaxDurabilityMultiplier(ItemStack stack) {
-        return 10.0f;
+        return 2.0f;
     }
 
     @Override

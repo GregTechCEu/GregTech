@@ -39,7 +39,7 @@ public class ToolDrillLV extends ToolBase {
 
     @Override
     public float getMaxDurabilityMultiplier(ItemStack stack) {
-        return 10.0f;
+        return 1.0f;
     }
 
     @Override

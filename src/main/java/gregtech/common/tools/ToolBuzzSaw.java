@@ -24,7 +24,7 @@ public class ToolBuzzSaw extends ToolSaw {
 
     @Override
     public float getMaxDurabilityMultiplier(ItemStack stack) {
-        return 10.0f;
+        return 1.0f;
     }
 
     @Override

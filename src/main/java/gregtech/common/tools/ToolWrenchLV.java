@@ -19,7 +19,7 @@ public class ToolWrenchLV extends ToolWrench {
 
     @Override
     public float getMaxDurabilityMultiplier(ItemStack stack) {
-        return 10.0f;
+        return 1.0f;
     }
 
     @Override

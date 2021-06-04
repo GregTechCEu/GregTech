@@ -340,17 +340,15 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
                     energyAmount = (int) discharged;
                     vanillaDamage = energyAmount / ConfigHolder.energyUsageMultiplier;
                     if (energyAmount % ConfigHolder.energyUsageMultiplier != 0)
-                       ++vanillaDamage;
-                }
-                else {
+                        ++vanillaDamage;
+                } else {
                     // Can't do the operation
                     return 0;
                 }
             }
             capability.discharge(energyAmount, capability.getTier(), true, false, simulate);
         }
-
-        if ( capability == null || capability.getCharge() <= 0) {
+        if ( capability == null || (capability.getCharge() <= 0 || GTUtility.getRandomIntXSTR(100) <= 4)) {
             T toolMetaItem = getItem(stack);
             if (toolMetaItem == null) {
                 return 0;
