@@ -80,18 +80,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean hasNotifiedInputs() {
-        return (metaTileEntity.getNotifiedItemInputList().size() > 0 ||
-                metaTileEntity.getNotifiedFluidInputList().size() > 0);
-    }
-
-    @Override
-    protected boolean hasNotifiedOutputs() {
-        return (metaTileEntity.getNotifiedItemOutputList().size() > 0 ||
-                metaTileEntity.getNotifiedFluidOutputList().size() > 0);
-    }
-
-    @Override
     protected long getEnergyStored() {
         return getEnergyContainer().getEnergyStored();
     }
