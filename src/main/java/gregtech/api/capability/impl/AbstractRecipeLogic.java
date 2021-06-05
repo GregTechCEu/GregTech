@@ -247,7 +247,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
      */
     @Deprecated
     protected boolean checkRecipeInputsDirty(IItemHandler inputs, IMultipleTankHandler fluidInputs) {
-        return this.hasNotifiedInputs();
+        boolean isDirty = this.hasNotifiedInputs();
+        metaTileEntity.getNotifiedItemInputList().clear();
+        metaTileEntity.getNotifiedFluidInputList().clear();
+        return isDirty;
     }
 
     protected static boolean areItemStacksEqual(ItemStack stackA, ItemStack stackB) {
