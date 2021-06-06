@@ -141,7 +141,6 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
                 setupRecipe(currentRecipe);
             // Inputs have been inspected.
             metaTileEntity.getNotifiedItemInputList().clear();
-            metaTileEntity.getNotifiedFluidOutputList().clear();
         }
 
         @Override
