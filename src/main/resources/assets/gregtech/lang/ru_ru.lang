@@ -2903,3 +2903,61 @@ gregtech.command.util.hand.no_item=Перед выполнением этой к
 # Fixes
 fluid.tile.water=Вода
 fluid.tile.lava=Лава
+
+metaitem.circuit.basic.name=Базовая микросхема
+metaitem.circuit.basic_electronic.name=Базовая электросхема
+metaitem.circuit.advanced_parts.name=Продвинутые запчасти электросхемы
+metaitem.circuit.good.name=Хорошая электросхема
+metaitem.circuit.advanced.name=Продвинутая микросхема
+metaitem.circuit.processor_assembly.name=Вычислительный блок
+metaitem.circuit.nano_processor.name=Нанопроцессор
+metaitem.circuit.nano_processor.tooltip=Меньше чем когда либо!
+metaitem.circuit.nano_processor_assembly.name=Нанопроцессорный вычислительный блок
+metaitem.circuit.quantum_processor.name=Квантовый процессор
+metaitem.circuit.quantum_processor.tooltip=Квантовые вычисления становятся явью
+metaitem.circuit.data_control.name=Микросхема контроля данных
+metaitem.circuit.crystal_processor.name=Кристальный процессор
+metaitem.circuit.crystal_processor.tooltip=Использование гравировки на кристаллах 
+metaitem.circuit.energy_flow.name=Микросхема контроля потока энергии
+metaitem.circuit.wetware_processor.name=Нейронный процессор
+metaitem.circuit.wetware_processor.tooltip=Вы чувсвтуете что он следит за вами
+metaitem.circuit.wetware_assembly.name=Нейронный вычислительный блок
+metaitem.circuit.wetware_assembly.tooltip=Тянет Minecraft 1.17+
+metaitem.circuit.wetware_super_computer.name=Нейронный суперкомпьютер
+metaitem.circuit.wetware_mainframe.name=Нейронный мейнфрейм
+metaitem.engraved.crystal_chip.name=Гравированный кристальный чип 
+metaitem.engraved.lapotron_chip.name=Гравированный лапотронный кристальный чип
+
+metaitem.crystal.system_on_chip.name=Кристальный SoC
+metaitem.crystal.system_on_chip.tooltip=Гравирован на кристалле
+metaitem.plate.advanced_system_on_chip.name=ASoC
+metaitem.plate.advanced_system_on_chip.tooltip=Продвинутая система в чипе
+metaitem.plate.integrated_logic_circuit.name=Интегрированная схема
+metaitem.plate.central_processing_unit.name=Центральный процессор
+metaitem.plate.high_power_integrated_circuit.name=HPIC
+metaitem.plate.high_power_integrated_circuit.tooltip=Высоковольтная интегрированная электросхема
+metaitem.plate.nand_memory_chip.name=NAND схема
+metaitem.plate.nano_central_processing_unit.name=Нанопроцессор
+metaitem.plate.nano_central_processing_unit.tooltip=Центральный нанопроцессор
+metaitem.plate.nor_memory_chip.name=NOR схема
+metaitem.plate.power_integrated_circuit.name=Силовая ИС
+metaitem.plate.power_integrated_circuit.tooltip=Силовая интегральная схема
+metaitem.plate.qbit_central_processing_unit.name=Кубитный процессор
+metaitem.plate.random_access_memory.name=ОЗУ
+metaitem.plate.random_access_memory.tooltip=Оперативная память
+metaitem.plate.system_on_chip.name=SoC
+metaitem.plate.system_on_chip.tooltip=Система в чипе
+
+gregtech.machine.locked_safe.name=Закрытый сейф
+gregtech.machine.locked_safe.malfunctioning=§cСломан!
+gregtech.machine.locked_safe.requirements=§7Требуется замена:
+
+gregtech.machine.workbench.name=Инженерный верстак
+gregtech.machine.workbench.tab.workbench=Создание
+gregtech.machine.workbench.tab.item_list=Хранение
+gregtech.machine.workbench.storage_note_1=(Доступные предметы в соседних
+gregtech.machine.workbench.storage_note_2=инвентарях, доступные для крафта)
+gregtech.item_list.item_stored=§7Хранится: %,d
+
+gregtech.machine.workbench.tab.crafting=Создание
+gregtech.machine.workbench.tab.container=Контейнер
