@@ -2965,6 +2965,8 @@ gregtech.machine.workbench.tab.container=Контейнер
 metaitem.smart_item_filter.name=Умный предметный фильтр
 metaitem.smart_item_filter.tooltip=Фильтрует предметы в зависимости от рецептов механизма
 
+gregtech.machine.fluid_tank.max_multiblock=Максимальный размер: %,dx%,dx%,d
+
 cover.smart_item_filter.title=Умный предметный фильтр
 cover.smart_item_filter.filtering_mode.electrolyzer=Электролизер
 cover.smart_item_filter.filtering_mode.centrifuge=Центрифуга
