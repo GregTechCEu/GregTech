@@ -320,7 +320,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ULV;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_LV;
 
-    public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT;
+    public static ConfigCircuitMetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT;
 
     public static MetaItem<?>.MetaValueItem FLUID_CELL;
 

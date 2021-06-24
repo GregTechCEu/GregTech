@@ -15,7 +15,7 @@
       },
       "engine_intake": {
         "textures": {
-          "all": "gregtech:blocks/casings/pipe/machine_casing_pipe_titanium"
+          "all": "gregtech:blocks/casings/pipe/machine_casing_engine_intake"
         }
       },
       "grate": {
@@ -35,12 +35,12 @@
       },
       "fusion": {
         "textures": {
-          "all": "gregtech:blocks/multiblock/fusion/fusioni_8"
+          "all": "gregtech:blocks/multiblock/fusion/machine_casing_fusion"
         }
       },
       "fusion_mk2": {
         "textures": {
-          "all": "gregtech:blocks/multiblock/fusion/fusionii_8"
+          "all": "gregtech:blocks/multiblock/fusion/machine_casing_fusion_2"
         }
       }
     }

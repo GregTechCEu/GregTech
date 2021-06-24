@@ -605,7 +605,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private int maxStackSize = 64;
         private int modelAmount = 1;
 
-        protected MetaValueItem(int metaValue, String unlocalizedName) {
+        public MetaValueItem(int metaValue, String unlocalizedName) {
             this.metaValue = metaValue;
             this.unlocalizedName = unlocalizedName;
         }
