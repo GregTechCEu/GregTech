@@ -19,6 +19,7 @@ import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRo
 import gregtech.common.metatileentities.multi.MetaTileEntityCokeOven;
 import gregtech.common.metatileentities.multi.MetaTileEntityCokeOvenHatch;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityLaserHatch;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler.BoilerType;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnace;
 import gregtech.common.metatileentities.multi.electric.*;
@@ -31,6 +32,7 @@ import gregtech.common.metatileentities.steam.boiler.SteamLavaBoiler;
 import gregtech.common.metatileentities.steam.boiler.SteamSolarBoiler;
 import gregtech.common.metatileentities.storage.*;
 import net.minecraft.util.ResourceLocation;
+
 
 public class MetaTileEntities {
 
@@ -114,6 +116,8 @@ public class MetaTileEntities {
     public static MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
     public static MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
     public static MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
+    public static MetaTileEntityLaserHatch[] LASER_INPUT_HATCH = new MetaTileEntityLaserHatch[GTValues.V.length];
+    public static MetaTileEntityLaserHatch[] LASER_OUTPUT_HATCH = new MetaTileEntityLaserHatch[GTValues.V.length];
     public static MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[3]; //HV, LuV, MAX
     public static MetaTileEntityCokeOvenHatch COKE_OVEN_HATCH;
 
@@ -632,6 +636,15 @@ public class MetaTileEntities {
         WORKBENCH = GregTechAPI.registerMetaTileEntity(1627, new MetaTileEntityWorkbench(gregtechId("workbench")));
         ARMOR_TABLE = GregTechAPI.registerMetaTileEntity(1628, new MetaTileEntityArmorTable(gregtechId("armor_table")));
 
+        // laserInput/Output Hatches,IDs 1229 - 1659
+        for (int i = 0; i < LASER_INPUT_HATCH.length; i++) {
+            String voltageName = GTValues.VN[i].toLowerCase();
+            LASER_INPUT_HATCH[i] = new MetaTileEntityLaserHatch(gregtechId("laser.input." + voltageName), i, false);
+            LASER_OUTPUT_HATCH[i] = new MetaTileEntityLaserHatch(gregtechId("laser.output." + voltageName), i, true);
+
+            GregTechAPI.registerMetaTileEntity(1629 + i, LASER_INPUT_HATCH[i]);
+            GregTechAPI.registerMetaTileEntity(1644 + i, LASER_OUTPUT_HATCH[i]);
+        }
 
 
         /*
