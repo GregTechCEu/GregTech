@@ -144,6 +144,7 @@ public enum OrePrefix {
     cableGtQuadruple("Quadruple cables", M * 2, null, null, ENABLE_UNIFICATION, null),
     cableGtDouble("Double cables", M, null, null, ENABLE_UNIFICATION, null),
     cableGtSingle("Single cables", M / 2, null, null, ENABLE_UNIFICATION, null),
+    laserGTSingle("laser cable",M,null,null,ENABLE_UNIFICATION,null),
 
     craftingLens("Crafting Ingredients", -1, null, null, DISALLOW_RECYCLING, null), // Special Prefix used mainly for the Crafting Handler.
     dye("Dyes", -1, null, null, DISALLOW_RECYCLING, null), // Used for the 16 dyes. Introduced by Eloraam
