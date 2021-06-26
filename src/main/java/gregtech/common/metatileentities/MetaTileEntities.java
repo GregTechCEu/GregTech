@@ -154,7 +154,6 @@ public class MetaTileEntities {
     public static MetaTileEntityChest TITANIUM_CHEST;
     public static MetaTileEntityChest TUNGSTENSTEEL_CHEST;
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
-    public static MetaTileEntityArmorTable ARMOR_TABLE;
 
     public static MetaTileEntityTank WOODEN_TANK;
     public static MetaTileEntityTank BRONZE_TANK;
@@ -278,7 +277,7 @@ public class MetaTileEntities {
                 ConfigHolder.U.machines.midTierCentrifuges, ConfigHolder.U.machines.highTierCentrifuges, false);
 
         // Chemical Bath, IDs 215-229
-        registerSimpleMetaTileEntity(CHEMICAL_BATH, 215, "chemical_bath", RecipeMaps.CHEMICAL_BATH_RECIPES, Textures.CHEMICAL_REACTOR_OVERLAY,
+        registerSimpleMetaTileEntity(CHEMICAL_BATH, 215, "chemical_bath", RecipeMaps.CHEMICAL_BATH_RECIPES, Textures.CHEMICAL_BATH_OVERLAY,
                 ConfigHolder.U.machines.midTierChemicalBaths, ConfigHolder.U.machines.highTierChemicalBaths);
 
         // Chemical Reactor, IDs 230-244
@@ -634,7 +633,6 @@ public class MetaTileEntities {
         GregTechAPI.registerMetaTileEntity(1625, TESLA_COIL);
         LOCKED_SAFE = GregTechAPI.registerMetaTileEntity(1626, new MetaTileEntityLockedSafe(gregtechId("locked_safe")));
         WORKBENCH = GregTechAPI.registerMetaTileEntity(1627, new MetaTileEntityWorkbench(gregtechId("workbench")));
-        ARMOR_TABLE = GregTechAPI.registerMetaTileEntity(1628, new MetaTileEntityArmorTable(gregtechId("armor_table")));
 
         // laserInput/Output Hatches,IDs 1229 - 1659
         for (int i = 0; i < LASER_INPUT_HATCH.length; i++) {

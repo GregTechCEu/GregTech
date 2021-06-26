@@ -99,6 +99,12 @@ public class GTValues {
     }
 
     /**
+     * Default fallback value used for Map keys.
+     * Currently only used in {@link gregtech.loaders.recipe.CraftingComponent}.
+     */
+    public static final int FALLBACK = -1;
+
+    /**
      * Used to tell if any high-tier machine (UHV+) was registered.
      */
     public static final boolean HT =

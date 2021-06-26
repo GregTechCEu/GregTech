@@ -24,7 +24,7 @@ public class MetaTileEntityMacerator extends SimpleMachineMetaTileEntity {
     private final int outputAmount;
 
     public MetaTileEntityMacerator(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, int outputAmount, OrientedOverlayRenderer renderer, int tier) {
-        super(metaTileEntityId, recipeMap, renderer, tier);
+        super(metaTileEntityId, recipeMap, renderer, tier, true);
         this.outputAmount = outputAmount;
         initializeInventory();
     }

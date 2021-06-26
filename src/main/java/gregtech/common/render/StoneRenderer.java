@@ -16,7 +16,6 @@ import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.surfacerock.BlockSurfaceRock;
-import gregtech.common.blocks.surfacerock.BlockSurfaceRockNew;
 import gregtech.common.blocks.surfacerock.TileEntitySurfaceRock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -51,7 +50,7 @@ public class StoneRenderer implements ICCBlockRenderer {
     }
 
     private static CCModel getActualModel(IBlockAccess world, BlockPos pos) {
-        TileEntitySurfaceRock tileEntity = BlockSurfaceRockNew.getTileEntity(world, pos);
+        TileEntitySurfaceRock tileEntity = BlockSurfaceRock.getTileEntity(world, pos);
         if (tileEntity != null) {
             if (tileEntity.cachedModel == null) {
                 Random random = new Random(MathHelper.getPositionRandom(pos));

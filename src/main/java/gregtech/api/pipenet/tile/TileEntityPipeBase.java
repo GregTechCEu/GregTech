@@ -149,7 +149,12 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    public void setConnectionBlocked(AttachmentType attachmentType, EnumFacing side, boolean blocked) {
+    public void setConnectionBlocked(AttachmentType attachmentType, EnumFacing side, boolean blocked, boolean fromNeighbor) {
+        // fix desync between two connections. Can happen if a pipe side is blocked, and a new pipe is placed next to it.
+        if (isConnectionBlocked(attachmentType, side) != isNeighborPipeBlocked(attachmentType, side) && !fromNeighbor) {
+            syncPipeConnections(attachmentType, side);
+            return;
+        }
         int blockedConnections = blockedConnectionsMap.get(attachmentType.ordinal());
         this.blockedConnectionsMap.put(attachmentType.ordinal(), withSideConnectionBlocked(blockedConnections, side, blocked));
         recomputeBlockedConnections();
@@ -159,6 +164,35 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             }
             writeCustomData(-2, buffer -> buffer.writeVarInt(this.blockedConnections));
             markDirty();
+        }
+        if (!fromNeighbor) {
+            setNeighborPipeBlocked(attachmentType, side, blocked);
+        }
+    }
+
+    private void setNeighborPipeBlocked(AttachmentType type, EnumFacing side, boolean blocked) {
+        // Block/Unblock neighbor pipe if it exists
+        TileEntity te = this.getWorld().getTileEntity(this.getPipePos().offset(side));
+        if (te instanceof TileEntityPipeBase) {
+            TileEntityPipeBase<?, ?> pipeTe = (TileEntityPipeBase<?, ?>) te;
+            pipeTe.setConnectionBlocked(type, side.getOpposite(), blocked, true);
+        }
+    }
+
+    private boolean isNeighborPipeBlocked(AttachmentType type, EnumFacing side) {
+        TileEntity te = this.getWorld().getTileEntity(this.getPipePos().offset(side));
+        if (te instanceof TileEntityPipeBase) {
+            TileEntityPipeBase<?, ?> pipeTe = (TileEntityPipeBase<?, ?>) te;
+            return pipeTe.isConnectionBlocked(type, side.getOpposite());
+        }
+        return false;
+    }
+
+    private void syncPipeConnections(AttachmentType type, EnumFacing side) {
+        if (isNeighborPipeBlocked(type, side) && !isConnectionBlocked(type, side)) {
+            setNeighborPipeBlocked(type, side, false);
+        } else {
+            setConnectionBlocked(type, side, false, true);
         }
     }
 

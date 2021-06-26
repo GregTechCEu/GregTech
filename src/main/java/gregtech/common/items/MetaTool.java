@@ -3,10 +3,7 @@ package gregtech.common.items;
 import gregtech.api.GTValues;
 import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.ElectricStats;
-import gregtech.api.items.toolitem.ScrewdriverItemStat;
-import gregtech.api.items.toolitem.SoftMalletItemStat;
-import gregtech.api.items.toolitem.ToolMetaItem;
-import gregtech.api.items.toolitem.WrenchItemStat;
+import gregtech.api.items.toolitem.*;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.IngotMaterial;
@@ -86,7 +83,8 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
 
         WIRE_CUTTER = addItem(13, "tool.wire_cutter").setToolStats(new ToolWireCutter())
             .setFullRepairCost(4.125)
-            .addOreDict(ToolDictNames.craftingToolWireCutter);
+            .addOreDict(ToolDictNames.craftingToolWireCutter)
+            .addComponents(new CutterItemStat());
 
         SCOOP = addItem(14, "tool.scoop").setToolStats(new ToolScoop())
             .setFullRepairCost(3)

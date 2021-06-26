@@ -25,6 +25,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.worldgen.LootTableHelper;
 import gregtech.loaders.recipe.CraftingComponent;
+import gregtech.loaders.recipe.CraftingComponent.Component;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -53,16 +54,16 @@ import java.util.function.DoubleSupplier;
 public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRenderMetaTileEntity {
     
     private static final int MAX_UNLOCK_PROGRESS = 100;
-    private static final CraftingComponent[] ALLOWED_COMPONENTS = {CraftingComponent.PUMP, CraftingComponent.CONVEYOR, CraftingComponent.EMITTER, CraftingComponent.SENSOR};
-    private static IndexedCuboid6 COLLISION_BOX = new IndexedCuboid6(null, new Cuboid6(3 / 16.0, 0 / 16.0, 3 / 16.0, 13 / 16.0, 14 / 16.0, 13 / 16.0));
+    private static Component[] ALLOWED_COMPONENTS;
+    private static final IndexedCuboid6 COLLISION_BOX = new IndexedCuboid6(null, new Cuboid6(3 / 16.0, 0 / 16.0, 3 / 16.0, 13 / 16.0, 14 / 16.0, 13 / 16.0));
 
     private int unlockProgress = -1;
     private int unlockComponentTier = 1;
     private boolean isSafeUnlocked = false;
 
     private long unlockComponentsSeed = 0L;
-    private ItemStackHandler unlockComponents = new ItemStackHandler(2);
-    private ItemStackHandler unlockInventory = new ItemStackHandler(2) {
+    private final ItemStackHandler unlockComponents = new ItemStackHandler(2);
+    private final ItemStackHandler unlockInventory = new ItemStackHandler(2) {
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
@@ -83,7 +84,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
             recheckUnlockItemsAndUnlock();
         }
     };
-    private ItemStackHandler safeLootInventory = new ItemStackHandler(27);
+    private final ItemStackHandler safeLootInventory = new ItemStackHandler(27);
     private float doorAngle = 0.0f;
     private float prevDoorAngle = 0.0f;
         
@@ -150,6 +151,9 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     }
 
     private CountableIngredient[] getUnlockComponents() {
+        if (ALLOWED_COMPONENTS == null)
+            ALLOWED_COMPONENTS = new Component[]{CraftingComponent.PUMP, CraftingComponent.CONVEYOR, CraftingComponent.EMITTER, CraftingComponent.SENSOR};
+
         Random random = new Random(unlockComponentsSeed);
         return new CountableIngredient[] {
             new CountableIngredient(createIngredient(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier)), 1),
@@ -185,8 +189,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         boolean isRequiredItem = false;
         int amountRequired = 0;
         CountableIngredient[] unlockComponents = getUnlockComponents();
-        for (int j = 0; j < unlockComponents.length; j++) {
-            CountableIngredient ingredient = unlockComponents[j];
+        for (CountableIngredient ingredient : unlockComponents) {
             if (ingredient == null) continue;
             if (!ingredient.getIngredient().test(itemStack)) continue;
             amountRequired = ingredient.getCount();
@@ -207,8 +210,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
 
     private boolean checkUnlockedItems() {
         CountableIngredient[] unlockComponents = getUnlockComponents();
-        for (int j = 0; j < unlockComponents.length; j++) {
-            CountableIngredient ingredient = unlockComponents[j];
+        for (CountableIngredient ingredient : unlockComponents) {
             if (ingredient == null) continue;
             int itemLeftToCheck = ingredient.getCount();
             for (int i = 0; i < unlockInventory.getSlots(); i++) {

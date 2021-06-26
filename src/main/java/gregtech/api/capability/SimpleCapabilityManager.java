@@ -1,5 +1,6 @@
 package gregtech.api.capability;
 
+import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.capability.tool.IWrenchItem;
@@ -42,13 +43,11 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(IFuelable.class);
 
         registerCapabilityWithNoDefault(IWrenchItem.class);
+        registerCapabilityWithNoDefault(ICutterItem.class);
         registerCapabilityWithNoDefault(IScrewdriverItem.class);
         registerCapabilityWithNoDefault(ISoftHammerItem.class);
 
         //internal capabilities
         CapabilityManager.INSTANCE.register(GTWorldGenCapability.class, GTWorldGenCapability.STORAGE, GTWorldGenCapability.FACTORY);
-
-
     }
-
 }

@@ -169,7 +169,7 @@ public class ConfigHolder {
 
         @Config.Comment("Config category for GT5u inspired features.")
         @Config.Name("GregTech 5 Unofficial Options")
-        public GT5U GT5U = new GT5U();
+        public GT5U GT5u = new GT5U();
 
         @Config.Comment("Should Drums be enabled? Default: true")
         @Config.RequiresMcRestart
@@ -185,9 +185,21 @@ public class ConfigHolder {
             @Config.Name("Batteries - Enable an extra ZPM and UV Battery (this also makes the Ultimate Battery harder to make)")
             @Config.RequiresMcRestart
             public boolean enableZPMandUVBats = false;
+
             @Config.Name("Batteries - Replace the Ultimate Battery with a MAX Battery")
             @Config.RequiresMcRestart
             public boolean replaceUVwithMAXBat = false;
+
+            @Config.Comment("This config requires 'B:Use custom machine tank sizes' = true to take effect. Changes the input tank size to the first value, and out tank size to the second value for nearly every single block machine. Units are millibuckets.")
+            @Config.Name("Custom machine fluid tank sizes")
+            @Config.RangeInt(min = 1)
+            @Config.RequiresMcRestart
+            public int[] customMachineTankSizes = new int[]{64000, 64000};
+
+            @Config.Comment("This config enables the customization of nearly every single block machine's input and output fluid tank sizes.")
+            @Config.Name("Use custom machine tank sizes")
+            @Config.RequiresMcRestart
+            public boolean useCustomMachineTankSizes = false;
         }
 
         public static class HighTierMachines {
@@ -196,7 +208,7 @@ public class ConfigHolder {
             @Config.Name("LuV-UV Machines")
             public boolean midTierMachines = false;
 
-            @Config.Comment("Enable all UHV-UXV Machines, overrides individual values if true. Default: false")
+            @Config.Comment("Enable all UHV-UXV Machines, overrides individual values if true. THESE WILL HAVE NO RECIPES BY DEFAULT WITHOUT GREGICALITY! Default: false")
             @Config.Name("UHV-UXV Machines")
             public boolean highTierMachines = false;
 
@@ -250,7 +262,7 @@ public class ConfigHolder {
             public boolean midTierUnpackers = false;
             public boolean midTierWiremills = false;
 
-            @Config.Comment("Set these to true to enable UHV-UXV tiers of machines. Default (all): false")
+            @Config.Comment("Set these to true to enable UHV-UXV tiers of machines. THESE WILL HAVE NO RECIPES BY DEFAULT WITHOUT GREGICALITY! Default (all): false")
             public boolean highTierAlloySmelter = false;
             public boolean highTierArcFurnaces = false;
             public boolean highTierAssemblers = false;

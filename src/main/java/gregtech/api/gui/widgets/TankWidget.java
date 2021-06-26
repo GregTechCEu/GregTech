@@ -270,7 +270,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 performedEmptying = true;
             }
             FluidStack filledFluid = fluidTank.getFluid();
-            if (performedEmptying) {
+            if (performedEmptying && filledFluid != null) {
                 SoundEvent soundevent = filledFluid.getFluid().getEmptySound(filledFluid);
                 player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
                     soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);

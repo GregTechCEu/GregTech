@@ -64,7 +64,7 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
     }
 
     private void setStoneBlock(World world, BlockPos blockPos, Collection<Material> undergroundMaterials) {
-        boolean surfaceRockPlaced = world.setBlockState(blockPos, MetaBlocks.SURFACE_ROCK_NEW.getDefaultState());
+        boolean surfaceRockPlaced = world.setBlockState(blockPos, MetaBlocks.SURFACE_ROCK.getDefaultState());
         if (surfaceRockPlaced) {
             TileEntitySurfaceRock tileEntity = (TileEntitySurfaceRock) world.getTileEntity(blockPos);
             if (tileEntity != null)

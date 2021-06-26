@@ -15,7 +15,6 @@ import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
 import gregtech.common.blocks.*;
-import gregtech.common.blocks.surfacerock.BlockSurfaceRockDeprecated;
 import gregtech.common.covers.facade.FacadeRenderer;
 import gregtech.common.items.MetaItems;
 import gregtech.common.render.CableRenderer;
@@ -36,7 +35,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.biome.BiomeColorHelper;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -97,18 +95,6 @@ public class ClientProxy extends CommonProxy {
 
     public static final IBlockColor FOAM_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
         state.getValue(BlockColored.COLOR).colorValue;
-
-    public static final IBlockColor SURFACE_ROCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) -> {
-        if (tintIndex == 1) {
-            if (state.getBlock() instanceof BlockSurfaceRockDeprecated) {
-                BlockSurfaceRockDeprecated surfaceRock = (BlockSurfaceRockDeprecated) state.getBlock();
-                return state.getValue(surfaceRock.materialProperty).materialRGB;
-            } else return 0xFFFFFF;
-        } else {
-            //flooded surface rock water variant
-            return BiomeColorHelper.getWaterColorAtPos(worldIn, pos);
-        }
-    };
 
     public void onPreLoad() {
         super.onPreLoad();

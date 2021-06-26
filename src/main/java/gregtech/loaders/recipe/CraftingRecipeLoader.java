@@ -97,20 +97,6 @@ public class CraftingRecipeLoader {
                 'E', MetaItems.ENERGY_CRYSTAL.getStackForm());
         }
 
-        for (MetaValueItem batteryItem : ToolRecipeHandler.batteryItems[1]) {
-            ItemStack batteryStack = batteryItem.getStackForm();
-            ModHandler.addShapedEnergyTransferRecipe("rebreather_" + batteryItem.unlocalizedName,
-                MetaItems.REBREATHER.getStackForm(),
-                Ingredient.fromStacks(batteryStack), true,
-                "CEC", "PGP", "BUB",
-                'C', new UnificationEntry(OrePrefix.circuit, Tier.Basic),
-                'E', MetaTileEntities.ELECTROLYZER[0].getStackForm(),
-                'G', new UnificationEntry(OrePrefix.glass, null),
-                'P', new UnificationEntry(OrePrefix.pipeSmall, Materials.Steel),
-                'B', batteryStack,
-                'U', MetaItems.ELECTRIC_PUMP_LV.getStackForm());
-        }
-
         ModHandler.addShapelessRecipe("rubber_wood_planks", new ItemStack(Blocks.PLANKS, 4, EnumType.JUNGLE.getMetadata()), new ItemStack(MetaBlocks.LOG, 1, LogVariant.RUBBER_WOOD.ordinal()));
 
         ModHandler.addShapedRecipe("paper_ring", OreDictUnifier.get(OrePrefix.ring, Materials.Paper), "k", "X", 'X', new UnificationEntry(OrePrefix.plate, Materials.Paper));

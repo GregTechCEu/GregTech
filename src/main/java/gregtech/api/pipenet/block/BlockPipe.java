@@ -211,17 +211,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             return false;
 
         if (!(hit.cuboid6.data instanceof CoverSideData)) {
-            IWrenchItem wrenchItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
-            if (wrenchItem != null) {
-                if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true)) {
-                    if (!entityPlayer.world.isRemote) {
-                        boolean isBlocked = pipeTile.isConnectionBlocked(AttachmentType.PIPE, coverSide);
-                        pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, !isBlocked);
-                        wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
-                    }
-                    return true;
-                }
-                return false;
+            switch (onPipeToolUsed(itemStack, coverSide, pipeTile, entityPlayer)) {
+                case 1: return true;
+                case 0: return false;
             }
         }
 
@@ -239,6 +231,26 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             return false;
         }
         return coverBehavior.onRightClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS;
+    }
+
+    /**
+     * @return 1 if successfully used tool, 0 if failed to use tool,
+     *        -1 if ItemStack failed the capability check (no action done, continue checks).
+     */
+    public int onPipeToolUsed(ItemStack stack, EnumFacing coverSide, IPipeTile<PipeType, NodeDataType> pipeTile, EntityPlayer entityPlayer) {
+        IWrenchItem wrenchItem = stack.getCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
+        if (wrenchItem != null) {
+            if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true)) {
+                if (!entityPlayer.world.isRemote) {
+                    boolean isBlocked = pipeTile.isConnectionBlocked(AttachmentType.PIPE, coverSide);
+                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, !isBlocked, false);
+                    wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
+                }
+                return 1;
+            }
+            return 0;
+        }
+        return -1;
     }
 
     @Override

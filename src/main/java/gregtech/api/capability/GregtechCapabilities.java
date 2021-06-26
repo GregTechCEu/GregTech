@@ -1,5 +1,6 @@
 package gregtech.api.capability;
 
+import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.capability.tool.IWrenchItem;
@@ -16,6 +17,9 @@ public class GregtechCapabilities {
 
     @CapabilityInject(IWrenchItem.class)
     public static Capability<IWrenchItem> CAPABILITY_WRENCH = null;
+
+    @CapabilityInject(ICutterItem.class)
+    public static Capability<ICutterItem> CAPABILITY_CUTTER = null;
 
     @CapabilityInject(IScrewdriverItem.class)
     public static Capability<IScrewdriverItem> CAPABILITY_SCREWDRIVER = null;

@@ -11,7 +11,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.DustMaterial.MatFlags;
 import gregtech.api.unification.material.type.IngotMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.material.type.SolidMaterial;
@@ -20,8 +19,7 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
 import gregtech.common.blocks.modelfactories.BakedModelHandler;
-import gregtech.common.blocks.surfacerock.BlockSurfaceRockDeprecated;
-import gregtech.common.blocks.surfacerock.BlockSurfaceRockNew;
+import gregtech.common.blocks.surfacerock.BlockSurfaceRock;
 import gregtech.common.blocks.surfacerock.TileEntitySurfaceRock;
 import gregtech.common.blocks.tileentity.TileEntityCrusherBlade;
 import gregtech.common.blocks.wood.BlockGregLeaves;
@@ -107,10 +105,9 @@ public class MetaBlocks {
     public static BlockGregSapling SAPLING;
 
     public static BlockCrusherBlade CRUSHER_BLADE;
+    public static BlockSurfaceRock SURFACE_ROCK;
 
     public static Map<DustMaterial, BlockCompressed> COMPRESSED = new HashMap<>();
-    public static Map<IngotMaterial, BlockSurfaceRockDeprecated> SURFACE_ROCKS = new HashMap<>();
-    public static BlockSurfaceRockNew SURFACE_ROCK_NEW;
     public static Map<SolidMaterial, BlockFrame> FRAMES = new HashMap<>();
     public static Collection<BlockOre> ORES = new HashSet<>();
     public static Collection<BlockFluidBase> FLUID_BLOCKS = new HashSet<>();
@@ -169,18 +166,14 @@ public class MetaBlocks {
         CRUSHER_BLADE = new BlockCrusherBlade();
         CRUSHER_BLADE.setRegistryName("crusher_blade");
 
-        SURFACE_ROCK_NEW = new BlockSurfaceRockNew();
-        SURFACE_ROCK_NEW.setRegistryName("surface_rock_new");
+        SURFACE_ROCK = new BlockSurfaceRock();
+        SURFACE_ROCK.setRegistryName("surface_rock_new");
 
         StoneType.init();
 
         createGeneratedBlock(
             material -> material instanceof DustMaterial && !OrePrefix.block.isIgnored(material),
             MetaBlocks::createCompressedBlock);
-
-        createGeneratedBlock(
-            material -> material instanceof IngotMaterial && material.hasFlag(MatFlags.GENERATE_ORE),
-            MetaBlocks::createSurfaceRockBlock);
 
         for (Material material : Material.MATERIAL_REGISTRY) {
             if (material instanceof DustMaterial &&
@@ -240,16 +233,6 @@ public class MetaBlocks {
             }
 
         blocksToGenerate.forEach((key, value) -> blockGenerator.accept(value, key));
-    }
-
-    private static void createSurfaceRockBlock(Material[] materials, int index) {
-        BlockSurfaceRockDeprecated block = new BlockSurfaceRockDeprecated(materials);
-        block.setRegistryName("meta_block_surface_rock_" + index);
-        for (Material material : materials) {
-            if (material instanceof IngotMaterial) {
-                SURFACE_ROCKS.put((IngotMaterial) material, block);
-            }
-        }
     }
 
     private static void createCompressedBlock(Material[] materials, int index) {
@@ -403,9 +386,8 @@ public class MetaBlocks {
         BakedModelHandler modelHandler = new BakedModelHandler();
         MinecraftForge.EVENT_BUS.register(modelHandler);
         FLUID_BLOCKS.forEach(modelHandler::addFluidBlock);
-        SURFACE_ROCKS.values().stream().distinct().forEach(block -> modelHandler.addBuiltInBlock(block, "stone"));
 
-        modelHandler.addBuiltInBlock(SURFACE_ROCK_NEW, "stone_andesite");
+        modelHandler.addBuiltInBlock(SURFACE_ROCK, "stone_andesite");
         modelHandler.addBuiltInBlock(CRUSHER_BLADE, "iron_block");
 
         Item.getItemFromBlock(CRUSHER_BLADE).setTileEntityItemStackRenderer(new TileEntityRenderBaseItem<>(TileEntityCrusherBlade.class));
@@ -432,9 +414,6 @@ public class MetaBlocks {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(ORE_BLOCK_COLOR, block);
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(ORE_ITEM_COLOR, block);
         });
-
-        MetaBlocks.SURFACE_ROCKS.values().stream().distinct().forEach(block ->
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(SURFACE_ROCK_COLOR, block));
     }
 
     public static void registerOreDict() {
