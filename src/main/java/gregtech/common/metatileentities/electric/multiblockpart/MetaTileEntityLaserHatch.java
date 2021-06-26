@@ -5,8 +5,9 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.impl.EnergyContainerHandler;
+import gregtech.api.capability.impl.LaserContainerHandler;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
@@ -14,33 +15,37 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.PipelineUtil;
+import gregtech.common.pipelike.laser.tile.LaserContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Predicate;
 
-public class MetaTileEntityLaserHatch  extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IEnergyContainer> {
-
+public class MetaTileEntityLaserHatch  extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<LaserContainer> {
     private final boolean isExportHatch;
-    private final IEnergyContainer energyContainer;
+
+    private final LaserContainer Laser;
+    private final long  MAPCAP;
+
 
     public MetaTileEntityLaserHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier);
-        this.isExportHatch = isExportHatch;
+        this.MAPCAP = GTValues.V[tier] * 102400;
+        this.isExportHatch  = isExportHatch;
         if (isExportHatch) {
-            this.energyContainer = EnergyContainerHandler.emitterContainer(this, GTValues.V[tier] * 1024L, GTValues.V[tier], 1024);
+            this.Laser =LaserContainerHandler.LaseremitterContainer(this, MAPCAP,  GTValues.V[tier],102400);
         } else {
-            this.energyContainer = EnergyContainerHandler.receiverContainer(this, GTValues.V[tier] * 1024L, GTValues.V[tier], 1024);
+            this.Laser = LaserContainerHandler.LaserreceiverContainer(this, MAPCAP, GTValues.V[tier], 102400);
         }
     }
-
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityEnergyHatch(metaTileEntityId, getTier(), isExportHatch);
+        return new MetaTileEntityLaserHatch(metaTileEntityId, getTier(), isExportHatch);
     }
 
     @Override
@@ -52,14 +57,16 @@ public class MetaTileEntityLaserHatch  extends MetaTileEntityMultiblockPart impl
         }
     }
 
-    @Override
-    public MultiblockAbility<IEnergyContainer> getAbility() {
-        return isExportHatch ? MultiblockAbility.OUTPUT_ENERGY : MultiblockAbility.INPUT_ENERGY;
+
+    public MultiblockAbility<LaserContainer> getAbility() {
+        return isExportHatch ? MultiblockAbility.OUTPUT_LASER : MultiblockAbility.INPUT_LASER;
     }
 
     @Override
-    public void registerAbilities(List<IEnergyContainer> abilityList) {
-        abilityList.add(energyContainer);
+    public void registerAbilities(List<LaserContainer> abilityList) { {
+        abilityList.add(Laser);
+    }
+
     }
 
     @Override
@@ -72,19 +79,18 @@ public class MetaTileEntityLaserHatch  extends MetaTileEntityMultiblockPart impl
         return null;
     }
 
+
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         String tierName = GTValues.VN[getTier()];
 
         if (isExportHatch) {
-            tooltip.add(I18n.format("gregtech.machine.energy_hatch.output.tooltip"));
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
-            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", Laser.getOutputLaser(), tierName +" Laser"));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", Laser.getOutputParallel())+" Laser");
         } else {
-            tooltip.add(I18n.format("gregtech.machine.energy_hatch.input.tooltip"));
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
-            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
+            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", Laser.getInputLaser(), tierName)+" Laser");
+            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", Laser.getInputParallel())+" Laser");
         }
-        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", MAPCAP)+" Laser");
     }
 }
