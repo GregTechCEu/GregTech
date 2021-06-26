@@ -26,6 +26,4 @@ public class GregtechCapabilities {
     @CapabilityInject(IFuelable.class)
     public static Capability<IFuelable> CAPABILITY_FUELABLE = null;
 
-    public static Capability<ICircuitConfigurationItem> CAPABILITY_CIRCUIT_CONFIGURATION = null;
-
 }
