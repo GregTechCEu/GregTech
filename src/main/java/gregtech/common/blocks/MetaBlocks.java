@@ -5,6 +5,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.MetaTileEntityTESR;
 import gregtech.api.unification.OreDictUnifier;
@@ -25,6 +26,12 @@ import gregtech.common.blocks.tileentity.TileEntityCrusherBlade;
 import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.blocks.wood.BlockGregSapling;
+import gregtech.common.pipelike.laser.net.BlockLaser;
+import gregtech.common.pipelike.laser.tile.ItemBlockLaser;
+import gregtech.common.pipelike.laser.tile.LaserProperties;
+import gregtech.common.pipelike.laser.tile.LaserSize;
+import gregtech.common.pipelike.laser.tile.TileEntityLaser;
+import gregtech.common.pipelike.laser.tile.TileEntityLaserTickable;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.WireProperties;
@@ -78,6 +85,7 @@ public class MetaBlocks {
 
     public static BlockMachine MACHINE;
     public static BlockCable CABLE;
+    public static BlockLaser laser;
     public static BlockFluidPipe FLUID_PIPE;
 
     public static BlockBoilerCasing BOILER_CASING;
@@ -117,6 +125,8 @@ public class MetaBlocks {
         MACHINE.setRegistryName("machine");
         CABLE = new BlockCable();
         CABLE.setRegistryName("cable");
+        laser = new BlockLaser();
+        laser.setRegistryName("laser");
         FLUID_PIPE = new BlockFluidPipe();
         FLUID_PIPE.setRegistryName("fluid_pipe");
         BOILER_CASING = new BlockBoilerCasing();
@@ -193,8 +203,14 @@ public class MetaBlocks {
                 if (metalMaterial.fluidPipeProperties != null) {
                     FLUID_PIPE.addPipeMaterial(metalMaterial, metalMaterial.fluidPipeProperties);
                 }
+                if (metalMaterial.laserProperties != null) {
+                    laser.addCableMaterial(metalMaterial, metalMaterial.laserProperties);
+                }
             }
+
         }
+
+
         FLUID_PIPE.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 20, false));
         CABLE.addCableMaterial(MarkerMaterials.Tier.Superconductor, new WireProperties(Integer.MAX_VALUE, 4, 0));
         registerTileEntity();
@@ -278,7 +294,9 @@ public class MetaBlocks {
         GameRegistry.registerTileEntity(MetaTileEntityHolder.class, new ResourceLocation(GTValues.MODID, "machine"));
         GameRegistry.registerTileEntity(TileEntityCrusherBlade.class, new ResourceLocation(GTValues.MODID, "crusher_blade"));
         GameRegistry.registerTileEntity(TileEntityCable.class, new ResourceLocation(GTValues.MODID, "cable"));
+        GameRegistry.registerTileEntity(TileEntityLaser.class, new ResourceLocation(GTValues.MODID, "laser"));
         GameRegistry.registerTileEntity(TileEntityCableTickable.class, new ResourceLocation(GTValues.MODID, "cable_tickable"));
+        GameRegistry.registerTileEntity(TileEntityLaserTickable.class, new ResourceLocation(GTValues.MODID, "laser_tickable"));
         GameRegistry.registerTileEntity(TileEntityFluidPipe.class, new ResourceLocation(GTValues.MODID, "fluid_pipe"));
         GameRegistry.registerTileEntity(TileEntityFluidPipeTickable.class, new ResourceLocation(GTValues.MODID, "fluid_pipe_active"));
         GameRegistry.registerTileEntity(TileEntitySurfaceRock.class, new ResourceLocation(GTValues.MODID, "surface_rock"));
@@ -288,6 +306,7 @@ public class MetaBlocks {
     public static void registerItemModels() {
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE), stack -> MetaTileEntityRenderer.MODEL_LOCATION);
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(CABLE), stack -> CableRenderer.MODEL_LOCATION);
+        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(laser), stack -> CableRenderer.MODEL_LOCATION);
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(FLUID_PIPE), stack -> FluidPipeRenderer.MODEL_LOCATION);
         registerItemModel(BOILER_CASING);
         registerItemModel(BOILER_FIREBOX_CASING);
@@ -360,6 +379,12 @@ public class MetaBlocks {
             }
         });
         ModelLoader.setCustomStateMapper(CABLE, new DefaultStateMapper() {
+            @Override
+            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                return CableRenderer.MODEL_LOCATION;
+            }
+        });
+        ModelLoader.setCustomStateMapper(laser, new DefaultStateMapper() {
             @Override
             protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
                 return CableRenderer.MODEL_LOCATION;
@@ -451,6 +476,12 @@ public class MetaBlocks {
             for (Insulation insulation : Insulation.values()) {
                 ItemStack itemStack = CABLE.getItem(insulation, pipeMaterial);
                 OreDictUnifier.registerOre(itemStack, insulation.getOrePrefix(), pipeMaterial);
+            }
+        }
+        for (Material pipeMaterial : laser.getEnabledMaterials2()) {
+            for (LaserSize laserSize : LaserSize.values()) {
+                ItemStack itemStack = laser.getItem(laserSize, pipeMaterial);
+                OreDictUnifier.registerOre(itemStack, laserSize.getOrePrefix(), pipeMaterial);
             }
         }
         for (Material pipeMaterial : FLUID_PIPE.getEnabledMaterials()) {
