@@ -2,6 +2,7 @@ package gregtech.api.unification.material.type;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.Element;
+import gregtech.common.pipelike.laser.tile.LaserProperties;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.pipelike.cable.WireProperties;
@@ -79,7 +80,12 @@ public class IngotMaterial extends SolidMaterial {
      */
     @Nullable
     public WireProperties cableProperties;
-
+    /**
+     * If set, laser will be generated for this material with base stats
+     * specified by this field
+     */
+    @Nullable
+    public  LaserProperties laserProperties;
     /**
      * If set, fluid pipe will be generated for this materials with stats
      * specified by this field
@@ -164,6 +170,11 @@ public class IngotMaterial extends SolidMaterial {
     @ZenMethod
     public void setCableProperties(long voltage, int baseAmperage, int lossPerBlock) {
         this.cableProperties = new WireProperties((int) voltage, baseAmperage, lossPerBlock);
+    }
+
+    @ZenMethod
+    public void setlaserProperties(long voltage, int baseAmperage) {
+        this.laserProperties = new LaserProperties((int) voltage, baseAmperage);
     }
 
     @ZenMethod
