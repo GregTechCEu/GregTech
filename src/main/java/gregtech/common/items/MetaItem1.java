@@ -293,7 +293,8 @@ public class MetaItem1 extends MaterialMetaItem {
 
     public void registerRecipes() {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.dust, Materials.Redstone).input(OrePrefix.plate, Materials.Tin, 2)
+            .input(OrePrefix.dust, Materials.Redstone)
+            .inputs(MetaItems.FLUID_CELL.getStackForm())
             .outputs(SPRAY_EMPTY.getStackForm())
             .duration(200).EUt(8)
             .buildAndRegister();
@@ -322,25 +323,29 @@ public class MetaItem1 extends MaterialMetaItem {
 
         // Matches/lighters recipes
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood).input(OrePrefix.dustSmall, Materials.Phosphorus)
+            .input(OrePrefix.bolt, Materials.Wood)
+            .input(OrePrefix.dustSmall, Materials.Phosphorus)
             .outputs(TOOL_MATCHES.getStackForm())
             .duration(16).EUt(16)
             .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood).input(OrePrefix.dustSmall, Materials.TricalciumPhosphate)
+            .input(OrePrefix.bolt, Materials.Wood)
+            .input(OrePrefix.dustSmall, Materials.TricalciumPhosphate)
             .outputs(TOOL_MATCHES.getStackForm())
             .duration(16).EUt(16)
             .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood, 4).input(OrePrefix.dust, Materials.Phosphorus)
+            .input(OrePrefix.bolt, Materials.Wood, 4)
+            .input(OrePrefix.dust, Materials.Phosphorus)
             .outputs(TOOL_MATCHES.getStackForm(4))
             .duration(64).EUt(16)
             .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood, 4).input(OrePrefix.dust, Materials.TricalciumPhosphate)
+            .input(OrePrefix.bolt, Materials.Wood, 4)
+            .input(OrePrefix.dust, Materials.TricalciumPhosphate)
             .outputs(TOOL_MATCHES.getStackForm(4))
             .duration(64)
             .EUt(16)

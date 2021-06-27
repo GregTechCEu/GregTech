@@ -124,6 +124,7 @@ public class MetaItem2 extends MaterialMetaItem {
         RANDOM_ACCESS_MEMORY_WAFER = addItem(471, "wafer.random_access_memory");
         SYSTEM_ON_CHIP_WAFER = addItem(472, "wafer.system_on_chip");
 
+        RAW_CRYSTAL_CHIP = addItem(473, "crystal.raw");
         CRYSTAL_CENTRAL_PROCESSING_UNIT = addItem(474, "crystal.central_processing_unit");
         CRYSTAL_SYSTEM_ON_CHIP = addItem(475, "crystal.system_on_chip");
         ADVANCED_SYSTEM_ON_CHIP = addItem(476, "plate.advanced_system_on_chip");
@@ -178,7 +179,8 @@ public class MetaItem2 extends MaterialMetaItem {
         }
 
         NEURO_PROCESSOR = addItem(523, "processor.neuro");
-        STEM_CELLS = addItem(524, "stemcells");
+        STEM_CELLS = addItem(524, "stem_cells");
+        PETRI_DISH = addItem(525, "petri_dish");
     }
 
     public void registerRecipes() {

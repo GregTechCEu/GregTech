@@ -1,6 +1,8 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.common.items.MetaItems;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.api.unification.material.Materials.*;
@@ -72,5 +74,16 @@ public class ChemistryRecipes {
             .output(ingot, RedAlloy, 2)
             .blastFurnaceTemp(1200)
             .duration(884).EUt(120).buildAndRegister();
+
+        FLUID_HEATER_RECIPES.recipeBuilder()
+            .fluidInputs(RawGrowthMedium.getFluid(500))
+            .circuitMeta(1)
+            .fluidOutputs(SterileGrowthMedium.getFluid(500))
+            .duration(30).EUt(24).buildAndRegister();
+
+        EXTRACTOR_RECIPES.recipeBuilder()
+            .inputs(new ItemStack(Items.EGG))
+            .chancedOutput(MetaItems.STEM_CELLS.getStackForm(), 1500, 500)
+            .duration(600).EUt(480).buildAndRegister();
     }
 }

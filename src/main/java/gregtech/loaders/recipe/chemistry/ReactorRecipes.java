@@ -586,7 +586,7 @@ public class ReactorRecipes {
             .duration(120).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-            .fluidInputs(PhosphoricAcid.getFluid(1000))
+            .notConsumable(PhosphoricAcid.getFluid(0))
             .fluidInputs(Benzene.getFluid(8000))
             .fluidInputs(Propene.getFluid(8000))
             .fluidOutputs(Cumene.getFluid(8000))

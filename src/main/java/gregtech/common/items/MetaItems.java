@@ -250,6 +250,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP;
+    public static MetaItem<?>.MetaValueItem RAW_CRYSTAL_CHIP;
     public static MetaItem<?>.MetaValueItem CRYSTAL_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem CRYSTAL_SYSTEM_ON_CHIP;
 
@@ -388,6 +389,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem MAX_BATTERY;
     public static MetaItem<?>.MetaValueItem NEURO_PROCESSOR;
     public static MetaItem<?>.MetaValueItem STEM_CELLS;
+    public static MetaItem<?>.MetaValueItem PETRI_DISH;
 
     public static void init() {
         MetaItem1 first = new MetaItem1();
