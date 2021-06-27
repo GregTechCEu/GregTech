@@ -26,6 +26,7 @@ import gregtech.common.blocks.BlockMachineCasing.MachineCasingType;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockMineral.MineralVariant;
 import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
+import gregtech.common.blocks.BlockTransparentCasing;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
@@ -566,6 +567,9 @@ public class MachineRecipeLoader {
         RecipeMaps.IMPLOSION_RECIPES.recipeBuilder().inputs(MetaItems.INGOT_IRIDIUM_ALLOY.getStackForm()).outputs(MetaItems.PLATE_IRIDIUM_ALLOY.getStackForm()).output(OrePrefix.dustTiny, Materials.DarkAsh, 4).explosivesAmount(8).buildAndRegister();
         RecipeMaps.COMPRESSOR_RECIPES.recipeBuilder().inputs(MetaItems.CARBON_FIBERS.getStackForm(2)).outputs(MetaItems.CARBON_MESH.getStackForm()).buildAndRegister();
         RecipeMaps.COMPRESSOR_RECIPES.recipeBuilder().inputs(MetaItems.CARBON_MESH.getStackForm()).outputs(MetaItems.CARBON_PLATE.getStackForm()).buildAndRegister();
+
+        RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder().duration(400).EUt(4).input(OrePrefix.dust, Materials.Glass, 3).inputs(MetaItems.ADVANCED_ALLOY_PLATE.getStackForm()).outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS, 4)).buildAndRegister();
+        RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder().duration(400).EUt(4).inputs(new ItemStack(Blocks.GLASS)).inputs(MetaItems.ADVANCED_ALLOY_PLATE.getStackForm()).outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS, 4)).buildAndRegister();
     }
 
     private static void registerAssemblerRecipes() {
