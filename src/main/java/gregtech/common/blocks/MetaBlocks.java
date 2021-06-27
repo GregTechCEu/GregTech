@@ -44,6 +44,7 @@ import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import gregtech.common.render.CableRenderer;
 import gregtech.common.render.FluidPipeRenderer;
+import gregtech.common.render.LaserRenderer;
 import gregtech.common.render.tesr.TileEntityCrusherBladeRenderer;
 import gregtech.common.render.tesr.TileEntityRendererBase.TileEntityRenderBaseItem;
 import net.minecraft.block.Block;
@@ -214,7 +215,7 @@ public class MetaBlocks {
         FLUID_PIPE.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 20, false));
         CABLE.addCableMaterial(MarkerMaterials.Tier.Superconductor, new WireProperties(Integer.MAX_VALUE, 4, 0));
         registerTileEntity();
-
+        
         //not sure if that's a good place for that, but i don't want to make a dedicated method for that
         //could possibly override block methods, but since these props don't depend on state why not just use nice and simple vanilla method
         Blocks.FIRE.setFireInfo(LOG, 5, 5);
@@ -296,7 +297,7 @@ public class MetaBlocks {
         GameRegistry.registerTileEntity(TileEntityCable.class, new ResourceLocation(GTValues.MODID, "cable"));
         GameRegistry.registerTileEntity(TileEntityLaser.class, new ResourceLocation(GTValues.MODID, "laser"));
         GameRegistry.registerTileEntity(TileEntityCableTickable.class, new ResourceLocation(GTValues.MODID, "cable_tickable"));
-        GameRegistry.registerTileEntity(TileEntityLaserTickable.class, new ResourceLocation(GTValues.MODID, "laser_tickable"));
+        GameRegistry.registerTileEntity(TileEntityLaserTickable.class, new ResourceLocation(GTValues.MODID, "cable_tickable"));
         GameRegistry.registerTileEntity(TileEntityFluidPipe.class, new ResourceLocation(GTValues.MODID, "fluid_pipe"));
         GameRegistry.registerTileEntity(TileEntityFluidPipeTickable.class, new ResourceLocation(GTValues.MODID, "fluid_pipe_active"));
         GameRegistry.registerTileEntity(TileEntitySurfaceRock.class, new ResourceLocation(GTValues.MODID, "surface_rock"));
@@ -306,7 +307,7 @@ public class MetaBlocks {
     public static void registerItemModels() {
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE), stack -> MetaTileEntityRenderer.MODEL_LOCATION);
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(CABLE), stack -> CableRenderer.MODEL_LOCATION);
-        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(laser), stack -> CableRenderer.MODEL_LOCATION);
+        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(laser), stack ->LaserRenderer.MODEL_LOCATION);
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(FLUID_PIPE), stack -> FluidPipeRenderer.MODEL_LOCATION);
         registerItemModel(BOILER_CASING);
         registerItemModel(BOILER_FIREBOX_CASING);
@@ -387,7 +388,7 @@ public class MetaBlocks {
         ModelLoader.setCustomStateMapper(laser, new DefaultStateMapper() {
             @Override
             protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-                return CableRenderer.MODEL_LOCATION;
+                return LaserRenderer.MODEL_LOCATION;
             }
         });
         ModelLoader.setCustomStateMapper(FLUID_PIPE, new DefaultStateMapper() {
