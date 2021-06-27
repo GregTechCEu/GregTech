@@ -31,12 +31,7 @@ public class TileEntityLaser extends TileEntityMaterialPipeBase<LaserSize, Laser
     public boolean supportsTicking() {
         return false;
     }
-
-
-    public Material getPipeMaterial() {
-        return Materials.Aluminium;
-    }
-
+    
     @Nullable
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
