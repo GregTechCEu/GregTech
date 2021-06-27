@@ -204,7 +204,7 @@ public class MetaBlocks {
                     FLUID_PIPE.addPipeMaterial(metalMaterial, metalMaterial.fluidPipeProperties);
                 }
                 if (metalMaterial.laserProperties != null) {
-                    laser.addCableMaterial(metalMaterial, metalMaterial.laserProperties);
+                    laser.addlaserMaterial(metalMaterial, metalMaterial.laserProperties);
                 }
             }
 
