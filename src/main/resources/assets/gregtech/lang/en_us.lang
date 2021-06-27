@@ -242,10 +242,10 @@ metaitem.paper.punch.card.encoded.name=Punched Card
 
 metaitem.battery.hull.lv.name=Small Battery Hull
 metaitem.battery.hull.lv.tooltip=An empty LV Battery Hull
-metaitem.battery.hull.hv.name=Medium Battery Hull
-metaitem.battery.hull.hv.tooltip=An empty MV Battery Hull
-metaitem.battery.hull.mv.name=Large Battery Hull
-metaitem.battery.hull.mv.tooltip=An empty HV Battery Hull
+metaitem.battery.hull.mv.name=Medium Battery Hull
+metaitem.battery.hull.mv.tooltip=An empty MV Battery Hull
+metaitem.battery.hull.hv.name=Large Battery Hull
+metaitem.battery.hull.hv.tooltip=An empty HV Battery Hull
 
 metaitem.battery.re.ulv.tantalum.name=Tantalum Capacitor
 metaitem.battery.re.ulv.tantalum.tooltip=Reusable

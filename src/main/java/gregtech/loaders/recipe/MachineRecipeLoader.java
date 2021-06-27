@@ -333,8 +333,9 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(120).input(OrePrefix.foil, Materials.PolyvinylChloride, 4).input(OrePrefix.foil, Materials.Aluminium).fluidInputs(Materials.Polyethylene.getFluid(36)).outputs(MetaItems.SMD_CAPACITOR.getStackForm(16)).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(60).EUt(120).input(OrePrefix.foil, Materials.SiliconeRubber, 4).input(OrePrefix.foil, Materials.Aluminium).fluidInputs(Materials.Polyethylene.getFluid(36)).outputs(MetaItems.SMD_CAPACITOR.getStackForm(16)).buildAndRegister();
 
-        RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder().duration(45).EUt(40).input(OrePrefix.dust, Materials.Carbon).fluidInputs(Materials.Palladium.getFluid(1)).chancedOutput(MetaItems.CARBON_FIBERS.getStackForm(2), 8500, 750).buildAndRegister();
-        RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder().duration(45).EUt(40).input(OrePrefix.dust, Materials.Carbon).fluidInputs(Materials.Platinum.getFluid(1)).chancedOutput(MetaItems.CARBON_FIBERS.getStackForm(2), 8000, 750).buildAndRegister();
+        RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder().duration(150).EUt(5).input(OrePrefix.dust, Materials.Carbon, 4).fluidInputs(Materials.Palladium.getFluid(1)).chancedOutput(MetaItems.CARBON_FIBERS.getStackForm(2), 9000, 1000).buildAndRegister();
+        RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder().duration(150).EUt(5).input(OrePrefix.dust, Materials.Carbon, 4).fluidInputs(Materials.Platinum.getFluid(1)).chancedOutput(MetaItems.CARBON_FIBERS.getStackForm(2), 5000, 5000).buildAndRegister();
+        RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder().duration(150).EUt(5).input(OrePrefix.dust, Materials.Carbon, 4).fluidInputs(Materials.Lutetium.getFluid(1)).chancedOutput(MetaItems.CARBON_FIBERS.getStackForm(2), 3333, 3334).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(4000).EUt(120).inputs(MetaItems.PLATE_IRIDIUM_ALLOY.getStackForm()).input(OrePrefix.plate, Materials.Beryllium, 32).input(OrePrefix.plate, Materials.TungstenCarbide, 4).fluidInputs(Materials.TinAlloy.getFluid(L * 32)).outputs(MetaItems.NEUTRON_REFLECTOR.getStackForm()).buildAndRegister();
 
@@ -367,7 +368,7 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(4).input(OrePrefix.dust, Materials.Tantalum).input(OrePrefix.foil, Materials.Manganese).fluidInputs(Materials.Polyethylene.getFluid(144)).outputs(MetaItems.BATTERY_RE_ULV_TANTALUM.getStackForm(8)).buildAndRegister();
         RecipeMaps.CHEMICAL_BATH_RECIPES.recipeBuilder().duration(480).EUt(384).input(OrePrefix.gem, Materials.EnderEye, 1).fluidInputs(Materials.Plutonium.getFluid(L * 2)).outputs(MetaItems.QUANTUM_EYE.getStackForm()).buildAndRegister();
         RecipeMaps.CHEMICAL_BATH_RECIPES.recipeBuilder().duration(1920).EUt(384).input(OrePrefix.gem, Materials.NetherStar, 1).fluidInputs(Materials.Plutonium.getFluid(L * 8)).outputs(MetaItems.QUANTUM_STAR.getStackForm()).buildAndRegister();
-        RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder().duration(480).EUt(7680).input(OrePrefix.gem, Materials.NetherStar, 1).fluidInputs(Materials.Darmstadtium.getFluid(L * 2)).outputs(MetaItems.GRAVI_STAR.getStackForm()).buildAndRegister();
+        RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder().duration(480).EUt(7680).input(OrePrefix.gem, Materials.NetherStar, 1).fluidInputs(Materials.Neutronium.getFluid(L * 2)).outputs(MetaItems.GRAVI_STAR.getStackForm()).buildAndRegister();
     }
 
     private static void registerMixingCrystallizationRecipes() {
@@ -546,11 +547,11 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
         }
 
-        for (IngotMaterial cableMaterial : new IngotMaterial[]{Materials.YttriumBariumCuprate, Materials.NiobiumTitanium, Materials.VanadiumGallium}) {
+        for (IngotMaterial cableMaterial : new IngotMaterial[]{Materials.YttriumBariumCuprate, Materials.NiobiumTitanium, Materials.VanadiumGallium, Materials.Naquadah}) {
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.wireGtSingle, cableMaterial, 3)
                 .input(OrePrefix.plate, Materials.TungstenSteel, 3)
-                .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm())
+                .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm(2))
                 .fluidInputs(Materials.Nitrogen.getFluid(2000))
                 .outputs(OreDictUnifier.get(OrePrefix.wireGtSingle, Tier.Superconductor, 3))
                 .duration(20).EUt(512)
@@ -632,6 +633,8 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Titanium, 6).input(OrePrefix.frameGt, Materials.Titanium, 1).outputs(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.TITANIUM_STABLE, 3)).duration(50).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.LuV)).input(OrePrefix.plate, Materials.TungstenSteel, 6).outputs(MetaBlocks.MULTIBLOCK_CASING.getItemVariant(MultiblockCasingType.FUSION_CASING)).duration(50).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.MULTIBLOCK_CASING.getItemVariant(MultiblockCasingType.FUSION_CASING)).input(OrePrefix.plate, Materials.Americium, 6).outputs(MetaBlocks.MULTIBLOCK_CASING.getItemVariant(MultiblockCasingType.FUSION_CASING_MK2)).duration(50).buildAndRegister();
+
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Magnalium, 6).input(OrePrefix.frameGt, Materials.BlueSteel, 1).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING, 3)).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING)).input(OrePrefix.plate, Materials.StainlessSteel, 6).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STAINLESS_TURBINE_CASING, 3)).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).inputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.STEEL_TURBINE_CASING)).input(OrePrefix.plate, Materials.Titanium, 6).outputs(MetaBlocks.TURBINE_CASING.getItemVariant(TurbineCasingType.TITANIUM_TURBINE_CASING, 3)).duration(50).buildAndRegister();
