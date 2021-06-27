@@ -62,14 +62,14 @@ public class MiscRecipeLoader {
                         .input(OrePrefix.plate, material1)
                         .input(OrePrefix.plank, Bronze)
                         .input(OrePrefix.plate, material2)
-                        .outputs(MetaItems.INGOT_MIXED_METAL.getStackForm((multiplier1 + multiplier) * 2))
+                        .outputs(MetaItems.INGOT_MIXED_METAL.getStackForm(multiplier1 + multiplier))
                         .buildAndRegister();
 
                 FORMING_PRESS_RECIPES.recipeBuilder().duration(40 * multiplier1 + multiplier * 40).EUt(8)
                         .input(OrePrefix.plate, material1)
                         .input(OrePrefix.plate, Brass)
                         .input(OrePrefix.plate, material2)
-                        .outputs(MetaItems.INGOT_MIXED_METAL.getStackForm((multiplier1 + multiplier) * 2))
+                        .outputs(MetaItems.INGOT_MIXED_METAL.getStackForm(multiplier1 + multiplier))
                         .buildAndRegister();
             }
         }
