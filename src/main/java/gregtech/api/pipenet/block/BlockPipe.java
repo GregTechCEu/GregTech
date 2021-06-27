@@ -14,11 +14,14 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.ICoverable.CoverSideData;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.cover.IFacadeCover;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import gregtech.common.tools.DamageValues;
 import gregtech.api.render.IBlockAppearance;
 import gregtech.integration.ctm.IFacadeWrapper;
@@ -48,9 +51,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
 
 @SuppressWarnings("deprecation")
 public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BuiltInRenderBlock implements ITileEntityProvider, IFacadeWrapper, IBlockAppearance {
+
+    private final AtomicBoolean isFullModel = new AtomicBoolean(false);
 
     public BlockPipe() {
         super(net.minecraft.block.material.Material.IRON);
@@ -120,6 +128,34 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
         if (pipeTile != null) {
             setTileEntityData((TileEntityPipeBase<PipeType, NodeDataType>) pipeTile, stack);
+            if (ConfigHolder.U.GT6.gt6StylePipesCables) {
+                if (placer instanceof EntityPlayer) {
+                    EntityPlayer player = (EntityPlayer) placer;
+                    RayTraceResult rt1 = GTUtility.getBlockLookingAt(player);
+                    RayTraceResult rt2 = GTUtility.getBlockLookingAt(player, pos);
+                    for (EnumFacing facing : EnumFacing.VALUES) {
+                        BlockPos otherPipePos = null;
+
+                        if (rt1 != null)
+                            if (GTUtility.arePosEqual(rt1.getBlockPos(), pos.offset(facing, 1)))
+                                otherPipePos = rt1.getBlockPos();
+                        if (rt2 != null)
+                            if (GTUtility.arePosEqual(rt2.getBlockPos(), pos.offset(facing, 1)))
+                                otherPipePos = rt2.getBlockPos();
+                        if (otherPipePos != null) {
+                            TileEntity tileEntity = placer.world.getTileEntity(otherPipePos);
+                            if (tileEntity instanceof IPipeTile) {
+                                IPipeTile<?, ?> otherPipeTE = (IPipeTile<?, ?>) tileEntity;
+                                if (otherPipeTE.getPipeBlock().getPipeTypeClass() == this.getPipeTypeClass()) {
+                                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
+                                }
+                            } else if (tileEntity instanceof MetaTileEntityHolder) {
+                                pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, true);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -287,7 +323,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     @Override
     public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
-        for (Cuboid6 axisAlignedBB : getCollisionBox(worldIn, pos)) {
+        for (Cuboid6 axisAlignedBB : getCollisionBox(worldIn, pos, entityIn)) {
             AxisAlignedBB offsetBox = axisAlignedBB.aabb().offset(pos);
             if (offsetBox.intersects(entityBox)) collidingBoxes.add(offsetBox);
         }
@@ -296,7 +332,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @Nullable
     @Override
     public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {
-        return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos));
+        return RayTracer.rayTraceCuboidsClosest(start, end, pos, FULL_CUBE_COLLISION);
     }
 
     @Override
@@ -410,7 +446,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return getActiveNodeConnections(selfTile.getPipeWorld(), selfTile.getPipePos(), selfTile);
     }
 
-    private List<IndexedCuboid6> getCollisionBox(IBlockAccess world, BlockPos pos) {
+    private List<IndexedCuboid6> getCollisionBox(IBlockAccess world, BlockPos pos, @Nullable Entity entityIn) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(world, pos);
         if (pipeTile == null) {
             return Collections.emptyList();
@@ -422,8 +458,17 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         int actualConnections = getActualConnections(pipeTile, world);
         float thickness = pipeType.getThickness();
         ArrayList<IndexedCuboid6> result = new ArrayList<>();
-        result.add(new IndexedCuboid6(new PrimaryBoxData(false), getSideBox(null, thickness)));
         ICoverable coverable = pipeTile.getCoverableImplementation();
+
+        // Check if the machine grid is being rendered
+        if (hasPipeCollisionChangingItem(entityIn)) {
+            result.add(FULL_CUBE_COLLISION);
+            isFullModel.set(true);
+        } else isFullModel.set(false);
+
+        // Always add normal collision so player doesn't "fall through" the cable/pipe when
+        // a tool is put in hand, and will still be standing where they were before.
+        result.add(new IndexedCuboid6(new PrimaryBoxData(true), getSideBox(null, thickness)));
         for (EnumFacing side : EnumFacing.VALUES) {
             if ((actualConnections & 1 << side.getIndex()) > 0) {
                 result.add(new IndexedCuboid6(new PipeConnectionData(side), getSideBox(side, thickness)));
@@ -431,6 +476,18 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         }
         coverable.addCoverCollisionBoundingBox(result);
         return result;
+    }
+
+    private boolean hasPipeCollisionChangingItem(Entity entity) {
+        if (entity instanceof EntityPlayer) {
+            ItemStack itemStack = ((EntityPlayer) entity).getHeldItemMainhand();
+
+            return  itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null) ||
+                    itemStack.hasCapability(GregtechCapabilities.CAPABILITY_CUTTER, null) ||
+                    itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) ||
+                    GTUtility.isCoverBehaviorItem(itemStack);
+        }
+        return false;
     }
 
     @Override

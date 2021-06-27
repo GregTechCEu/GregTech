@@ -5,11 +5,12 @@ import codechicken.lib.vec.Vector3;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
-import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.common.items.behaviors.CoverPlaceBehavior;
-import gregtech.common.items.behaviors.CrowbarBehaviour;
+import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.util.GTUtility;
+import gregtech.common.pipelike.cable.Insulation;
+import gregtech.common.pipelike.fluidpipe.FluidPipeType;
+import gregtech.common.pipelike.inventory.InventoryPipeType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -30,8 +31,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.List;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -93,24 +92,32 @@ public class WrenchOverlayRenderer {
     }
 
     public static boolean shouldDrawOverlayForItem(ItemStack itemStack, TileEntity tileEntity) {
+        if (tileEntity instanceof TileEntityPipeBase) {
+            TileEntityPipeBase<?, ?> pipeTE = (TileEntityPipeBase<?, ?>) tileEntity;
+            Class<?> pipeClass = pipeTE.getPipeBlock().getPipeTypeClass();
+
+            // Cables/wires. Add screwdriver here if cover for wires that can use screwdriver is added.
+            if (pipeClass == Insulation.class) {
+                return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_CUTTER, null) || GTUtility.isCoverBehaviorItem(itemStack);
+            }
+
+            // Pipes
+            if (pipeClass == FluidPipeType.class || pipeClass == InventoryPipeType.class) {
+                return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null) ||
+                        itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null)
+                        || GTUtility.isCoverBehaviorItem(itemStack);
+            }
+        }
+
+        // MetaTileEntities
         if(tileEntity instanceof MetaTileEntityHolder &&
-            itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null)) {
+            itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
             return true;
-        }
-        if(tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null)) {
-            if(itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null)) {
-                return true;
-            }
-            if (itemStack.getItem() instanceof MetaItem) {
-                MetaItem<?> metaItem = (MetaItem<?>) itemStack.getItem();
-                MetaItem<?>.MetaValueItem valueItem = metaItem.getItem(itemStack);
-                if (valueItem != null) {
-                    List<IItemBehaviour> behaviourList = valueItem.getBehaviours();
-                    return behaviourList.stream().anyMatch(it ->
-                        it instanceof CoverPlaceBehavior || it instanceof CrowbarBehaviour);
-                }
-            }
-        }
+
+        // ICoverable
+        if(tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null))
+            return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) || GTUtility.isCoverBehaviorItem(itemStack);
+
         return false;
     }
 

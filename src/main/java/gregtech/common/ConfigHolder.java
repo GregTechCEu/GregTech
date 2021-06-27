@@ -171,6 +171,10 @@ public class ConfigHolder {
         @Config.Name("GregTech 5 Unofficial Options")
         public GT5U GT5u = new GT5U();
 
+        @Config.Comment("Config category for GT6 inspired features.")
+        @Config.Name("GregTech 6 Options")
+        public GT6 GT6 = new GT6();
+
         @Config.Comment("Should Drums be enabled? Default: true")
         @Config.RequiresMcRestart
         public boolean registerDrums = true;
@@ -203,6 +207,13 @@ public class ConfigHolder {
 
             @Config.Comment("Require Wrench to break machines? Default: false")
             public boolean requireWrenchForMachines = false;
+        }
+
+        public static class GT6 {
+
+            @Config.Comment("Whether or not to use GT6-style pipe and cable connections, meaning they will not auto-connect " +
+                    "unless placed directly onto another pipe or cable. Default: false")
+            public boolean gt6StylePipesCables = false;
         }
 
         public static class HighTierMachines {

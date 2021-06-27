@@ -8,6 +8,7 @@ import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,6 +38,10 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     private boolean wasInDetachedConversionMode;
 
     public TileEntityPipeBase() {
+        if (ConfigHolder.U.GT6.gt6StylePipesCables) {
+            blockedConnectionsMap.put(AttachmentType.PIPE.ordinal(), 0b111111);
+            recomputeBlockedConnections();
+        }
     }
 
     public void setDetachedConversionMode(boolean detachedConversionMode) {
@@ -151,7 +156,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void setConnectionBlocked(AttachmentType attachmentType, EnumFacing side, boolean blocked, boolean fromNeighbor) {
         // fix desync between two connections. Can happen if a pipe side is blocked, and a new pipe is placed next to it.
-        if (isConnectionBlocked(attachmentType, side) != isNeighborPipeBlocked(attachmentType, side) && !fromNeighbor) {
+        if (attachmentType == AttachmentType.PIPE && isConnectionBlocked(attachmentType, side) != isNeighborPipeBlocked(attachmentType, side) && !fromNeighbor) {
             syncPipeConnections(attachmentType, side);
             return;
         }
@@ -165,7 +170,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             writeCustomData(-2, buffer -> buffer.writeVarInt(this.blockedConnections));
             markDirty();
         }
-        if (!fromNeighbor) {
+        if (attachmentType == AttachmentType.PIPE && !fromNeighbor) {
             setNeighborPipeBlocked(attachmentType, side, blocked);
         }
     }

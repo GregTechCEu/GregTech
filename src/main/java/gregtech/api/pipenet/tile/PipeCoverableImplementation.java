@@ -1,8 +1,6 @@
 package gregtech.api.pipenet.tile;
 
-import codechicken.lib.raytracer.IndexedCuboid6;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
@@ -177,10 +175,6 @@ public class PipeCoverableImplementation implements ICoverable {
 
     @Override
     public boolean canPlaceCoverOnSide(EnumFacing side) {
-        List<IndexedCuboid6> pipeBox = Lists.newArrayList(new IndexedCuboid6(null, BlockPipe.getSideBox(null, holder.getPipeType().getThickness())));
-        if (ICoverable.doesCoverCollide(side, pipeBox, getCoverPlateThickness())) {
-            return false;
-        }
         return holder.canPlaceCoverOnSide(side);
     }
 
