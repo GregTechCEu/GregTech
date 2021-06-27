@@ -1,4 +1,5 @@
 package gregtech.common.render;
+
 import codechicken.lib.render.BlockRenderer;
 import codechicken.lib.render.BlockRenderer.BlockFace;
 import codechicken.lib.render.CCRenderState;
@@ -68,10 +69,6 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
         GTLog.logger.info("Registering laser textures.");
         ResourceLocation laserlocation = new ResourceLocation(GTValues.MODID, "blocks/cable/wire");
         this.wireTexture = map.registerSprite(laserlocation);
-        for (int i = 0; i < insulationTextures.length; i++) {
-            ResourceLocation location = new ResourceLocation(GTValues.MODID, "blocks/cable/insulation_" + i);
-            this.insulationTextures[i] = map.registerSprite(location);
-        }
     }
     @SubscribeEvent
     public void onModelsBake(ModelBakeEvent event) {
@@ -127,7 +124,7 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     public void renderCableBlock(Material material, LaserSize insulation1, int insulationColor1, CCRenderState state, IVertexOperation[] pipeline, int connectMask) {
-        int wireColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB);
+        int wireColor = GTUtility.convertRGBtoOpaqueRGBA_CL(0xFFFFFF);
         float thickness = .2f;
 
         IVertexOperation[] wire = ArrayUtils.addAll(pipeline, new IconTransformation(wireTexture), new ColourMultiplier(wireColor));
@@ -198,7 +195,7 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
         if (insulation == null) {
             return;
         }
-        float thickness = insulation.getThickness();
+        float thickness = .2F;
         int connectedSidesMask = blockCable.getActualConnections(tileEntityCable, world);
         Cuboid6 baseBox = BlockLaser.getSideBox(null, thickness);
         BlockRenderer.renderCuboid(renderState, baseBox, 0);
