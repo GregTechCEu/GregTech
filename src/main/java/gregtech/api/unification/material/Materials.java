@@ -833,6 +833,8 @@ public class Materials {
         Diorite.addOreByProducts(NetherQuartz);
         Lepidolite.addOreByProducts(Boron);
 
+        Bronze.setlaserProperties(32,1000);
+
         Vinteum.addEnchantmentForTools(Enchantments.FORTUNE, 2);
         BlackBronze.addEnchantmentForTools(Enchantments.SMITE, 2);
         RoseGold.addEnchantmentForTools(Enchantments.SMITE, 4);
