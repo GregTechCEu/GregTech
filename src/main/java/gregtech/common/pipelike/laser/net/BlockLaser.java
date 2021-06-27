@@ -9,12 +9,6 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-
-import gregtech.common.pipelike.cable.Insulation;
-import gregtech.common.pipelike.cable.WireProperties;
-import gregtech.common.pipelike.cable.net.WorldENet;
-
-import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.laser.net.LaserPipeNet;
 import gregtech.common.pipelike.laser.net.WorldLaserNet;
 import gregtech.common.pipelike.laser.tile.LaserSize;
@@ -22,6 +16,7 @@ import gregtech.common.pipelike.laser.tile.TileEntityLaser;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserTickable;
 import gregtech.common.render.CableRenderer;
 import gregtech.common.pipelike.laser.tile.LaserProperties;
+import gregtech.common.render.LaserRenderer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -120,7 +115,7 @@ public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,Worl
     @Override
     @SideOnly(Side.CLIENT)
     public EnumBlockRenderType getRenderType(IBlockState state) {
-        return CableRenderer.BLOCK_RENDER_TYPE;
+        return LaserRenderer.BLOCK_RENDER_TYPE;
     }
 
     @Override
@@ -132,6 +127,6 @@ public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,Worl
     @Override
     @SideOnly(Side.CLIENT)
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
-        return CableRenderer.INSTANCE.getParticleTexture((TileEntityCable) world.getTileEntity(blockPos));
+        return LaserRenderer.INSTANCE.getParticleTexture((TileEntityLaser) world.getTileEntity(blockPos));
     }
 }
