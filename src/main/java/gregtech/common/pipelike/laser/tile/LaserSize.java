@@ -46,7 +46,7 @@ public enum LaserSize implements IMaterialPipeType<LaserProperties> {
 
     @Override
     public float getThickness() {
-        return 0;
+        return .1f;
     }
 
 
