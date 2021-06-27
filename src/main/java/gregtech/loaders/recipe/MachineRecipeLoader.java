@@ -840,7 +840,7 @@ public class MachineRecipeLoader {
 
 
         RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder().duration(250).EUt(6)
-            .input(OrePrefix.dust, Materials.DarkAsh, 2)
+            .input(OrePrefix.dust, Materials.DarkAsh)
             .outputs(OreDictUnifier.get(OrePrefix.dust, Materials.Ash, 1),
                 OreDictUnifier.get(OrePrefix.dust, Materials.Carbon, 1))
             .buildAndRegister();
@@ -1029,13 +1029,13 @@ public class MachineRecipeLoader {
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
             .inputs(new ItemStack(Items.PORKCHOP))
-            .output(dust, Materials.Meat)
+            .output(dustSmall, Materials.Meat, 6)
             .output(dustTiny, Materials.Bone)
             .duration(102).EUt(4).buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Items.FISH))
-            .output(dust, Materials.Meat)
+            .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
+            .output(dustSmall, Materials.Meat, 6)
             .output(dustTiny, Materials.Bone)
             .duration(102).EUt(4).buildAndRegister();
 
@@ -1047,13 +1047,13 @@ public class MachineRecipeLoader {
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
             .inputs(new ItemStack(Items.BEEF))
-            .output(dust, Materials.Meat)
+            .output(dustSmall, Materials.Meat, 6)
             .output(dustTiny, Materials.Bone)
             .duration(102).EUt(4).buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
             .inputs(new ItemStack(Items.RABBIT))
-            .output(dust, Materials.Meat)
+            .output(dustSmall, Materials.Meat, 6)
             .output(dustTiny, Materials.Bone)
             .duration(102).EUt(4).buildAndRegister();
 
