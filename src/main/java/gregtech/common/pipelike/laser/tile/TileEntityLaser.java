@@ -1,23 +1,25 @@
 package gregtech.common.pipelike.laser.tile;
 
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.type.Material;
+import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.common.pipelike.laser.tile.LaserProperties;
 import gregtech.common.pipelike.laser.tile.LaserSize;
 import gregtech.common.pipelike.laser.tile.LaserContainer;
 import gregtech.common.pipelike.laser.tile.CableLaserContainer;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.capability.GregtechTileCapabilities;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import javax.annotation.Nullable;
-public class TileEntityLaser extends TileEntityPipeBase<LaserSize, LaserProperties> {
+public class TileEntityLaser extends TileEntityMaterialPipeBase<LaserSize, LaserProperties> {
 
-    private LaserContainer energyContainer;
+    private LaserContainer laserContainer;
 
     private LaserContainer getEnergyContainer() {
-        if (energyContainer == null) {
-            energyContainer = new CableLaserContainer(this);
+        if (laserContainer == null) {
+            laserContainer = new CableLaserContainer(this);
         }
-        return energyContainer;
+        return laserContainer;
     }
 
     @Override
@@ -28,6 +30,11 @@ public class TileEntityLaser extends TileEntityPipeBase<LaserSize, LaserProperti
     @Override
     public boolean supportsTicking() {
         return false;
+    }
+
+
+    public Material getPipeMaterial() {
+        return Materials.Aluminium;
     }
 
     @Nullable
