@@ -49,22 +49,23 @@ import java.util.TreeMap;
 
 
 public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,WorldLaserNet>implements ITileEntityProvider {
-    private final Map<Material, LaserProperties> enabledMaterials = new TreeMap<>();
+
+    private final Map<Material, LaserProperties> enabledMaterials2 = new TreeMap<>();
 
     public BlockLaser() {
         setHarvestLevel("cutter", 1);
     }
 
-    public void addCableMaterial(Material material, LaserProperties LaserProperties) {
+    public void addlaserMaterial(Material material, LaserProperties LaserProperties) {
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(LaserProperties, "LaserProperties");
         Preconditions.checkArgument(Material.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
-        this.enabledMaterials.put(material, LaserProperties);
+        this.enabledMaterials2.put(material, LaserProperties);
 
 
     }
-    public Collection<Material> getEnabledMaterials() {
-        return Collections.unmodifiableSet(enabledMaterials.keySet());
+    public Collection<Material> getEnabledMaterials2() {
+        return Collections.unmodifiableSet(enabledMaterials2.keySet());
     }
     @Override
     public Class<LaserSize> getPipeTypeClass() {
@@ -80,13 +81,18 @@ public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,Worl
 
     @Override
     protected LaserProperties createProperties(LaserSize insulation, Material material) {
-        return insulation.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
+        return insulation.modifyProperties(enabledMaterials2.getOrDefault(material, getFallbackType()));
 
     }
 
     @Override
+    protected LaserProperties getFallbackType() {
+        return enabledMaterials2.values().iterator().next();
+    }
+
+    @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (Material material : enabledMaterials.keySet()) {
+        for (Material material : enabledMaterials2.keySet()) {
             for (LaserSize laserSize : LaserSize.values()) {
                 items.add(getItem(laserSize, material));
             }
@@ -122,10 +128,6 @@ public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,Worl
         return supportsTicking ? new TileEntityLaser() : new TileEntityLaser();
     }
 
-    @Override
-    protected LaserProperties getFallbackType() {
-        return null;
-    }
 
     @Override
     @SideOnly(Side.CLIENT)
