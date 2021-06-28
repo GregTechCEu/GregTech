@@ -460,13 +460,35 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_RECIPES = new RecipeMap<>("chemical_reactor", 0, 2, 0, 1, 0, 3, 0, 2, new SimpleRecipeBuilder().EUt(30))
+    public static final RecipeMap<ChemicalReactorRecipeBuilder> CHEMICAL_RECIPES = new RecipeMap<>("chemical_reactor", 0, 2, 0, 2, 0, 3, 0, 2, new ChemicalReactorRecipeBuilder().EUt(30))
         .setSlotOverlay(false, false, false, GuiTextures.MOLECULAR_OVERLAY_1)
         .setSlotOverlay(false, false, true, GuiTextures.MOLECULAR_OVERLAY_2)
         .setSlotOverlay(false, true, GuiTextures.MOLECULAR_OVERLAY_3)
         .setSlotOverlay(true, false, GuiTextures.VIAL_OVERLAY_1)
         .setSlotOverlay(true, true, GuiTextures.VIAL_OVERLAY_2)
         .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL);
+
+    /**
+     * Example:
+     * <pre>
+     *      RecipeMap.LARGE_CHEMICAL_RECIPES.recipeBuilder()
+     * 				.inputs(OreDictUnifier.get(OrePrefix.cell, Materials.NitrogenDioxide, 4), OreDictUnifier.get(OrePrefix.cell, Materials.Oxygen, 1))
+     * 				.fluidInputs(Materials.Water.getFluid(2000))
+     * 				.fluidOutputs( new FluidStack(ItemList.sNitricAcid,4000))
+     * 				.duration(950)
+     * 				.EUt(30)
+     * 				.buildAndRegister();
+     * </pre>
+     */
+
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> LARGE_CHEMICAL_RECIPES = new RecipeMap<>("large_chemical_reactor", 0, 3, 0, 3, 0, 5, 0, 4, new SimpleRecipeBuilder().EUt(30))
+            .setSlotOverlay(false, false, false, GuiTextures.MOLECULAR_OVERLAY_1)
+            .setSlotOverlay(false, false, true, GuiTextures.MOLECULAR_OVERLAY_2)
+            .setSlotOverlay(false, true, GuiTextures.MOLECULAR_OVERLAY_3)
+            .setSlotOverlay(true, false, GuiTextures.VIAL_OVERLAY_1)
+            .setSlotOverlay(true, true, GuiTextures.VIAL_OVERLAY_2)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL);
 
     /**
      * If universal every Fluid also gets separate distillation recipes

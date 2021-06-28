@@ -36,16 +36,17 @@ gregtech.multiblock.implosion_compressor.description=The Implosion Compressor is
 gregtech.multiblock.pyrolyze_oven.description=The Pyrolyze Oven is a multiblock structure used for turning Logs into Charcoal and Creosote Oil, or Ash and Heavy Oil.
 gregtech.multiblock.cracker.description=The Cracker Unit is a multiblock structure used for turning Light and Heavy Fuel into their Cracked variants.
 gregtech.multiblock.large_combustion_engine.description=The Large Combustion Engine is a multiblock structure that acts as a Combustion Generator for EV power.
-gregtech.multiblock.distillation_tower.description=The Distillation Tower is a multiblock structure used for distilling the various types of Oil and some of their byproducts.
+gregtech.multiblock.distillation_tower.description=The Distillation Tower is a multiblock structure used for distilling the various types of Oil and some of their byproducts. Each layer must have exactly one output hatch, starting from the second one. The bottom layer can output items and insert fluids in any position.
 gregtech.multiblock.electric_blast_furnace.description=The Electric Blast Furnace (EBF) is a multiblock structure used for smelting alloys, cooking metals and refining ores. It is required for obtaining high-tier alloys and metals, such as aluminium, stainless steel, titanium, and naquadah alloy.
 gregtech.multiblock.multi_smelter.description=The Multi Smelter is a multiblock structure used for smelting massive amounts of items at once. Different tiers of coils provide a speed boost and energy efficiency gain. 16 is the base value of items smelted per operation, and can be multiplied by using higher level coils.
 gregtech.multiblock.large_boiler.description=Large Boilers are multiblocks that generate steam from an energy source and water. Said energy source is usually a solid fuel or some high-density fluid. Tiers differ only by amount of steam outputted.
-gregtech.multiblock.large_turbine.description=Large Turbines are multiblocks that generate power from steam, gases, and plasma by having them spin the turbine's rotor. Energy output is based on rotor efficiency and current speed of turbine.
+gregtech.multiblock.large_turbine.description=Large Turbines are multiblocks that generate power from steam, gases, and plasma by having them spin the turbine's rotor. Energy output is based on rotor efficiency and current speed of turbine. Gearbox casings are used in the center of the structure.
 gregtech.multiblock.assembly_line.description=The Assembly Line is a large multiblock structure consisting of 5 to 16 "slices". In theory, it's large Assembling Machine, used for creating advanced crafting components.
 gregtech.multiblock.fusion_reactor_mk1.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. The Mark 1 Fusion Reactor can use LuV, ZPM or UV Energy Hatches. For every Hatch it has its buffer increases by 10M EU.
 gregtech.multiblock.fusion_reactor_mk2.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. The Mark 2 Fusion Reactor can use ZPM or UV Energy Hatches. For every Hatch it has its buffer increases by 20M EU.
 gregtech.multiblock.fusion_reactor_mk3.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. The Mark 3 Fusion Reactor can only use UV Energy Hatches. For every Hatch it has its buffer increases by 40M EU.
 gregtech.multiblock.fusion_reactor.heat=Heat: %d
+gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reactor performs chemical reactions at 100% energy efficiency. Overclocks multiply both speed and energy by 4. The multiblock requires exactly 1 Cupronickel Coil Block, which must be placed adjacent to the PTFE Pipe casing located in the center.
 
 item.invalid.name=Invalid item
 fluid.empty=Empty
@@ -1738,6 +1739,7 @@ recipemap.blast_furnace.value=Heat Capacity: %s K
 recipemap.implosion_compressor.name=Implosion Compressor
 recipemap.vacuum_freezer.name=Vacuum Freezer
 recipemap.chemical_reactor.name=Chemical Reactor
+recipemap.large_chemical_reactor.name=Large Chemical Reactor
 recipemap.distillation_tower.name=Distillation Tower
 recipemap.cracker.name=Cracking Unit
 recipemap.pyro.name=Pyrolyse Oven
@@ -1843,6 +1845,7 @@ tile.boiler_casing.bronze_pipe.name=Bronze Pipe Casing
 tile.boiler_casing.steel_pipe.name=Steel Pipe Casing
 tile.boiler_casing.titanium_pipe.name=Titanium Pipe Casing
 tile.boiler_casing.tungstensteel_pipe.name=Tungstensteel Pipe Casing
+tile.boiler_casing.polytetrafluoroethylene_pipe.name=Polytetrafluoroethylene (PTFE) Pipe Casing
 
 #Firebox casing blocks
 tile.boiler_casing.bronze_firebox.name=Bronze Firebox Casing
@@ -1860,6 +1863,7 @@ tile.metal_casing.steel_solid.name=Solid Steel Machine Casing
 tile.metal_casing.stainless_clean.name=Clean Stainless Steel Casing
 tile.metal_casing.titanium_stable.name=Stable Titanium Machine Casing
 tile.metal_casing.tungstensteel_robust.name=Robust Tungstensteel Machine Casing
+tile.metal_casing.ptfe_inert.name=Chemically Inert Polytetrafluoroethylene (PTFE) Machine Casing
 
 # Machine casing blocks
 tile.machine_casing.ultra_low_voltage.name=ULV Machine Casing
@@ -2927,6 +2931,7 @@ gregtech.machine.fisher.requirement=Requires a square of water with size of %,d 
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
 gregtech.machine.basic.input_from_output_side.disallow=Disallow Input from Output Side
+gregtech.machine.perfect_oc=Does not lose energy efficiency when overclocked.
 
 # Achievement ores
 achievement.Naquadah=Find Naquadah Ore
@@ -3396,8 +3401,11 @@ gregtech.machine.fusion_reactor.luv.name=Fusion Reactor Computer Mark 1
 gregtech.machine.fusion_reactor.zpm.name=Fusion Reactor Computer Mark 2
 gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
 
+gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
+
 # Multiblock Tooltips
 gregtech.machine.primitive_blast_furnace.bronze.tooltip=Structure: 3x3x4 (WxLxH) The entire structure is made out of Primitive Bricks (32 in total)./nFirst Layer is a 3x3 square./nSecond, third, and fourth layers are hollow, without the middle block./nThis block goes on the middle of any side in the second layer./nThe sides of Blast Furnaces can be shared, if the side does not have a controller./n
+gregtech.machine.multiblock.universal.controller_information=Controller block for the §e%s§7.
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks

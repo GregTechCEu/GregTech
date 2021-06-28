@@ -55,9 +55,17 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected boolean hasNotEnoughEnergy;
     protected boolean wasActiveAndNeedsUpdate;
 
+    protected boolean hasPerfectOC = false;
+
     public AbstractRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap) {
         super(tileEntity);
         this.recipeMap = recipeMap;
+    }
+
+    public AbstractRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap, boolean hasPerfectOC) {
+        super(tileEntity);
+        this.recipeMap = recipeMap;
+        this.hasPerfectOC = hasPerfectOC;
     }
 
     protected abstract long getEnergyStored();
@@ -257,7 +265,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             return new int[]{EUt, duration};
         if (negativeEU)
             EUt = -EUt;
-        if (EUt <= 16) {
+        if (hasPerfectOC) {
+            int resultEUt = EUt;
+            double resultDuration = duration;
+            //do not overclock further if duration is already too small
+            while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1]) {
+                resultEUt *= 4;
+                resultDuration /= 4.0;
+            }
+            return new int[]{negativeEU ? -resultEUt : resultEUt, (int) Math.ceil(resultDuration)};
+        } else if (EUt <= 16) {
             int multiplier = EUt <= 8 ? tier : tier - 1;
             int resultEUt = EUt * (1 << multiplier) * (1 << multiplier);
             int resultDuration = duration / (1 << multiplier);

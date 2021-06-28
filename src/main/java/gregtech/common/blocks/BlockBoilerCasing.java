@@ -30,7 +30,8 @@ public class BlockBoilerCasing extends VariantBlock<BlockBoilerCasing.BoilerCasi
         BRONZE_PIPE("bronze_pipe"),
         STEEL_PIPE("steel_pipe"),
         TITANIUM_PIPE("titanium_pipe"),
-        TUNGSTENSTEEL_PIPE("tungstensteel_pipe");
+        TUNGSTENSTEEL_PIPE("tungstensteel_pipe"),
+        POLYTETRAFLUOROETHYLENE_PIPE("polytetrafluoroethylene_pipe");
 
         private final String name;
 

@@ -144,6 +144,8 @@ public class MetaTileEntities {
     public static MetaTileEntityAssemblyLine ASSEMBLY_LINE;
     public static MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
 
+    public static MetaTileEntityLargeChemicalReactor LARGE_CHEMICAL_REACTOR;
+
     //STORAGE SECTION
     public static MetaTileEntityChest SMALL_WOODEN_CHEST;
     public static MetaTileEntityChest WOODEN_CHEST;
@@ -456,6 +458,8 @@ public class MetaTileEntities {
         FUSION_REACTOR[0] = GregTechAPI.registerMetaTileEntity(1019, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.luv"), 6));
         FUSION_REACTOR[1] = GregTechAPI.registerMetaTileEntity(1020, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.zpm"), 7));
         FUSION_REACTOR[2] = GregTechAPI.registerMetaTileEntity(1021, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.uv"), 8));
+
+        LARGE_CHEMICAL_REACTOR = GregTechAPI.registerMetaTileEntity(1022, new MetaTileEntityLargeChemicalReactor(gregtechId("large_chemical_reactor")));
 
         // MISC MTE's START: IDs 1300-2000
 

@@ -40,6 +40,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("distillation_tower", new MultiblockInfoRecipeWrapper(new DistillationTowerInfo()));
         put("electric_blast_furnace", new MultiblockInfoRecipeWrapper(new ElectricBlastFurnaceInfo()));
         put("multi_smelter", new MultiblockInfoRecipeWrapper(new MultiSmelterInfo()));
+        put("large_chemical_reactor", new MultiblockInfoRecipeWrapper(new LargeChemicalReactorInfo()));
         put("large_bronze_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_BRONZE_BOILER)));
         put("large_steel_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_STEEL_BOILER)));
         put("large_titanium_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_TITANIUM_BOILER)));

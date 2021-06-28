@@ -13,6 +13,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         super(tileEntity, tileEntity.recipeMap);
     }
 
+    public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity, boolean hasPerfectOC) {
+        super(tileEntity, tileEntity.recipeMap, hasPerfectOC);
+    }
+
     @Override
     public void update() {
     }

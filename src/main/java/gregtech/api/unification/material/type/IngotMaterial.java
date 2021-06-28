@@ -1,19 +1,22 @@
 package gregtech.api.unification.material.type;
 
 import com.google.common.collect.ImmutableList;
+import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.pipelike.cable.WireProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
-import crafttweaker.annotations.ZenRegister;
-import stanhebben.zenscript.annotations.*;
+import stanhebben.zenscript.annotations.ZenClass;
+import stanhebben.zenscript.annotations.ZenMethod;
+import stanhebben.zenscript.annotations.ZenProperty;
 
 import javax.annotation.Nullable;
 
 import static gregtech.api.unification.material.type.DustMaterial.MatFlags.GENERATE_PLATE;
 import static gregtech.api.unification.material.type.DustMaterial.MatFlags.SMELT_INTO_FLUID;
 import static gregtech.api.unification.material.type.IngotMaterial.MatFlags.*;
+import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.GENERATE_FRAME;
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.GENERATE_ROD;
 import static gregtech.api.util.GTUtility.createFlag;
 
@@ -148,6 +151,9 @@ public class IngotMaterial extends SolidMaterial {
             generationBits |= GENERATE_ROD;
         }
         if ((generationBits & GENERATE_BOLT_SCREW) > 0) {
+            generationBits |= GENERATE_ROD;
+        }
+        if ((generationBits & GENERATE_FRAME) > 0) {
             generationBits |= GENERATE_ROD;
         }
         return super.verifyMaterialBits(generationBits);

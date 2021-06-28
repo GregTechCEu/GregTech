@@ -197,15 +197,13 @@ public class MaterialRecipeHandler {
                 OreDictUnifier.get(OrePrefix.stick, material, 1),
                 "f ", " X",
                 'X', new UnificationEntry(ingotPrefix, material));
-            if (!material.hasFlag(NO_SMASHING)) {
-                RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(ingotPrefix, material)
-                    .notConsumable(MetaItems.SHAPE_EXTRUDER_ROD)
-                    .outputs(OreDictUnifier.get(OrePrefix.stick, material, 2))
-                    .duration((int) material.getAverageMass() * 2)
-                    .EUt(6 * getVoltageMultiplier(material))
-                    .buildAndRegister();
-            }
+            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                .input(ingotPrefix, material)
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_ROD)
+                .outputs(OreDictUnifier.get(OrePrefix.stick, material, 2))
+                .duration((int) material.getAverageMass() * 2)
+                .EUt(6 * getVoltageMultiplier(material))
+                .buildAndRegister();
         }
 
         if (material.shouldGenerateFluid()) {

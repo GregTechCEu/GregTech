@@ -1,6 +1,5 @@
 package gregtech.api.unification.material;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.type.*;
@@ -9,13 +8,13 @@ import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.init.Enchantments;
 
 import static com.google.common.collect.ImmutableList.of;
+import static gregtech.api.unification.material.MaterialIconSet.*;
 import static gregtech.api.unification.material.type.DustMaterial.MatFlags.*;
 import static gregtech.api.unification.material.type.FluidMaterial.MatFlags.*;
 import static gregtech.api.unification.material.type.GemMaterial.MatFlags.*;
 import static gregtech.api.unification.material.type.IngotMaterial.MatFlags.*;
 import static gregtech.api.unification.material.type.Material.MatFlags.*;
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.*;
-import static gregtech.api.unification.material.MaterialIconSet.*;
 
 @SuppressWarnings("unused")
 public class Materials {
@@ -216,7 +215,7 @@ public class Materials {
     public static IngotMaterial Epoxy = new IngotMaterial(175, "epoxy", 0xC88C14, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 4), new MaterialStack(Oxygen, 1)), EXT2_METAL | DISABLE_DECOMPOSITION);
     public static DustMaterial Polysiloxane = new DustMaterial(176, "polysiloxane", 0xDCDCDC, DULL, 1, of(new MaterialStack(Carbon, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Silicon, 2), new MaterialStack(Oxygen, 1)), GENERATE_PLATE | FLAMMABLE | NO_SMASHING | SMELT_INTO_FLUID | DISABLE_DECOMPOSITION);
     public static IngotMaterial Polycaprolactam = new IngotMaterial(177, "polycaprolactam", 0x323232, DULL, 1, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 11), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 1)), GENERATE_PLATE | DISABLE_DECOMPOSITION);
-    public static IngotMaterial Polytetrafluoroethylene = new IngotMaterial(178, "polytetrafluoroethylene", 0x646464, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Fluorine, 4)), GENERATE_PLATE | SMELT_INTO_FLUID | NO_WORKING | DISABLE_DECOMPOSITION);
+    public static IngotMaterial Polytetrafluoroethylene = new IngotMaterial(178, "polytetrafluoroethylene", 0x646464, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Fluorine, 4)), GENERATE_PLATE | GENERATE_FRAME | SMELT_INTO_FLUID | NO_SMASHING | DISABLE_DECOMPOSITION);
     public static DustMaterial Powellite = new DustMaterial(179, "powellite", 0xFFFF00, DULL, 2, of(new MaterialStack(Calcium, 1), new MaterialStack(Molybdenum, 1), new MaterialStack(Oxygen, 4)), GENERATE_ORE);
     public static DustMaterial Pyrite = new DustMaterial(180, "pyrite", 0x967828, ROUGH, 1, of(new MaterialStack(Iron, 1), new MaterialStack(Sulfur, 2)), GENERATE_ORE | INDUCTION_SMELTING_LOW_OUTPUT);
     public static DustMaterial Pyrolusite = new DustMaterial(181, "pyrolusite", 0x9696AA, DULL, 2, of(new MaterialStack(Manganese, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE);
