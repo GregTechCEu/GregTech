@@ -1229,4 +1229,12 @@ public abstract class MetaTileEntity implements ICoverable {
     public float getBlockResistance() {
         return 6.0f;
     }
+
+    public boolean getExplosionProof(){
+        return false;
+    }
+
+    public boolean getWitherProof(){
+        return false;
+    }
 }
