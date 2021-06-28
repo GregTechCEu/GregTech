@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.laser.net;
 import com.google.common.base.Preconditions;
 import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IEnergyContainer;
+
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -11,11 +11,8 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.laser.net.LaserPipeNet;
 import gregtech.common.pipelike.laser.net.WorldLaserNet;
-import gregtech.common.pipelike.laser.tile.LaserSize;
-import gregtech.common.pipelike.laser.tile.TileEntityLaser;
-import gregtech.common.pipelike.laser.tile.TileEntityLaserTickable;
+import gregtech.common.pipelike.laser.tile.*;
 import gregtech.common.render.CableRenderer;
-import gregtech.common.pipelike.laser.tile.LaserProperties;
 import gregtech.common.render.LaserRenderer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
@@ -102,7 +99,7 @@ public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,Worl
             //do not connect to null cables and ignore cables
             if (tileEntity == null || getPipeTileEntity(tileEntity) != null) continue;
             EnumFacing opposite = side.getOpposite();
-            IEnergyContainer energyContainer = tileEntity.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite);
+            LaserContainer energyContainer = tileEntity.getCapability(GregtechCapabilities.LASER_CAPABILITY, opposite);
             if (energyContainer != null) {
                 activeNodeConnections |= 1 << side.getIndex();
             }
