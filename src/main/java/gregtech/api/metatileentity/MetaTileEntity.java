@@ -1230,10 +1230,6 @@ public abstract class MetaTileEntity implements ICoverable {
         return 6.0f;
     }
 
-    public boolean getExplosionProof(){
-        return false;
-    }
-
     public boolean getWitherProof(){
         return false;
     }
