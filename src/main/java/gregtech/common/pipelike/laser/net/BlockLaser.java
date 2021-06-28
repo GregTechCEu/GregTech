@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
+import gregtech.api.pipenet.block.simple.BlockSimplePipe;
 import gregtech.common.pipelike.laser.tile.TileEntityLaserTickable;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -39,7 +40,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
-public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,WorldLaserNet>implements ITileEntityProvider {
+public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,WorldLaserNet> implements ITileEntityProvider {
 
     private final Map<Material, LaserProperties> enabledMaterials2 = new TreeMap<>();
 
@@ -69,26 +70,27 @@ public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,Worl
     }
 
 
-
-    @Override
-    protected LaserProperties createProperties(LaserSize insulation, Material material) {
-        return insulation.modifyProperties(enabledMaterials2.getOrDefault(material, getFallbackType()));
-
-    }
-
     @Override
     protected LaserProperties getFallbackType() {
-        return enabledMaterials2.values().iterator().next();
+        return new LaserProperties(1,1);
     }
 
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (Material material : enabledMaterials2.keySet()) {
+
             for (LaserSize laserSize : LaserSize.values()) {
-                items.add(getItem(laserSize, material));
-            }
+                items.add(getItem(laserSize));
+
         }
     }
+
+    private ItemStack getItem(LaserSize laserSize) {
+        if(laserSize == null){
+            return ItemStack.EMPTY;
+        }
+        return new ItemStack(this,1,laserSize.ordinal());
+    }
+
     @Override
     public int getActiveNodeConnections(IBlockAccess world, BlockPos nodePos, IPipeTile<LaserSize, LaserProperties> selfTileEntity) {
         int activeNodeConnections = 0;
@@ -142,5 +144,13 @@ public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,Worl
     @SideOnly(Side.CLIENT)
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
         return LaserRenderer.INSTANCE.getParticleTexture((TileEntityLaser) world.getTileEntity(blockPos));
+    }
+
+
+
+
+    @Override
+    protected LaserProperties createProperties(LaserSize laserSize, Material material) {
+        return laserSize.modifyProperties(enabledMaterials2.getOrDefault(material, getFallbackType()));
     }
 }
