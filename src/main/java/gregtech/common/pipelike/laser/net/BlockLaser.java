@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
+import gregtech.common.pipelike.laser.tile.TileEntityLaserTickable;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -133,7 +134,7 @@ public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,Worl
 
     @Override
     public TileEntityPipeBase<LaserSize, LaserProperties> createNewTileEntity(boolean supportsTicking) {
-        return supportsTicking ? new TileEntityLaser() : new TileEntityLaser();
+        return supportsTicking ? new  TileEntityLaserTickable() : new TileEntityLaser();
     }
 
 
