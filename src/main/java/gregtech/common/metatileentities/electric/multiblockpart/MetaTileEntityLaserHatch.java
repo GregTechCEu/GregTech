@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static gregtech.api.metatileentity.multiblock.MultiblockAbility.OUTPUT_LASER;
+
 public class MetaTileEntityLaserHatch  extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<LaserContainer> {
     private final boolean isExportHatch;
 
