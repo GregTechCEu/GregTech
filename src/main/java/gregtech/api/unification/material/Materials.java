@@ -114,7 +114,7 @@ public class Materials {
     public static DustMaterial Phosphorus = new DustMaterial(78, "phosphorus", 0xFFFF00, DULL, 2, of(), 0, Elements.get("Phosphorus"));
     public static IngotMaterial Polonium = new IngotMaterial(79, "polonium", 0xC9D47E, DULL, 4, of(), 0, Elements.get("Polonium"));
     public static IngotMaterial Platinum = new IngotMaterial(80, "platinum", 0xFFFFC8, SHINY, 2, of(), EXT2_METAL | GENERATE_ORE | GENERATE_FLUID_BLOCK, Elements.get("Platinum"));
-    public static IngotMaterial Plutonium = new IngotMaterial(81, "plutonium", 0xF03232, METALLIC, 3, of(), EXT_METAL, Elements.get("Plutonium"));
+    public static IngotMaterial Plutonium239 = new IngotMaterial(81, "plutonium", 0xF03232, METALLIC, 3, of(), EXT_METAL, Elements.get("Plutonium-239"));
     public static IngotMaterial Plutonium241 = new IngotMaterial(82, "plutonium241", 0xFA4646, SHINY, 3, of(), EXT_METAL, Elements.get("Plutonium-241"));
     public static IngotMaterial Potassium = new IngotMaterial(83, "potassium", 0xFAFAFA, METALLIC, 1, of(), EXT_METAL, Elements.get("Potassium"));
     public static IngotMaterial Praseodymium = new IngotMaterial(84, "praseodymium", 0xCECECE, METALLIC, 2, of(), EXT_METAL, Elements.get("Praseodymium"), 1208);
@@ -149,7 +149,7 @@ public class Materials {
     public static IngotMaterial Titanium = new IngotMaterial(113, "titanium", 0xDCA0F0, METALLIC, 3, of(), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_SPRING | GENERATE_FRAME | GENERATE_DENSE, Elements.get("Titanium"), 7.0F, 3.0f, 1600, 1941);
     public static FluidMaterial Tritium = new FluidMaterial(114, "tritium", 0xFFFFFF, METALLIC, of(), STATE_GAS, Elements.get("Tritium"));
     public static IngotMaterial Tungsten = new IngotMaterial(115, "tungsten", 0x323232, METALLIC, 3, of(), EXT2_METAL, Elements.get("Tungsten"), 7.0F, 3.0f, 2560, 3000);
-    public static IngotMaterial Uranium = new IngotMaterial(116, "uranium", 0x32F032, METALLIC, 3, of(), STD_METAL | GENERATE_ORE, Elements.get("Uranium"), 6.0F, 3.0f, 512);
+    public static IngotMaterial Uranium238 = new IngotMaterial(116, "uranium", 0x32F032, METALLIC, 3, of(), STD_METAL | GENERATE_ORE, Elements.get("Uranium-238"), 6.0F, 3.0f, 512);
     public static IngotMaterial Uranium235 = new IngotMaterial(117, "uranium235", 0x46FA46, SHINY, 3, of(), STD_METAL | GENERATE_ORE | GENERATE_ROD, Elements.get("Uranium-235"), 6.0F, 3.0f, 512);
     public static IngotMaterial Vanadium = new IngotMaterial(118, "vanadium", 0x323232, METALLIC, 2, of(), STD_METAL, Elements.get("Vanadium"), 2183);
     public static FluidMaterial Xenon = new FluidMaterial(119, "xenon", 0x270095, FLUID, of(), 0, Elements.get("Xenon"));
@@ -245,7 +245,7 @@ public class Materials {
     public static GemMaterial Topaz = new GemMaterial(203, "topaz", 0xFF8000, GEM_HORIZONTAL, 3, of(new MaterialStack(Aluminium, 2), new MaterialStack(Silicon, 1), new MaterialStack(Fluorine, 2), new MaterialStack(Hydrogen, 2), new MaterialStack(Oxygen, 6)), STD_GEM | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT, null, 7.0F, 2.0f, 256);
     public static DustMaterial Tungstate = new DustMaterial(204, "tungstate", 0x373223, DULL, 3, of(new MaterialStack(Tungsten, 1), new MaterialStack(Lithium, 2), new MaterialStack(Oxygen, 4)), GENERATE_ORE | DECOMPOSITION_REQUIRES_HYDROGEN, null);
     public static IngotMaterial Ultimet = new IngotMaterial(205, "ultimet", 0xB4B4E6, SHINY, 4, of(new MaterialStack(Cobalt, 5), new MaterialStack(Chrome, 2), new MaterialStack(Nickel, 1), new MaterialStack(Molybdenum, 1)), EXT2_METAL, null, 9.0F, 4.0f, 2048, 2700);
-    public static DustMaterial Uraninite = new DustMaterial(206, "uraninite", 0x232323, METALLIC, 3, of(new MaterialStack(Uranium, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE | DISABLE_DECOMPOSITION);
+    public static DustMaterial Uraninite = new DustMaterial(206, "uraninite", 0x232323, METALLIC, 3, of(new MaterialStack(Uranium238, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE | DISABLE_DECOMPOSITION);
     public static DustMaterial Uvarovite = new DustMaterial(207, "uvarovite", 0xB4FFB4, DIAMOND, 2, of(new MaterialStack(Calcium, 3), new MaterialStack(Chrome, 2), new MaterialStack(Silicon, 3), new MaterialStack(Oxygen, 12)), 0);
     public static IngotMaterial VanadiumGallium = new IngotMaterial(208, "vanadium_gallium", 0x80808C, SHINY, 2, of(new MaterialStack(Vanadium, 3), new MaterialStack(Gallium, 1)), STD_METAL | GENERATE_FOIL | GENERATE_ROD, null, 4500);
     public static IngotMaterial WroughtIron = new IngotMaterial(209, "wrought_iron", 0xC8B4B4, METALLIC, 2, of(new MaterialStack(Iron, 1)), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_LONG_ROD | DISABLE_DECOMPOSITION, null, 6.0F, 3.5f, 384);
@@ -703,8 +703,8 @@ public class Materials {
         Vermiculite.addOreByProducts(Iron, Aluminium, Magnesium);
         FullersEarth.addOreByProducts(Aluminium, Silicon, Magnesium);
         Bentonite.addOreByProducts(Aluminium, Calcium, Magnesium);
-        Uraninite.addOreByProducts(Uranium, Thorium, Uranium235);
-        Pitchblende.addOreByProducts(Thorium, Uranium, Lead);
+        Uraninite.addOreByProducts(Uranium238, Thorium, Uranium235);
+        Pitchblende.addOreByProducts(Thorium, Uranium238, Lead);
         Galena.addOreByProducts(Sulfur, Silver, Lead, Silver);
         Lapis.addOreByProducts(Lazurite, Sodalite, Pyrite);
         Pyrite.addOreByProducts(Sulfur, TricalciumPhosphate, Iron);
@@ -719,7 +719,7 @@ public class Materials {
         Chrysotile.addOreByProducts(Asbestos, Silicon, Magnesium);
         Asbestos.addOreByProducts(Asbestos, Silicon, Magnesium);
         Pentlandite.addOreByProducts(Iron, Sulfur, Cobalt);
-        Uranium.addOreByProducts(Lead, Uranium235, Thorium);
+        Uranium238.addOreByProducts(Lead, Uranium235, Thorium);
         Scheelite.addOreByProducts(Manganese, Molybdenum, Calcium);
         Tungstate.addOreByProducts(Manganese, Silver, Lithium, Silver);
         Bauxite.addOreByProducts(Grossular, Rutile, Gallium);
@@ -744,8 +744,8 @@ public class Materials {
         Antimony.addOreByProducts(Zinc, Iron, Zinc);
         Silver.addOreByProducts(Lead, Sulfur, Silver);
         Lead.addOreByProducts(Silver, Sulfur, Silver);
-        Thorium.addOreByProducts(Uranium, Lead);
-        Plutonium.addOreByProducts(Uranium, Lead);
+        Thorium.addOreByProducts(Uranium238, Lead);
+        Plutonium239.addOreByProducts(Uranium238, Lead);
         Electrum.addOreByProducts(Gold, Silver);
         Bronze.addOreByProducts(Copper, Tin);
         Brass.addOreByProducts(Copper, Zinc);

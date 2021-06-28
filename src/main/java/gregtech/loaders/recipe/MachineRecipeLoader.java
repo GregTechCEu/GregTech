@@ -919,8 +919,8 @@ public class MachineRecipeLoader {
             .fluidOutputs(Materials.Oxygen.getFluid(5000))
             .buildAndRegister();
 
-        RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(320).input(OrePrefix.dust, Materials.Uranium, 1).chancedOutput(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Plutonium, 1), 200, 80).chancedOutput(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Uranium235, 1), 2000, 350).buildAndRegister();
-        RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(320).input(OrePrefix.dust, Materials.Plutonium, 1).chancedOutput(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Uranium, 1), 3000, 450).chancedOutput(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Plutonium241, 1), 2000, 300).buildAndRegister();
+        RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(320).input(OrePrefix.dust, Materials.Uranium238, 1).chancedOutput(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Plutonium239, 1), 200, 80).chancedOutput(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Uranium235, 1), 2000, 350).buildAndRegister();
+        RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(320).input(OrePrefix.dust, Materials.Plutonium239, 1).chancedOutput(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Uranium238, 1), 3000, 450).chancedOutput(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Plutonium241, 1), 2000, 300).buildAndRegister();
         RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder().duration(3200).EUt(320).input(OrePrefix.dust, Materials.Naquadah, 1).chancedOutput(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Naquadria, 1), 1000, 300).chancedOutput(OreDictUnifier.get(OrePrefix.dustTiny, Materials.NaquadahEnriched, 1), 5000, 750).buildAndRegister();
         RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder().duration(6400).EUt(640).input(OrePrefix.dust, Materials.NaquadahEnriched, 1).chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Naquadah, 1), 3000, 400).chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Naquadria, 1), 2000, 450).buildAndRegister();
 
@@ -1081,7 +1081,7 @@ public class MachineRecipeLoader {
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
             .input(OrePrefix.stone, Materials.GraniteRed)
             .outputs(OreDictUnifier.get(OrePrefix.dust, Materials.GraniteRed, 1))
-            .chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Uranium, 1), 100, 40)
+            .chancedOutput(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Uranium238, 1), 100, 40)
             .buildAndRegister();
 
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()

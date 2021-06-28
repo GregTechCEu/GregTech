@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
@@ -12,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
-import static gregtech.api.recipes.RecipeMaps.MIXER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.api.unification.ore.OrePrefix.block;
@@ -922,7 +920,7 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
             .input(dust, Uraninite, 3)
             .input(dust, Aluminium)
-            .output(dust, Uranium)
+            .output(dust, Uranium238)
             .fluidOutputs(Aluminium.getFluid(144))
             .fluidOutputs(Oxygen.getFluid(2000))
             .duration(360).EUt(120).buildAndRegister();
@@ -930,7 +928,7 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
             .input(dust, Uraninite, 3)
             .input(dust, Magnesium)
-            .output(dust, Uranium)
+            .output(dust, Uranium238)
             .fluidOutputs(Magnesium.getFluid(144))
             .fluidOutputs(Oxygen.getFluid(2000))
             .duration(360).EUt(120).buildAndRegister();
@@ -1071,5 +1069,13 @@ public class ReactorRecipes {
             .fluidOutputs(AceticAcid.getFluid(1000))
             .fluidOutputs(Methanol.getFluid(1000))
             .duration(264).EUt(60).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+            .input(ingot, Plutonium239, 8)
+            .input(dustTiny, Uranium238)
+            .fluidInputs(Air.getFluid(1000))
+            .output(dust, Plutonium239, 8)
+            .fluidOutputs(Radon.getFluid(100))
+            .duration(12000).EUt(8).buildAndRegister();
     }
 }

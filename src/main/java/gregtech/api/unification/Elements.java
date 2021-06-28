@@ -111,9 +111,11 @@ public class Elements {
         add(90, 140, -1, null, "Thorium", "Th", false);
         add(91, 138, -1, null, "Protactinium", "Pa", false);
         add(92, 146, -1, null, "Uranium", "U", false);
+        add(92, 146, -1, null, "Uranium-238", "U_238", false);
         add(92, 143, -1, null, "Uranium-235", "U_235", true);
         add(93, 144, -1, null, "Neptunium", "Np", false);
         add(94, 152, -1, null, "Plutonium", "Pu", false);
+        add(94, 145, -1, null, "Plutonium-239", "Pu_239", false);
         add(94, 149, -1, null, "Plutonium-241", "Pu_241", true);
         add(95, 150, -1, null, "Americium", "Am", false);
         add(96, 153, -1, null, "Curium", "Cm", false);
