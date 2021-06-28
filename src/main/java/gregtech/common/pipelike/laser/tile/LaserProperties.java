@@ -13,16 +13,16 @@ public class LaserProperties{
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof LaserProperties)) return false;
-        LaserProperties that = (LaserProperties) o;
+    public boolean equals(Object i) {
+        if (this == i) return true;
+        if (!(i instanceof LaserProperties)) return false;
+        LaserProperties that = (LaserProperties) i;
         return laserVoltage == that.laserVoltage &&
                 parallel == that.parallel;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(laserVoltage, parallel, "optical_fiber");
+        return Objects.hash(laserVoltage, parallel);
     }
 }
