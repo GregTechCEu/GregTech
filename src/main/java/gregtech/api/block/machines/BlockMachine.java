@@ -483,17 +483,8 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     }
 
     @Override
-    public void onBlockExploded(World world, BlockPos pos, Explosion explosion) {
-        MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        if(!metaTileEntity.getExplosionProof()) {
-            world.setBlockToAir(pos);
-            this.onExplosionDestroy(world, pos, explosion);
-        }
-    }
-
-    @Override
     public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
-        return !(entity instanceof EntityWither && metaTileEntity.getWitherProof());
+        return !((entity instanceof EntityWither || entity instanceof EntityWitherSkull) && metaTileEntity.getWitherProof());
     }
 }
