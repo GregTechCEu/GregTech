@@ -77,7 +77,7 @@ public class LaserPipeNet  extends PipeNet<LaserProperties> {
 
     @Override
     protected void writeNodeData(LaserProperties nodeData, NBTTagCompound tagCompound) {
-        tagCompound.setInteger("qubit", nodeData.laserVoltage);
+        tagCompound.setInteger("laserVoltage", nodeData.laserVoltage);
         tagCompound.setInteger("parallel", nodeData.parallel);
     }
 
