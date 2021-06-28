@@ -9,6 +9,7 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.items.MetaItems;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.recipes.RecipeMaps.FORMING_PRESS_RECIPES;
@@ -90,5 +91,42 @@ public class MiscRecipeLoader {
                 .notConsumable(SHAPE_MOLD_BLOCK.getStackForm())
                 .outputs(new ItemStack(Blocks.GLASS, 1))
                 .buildAndRegister();
+
+        RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder().duration(64).EUt(4)
+                .input(dust, Materials.Glass)
+                .notConsumable(MetaItems.SHAPE_MOLD_BOTTLE)
+                .outputs(new ItemStack(Items.GLASS_BOTTLE))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder().duration(32).EUt(16)
+                .input(dust, Materials.Glass)
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_BOTTLE)
+                .outputs(new ItemStack(Items.GLASS_BOTTLE))
+                .buildAndRegister();
+
+        RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(12).EUt(4)
+                .fluidInputs(Materials.Glass.getFluid(144))
+                .notConsumable(MetaItems.SHAPE_MOLD_BOTTLE)
+                .outputs(new ItemStack(Items.GLASS_BOTTLE))
+                .buildAndRegister();
+
+        RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(8)
+            .input(dust, Sugar)
+            .inputs(new ItemStack(Blocks.BROWN_MUSHROOM))
+            .inputs(new ItemStack(Items.SPIDER_EYE))
+            .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
+            .buildAndRegister();
+
+        RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(8)
+            .input(dust, Sugar)
+            .inputs(new ItemStack(Blocks.RED_MUSHROOM))
+            .inputs(new ItemStack(Items.SPIDER_EYE))
+            .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
+            .buildAndRegister();
+
+        RecipeMaps.SIFTER_RECIPES.recipeBuilder().duration(800).EUt(16)
+            .inputs(new ItemStack(Blocks.GRAVEL))
+            .outputs(new ItemStack(Items.FLINT))
+            .buildAndRegister();
     }
 }

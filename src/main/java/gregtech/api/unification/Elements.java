@@ -45,7 +45,7 @@ public class Elements {
         add(24, 28, -1, null, "Chrome", "Cr", false);
         add(25, 30, -1, null, "Manganese", "Mn", false);
         add(26, 30, -1, null, "Iron", "Fe", false);
-        add(27, 32, -1, null, "Cobalt", "Cp", false);
+        add(27, 32, -1, null, "Cobalt", "Co", false);
         add(28, 30, -1, null, "Nickel", "Ni", false);
         add(29, 34, -1, null, "Copper", "Cu", false);
         add(30, 35, -1, null, "Zinc", "Zn", false);
@@ -67,7 +67,7 @@ public class Elements {
         add(46, 60, -1, null, "Palladium", "Pd", false);
         add(47, 60, -1, null, "Silver", "Ag", false);
         add(48, 64, -1, null, "Cadmium", "Cd", false);
-        add(49, 65, -1, null, "Indium", "I", false);
+        add(49, 65, -1, null, "Indium", "In", false);
         add(50, 68, -1, null, "Tin", "Sn", false);
         add(51, 70, -1, null, "Antimony", "Sb", false);
         add(52, 75, -1, null, "Tellurium", "Te", false);

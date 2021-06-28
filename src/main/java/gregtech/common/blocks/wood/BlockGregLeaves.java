@@ -85,4 +85,12 @@ public class BlockGregLeaves extends BlockLeaves {
     public List<ItemStack> onSheared(@Nonnull ItemStack item, IBlockAccess world, BlockPos pos, int fortune) {
         return Lists.newArrayList(new ItemStack(this, 1, world.getBlockState(pos).getValue(VARIANT).ordinal()));
     }
+
+    public ItemStack getItem(LogVariant variant) {
+        return new ItemStack(this, 1, variant.ordinal() * 2);
+    }
+
+    public ItemStack getItem(LogVariant variant, int amount) {
+        return new ItemStack(this, amount, variant.ordinal() * 2);
+    }
 }

@@ -1,7 +1,10 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.items.MetaItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -9,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import static gregtech.api.recipes.RecipeMaps.CHEMICAL_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.MIXER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.api.unification.ore.OrePrefix.block;
@@ -30,17 +34,17 @@ public class ReactorRecipes {
             .duration(160).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-            .fluidInputs(Butadiene.getFluid(108))
-            .fluidInputs(Styrene.getFluid(36))
-            .fluidInputs(Air.getFluid(2000))
-            .output(dust, RawStyreneButadieneRubber)
+            .fluidInputs(Butadiene.getFluid(3000))
+            .fluidInputs(Styrene.getFluid(1000))
+            .fluidInputs(Air.getFluid(4000))
+            .output(dust, RawStyreneButadieneRubber, 4)
             .duration(160).EUt(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-            .fluidInputs(Butadiene.getFluid(108))
-            .fluidInputs(Styrene.getFluid(36))
-            .fluidInputs(Oxygen.getFluid(2000))
-            .output(dust, RawStyreneButadieneRubber, 3)
+            .fluidInputs(Butadiene.getFluid(3000))
+            .fluidInputs(Styrene.getFluid(1000))
+            .fluidInputs(Oxygen.getFluid(4000))
+            .output(dust, RawStyreneButadieneRubber, 6)
             .duration(160).EUt(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -748,13 +752,6 @@ public class ReactorRecipes {
             .duration(160).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-            .input(crushedPurified, Sphalerite)
-            .input(crushedPurified, Galena)
-            .fluidInputs(SulfuricAcid.getFluid(4000))
-            .fluidOutputs(IndiumConcentrate.getFluid(1000))
-            .duration(60).EUt(150).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
             .notConsumable(new IntCircuitIngredient(1))
             .input(dust, Phosphorus, 4)
             .fluidInputs(Oxygen.getFluid(10000))
@@ -1019,6 +1016,18 @@ public class ReactorRecipes {
             .inputs(new ItemStack(Items.APPLE, 1, OreDictionary.WILDCARD_VALUE))
             .input(block, Gold, 8)
             .outputs(new ItemStack(Items.GOLDEN_APPLE, 1, 1))
+            .duration(50).EUt(30).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+            .inputs(new ItemStack(Items.BLAZE_POWDER))
+            .inputs(new ItemStack(Items.SLIME_BALL))
+            .outputs(new ItemStack(Items.MAGMA_CREAM))
+            .duration(50).EUt(30).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+            .inputs(new ItemStack(Items.BLAZE_POWDER))
+            .input(OrePrefix.gem, Materials.EnderPearl)
+            .outputs(new ItemStack(Items.ENDER_EYE))
             .duration(50).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()

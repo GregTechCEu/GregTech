@@ -101,17 +101,18 @@ public class MetaItem1 extends MaterialMetaItem {
         SHAPE_EXTRUDERS[8] = SHAPE_EXTRUDER_PIPE_SMALL = addItem(359, "shape.extruder.pipe.small");
         SHAPE_EXTRUDERS[9] = SHAPE_EXTRUDER_PIPE_MEDIUM = addItem(360, "shape.extruder.pipe.medium");
         SHAPE_EXTRUDERS[10] = SHAPE_EXTRUDER_PIPE_LARGE = addItem(361, "shape.extruder.pipe.large");
-        SHAPE_EXTRUDERS[11] = SHAPE_EXTRUDER_BLOCK = addItem(363, "shape.extruder.block");
-        SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_SWORD = addItem(364, "shape.extruder.sword");
-        SHAPE_EXTRUDERS[13] = SHAPE_EXTRUDER_PICKAXE = addItem(365, "shape.extruder.pickaxe");
-        SHAPE_EXTRUDERS[14] = SHAPE_EXTRUDER_SHOVEL = addItem(366, "shape.extruder.shovel");
-        SHAPE_EXTRUDERS[15] = SHAPE_EXTRUDER_AXE = addItem(367, "shape.extruder.axe");
-        SHAPE_EXTRUDERS[16] = SHAPE_EXTRUDER_HOE = addItem(368, "shape.extruder.hoe");
-        SHAPE_EXTRUDERS[17] = SHAPE_EXTRUDER_HAMMER = addItem(369, "shape.extruder.hammer");
-        SHAPE_EXTRUDERS[18] = SHAPE_EXTRUDER_FILE = addItem(370, "shape.extruder.file");
-        SHAPE_EXTRUDERS[19] = SHAPE_EXTRUDER_SAW = addItem(371, "shape.extruder.saw");
-        SHAPE_EXTRUDERS[20] = SHAPE_EXTRUDER_GEAR = addItem(372, "shape.extruder.gear");
-        SHAPE_EXTRUDERS[21] = SHAPE_EXTRUDER_BOTTLE = addItem(373, "shape.extruder.bottle");
+        SHAPE_EXTRUDERS[11] = SHAPE_EXTRUDER_PIPE_HUGE = addItem(362, "shape.extruder.pipe.huge");
+        SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_BLOCK = addItem(363, "shape.extruder.block");
+        SHAPE_EXTRUDERS[13] = SHAPE_EXTRUDER_SWORD = addItem(364, "shape.extruder.sword");
+        SHAPE_EXTRUDERS[14] = SHAPE_EXTRUDER_PICKAXE = addItem(365, "shape.extruder.pickaxe");
+        SHAPE_EXTRUDERS[15] = SHAPE_EXTRUDER_SHOVEL = addItem(366, "shape.extruder.shovel");
+        SHAPE_EXTRUDERS[16] = SHAPE_EXTRUDER_AXE = addItem(367, "shape.extruder.axe");
+        SHAPE_EXTRUDERS[17] = SHAPE_EXTRUDER_HOE = addItem(368, "shape.extruder.hoe");
+        SHAPE_EXTRUDERS[18] = SHAPE_EXTRUDER_HAMMER = addItem(369, "shape.extruder.hammer");
+        SHAPE_EXTRUDERS[19] = SHAPE_EXTRUDER_FILE = addItem(370, "shape.extruder.file");
+        SHAPE_EXTRUDERS[20] = SHAPE_EXTRUDER_SAW = addItem(371, "shape.extruder.saw");
+        SHAPE_EXTRUDERS[21] = SHAPE_EXTRUDER_GEAR = addItem(372, "shape.extruder.gear");
+        SHAPE_EXTRUDERS[22] = SHAPE_EXTRUDER_BOTTLE = addItem(373, "shape.extruder.bottle");
 
         SPRAY_EMPTY = addItem(402, "spray.empty")
             .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tin, OrePrefix.plate.materialAmount * 2L), new MaterialStack(Materials.Redstone, OrePrefix.dust.materialAmount)));

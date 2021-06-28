@@ -16,8 +16,7 @@ import javax.annotation.Nullable;
 import static gregtech.api.unification.material.type.DustMaterial.MatFlags.GENERATE_PLATE;
 import static gregtech.api.unification.material.type.DustMaterial.MatFlags.SMELT_INTO_FLUID;
 import static gregtech.api.unification.material.type.IngotMaterial.MatFlags.*;
-import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.GENERATE_FRAME;
-import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.GENERATE_ROD;
+import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.*;
 import static gregtech.api.util.GTUtility.createFlag;
 
 @ZenClass("mods.gregtech.material.IngotMaterial")
@@ -156,6 +155,14 @@ public class IngotMaterial extends SolidMaterial {
         if ((generationBits & GENERATE_FRAME) > 0) {
             generationBits |= GENERATE_ROD;
         }
+        if ((generationBits & GENERATE_DOUBLE_PLATE) > 0) {
+            generationBits |= GENERATE_PLATE;
+        }
+        if (this.fluidPipeProperties != null) {
+            generationBits |= GENERATE_PLATE;
+            generationBits |= GENERATE_DOUBLE_PLATE;
+        }
+
         return super.verifyMaterialBits(generationBits);
     }
 

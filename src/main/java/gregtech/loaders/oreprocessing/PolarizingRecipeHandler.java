@@ -1,9 +1,11 @@
 package gregtech.loaders.oreprocessing;
 
+import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.type.IngotMaterial;
+import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.item.ItemStack;
@@ -26,12 +28,18 @@ public class PolarizingRecipeHandler {
             RecipeMaps.POLARIZER_RECIPES.recipeBuilder() //polarizing
                 .input(polarizingPrefix, material)
                 .outputs(magneticStack)
-                .duration(16).EUt(16)
+                .duration((int) ((int) material.getAverageMass() * polarizingPrefix.materialAmount / GTValues.M))
+                .EUt(8 * getVoltageMultiplier(material))
                 .buildAndRegister();
 
             ModHandler.addSmeltingRecipe(new UnificationEntry(polarizingPrefix, material.magneticMaterial),
                 OreDictUnifier.get(polarizingPrefix, material)); //de-magnetizing
         }
+    }
+
+    private static int getVoltageMultiplier(Material material) {
+        return material instanceof IngotMaterial && ((IngotMaterial) material)
+                .blastFurnaceTemperature >= 1200 ? 32 : 2;
     }
 
 }

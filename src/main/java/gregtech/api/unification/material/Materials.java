@@ -172,17 +172,17 @@ public class Materials {
     public static DustMaterial Bone = new DustMaterial(132, "bone", 0xFAFAFA, DULL, 1, of(new MaterialStack(Calcium, 1)), MORTAR_GRINDABLE | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES);
     public static IngotMaterial Brass = new IngotMaterial(133, "brass", 0xFFB400, METALLIC, 1, of(new MaterialStack(Zinc, 1), new MaterialStack(Copper, 3)), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING, 8.0F, 3.0f, 152);
     public static IngotMaterial Bronze = new IngotMaterial(134, "bronze", 0xFF8000, METALLIC, 2, of(new MaterialStack(Tin, 1), new MaterialStack(Copper, 3)), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_ROTOR | GENERATE_FRAME | GENERATE_LONG_ROD, 6.0F, 2.5f, 192);
-    public static DustMaterial BrownLimonite = new DustMaterial(135, "brown_limonite", 0xC86400, METALLIC, 1, of(new MaterialStack(Iron, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE);
+    public static DustMaterial BrownLimonite = new DustMaterial(135, "brown_limonite", 0xC86400, METALLIC, 1, of(new MaterialStack(Iron, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial Calcite = new DustMaterial(136, "calcite", 0xFAE6DC, DULL, 1, of(new MaterialStack(Calcium, 1), new MaterialStack(Carbon, 1), new MaterialStack(Oxygen, 3)), GENERATE_ORE);
     public static DustMaterial Cassiterite = new DustMaterial(137, "cassiterite", 0xDCDCDC, METALLIC, 1, of(new MaterialStack(Tin, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE);
     public static DustMaterial CassiteriteSand = new DustMaterial(138, "cassiterite_sand", 0xDCDCDC, SAND, 1, of(new MaterialStack(Tin, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE);
     public static DustMaterial Chalcopyrite = new DustMaterial(139, "chalcopyrite", 0xA07828, DULL, 1, of(new MaterialStack(Copper, 1), new MaterialStack(Iron, 1), new MaterialStack(Sulfur, 2)), GENERATE_ORE | INDUCTION_SMELTING_LOW_OUTPUT);
     public static GemMaterial Charcoal = new GemMaterial(140, "charcoal", 0x644646, FINE, 1, of(new MaterialStack(Carbon, 1)), FLAMMABLE | NO_SMELTING | NO_SMASHING | MORTAR_GRINDABLE);
     public static DustMaterial Chromite = new DustMaterial(141, "chromite", 0x23140F, METALLIC, 1, of(new MaterialStack(Iron, 1), new MaterialStack(Chrome, 2), new MaterialStack(Oxygen, 4)), GENERATE_ORE, null);
-    public static GemMaterial Cinnabar = new GemMaterial(142, "cinnabar", 0x960000, EMERALD, 1, of(new MaterialStack(Mercury, 1), new MaterialStack(Sulfur, 1)), GENERATE_ORE | CRYSTALLISABLE);
+    public static GemMaterial Cinnabar = new GemMaterial(142, "cinnabar", 0x960000, EMERALD, 1, of(new MaterialStack(Mercury, 1), new MaterialStack(Sulfur, 1)), GENERATE_ORE | CRYSTALLISABLE | DECOMPOSITION_BY_CENTRIFUGING);
     public static FluidMaterial Water = new FluidMaterial(143, "water", 0x0000FF, FLUID, of(new MaterialStack(Hydrogen, 2), new MaterialStack(Oxygen, 1)), NO_RECYCLING | DISABLE_DECOMPOSITION);
     public static DustMaterial Clay = new DustMaterial(144, "clay", 0xC8C8DC, ROUGH, 1, of(new MaterialStack(Sodium, 2), new MaterialStack(Lithium, 1), new MaterialStack(Aluminium, 2), new MaterialStack(Silicon, 2), new MaterialStack(Water, 6)), MORTAR_GRINDABLE);
-    public static GemMaterial Coal = new GemMaterial(145, "coal", 0x464646, LIGNITE, 1, of(new MaterialStack(Carbon, 1)), GENERATE_ORE | FLAMMABLE | NO_SMELTING | NO_SMASHING | MORTAR_GRINDABLE | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES);
+    public static GemMaterial Coal = new GemMaterial(145, "coal", 0x464646, LIGNITE, 1, of(new MaterialStack(Carbon, 1)), GENERATE_ORE | FLAMMABLE | NO_SMELTING | NO_SMASHING | MORTAR_GRINDABLE | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES | DISABLE_DECOMPOSITION);
     public static DustMaterial Cobaltite = new DustMaterial(146, "cobaltite", 0x5050FA, METALLIC, 1, of(new MaterialStack(Cobalt, 1), new MaterialStack(Arsenic, 1), new MaterialStack(Sulfur, 1)), GENERATE_ORE);
     public static DustMaterial Cooperite = new DustMaterial(147, "cooperite", 0xFFFFC8, METALLIC, 1, of(new MaterialStack(Platinum, 3), new MaterialStack(Nickel, 1), new MaterialStack(Sulfur, 1), new MaterialStack(Palladium, 1)), GENERATE_ORE);
     public static IngotMaterial Cupronickel = new IngotMaterial(148, "cupronickel", 0xE39680, METALLIC, 1, of(new MaterialStack(Copper, 1), new MaterialStack(Nickel, 1)), EXT_METAL| GENERATE_SPRING);
@@ -212,16 +212,16 @@ public class Materials {
     public static DustMaterial Phosphate = new DustMaterial(172, "phosphate", 0xFFFF00, DULL, 1, of(new MaterialStack(Phosphorus, 1), new MaterialStack(Oxygen, 4)), GENERATE_ORE | NO_SMASHING | NO_SMELTING | FLAMMABLE | EXPLOSIVE);
     public static IngotMaterial PigIron = new IngotMaterial(173, "pig_iron", 0xC8B4B4, METALLIC, 2, of(new MaterialStack(Iron, 1)), EXT_METAL | GENERATE_RING, 6.0F, 4.0f, 384);
     public static IngotMaterial Polyethylene = new IngotMaterial(174, "plastic", 0xC8C8C8, DULL, 1, of(new MaterialStack(Carbon, 1), new MaterialStack(Hydrogen, 2)), GENERATE_PLATE | FLAMMABLE | NO_SMASHING | SMELT_INTO_FLUID | DISABLE_DECOMPOSITION); //todo add polyethylene oredicts
-    public static IngotMaterial Epoxy = new IngotMaterial(175, "epoxy", 0xC88C14, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 4), new MaterialStack(Oxygen, 1)), EXT2_METAL | DISABLE_DECOMPOSITION);
+    public static IngotMaterial Epoxy = new IngotMaterial(175, "epoxy", 0xC88C14, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 4), new MaterialStack(Oxygen, 1)), EXT2_METAL | DISABLE_DECOMPOSITION | NO_SMASHING);
     public static DustMaterial Polysiloxane = new DustMaterial(176, "polysiloxane", 0xDCDCDC, DULL, 1, of(new MaterialStack(Carbon, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Silicon, 2), new MaterialStack(Oxygen, 1)), GENERATE_PLATE | FLAMMABLE | NO_SMASHING | SMELT_INTO_FLUID | DISABLE_DECOMPOSITION);
-    public static IngotMaterial Polycaprolactam = new IngotMaterial(177, "polycaprolactam", 0x323232, DULL, 1, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 11), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 1)), GENERATE_PLATE | DISABLE_DECOMPOSITION);
-    public static IngotMaterial Polytetrafluoroethylene = new IngotMaterial(178, "polytetrafluoroethylene", 0x646464, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Fluorine, 4)), GENERATE_PLATE | GENERATE_FRAME | SMELT_INTO_FLUID | NO_SMASHING | DISABLE_DECOMPOSITION);
+    public static IngotMaterial Polycaprolactam = new IngotMaterial(177, "polycaprolactam", 0x323232, DULL, 1, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 11), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 1)), GENERATE_PLATE | DISABLE_DECOMPOSITION | NO_SMASHING);
+    public static IngotMaterial Polytetrafluoroethylene = new IngotMaterial(178, "polytetrafluoroethylene", 0x646464, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Fluorine, 4)), GENERATE_PLATE | GENERATE_FRAME | SMELT_INTO_FLUID  | DISABLE_DECOMPOSITION | NO_SMASHING);
     public static DustMaterial Powellite = new DustMaterial(179, "powellite", 0xFFFF00, DULL, 2, of(new MaterialStack(Calcium, 1), new MaterialStack(Molybdenum, 1), new MaterialStack(Oxygen, 4)), GENERATE_ORE);
     public static DustMaterial Pyrite = new DustMaterial(180, "pyrite", 0x967828, ROUGH, 1, of(new MaterialStack(Iron, 1), new MaterialStack(Sulfur, 2)), GENERATE_ORE | INDUCTION_SMELTING_LOW_OUTPUT);
     public static DustMaterial Pyrolusite = new DustMaterial(181, "pyrolusite", 0x9696AA, DULL, 2, of(new MaterialStack(Manganese, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE);
     public static DustMaterial Pyrope = new DustMaterial(182, "pyrope", 0x783264, METALLIC, 2, of(new MaterialStack(Aluminium, 2), new MaterialStack(Magnesium, 3), new MaterialStack(Silicon, 3), new MaterialStack(Oxygen, 12)), GENERATE_ORE);
     public static DustMaterial RockSalt = new DustMaterial(183, "rock_salt", 0xF0C8C8, FINE, 1, of(new MaterialStack(Potassium, 1), new MaterialStack(Chlorine, 1)), GENERATE_ORE | NO_SMASHING);
-    public static IngotMaterial Rubber = new IngotMaterial(184, "rubber", 0x000000, SHINY, 0, of(new MaterialStack(Carbon, 5), new MaterialStack(Hydrogen, 8)), GENERATE_PLATE | GENERATE_GEAR | GENERATE_RING | FLAMMABLE | NO_SMASHING | GENERATE_RING | NO_WORKING | DISABLE_DECOMPOSITION);
+    public static IngotMaterial Rubber = new IngotMaterial(184, "rubber", 0x000000, SHINY, 0, of(new MaterialStack(Carbon, 5), new MaterialStack(Hydrogen, 8)), GENERATE_PLATE | GENERATE_GEAR | GENERATE_RING | FLAMMABLE | NO_SMASHING | GENERATE_RING | DISABLE_DECOMPOSITION);
     public static GemMaterial Ruby = new GemMaterial(185, "ruby", 0xFF6464, RUBY, 2, of(new MaterialStack(Chrome, 1), new MaterialStack(Aluminium, 2), new MaterialStack(Oxygen, 3)), STD_GEM | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT, 8.5F, 3.0f, 256);
     public static DustMaterial Salt = new DustMaterial(186, "salt", 0xFAFAFA, FINE, 1, of(new MaterialStack(Sodium, 1), new MaterialStack(Chlorine, 1)), GENERATE_ORE | NO_SMASHING);
     public static DustMaterial Saltpeter = new DustMaterial(187, "saltpeter", 0xE6E6E6, FINE, 1, of(new MaterialStack(Potassium, 1), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 3)), GENERATE_ORE | NO_SMASHING | NO_SMELTING | FLAMMABLE);
@@ -238,7 +238,7 @@ public class Materials {
     public static DustMaterial Sphalerite = new DustMaterial(196, "sphalerite", 0xFFFFFF, DULL, 1, of(new MaterialStack(Zinc, 1), new MaterialStack(Sulfur, 1)), GENERATE_ORE | INDUCTION_SMELTING_LOW_OUTPUT | DISABLE_DECOMPOSITION);
     public static IngotMaterial StainlessSteel = new IngotMaterial(197, "stainless_steel", 0xC8C8DC, SHINY, 2, of(new MaterialStack(Iron, 6), new MaterialStack(Chrome, 1), new MaterialStack(Manganese, 1), new MaterialStack(Nickel, 1)), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_FRAME | GENERATE_LONG_ROD, null, 7.0F, 4.0f, 480, 1700);
     public static IngotMaterial Steel = new IngotMaterial(198, "steel", 0x808080, METALLIC, 2, of(new MaterialStack(Iron, 1)), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_DENSE | DISABLE_DECOMPOSITION | GENERATE_FRAME | GENERATE_LONG_ROD, null, 6.0F, 3.0f, 512, 1000);
-    public static DustMaterial Stibnite = new DustMaterial(199, "stibnite", 0x464646, METALLIC, 2, of(new MaterialStack(Antimony, 2), new MaterialStack(Sulfur, 3)), GENERATE_ORE);
+    public static DustMaterial Stibnite = new DustMaterial(199, "stibnite", 0x464646, METALLIC, 2, of(new MaterialStack(Antimony, 2), new MaterialStack(Sulfur, 3)), GENERATE_ORE | DECOMPOSITION_BY_CENTRIFUGING);
     public static GemMaterial Tanzanite = new GemMaterial(200, "tanzanite", 0x4000C8, GEM_VERTICAL, 2, of(new MaterialStack(Calcium, 2), new MaterialStack(Aluminium, 3), new MaterialStack(Silicon, 3), new MaterialStack(Hydrogen, 1), new MaterialStack(Oxygen, 13)), EXT_METAL | GENERATE_ORE | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT, null, 7.0F, 2.0f, 256);
     public static DustMaterial Tetrahedrite = new DustMaterial(201, "tetrahedrite", 0xC82000, DULL, 2, of(new MaterialStack(Copper, 3), new MaterialStack(Antimony, 1), new MaterialStack(Sulfur, 3), new MaterialStack(Iron, 1)), GENERATE_ORE | INDUCTION_SMELTING_LOW_OUTPUT);
     public static IngotMaterial TinAlloy = new IngotMaterial(202, "tin_alloy", 0xC8C8C8, METALLIC, 2, of(new MaterialStack(Tin, 1), new MaterialStack(Iron, 1)), EXT2_METAL, null);
@@ -250,7 +250,7 @@ public class Materials {
     public static IngotMaterial VanadiumGallium = new IngotMaterial(208, "vanadium_gallium", 0x80808C, SHINY, 2, of(new MaterialStack(Vanadium, 3), new MaterialStack(Gallium, 1)), STD_METAL | GENERATE_FOIL | GENERATE_ROD, null, 4500);
     public static IngotMaterial WroughtIron = new IngotMaterial(209, "wrought_iron", 0xC8B4B4, METALLIC, 2, of(new MaterialStack(Iron, 1)), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_LONG_ROD | DISABLE_DECOMPOSITION, null, 6.0F, 3.5f, 384);
     public static DustMaterial Wulfenite = new DustMaterial(210, "wulfenite", 0xFF8000, DULL, 3, of(new MaterialStack(Lead, 1), new MaterialStack(Molybdenum, 1), new MaterialStack(Oxygen, 4)), GENERATE_ORE);
-    public static DustMaterial YellowLimonite = new DustMaterial(211, "yellow_limonite", 0xC8C800, METALLIC, 2, of(new MaterialStack(Iron, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE | INDUCTION_SMELTING_LOW_OUTPUT);
+    public static DustMaterial YellowLimonite = new DustMaterial(211, "yellow_limonite", 0xC8C800, METALLIC, 2, of(new MaterialStack(Iron, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE | INDUCTION_SMELTING_LOW_OUTPUT | DECOMPOSITION_BY_CENTRIFUGING);
     public static IngotMaterial YttriumBariumCuprate = new IngotMaterial(212, "yttrium_barium_cuprate", 0x504046, METALLIC, 2, of(new MaterialStack(Yttrium, 1), new MaterialStack(Barium, 2), new MaterialStack(Copper, 3), new MaterialStack(Oxygen, 7)), EXT_METAL | GENERATE_FOIL | GENERATE_FINE_WIRE, null, 4500);
     public static GemMaterial NetherQuartz = new GemMaterial(213, "nether_quartz", 0xE6D2D2, QUARTZ, 1, of(), STD_SOLID | NO_SMELTING | CRYSTALLISABLE | GENERATE_ORE | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES);
     public static GemMaterial CertusQuartz = new GemMaterial(214, "certus_quartz", 0xD2D2E6, QUARTZ, 1, of(), STD_SOLID | NO_SMELTING | CRYSTALLISABLE | GENERATE_ORE);
@@ -295,7 +295,7 @@ public class Materials {
     public static FluidMaterial NitricAcid = new FluidMaterial(982, "nitric_acid", 0xCCCC00, FLUID, of(new MaterialStack(Hydrogen, 1), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 3)), 0);
     public static FluidMaterial SulfuricAcid = new FluidMaterial(981, "sulfuric_acid", 0xFFFFFF, FLUID, of(new MaterialStack(Hydrogen, 2), new MaterialStack(Sulfur, 1), new MaterialStack(Oxygen, 4)), 0);
     public static FluidMaterial NitrationMixture = new FluidMaterial(980, "nitration_mixture", 0xE6E2AB, FLUID, of(new MaterialStack(NitricAcid, 1), new MaterialStack(SulfuricAcid, 1)), DISABLE_DECOMPOSITION);
-    public static DustMaterial PhosphorusPentoxide = new DustMaterial(979, "phosphorus_pentoxide", 0xDCDC00, DULL, 1, of(new MaterialStack(Phosphorus, 4), new MaterialStack(Oxygen, 10)), 0);
+    public static DustMaterial PhosphorusPentoxide = new DustMaterial(979, "phosphorus_pentoxide", 0xDCDC00, DULL, 1, of(new MaterialStack(Phosphorus, 4), new MaterialStack(Oxygen, 10)), DISABLE_DECOMPOSITION);
     public static FluidMaterial PhosphoricAcid = new FluidMaterial(978, "phosphoric_acid", 0xDCDC01, FLUID, of(new MaterialStack(Hydrogen, 3), new MaterialStack(Phosphorus, 1), new MaterialStack(Oxygen, 4)), 0);
     public static DustMaterial SodiumHydroxide = new DustMaterial(977, "sodium_hydroxide", 0x003380, DULL, 1, of(new MaterialStack(Sodium, 1), new MaterialStack(Oxygen, 1), new MaterialStack(Hydrogen, 1)), 0);
     public static DustMaterial Quicklime = new DustMaterial(976, "quicklime", 0xF0F0F0, DULL, 1, of(new MaterialStack(Calcium, 1), new MaterialStack(Oxygen, 1)), 0);
@@ -422,12 +422,12 @@ public class Materials {
      * Organic chemistry
      */
     public static IngotMaterial SiliconeRubber = new IngotMaterial(231, "silicon_rubber", 0xDCDCDC, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 1), new MaterialStack(Silicon, 1)), GENERATE_PLATE | GENERATE_GEAR | GENERATE_RING | FLAMMABLE | NO_SMASHING | GENERATE_FOIL | DISABLE_DECOMPOSITION);
-    public static IngotMaterial Polystyrene = new IngotMaterial(232, "polystyrene", 0xBEB4AA, DULL, 1, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 8)), DISABLE_DECOMPOSITION | GENERATE_FOIL);
+    public static IngotMaterial Polystyrene = new IngotMaterial(232, "polystyrene", 0xBEB4AA, DULL, 1, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 8)), DISABLE_DECOMPOSITION | GENERATE_FOIL | NO_SMASHING);
     public static IngotMaterial StyreneButadieneRubber = new IngotMaterial(233, "styrene_butadiene_rubber", 0x211A18, SHINY, 1, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 8), new MaterialStack(Butadiene, 3)), GENERATE_PLATE | GENERATE_GEAR | GENERATE_RING | FLAMMABLE | NO_SMASHING | DISABLE_DECOMPOSITION);
     public static FluidMaterial PolyvinylAcetate = new FluidMaterial(234, "polyvinyl_acetate", 0xFF9955, FLUID, of(new MaterialStack(Carbon, 4), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
-    public static IngotMaterial ReinforcedEpoxyResin = new IngotMaterial(235, "reinforced_epoxy_resin", 0xA07A10, DULL, 1, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Oxygen, 1)), GENERATE_PLATE | DISABLE_DECOMPOSITION);
-    public static IngotMaterial BorosilicateGlass = new IngotMaterial(236, "borosilicate_glass", 0xE6F3E6, SHINY, 1, of(new MaterialStack(Boron, 1), new MaterialStack(SiliconDioxide, 7)), DISABLE_DECOMPOSITION);
-    public static IngotMaterial PolyvinylChloride = new IngotMaterial(237, "polyvinyl_chloride", 0xD7E6E6, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 3), new MaterialStack(Chlorine, 1)), EXT_METAL | GENERATE_FOIL | DISABLE_DECOMPOSITION);
+    public static IngotMaterial ReinforcedEpoxyResin = new IngotMaterial(235, "reinforced_epoxy_resin", 0xA07A10, DULL, 1, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Oxygen, 1)), GENERATE_PLATE | DISABLE_DECOMPOSITION | NO_SMASHING);
+    public static IngotMaterial BorosilicateGlass = new IngotMaterial(236, "borosilicate_glass", 0xE6F3E6, SHINY, 1, of(new MaterialStack(Boron, 1), new MaterialStack(SiliconDioxide, 7)), 0);
+    public static IngotMaterial PolyvinylChloride = new IngotMaterial(237, "polyvinyl_chloride", 0xD7E6E6, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 3), new MaterialStack(Chlorine, 1)), EXT_METAL | GENERATE_FOIL | DISABLE_DECOMPOSITION | NO_SMASHING);
 
     /**
      * Not possible to determine exact Components
@@ -452,21 +452,21 @@ public class Materials {
     /**
      * Second Degree Compounds
      */
-    public static GemMaterial Glass = new GemMaterial(249, "glass", 0xFAFAFA, GLASS, 0, of(new MaterialStack(SiliconDioxide, 1)), GENERATE_PLATE | GENERATE_LENSE | NO_SMASHING | NO_RECYCLING | SMELT_INTO_FLUID | EXCLUDE_BLOCK_CRAFTING_RECIPES);
+    public static GemMaterial Glass = new GemMaterial(249, "glass", 0xFAFAFA, GLASS, 0, of(new MaterialStack(SiliconDioxide, 1)), GENERATE_PLATE | GENERATE_LENSE | NO_SMASHING | NO_RECYCLING | SMELT_INTO_FLUID | EXCLUDE_BLOCK_CRAFTING_RECIPES | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial Perlite = new DustMaterial(250, "perlite", 0x1E141E, DULL, 1, of(new MaterialStack(Obsidian, 2), new MaterialStack(Water, 1)), 0);
     public static DustMaterial Borax = new DustMaterial(251, "borax", 0xFAFAFA, FINE, 1, of(new MaterialStack(Sodium, 2), new MaterialStack(Boron, 4), new MaterialStack(Water, 10), new MaterialStack(Oxygen, 7)), 0);
     public static GemMaterial Lignite = new GemMaterial(252, "lignite", 0x644646, LIGNITE, 0, of(new MaterialStack(Carbon, 2), new MaterialStack(Water, 4), new MaterialStack(DarkAsh, 1)), GENERATE_ORE | FLAMMABLE | NO_SMELTING | NO_SMASHING | MORTAR_GRINDABLE);
     public static GemMaterial Olivine = new GemMaterial(253, "olivine", 0x96FF96, RUBY, 2, of(new MaterialStack(Magnesium, 2), new MaterialStack(Iron, 1), new MaterialStack(SiliconDioxide, 2)), STD_GEM | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT, 7.5F, 3.0f, 312);
-    public static GemMaterial Opal = new GemMaterial(254, "opal", 0x0000FF, OPAL, 2, of(new MaterialStack(SiliconDioxide, 1)), STD_GEM | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT, 7.5F, 3.0f, 312);
+    public static GemMaterial Opal = new GemMaterial(254, "opal", 0x0000FF, OPAL, 2, of(new MaterialStack(SiliconDioxide, 1)), STD_GEM | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT | DECOMPOSITION_BY_CENTRIFUGING, 7.5F, 3.0f, 312);
     public static GemMaterial Amethyst = new GemMaterial(255, "amethyst", 0xD232D2, RUBY, 3, of(new MaterialStack(SiliconDioxide, 4), new MaterialStack(Iron, 1)), STD_GEM | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT, 7.5F, 3.0f, 312);
-    public static DustMaterial Redstone = new DustMaterial(256, "redstone", 0xC80000, ROUGH, 2, of(new MaterialStack(Silicon, 1), new MaterialStack(Pyrite, 5), new MaterialStack(Ruby, 1), new MaterialStack(Mercury, 3)), GENERATE_PLATE | GENERATE_ORE | NO_SMASHING | SMELT_INTO_FLUID | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES);
-    public static GemMaterial Lapis = new GemMaterial(257, "lapis", 0x4646DC, LAPIS, 1, of(new MaterialStack(Lazurite, 12), new MaterialStack(Sodalite, 2), new MaterialStack(Pyrite, 1), new MaterialStack(Calcite, 1)), STD_GEM | NO_SMASHING | NO_SMELTING | CRYSTALLISABLE | NO_WORKING | DECOMPOSITION_BY_ELECTROLYZING | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES);
-    public static DustMaterial Blaze = new DustMaterial(258, "blaze", 0xFFC800, FINE, 1, of(new MaterialStack(DarkAsh, 1), new MaterialStack(Sulfur, 1)), NO_SMELTING | SMELT_INTO_FLUID | MORTAR_GRINDABLE | BURNING);
+    public static DustMaterial Redstone = new DustMaterial(256, "redstone", 0xC80000, ROUGH, 2, of(new MaterialStack(Silicon, 1), new MaterialStack(Pyrite, 5), new MaterialStack(Ruby, 1), new MaterialStack(Mercury, 3)), GENERATE_PLATE | GENERATE_ORE | NO_SMASHING | SMELT_INTO_FLUID | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES | DECOMPOSITION_BY_CENTRIFUGING);
+    public static GemMaterial Lapis = new GemMaterial(257, "lapis", 0x4646DC, LAPIS, 1, of(new MaterialStack(Lazurite, 12), new MaterialStack(Sodalite, 2), new MaterialStack(Pyrite, 1), new MaterialStack(Calcite, 1)), STD_GEM | NO_SMASHING | NO_SMELTING | CRYSTALLISABLE | NO_WORKING | DECOMPOSITION_BY_ELECTROLYZING | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES | DECOMPOSITION_BY_CENTRIFUGING);
+    public static DustMaterial Blaze = new DustMaterial(258, "blaze", 0xFFC800, FINE, 1, of(new MaterialStack(DarkAsh, 1), new MaterialStack(Sulfur, 1)), NO_SMELTING | SMELT_INTO_FLUID | MORTAR_GRINDABLE | BURNING | DECOMPOSITION_BY_CENTRIFUGING);
     public static GemMaterial EnderPearl = new GemMaterial(259, "ender_pearl", 0x6CDCC8, GEM_VERTICAL, 1, of(new MaterialStack(Beryllium, 1), new MaterialStack(Potassium, 4), new MaterialStack(Nitrogen, 5)), GENERATE_PLATE | GENERATE_LENSE | NO_SMASHING | NO_SMELTING);
-    public static GemMaterial EnderEye = new GemMaterial(260, "ender_eye", 0x66FF66, GEM_VERTICAL, 1, of(new MaterialStack(EnderPearl, 1), new MaterialStack(Blaze, 1)), GENERATE_PLATE | GENERATE_LENSE | NO_SMASHING | NO_SMELTING);
-    public static RoughSolidMaterial Flint = new RoughSolidMaterial(261, "flint", 0x002040, FLINT, 1, of(new MaterialStack(SiliconDioxide, 1)), NO_SMASHING | MORTAR_GRINDABLE, () -> OrePrefix.gem);
+    public static GemMaterial EnderEye = new GemMaterial(260, "ender_eye", 0x66FF66, GEM_VERTICAL, 1, of(new MaterialStack(EnderPearl, 1), new MaterialStack(Blaze, 1)), GENERATE_PLATE | GENERATE_LENSE | NO_SMASHING | NO_SMELTING | DECOMPOSITION_BY_CENTRIFUGING);
+    public static RoughSolidMaterial Flint = new RoughSolidMaterial(261, "flint", 0x002040, FLINT, 1, of(new MaterialStack(SiliconDioxide, 1)), NO_SMASHING | MORTAR_GRINDABLE | DECOMPOSITION_BY_CENTRIFUGING, () -> OrePrefix.gem);
     public static DustMaterial Diatomite = new DustMaterial(262, "diatomite", 0xE1E1E1, DULL, 1, of(new MaterialStack(Flint, 8), new MaterialStack(BandedIron, 1), new MaterialStack(Sapphire, 1)), 0);
-    public static DustMaterial Niter = new DustMaterial(263, "niter", 0xFFC8C8, FLINT, 1, of(new MaterialStack(Saltpeter, 1)), NO_SMASHING | NO_SMELTING);
+    public static DustMaterial Niter = new DustMaterial(263, "niter", 0xFFC8C8, FLINT, 1, of(new MaterialStack(Saltpeter, 1)), NO_SMASHING | NO_SMELTING | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial Tantalite = new DustMaterial(264, "tantalite", 0x915028, METALLIC, 3, of(new MaterialStack(Manganese, 1), new MaterialStack(Tantalum, 2), new MaterialStack(Oxygen, 6)), GENERATE_ORE);
     public static GemMaterial Apatite = new GemMaterial(265, "apatite", 0xC8C8FF, DIAMOND, 1, of(new MaterialStack(Calcium, 5), new MaterialStack(Phosphate, 3), new MaterialStack(Chlorine, 1)), GENERATE_ORE | NO_SMASHING | NO_SMELTING | CRYSTALLISABLE);
     public static IngotMaterial SterlingSilver = new IngotMaterial(266, "sterling_silver", 0xFADCE1, SHINY, 2, of(new MaterialStack(Copper, 1), new MaterialStack(Silver, 4)), EXT2_METAL, null, 13.0F, 2.0f, 196, 1700);
@@ -480,24 +480,24 @@ public class Materials {
     public static IngotMaterial TungstenSteel = new IngotMaterial(274, "tungsten_steel", 0x6464A0, METALLIC, 4, of(new MaterialStack(Steel, 1), new MaterialStack(Tungsten, 1)), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_DENSE | GENERATE_FRAME| GENERATE_SPRING, null, 8.0F, 4.0f, 2560, 3000);
     public static IngotMaterial RedAlloy = new IngotMaterial(275, "red_alloy", 0xC80000, DULL, 0, of(new MaterialStack(Copper, 1), new MaterialStack(Redstone, 1)), GENERATE_PLATE | GENERATE_FINE_WIRE);
     public static IngotMaterial CobaltBrass = new IngotMaterial(276, "cobalt_brass", 0xB4B4A0, METALLIC, 2, of(new MaterialStack(Brass, 7), new MaterialStack(Aluminium, 1), new MaterialStack(Cobalt, 1)), EXT2_METAL, null, 8.0F, 2.0f, 256);
-    public static DustMaterial TricalciumPhosphate = new DustMaterial(277, "tricalcium_phosphate", 0xFFFF00, FLINT, 2, of(new MaterialStack(Calcium, 3), new MaterialStack(Phosphate, 2)), GENERATE_ORE | NO_SMASHING | NO_SMELTING | FLAMMABLE | EXPLOSIVE);
-    public static DustMaterial Basalt = new DustMaterial(278, "basalt", 0x1E1414, ROUGH, 1, of(new MaterialStack(Olivine, 1), new MaterialStack(Calcite, 3), new MaterialStack(Flint, 8), new MaterialStack(DarkAsh, 4)), NO_SMASHING);
+    public static DustMaterial TricalciumPhosphate = new DustMaterial(277, "tricalcium_phosphate", 0xFFFF00, FLINT, 2, of(new MaterialStack(Calcium, 3), new MaterialStack(Phosphate, 2)), GENERATE_ORE | NO_SMASHING | NO_SMELTING | FLAMMABLE | EXPLOSIVE | DECOMPOSITION_BY_CENTRIFUGING);
+    public static DustMaterial Basalt = new DustMaterial(278, "basalt", 0x1E1414, ROUGH, 1, of(new MaterialStack(Olivine, 1), new MaterialStack(Calcite, 3), new MaterialStack(Flint, 8), new MaterialStack(DarkAsh, 4)), NO_SMASHING | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial Andesite = new DustMaterial(279, "andesite", 0xBEBEBE, ROUGH, 2, of(), NO_SMASHING);
     public static DustMaterial Diorite = new DustMaterial(280, "diorite", 0xFFFFFF, ROUGH, 2, of(), NO_SMASHING);
     public static DustMaterial Granite = new DustMaterial(281, "granite", 0xCFA18C, ROUGH, 2, of(), NO_SMASHING);
-    public static GemMaterial GarnetRed = new GemMaterial(282, "garnet_red", 0xC85050, RUBY, 2, of(new MaterialStack(Pyrope, 3), new MaterialStack(Almandine, 5), new MaterialStack(Spessartine, 8)), STD_SOLID | GENERATE_LENSE | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT | GENERATE_ORE, null, 7.5F, 3.0f, 156);
-    public static GemMaterial GarnetYellow = new GemMaterial(283, "garnet_yellow", 0xC8C850, RUBY, 2, of(new MaterialStack(Andradite, 5), new MaterialStack(Grossular, 8), new MaterialStack(Uvarovite, 3)), STD_SOLID | GENERATE_LENSE | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT | GENERATE_ORE, null, 7.5F, 3.0f, 156);
-    public static DustMaterial Marble = new DustMaterial(284, "marble", 0xC8C8C8, FINE, 1, of(new MaterialStack(Magnesium, 1), new MaterialStack(Calcite, 7)), NO_SMASHING);
+    public static GemMaterial GarnetRed = new GemMaterial(282, "garnet_red", 0xC85050, RUBY, 2, of(new MaterialStack(Pyrope, 3), new MaterialStack(Almandine, 5), new MaterialStack(Spessartine, 8)), STD_SOLID | GENERATE_LENSE | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT | GENERATE_ORE | DECOMPOSITION_BY_CENTRIFUGING, null, 7.5F, 3.0f, 156);
+    public static GemMaterial GarnetYellow = new GemMaterial(283, "garnet_yellow", 0xC8C850, RUBY, 2, of(new MaterialStack(Andradite, 5), new MaterialStack(Grossular, 8), new MaterialStack(Uvarovite, 3)), STD_SOLID | GENERATE_LENSE | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT | GENERATE_ORE | DECOMPOSITION_BY_CENTRIFUGING, null, 7.5F, 3.0f, 156);
+    public static DustMaterial Marble = new DustMaterial(284, "marble", 0xC8C8C8, FINE, 1, of(new MaterialStack(Magnesium, 1), new MaterialStack(Calcite, 7)), NO_SMASHING | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial Sugar = new DustMaterial(285, "sugar", 0xFAFAFA, FINE, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Water, 5), new MaterialStack(Oxygen, 25)), 0);
     public static GemMaterial Vinteum = new GemMaterial(286, "vinteum", 0x64C8FF, EMERALD, 3, of(), STD_GEM | NO_SMASHING | NO_SMELTING, 12.0F, 3.0f, 128);
-    public static DustMaterial Redrock = new DustMaterial(287, "redrock", 0xFF5032, ROUGH, 1, of(new MaterialStack(Calcite, 2), new MaterialStack(Flint, 1), new MaterialStack(Clay, 1)), NO_SMASHING);
+    public static DustMaterial Redrock = new DustMaterial(287, "redrock", 0xFF5032, ROUGH, 1, of(new MaterialStack(Calcite, 2), new MaterialStack(Flint, 1), new MaterialStack(Clay, 1)), NO_SMASHING | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial PotassiumFeldspar = new DustMaterial(288, "potassium_feldspar", 0x782828, FINE, 1, of(new MaterialStack(Potassium, 1), new MaterialStack(Aluminium, 1), new MaterialStack(Silicon, 3), new MaterialStack(Oxygen, 8)), 0);
     public static DustMaterial Biotite = new DustMaterial(289, "biotite", 0x141E14, METALLIC, 1, of(new MaterialStack(Potassium, 1), new MaterialStack(Magnesium, 3), new MaterialStack(Aluminium, 3), new MaterialStack(Fluorine, 2), new MaterialStack(Silicon, 3), new MaterialStack(Oxygen, 10)), 0);
-    public static DustMaterial GraniteBlack = new DustMaterial(290, "granite_black", 0x0A0A0A, ROUGH, 3, of(new MaterialStack(SiliconDioxide, 4), new MaterialStack(Biotite, 1)), NO_SMASHING);
+    public static DustMaterial GraniteBlack = new DustMaterial(290, "granite_black", 0x0A0A0A, ROUGH, 3, of(new MaterialStack(SiliconDioxide, 4), new MaterialStack(Biotite, 1)), NO_SMASHING | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial GraniteRed = new DustMaterial(291, "granite_red", 0xFF0080, ROUGH, 3, of(new MaterialStack(Aluminium, 2), new MaterialStack(PotassiumFeldspar, 1), new MaterialStack(Oxygen, 3)), NO_SMASHING);
     public static DustMaterial Chrysotile = new DustMaterial(292, "chrysotile", 0x6E8C6E, ROUGH, 2, of(new MaterialStack(Asbestos, 1)), 0);
-    public static DustMaterial Realgar = new DustMaterial(293, "realgar", 0x8C6464, DULL, 2, of(new MaterialStack(Arsenic, 4), new MaterialStack(Sulfur, 4)), 0);
-    public static DustMaterial VanadiumMagnetite = new DustMaterial(294, "vanadium_magnetite", 0x23233C, METALLIC, 2, of(new MaterialStack(Magnetite, 1), new MaterialStack(Vanadium, 1)), GENERATE_ORE);
+    public static DustMaterial Realgar = new DustMaterial(293, "realgar", 0x8C6464, DULL, 2, of(new MaterialStack(Arsenic, 4), new MaterialStack(Sulfur, 4)), DISABLE_DECOMPOSITION);
+    public static DustMaterial VanadiumMagnetite = new DustMaterial(294, "vanadium_magnetite", 0x23233C, METALLIC, 2, of(new MaterialStack(Magnetite, 1), new MaterialStack(Vanadium, 1)), GENERATE_ORE | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial BasalticMineralSand = new DustMaterial(295, "basaltic_mineral_sand", 0x283228, SAND, 1, of(new MaterialStack(Magnetite, 1), new MaterialStack(Basalt, 1)), INDUCTION_SMELTING_LOW_OUTPUT);
     public static DustMaterial GraniticMineralSand = new DustMaterial(296, "granitic_mineral_sand", 0x283C3C, SAND, 1, of(new MaterialStack(Magnetite, 1), new MaterialStack(GraniteBlack, 1)), INDUCTION_SMELTING_LOW_OUTPUT);
     public static DustMaterial GarnetSand = new DustMaterial(297, "garnet_sand", 0xC86400, SAND, 1, of(new MaterialStack(GarnetRed, 1), new MaterialStack(GarnetYellow, 1)), 0);
@@ -512,7 +512,7 @@ public class Materials {
     public static DustMaterial Vermiculite = new DustMaterial(306, "vermiculite", 0xC8B40F, METALLIC, 2, of(new MaterialStack(Iron, 3), new MaterialStack(Aluminium, 4), new MaterialStack(Silicon, 4), new MaterialStack(Hydrogen, 2), new MaterialStack(Water, 4), new MaterialStack(Oxygen, 12)), 0);
     public static DustMaterial Bentonite = new DustMaterial(307, "bentonite", 0xF5D7D2, ROUGH, 2, of(new MaterialStack(Sodium, 1), new MaterialStack(Magnesium, 6), new MaterialStack(Silicon, 12), new MaterialStack(Hydrogen, 4), new MaterialStack(Water, 5), new MaterialStack(Oxygen, 36)), GENERATE_ORE);
     public static DustMaterial FullersEarth = new DustMaterial(308, "fullers_earth", 0xA0A078, FINE, 2, of(new MaterialStack(Magnesium, 1), new MaterialStack(Silicon, 4), new MaterialStack(Hydrogen, 1), new MaterialStack(Water, 4), new MaterialStack(Oxygen, 11)), 0);
-    public static DustMaterial Pitchblende = new DustMaterial(309, "pitchblende", 0xC8D200, DULL, 3, of(new MaterialStack(Uraninite, 3), new MaterialStack(Thorium, 1), new MaterialStack(Lead, 1)), GENERATE_ORE);
+    public static DustMaterial Pitchblende = new DustMaterial(309, "pitchblende", 0xC8D200, DULL, 3, of(new MaterialStack(Uraninite, 3), new MaterialStack(Thorium, 1), new MaterialStack(Lead, 1)), GENERATE_ORE | DECOMPOSITION_BY_CENTRIFUGING);
     public static GemMaterial Monazite = new GemMaterial(310, "monazite", 0x324632, DIAMOND, 1, of(new MaterialStack(RareEarth, 1), new MaterialStack(Phosphate, 1)), GENERATE_ORE | NO_SMASHING | NO_SMELTING | CRYSTALLISABLE);
     public static DustMaterial Malachite = new DustMaterial(311, "malachite", 0x055F05, DULL, 2, of(new MaterialStack(Copper, 2), new MaterialStack(Carbon, 1), new MaterialStack(Hydrogen, 2), new MaterialStack(Oxygen, 5)), GENERATE_ORE | INDUCTION_SMELTING_LOW_OUTPUT);
     public static DustMaterial Mirabilite = new DustMaterial(312, "mirabilite", 0xF0FAD2, DULL, 2, of(new MaterialStack(Sodium, 2), new MaterialStack(Sulfur, 1), new MaterialStack(Water, 10), new MaterialStack(Oxygen, 4)), 0);
@@ -582,10 +582,10 @@ public class Materials {
         for (DustMaterial dustMaterial : new DustMaterial[]{Iron, PigIron, WroughtIron, BrownLimonite}) {
             dustMaterial.addFlag(BLAST_FURNACE_CALCITE_TRIPLE);
         }
-        for (DustMaterial dustMaterial : new DustMaterial[]{Gold, Silver, Osmium, Platinum, Cooperite, Chalcopyrite, Bornite}) {
+        for (DustMaterial dustMaterial : new DustMaterial[]{Gold, Silver, Osmium, Platinum, Cooperite, Chalcopyrite, Bornite, Tungstate, Lead, Nickel, Magnetite, Iridium, Galena, Copper}) {
             dustMaterial.washedIn = Mercury;
         }
-        for (DustMaterial dustMaterial : new DustMaterial[]{Zinc, Nickel, Copper, Cobalt, Cobaltite, Tetrahedrite, Sphalerite}) {
+        for (DustMaterial dustMaterial : new DustMaterial[]{Zinc, Cobalt, Cobaltite, Tetrahedrite, Sphalerite, Iron, Malachite, Tin, Garnierite, YellowLimonite, Antimony, Pentlandite}) {
             dustMaterial.washedIn = SodiumPersulfate;
         }
 
@@ -705,14 +705,14 @@ public class Materials {
         Bentonite.addOreByProducts(Aluminium, Calcium, Magnesium);
         Uraninite.addOreByProducts(Uranium, Thorium, Uranium235);
         Pitchblende.addOreByProducts(Thorium, Uranium, Lead);
-        Galena.addOreByProducts(Sulfur, Silver, Lead);
+        Galena.addOreByProducts(Sulfur, Silver, Lead, Silver);
         Lapis.addOreByProducts(Lazurite, Sodalite, Pyrite);
         Pyrite.addOreByProducts(Sulfur, TricalciumPhosphate, Iron);
-        Copper.addOreByProducts(Cobalt, Gold, Nickel);
-        Nickel.addOreByProducts(Cobalt, Platinum, Iron);
+        Copper.addOreByProducts(Cobalt, Gold, Nickel, Gold);
+        Nickel.addOreByProducts(Cobalt, Platinum, Iron, Platinum);
         GarnetRed.addOreByProducts(Spessartine, Pyrope, Almandine);
         GarnetYellow.addOreByProducts(Andradite, Grossular, Uvarovite);
-        Cooperite.addOreByProducts(Palladium, Nickel, Iridium);
+        Cooperite.addOreByProducts(Palladium, Nickel, Iridium, Cooperite);
         Cinnabar.addOreByProducts(Redstone, Sulfur, Glowstone);
         Tantalite.addOreByProducts(Manganese, Niobium, Tantalum);
         Pollucite.addOreByProducts(Caesium, Aluminium, Rubidium);
@@ -721,15 +721,15 @@ public class Materials {
         Pentlandite.addOreByProducts(Iron, Sulfur, Cobalt);
         Uranium.addOreByProducts(Lead, Uranium235, Thorium);
         Scheelite.addOreByProducts(Manganese, Molybdenum, Calcium);
-        Tungstate.addOreByProducts(Manganese, Silver, Lithium);
+        Tungstate.addOreByProducts(Manganese, Silver, Lithium, Silver);
         Bauxite.addOreByProducts(Grossular, Rutile, Gallium);
         QuartzSand.addOreByProducts(CertusQuartz, Quartzite, Barite);
         Quartzite.addOreByProducts(CertusQuartz, Barite);
         CertusQuartz.addOreByProducts(Quartzite, Barite);
         Redstone.addOreByProducts(Cinnabar, RareEarth, Glowstone);
         Monazite.addOreByProducts(Thorium, Neodymium, RareEarth);
-        Malachite.addOreByProducts(Copper, BrownLimonite, Calcite);
-        YellowLimonite.addOreByProducts(Nickel, BrownLimonite, Cobalt);
+        Malachite.addOreByProducts(Copper, BrownLimonite, Calcite, Copper);
+        YellowLimonite.addOreByProducts(Nickel, BrownLimonite, Cobalt, Nickel);
         BrownLimonite.addOreByProducts(Malachite, YellowLimonite);
         Neodymium.addOreByProducts(Monazite, RareEarth);
         Bastnasite.addOreByProducts(Neodymium, RareEarth);
@@ -737,13 +737,13 @@ public class Materials {
         Zinc.addOreByProducts(Tin, Gallium);
         Tungsten.addOreByProducts(Manganese, Molybdenum);
         Diatomite.addOreByProducts(BandedIron, Sapphire);
-        Iron.addOreByProducts(Nickel, Tin);
+        Iron.addOreByProducts(Nickel, Tin, Nickel);
         Lepidolite.addOreByProducts(Lithium, Caesium);
-        Gold.addOreByProducts(Copper, Nickel);
+        Gold.addOreByProducts(Copper, Nickel, Gold);
         Tin.addOreByProducts(Iron, Zinc);
-        Antimony.addOreByProducts(Zinc, Iron);
-        Silver.addOreByProducts(Lead, Sulfur);
-        Lead.addOreByProducts(Silver, Sulfur);
+        Antimony.addOreByProducts(Zinc, Iron, Zinc);
+        Silver.addOreByProducts(Lead, Sulfur, Silver);
+        Lead.addOreByProducts(Silver, Sulfur, Silver);
         Thorium.addOreByProducts(Uranium, Lead);
         Plutonium.addOreByProducts(Uranium, Lead);
         Electrum.addOreByProducts(Gold, Silver);
@@ -759,7 +759,7 @@ public class Materials {
         Olivine.addOreByProducts(Pyrope, Magnesium, Manganese);
         Chrome.addOreByProducts(Iron, Magnesium);
         Chromite.addOreByProducts(Iron, Magnesium);
-        Tetrahedrite.addOreByProducts(Antimony, Zinc);
+        Tetrahedrite.addOreByProducts(Antimony, Zinc, Tetrahedrite);
         GarnetSand.addOreByProducts(GarnetRed, GarnetYellow);
         Magnetite.addOreByProducts(Iron, Gold);
         GraniticMineralSand.addOreByProducts(GraniteBlack, Magnetite);
@@ -771,7 +771,7 @@ public class Materials {
         Spodumene.addOreByProducts(Aluminium, Lithium);
         Ruby.addOreByProducts(Chrome, GarnetRed);
         TricalciumPhosphate.addOreByProducts(Apatite, Phosphate);
-        Iridium.addOreByProducts(Platinum, Osmium);
+        Iridium.addOreByProducts(Platinum, Osmium, Platinum);
         Pyrope.addOreByProducts(GarnetRed, Magnesium);
         Almandine.addOreByProducts(GarnetRed, Aluminium);
         Spessartine.addOreByProducts(GarnetRed, Manganese);
@@ -796,12 +796,12 @@ public class Materials {
         Graphite.addOreByProducts(Carbon);
         Netherrack.addOreByProducts(Sulfur);
         Flint.addOreByProducts(Obsidian);
-        Cobaltite.addOreByProducts(Cobalt);
+        Cobaltite.addOreByProducts(Cobalt, Cobaltite);
         Cobalt.addOreByProducts(Cobaltite);
         Sulfur.addOreByProducts(Sulfur);
         Saltpeter.addOreByProducts(Saltpeter);
         Endstone.addOreByProducts(Helium3);
-        Osmium.addOreByProducts(Iridium);
+        Osmium.addOreByProducts(Iridium, Osmium);
         Magnesium.addOreByProducts(Olivine);
         Aluminium.addOreByProducts(Bauxite);
         Titanium.addOreByProducts(Almandine);

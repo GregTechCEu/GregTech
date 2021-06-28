@@ -47,6 +47,7 @@ public class DustMaterial extends FluidMaterial {
 
         /**
          * Add to material if it is outputting less in an Induction Smelter.
+         * todo remove
          */
         public static final long INDUCTION_SMELTING_LOW_OUTPUT = createFlag(16);
 

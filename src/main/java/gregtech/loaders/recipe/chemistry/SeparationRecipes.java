@@ -1,15 +1,15 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-import static gregtech.api.recipes.RecipeMaps.CENTRIFUGE_RECIPES;
-import static gregtech.api.recipes.RecipeMaps.ELECTROLYZER_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.ore.OrePrefix.dust;
-import static gregtech.api.unification.ore.OrePrefix.dustTiny;
+import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class SeparationRecipes {
 
@@ -54,6 +54,17 @@ public class SeparationRecipes {
             .fluidOutputs(NitricAcid.getFluid(1000))
             .fluidOutputs(SulfuricAcid.getFluid(1000))
             .duration(192).EUt(30).buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder()
+            .input(dust, ReinforcedEpoxyResin)
+            .output(dust, Epoxy)
+            .duration(24).EUt(5).buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder()
+            .input(OrePrefix.ore, Oilsands)
+            .chancedOutput(new ItemStack(Blocks.SAND), 5000, 5000)
+            .fluidOutputs(Oil.getFluid(500))
+            .duration(1000).EUt(5).buildAndRegister();
 
 
         // Electrolyzer
@@ -131,5 +142,34 @@ public class SeparationRecipes {
             .fluidOutputs(Propane.getFluid(1000))
             .fluidOutputs(Water.getFluid(2000))
             .duration(480).EUt(60).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+            .fluidInputs(Butane.getFluid(1000))
+            .fluidOutputs(Butene.getFluid(1000))
+            .fluidOutputs(Hydrogen.getFluid(2000))
+            .duration(240).EUt(120).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+            .fluidInputs(Butene.getFluid(1000))
+            .fluidOutputs(Butadiene.getFluid(1000))
+            .fluidOutputs(Hydrogen.getFluid(2000))
+            .duration(240).EUt(120).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+            .fluidInputs(Propane.getFluid(1000))
+            .fluidOutputs(Propene.getFluid(1000))
+            .fluidOutputs(Hydrogen.getFluid(2000))
+            .duration(640).EUt(120).buildAndRegister();
+
+        ELECTROLYZER_RECIPES.recipeBuilder()
+            .input(dust, Diamond)
+            .output(dust, Carbon, 64)
+            .duration(768).EUt(30).buildAndRegister();
+
+        // Thermal Centrifuge
+        THERMAL_CENTRIFUGE_RECIPES.recipeBuilder()
+            .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
+            .output(dust, Stone)
+            .duration(500).EUt(48).buildAndRegister();
     }
 }

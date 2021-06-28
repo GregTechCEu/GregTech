@@ -131,6 +131,14 @@ public class BlockGregSapling extends BlockBush implements IGrowable, IPlantable
         }
     }
 
+    public ItemStack getItem(LogVariant variant) {
+        return new ItemStack(this, 1, variant.ordinal() * 2);
+    }
+
+    public ItemStack getItem(LogVariant variant, int amount) {
+        return new ItemStack(this, amount, variant.ordinal() * 2);
+    }
+
     public static class WorldGenBigTreeCustom extends WorldGenBigTree {
 
         private final IBlockState logBlock;

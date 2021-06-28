@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe;
 
+import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
@@ -48,6 +49,19 @@ public class WoodMachineRecipes {
             .duration(160).EUt(8)
             .buildAndRegister();
 
+        RecipeMaps.LATHE_RECIPES.recipeBuilder()
+            .inputs(new ItemStack(Blocks.SAPLING, 1, GTValues.W))
+            .outputs(new ItemStack(Items.STICK))
+            .output(OrePrefix.dustTiny, Materials.Wood)
+            .duration(16).EUt(8)
+            .buildAndRegister();
+
+        RecipeMaps.LATHE_RECIPES.recipeBuilder()
+            .inputs(new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W))
+            .outputs(new ItemStack(Items.BOWL))
+            .output(OrePrefix.dustSmall, Materials.Wood)
+            .duration(50).EUt(8)
+            .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
             .input(OrePrefix.plank, Materials.Wood, 6)
