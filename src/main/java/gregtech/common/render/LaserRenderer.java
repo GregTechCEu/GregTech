@@ -56,7 +56,7 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
     public static LaserRenderer INSTANCE = new LaserRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
     private static ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
-    private TextureAtlasSprite[] insulationTextures = new TextureAtlasSprite[6];
+    //private TextureAtlasSprite[] insulationTextures = new TextureAtlasSprite[6];
     private TextureAtlasSprite wireTexture;
 
     public static void preInit() {
@@ -67,8 +67,8 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
     }
     public void registerIcons(TextureMap map) {
         GTLog.logger.info("Registering laser textures.");
-        ResourceLocation laserlocation = new ResourceLocation(GTValues.MODID, "blocks/cable/wire");
-        this.wireTexture = map.registerSprite(laserlocation);
+        ResourceLocation wireLocation = new ResourceLocation(GTValues.MODID, "blocks/cable/laser");
+        this.wireTexture = map.registerSprite(wireLocation);
     }
     @SubscribeEvent
     public void onModelsBake(ModelBakeEvent event) {
@@ -88,8 +88,8 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
         BlockLaser blockCable = (BlockLaser) ((ItemBlockLaser) stack.getItem()).getBlock();
         LaserSize insulation = blockCable.getItemPipeType(stack);
         Material material = blockCable.getItemMaterial(stack);
-        if (insulation != null && material != null) {
-            renderCableBlock(material, insulation, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0],
+        if (insulation != null ) {
+            renderCableBlock(insulation, renderState, new IVertexOperation[0],
                     1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
                             1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
         }
@@ -108,14 +108,13 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
         BlockLaser blockCable = (BlockLaser) state.getBlock();
         TileEntityLaser tileEntityCable = (TileEntityLaser) blockCable.getPipeTileEntity(world, pos);
         if (tileEntityCable == null) return false;
-        int paintingColor = tileEntityCable.getInsulationColor();
+        int paintingColor = IPipeTile.DEFAULT_INSULATION_COLOR;
         int connectedSidesMask = blockCable.getActualConnections(tileEntityCable, world);
         LaserSize insulation = tileEntityCable.getPipeType();
-        Material material = tileEntityCable.getPipeMaterial();
-        if (insulation != null && material != null) {
+        if (insulation != null ) {
             BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
             if (renderLayer == BlockRenderLayer.CUTOUT) {
-                renderCableBlock(material, insulation, paintingColor, renderState, pipeline, connectedSidesMask);
+                renderCableBlock(insulation, renderState, pipeline, connectedSidesMask);
             }
             ICoverable coverable = tileEntityCable.getCoverableImplementation();
             coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), renderLayer);
@@ -123,14 +122,11 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
         return true;
     }
 
-    public void renderCableBlock(Material material, LaserSize insulation1, int insulationColor1, CCRenderState state, IVertexOperation[] pipeline, int connectMask) {
+    public void renderCableBlock( LaserSize insulation1, CCRenderState state, IVertexOperation[] pipeline, int connectMask) {
         int wireColor = GTUtility.convertRGBtoOpaqueRGBA_CL(0xFFFFFF);
-        float thickness = .2f;
+        float thickness = .10f;
 
         IVertexOperation[] wire = ArrayUtils.addAll(pipeline, new IconTransformation(wireTexture), new ColourMultiplier(wireColor));
-        IVertexOperation[] overlays = wire;
-        IVertexOperation[] insulation = wire;
-
 
         Cuboid6 cuboid6 = BlockLaser.getSideBox(null, thickness);
         for (EnumFacing renderedSide : EnumFacing.VALUES) {
@@ -139,19 +135,19 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
                 if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & ~(1 << oppositeIndex)) == 0) {
                     //if there is something on opposite side, render overlay + wire
                     renderCableSide(state, wire, renderedSide, cuboid6);
-                    renderCableSide(state, overlays, renderedSide, cuboid6);
+                    renderCableSide(state, wire, renderedSide, cuboid6);
                 } else {
-                    renderCableSide(state, insulation, renderedSide, cuboid6);
+                    renderCableSide(state, wire, renderedSide, cuboid6);
                 }
             }
         }
 
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.DOWN, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.UP, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.WEST, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.EAST, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.NORTH, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.SOUTH, thickness);
+        renderCableCube(connectMask, state, wire, wire, wire, EnumFacing.DOWN, thickness);
+        renderCableCube(connectMask, state, wire, wire, wire, EnumFacing.UP, thickness);
+        renderCableCube(connectMask, state, wire, wire, wire, EnumFacing.WEST, thickness);
+        renderCableCube(connectMask, state, wire, wire, wire, EnumFacing.EAST, thickness);
+        renderCableCube(connectMask, state, wire, wire, wire, EnumFacing.NORTH, thickness);
+        renderCableCube(connectMask, state, wire, wire, wire, EnumFacing.SOUTH, thickness);
     }
 
 
@@ -195,7 +191,7 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
         if (insulation == null) {
             return;
         }
-        float thickness = .2F;
+        float thickness = .10F;
         int connectedSidesMask = blockCable.getActualConnections(tileEntityCable, world);
         Cuboid6 baseBox = BlockLaser.getSideBox(null, thickness);
         BlockRenderer.renderCuboid(renderState, baseBox, 0);
@@ -238,16 +234,13 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
         if (tileEntity == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
-        Material material = ((TileEntityLaser) tileEntity).getPipeMaterial();
-        LaserSize insulation = tileEntity.getPipeType();
-        if (material == null || insulation == null) {
+        LaserSize opticalFiberSize = tileEntity.getPipeType();
+        if (opticalFiberSize == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
         TextureAtlasSprite atlasSprite;
-        int particleColor;
-            atlasSprite = insulationTextures[5];
-            particleColor = tileEntity.getInsulationColor();
+        atlasSprite = wireTexture;
 
-        return Pair.of(atlasSprite, particleColor);
+        return Pair.of(atlasSprite, 0xFFFFFF);
     }
 }
