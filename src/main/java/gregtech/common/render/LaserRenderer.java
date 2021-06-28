@@ -81,15 +81,13 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
         if (!(stack.getItem() instanceof ItemBlockLaser)) {
             return;
         }
-        GlStateManager.enableBlend();
         CCRenderState renderState = CCRenderState.instance();
         renderState.reset();
         renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-        BlockLaser blockCable = (BlockLaser) ((ItemBlockLaser) stack.getItem()).getBlock();
-        LaserSize insulation = blockCable.getItemPipeType(stack);
-        Material material = blockCable.getItemMaterial(stack);
-        if (insulation != null ) {
-            renderCableBlock(insulation, renderState, new IVertexOperation[0],
+        BlockLaser blockOpticalFiber = (BlockLaser) ((ItemBlockLaser) stack.getItem()).getBlock();
+        LaserSize opticalFiberSize = blockOpticalFiber.getItemPipeType(stack);
+        if (opticalFiberSize != null) {
+            renderCableBlock(opticalFiberSize, renderState, new IVertexOperation[0],
                     1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
                             1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
         }
@@ -111,7 +109,8 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
         int paintingColor = IPipeTile.DEFAULT_INSULATION_COLOR;
         int connectedSidesMask = blockCable.getActualConnections(tileEntityCable, world);
         LaserSize insulation = tileEntityCable.getPipeType();
-        if (insulation != null ) {
+        Material material = tileEntityCable.getPipeMaterial();
+        if (insulation != null && material != null ) {
             BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
             if (renderLayer == BlockRenderLayer.CUTOUT) {
                 renderCableBlock(insulation, renderState, pipeline, connectedSidesMask);
@@ -238,9 +237,12 @@ public class LaserRenderer implements ICCBlockRenderer, IItemRenderer {
         if (opticalFiberSize == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
+        Material material = ((TileEntityLaser) tileEntity).getPipeMaterial();
         TextureAtlasSprite atlasSprite;
         atlasSprite = wireTexture;
-
+        int particleColor;
+        particleColor = material.materialRGB;
         return Pair.of(atlasSprite, 0xFFFFFF);
+
     }
 }
