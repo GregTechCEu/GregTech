@@ -1,6 +1,7 @@
 package gregtech.api.capability.impl;
 
 
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.common.pipelike.laser.tile.CableLaserContainer;
 import gregtech.api.metatileentity.MTETrait;
