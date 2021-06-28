@@ -3,7 +3,7 @@ import gregtech.api.pipenet.WorldPipeNet;
 import net.minecraft.world.World;
 import gregtech.common.pipelike.laser.tile.LaserProperties;
 public class WorldLaserNet extends  WorldPipeNet<LaserProperties, LaserPipeNet> {
-    private static final String DATA_ID = "gt.laser.net";
+    private static final String DATA_ID = "gregtech.laser_net";
 
     public static WorldLaserNet getWorldENet(World world) {
         WorldLaserNet eNetWorldData = (WorldLaserNet) world.loadData(WorldLaserNet.class, DATA_ID);
