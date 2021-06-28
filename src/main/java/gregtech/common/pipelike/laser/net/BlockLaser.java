@@ -1,35 +1,33 @@
 package gregtech.common.pipelike.laser.net;
 import com.google.common.base.Preconditions;
 import gregtech.api.capability.GregtechCapabilities;
-
+import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
+import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.laser.net.LaserPipeNet;
-import gregtech.common.pipelike.laser.net.WorldLaserNet;
 import gregtech.common.pipelike.laser.tile.*;
-import gregtech.common.render.CableRenderer;
 import gregtech.common.render.LaserRenderer;
+import gregtech.common.tools.DamageValues;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import gregtech.api.pipenet.block.BlockPipe;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -106,6 +104,24 @@ public class BlockLaser extends BlockMaterialPipe<LaserSize,LaserProperties,Worl
         }
         return activeNodeConnections;
     }
+    @Override
+    public int onPipeToolUsed(ItemStack stack, EnumFacing coverSide, IPipeTile<LaserSize, LaserProperties> pipeTile, EntityPlayer entityPlayer) {
+        ICutterItem cutterItem = stack.getCapability(GregtechCapabilities.CAPABILITY_CUTTER, null);
+        if (cutterItem != null) {
+            if (cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, true)) {
+                if (!entityPlayer.world.isRemote) {
+                    boolean isBlocked = pipeTile.isConnectionBlocked(AttachmentType.PIPE, coverSide);
+                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, !isBlocked, false);
+                    cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, false);
+                }
+                return 1;
+            }
+            return 0;
+        }
+        return -1;
+    }
+
+
     @Override
     public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
     }
