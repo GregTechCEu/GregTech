@@ -171,5 +171,11 @@ public class SeparationRecipes {
             .inputs(new ItemStack(Blocks.COBBLESTONE, 1, GTValues.W))
             .output(dust, Stone)
             .duration(500).EUt(48).buildAndRegister();
+
+        // Fluid Extractor
+        FLUID_EXTRACTION_RECIPES.recipeBuilder()
+            .input(dust, Monazite)
+            .fluidOutputs(Helium.getFluid(200))
+            .duration(64).EUt(64).buildAndRegister();
     }
 }

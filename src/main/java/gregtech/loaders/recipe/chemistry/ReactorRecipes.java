@@ -36,16 +36,16 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
             .fluidInputs(Butadiene.getFluid(3000))
             .fluidInputs(Styrene.getFluid(1000))
-            .fluidInputs(Air.getFluid(4000))
-            .output(dust, RawStyreneButadieneRubber, 4)
-            .duration(160).EUt(240).buildAndRegister();
+            .fluidInputs(Air.getFluid(15000))
+            .output(dust, RawStyreneButadieneRubber, 27)
+            .duration(480).EUt(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
             .fluidInputs(Butadiene.getFluid(3000))
             .fluidInputs(Styrene.getFluid(1000))
-            .fluidInputs(Oxygen.getFluid(4000))
-            .output(dust, RawStyreneButadieneRubber, 6)
-            .duration(160).EUt(240).buildAndRegister();
+            .fluidInputs(Oxygen.getFluid(15000))
+            .output(dust, RawStyreneButadieneRubber, 41)
+            .duration(480).EUt(240).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
             .input(dust, RawStyreneButadieneRubber, 9)
