@@ -129,6 +129,8 @@ public class MetaTileEntities {
     public static MetaTileEntityImplosionCompressor IMPLOSION_COMPRESSOR;
     public static MetaTileEntityPyrolyseOven PYROLYSE_OVEN;
     public static MetaTileEntityDistillationTower DISTILLATION_TOWER;
+    public static MetaTileEntityEnergyConverterGTEUtoLaser convertEUToLaser;
+    public static MetaTileEntityEnergyConverterLasertoGTEU convertLaserToEU;
     public static MetaTileEntityCrackingUnit CRACKER;
     public static MetaTileEntityMultiFurnace MULTI_FURNACE;
     public static MetaTileEntityDieselEngine DIESEL_ENGINE;
@@ -643,7 +645,8 @@ public class MetaTileEntities {
             GregTechAPI.registerMetaTileEntity(1629 + i, LASER_INPUT_HATCH[i]);
             GregTechAPI.registerMetaTileEntity(1644 + i, LASER_OUTPUT_HATCH[i]);
         }
-
+        convertLaserToEU =GregTechAPI.registerMetaTileEntity(1660, new MetaTileEntityEnergyConverterLasertoGTEU((gregtechId("LaserToEU"))));
+        convertEUToLaser = GregTechAPI.registerMetaTileEntity(1661,new MetaTileEntityEnergyConverterGTEUtoLaser(gregtechId("GTEUToLaser")));
 
         /*
          * FOR ADDON DEVELOPERS:
