@@ -2,7 +2,6 @@ package gregtech.api.unification;
 
 import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import java.util.HashMap;
@@ -146,7 +145,7 @@ public class Elements {
         add(120, 180, -1, null, "Duranium", "Dr", false);
         add(121, 172, 140, null, "Naquadah", "Nq", true);
         add(0, 5000, -1, null, "Neutronium", "Nt", false);
-        add(1000, 1000, -1, null, "Trinium", "Ke", false);
+        add(1000, 1500, -1, null, "Trinium", "Ke", false);
         add(750, 1000, -1, null, "Adamantium", "Ad", false);
         add(850, 900, -1, null, "Vibranium", "Vb", false);
         add(550, 670, -1, null, "Taranium", "Tn", false);

@@ -1,6 +1,5 @@
 package gregtech.api.unification.material;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.type.*;
@@ -9,13 +8,13 @@ import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.init.Enchantments;
 
 import static com.google.common.collect.ImmutableList.of;
+import static gregtech.api.unification.material.MaterialIconSet.*;
 import static gregtech.api.unification.material.type.DustMaterial.MatFlags.*;
 import static gregtech.api.unification.material.type.FluidMaterial.MatFlags.*;
 import static gregtech.api.unification.material.type.GemMaterial.MatFlags.*;
 import static gregtech.api.unification.material.type.IngotMaterial.MatFlags.*;
 import static gregtech.api.unification.material.type.Material.MatFlags.*;
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.*;
-import static gregtech.api.unification.material.MaterialIconSet.*;
 
 @SuppressWarnings("unused")
 public class Materials {
@@ -59,7 +58,7 @@ public class Materials {
     public static IngotMaterial Chrome = new IngotMaterial(22, "chrome", 0xFFE6E6, SHINY, 3, of(), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR, Elements.get("Chrome"), 12.0f, 3.0f, 512, 1700);
     public static IngotMaterial Cobalt = new IngotMaterial(23, "cobalt", 0x5050FA, METALLIC, 2, of(), GENERATE_ORE | STD_METAL, Elements.get("Cobalt"), 10.0F, 3.0f, 256);
     public static IngotMaterial Copernicium = new IngotMaterial(24, "copernicium", 0xFFFEFF, DULL, 4, of(), 0, Elements.get("Copernicium"));
-    public static IngotMaterial Copper = new IngotMaterial(25, "copper", 0xFF6400, SHINY, 1, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_DENSE, Elements.get("Copper"));
+    public static IngotMaterial Copper = new IngotMaterial(25, "copper", 0xFF6400, SHINY, 1, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_DENSE | GENERATE_SPRING, Elements.get("Copper"));
     public static IngotMaterial Curium = new IngotMaterial(26, "curium", 0x7B544E, METALLIC, 3, of(), EXT2_METAL, Elements.get("Curium"));
     public static IngotMaterial Darmstadtium = new IngotMaterial(27, "darmstadtium", 0xAAAAAA, METALLIC, 2, of(), 0, Elements.get("Darmstadtium"));
     public static FluidMaterial Deuterium = new FluidMaterial(28, "deuterium", 0xFFFFFF, FLUID, of(), STATE_GAS, Elements.get("Deuterium"));
@@ -186,7 +185,7 @@ public class Materials {
     public static GemMaterial Coal = new GemMaterial(145, "coal", 0x464646, LIGNITE, 1, of(new MaterialStack(Carbon, 1)), GENERATE_ORE | FLAMMABLE | NO_SMELTING | NO_SMASHING | MORTAR_GRINDABLE | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES);
     public static DustMaterial Cobaltite = new DustMaterial(146, "cobaltite", 0x5050FA, METALLIC, 1, of(new MaterialStack(Cobalt, 1), new MaterialStack(Arsenic, 1), new MaterialStack(Sulfur, 1)), GENERATE_ORE);
     public static DustMaterial Cooperite = new DustMaterial(147, "cooperite", 0xFFFFC8, METALLIC, 1, of(new MaterialStack(Platinum, 3), new MaterialStack(Nickel, 1), new MaterialStack(Sulfur, 1), new MaterialStack(Palladium, 1)), GENERATE_ORE);
-    public static IngotMaterial Cupronickel = new IngotMaterial(148, "cupronickel", 0xE39680, METALLIC, 1, of(new MaterialStack(Copper, 1), new MaterialStack(Nickel, 1)), EXT_METAL);
+    public static IngotMaterial Cupronickel = new IngotMaterial(148, "cupronickel", 0xE39680, METALLIC, 1, of(new MaterialStack(Copper, 1), new MaterialStack(Nickel, 1)), EXT_METAL| GENERATE_SPRING);
     public static DustMaterial DarkAsh = new DustMaterial(149, "dark_ash", 0x323232, DULL, 1, of(new MaterialStack(Carbon, 1)), DISABLE_DECOMPOSITION);
     public static GemMaterial Diamond = new GemMaterial(150, "diamond", 0xC8FFFF, DIAMOND, 3, of(new MaterialStack(Carbon, 1)), GENERATE_ROD | GENERATE_BOLT_SCREW | GENERATE_LENSE | GENERATE_GEAR | NO_SMASHING | NO_SMELTING | FLAMMABLE | HIGH_SIFTER_OUTPUT | GENERATE_ORE | DISABLE_DECOMPOSITION | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, 8.0F, 3.0f, 1280);
     public static IngotMaterial Electrum = new IngotMaterial(151, "electrum", 0xFFFF64, SHINY, 2, of(new MaterialStack(Silver, 1), new MaterialStack(Gold, 1)), EXT2_METAL | MORTAR_GRINDABLE);
@@ -200,13 +199,13 @@ public class Materials {
     public static GemMaterial Rutile = new GemMaterial(159, "rutile", 0xD40D5C, GEM_HORIZONTAL, 2, of(new MaterialStack(Titanium, 1), new MaterialStack(Oxygen, 2)), STD_GEM | DISABLE_DECOMPOSITION);
     public static DustMaterial Bauxite = new DustMaterial(160, "bauxite", 0xC86400, DULL, 1, of(new MaterialStack(Rutile, 2), new MaterialStack(Aluminium, 16), new MaterialStack(Hydrogen, 10), new MaterialStack(Oxygen, 11)), GENERATE_ORE | DISABLE_DECOMPOSITION);
     public static IngotMaterial Invar = new IngotMaterial(161, "invar", 0xB4B478, METALLIC, 2, of(new MaterialStack(Iron, 2), new MaterialStack(Nickel, 1)), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_FRAME, 7.0F, 3.0f, 512);
-    public static IngotMaterial Kanthal = new IngotMaterial(162, "kanthal", 0xC2D2DF, METALLIC, 2, of(new MaterialStack(Iron, 1), new MaterialStack(Aluminium, 1), new MaterialStack(Chrome, 1)), EXT_METAL, null, 1800);
+    public static IngotMaterial Kanthal = new IngotMaterial(162, "kanthal", 0xC2D2DF, METALLIC, 2, of(new MaterialStack(Iron, 1), new MaterialStack(Aluminium, 1), new MaterialStack(Chrome, 1)), EXT_METAL| GENERATE_SPRING, null, 1800);
     public static GemMaterial Lazurite = new GemMaterial(163, "lazurite", 0x6478FF, LAPIS, 1, of(new MaterialStack(Aluminium, 6), new MaterialStack(Silicon, 6), new MaterialStack(Calcium, 8), new MaterialStack(Sodium, 8)), GENERATE_PLATE | GENERATE_ORE | NO_SMASHING | NO_SMELTING | CRYSTALLISABLE | GENERATE_ROD | DECOMPOSITION_BY_ELECTROLYZING);
     public static IngotMaterial Magnalium = new IngotMaterial(164, "magnalium", 0xC8BEFF, DULL, 2, of(new MaterialStack(Magnesium, 1), new MaterialStack(Aluminium, 2)), EXT2_METAL | GENERATE_LONG_ROD, 6.0F, 2.0f, 256);
     public static DustMaterial Magnesite = new DustMaterial(165, "magnesite", 0xFAFAB4, METALLIC, 2, of(new MaterialStack(Magnesium, 1), new MaterialStack(Carbon, 1), new MaterialStack(Oxygen, 3)), GENERATE_ORE);
     public static DustMaterial Magnetite = new DustMaterial(166, "magnetite", 0x1E1E1E, METALLIC, 2, of(new MaterialStack(Iron, 3), new MaterialStack(Oxygen, 4)), GENERATE_ORE);
     public static DustMaterial Molybdenite = new DustMaterial(167, "molybdenite", 0x191919, METALLIC, 2, of(new MaterialStack(Molybdenum, 1), new MaterialStack(Sulfur, 2)), GENERATE_ORE);
-    public static IngotMaterial Nichrome = new IngotMaterial(168, "nichrome", 0xCDCEF6, METALLIC, 2, of(new MaterialStack(Nickel, 4), new MaterialStack(Chrome, 1)), EXT_METAL, null, 2700);
+    public static IngotMaterial Nichrome = new IngotMaterial(168, "nichrome", 0xCDCEF6, METALLIC, 2, of(new MaterialStack(Nickel, 4), new MaterialStack(Chrome, 1)), EXT_METAL| GENERATE_SPRING, null, 2700);
     public static IngotMaterial NiobiumNitride = new IngotMaterial(169, "niobium_nitride", 0x1D291D, DULL, 2, of(new MaterialStack(Niobium, 1), new MaterialStack(Nitrogen, 1)), EXT_METAL, null, 2573);
     public static IngotMaterial NiobiumTitanium = new IngotMaterial(170, "niobium_titanium", 0x1D1D29, DULL, 2, of(new MaterialStack(Niobium, 1), new MaterialStack(Titanium, 1)), EXT2_METAL, null, 4500);
     public static DustMaterial Obsidian = new DustMaterial(171, "obsidian", 0x503264, DULL, 3, of(new MaterialStack(Magnesium, 1), new MaterialStack(Iron, 1), new MaterialStack(Silicon, 2), new MaterialStack(Oxygen, 8)), NO_SMASHING | EXCLUDE_BLOCK_CRAFTING_RECIPES);
@@ -478,7 +477,7 @@ public class Materials {
     public static IngotMaterial RedSteel = new IngotMaterial(271, "red_steel", 0x8C6464, METALLIC, 2, of(new MaterialStack(SterlingSilver, 1), new MaterialStack(BismuthBronze, 1), new MaterialStack(Steel, 2), new MaterialStack(BlackSteel, 4)), EXT_METAL, null, 7.0F, 4.5f, 896, 1300);
     public static IngotMaterial BlueSteel = new IngotMaterial(272, "blue_steel", 0x64648C, METALLIC, 2, of(new MaterialStack(RoseGold, 1), new MaterialStack(Brass, 1), new MaterialStack(Steel, 2), new MaterialStack(BlackSteel, 4)), EXT_METAL | GENERATE_FRAME, null, 7.5F, 5.0f, 1024, 1400);
     public static IngotMaterial DamascusSteel = new IngotMaterial(273, "damascus_steel", 0x6E6E6E, METALLIC, 2, of(new MaterialStack(Steel, 1)), EXT_METAL, null, 8.0F, 5.0f, 1280, 1500);
-    public static IngotMaterial TungstenSteel = new IngotMaterial(274, "tungsten_steel", 0x6464A0, METALLIC, 4, of(new MaterialStack(Steel, 1), new MaterialStack(Tungsten, 1)), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_DENSE | GENERATE_FRAME, null, 8.0F, 4.0f, 2560, 3000);
+    public static IngotMaterial TungstenSteel = new IngotMaterial(274, "tungsten_steel", 0x6464A0, METALLIC, 4, of(new MaterialStack(Steel, 1), new MaterialStack(Tungsten, 1)), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_DENSE | GENERATE_FRAME| GENERATE_SPRING, null, 8.0F, 4.0f, 2560, 3000);
     public static IngotMaterial RedAlloy = new IngotMaterial(275, "red_alloy", 0xC80000, DULL, 0, of(new MaterialStack(Copper, 1), new MaterialStack(Redstone, 1)), GENERATE_PLATE | GENERATE_FINE_WIRE);
     public static IngotMaterial CobaltBrass = new IngotMaterial(276, "cobalt_brass", 0xB4B4A0, METALLIC, 2, of(new MaterialStack(Brass, 7), new MaterialStack(Aluminium, 1), new MaterialStack(Cobalt, 1)), EXT2_METAL, null, 8.0F, 2.0f, 256);
     public static DustMaterial TricalciumPhosphate = new DustMaterial(277, "tricalcium_phosphate", 0xFFFF00, FLINT, 2, of(new MaterialStack(Calcium, 3), new MaterialStack(Phosphate, 2)), GENERATE_ORE | NO_SMASHING | NO_SMELTING | FLAMMABLE | EXPLOSIVE);
@@ -535,7 +534,7 @@ public class Materials {
     public static IngotMaterial NeodymiumMagnetic = new IngotMaterial(328, "neodymium_magnetic", 0x646464, MAGNETIC, 2, of(new MaterialStack(Neodymium, 1)), EXT2_METAL | GENERATE_LONG_ROD, null, 1297);
     public static IngotMaterial TungstenCarbide = new IngotMaterial(329, "tungsten_carbide", 0x330066, METALLIC, 4, of(new MaterialStack(Tungsten, 1), new MaterialStack(Carbon, 1)), EXT2_METAL, null, 12.0F, 4.0f, 1280, 2460);
     public static IngotMaterial VanadiumSteel = new IngotMaterial(330, "vanadium_steel", 0xc0c0c0, METALLIC, 3, of(new MaterialStack(Vanadium, 1), new MaterialStack(Chrome, 1), new MaterialStack(Steel, 7)), EXT2_METAL, null, 7.0F, 3.0f, 1920, 1453);
-    public static IngotMaterial HSSG = new IngotMaterial(331, "hssg", 0x999900, METALLIC, 3, of(new MaterialStack(TungstenSteel, 5), new MaterialStack(Chrome, 1), new MaterialStack(Molybdenum, 2), new MaterialStack(Vanadium, 1)), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_FRAME, null, 10.0F, 5.5f, 4000, 4200);
+    public static IngotMaterial HSSG = new IngotMaterial(331, "hssg", 0x999900, METALLIC, 3, of(new MaterialStack(TungstenSteel, 5), new MaterialStack(Chrome, 1), new MaterialStack(Molybdenum, 2), new MaterialStack(Vanadium, 1)), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_FRAME| GENERATE_SPRING, null, 10.0F, 5.5f, 4000, 4200);
     public static IngotMaterial HSSE = new IngotMaterial(332, "hsse", 0x336600, METALLIC, 4, of(new MaterialStack(HSSG, 6), new MaterialStack(Cobalt, 1), new MaterialStack(Manganese, 1), new MaterialStack(Silicon, 1)), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_FRAME, null, 10.0F, 8.0f, 5120, 5000);
     public static IngotMaterial HSSS = new IngotMaterial(333, "hsss", 0x660033, METALLIC, 4, of(new MaterialStack(HSSG, 6), new MaterialStack(Iridium, 2), new MaterialStack(Osmium, 1)), EXT2_METAL | GENERATE_GEAR, null, 15.0F, 7.0f, 3000, 5000);
     /*
@@ -545,8 +544,8 @@ public class Materials {
     /**
      * Fantasy materials
      */
-    public static IngotMaterial Naquadah = new IngotMaterial(334, "naquadah", 0x323232, METALLIC, 4, of(), EXT_METAL | GENERATE_ORE | GENERATE_FOIL, Elements.get("Naquadah"), 6.0F, 4.0f, 1280, 5400);
-    public static IngotMaterial NaquadahAlloy = new IngotMaterial(335, "naquadah_alloy", 0x282828, METALLIC, 5, of(new MaterialStack(Naquadah, 1), new MaterialStack(Osmiridium, 1)), EXT2_METAL, null, 8.0F, 5.0f, 5120, 7200);
+    public static IngotMaterial Naquadah = new IngotMaterial(334, "naquadah", 0x323232, METALLIC, 4, of(), EXT_METAL | GENERATE_ORE | GENERATE_FOIL| GENERATE_SPRING, Elements.get("Naquadah"), 6.0F, 4.0f, 1280, 5400);
+    public static IngotMaterial NaquadahAlloy = new IngotMaterial(335, "naquadah_alloy", 0x282828, METALLIC, 5, of(new MaterialStack(Naquadah, 1), new MaterialStack(Osmiridium, 1)), EXT2_METAL| GENERATE_SPRING, null, 8.0F, 5.0f, 5120, 7200);
     public static IngotMaterial NaquadahEnriched = new IngotMaterial(336, "naquadah_enriched", 0x323232, METALLIC, 4, of(), EXT_METAL | GENERATE_ORE | GENERATE_FOIL, null, 6.0F, 4.0f, 1280, 4500);
     public static IngotMaterial Naquadria = new IngotMaterial(337, "naquadria", 0x1E1E1E, SHINY, 3, of(), EXT_METAL, Elements.get("Naquadah"), 9000);
     public static IngotMaterial Neutronium = new IngotMaterial(338, "neutronium", 0xFAFAFA, DULL, 6, of(), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_FRAME, Elements.get("Neutronium"), 24.0F, 12F, 655360);
