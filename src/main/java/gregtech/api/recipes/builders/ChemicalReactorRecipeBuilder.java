@@ -34,7 +34,7 @@ public class ChemicalReactorRecipeBuilder extends RecipeBuilder<ChemicalReactorR
     public void buildAndRegister() {
         if (!disableLargeRecipe) {
             RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder().copy()
-                .inputs(this.inputs.toArray(new CountableIngredient[0]))
+                .inputsIngredients(this.inputs)
                 .outputs(this.outputs)
                 .fluidInputs(this.fluidInputs)
                 .fluidOutputs(this.fluidOutputs)
