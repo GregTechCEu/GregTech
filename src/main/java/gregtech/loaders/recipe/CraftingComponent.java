@@ -196,7 +196,10 @@ public class CraftingComponent {
 
                 {GTValues.FALLBACK, new ItemStack(Blocks.GLASS, 1, GTValues.W)},
                 {4, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS)},
-                {5, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS)}
+                {5, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS)},
+                {6, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS)},
+                {7, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS)},
+                {8, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS)}
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
