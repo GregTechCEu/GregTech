@@ -4,6 +4,7 @@ import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.capability.tool.IWrenchItem;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.common.pipelike.laser.tile.LaserContainer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -32,5 +33,8 @@ public class GregtechCapabilities {
     public static Capability<IFuelable> CAPABILITY_FUELABLE = null;
 
     @CapabilityInject(LaserContainer.class)
-    public static Capability<LaserContainer> LASER_CAPABILITY = null;
+    public static Capability<LaserContainer> LASER_CAPABILITY;
+
+    public static MultiblockAbility<LaserContainer> INPUT_LASER = new MultiblockAbility<>();
+    public static MultiblockAbility<LaserContainer> OUTPUT_LASER= new MultiblockAbility<>();
 }
