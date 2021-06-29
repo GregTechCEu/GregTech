@@ -82,6 +82,13 @@ public class MultiblockShapeInfo {
             return blockInfos;
         }
 
+        public Builder copy() {
+            Builder builder = new Builder();
+            builder.shape = this.shape;
+            builder.symbolMap = this.symbolMap;
+            return builder;
+        }
+
         public MultiblockShapeInfo build() {
             return new MultiblockShapeInfo(bakeArray());
         }
