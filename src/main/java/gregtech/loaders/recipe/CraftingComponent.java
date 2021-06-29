@@ -24,7 +24,6 @@ public class CraftingComponent {
     public static Component PUMP;
     public static Component CABLE;
     public static Component WIRE;
-    public static Component MOTOR_WIRE_DOUBLE;
     public static Component CABLE_QUAD;
     public static Component HULL;
     public static Component PIPE_MEDIUM;
