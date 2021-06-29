@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.laserContainerList;
@@ -24,13 +25,15 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.common.pipelike.laser.tile.LaserContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.Capability;
 
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
-
+//Todo fix crash
 
 public class MetaTileEntityEnergyConverterGTEUtoLaser extends MultiblockWithDisplayBase {
 
@@ -51,6 +54,17 @@ public class MetaTileEntityEnergyConverterGTEUtoLaser extends MultiblockWithDisp
             setActive(false);
     }
     @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechCapabilities.LASER_CAPABILITY || capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
+
+            return (T) this;
+        }
+        else if (capability == GregtechTileCapabilities.CAPABILITY_COVERABLE.cast(this)){;
+
+        }
+        return null;
+    }
+    @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
@@ -58,7 +72,7 @@ public class MetaTileEntityEnergyConverterGTEUtoLaser extends MultiblockWithDisp
 
     private void initializeAbilities() {
         this.input = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        this.output = new laserContainerList(getAbilities(GregtechCapabilities.OUTPUT_LASER ));
+        this.output = new laserContainerList(getAbilities(GregtechCapabilities.OUTPUT_LASER));
     }
     private void resetTileAbilities() {
         this.input = new EnergyContainerList(Lists.newArrayList());
@@ -91,9 +105,11 @@ public class MetaTileEntityEnergyConverterGTEUtoLaser extends MultiblockWithDisp
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("ASA")
-                .where('S', selfPredicate())
-                .where('A', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .aisle("IMTZ")
+                .where('T',abilityPartPredicate(GregtechCapabilities.OUTPUT_LASER ))
+                .where('Z',abilityPartPredicate( MultiblockAbility.OUTPUT_ENERGY))
+                .where('M', selfPredicate())
+                .where('I', abilityPartPredicate(MultiblockAbility.INPUT_ENERGY ))
                 .build();
     }
     public IBlockState getCasingState() {
@@ -107,11 +123,11 @@ public class MetaTileEntityEnergyConverterGTEUtoLaser extends MultiblockWithDisp
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityEnergyConverterLasertoGTEU(metaTileEntityId);
+        return new MetaTileEntityEnergyConverterGTEUtoLaser(metaTileEntityId);
     }
     @Override
     protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        return abilities.containsKey(MultiblockAbility.INPUT_ENERGY) && abilities.containsKey(GregtechCapabilities.OUTPUT_LASER);
+        return abilities.containsKey(GregtechCapabilities.OUTPUT_LASER) && abilities.containsKey(MultiblockAbility.INPUT_ENERGY)&& abilities.containsKey(MultiblockAbility.OUTPUT_ENERGY);
     }
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
