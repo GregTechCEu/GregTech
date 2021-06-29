@@ -20,7 +20,6 @@ import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.pipelike.laser.tile.CableLaserContainer;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.common.pipelike.laser.tile.LaserContainer;
 import net.minecraft.block.state.IBlockState;
@@ -34,9 +33,9 @@ import java.util.List;
 import java.util.Map;
 
 
-
+//Todo fix crash
 public class MetaTileEntityEnergyConverterLasertoGTEU extends MultiblockWithDisplayBase {
-    private final MultiblockAbility<?>[] ALLOWED_ABILITIES = new MultiblockAbility[] {GregtechCapabilities.INPUT_LASER,MultiblockAbility.OUTPUT_ENERGY,};
+    private final MultiblockAbility<?>[] ALLOWED_ABILITIES = new MultiblockAbility[] {GregtechCapabilities.INPUT_LASER};
 private LaserContainer input;
 private IEnergyContainer output;
 private boolean isActive = false;
@@ -109,9 +108,12 @@ public MetaTileEntityEnergyConverterLasertoGTEU(ResourceLocation metaTileEntityI
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-                .aisle("ASA")
+                .aisle("ASDX")
+
+                .where('D',abilityPartPredicate(GregtechCapabilities.INPUT_LASER))
+                .where('X', abilityPartPredicate(MultiblockAbility.INPUT_ENERGY))
                 .where('S', selfPredicate())
-                .where('A', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('A', abilityPartPredicate(MultiblockAbility.OUTPUT_ENERGY))
                 .build();
     }
     public IBlockState getCasingState() {
@@ -130,7 +132,7 @@ public MetaTileEntityEnergyConverterLasertoGTEU(ResourceLocation metaTileEntityI
 
     @Override
     protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        return  abilities.containsKey(GregtechCapabilities.INPUT_LASER) && abilities.containsKey(MultiblockAbility.OUTPUT_ENERGY);
+        return  abilities.containsKey(GregtechCapabilities.INPUT_LASER) && abilities.containsKey(MultiblockAbility.OUTPUT_ENERGY) && abilities.containsKey(MultiblockAbility.INPUT_ENERGY );
 
     }
 
