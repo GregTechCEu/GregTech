@@ -4,6 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.LaserContainerHandler;
 import gregtech.api.gui.ModularUI;
@@ -26,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static gregtech.api.metatileentity.multiblock.MultiblockAbility.OUTPUT_LASER;
+
 
 public class MetaTileEntityLaserHatch  extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<LaserContainer> {
     private final boolean isExportHatch;
@@ -59,17 +60,16 @@ public class MetaTileEntityLaserHatch  extends MetaTileEntityMultiblockPart impl
         }
     }
 
-
+@Override
     public MultiblockAbility<LaserContainer> getAbility() {
-        return isExportHatch ? MultiblockAbility.OUTPUT_LASER : MultiblockAbility.INPUT_LASER;
+        return isExportHatch ? GregtechCapabilities.OUTPUT_LASER : GregtechCapabilities.INPUT_LASER;
     }
 
     @Override
-    public void registerAbilities(List<LaserContainer> abilityList) { {
+    public void registerAbilities(List<LaserContainer> abilityList) {
         abilityList.add(Laser);
     }
 
-    }
 
     @Override
     protected boolean openGUIOnRightClick() {
