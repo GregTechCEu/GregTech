@@ -32,9 +32,12 @@ public class GregtechCapabilities {
     @CapabilityInject(IFuelable.class)
     public static Capability<IFuelable> CAPABILITY_FUELABLE = null;
 
-    @CapabilityInject(LaserContainer.class)
-    public static Capability<LaserContainer> LASER_CAPABILITY;
+    @CapabilityInject(IMultiblockController.class)
+    public static Capability<IMultiblockController> CAPABILITY_MULTIBLOCK_CONTROLLER = null;
 
-    public static MultiblockAbility<LaserContainer> INPUT_LASER = new MultiblockAbility<>();
+        @CapabilityInject(LaserContainer.class)
+    public static Capability<LaserContainer> LASER_CAPABILITY;
+    
+        public static MultiblockAbility<LaserContainer> INPUT_LASER = new MultiblockAbility<>();
     public static MultiblockAbility<LaserContainer> OUTPUT_LASER= new MultiblockAbility<>();
 }
