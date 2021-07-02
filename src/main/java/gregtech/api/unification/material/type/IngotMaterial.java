@@ -46,6 +46,8 @@ public class IngotMaterial extends SolidMaterial {
         public static final long GENERATE_ROUND = createFlag(51);
         public static final long GENERATE_DOUBLE_PLATE = createFlag(52);
 
+        public static final long GENERATE_ITEM_PIPE = createFlag(55);
+
         static {
             Material.MatFlags.registerMaterialFlagsHolder(MatFlags.class, IngotMaterial.class);
         }

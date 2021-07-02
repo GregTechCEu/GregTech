@@ -1,7 +1,7 @@
 package gregtech.common.inventory.itemsource;
 
 import gregtech.api.util.ItemStackKey;
-import gregtech.common.pipelike.inventory.network.UpdateResult;
+import gregtech.common.pipelike.itempipe.net.UpdateResult;
 
 import java.util.Map;
 import java.util.Set;
