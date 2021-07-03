@@ -20,6 +20,7 @@ public class ChemistryRecipes {
         ChemicalBathRecipes.init();
         ReactorRecipes.init();
         PolymerRecipes.init();
+        LCRCombined.init();
 
 
         // A Few Random Recipes
