@@ -289,22 +289,52 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SMD_TRANSISTOR;
     public static MetaItem<?>.MetaValueItem TRANSISTOR;
 
-    public static MetaItem<?>.MetaValueItem BASIC_CIRCUIT_LV;
-    public static MetaItem<?>.MetaValueItem BASIC_ELECTRONIC_CIRCUIT_LV;
-    public static MetaItem<?>.MetaValueItem ADVANCED_CIRCUIT_PARTS_LV;
-    public static MetaItem<?>.MetaValueItem GOOD_INTEGRATED_CIRCUIT_MV;
-    public static MetaItem<?>.MetaValueItem ADVANCED_CIRCUIT_MV;
+    // T1: Electronic
+    public static MetaItem<?>.MetaValueItem ELECTRONIC_CIRCUIT_LV;
+    public static MetaItem<?>.MetaValueItem ELECTRONIC_CIRCUIT_MV;
+
+    // T2: Integrated
+    public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT_LV;
+    public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT_MV;
+    public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT_HV;
+
+    // ULV/LV easier circuits
+    public static MetaItem<?>.MetaValueItem NAND_CHIP_ULV;
+    public static MetaItem<?>.MetaValueItem MICROPROCESSOR_LV;
+
+    // T3: Processor
+    public static MetaItem<?>.MetaValueItem PROCESSOR_MV;
     public static MetaItem<?>.MetaValueItem PROCESSOR_ASSEMBLY_HV;
+    public static MetaItem<?>.MetaValueItem WORKSTATION_EV;
+    public static MetaItem<?>.MetaValueItem MAINFRAME_IV;
+
+    // T4: Nano
     public static MetaItem<?>.MetaValueItem NANO_PROCESSOR_HV;
     public static MetaItem<?>.MetaValueItem NANO_PROCESSOR_ASSEMBLY_EV;
+    public static MetaItem<?>.MetaValueItem NANO_COMPUTER_IV;
+    public static MetaItem<?>.MetaValueItem NANO_MAINFRAME_LUV;
+
+    // T5: Quantum
     public static MetaItem<?>.MetaValueItem QUANTUM_PROCESSOR_EV;
-    public static MetaItem<?>.MetaValueItem DATA_CONTROL_CIRCUIT_IV;
+    public static MetaItem<?>.MetaValueItem QUANTUM_ASSEMBLY_IV;
+    public static MetaItem<?>.MetaValueItem QUANTUM_COMPUTER_LUV;
+    public static MetaItem<?>.MetaValueItem QUANTUM_MAINFRAME_ZPM;
+
+    // T6: Crystal
     public static MetaItem<?>.MetaValueItem CRYSTAL_PROCESSOR_IV;
-    public static MetaItem<?>.MetaValueItem ENERGY_FLOW_CIRCUIT_LUV;
+    public static MetaItem<?>.MetaValueItem CRYSTAL_ASSEMBLY_LUV;
+    public static MetaItem<?>.MetaValueItem CRYSTAL_COMPUTER_ZPM;
+    public static MetaItem<?>.MetaValueItem CRYSTAL_MAINFRAME_UV;
+
+    // T7: Wetware
     public static MetaItem<?>.MetaValueItem WETWARE_PROCESSOR_LUV;
     public static MetaItem<?>.MetaValueItem WETWARE_PROCESSOR_ASSEMBLY_ZPM;
     public static MetaItem<?>.MetaValueItem WETWARE_SUPER_COMPUTER_UV;
     public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_MAX;
+
+    // TODO Remove these two
+    public static MetaItem<?>.MetaValueItem DATA_CONTROL_CIRCUIT_IV; // was basically the Quantum Assembly
+    public static MetaItem<?>.MetaValueItem ENERGY_FLOW_CIRCUIT_LUV; // was basically the Crystal Assembly
 
     public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;

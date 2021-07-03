@@ -656,7 +656,7 @@ public class CircuitRecipes {
     private static void circuitRecipes() {
 
         // Handcrafted Circuits
-        ModHandler.addShapedRecipe("basic_circuit", BASIC_CIRCUIT_LV.getStackForm(),
+        ModHandler.addShapedRecipe("basic_circuit", ELECTRONIC_CIRCUIT_LV.getStackForm(),
                 "RPR", "VBV", "CCC",
                 'R', RESISTOR.getStackForm(),
                 'P', new UnificationEntry(plate, Steel),
@@ -664,11 +664,11 @@ public class CircuitRecipes {
                 'B', COATED_BOARD.getStackForm(),
                 'C', new UnificationEntry(cableGtSingle, RedAlloy));
 
-        ModHandler.addShapedRecipe("good_circuit", GOOD_INTEGRATED_CIRCUIT_MV.getStackForm(),
+        ModHandler.addShapedRecipe("good_circuit", INTEGRATED_CIRCUIT_MV.getStackForm(),
                 "RCP", "CDC", "PCR",
                 'R', new UnificationEntry(cableGtSingle, RedAlloy),
                 'P', new UnificationEntry(plate, Steel),
-                'C', BASIC_CIRCUIT_LV.getStackForm(),
+                'C', ELECTRONIC_CIRCUIT_LV.getStackForm(),
                 'D', DIODE.getStackForm());
 
         //circuit assembling recipes TODO
@@ -683,7 +683,7 @@ public class CircuitRecipes {
                     .input(RESISTOR, 2)
                     .input(wireFine, Copper)
                     .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(BASIC_ELECTRONIC_CIRCUIT_LV)
+                    .output(INTEGRATED_CIRCUIT_LV)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(8)
@@ -692,7 +692,7 @@ public class CircuitRecipes {
                     .input(SMD_RESISTOR, 2)
                     .input(wireFine, Copper)
                     .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(BASIC_ELECTRONIC_CIRCUIT_LV)
+                    .output(INTEGRATED_CIRCUIT_LV)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(60)
@@ -703,7 +703,7 @@ public class CircuitRecipes {
                     .input(TRANSISTOR, 4)
                     .input(wireFine, Copper, 2)
                     .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(ADVANCED_CIRCUIT_PARTS_LV, 4)
+                    .output(MICROPROCESSOR_LV, 4)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(60)
@@ -714,7 +714,7 @@ public class CircuitRecipes {
                     .input(SMD_TRANSISTOR, 4)
                     .input(wireFine, Copper, 2)
                     .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(ADVANCED_CIRCUIT_PARTS_LV, 4)
+                    .output(MICROPROCESSOR_LV, 4)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(600)
@@ -722,26 +722,26 @@ public class CircuitRecipes {
                     .input(SYSTEM_ON_CHIP, 4)
                     .input(wireFine, Copper, 2)
                     .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(ADVANCED_CIRCUIT_PARTS_LV, 4)
+                    .output(MICROPROCESSOR_LV, 4)
                     .buildAndRegister();
 
             // MV Circuits
             ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(16)
                     .input(PHENOLIC_BOARD)
-                    .input(BASIC_ELECTRONIC_CIRCUIT_LV, 3)
+                    .input(INTEGRATED_CIRCUIT_LV, 3)
                     .input(RESISTOR, 4)
                     .input(wireFine, Gold, 8)
                     .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(GOOD_INTEGRATED_CIRCUIT_MV)
+                    .output(INTEGRATED_CIRCUIT_MV)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(16)
                     .input(PHENOLIC_BOARD)
-                    .input(BASIC_ELECTRONIC_CIRCUIT_LV, 3)
+                    .input(INTEGRATED_CIRCUIT_LV, 3)
                     .input(SMD_RESISTOR, 4)
                     .input(wireFine, Gold, 8)
                     .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(GOOD_INTEGRATED_CIRCUIT_MV)
+                    .output(INTEGRATED_CIRCUIT_MV)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(60)
@@ -752,7 +752,7 @@ public class CircuitRecipes {
                     .input(TRANSISTOR, 2)
                     .input(wireFine, RedAlloy, 2)
                     .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(ADVANCED_CIRCUIT_MV)
+                    .output(PROCESSOR_MV)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(60)
@@ -763,7 +763,7 @@ public class CircuitRecipes {
                     .input(SMD_TRANSISTOR, 2)
                     .input(wireFine, RedAlloy, 2)
                     .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(ADVANCED_CIRCUIT_MV)
+                    .output(PROCESSOR_MV)
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(2400)
@@ -771,13 +771,13 @@ public class CircuitRecipes {
                     .input(SYSTEM_ON_CHIP)
                     .input(wireFine, RedAlloy, 2)
                     .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(ADVANCED_CIRCUIT_MV)
+                    .output(PROCESSOR_MV)
                     .buildAndRegister();
 
             // HV Circuits
             ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(90)
                     .input(PLASTIC_BOARD)
-                    .input(ADVANCED_CIRCUIT_MV, 2)
+                    .input(PROCESSOR_MV, 2)
                     .input(SMALL_COIL, 4)
                     .input(CAPACITOR, 4)
                     .input(RANDOM_ACCESS_MEMORY, 4)
@@ -788,7 +788,7 @@ public class CircuitRecipes {
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(90)
                     .input(PLASTIC_BOARD)
-                    .input(ADVANCED_CIRCUIT_MV, 2)
+                    .input(PROCESSOR_MV, 2)
                     .input(SMALL_COIL, 4)
                     .input(SMD_CAPACITOR, 4)
                     .input(RANDOM_ACCESS_MEMORY, 4)
@@ -949,7 +949,7 @@ public class CircuitRecipes {
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(90)
                     .input(PLASTIC_BOARD)
-                    .input(ADVANCED_CIRCUIT_MV)
+                    .input(PROCESSOR_MV)
                     .input(NAND_MEMORY_CHIP, 32)
                     .input(RANDOM_ACCESS_MEMORY, 4)
                     .input(wireFine, RedAlloy, 8)
