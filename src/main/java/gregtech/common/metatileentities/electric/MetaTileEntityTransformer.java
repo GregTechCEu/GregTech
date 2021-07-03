@@ -96,23 +96,36 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
         if (isTransformUp) {
             //storage = 1 amp high; input = tier / 4; amperage = 4; output = tier; amperage = 1
             this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage / 4, 4, tierVoltage, 1);
+            ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s != EnumFacing.NORTH);
+            ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == EnumFacing.NORTH);
         } else {
             //storage = 1 amp high; input = tier; amperage = 1; output = tier / 4; amperage = 4
             this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage, 1, tierVoltage / 4, 4);
+            ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s == EnumFacing.NORTH);
+            ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s != EnumFacing.NORTH);
+
         }
-        ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s == getFrontFacing());
-        ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing().getOpposite());
-    }
+}
+
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (isTransformUp) {
-            Textures.ENERGY_OUT_MULTI.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-            Textures.ENERGY_IN.renderSided(getFrontFacing().getOpposite(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+            Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+            Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
+            Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
+            Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
+            Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
+            Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
         } else {
-            Textures.ENERGY_IN_MULTI.renderSided(getFrontFacing(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-            Textures.ENERGY_OUT.renderSided(getFrontFacing().getOpposite(), renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
+            Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+            Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
+            Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
+            Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
+            Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
+            Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
+
         }
     }
 
