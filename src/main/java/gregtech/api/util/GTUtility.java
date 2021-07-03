@@ -865,41 +865,4 @@ public class GTUtility {
         }
         return false;
     }
-
-    public static int getRatioForDistillation(List<FluidStack> fluidInputs, List<FluidStack> fluidOutputs, List<ItemStack> outputs) {
-        int[] divisors = new int[]{2, 5, 10};
-        int ratio = -1;
-
-        for (int divisor : divisors) {
-
-            if (!(checkFluidStackDivisibility(fluidInputs, divisor)))
-                continue;
-
-            if (!(checkFluidStackDivisibility(fluidOutputs, divisor)))
-                continue;
-
-            if (!(checkItemStackDivisibility(outputs, divisor)))
-                continue;
-
-            ratio = divisor;
-        }
-
-        return Math.max(1, ratio);
-    }
-
-    private static boolean checkFluidStackDivisibility(List<FluidStack> fluidStacks, int divisor) {
-        for (FluidStack fluidStack : fluidStacks) {
-            if (fluidStack.amount % divisor != 0)
-                return false;
-        }
-        return true;
-    }
-
-    private static boolean checkItemStackDivisibility(List<ItemStack> itemStacks, int divisor) {
-        for (ItemStack itemStack : itemStacks) {
-            if (itemStack.getCount() % divisor != 0)
-                return false;
-        }
-        return true;
-    }
 }
