@@ -96,18 +96,13 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
         if (isTransformUp) {
             //storage = 1 amp high; input = tier / 4; amperage = 4; output = tier; amperage = 1
             this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage / 4, 4, tierVoltage, 1);
-        } else {
+            ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s != getFrontFacing());
+            ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
+        } else{
             //storage = 1 amp high; input = tier; amperage = 1; output = tier / 4; amperage = 4
             this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage, 1, tierVoltage / 4, 4);
-        }
-        if (isTransformUp) {
-            ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s == EnumFacing.NORTH);
-            ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s != EnumFacing.NORTH);
-        }
-        else {
-            ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s == EnumFacing.NORTH);
-            ((EnergyContainerHandler) this.energyContainer).setSideInputCondition (s -> s != EnumFacing.NORTH);
-
+            ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s == getFrontFacing());
+            ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s != getFrontFacing());
         }
     }
 
