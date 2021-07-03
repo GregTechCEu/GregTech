@@ -4,6 +4,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.ValidationResult;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -58,7 +59,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
             }
 
             if (this.outputs.size() > 0) {
-                boolean itemsDivisible = isItemStackDivisibleForDistillery(this.outputs.get(0), ratio) && fluidsDivisible;
+                boolean itemsDivisible = GTUtility.isItemStackCountDivisible(this.outputs.get(0), ratio) && fluidsDivisible;
 
                 if (fluidsDivisible && itemsDivisible) {
                     ItemStack stack = this.outputs.get(0).copy();
@@ -79,7 +80,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
     }
 
     private int getRatioForDistillery(FluidStack fluidInput, FluidStack fluidOutput, ItemStack output) {
-        int[] divisors = new int[]{2, 5, 10};
+        int[] divisors = new int[]{2, 5, 10, 25, 50};
         int ratio = -1;
 
         for (int divisor : divisors) {
@@ -90,7 +91,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
             if (!(isFluidStackDivisibleForDistillery(fluidOutput, divisor)))
                 continue;
 
-            if (output != null && !(isItemStackDivisibleForDistillery(output, divisor)))
+            if (output != null && !(GTUtility.isItemStackCountDivisible(output, divisor)))
                 continue;
 
             ratio = divisor;
@@ -100,11 +101,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
     }
 
     private boolean isFluidStackDivisibleForDistillery(FluidStack fluidStack, int divisor) {
-        return fluidStack.amount % divisor == 0 && fluidStack.amount / divisor > 25 && fluidStack.amount % divisor != fluidStack.amount && fluidStack.amount / divisor != 0;
-    }
-
-    private boolean isItemStackDivisibleForDistillery(ItemStack itemStack, int divisor) {
-        return itemStack.getCount() % divisor == 0 && itemStack.getCount() % divisor != itemStack.getCount() && itemStack.getCount() / divisor != 0;
+        return GTUtility.isFluidStackAmountDivisible(fluidStack, divisor) && fluidStack.amount / divisor >= 25;
     }
 
 }
