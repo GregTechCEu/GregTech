@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: sudosubin/git-clone-action@v1
       with:
-        repository: '<USER>/<REPO>'
+        repository: ${{ github.repository }}
         platform: 'github'
     - name: Declare some variables
       id: vars
