@@ -448,13 +448,34 @@ metaitem.wafer.neutronium.name=Neutronium-doped Wafer
 metaitem.wafer.neutronium.tooltip=Raw Circuit
 
 metaitem.board.coated.name=Coated Circuit Board
-metaitem.board.epoxy.name=Epoxy Circuit Board
-metaitem.board.fiber_reinforced.name=Fiber-Reinforced Circuit Board
-metaitem.board.multilayer.fiber_reinforced.name=Multi-layer Fiber-Reinforced Circuit Board
+metaitem.board.coated.tooltip=A Coated Board
 metaitem.board.phenolic.name=Phenolic Circuit Board
+metaitem.board.phenolic.tooltip=A Good Board
 metaitem.board.plastic.name=Plastic Circuit Board
+metaitem.board.plastic.tooltip=A Good Board
+metaitem.board.epoxy.name=Epoxy Circuit Board
+metaitem.board.epoxy.tooltip=An Advanced Board
+metaitem.board.fiber_reinforced.name=Fiber-Reinforced Circuit Board
+metaitem.board.fiber_reinforced.tooltip=An Extreme Board
+metaitem.board.multilayer.fiber_reinforced.name=Multi-layer Fiber-Reinforced Circuit Board
+metaitem.board.multiplayer.fiber_reinforced.name=An Elite Board
 metaitem.board.wetware.name=Wetware Lifesupport Circuit Board
 metaitem.board.wetware.tooltip=The Board that keeps life
+
+metaitem.circuit_board.basic.name=Circuit Board
+metaitem.circuit_board.basic.tooltip=A Basic Circuit Board
+metaitem.circuit_board.good.name=Good Circuit Board
+metaitem.circuit_board.good.tooltip=A Good Circuit Board
+metaitem.circuit_board.plastic.name=Plastic Circuit Board
+metaitem.circuit_board.plastic.tooltip=A Good Circuit Board
+metaitem.circuit_board.advanced.name=Advanced Circuit Board
+metaitem.circuit_board.advanced.tooltip=An Advanced Circuit Board
+metaitem.circuit_board.extreme.name=Extreme Circuit Board
+metaitem.circuit_board.extreme.tooltip=A More Advanced Circuit Board
+metaitem.circuit_board.elite.name=Elite Circuit Board
+metaitem.circuit_board.elite.tooltip=An Elite Circuit Board
+metaitem.circuit_board.wetware.name=Master Circuit Board
+metaitem.circuit_board.wetware.tooltip=The Board that keeps life
 
 metaitem.circuit.vacuum_tube.name=Vacuum Tube
 metaitem.circuit.vacuum_tube.tooltip=Technically a Diode/n§cULV-tier

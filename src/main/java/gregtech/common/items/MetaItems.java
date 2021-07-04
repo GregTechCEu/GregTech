@@ -276,12 +276,20 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CRYSTAL_SYSTEM_ON_CHIP;
 
     public static MetaItem<?>.MetaValueItem COATED_BOARD;
+    public static MetaItem<?>.MetaValueItem PHENOLIC_BOARD;
+    public static MetaItem<?>.MetaValueItem PLASTIC_BOARD;
     public static MetaItem<?>.MetaValueItem EPOXY_BOARD;
     public static MetaItem<?>.MetaValueItem FIBER_BOARD;
     public static MetaItem<?>.MetaValueItem MULTILAYER_FIBER_BOARD;
-    public static MetaItem<?>.MetaValueItem PHENOLIC_BOARD;
-    public static MetaItem<?>.MetaValueItem PLASTIC_BOARD;
     public static MetaItem<?>.MetaValueItem WETWARE_BOARD;
+
+    public static MetaItem<?>.MetaValueItem BASIC_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem GOOD_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem PLASTIC_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem ADVANCED_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem EXTREME_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem ELITE_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem WETWARE_CIRCUIT_BOARD;
 
     public static MetaItem<?>.MetaValueItem VACUUM_TUBE;
     public static MetaItem<?>.MetaValueItem GLASS_TUBE;
@@ -337,10 +345,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem WETWARE_PROCESSOR_ASSEMBLY_ZPM;
     public static MetaItem<?>.MetaValueItem WETWARE_SUPER_COMPUTER_UV;
     public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_MAX;
-
-    // TODO Remove these two
-    public static MetaItem<?>.MetaValueItem DATA_CONTROL_CIRCUIT_IV; // was basically the Quantum Assembly
-    public static MetaItem<?>.MetaValueItem ENERGY_FLOW_CIRCUIT_LUV; // was basically the Crystal Assembly
 
     public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;

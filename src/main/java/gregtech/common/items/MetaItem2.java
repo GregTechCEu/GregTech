@@ -61,6 +61,22 @@ public class MetaItem2 extends MaterialMetaItem {
         NAQUADAH_WAFER = addItem(26, "wafer.naquadah");
         NEUTRONIUM_WAFER = addItem(27, "wafer.neutronium");
 
+        COATED_BOARD = addItem(30, "board.coated");
+        PHENOLIC_BOARD = addItem(32, "board.phenolic");
+        PLASTIC_BOARD = addItem(34, "board.plastic");
+        EPOXY_BOARD = addItem(36, "board.epoxy");
+        FIBER_BOARD = addItem(38, "board.fiber_reinforced");
+        MULTILAYER_FIBER_BOARD = addItem(40, "board.multilayer.fiber_reinforced");
+        WETWARE_BOARD = addItem(42, "board.wetware");
+
+        BASIC_CIRCUIT_BOARD = addItem(31, "circuit_board.basic");
+        GOOD_CIRCUIT_BOARD = addItem(33, "circuit_board.good");
+        PLASTIC_CIRCUIT_BOARD = addItem(35, "circuit_board.plastic");
+        ADVANCED_CIRCUIT_BOARD = addItem(37, "circuit_board.advanced");
+        EXTREME_CIRCUIT_BOARD = addItem(39, "circuit_board.extreme");
+        ELITE_CIRCUIT_BOARD = addItem(41, "circuit_board.elite");
+        WETWARE_CIRCUIT_BOARD = addItem(43, "circuit_board.wetware");
+
         BOTTLE_PURPLE_DRINK = addItem(100, "bottle.purple.drink").addComponents(new FoodStats(8, 0.2F, true, true, new ItemStack(Items.GLASS_BOTTLE), new RandomPotionEffect(MobEffects.HASTE, 800, 1, 90)));
 
         ENERGY_CRYSTAL = addItem(212, "energy_crystal").addComponents(ElectricStats.createRechargeableBattery(4000000L, GTValues.HV)).setModelAmount(8).setMaxStackSize(1);
@@ -93,13 +109,6 @@ public class MetaItem2 extends MaterialMetaItem {
         PLATE_IRIDIUM_ALLOY = addItem(435, "plate.iridium_alloy");
         NEUTRON_REFLECTOR = addItem(436, "neutron_reflector");
 
-        COATED_BOARD = addItem(443, "board.coated");
-        EPOXY_BOARD = addItem(444, "board.epoxy");
-        FIBER_BOARD = addItem(445, "board.fiber_reinforced");
-        MULTILAYER_FIBER_BOARD = addItem(446, "board.multilayer.fiber_reinforced");
-        PHENOLIC_BOARD = addItem(447, "board.phenolic");
-        PLASTIC_BOARD = addItem(448, "board.plastic");
-        WETWARE_BOARD = addItem(449, "board.wetware");
 
         VACUUM_TUBE = addItem(450, "circuit.vacuum_tube").setUnificationData(OrePrefix.circuit, Tier.Primitive);
         DIODE = addItem(451, "component.diode");
@@ -193,10 +202,6 @@ public class MetaItem2 extends MaterialMetaItem {
         WETWARE_PROCESSOR_ASSEMBLY_ZPM = addItem(524, "circuit.wetware_assembly").setUnificationData(OrePrefix.circuit, Tier.Ultimate);
         WETWARE_SUPER_COMPUTER_UV = addItem(525, "circuit.wetware_computer").setUnificationData(OrePrefix.circuit, Tier.Superconductor);
         WETWARE_MAINFRAME_MAX = addItem(526, "circuit.wetware_mainframe").setUnificationData(OrePrefix.circuit, Tier.Infinite);
-
-        // TODO REMOVE THESE
-        DATA_CONTROL_CIRCUIT_IV = addItem(527, "circuit.data_control").setUnificationData(OrePrefix.circuit, Tier.Elite);
-        ENERGY_FLOW_CIRCUIT_LUV = addItem(528, "circuit.energy_flow").setUnificationData(OrePrefix.circuit, Tier.Master);
 
         TURBINE_ROTOR = addItem(529, "turbine_rotor").addComponents(new TurbineRotorBehavior());
         COVER_FACADE = addItem(530, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
