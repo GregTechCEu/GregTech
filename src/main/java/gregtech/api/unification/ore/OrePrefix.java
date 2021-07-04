@@ -434,9 +434,6 @@ public enum OrePrefix {
             material = materialType; //append default material for self-referencing OrePrefix
         }
         if (material != null) {
-            if (material.getMaterialClass() == SimpleDustMaterial.class) {
-                GTLog.logger.info("HERE!!!!!");
-            }
             generatedMaterials.add(material);
         }
     }

@@ -1,11 +1,9 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.material.MarkerMaterials.Component;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.MarkerMaterials.Color;
-import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.type.IngotMaterial;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -24,6 +22,7 @@ public class CircuitRecipes {
     private CircuitRecipes() {
     }
 
+    // TODO Remove
     private static final MaterialStack[] solderingList = {
             new MaterialStack(Tin, 2L),
             new MaterialStack(SolderingAlloy, 1L)
@@ -862,8 +861,10 @@ public class CircuitRecipes {
 
     private static void circuitRecipes() {
 
-        // T1: Electronic
-        ModHandler.addShapedRecipe("basic_circuit", ELECTRONIC_CIRCUIT_LV.getStackForm(),
+        // T1: Electronic ==============================================================================================
+
+        // LV
+        ModHandler.addShapedRecipe("electronic_circuit_lv", ELECTRONIC_CIRCUIT_LV.getStackForm(),
                 "RPR", "VBV", "CCC",
                 'R', RESISTOR.getStackForm(),
                 'P', new UnificationEntry(plate, Steel),
@@ -879,159 +880,209 @@ public class CircuitRecipes {
                 .output(ELECTRONIC_CIRCUIT_LV, 2)
                 .buildAndRegister();
 
-
-
-        ModHandler.addShapedRecipe("good_circuit", INTEGRATED_CIRCUIT_MV.getStackForm(),
-                "RCP", "CDC", "PCR",
-                'R', new UnificationEntry(cableGtSingle, RedAlloy),
+        // MV
+        ModHandler.addShapedRecipe("electronic_circuit_mv", ELECTRONIC_CIRCUIT_MV.getStackForm(),
+                "DPD", "CBC", "WWW",
+                'W', new UnificationEntry(wireGtSingle, Copper),
                 'P', new UnificationEntry(plate, Steel),
                 'C', ELECTRONIC_CIRCUIT_LV.getStackForm(),
+                'B', GOOD_CIRCUIT_BOARD.getStackForm(),
                 'D', DIODE.getStackForm());
+
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(30).duration(300)
+                .input(GOOD_CIRCUIT_BOARD)
+                .input(circuit, Tier.Basic, 2)
+                .input(component, Component.Diode, 2)
+                .input(wireGtSingle, Copper, 2)
+                .output(ELECTRONIC_CIRCUIT_MV, 2)
+                .buildAndRegister();
+
+        // T2: Integrated ==============================================================================================
+
+        // LV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(16).duration(200)
+                .input(BASIC_CIRCUIT_BOARD)
+                .input(INTEGRATED_LOGIC_CIRCUIT)
+                .input(component, Component.Resistor, 2)
+                .input(component, Component.Diode, 2)
+                .input(wireFine, Copper, 2)
+                .input(bolt, Tin, 2)
+                .output(INTEGRATED_CIRCUIT_LV, 2)
+                .buildAndRegister();
+
+        // MV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(24).duration(400)
+                .input(GOOD_CIRCUIT_BOARD)
+                .input(INTEGRATED_CIRCUIT_LV, 2)
+                .input(component, Component.Resistor, 4)
+                .input(component, Component.Diode, 4)
+                .input(wireFine, Gold, 4)
+                .input(bolt, Silver, 4)
+                .output(INTEGRATED_CIRCUIT_MV)
+                .buildAndRegister();
+
+        // HV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(30).duration(800)
+                .input(INTEGRATED_CIRCUIT_MV)
+                .input(INTEGRATED_LOGIC_CIRCUIT, 2)
+                .input(RANDOM_ACCESS_MEMORY, 2)
+                .input(component, Component.Transistor, 4)
+                .input(wireFine, Electrum, 8)
+                .input(bolt, AnnealedCopper, 8)
+                .output(INTEGRATED_CIRCUIT_HV)
+                .buildAndRegister();
+
+        // T2.5: Misc ==================================================================================================
+
+        // NAND Chip ULV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(30).duration(300)
+                .input(GOOD_CIRCUIT_BOARD)
+                .input(SIMPLE_SYSTEM_ON_CHIP)
+                .input(bolt, RedAlloy, 2)
+                .input(wireFine, Tin, 2)
+                .output(NAND_CHIP_ULV, 8)
+                .buildAndRegister();
+
+        // Microprocessor LV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(60).duration(200)
+                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(CENTRAL_PROCESSING_UNIT)
+                .input(component, Component.Resistor, 2)
+                .input(component, Component.Capacitor, 2)
+                .input(component, Component.Transistor, 2)
+                .input(wireFine, Copper, 2)
+                .output(MICROPROCESSOR_LV, 3)
+                .buildAndRegister();
+
+        // Microprocessor LV SoC
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(50)
+                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(SYSTEM_ON_CHIP)
+                .input(wireFine, Copper, 2)
+                .input(bolt, Tin, 2)
+                .output(MICROPROCESSOR_LV, 6)
+                .buildAndRegister();
+
+        // T3: Processor ===============================================================================================
+
+        // MV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(60).duration(200)
+                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(CENTRAL_PROCESSING_UNIT)
+                .input(component, Component.Resistor, 4)
+                .input(component, Component.Capacitor, 4)
+                .input(component, Component.Transistor, 4)
+                .input(wireFine, RedAlloy, 4)
+                .output(PROCESSOR_MV, 2)
+                .buildAndRegister();
+
+        // MV SoC
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(2400).duration(50)
+                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(SYSTEM_ON_CHIP)
+                .input(wireFine, RedAlloy, 4)
+                .input(bolt, AnnealedCopper, 4)
+                .output(PROCESSOR_MV, 4)
+                .buildAndRegister();
+
+        // HV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(120).duration(400)
+                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(PROCESSOR_MV, 2)
+                .input(SMALL_COIL, 4)
+                .input(component, Component.Capacitor, 8)
+                .input(RANDOM_ACCESS_MEMORY, 4)
+                .input(wireFine, RedAlloy, 8)
+                .output(PROCESSOR_ASSEMBLY_HV, 2)
+                .solderMultiplier(2)
+                .buildAndRegister();
+
+        // EV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(120).duration(400)
+                .input(PLASTIC_CIRCUIT_BOARD)
+                .input(PROCESSOR_ASSEMBLY_HV, 2)
+                .input(component, Component.Diode, 4)
+                .input(RANDOM_ACCESS_MEMORY, 4)
+                .input(wireFine, Electrum, 16)
+                .input(bolt, Platinum, 16)
+                .output(WORKSTATION_EV)
+                .solderMultiplier(2)
+                .buildAndRegister();
+
+        // IV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(480).duration(800)
+                .input(frameGt, Aluminium, 2)
+                .input(WORKSTATION_EV, 2)
+                .input(SMALL_COIL, 12)
+                .input(component, Component.Capacitor, 16)
+                .input(RANDOM_ACCESS_MEMORY, 16)
+                .input(wireGtSingle, AnnealedCopper, 16)
+                .output(MAINFRAME_IV)
+                .solderMultiplier(4)
+                .buildAndRegister();
+
+        // T4: Nano ====================================================================================================
+
+        // HV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(200)
+                .input(ADVANCED_CIRCUIT_BOARD)
+                .input(NANO_CENTRAL_PROCESSING_UNIT)
+                .input(SMD_RESISTOR, 8)
+                .input(SMD_CAPACITOR, 8)
+                .input(SMD_TRANSISTOR, 8)
+                .input(wireFine, Electrum, 8)
+                .output(NANO_PROCESSOR_HV, 2)
+                .buildAndRegister();
+
+        // HV SoC
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(9600).duration(50)
+                .input(ADVANCED_CIRCUIT_BOARD)
+                .input(ADVANCED_SYSTEM_ON_CHIP)
+                .input(wireFine, Electrum, 4)
+                .input(bolt, Platinum, 4)
+                .output(NANO_PROCESSOR_HV, 4)
+                .buildAndRegister();
+
+        // EV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(200)
+                .input(ADVANCED_CIRCUIT_BOARD)
+                .input(NANO_PROCESSOR_HV, 2)
+                .input(SMALL_COIL, 8)
+                .input(SMD_CAPACITOR, 8)
+                .input(RANDOM_ACCESS_MEMORY, 8)
+                .input(wireFine, Electrum, 16)
+                .output(NANO_PROCESSOR_ASSEMBLY_EV, 2)
+                .solderMultiplier(2)
+                .buildAndRegister();
+
+        // IV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(400)
+                .input(ADVANCED_CIRCUIT_BOARD)
+                .input(NANO_PROCESSOR_ASSEMBLY_EV, 2)
+                .input(SMD_DIODE, 8)
+                .input(NOR_MEMORY_CHIP, 4)
+                .input(RANDOM_ACCESS_MEMORY, 16)
+                .input(wireFine, Electrum, 16)
+                .output(NANO_COMPUTER_IV)
+                .solderMultiplier(2)
+                .buildAndRegister();
+
+        // LuV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(1920).duration(800)
+                .input(frameGt, Aluminium, 2)
+                .input(NANO_COMPUTER_IV, 2)
+                .input(SMALL_COIL, 16)
+                .input(SMD_CAPACITOR, 32)
+                .input(RANDOM_ACCESS_MEMORY, 16)
+                .input(wireGtSingle, AnnealedCopper, 32)
+                .output(NANO_MAINFRAME_LUV)
+                .solderMultiplier(4)
+                .buildAndRegister();
 
         //circuit assembling recipes TODO
         for (MaterialStack stack : solderingList) {
             IngotMaterial material = (IngotMaterial) stack.material;
             int multiplier = (int) stack.amount;
-
-            // LV Circuits
-            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(8)
-                    .input(PHENOLIC_BOARD)
-                    .input(INTEGRATED_LOGIC_CIRCUIT)
-                    .input(RESISTOR, 2)
-                    .input(wireFine, Copper)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(INTEGRATED_CIRCUIT_LV)
-                    .buildAndRegister();
-
-            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(8)
-                    .input(PHENOLIC_BOARD)
-                    .input(INTEGRATED_LOGIC_CIRCUIT)
-                    .input(SMD_RESISTOR, 2)
-                    .input(wireFine, Copper)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(INTEGRATED_CIRCUIT_LV)
-                    .buildAndRegister();
-
-            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(60)
-                    .input(PLASTIC_BOARD)
-                    .input(CENTRAL_PROCESSING_UNIT, 4)
-                    .input(RESISTOR, 4)
-                    .input(CAPACITOR, 4)
-                    .input(TRANSISTOR, 4)
-                    .input(wireFine, Copper, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(MICROPROCESSOR_LV, 4)
-                    .buildAndRegister();
-
-            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(60)
-                    .input(PLASTIC_BOARD)
-                    .input(CENTRAL_PROCESSING_UNIT, 4)
-                    .input(SMD_RESISTOR, 4)
-                    .input(SMD_CAPACITOR, 4)
-                    .input(SMD_TRANSISTOR, 4)
-                    .input(wireFine, Copper, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(MICROPROCESSOR_LV, 4)
-                    .buildAndRegister();
-
-            ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(600)
-                    .input(PLASTIC_BOARD)
-                    .input(SYSTEM_ON_CHIP, 4)
-                    .input(wireFine, Copper, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(MICROPROCESSOR_LV, 4)
-                    .buildAndRegister();
-
-            // MV Circuits
-            ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(16)
-                    .input(PHENOLIC_BOARD)
-                    .input(INTEGRATED_CIRCUIT_LV, 3)
-                    .input(RESISTOR, 4)
-                    .input(wireFine, Gold, 8)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(INTEGRATED_CIRCUIT_MV)
-                    .buildAndRegister();
-
-            ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(16)
-                    .input(PHENOLIC_BOARD)
-                    .input(INTEGRATED_CIRCUIT_LV, 3)
-                    .input(SMD_RESISTOR, 4)
-                    .input(wireFine, Gold, 8)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(INTEGRATED_CIRCUIT_MV)
-                    .buildAndRegister();
-
-            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(60)
-                    .input(PLASTIC_BOARD)
-                    .input(CENTRAL_PROCESSING_UNIT)
-                    .input(RESISTOR, 2)
-                    .input(CAPACITOR, 2)
-                    .input(TRANSISTOR, 2)
-                    .input(wireFine, RedAlloy, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(PROCESSOR_MV)
-                    .buildAndRegister();
-
-            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(60)
-                    .input(PLASTIC_BOARD)
-                    .input(CENTRAL_PROCESSING_UNIT)
-                    .input(SMD_RESISTOR, 2)
-                    .input(SMD_CAPACITOR, 2)
-                    .input(SMD_TRANSISTOR, 2)
-                    .input(wireFine, RedAlloy, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(PROCESSOR_MV)
-                    .buildAndRegister();
-
-            ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(2400)
-                    .input(PLASTIC_BOARD)
-                    .input(SYSTEM_ON_CHIP)
-                    .input(wireFine, RedAlloy, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(PROCESSOR_MV)
-                    .buildAndRegister();
-
-            // HV Circuits
-            ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(90)
-                    .input(PLASTIC_BOARD)
-                    .input(PROCESSOR_MV, 2)
-                    .input(SMALL_COIL, 4)
-                    .input(CAPACITOR, 4)
-                    .input(RANDOM_ACCESS_MEMORY, 4)
-                    .input(wireFine, RedAlloy, 12)
-                    .fluidInputs(material.getFluid(L * multiplier))
-                    .output(PROCESSOR_ASSEMBLY_HV)
-                    .buildAndRegister();
-
-            ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(90)
-                    .input(PLASTIC_BOARD)
-                    .input(PROCESSOR_MV, 2)
-                    .input(SMALL_COIL, 4)
-                    .input(SMD_CAPACITOR, 4)
-                    .input(RANDOM_ACCESS_MEMORY, 4)
-                    .input(wireFine, RedAlloy, 12)
-                    .fluidInputs(material.getFluid(L * multiplier))
-                    .output(PROCESSOR_ASSEMBLY_HV)
-                    .buildAndRegister();
-
-            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(480)
-                    .input(EPOXY_BOARD)
-                    .input(NANO_CENTRAL_PROCESSING_UNIT)
-                    .input(SMD_RESISTOR, 2)
-                    .input(SMD_CAPACITOR, 2)
-                    .input(SMD_TRANSISTOR, 2)
-                    .input(wireFine, Electrum, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(NANO_PROCESSOR_HV)
-                    .buildAndRegister();
-
-            ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(9600)
-                    .input(EPOXY_BOARD)
-                    .input(SYSTEM_ON_CHIP)
-                    .input(wireFine, Electrum, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(NANO_PROCESSOR_HV)
-                    .buildAndRegister();
 
             // EV Circuits
             ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(480)

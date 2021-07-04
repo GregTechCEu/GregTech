@@ -54,7 +54,7 @@ public class CircuitAssemblerRecipeBuilder extends RecipeBuilder<CircuitAssemble
     public void buildAndRegister() {
         if (fluidInputs.isEmpty()) {
             recipeMap.addRecipe(this.copy()
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(Math.max(1, GTValues.L / 2 * solderMultiplier)))
+                    .fluidInputs(Materials.SolderingAlloy.getFluid(Math.max(1, (GTValues.L / 2) * solderMultiplier)))
                     .build());
             recipeMap.addRecipe(this.copy()
                     .fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L * solderMultiplier)))
