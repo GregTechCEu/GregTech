@@ -15,10 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: sudosubin/git-clone-action@v1.0.1
-      with:
-        repository: ${{ github.repository }}
-        platform: 'github'
+    - name: Clone Repository
+    - shell: bash
+    - run: |
+        /usr/bin/git clone https://github.com/Irgendwer01/GregTech.git ./
     - name: Declare some variables
       id: vars
       shell: bash
