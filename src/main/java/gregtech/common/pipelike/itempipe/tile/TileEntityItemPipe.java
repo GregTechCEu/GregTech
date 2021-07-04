@@ -18,11 +18,18 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     private ItemNetHandler itemHandler;
     private WeakReference<ItemPipeNet> currentPipeNet = new WeakReference<>(null);
 
-    public ItemNetHandler getItemHandler() {
-        if(itemHandler == null) {
-            itemHandler = new ItemNetHandler(getItemPipeNet(), getPipePos());
-        }
-        return itemHandler;
+    private boolean walked;
+
+    public void markWalked() {
+        this.walked = true;
+    }
+
+    public void resetWalk() {
+        this.walked = false;
+    }
+
+    public boolean isWalked() {
+        return walked;
     }
 
     @Override
@@ -33,6 +40,13 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     @Override
     public boolean supportsTicking() {
         return false;
+    }
+
+    public ItemNetHandler getItemHandler() {
+        if (itemHandler == null) {
+            itemHandler = new ItemNetHandler(getItemPipeNet(), this);
+        }
+        return itemHandler;
     }
 
     @Nullable
