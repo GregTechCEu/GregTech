@@ -12,14 +12,14 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
 
-    private int EUToStart;
+    private long EUToStart;
 
     public FusionRecipeBuilder() {
     }
 
     public FusionRecipeBuilder(Recipe recipe, RecipeMap<FusionRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
-        this.EUToStart = recipe.getRecipePropertyStorage().getRecipePropertyValue(FusionEUToStartProperty.getInstance(), 0);
+        this.EUToStart = recipe.getRecipePropertyStorage().getRecipePropertyValue(FusionEUToStartProperty.getInstance(), 0L);
     }
 
     public FusionRecipeBuilder(RecipeBuilder<FusionRecipeBuilder> recipeBuilder) {

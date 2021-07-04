@@ -6,6 +6,7 @@ import gregtech.api.enchants.EnchantmentEnderDamage;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
+import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -155,6 +156,11 @@ public class CommonProxy {
             BlastTemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
                     "tile.wire_coil." + values.getName() + ".name");
         }
+
+        //Registers Fusion tiers for the FusionEUToStartProperty
+        FusionEUToStartProperty.registerFusionTier(6, "(MK1)");
+        FusionEUToStartProperty.registerFusionTier(7, "(MK2)");
+        FusionEUToStartProperty.registerFusionTier(8, "(MK3)");
 
         GTLog.logger.info("Registering ore dictionary...");
 
