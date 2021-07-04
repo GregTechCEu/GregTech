@@ -508,13 +508,13 @@ public class CircuitRecipes {
                 .output(ENGRAVED_LAPOTRON_CHIP, 3)
                 .buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(100).EUt(7600)
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(100).EUt(10000)
                 .input(ENGRAVED_CRYSTAL_CHIP)
                 .notConsumable(craftingLens, Color.Lime)
                 .output(CRYSTAL_CENTRAL_PROCESSING_UNIT)
                 .buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(100).EUt(32000)
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(100).EUt(40000)
                 .input(CRYSTAL_CENTRAL_PROCESSING_UNIT)
                 .notConsumable(craftingLens, Color.Blue)
                 .output(CRYSTAL_SYSTEM_ON_CHIP)
@@ -582,22 +582,56 @@ public class CircuitRecipes {
 
     private static void boardRecipes() { // TODO Start here
 
-        // Coated board
+        // Coated Board
         ModHandler.addShapedRecipe("coated_board", COATED_BOARD.getStackForm(3),
                 " R ", "PPP", " R ",
                 'R', RUBBER_DROP.getStackForm(),
                 'P', new UnificationEntry(plate, Wood));
 
         ModHandler.addShapelessRecipe("coated_board_1x", COATED_BOARD.getStackForm(),
-                RUBBER_DROP.getStackForm(),
                 new UnificationEntry(plate, Wood),
-                new UnificationEntry(plate, Wood));
+                RUBBER_DROP.getStackForm(),
+                RUBBER_DROP.getStackForm());
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(160).EUt(8)
-                .input(plate, Wood, 8)
-                .input(RUBBER_DROP)
-                .fluidInputs(Glue.getFluid(100))
-                .output(COATED_BOARD, 8)
+        ModHandler.addShapedRecipe("basic_circuit_board", BASIC_CIRCUIT_BOARD.getStackForm(),
+                "WWW", "WBW", "WWW",
+                'W', new UnificationEntry(wireGtSingle, Copper),
+                'B', COATED_BOARD.getStackForm());
+
+        // Basic Circuit Board
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(8)
+                .input(foil, Copper, 4)
+                .input(plate, Wood)
+                .fluidInputs(Glue.getFluid(72))
+                .output(BASIC_CIRCUIT_BOARD)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(8)
+                .input(foil, Copper, 4)
+                .input(plate, Wood)
+                .fluidInputs(Polyethylene.getFluid(36))
+                .output(BASIC_CIRCUIT_BOARD, 2)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(8)
+                .input(foil, Copper, 4)
+                .input(plate, Wood)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(18))
+                .output(BASIC_CIRCUIT_BOARD, 2)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(8)
+                .input(foil, Copper, 4)
+                .input(plate, Wood)
+                .fluidInputs(Epoxy.getFluid(18))
+                .output(BASIC_CIRCUIT_BOARD, 3)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(8)
+                .input(foil, Copper, 4)
+                .input(plate, Wood)
+                .fluidInputs(Polybenzimidazole.getFluid(9))
+                .output(BASIC_CIRCUIT_BOARD, 4)
                 .buildAndRegister();
 
         // Phenolic Board
@@ -622,41 +656,91 @@ public class CircuitRecipes {
                 .output(PHENOLIC_BOARD, 3)
                 .buildAndRegister();
 
+        // Good Circuit Board
+        ModHandler.addShapedRecipe("good_circuit_board", GOOD_CIRCUIT_BOARD.getStackForm(),
+                "WWW", "WBW", "WWW",
+                'W', new UnificationEntry(wireGtSingle, Gold),
+                'B', PHENOLIC_BOARD.getStackForm());
+
+        CHEMICAL_RECIPES.recipeBuilder().EUt(30).duration(300)
+                .input(foil, Gold, 4)
+                .input(PHENOLIC_BOARD)
+                .fluidInputs(SodiumPersulfate.getFluid(250))
+                .output(GOOD_CIRCUIT_BOARD)
+                .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().EUt(480).duration(75)
+                .input(foil, Gold, 4)
+                .input(PHENOLIC_BOARD)
+                .fluidInputs(Iron3Chloride.getFluid(125))
+                .output(GOOD_CIRCUIT_BOARD)
+                .buildAndRegister();
+
         // Plastic Board
-        CHEMICAL_RECIPES.recipeBuilder().duration(600).EUt(10)
+        CHEMICAL_RECIPES.recipeBuilder().duration(500).EUt(10)
                 .input(plate, Polyethylene)
                 .input(foil, Copper, 4)
-                .fluidInputs(SulfuricAcid.getFluid(125))
+                .fluidInputs(SulfuricAcid.getFluid(250))
                 .output(PLASTIC_BOARD)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(600).EUt(10)
+        CHEMICAL_RECIPES.recipeBuilder().duration(500).EUt(10)
                 .input(plate, PolyvinylChloride)
                 .input(foil, Copper, 4)
-                .fluidInputs(SulfuricAcid.getFluid(125))
+                .fluidInputs(SulfuricAcid.getFluid(250))
                 .output(PLASTIC_BOARD, 2)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(600).EUt(10)
+        CHEMICAL_RECIPES.recipeBuilder().duration(500).EUt(10)
                 .input(plate, Polytetrafluoroethylene)
                 .input(foil, Copper, 4)
-                .fluidInputs(SulfuricAcid.getFluid(125))
+                .fluidInputs(SulfuricAcid.getFluid(250))
                 .output(PLASTIC_BOARD, 4)
                 .buildAndRegister();
 
-        CHEMICAL_RECIPES.recipeBuilder().duration(600).EUt(10)
+        CHEMICAL_RECIPES.recipeBuilder().duration(500).EUt(10)
                 .input(plate, Polybenzimidazole)
                 .input(foil, Copper, 4)
-                .fluidInputs(SulfuricAcid.getFluid(125))
+                .fluidInputs(SulfuricAcid.getFluid(250))
                 .output(PLASTIC_BOARD, 8)
                 .buildAndRegister();
 
+        // Plastic Circuit Board
+        CHEMICAL_RECIPES.recipeBuilder().duration(600).EUt(30)
+                .input(PLASTIC_BOARD)
+                .input(foil, Copper, 6)
+                .fluidInputs(SodiumPersulfate.getFluid(500))
+                .output(PLASTIC_CIRCUIT_BOARD)
+                .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().duration(150).EUt(480)
+                .input(PLASTIC_BOARD)
+                .input(foil, Copper, 6)
+                .fluidInputs(Iron3Chloride.getFluid(250))
+                .output(PLASTIC_CIRCUIT_BOARD)
+                .buildAndRegister();
+
         // Epoxy Board
-        CHEMICAL_RECIPES.recipeBuilder().duration(500).EUt(10)
+        CHEMICAL_RECIPES.recipeBuilder().duration(600).EUt(30)
                 .input(plate, Epoxy)
-                .input(foil, Copper)
-                .fluidInputs(SulfuricAcid.getFluid(125))
+                .input(foil, Gold, 8)
+                .fluidInputs(SulfuricAcid.getFluid(500))
                 .output(EPOXY_BOARD)
+                .buildAndRegister();
+
+        // Advanced Circuit Board
+        CHEMICAL_RECIPES.recipeBuilder().duration(900).EUt(30)
+                .input(EPOXY_BOARD)
+                .input(foil, Electrum, 8)
+                .fluidInputs(SodiumPersulfate.getFluid(1000))
+                .output(ADVANCED_CIRCUIT_BOARD)
+                .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().duration(225).EUt(480)
+                .input(EPOXY_BOARD)
+                .input(foil, Electrum, 8)
+                .fluidInputs(Iron3Chloride.getFluid(500))
+                .output(ADVANCED_CIRCUIT_BOARD)
                 .buildAndRegister();
 
         // Fiber Reinforced Epoxy Board
@@ -672,9 +756,15 @@ public class CircuitRecipes {
                 .output(plate, ReinforcedEpoxyResin)
                 .buildAndRegister();
 
+        // Borosilicate Glass Recipes
         EXTRUDER_RECIPES.recipeBuilder().duration(160).EUt(96)
                 .input(ingot, BorosilicateGlass)
                 .notConsumable(SHAPE_EXTRUDER_WIRE)
+                .output(GLASS_FIBER, 8)
+                .buildAndRegister();
+
+        WIREMILL_RECIPES.recipeBuilder().duration(200).EUt(120)
+                .input(ingot, BorosilicateGlass)
                 .output(GLASS_FIBER, 8)
                 .buildAndRegister();
 
@@ -685,12 +775,42 @@ public class CircuitRecipes {
                 .output(FIBER_BOARD)
                 .buildAndRegister();
 
-        // Multi-Layer Fiber Reinforced Epoxy Board
-        CHEMICAL_RECIPES.recipeBuilder().duration(100).EUt(480)
+        // Extreme Circuit Board
+        CHEMICAL_RECIPES.recipeBuilder().duration(300).EUt(480)
                 .input(FIBER_BOARD)
-                .input(foil, Electrum, 16)
-                .fluidInputs(SulfuricAcid.getFluid(250))
+                .input(foil, AnnealedCopper, 12)
+                .fluidInputs(SodiumPersulfate.getFluid(2000))
+                .output(EXTREME_CIRCUIT_BOARD)
+                .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().duration(150).EUt(1920)
+                .input(FIBER_BOARD)
+                .input(foil, AnnealedCopper, 12)
+                .fluidInputs(Iron3Chloride.getFluid(1000))
+                .output(EXTREME_CIRCUIT_BOARD)
+                .buildAndRegister();
+
+        // Multi-Layer Fiber Reinforced Epoxy Board
+        CHEMICAL_RECIPES.recipeBuilder().duration(500).EUt(480)
+                .input(FIBER_BOARD, 2)
+                .input(foil, Platinum, 8)
+                .fluidInputs(SulfuricAcid.getFluid(500))
                 .output(MULTILAYER_FIBER_BOARD)
+                .buildAndRegister();
+
+        // Elite Circuit Board
+        CHEMICAL_RECIPES.recipeBuilder().duration(300).EUt(1920)
+                .input(MULTILAYER_FIBER_BOARD)
+                .input(foil, Platinum, 8)
+                .fluidInputs(SodiumPersulfate.getFluid(4000))
+                .output(ELITE_CIRCUIT_BOARD)
+                .buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder().duration(150).EUt(7680)
+                .input(MULTILAYER_FIBER_BOARD)
+                .input(foil, Platinum, 8)
+                .fluidInputs(Iron3Chloride.getFluid(2000))
+                .output(ELITE_CIRCUIT_BOARD)
                 .buildAndRegister();
 
         // Wetware Board
@@ -712,14 +832,29 @@ public class CircuitRecipes {
                 .output(PETRI_DISH, 2)
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(480)
-                .input(MULTILAYER_FIBER_BOARD)
-                .input(circuit, Tier.Good)
-                .input(ELECTRIC_PUMP_LV)
-                .input(SENSOR_LV)
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(30720)
+                .input(MULTILAYER_FIBER_BOARD, 16)
                 .input(PETRI_DISH)
-                .fluidInputs(SterileGrowthMedium.getFluid(250))
-                .output(WETWARE_BOARD)
+                .input(ELECTRIC_PUMP_LUV)
+                .input(SENSOR_IV)
+                .input(circuit, Tier.Elite)
+                .input(foil, NiobiumTitanium, 16)
+                .fluidInputs(SterileGrowthMedium.getFluid(4000))
+                .output(WETWARE_BOARD, 16)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(300).EUt(7680)
+                .input(WETWARE_BOARD)
+                .input(foil, NiobiumTitanium, 32)
+                .fluidInputs(SodiumPersulfate.getFluid(8000))
+                .output(WETWARE_CIRCUIT_BOARD)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(30720)
+                .input(WETWARE_BOARD)
+                .input(foil, NiobiumTitanium, 32)
+                .fluidInputs(Iron3Chloride.getFluid(4000))
+                .output(WETWARE_CIRCUIT_BOARD)
                 .buildAndRegister();
     }
 

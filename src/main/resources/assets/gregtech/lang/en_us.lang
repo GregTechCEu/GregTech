@@ -1624,6 +1624,7 @@ material.nitrochlorobenzene=2-Nitrochlorobenzene
 material.chlorobenzene=Chlorobenzene
 material.potassium_dichromate=Potassium Dichromate
 material.chromium_trioxide=Chromium Trioxide
+material.iron_iii_chloride=Iron III Chloride
 
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
 item.gunpowder.dustTiny=Tiny Pile of Gunpowder
