@@ -245,12 +245,21 @@ public class ReactorRecipes {
             .fluidOutputs(HydrochloricAcid.getFluid(1000))
             .duration(60).EUt(8).buildAndRegister();
 
+        // NaCl + H2SO4 -> NaHSO4 + HCl
         CHEMICAL_RECIPES.recipeBuilder()
             .input(dust, Salt, 2)
             .fluidInputs(SulfuricAcid.getFluid(1000))
             .output(dust, SodiumBisulfate, 7)
             .fluidOutputs(HydrochloricAcid.getFluid(1000))
             .duration(60).EUt(30).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Iron)
+                .fluidInputs(Chlorine.getFluid(3000))
+                .notConsumable(new IntCircuitIngredient(1))
+                .fluidOutputs(Iron3Chloride.getFluid(1000))
+                .duration(400).EUt(30)
+                .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
             .notConsumable(new IntCircuitIngredient(1))

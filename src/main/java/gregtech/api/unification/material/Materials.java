@@ -405,6 +405,14 @@ public class Materials {
     public static SimpleFluidMaterial OilMedium = new SimpleFluidMaterial(119, "oil_medium", 0x0A0A0A, FLUID, of(), GENERATE_FLUID_BLOCK);
     public static SimpleFluidMaterial OilLight = new SimpleFluidMaterial(120, "oil_light", 0x0A0A0A, FLUID, of(), GENERATE_FLUID_BLOCK);
     public static SimpleFluidMaterial NaturalGas = new SimpleFluidMaterial(121, "natural_gas", 0xFFFFFF, FLUID, of(), STATE_GAS | GENERATE_FLUID_BLOCK);
+    public static final SimpleFluidMaterial DiphenylIsophtalate = new SimpleFluidMaterial(122, "diphenyl_isophthalate", 0x246E57, DULL, of(new MaterialStack(Carbon, 20), new MaterialStack(Hydrogen, 14), new MaterialStack(Oxygen, 4)), DISABLE_DECOMPOSITION);
+    public static final SimpleFluidMaterial PhthalicAcid = new SimpleFluidMaterial(123, "phthalic_acid", 0xD1D1D1, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 4)), GENERATE_FLUID_BLOCK | DISABLE_DECOMPOSITION);
+    public static final SimpleFluidMaterial Dimethylbenzene = new SimpleFluidMaterial(124, "dimethylbenzene", 0x669C40, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 10)), DISABLE_DECOMPOSITION).setFormula("C6H4(CH3)2");
+    public static final SimpleFluidMaterial Diaminobenzidine = new SimpleFluidMaterial(125, "diaminobenzidine", 0x337D59, DULL, of(new MaterialStack(Carbon, 12), new MaterialStack(Hydrogen, 14), new MaterialStack(Nitrogen, 4)), DISABLE_DECOMPOSITION);
+    public static final SimpleFluidMaterial Dichlorobenzidine = new SimpleFluidMaterial(126, "dichlorobenzidine", 0xA1DEA6, DULL, of(new MaterialStack(Carbon, 12), new MaterialStack(Hydrogen, 10), new MaterialStack(Chlorine, 2), new MaterialStack(Nitrogen, 2)), DISABLE_DECOMPOSITION);
+    public static final SimpleFluidMaterial Nitrochlorobenzene = new SimpleFluidMaterial(127, "nitrochlorobenzene", 0x8FB51A, DULL, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Chlorine, 1), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
+    public static final SimpleFluidMaterial Chlorobenzene = new SimpleFluidMaterial(128, "chlorobenzene", 0x326A3E, DULL, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 5), new MaterialStack(Chlorine, 1)), DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial Iron3Chloride = new SimpleFluidMaterial(129, "iron_iii_chloride", 0x060B0B, FLUID, of(new MaterialStack(Iron, 1), new MaterialStack(Chlorine, 3)), DECOMPOSITION_BY_ELECTROLYZING);
 
     public static SimpleDustMaterial SodiumHydroxide = new SimpleDustMaterial(1, "sodium_hydroxide", 0x003380, DULL, of(new MaterialStack(Sodium, 1), new MaterialStack(Oxygen, 1), new MaterialStack(Hydrogen, 1)), GENERATE_SMALL_TINY);
     public static SimpleDustMaterial MagnesiumChloride = new SimpleDustMaterial(2, "magnesium_chloride", 0xD40D5C, DULL, of(new MaterialStack(Magnesium, 1), new MaterialStack(Chlorine, 2)), GENERATE_SMALL_TINY);
@@ -575,13 +583,6 @@ public class Materials {
 
     // TODO Put these in good places, PBI Tools
     public static final IngotMaterial Polybenzimidazole = new IngotMaterial(356, "polybenzimidazole", 0x2D2D2D, DULL, 0, of(new MaterialStack(Carbon, 20), new MaterialStack(Hydrogen, 12), new MaterialStack(Nitrogen, 4)), EXCLUDE_BLOCK_CRAFTING_RECIPES | SMELT_INTO_FLUID | NO_SMASHING | DISABLE_DECOMPOSITION | GENERATE_FOIL);
-    public static final SimpleFluidMaterial DiphenylIsophtalate = new SimpleFluidMaterial(122, "diphenyl_isophthalate", 0x246E57, DULL, of(new MaterialStack(Carbon, 20), new MaterialStack(Hydrogen, 14), new MaterialStack(Oxygen, 4)), DISABLE_DECOMPOSITION);
-    public static final SimpleFluidMaterial PhthalicAcid = new SimpleFluidMaterial(123, "phthalic_acid", 0xD1D1D1, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 4)), GENERATE_FLUID_BLOCK | DISABLE_DECOMPOSITION);
-    public static final SimpleFluidMaterial Dimethylbenzene = new SimpleFluidMaterial(124, "dimethylbenzene", 0x669C40, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 10)), DISABLE_DECOMPOSITION).setFormula("C6H4(CH3)2");
-    public static final SimpleFluidMaterial Diaminobenzidine = new SimpleFluidMaterial(125, "diaminobenzidine", 0x337D59, DULL, of(new MaterialStack(Carbon, 12), new MaterialStack(Hydrogen, 14), new MaterialStack(Nitrogen, 4)), DISABLE_DECOMPOSITION);
-    public static final SimpleFluidMaterial Dichlorobenzidine = new SimpleFluidMaterial(126, "dichlorobenzidine", 0xA1DEA6, DULL, of(new MaterialStack(Carbon, 12), new MaterialStack(Hydrogen, 10), new MaterialStack(Chlorine, 2), new MaterialStack(Nitrogen, 2)), DISABLE_DECOMPOSITION);
-    public static final SimpleFluidMaterial Nitrochlorobenzene = new SimpleFluidMaterial(127, "nitrochlorobenzene", 0x8FB51A, DULL, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Chlorine, 1), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
-    public static final SimpleFluidMaterial Chlorobenzene = new SimpleFluidMaterial(128, "chlorobenzene", 0x326A3E, DULL, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 5), new MaterialStack(Chlorine, 1)), DISABLE_DECOMPOSITION);
     public static final SimpleDustMaterial PotassiumDichromate = new SimpleDustMaterial(845, "potassium_dichromate", 0xFF084E, DULL, of(new MaterialStack(Potassium, 2), new MaterialStack(Chrome, 2), new MaterialStack(Oxygen, 7)), GENERATE_SMALL_TINY);
     public static final SimpleDustMaterial ChromiumTrioxide = new SimpleDustMaterial(848, "chromium_trioxide", 0xFFE4E1, DULL, of(new MaterialStack(Chrome, 1), new MaterialStack(Oxygen, 3)), GENERATE_SMALL_TINY);
 
