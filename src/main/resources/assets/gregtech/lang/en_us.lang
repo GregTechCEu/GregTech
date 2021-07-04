@@ -1871,6 +1871,7 @@ recipemap.steam_turbine.name=Steam Turbine
 recipemap.semi_fluid_generator.name=Semi Fluid Fuels
 recipemap.plasma_generator.name=Plasma Generator
 recipemap.cluster_mill.name=Cluster Mill
+recipemap.circuit_assembler.name=Circuit Assembler
 
 behaviour.hoe=Can till dirt
 behaviour.soft_hammer=Activates and Deactivates Machines
@@ -2848,6 +2849,16 @@ gregtech.machine.cluster_mill.uev.name=High-Tech Cluster Mill II
 gregtech.machine.cluster_mill.uiv.name=High-Tech Cluster Mill III
 gregtech.machine.cluster_mill.umv.name=High-Tech Cluster Mill IV
 gregtech.machine.cluster_mill.uxv.name=Ultimate Cluster Mill
+
+gregtech.machine.circuit_assembler.tooltip=Pick-n-Place all over the place
+
+gregtech.machine.circuit_assembler.lv.name=Basic Circuit Assembler
+gregtech.machine.circuit_assembler.mv.name=Advanced Circuit Assembler
+gregtech.machine.circuit_assembler.hv.name=Advanced Circuit Assembler II
+gregtech.machine.circuit_assembler.ev.name=Advanced Circuit Assembler III
+gregtech.machine.circuit_assembler.iv.name=Elite Circuit Assembler
+gregtech.machine.circuit_assembler.luv.name=Elite Circuit Assembler II
+gregtech.machine.circuit_assembler.zpm.name=Elite Circuit Assembler III
 
 # Machine hulls
 gregtech.machine.hull.tooltip=§fYou just need §5I§dm§4a§cg§ei§an§ba§3t§7i§1o§5n§f to use this
