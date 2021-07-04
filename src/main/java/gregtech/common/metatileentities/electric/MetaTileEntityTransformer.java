@@ -12,6 +12,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
+import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.PipelineUtil;
 import gregtech.common.tools.DamageValues;
@@ -27,6 +28,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 
 public class MetaTileEntityTransformer extends TieredMetaTileEntity {
@@ -109,111 +111,13 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        if (isTransformUp) {
-            if (frontFacing == EnumFacing.NORTH) {
-                 Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-}
-            if (frontFacing == EnumFacing.SOUTH) {
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline,GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
 
-            }
-            if(frontFacing ==EnumFacing.EAST){
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                }
-                if(frontFacing ==EnumFacing.WEST){
-                 Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                 Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                 Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                 Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                 Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                 Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                    }
-            if(frontFacing ==EnumFacing.DOWN){
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-            }
+            SimpleOverlayRenderer frontFacetexture = isTransformUp ? Textures.ENERGY_OUT_MULTI : Textures.ENERGY_IN_MULTI;
+            SimpleOverlayRenderer OtherFacetexture = isTransformUp ? Textures.ENERGY_IN_MULTI : Textures.ENERGY_OUT_MULTI;
+            frontFacetexture.renderSided(frontFacing,renderState,translation,PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+        Arrays.stream(EnumFacing.values()).filter(f -> f != frontFacing)
+                .forEach((f -> OtherFacetexture.renderSided(f,renderState,translation,PipelineUtil.color(pipeline, GTValues.VC[getTier() -1]))));
 
-            if(frontFacing ==EnumFacing.UP){
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-            }
-        }
-            else{
-            if (frontFacing == EnumFacing.NORTH) {
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-            }
-            if (frontFacing == EnumFacing.SOUTH) {
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-
-            }
-            if(frontFacing ==EnumFacing.EAST){
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-            }
-            if(frontFacing ==EnumFacing.WEST){
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-            }
-            if(frontFacing ==EnumFacing.DOWN){
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-            }
-
-            if(frontFacing ==EnumFacing.UP){
-                Textures.ENERGY_IN_MULTI.renderSided(EnumFacing.UP, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.SOUTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.EAST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.WEST, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.NORTH, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-                Textures.ENERGY_OUT_MULTI.renderSided(EnumFacing.DOWN, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier() - 1]));
-            }
-
-            }
         }
 
 
