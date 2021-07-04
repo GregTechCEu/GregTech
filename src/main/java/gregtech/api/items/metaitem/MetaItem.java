@@ -80,7 +80,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return Collections.unmodifiableList(META_ITEMS);
     }
 
-    protected TShortObjectMap<T> metaItems = new TShortObjectHashMap<>();
+    protected Map<Short, T> metaItems = new TreeMap<>();
     private Map<String, T> names = new HashMap<>();
     protected TShortObjectMap<ModelResourceLocation> metaItemsModels = new TShortObjectHashMap<>();
     protected TShortObjectHashMap<ModelResourceLocation[]> specialItemsModels = new TShortObjectHashMap<>();
@@ -102,7 +102,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     @SideOnly(Side.CLIENT)
     public void registerModels() {
-        for (short itemMetaKey : metaItems.keys()) {
+        for (short itemMetaKey : metaItems.keySet()) {
             T metaValueItem = metaItems.get(itemMetaKey);
             int numberOfModels = metaValueItem.getModelAmount();
             if (numberOfModels > 1) {
@@ -224,7 +224,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     }
 
     public final Collection<T> getAllItems() {
-        return Collections.unmodifiableCollection(metaItems.valueCollection());
+        return Collections.unmodifiableCollection(metaItems.values());
     }
 
     public final T getItem(short metaValue) {
@@ -570,7 +570,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         if (tab != GregTechAPI.TAB_GREGTECH && tab != CreativeTabs.SEARCH) {
             return;
         }
-        for (T enabledItem : metaItems.valueCollection()) {
+        for (T enabledItem : metaItems.values()) {
             if (!enabledItem.isVisible())
                 continue;
             ItemStack itemStack = enabledItem.getStackForm();
