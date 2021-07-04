@@ -233,13 +233,16 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem TOOL_DATA_STICK;
     public static MetaItem<?>.MetaValueItem TOOL_DATA_ORB;
 
+    public static MetaItem<?>.MetaValueItem SILICON_BOULE;
     public static MetaItem<?>.MetaValueItem GLOWSTONE_BOULE;
     public static MetaItem<?>.MetaValueItem NAQUADAH_BOULE;
-    public static MetaItem<?>.MetaValueItem SILICON_BOULE;
+    public static MetaItem<?>.MetaValueItem NEUTRONIUM_BOULE;
     public static MetaItem<?>.MetaValueItem SILICON_WAFER;
     public static MetaItem<?>.MetaValueItem GLOWSTONE_WAFER;
     public static MetaItem<?>.MetaValueItem NAQUADAH_WAFER;
+    public static MetaItem<?>.MetaValueItem NEUTRONIUM_WAFER;
 
+    public static MetaItem<?>.MetaValueItem HIGHLY_ADVANCED_SOC_WAFER;
     public static MetaItem<?>.MetaValueItem ADVANCED_SYSTEM_ON_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem INTEGRATED_LOGIC_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem CENTRAL_PROCESSING_UNIT_WAFER;
@@ -251,9 +254,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT_WAFER;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY_WAFER;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP_WAFER;
+    public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem ENGRAVED_CRYSTAL_CHIP;
     public static MetaItem<?>.MetaValueItem ENGRAVED_LAPOTRON_CHIP;
 
+    public static MetaItem<?>.MetaValueItem HIGHLY_ADVANCED_SOC;
     public static MetaItem<?>.MetaValueItem ADVANCED_SYSTEM_ON_CHIP;
     public static MetaItem<?>.MetaValueItem INTEGRATED_LOGIC_CIRCUIT;
     public static MetaItem<?>.MetaValueItem CENTRAL_PROCESSING_UNIT;
@@ -265,6 +270,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP;
+    public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP;
     public static MetaItem<?>.MetaValueItem RAW_CRYSTAL_CHIP;
     public static MetaItem<?>.MetaValueItem CRYSTAL_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem CRYSTAL_SYSTEM_ON_CHIP;

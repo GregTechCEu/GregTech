@@ -424,18 +424,28 @@ metaitem.tool.datastick.name=Data Stick
 metaitem.tool.datastick.tooltip=A Low Capacity Data Storage
 metaitem.tool.dataorb.name=Data Orb
 metaitem.tool.dataorb.tooltip=A High Capacity Data Storage
-metaitem.circuit.integrated.name=Integrated circuit
+metaitem.circuit.integrated.name=Programmed Circuit
 metaitem.circuit.integrated.tooltip=Use to open configuration GUI
-metaitem.circuit.integrated.gui=Integrated Circuit Configuration
-metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Integrated circuit configuration tab.
+metaitem.circuit.integrated.gui=Programmed Circuit Configuration
+metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
 #CIRCUITS LOCALIZATION
-metaitem.boule.silicon.name=Silicon Boule
-metaitem.boule.glowstone.name=Glowstone-doped Boule
-metaitem.boule.naquadah.name=Naquadah-doped Boule
+metaitem.boule.silicon.name=Monocrystalline Silicon Boule
+metaitem.boule.silicon.tooltip=Raw Circuit
+metaitem.boule.glowstone.name=Glowstone-doped Monocrystalline Silicon Boule
+metaitem.boule.glowstone.tooltip=Raw Circuit
+metaitem.boule.naquadah.name=Naquadah-doped Monocrystalline Silicon Boule
+metaitem.boule.naquadah.tooltip=Raw Circuit
+metaitem.boule.neutronium.name=Neutronium-doped Monocrystalline Silicon Boule
+metaitem.boule.neutronium.tooltip=Raw Circuit
 metaitem.wafer.silicon.name=Silicon Wafer
+metaitem.wafer.silicon.tooltip=Raw Circuit
 metaitem.wafer.glowstone.name=Glowstone-doped Wafer
+metaitem.wafer.glowstone.tooltip=Raw Circuit
 metaitem.wafer.naquadah.name=Naquadah-doped Wafer
+metaitem.wafer.naquadah.tooltip=Raw Circuit
+metaitem.wafer.neutronium.name=Neutronium-doped Wafer
+metaitem.wafer.neutronium.tooltip=Raw Circuit
 
 metaitem.board.coated.name=Coated Circuit Board
 metaitem.board.epoxy.name=Epoxy Circuit Board
@@ -443,10 +453,11 @@ metaitem.board.fiber_reinforced.name=Fiber-Reinforced Circuit Board
 metaitem.board.multilayer.fiber_reinforced.name=Multi-layer Fiber-Reinforced Circuit Board
 metaitem.board.phenolic.name=Phenolic Circuit Board
 metaitem.board.plastic.name=Plastic Circuit Board
-metaitem.board.wetware.name=Wetware Circuit Board
+metaitem.board.wetware.name=Wetware Lifesupport Circuit Board
+metaitem.board.wetware.tooltip=The Board that keeps life
 
 metaitem.circuit.vacuum_tube.name=Vacuum Tube
-metaitem.circuit.vacuum_tube.description=A Simple Circuit
+metaitem.circuit.vacuum_tube.tooltip=Technically a Diode/n§cULV-tier
 metaitem.component.diode.name=Diode
 metaitem.component.resistor.name=Resistor
 metaitem.component.transistor.name=Transistor
@@ -463,9 +474,11 @@ metaitem.component.smd.transistor.tooltip=Electronic Component
 metaitem.component.smd.resistor.name=SMD Resistor
 metaitem.component.smd.resistor.tooltip=Electronic Component
 
+metaitem.wafer.highly_advanced_system_on_chip.name=HASoC Wafer
+metaitem.wafer.highly_advanced_system_on_chip.tooltip=Raw Circuit
 metaitem.wafer.advanced_system_on_chip.name=ASoC Wafer
 metaitem.wafer.advanced_system_on_chip.tooltip=Raw Circuit
-metaitem.wafer.integrated_logic_circuit.name=Integrated Circuit Wafer
+metaitem.wafer.integrated_logic_circuit.name=Integrated Logic Circuit Wafer
 metaitem.wafer.integrated_logic_circuit.tooltip=Raw Circuit
 metaitem.wafer.central_processing_unit.name=CPU Wafer
 metaitem.wafer.central_processing_unit.tooltip=Raw Circuit
@@ -485,6 +498,8 @@ metaitem.wafer.random_access_memory.name=RAM Wafer
 metaitem.wafer.random_access_memory.tooltip=Raw Circuit
 metaitem.wafer.system_on_chip.name=SoC Wafer
 metaitem.wafer.system_on_chip.tooltip=Raw Circuit
+metaitem.wafer.simple_system_on_chip.name=Simple SoC Wafer
+metaitem.wafer.simple_system_on_chip.tooltip=Raw Primitive Circuit
 metaitem.engraved.crystal_chip.name=Engraved Crystal Chip
 metaitem.engraved.crystal_chip.tooltip=Needed for Circuits
 metaitem.crystal.raw.name=Raw Crystal Chip
@@ -497,7 +512,9 @@ metaitem.crystal.system_on_chip.name=Crystal SoC
 metaitem.crystal.system_on_chip.tooltip=Crystal System on a Chip
 metaitem.plate.advanced_system_on_chip.name=ASoC
 metaitem.plate.advanced_system_on_chip.tooltip=Advanced System on Chip
-metaitem.plate.integrated_logic_circuit.name=Integrated Circuit
+metaitem.plate.highly_advanced_system_on_chip.name=HASoC
+metaitem.plate.highly_advanced_system_on_chip.tooltip=Highly Advanced System on a Chip
+metaitem.plate.integrated_logic_circuit.name=Integrated Logic Circuit
 metaitem.plate.central_processing_unit.name=Central Processing Unit
 metaitem.plate.high_power_integrated_circuit.name=HPIC
 metaitem.plate.high_power_integrated_circuit.tooltip=High-Power Integrated Circuit
@@ -511,40 +528,87 @@ metaitem.plate.qbit_central_processing_unit.name=QBit CPU
 metaitem.plate.random_access_memory.name=RAM
 metaitem.plate.random_access_memory.tooltip=Random Access Memory
 metaitem.plate.system_on_chip.name=SoC
-metaitem.plate.system_on_chip.tooltip=System on Chip
+metaitem.plate.system_on_chip.tooltip=System on a Chip
+metaitem.plate.simple_system_on_chip.name=Simple SoC
+metaitem.plate.simple_system_on_chip.tooltip=Simple System on a Chip
 
-metaitem.circuit.basic.name=Basic Circuit
-metaitem.circuit.basic_electronic.name=Basic Electronic Circuit
-metaitem.circuit.basic_electronic.tooltip=A Basic Circuit
-metaitem.circuit.advanced_parts.name=Advanced Circuit Parts
-metaitem.circuit.advanced_parts.tooltip=A Basic Circuit
-metaitem.circuit.good.name=Good Electronic Circuit
-metaitem.circuit.good.tooltip=A Good Circuit
-metaitem.circuit.advanced.name=Advanced Circuit
-metaitem.circuit.advanced.tooltip=A Good Circuit
-metaitem.circuit.processor_assembly.name=Processor Assembly
-metaitem.circuit.processor_assembly.tooltip=An Advanced Circuit
+
+# T1: Electronic
+metaitem.circuit.electronic.name=Electronic Circuit
+metaitem.circuit.electronic.tooltip=Your First Circuit/n§cLV-tier
+metaitem.circuit.good_electronic.name=Good Electronic Circuit
+metaitem.circuit.good_electronic.tooltip=Your Second Circuit/n§cMV-tier
+
+# T2: Integrated
+metaitem.circuit.basic_integrated.name=Integrated Logic Circuit
+metaitem.circuit.basic_integrated.tooltip=Smaller and more powerful/n§6LV-tier
+metaitem.circuit.good_integrated.name=Good Integrated Circuit
+metaitem.circuit.good_integrated.tooltip=Smaller and more powerful/n§6MV-tier
+metaitem.circuit.advanced_integrated.name=Advanced Integrated Circuit
+metaitem.circuit.advanced_integrated.tooltip=Smaller and more powerful/n§6HV-tier
+
+# Misc
+metaitem.circuit.nand_chip.name=NAND Chip
+metaitem.circuit.nand_chip.tooltip=A Superior Simple Circuit/n§6ULV-tier
+metaitem.circuit.microprocessor.name=Microprocessor
+metaitem.circuit.microprocessor.tooltip=A Superior Basic Circuit/n§eLV-tier
+
+# T3: Processor
+metaitem.circuit.processor.name=Integrated Processor
+metaitem.circuit.processor.tooltip=Amazing Computation Speed!/n§eMV-tier
+metaitem.circuit.assembly.name=Processor Assembly
+metaitem.circuit.assembly.tooltip=Amazing Computation Speed!/n§eHV-tier
+metaitem.circuit.workstation.name=Workstation
+metaitem.circuit.workstation.tooltip=Amazing Computation Speed!/n§eEV-tier
+metaitem.circuit.mainframe.name=Mainframe
+metaitem.circuit.mainframe.tooltip=Amazing Computation Speed!/n§eIV-tier
+
+# T4: Nano
 metaitem.circuit.nano_processor.name=Nanoprocessor
-metaitem.circuit.nano_processor.tooltip=Smaller than ever
-metaitem.circuit.nano_processor_assembly.name=Nano Processor Assembly
+metaitem.circuit.nano_processor.tooltip=Smaller than ever/n§aHV-tier
+metaitem.circuit.nano_assembly.name=Nanoprocessor Assembly
+metaitem.circuit.nano_assembly.tooltip=Smaller than ever/n§aEV-tier
+metaitem.circuit.nano_computer.name=Nano Supercomputer
+metaitem.circuit.nano_computer.tooltip=Smaller than ever/n§aIV-tier
+metaitem.circuit.nano_mainframe.name=Nanoprocessor Mainframe
+metaitem.circuit.nano_mainframe.tooltip=Smaller than ever/n§aLuV-tier
+
+# T5: Quantum
 metaitem.circuit.quantum_processor.name=Quantumprocessor
-metaitem.circuit.quantum_processor.tooltip=Quantum computing comes to life!
-metaitem.circuit.data_control.name=Data Control Circuit
-metaitem.circuit.crystal_processor.name=Crystalprocessor
-metaitem.circuit.crystal_processor.tooltip=Taking Advantage of Crystal Engraving
-metaitem.circuit.energy_flow.name=Energy Flow Circuit
+metaitem.circuit.quantum_processor.tooltip=Quantum Computing comes to life!/n§bEV-tier
+metaitem.circuit.quantum_assembly.name=Quantumprocessor Assembly
+metaitem.circuit.quantum_assembly.tooltip=Quantum Computing comes to life!/n§bIV-tier
+metaitem.circuit.quantum_computer.name=Quantum Supercomputer
+metaitem.circuit.quantum_computer.tooltip=Quantum Computing comes to life!/n§bLuV-tier
+metaitem.circuit.quantum_mainframe.name=Quantumprocessor Mainframe
+metaitem.circuit.quantum_mainframe.tooltip=Quantum Computing comes to life!/n§bZPM-tier
+
+# T6: Crystal
+metaitem.circuit.crystal_processor.name=Crystal Processor
+metaitem.circuit.crystal_processor.tooltip=Taking Advantage of Crystal Engraving/n§9IV-tier
+metaitem.circuit.crystal_assembly.name=Crystal Processor Assembly
+metaitem.circuit.crystal_assembly.tooltip=Taking Advantage of Crystal Engraving/n§9LuV-tier
+metaitem.circuit.crystal_computer.name=Crystal Supercomputer
+metaitem.circuit.crystal_computer.tooltip=Taking Advantage of Crystal Engraving/n§9ZPM-tier
+metaitem.circuit.crystal_mainframe.name=Crystal Processor Mainframe
+metaitem.circuit.crystal_mainframe.tooltip=Taking Advantage of Crystal Engraving/n§9UV-tier
+
+# T7: Wetware
 metaitem.circuit.wetware_processor.name=Wetware Processor
-metaitem.circuit.wetware_processor.tooltip=You have a feeling like it's watching you
+metaitem.circuit.wetware_processor.tooltip=You have a feeling like it's watching you/n§5LuV-tier
 metaitem.circuit.wetware_assembly.name=Wetware Assembly
-metaitem.circuit.wetware_assembly.tooltip=Can run Minecraft
-metaitem.circuit.wetware_super_computer.name=Wetware Supercomputer
+metaitem.circuit.wetware_assembly.tooltip=Can run Minecraft/n§5ZPM-tier
+metaitem.circuit.wetware_computer.name=Wetware Supercomputer
+metaitem.circuit.wetware_computer.tooltip=Ultimate fusion of Flesh and Machine/n§5UV-tier
 metaitem.circuit.wetware_mainframe.name=Wetware Mainframe
+metaitem.circuit.wetware_mainframe.tooltip=The best Man has ever seen/n§5UHV-tier
 
 metaitem.stem_cells.name=Stem Cells
 metaitem.stem_cells.tooltip=Raw Intelligence
 metaitem.processor.neuro.name=Neuro Processing Unit
 metaitem.processor.neuro.tooltip=Neuro CPU
 metaitem.petri_dish.name=Petri Dish
+metaitem.petri_dish.tooltip=For cultivating Cells
 
 metaitem.carbon.fibers.name=Raw Carbon Fibers
 metaitem.carbon.mesh.name=Carbon Fiber Mesh

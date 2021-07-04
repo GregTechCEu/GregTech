@@ -52,6 +52,15 @@ public class MetaItem2 extends MaterialMetaItem {
         FIRECLAY_BRICK = addItem(15, "brick.fireclay");
         COKE_OVEN_BRICK = addItem(16, "brick.coke");
 
+        SILICON_BOULE = addItem(20, "boule.silicon");
+        GLOWSTONE_BOULE = addItem(21, "boule.glowstone");
+        NAQUADAH_BOULE = addItem(22, "boule.naquadah");
+        NEUTRONIUM_BOULE = addItem(23, "boule.neutronium");
+        SILICON_WAFER = addItem(24, "wafer.silicon");
+        GLOWSTONE_WAFER = addItem(25, "wafer.glowstone");
+        NAQUADAH_WAFER = addItem(26, "wafer.naquadah");
+        NEUTRONIUM_WAFER = addItem(27, "wafer.neutronium");
+
         BOTTLE_PURPLE_DRINK = addItem(100, "bottle.purple.drink").addComponents(new FoodStats(8, 0.2F, true, true, new ItemStack(Items.GLASS_BOTTLE), new RandomPotionEffect(MobEffects.HASTE, 800, 1, 90)));
 
         ENERGY_CRYSTAL = addItem(212, "energy_crystal").addComponents(ElectricStats.createRechargeableBattery(4000000L, GTValues.HV)).setModelAmount(8).setMaxStackSize(1);
@@ -75,21 +84,14 @@ public class MetaItem2 extends MaterialMetaItem {
         ENERGY_FIELD_PROJECTOR = addItem(578, "energy_field_projector").addComponents(ElectricStats.createElectricItem(16000000L, GTValues.EV)).setMaxStackSize(1);
         SCANNER = addItem(579, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, GTValues.LV), new ScannerBehavior(50));
 
-        CARBON_FIBERS = addItem(526, "carbon.fibers");
-        CARBON_MESH = addItem(527, "carbon.mesh");
-        CARBON_PLATE = addItem(528, "carbon.plate");
+        CARBON_FIBERS = addItem(537, "carbon.fibers");
+        CARBON_MESH = addItem(538, "carbon.mesh");
+        CARBON_PLATE = addItem(539, "carbon.plate");
         INGOT_MIXED_METAL = addItem(432, "ingot.mixed_metal");
         ADVANCED_ALLOY_PLATE = addItem(433, "plate.advanced_alloy");
         INGOT_IRIDIUM_ALLOY = addItem(434, "ingot.iridium_alloy");
         PLATE_IRIDIUM_ALLOY = addItem(435, "plate.iridium_alloy");
         NEUTRON_REFLECTOR = addItem(436, "neutron_reflector");
-
-        SILICON_BOULE = addItem(439, "boule.silicon");
-        GLOWSTONE_BOULE = addItem(437, "boule.glowstone");
-        NAQUADAH_BOULE = addItem(438, "boule.naquadah");
-        SILICON_WAFER = addItem(440, "wafer.silicon");
-        GLOWSTONE_WAFER = addItem(441, "wafer.glowstone");
-        NAQUADAH_WAFER = addItem(442, "wafer.naquadah");
 
         COATED_BOARD = addItem(443, "board.coated");
         EPOXY_BOARD = addItem(444, "board.epoxy");
@@ -112,88 +114,92 @@ public class MetaItem2 extends MaterialMetaItem {
         SMD_TRANSISTOR = addItem(460, "component.smd.transistor");
         TRANSISTOR = addItem(461, "component.transistor");
 
-        ADVANCED_SYSTEM_ON_CHIP_WAFER = addItem(462, "wafer.advanced_system_on_chip");
-        INTEGRATED_LOGIC_CIRCUIT_WAFER = addItem(463, "wafer.integrated_logic_circuit");
-        CENTRAL_PROCESSING_UNIT_WAFER = addItem(464, "wafer.central_processing_unit");
-        HIGH_POWER_INTEGRATED_CIRCUIT_WAFER = addItem(465, "wafer.high_power_integrated_circuit");
-        NAND_MEMORY_CHIP_WAFER = addItem(466, "wafer.nand_memory_chip");
-        NANO_CENTRAL_PROCESSING_UNIT_WAFER = addItem(467, "wafer.nano_central_processing_unit");
-        NOR_MEMORY_CHIP_WAFER = addItem(468, "wafer.nor_memory_chip");
-        POWER_INTEGRATED_CIRCUIT_WAFER = addItem(469, "wafer.power_integrated_circuit");
-        QBIT_CENTRAL_PROCESSING_UNIT_WAFER = addItem(470, "wafer.qbit_central_processing_unit");
-        RANDOM_ACCESS_MEMORY_WAFER = addItem(471, "wafer.random_access_memory");
-        SYSTEM_ON_CHIP_WAFER = addItem(472, "wafer.system_on_chip");
+        HIGHLY_ADVANCED_SOC_WAFER = addItem(462, "wafer.highly_advanced_system_on_chip");
+        ADVANCED_SYSTEM_ON_CHIP_WAFER = addItem(463, "wafer.advanced_system_on_chip");
+        INTEGRATED_LOGIC_CIRCUIT_WAFER = addItem(464, "wafer.integrated_logic_circuit");
+        CENTRAL_PROCESSING_UNIT_WAFER = addItem(465, "wafer.central_processing_unit");
+        HIGH_POWER_INTEGRATED_CIRCUIT_WAFER = addItem(466, "wafer.high_power_integrated_circuit");
+        NAND_MEMORY_CHIP_WAFER = addItem(467, "wafer.nand_memory_chip");
+        NANO_CENTRAL_PROCESSING_UNIT_WAFER = addItem(468, "wafer.nano_central_processing_unit");
+        NOR_MEMORY_CHIP_WAFER = addItem(469, "wafer.nor_memory_chip");
+        POWER_INTEGRATED_CIRCUIT_WAFER = addItem(470, "wafer.power_integrated_circuit");
+        QBIT_CENTRAL_PROCESSING_UNIT_WAFER = addItem(471, "wafer.qbit_central_processing_unit");
+        RANDOM_ACCESS_MEMORY_WAFER = addItem(472, "wafer.random_access_memory");
+        SYSTEM_ON_CHIP_WAFER = addItem(473, "wafer.system_on_chip");
+        SIMPLE_SYSTEM_ON_CHIP_WAFER = addItem(474, "wafer.simple_system_on_chip");
 
-        RAW_CRYSTAL_CHIP = addItem(473, "crystal.raw");
-        CRYSTAL_CENTRAL_PROCESSING_UNIT = addItem(474, "crystal.central_processing_unit");
-        CRYSTAL_SYSTEM_ON_CHIP = addItem(475, "crystal.system_on_chip");
-        ADVANCED_SYSTEM_ON_CHIP = addItem(476, "plate.advanced_system_on_chip");
-        INTEGRATED_LOGIC_CIRCUIT = addItem(477, "plate.integrated_logic_circuit");
-        CENTRAL_PROCESSING_UNIT = addItem(478, "plate.central_processing_unit");
-        HIGH_POWER_INTEGRATED_CIRCUIT = addItem(479, "plate.high_power_integrated_circuit");
-        NAND_MEMORY_CHIP = addItem(480, "plate.nand_memory_chip");
-        NANO_CENTRAL_PROCESSING_UNIT = addItem(481, "plate.nano_central_processing_unit");
-        NOR_MEMORY_CHIP = addItem(482, "plate.nor_memory_chip");
-        POWER_INTEGRATED_CIRCUIT = addItem(483, "plate.power_integrated_circuit");
-        QBIT_CENTRAL_PROCESSING_UNIT = addItem(484, "plate.qbit_central_processing_unit");
-        RANDOM_ACCESS_MEMORY = addItem(485, "plate.random_access_memory");
-        SYSTEM_ON_CHIP = addItem(486, "plate.system_on_chip");
+        RAW_CRYSTAL_CHIP = addItem(475, "crystal.raw");
+        CRYSTAL_CENTRAL_PROCESSING_UNIT = addItem(476, "crystal.central_processing_unit");
+        CRYSTAL_SYSTEM_ON_CHIP = addItem(477, "crystal.system_on_chip");
+        HIGHLY_ADVANCED_SOC = addItem(478, "plate.highly_advanced_system_on_chip");
+        ADVANCED_SYSTEM_ON_CHIP = addItem(479, "plate.advanced_system_on_chip");
+        INTEGRATED_LOGIC_CIRCUIT = addItem(480, "plate.integrated_logic_circuit");
+        CENTRAL_PROCESSING_UNIT = addItem(481, "plate.central_processing_unit");
+        HIGH_POWER_INTEGRATED_CIRCUIT = addItem(482, "plate.high_power_integrated_circuit");
+        NAND_MEMORY_CHIP = addItem(483, "plate.nand_memory_chip");
+        NANO_CENTRAL_PROCESSING_UNIT = addItem(484, "plate.nano_central_processing_unit");
+        NOR_MEMORY_CHIP = addItem(485, "plate.nor_memory_chip");
+        POWER_INTEGRATED_CIRCUIT = addItem(486, "plate.power_integrated_circuit");
+        QBIT_CENTRAL_PROCESSING_UNIT = addItem(487, "plate.qbit_central_processing_unit");
+        RANDOM_ACCESS_MEMORY = addItem(488, "plate.random_access_memory");
+        SYSTEM_ON_CHIP = addItem(489, "plate.system_on_chip");
+        SIMPLE_SYSTEM_ON_CHIP = addItem(490, "plate.simple_system_on_chip");
+
+        ENGRAVED_CRYSTAL_CHIP = addItem(491, "engraved.crystal_chip");
+        ENGRAVED_LAPOTRON_CHIP = addItem(492, "engraved.lapotron_chip");
 
 
         // CIRCUITS
 
-        // T1: Electronic todo: textures
-        ELECTRONIC_CIRCUIT_LV = addItem(487, "circuit.electronic").setUnificationData(OrePrefix.circuit, Tier.Basic);
-        ELECTRONIC_CIRCUIT_MV = addItem(488, "circuit.good_electronic").setUnificationData(OrePrefix.circuit, Tier.Good);
+        // T1: Electronic
+        ELECTRONIC_CIRCUIT_LV = addItem(500, "circuit.electronic").setUnificationData(OrePrefix.circuit, Tier.Basic);
+        ELECTRONIC_CIRCUIT_MV = addItem(501, "circuit.good_electronic").setUnificationData(OrePrefix.circuit, Tier.Good);
 
-        // T2: Integrated todo textures
-        INTEGRATED_CIRCUIT_LV = addItem(489, "circuit.basic_integrated").setUnificationData(OrePrefix.circuit, Tier.Basic);
-        INTEGRATED_CIRCUIT_MV = addItem(490, "circuit.good_integrated").setUnificationData(OrePrefix.circuit, Tier.Good);
-        INTEGRATED_CIRCUIT_HV = addItem(491, "circuit.advanced_integrated").setUnificationData(OrePrefix.circuit, Tier.Advanced);
+        // T2: Integrated
+        INTEGRATED_CIRCUIT_LV = addItem(502, "circuit.basic_integrated").setUnificationData(OrePrefix.circuit, Tier.Basic);
+        INTEGRATED_CIRCUIT_MV = addItem(503, "circuit.good_integrated").setUnificationData(OrePrefix.circuit, Tier.Good);
+        INTEGRATED_CIRCUIT_HV = addItem(504, "circuit.advanced_integrated").setUnificationData(OrePrefix.circuit, Tier.Advanced);
 
-        // Misc Unlocks todo textures
-        NAND_CHIP_ULV = addItem(492, "circuit.nand_chip").setUnificationData(OrePrefix.circuit, Tier.Primitive);
-        MICROPROCESSOR_LV = addItem(493, "circuit.microprocessor").setUnificationData(OrePrefix.circuit, Tier.Basic);
+        // Misc Unlocks
+        NAND_CHIP_ULV = addItem(505, "circuit.nand_chip").setUnificationData(OrePrefix.circuit, Tier.Primitive);
+        MICROPROCESSOR_LV = addItem(506, "circuit.microprocessor").setUnificationData(OrePrefix.circuit, Tier.Basic);
 
-        // T3: Processor todo textures
-        PROCESSOR_MV = addItem(494, "circuit.processor").setUnificationData(OrePrefix.circuit, Tier.Good);
-        PROCESSOR_ASSEMBLY_HV = addItem(495, "circuit.assembly").setUnificationData(OrePrefix.circuit, Tier.Advanced);
-        WORKSTATION_EV = addItem(496, "circuit.workstation").setUnificationData(OrePrefix.circuit, Tier.Extreme);
-        MAINFRAME_IV = addItem(497, "circuit.mainframe").setUnificationData(OrePrefix.circuit, Tier.Elite);
+        // T3: Processor
+        PROCESSOR_MV = addItem(507, "circuit.processor").setUnificationData(OrePrefix.circuit, Tier.Good);
+        PROCESSOR_ASSEMBLY_HV = addItem(508, "circuit.assembly").setUnificationData(OrePrefix.circuit, Tier.Advanced);
+        WORKSTATION_EV = addItem(509, "circuit.workstation").setUnificationData(OrePrefix.circuit, Tier.Extreme);
+        MAINFRAME_IV = addItem(510, "circuit.mainframe").setUnificationData(OrePrefix.circuit, Tier.Elite);
 
-        // T4: Nano todo textures
-        NANO_PROCESSOR_HV = addItem(498, "circuit.nano_processor").setUnificationData(OrePrefix.circuit, Tier.Advanced);
-        NANO_PROCESSOR_ASSEMBLY_EV = addItem(499, "circuit.nano_assembly").setUnificationData(OrePrefix.circuit, Tier.Extreme);
-        NANO_COMPUTER_IV = addItem(500, "circuit.nano_computer").setUnificationData(OrePrefix.circuit, Tier.Elite);
-        NANO_MAINFRAME_LUV = addItem(501, "circuit.nano_mainframe").setUnificationData(OrePrefix.circuit, Tier.Master);
+        // T4: Nano
+        NANO_PROCESSOR_HV = addItem(511, "circuit.nano_processor").setUnificationData(OrePrefix.circuit, Tier.Advanced);
+        NANO_PROCESSOR_ASSEMBLY_EV = addItem(512, "circuit.nano_assembly").setUnificationData(OrePrefix.circuit, Tier.Extreme);
+        NANO_COMPUTER_IV = addItem(513, "circuit.nano_computer").setUnificationData(OrePrefix.circuit, Tier.Elite);
+        NANO_MAINFRAME_LUV = addItem(514, "circuit.nano_mainframe").setUnificationData(OrePrefix.circuit, Tier.Master);
 
-        // T5: Quantum todo textures
-        QUANTUM_PROCESSOR_EV = addItem(502, "circuit.quantum_processor").setUnificationData(OrePrefix.circuit, Tier.Extreme);
-        QUANTUM_ASSEMBLY_IV = addItem(503, "circuit.quantum_assembly").setUnificationData(OrePrefix.circuit, Tier.Elite);
-        QUANTUM_COMPUTER_LUV = addItem(504, "circuit.quantum_computer").setUnificationData(OrePrefix.circuit, Tier.Master);
-        QUANTUM_MAINFRAME_ZPM = addItem(505, "circuit.quantum_mainframe").setUnificationData(OrePrefix.circuit, Tier.Ultimate);
+        // T5: Quantum
+        QUANTUM_PROCESSOR_EV = addItem(515, "circuit.quantum_processor").setUnificationData(OrePrefix.circuit, Tier.Extreme);
+        QUANTUM_ASSEMBLY_IV = addItem(516, "circuit.quantum_assembly").setUnificationData(OrePrefix.circuit, Tier.Elite);
+        QUANTUM_COMPUTER_LUV = addItem(517, "circuit.quantum_computer").setUnificationData(OrePrefix.circuit, Tier.Master);
+        QUANTUM_MAINFRAME_ZPM = addItem(518, "circuit.quantum_mainframe").setUnificationData(OrePrefix.circuit, Tier.Ultimate);
 
-        // T6: Crystal todo textures
-        CRYSTAL_PROCESSOR_IV = addItem(506, "circuit.crystal_processor").setUnificationData(OrePrefix.circuit, Tier.Elite);
-        CRYSTAL_ASSEMBLY_LUV = addItem(507, "circuit.crystal_assembly").setUnificationData(OrePrefix.circuit, Tier.Master);
-        CRYSTAL_COMPUTER_ZPM = addItem(508, "circuit.crystal_computer").setUnificationData(OrePrefix.circuit, Tier.Ultimate);
-        CRYSTAL_MAINFRAME_UV = addItem(509, "circuit.crystal_mainframe").setUnificationData(OrePrefix.circuit, Tier.Superconductor);
+        // T6: Crystal
+        CRYSTAL_PROCESSOR_IV = addItem(519, "circuit.crystal_processor").setUnificationData(OrePrefix.circuit, Tier.Elite);
+        CRYSTAL_ASSEMBLY_LUV = addItem(520, "circuit.crystal_assembly").setUnificationData(OrePrefix.circuit, Tier.Master);
+        CRYSTAL_COMPUTER_ZPM = addItem(521, "circuit.crystal_computer").setUnificationData(OrePrefix.circuit, Tier.Ultimate);
+        CRYSTAL_MAINFRAME_UV = addItem(522, "circuit.crystal_mainframe").setUnificationData(OrePrefix.circuit, Tier.Superconductor);
 
         // T7: Wetware
-        WETWARE_PROCESSOR_LUV = addItem(510, "circuit.wetware_processor").setUnificationData(OrePrefix.circuit, Tier.Master);
-        WETWARE_PROCESSOR_ASSEMBLY_ZPM = addItem(511, "circuit.wetware_assembly").setUnificationData(OrePrefix.circuit, Tier.Ultimate);
-        WETWARE_SUPER_COMPUTER_UV = addItem(512, "circuit.wetware_computer").setUnificationData(OrePrefix.circuit, Tier.Superconductor);
-        WETWARE_MAINFRAME_MAX = addItem(513, "circuit.wetware_mainframe").setUnificationData(OrePrefix.circuit, Tier.Infinite);
+        WETWARE_PROCESSOR_LUV = addItem(523, "circuit.wetware_processor").setUnificationData(OrePrefix.circuit, Tier.Master);
+        WETWARE_PROCESSOR_ASSEMBLY_ZPM = addItem(524, "circuit.wetware_assembly").setUnificationData(OrePrefix.circuit, Tier.Ultimate);
+        WETWARE_SUPER_COMPUTER_UV = addItem(525, "circuit.wetware_computer").setUnificationData(OrePrefix.circuit, Tier.Superconductor);
+        WETWARE_MAINFRAME_MAX = addItem(526, "circuit.wetware_mainframe").setUnificationData(OrePrefix.circuit, Tier.Infinite);
 
         // TODO REMOVE THESE
-        DATA_CONTROL_CIRCUIT_IV = addItem(518, "circuit.data_control").setUnificationData(OrePrefix.circuit, Tier.Elite);
-        ENERGY_FLOW_CIRCUIT_LUV = addItem(519, "circuit.energy_flow").setUnificationData(OrePrefix.circuit, Tier.Master);
+        DATA_CONTROL_CIRCUIT_IV = addItem(527, "circuit.data_control").setUnificationData(OrePrefix.circuit, Tier.Elite);
+        ENERGY_FLOW_CIRCUIT_LUV = addItem(528, "circuit.energy_flow").setUnificationData(OrePrefix.circuit, Tier.Master);
 
-        ENGRAVED_CRYSTAL_CHIP = addItem(514, "engraved.crystal_chip");
-        ENGRAVED_LAPOTRON_CHIP = addItem(515, "engraved.lapotron_chip");
-
-        TURBINE_ROTOR = addItem(516, "turbine_rotor").addComponents(new TurbineRotorBehavior());
-        COVER_FACADE = addItem(517, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
+        TURBINE_ROTOR = addItem(529, "turbine_rotor").addComponents(new TurbineRotorBehavior());
+        COVER_FACADE = addItem(530, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
         FLUID_REGULATORS[0] = FLUID_REGULATOR_LV = addItem(700, "fluid.regulator.lv");
         FLUID_REGULATORS[1] = FLUID_REGULATOR_MV = addItem(701, "fluid.regulator.mv");
@@ -205,18 +211,32 @@ public class MetaItem2 extends MaterialMetaItem {
         FLUID_REGULATORS[7] = FLUID_REGULATOR_UV = addItem(707, "fluid.regulator.uv");
 
         if (ConfigHolder.U.GT5u.enableZPMandUVBats) {
-            ENERGY_MODULE = addItem(520, "energy.module").addComponents(new IItemComponent[] { ElectricStats.createRechargeableBattery(10000000000L, GTValues.ZPM) }).setModelAmount(8);
-            ENERGY_CLUSTER = addItem(521, "energy.cluster").addComponents(new IItemComponent[] { ElectricStats.createRechargeableBattery(100000000000L, GTValues.UV) }).setModelAmount(8);
+            ENERGY_MODULE = addItem(531, "energy.module").addComponents(new IItemComponent[] { ElectricStats.createRechargeableBattery(10000000000L, GTValues.ZPM) }).setModelAmount(8);
+            ENERGY_CLUSTER = addItem(532, "energy.cluster").addComponents(new IItemComponent[] { ElectricStats.createRechargeableBattery(100000000000L, GTValues.UV) }).setModelAmount(8);
         }
 
         if (ConfigHolder.U.GT5u.replaceUVwithMAXBat) {
-            MAX_BATTERY = addItem(522, "max.battery").addComponents(new IItemComponent[] { ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.MAX) }).setModelAmount(8);
+            MAX_BATTERY = addItem(533, "max.battery").addComponents(new IItemComponent[] { ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.MAX) }).setModelAmount(8);
             MetaItems.ZPM2.setInvisible();
         }
 
-        NEURO_PROCESSOR = addItem(523, "processor.neuro");
-        STEM_CELLS = addItem(524, "stem_cells");
-        PETRI_DISH = addItem(525, "petri_dish");
+        NEURO_PROCESSOR = addItem(534, "processor.neuro");
+        STEM_CELLS = addItem(535, "stem_cells");
+        PETRI_DISH = addItem(536, "petri_dish");
+    }
+
+    @Override
+    public void registerOreDict() {
+        super.registerOreDict();
+
+        OreDictUnifier.registerOre(CAPACITOR.getStackForm(), "capacitor");
+        OreDictUnifier.registerOre(SMD_CAPACITOR.getStackForm(), "capacitor");
+        OreDictUnifier.registerOre(TRANSISTOR.getStackForm(), "transistor");
+        OreDictUnifier.registerOre(SMD_TRANSISTOR.getStackForm(), "transistor");
+        OreDictUnifier.registerOre(DIODE.getStackForm(), "diode");
+        OreDictUnifier.registerOre(SMD_DIODE.getStackForm(), "diode");
+        OreDictUnifier.registerOre(RESISTOR.getStackForm(), "resistor");
+        OreDictUnifier.registerOre(SMD_RESISTOR.getStackForm(), "resistor");
     }
 
     public void registerRecipes() {
