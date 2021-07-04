@@ -16,8 +16,8 @@ jobs:
 
     steps:
     - name: Clone Repository
-    - shell: bash
-    - run: |
+      shell: bash
+      run: |
         /usr/bin/git clone https://github.com/Irgendwer01/GregTech.git ./
     - name: Declare some variables
       id: vars
