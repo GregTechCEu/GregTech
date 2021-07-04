@@ -15,7 +15,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: sudosubin/git-clone-action@v1
+      with:
+        repository: '<USER>/<REPO>'
+        platform: 'github'
+    - name: Declare some variables
+      id: vars
+      shell: bash
+      run: |
+        echo "::set-output name=sha_short::$(git rev-parse --short $GITHUB_SHA)"
     - name: Set up JDK 8
       uses: actions/setup-java@v2
       with:
