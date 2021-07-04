@@ -91,6 +91,8 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockPart imple
         if (shouldRenderOverlay()) {
             SimpleOverlayRenderer renderer = isExportHatch ? Textures.PIPE_OUT_OVERLAY : Textures.PIPE_IN_OVERLAY;
             renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            SimpleOverlayRenderer overlay = isExportHatch ? Textures.FLUID_HATCH_OUTPUT_OVERLAY : Textures.FLUID_HATCH_INPUT_OVERLAY;
+            overlay.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
@@ -121,25 +123,25 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockPart imple
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return createTankUI((isExportHatch ? exportFluids : importFluids).getTankAt(0), containerInventory, getMetaFullName(), entityPlayer)
-            .build(getHolder(), entityPlayer);
+                .build(getHolder(), entityPlayer);
     }
 
     public ModularUI.Builder createTankUI(IFluidTank fluidTank, IItemHandlerModifiable containerInventory, String title, EntityPlayer entityPlayer) {
         Builder builder = ModularUI.defaultBuilder();
         builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
         TankWidget tankWidget = new TankWidget(fluidTank, 69, 52, 18, 18)
-            .setHideTooltip(true).setAlwaysShowFull(true);
+                .setHideTooltip(true).setAlwaysShowFull(true);
         builder.widget(tankWidget);
         builder.label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF);
         builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
         builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
         return builder.label(6, 6, title)
-            .widget(new FluidContainerSlotWidget(containerInventory, 0, 90, 17, false)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-            .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
-            .widget(new SlotWidget(containerInventory, 1, 90, 54, true, false)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
-            .bindPlayerInventory(entityPlayer.inventory);
+                .widget(new FluidContainerSlotWidget(containerInventory, 0, 90, 17, false)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
+                .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
+                .widget(new SlotWidget(containerInventory, 1, 90, 54, true, false)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
+                .bindPlayerInventory(entityPlayer.inventory);
     }
 
     @Override

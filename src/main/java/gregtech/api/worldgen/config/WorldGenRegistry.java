@@ -49,7 +49,7 @@ public class WorldGenRegistry {
     private final Map<String, Supplier<ShapeGenerator>> shapeGeneratorRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private final Map<String, Supplier<BlockFiller>> blockFillerRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private final Map<String, Supplier<IVeinPopulator>> veinPopulatorRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    private final Map<String, Integer> namedDimensions = new HashMap<>();
+    private final Map<Integer, String> namedDimensions = new HashMap<>();
 
     private final List<OreDepositDefinition> registeredDefinitions = new ArrayList<>();
     private final Map<WorldProvider, WorldOreVeinCache> oreVeinCache = new WeakHashMap<>();
@@ -221,7 +221,7 @@ public class WorldGenRegistry {
         try {
             JsonArray dims = element.getAsJsonArray("dims");
             for(JsonElement dim : dims) {
-                namedDimensions.put(dim.getAsJsonObject().get("dimName").getAsString(), dim.getAsJsonObject().get("dimID").getAsInt());
+                namedDimensions.put(dim.getAsJsonObject().get("dimID").getAsInt(), dim.getAsJsonObject().get("dimName").getAsString());
             }
         } catch (RuntimeException exception){
             GTLog.logger.error("Failed to parse named dimensions", exception);
@@ -279,7 +279,7 @@ public class WorldGenRegistry {
         return Collections.unmodifiableList(INSTANCE.registeredDefinitions);
     }
 
-    public static Map<String, Integer> getNamedDimensions() {
+    public static Map<Integer, String> getNamedDimensions() {
         return INSTANCE.namedDimensions;
     }
 
