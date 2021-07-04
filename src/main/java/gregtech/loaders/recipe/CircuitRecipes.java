@@ -1,6 +1,9 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.unification.material.MarkerMaterials.Component;
+import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.type.IngotMaterial;
@@ -62,7 +65,6 @@ public class CircuitRecipes {
         BLAST_RECIPES.recipeBuilder().duration(18000).EUt(7680)
                 .input(block, Silicon, 32)
                 .input(ingot, Neutronium, 4)
-                .notConsumable(new IntCircuitIngredient(1))
                 .fluidInputs(Radon.getFluid(8000))
                 .output(NEUTRONIUM_BOULE)
                 .blastFurnaceTemp(6484)
@@ -111,7 +113,7 @@ public class CircuitRecipes {
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(NAQUADAH_WAFER)  .notConsumable(craftingLens, Color.Orange)   .output(ADVANCED_SYSTEM_ON_CHIP_WAFER)           .buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Orange)   .output(ADVANCED_SYSTEM_ON_CHIP_WAFER, 2)  .buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Pink)     .output(HIGHLY_ADVANCED_SOC_WAFER)               .buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Magenta)  .output(HIGHLY_ADVANCED_SOC_WAFER)               .buildAndRegister();
 
         // Wafer chemical refining recipes
         CHEMICAL_RECIPES.recipeBuilder().duration(1200).EUt(7680)
@@ -860,14 +862,24 @@ public class CircuitRecipes {
 
     private static void circuitRecipes() {
 
-        // Handcrafted Circuits
+        // T1: Electronic
         ModHandler.addShapedRecipe("basic_circuit", ELECTRONIC_CIRCUIT_LV.getStackForm(),
                 "RPR", "VBV", "CCC",
                 'R', RESISTOR.getStackForm(),
                 'P', new UnificationEntry(plate, Steel),
                 'V', VACUUM_TUBE.getStackForm(),
-                'B', COATED_BOARD.getStackForm(),
+                'B', BASIC_CIRCUIT_BOARD.getStackForm(),
                 'C', new UnificationEntry(cableGtSingle, RedAlloy));
+
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(16).duration(200)
+                .input(BASIC_CIRCUIT_BOARD)
+                .input(component, Component.Resistor, 2)
+                .input(wireGtSingle, RedAlloy, 2)
+                .input(circuit, Tier.Primitive, 2)
+                .output(ELECTRONIC_CIRCUIT_LV, 2)
+                .buildAndRegister();
+
+
 
         ModHandler.addShapedRecipe("good_circuit", INTEGRATED_CIRCUIT_MV.getStackForm(),
                 "RCP", "CDC", "PCR",

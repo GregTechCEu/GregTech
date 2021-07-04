@@ -9,6 +9,7 @@ import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterials.Component;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -111,17 +112,17 @@ public class MetaItem2 extends MaterialMetaItem {
 
 
         VACUUM_TUBE = addItem(450, "circuit.vacuum_tube").setUnificationData(OrePrefix.circuit, Tier.Primitive);
-        DIODE = addItem(451, "component.diode");
-        CAPACITOR = addItem(452, "component.capacitor");
+        DIODE = addItem(451, "component.diode").setUnificationData(OrePrefix.component, Component.Diode);
+        CAPACITOR = addItem(452, "component.capacitor").setUnificationData(OrePrefix.component, Component.Capacitor);
         GLASS_FIBER = addItem(453, "component.glass.fiber");
         GLASS_TUBE = addItem(454, "component.glass.tube");
-        RESISTOR = addItem(455, "component.resistor");
+        RESISTOR = addItem(455, "component.resistor").setUnificationData(OrePrefix.component, Component.Resistor);
         SMALL_COIL = addItem(456, "component.small_coil");
-        SMD_DIODE = addItem(457, "component.smd.diode");
-        SMD_CAPACITOR = addItem(458, "component.smd.capacitor");
-        SMD_RESISTOR = addItem(459, "component.smd.resistor");
-        SMD_TRANSISTOR = addItem(460, "component.smd.transistor");
-        TRANSISTOR = addItem(461, "component.transistor");
+        SMD_DIODE = addItem(457, "component.smd.diode").setUnificationData(OrePrefix.component, Component.Diode);
+        SMD_CAPACITOR = addItem(458, "component.smd.capacitor").setUnificationData(OrePrefix.component, Component.Capacitor);
+        SMD_RESISTOR = addItem(459, "component.smd.resistor").setUnificationData(OrePrefix.component, Component.Resistor);
+        SMD_TRANSISTOR = addItem(460, "component.smd.transistor").setUnificationData(OrePrefix.component, Component.Transistor);
+        TRANSISTOR = addItem(461, "component.transistor").setUnificationData(OrePrefix.component, Component.Transistor);
 
         HIGHLY_ADVANCED_SOC_WAFER = addItem(462, "wafer.highly_advanced_system_on_chip");
         ADVANCED_SYSTEM_ON_CHIP_WAFER = addItem(463, "wafer.advanced_system_on_chip");
@@ -228,20 +229,6 @@ public class MetaItem2 extends MaterialMetaItem {
         NEURO_PROCESSOR = addItem(534, "processor.neuro");
         STEM_CELLS = addItem(535, "stem_cells");
         PETRI_DISH = addItem(536, "petri_dish");
-    }
-
-    @Override
-    public void registerOreDict() {
-        super.registerOreDict();
-
-        OreDictUnifier.registerOre(CAPACITOR.getStackForm(), "capacitor");
-        OreDictUnifier.registerOre(SMD_CAPACITOR.getStackForm(), "capacitor");
-        OreDictUnifier.registerOre(TRANSISTOR.getStackForm(), "transistor");
-        OreDictUnifier.registerOre(SMD_TRANSISTOR.getStackForm(), "transistor");
-        OreDictUnifier.registerOre(DIODE.getStackForm(), "diode");
-        OreDictUnifier.registerOre(SMD_DIODE.getStackForm(), "diode");
-        OreDictUnifier.registerOre(RESISTOR.getStackForm(), "resistor");
-        OreDictUnifier.registerOre(SMD_RESISTOR.getStackForm(), "resistor");
     }
 
     public void registerRecipes() {
