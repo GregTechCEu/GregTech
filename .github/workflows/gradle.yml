@@ -40,4 +40,5 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: true
           title: ${{ steps.vars.outputs.sha_short }}
-          files: build/libs/gregtech-1.12.2-1.16.1.832.jar
+          files: |
+              build/libs/*.jar
