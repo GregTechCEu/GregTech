@@ -501,7 +501,7 @@ public class CircuitRecipes {
                     .buildAndRegister();
         }
 
-        // Crystal Circuit Components TODO
+        // Crystal Circuit Components
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(256).EUt(480)
                 .input(LAPOTRON_CRYSTAL)
                 .notConsumable(craftingLens, Color.Blue)
@@ -580,7 +580,7 @@ public class CircuitRecipes {
                 .buildAndRegister();
     }
 
-    private static void boardRecipes() { // TODO Start here
+    private static void boardRecipes() {
 
         // Coated Board
         ModHandler.addShapedRecipe("coated_board", COATED_BOARD.getStackForm(3),
