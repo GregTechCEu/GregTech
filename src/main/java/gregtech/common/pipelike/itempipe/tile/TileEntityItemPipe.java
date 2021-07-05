@@ -15,7 +15,6 @@ import java.lang.ref.WeakReference;
 
 public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, EmptyNodeData> {
 
-    private ItemNetHandler itemHandler;
     private WeakReference<ItemPipeNet> currentPipeNet = new WeakReference<>(null);
 
     private boolean walked;
@@ -42,18 +41,11 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
         return false;
     }
 
-    public ItemNetHandler getItemHandler() {
-        if (itemHandler == null) {
-            itemHandler = new ItemNetHandler(getItemPipeNet(), this);
-        }
-        return itemHandler;
-    }
-
     @Nullable
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(getItemHandler());
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new ItemNetHandler(getItemPipeNet(), this, facing));
         }
         return super.getCapabilityInternal(capability, facing);
     }

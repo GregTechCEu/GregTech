@@ -1,7 +1,8 @@
 package gregtech.common.pipelike.itempipe.net;
 
+import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
@@ -9,11 +10,13 @@ import javax.annotation.Nonnull;
 public class ItemNetHandler implements IItemHandler {
 
     private final ItemPipeNet net;
-    private final BlockPos pos;
+    private final TileEntityItemPipe pipe;
+    private final EnumFacing facing;
 
-    public ItemNetHandler(ItemPipeNet net, BlockPos pos) {
+    public ItemNetHandler(ItemPipeNet net, TileEntityItemPipe pipe, EnumFacing facing) {
         this.net = net;
-        this.pos = pos;
+        this.pipe = pipe;
+        this.facing = facing;
     }
 
     @Override
@@ -30,7 +33,8 @@ public class ItemNetHandler implements IItemHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        return net.getTransferNetwork().requestItemTransfer(stack, pos, simulate);
+        if (stack.isEmpty()) return stack;
+        return ItemNetWalker.sendStack(pipe.getWorld(), net, pipe.getPos(), facing, stack, simulate);
     }
 
     @Nonnull
