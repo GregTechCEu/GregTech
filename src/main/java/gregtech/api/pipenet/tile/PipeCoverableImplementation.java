@@ -160,7 +160,8 @@ public class PipeCoverableImplementation implements ICoverable {
 
     @Override
     public int getPaintingColor() {
-        return holder.getInsulationColor() == IPipeTile.DEFAULT_INSULATION_COLOR ? 0xFFFFFF : holder.getInsulationColor();
+        //todo make insulation colors separate for pipes and cables so cover plates have the correct overlay
+        return holder.getInsulationColor() == IPipeTile.DEFAULT_INSULATION_COLOR ? IPipeTile.DEFAULT_INSULATION_COLOR : holder.getInsulationColor();
     }
 
     @Override

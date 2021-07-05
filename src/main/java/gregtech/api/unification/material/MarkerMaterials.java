@@ -95,9 +95,22 @@ public class MarkerMaterials {
         public static Material Elite = new MarkerMaterial("elite");
         public static Material Master = new MarkerMaterial("master");
         public static Material Ultimate = new MarkerMaterial("ultimate");
-        public static Material Superconductor = new Material(355, "superconductor", 0xFFFFFF, MaterialIconSet.NONE, of(), 0L, null) {
+        public static Material Superconductor = new Material(369, "superconductor", 0xFFFFFF, MaterialIconSet.NONE, of(), 0L, null) {
         };
         public static Material Infinite = new MarkerMaterial("infinite");
+
+        public static Material UEVCircuit = new MarkerMaterial("uev");
+        public static Material UIVCircuit = new MarkerMaterial("uiv");
+        public static Material UMVCircuit = new MarkerMaterial("umv");
+        public static Material UXVCircuit = new MarkerMaterial("uxv");
+        public static Material MAXCircuit = new MarkerMaterial("max");
+    }
+
+    public static class Component {
+        public static Material Resistor = new MarkerMaterial("resistor");
+        public static Material Transistor = new MarkerMaterial("transistor");
+        public static Material Capacitor = new MarkerMaterial("capacitor");
+        public static Material Diode = new MarkerMaterial("diode");
     }
 
 }

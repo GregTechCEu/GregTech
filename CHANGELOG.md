@@ -1,5 +1,26 @@
 ## Changelog
 
+### 1.16.1
+* Note: This is hotfix
+* Fixed Surface block spawning (#1681) - ALongStringOfNumbers
+* Reverted "Fixed name overlaps in GUIs (#1665)" (#1686) - LAGIdiot
+
+### 1.16.0
+* Added Fluid Regulator (#1570) - hjae78
+* Added Info tab for multiblock description (#1583) - ALongStringOfNumbers
+* Update input/output overlays on buses/hatches to look different (#1607) - galyfray
+* Updated name of Phosphate to Tricalcium Phosphate (#1659) - MounderFod
+* Updated systems to new Recipe Properties (#1672) - ALongStringOfNumbers
+* Fixed wire and cable lang (#1645) - TechLord22
+* Fixed typo in Monazite vein preventing surface rock spawning (#1649) - ALongStringOfNumbers
+* Fixed Electric Pump Assembler recipe using wrong cable (#1650) - ALongStringOfNumbers
+* Fixed damage is not applied when a saw is used as shears (#1655) - Adrian Brock
+* Fixed name overlaps in GUIs (#1665) - TechLord22
+* Fixed Surface Block generation issue, add logging (#1666) - ALongStringOfNumbers
+* Fixed Ore generation Page glitches (#1668) - ALongStringOfNumbers
+* Internal migrated Json Recipes to Java Code (#1634) - Dane Strandboge
+* Internal added isHidden to RecipeMaps to hide the default RecipeMapCategory (#1652) - bruberu
+
 ### 1.15.1
 * Added recipe using liquid ice (#1620) - ALongStringOfNumbers
 * Added Active Overlay to single block Steam and Gas Turbines (#1624) - dan

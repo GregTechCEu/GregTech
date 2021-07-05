@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial.MatFlags;
@@ -21,8 +22,11 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.lang.Math;
 
 import static gregtech.api.GTValues.M;
+import static gregtech.api.recipes.RecipeMaps.PACKER_RECIPES;
+import static gregtech.api.recipes.RecipeMaps.UNPACKER_RECIPES;
 
 public class WireRecipeHandler {
 
@@ -36,6 +40,7 @@ public class WireRecipeHandler {
 
     public static void register() {
         OrePrefix.wireGtSingle.addProcessingHandler(IngotMaterial.class, WireRecipeHandler::processWireSingle);
+        OrePrefix.wireGtSingle.addProcessingHandler(IngotMaterial.class, WireRecipeHandler::processWireCompression);
         for (OrePrefix wirePrefix : WIRE_DOUBLING_ORDER) {
             wirePrefix.addProcessingHandler(IngotMaterial.class, WireRecipeHandler::generateWireRecipe);
             wirePrefix.addProcessingHandler(Material.class, WireRecipeHandler::generateWireCombiningRecipe);
@@ -180,7 +185,33 @@ public class WireRecipeHandler {
         }
     }
 
-    private static int getMaterialAmount(int cableTier, int insulationTier) {
+    /**
+     * Wire compression Material Handler
+     */
+    private static void processWireCompression(OrePrefix prefix, IngotMaterial material) {
+        if (material.cableProperties != null) {
+            for(int startTier = 0; startTier < 4; startTier++) {
+                for (int i = 1; i < 5 - startTier; i++) {
+                    PACKER_RECIPES.recipeBuilder()
+                            .inputs(OreDictUnifier.get(WIRE_DOUBLING_ORDER[startTier], material, 1 << i))
+                            .notConsumable(new IntCircuitIngredient((int) Math.pow(2, i)))
+                            .outputs(OreDictUnifier.get(WIRE_DOUBLING_ORDER[startTier + i], material, 1))
+                            .buildAndRegister();
+                }
+            }
+
+            for (int i = 1; i < 5; i++) {
+                UNPACKER_RECIPES.recipeBuilder()
+                        .inputs(OreDictUnifier.get(WIRE_DOUBLING_ORDER[i], material, 1))
+                        .notConsumable(new IntCircuitIngredient(1))
+                        .outputs(OreDictUnifier.get(WIRE_DOUBLING_ORDER[0], material, (int) Math.pow(2, i)))
+                        .buildAndRegister();
+            }
+        }
+    }
+
+
+        private static int getMaterialAmount(int cableTier, int insulationTier) {
         if (cableTier > insulationTier) {
             return -1;
         }

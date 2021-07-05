@@ -1,6 +1,7 @@
 package gregtech.loaders.recipe;
 
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.GTValues;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
@@ -14,6 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static gregtech.api.GTValues.L;
+import static gregtech.common.items.MetaItems.FLUID_REGULATORS;
+import static gregtech.common.items.MetaItems.PUMPS;
 
 public class ComponentRecipes {
 
@@ -441,6 +444,18 @@ public class ComponentRecipes {
                     .fluidInputs(fluid)
                     .outputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
                     .duration(100).EUt(7680).buildAndRegister();
+        }
+
+        Material[] circuitTiers = new Material[] {MarkerMaterials.Tier.Basic, MarkerMaterials.Tier.Good, MarkerMaterials.Tier.Advanced, MarkerMaterials.Tier.Extreme, MarkerMaterials.Tier.Elite};
+
+        for (int i = 0; i < circuitTiers.length; i++) {
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                    .inputs(PUMPS[i].getStackForm())
+                    .input(OrePrefix.circuit, circuitTiers[i], 2)
+                    .outputs(FLUID_REGULATORS[i].getStackForm())
+                    .EUt((int) (GTValues.V[i + 1] * 30 / 32))
+                    .duration(100)
+                    .buildAndRegister();
         }
     }
 }

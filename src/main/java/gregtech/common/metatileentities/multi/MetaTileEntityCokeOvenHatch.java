@@ -25,6 +25,7 @@ public class MetaTileEntityCokeOvenHatch extends MetaTileEntityMultiblockPart {
 
     public MetaTileEntityCokeOvenHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 0);
+        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override

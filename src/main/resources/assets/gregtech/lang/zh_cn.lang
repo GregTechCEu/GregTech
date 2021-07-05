@@ -2799,7 +2799,7 @@ gregtech.recipe.amperage=电流: %d
 gregtech.recipe.not_consumed=不在加工时消耗
 gregtech.recipe.chance=出产概率: %s%% +%s%%/tier
 gregtech.recipe.blast_furnace_temperature=温度: %d K (%s)
-gregtech.recipe.eu_to_start=启动耗电: %d EU
+gregtech.recipe.eu_to_start=启动耗电: %sEU
 
 gregtech.fluid.click_to_fill=§7手持空的流体容器点击储罐以取走流体.
 gregtech.fluid.click_to_fill.shift=§7(Shift+单击将装满所有手持容器)
