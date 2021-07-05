@@ -2837,6 +2837,9 @@ gregtech.machine.circuit_assembler.iv.name=Elite Circuit Assembler
 gregtech.machine.circuit_assembler.luv.name=Elite Circuit Assembler II
 gregtech.machine.circuit_assembler.zpm.name=Elite Circuit Assembler III
 
+gregtech.machine.infinite_emitter.name=Infinite GT Energy Unit Emitter
+gregtech.machine.infinite_emitter.tooltip=§fYou just need §5C§dr§4e§ca§et§ai§bv§3e §7m§1o§5d§de§f to use this
+
 # Machine hulls
 gregtech.machine.hull.tooltip=§fYou just need §5I§dm§4a§cg§ei§an§ba§3t§7i§1o§5n§f to use this
 
@@ -3504,3 +3507,25 @@ gregtech.command.util.hand.tool_stats=Tool Stats Class: %s
 gregtech.command.util.hand.meta_item=Meta Item Name: %s
 gregtech.command.util.hand.not_a_player=This command is only usable by a player.
 gregtech.command.util.hand.no_item=You must hold something in mainhand before executing this command.
+
+info.infinite_energy.infinite=Infinite: §lOn§r
+info.infinite_energy.finite=Infinite: §lOff§r
+info.button.accept=Press §lENTER§r to accept changes
+info.button.decline=Press §lESC§r to decline changes
+info.infinite_energy.accept=Accept
+info.infinite_energy.decline=Decline
+info.infinite_energy.ulv=Voltage: ULV
+info.infinite_energy.lv=Voltage: LV
+info.infinite_energy.mv=Voltage: MV
+info.infinite_energy.hv=Voltage: HV
+info.infinite_energy.ev=Voltage: EV
+info.infinite_energy.iv=Voltage: IV
+info.infinite_energy.luv=Voltage: LUV
+info.infinite_energy.zpm=Voltage: ZPM
+info.infinite_energy.uv=Voltage: UV
+info.infinite_energy.uhv=Voltage: UHV
+info.infinite_energy.uev=Voltage: UEV
+info.infinite_energy.uiv=Voltage: UIV
+info.infinite_energy.umv=Voltage: UMV
+info.infinite_energy.uxv=Voltage: UXV
+info.infinite_energy.max=Voltage: MAX
