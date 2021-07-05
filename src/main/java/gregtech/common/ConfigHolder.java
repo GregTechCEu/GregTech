@@ -115,6 +115,9 @@ public class ConfigHolder {
     @Config.Comment("Array of blacklisted dimension IDs in which Air Collector does not work. Default: none")
     public static int[] airCollectorDimensionBlacklist = new int[]{};
 
+    @Config.Comment("If true, the Infinite Energy Emitter will be registered. Default: true")
+    public static boolean registerInfiniteEnergyEmitter = true;
+
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to nerf the paper crafting recipe. Default: true")

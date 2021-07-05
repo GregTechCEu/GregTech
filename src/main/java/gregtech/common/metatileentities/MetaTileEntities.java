@@ -646,7 +646,8 @@ public class MetaTileEntities {
         //PRIMITIVE_WATER_PUMP = GregTechAPI.registerMetaTileEntity(1628, new MetaTileEntityWaterPump(gregtechId("primitive_pump")));
         //PUMP_OUTPUT_HATCH = GregTechAPI.registerMetaTileEntity(1629, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
 
-        INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1630, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));
+        if(ConfigHolder.registerInfiniteEnergyEmitter)
+            INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1630, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));
 
 
         /*

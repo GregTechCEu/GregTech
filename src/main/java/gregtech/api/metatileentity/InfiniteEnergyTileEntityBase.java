@@ -31,7 +31,6 @@ public abstract class InfiniteEnergyTileEntityBase<TRAIT extends TraitInfiniteEn
     }
 
     protected abstract TRAIT createTrait();
-    public abstract boolean isDisabled();
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline){

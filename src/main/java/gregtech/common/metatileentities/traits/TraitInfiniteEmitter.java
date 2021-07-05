@@ -31,7 +31,7 @@ public class TraitInfiniteEmitter extends TraitInfiniteEnergy implements IEnergy
     }
 
     @Override public void update(){
-        if(!metaTileEntity.getWorld().isRemote&&!mte.isDisabled()){
+        if(!metaTileEntity.getWorld().isRemote){
             if(isInfinite) for(EnumFacing facing : EnumFacing.VALUES) send(facing);
             else if(energy.signum()==1) for(EnumFacing facing : EnumFacing.VALUES)
                 if(send(facing)&&energy.signum()!=1) break;
@@ -79,7 +79,7 @@ public class TraitInfiniteEmitter extends TraitInfiniteEnergy implements IEnergy
         return false;
     }
     @Override public boolean outputsEnergy(EnumFacing side){
-        return !mte.isDisabled();
+        return true;
     }
     @Override public long changeEnergy(long differenceAmount){
         add(BigInteger.valueOf(differenceAmount));

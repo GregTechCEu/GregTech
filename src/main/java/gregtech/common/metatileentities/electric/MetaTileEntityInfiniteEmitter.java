@@ -15,6 +15,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.function.BooleanConsumer;
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.traits.TraitInfiniteEmitter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -38,10 +39,6 @@ public class MetaTileEntityInfiniteEmitter extends InfiniteEnergyTileEntityBase<
 
     @Override protected TraitInfiniteEmitter createTrait(){
         return new TraitInfiniteEmitter(this);
-    }
-
-    @Override public boolean isDisabled(){
-        return false;
     }
 
     @Override public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder){
