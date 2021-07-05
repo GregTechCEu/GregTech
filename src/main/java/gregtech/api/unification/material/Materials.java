@@ -416,8 +416,9 @@ public class Materials {
     public static SimpleFluidMaterial Bacteria = new SimpleFluidMaterial(130, "bacteria", 0x808000, FLUID, of(), 0);
     public static SimpleFluidMaterial BacterialSludge = new SimpleFluidMaterial(131, "bacterial_sludge", 0x355E3B, FLUID, of(), 0);
     public static SimpleFluidMaterial EnrichedBacterialSludge = new SimpleFluidMaterial(132, "enriched_bacterial_sludge", 0x7FFF00, FLUID, of(), 0);
-    public static SimpleFluidMaterial Mutagen = new SimpleFluidMaterial(133, "mutagen", 0x00FF7F, FLUID, of(), 0);
-    public static SimpleFluidMaterial GelatinMixture = new SimpleFluidMaterial(134, "gelatin_mixture", 0x588BAE, FLUID, of(), 0);
+    public static SimpleFluidMaterial FermentedBacterialSludge = new SimpleFluidMaterial(133, "fermented_bacterial_sludge", 0x32CD32, FLUID, of(), 0);
+    public static SimpleFluidMaterial Mutagen = new SimpleFluidMaterial(134, "mutagen", 0x00FF7F, FLUID, of(), 0);
+    public static SimpleFluidMaterial GelatinMixture = new SimpleFluidMaterial(135, "gelatin_mixture", 0x588BAE, FLUID, of(), 0);
 
     public static SimpleDustMaterial SodiumHydroxide = new SimpleDustMaterial(1, "sodium_hydroxide", 0x003380, DULL, of(new MaterialStack(Sodium, 1), new MaterialStack(Oxygen, 1), new MaterialStack(Hydrogen, 1)), GENERATE_SMALL_TINY);
     public static SimpleDustMaterial MagnesiumChloride = new SimpleDustMaterial(2, "magnesium_chloride", 0xD40D5C, DULL, of(new MaterialStack(Magnesium, 1), new MaterialStack(Chlorine, 2)), GENERATE_SMALL_TINY);
