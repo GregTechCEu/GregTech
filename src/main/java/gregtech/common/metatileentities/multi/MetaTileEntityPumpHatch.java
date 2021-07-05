@@ -101,7 +101,7 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
 
     @Override
     public ICubeRenderer getBaseTexture() {
-        return Textures.PRIMITIVE_PUMP;
+        return Textures.VOLTAGE_CASINGS[0];
     }
 
     @Override

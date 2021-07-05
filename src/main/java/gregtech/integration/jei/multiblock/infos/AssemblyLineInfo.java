@@ -43,7 +43,7 @@ public class AssemblyLineInfo extends MultiblockInfoPage {
                     .where('R', MetaBlocks.TRANSPARENT_CASING.getState(BlockTransparentCasing.CasingType.REINFORCED_GLASS))
                     .where('T', MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING))
                     .where('#', Blocks.AIR.getDefaultState());
-            builder.copy();
+            builder.shallowCopy();
             shapes.add(builder.build());
         }
 
