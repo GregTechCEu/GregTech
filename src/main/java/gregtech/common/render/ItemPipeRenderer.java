@@ -53,13 +53,13 @@ import org.lwjgl.opengl.GL11;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InvPipeRenderer implements ICCBlockRenderer, IItemRenderer {
+public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
     public static ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "item_pipe"), "normal");
-    public static InvPipeRenderer INSTANCE = new InvPipeRenderer();
+    public static ItemPipeRenderer INSTANCE = new ItemPipeRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
     private static final ThreadLocal<BlockRenderer.BlockFace> blockFaces = ThreadLocal.withInitial(BlockRenderer.BlockFace::new);
-    private final Map<ItemPipeType, InvPipeRenderer.PipeTextureInfo> pipeTextures = new HashMap<>();
+    private final Map<ItemPipeType, ItemPipeRenderer.PipeTextureInfo> pipeTextures = new HashMap<>();
 
     private static class PipeTextureInfo {
         public final TextureAtlasSprite inTexture;

@@ -41,7 +41,7 @@ import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import gregtech.common.render.CableRenderer;
 import gregtech.common.render.FluidPipeRenderer;
-import gregtech.common.render.InvPipeRenderer;
+import gregtech.common.render.ItemPipeRenderer;
 import gregtech.common.render.tesr.TileEntityCrusherBladeRenderer;
 import gregtech.common.render.tesr.TileEntityRendererBase.TileEntityRenderBaseItem;
 import net.minecraft.block.Block;
@@ -306,7 +306,7 @@ public class MetaBlocks {
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE), stack -> MetaTileEntityRenderer.MODEL_LOCATION);
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(CABLE), stack -> CableRenderer.MODEL_LOCATION);
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(FLUID_PIPE), stack -> FluidPipeRenderer.MODEL_LOCATION);
-        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(ITEM_PIPE), stack -> InvPipeRenderer.MODEL_LOCATION);
+        ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(ITEM_PIPE), stack -> ItemPipeRenderer.MODEL_LOCATION);
         registerItemModel(BOILER_CASING);
         registerItemModel(BOILER_FIREBOX_CASING);
         registerItemModel(METAL_CASING);
@@ -393,7 +393,7 @@ public class MetaBlocks {
         ModelLoader.setCustomStateMapper(ITEM_PIPE, new DefaultStateMapper() {
             @Override
             protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-                return InvPipeRenderer.MODEL_LOCATION;
+                return ItemPipeRenderer.MODEL_LOCATION;
             }
         });
         IStateMapper normalStateMapper = new StateMapperBase() {

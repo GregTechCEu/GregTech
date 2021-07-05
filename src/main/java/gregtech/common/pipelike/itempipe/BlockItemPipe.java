@@ -9,7 +9,7 @@ import gregtech.api.unification.material.type.Material;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
-import gregtech.common.render.InvPipeRenderer;
+import gregtech.common.render.ItemPipeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -106,7 +106,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, EmptyNodeData
 
     @Override
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
-        return InvPipeRenderer.INSTANCE.getParticleTexture((TileEntityItemPipe) world.getTileEntity(blockPos));
+        return ItemPipeRenderer.INSTANCE.getParticleTexture((TileEntityItemPipe) world.getTileEntity(blockPos));
     }
 
     @Override
@@ -188,7 +188,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, EmptyNodeData
     @Override
     @SideOnly(Side.CLIENT)
     public EnumBlockRenderType getRenderType(IBlockState state) {
-        return InvPipeRenderer.BLOCK_RENDER_TYPE;
+        return ItemPipeRenderer.BLOCK_RENDER_TYPE;
     }
 
 
