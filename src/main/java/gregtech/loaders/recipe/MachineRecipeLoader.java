@@ -565,34 +565,6 @@ public class MachineRecipeLoader {
         createSulfurDioxideRecipe(Pyrite, BandedIron, 2000);
         createSulfurDioxideRecipe(Pentlandite, Garnierite, 1000);
 
-        createCarbonDioxideRecipe(CupricOxide, Copper, 1000);
-        createCarbonDioxideRecipe(Garnierite, Nickel, 1000);
-        createCarbonDioxideRecipe(BandedIron, Iron, 1000);
-        createCarbonDioxideRecipe(Zincite, Zinc, 1000);
-        createCarbonDioxideRecipe(AntimonyTrioxide, Antimony, 3000);
-        createCarbonDioxideRecipe(Magnetite, Iron, 1000);
-        createCarbonDioxideRecipe(Malachite, Copper, 3000);
-        createCarbonDioxideRecipe(Cassiterite, Tin, 1000);
-        createCarbonDioxideRecipe(CassiteriteSand, Tin, 1000);
-        createCarbonDioxideRecipe(BrownLimonite, Iron, 1000);
-        createCarbonDioxideRecipe(Massicot, Lead, 1000);
-        createCarbonDioxideRecipe(YellowLimonite, Iron, 1000);
-        createCarbonDioxideRecipe(GraniticMineralSand, Iron, 1000);
-        createCarbonDioxideRecipe(BasalticMineralSand, Iron, 1000);
-        createCarbonDioxideRecipe(CobaltOxide, Cobalt, 1000);
-
-        createCalciteOreRecipe(Pyrite, Iron);
-        createCalciteOreRecipe(Magnetite, Iron);
-        createCalciteOreRecipe(YellowLimonite, Iron);
-        createCalciteOreRecipe(BrownLimonite, Iron);
-        createCalciteOreRecipe(Iron, Iron);
-
-        createQuicklimeOreRecipe(Pyrite, Iron);
-        createQuicklimeOreRecipe(Magnetite, Iron);
-        createQuicklimeOreRecipe(BrownLimonite, Iron);
-        createQuicklimeOreRecipe(GraniticMineralSand, Iron);
-        createQuicklimeOreRecipe(Iron, Iron);
-
         BLAST_RECIPES.recipeBuilder().duration(120).EUt(120).blastFurnaceTemp(1200)
                 .input(dust, Tetrahedrite)
                 .fluidInputs(Oxygen.getFluid(3000))
@@ -617,15 +589,14 @@ public class MachineRecipeLoader {
                 .fluidOutputs(SulfurDioxide.getFluid(1000))
                 .buildAndRegister();
 
-        //todo this causes problems
-//        BLAST_RECIPES.recipeBuilder().duration(120).EUt(120).blastFurnaceTemp(1200)
-//                .input(dust, Chalcopyrite)
-//                .input(dust, SiliconDioxide)
-//                .fluidInputs(Oxygen.getFluid(3000))
-//                .output(dust, CupricOxide)
-//                .output(dust, Ferrosilite)
-//                .fluidOutputs(SulfurDioxide.getFluid(2000))
-//                .buildAndRegister();
+        BLAST_RECIPES.recipeBuilder().duration(120).EUt(120).blastFurnaceTemp(1200)
+                .input(dust, Chalcopyrite)
+                .input(dust, SiliconDioxide)
+                .fluidInputs(Oxygen.getFluid(3000))
+                .output(dust, CupricOxide)
+                .output(dust, Ferrosilite)
+                .fluidOutputs(SulfurDioxide.getFluid(2000))
+                .buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder().duration(240).EUt(120).blastFurnaceTemp(1200)
                 .input(dust, SiliconDioxide)
@@ -645,35 +616,6 @@ public class MachineRecipeLoader {
                 .fluidOutputs(SulfurDioxide.getFluid(sulfurDioxideAmount))
                 .buildAndRegister();
     }
-
-    private static void createCarbonDioxideRecipe(IMaterial<?> inputMaterial, IMaterial<?> outputMaterial, int carbonDioxideAmount) {
-        BLAST_RECIPES.recipeBuilder().duration(240).EUt(120).blastFurnaceTemp(1200)
-                .input(dust, inputMaterial, 2)
-                .input(dust, Carbon)
-                .output(ingot, outputMaterial, 3)
-                .output(dustTiny, Ash, 2)
-                .fluidOutputs(CarbonDioxide.getFluid(carbonDioxideAmount))
-                .buildAndRegister();
-    }
-
-    private static void createCalciteOreRecipe(IMaterial<?> inputMaterial, IMaterial<?> outputMaterial) {
-        BLAST_RECIPES.recipeBuilder().duration(500).EUt(120).blastFurnaceTemp(1500)
-                .input(ore, inputMaterial)
-                .input(dust, Calcite)
-                .output(ingot, outputMaterial, 3)
-                .output(dustSmall, DarkAsh)
-                .buildAndRegister();
-    }
-
-    private static void createQuicklimeOreRecipe(IMaterial<?> inputMaterial, IMaterial<?> outputMaterial) {
-        BLAST_RECIPES.recipeBuilder().duration(500).EUt(120).blastFurnaceTemp(1500)
-                .input(ore, inputMaterial)
-                .input(dustTiny, Quicklime, 3)
-                .output(ingot, outputMaterial, 2)
-                .output(dustSmall, DarkAsh)
-                .buildAndRegister();
-    }
-
 
     private static void registerDecompositionRecipes() {
 
