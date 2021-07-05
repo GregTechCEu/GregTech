@@ -367,19 +367,19 @@ public class DistillationRecipes {
             .duration(32).EUt(24).buildAndRegister();
 
         DISTILLERY_RECIPES.recipeBuilder()
-            .circuitMeta(4)
+            .circuitMeta(5)
             .fluidInputs(OilLight.getFluid(300))
             .fluidOutputs(Oil.getFluid(100))
             .duration(16).EUt(24).buildAndRegister();
 
         DISTILLERY_RECIPES.recipeBuilder()
-            .circuitMeta(4)
+            .circuitMeta(5)
             .fluidInputs(OilMedium.getFluid(200))
             .fluidOutputs(Oil.getFluid(100))
             .duration(16).EUt(24).buildAndRegister();
 
         DISTILLERY_RECIPES.recipeBuilder()
-            .circuitMeta(4)
+            .circuitMeta(5)
             .fluidInputs(OilHeavy.getFluid(100))
             .fluidOutputs(Oil.getFluid(100))
             .duration(16).EUt(24).buildAndRegister();

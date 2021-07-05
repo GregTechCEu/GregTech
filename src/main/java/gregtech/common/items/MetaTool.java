@@ -192,7 +192,7 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
         }
 
         SolidMaterial[] softHammerMaterials = new SolidMaterial[]{
-            Materials.Wood, Materials.Rubber, Materials.Polyethylene, Materials.Polytetrafluoroethylene
+            Materials.Wood, Materials.Rubber, Materials.Polyethylene, Materials.Polytetrafluoroethylene, Materials.Polybenzimidazole
         };
         for (int i = 0; i < softHammerMaterials.length; i++) {
             SolidMaterial solidMaterial = softHammerMaterials[i];
@@ -204,8 +204,9 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
                 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         }
 
+        // for future use: in-game durabilty is 3 per use, maxDurability shown in game is multiplied by 8
         Function<ToolMetaItem.MetaToolValueItem, ItemStack> woodenToolDataApplier = item ->
-            item.setToolData(item.getStackForm(), Materials.Wood, 55, 1, 4.0f, 1.0f);
+            item.setToolData(item.getStackForm(), Materials.Wood, 48, 1, 4.0f, 1.0f);
 
         ModHandler.addShapedRecipe("soft_hammer_wooden", woodenToolDataApplier.apply(MetaItems.SOFT_HAMMER),
             "XX ", "XXS", "XX ",

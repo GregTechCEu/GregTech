@@ -233,78 +233,129 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem TOOL_DATA_STICK;
     public static MetaItem<?>.MetaValueItem TOOL_DATA_ORB;
 
+    public static MetaItem<?>.MetaValueItem SILICON_BOULE;
     public static MetaItem<?>.MetaValueItem GLOWSTONE_BOULE;
     public static MetaItem<?>.MetaValueItem NAQUADAH_BOULE;
-    public static MetaItem<?>.MetaValueItem SILICON_BOULE;
+    public static MetaItem<?>.MetaValueItem NEUTRONIUM_BOULE;
     public static MetaItem<?>.MetaValueItem SILICON_WAFER;
     public static MetaItem<?>.MetaValueItem GLOWSTONE_WAFER;
     public static MetaItem<?>.MetaValueItem NAQUADAH_WAFER;
+    public static MetaItem<?>.MetaValueItem NEUTRONIUM_WAFER;
 
+    public static MetaItem<?>.MetaValueItem HIGHLY_ADVANCED_SOC_WAFER;
     public static MetaItem<?>.MetaValueItem ADVANCED_SYSTEM_ON_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem INTEGRATED_LOGIC_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem CENTRAL_PROCESSING_UNIT_WAFER;
+    public static MetaItem<?>.MetaValueItem ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER;
+    public static MetaItem<?>.MetaValueItem LOW_POWER_INTEGRATED_CIRCUIT_WAFER;
+    public static MetaItem<?>.MetaValueItem POWER_INTEGRATED_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem HIGH_POWER_INTEGRATED_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem NAND_MEMORY_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem NANO_CENTRAL_PROCESSING_UNIT_WAFER;
     public static MetaItem<?>.MetaValueItem NOR_MEMORY_CHIP_WAFER;
-    public static MetaItem<?>.MetaValueItem POWER_INTEGRATED_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT_WAFER;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY_WAFER;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP_WAFER;
+    public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP_WAFER;
+
     public static MetaItem<?>.MetaValueItem ENGRAVED_CRYSTAL_CHIP;
     public static MetaItem<?>.MetaValueItem ENGRAVED_LAPOTRON_CHIP;
 
+    public static MetaItem<?>.MetaValueItem HIGHLY_ADVANCED_SOC;
     public static MetaItem<?>.MetaValueItem ADVANCED_SYSTEM_ON_CHIP;
     public static MetaItem<?>.MetaValueItem INTEGRATED_LOGIC_CIRCUIT;
     public static MetaItem<?>.MetaValueItem CENTRAL_PROCESSING_UNIT;
+    public static MetaItem<?>.MetaValueItem ULTRA_LOW_POWER_INTEGRATED_CIRCUIT;
+    public static MetaItem<?>.MetaValueItem LOW_POWER_INTEGRATED_CIRCUIT;
+    public static MetaItem<?>.MetaValueItem POWER_INTEGRATED_CIRCUIT;
     public static MetaItem<?>.MetaValueItem HIGH_POWER_INTEGRATED_CIRCUIT;
     public static MetaItem<?>.MetaValueItem NAND_MEMORY_CHIP;
     public static MetaItem<?>.MetaValueItem NANO_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem NOR_MEMORY_CHIP;
-    public static MetaItem<?>.MetaValueItem POWER_INTEGRATED_CIRCUIT;
     public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP;
+    public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP;
+
     public static MetaItem<?>.MetaValueItem RAW_CRYSTAL_CHIP;
+    public static MetaItem<?>.MetaValueItem RAW_CRYSTAL_CHIP_PART;
     public static MetaItem<?>.MetaValueItem CRYSTAL_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem CRYSTAL_SYSTEM_ON_CHIP;
 
     public static MetaItem<?>.MetaValueItem COATED_BOARD;
+    public static MetaItem<?>.MetaValueItem PHENOLIC_BOARD;
+    public static MetaItem<?>.MetaValueItem PLASTIC_BOARD;
     public static MetaItem<?>.MetaValueItem EPOXY_BOARD;
     public static MetaItem<?>.MetaValueItem FIBER_BOARD;
     public static MetaItem<?>.MetaValueItem MULTILAYER_FIBER_BOARD;
-    public static MetaItem<?>.MetaValueItem PHENOLIC_BOARD;
-    public static MetaItem<?>.MetaValueItem PLASTIC_BOARD;
     public static MetaItem<?>.MetaValueItem WETWARE_BOARD;
+
+    public static MetaItem<?>.MetaValueItem BASIC_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem GOOD_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem PLASTIC_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem ADVANCED_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem EXTREME_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem ELITE_CIRCUIT_BOARD;
+    public static MetaItem<?>.MetaValueItem WETWARE_CIRCUIT_BOARD;
 
     public static MetaItem<?>.MetaValueItem VACUUM_TUBE;
     public static MetaItem<?>.MetaValueItem GLASS_TUBE;
     public static MetaItem<?>.MetaValueItem RESISTOR;
     public static MetaItem<?>.MetaValueItem DIODE;
     public static MetaItem<?>.MetaValueItem CAPACITOR;
+    public static MetaItem<?>.MetaValueItem TRANSISTOR;
     public static MetaItem<?>.MetaValueItem SMALL_COIL;
     public static MetaItem<?>.MetaValueItem SMD_CAPACITOR;
     public static MetaItem<?>.MetaValueItem SMD_DIODE;
     public static MetaItem<?>.MetaValueItem SMD_RESISTOR;
     public static MetaItem<?>.MetaValueItem SMD_TRANSISTOR;
-    public static MetaItem<?>.MetaValueItem TRANSISTOR;
+    public static MetaItem<?>.MetaValueItem ADVANCED_SMD_CAPACITOR;
+    public static MetaItem<?>.MetaValueItem ADVANCED_SMD_DIODE;
+    public static MetaItem<?>.MetaValueItem ADVANCED_SMD_RESISTOR;
+    public static MetaItem<?>.MetaValueItem ADVANCED_SMD_TRANSISTOR;
 
-    public static MetaItem<?>.MetaValueItem BASIC_CIRCUIT_LV;
-    public static MetaItem<?>.MetaValueItem BASIC_ELECTRONIC_CIRCUIT_LV;
-    public static MetaItem<?>.MetaValueItem ADVANCED_CIRCUIT_PARTS_LV;
-    public static MetaItem<?>.MetaValueItem GOOD_INTEGRATED_CIRCUIT_MV;
-    public static MetaItem<?>.MetaValueItem ADVANCED_CIRCUIT_MV;
+    // T1: Electronic
+    public static MetaItem<?>.MetaValueItem ELECTRONIC_CIRCUIT_LV;
+    public static MetaItem<?>.MetaValueItem ELECTRONIC_CIRCUIT_MV;
+
+    // T2: Integrated
+    public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT_LV;
+    public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT_MV;
+    public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT_HV;
+
+    // ULV/LV easier circuits
+    public static MetaItem<?>.MetaValueItem NAND_CHIP_ULV;
+    public static MetaItem<?>.MetaValueItem MICROPROCESSOR_LV;
+
+    // T3: Processor
+    public static MetaItem<?>.MetaValueItem PROCESSOR_MV;
     public static MetaItem<?>.MetaValueItem PROCESSOR_ASSEMBLY_HV;
+    public static MetaItem<?>.MetaValueItem WORKSTATION_EV;
+    public static MetaItem<?>.MetaValueItem MAINFRAME_IV;
+
+    // T4: Nano
     public static MetaItem<?>.MetaValueItem NANO_PROCESSOR_HV;
     public static MetaItem<?>.MetaValueItem NANO_PROCESSOR_ASSEMBLY_EV;
+    public static MetaItem<?>.MetaValueItem NANO_COMPUTER_IV;
+    public static MetaItem<?>.MetaValueItem NANO_MAINFRAME_LUV;
+
+    // T5: Quantum
     public static MetaItem<?>.MetaValueItem QUANTUM_PROCESSOR_EV;
-    public static MetaItem<?>.MetaValueItem DATA_CONTROL_CIRCUIT_IV;
+    public static MetaItem<?>.MetaValueItem QUANTUM_ASSEMBLY_IV;
+    public static MetaItem<?>.MetaValueItem QUANTUM_COMPUTER_LUV;
+    public static MetaItem<?>.MetaValueItem QUANTUM_MAINFRAME_ZPM;
+
+    // T6: Crystal
     public static MetaItem<?>.MetaValueItem CRYSTAL_PROCESSOR_IV;
-    public static MetaItem<?>.MetaValueItem ENERGY_FLOW_CIRCUIT_LUV;
+    public static MetaItem<?>.MetaValueItem CRYSTAL_ASSEMBLY_LUV;
+    public static MetaItem<?>.MetaValueItem CRYSTAL_COMPUTER_ZPM;
+    public static MetaItem<?>.MetaValueItem CRYSTAL_MAINFRAME_UV;
+
+    // T7: Wetware
     public static MetaItem<?>.MetaValueItem WETWARE_PROCESSOR_LUV;
     public static MetaItem<?>.MetaValueItem WETWARE_PROCESSOR_ASSEMBLY_ZPM;
     public static MetaItem<?>.MetaValueItem WETWARE_SUPER_COMPUTER_UV;
-    public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_MAX;
+    public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_UHV;
 
     public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;
@@ -405,6 +456,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem NEURO_PROCESSOR;
     public static MetaItem<?>.MetaValueItem STEM_CELLS;
     public static MetaItem<?>.MetaValueItem PETRI_DISH;
+
+    public static MetaItem<?>.MetaValueItem BIO_CHAFF;
 
     public static void init() {
         MetaItem1 first = new MetaItem1();

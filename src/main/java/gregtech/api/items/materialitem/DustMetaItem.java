@@ -31,8 +31,7 @@ public class DustMetaItem extends StandardMetaItem {
         for (SimpleDustMaterial material : SimpleDustMaterial.MATERIAL_REGISTRY) {
             int i = SimpleDustMaterial.MATERIAL_REGISTRY.getIDForObject(material);
             for (int j = 0; j < orePrefixes.length; j++) {
-                OrePrefix orePrefix = orePrefixes[j];
-                if (material.hasFlag(GENERATE_SMALL_TINY)) {
+                if (j == 2 || material.hasFlag(GENERATE_SMALL_TINY)) {
                     generatedItems.add((short) (i * 3 + j));
                 }
             }
@@ -58,14 +57,13 @@ public class DustMetaItem extends StandardMetaItem {
         TShortObjectHashMap<ModelResourceLocation> alreadyRegistered = new TShortObjectHashMap<>();
         for (short metaItem : generatedItems) {
             OrePrefix prefix = orePrefixes[metaItem % 3];
-            MaterialIconSet materialIconSet = SimpleDustMaterial.MATERIAL_REGISTRY.getObjectById(metaItem / 3).iconSet;
-            short registrationKey = (short) (metaItem + materialIconSet.ordinal());
-            if (!alreadyRegistered.containsKey(registrationKey)) {
+            MaterialIconSet materialIconSet = SimpleDustMaterial.MATERIAL_REGISTRY.getObjectById((metaItem - (metaItem % 3)) / 3).iconSet;
+            if (!alreadyRegistered.containsKey(metaItem)) {
                 ResourceLocation resourceLocation = prefix.materialIconType.getItemModelPath(materialIconSet);
                 ModelBakery.registerItemVariants(this, resourceLocation);
-                alreadyRegistered.put(registrationKey, new ModelResourceLocation(resourceLocation, "inventory"));
+                alreadyRegistered.put(metaItem, new ModelResourceLocation(resourceLocation, "inventory"));
             }
-            ModelResourceLocation resourceLocation = alreadyRegistered.get(registrationKey);
+            ModelResourceLocation resourceLocation = alreadyRegistered.get(metaItem);
             metaItemsModels.put(metaItem, resourceLocation);
         }
     }

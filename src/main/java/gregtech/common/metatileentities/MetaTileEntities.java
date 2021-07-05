@@ -103,6 +103,7 @@ public class MetaTileEntities {
     public static SimpleMachineMetaTileEntity[] THERMAL_CENTRIFUGE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] WIREMILL = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] CLUSTER_MILL = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static SimpleMachineMetaTileEntity[] CIRCUIT_ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.UV];
 
     //GENERATORS SECTION
     public static SimpleGeneratorMetaTileEntity[] COMBUSTION_GENERATOR = new SimpleGeneratorMetaTileEntity[4];
@@ -251,7 +252,7 @@ public class MetaTileEntities {
 
         // Arc Furnace, IDs 110-124
         registerSimpleMetaTileEntity(ARC_FURNACE, 110, "arc_furnace", RecipeMaps.ARC_FURNACE_RECIPES, Textures.ARC_FURNACE_OVERLAY,
-                ConfigHolder.U.machines.midTierArcFurnaces, ConfigHolder.U.machines.highTierArcFurnaces, false);
+                ConfigHolder.U.machines.midTierArcFurnaces, ConfigHolder.U.machines.highTierArcFurnaces, false, false);
 
         // Assembler, IDs 125-139
         registerSimpleMetaTileEntity(ASSEMBLER, 125, "assembler", RecipeMaps.ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY,
@@ -259,7 +260,7 @@ public class MetaTileEntities {
 
         // Autoclave, IDs 140-154
         registerSimpleMetaTileEntity(AUTOCLAVE, 140, "autoclave", RecipeMaps.AUTOCLAVE_RECIPES, Textures.AUTOCLAVE_OVERLAY,
-                ConfigHolder.U.machines.midTierAutoclaves, ConfigHolder.U.machines.highTierAutoclaves, false);
+                ConfigHolder.U.machines.midTierAutoclaves, ConfigHolder.U.machines.highTierAutoclaves, false, false);
 
         // Bender, IDs 155-169
         registerSimpleMetaTileEntity(BENDER, 155, "bender", RecipeMaps.BENDER_RECIPES, Textures.BENDER_OVERLAY,
@@ -275,7 +276,7 @@ public class MetaTileEntities {
 
         // Centrifuge, IDs 200-214
         registerSimpleMetaTileEntity(CENTRIFUGE, 200, "centrifuge", RecipeMaps.CENTRIFUGE_RECIPES, Textures.CENTRIFUGE_OVERLAY,
-                ConfigHolder.U.machines.midTierCentrifuges, ConfigHolder.U.machines.highTierCentrifuges, false);
+                ConfigHolder.U.machines.midTierCentrifuges, ConfigHolder.U.machines.highTierCentrifuges, false, false);
 
         // Chemical Bath, IDs 215-229
         registerSimpleMetaTileEntity(CHEMICAL_BATH, 215, "chemical_bath", RecipeMaps.CHEMICAL_BATH_RECIPES, Textures.CHEMICAL_BATH_OVERLAY,
@@ -299,7 +300,7 @@ public class MetaTileEntities {
 
         // Electrolyzer, IDs 290-304
         registerSimpleMetaTileEntity(ELECTROLYZER, 290, "electrolyzer", RecipeMaps.ELECTROLYZER_RECIPES, Textures.ELECTROLYZER_OVERLAY,
-                ConfigHolder.U.machines.midTierElectrolyzers, ConfigHolder.U.machines.highTierElectrolyzers, false);
+                ConfigHolder.U.machines.midTierElectrolyzers, ConfigHolder.U.machines.highTierElectrolyzers, false, false);
 
         // Electromagnetic Separator, IDs 305-319
         registerSimpleMetaTileEntity(ELECTROMAGNETIC_SEPARATOR, 305, "electromagnetic_separator", RecipeMaps.ELECTROMAGNETIC_SEPARATOR_RECIPES, Textures.ELECTROMAGNETIC_SEPARATOR_OVERLAY,
@@ -351,7 +352,7 @@ public class MetaTileEntities {
 
         // Mixer, IDs 485-499
         registerSimpleMetaTileEntity(MIXER, 485, "mixer", RecipeMaps.MIXER_RECIPES, Textures.MIXER_OVERLAY,
-                ConfigHolder.U.machines.midTierMixers, ConfigHolder.U.machines.highTierMixers, false);
+                ConfigHolder.U.machines.midTierMixers, ConfigHolder.U.machines.highTierMixers, false, false);
 
         // Ore Washer, IDs 500-514
         registerSimpleMetaTileEntity(ORE_WASHER, 500, "ore_washer", RecipeMaps.ORE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY,
@@ -367,7 +368,7 @@ public class MetaTileEntities {
 
         // Plasma Arc Furnace, IDs 545-559
         registerSimpleMetaTileEntity(PLASMA_ARC_FURNACE, 545, "plasma_arc_furnace", RecipeMaps.PLASMA_ARC_FURNACE_RECIPES, Textures.PLASMA_ARC_FURNACE_OVERLAY,
-                ConfigHolder.U.machines.midTierPlasmaArcFurnaces, ConfigHolder.U.machines.highTierPlasmaArcFurnaces, false);
+                ConfigHolder.U.machines.midTierPlasmaArcFurnaces, ConfigHolder.U.machines.highTierPlasmaArcFurnaces, false, false);
 
         // Polarizer, IDs 560-574
         registerSimpleMetaTileEntity(POLARIZER, 560, "polarizer", RecipeMaps.POLARIZER_RECIPES, Textures.POLARIZER_OVERLAY,
@@ -394,6 +395,10 @@ public class MetaTileEntities {
             registerSimpleMetaTileEntity(CLUSTER_MILL, 635, "cluster_mill", RecipeMaps.CLUSTER_MILL_RECIPES, Textures.WIREMILL_OVERLAY,
                     ConfigHolder.U.machines.midTierClusterMills, ConfigHolder.U.machines.highTierClusterMills);
         }
+
+        // Circuit Assembler, IDs 650-664
+        registerSimpleMetaTileEntity(CIRCUIT_ASSEMBLER, 650, "circuit_assembler", RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY,
+                true, false, true, true);
 
         // Some space here for more SimpleMachines
 
@@ -664,10 +669,13 @@ public class MetaTileEntities {
                                                      OrientedOverlayRenderer texture,
                                                      boolean midTier,
                                                      boolean highTier,
-                                                     boolean hasFrontFacing) {
+                                                     boolean hasFrontFacing,
+                                                     boolean ignoreConfig) {
         for (int i = 0; i < machines.length - 1; i++) {
-            if (i > 4 && !(ConfigHolder.U.machines.midTierMachines || midTier)) continue;
-            if (i > 7 && !(ConfigHolder.U.machines.highTierMachines || highTier)) break;
+            if (!ignoreConfig) {
+                if (i > 4 && !(ConfigHolder.U.machines.midTierMachines || midTier)) continue;
+                if (i > 7 && !(ConfigHolder.U.machines.highTierMachines || highTier)) break;
+            }
 
             String voltageName = GTValues.VN[i + 1].toLowerCase();
             machines[i] = GregTechAPI.registerMetaTileEntity(startId + i,
@@ -682,7 +690,7 @@ public class MetaTileEntities {
                                                      OrientedOverlayRenderer texture,
                                                      boolean midTier,
                                                      boolean highTier) {
-        registerSimpleMetaTileEntity(machines, startId, name, map, texture, midTier, highTier, true);
+        registerSimpleMetaTileEntity(machines, startId, name, map, texture, midTier, highTier, true, false);
     }
 
     private static ResourceLocation gregtechId(String name) {

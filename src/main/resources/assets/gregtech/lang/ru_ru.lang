@@ -2820,7 +2820,7 @@ gregtech.recipe.amperage=Сила тока: %d
 gregtech.recipe.not_consumed=Не расходуется
 gregtech.recipe.chance=Шанс: %s%% +%s%%/уровень
 gregtech.recipe.blast_furnace_temperature=Температура: %dK (%s)
-gregtech.recipe.eu_to_start=Энергия для запуска: %dEU
+gregtech.recipe.eu_to_start=Энергия для запуска: %sEU
 
 gregtech.fluid.click_to_fill=§7Нажмите с пустым контейнером для жидкости, чтобы заполнить его из бака.
 gregtech.fluid.click_to_fill.shift=§7(Shift-нажатие заполнит все контейнеры в вашей руке)

@@ -21,6 +21,7 @@ public class ChemistryRecipes {
         ReactorRecipes.init();
         PolymerRecipes.init();
         LargeReactorRecipes.init();
+        GrowthMediumRecipes.init();
 
 
         // A Few Random Recipes
@@ -47,11 +48,11 @@ public class ChemistryRecipes {
             .duration(400).EUt(30).buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder()
-            .input(dust, FerriteMixture, 6)
-            .fluidInputs(Oxygen.getFluid(8000))
-            .output(ingot, NickelZincFerrite, 14)
+            .input(dust, FerriteMixture)
+            .fluidInputs(Oxygen.getFluid(2000))
+            .output(ingot, NickelZincFerrite)
             .blastFurnaceTemp(1500)
-            .duration(3200).EUt(120).buildAndRegister();
+            .duration(400).EUt(120).buildAndRegister();
 
         FERMENTING_RECIPES.recipeBuilder()
             .fluidInputs(Biomass.getFluid(100))
@@ -76,11 +77,5 @@ public class ChemistryRecipes {
             .output(ingot, RedAlloy, 2)
             .blastFurnaceTemp(1200)
             .duration(884).EUt(120).buildAndRegister();
-
-        FLUID_HEATER_RECIPES.recipeBuilder()
-            .fluidInputs(RawGrowthMedium.getFluid(500))
-            .circuitMeta(1)
-            .fluidOutputs(SterileGrowthMedium.getFluid(500))
-            .duration(30).EUt(24).buildAndRegister();
     }
 }
