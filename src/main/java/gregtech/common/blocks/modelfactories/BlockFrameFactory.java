@@ -25,8 +25,7 @@ public class BlockFrameFactory extends AbstractBlockModelFactory {
     protected String fillSample(Block block, String blockStateSample) {
         Material material = ((BlockFrame) block).frameMaterial;
         return blockStateSample.replace("$MATERIAL$", material.toString())
-            .replace("$TEXTURE$", MaterialIconType.frameSide.getBlockPath(material.materialIconSet).toString())
-            .replace("$TEXTURE_TOP$", MaterialIconType.frameTop.getBlockPath(material.materialIconSet).toString());
+            .replace("$TEXTURE$", MaterialIconType.frameGt.getBlockPath(material.materialIconSet).toString());
     }
 
 

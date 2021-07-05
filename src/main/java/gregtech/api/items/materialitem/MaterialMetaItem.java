@@ -31,8 +31,8 @@ import java.util.List;
 public class MaterialMetaItem extends StandardMetaItem {
 
     protected OrePrefix[] orePrefixes;
-    private ArrayList<Short> generatedItems = new ArrayList<>();
-    private ArrayList<ItemStack> items = new ArrayList<>();
+    private final ArrayList<Short> generatedItems = new ArrayList<>();
+    private final ArrayList<ItemStack> items = new ArrayList<>();
 
     public MaterialMetaItem(OrePrefix... orePrefixes) {
         super((short) (1000 * orePrefixes.length));
@@ -56,10 +56,18 @@ public class MaterialMetaItem extends StandardMetaItem {
             Material material = Material.MATERIAL_REGISTRY.getObjectById(metaItem % 1000);
             ItemStack item = new ItemStack(this, 1, metaItem);
             OreDictUnifier.registerOre(item, prefix, material);
-            if(prefix.name().equals("dust"))
-                OreDictUnifier.registerOre(item, OrePrefix.DUST_REGULAR, material);
-          
+            registerSpecialOreDict(item, material, prefix);
             items.add(item);
+        }
+    }
+
+    private void registerSpecialOreDict(ItemStack item, Material material, OrePrefix prefix) {
+        switch (prefix) {
+            case dust: OreDictUnifier.registerOre(item, OrePrefix.DUST_REGULAR, material); break;
+            case oreChunk: OreDictUnifier.registerOre(item, OrePrefix.oreGravel.name(), material); break;
+            case oreEnderChunk: OreDictUnifier.registerOre(item, OrePrefix.oreEndstone.name(), material); break;
+            case oreNetherChunk: OreDictUnifier.registerOre(item, OrePrefix.oreNetherrack.name(), material); break;
+            case oreSandyChunk: OreDictUnifier.registerOre(item, OrePrefix.oreSand.name(), material); break;
         }
     }
 

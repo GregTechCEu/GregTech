@@ -24,6 +24,8 @@ import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
+import gregtech.common.ConfigHolder;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,6 +35,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -41,6 +44,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide {
 
@@ -55,6 +61,9 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
+
+    private static int inputTankCapacity = ConfigHolder.U.GT5u.useCustomMachineTankSizes ? ConfigHolder.U.GT5u.customMachineTankSizes[0] : 64000;
+    private static int outputTankCapacity = ConfigHolder.U.GT5u.useCustomMachineTankSizes ? ConfigHolder.U.GT5u.customMachineTankSizes[1] : 64000;
 
     public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier) {
         this(metaTileEntityId, recipeMap, renderer, tier, true);
@@ -358,9 +367,26 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         return createGuiTemplate(entityPlayer).build(getHolder(), entityPlayer);
     }
 
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        String key = this.metaTileEntityId.getPath().split("\\.")[0];
+        tooltip.add(1, I18n.format(String.format("gregtech.machine.%s.tooltip", key)));
+    }
+
     public interface RecipeMapWithConfigButton {
         int getLeftButtonOffset();
 
         int getRightButtonOffset();
+    }
+
+    @Override
+    protected int getInputTankCapacity(int index) {
+        return inputTankCapacity;
+    }
+
+    @Override
+    protected int getOutputTankCapacity(int index) {
+        return outputTankCapacity;
     }
 }

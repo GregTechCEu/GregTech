@@ -1,6 +1,6 @@
 package gregtech.common.items;
 
-import gregtech.api.items.armor.ArmorMetaItem;
+import gregtech.api.items.materialitem.DustMetaItem;
 import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
@@ -65,7 +65,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROTOR;
 
-    public static MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[22];
+    public static MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[23];
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOLT;
@@ -77,6 +77,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_MEDIUM;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_LARGE;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PIPE_HUGE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BLOCK;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_SWORD;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PICKAXE;
@@ -157,6 +158,19 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_LUV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_ZPM;
     public static MetaItem<?>.MetaValueItem ELECTRIC_PUMP_UV;
+
+    public static final MetaItem<?>.MetaValueItem[] PUMPS = new MetaValueItem[8];
+
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_LV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_MV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_HV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_EV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_IV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_LUV;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_ZPM;
+    public static MetaItem<?>.MetaValueItem FLUID_REGULATOR_UV;
+
+    public static final MetaItem<?>.MetaValueItem[] FLUID_REGULATORS = new MetaValueItem[8];
 
     public static MetaItem<?>.MetaValueItem FLUID_FILTER;
 
@@ -251,6 +265,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP;
+    public static MetaItem<?>.MetaValueItem RAW_CRYSTAL_CHIP;
     public static MetaItem<?>.MetaValueItem CRYSTAL_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem CRYSTAL_SYSTEM_ON_CHIP;
 
@@ -349,8 +364,6 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem TURBINE_ROTOR;
 
-    public static ArmorMetaItem.ArmorMetaValueItem REBREATHER;
-
     public static ToolMetaItem<?>.MetaToolValueItem SWORD;
     public static ToolMetaItem<?>.MetaToolValueItem PICKAXE;
     public static ToolMetaItem<?>.MetaToolValueItem SHOVEL;
@@ -385,21 +398,31 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem BUZZSAW;
     public static ToolMetaItem<?>.MetaToolValueItem SCREWDRIVER_LV;
 
+    public static MetaItem<?>.MetaValueItem COMPRESSED_COKE_CLAY;
+    public static MetaItem<?>.MetaValueItem ENERGY_MODULE;
+    public static MetaItem<?>.MetaValueItem ENERGY_CLUSTER;
+    public static MetaItem<?>.MetaValueItem MAX_BATTERY;
+    public static MetaItem<?>.MetaValueItem NEURO_PROCESSOR;
+    public static MetaItem<?>.MetaValueItem STEM_CELLS;
+    public static MetaItem<?>.MetaValueItem PETRI_DISH;
+
     public static void init() {
         MetaItem1 first = new MetaItem1();
         first.setRegistryName("meta_item_1");
         MetaItem2 second = new MetaItem2();
         second.setRegistryName("meta_item_2");
+        DustMetaItem dustItem = new DustMetaItem();
+        dustItem.setRegistryName("meta_item_3");
         MetaTool tool = new MetaTool();
         tool.setRegistryName("meta_tool");
-        MetaArmor armor = new MetaArmor();
-        armor.setRegistryName("meta_armor");
     }
 
     public static void registerOreDict() {
         for (MetaItem<?> item : ITEMS) {
             if (item instanceof MaterialMetaItem) {
                 ((MaterialMetaItem) item).registerOreDict();
+            } else if (item instanceof DustMetaItem) {
+                ((DustMetaItem) item).registerOreDict();
             }
         }
     }

@@ -1,6 +1,6 @@
 package gregtech.api.unification.stack;
 
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 
 import javax.annotation.Nullable;
@@ -10,9 +10,9 @@ public class UnificationEntry {
 
     public final OrePrefix orePrefix;
     @Nullable
-    public final Material material;
+    public final IMaterial<?> material;
 
-    public UnificationEntry(OrePrefix orePrefix, @Nullable Material material) {
+    public UnificationEntry(OrePrefix orePrefix, @Nullable IMaterial<?> material) {
         this.orePrefix = orePrefix;
         this.material = material;
     }

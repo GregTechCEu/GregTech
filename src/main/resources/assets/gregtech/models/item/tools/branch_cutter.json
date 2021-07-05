@@ -2,6 +2,6 @@
   "parent": "item/handheld",
   "textures": {
     "layer0": "gregtech:items/tools/branch_cutter_base",
-	  "layer1": "gregtech:items/tools/branch_cutter"
+    "layer1": "gregtech:items/tools/branch_cutter"
   }
 }

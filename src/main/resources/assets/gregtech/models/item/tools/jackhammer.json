@@ -2,6 +2,6 @@
   "parent": "item/handheld",
   "textures": {
     "layer0": "gregtech:items/tools/jackhammer_base",
-	  "layer1": "gregtech:items/tools/jackhammer"
+    "layer1": "gregtech:items/tools/jackhammer"
   }
 }

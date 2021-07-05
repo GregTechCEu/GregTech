@@ -77,9 +77,11 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
         String tierName = GTValues.VN[getTier()];
 
         if (isExportHatch) {
+            tooltip.add(I18n.format("gregtech.machine.energy_hatch.output.tooltip"));
             tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", energyContainer.getOutputVoltage(), tierName));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out_till", energyContainer.getOutputAmperage()));
         } else {
+            tooltip.add(I18n.format("gregtech.machine.energy_hatch.input.tooltip"));
             tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), tierName));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in_till", energyContainer.getInputAmperage()));
         }

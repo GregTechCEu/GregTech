@@ -8,6 +8,10 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class BlockTurbineCasing extends VariantBlock<BlockTurbineCasing.TurbineCasingType> {
 
     public BlockTurbineCasing() {
@@ -43,6 +47,7 @@ public class BlockTurbineCasing extends VariantBlock<BlockTurbineCasing.TurbineC
         }
 
         @Override
+        @Nonnull
         public String getName() {
             return this.name;
         }

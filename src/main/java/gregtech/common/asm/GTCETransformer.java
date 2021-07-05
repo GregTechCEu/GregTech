@@ -11,40 +11,10 @@ public class GTCETransformer implements IClassTransformer, Opcodes {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         String internalName = transformedName.replace('.', '/');
-        if (internalName.equals(LayerArmorBaseVisitor.TARGET_CLASS_NAME)) {
-            ClassReader classReader = new ClassReader(basicClass);
-            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-            classReader.accept(new TargetClassVisitor(classWriter, LayerArmorBaseVisitor.TARGET_METHOD, LayerArmorBaseVisitor::new), 0);
-            return classWriter.toByteArray();
-        }
-        if (internalName.equals(LayerCustomHeadVisitor.TARGET_CLASS_NAME)) {
-            ClassReader classReader = new ClassReader(basicClass);
-            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-            classReader.accept(new TargetClassVisitor(classWriter, LayerCustomHeadVisitor.TARGET_METHOD, LayerCustomHeadVisitor::new), 0);
-            return classWriter.toByteArray();
-        }
-        if (internalName.equals(SpecialArmorApplyVisitor.TARGET_CLASS_NAME)) {
-            ClassReader classReader = new ClassReader(basicClass);
-            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-            classReader.accept(new SpecialArmorClassVisitor(classWriter, SpecialArmorApplyVisitor.TARGET_METHOD, SpecialArmorApplyVisitor::new), 0);
-            return classWriter.toByteArray();
-        }
         if (internalName.equals(JEIVisitor.TARGET_CLASS_NAME)) {
             ClassReader classReader = new ClassReader(basicClass);
             ClassWriter classWriter = new ClassWriter(0);
             classReader.accept(new TargetClassVisitor(classWriter, JEIVisitor.TARGET_METHOD, JEIVisitor::new), 0);
-            return classWriter.toByteArray();
-        }
-        if (internalName.equals(SaveFormatOldLoadVisitor.TARGET_CLASS_NAME)) {
-            ClassReader classReader = new ClassReader(basicClass);
-            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-            classReader.accept(new TargetClassVisitor(classWriter, SaveFormatOldLoadVisitor.TARGET_METHOD, SaveFormatOldLoadVisitor::new), 0);
-            return classWriter.toByteArray();
-        }
-        if (internalName.equals(CompoundDataFixerGetVersionVisitor.TARGET_CLASS_NAME)) {
-            ClassReader classReader = new ClassReader(basicClass);
-            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-            classReader.accept(new TargetClassVisitor(classWriter, CompoundDataFixerGetVersionVisitor.TARGET_METHOD, CompoundDataFixerGetVersionVisitor::new), 0);
             return classWriter.toByteArray();
         }
         return basicClass;

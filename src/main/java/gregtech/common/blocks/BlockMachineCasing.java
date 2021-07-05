@@ -1,13 +1,21 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineCasingType> {
 
     public BlockMachineCasing() {
@@ -25,23 +33,33 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
         return false;
     }
 
+    @Override
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+        for (MachineCasingType variant : VALUES) {
+            if (variant == MachineCasingType.MAX || variant.ordinal() < MachineCasingType.UHV.ordinal() || GTValues.HT) {
+                list.add(getItemVariant(variant));
+            }
+        }
+    }
+
     public enum MachineCasingType implements IStringSerializable {
 
         //Voltage-tiered casings
-        ULV("ultra_low_voltage"),
-        LV("low_voltage"),
-        MV("medium_voltage"),
-        HV("high_voltage"),
-        EV("extreme_voltage"),
-        IV("insane_voltage"),
-        LuV("ludicrous_voltage"),
-        ZPM("zero_point_module"),
-        UV("ultra_voltage"),
-        MAX("maximum_voltage"),
-        BRONZE_HULL("bronze_hull"),
-        BRONZE_BRICKS_HULL("bronze_bricks_hull"),
-        STEEL_HULL("steel_hull"),
-        STEEL_BRICKS_HULL("steel_bricks_hull");
+        ULV(makeName(GTValues.VOLTAGE_NAMES[0])),
+        LV(makeName(GTValues.VOLTAGE_NAMES[1])),
+        MV(makeName(GTValues.VOLTAGE_NAMES[2])),
+        HV(makeName(GTValues.VOLTAGE_NAMES[3])),
+        EV(makeName(GTValues.VOLTAGE_NAMES[4])),
+        IV(makeName(GTValues.VOLTAGE_NAMES[5])),
+        LuV(makeName(GTValues.VOLTAGE_NAMES[6])),
+        ZPM(makeName(GTValues.VOLTAGE_NAMES[7])),
+        UV(makeName(GTValues.VOLTAGE_NAMES[8])),
+        UHV(makeName(GTValues.VOLTAGE_NAMES[9])),
+        UEV(makeName(GTValues.VOLTAGE_NAMES[10])),
+        UIV(makeName(GTValues.VOLTAGE_NAMES[11])),
+        UMV(makeName(GTValues.VOLTAGE_NAMES[12])),
+        UXV(makeName(GTValues.VOLTAGE_NAMES[13])),
+        MAX(makeName(GTValues.VOLTAGE_NAMES[14]));
 
         private final String name;
 
@@ -50,8 +68,13 @@ public class BlockMachineCasing extends VariantBlock<BlockMachineCasing.MachineC
         }
 
         @Override
+        @Nonnull
         public String getName() {
             return this.name;
+        }
+
+        private static String makeName(String voltageName) {
+            return String.join("_", voltageName.toLowerCase().split(" "));
         }
 
     }

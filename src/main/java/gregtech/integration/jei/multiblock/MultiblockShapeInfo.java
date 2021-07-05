@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MultiblockShapeInfo {
 
@@ -80,6 +81,13 @@ public class MultiblockShapeInfo {
                 blockInfos[i] = aisleData;
             }
             return blockInfos;
+        }
+
+        public Builder shallowCopy() {
+            Builder builder = new Builder();
+            builder.shape = new ArrayList<>(this.shape);
+            builder.symbolMap = new HashMap<>(this.symbolMap);
+            return builder;
         }
 
         public MultiblockShapeInfo build() {

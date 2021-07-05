@@ -14,7 +14,6 @@ import gregtech.common.blocks.*;
 import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.blocks.wood.BlockGregSapling;
-import gregtech.common.datafix.GregTechDataFixers;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.potions.PotionFluids;
 import gregtech.common.pipelike.cable.ItemBlockCable;
@@ -68,8 +67,11 @@ public class CommonProxy {
         registry.register(METAL_CASING);
         registry.register(TURBINE_CASING);
         registry.register(MACHINE_CASING);
-        registry.register(MUTLIBLOCK_CASING);
+        registry.register(STEAM_CASING);
+        registry.register(MULTIBLOCK_CASING);
+        registry.register(TRANSPARENT_CASING);
         registry.register(WIRE_COIL);
+        registry.register(FUSION_COIL);
         registry.register(WARNING_SIGN);
         registry.register(GRANITE);
         registry.register(MINERAL);
@@ -78,10 +80,9 @@ public class CommonProxy {
         registry.register(LEAVES);
         registry.register(SAPLING);
         registry.register(CRUSHER_BLADE);
-        registry.register(SURFACE_ROCK_NEW);
+        registry.register(SURFACE_ROCK);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
-        SURFACE_ROCKS.values().stream().distinct().forEach(registry::register);
         FRAMES.values().stream().distinct().forEach(registry::register);
         ORES.forEach(registry::register);
     }
@@ -113,8 +114,11 @@ public class CommonProxy {
         registry.register(createItemBlock(METAL_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(TURBINE_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(MACHINE_CASING, VariantItemBlock::new));
-        registry.register(createItemBlock(MUTLIBLOCK_CASING, VariantItemBlock::new));
+        registry.register(createItemBlock(STEAM_CASING, VariantItemBlock::new));
+        registry.register(createItemBlock(MULTIBLOCK_CASING, VariantItemBlock::new));
+        registry.register(createItemBlock(TRANSPARENT_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WIRE_COIL, VariantItemBlock::new));
+        registry.register(createItemBlock(FUSION_COIL, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));
         registry.register(createItemBlock(GRANITE, StoneItemBlock::new));
         registry.register(createItemBlock(MINERAL, StoneItemBlock::new));
@@ -135,6 +139,11 @@ public class CommonProxy {
         ORES.stream()
             .map(block -> createItemBlock(block, OreItemBlock::new))
             .forEach(registry::register);
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void initComponents(RegistryEvent.Register<IRecipe> event) {
+        CraftingComponent.initializeComponents();
     }
 
     //this is called with normal priority, so most mods working with
@@ -239,15 +248,12 @@ public class CommonProxy {
     }
 
     public void onPreLoad() {
-
     }
 
     public void onLoad() {
-        GregTechDataFixers.init();
     }
 
     public void onPostLoad() {
         WoodMachineRecipes.postInit();
     }
-  
 }

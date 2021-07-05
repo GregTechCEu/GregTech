@@ -3,6 +3,7 @@ package gregtech.common.tools;
 public class DamageValues {
     public static final int DAMAGE_FOR_SCREWDRIVER = 1;
     public static final int DAMAGE_FOR_WRENCH = 2;
+    public static final int DAMAGE_FOR_CUTTER = 2;
     public static final int DAMAGE_FOR_MAGNIFYING_GLASS = 1;
     public static final int DAMAGE_FOR_SCOOP = 1;
     public static final int DAMAGE_FOR_CROWBAR = 1;

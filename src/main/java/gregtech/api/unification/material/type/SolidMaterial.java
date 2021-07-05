@@ -80,7 +80,7 @@ public abstract class SolidMaterial extends DustMaterial {
     }
 
     @Override
-    protected long verifyMaterialBits(long generationBits) {
+    public long verifyMaterialBits(long generationBits) {
         if ((generationBits & GENERATE_GEAR) > 0) {
             generationBits |= GENERATE_PLATE;
             generationBits |= GENERATE_ROD;

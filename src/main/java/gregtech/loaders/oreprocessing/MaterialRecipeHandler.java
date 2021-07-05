@@ -6,12 +6,14 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.material.type.DustMaterial.MatFlags;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 
@@ -19,9 +21,11 @@ import java.util.*;
 
 import static gregtech.api.GTValues.L;
 import static gregtech.api.GTValues.M;
+import static gregtech.api.recipes.RecipeMaps.ALLOY_SMELTER_RECIPES;
 import static gregtech.api.unification.material.type.DustMaterial.MatFlags.*;
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.GENERATE_ROD;
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.MORTAR_GRINDABLE;
+import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class MaterialRecipeHandler {
 
@@ -40,6 +44,9 @@ public class MaterialRecipeHandler {
         OrePrefix.dust.addProcessingHandler(DustMaterial.class, MaterialRecipeHandler::processDust);
         OrePrefix.dustSmall.addProcessingHandler(DustMaterial.class, MaterialRecipeHandler::processSmallDust);
         OrePrefix.dustTiny.addProcessingHandler(DustMaterial.class, MaterialRecipeHandler::processTinyDust);
+        OrePrefix.dust.addProcessingHandler(SimpleDustMaterial.class, MaterialRecipeHandler::processDust);
+        OrePrefix.dustSmall.addProcessingHandler(SimpleDustMaterial.class, MaterialRecipeHandler::processSmallDust);
+        OrePrefix.dustTiny.addProcessingHandler(SimpleDustMaterial.class, MaterialRecipeHandler::processTinyDust);
 
         for (OrePrefix orePrefix : GEM_ORDER) {
             orePrefix.addProcessingHandler(GemMaterial.class, MaterialRecipeHandler::processGem);
@@ -52,8 +59,9 @@ public class MaterialRecipeHandler {
         circuitRequiringMaterials.add(material);
     }
 
-    public static void processDust(OrePrefix dustPrefix, DustMaterial material) {
-        if (material instanceof GemMaterial) {
+    public static void processDust(OrePrefix dustPrefix, IMaterial<?> mat) {
+        if (mat instanceof GemMaterial) {
+            GemMaterial material = (GemMaterial) mat;
             ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, material);
             ItemStack tinyDarkAshStack = OreDictUnifier.get(OrePrefix.dustTiny, Materials.DarkAsh);
 
@@ -81,9 +89,9 @@ public class MaterialRecipeHandler {
                     .buildAndRegister();
             }
 
-        } else if (material instanceof IngotMaterial) {
-            IngotMaterial metalMaterial = (IngotMaterial) material;
-            if (!material.hasFlag(Material.MatFlags.FLAMMABLE | MatFlags.NO_SMELTING)) {
+        } else if (mat instanceof IngotMaterial) {
+            IngotMaterial metalMaterial = (IngotMaterial) mat;
+            if (!metalMaterial.hasFlag(Material.MatFlags.FLAMMABLE | MatFlags.NO_SMELTING)) {
 
                 boolean hasHotIngot = OrePrefix.ingotHot.doGenerateItem(metalMaterial);
                 ItemStack ingotStack = OreDictUnifier.get(hasHotIngot ? OrePrefix.ingotHot : OrePrefix.ingot, metalMaterial);
@@ -93,54 +101,52 @@ public class MaterialRecipeHandler {
                     ModHandler.addSmeltingRecipe(new UnificationEntry(dustPrefix, metalMaterial), ingotStack);
                     ModHandler.addSmeltingRecipe(new UnificationEntry(OrePrefix.dustTiny, metalMaterial), nuggetStack);
                 } else {
-                    int duration = Math.max(1, (int) (material.getAverageMass() * metalMaterial.blastFurnaceTemperature / 50L));
+                    int duration = Math.max(1, (int) (metalMaterial.getAverageMass() * metalMaterial.blastFurnaceTemperature / 50L));
                     ModHandler.removeFurnaceSmelting(new UnificationEntry(OrePrefix.ingot, metalMaterial));
 
                     BlastRecipeBuilder ingotSmeltingBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
-                        .input(dustPrefix, material)
-                        .outputs(ingotStack)
-                        .blastFurnaceTemp(metalMaterial.blastFurnaceTemperature)
-                        .duration(duration).EUt(120);
-                    if (circuitRequiringMaterials.contains(material)) {
-                        ingotSmeltingBuilder.inputs(new CountableIngredient(new IntCircuitIngredient(0), 0));
+                            .input(dustPrefix, metalMaterial)
+                            .outputs(ingotStack)
+                            .blastFurnaceTemp(metalMaterial.blastFurnaceTemperature)
+                            .duration(duration).EUt(120);
+                    if (circuitRequiringMaterials.contains(metalMaterial)) {
+                        ingotSmeltingBuilder.inputs(new CountableIngredient(new IntCircuitIngredient(1), 0));
                     }
                     ingotSmeltingBuilder.buildAndRegister();
 
                     if (!hasHotIngot) {
                         BlastRecipeBuilder nuggetSmeltingBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
-                            .input(OrePrefix.dustTiny, material)
-                            .outputs(nuggetStack)
-                            .blastFurnaceTemp(metalMaterial.blastFurnaceTemperature)
-                            .duration(Math.max(1, duration / 9)).EUt(120);
-                        if (circuitRequiringMaterials.contains(material)) {
-                            nuggetSmeltingBuilder.inputs(IntCircuitIngredient.getIntegratedCircuit(0));
+                                .input(OrePrefix.dustTiny, metalMaterial)
+                                .outputs(nuggetStack)
+                                .blastFurnaceTemp(metalMaterial.blastFurnaceTemperature)
+                                .duration(Math.max(1, duration / 9)).EUt(120);
+                        if (circuitRequiringMaterials.contains(metalMaterial)) {
+                            nuggetSmeltingBuilder.inputs(IntCircuitIngredient.getIntegratedCircuit(1));
                         }
                         nuggetSmeltingBuilder.buildAndRegister();
                     }
 
                     if (hasHotIngot) {
                         RecipeMaps.VACUUM_RECIPES.recipeBuilder()
-                            .input(OrePrefix.ingotHot, metalMaterial)
-                            .outputs(OreDictUnifier.get(OrePrefix.ingot, metalMaterial))
-                            .duration(metalMaterial.blastFurnaceTemperature / 16)
-                            .buildAndRegister();
-                    }
-
-                    if (metalMaterial.blastFurnaceTemperature <= 1000) {
-                        ModHandler.addRCFurnaceRecipe(new UnificationEntry(dustPrefix, metalMaterial), ingotStack, duration);
-                        ModHandler.addRCFurnaceRecipe(new UnificationEntry(OrePrefix.nugget, metalMaterial), nuggetStack, Math.max(1, duration / 9));
+                                .input(OrePrefix.ingotHot, metalMaterial)
+                                .output(OrePrefix.ingot, metalMaterial)
+                                .duration((int) metalMaterial.getAverageMass() * 3)
+                                .buildAndRegister();
                     }
                 }
             }
-        } else if (material.hasFlag(MatFlags.GENERATE_PLATE) && !material.hasFlag(EXCLUDE_PLATE_COMPRESSOR_RECIPE)) {
-            RecipeMaps.COMPRESSOR_RECIPES.recipeBuilder()
-                .input(dustPrefix, material)
-                .outputs(OreDictUnifier.get(OrePrefix.plate, material))
-                .buildAndRegister();
+        } else if (mat instanceof DustMaterial) {
+            DustMaterial material = (DustMaterial) mat;
+            if (material.hasFlag(MatFlags.GENERATE_PLATE) && !material.hasFlag(EXCLUDE_PLATE_COMPRESSOR_RECIPE)) {
+                RecipeMaps.COMPRESSOR_RECIPES.recipeBuilder()
+                        .input(dustPrefix, material)
+                        .outputs(OreDictUnifier.get(OrePrefix.plate, material))
+                        .buildAndRegister();
+            }
         }
     }
 
-    public static void processSmallDust(OrePrefix orePrefix, DustMaterial material) {
+    public static void processSmallDust(OrePrefix orePrefix, IMaterial<?> material) {
         ItemStack smallDustStack = OreDictUnifier.get(orePrefix, material);
         ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
 
@@ -160,7 +166,7 @@ public class MaterialRecipeHandler {
             .buildAndRegister();
     }
 
-    public static void processTinyDust(OrePrefix orePrefix, DustMaterial material) {
+    public static void processTinyDust(OrePrefix orePrefix, IMaterial<?> material) {
         ItemStack tinyDustStack = OreDictUnifier.get(orePrefix, material);
         ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
 
@@ -187,9 +193,15 @@ public class MaterialRecipeHandler {
         }
 
         if (!material.hasFlag(MatFlags.NO_SMASHING) && material.toolDurability > 0) {
-            ModHandler.addShapedRecipe(String.format("wrench_%s", material.toString()),
-                MetaItems.WRENCH.getStackForm(material),
-                "IhI", "III", " I ", 'I', new UnificationEntry(ingotPrefix, material));
+            if (ConfigHolder.U.GT6.plateWrenches && material.hasFlag(GENERATE_PLATE)) {
+                ModHandler.addShapedRecipe(String.format("wrench_%s", material.toString()),
+                        MetaItems.WRENCH.getStackForm(material),
+                        "PhP", "PPP", " P ", 'P', new UnificationEntry(plate, material));
+            } else {
+                ModHandler.addShapedRecipe(String.format("wrench_%s", material.toString()),
+                        MetaItems.WRENCH.getStackForm(material),
+                        "IhI", "III", " I ", 'I', new UnificationEntry(ingotPrefix, material));
+            }
         }
 
         if (material.hasFlag(GENERATE_ROD)) {
@@ -197,7 +209,7 @@ public class MaterialRecipeHandler {
                 OreDictUnifier.get(OrePrefix.stick, material, 1),
                 "f ", " X",
                 'X', new UnificationEntry(ingotPrefix, material));
-            if (!material.hasFlag(NO_SMASHING)) {
+            if (!material.hasFlag(NO_WORKING)) {
                 RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                     .input(ingotPrefix, material)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_ROD)
@@ -227,20 +239,40 @@ public class MaterialRecipeHandler {
                 .buildAndRegister();
         }
 
-        if (material.hasFlag(MatFlags.GENERATE_PLATE) && !material.hasFlag(NO_SMASHING)) {
-            ItemStack plateStack = OreDictUnifier.get(OrePrefix.plate, material);
-            RecipeMaps.BENDER_RECIPES.recipeBuilder()
-                .circuitMeta(0)
-                .input(ingotPrefix, material)
-                .outputs(plateStack)
-                .EUt(24).duration((int) (material.getAverageMass()))
+        ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(8).duration((int) material.getAverageMass())
+                .input(ingot, material)
+                .notConsumable(MetaItems.SHAPE_MOLD_NUGGET.getStackForm())
+                .output(nugget, material, 9)
                 .buildAndRegister();
 
-            RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
-                .input(ingotPrefix, material, 3)
-                .outputs(GTUtility.copyAmount(2, plateStack))
-                .EUt(16).duration((int) (material.getAverageMass() * 2))
-                .buildAndRegister();
+        if (!OreDictUnifier.get(block, material).isEmpty()) {
+            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(8).duration((int) material.getAverageMass() * 9)
+                    .input(block, material)
+                    .notConsumable(MetaItems.SHAPE_MOLD_INGOT.getStackForm())
+                    .output(ingot, material, 9)
+                    .buildAndRegister();
+        }
+
+        if (material.hasFlag(MatFlags.GENERATE_PLATE) && !material.hasFlag(NO_WORKING)) {
+
+            if (!material.hasFlag(NO_SMASHING)) {
+                ItemStack plateStack = OreDictUnifier.get(OrePrefix.plate, material);
+                RecipeMaps.BENDER_RECIPES.recipeBuilder()
+                    .circuitMeta(1)
+                    .input(ingotPrefix, material)
+                    .outputs(plateStack)
+                    .EUt(24).duration((int) (material.getAverageMass()))
+                    .buildAndRegister();
+
+                RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
+                    .input(ingotPrefix, material, 3)
+                    .outputs(GTUtility.copyAmount(2, plateStack))
+                    .EUt(16).duration((int) (material.getAverageMass() * 2))
+                    .buildAndRegister();
+
+                ModHandler.addShapedRecipe(String.format("plate_%s", material.toString()),
+                        plateStack, "h", "I", "I", 'I', new UnificationEntry(ingotPrefix, material));
+            }
 
             int voltageMultiplier = getVoltageMultiplier(material);
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -250,27 +282,6 @@ public class MaterialRecipeHandler {
                 .duration((int) material.getAverageMass())
                 .EUt(8 * voltageMultiplier)
                 .buildAndRegister();
-
-            RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
-                .input(ingotPrefix, material, 2)
-                .notConsumable(MetaItems.SHAPE_MOLD_PLATE)
-                .outputs(OreDictUnifier.get(OrePrefix.plate, material))
-                .duration((int) material.getAverageMass() * 2)
-                .EUt(2 * voltageMultiplier)
-                .buildAndRegister();
-
-            ModHandler.addShapedRecipe(String.format("plate_%s", material.toString()),
-                plateStack, "h", "I", "I", 'I', new UnificationEntry(ingotPrefix, material));
-
-            if (material.hasFlag(IngotMaterial.MatFlags.GENERATE_DENSE)) {
-                ItemStack denseStack = OreDictUnifier.get(OrePrefix.plateDense, material);
-                RecipeMaps.BENDER_RECIPES.recipeBuilder()
-                    .input(ingotPrefix, material, 9)
-                    .outputs(denseStack)
-                    .circuitMeta(5)
-                    .EUt(96).duration((int) (material.getAverageMass() * 9))
-                    .buildAndRegister();
-            }
         }
 
     }
@@ -317,6 +328,12 @@ public class MaterialRecipeHandler {
                 .outputs(ingotStack)
                 .buildAndRegister();
 
+            ALLOY_SMELTER_RECIPES.recipeBuilder().EUt(8).duration((int) material.getAverageMass())
+                    .input(nugget, material, 9)
+                    .notConsumable(MetaItems.SHAPE_MOLD_INGOT.getStackForm())
+                    .output(ingot, material)
+                    .buildAndRegister();
+
             if (material.shouldGenerateFluid()) {
                 RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .notConsumable(MetaItems.SHAPE_MOLD_NUGGET)
@@ -337,20 +354,18 @@ public class MaterialRecipeHandler {
     }
 
     public static void processFrame(OrePrefix framePrefix, SolidMaterial material) {
-        if (material.hasFlag(GENERATE_PLATE | GENERATE_ROD)) {
+        if (material.hasFlag(GENERATE_ROD)) {
             boolean isWoodenFrame = ModHandler.isMaterialWood(material);
-            ItemStack frameStack = OreDictUnifier.get(framePrefix, material, 4);
-            ModHandler.addShapedRecipe(String.format("frame_%s", material), frameStack,
-                "PPP", "SSS", isWoodenFrame ? "SsS" : "SwS",
-                'P', new UnificationEntry(isWoodenFrame ? OrePrefix.plank : OrePrefix.plate, material),
+            ModHandler.addShapedRecipe(String.format("frame_%s", material),
+                    OreDictUnifier.get(framePrefix, material, 2),
+                "SSS", isWoodenFrame ? "SsS" : "SwS", "SSS",
                 'S', new UnificationEntry(OrePrefix.stick, material));
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, material, 3)
-                .input(OrePrefix.stick, material, 5)
-                .circuitMeta(1)
-                .outputs(frameStack)
-                .EUt(8).duration(200)
+                .input(OrePrefix.stick, material, 4)
+                .circuitMeta(4)
+                .outputs(OreDictUnifier.get(framePrefix, material, 1))
+                .EUt(8).duration(64)
                 .buildAndRegister();
         }
     }

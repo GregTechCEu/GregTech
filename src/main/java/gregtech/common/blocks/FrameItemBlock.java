@@ -15,7 +15,6 @@ public class FrameItemBlock extends ItemBlock {
     public FrameItemBlock(BlockFrame block) {
         super(block);
         this.frameBlock = block;
-        setHasSubtypes(true);
     }
 
     @Override

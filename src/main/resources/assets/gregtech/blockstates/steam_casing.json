@@ -1,0 +1,43 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "minecraft:cube_bottom_top",
+    "textures": {
+      "bottom": "gregtech:blocks/rendering_error",
+      "top": "gregtech:blocks/rendering_error",
+      "side": "gregtech:blocks/rendering_error"
+    }
+  },
+  "variants": {
+    "variant": {
+      "bronze_hull": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/steam/bronze/bottom",
+          "top": "gregtech:blocks/casings/steam/bronze/top",
+          "side": "gregtech:blocks/casings/steam/bronze/side"
+        }
+      },
+      "bronze_bricks_hull": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/steam/bricked_bronze/bottom",
+          "top": "gregtech:blocks/casings/steam/bricked_bronze/top",
+          "side": "gregtech:blocks/casings/steam/bricked_bronze/side"
+        }
+      },
+      "steel_hull": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/steam/steel/bottom",
+          "top": "gregtech:blocks/casings/steam/steel/top",
+          "side": "gregtech:blocks/casings/steam/steel/side"
+        }
+      },
+      "steel_bricks_hull": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/steam/bricked_steel/bottom",
+          "top": "gregtech:blocks/casings/steam/bricked_steel/top",
+          "side": "gregtech:blocks/casings/steam/bricked_steel/side"
+        }
+      }
+    }
+  }
+}

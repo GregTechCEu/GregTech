@@ -1,7 +1,6 @@
 package gregtech.common.blocks;
 
 import com.google.common.collect.ImmutableMap;
-import gnu.trove.map.TIntObjectMap;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
@@ -12,7 +11,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.DustMaterial.MatFlags;
 import gregtech.api.unification.material.type.IngotMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.material.type.SolidMaterial;
@@ -21,8 +19,7 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
 import gregtech.common.blocks.modelfactories.BakedModelHandler;
-import gregtech.common.blocks.surfacerock.BlockSurfaceRockDeprecated;
-import gregtech.common.blocks.surfacerock.BlockSurfaceRockNew;
+import gregtech.common.blocks.surfacerock.BlockSurfaceRock;
 import gregtech.common.blocks.surfacerock.TileEntitySurfaceRock;
 import gregtech.common.blocks.tileentity.TileEntityCrusherBlade;
 import gregtech.common.blocks.wood.BlockGregLeaves;
@@ -88,8 +85,11 @@ public class MetaBlocks {
     public static BlockMetalCasing METAL_CASING;
     public static BlockTurbineCasing TURBINE_CASING;
     public static BlockMachineCasing MACHINE_CASING;
-    public static BlockMultiblockCasing MUTLIBLOCK_CASING;
+    public static BlockSteamCasing STEAM_CASING;
+    public static BlockMultiblockCasing MULTIBLOCK_CASING;
+    public static BlockTransparentCasing TRANSPARENT_CASING;
     public static BlockWireCoil WIRE_COIL;
+    public static BlockFusionCoil FUSION_COIL;
     public static BlockWarningSign WARNING_SIGN;
 
     public static BlockGranite GRANITE;
@@ -106,10 +106,9 @@ public class MetaBlocks {
     public static BlockGregSapling SAPLING;
 
     public static BlockCrusherBlade CRUSHER_BLADE;
+    public static BlockSurfaceRock SURFACE_ROCK;
 
     public static Map<DustMaterial, BlockCompressed> COMPRESSED = new HashMap<>();
-    public static Map<IngotMaterial, BlockSurfaceRockDeprecated> SURFACE_ROCKS = new HashMap<>();
-    public static BlockSurfaceRockNew SURFACE_ROCK_NEW;
     public static Map<SolidMaterial, BlockFrame> FRAMES = new HashMap<>();
     public static Collection<BlockOre> ORES = new HashSet<>();
     public static Collection<BlockFluidBase> FLUID_BLOCKS = new HashSet<>();
@@ -131,10 +130,16 @@ public class MetaBlocks {
         TURBINE_CASING.setRegistryName("turbine_casing");
         MACHINE_CASING = new BlockMachineCasing();
         MACHINE_CASING.setRegistryName("machine_casing");
-        MUTLIBLOCK_CASING = new BlockMultiblockCasing();
-        MUTLIBLOCK_CASING.setRegistryName("multiblock_casing");
+        STEAM_CASING = new BlockSteamCasing();
+        STEAM_CASING.setRegistryName("steam_casing");
+        MULTIBLOCK_CASING = new BlockMultiblockCasing();
+        MULTIBLOCK_CASING.setRegistryName("multiblock_casing");
+        TRANSPARENT_CASING = new BlockTransparentCasing();
+        TRANSPARENT_CASING.setRegistryName("transparent_casing");
         WIRE_COIL = new BlockWireCoil();
         WIRE_COIL.setRegistryName("wire_coil");
+        FUSION_COIL = new BlockFusionCoil();
+        FUSION_COIL.setRegistryName("fusion_coil");
         WARNING_SIGN = new BlockWarningSign();
         WARNING_SIGN.setRegistryName("warning_sign");
         GRANITE = new BlockGranite();
@@ -164,18 +169,14 @@ public class MetaBlocks {
         CRUSHER_BLADE = new BlockCrusherBlade();
         CRUSHER_BLADE.setRegistryName("crusher_blade");
 
-        SURFACE_ROCK_NEW = new BlockSurfaceRockNew();
-        SURFACE_ROCK_NEW.setRegistryName("surface_rock_new");
+        SURFACE_ROCK = new BlockSurfaceRock();
+        SURFACE_ROCK.setRegistryName("surface_rock_new");
 
         StoneType.init();
 
         createGeneratedBlock(
             material -> material instanceof DustMaterial && !OrePrefix.block.isIgnored(material),
             MetaBlocks::createCompressedBlock);
-
-        createGeneratedBlock(
-            material -> material instanceof IngotMaterial && material.hasFlag(MatFlags.GENERATE_ORE),
-            MetaBlocks::createSurfaceRockBlock);
 
         for (Material material : Material.MATERIAL_REGISTRY) {
             if (material instanceof DustMaterial &&
@@ -237,16 +238,6 @@ public class MetaBlocks {
         blocksToGenerate.forEach((key, value) -> blockGenerator.accept(value, key));
     }
 
-    private static void createSurfaceRockBlock(Material[] materials, int index) {
-        BlockSurfaceRockDeprecated block = new BlockSurfaceRockDeprecated(materials);
-        block.setRegistryName("meta_block_surface_rock_" + index);
-        for (Material material : materials) {
-            if (material instanceof IngotMaterial) {
-                SURFACE_ROCKS.put((IngotMaterial) material, block);
-            }
-        }
-    }
-
     private static void createCompressedBlock(Material[] materials, int index) {
         BlockCompressed block = new BlockCompressed(materials);
         block.setRegistryName("meta_block_compressed_" + index);
@@ -306,8 +297,11 @@ public class MetaBlocks {
         registerItemModel(METAL_CASING);
         registerItemModel(TURBINE_CASING);
         registerItemModel(MACHINE_CASING);
-        registerItemModel(MUTLIBLOCK_CASING);
+        registerItemModel(STEAM_CASING);
+        registerItemModel(MULTIBLOCK_CASING);
+        registerItemModel(TRANSPARENT_CASING);
         registerItemModel(WIRE_COIL);
+        registerItemModel(FUSION_COIL);
         registerItemModel(WARNING_SIGN);
         registerItemModel(GRANITE);
         registerItemModel(MINERAL);
@@ -317,7 +311,7 @@ public class MetaBlocks {
         registerItemModel(SAPLING);
 
         COMPRESSED.values().stream().distinct().forEach(MetaBlocks::registerItemModel);
-        FRAMES.values().forEach(it -> registerItemModelWithFilteredProperties(it));
+        FRAMES.values().forEach(MetaBlocks::registerItemModelWithFilteredProperties);
         ORES.stream().distinct().forEach(MetaBlocks::registerItemModel);
     }
 
@@ -396,9 +390,8 @@ public class MetaBlocks {
         BakedModelHandler modelHandler = new BakedModelHandler();
         MinecraftForge.EVENT_BUS.register(modelHandler);
         FLUID_BLOCKS.forEach(modelHandler::addFluidBlock);
-        SURFACE_ROCKS.values().stream().distinct().forEach(block -> modelHandler.addBuiltInBlock(block, "stone"));
 
-        modelHandler.addBuiltInBlock(SURFACE_ROCK_NEW, "stone_andesite");
+        modelHandler.addBuiltInBlock(SURFACE_ROCK, "stone_andesite");
         modelHandler.addBuiltInBlock(CRUSHER_BLADE, "iron_block");
 
         Item.getItemFromBlock(CRUSHER_BLADE).setTileEntityItemStackRenderer(new TileEntityRenderBaseItem<>(TileEntityCrusherBlade.class));
@@ -425,9 +418,6 @@ public class MetaBlocks {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(ORE_BLOCK_COLOR, block);
             Minecraft.getMinecraft().getItemColors().registerItemColorHandler(ORE_ITEM_COLOR, block);
         });
-
-        MetaBlocks.SURFACE_ROCKS.values().stream().distinct().forEach(block ->
-            Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(SURFACE_ROCK_COLOR, block));
     }
 
     public static void registerOreDict() {
@@ -446,10 +436,8 @@ public class MetaBlocks {
         for (Entry<SolidMaterial, BlockFrame> entry : FRAMES.entrySet()) {
             SolidMaterial material = entry.getKey();
             BlockFrame block = entry.getValue();
-            for (int i = 0; i < 16; i++) {
-                ItemStack itemStack = new ItemStack(block, 1, i);
-                OreDictUnifier.registerOre(itemStack, OrePrefix.frameGt, material);
-            }
+            ItemStack itemStack = new ItemStack(block, 1);
+            OreDictUnifier.registerOre(itemStack, OrePrefix.frameGt, material);
         }
 
         for (BlockOre blockOre : ORES) {

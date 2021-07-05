@@ -6,6 +6,10 @@ import net.minecraftforge.common.config.Config;
 @Config(modid = GTValues.MODID)
 public class ConfigHolder {
 
+    @Config.Comment("Category of options added by GregTechCE Unofficial")
+    @Config.Name("Unofficial Options")
+    public static UnofficialOptions U = new UnofficialOptions();
+
     @Config.Comment("Whether to enable more verbose logging. Default: false")
     public static boolean debug = false;
 
@@ -53,9 +57,9 @@ public class ConfigHolder {
     @Config.Comment("Chance with which flint and steel will create fire. Default: 50")
     public static int flintChanceToCreateFire = 50;
 
-    @Config.Comment("Recipes for machine hulls use more materials. Default: false")
+    @Config.Comment("Recipes for machine hulls use more materials. Default: true")
     @Config.RequiresMcRestart
-    public static boolean harderMachineHulls = false;
+    public static boolean harderMachineHulls = true;
 
     @Config.Comment("If true, insufficient energy supply will reset recipe progress to zero. If false, progress will decrease to zero with 2x speed. Default: false")
     @Config.RequiresWorldRestart
@@ -81,13 +85,12 @@ public class ConfigHolder {
     public static boolean addFoodMethaneRecipes = true;
 
     @Config.Comment("Category that contains configs for changing vanilla recipes")
+    @Config.Name("Vanilla Recipe Options")
     @Config.RequiresMcRestart
     public static VanillaRecipes vanillaRecipes = new VanillaRecipes();
 
-    @Config.Comment("Category that contains configs for machines with specific behavior")
-    public static MachineSpecificConfiguration machineSpecific = new MachineSpecificConfiguration();
-
     @Config.Comment("Category that contains configs for the NanoSaber")
+    @Config.Name("Nano Saber Options")
     public static NanoSaberConfiguration nanoSaberConfiguration = new NanoSaberConfiguration();
 
     @Config.Comment("Sets the bonus EU output of Steam Turbines. Default: 6144")
@@ -108,6 +111,9 @@ public class ConfigHolder {
     @Config.Comment("If true, lossless cables will have lossy wires. Default: false")
     @Config.RequiresMcRestart
     public static boolean doLosslessWiresMakeLossyCables = false;
+
+    @Config.Comment("Array of blacklisted dimension IDs in which Air Collector does not work. Default: none")
+    public static int[] airCollectorDimensionBlacklist = new int[]{};
 
     public static class VanillaRecipes {
 
@@ -133,11 +139,6 @@ public class ConfigHolder {
         public boolean bowlRequireKnife = true;
     }
 
-    public static class MachineSpecificConfiguration {
-        @Config.Comment("Array of blacklisted dimension IDs in which Air Collector does not work.")
-        public int[] airCollectorDimensionBlacklist = new int[]{};
-    }
-
     public static class NanoSaberConfiguration {
 
         @Config.RangeDouble(min = 0, max = 100)
@@ -157,5 +158,173 @@ public class ConfigHolder {
         @Config.Comment("The EU/t consumption of the NanoSaber. Default: 64")
         @Config.RequiresMcRestart
         public int energyConsumption = 64;
+    }
+
+    public static class UnofficialOptions {
+
+        @Config.Comment("Config category for enabling higher-tier machines.")
+        @Config.Name("Higher Tier Machines")
+        @Config.RequiresMcRestart
+        public HighTierMachines machines = new HighTierMachines();
+
+        @Config.Comment("Config category for GT5u inspired features.")
+        @Config.Name("GregTech 5 Unofficial Options")
+        public GT5U GT5u = new GT5U();
+
+        @Config.Comment("Config category for GT6 inspired features.")
+        @Config.Name("GregTech 6 Options")
+        public GT6 GT6 = new GT6();
+
+        @Config.Comment("Should Drums be enabled? Default: true")
+        @Config.RequiresMcRestart
+        public boolean registerDrums = true;
+
+        @Config.Comment("Should Crates be enabled? Default: true")
+        @Config.RequiresMcRestart
+        public boolean registerCrates = true;
+
+        public static class GT5U {
+
+            @Config.Comment("Enable an extra ZPM and UV Battery (this also makes the Ultimate Battery harder to make). Default: false")
+            @Config.RequiresMcRestart
+            public boolean enableZPMandUVBats = false;
+
+            @Config.Comment("Replace the Ultimate Battery with a MAX Battery. Default: false")
+            @Config.RequiresMcRestart
+            public boolean replaceUVwithMAXBat = false;
+
+            @Config.Comment("This config requires 'B:Use custom machine tank sizes' = true to take effect. Changes the input tank size to the first value, and out tank size to the second value for nearly every single block machine. Units are millibuckets.")
+            @Config.Name("Custom machine fluid tank sizes")
+            @Config.RangeInt(min = 1)
+            @Config.RequiresMcRestart
+            public int[] customMachineTankSizes = new int[]{64000, 64000};
+
+            @Config.Comment("This config enables the customization of nearly every single block machine's input and output fluid tank sizes.")
+            @Config.Name("Use custom machine tank sizes")
+            @Config.RequiresMcRestart
+            public boolean useCustomMachineTankSizes = false;
+
+            @Config.Comment("Require Wrench to break machines? Default: false")
+            public boolean requireWrenchForMachines = false;
+
+            @Config.Comment("Change the recipe of rods to result in 1 stick and 2 small piles of dusts. Default: false")
+            public boolean harderRods = false;
+
+            @Config.Comment("Whether or not to use polymers instead of rare metals for Carbon Fibers. REMOVES THE CHANCED OUTPUT! Default: false")
+            public boolean polymerCarbonFiber = false;
+        }
+
+        public static class GT6 {
+
+            @Config.Comment("Whether or not to use GT6-style pipe and cable connections, meaning they will not auto-connect " +
+                    "unless placed directly onto another pipe or cable. Default: false")
+            public boolean gt6StylePipesCables = false;
+
+            @Config.Comment("Whether or not to use Plates instead of Ingots for Wrench Recipes. Default: false")
+            @Config.RequiresMcRestart
+            public boolean plateWrenches = false;
+        }
+
+        public static class HighTierMachines {
+
+            @Config.Comment("Enable all LuV-UV Machines, overrides individual values if true. Default: false")
+            @Config.Name("LuV-UV Machines")
+            public boolean midTierMachines = false;
+
+            @Config.Comment("Enable all UHV-UXV Machines, overrides individual values if true. THESE WILL HAVE NO RECIPES BY DEFAULT WITHOUT GREGICALITY! Default: false")
+            @Config.Name("UHV-UXV Machines")
+            public boolean highTierMachines = false;
+
+            @Config.Comment("Should higher tier Pumps be registered (IV-UV)? Separate from other configs. Default: false")
+            public boolean highTierPumps = false;
+
+            @Config.Comment("Should higher tier Air Collectors be registered (IV, LuV)? Separate from other configs. Default: false")
+            public boolean highTierAirCollectors = false;
+
+            @Config.Comment("Enable the Cluster Mill for making foils? Will not be overridden by \"higher tier\" settings. Default: false")
+            public boolean enableClusterMill = false;
+
+            @Config.Comment("Set these to true to enable LuV-UV tiers of machines. Default (all): false")
+            public boolean midTierAlloySmelter = false;
+            public boolean midTierArcFurnaces = false;
+            public boolean midTierAssemblers = false;
+            public boolean midTierAutoclaves = false;
+            public boolean midTierBenders = false;
+            public boolean midTierBreweries = false;
+            public boolean midTierCanners = false;
+            public boolean midTierCentrifuges = false;
+            public boolean midTierChemicalBaths = false;
+            public boolean midTierChemicalReactors = false;
+            public boolean midTierCompressors = false;
+            public boolean midTierCutters = false;
+            public boolean midTierClusterMills = false;
+            public boolean midTierDistilleries = false;
+            public boolean midTierElectricFurnace = false;
+            public boolean midTierElectrolyzers = false;
+            public boolean midTierElectromagneticSeparators = false;
+            public boolean midTierExtractors = false;
+            public boolean midTierExtruders = false;
+            public boolean midTierFermenters = false;
+            public boolean midTierFluidCanners = false;
+            public boolean midTierFluidExtractors = false;
+            public boolean midTierFluidHeaters = false;
+            public boolean midTierFluidSolidifiers = false;
+            public boolean midTierForgeHammers = false;
+            public boolean midTierFormingPresses = false;
+            public boolean midTierLathes = false;
+            public boolean midTierMicrowaves = false;
+            public boolean midTierMixers = false;
+            public boolean midTierOreWashers = false;
+            public boolean midTierPackers = false;
+            public boolean midTierPlasmaArcFurnaces = false;
+            public boolean midTierPolarizers = false;
+            public boolean midTierLaserEngravers = false;
+            public boolean midTierSifters = false;
+            public boolean midTierThermalCentrifuges = false;
+            public boolean midTierMacerators = false;
+            public boolean midTierUnpackers = false;
+            public boolean midTierWiremills = false;
+
+            @Config.Comment("Set these to true to enable UHV-UXV tiers of machines. THESE WILL HAVE NO RECIPES BY DEFAULT WITHOUT GREGICALITY! Default (all): false")
+            public boolean highTierAlloySmelter = false;
+            public boolean highTierArcFurnaces = false;
+            public boolean highTierAssemblers = false;
+            public boolean highTierAutoclaves = false;
+            public boolean highTierBenders = false;
+            public boolean highTierBreweries = false;
+            public boolean highTierCanners = false;
+            public boolean highTierCentrifuges = false;
+            public boolean highTierChemicalBaths = false;
+            public boolean highTierChemicalReactors = false;
+            public boolean highTierCompressors = false;
+            public boolean highTierCutters = false;
+            public boolean highTierClusterMills = false;
+            public boolean highTierDistilleries = false;
+            public boolean highTierElectricFurnace = false;
+            public boolean highTierElectrolyzers = false;
+            public boolean highTierElectromagneticSeparators = false;
+            public boolean highTierExtractors = false;
+            public boolean highTierExtruders = false;
+            public boolean highTierFermenters = false;
+            public boolean highTierFluidCanners = false;
+            public boolean highTierFluidExtractors = false;
+            public boolean highTierFluidHeaters = false;
+            public boolean highTierFluidSolidifiers = false;
+            public boolean highTierForgeHammers = false;
+            public boolean highTierFormingPresses = false;
+            public boolean highTierLathes = false;
+            public boolean highTierMicrowaves = false;
+            public boolean highTierMixers = false;
+            public boolean highTierOreWashers = false;
+            public boolean highTierPackers = false;
+            public boolean highTierPlasmaArcFurnaces = false;
+            public boolean highTierPolarizers = false;
+            public boolean highTierLaserEngravers = false;
+            public boolean highTierSifters = false;
+            public boolean highTierThermalCentrifuges = false;
+            public boolean highTierMacerators = false;
+            public boolean highTierUnpackers = false;
+            public boolean highTierWiremills = false;
+        }
     }
 }

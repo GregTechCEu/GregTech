@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FoodStats;
+import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.RecipeMaps;
@@ -123,6 +124,7 @@ public class MetaItem2 extends MaterialMetaItem {
         RANDOM_ACCESS_MEMORY_WAFER = addItem(471, "wafer.random_access_memory");
         SYSTEM_ON_CHIP_WAFER = addItem(472, "wafer.system_on_chip");
 
+        RAW_CRYSTAL_CHIP = addItem(473, "crystal.raw");
         CRYSTAL_CENTRAL_PROCESSING_UNIT = addItem(474, "crystal.central_processing_unit");
         CRYSTAL_SYSTEM_ON_CHIP = addItem(475, "crystal.system_on_chip");
         ADVANCED_SYSTEM_ON_CHIP = addItem(476, "plate.advanced_system_on_chip");
@@ -165,6 +167,29 @@ public class MetaItem2 extends MaterialMetaItem {
 
         TURBINE_ROTOR = addItem(508, "turbine_rotor").addComponents(new TurbineRotorBehavior());
         COVER_FACADE = addItem(509, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
+
+        FLUID_REGULATORS[0] = FLUID_REGULATOR_LV = addItem(700, "fluid.regulator.lv");
+        FLUID_REGULATORS[1] = FLUID_REGULATOR_MV = addItem(701, "fluid.regulator.mv");
+        FLUID_REGULATORS[2] = FLUID_REGULATOR_HV = addItem(702, "fluid.regulator.hv");
+        FLUID_REGULATORS[3] = FLUID_REGULATOR_EV = addItem(703, "fluid.regulator.ev");
+        FLUID_REGULATORS[4] = FLUID_REGULATOR_IV = addItem(704, "fluid.regulator.iv");
+        FLUID_REGULATORS[5] = FLUID_REGULATOR_LUV = addItem(705, "fluid.regulator.luv");
+        FLUID_REGULATORS[6] = FLUID_REGULATOR_ZPM = addItem(706, "fluid.regulator.zpm");
+        FLUID_REGULATORS[7] = FLUID_REGULATOR_UV = addItem(707, "fluid.regulator.uv");
+
+        if (ConfigHolder.U.GT5u.enableZPMandUVBats) {
+            ENERGY_MODULE = addItem(520, "energy.module").addComponents(new IItemComponent[] { ElectricStats.createRechargeableBattery(10000000000L, GTValues.ZPM) }).setModelAmount(8);
+            ENERGY_CLUSTER = addItem(521, "energy.cluster").addComponents(new IItemComponent[] { ElectricStats.createRechargeableBattery(100000000000L, GTValues.UV) }).setModelAmount(8);
+        }
+
+        if (ConfigHolder.U.GT5u.replaceUVwithMAXBat) {
+            MAX_BATTERY = addItem(522, "max.battery").addComponents(new IItemComponent[] { ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.MAX) }).setModelAmount(8);
+            MetaItems.ZPM2.setInvisible();
+        }
+
+        NEURO_PROCESSOR = addItem(523, "processor.neuro");
+        STEM_CELLS = addItem(524, "stem_cells");
+        PETRI_DISH = addItem(525, "petri_dish");
     }
 
     public void registerRecipes() {

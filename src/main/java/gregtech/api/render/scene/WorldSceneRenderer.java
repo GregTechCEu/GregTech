@@ -182,7 +182,6 @@ public class WorldSceneRenderer {
         //rewind buffer after read
         OBJECT_POS_BUFFER.rewind();
 
-        //System.out.println(String.format("%f %f %f %f", pixelDepth, posX, posY, posZ));
         //if we didn't hit anything, just return null
         //also return null if hit is too far from us
         if (posY < -100.0f) {
@@ -211,7 +210,7 @@ public class WorldSceneRenderer {
         Minecraft mc = Minecraft.getMinecraft();
         ScaledResolution resolution = new ScaledResolution(mc);
 
-        GlStateManager.pushAttrib();
+        GL11.glPushAttrib(GL11.GL_TRANSFORM_BIT);
         mc.entityRenderer.disableLightmap();
         GlStateManager.disableLighting();
         GlStateManager.enableDepth();
@@ -274,8 +273,12 @@ public class WorldSceneRenderer {
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.popMatrix();
 
-        //reset attributes
-        GlStateManager.popAttrib();
+        //Re-enable disabled states
+        GlStateManager.disableBlend();
+        GlStateManager.disableDepth();
+
+        //Reset Attributes
+        GL11.glPopAttrib();
     }
 
     public class TrackedDummyWorld extends DummyWorld {

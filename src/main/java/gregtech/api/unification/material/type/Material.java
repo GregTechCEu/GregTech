@@ -4,12 +4,15 @@ import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.Element;
+import gregtech.api.unification.Elements;
+import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.IMaterialHandler;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import stanhebben.zenscript.annotations.*;
@@ -27,7 +30,7 @@ import static gregtech.api.util.GTUtility.createFlag;
 
 @ZenClass("mods.gregtech.material.Material")
 @ZenRegister
-public abstract class Material implements Comparable<Material> {
+public abstract class Material implements Comparable<Material>, IMaterial<Material> {
 
     public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(1000);
     private static final List<IMaterialHandler> materialHandlers = new ArrayList<>();
@@ -36,6 +39,13 @@ public abstract class Material implements Comparable<Material> {
         materialHandlers.add(materialHandler);
     }
 
+    public GTControlledRegistry<String, Material> getRegistry() {
+        return MATERIAL_REGISTRY;
+    }
+
+    public Class<Material> getMaterialClass() {
+        return Material.class;
+    }
 
     public static void runMaterialHandlers() {
         materialHandlers.forEach(IMaterialHandler::onMaterialsInit);
@@ -48,26 +58,17 @@ public abstract class Material implements Comparable<Material> {
 
     public static final class MatFlags {
 
-        private static final Map<String, Entry<Long, Class<? extends Material>>> materialFlagRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        private static final Map<String, Entry<Long, Class<? extends IMaterial<?>>>> materialFlagRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
-        public static void registerMaterialFlag(String name, long value, Class<? extends Material> classFilter) {
+        public static void registerMaterialFlag(String name, long value, Class<? extends IMaterial<?>> classFilter) {
             if (materialFlagRegistry.containsKey(name))
                 throw new IllegalArgumentException("Flag with name " + name + " already registered!");
 
-            for (Map.Entry<Long, Class<? extends Material>> entry : materialFlagRegistry.values()) {
+            for (Map.Entry<Long, Class<? extends IMaterial<?>>> entry : materialFlagRegistry.values()) {
                 if (entry.getKey() == value)
-                    throw new IllegalArgumentException("Flag with ID " + getIntValueOfFlag(value) + " already registered!");
+                    throw new IllegalArgumentException("Flag with ID " + IMaterial.getIntValueOfFlag(value) + " already registered!");
             }
             materialFlagRegistry.put(name, new SimpleEntry<>(value, classFilter));
-        }
-
-        private static int getIntValueOfFlag(long value) {
-            int index = 0;
-            while (value != 1) {
-                value >>= 1;
-                index++;
-            }
-            return index;
         }
 
         public static void registerMaterialFlagsHolder(Class<?> holder, Class<? extends Material> lowerBounds) {
@@ -89,8 +90,8 @@ public abstract class Material implements Comparable<Material> {
             }
         }
 
-        public static long resolveFlag(String name, Class<? extends Material> selfClass) {
-            Entry<Long, Class<? extends Material>> flagEntry = materialFlagRegistry.get(name);
+        public static long resolveFlag(String name, Class<? extends IMaterial<?>> selfClass) {
+            Entry<Long, Class<? extends IMaterial<?>>> flagEntry = materialFlagRegistry.get(name);
             if (flagEntry == null)
                 throw new IllegalArgumentException("Flag with name " + name + " not registered");
             else if (!flagEntry.getValue().isAssignableFrom(selfClass))
@@ -98,26 +99,6 @@ public abstract class Material implements Comparable<Material> {
                     selfClass.getSimpleName() + ", lower bound is " + flagEntry.getValue().getSimpleName());
             return flagEntry.getKey();
         }
-
-        /**
-         * Enables electrolyzer decomposition recipe generation
-         */
-        public static final long DECOMPOSITION_BY_ELECTROLYZING = createFlag(40);
-
-        /**
-         * Enables centrifuge decomposition recipe generation
-         */
-        public static final long DECOMPOSITION_BY_CENTRIFUGING = createFlag(41);
-
-        /**
-         * Add to material if it has constantly burning aura
-         */
-        public static final long BURNING = createFlag(7);
-
-        /**
-         * Add to material if it is some kind of flammable
-         */
-        public static final long FLAMMABLE = createFlag(42);
 
         /**
          * Add to material if it is some kind of explosive
@@ -135,14 +116,34 @@ public abstract class Material implements Comparable<Material> {
         public static final long NO_RECYCLING = createFlag(6);
 
         /**
-         * Disables decomposition recipe generation for this material and all materials that has it as component
+         * Add to material if it has constantly burning aura
          */
-        public static final long DISABLE_DECOMPOSITION = createFlag(43);
+        public static final long BURNING = createFlag(7);
 
         /**
          * Decomposition recipe requires hydrogen as additional input. Amount is equal to input amount
          */
         public static final long DECOMPOSITION_REQUIRES_HYDROGEN = createFlag(8);
+
+        /**
+         * Enables electrolyzer decomposition recipe generation
+         */
+        public static final long DECOMPOSITION_BY_ELECTROLYZING = createFlag(40);
+
+        /**
+         * Enables centrifuge decomposition recipe generation
+         */
+        public static final long DECOMPOSITION_BY_CENTRIFUGING = createFlag(41);
+
+        /**
+         * Add to material if it is some kind of flammable
+         */
+        public static final long FLAMMABLE = createFlag(42);
+
+        /**
+         * Disables decomposition recipe generation for this material and all materials that has it as component
+         */
+        public static final long DISABLE_DECOMPOSITION = createFlag(43);
 
         static {
             registerMaterialFlagsHolder(MatFlags.class, Material.class);
@@ -153,19 +154,18 @@ public abstract class Material implements Comparable<Material> {
      * Color of material in RGB format
      */
     @ZenProperty("color")
-    public final int materialRGB;
+    public int materialRGB;
 
     /**
      * Chemical formula of this material
      */
-    @ZenProperty
-    public final String chemicalFormula;
+    private String chemicalFormula;
 
     /**
      * Icon set for this material meta-items generation
      */
     @ZenProperty("iconSet")
-    public final MaterialIconSet materialIconSet;
+    public MaterialIconSet materialIconSet;
 
     /**
      * List of this material component
@@ -190,7 +190,7 @@ public abstract class Material implements Comparable<Material> {
 
     private String calculateChemicalFormula() {
         if (element != null) {
-            return element.name();
+            return element.getSymbol();
         }
         if (!materialComponents.isEmpty()) {
             StringBuilder components = new StringBuilder();
@@ -199,6 +199,21 @@ public abstract class Material implements Comparable<Material> {
             return components.toString();
         }
         return "";
+    }
+
+    @ZenGetter
+    public String getChemicalFormula() {
+        return chemicalFormula;
+    }
+
+    @ZenMethod
+    public <T extends Material> T setFormula(String formula) {
+        this.chemicalFormula = formula;
+        return (T)this;
+    }
+
+    public ImmutableList<MaterialStack> getMaterialComponents() {
+        return materialComponents;
     }
 
     public Material(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element) {
@@ -220,7 +235,7 @@ public abstract class Material implements Comparable<Material> {
     protected void initializeMaterial() {
     }
 
-    protected long verifyMaterialBits(long materialBits) {
+    public long verifyMaterialBits(long materialBits) {
         return materialBits;
     }
 
@@ -267,7 +282,7 @@ public abstract class Material implements Comparable<Material> {
             !hasFlag(MatFlags.DISABLE_DECOMPOSITION)) {
             boolean onlyMetalMaterials = true;
             for (MaterialStack materialStack : materialComponents) {
-                Material material = materialStack.material;
+                IMaterial<?> material = materialStack.material;
                 onlyMetalMaterials &= material instanceof IngotMaterial;
             }
             //allow centrifuging of alloy materials only
@@ -278,6 +293,21 @@ public abstract class Material implements Comparable<Material> {
                 materialGenerationFlags |= MatFlags.DECOMPOSITION_BY_ELECTROLYZING;
             }
         }
+    }
+
+    @ZenMethod
+    public void setMaterialRGB(int materialRGB) {
+        this.materialRGB = materialRGB;
+    }
+
+    @Override
+    public int getMaterialRGB() {
+        return materialRGB;
+    }
+
+    @ZenMethod
+    public void setMaterialIconSet(MaterialIconSet materialIconSet) {
+        this.materialIconSet = materialIconSet;
     }
 
     @ZenGetter("radioactive")
@@ -294,7 +324,7 @@ public abstract class Material implements Comparable<Material> {
         if (element != null)
             return element.getProtons();
         if (materialComponents.isEmpty())
-            return Element.Tc.getProtons();
+            return Elements.get("Neutronium").getProtons();
         long totalProtons = 0;
         for (MaterialStack material : materialComponents) {
             totalProtons += material.amount * material.material.getProtons();
@@ -307,7 +337,7 @@ public abstract class Material implements Comparable<Material> {
         if (element != null)
             return element.getNeutrons();
         if (materialComponents.isEmpty())
-            return Element.Tc.getNeutrons();
+            return Elements.get("Neutronium").getNeutrons();
         long totalNeutrons = 0;
         for (MaterialStack material : materialComponents) {
             totalNeutrons += material.amount * material.material.getNeutrons();
@@ -320,7 +350,7 @@ public abstract class Material implements Comparable<Material> {
         if (element != null)
             return element.getMass();
         if (materialComponents.isEmpty())
-            return Element.Tc.getMass();
+            return Elements.get("Neutronium").getMass();
         long totalMass = 0;
         for (MaterialStack material : materialComponents) {
             totalMass += material.amount * material.material.getMass();
@@ -333,7 +363,7 @@ public abstract class Material implements Comparable<Material> {
         if (element != null)
             return element.getProtons();
         if (materialComponents.isEmpty())
-            return Element.Tc.getProtons();
+            return Math.max(1, Elements.get("Neutronium").getProtons());
         long totalProtons = 0, totalAmount = 0;
         for (MaterialStack material : materialComponents) {
             totalAmount += material.amount;
@@ -347,7 +377,7 @@ public abstract class Material implements Comparable<Material> {
         if (element != null)
             return element.getNeutrons();
         if (materialComponents.isEmpty())
-            return Element.Tc.getNeutrons();
+            return Elements.get("Neutronium").getNeutrons();
         long totalNeutrons = 0, totalAmount = 0;
         for (MaterialStack material : materialComponents) {
             totalAmount += material.amount;
@@ -362,13 +392,18 @@ public abstract class Material implements Comparable<Material> {
         if (element != null)
             return element.getMass();
         if (materialComponents.size() <= 0)
-            return Element.Tc.getMass();
+            return Elements.get("Neutronium").getMass();
         long totalMass = 0, totalAmount = 0;
         for (MaterialStack material : materialComponents) {
             totalAmount += material.amount;
             totalMass += material.amount * material.material.getAverageMass();
         }
         return totalMass / totalAmount;
+    }
+
+    @Override
+    public FluidStack getFluid(int amount) {
+        return null;
     }
 
     @ZenGetter("camelCaseName")

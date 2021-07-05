@@ -9,6 +9,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.api.util.TextFormattingUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -114,13 +115,18 @@ public class TankWidget extends Widget implements IIngredientSlot {
         if (lastFluidInTank != null && lastFluidInTank.amount > 0 && !gui.isJEIHandled) {
             GlStateManager.disableBlend();
             RenderUtil.drawFluidForGui(lastFluidInTank, alwaysShowFull ? lastFluidInTank.amount : lastTankCapacity,
-                pos.x + fluidRenderOffset, pos.y + fluidRenderOffset,
-                size.width - fluidRenderOffset, size.height - fluidRenderOffset);
-            int bucketsAmount = lastFluidInTank.amount / 1000;
-            if (alwaysShowFull && !hideTooltip && bucketsAmount > 0) {
-                String s = String.valueOf(bucketsAmount);
+                    pos.x + fluidRenderOffset, pos.y + fluidRenderOffset,
+                    size.width - fluidRenderOffset, size.height - fluidRenderOffset);
+
+            if (alwaysShowFull && !hideTooltip) {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(0.5, 0.5, 1);
+
+                String s = TextFormattingUtil.formatLongToCompactString(lastFluidInTank.amount, 4) + "L";
+
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-                fontRenderer.drawStringWithShadow(s, pos.x + 1 + size.width - 2 - fontRenderer.getStringWidth(s), pos.y + (size.height / 3) + 3, 0xFFFFFF);
+                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3) + 6) * 2, 0xFFFFFF);
+                GlStateManager.popMatrix();
             }
             GlStateManager.enableBlend();
             GlStateManager.color(1.0f, 1.0f, 1.0f);
@@ -270,7 +276,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 performedEmptying = true;
             }
             FluidStack filledFluid = fluidTank.getFluid();
-            if (performedEmptying) {
+            if (performedEmptying && filledFluid != null) {
                 SoundEvent soundevent = filledFluid.getFluid().getEmptySound(filledFluid);
                 player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
                     soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);

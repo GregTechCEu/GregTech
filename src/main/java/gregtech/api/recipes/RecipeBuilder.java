@@ -2,6 +2,7 @@ package gregtech.api.recipes;
 
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.Recipe.ChanceEntry;
+import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.type.Material;
@@ -112,11 +113,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(CountableIngredient.from(oredict, count));
     }
 
-    public R input(OrePrefix orePrefix, Material material) {
+    public R input(OrePrefix orePrefix, IMaterial<?> material) {
         return inputs(CountableIngredient.from(orePrefix, material, 1));
     }
 
-    public R input(OrePrefix orePrefix, Material material, int count) {
+    public R input(OrePrefix orePrefix, IMaterial<?> material, int count) {
         return inputs(CountableIngredient.from(orePrefix, material, count));
     }
 
@@ -148,6 +149,14 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(new ItemStack(item, count, OreDictionary.WILDCARD_VALUE));
     }
 
+    public R input(MetaItem<?>.MetaValueItem item, int count) {
+        return inputs(item.getStackForm(count));
+    }
+
+    public R input(MetaItem<?>.MetaValueItem item) {
+        return input(item, 1);
+    }
+
     public R inputs(CountableIngredient... inputs) {
         List<CountableIngredient> ingredients = new ArrayList<>();
         for (CountableIngredient input : inputs) {
@@ -171,7 +180,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(CountableIngredient.from(itemStack, 0));
     }
 
-    public R notConsumable(OrePrefix prefix, Material material) {
+    public R notConsumable(OrePrefix prefix, IMaterial<?> material) {
         return input(prefix, material, 0);
     }
 
@@ -191,11 +200,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return fluidInputs(new FluidStack(fluidStack, 0));
     }
 
-    public R output(OrePrefix orePrefix, Material material) {
+    public R output(OrePrefix orePrefix, IMaterial<?> material) {
         return outputs(OreDictUnifier.get(orePrefix, material, 1));
     }
 
-    public R output(OrePrefix orePrefix, Material material, int count) {
+    public R output(OrePrefix orePrefix, IMaterial<?> material, int count) {
         return outputs(OreDictUnifier.get(orePrefix, material, count));
     }
 
@@ -217,6 +226,14 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R output(Block item, int count) {
         return outputs(new ItemStack(item, count));
+    }
+
+    public R output(MetaItem<?>.MetaValueItem item, int count) {
+        return outputs(item.getStackForm(count));
+    }
+
+    public R output(MetaItem<?>.MetaValueItem item) {
+        return output(item, 1);
     }
 
     public R outputs(ItemStack... outputs) {
@@ -268,6 +285,22 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         }
         this.chancedOutputs.add(new ChanceEntry(stack.copy(), chance, tierChanceBoost));
         return (R) this;
+    }
+
+    public R chancedOutput(OrePrefix prefix, IMaterial<?> material, int count, int chance, int tierChanceBoost) {
+        return chancedOutput(OreDictUnifier.get(prefix, material, count), chance, tierChanceBoost);
+    }
+
+    public R chancedOutput(OrePrefix prefix, IMaterial<?> material, int chance, int tierChanceBoost) {
+        return chancedOutput(prefix, material, 1, chance, tierChanceBoost);
+    }
+
+    public R chancedOutput(MetaItem<?>.MetaValueItem item, int count, int chance, int tierChanceBoost) {
+        return chancedOutput(item.getStackForm(count), chance, tierChanceBoost);
+    }
+
+    public R chancedOutput(MetaItem<?>.MetaValueItem item, int chance, int tierChanceBoost) {
+        return chancedOutput(item, 1, chance, tierChanceBoost);
     }
 
     public R duration(int duration) {

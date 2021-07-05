@@ -18,8 +18,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -60,11 +58,13 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
         if (shouldRenderOverlay()) {
             SimpleOverlayRenderer renderer = isExportHatch ? Textures.PIPE_OUT_OVERLAY : Textures.PIPE_IN_OVERLAY;
             renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            SimpleOverlayRenderer overlay = isExportHatch ? Textures.ITEM_HATCH_OUTPUT_OVERLAY : Textures.ITEM_HATCH_INPUT_OVERLAY;
+            overlay.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     private int getInventorySize() {
-        int sizeRoot = (1 + getTier());
+        int sizeRoot = 1 + Math.min(9, getTier());
         return sizeRoot * sizeRoot;
     }
 
@@ -92,14 +92,14 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(getInventorySize());
         Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-            18 + 18 * rowSize + 94)
-            .label(10, 5, getMetaFullName());
+                18 + 18 * rowSize + 94)
+                .label(10, 5, getMetaFullName());
 
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
                 builder.widget(new SlotWidget(isExportHatch ? exportItems : importItems, index, 89 - rowSize * 9 + x * 18, 18 + y * 18, true, !isExportHatch)
-                    .setBackgroundTexture(GuiTextures.SLOT));
+                        .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 8, 18 + 18 * rowSize + 12);
@@ -108,6 +108,10 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        if (this.isExportHatch)
+            tooltip.add(I18n.format("gregtech.machine.item_bus.export.tooltip"));
+        else
+            tooltip.add(I18n.format("gregtech.machine.item_bus.import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.item_storage_capacity", getInventorySize()));
     }
 }

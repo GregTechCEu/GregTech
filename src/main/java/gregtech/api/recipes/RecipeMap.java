@@ -19,6 +19,7 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
+import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
@@ -59,14 +60,21 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private final TByteObjectMap<TextureArea> slotOverlays;
     protected TextureArea progressBarTexture;
     protected MoveType moveType;
+    public final boolean isHidden;
 
     private final Map<FluidKey, Collection<Recipe>> recipeFluidMap = new HashMap<>();
-    private final Collection<Recipe> recipeList = new ArrayList<>();
+    private final List<Recipe> recipeList = new ArrayList<>();
 
     public RecipeMap(String unlocalizedName,
                      int minInputs, int maxInputs, int minOutputs, int maxOutputs,
                      int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
                      R defaultRecipe) {
+        this(unlocalizedName, minInputs, maxInputs, minOutputs, maxOutputs, minFluidInputs, maxFluidInputs, minFluidOutputs, maxFluidOutputs, defaultRecipe, false);
+    }
+    public RecipeMap(String unlocalizedName,
+                     int minInputs, int maxInputs, int minOutputs, int maxOutputs,
+                     int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
+                     R defaultRecipe, boolean isHidden) {
         this.unlocalizedName = unlocalizedName;
         this.slotOverlays = new TByteObjectHashMap<>();
         this.progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
@@ -82,14 +90,21 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.maxOutputs = maxOutputs;
         this.maxFluidOutputs = maxFluidOutputs;
 
+        this.isHidden = isHidden;
         defaultRecipe.setRecipeMap(this);
         this.recipeBuilderSample = defaultRecipe;
         RECIPE_MAPS.add(this);
     }
-
     @ZenMethod
     public static List<RecipeMap<?>> getRecipeMaps() {
         return Collections.unmodifiableList(RECIPE_MAPS);
+    }
+
+    public static void sortMaps() {
+        for (RecipeMap<?> rmap : RECIPE_MAPS) {
+            rmap.recipeList.sort(Comparator.comparingInt(Recipe::getDuration)
+                    .thenComparingInt(Recipe::getEUt));
+        }
     }
 
     @ZenMethod
@@ -111,7 +126,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         RecipeMap.foundInvalidRecipe |= foundInvalidRecipe;
         OrePrefix currentOrePrefix = OrePrefix.getCurrentProcessingPrefix();
         if (currentOrePrefix != null) {
-            Material currentMaterial = OrePrefix.getCurrentMaterial();
+            IMaterial<?> currentMaterial = OrePrefix.getCurrentMaterial();
             GTLog.logger.error("Error happened during processing ore registration of prefix {} and material {}. " +
                     "Seems like cross-mod compatibility issue. Report to GTCE github.",
                 currentOrePrefix, currentMaterial);
@@ -371,8 +386,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
 
-    public Collection<Recipe> getRecipeList() {
-        return Collections.unmodifiableCollection(recipeList);
+    public List<Recipe> getRecipeList() {
+        return Collections.unmodifiableList(recipeList);
     }
 
     @ZenMethod("findRecipe")

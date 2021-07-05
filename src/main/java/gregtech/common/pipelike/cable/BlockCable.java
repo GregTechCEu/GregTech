@@ -3,8 +3,10 @@ package gregtech.common.pipelike.cable;
 import com.google.common.base.Preconditions;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
+import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.type.Material;
@@ -15,12 +17,14 @@ import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.common.render.CableRenderer;
+import gregtech.common.tools.DamageValues;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -101,6 +105,23 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
             }
         }
         return activeNodeConnections;
+    }
+
+    @Override
+    public int onPipeToolUsed(ItemStack stack, EnumFacing coverSide, IPipeTile<Insulation, WireProperties> pipeTile, EntityPlayer entityPlayer) {
+        ICutterItem cutterItem = stack.getCapability(GregtechCapabilities.CAPABILITY_CUTTER, null);
+        if (cutterItem != null) {
+            if (cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, true)) {
+                if (!entityPlayer.world.isRemote) {
+                    boolean isBlocked = pipeTile.isConnectionBlocked(AttachmentType.PIPE, coverSide);
+                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, !isBlocked, false);
+                    cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, false);
+                }
+                return 1;
+            }
+            return 0;
+        }
+        return -1;
     }
 
     @Override

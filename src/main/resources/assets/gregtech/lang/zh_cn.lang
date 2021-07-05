@@ -21,7 +21,7 @@ gregtech.multiblock.vacuum_freezer.description=真空冷冻机是一种主要用
 gregtech.multiblock.implosion_compressor.description=聚爆压缩机是一种使用爆炸物将宝石粉压缩为相应宝石的多方块结构.
 gregtech.multiblock.pyrolyze_oven.description=热解炉是一种用于将原木处理为木炭、杂酚油、灰烬或重油的多方块结构.
 gregtech.multiblock.cracker.description=石油裂化机是一种用于将轻燃料和重燃料裂解为相应裂化物的多方块结构.
-gregtech.multiblock.diesel_engine.description=内燃机是一种像柴油发电机一样燃烧燃料产生EV电能的多方块结构.
+gregtech.multiblock.large_combustion_engine.description=内燃机是一种像柴油发电机一样燃烧燃料产生EV电能的多方块结构.
 gregtech.multiblock.distillation_tower.description=蒸馏塔是一种用于蒸馏不同石油及其副产品的多方块结构.
 gregtech.multiblock.electric_blast_furnace.description=工业高炉是一种用来熔炼合金、熔化金属或冶炼矿石的多方块结构. 也可用于获取高级的合金和金属, 例如铝、不锈钢、钛或硅岩合金.
 gregtech.multiblock.multi_smelter.description=工业熔炉是一种用于一次性烧制大量物品的多方块结构. 不同级别的线圈会提供速度增幅和能量效率增幅. 每次烧制数量为 16 , 且可以使用高等级的线圈增加烧制数量. 
@@ -1563,7 +1563,7 @@ recipemap.forge_hammer.name=锻造锤
 recipemap.compressor.name=压缩机
 recipemap.packer.name=打包机
 recipemap.unpacker.name=解包器
-recipemap.diesel_generator.name=柴油发电机
+recipemap.combustion_generator.name=柴油发电机
 recipemap.gas_turbine.name=燃气轮机
 recipemap.steam_turbine.name=蒸汽轮机
 recipemap.semi_fluid_generator.name=半流体燃料
@@ -1797,12 +1797,12 @@ gregtech.machine.steam_alloy_smelter_bronze.name=蒸汽合金炉
 gregtech.machine.steam_alloy_smelter_steel.name=高压合金炉
 
 # Generators
-gregtech.machine.diesel_generator.tooltip=需要液体燃料
+gregtech.machine.combustion_generator.tooltip=需要液体燃料
 
-gregtech.machine.diesel_generator.lv.name=基础柴油发电机
-gregtech.machine.diesel_generator.mv.name=进阶柴油发电机
-gregtech.machine.diesel_generator.hv.name=涡轮柴油发电机
-gregtech.machine.diesel_generator.ev.name=涡轮柴油发电机 II
+gregtech.machine.combustion_generator.lv.name=基础柴油发电机
+gregtech.machine.combustion_generator.mv.name=进阶柴油发电机
+gregtech.machine.combustion_generator.hv.name=涡轮柴油发电机
+gregtech.machine.combustion_generator.ev.name=涡轮柴油发电机 II
 
 gregtech.machine.steam_turbine.lv.name=基础蒸汽轮机
 gregtech.machine.steam_turbine.mv.name=进阶蒸汽轮机
@@ -2671,7 +2671,7 @@ gregtech.machine.coke_oven.name=焦炉
 gregtech.machine.coke_oven_hatch.name=焦炉仓
 gregtech.machine.coke_oven_hatch.tooltip=可允许自动化访问焦炉. 必须放置在每面的正中位置.
 
-gregtech.machine.diesel_engine.name=内燃机
+gregtech.machine.large_combustion_engine.name=内燃机
 gregtech.machine.large_turbine.steam.name=大型蒸汽涡轮
 gregtech.machine.large_turbine.gas.name=大型燃气涡轮
 gregtech.machine.large_turbine.plasma.name=大型等离子体涡轮
@@ -2848,11 +2848,11 @@ gregtech.multiblock.multi_furnace.heating_coil_discount=加热线圈增幅: %sx
 gregtech.multiblock.distillation_tower.distilling_fluid=正在蒸馏%s
 gregtech.multiblock.cracker.cracking_fluid=正在裂化%s
 
-gregtech.multiblock.diesel_engine.lubricant_amount=润滑油量: %s 升
-gregtech.multiblock.diesel_engine.fuel_amount=燃料量: %s 升 (%s)
-gregtech.multiblock.diesel_engine.oxygen_amount=氧气量: %s 升
-gregtech.multiblock.diesel_engine.oxygen_boosted=氧气增幅中.
-gregtech.multiblock.diesel_engine.supply_oxygen_to_boost=提供氧气来增幅.
+gregtech.multiblock.large_combustion_engine.lubricant_amount=润滑油量: %s 升
+gregtech.multiblock.large_combustion_engine.fuel_amount=燃料量: %s 升 (%s)
+gregtech.multiblock.large_combustion_engine.oxygen_amount=氧气量: %s 升
+gregtech.multiblock.large_combustion_engine.oxygen_boosted=氧气增幅中.
+gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=提供氧气来增幅.
 
 gregtech.multiblock.turbine.fuel_amount=燃料量: %s 升 (%s)
 gregtech.multiblock.turbine.rotor_speed=转子转速: %s / %s 转/分

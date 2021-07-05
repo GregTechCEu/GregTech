@@ -76,6 +76,8 @@ public enum MaterialIconType {
     turbineBlade,
     handleMallet,
     toolHeadMallet,
+    plateCurved,
+    coke,
 
     //BLOCK TEXTURES
     block,
@@ -83,14 +85,21 @@ public enum MaterialIconType {
     wire,
     ore,
     frameGt,
-    frameSide,
-    frameTop,
     pipeSide,
     pipeTiny,
     pipeSmall,
     pipeMedium,
     pipeLarge,
-    pipeHuge;
+    pipeHuge,
+
+    //USED FOR GREGIFICATION ADDON
+    oreChunk,
+    oreEnderChunk,
+    oreNetherChunk,
+    oreSandyChunk,
+    seed,
+    crop,
+    essence;
 
     public static final ImmutableMap<String, MaterialIconType> values;
 

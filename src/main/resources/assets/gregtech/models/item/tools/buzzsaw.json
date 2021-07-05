@@ -1,7 +1,7 @@
 {
   "parent": "item/handheld",
   "textures": {
-	  "layer0": "gregtech:items/tools/handle_buzzsaw",
-    "layer1": "gregtech:items/tools/buzzsaw"
+    "layer0": "gregtech:items/tools/handle_buzzsaw",
+    "layer1": "gregtech:items/tools/buzzsaw_tool"
   }
 }

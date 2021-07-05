@@ -74,7 +74,7 @@ public class MetaTileEntityAirCollector extends TieredMetaTileEntity {
 
     private boolean checkDimension() {
         int dimensionId = getWorld().provider.getDimension();
-        return IntStream.of(ConfigHolder.machineSpecific.airCollectorDimensionBlacklist).noneMatch(x -> x == dimensionId);
+        return IntStream.of(ConfigHolder.airCollectorDimensionBlacklist).noneMatch(x -> x == dimensionId);
     }
 
     private int getCollectedFluidAmount() {

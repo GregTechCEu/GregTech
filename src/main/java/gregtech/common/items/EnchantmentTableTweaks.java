@@ -71,10 +71,10 @@ public class EnchantmentTableTweaks {
 
     private static boolean isValidForEnchantment(ItemStack itemStack) {
         UnificationEntry entry = OreDictUnifier.getUnificationEntry(itemStack);
-        if (entry == null || entry.orePrefix != OrePrefix.gem) {
+        if (entry == null || entry.orePrefix != OrePrefix.gem || entry.material == null || entry.material.getMaterialClass() != Material.class) {
             return false;
         }
-        Material material = entry.material;
+        Material material = (Material) entry.material;
         return material == Materials.Lapis ||
             material == Materials.Lazurite ||
             material == Materials.Sodalite;

@@ -1,11 +1,11 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.api.unification.material.type.DustMaterial;
 import net.minecraft.init.Items;
 
 import static gregtech.api.recipes.RecipeMaps.MIXER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.unification.ore.OrePrefix.dustTiny;
 
 public class MixerRecipes {
 
@@ -63,13 +63,13 @@ public class MixerRecipes {
         MIXER_RECIPES.recipeBuilder()
             .fluidInputs(BioDiesel.getFluid(1000))
             .fluidInputs(Tetranitromethane.getFluid(40))
-            .fluidOutputs(NitroFuel.getFluid(750))
+            .fluidOutputs(NitroDiesel.getFluid(750))
             .duration(20).EUt(480).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .fluidInputs(Fuel.getFluid(1000))
+            .fluidInputs(Diesel.getFluid(1000))
             .fluidInputs(Tetranitromethane.getFluid(20))
-            .fluidOutputs(NitroFuel.getFluid(1000))
+            .fluidOutputs(NitroDiesel.getFluid(1000))
             .duration(20).EUt(480).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
@@ -87,7 +87,7 @@ public class MixerRecipes {
         MIXER_RECIPES.recipeBuilder()
             .fluidInputs(LightFuel.getFluid(5000))
             .fluidInputs(HeavyFuel.getFluid(1000))
-            .fluidOutputs(Fuel.getFluid(6000))
+            .fluidOutputs(Diesel.getFluid(6000))
             .duration(16).EUt(120).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
@@ -98,24 +98,12 @@ public class MixerRecipes {
             .output(dust, YttriumBariumCuprate, 13)
             .EUt(8).duration(8000).buildAndRegister();
 
-        for (DustMaterial dustMaterial : new DustMaterial[]{Talc, Soapstone, Redstone}) {
-            MIXER_RECIPES.recipeBuilder()
-                .input(dust, dustMaterial)
-                .fluidInputs(Oil.getFluid(750))
-                .fluidOutputs(Lubricant.getFluid(750))
-                .duration(128).EUt(4).buildAndRegister();
-
-            MIXER_RECIPES.recipeBuilder()
-                .input(dust, dustMaterial)
-                .fluidInputs(Creosote.getFluid(750))
-                .fluidOutputs(Lubricant.getFluid(750))
-                .duration(128).EUt(4).buildAndRegister();
-
-            MIXER_RECIPES.recipeBuilder()
-                .input(dust, dustMaterial)
-                .fluidInputs(SeedOil.getFluid(750))
-                .fluidOutputs(Lubricant.getFluid(750))
-                .duration(128).EUt(4).buildAndRegister();
-        }
+        MIXER_RECIPES.recipeBuilder()
+                .input(dust, Sugar, 4)
+                .input(dust, Meat)
+                .input(dustTiny, Salt)
+                .fluidInputs(DistilledWater.getFluid(4000))
+                .fluidOutputs(RawGrowthMedium.getFluid(4000))
+                .duration(160).EUt(16).buildAndRegister();
     }
 }

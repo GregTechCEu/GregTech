@@ -1,19 +1,22 @@
 package gregtech.api.unification.material.type;
 
 import com.google.common.collect.ImmutableList;
+import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.pipelike.cable.WireProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
-import crafttweaker.annotations.ZenRegister;
-import stanhebben.zenscript.annotations.*;
+import stanhebben.zenscript.annotations.ZenClass;
+import stanhebben.zenscript.annotations.ZenMethod;
+import stanhebben.zenscript.annotations.ZenProperty;
 
 import javax.annotation.Nullable;
 
 import static gregtech.api.unification.material.type.DustMaterial.MatFlags.GENERATE_PLATE;
 import static gregtech.api.unification.material.type.DustMaterial.MatFlags.SMELT_INTO_FLUID;
 import static gregtech.api.unification.material.type.IngotMaterial.MatFlags.*;
+import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.GENERATE_FRAME;
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.GENERATE_ROD;
 import static gregtech.api.util.GTUtility.createFlag;
 
@@ -39,6 +42,9 @@ public class IngotMaterial extends SolidMaterial {
          */
         public static final long BLAST_FURNACE_CALCITE_DOUBLE = createFlag(35);
         public static final long BLAST_FURNACE_CALCITE_TRIPLE = createFlag(36);
+
+        public static final long GENERATE_ROUND = createFlag(51);
+        public static final long GENERATE_DOUBLE_PLATE = createFlag(52);
 
         static {
             Material.MatFlags.registerMaterialFlagsHolder(MatFlags.class, IngotMaterial.class);
@@ -123,7 +129,7 @@ public class IngotMaterial extends SolidMaterial {
     }
 
     @Override
-    protected long verifyMaterialBits(long generationBits) {
+    public long verifyMaterialBits(long generationBits) {
         if ((generationBits & GENERATE_DENSE) > 0) {
             generationBits |= GENERATE_PLATE;
         }
@@ -147,6 +153,13 @@ public class IngotMaterial extends SolidMaterial {
         if ((generationBits & GENERATE_BOLT_SCREW) > 0) {
             generationBits |= GENERATE_ROD;
         }
+        if ((generationBits & GENERATE_FRAME) > 0) {
+            generationBits |= GENERATE_ROD;
+        }
+        if ((generationBits & GENERATE_DOUBLE_PLATE) > 0) {
+            generationBits |= GENERATE_PLATE;
+        }
+
         return super.verifyMaterialBits(generationBits);
     }
 
@@ -164,7 +177,7 @@ public class IngotMaterial extends SolidMaterial {
     }
 
     @ZenMethod
-    public void setFluidPipeProperties(int throughput, int maxTemperature, boolean gasProof) {
+    public void setFluidPipeProperties(int maxTemperature, int throughput, boolean gasProof) {
         this.fluidPipeProperties = new FluidPipeProperties(maxTemperature, throughput, gasProof);
     }
 

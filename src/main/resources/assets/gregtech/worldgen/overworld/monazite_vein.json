@@ -5,7 +5,7 @@
   "min_height": 20,
   "vein_populator": {
     "type": "surface_rock",
-    "material": "monzanite"
+    "material": "monazite"
   },
   "generator": {
     "type": "ellipsoid",

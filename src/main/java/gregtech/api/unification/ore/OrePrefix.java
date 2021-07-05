@@ -1,16 +1,19 @@
 package gregtech.api.unification.ore;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MaterialIconType;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.Validate;
+import scala.collection.GenTraversableLike;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -70,11 +73,15 @@ public enum OrePrefix {
 
     nugget("Nuggets", M / 9, null, MaterialIconType.nugget, ENABLE_UNIFICATION | DISALLOW_RECYCLING, mat -> mat instanceof IngotMaterial), // A Nugget. Introduced by Eloraam
 
+    plateCurved("Curved Plates", M, null, MaterialIconType.plateCurved, ENABLE_UNIFICATION, null),
     plateDense("Dense Plates", M * 9, null, MaterialIconType.plateDense, ENABLE_UNIFICATION, mat -> mat instanceof IngotMaterial && mat.hasFlag(GENERATE_PLATE | GENERATE_DENSE) && !mat.hasFlag(NO_SMASHING)), // 9 Plates combined in one Item.
+    plateDouble("Double Plates", M * 2, null, MaterialIconType.plateDouble, ENABLE_UNIFICATION, mat -> mat instanceof IngotMaterial && mat.hasFlag(GENERATE_DOUBLE_PLATE) && !mat.hasFlag(NO_SMASHING)), // 2 Plates combined in one Item
     plate("Plates", M, null, MaterialIconType.plate, ENABLE_UNIFICATION, mat -> mat instanceof DustMaterial && mat.hasFlag(GENERATE_PLATE)), // Regular Plate made of one Ingot/Dust. Introduced by Calclavia
     compressed("Compressed Materials", M * 2, null, null, ENABLE_UNIFICATION, null), // Compressed Material, worth 1 Unit. Introduced by Galacticraft
 
+    round("Rounds", M / 9, null, MaterialIconType.round, OrePrefix.Flags.ENABLE_UNIFICATION, mat -> mat instanceof IngotMaterial && mat.hasFlag(GENERATE_ROUND)), // Round made of 1 Nugget
     foil("Foils", M / 4, null, MaterialIconType.foil, ENABLE_UNIFICATION, mat -> mat instanceof IngotMaterial && mat.hasFlag(GENERATE_FOIL)), // Foil made of 1/4 Ingot/Dust.
+
     stickLong("Long Sticks/Rods", M, null, MaterialIconType.stickLong, ENABLE_UNIFICATION, mat -> mat instanceof SolidMaterial && mat.hasFlag(GENERATE_LONG_ROD)), // Stick made of an Ingot.
     stick("Sticks/Rods", M / 2, null, MaterialIconType.stick, ENABLE_UNIFICATION, mat -> mat instanceof SolidMaterial && mat.hasFlag(GENERATE_ROD)), // Stick made of half an Ingot. Introduced by Eloraam
 
@@ -126,7 +133,8 @@ public enum OrePrefix {
     pipeTiny("Tiny Pipes", M / 2, null, MaterialIconType.pipeTiny, ENABLE_UNIFICATION, null),
     pipeSmall("Small Pipes", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null),
     pipeMedium("Medium Pipes", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null),
-    pipeLarge("Large pipes", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null),
+    pipeLarge("Large Pipes", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null),
+    pipeHuge("Huge Pipes", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null),
 
     wireGtHex("Hex wires", M * 8, null, null, ENABLE_UNIFICATION, null),
     wireGtOctal("Octal wires", M * 4, null, null, ENABLE_UNIFICATION, null),
@@ -159,7 +167,21 @@ public enum OrePrefix {
     batterySingleUse("Single Use Batteries", -1, null, null, DISALLOW_RECYCLING, null),
     battery("Reusable Batteries", -1, null, null, DISALLOW_RECYCLING, null), // Introduced by Calclavia
     circuit("Circuits", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null), // Introduced by Calclavia
-    chipset("Chipsets", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null); // Introduced by Buildcraft
+    chipset("Chipsets", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null), // Introduced by Buildcraft
+
+    // Used for Gregification Addon
+
+    // Ex Nihilo Compat
+    oreChunk("Ore Chunk", -1, null, MaterialIconType.oreChunk, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+    oreEnderChunk("Ore Chunk", -1, null, MaterialIconType.oreEnderChunk, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+    oreNetherChunk("Ore Chunk", -1, null, MaterialIconType.oreNetherChunk, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+    oreSandyChunk("Ore Chunk", -1, null, MaterialIconType.oreSandyChunk, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+
+    // Myst Ag Compat
+    seed("Seed", -1, null, MaterialIconType.seed, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+    crop("Crop", -1, null, MaterialIconType.crop, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+    essence("Essence", -1, null, MaterialIconType.essence, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+    ;
 
     public static final String DUST_REGULAR = "dustRegular";
 
@@ -180,8 +202,8 @@ public enum OrePrefix {
         gemFlawless.maxStackSize = 32;
         gemExquisite.maxStackSize = 16;
 
-        plateDense.maxStackSize = 8;
-        rotor.maxStackSize = 64;
+        plateDense.maxStackSize = 7;
+        rotor.maxStackSize = 16;
         gear.maxStackSize = 16;
 
         toolHeadSword.maxStackSize = 16;
@@ -300,7 +322,7 @@ public enum OrePrefix {
     public final boolean isRecyclingDisallowed;
     public final boolean isFluidContainer;
 
-    public final @Nullable
+    private @Nullable
     Predicate<Material> generationCondition;
     public final @Nullable
     MaterialIconType materialIconType;
@@ -314,18 +336,18 @@ public enum OrePrefix {
      * NOTE: Ore registrations with self-referencing OrePrefix still can occur with other materials
      */
     public @Nullable
-    Material materialType;
+    IMaterial<?> materialType;
 
     private final List<IOreRegistrationHandler> oreProcessingHandlers = new ArrayList<>();
-    private final Set<Material> ignoredMaterials = new HashSet<>();
-    private final Set<Material> generatedMaterials = new HashSet<>();
+    private final Set<IMaterial<?>> ignoredMaterials = new HashSet<>();
+    private final Set<IMaterial<?>> generatedMaterials = new HashSet<>();
     private boolean isMarkerPrefix = false;
 
     public byte maxStackSize = 64;
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
     public float heatDamage = 0.0F; // Negative for Frost Damage
 
-    OrePrefix(String categoryName, long materialAmount, Material material, MaterialIconType materialIconType, long flags, Predicate<Material> condition) {
+    OrePrefix(String categoryName, long materialAmount, IMaterial<?> material, MaterialIconType materialIconType, long flags, Predicate<Material> condition) {
         this.categoryName = categoryName;
         this.materialAmount = materialAmount;
         this.isSelfReferencing = (flags & SELF_REFERENCING) != 0;
@@ -387,13 +409,17 @@ public enum OrePrefix {
         return !isSelfReferencing && generationCondition != null && !isIgnored(material) && generationCondition.test(material);
     }
 
+    public void setGenerationCondition(Predicate<Material> in) {
+        generationCondition = in;
+    }
+
     public boolean addProcessingHandler(IOreRegistrationHandler... processingHandler) {
         Preconditions.checkNotNull(processingHandler);
         Validate.noNullElements(processingHandler);
         return oreProcessingHandlers.addAll(Arrays.asList(processingHandler));
     }
 
-    public <T extends Material> void addProcessingHandler(Class<T> materialFilter, BiConsumer<OrePrefix, T> handler) {
+    public <T extends IMaterial<?>> void addProcessingHandler(Class<T> materialFilter, BiConsumer<OrePrefix, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
             if (materialFilter.isAssignableFrom(material.getClass())) {
                 //noinspection unchecked
@@ -402,11 +428,14 @@ public enum OrePrefix {
         });
     }
 
-    public void processOreRegistration(@Nullable Material material) {
+    public void processOreRegistration(@Nullable IMaterial<?> material) {
         if (this.isSelfReferencing && material == null) {
             material = materialType; //append default material for self-referencing OrePrefix
         }
         if (material != null) {
+            if (material.getMaterialClass() == SimpleDustMaterial.class) {
+                GTLog.logger.info("HERE!!!!!");
+            }
             generatedMaterials.add(material);
         }
     }
@@ -418,19 +447,19 @@ public enum OrePrefix {
     }
 
     private static final ThreadLocal<OrePrefix> currentProcessingPrefix = new ThreadLocal<>();
-    private static final ThreadLocal<Material> currentMaterial = new ThreadLocal<>();
+    private static final ThreadLocal<IMaterial<?>> currentMaterial = new ThreadLocal<>();
 
     public static OrePrefix getCurrentProcessingPrefix() {
         return currentProcessingPrefix.get();
     }
 
-    public static Material getCurrentMaterial() {
+    public static IMaterial<?> getCurrentMaterial() {
         return currentMaterial.get();
     }
 
     private void runGeneratedMaterialHandlers() {
         currentProcessingPrefix.set(this);
-        for (Material registeredMaterial : generatedMaterials) {
+        for (IMaterial<?> registeredMaterial : generatedMaterials) {
             currentMaterial.set(registeredMaterial);
             for (IOreRegistrationHandler registrationHandler : oreProcessingHandlers) {
                 registrationHandler.processMaterial(this, registeredMaterial);
@@ -443,20 +472,20 @@ public enum OrePrefix {
     }
 
     @SideOnly(Side.CLIENT)
-    public String getLocalNameForItem(Material material) {
-        String specfiedUnlocalized = "item." + material.toString() + "." + this.name();
-        if (I18n.hasKey(specfiedUnlocalized)) return I18n.format(specfiedUnlocalized);
+    public String getLocalNameForItem(IMaterial<?> material) {
+        String specifiedUnlocalized = "item." + material.toString() + "." + this.name();
+        if (I18n.hasKey(specifiedUnlocalized)) return I18n.format(specifiedUnlocalized);
         String unlocalized = "item.material.oreprefix." + this.name();
         String matLocalized = material.getLocalizedName();
         String formatted = I18n.format(unlocalized, matLocalized);
         return formatted.equals(unlocalized) ? matLocalized : formatted;
     }
 
-    public boolean isIgnored(Material material) {
+    public boolean isIgnored(IMaterial<?> material) {
         return ignoredMaterials.contains(material);
     }
 
-    public void setIgnored(Material material) {
+    public void setIgnored(IMaterial<?> material) {
         ignoredMaterials.add(material);
     }
 

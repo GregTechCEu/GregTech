@@ -57,7 +57,7 @@ public class CrackingRecipes {
 
         CRACKING_RECIPES.recipeBuilder()
             .fluidInputs(Hydrogen.getFluid(2000))
-            .fluidInputs(Gas.getFluid(1000))
+            .fluidInputs(RefineryGas.getFluid(1000))
             .fluidOutputs(HydroCrackedGas.getFluid(1000))
             .duration(40).EUt(120).buildAndRegister();
 
@@ -100,7 +100,7 @@ public class CrackingRecipes {
         CRACKING_RECIPES.recipeBuilder()
             .fluidInputs(Steam.getFluid(2000))
             .fluidInputs(LightFuel.getFluid(1000))
-            .fluidOutputs(CrackedLightFuel.getFluid(1000))
+            .fluidOutputs(SteamCrackedLightFuel.getFluid(1000))
             .duration(40).EUt(120).buildAndRegister();
 
         CRACKING_RECIPES.recipeBuilder()
@@ -118,12 +118,12 @@ public class CrackingRecipes {
         CRACKING_RECIPES.recipeBuilder()
             .fluidInputs(Steam.getFluid(2000))
             .fluidInputs(HeavyFuel.getFluid(1000))
-            .fluidOutputs(CrackedHeavyFuel.getFluid(1000))
+            .fluidOutputs(SteamCrackedHeavyFuel.getFluid(1000))
             .duration(40).EUt(120).buildAndRegister();
 
         CRACKING_RECIPES.recipeBuilder()
             .fluidInputs(Steam.getFluid(2000))
-            .fluidInputs(Gas.getFluid(1000))
+            .fluidInputs(RefineryGas.getFluid(1000))
             .fluidOutputs(SteamCrackedGas.getFluid(1000))
             .duration(40).EUt(120).buildAndRegister();
 

@@ -15,7 +15,6 @@ import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
 import gregtech.common.blocks.*;
-import gregtech.common.blocks.surfacerock.BlockSurfaceRockDeprecated;
 import gregtech.common.covers.facade.FacadeRenderer;
 import gregtech.common.items.MetaItems;
 import gregtech.common.render.CableRenderer;
@@ -36,7 +35,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.biome.BiomeColorHelper;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -78,15 +76,13 @@ public class ClientProxy extends CommonProxy {
 
     public static final IBlockColor FRAME_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) -> {
         Material material = ((BlockFrame) state.getBlock()).frameMaterial;
-        EnumDyeColor dyeColor = state.getValue(BlockColored.COLOR);
-        return dyeColor == EnumDyeColor.WHITE ? material.materialRGB : dyeColor.colorValue;
+        return material.materialRGB;
     };
 
     public static final IItemColor FRAME_ITEM_COLOR = (stack, tintIndex) -> {
         IBlockState frameState = ((FrameItemBlock) stack.getItem()).getBlockState(stack);
         BlockFrame block = (BlockFrame) frameState.getBlock();
-        EnumDyeColor dyeColor = frameState.getValue(BlockColored.COLOR);
-        return dyeColor == EnumDyeColor.WHITE ? block.frameMaterial.materialRGB : dyeColor.colorValue;
+        return block.frameMaterial.materialRGB;
     };
 
     public static final IBlockColor ORE_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
@@ -97,18 +93,6 @@ public class ClientProxy extends CommonProxy {
 
     public static final IBlockColor FOAM_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
         state.getValue(BlockColored.COLOR).colorValue;
-
-    public static final IBlockColor SURFACE_ROCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) -> {
-        if (tintIndex == 1) {
-            if (state.getBlock() instanceof BlockSurfaceRockDeprecated) {
-                BlockSurfaceRockDeprecated surfaceRock = (BlockSurfaceRockDeprecated) state.getBlock();
-                return state.getValue(surfaceRock.materialProperty).materialRGB;
-            } else return 0xFFFFFF;
-        } else {
-            //flooded surface rock water variant
-            return BiomeColorHelper.getWaterColorAtPos(worldIn, pos);
-        }
-    };
 
     public void onPreLoad() {
         super.onPreLoad();
@@ -159,7 +143,7 @@ public class ClientProxy extends CommonProxy {
             // Test for Items
             UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
             if (unificationEntry != null && unificationEntry.material != null) {
-                chemicalFormula = unificationEntry.material.chemicalFormula;
+                chemicalFormula = unificationEntry.material.getChemicalFormula();
 
             // Test for Fluids
             } else if (ItemNBTUtils.hasTag(itemStack)) {
@@ -195,6 +179,8 @@ public class ClientProxy extends CommonProxy {
     private static void loadCapesList() {
         capeHoldersUUIDs.add(UUID.fromString("4bdba267-1479-449a-8ae4-d1957dd39f29"));
         capeHoldersUUIDs.add(UUID.fromString("6cb05251-cd1b-481e-bf59-07637add1c64"));
+        capeHoldersUUIDs.add(UUID.fromString("a82fb558-64f9-4dd6-a87d-84040e84bb43"));
+        capeHoldersUUIDs.add(UUID.fromString("5c2933b3-5340-4356-81e7-783c53bd7845"));
         try {
             URL connectURL = new URL("https://www.dropbox.com/s/zc07k4y1h4ftmz3/GregTechPatreonList.txt?dl=1");
             HttpURLConnection connection = (HttpURLConnection) connectURL.openConnection(Minecraft.getMinecraft().getProxy());

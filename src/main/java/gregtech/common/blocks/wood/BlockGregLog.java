@@ -50,6 +50,10 @@ public class BlockGregLog extends BlockLog {
         return new ItemStack(this, 1, variant.ordinal() * 2);
     }
 
+    public ItemStack getItem(LogVariant variant, int amount) {
+        return new ItemStack(this, amount, variant.ordinal() * 2);
+    }
+
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState()

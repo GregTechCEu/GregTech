@@ -1,10 +1,12 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.loaders.recipe.LargeReactorRecipes;
 import net.minecraft.init.Items;
 
-import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.recipes.RecipeMaps.*;
+import static gregtech.api.unification.material.Materials.*;
+import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.api.unification.ore.OrePrefix.ingot;
 
 public class ChemistryRecipes {
 
@@ -17,6 +19,8 @@ public class ChemistryRecipes {
         BrewingRecipes.init();
         ChemicalBathRecipes.init();
         ReactorRecipes.init();
+        PolymerRecipes.init();
+        LargeReactorRecipes.init();
 
 
         // A Few Random Recipes
@@ -28,7 +32,7 @@ public class ChemistryRecipes {
 
         FLUID_HEATER_RECIPES.recipeBuilder()
             .circuitMeta(1)
-            .fluidInputs(CalciumAcetate.getFluid(200))
+            .fluidInputs(DissolvedCalciumAcetate.getFluid(200))
             .fluidOutputs(Acetone.getFluid(200))
             .duration(16).EUt(30).buildAndRegister();
 
@@ -72,5 +76,11 @@ public class ChemistryRecipes {
             .output(ingot, RedAlloy, 2)
             .blastFurnaceTemp(1200)
             .duration(884).EUt(120).buildAndRegister();
+
+        FLUID_HEATER_RECIPES.recipeBuilder()
+            .fluidInputs(RawGrowthMedium.getFluid(500))
+            .circuitMeta(1)
+            .fluidOutputs(SterileGrowthMedium.getFluid(500))
+            .duration(30).EUt(24).buildAndRegister();
     }
 }

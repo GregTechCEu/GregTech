@@ -1,5 +1,6 @@
 package gregtech.api;
 
+import gregtech.common.ConfigHolder;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -39,7 +40,7 @@ public class GTValues {
     /**
      * The Voltage Tiers. Use this Array instead of the old named Voltage Variables
      */
-    public static final long[] V = new long[]{8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, Integer.MAX_VALUE};
+    public static final long[] V = new long[]{8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, 2097152, 8388608, 33554432, 134217728, 536870912, Integer.MAX_VALUE};
 
     public static final int ULV = 0;
     public static final int LV = 1;
@@ -50,22 +51,29 @@ public class GTValues {
     public static final int LuV = 6;
     public static final int ZPM = 7;
     public static final int UV = 8;
-    public static final int MAX = 9;
+
+    public static final int UHV = 9;
+    public static final int UEV = 10;
+    public static final int UIV = 11;
+    public static final int UMV = 12;
+    public static final int UXV = 13;
+    public static final int MAX = 14;
 
     /**
      * The short names for the voltages
      */
-    public static final String[] VN = new String[] {"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "MAX"};
+    public static final String[] VN = new String[] {"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UMV", "UXV", "MAX"};
 
     /**
      * Color values for the voltages
      */
-    public static final int[] VC = new int[] {0xDCDCDC, 0xDCDCDC, 0xFF6400, 0xFFFF1E, 0x808080, 0xF0F0F5, 0xF0F0F5, 0xF0F0F5, 0xF0F0F5, 0xF0F0F5};
+    public static final int[] VC = new int[] {0xB4B4B4, 0xDCDCDC, 0xFF6400, 0xFFFF1E, 0x808080, 0xF0F0F5, 0xDCDCF5, 0xC8C8F5, 0xB4B4F5, 0xA0A0F5, 0x8C8CF5, 0x7878F5, 0x6464F5, 0x5050F5, 0x2828F5};
 
     /**
      * The long names for the voltages
      */
-    public static final String[] VOLTAGE_NAMES = new String[] {"Ultra Low Voltage", "Low Voltage", "Medium Voltage", "High Voltage", "Extreme Voltage", "Insane Voltage", "Ludicrous Voltage", "ZPM Voltage", "Ultimate Voltage", "Maximum Voltage"};
+    public static final String[] VOLTAGE_NAMES = new String[] {"Ultra Low Voltage", "Low Voltage", "Medium Voltage", "High Voltage", "Extreme Voltage", "Insane Voltage", "Ludicrous Voltage", "ZPM Voltage", "Ultimate Voltage",
+            "Highly Ultimate Voltage", "Extremely Ultimate Voltage", "Insanely Ultimate Voltage", "Mega Ultimate Voltage", "Extended Mega Ultimate Voltage", "Maximum Voltage"};
 
     /**
      * ModID strings, since they are quite common parameters
@@ -75,7 +83,8 @@ public class GTValues {
         MODID_CT = "crafttweaker",
         MODID_TOP = "theoneprobe",
         MODID_CTM = "ctm",
-        MODID_CC = "cubicchunks";
+        MODID_CC = "cubicchunks",
+        MODID_AR = "advancedrocketry";
 
     //because forge is too fucking retarded to cache results or at least do not create fucking
     //immutable collections every time you retrieve indexed mod list
@@ -90,4 +99,53 @@ public class GTValues {
         return isLoaded;
     }
 
+    /**
+     * Default fallback value used for Map keys.
+     * Currently only used in {@link gregtech.loaders.recipe.CraftingComponent}.
+     */
+    public static final int FALLBACK = -1;
+
+    /**
+     * Used to tell if any high-tier machine (UHV+) was registered.
+     */
+    public static final boolean HT =
+            ConfigHolder.U.machines.highTierMachines ||
+            ConfigHolder.U.machines.highTierAlloySmelter ||
+            ConfigHolder.U.machines.highTierArcFurnaces ||
+            ConfigHolder.U.machines.highTierAssemblers ||
+            ConfigHolder.U.machines.highTierAutoclaves ||
+            ConfigHolder.U.machines.highTierBenders ||
+            ConfigHolder.U.machines.highTierBreweries ||
+            ConfigHolder.U.machines.highTierCanners ||
+            ConfigHolder.U.machines.highTierCentrifuges ||
+            ConfigHolder.U.machines.highTierChemicalBaths ||
+            ConfigHolder.U.machines.highTierChemicalReactors ||
+            ConfigHolder.U.machines.highTierCompressors ||
+            ConfigHolder.U.machines.highTierCutters ||
+            ConfigHolder.U.machines.highTierDistilleries ||
+            ConfigHolder.U.machines.highTierElectricFurnace ||
+            ConfigHolder.U.machines.highTierElectrolyzers ||
+            ConfigHolder.U.machines.highTierElectromagneticSeparators ||
+            ConfigHolder.U.machines.highTierExtractors ||
+            ConfigHolder.U.machines.highTierExtruders ||
+            ConfigHolder.U.machines.highTierFermenters ||
+            ConfigHolder.U.machines.highTierFluidCanners ||
+            ConfigHolder.U.machines.highTierFluidExtractors ||
+            ConfigHolder.U.machines.highTierFluidHeaters ||
+            ConfigHolder.U.machines.highTierFluidSolidifiers ||
+            ConfigHolder.U.machines.highTierForgeHammers ||
+            ConfigHolder.U.machines.highTierFormingPresses ||
+            ConfigHolder.U.machines.highTierLathes ||
+            ConfigHolder.U.machines.highTierMicrowaves ||
+            ConfigHolder.U.machines.highTierMixers ||
+            ConfigHolder.U.machines.highTierOreWashers ||
+            ConfigHolder.U.machines.highTierPackers ||
+            ConfigHolder.U.machines.highTierPlasmaArcFurnaces ||
+            ConfigHolder.U.machines.highTierPolarizers ||
+            ConfigHolder.U.machines.highTierLaserEngravers ||
+            ConfigHolder.U.machines.highTierSifters ||
+            ConfigHolder.U.machines.highTierThermalCentrifuges ||
+            ConfigHolder.U.machines.highTierMacerators ||
+            ConfigHolder.U.machines.highTierUnpackers ||
+            ConfigHolder.U.machines.highTierWiremills;
 }

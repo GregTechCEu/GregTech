@@ -5,10 +5,11 @@ import gregtech.api.unification.ore.OrePrefix;
 
 public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
 
-    TINY_OPAQUE("tiny", 0.20f, 1, OrePrefix.pipeTiny, true),
-    SMALL_OPAQUE("small", 0.30f, 2, OrePrefix.pipeSmall, true),
-    MEDIUM_OPAQUE("medium", 0.35f, 4, OrePrefix.pipeMedium, true),
-    LARGE_OPAQUE("large", 0.40f, 8, OrePrefix.pipeLarge, true);
+    TINY_OPAQUE("tiny", 0.25f, 1, OrePrefix.pipeTiny, true),
+    SMALL_OPAQUE("small", 0.375f, 2, OrePrefix.pipeSmall, true),
+    MEDIUM_OPAQUE("medium", 0.5f, 6, OrePrefix.pipeMedium, true),
+    LARGE_OPAQUE("large", 0.75f, 12, OrePrefix.pipeLarge, true),
+    HUGE_OPAQUE("huge", 0.875f, 24, OrePrefix.pipeHuge, true);
 
     public final String name;
     public final float thickness;

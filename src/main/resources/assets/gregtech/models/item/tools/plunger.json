@@ -3,6 +3,6 @@
   "textures": {
     "layer0": "gregtech:items/void",
     "layer1": "gregtech:items/tools/handle",
-	  "layer2": "gregtech:items/tools/plunger"
+    "layer2": "gregtech:items/tools/plunger"
   }
 }

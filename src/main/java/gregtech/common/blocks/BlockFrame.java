@@ -26,7 +26,7 @@ import net.minecraft.world.World;
 import java.util.HashSet;
 import java.util.Stack;
 
-public final class BlockFrame extends BlockColored {
+public final class BlockFrame extends Block {
 
     private static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
     private static final int SCAFFOLD_PILLAR_RADIUS_SQ = 10;

@@ -31,7 +31,7 @@ public class WireRecipeHandler {
     static {
         INSULATION_MATERIALS.put(Materials.Rubber, GTValues.HV);
         INSULATION_MATERIALS.put(Materials.StyreneButadieneRubber, GTValues.LuV);
-        INSULATION_MATERIALS.put(Materials.SiliconeRubber, GTValues.MAX);
+        INSULATION_MATERIALS.put(Materials.SiliconeRubber, GTValues.UHV);
     }
 
     public static void register() {

@@ -91,11 +91,11 @@ public class RecyclingRecipes {
         if (material.hasFlag(MatFlags.FLAMMABLE)) {
             return OreDictUnifier.getDust(Materials.Ash, materialAmount);
         } else if (material instanceof GemMaterial) {
-            if (materialStack.material.materialComponents.stream()
+            if (materialStack.material.getMaterialComponents().stream()
                 .anyMatch(stack -> stack.material == Materials.Oxygen)) {
                 return OreDictUnifier.getDust(Materials.Ash, materialAmount);
             }
-            if (materialStack.material.materialComponents.stream()
+            if (materialStack.material.getMaterialComponents().stream()
                 .anyMatch(stack -> stack.material == Materials.Carbon)) {
                 return OreDictUnifier.getDust(Materials.Carbon, materialAmount);
             }

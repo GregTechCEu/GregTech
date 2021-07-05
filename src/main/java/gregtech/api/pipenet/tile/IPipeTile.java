@@ -37,7 +37,7 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     boolean isConnectionBlocked(AttachmentType type, EnumFacing side);
 
-    void setConnectionBlocked(AttachmentType type, EnumFacing side, boolean isBlocked);
+    void setConnectionBlocked(AttachmentType type, EnumFacing side, boolean isBlocked, boolean fromNeighbor);
 
     PipeType getPipeType();
 

@@ -45,7 +45,7 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if(electricItem != null && electricItem.canProvideChargeExternally() && player.isSneaking()) {
             if(!world.isRemote) {
-                boolean isInDischargeMode = isInDishargeMode(itemStack);
+                boolean isInDischargeMode = isInDischargeMode(itemStack);
                 String locale = "metaitem.electric.discharge_mode." + (isInDischargeMode ? "disabled" : "enabled");
                 player.sendStatusMessage(new TextComponentTranslation(locale), true);
                 setInDischargeMode(itemStack, !isInDischargeMode);
@@ -60,7 +60,7 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if(!entity.world.isRemote && entity instanceof EntityPlayer && electricItem != null &&
             electricItem.canProvideChargeExternally() &&
-            isInDishargeMode(itemStack) && electricItem.getCharge() > 0L) {
+            isInDischargeMode(itemStack) && electricItem.getCharge() > 0L) {
 
             EntityPlayer entityPlayer = (EntityPlayer) entity;
             InventoryPlayer inventoryPlayer = entityPlayer.inventory;
@@ -93,15 +93,14 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
     }
 
     private static void setInDischargeMode(ItemStack itemStack, boolean isDischargeMode) {
+        NBTTagCompound tagCompound = itemStack.getTagCompound();
         if(isDischargeMode) {
-            NBTTagCompound tagCompound = itemStack.getTagCompound();
             if(tagCompound == null) {
                 tagCompound = new NBTTagCompound();
                 itemStack.setTagCompound(tagCompound);
             }
             tagCompound.setBoolean("DischargeMode", true);
         } else {
-            NBTTagCompound tagCompound = itemStack.getTagCompound();
             if(tagCompound != null) {
                 tagCompound.removeTag("DischargeMode");
                 if(tagCompound.isEmpty()) {
@@ -119,7 +118,7 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
         }
     }
 
-    private static boolean isInDishargeMode(ItemStack itemStack) {
+    private static boolean isInDischargeMode(ItemStack itemStack) {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         return tagCompound != null && tagCompound.getBoolean("DischargeMode");
     }

@@ -21,7 +21,7 @@ gregtech.multiblock.vacuum_freezer.description=Вакуумный морозил
 gregtech.multiblock.implosion_compressor.description=Детонационный компрессор - это многоблочная структура, в которой используются взрывчатые вещества для превращения пыли в соответствующие камни.
 gregtech.multiblock.pyrolyze_oven.description=Пиролизная печь - представляет собой многоблочную конструкцию, используемую для превращения бревен в древесный уголь и креозотовое масло или золу и тяжелое масло.
 gregtech.multiblock.cracker.description=Крекинговая установка - это многоблочная структура, используемая для высокотемпературной переработки нефти и её фракций с целью получения продуктов меньшей молекулярной массы.
-gregtech.multiblock.diesel_engine.description=Дизельный двигатель - представляет собой многоблочную конструкцию, которая действует как дизельный генератор для электромобилей.
+gregtech.multiblock.large_combustion_engine.description=Дизельный двигатель - представляет собой многоблочную конструкцию, которая действует как дизельный генератор для электромобилей.
 gregtech.multiblock.distillation_tower.description=Ректификационная колонна - представляет собой многоблочную конструкцию, используемую для перегонки различных типов нефти и некоторых их побочных продуктов.
 gregtech.multiblock.electric_blast_furnace.description=Электрическая доменная печь (ЭДП) - это многоблочная конструкция, используемая для выплавки сплавов, приготовления металлов и переработки руд. Она необходима для получения высокоуровневых сплавов и металлов, таких как алюминий, нержавеющая сталь и титан, сплав наквада.
 gregtech.multiblock.multi_smelter.description=Плавильная печь - это многоблочная структура, используемая для плавки большого количества изделий одновременно. Различные уровни катушек обеспечивают повышение скорости и повышение энергоэффективности. 16 изделий может быть выплавленно за одну операцию, и может быть умножено с использованием катушек более высокого уровня.
@@ -1578,7 +1578,7 @@ recipemap.forge_hammer.name=Кузнечный молот
 recipemap.compressor.name=Компрессор
 recipemap.packer.name=Упаковщик
 recipemap.unpacker.name=Распаковщик
-recipemap.diesel_generator.name=Дизельный генератор
+recipemap.combustion_generator.name=Дизельный генератор
 recipemap.gas_turbine.name=Газовая турбина
 recipemap.steam_turbine.name=Паровая турбина
 recipemap.semi_fluid_generator.name=Полужидкое топливо
@@ -1812,12 +1812,12 @@ gregtech.machine.steam_alloy_smelter_bronze.name=Паровая плавильн
 gregtech.machine.steam_alloy_smelter_steel.name=Паровая плавильня высокого давления
 
 # Генераторы
-gregtech.machine.diesel_generator.tooltip=Требует горючих жидкостей
+gregtech.machine.combustion_generator.tooltip=Требует горючих жидкостей
 
-gregtech.machine.diesel_generator.lv.name=Базовый дизельный генератор
-gregtech.machine.diesel_generator.mv.name=Улучшеный дизельный генератор
-gregtech.machine.diesel_generator.hv.name=Турбодизельный генератор
-gregtech.machine.diesel_generator.ev.name=Турбодизельный генератор II
+gregtech.machine.combustion_generator.lv.name=Базовый дизельный генератор
+gregtech.machine.combustion_generator.mv.name=Улучшеный дизельный генератор
+gregtech.machine.combustion_generator.hv.name=Турбодизельный генератор
+gregtech.machine.combustion_generator.ev.name=Турбодизельный генератор II
 
 gregtech.machine.steam_turbine.lv.name=Базовая паровая турбина
 gregtech.machine.steam_turbine.mv.name=Улучшеная паровая турбина
@@ -2692,7 +2692,7 @@ gregtech.machine.coke_oven.name=Коксовая печь
 gregtech.machine.coke_oven_hatch.name=Люк коксовой печи
 gregtech.machine.coke_oven_hatch.tooltip=Позволяет автоматизировать доступ к коксовой печи
 
-gregtech.machine.diesel_engine.name=Дизельный двигатель
+gregtech.machine.large_combustion_engine.name=Дизельный двигатель
 gregtech.machine.large_turbine.steam.name=Большая паровая турбина
 gregtech.machine.large_turbine.gas.name=Большая газовая турбина
 gregtech.machine.large_turbine.plasma.name=Большая плазменная турбина
@@ -2869,11 +2869,11 @@ gregtech.multiblock.multi_furnace.heating_coil_discount=EU усиление на
 gregtech.multiblock.distillation_tower.distilling_fluid=Дистилляция %s
 gregtech.multiblock.cracker.cracking_fluid=Крекинг %s
 
-gregtech.multiblock.diesel_engine.lubricant_amount=Количество смазки: %sЛ
-gregtech.multiblock.diesel_engine.fuel_amount=Количество топлива: %sЛ (%s)
-gregtech.multiblock.diesel_engine.oxygen_amount=Количество кислорода: %sЛ
-gregtech.multiblock.diesel_engine.oxygen_boosted=Кислород добавлен.
-gregtech.multiblock.diesel_engine.supply_oxygen_to_boost=Принимает кислород для ускорения.
+gregtech.multiblock.large_combustion_engine.lubricant_amount=Количество смазки: %sЛ
+gregtech.multiblock.large_combustion_engine.fuel_amount=Количество топлива: %sЛ (%s)
+gregtech.multiblock.large_combustion_engine.oxygen_amount=Количество кислорода: %sЛ
+gregtech.multiblock.large_combustion_engine.oxygen_boosted=Кислород добавлен.
+gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost=Принимает кислород для ускорения.
 
 gregtech.multiblock.turbine.fuel_amount=Количество топлива: %sЛ (%s)
 gregtech.multiblock.turbine.rotor_speed=Скорость ротора: %s / %s об/мин
@@ -2903,3 +2903,85 @@ gregtech.command.util.hand.no_item=Перед выполнением этой к
 # Fixes
 fluid.tile.water=Вода
 fluid.tile.lava=Лава
+
+metaitem.circuit.basic.name=Базовая микросхема
+metaitem.circuit.basic_electronic.name=Базовая электросхема
+metaitem.circuit.advanced_parts.name=Продвинутые запчасти электросхемы
+metaitem.circuit.good.name=Хорошая электросхема
+metaitem.circuit.advanced.name=Продвинутая микросхема
+metaitem.circuit.processor_assembly.name=Вычислительный блок
+metaitem.circuit.nano_processor.name=Нанопроцессор
+metaitem.circuit.nano_processor.tooltip=Меньше чем когда либо!
+metaitem.circuit.nano_processor_assembly.name=Нанопроцессорный вычислительный блок
+metaitem.circuit.quantum_processor.name=Квантовый процессор
+metaitem.circuit.quantum_processor.tooltip=Квантовые вычисления становятся явью
+metaitem.circuit.data_control.name=Микросхема контроля данных
+metaitem.circuit.crystal_processor.name=Кристальный процессор
+metaitem.circuit.crystal_processor.tooltip=Использование гравировки на кристаллах 
+metaitem.circuit.energy_flow.name=Микросхема контроля потока энергии
+metaitem.circuit.wetware_processor.name=Нейронный процессор
+metaitem.circuit.wetware_processor.tooltip=Вы чувсвтуете что он следит за вами
+metaitem.circuit.wetware_assembly.name=Нейронный вычислительный блок
+metaitem.circuit.wetware_assembly.tooltip=Тянет Minecraft 1.17+
+metaitem.circuit.wetware_super_computer.name=Нейронный суперкомпьютер
+metaitem.circuit.wetware_mainframe.name=Нейронный мейнфрейм
+metaitem.engraved.crystal_chip.name=Гравированный кристальный чип 
+metaitem.engraved.lapotron_chip.name=Гравированный лапотронный кристальный чип
+
+metaitem.crystal.system_on_chip.name=Кристальный SoC
+metaitem.crystal.system_on_chip.tooltip=Гравирован на кристалле
+metaitem.plate.advanced_system_on_chip.name=ASoC
+metaitem.plate.advanced_system_on_chip.tooltip=Продвинутая система в чипе
+metaitem.plate.integrated_logic_circuit.name=Интегрированная схема
+metaitem.plate.central_processing_unit.name=Центральный процессор
+metaitem.plate.high_power_integrated_circuit.name=HPIC
+metaitem.plate.high_power_integrated_circuit.tooltip=Высоковольтная интегрированная электросхема
+metaitem.plate.nand_memory_chip.name=NAND схема
+metaitem.plate.nano_central_processing_unit.name=Нанопроцессор
+metaitem.plate.nano_central_processing_unit.tooltip=Центральный нанопроцессор
+metaitem.plate.nor_memory_chip.name=NOR схема
+metaitem.plate.power_integrated_circuit.name=Силовая ИС
+metaitem.plate.power_integrated_circuit.tooltip=Силовая интегральная схема
+metaitem.plate.qbit_central_processing_unit.name=Кубитный процессор
+metaitem.plate.random_access_memory.name=ОЗУ
+metaitem.plate.random_access_memory.tooltip=Оперативная память
+metaitem.plate.system_on_chip.name=SoC
+metaitem.plate.system_on_chip.tooltip=Система в чипе
+
+gregtech.machine.locked_safe.name=Закрытый сейф
+gregtech.machine.locked_safe.malfunctioning=§cСломан!
+gregtech.machine.locked_safe.requirements=§7Требуется замена:
+
+gregtech.machine.workbench.name=Инженерный верстак
+gregtech.machine.workbench.tab.workbench=Создание
+gregtech.machine.workbench.tab.item_list=Хранение
+gregtech.machine.workbench.storage_note_1=(Доступные предметы в соседних
+gregtech.machine.workbench.storage_note_2=инвентарях, доступные для крафта)
+gregtech.item_list.item_stored=§7Хранится: %,d
+
+gregtech.machine.workbench.tab.crafting=Создание
+gregtech.machine.workbench.tab.container=Контейнер
+
+metaitem.smart_item_filter.name=Умный предметный фильтр
+metaitem.smart_item_filter.tooltip=Фильтрует предметы в зависимости от рецептов механизма
+
+gregtech.machine.fluid_tank.max_multiblock=Максимальный размер: %,dx%,dx%,d
+
+cover.smart_item_filter.title=Умный предметный фильтр
+cover.smart_item_filter.filtering_mode.electrolyzer=Электролизер
+cover.smart_item_filter.filtering_mode.centrifuge=Центрифуга
+cover.smart_item_filter.filtering_mode.sifter=Просеиватель
+cover.smart_item_filter.filtering_mode.description=Выберите машину для которой будут/не будут фильтроваться предметы для роботической руки.
+cover.smart_item_filter.matching_mode.default=По умолчанию
+cover.smart_item_filter.matching_mode.ignore_fluid=Игнорировать жидкости
+cover.smart_item_filter.matching_mode.description=§eПо умолчанию§r - будет фильтровать предметы и жидкости по определенным критериям. /n§eИгнорировать жидкостиs§r - будет фильтровать только предметы.
+
+metaitem.energy_field_projector.name=Проектор энергитического поля
+metaitem.energy_field_projector.tooltip=Отталкивает объекты, находящиеся в близости от вас
+
+metaitem.scanner.name=Сканнер
+metaitem.scanner.tooltip=Удерживайте ПКМ на поверхностных камнях/nчтобы узнать о низлежащей жиле
+behavior.scanner.analyzing=Анализирование...
+behavior.scanner.analyzing_failed=Анализ провалился!
+behavior.scanner.analyzing_complete=Анализ завершен!
+behavior.scanner.not_enough_energy=Ошибка анализа: Недостаточно энергии!

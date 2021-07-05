@@ -1,6 +1,7 @@
 package gregtech.api.unification.stack;
 
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.util.SmallDigits;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -12,11 +13,11 @@ import stanhebben.zenscript.annotations.ZenProperty;
 public class MaterialStack {
 
     @ZenProperty
-    public final Material material;
+    public final IMaterial<?> material;
     @ZenProperty
     public final long amount;
 
-    public MaterialStack(Material material, long amount) {
+    public MaterialStack(IMaterial<?> material, long amount) {
         this.material = material;
         this.amount = amount;
     }
@@ -52,12 +53,12 @@ public class MaterialStack {
     @ZenMethod
     public String toString() {
         String string = "";
-        if (material.chemicalFormula.isEmpty()) {
+        if (material.getChemicalFormula().isEmpty()) {
             string += "?";
-        } else if (material.materialComponents.size() > 1) {
-            string += '(' + material.chemicalFormula + ')';
+        } else if (material.getMaterialComponents().size() > 1) {
+            string += '(' + material.getChemicalFormula() + ')';
         } else {
-            string += material.chemicalFormula;
+            string += material.getChemicalFormula();
         }
         if (amount > 1) {
             string += SmallDigits.toSmallDownNumbers(Long.toString(amount));

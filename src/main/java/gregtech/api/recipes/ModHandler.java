@@ -42,6 +42,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public class ModHandler {
 
     /**
@@ -566,26 +567,4 @@ public class ModHandler {
         if (input.isEmpty()) return ItemStack.EMPTY;
         return OreDictUnifier.getUnificated(FurnaceRecipes.instance().getSmeltingResult(input));
     }
-
-    public static void addRCFurnaceRecipe(UnificationEntry input, ItemStack output, int duration) {
-        List<ItemStack> allStacks = OreDictUnifier.getAll(input);
-        for (ItemStack inputStack : allStacks) {
-            addRCFurnaceRecipe(inputStack, output, duration);
-        }
-    }
-
-    public static void addRCFurnaceRecipe(ItemStack input, ItemStack output, int duration) {
-        Preconditions.checkNotNull(input);
-        Preconditions.checkNotNull(output);
-        Preconditions.checkArgument(duration > 0, "Duration should be positive!");
-//        if(GTValues.isModLoaded("railcraft")) {
-//            addRCFurnaceRecipeInternal(input, output, duration);
-//        }
-    }
-
-//    @Optional.Method(modid = "railcraft")
-//    private static void addRCFurnaceRecipeInternal(ItemStack input, ItemStack output, int duration) {
-//        RailcraftCraftingManager.blastFurnace.addRecipe(input, true, false, duration, output);
-//    }
-
 }

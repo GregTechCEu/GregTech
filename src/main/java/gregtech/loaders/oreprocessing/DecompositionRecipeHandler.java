@@ -3,10 +3,9 @@ package gregtech.loaders.oreprocessing;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.FluidMaterial;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.item.ItemStack;
@@ -25,13 +24,19 @@ public class DecompositionRecipeHandler {
         for (Material material : Material.MATERIAL_REGISTRY) {
             if (material instanceof FluidMaterial) {
                 OrePrefix prefix = material instanceof DustMaterial ? OrePrefix.dust : null;
-                processDecomposition(prefix, (FluidMaterial) material);
+                processDecomposition(prefix, material);
             }
+        }
+        for (SimpleDustMaterial material : SimpleDustMaterial.MATERIAL_REGISTRY) {
+            processDecomposition(OrePrefix.dust, material);
+        }
+        for (SimpleFluidMaterial material : SimpleFluidMaterial.MATERIAL_REGISTRY) {
+            processDecomposition(null, material);
         }
     }
 
-    public static void processDecomposition(OrePrefix decomposePrefix, FluidMaterial material) {
-        if (material.materialComponents.isEmpty() ||
+    private static void processDecomposition(OrePrefix decomposePrefix, IMaterial<?> material) {
+        if (material.getMaterialComponents().isEmpty() ||
             (!material.hasFlag(Material.MatFlags.DECOMPOSITION_BY_ELECTROLYZING) &&
                 !material.hasFlag(Material.MatFlags.DECOMPOSITION_BY_CENTRIFUGING)) ||
             //disable decomposition if explicitly disabled for this material or for one of it's components
@@ -42,7 +47,7 @@ public class DecompositionRecipeHandler {
         int totalInputAmount = 0;
 
         //compute outputs
-        for (MaterialStack component : material.materialComponents) {
+        for (MaterialStack component : material.getMaterialComponents()) {
             totalInputAmount += component.amount;
             if (component.material instanceof DustMaterial) {
                 outputs.add(OreDictUnifier.get(OrePrefix.dust, component.material, (int) component.amount));
@@ -57,7 +62,7 @@ public class DecompositionRecipeHandler {
         if (material.hasFlag(Material.MatFlags.DECOMPOSITION_BY_ELECTROLYZING)) {
             builder = RecipeMaps.ELECTROLYZER_RECIPES.recipeBuilder()
                 .duration((int) material.getAverageProtons() * totalInputAmount * 8)
-                .EUt(getElectrolyzingVoltage(material.materialComponents.stream()
+                .EUt(getElectrolyzingVoltage(material.getMaterialComponents().stream()
                     .map(s -> s.material).collect(Collectors.toList())));
         } else {
             builder = RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
@@ -82,7 +87,7 @@ public class DecompositionRecipeHandler {
     }
 
     //todo think something better with this
-    private static int getElectrolyzingVoltage(List<Material> components) {
+    private static int getElectrolyzingVoltage(List<IMaterial<?>> components) {
         //tungsten-containing materials electrolyzing requires 1920
         if (components.contains(Materials.Tungsten))
             return 1920; //EV voltage (tungstate and scheelite electrolyzing)

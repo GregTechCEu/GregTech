@@ -71,11 +71,11 @@ public class InvPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         InventoryPipeType pipeType = InventoryPipeType.NORMAL;
         float thickness = pipeType.getThickness();
         double height = (1.0f - thickness) / 2.0f;
-        CCModel connectionModel = ShapeModelGenerator.generateModel(3, height, thickness / 3.0f, height);
-        CCModel fullBlockModel = ShapeModelGenerator.generateModel(3, 1.0f, thickness / 3.0f, height);
+        //CCModel connectionModel = ShapeModelGenerator.generateModel(3, height, thickness / 3.0f, height);
+        //CCModel fullBlockModel = ShapeModelGenerator.generateModel(3, 1.0f, thickness / 3.0f, height);
 
-        this.fullBlockVariants = ShapeModelGenerator.generateFullBlockVariants(fullBlockModel);
-        this.connectionModels = ShapeModelGenerator.generateRotatedVariants(connectionModel);
+        //this.fullBlockVariants = ShapeModelGenerator.generateFullBlockVariants(fullBlockModel);
+        //this.connectionModels = ShapeModelGenerator.generateRotatedVariants(connectionModel);
     }
 
     @SubscribeEvent

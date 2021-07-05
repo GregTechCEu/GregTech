@@ -12,6 +12,7 @@ import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil;
@@ -22,6 +23,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -106,4 +108,9 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         return Textures.HEAT_PROOF_CASING;
     }
 
+    @Nonnull
+    @Override
+    protected OrientedOverlayRenderer getFrontOverlay() {
+        return Textures.BLAST_FURNACE_OVERLAY;
+    }
 }

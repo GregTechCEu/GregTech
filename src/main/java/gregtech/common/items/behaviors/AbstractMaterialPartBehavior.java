@@ -29,7 +29,7 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
 
     public IngotMaterial getPartMaterial(ItemStack itemStack) {
         NBTTagCompound compound = getPartStatsTag(itemStack);
-        IngotMaterial defaultMaterial = Materials.Darmstadtium;
+        IngotMaterial defaultMaterial = Materials.Neutronium;
         if (compound == null || !compound.hasKey("Material", NBT.TAG_STRING)) {
             return defaultMaterial;
         }

@@ -2,6 +2,6 @@
   "parent": "item/handheld",
   "textures": {
     "layer0": "gregtech:items/tools/magnifying_glass_base",
-	  "layer1": "gregtech:items/tools/magnifying_glass"
+    "layer1": "gregtech:items/tools/magnifying_glass"
   }
 }

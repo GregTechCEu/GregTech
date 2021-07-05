@@ -9,16 +9,22 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.util.GTUtility;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 public class MetaTileEntityMacerator extends SimpleMachineMetaTileEntity {
 
-    private int outputAmount;
+    private final int outputAmount;
 
     public MetaTileEntityMacerator(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, int outputAmount, OrientedOverlayRenderer renderer, int tier) {
-        super(metaTileEntityId, recipeMap, renderer, tier);
+        super(metaTileEntityId, recipeMap, renderer, tier, true);
         this.outputAmount = outputAmount;
         initializeInventory();
     }
@@ -47,5 +53,14 @@ public class MetaTileEntityMacerator extends SimpleMachineMetaTileEntity {
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
         return new MetaTileEntityMacerator(metaTileEntityId, workable.recipeMap, outputAmount, renderer, getTier());
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        if (getTier() > GTValues.MV) {
+            tooltip.add(I18n.format("gregtech.machine.macerator.tooltip2"));
+        } else {
+            tooltip.add(I18n.format("gregtech.machine.macerator.tooltip1"));
+        }
     }
 }

@@ -2,9 +2,11 @@ package gregtech.common.metatileentities.multi.electric.generator;
 
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.recipes.machines.FuelRecipeMap;
+import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public abstract class RotorHolderMultiblockController extends FueledMultiblockController {
@@ -54,4 +56,10 @@ public abstract class RotorHolderMultiblockController extends FueledMultiblockCo
     public abstract int getRotorSpeedIncrement();
 
     public abstract int getRotorSpeedDecrement();
+
+    @Nonnull
+    @Override
+    protected OrientedOverlayRenderer getFrontOverlay() {
+        return super.getFrontOverlay();
+    }
 }

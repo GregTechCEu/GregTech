@@ -59,18 +59,53 @@
           "side": "gregtech:blocks/casings/voltage/luv/side"
         }
       },
-      "zero_point_module": {
+      "zpm_voltage": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/zpm/bottom",
           "top": "gregtech:blocks/casings/voltage/zpm/top",
           "side": "gregtech:blocks/casings/voltage/zpm/side"
         }
       },
-      "ultra_voltage": {
+      "ultimate_voltage": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/uv/bottom",
           "top": "gregtech:blocks/casings/voltage/uv/top",
           "side": "gregtech:blocks/casings/voltage/uv/side"
+        }
+      },
+      "highly_ultimate_voltage": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/voltage/uhv/bottom",
+          "top": "gregtech:blocks/casings/voltage/uhv/top",
+          "side": "gregtech:blocks/casings/voltage/uhv/side"
+        }
+      },
+      "extremely_ultimate_voltage": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/voltage/uev/bottom",
+          "top": "gregtech:blocks/casings/voltage/uev/top",
+          "side": "gregtech:blocks/casings/voltage/uev/side"
+        }
+      },
+      "insanely_ultimate_voltage": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/voltage/uiv/bottom",
+          "top": "gregtech:blocks/casings/voltage/uiv/top",
+          "side": "gregtech:blocks/casings/voltage/uiv/side"
+        }
+      },
+      "mega_ultimate_voltage": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/voltage/umv/bottom",
+          "top": "gregtech:blocks/casings/voltage/umv/top",
+          "side": "gregtech:blocks/casings/voltage/umv/side"
+        }
+      },
+      "extended_mega_ultimate_voltage": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/voltage/uxv/bottom",
+          "top": "gregtech:blocks/casings/voltage/uxv/top",
+          "side": "gregtech:blocks/casings/voltage/uxv/side"
         }
       },
       "maximum_voltage": {
@@ -78,34 +113,6 @@
           "bottom": "gregtech:blocks/casings/voltage/max/bottom",
           "top": "gregtech:blocks/casings/voltage/max/top",
           "side": "gregtech:blocks/casings/voltage/max/side"
-        }
-      },
-      "bronze_hull": {
-        "textures": {
-          "bottom": "gregtech:blocks/casings/steam/bronze/bottom",
-          "top": "gregtech:blocks/casings/steam/bronze/top",
-          "side": "gregtech:blocks/casings/steam/bronze/side"
-        }
-      },
-      "bronze_bricks_hull": {
-        "textures": {
-          "bottom": "gregtech:blocks/casings/steam/bricked_bronze/bottom",
-          "top": "gregtech:blocks/casings/steam/bricked_bronze/top",
-          "side": "gregtech:blocks/casings/steam/bricked_bronze/side"
-        }
-      },
-      "steel_hull": {
-        "textures": {
-          "bottom": "gregtech:blocks/casings/steam/steel/bottom",
-          "top": "gregtech:blocks/casings/steam/steel/top",
-          "side": "gregtech:blocks/casings/steam/steel/side"
-        }
-      },
-      "steel_bricks_hull": {
-        "textures": {
-          "bottom": "gregtech:blocks/casings/steam/bricked_steel/bottom",
-          "top": "gregtech:blocks/casings/steam/bricked_steel/top",
-          "side": "gregtech:blocks/casings/steam/bricked_steel/side"
         }
       }
     }

@@ -1,6 +1,6 @@
 [{
   "modid": "gregtech",
-  "name": "GregTech Community Edition",
+  "name": "GregTech",
   "description": "Finally, the awesome technology of GregTech-Intergalactical can be used in 1.12!",
   "version": "${version}",
   "mcversion": "${mcversion}",

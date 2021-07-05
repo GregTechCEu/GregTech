@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.model.ResourcePackHook;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.unification.Elements;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.Material;
@@ -30,7 +31,6 @@ import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.common.util.ResourcePackFix;
 import gregtech.common.worldgen.LootTableHelper;
 import gregtech.common.worldgen.WorldGenAbandonedBase;
 import gregtech.common.worldgen.WorldGenRubberTree;
@@ -42,11 +42,9 @@ import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 @Mod(modid = GTValues.MODID,
-        name = "GregTech Community Edition",
+        name = "GregTech",
         acceptedMinecraftVersions = "[1.12,1.13)",
         dependencies = "required:forge@[14.23.5.2847,);" + CodeChickenLib.MOD_VERSION_DEP + "after:forestry;after:jei@[4.15.0,);after:crafttweaker;")
 public class GregTechMod {
@@ -68,19 +66,10 @@ public class GregTechMod {
     public static CommonProxy proxy;
 
     @Mod.EventHandler
-    @SideOnly(Side.CLIENT)
-    public void onConstruction(FMLConstructionEvent event) {
-        ModContainer selfModContainer = Loader.instance().activeModContainer();
-        if (selfModContainer.getSource().isDirectory()) {
-            //check and fix resource pack file path as needed
-            ResourcePackFix.fixResourcePackLocation(selfModContainer);
-        }
-    }
-
-    @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
         GTLog.init(event.getModLog());
         NetworkHandler.init();
+        Elements.register();
         MetaTileEntityUIFactory.INSTANCE.init();
         PlayerInventoryUIFactory.INSTANCE.init();
         CoverBehaviorUIFactory.INSTANCE.init();
@@ -128,6 +117,7 @@ public class GregTechMod {
                 GTLog.logger.fatal("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
         }
+        RecipeMap.sortMaps();
 
         if (GTValues.isModLoaded(GTValues.MODID_TOP)) {
             GTLog.logger.info("TheOneProbe found. Enabling integration...");

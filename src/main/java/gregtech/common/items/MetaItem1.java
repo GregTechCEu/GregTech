@@ -6,6 +6,7 @@ import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FluidStats;
 import gregtech.api.items.metaitem.FoodStats;
+import gregtech.api.items.metaitem.stats.IItemModelIndexProvider;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -41,9 +42,10 @@ public class MetaItem1 extends MaterialMetaItem {
     public MetaItem1() {
         super(OrePrefix.dustTiny, OrePrefix.dustSmall, OrePrefix.dust, OrePrefix.dustImpure, OrePrefix.dustPure,
             OrePrefix.crushed, OrePrefix.crushedPurified, OrePrefix.crushedCentrifuged, OrePrefix.gem, OrePrefix.nugget,
-            OrePrefix.ingot, OrePrefix.ingotHot, OrePrefix.plate, OrePrefix.plateDense, OrePrefix.stick, OrePrefix.lens,
-            OrePrefix.bolt, OrePrefix.screw, OrePrefix.ring, OrePrefix.foil,
-            null, null, null, null, null, null, null, null, null, null, null, null);
+            OrePrefix.ingot, OrePrefix.ingotHot, OrePrefix.plate, OrePrefix.plateDouble, OrePrefix.plateDense, OrePrefix.stick,
+            OrePrefix.lens, OrePrefix.bolt, OrePrefix.screw, OrePrefix.ring, OrePrefix.foil, OrePrefix.round,
+            OrePrefix.oreChunk, OrePrefix.oreEnderChunk, OrePrefix.oreNetherChunk, OrePrefix.oreSandyChunk,
+            OrePrefix.seed, OrePrefix.crop, OrePrefix.essence, OrePrefix.plateCurved, null, null);
         registerPurifyRecipes();
     }
 
@@ -99,17 +101,18 @@ public class MetaItem1 extends MaterialMetaItem {
         SHAPE_EXTRUDERS[8] = SHAPE_EXTRUDER_PIPE_SMALL = addItem(359, "shape.extruder.pipe.small");
         SHAPE_EXTRUDERS[9] = SHAPE_EXTRUDER_PIPE_MEDIUM = addItem(360, "shape.extruder.pipe.medium");
         SHAPE_EXTRUDERS[10] = SHAPE_EXTRUDER_PIPE_LARGE = addItem(361, "shape.extruder.pipe.large");
-        SHAPE_EXTRUDERS[11] = SHAPE_EXTRUDER_BLOCK = addItem(363, "shape.extruder.block");
-        SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_SWORD = addItem(364, "shape.extruder.sword");
-        SHAPE_EXTRUDERS[13] = SHAPE_EXTRUDER_PICKAXE = addItem(365, "shape.extruder.pickaxe");
-        SHAPE_EXTRUDERS[14] = SHAPE_EXTRUDER_SHOVEL = addItem(366, "shape.extruder.shovel");
-        SHAPE_EXTRUDERS[15] = SHAPE_EXTRUDER_AXE = addItem(367, "shape.extruder.axe");
-        SHAPE_EXTRUDERS[16] = SHAPE_EXTRUDER_HOE = addItem(368, "shape.extruder.hoe");
-        SHAPE_EXTRUDERS[17] = SHAPE_EXTRUDER_HAMMER = addItem(369, "shape.extruder.hammer");
-        SHAPE_EXTRUDERS[18] = SHAPE_EXTRUDER_FILE = addItem(370, "shape.extruder.file");
-        SHAPE_EXTRUDERS[19] = SHAPE_EXTRUDER_SAW = addItem(371, "shape.extruder.saw");
-        SHAPE_EXTRUDERS[20] = SHAPE_EXTRUDER_GEAR = addItem(372, "shape.extruder.gear");
-        SHAPE_EXTRUDERS[21] = SHAPE_EXTRUDER_BOTTLE = addItem(373, "shape.extruder.bottle");
+        SHAPE_EXTRUDERS[11] = SHAPE_EXTRUDER_PIPE_HUGE = addItem(362, "shape.extruder.pipe.huge");
+        SHAPE_EXTRUDERS[12] = SHAPE_EXTRUDER_BLOCK = addItem(363, "shape.extruder.block");
+        SHAPE_EXTRUDERS[13] = SHAPE_EXTRUDER_SWORD = addItem(364, "shape.extruder.sword");
+        SHAPE_EXTRUDERS[14] = SHAPE_EXTRUDER_PICKAXE = addItem(365, "shape.extruder.pickaxe");
+        SHAPE_EXTRUDERS[15] = SHAPE_EXTRUDER_SHOVEL = addItem(366, "shape.extruder.shovel");
+        SHAPE_EXTRUDERS[16] = SHAPE_EXTRUDER_AXE = addItem(367, "shape.extruder.axe");
+        SHAPE_EXTRUDERS[17] = SHAPE_EXTRUDER_HOE = addItem(368, "shape.extruder.hoe");
+        SHAPE_EXTRUDERS[18] = SHAPE_EXTRUDER_HAMMER = addItem(369, "shape.extruder.hammer");
+        SHAPE_EXTRUDERS[19] = SHAPE_EXTRUDER_FILE = addItem(370, "shape.extruder.file");
+        SHAPE_EXTRUDERS[20] = SHAPE_EXTRUDER_SAW = addItem(371, "shape.extruder.saw");
+        SHAPE_EXTRUDERS[21] = SHAPE_EXTRUDER_GEAR = addItem(372, "shape.extruder.gear");
+        SHAPE_EXTRUDERS[22] = SHAPE_EXTRUDER_BOTTLE = addItem(373, "shape.extruder.bottle");
 
         SPRAY_EMPTY = addItem(402, "spray.empty")
             .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tin, OrePrefix.plate.materialAmount * 2L), new MaterialStack(Materials.Redstone, OrePrefix.dust.materialAmount)));
@@ -143,8 +146,8 @@ public class MetaItem1 extends MaterialMetaItem {
             .addComponents(new LighterBehaviour(1000)).setMaxStackSize(1);
 
         BATTERY_HULL_LV = addItem(500, "battery.hull.lv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, OrePrefix.plate.materialAmount)));
-        BATTERY_HULL_MV = addItem(501, "battery.hull.hv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, OrePrefix.plate.materialAmount * 3L)));
-        BATTERY_HULL_HV = addItem(502, "battery.hull.mv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, OrePrefix.plate.materialAmount * 9L)));
+        BATTERY_HULL_MV = addItem(501, "battery.hull.mv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, OrePrefix.plate.materialAmount * 3L)));
+        BATTERY_HULL_HV = addItem(502, "battery.hull.hv").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.BatteryAlloy, OrePrefix.plate.materialAmount * 9L)));
 
         BATTERY_RE_ULV_TANTALUM = addItem(499, "battery.re.ulv.tantalum").addComponents(ElectricStats.createRechargeableBattery(1000, 0));
 
@@ -172,8 +175,8 @@ public class MetaItem1 extends MaterialMetaItem {
         ENERGY_LAPOTRONIC_ORB = addItem(597, "energy.lapotronicorb").addComponents(ElectricStats.createRechargeableBattery(100000000, 5)).setUnificationData(OrePrefix.battery, MarkerMaterials.Tier.Ultimate).setModelAmount(8);
         ENERGY_LAPOTRONIC_ORB2 = addItem(598, "energy.lapotronicorb2").addComponents(ElectricStats.createRechargeableBattery(1000000000, 6)).setUnificationData(OrePrefix.battery, MarkerMaterials.Tier.Ultimate).setModelAmount(8);
 
-        ZPM = addItem(599, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, 7, false)).setModelAmount(8);
-        ZPM2 = addItem(605, "zpm2").addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, 8)).setModelAmount(8);
+        ZPM = addItem(599, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, false)).setModelAmount(8);
+        ZPM2 = addItem(605, "zpm2").addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.UV)).setModelAmount(8);
 
         ELECTRIC_MOTOR_LV = addItem(600, "electric.motor.lv");
         ELECTRIC_MOTOR_MV = addItem(601, "electric.motor.mv");
@@ -184,14 +187,14 @@ public class MetaItem1 extends MaterialMetaItem {
         ELECTRIC_MOTOR_ZPM = addItem(607, "electric.motor.zpm");
         ELECTRIC_MOTOR_UV = addItem(608, "electric.motor.uv");
 
-        ELECTRIC_PUMP_LV = addItem(610, "electric.pump.lv");
-        ELECTRIC_PUMP_MV = addItem(611, "electric.pump.mv");
-        ELECTRIC_PUMP_HV = addItem(612, "electric.pump.hv");
-        ELECTRIC_PUMP_EV = addItem(613, "electric.pump.ev");
-        ELECTRIC_PUMP_IV = addItem(614, "electric.pump.iv");
-        ELECTRIC_PUMP_LUV = addItem(615, "electric.pump.luv");
-        ELECTRIC_PUMP_ZPM = addItem(616, "electric.pump.zpm");
-        ELECTRIC_PUMP_UV = addItem(617, "electric.pump.uv");
+        PUMPS[0] = ELECTRIC_PUMP_LV = addItem(610, "electric.pump.lv");
+        PUMPS[1] = ELECTRIC_PUMP_MV = addItem(611, "electric.pump.mv");
+        PUMPS[2] = ELECTRIC_PUMP_HV = addItem(612, "electric.pump.hv");
+        PUMPS[3] = ELECTRIC_PUMP_EV = addItem(613, "electric.pump.ev");
+        PUMPS[4] = ELECTRIC_PUMP_IV = addItem(614, "electric.pump.iv");
+        PUMPS[5] = ELECTRIC_PUMP_LUV = addItem(615, "electric.pump.luv");
+        PUMPS[6] = ELECTRIC_PUMP_ZPM = addItem(616, "electric.pump.zpm");
+        PUMPS[7] = ELECTRIC_PUMP_UV = addItem(617, "electric.pump.uv");
 
         RUBBER_DROP = addItem(627, "rubber_drop").setBurnValue(200);
 
@@ -286,65 +289,11 @@ public class MetaItem1 extends MaterialMetaItem {
         COVER_SOLAR_PANEL_LV = addItem(752, "cover.solar.panel.lv");
 
         FLUID_CELL = addItem(762, "fluid_cell").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, false));
-        INTEGRATED_CIRCUIT = addItem(766, "circuit.integrated").addComponents(new IntCircuitBehaviour());
+        INTEGRATED_CIRCUIT = addItem(766, "circuit.integrated").addComponents(new IntCircuitBehaviour()).setModelAmount(33);
         FOAM_SPRAYER = addItem(746, "foam_sprayer").addComponents(new FoamSprayerBehavior());
     }
 
     public void registerRecipes() {
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.dust, Materials.Redstone).input(OrePrefix.plate, Materials.Tin, 2)
-            .outputs(SPRAY_EMPTY.getStackForm())
-            .duration(200).EUt(8)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plateDense, Materials.Steel, 2)
-            .input(OrePrefix.ring, Materials.Steel, 8)
-            .outputs(LARGE_FLUID_CELL_STEEL.getStackForm())
-            .circuitMeta(1).duration(100).EUt(64)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plateDense, Materials.TungstenSteel, 2)
-            .input(OrePrefix.ring, Materials.TungstenSteel, 8)
-            .outputs(LARGE_FLUID_CELL_TUNGSTEN_STEEL.getStackForm())
-            .circuitMeta(1).duration(200).EUt(256)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plate, Materials.Tin, 6)
-            .inputs(SPRAY_EMPTY.getStackForm())
-            .input(OrePrefix.paneGlass.name(), 1)
-            .outputs(FOAM_SPRAYER.getStackForm())
-            .duration(200).EUt(8)
-            .buildAndRegister();
-
-        // Matches/lighters recipes
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood).input(OrePrefix.dustSmall, Materials.Phosphorus)
-            .outputs(TOOL_MATCHES.getStackForm())
-            .duration(16).EUt(16)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood).input(OrePrefix.dustSmall, Materials.Phosphor)
-            .outputs(TOOL_MATCHES.getStackForm())
-            .duration(16).EUt(16)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood, 4).input(OrePrefix.dust, Materials.Phosphorus)
-            .outputs(TOOL_MATCHES.getStackForm(4))
-            .duration(64).EUt(16)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.stick, Materials.Wood, 4).input(OrePrefix.dust, Materials.Phosphor)
-            .outputs(TOOL_MATCHES.getStackForm(4))
-            .duration(64)
-            .EUt(16)
-            .buildAndRegister();
-
         RecipeMaps.PACKER_RECIPES.recipeBuilder()
             .inputs(TOOL_MATCHES.getStackForm(16)).input(OrePrefix.plate, Materials.Paper)
             .outputs(TOOL_MATCHBOX.getStackForm())
@@ -352,19 +301,12 @@ public class MetaItem1 extends MaterialMetaItem {
             .EUt(16)
             .buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plate, Materials.Invar, 2).inputs(new ItemStack(Items.FLINT, 1))
-            .outputs(TOOL_LIGHTER_INVAR.getStackForm())
-            .duration(256)
-            .EUt(16)
-            .buildAndRegister();
-
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plate, Materials.Platinum, 2).inputs(new ItemStack(Items.FLINT, 1))
-            .outputs(TOOL_LIGHTER_PLATINUM.getStackForm())
-            .duration(256)
-            .EUt(256)
-            .buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(4)
+                .input(OrePrefix.dust, Materials.Tantalum)
+                .input(OrePrefix.foil, Materials.Manganese)
+                .fluidInputs(Materials.Polyethylene.getFluid(144))
+                .outputs(MetaItems.BATTERY_RE_ULV_TANTALUM.getStackForm(8))
+                .buildAndRegister();
 
         RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
             .inputs(BATTERY_SU_LV_SULFURIC_ACID.getStackForm())
@@ -503,7 +445,6 @@ public class MetaItem1 extends MaterialMetaItem {
             .outputs(BATTERY_RE_HV_SODIUM.getStackForm())
             .duration(1600).EUt(2)
             .buildAndRegister();
-
     }
 
     @Override

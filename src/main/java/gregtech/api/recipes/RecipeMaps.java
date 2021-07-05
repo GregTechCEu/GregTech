@@ -2,6 +2,7 @@ package gregtech.api.recipes;
 
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.machines.*;
@@ -459,13 +460,35 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_RECIPES = new RecipeMap<>("chemical_reactor", 0, 2, 0, 1, 0, 3, 0, 2, new SimpleRecipeBuilder().EUt(30))
+    public static final RecipeMap<ChemicalReactorRecipeBuilder> CHEMICAL_RECIPES = new RecipeMap<>("chemical_reactor", 0, 2, 0, 2, 0, 3, 0, 2, new ChemicalReactorRecipeBuilder().EUt(30))
         .setSlotOverlay(false, false, false, GuiTextures.MOLECULAR_OVERLAY_1)
         .setSlotOverlay(false, false, true, GuiTextures.MOLECULAR_OVERLAY_2)
         .setSlotOverlay(false, true, GuiTextures.MOLECULAR_OVERLAY_3)
         .setSlotOverlay(true, false, GuiTextures.VIAL_OVERLAY_1)
         .setSlotOverlay(true, true, GuiTextures.VIAL_OVERLAY_2)
         .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL);
+
+    /**
+     * Example:
+     * <pre>
+     *      RecipeMap.LARGE_CHEMICAL_RECIPES.recipeBuilder()
+     * 				.inputs(OreDictUnifier.get(OrePrefix.cell, Materials.NitrogenDioxide, 4), OreDictUnifier.get(OrePrefix.cell, Materials.Oxygen, 1))
+     * 				.fluidInputs(Materials.Water.getFluid(2000))
+     * 				.fluidOutputs( new FluidStack(ItemList.sNitricAcid,4000))
+     * 				.duration(950)
+     * 				.EUt(30)
+     * 				.buildAndRegister();
+     * </pre>
+     */
+
+    @ZenProperty
+    public static final RecipeMap<SimpleRecipeBuilder> LARGE_CHEMICAL_RECIPES = new RecipeMap<>("large_chemical_reactor", 0, 3, 0, 3, 0, 5, 0, 4, new SimpleRecipeBuilder().EUt(30))
+            .setSlotOverlay(false, false, false, GuiTextures.MOLECULAR_OVERLAY_1)
+            .setSlotOverlay(false, false, true, GuiTextures.MOLECULAR_OVERLAY_2)
+            .setSlotOverlay(false, true, GuiTextures.MOLECULAR_OVERLAY_3)
+            .setSlotOverlay(true, false, GuiTextures.VIAL_OVERLAY_1)
+            .setSlotOverlay(true, true, GuiTextures.VIAL_OVERLAY_2)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL);
 
     /**
      * If universal every Fluid also gets separate distillation recipes
@@ -478,15 +501,6 @@ public class RecipeMaps {
      * 	        	.duration(250)
      * 	        	.EUt(480)
      * 	        	.buildAndRegister();
-     *
-     * 		RecipeMap.DISTILLATION_RECIPES.recipeBuilder()
-     * 				.universal()
-     * 				.fluidInputs(Materials.CrackedHeavyFuel.getFluid(100))
-     * 				.fluidOutputs(Materials.Gas.getGas(80), Materials.Naphtha.getFluid(10), Materials.LightFuel.getFluid(40), new FluidStack(ItemList.sToluene,30), Materials.Lubricant.getFluid(5))
-     * 				.outputs(OreDictUnifier.get(OrePrefix.dustTiny, Materials.HydratedCoal, 1))
-     * 				.duration(16)
-     * 				.EUt(64)
-     * 				.buildAndRegister();
      * </pre>
      */
 
@@ -686,9 +700,18 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<AmplifierRecipeBuilder> AMPLIFIERS = new RecipeMap<>("uuamplifier", 1, 1, 0, 0, 0, 0, 1, 1, new AmplifierRecipeBuilder().EUt(32));
 
+    @ZenProperty
+    public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = new RecipeMapAssemblyLine<>("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new SimpleRecipeBuilder())
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+    // ASSEMBLY_LINE_RECIPES.setSlotOverlay(false, false, GuiTextures.MOLD_OVERLAY); TODO Fix this (???)
 
     @ZenProperty
-    public static final FuelRecipeMap DIESEL_GENERATOR_FUELS = new FuelRecipeMap("diesel_generator");
+    public static final RecipeMap<SimpleRecipeBuilder> CLUSTER_MILL_RECIPES = new RecipeMap<>("cluster_mill", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder())
+            .setSlotOverlay(false, false, GuiTextures.BENDER_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BENDING, ProgressWidget.MoveType.HORIZONTAL);
+
+    @ZenProperty
+    public static final FuelRecipeMap COMBUSTION_GENERATOR_FUELS = new FuelRecipeMap("combustion_generator");
 
 
     @ZenProperty

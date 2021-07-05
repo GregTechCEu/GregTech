@@ -6,6 +6,7 @@ import gregtech.api.unification.Element;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import stanhebben.zenscript.annotations.ZenClass;
+import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenProperty;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class DustMaterial extends FluidMaterial {
 
         /**
          * Add to material if it is outputting less in an Induction Smelter.
+         * todo remove
          */
         public static final long INDUCTION_SMELTING_LOW_OUTPUT = createFlag(16);
 
@@ -60,12 +62,12 @@ public class DustMaterial extends FluidMaterial {
          */
         public static final long EXCLUDE_BLOCK_CRAFTING_RECIPES = createFlag(18);
 
+        public static final long EXCLUDE_PLATE_COMPRESSOR_RECIPE = createFlag(19);
+
         /**
          * This will prevent material from creating Shapeless recipes for dust to block and vice versa
          */
         public static final long EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES = createFlag(46);
-
-        public static final long EXCLUDE_PLATE_COMPRESSOR_RECIPE = createFlag(19);
 
         static {
             Material.MatFlags.registerMaterialFlagsHolder(MatFlags.class, DustMaterial.class);
@@ -95,7 +97,7 @@ public class DustMaterial extends FluidMaterial {
      * Tool level needed to harvest block of this material
      */
     @ZenProperty
-    public final int harvestLevel;
+    public int harvestLevel;
 
     /**
      * Material to which smelting of this material ore will result
@@ -133,6 +135,11 @@ public class DustMaterial extends FluidMaterial {
      */
     @ZenProperty
     public DustMaterial crushedInto = this;
+
+    @ZenMethod
+    public void setHarvestLevel(int harvestLevel) {
+        this.harvestLevel = harvestLevel;
+    }
 
     public DustMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element) {
         super(metaItemSubId, name, materialRGB, materialIconSet, materialComponents, materialGenerationFlags, element);

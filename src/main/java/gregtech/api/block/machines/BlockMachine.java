@@ -17,7 +17,11 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.IFacadeCover;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.pipenet.tile.AttachmentType;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.render.MetaTileEntityRenderer;
+import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import gregtech.common.tools.DamageValues;
 import gregtech.api.render.IBlockAppearance;
 import gregtech.integration.ctm.IFacadeWrapper;
@@ -81,6 +85,14 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         setDefaultState(getDefaultState().withProperty(OPAQUE, true));
     }
 
+    @Override
+    public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player) {
+        if (ConfigHolder.U.GT5u.requireWrenchForMachines) {
+            return player.getHeldItemMainhand().hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
+        }
+        return super.canHarvestBlock(world, pos, player);
+    }
+
     @Nullable
     @Override
     public String getHarvestTool(IBlockState state) {
@@ -105,7 +117,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             return state;
 
         return ((IExtendedBlockState) state)
-            .withProperty(HARVEST_TOOL, metaTileEntity.getHarvestTool())
+            .withProperty(HARVEST_TOOL, metaTileEntity.getHarvestTool() == null ? "wrench" : metaTileEntity.getHarvestTool())
             .withProperty(HARVEST_LEVEL, metaTileEntity.getHarvestLevel());
     }
 
@@ -225,6 +237,30 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             EnumFacing placeFacing = placer.getHorizontalFacing().getOpposite();
             if (metaTileEntity.isValidFrontFacing(placeFacing)) {
                 metaTileEntity.setFrontFacing(placeFacing);
+            }
+            if (ConfigHolder.U.GT6.gt6StylePipesCables) {
+                if (placer instanceof EntityPlayer) {
+                    EntityPlayer player = (EntityPlayer) placer;
+                    RayTraceResult rt1 = GTUtility.getBlockLookingAt(player);
+                    RayTraceResult rt2 = GTUtility.getBlockLookingAt(player, pos);
+                    for (EnumFacing facing : EnumFacing.VALUES) {
+                        BlockPos pipePos = null;
+
+                        if (rt1 != null)
+                            if (GTUtility.arePosEqual(rt1.getBlockPos(), pos.offset(facing, 1)))
+                                pipePos = rt1.getBlockPos();
+                        if (rt2 != null)
+                            if (GTUtility.arePosEqual(rt2.getBlockPos(), pos.offset(facing, 1)))
+                                pipePos = rt2.getBlockPos();
+                        if (pipePos != null) {
+                            TileEntity tileEntity = placer.world.getTileEntity(pipePos);
+                            if (tileEntity instanceof IPipeTile) {
+                                IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) tileEntity;
+                                pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing.getOpposite(), false, true);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

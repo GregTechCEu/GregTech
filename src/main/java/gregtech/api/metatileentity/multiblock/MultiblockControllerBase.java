@@ -4,6 +4,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IMultiblockController;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.multiblock.BlockPattern;
@@ -11,22 +13,30 @@ import gregtech.api.multiblock.BlockWorldState;
 import gregtech.api.multiblock.IPatternCenterPredicate;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.OrientedOverlayRenderer;
+import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-public abstract class MultiblockControllerBase extends MetaTileEntity {
+public abstract class MultiblockControllerBase extends MetaTileEntity /*implements IMultiblockController*/ {
 
     protected BlockPattern structurePattern;
 
@@ -70,6 +80,15 @@ public abstract class MultiblockControllerBase extends MetaTileEntity {
 
     public boolean shouldRenderOverlay(IMultiblockPart sourcePart) {
         return true;
+    }
+
+    /**
+     * Override this method to change the Controller overlay
+     * @return The overlay to render on the Multiblock Controller
+     */
+    @Nonnull
+    protected OrientedOverlayRenderer getFrontOverlay() {
+        return Textures.MULTIBLOCK_WORKABLE_OVERLAY;
     }
 
     public int getLightValueForPart(IMultiblockPart sourcePart) {
@@ -204,7 +223,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity {
 
     @SuppressWarnings("unchecked")
     public <T> List<T> getAbilities(MultiblockAbility<T> ability) {
-        @SuppressWarnings("SuspiciousMethodCalls")
         List<T> rawList = (List<T>) multiblockAbilities.getOrDefault(ability, Collections.emptyList());
         return Collections.unmodifiableList(rawList);
     }
@@ -232,9 +250,22 @@ public abstract class MultiblockControllerBase extends MetaTileEntity {
             this.structureFormed = buf.readBoolean();
         }
     }
-
+/*
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER) {
+            return GregtechCapabilities.CAPABILITY_MULTIBLOCK_CONTROLLER.cast(this);
+        }
+        return null;
+    }
+*/
     public boolean isStructureFormed() {
         return structureFormed;
     }
 
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.multiblock.universal.controller_information", I18n.format(getMetaFullName())));
+    }
 }

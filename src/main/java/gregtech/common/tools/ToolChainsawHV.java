@@ -44,7 +44,7 @@ public class ToolChainsawHV extends ToolChainsawLV {
 
     @Override
     public float getMaxDurabilityMultiplier(ItemStack stack) {
-        return 40.0F;
+        return 4.F;
     }
 
     @Override

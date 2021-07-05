@@ -5,6 +5,7 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.ore.OrePrefix;
@@ -52,13 +53,13 @@ public class OreRecipeHandler {
         }
     }
 
-    private static double getPercentOfComponentInMaterial(Material material, Material materialToFind) {
+    private static double getPercentOfComponentInMaterial(IMaterial<?> material, IMaterial<?> materialToFind) {
         if (material == materialToFind) {
             return 1.0;
         }
-        double amountOfComponents = material.materialComponents.stream()
+        double amountOfComponents = material.getMaterialComponents().stream()
             .mapToLong(it -> it.amount).sum();
-        return material.materialComponents.stream()
+        return material.getMaterialComponents().stream()
             .mapToDouble(it -> getPercentOfComponentInMaterial(it.material, materialToFind) *
                 (it.amount / amountOfComponents)).sum();
     }

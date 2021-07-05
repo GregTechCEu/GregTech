@@ -17,6 +17,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.text.*;
 import net.minecraftforge.items.*;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
@@ -84,6 +85,12 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return Textures.HEAT_PROOF_CASING;
+    }
+
+    @Nonnull
+    @Override
+    protected OrientedOverlayRenderer getFrontOverlay() {
+        return Textures.MULTI_FURNACE_OVERLAY;
     }
 
     protected class MultiFurnaceWorkable extends MultiblockRecipeLogic {

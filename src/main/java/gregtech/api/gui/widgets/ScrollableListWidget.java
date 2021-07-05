@@ -107,20 +107,34 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
             super.drawInBackground(finalMouseX, finalMouseY, context));
     }
 
+    @Override
     public boolean isWidgetClickable(final Widget widget) {
         if (!super.isWidgetClickable(widget)) {
             return false;
         }
-        return isBoxInsideScissor(widget.toRectangleBox());
+        return isWidgetOverlapsScissor(widget);
     }
 
     private boolean isPositionInsideScissor(int mouseX, int mouseY) {
         return isMouseOverElement(mouseX, mouseY) && !isOnScrollPane(mouseX, mouseY);
     }
 
+    private boolean isWidgetOverlapsScissor(Widget widget) {
+        final Position position = widget.getPosition();
+        final Size size = widget.getSize();
+        final int x0 = position.x;
+        final int y0 = position.y;
+        final int x1 = position.x + size.width - 1;
+        final int y1 = position.y + size.height - 1;
+        return isPositionInsideScissor(x0, y0) ||
+               isPositionInsideScissor(x0, y1) ||
+               isPositionInsideScissor(x1, y0) ||
+               isPositionInsideScissor(x1, y1);
+    }
+
     private boolean isBoxInsideScissor(Rectangle rectangle) {
         return isPositionInsideScissor(rectangle.x, rectangle.y) &&
-            isPositionInsideScissor(rectangle.x + rectangle.width, rectangle.y + rectangle.height);
+            isPositionInsideScissor(rectangle.x + rectangle.width - 1, rectangle.y + rectangle.height - 1);
     }
 
     @Override

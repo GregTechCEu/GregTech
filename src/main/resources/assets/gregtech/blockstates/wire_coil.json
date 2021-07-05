@@ -40,14 +40,14 @@
           "all": "gregtech:blocks/casings/coils/machine_coil_naquadahalloy"
         }
       },
-      "superconductor": {
+      "fluxed_electrum": {
         "textures": {
-          "all": "gregtech:blocks/casings/coils/machine_coil_superconductor"
+          "all": "gregtech:blocks/casings/coils/machine_coil_fluxed_electrum"
         }
       },
-      "fusion_coil": {
+      "diamericium_titanium": {
         "textures": {
-          "all": "gregtech:blocks/casings/fusion/machine_casing_fusion_coil"
+          "all": "gregtech:blocks/casings/coils/machine_coil_diamericium_titanium"
         }
       }
     }

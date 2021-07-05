@@ -1,10 +1,11 @@
 package gregtech.integration.jei.multiblock;
 
 import gregtech.api.GTValues;
+import gregtech.api.gui.GuiTextures;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.jei.multiblock.infos.*;
-import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.IGuiHelper;
+import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -12,7 +13,6 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.gui.recipes.RecipeLayout;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +26,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     public MultiblockInfoCategory(IJeiHelpers helpers) {
         this.guiHelper = helpers.getGuiHelper();
         this.background = this.guiHelper.createBlankDrawable(176, 166);
-        ResourceLocation iconLocation = new ResourceLocation(GTValues.MODID, "textures/gui/icon/coke_oven.png");
-        this.icon = this.guiHelper.createDrawable(iconLocation, 0, 0, 16, 16, 16, 16);
+        this.icon = guiHelper.drawableBuilder(GuiTextures.MULTIBLOCK_CATEGORY.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
     }
 
     public static final Map<String, MultiblockInfoRecipeWrapper> multiblockRecipes = new HashMap<String, MultiblockInfoRecipeWrapper>() {{
@@ -35,12 +34,13 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("coke_oven", new MultiblockInfoRecipeWrapper(new CokeOvenInfo()));
         put("vacuum_freezer", new MultiblockInfoRecipeWrapper(new VacuumFreezerInfo()));
         put("implosion_compressor", new MultiblockInfoRecipeWrapper(new ImplosionCompressorInfo()));
-        put("pyrolyze_oven", new MultiblockInfoRecipeWrapper(new PyrolyzeOvenInfo()));
+        put("pyrolyze_oven", new MultiblockInfoRecipeWrapper(new PyrolyseOvenInfo()));
         put("cracker_unit", new MultiblockInfoRecipeWrapper(new CrackerUnitInfo()));
-        put("diesel_engine", new MultiblockInfoRecipeWrapper(new DieselEngineInfo()));
+        put("diesel_engine", new MultiblockInfoRecipeWrapper(new LargeCombustionEngineInfo()));
         put("distillation_tower", new MultiblockInfoRecipeWrapper(new DistillationTowerInfo()));
         put("electric_blast_furnace", new MultiblockInfoRecipeWrapper(new ElectricBlastFurnaceInfo()));
         put("multi_smelter", new MultiblockInfoRecipeWrapper(new MultiSmelterInfo()));
+        put("large_chemical_reactor", new MultiblockInfoRecipeWrapper(new LargeChemicalReactorInfo()));
         put("large_bronze_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_BRONZE_BOILER)));
         put("large_steel_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_STEEL_BOILER)));
         put("large_titanium_boiler", new MultiblockInfoRecipeWrapper(new LargeBoilerInfo(MetaTileEntities.LARGE_TITANIUM_BOILER)));
@@ -48,6 +48,10 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("large_steam_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_STEAM_TURBINE)));
         put("large_gas_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_GAS_TURBINE)));
         put("large_plasma_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_PLASMA_TURBINE)));
+        put("assembly_line", new MultiblockInfoRecipeWrapper(new AssemblyLineInfo()));
+        put("fusion_reactor_mk1", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(0)));
+        put("fusion_reactor_mk2", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(1)));
+        put("fusion_reactor_mk3", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(2)));
     }};
 
     public static void registerRecipes(IModRegistry registry) {
@@ -83,5 +87,4 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     public void setRecipe(IRecipeLayout recipeLayout, MultiblockInfoRecipeWrapper recipeWrapper, IIngredients ingredients) {
         recipeWrapper.setRecipeLayout((RecipeLayout) recipeLayout, this.guiHelper);
     }
-
 }
