@@ -493,10 +493,5 @@ public class SeparationRecipes {
                 .inputs(new ItemStack(Blocks.BOOKSHELF))
                 .outputs(new ItemStack(Items.BOOK, 3))
                 .duration(300).EUt(2).buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Items.EGG))
-                .chancedOutput(MetaItems.STEM_CELLS.getStackForm(), 1500, 500)
-                .duration(600).EUt(480).buildAndRegister();
     }
 }

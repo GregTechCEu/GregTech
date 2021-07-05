@@ -243,6 +243,8 @@ public class MetaItem2 extends MaterialMetaItem {
         ADVANCED_SMD_RESISTOR = addItem(545, "component.advanced_smd.resistor");
         ADVANCED_SMD_CAPACITOR = addItem(546, "component.advanced_smd.capacitor");
         ADVANCED_SMD_DIODE = addItem(547, "component.advanced_smd.diode");
+
+        BIO_CHAFF = addItem(548, "bio_chaff");
     }
 
     public void registerRecipes() {

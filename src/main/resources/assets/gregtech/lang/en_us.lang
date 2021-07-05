@@ -652,6 +652,7 @@ metaitem.processor.neuro.name=Neuro Processing Unit
 metaitem.processor.neuro.tooltip=Neuro CPU
 metaitem.petri_dish.name=Petri Dish
 metaitem.petri_dish.tooltip=For cultivating Cells
+metaitem.bio_chaff.name=Bio Chaff
 
 metaitem.carbon.fibers.name=Raw Carbon Fibers
 metaitem.carbon.mesh.name=Carbon Fiber Mesh
@@ -1630,6 +1631,7 @@ material.coffee=Coffee
 material.wheat=Wheat
 material.meat=Mince Meat
 
+material.sodium_bicarbonate=Sodium Bicarbonate
 material.polybenzimidazole=Polybenzimidazole
 material.diphenyl_isophthalate=Diphenyl Isophthalate
 material.phthalic_acid=Phthalic Acid
@@ -1641,6 +1643,18 @@ material.chlorobenzene=Chlorobenzene
 material.potassium_dichromate=Potassium Dichromate
 material.chromium_trioxide=Chromium Trioxide
 material.iron_iii_chloride=Iron III Chloride
+
+material.bacteria=Bacteria
+material.bacterial_sludge=Bacterial Sludge
+material.enriched_bacterial_sludge=Enriched Bacterial Sludge
+material.mutagen=Mutagen
+material.gelatin_mixture=Gelatin Mixture
+material.collagen=Collagen
+item.collagen.dust=Collagen
+material.gelatin=Gelatin
+item.gelatin.dust=Gelatin
+material.agar=Agar
+item.agar.dust=Agar
 
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
 item.gunpowder.dustTiny=Tiny Pile of Gunpowder

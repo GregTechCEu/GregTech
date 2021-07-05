@@ -405,14 +405,19 @@ public class Materials {
     public static SimpleFluidMaterial OilMedium = new SimpleFluidMaterial(119, "oil_medium", 0x0A0A0A, FLUID, of(), GENERATE_FLUID_BLOCK);
     public static SimpleFluidMaterial OilLight = new SimpleFluidMaterial(120, "oil_light", 0x0A0A0A, FLUID, of(), GENERATE_FLUID_BLOCK);
     public static SimpleFluidMaterial NaturalGas = new SimpleFluidMaterial(121, "natural_gas", 0xFFFFFF, FLUID, of(), STATE_GAS | GENERATE_FLUID_BLOCK);
-    public static final SimpleFluidMaterial DiphenylIsophtalate = new SimpleFluidMaterial(122, "diphenyl_isophthalate", 0x246E57, DULL, of(new MaterialStack(Carbon, 20), new MaterialStack(Hydrogen, 14), new MaterialStack(Oxygen, 4)), DISABLE_DECOMPOSITION);
-    public static final SimpleFluidMaterial PhthalicAcid = new SimpleFluidMaterial(123, "phthalic_acid", 0xD1D1D1, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 4)), GENERATE_FLUID_BLOCK | DISABLE_DECOMPOSITION);
-    public static final SimpleFluidMaterial Dimethylbenzene = new SimpleFluidMaterial(124, "dimethylbenzene", 0x669C40, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 10)), DISABLE_DECOMPOSITION).setFormula("C6H4(CH3)2");
-    public static final SimpleFluidMaterial Diaminobenzidine = new SimpleFluidMaterial(125, "diaminobenzidine", 0x337D59, DULL, of(new MaterialStack(Carbon, 12), new MaterialStack(Hydrogen, 14), new MaterialStack(Nitrogen, 4)), DISABLE_DECOMPOSITION);
-    public static final SimpleFluidMaterial Dichlorobenzidine = new SimpleFluidMaterial(126, "dichlorobenzidine", 0xA1DEA6, DULL, of(new MaterialStack(Carbon, 12), new MaterialStack(Hydrogen, 10), new MaterialStack(Chlorine, 2), new MaterialStack(Nitrogen, 2)), DISABLE_DECOMPOSITION);
-    public static final SimpleFluidMaterial Nitrochlorobenzene = new SimpleFluidMaterial(127, "nitrochlorobenzene", 0x8FB51A, DULL, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Chlorine, 1), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
-    public static final SimpleFluidMaterial Chlorobenzene = new SimpleFluidMaterial(128, "chlorobenzene", 0x326A3E, DULL, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 5), new MaterialStack(Chlorine, 1)), DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial DiphenylIsophtalate = new SimpleFluidMaterial(122, "diphenyl_isophthalate", 0x246E57, DULL, of(new MaterialStack(Carbon, 20), new MaterialStack(Hydrogen, 14), new MaterialStack(Oxygen, 4)), DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial PhthalicAcid = new SimpleFluidMaterial(123, "phthalic_acid", 0xD1D1D1, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 4)), GENERATE_FLUID_BLOCK | DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial Dimethylbenzene = new SimpleFluidMaterial(124, "dimethylbenzene", 0x669C40, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 10)), DISABLE_DECOMPOSITION).setFormula("C6H4(CH3)2");
+    public static SimpleFluidMaterial Diaminobenzidine = new SimpleFluidMaterial(125, "diaminobenzidine", 0x337D59, DULL, of(new MaterialStack(Carbon, 12), new MaterialStack(Hydrogen, 14), new MaterialStack(Nitrogen, 4)), DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial Dichlorobenzidine = new SimpleFluidMaterial(126, "dichlorobenzidine", 0xA1DEA6, DULL, of(new MaterialStack(Carbon, 12), new MaterialStack(Hydrogen, 10), new MaterialStack(Chlorine, 2), new MaterialStack(Nitrogen, 2)), DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial Nitrochlorobenzene = new SimpleFluidMaterial(127, "nitrochlorobenzene", 0x8FB51A, DULL, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Chlorine, 1), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial Chlorobenzene = new SimpleFluidMaterial(128, "chlorobenzene", 0x326A3E, DULL, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 5), new MaterialStack(Chlorine, 1)), DISABLE_DECOMPOSITION);
     public static SimpleFluidMaterial Iron3Chloride = new SimpleFluidMaterial(129, "iron_iii_chloride", 0x060B0B, FLUID, of(new MaterialStack(Iron, 1), new MaterialStack(Chlorine, 3)), DECOMPOSITION_BY_ELECTROLYZING);
+    public static SimpleFluidMaterial Bacteria = new SimpleFluidMaterial(130, "bacteria", 0x808000, FLUID, of(), 0);
+    public static SimpleFluidMaterial BacterialSludge = new SimpleFluidMaterial(131, "bacterial_sludge", 0x355E3B, FLUID, of(), 0);
+    public static SimpleFluidMaterial EnrichedBacterialSludge = new SimpleFluidMaterial(132, "enriched_bacterial_sludge", 0x7FFF00, FLUID, of(), 0);
+    public static SimpleFluidMaterial Mutagen = new SimpleFluidMaterial(133, "mutagen", 0x00FF7F, FLUID, of(), 0);
+    public static SimpleFluidMaterial GelatinMixture = new SimpleFluidMaterial(134, "gelatin_mixture", 0x588BAE, FLUID, of(), 0);
 
     public static SimpleDustMaterial SodiumHydroxide = new SimpleDustMaterial(1, "sodium_hydroxide", 0x003380, DULL, of(new MaterialStack(Sodium, 1), new MaterialStack(Oxygen, 1), new MaterialStack(Hydrogen, 1)), GENERATE_SMALL_TINY);
     public static SimpleDustMaterial MagnesiumChloride = new SimpleDustMaterial(2, "magnesium_chloride", 0xD40D5C, DULL, of(new MaterialStack(Magnesium, 1), new MaterialStack(Chlorine, 2)), GENERATE_SMALL_TINY);
@@ -428,6 +433,9 @@ public class Materials {
     public static SimpleDustMaterial PlatinumGroupSludge = new SimpleDustMaterial(12, "platinum_group_sludge", 0x001E00, FINE, of(), DISABLE_DECOMPOSITION | GENERATE_SMALL_TINY);
     public static SimpleDustMaterial HydratedCoal = new SimpleDustMaterial(13, "hydrated_coal", 0x464664, ROUGH, of(new MaterialStack(Coal, 8), new MaterialStack(Water, 1)), GENERATE_SMALL_TINY);
     public static SimpleDustMaterial SodiumBicarbonate = new SimpleDustMaterial(14, "sodium_bicarbonate", 0x565b96, ROUGH, of(new MaterialStack(Sodium, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Carbon, 1), new MaterialStack(Oxygen, 3)), GENERATE_SMALL_TINY);
+    public static SimpleDustMaterial Collagen = new SimpleDustMaterial(15, "collagen", 0x80471C, ROUGH, of(), 0);
+    public static SimpleDustMaterial Gelatin = new SimpleDustMaterial(16, "gelatin", 0x588BAE, ROUGH, of(), 0);
+    public static SimpleDustMaterial Agar = new SimpleDustMaterial(17, "agar", 0x4F7942, ROUGH, of(), 0);
 
     /**
      * Organic chemistry

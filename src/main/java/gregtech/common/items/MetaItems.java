@@ -456,6 +456,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem STEM_CELLS;
     public static MetaItem<?>.MetaValueItem PETRI_DISH;
 
+    public static MetaItem<?>.MetaValueItem BIO_CHAFF;
+
     public static void init() {
         MetaItem1 first = new MetaItem1();
         first.setRegistryName("meta_item_1");
