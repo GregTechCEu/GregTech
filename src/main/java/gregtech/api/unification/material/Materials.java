@@ -439,6 +439,14 @@ public class Materials {
     public static SimpleDustMaterial Agar = new SimpleDustMaterial(17, "agar", 0x4F7942, ROUGH, of(), 0);
     public static SimpleDustMaterial PotassiumDichromate = new SimpleDustMaterial(18, "potassium_dichromate", 0xFF084E, DULL, of(new MaterialStack(Potassium, 2), new MaterialStack(Chrome, 2), new MaterialStack(Oxygen, 7)), GENERATE_SMALL_TINY);
     public static SimpleDustMaterial ChromiumTrioxide = new SimpleDustMaterial(19, "chromium_trioxide", 0xFFE4E1, DULL, of(new MaterialStack(Chrome, 1), new MaterialStack(Oxygen, 3)), GENERATE_SMALL_TINY);
+    public static SimpleDustMaterial AntimonyTrioxide = new SimpleDustMaterial(20, "antimony_trioxide", 0xE6E6F0, DULL, of(new MaterialStack(Antimony, 2), new MaterialStack(Oxygen, 3)), GENERATE_SMALL_TINY);
+    public static SimpleDustMaterial Zincite = new SimpleDustMaterial(21, "zincite", 0xFFFFF5, DULL, of(new MaterialStack(Zinc, 1), new MaterialStack(Oxygen, 1)), 0); //todo this isn't getting registered
+    public static SimpleDustMaterial CupricOxide = new SimpleDustMaterial(22, "cupric_oxide", 0x0F0F0F, DULL, of(new MaterialStack(Copper, 1), new MaterialStack(Oxygen, 1)), 0);
+    public static SimpleDustMaterial CobaltOxide = new SimpleDustMaterial(23, "cobalt_oxide", 0x788000, DULL, of(new MaterialStack(Cobalt, 1), new MaterialStack(Oxygen, 1)), 0);
+    public static SimpleDustMaterial ArsenicTrioxide = new SimpleDustMaterial(24, "arsenic_trioxide", 0xFFFFFF, ROUGH, of(new MaterialStack(Arsenic, 2), new MaterialStack(Oxygen, 3)), GENERATE_SMALL_TINY);
+    public static SimpleDustMaterial Massicot = new SimpleDustMaterial(25, "massicot", 0xFFDD55, DULL, of(new MaterialStack(Lead, 1), new MaterialStack(Oxygen, 1)), 0);
+    public static SimpleDustMaterial Ferrosilite = new SimpleDustMaterial(26, "ferrosilite", 0x97632A, DULL, of(new MaterialStack(Iron, 1), new MaterialStack(Silicon, 1), new MaterialStack(Oxygen, 3)), 0);
+
 
     /**
      * Organic chemistry

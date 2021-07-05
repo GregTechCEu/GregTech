@@ -95,11 +95,9 @@ public class MaterialRecipeHandler {
 
                 boolean hasHotIngot = OrePrefix.ingotHot.doGenerateItem(metalMaterial);
                 ItemStack ingotStack = OreDictUnifier.get(hasHotIngot ? OrePrefix.ingotHot : OrePrefix.ingot, metalMaterial);
-                ItemStack nuggetStack = OreDictUnifier.get(OrePrefix.nugget, metalMaterial);
 
                 if (metalMaterial.blastFurnaceTemperature <= 0) {
                     ModHandler.addSmeltingRecipe(new UnificationEntry(dustPrefix, metalMaterial), ingotStack);
-                    ModHandler.addSmeltingRecipe(new UnificationEntry(OrePrefix.dustTiny, metalMaterial), nuggetStack);
                 } else {
                     int duration = Math.max(1, (int) (metalMaterial.getAverageMass() * metalMaterial.blastFurnaceTemperature / 50L));
                     ModHandler.removeFurnaceSmelting(new UnificationEntry(OrePrefix.ingot, metalMaterial));
@@ -113,18 +111,6 @@ public class MaterialRecipeHandler {
                         ingotSmeltingBuilder.inputs(new CountableIngredient(new IntCircuitIngredient(1), 0));
                     }
                     ingotSmeltingBuilder.buildAndRegister();
-
-                    if (!hasHotIngot) {
-                        BlastRecipeBuilder nuggetSmeltingBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
-                                .input(OrePrefix.dustTiny, metalMaterial)
-                                .outputs(nuggetStack)
-                                .blastFurnaceTemp(metalMaterial.blastFurnaceTemperature)
-                                .duration(Math.max(1, duration / 9)).EUt(120);
-                        if (circuitRequiringMaterials.contains(metalMaterial)) {
-                            nuggetSmeltingBuilder.inputs(IntCircuitIngredient.getIntegratedCircuit(1));
-                        }
-                        nuggetSmeltingBuilder.buildAndRegister();
-                    }
 
                     if (hasHotIngot) {
                         RecipeMaps.VACUUM_RECIPES.recipeBuilder()
