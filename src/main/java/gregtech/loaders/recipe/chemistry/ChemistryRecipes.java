@@ -1,6 +1,5 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.loaders.recipe.LargeReactorRecipes;
 import net.minecraft.init.Items;
 
 import static gregtech.api.recipes.RecipeMaps.*;
