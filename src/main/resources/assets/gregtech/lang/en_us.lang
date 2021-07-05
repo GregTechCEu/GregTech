@@ -543,6 +543,8 @@ metaitem.engraved.crystal_chip.name=Engraved Crystal Chip
 metaitem.engraved.crystal_chip.tooltip=Needed for Circuits
 metaitem.crystal.raw.name=Raw Crystal Chip
 metaitem.crystal.raw.tooltip=Raw Crystal Processor
+metaitem.crystal.raw_chip.name=Raw Crystal Chip Parts
+metaitem.crystal.raw_chip.tooltip=Raw Crystal Processor Parts
 metaitem.engraved.lapotron_chip.name=Engraved Lapotron Crystal Chip
 
 metaitem.crystal.central_processing_unit.name=Crystal Processing Unit

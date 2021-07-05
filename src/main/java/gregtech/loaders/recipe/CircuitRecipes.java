@@ -4,8 +4,6 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.material.MarkerMaterials.Component;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.MarkerMaterials.Color;
-import gregtech.api.unification.material.type.IngotMaterial;
-import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
 import net.minecraft.init.Items;
@@ -21,12 +19,6 @@ public class CircuitRecipes {
 
     private CircuitRecipes() {
     }
-
-    // TODO Remove
-    private static final MaterialStack[] solderingList = {
-            new MaterialStack(Tin, 2L),
-            new MaterialStack(SolderingAlloy, 1L)
-    };
 
     public static void init() {
         waferRecipes();
@@ -506,11 +498,6 @@ public class CircuitRecipes {
                 .output(CRYSTAL_SYSTEM_ON_CHIP)
                 .buildAndRegister();
 
-        CUTTER_RECIPES.recipeBuilder().EUt(60).duration(960)
-                .input(CRYSTAL_CENTRAL_PROCESSING_UNIT)
-                .output(RAW_CRYSTAL_CHIP, 2)
-                .buildAndRegister();
-
         AUTOCLAVE_RECIPES.recipeBuilder().duration(12000).EUt(320)
                 .input(gemExquisite, Emerald)
                 .fluidInputs(Europium.getFluid(L / 9))
@@ -521,6 +508,29 @@ public class CircuitRecipes {
                 .input(gemExquisite, Olivine)
                 .fluidInputs(Europium.getFluid(L / 9))
                 .chancedOutput(RAW_CRYSTAL_CHIP, 1000, 2000)
+                .buildAndRegister();
+
+        FORGE_HAMMER_RECIPES.recipeBuilder().EUt(480).duration(100)
+                .input(RAW_CRYSTAL_CHIP)
+                .output(RAW_CRYSTAL_CHIP_PART, 9)
+                .buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder().duration(12000).EUt(480)
+                .input(RAW_CRYSTAL_CHIP_PART)
+                .fluidInputs(Europium.getFluid(L / 9))
+                .chancedOutput(RAW_CRYSTAL_CHIP, 8000, 250)
+                .buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder().duration(12000).EUt(480)
+                .input(RAW_CRYSTAL_CHIP_PART)
+                .fluidInputs(Mutagen.getFluid(250))
+                .chancedOutput(RAW_CRYSTAL_CHIP, 8000, 250)
+                .buildAndRegister();
+
+        AUTOCLAVE_RECIPES.recipeBuilder().duration(12000).EUt(480)
+                .input(RAW_CRYSTAL_CHIP_PART)
+                .fluidInputs(BacterialSludge.getFluid(250))
+                .chancedOutput(RAW_CRYSTAL_CHIP, 8000, 250)
                 .buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder().duration(900).EUt(480).blastFurnaceTemp(5000)

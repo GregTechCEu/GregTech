@@ -245,6 +245,7 @@ public class MetaItem2 extends MaterialMetaItem {
         ADVANCED_SMD_DIODE = addItem(547, "component.advanced_smd.diode");
 
         BIO_CHAFF = addItem(548, "bio_chaff");
+        RAW_CRYSTAL_CHIP_PART = addItem(549, "crystal.raw_chip");
     }
 
     public void registerRecipes() {

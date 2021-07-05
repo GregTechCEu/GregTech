@@ -278,6 +278,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP;
 
     public static MetaItem<?>.MetaValueItem RAW_CRYSTAL_CHIP;
+    public static MetaItem<?>.MetaValueItem RAW_CRYSTAL_CHIP_PART;
     public static MetaItem<?>.MetaValueItem CRYSTAL_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem CRYSTAL_SYSTEM_ON_CHIP;
 
