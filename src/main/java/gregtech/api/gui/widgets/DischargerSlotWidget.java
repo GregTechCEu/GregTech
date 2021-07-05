@@ -10,8 +10,7 @@ public class DischargerSlotWidget extends SlotWidget {
     public DischargerSlotWidget(IItemHandlerModifiable itemHandler, int slotIndex, int xPosition, int yPosition) {
         super(itemHandler, slotIndex, xPosition, yPosition, true, true);
     }
-
-    @Override
+    
     public boolean canPutStack(ItemStack stack) {
         if (this instanceof IElectricItem) {
             IElectricItem capability = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
