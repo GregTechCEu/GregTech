@@ -97,13 +97,5 @@ public class MixerRecipes {
             .fluidInputs(Oxygen.getFluid(7000))
             .output(dust, YttriumBariumCuprate, 13)
             .EUt(8).duration(8000).buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder()
-                .input(dust, Sugar, 4)
-                .input(dust, Meat)
-                .input(dustTiny, Salt)
-                .fluidInputs(DistilledWater.getFluid(4000))
-                .fluidOutputs(RawGrowthMedium.getFluid(4000))
-                .duration(160).EUt(16).buildAndRegister();
     }
 }

@@ -865,4 +865,36 @@ public class GTUtility {
         }
         return false;
     }
+
+    public static int getDecompositionReductionRatio(FluidStack fluidInput, FluidStack fluidOutput, ItemStack input, ItemStack output) {
+        int[] divisors = new int[]{2, 5, 10, 25, 50};
+        int ratio = -1;
+
+        for (int divisor : divisors) {
+
+            if (!(isFluidStackAmountDivisible(fluidInput, divisor)))
+                continue;
+
+            if (!(isFluidStackAmountDivisible(fluidOutput, divisor)))
+                continue;
+
+            if (input != null && !(GTUtility.isItemStackCountDivisible(input, divisor)))
+                continue;
+
+            if (output != null && !(GTUtility.isItemStackCountDivisible(output, divisor)))
+                continue;
+
+            ratio = divisor;
+        }
+
+        return Math.max(1, ratio);
+    }
+
+    public static boolean isFluidStackAmountDivisible(FluidStack fluidStack, int divisor) {
+        return fluidStack.amount % divisor == 0 && fluidStack.amount % divisor != fluidStack.amount && fluidStack.amount / divisor != 0;
+    }
+
+    public static boolean isItemStackCountDivisible(ItemStack itemStack, int divisor) {
+        return itemStack.getCount() % divisor == 0 && itemStack.getCount() % divisor != itemStack.getCount() && itemStack.getCount() / divisor != 0;
+    }
 }

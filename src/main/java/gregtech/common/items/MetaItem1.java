@@ -187,14 +187,14 @@ public class MetaItem1 extends MaterialMetaItem {
         ELECTRIC_MOTOR_ZPM = addItem(607, "electric.motor.zpm");
         ELECTRIC_MOTOR_UV = addItem(608, "electric.motor.uv");
 
-        ELECTRIC_PUMP_LV = addItem(610, "electric.pump.lv");
-        ELECTRIC_PUMP_MV = addItem(611, "electric.pump.mv");
-        ELECTRIC_PUMP_HV = addItem(612, "electric.pump.hv");
-        ELECTRIC_PUMP_EV = addItem(613, "electric.pump.ev");
-        ELECTRIC_PUMP_IV = addItem(614, "electric.pump.iv");
-        ELECTRIC_PUMP_LUV = addItem(615, "electric.pump.luv");
-        ELECTRIC_PUMP_ZPM = addItem(616, "electric.pump.zpm");
-        ELECTRIC_PUMP_UV = addItem(617, "electric.pump.uv");
+        PUMPS[0] = ELECTRIC_PUMP_LV = addItem(610, "electric.pump.lv");
+        PUMPS[1] = ELECTRIC_PUMP_MV = addItem(611, "electric.pump.mv");
+        PUMPS[2] = ELECTRIC_PUMP_HV = addItem(612, "electric.pump.hv");
+        PUMPS[3] = ELECTRIC_PUMP_EV = addItem(613, "electric.pump.ev");
+        PUMPS[4] = ELECTRIC_PUMP_IV = addItem(614, "electric.pump.iv");
+        PUMPS[5] = ELECTRIC_PUMP_LUV = addItem(615, "electric.pump.luv");
+        PUMPS[6] = ELECTRIC_PUMP_ZPM = addItem(616, "electric.pump.zpm");
+        PUMPS[7] = ELECTRIC_PUMP_UV = addItem(617, "electric.pump.uv");
 
         RUBBER_DROP = addItem(627, "rubber_drop").setBurnValue(200);
 

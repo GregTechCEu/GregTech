@@ -168,6 +168,7 @@ public enum OrePrefix {
     battery("Reusable Batteries", -1, null, null, DISALLOW_RECYCLING, null), // Introduced by Calclavia
     circuit("Circuits", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null), // Introduced by Calclavia
     chipset("Chipsets", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null), // Introduced by Buildcraft
+    component("Components", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
 
     // Used for Gregification Addon
 
@@ -433,9 +434,6 @@ public enum OrePrefix {
             material = materialType; //append default material for self-referencing OrePrefix
         }
         if (material != null) {
-            if (material.getMaterialClass() == SimpleDustMaterial.class) {
-                GTLog.logger.info("HERE!!!!!");
-            }
             generatedMaterials.add(material);
         }
     }

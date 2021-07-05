@@ -17,6 +17,9 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import gregtech.api.items.toolitem.ToolMetaItem;
+
 import java.util.List;
 
 public class ToolSaw extends ToolBase {
@@ -58,7 +61,13 @@ public class ToolSaw extends ToolBase {
         if (player.world.isRemote || player.capabilities.isCreativeMode) {
             return false;
         }
-        return ToolUtility.applyShearBehavior(stack, blockPos, player);
+        boolean result = ToolUtility.applyShearBehavior(stack, blockPos, player);
+        if (result) {
+            ToolMetaItem<?> toolMetaItem = (ToolMetaItem<?>) stack.getItem();
+            int damagePerBlockBreak = getToolDamagePerBlockBreak(stack);
+            toolMetaItem.damageItem(stack, damagePerBlockBreak, false);
+        }
+        return result;
     }
 
     @Override

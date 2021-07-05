@@ -69,7 +69,9 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipeCategories(new IntCircuitCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MultiblockInfoCategory(registry.getJeiHelpers()));
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            registry.addRecipeCategories(new RecipeMapCategory(recipeMap, registry.getJeiHelpers().getGuiHelper()));
+            if(!recipeMap.isHidden) {
+                registry.addRecipeCategories(new RecipeMapCategory(recipeMap, registry.getJeiHelpers().getGuiHelper()));
+            }
         }
         for (FuelRecipeMap fuelRecipeMap : FuelRecipeMap.getRecipeMaps()) {
             registry.addRecipeCategories(new FuelRecipeMapCategory(fuelRecipeMap, registry.getJeiHelpers().getGuiHelper()));

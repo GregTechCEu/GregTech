@@ -26,7 +26,6 @@ import static gregtech.api.unification.material.type.DustMaterial.MatFlags.*;
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.GENERATE_ROD;
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.MORTAR_GRINDABLE;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.api.unification.ore.OrePrefix.block;
 
 public class MaterialRecipeHandler {
 
@@ -96,11 +95,9 @@ public class MaterialRecipeHandler {
 
                 boolean hasHotIngot = OrePrefix.ingotHot.doGenerateItem(metalMaterial);
                 ItemStack ingotStack = OreDictUnifier.get(hasHotIngot ? OrePrefix.ingotHot : OrePrefix.ingot, metalMaterial);
-                ItemStack nuggetStack = OreDictUnifier.get(OrePrefix.nugget, metalMaterial);
 
                 if (metalMaterial.blastFurnaceTemperature <= 0) {
                     ModHandler.addSmeltingRecipe(new UnificationEntry(dustPrefix, metalMaterial), ingotStack);
-                    ModHandler.addSmeltingRecipe(new UnificationEntry(OrePrefix.dustTiny, metalMaterial), nuggetStack);
                 } else {
                     int duration = Math.max(1, (int) (metalMaterial.getAverageMass() * metalMaterial.blastFurnaceTemperature / 50L));
                     ModHandler.removeFurnaceSmelting(new UnificationEntry(OrePrefix.ingot, metalMaterial));
@@ -111,21 +108,9 @@ public class MaterialRecipeHandler {
                             .blastFurnaceTemp(metalMaterial.blastFurnaceTemperature)
                             .duration(duration).EUt(120);
                     if (circuitRequiringMaterials.contains(metalMaterial)) {
-                        ingotSmeltingBuilder.inputs(new CountableIngredient(new IntCircuitIngredient(0), 0));
+                        ingotSmeltingBuilder.inputs(new CountableIngredient(new IntCircuitIngredient(1), 0));
                     }
                     ingotSmeltingBuilder.buildAndRegister();
-
-                    if (!hasHotIngot) {
-                        BlastRecipeBuilder nuggetSmeltingBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
-                                .input(OrePrefix.dustTiny, metalMaterial)
-                                .outputs(nuggetStack)
-                                .blastFurnaceTemp(metalMaterial.blastFurnaceTemperature)
-                                .duration(Math.max(1, duration / 9)).EUt(120);
-                        if (circuitRequiringMaterials.contains(metalMaterial)) {
-                            nuggetSmeltingBuilder.inputs(IntCircuitIngredient.getIntegratedCircuit(0));
-                        }
-                        nuggetSmeltingBuilder.buildAndRegister();
-                    }
 
                     if (hasHotIngot) {
                         RecipeMaps.VACUUM_RECIPES.recipeBuilder()
@@ -259,7 +244,7 @@ public class MaterialRecipeHandler {
             if (!material.hasFlag(NO_SMASHING)) {
                 ItemStack plateStack = OreDictUnifier.get(OrePrefix.plate, material);
                 RecipeMaps.BENDER_RECIPES.recipeBuilder()
-                    .circuitMeta(0)
+                    .circuitMeta(1)
                     .input(ingotPrefix, material)
                     .outputs(plateStack)
                     .EUt(24).duration((int) (material.getAverageMass()))

@@ -137,34 +137,33 @@ public class ClientProxy extends CommonProxy {
         ItemStack itemStack = event.getItemStack();
 
         // Handles Item tooltips
-        if (!(itemStack.getItem() instanceof ItemBlock)) {
-            String chemicalFormula = null;
+        String chemicalFormula = null;
 
-            // Test for Items
-            UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
-            if (unificationEntry != null && unificationEntry.material != null) {
-                chemicalFormula = unificationEntry.material.getChemicalFormula();
+        // Test for Items
+        UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(itemStack);
+        if (unificationEntry != null && unificationEntry.material != null) {
+            chemicalFormula = unificationEntry.material.getChemicalFormula();
 
-            // Test for Fluids
-            } else if (ItemNBTUtils.hasTag(itemStack)) {
+        // Test for Fluids
+        } else if (ItemNBTUtils.hasTag(itemStack)) {
 
-                // Vanilla bucket
-                chemicalFormula = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
+            // Vanilla bucket
+            chemicalFormula = FluidTooltipUtil.getFluidTooltip(ItemNBTUtils.getString(itemStack, "FluidName"));
 
-                // GTCE Cells, Forestry cans, some other containers
-                if (chemicalFormula == null) {
-                    NBTTagCompound compound = itemStack.getTagCompound();
-                    if (compound != null && compound.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
-                        chemicalFormula = FluidTooltipUtil.getFluidTooltip(FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY)));
-                    }
+            // GTCE Cells, Forestry cans, some other containers
+            if (chemicalFormula == null) {
+                NBTTagCompound compound = itemStack.getTagCompound();
+                if (compound != null && compound.hasKey(FluidHandlerItemStack.FLUID_NBT_KEY, Constants.NBT.TAG_COMPOUND)) {
+                    chemicalFormula = FluidTooltipUtil.getFluidTooltip(FluidStack.loadFluidStackFromNBT(compound.getCompoundTag(FluidHandlerItemStack.FLUID_NBT_KEY)));
                 }
-
-            // Water buckets have a separate registry name from other buckets
-            } else if(itemStack.getItem().equals(Items.WATER_BUCKET)) {
-                chemicalFormula = FluidTooltipUtil.getWaterTooltip();
             }
-            if (chemicalFormula != null && !chemicalFormula.isEmpty())
-                event.getToolTip().add(1, ChatFormatting.GRAY.toString() + chemicalFormula);
+
+        // Water buckets have a separate registry name from other buckets
+        } else if(itemStack.getItem().equals(Items.WATER_BUCKET)) {
+            chemicalFormula = FluidTooltipUtil.getWaterTooltip();
+        }
+        if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
+            event.getToolTip().add(1, ChatFormatting.YELLOW.toString() + chemicalFormula);
         }
     }
 

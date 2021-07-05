@@ -120,7 +120,7 @@ repositories {
 }
 
 dependencies {
-    "deobfCompile"("net.sengir.forestry:forestry_$mcVersion:$forestryVersion") {
+    "deobfProvided"("net.sengir.forestry:forestry_$mcVersion:$forestryVersion") {
         isTransitive = false
     }
     "deobfCompile"("codechicken:ChickenASM:$shortVersion-$chickenasmVersion")

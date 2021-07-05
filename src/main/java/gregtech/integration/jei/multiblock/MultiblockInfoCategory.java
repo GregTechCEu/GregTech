@@ -34,7 +34,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("coke_oven", new MultiblockInfoRecipeWrapper(new CokeOvenInfo()));
         put("vacuum_freezer", new MultiblockInfoRecipeWrapper(new VacuumFreezerInfo()));
         put("implosion_compressor", new MultiblockInfoRecipeWrapper(new ImplosionCompressorInfo()));
-        put("pyrolyze_oven", new MultiblockInfoRecipeWrapper(new PyrolyzeOvenInfo()));
+        put("pyrolyze_oven", new MultiblockInfoRecipeWrapper(new PyrolyseOvenInfo()));
         put("cracker_unit", new MultiblockInfoRecipeWrapper(new CrackerUnitInfo()));
         put("diesel_engine", new MultiblockInfoRecipeWrapper(new LargeCombustionEngineInfo()));
         put("distillation_tower", new MultiblockInfoRecipeWrapper(new DistillationTowerInfo()));

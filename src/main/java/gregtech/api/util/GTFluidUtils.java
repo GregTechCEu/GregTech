@@ -44,4 +44,21 @@ public class GTFluidUtils {
         }
         return transferLimit - fluidLeftToTransfer;
     }
+
+    public static boolean transferExactFluidStack(@Nonnull IFluidHandler sourceHandler, @Nonnull IFluidHandler destHandler, FluidStack fluidStack) {
+        int amount = fluidStack.amount;
+        FluidStack sourceFluid = sourceHandler.drain(fluidStack, false);
+        if (sourceFluid == null || sourceFluid.amount != amount) {
+            return false;
+        }
+        int canInsertAmount = destHandler.fill(sourceFluid, false);
+        if (canInsertAmount == amount) {
+            sourceFluid = sourceHandler.drain(sourceFluid, true);
+            if (sourceFluid != null && sourceFluid.amount > 0) {
+                destHandler.fill(sourceFluid, true);
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -306,10 +306,10 @@ public class SeparationRecipes {
 
         // Electrolyzer
         ELECTROLYZER_RECIPES.recipeBuilder()
-                .input(dust, SodiumBisulfate, 14)
-                .fluidOutputs(SodiumPersulfate.getFluid(1000))
-                .fluidOutputs(Hydrogen.getFluid(2000))
-                .duration(448).EUt(60).buildAndRegister();
+                .input(dust, SodiumBisulfate, 7)
+                .fluidOutputs(SodiumPersulfate.getFluid(500))
+                .fluidOutputs(Hydrogen.getFluid(1000))
+                .duration(150).EUt(30).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(SaltWater.getFluid(1000))
@@ -493,10 +493,5 @@ public class SeparationRecipes {
                 .inputs(new ItemStack(Blocks.BOOKSHELF))
                 .outputs(new ItemStack(Items.BOOK, 3))
                 .duration(300).EUt(2).buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Items.EGG))
-                .chancedOutput(MetaItems.STEM_CELLS.getStackForm(), 1500, 500)
-                .duration(600).EUt(480).buildAndRegister();
     }
 }
