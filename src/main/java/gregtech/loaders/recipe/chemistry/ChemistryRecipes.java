@@ -21,6 +21,7 @@ public class ChemistryRecipes {
         ReactorRecipes.init();
         PolymerRecipes.init();
         LargeReactorRecipes.init();
+        GrowthMediumRecipes.init();
 
 
         // A Few Random Recipes
@@ -76,11 +77,5 @@ public class ChemistryRecipes {
             .output(ingot, RedAlloy, 2)
             .blastFurnaceTemp(1200)
             .duration(884).EUt(120).buildAndRegister();
-
-        FLUID_HEATER_RECIPES.recipeBuilder()
-            .fluidInputs(RawGrowthMedium.getFluid(500))
-            .circuitMeta(1)
-            .fluidOutputs(SterileGrowthMedium.getFluid(500))
-            .duration(30).EUt(24).buildAndRegister();
     }
 }

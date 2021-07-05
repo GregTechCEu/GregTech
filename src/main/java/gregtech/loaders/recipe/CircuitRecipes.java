@@ -75,7 +75,7 @@ public class CircuitRecipes {
         CUTTER_RECIPES.recipeBuilder().duration(1600).EUt(480) .input(NAQUADAH_BOULE)  .output(NAQUADAH_WAFER, 64).buildAndRegister();
         CUTTER_RECIPES.recipeBuilder().duration(2400).EUt(1920).input(NEUTRONIUM_BOULE).output(NEUTRONIUM_WAFER, 64).output(NEUTRONIUM_WAFER, 32).buildAndRegister();
 
-        // Wafer engraving
+        // Wafer engraving TODO ULPIC, LPIC
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(SILICON_WAFER)   .notConsumable(craftingLens, Color.Red)      .output(INTEGRATED_LOGIC_CIRCUIT_WAFER)          .buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(480) .input(GLOWSTONE_WAFER) .notConsumable(craftingLens, Color.Red)      .output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 4) .buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(1920).input(NAQUADAH_WAFER)  .notConsumable(craftingLens, Color.Red)      .output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 8) .buildAndRegister();
@@ -144,19 +144,21 @@ public class CircuitRecipes {
                 .buildAndRegister();
 
         // Wafer cutting
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(HIGHLY_ADVANCED_SOC_WAFER)          .output(HIGHLY_ADVANCED_SOC, 6)          .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(ADVANCED_SYSTEM_ON_CHIP_WAFER)      .output(ADVANCED_SYSTEM_ON_CHIP, 6)      .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(480) .input(SYSTEM_ON_CHIP_WAFER)               .output(SYSTEM_ON_CHIP, 6)               .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(64)  .input(SIMPLE_SYSTEM_ON_CHIP_WAFER)        .output(SIMPLE_SYSTEM_ON_CHIP, 6)        .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(96)  .input(RANDOM_ACCESS_MEMORY_WAFER)         .output(RANDOM_ACCESS_MEMORY, 32)        .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(QBIT_CENTRAL_PROCESSING_UNIT_WAFER) .output(QBIT_CENTRAL_PROCESSING_UNIT, 4) .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(POWER_INTEGRATED_CIRCUIT_WAFER)     .output(POWER_INTEGRATED_CIRCUIT, 4)     .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(HIGH_POWER_INTEGRATED_CIRCUIT_WAFER).output(HIGH_POWER_INTEGRATED_CIRCUIT, 2).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192) .input(NOR_MEMORY_CHIP_WAFER)              .output(NOR_MEMORY_CHIP, 16)             .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192) .input(NAND_MEMORY_CHIP_WAFER)             .output(NAND_MEMORY_CHIP, 32)            .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(CENTRAL_PROCESSING_UNIT_WAFER)      .output(CENTRAL_PROCESSING_UNIT, 8)      .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(64)  .input(INTEGRATED_LOGIC_CIRCUIT_WAFER)     .output(INTEGRATED_LOGIC_CIRCUIT, 8)     .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(480). input(NANO_CENTRAL_PROCESSING_UNIT_WAFER) .output(NANO_CENTRAL_PROCESSING_UNIT, 8) .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(HIGHLY_ADVANCED_SOC_WAFER)               .output(HIGHLY_ADVANCED_SOC, 6)               .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(ADVANCED_SYSTEM_ON_CHIP_WAFER)           .output(ADVANCED_SYSTEM_ON_CHIP, 6)           .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(480) .input(SYSTEM_ON_CHIP_WAFER)                    .output(SYSTEM_ON_CHIP, 6)                    .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(64)  .input(SIMPLE_SYSTEM_ON_CHIP_WAFER)             .output(SIMPLE_SYSTEM_ON_CHIP, 6)             .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(96)  .input(RANDOM_ACCESS_MEMORY_WAFER)              .output(RANDOM_ACCESS_MEMORY, 32)             .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(QBIT_CENTRAL_PROCESSING_UNIT_WAFER)      .output(QBIT_CENTRAL_PROCESSING_UNIT, 4)      .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 6).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(480) .input(LOW_POWER_INTEGRATED_CIRCUIT_WAFER)      .output(POWER_INTEGRATED_CIRCUIT, 4)          .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(POWER_INTEGRATED_CIRCUIT_WAFER)          .output(POWER_INTEGRATED_CIRCUIT, 4)          .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(HIGH_POWER_INTEGRATED_CIRCUIT_WAFER)     .output(HIGH_POWER_INTEGRATED_CIRCUIT, 2)     .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192) .input(NOR_MEMORY_CHIP_WAFER)                   .output(NOR_MEMORY_CHIP, 16)                  .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192) .input(NAND_MEMORY_CHIP_WAFER)                  .output(NAND_MEMORY_CHIP, 32)                 .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(CENTRAL_PROCESSING_UNIT_WAFER)           .output(CENTRAL_PROCESSING_UNIT, 8)           .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(64)  .input(INTEGRATED_LOGIC_CIRCUIT_WAFER)          .output(INTEGRATED_LOGIC_CIRCUIT, 8)          .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(480). input(NANO_CENTRAL_PROCESSING_UNIT_WAFER)      .output(NANO_CENTRAL_PROCESSING_UNIT, 8)      .buildAndRegister();
     }
 
     private static void componentRecipes() {
@@ -363,26 +365,12 @@ public class CircuitRecipes {
                 .output(SMD_RESISTOR, 16)
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(1920)
-                .input(dust, Carbon)
-                .input(wireFine, Electrum, 4)
-                .fluidInputs(Polybenzimidazole.getFluid(L / 2))
-                .output(SMD_RESISTOR, 48)
-                .buildAndRegister();
-
         // SMD Diode
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(480)
                 .input(dust, GalliumArsenide)
                 .input(wireFine, Platinum, 8)
-                .fluidInputs(Polyethylene.getFluid(288))
+                .fluidInputs(Polyethylene.getFluid(L * 2))
                 .output(SMD_DIODE, 32)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(1920)
-                .input(dust, GalliumArsenide)
-                .input(wireFine, Platinum, 8)
-                .fluidInputs(Polybenzimidazole.getFluid(L / 2))
-                .output(SMD_DIODE, 64)
                 .buildAndRegister();
 
         // SMD Transistor
@@ -391,13 +379,6 @@ public class CircuitRecipes {
                 .input(wireFine, AnnealedCopper, 8)
                 .fluidInputs(Polyethylene.getFluid(L))
                 .output(SMD_TRANSISTOR, 16)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(1920)
-                .input(foil, Gallium)
-                .input(wireFine, AnnealedCopper, 8)
-                .fluidInputs(Polybenzimidazole.getFluid(L / 2))
-                .output(SMD_TRANSISTOR, 48)
                 .buildAndRegister();
 
         // SMD Capacitor
@@ -429,32 +410,36 @@ public class CircuitRecipes {
                 .output(SMD_CAPACITOR, 24)
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(40).EUt(1920)
-                .input(foil, SiliconeRubber)
-                .input(foil, Aluminium)
-                .fluidInputs(Polybenzimidazole.getFluid(18))
-                .output(SMD_CAPACITOR, 24)
+        // Advanced SMD Resistor
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(384).duration(160)
+                .input(dust, Graphene)
+                .input(wireFine, Platinum, 4)
+                .fluidInputs(Polybenzimidazole.getFluid(L * 2))
+                .output(ADVANCED_SMD_RESISTOR, 16)
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(40).EUt(1920)
-                .input(foil, PolyvinylChloride, 2)
-                .input(foil, Aluminium)
-                .fluidInputs(Polybenzimidazole.getFluid(18))
-                .output(SMD_CAPACITOR, 36)
+        // Advanced SMD Diode
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(480).duration(150)
+                .input(dustSmall, IndiumGalliumPhosphide)
+                .input(wireFine, NiobiumTitanium, 4)
+                .fluidInputs(Polybenzimidazole.getFluid(L / 2))
+                .output(ADVANCED_SMD_DIODE, 16)
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(60).EUt(1920)
-                .input(foil, SiliconeRubber)
-                .input(foil, Tantalum)
-                .fluidInputs(Polybenzimidazole.getFluid(18))
-                .output(SMD_CAPACITOR, 48)
+        // Advanced SMD Transistor
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(480).duration(160)
+                .input(foil, VanadiumGallium)
+                .input(wireFine, HSSG, 8)
+                .fluidInputs(Polybenzimidazole.getFluid(L))
+                .output(ADVANCED_SMD_TRANSISTOR, 16)
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(60).EUt(1920)
-                .input(foil, PolyvinylChloride, 2)
-                .input(foil, Tantalum)
-                .fluidInputs(Polybenzimidazole.getFluid(18))
-                .output(SMD_CAPACITOR, 64)
+        // Advanced SMD Capacitor
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(480).duration(80)
+                .input(foil, Polybenzimidazole, 2)
+                .input(foil, HSSS)
+                .fluidInputs(Polybenzimidazole.getFluid(L / 4))
+                .output(ADVANCED_SMD_CAPACITOR, 16)
                 .buildAndRegister();
 
         // Carbon Fibers
@@ -585,7 +570,7 @@ public class CircuitRecipes {
 
         // Coated Board
         ModHandler.addShapedRecipe("coated_board", COATED_BOARD.getStackForm(3),
-                " R ", "PPP", " R ",
+                "RRR", "PPP", "RRR",
                 'R', RUBBER_DROP.getStackForm(),
                 'P', new UnificationEntry(plate, Wood));
 
@@ -747,13 +732,13 @@ public class CircuitRecipes {
         // Fiber Reinforced Epoxy Board
         CHEMICAL_BATH_RECIPES.recipeBuilder().duration(240).EUt(16)
                 .input(GLASS_FIBER)
-                .fluidInputs(Epoxy.getFluid(144))
+                .fluidInputs(Epoxy.getFluid(L))
                 .output(plate, ReinforcedEpoxyResin)
                 .buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder().duration(240).EUt(16)
                 .input(CARBON_FIBERS)
-                .fluidInputs(Epoxy.getFluid(144))
+                .fluidInputs(Epoxy.getFluid(L))
                 .output(plate, ReinforcedEpoxyResin)
                 .buildAndRegister();
 
@@ -771,7 +756,7 @@ public class CircuitRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder().duration(500).EUt(10)
                 .input(plate, ReinforcedEpoxyResin)
-                .input(foil, Copper)
+                .input(foil, AnnealedCopper, 8)
                 .fluidInputs(SulfuricAcid.getFluid(125))
                 .output(FIBER_BOARD)
                 .buildAndRegister();
@@ -844,14 +829,14 @@ public class CircuitRecipes {
                 .output(WETWARE_BOARD, 16)
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(300).EUt(7680)
+        CHEMICAL_RECIPES.recipeBuilder().duration(300).EUt(7680)
                 .input(WETWARE_BOARD)
                 .input(foil, NiobiumTitanium, 32)
                 .fluidInputs(SodiumPersulfate.getFluid(8000))
                 .output(WETWARE_CIRCUIT_BOARD)
                 .buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(150).EUt(30720)
+        CHEMICAL_RECIPES.recipeBuilder().duration(150).EUt(30720)
                 .input(WETWARE_BOARD)
                 .input(foil, NiobiumTitanium, 32)
                 .fluidInputs(Iron3Chloride.getFluid(4000))
@@ -1021,6 +1006,17 @@ public class CircuitRecipes {
                 .solderMultiplier(4)
                 .buildAndRegister();
 
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(480).duration(400)
+                .input(frameGt, Aluminium, 2)
+                .input(WORKSTATION_EV, 2)
+                .input(SMALL_COIL, 12)
+                .input(ADVANCED_SMD_CAPACITOR, 4)
+                .input(RANDOM_ACCESS_MEMORY, 16)
+                .input(wireGtSingle, AnnealedCopper, 16)
+                .output(MAINFRAME_IV)
+                .solderMultiplier(4)
+                .buildAndRegister();
+
         // T4: Nano ====================================================================================================
 
         // HV
@@ -1030,6 +1026,16 @@ public class CircuitRecipes {
                 .input(SMD_RESISTOR, 8)
                 .input(SMD_CAPACITOR, 8)
                 .input(SMD_TRANSISTOR, 8)
+                .input(wireFine, Electrum, 8)
+                .output(NANO_PROCESSOR_HV, 2)
+                .buildAndRegister();
+
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(100)
+                .input(ADVANCED_CIRCUIT_BOARD)
+                .input(NANO_CENTRAL_PROCESSING_UNIT)
+                .input(ADVANCED_SMD_RESISTOR, 2)
+                .input(ADVANCED_SMD_CAPACITOR, 2)
+                .input(ADVANCED_SMD_TRANSISTOR, 2)
                 .input(wireFine, Electrum, 8)
                 .output(NANO_PROCESSOR_HV, 2)
                 .buildAndRegister();
@@ -1044,11 +1050,22 @@ public class CircuitRecipes {
                 .buildAndRegister();
 
         // EV
-        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(200)
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(400)
                 .input(ADVANCED_CIRCUIT_BOARD)
                 .input(NANO_PROCESSOR_HV, 2)
                 .input(SMALL_COIL, 8)
                 .input(SMD_CAPACITOR, 8)
+                .input(RANDOM_ACCESS_MEMORY, 8)
+                .input(wireFine, Electrum, 16)
+                .output(NANO_PROCESSOR_ASSEMBLY_EV, 2)
+                .solderMultiplier(2)
+                .buildAndRegister();
+
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(200)
+                .input(ADVANCED_CIRCUIT_BOARD)
+                .input(NANO_PROCESSOR_HV, 2)
+                .input(SMALL_COIL, 8)
+                .input(ADVANCED_SMD_CAPACITOR, 2)
                 .input(RANDOM_ACCESS_MEMORY, 8)
                 .input(wireFine, Electrum, 16)
                 .output(NANO_PROCESSOR_ASSEMBLY_EV, 2)
@@ -1060,6 +1077,17 @@ public class CircuitRecipes {
                 .input(ADVANCED_CIRCUIT_BOARD)
                 .input(NANO_PROCESSOR_ASSEMBLY_EV, 2)
                 .input(SMD_DIODE, 8)
+                .input(NOR_MEMORY_CHIP, 4)
+                .input(RANDOM_ACCESS_MEMORY, 16)
+                .input(wireFine, Electrum, 16)
+                .output(NANO_COMPUTER_IV)
+                .solderMultiplier(2)
+                .buildAndRegister();
+
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(600).duration(200)
+                .input(ADVANCED_CIRCUIT_BOARD)
+                .input(NANO_PROCESSOR_ASSEMBLY_EV, 2)
+                .input(ADVANCED_SMD_DIODE, 2)
                 .input(NOR_MEMORY_CHIP, 4)
                 .input(RANDOM_ACCESS_MEMORY, 16)
                 .input(wireFine, Electrum, 16)
@@ -1079,182 +1107,324 @@ public class CircuitRecipes {
                 .solderMultiplier(4)
                 .buildAndRegister();
 
-        //circuit assembling recipes TODO
-        for (MaterialStack stack : solderingList) {
-            IngotMaterial material = (IngotMaterial) stack.material;
-            int multiplier = (int) stack.amount;
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(1920).duration(400)
+                .input(frameGt, Aluminium, 2)
+                .input(NANO_COMPUTER_IV, 2)
+                .input(SMALL_COIL, 16)
+                .input(ADVANCED_SMD_CAPACITOR, 8)
+                .input(RANDOM_ACCESS_MEMORY, 16)
+                .input(wireGtSingle, AnnealedCopper, 32)
+                .output(NANO_MAINFRAME_LUV)
+                .solderMultiplier(4)
+                .buildAndRegister();
 
-            // EV Circuits
-            ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(480)
-                    .input(EPOXY_BOARD)
-                    .input(NANO_PROCESSOR_HV, 2)
-                    .input(SMALL_COIL, 4)
-                    .input(SMD_CAPACITOR, 4)
-                    .input(RANDOM_ACCESS_MEMORY, 4)
-                    .input(wireFine, Electrum, 6)
-                    .fluidInputs(material.getFluid(L * multiplier))
-                    .output(NANO_PROCESSOR_ASSEMBLY_EV)
-                    .buildAndRegister();
+        // T5: Quantum =================================================================================================
 
-            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(1960)
-                    .input(FIBER_BOARD)
-                    .input(QBIT_CENTRAL_PROCESSING_UNIT)
-                    .input(NANO_CENTRAL_PROCESSING_UNIT)
-                    .input(SMD_CAPACITOR, 2)
-                    .input(SMD_TRANSISTOR, 2)
-                    .input(wireFine, Platinum, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(QUANTUM_PROCESSOR_EV)
-                    .buildAndRegister();
+        // EV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(2400).duration(200)
+                .input(EXTREME_CIRCUIT_BOARD)
+                .input(QBIT_CENTRAL_PROCESSING_UNIT)
+                .input(NANO_CENTRAL_PROCESSING_UNIT)
+                .input(SMD_CAPACITOR, 12)
+                .input(SMD_TRANSISTOR, 12)
+                .input(wireFine, Platinum, 12)
+                .output(QUANTUM_PROCESSOR_EV, 2)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(32000)
-                    .input(FIBER_BOARD)
-                    .input(ADVANCED_SYSTEM_ON_CHIP)
-                    .input(wireFine, Platinum, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(QUANTUM_PROCESSOR_EV)
-                    .buildAndRegister();
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(2400).duration(100)
+                .input(EXTREME_CIRCUIT_BOARD)
+                .input(QBIT_CENTRAL_PROCESSING_UNIT)
+                .input(NANO_CENTRAL_PROCESSING_UNIT)
+                .input(ADVANCED_SMD_CAPACITOR, 3)
+                .input(ADVANCED_SMD_TRANSISTOR, 3)
+                .input(wireFine, Platinum, 12)
+                .output(QUANTUM_PROCESSOR_EV, 2)
+                .buildAndRegister();
 
-            // IV Circuits
-            /*
-            ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(1960)
-                    .input(FIBER_BOARD)
-                    .input(QUANTUM_PROCESSOR_EV, 2)
-                    .input(SMALL_COIL, 4)
-                    .input(SMD_CAPACITOR, 4)
-                    .input(RANDOM_ACCESS_MEMORY, 4)
-                    .input(wireFine, Platinum, 6)
-                    .fluidInputs(material.getFluid(L * multiplier))
-                    .output(DATA_CONTROL_CIRCUIT_IV)
-                    .buildAndRegister();*/
+        // EV SoC
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(38400).duration(50)
+                .input(EXTREME_CIRCUIT_BOARD)
+                .input(ADVANCED_SYSTEM_ON_CHIP)
+                .input(wireFine, Platinum, 12)
+                .input(bolt, NiobiumTitanium, 8)
+                .output(QUANTUM_PROCESSOR_EV, 4)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(7600)
-                    .input(MULTILAYER_FIBER_BOARD)
-                    .input(CRYSTAL_CENTRAL_PROCESSING_UNIT)
-                    .input(NANO_CENTRAL_PROCESSING_UNIT)
-                    .input(SMD_CAPACITOR, 2)
-                    .input(SMD_TRANSISTOR, 2)
-                    .input(wireFine, NiobiumTitanium, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(CRYSTAL_PROCESSOR_IV)
-                    .buildAndRegister();
+        // IV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(2400).duration(400)
+                .input(EXTREME_CIRCUIT_BOARD)
+                .input(QUANTUM_PROCESSOR_EV, 2)
+                .input(SMALL_COIL, 12)
+                .input(SMD_CAPACITOR, 16)
+                .input(RANDOM_ACCESS_MEMORY, 4)
+                .input(wireFine, Platinum, 16)
+                .output(QUANTUM_ASSEMBLY_IV, 2)
+                .solderMultiplier(2)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder().duration(50).EUt(31900)
-                    .input(MULTILAYER_FIBER_BOARD)
-                    .input(CRYSTAL_SYSTEM_ON_CHIP)
-                    .input(wireFine, NiobiumTitanium, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(CRYSTAL_PROCESSOR_IV)
-                    .buildAndRegister();
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(2400).duration(200)
+                .input(EXTREME_CIRCUIT_BOARD)
+                .input(QUANTUM_PROCESSOR_EV, 2)
+                .input(SMALL_COIL, 12)
+                .input(ADVANCED_SMD_CAPACITOR, 4)
+                .input(RANDOM_ACCESS_MEMORY, 4)
+                .input(wireFine, Platinum, 16)
+                .output(QUANTUM_ASSEMBLY_IV, 2)
+                .solderMultiplier(2)
+                .buildAndRegister();
 
-            // LuV Circuits
-            /*
-            ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(7600)
-                    .input(MULTILAYER_FIBER_BOARD)
-                    .input(CRYSTAL_PROCESSOR_IV, 2)
-                    .input(SMALL_COIL, 4)
-                    .input(SMD_CAPACITOR, 4)
-                    .input(RANDOM_ACCESS_MEMORY, 4)
-                    .input(wireFine, NiobiumTitanium, 6)
-                    .fluidInputs(material.getFluid(L * multiplier))
-                    .output(ENERGY_FLOW_CIRCUIT_LUV)
-                    .buildAndRegister();*/
+        // LuV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(2400).duration(400)
+                .input(EXTREME_CIRCUIT_BOARD)
+                .input(QUANTUM_ASSEMBLY_IV, 2)
+                .input(SMD_DIODE, 8)
+                .input(NOR_MEMORY_CHIP, 4)
+                .input(RANDOM_ACCESS_MEMORY, 16)
+                .input(wireFine, Platinum, 32)
+                .output(QUANTUM_COMPUTER_LUV)
+                .solderMultiplier(2)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(32800)
-                    .input(WETWARE_BOARD)
-                    .input(CRYSTAL_CENTRAL_PROCESSING_UNIT)
-                    .input(NANO_CENTRAL_PROCESSING_UNIT)
-                    .input(SMD_CAPACITOR, 2)
-                    .input(SMD_TRANSISTOR, 2)
-                    .input(wireFine, YttriumBariumCuprate, 2)
-                    .fluidInputs(material.getFluid(L / 2 * multiplier))
-                    .output(WETWARE_PROCESSOR_LUV)
-                    .buildAndRegister();
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(2400).duration(200)
+                .input(EXTREME_CIRCUIT_BOARD)
+                .input(QUANTUM_ASSEMBLY_IV, 2)
+                .input(ADVANCED_SMD_DIODE, 2)
+                .input(NOR_MEMORY_CHIP, 4)
+                .input(RANDOM_ACCESS_MEMORY, 16)
+                .input(wireFine, Platinum, 32)
+                .output(QUANTUM_COMPUTER_LUV)
+                .solderMultiplier(2)
+                .buildAndRegister();
 
-            // ZPM Circuits
-            ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(34400)
-                    .input(WETWARE_BOARD)
-                    .input(WETWARE_PROCESSOR_LUV, 2)
-                    .input(SMALL_COIL, 4)
-                    .input(SMD_CAPACITOR, 4)
-                    .input(RANDOM_ACCESS_MEMORY, 4)
-                    .input(wireFine, YttriumBariumCuprate, 6)
-                    .fluidInputs(material.getFluid(L * multiplier))
-                    .output(WETWARE_PROCESSOR_ASSEMBLY_ZPM)
-                    .buildAndRegister();
+        // ZPM
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(7680).duration(800)
+                .input(frameGt, HSSG, 2)
+                .input(QUANTUM_COMPUTER_LUV, 2)
+                .input(SMALL_COIL, 24)
+                .input(SMD_CAPACITOR, 48)
+                .input(RANDOM_ACCESS_MEMORY, 24)
+                .input(wireGtSingle, AnnealedCopper, 48)
+                .solderMultiplier(4)
+                .output(QUANTUM_MAINFRAME_ZPM)
+                .buildAndRegister();
 
-            // UV Circuits
-            ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(34400)
-                    .input(WETWARE_BOARD, 2)
-                    .input(WETWARE_PROCESSOR_ASSEMBLY_ZPM, 3)
-                    .input(SMD_DIODE, 4)
-                    .input(NOR_MEMORY_CHIP, 4)
-                    .input(RANDOM_ACCESS_MEMORY, 4)
-                    .input(wireFine, YttriumBariumCuprate, 6)
-                    .fluidInputs(material.getFluid(L * multiplier))
-                    .output(WETWARE_SUPER_COMPUTER_UV)
-                    .buildAndRegister();
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(7680).duration(400)
+                .input(frameGt, HSSG, 2)
+                .input(QUANTUM_COMPUTER_LUV, 2)
+                .input(SMALL_COIL, 24)
+                .input(ADVANCED_SMD_CAPACITOR, 12)
+                .input(RANDOM_ACCESS_MEMORY, 24)
+                .input(wireGtSingle, AnnealedCopper, 48)
+                .solderMultiplier(4)
+                .output(QUANTUM_MAINFRAME_ZPM)
+                .buildAndRegister();
 
-            // Misc
-            ASSEMBLER_RECIPES.recipeBuilder().duration(512).EUt(1024)
-                    .input(FIBER_BOARD)
-                    .input(POWER_INTEGRATED_CIRCUIT, 4)
-                    .input(ENGRAVED_LAPOTRON_CHIP, 18)
-                    .input(NANO_CENTRAL_PROCESSING_UNIT)
-                    .input(wireFine, Platinum, 16)
-                    .fluidInputs(material.getFluid(L * multiplier))
-                    .output(ENERGY_LAPOTRONIC_ORB)
-                    .buildAndRegister();
+        // T6: Crystal =================================================================================================
 
-            ASSEMBLER_RECIPES.recipeBuilder().duration(1024).EUt(4096)
-                    .input(FIBER_BOARD)
-                    .input(HIGH_POWER_INTEGRATED_CIRCUIT, 4)
-                    .input(ENERGY_LAPOTRONIC_ORB, 8)
-                    .input(QBIT_CENTRAL_PROCESSING_UNIT)
-                    .input(wireFine, Platinum, 16)
-                    .input(plate, Europium, 4)
-                    .fluidInputs(material.getFluid(L * multiplier))
-                    .output(ENERGY_LAPOTRONIC_ORB2)
-                    .buildAndRegister();
+        // IV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(9600).duration(200)
+                .input(ELITE_CIRCUIT_BOARD)
+                .input(CRYSTAL_CENTRAL_PROCESSING_UNIT)
+                .input(NANO_CENTRAL_PROCESSING_UNIT, 2)
+                .input(ADVANCED_SMD_CAPACITOR, 6)
+                .input(ADVANCED_SMD_TRANSISTOR, 6)
+                .input(wireFine, NiobiumTitanium, 8)
+                .output(CRYSTAL_PROCESSOR_IV, 2)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(90)
-                    .input(PLASTIC_BOARD)
-                    .input(PROCESSOR_MV)
-                    .input(NAND_MEMORY_CHIP, 32)
-                    .input(RANDOM_ACCESS_MEMORY, 4)
-                    .input(wireFine, RedAlloy, 8)
-                    .input(plate, Polyethylene, 4)
-                    .fluidInputs(material.getFluid(L * multiplier))
-                    .output(TOOL_DATA_STICK)
-                    .buildAndRegister();
+        // IV SoC
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(86000).duration(100)
+                .input(ELITE_CIRCUIT_BOARD)
+                .input(CRYSTAL_SYSTEM_ON_CHIP)
+                .input(wireFine, NiobiumTitanium, 8)
+                .input(bolt, YttriumBariumCuprate, 8)
+                .output(CRYSTAL_PROCESSOR_IV, 4)
+                .buildAndRegister();
 
-            ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(1200)
-                    .input(EPOXY_BOARD)
-                    .input(NANO_PROCESSOR_HV)
-                    .input(RANDOM_ACCESS_MEMORY, 4)
-                    .input(NOR_MEMORY_CHIP, 32)
-                    .input(NAND_MEMORY_CHIP, 64)
-                    .input(wireFine, Platinum, 32)
-                    .fluidInputs(material.getFluid(L * multiplier))
-                    .output(TOOL_DATA_ORB)
-                    .buildAndRegister();
-        }
+        // LuV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(9600).duration(400)
+                .input(ELITE_CIRCUIT_BOARD)
+                .input(CRYSTAL_PROCESSOR_IV, 2)
+                .input(SMALL_COIL, 24)
+                .input(ADVANCED_SMD_CAPACITOR, 8)
+                .input(RANDOM_ACCESS_MEMORY, 24)
+                .input(wireFine, NiobiumTitanium, 16)
+                .output(CRYSTAL_ASSEMBLY_LUV, 2)
+                .solderMultiplier(2)
+                .buildAndRegister();
 
-        // UHV Circuits
-        ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(2000).EUt(300000)
-                .input(frameGt, Tritanium, 4)
-                .input(WETWARE_SUPER_COMPUTER_UV, 8)
-                .input(SMALL_COIL, 4)
+        // ZPM
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(9600).duration(400)
+                .input(ELITE_CIRCUIT_BOARD)
+                .input(CRYSTAL_ASSEMBLY_LUV, 2)
+                .input(RANDOM_ACCESS_MEMORY, 4)
+                .input(NOR_MEMORY_CHIP, 32)
+                .input(NAND_MEMORY_CHIP, 64)
+                .input(wireFine, NiobiumTitanium, 32)
+                .solderMultiplier(2)
+                .output(CRYSTAL_COMPUTER_ZPM)
+                .buildAndRegister();
+
+        // UV
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(30720).duration(800)
+                .input(frameGt, HSSE, 2)
+                .input(CRYSTAL_COMPUTER_ZPM, 2)
+                .input(RANDOM_ACCESS_MEMORY, 32)
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 2)
+                .input(wireGtSingle, NiobiumTitanium, 8)
+                .input(SMALL_COIL, 32)
+                .input(ADVANCED_SMD_CAPACITOR, 16)
+                .input(ADVANCED_SMD_DIODE, 8)
+                .fluidInputs(SolderingAlloy.getFluid(L * 10))
+                .output(CRYSTAL_MAINFRAME_UV)
+                .buildAndRegister();
+
+        // T7: Wetware =================================================================================================
+
+        // Neuro Processing Unit
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(80000).duration(600)
+                .input(WETWARE_CIRCUIT_BOARD)
+                .input(STEM_CELLS, 16)
+                .input(pipeSmall, Polybenzimidazole, 8)
+                .input(plate, Electrum, 8)
+                .input(foil, SiliconeRubber, 16)
+                .input(bolt, HSSE, 8)
+                .fluidInputs(SterileGrowthMedium.getFluid(250))
+                .output(NEURO_PROCESSOR)
+                .buildAndRegister();
+
+        // LuV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(38400).duration(200)
+                .input(NEURO_PROCESSOR)
+                .input(CRYSTAL_CENTRAL_PROCESSING_UNIT)
+                .input(NANO_CENTRAL_PROCESSING_UNIT)
+                .input(ADVANCED_SMD_CAPACITOR, 8)
+                .input(ADVANCED_SMD_TRANSISTOR, 8)
+                .input(wireFine, YttriumBariumCuprate, 8)
+                .output(WETWARE_PROCESSOR_LUV, 2)
+                .buildAndRegister();
+
+        // SoC LuV
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(150000).duration(100)
+                .input(NEURO_PROCESSOR)
+                .input(HIGHLY_ADVANCED_SOC)
+                .input(wireFine, YttriumBariumCuprate, 8)
+                .input(bolt, Naquadah, 8)
+                .output(WETWARE_PROCESSOR_LUV, 4)
+                .buildAndRegister();
+
+        // ZPM
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(38400).duration(400)
+                .input(WETWARE_CIRCUIT_BOARD)
+                .input(WETWARE_PROCESSOR_LUV, 2)
+                .input(SMALL_COIL, 32)
+                .input(ADVANCED_SMD_CAPACITOR, 12)
+                .input(RANDOM_ACCESS_MEMORY, 24)
+                .input(wireFine, YttriumBariumCuprate, 16)
+                .solderMultiplier(2)
+                .output(WETWARE_PROCESSOR_ASSEMBLY_ZPM, 2)
+                .buildAndRegister();
+
+        // UV
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(38400).duration(400)
+                .input(WETWARE_CIRCUIT_BOARD)
+                .input(WETWARE_PROCESSOR_ASSEMBLY_ZPM, 2)
+                .input(ADVANCED_SMD_DIODE, 8)
+                .input(NOR_MEMORY_CHIP, 16)
+                .input(RANDOM_ACCESS_MEMORY, 32)
+                .input(wireFine, YttriumBariumCuprate, 24)
+                .input(foil, SiliconeRubber, 32)
+                .input(plate, Europium, 4)
+                .fluidInputs(SolderingAlloy.getFluid(1152))
+                .output(WETWARE_SUPER_COMPUTER_UV)
+                .buildAndRegister();
+
+        // UHV
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(300000).duration(2000)
+                .input(frameGt, Tritanium, 2)
+                .input(WETWARE_SUPER_COMPUTER_UV, 2)
+                .input(ADVANCED_SMD_DIODE, 32)
+                .input(ADVANCED_SMD_CAPACITOR, 32)
+                .input(ADVANCED_SMD_TRANSISTOR, 32)
+                .input(ADVANCED_SMD_RESISTOR, 32)
+                .input(foil, SiliconeRubber, 64)
+                .input(RANDOM_ACCESS_MEMORY, 32)
+                .input(wireGtDouble, Tier.Superconductor, 16)
+                .input(plate, Europium, 8)
+                .fluidInputs(SolderingAlloy.getFluid(L * 20))
+                .fluidInputs(Polybenzimidazole.getFluid(L * 8))
+                .output(WETWARE_MAINFRAME_UHV)
+                .buildAndRegister();
+
+        // Misc ========================================================================================================
+
+        // Data Stick
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(90)
+                .input(PLASTIC_BOARD)
+                .input(CENTRAL_PROCESSING_UNIT, 2)
+                .input(NAND_MEMORY_CHIP, 32)
+                .input(RANDOM_ACCESS_MEMORY, 4)
+                .input(wireFine, RedAlloy, 16)
+                .input(plate, Polyethylene, 4)
+                .output(TOOL_DATA_STICK)
+                .solderMultiplier(2)
+                .buildAndRegister();
+
+        // Data Orb
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(1200)
+                .input(EPOXY_BOARD)
+                .input(circuit, Tier.Advanced, 2)
+                .input(RANDOM_ACCESS_MEMORY, 4)
+                .input(NOR_MEMORY_CHIP, 32)
+                .input(NAND_MEMORY_CHIP, 64)
+                .input(wireFine, Platinum, 32)
+                .solderMultiplier(2)
+                .output(TOOL_DATA_ORB)
+                .buildAndRegister();
+
+        // Lapotronic Energy Orb
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(512).EUt(1024)
+                .input(FIBER_BOARD)
+                .input(POWER_INTEGRATED_CIRCUIT, 4)
+                .input(ENGRAVED_LAPOTRON_CHIP, 24)
+                .input(NANO_CENTRAL_PROCESSING_UNIT, 2)
+                .input(wireFine, Platinum, 16)
+                .input(plate, Platinum, 8)
+                .output(ENERGY_LAPOTRONIC_ORB)
+                .solderMultiplier(2)
+                .buildAndRegister();
+
+        // Lapotronic Energy Cluster
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(80000).duration(1000)
+                .input(MULTILAYER_FIBER_BOARD)
+                .input(foil, Europium, 32)
+                .input(circuit, Tier.Master, 4)
+                .input(ENGRAVED_LAPOTRON_CHIP, 36)
+                .input(ENGRAVED_LAPOTRON_CHIP, 36)
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 64)
+                .input(SMD_DIODE, 32)
                 .input(SMD_CAPACITOR, 32)
                 .input(SMD_RESISTOR, 32)
                 .input(SMD_TRANSISTOR, 32)
-                .input(SMD_DIODE, 32)
-                .input(RANDOM_ACCESS_MEMORY, 16)
-                .input(wireGtDouble, Tier.Superconductor, 16)
-                .input(foil, SiliconeRubber, 64)
-                .fluidInputs(SolderingAlloy.getFluid(L * 20))
-                .fluidInputs(Polybenzimidazole.getFluid(1000))
-                .output(WETWARE_MAINFRAME_MAX)
+                .input(wireFine, Platinum, 64)
+                .fluidInputs(SolderingAlloy.getFluid(L * 5))
+                .output(ENERGY_LAPOTRONIC_ORB2)
+                .buildAndRegister();
+
+        ASSEMBLY_LINE_RECIPES.recipeBuilder().EUt(80000).duration(500)
+                .input(MULTILAYER_FIBER_BOARD)
+                .input(foil, Europium, 32)
+                .input(circuit, Tier.Master, 4)
+                .input(ENGRAVED_LAPOTRON_CHIP, 36)
+                .input(ENGRAVED_LAPOTRON_CHIP, 36)
+                .input(HIGH_POWER_INTEGRATED_CIRCUIT, 64)
+                .input(ADVANCED_SMD_DIODE, 8)
+                .input(ADVANCED_SMD_CAPACITOR, 8)
+                .input(ADVANCED_SMD_RESISTOR, 8)
+                .input(ADVANCED_SMD_TRANSISTOR, 8)
+                .input(wireFine, Platinum, 64)
+                .fluidInputs(SolderingAlloy.getFluid(L * 5))
+                .output(ENERGY_LAPOTRONIC_ORB2)
                 .buildAndRegister();
     }
 }

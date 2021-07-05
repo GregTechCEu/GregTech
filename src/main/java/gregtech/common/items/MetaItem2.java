@@ -101,9 +101,7 @@ public class MetaItem2 extends MaterialMetaItem {
         ENERGY_FIELD_PROJECTOR = addItem(578, "energy_field_projector").addComponents(ElectricStats.createElectricItem(16000000L, GTValues.EV)).setMaxStackSize(1);
         SCANNER = addItem(579, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, GTValues.LV), new ScannerBehavior(50));
 
-        CARBON_FIBERS = addItem(537, "carbon.fibers");
-        CARBON_MESH = addItem(538, "carbon.mesh");
-        CARBON_PLATE = addItem(539, "carbon.plate");
+
         INGOT_MIXED_METAL = addItem(432, "ingot.mixed_metal");
         ADVANCED_ALLOY_PLATE = addItem(433, "plate.advanced_alloy");
         INGOT_IRIDIUM_ALLOY = addItem(434, "ingot.iridium_alloy");
@@ -202,7 +200,7 @@ public class MetaItem2 extends MaterialMetaItem {
         WETWARE_PROCESSOR_LUV = addItem(523, "circuit.wetware_processor").setUnificationData(OrePrefix.circuit, Tier.Master);
         WETWARE_PROCESSOR_ASSEMBLY_ZPM = addItem(524, "circuit.wetware_assembly").setUnificationData(OrePrefix.circuit, Tier.Ultimate);
         WETWARE_SUPER_COMPUTER_UV = addItem(525, "circuit.wetware_computer").setUnificationData(OrePrefix.circuit, Tier.Superconductor);
-        WETWARE_MAINFRAME_MAX = addItem(526, "circuit.wetware_mainframe").setUnificationData(OrePrefix.circuit, Tier.Infinite);
+        WETWARE_MAINFRAME_UHV = addItem(526, "circuit.wetware_mainframe").setUnificationData(OrePrefix.circuit, Tier.Infinite);
 
         TURBINE_ROTOR = addItem(529, "turbine_rotor").addComponents(new TurbineRotorBehavior());
         COVER_FACADE = addItem(530, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
@@ -229,6 +227,22 @@ public class MetaItem2 extends MaterialMetaItem {
         NEURO_PROCESSOR = addItem(534, "processor.neuro");
         STEM_CELLS = addItem(535, "stem_cells");
         PETRI_DISH = addItem(536, "petri_dish");
+
+        // TODO Reorganize
+        CARBON_FIBERS = addItem(537, "carbon.fibers");
+        CARBON_MESH = addItem(538, "carbon.mesh");
+        CARBON_PLATE = addItem(539, "carbon.plate");
+
+        ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER = addItem(540, "wafer.ultra_low_power_integrated_circuit");
+        LOW_POWER_INTEGRATED_CIRCUIT_WAFER = addItem(541, "wafer.low_power_integrated_circuit");
+        ULTRA_LOW_POWER_INTEGRATED_CIRCUIT = addItem(542, "plate.ultra_low_power_integrated_circuit");
+        LOW_POWER_INTEGRATED_CIRCUIT = addItem(543, "plate.low_power_integrated_circuit");
+
+        // keep this order for smd
+        ADVANCED_SMD_TRANSISTOR = addItem(544, "component.advanced_smd.transistor");
+        ADVANCED_SMD_RESISTOR = addItem(545, "component.advanced_smd.resistor");
+        ADVANCED_SMD_CAPACITOR = addItem(546, "component.advanced_smd.capacitor");
+        ADVANCED_SMD_DIODE = addItem(547, "component.advanced_smd.diode");
     }
 
     public void registerRecipes() {

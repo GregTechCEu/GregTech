@@ -246,15 +246,18 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ADVANCED_SYSTEM_ON_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem INTEGRATED_LOGIC_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem CENTRAL_PROCESSING_UNIT_WAFER;
+    public static MetaItem<?>.MetaValueItem ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER;
+    public static MetaItem<?>.MetaValueItem LOW_POWER_INTEGRATED_CIRCUIT_WAFER;
+    public static MetaItem<?>.MetaValueItem POWER_INTEGRATED_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem HIGH_POWER_INTEGRATED_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem NAND_MEMORY_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem NANO_CENTRAL_PROCESSING_UNIT_WAFER;
     public static MetaItem<?>.MetaValueItem NOR_MEMORY_CHIP_WAFER;
-    public static MetaItem<?>.MetaValueItem POWER_INTEGRATED_CIRCUIT_WAFER;
     public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT_WAFER;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY_WAFER;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP_WAFER;
+
     public static MetaItem<?>.MetaValueItem ENGRAVED_CRYSTAL_CHIP;
     public static MetaItem<?>.MetaValueItem ENGRAVED_LAPOTRON_CHIP;
 
@@ -262,15 +265,18 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ADVANCED_SYSTEM_ON_CHIP;
     public static MetaItem<?>.MetaValueItem INTEGRATED_LOGIC_CIRCUIT;
     public static MetaItem<?>.MetaValueItem CENTRAL_PROCESSING_UNIT;
+    public static MetaItem<?>.MetaValueItem ULTRA_LOW_POWER_INTEGRATED_CIRCUIT;
+    public static MetaItem<?>.MetaValueItem LOW_POWER_INTEGRATED_CIRCUIT;
+    public static MetaItem<?>.MetaValueItem POWER_INTEGRATED_CIRCUIT;
     public static MetaItem<?>.MetaValueItem HIGH_POWER_INTEGRATED_CIRCUIT;
     public static MetaItem<?>.MetaValueItem NAND_MEMORY_CHIP;
     public static MetaItem<?>.MetaValueItem NANO_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem NOR_MEMORY_CHIP;
-    public static MetaItem<?>.MetaValueItem POWER_INTEGRATED_CIRCUIT;
     public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP;
     public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP;
+
     public static MetaItem<?>.MetaValueItem RAW_CRYSTAL_CHIP;
     public static MetaItem<?>.MetaValueItem CRYSTAL_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem CRYSTAL_SYSTEM_ON_CHIP;
@@ -296,12 +302,16 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem RESISTOR;
     public static MetaItem<?>.MetaValueItem DIODE;
     public static MetaItem<?>.MetaValueItem CAPACITOR;
+    public static MetaItem<?>.MetaValueItem TRANSISTOR;
     public static MetaItem<?>.MetaValueItem SMALL_COIL;
     public static MetaItem<?>.MetaValueItem SMD_CAPACITOR;
     public static MetaItem<?>.MetaValueItem SMD_DIODE;
     public static MetaItem<?>.MetaValueItem SMD_RESISTOR;
     public static MetaItem<?>.MetaValueItem SMD_TRANSISTOR;
-    public static MetaItem<?>.MetaValueItem TRANSISTOR;
+    public static MetaItem<?>.MetaValueItem ADVANCED_SMD_CAPACITOR;
+    public static MetaItem<?>.MetaValueItem ADVANCED_SMD_DIODE;
+    public static MetaItem<?>.MetaValueItem ADVANCED_SMD_RESISTOR;
+    public static MetaItem<?>.MetaValueItem ADVANCED_SMD_TRANSISTOR;
 
     // T1: Electronic
     public static MetaItem<?>.MetaValueItem ELECTRONIC_CIRCUIT_LV;
@@ -344,7 +354,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem WETWARE_PROCESSOR_LUV;
     public static MetaItem<?>.MetaValueItem WETWARE_PROCESSOR_ASSEMBLY_ZPM;
     public static MetaItem<?>.MetaValueItem WETWARE_SUPER_COMPUTER_UV;
-    public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_MAX;
+    public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_UHV;
 
     public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;
