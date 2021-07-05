@@ -7,23 +7,25 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 import java.math.BigInteger;
 
-public abstract class TraitInfiniteEnergy extends MTETrait{
+public abstract class TraitInfiniteEnergy extends MTETrait {
     protected final InfiniteEnergyTileEntityBase<?> mte;
     protected BigInteger energy = BigInteger.ZERO;
 
-    public TraitInfiniteEnergy(InfiniteEnergyTileEntityBase<?> mte){
+    public TraitInfiniteEnergy(InfiniteEnergyTileEntityBase<?> mte) {
         super(mte);
         this.mte = mte;
     }
 
-    public BigInteger getEnergy(){
+    public BigInteger getEnergy() {
         return energy;
     }
-    public void setEnergy(BigInteger bigInteger){
-        energy = bigInteger.signum()==1 ? bigInteger : BigInteger.ZERO;
+
+    public void setEnergy(BigInteger bigInteger) {
+        energy = bigInteger.signum() == 1 ? bigInteger : BigInteger.ZERO;
     }
-    protected void add(BigInteger bInt){
-        switch(bInt.signum()){
+
+    protected void add(BigInteger bInt) {
+        switch (bInt.signum()) {
             case 1:
                 energy = energy.add(bInt);
                 break;
@@ -31,21 +33,25 @@ public abstract class TraitInfiniteEnergy extends MTETrait{
                 subtract(bInt.negate());
         }
     }
-    protected void subtract(BigInteger bInt){
-        if(energy.compareTo(bInt)>0){
+
+    protected void subtract(BigInteger bInt) {
+        if (energy.compareTo(bInt) > 0) {
             energy = energy.subtract(bInt);
-        }else energy = BigInteger.ZERO;
+        } else energy = BigInteger.ZERO;
     }
 
-    @Override public NBTTagCompound serializeNBT(){
+    @Override
+    public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        if(energy.signum()>0) nbt.setByteArray("energy", energy.toByteArray());
+        if (energy.signum() > 0) nbt.setByteArray("energy", energy.toByteArray());
         return nbt;
     }
-    @Override public void deserializeNBT(NBTTagCompound nbt){
-        if(nbt.hasKey("energy", NBT.TAG_BYTE_ARRAY)){
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        if (nbt.hasKey("energy", NBT.TAG_BYTE_ARRAY)) {
             byte[] bArr = nbt.getByteArray("energy");
-            energy = bArr.length>0 ? new BigInteger(bArr) : BigInteger.ZERO;
-        }else energy = BigInteger.ZERO;
+            energy = bArr.length > 0 ? new BigInteger(bArr) : BigInteger.ZERO;
+        } else energy = BigInteger.ZERO;
     }
 }

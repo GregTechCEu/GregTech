@@ -1,4 +1,5 @@
 package gregtech.api.metatileentity;
+
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
@@ -20,7 +21,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
-public abstract class InfiniteEnergyTileEntityBase<TRAIT extends TraitInfiniteEnergy> extends MetaTileEntity{
+public abstract class InfiniteEnergyTileEntityBase<TRAIT extends TraitInfiniteEnergy> extends MetaTileEntity {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
 
     protected final TRAIT trait;
@@ -33,18 +34,21 @@ public abstract class InfiniteEnergyTileEntityBase<TRAIT extends TraitInfiniteEn
     protected abstract TRAIT createTrait();
 
     @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline){
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.VOLTAGE_CASINGS[GTValues.MAX].render(renderState, translation, pipeline);
-        for(EnumFacing facing : EnumFacing.VALUES)
+        for (EnumFacing facing : EnumFacing.VALUES)
             getOverlay().renderSided(facing, renderState, translation, pipeline);
     }
 
-    @Override public boolean onWrenchClick(EntityPlayer player, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult){
-        if(!player.isCreative()||player.isSneaking()) return super.onWrenchClick(player, hand, wrenchSide, hitResult);
+    @Override
+    public boolean onWrenchClick(EntityPlayer player, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+        if (!player.isCreative() || player.isSneaking())
+            return super.onWrenchClick(player, hand, wrenchSide, hitResult);
         return true;
     }
 
-    @Override public void update(){
+    @Override
+    public void update() {
         super.update();
     }
 
@@ -54,7 +58,7 @@ public abstract class InfiniteEnergyTileEntityBase<TRAIT extends TraitInfiniteEn
 
     @Override
     @SideOnly(Side.CLIENT)
-    public Pair<TextureAtlasSprite, Integer> getParticleTexture(){
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(Textures.VOLTAGE_CASINGS[GTValues.MAX].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.TOP), 0xFFFFFF);
     }
 }
