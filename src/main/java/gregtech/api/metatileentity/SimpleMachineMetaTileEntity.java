@@ -16,11 +16,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.DischargerSlotWidget;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
+import gregtech.api.gui.widgets.*;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
@@ -326,7 +322,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
         ModularUI.Builder builder = workable.recipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids)
             .widget(new LabelWidget(5, 5, getMetaFullName()))
-            .widget(new DischargerSlotWidget(chargerInventory, 0, 79, 62)
+            .widget(new SlotWidget(chargerInventory, 0, 79, 62)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY))
             .widget(new ImageWidget(79, 42, 18, 18, GuiTextures.INDICATOR_NO_ENERGY)
                 .setPredicate(workable::isHasNotEnoughEnergy))
