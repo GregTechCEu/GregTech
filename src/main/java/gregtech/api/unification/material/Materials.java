@@ -930,7 +930,8 @@ public class Materials {
         TungstenSteel.setFluidPipeProperties(7500, 100, true);
         NiobiumTitanium.setFluidPipeProperties(2900, 150, true);
         Ultimet.setFluidPipeProperties(1500, 12000, true);
-
+        
+        Rubber.setFluidPipeProperties(150,30,true);
         Polyethylene.setFluidPipeProperties(350, 60, true);
         Polytetrafluoroethylene.setFluidPipeProperties(600, 80, true);
         Polybenzimidazole.setFluidPipeProperties(1000, 100, true);
