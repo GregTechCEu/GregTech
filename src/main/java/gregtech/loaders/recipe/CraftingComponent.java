@@ -48,6 +48,8 @@ public class CraftingComponent {
     public static Component STICK_ELECTROMAGNETIC;
     public static Component STICK_RADIOACTIVE;
     public static Component PIPE_REACTOR;
+    public static Component HermeticCasings;
+
 
     public static void initializeComponents() {
 
@@ -444,10 +446,30 @@ public class CraftingComponent {
                 {6, new UnificationEntry(OrePrefix.pipeMedium, Materials.Polytetrafluoroethylene)},
                 {7, new UnificationEntry(OrePrefix.pipeLarge, Materials.Polytetrafluoroethylene)},
                 {8, new UnificationEntry(OrePrefix.pipeHuge, Materials.Polytetrafluoroethylene)},
+
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.pipeMedium, Materials.Polyethylene)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+
+        HermeticCasings = new Component(Stream.of(new Object[][]{
+
+                {0, MetaBlocks.hermetic_casings.getItemVariant(gregtech.common.blocks.HermeticCasings.HermeticCasingsType.Hermetic_casing_ulv)},
+                {1, MetaBlocks.hermetic_casings.getItemVariant(gregtech.common.blocks.HermeticCasings.HermeticCasingsType.HermeticCasing_lv)},
+                {2, MetaBlocks.hermetic_casings.getItemVariant(gregtech.common.blocks.HermeticCasings.HermeticCasingsType.HermeticCasing_mv)},
+                {3, MetaBlocks.hermetic_casings.getItemVariant(gregtech.common.blocks.HermeticCasings.HermeticCasingsType.HermeticCasing_hv)},
+                {4, MetaBlocks.hermetic_casings.getItemVariant(gregtech.common.blocks.HermeticCasings.HermeticCasingsType.HermeticCasing_ev)},
+                {5, MetaBlocks.hermetic_casings.getItemVariant(gregtech.common.blocks.HermeticCasings.HermeticCasingsType.HermeticCasing_iv)},
+                {6, MetaBlocks.hermetic_casings.getItemVariant(gregtech.common.blocks.HermeticCasings.HermeticCasingsType.HermeticCasing_luv)},
+                {7, MetaBlocks.hermetic_casings.getItemVariant(gregtech.common.blocks.HermeticCasings.HermeticCasingsType.HermeticCasing_zpm)},
+                {8, MetaBlocks.hermetic_casings.getItemVariant(gregtech.common.blocks.HermeticCasings.HermeticCasingsType.HermeticCasing_uv)},
+
                 {GTValues.FALLBACK, new UnificationEntry(OrePrefix.pipeMedium, Materials.Polyethylene)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
     }
+
+
 
     public static class Component {
 
