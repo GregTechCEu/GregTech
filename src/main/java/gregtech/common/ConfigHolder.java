@@ -183,6 +183,14 @@ public class ConfigHolder {
         @Config.RequiresMcRestart
         public boolean registerCrates = true;
 
+        @Config.Comment("Should recipes for EV and IV Drills be enabled, which may cause large amounts of lag when used on some low-end devices? Default: true")
+        @Config.RequiresMcRestart
+        public boolean registerRecipesForHighTierDrills = true;
+
+        @Config.Comment("Should recipes for Mining Hammers be enabled? Default: true")
+        @Config.RequiresMcRestart
+        public boolean registerRecipesForMiningHammers = true;
+
         public static class GT5U {
 
             @Config.Comment("Enable an extra ZPM and UV Battery (this also makes the Ultimate Battery harder to make). Default: false")

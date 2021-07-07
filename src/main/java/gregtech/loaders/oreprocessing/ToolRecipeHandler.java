@@ -12,6 +12,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
@@ -88,7 +89,6 @@ public class ToolRecipeHandler {
         }
     }
 
-    // Can only be used on tools with 3 tiers!
     public static void processSimpleElectricToolHead(OrePrefix toolPrefix, SolidMaterial solidMaterial, MetaToolValueItem[] toolItems) {
         for (int i = 0; i < toolItems.length; i++) {
             for (MetaValueItem batteryItem : batteryItems[i]) {
@@ -207,7 +207,7 @@ public class ToolRecipeHandler {
     }
 
     public static void processPlate(OrePrefix platePrefix, SolidMaterial material) {
-        if (material.toolDurability > 0) {
+        if (material.toolDurability > 0 && ConfigHolder.U.registerRecipesForMiningHammers) {
             ModHandler.addShapedRecipe(String.format("mining_hammer_%s", material.toString()),
                     MetaItems.MINING_HAMMER.getStackForm(material),
                     "PIP", "IBI", "fRh",
@@ -219,9 +219,12 @@ public class ToolRecipeHandler {
     }
 
 
-
     public static void processDrillHead(OrePrefix drillHead, SolidMaterial solidMaterial) {
-        processSimpleElectricToolHead(drillHead, solidMaterial, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV, MetaItems.DRILL_EV, MetaItems.DRILL_IV});
+        if (ConfigHolder.U.registerRecipesForHighTierDrills) {
+            processSimpleElectricToolHead(drillHead, solidMaterial, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV, MetaItems.DRILL_EV, MetaItems.DRILL_IV});
+        } else {
+            processSimpleElectricToolHead(drillHead, solidMaterial, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV});
+        }
         ModHandler.addShapedRecipe(String.format("drill_head_%s", solidMaterial.toString()),
                 OreDictUnifier.get(OrePrefix.toolHeadDrill, solidMaterial),
                 "XSX", "XSX", "ShS",
