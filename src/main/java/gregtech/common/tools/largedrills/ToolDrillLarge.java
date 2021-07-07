@@ -7,14 +7,14 @@ import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.ModeSwitchBehavior;
-import gregtech.common.tools.ToolDrillLV;
-import gregtech.common.tools.ToolDrillMV;
+import gregtech.common.tools.ToolBase;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -25,11 +25,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends ToolDrillLV {
+public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends ToolBase {
 
     abstract ModeSwitchBehavior<E> getModeSwitchBehavior();
 
     abstract int getTier();
+
+    abstract MetaItem.MetaValueItem getPowerUnit();
 
     @Override
     public int getToolDamagePerBlockBreak(ItemStack stack) {
@@ -169,7 +171,7 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
     @Override
     public ItemStack getBrokenStack(ItemStack stack) {
         IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        return MetaItems.POWER_UNIT_MV.getChargedStackWithOverride(electricItem);
+        return getPowerUnit().getChargedStackWithOverride(electricItem);
     }
 
 }

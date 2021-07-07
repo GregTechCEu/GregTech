@@ -1,5 +1,7 @@
 package gregtech.common.tools.largedrills;
 
+import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
+import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.ModeSwitchBehavior;
 import static gregtech.common.tools.largedrills.DrillModes.*;
 
@@ -18,6 +20,11 @@ public class ToolDrills {
         int getTier() {
             return 1;
         }
+
+        @Override
+        MetaValueItem getPowerUnit() {
+            return MetaItems.POWER_UNIT_LV;
+        }
     }
 
     public static class ToolDrillMV extends ToolDrillLarge<DrillMVMode> {
@@ -31,6 +38,11 @@ public class ToolDrills {
         @Override
         int getTier() {
             return 2;
+        }
+
+        @Override
+        MetaValueItem getPowerUnit() {
+            return MetaItems.POWER_UNIT_MV;
         }
     }
 
@@ -46,6 +58,11 @@ public class ToolDrills {
         int getTier() {
             return 3;
         }
+
+        @Override
+        MetaValueItem getPowerUnit() {
+            return MetaItems.POWER_UNIT_HV;
+        }
     }
 
     public static class ToolDrillEV extends ToolDrillLarge<DrillEVMode> {
@@ -60,6 +77,11 @@ public class ToolDrills {
         int getTier() {
             return 4;
         }
+
+        @Override
+        MetaValueItem getPowerUnit() {
+            return MetaItems.POWER_UNIT_EV;
+        }
     }
 
     public static class ToolDrillIV extends ToolDrillLarge<DrillIVMode> {
@@ -73,6 +95,11 @@ public class ToolDrills {
         @Override
         int getTier() {
             return 5;
+        }
+
+        @Override
+        MetaValueItem getPowerUnit() {
+            return MetaItems.POWER_UNIT_IV;
         }
     }
 }

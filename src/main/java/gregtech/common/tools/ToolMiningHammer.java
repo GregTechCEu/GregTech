@@ -22,10 +22,8 @@ import java.util.List;
 
 public class ToolMiningHammer extends ToolBase {
 
-    private static final ModeSwitchBehavior<MiningHammerMode> MODE_SWITCH_BEHAVIOR = new ModeSwitchBehavior<>(MiningHammerMode.class);
-
     public enum MiningHammerMode implements ModeSwitchBehavior.ILocalizationKey {
-        THREE_BY_THREE("metaitem.drill.mode.three_by_three", 3, 3, 1.2f),
+        THREE_BY_THREE("metaitem.drill.mode.three_by_three", 3, 3, 0.75f),
         SINGLE_BLOCK("metaitem.drill.mode.single_block", 1, 1, 3.0f);
 
         private final String localizationKey;
@@ -82,7 +80,7 @@ public class ToolMiningHammer extends ToolBase {
 
     @Override
     public float getMaxDurabilityMultiplier(ItemStack stack) {
-        return 10.0f;
+        return 2.5f;
     }
 
     @Override
@@ -102,7 +100,12 @@ public class ToolMiningHammer extends ToolBase {
         }
         ArrayList<BlockPos> result = new ArrayList<>();
         BlockPos pos = rayTraceResult.getBlockPos();
-        MiningHammerMode miningHammerMode = MODE_SWITCH_BEHAVIOR.getModeFromItemStack(itemStack);
+        MiningHammerMode miningHammerMode;
+        if(player.isSneaking()) {
+            miningHammerMode = MiningHammerMode.SINGLE_BLOCK;
+        } else {
+            miningHammerMode = MiningHammerMode.THREE_BY_THREE;
+        }
         EnumFacing horizontalFacing = player.getHorizontalFacing();
         int xSizeExtend = (miningHammerMode.getHorizontalSize() - 1) / 2;
         int ySizeExtend = (miningHammerMode.getVerticalSize() - 1) / 2;
@@ -126,7 +129,12 @@ public class ToolMiningHammer extends ToolBase {
             EntityPlayer entityPlayer = (EntityPlayer) entity;
             EnumFacing sideHit = ToolUtility.getSideHit(world, pos, entityPlayer);
             int damagePerBlockBreak = getToolDamagePerBlockBreak(stack);
-            MiningHammerMode miningHammerMode = MODE_SWITCH_BEHAVIOR.getModeFromItemStack(stack);
+            MiningHammerMode miningHammerMode;
+            if(entityPlayer.isSneaking()) {
+                miningHammerMode = MiningHammerMode.SINGLE_BLOCK;
+            } else {
+                miningHammerMode = MiningHammerMode.THREE_BY_THREE;
+            }
             EnumFacing horizontalFacing = entity.getHorizontalFacing();
             int xSizeExtend = (miningHammerMode.getHorizontalSize() - 1) / 2;
             int ySizeExtend = (miningHammerMode.getVerticalSize() - 1) / 2;

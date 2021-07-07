@@ -135,6 +135,8 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
                 .addOreDict(ToolDictNames.craftingToolMiningDrill)
                 .addComponents(ElectricStats.createElectricItem(25600000L, 5L));
 
+        MINING_HAMMER = addItem(35, "tool.mining_hammer").setToolStats(new ToolMiningHammer())
+                .setFullRepairCost(14);
 
         CHAINSAW_LV = addItem(26, "tool.chainsaw.lv").setToolStats(new ToolChainsawLV())
             .setFullRepairCost(4)

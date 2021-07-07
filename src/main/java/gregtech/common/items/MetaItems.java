@@ -411,7 +411,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem POWER_UNIT_LV;
     public static MetaItem<?>.MetaValueItem POWER_UNIT_MV;
     public static MetaItem<?>.MetaValueItem POWER_UNIT_HV;
-    public static MetaItem<?>.MetaValueItem JACKHAMMER_BASE;
+    public static MetaItem<?>.MetaValueItem POWER_UNIT_EV;
+    public static MetaItem<?>.MetaValueItem POWER_UNIT_IV;
 
     public static MetaItem<?>.MetaValueItem NANO_SABER;
     public static MetaItem<?>.MetaValueItem ENERGY_FIELD_PROJECTOR;
@@ -448,6 +449,7 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem DRILL_HV;
     public static ToolMetaItem<?>.MetaToolValueItem DRILL_EV;
     public static ToolMetaItem<?>.MetaToolValueItem DRILL_IV;
+    public static ToolMetaItem<?>.MetaToolValueItem MINING_HAMMER;
     public static ToolMetaItem<?>.MetaToolValueItem CHAINSAW_LV;
     public static ToolMetaItem<?>.MetaToolValueItem CHAINSAW_MV;
     public static ToolMetaItem<?>.MetaToolValueItem CHAINSAW_HV;
