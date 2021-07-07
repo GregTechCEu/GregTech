@@ -187,7 +187,9 @@ public class MetaTileEntities {
     public static MetaTileEntityItemCollector[] ITEM_COLLECTOR = new MetaTileEntityItemCollector[4];
     public static MetaTileEntityTeslaCoil TESLA_COIL;
     public static MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[4];
+    public static MetaTileEntityQuantumChest[] super_chest = new MetaTileEntityQuantumChest[4];
     public static MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[4];
+    public static MetaTileEntityQuantumTank[] Super_tank = new MetaTileEntityQuantumTank[5];
     public static MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
 
     public static MetaTileEntityInfiniteEmitter INFINITE_EMITTER;
@@ -648,6 +650,24 @@ public class MetaTileEntities {
 
         INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1630, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));
 
+        super_chest[0] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest" + GTValues.VN[1].toLowerCase()),1,20000000);
+        super_chest[1] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest" + GTValues.VN[6].toLowerCase()),6,32768000);
+        super_chest[2] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest" + GTValues.VN[7].toLowerCase()),7,65536000);
+        super_chest[3] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest" + GTValues.VN[8].toLowerCase()),8,Integer.MAX_VALUE);
+        Super_tank[0] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank" + GTValues.VN[0].toLowerCase()),0,40000000);
+        Super_tank[1] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank" + GTValues.VN[1].toLowerCase()),1,80000000);
+        Super_tank[2] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank" + GTValues.VN[6].toLowerCase()),6,512000000);
+        Super_tank[3] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank" + GTValues.VN[7].toLowerCase()),7,1024000000);
+        Super_tank[4] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank" + GTValues.VN[8].toLowerCase()),8,Integer.MAX_VALUE);
+        GregTechAPI.registerMetaTileEntity(1631, super_chest[0]);
+        GregTechAPI.registerMetaTileEntity(1632, Super_tank[0]);
+        GregTechAPI.registerMetaTileEntity(1633, Super_tank[1]);
+        GregTechAPI.registerMetaTileEntity(1634, super_chest[1]);
+        GregTechAPI.registerMetaTileEntity(1635, super_chest[2]);
+        GregTechAPI.registerMetaTileEntity(1636, super_chest[3]);
+        GregTechAPI.registerMetaTileEntity(1637, Super_tank[2]);
+        GregTechAPI.registerMetaTileEntity(1638, Super_tank[3]);
+        GregTechAPI.registerMetaTileEntity(1639, Super_tank[4]);
 
         /*
          * FOR ADDON DEVELOPERS:
