@@ -27,7 +27,6 @@ import static gregtech.api.render.OrientedOverlayRenderer.OverlayFace.*;
 
 public class Textures {
 
-    public static final SimpleOverlayRenderer INFINITE_EMITTER_FACE = new SimpleOverlayRenderer("overlay/machine/energy_emitter");
     private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
     public static List<IIconRegister> iconRegisters = new ArrayList<>();
     public static ChestRenderer WOODEN_CHEST = new ChestRenderer("storage/wooden_chest");
@@ -170,6 +169,7 @@ public class Textures {
     public static SimpleOverlayRenderer AIR_VENT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_air_vent");
     public static SimpleOverlayRenderer BLOWER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_blower");
     public static SimpleOverlayRenderer BLOWER_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_blower_active");
+    public static SimpleOverlayRenderer INFINITE_EMITTER_FACE = new SimpleOverlayRenderer("overlay/machine/energy_emitter");
 
     static {
         for (int i = 0; i < VOLTAGE_CASINGS.length; i++) {
