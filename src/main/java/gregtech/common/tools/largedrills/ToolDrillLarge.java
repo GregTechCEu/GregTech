@@ -43,12 +43,12 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
 
     @Override
     public int getToolDamagePerContainerCraft(ItemStack stack) {
-        return (int) Math.pow(getTier(), 5);
+        return (int) Math.pow(2, getTier() * 2 - 1);
     }
 
     @Override
     public int getToolDamagePerEntityAttack(ItemStack stack) {
-        return getTier() * 4;
+        return getTier() + 2;
     }
 
     @Override
@@ -79,6 +79,20 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
 
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
+        String tool = block.getBlock().getHarvestTool(block);
+        return (tool != null && (tool.equals("pickaxe") || tool.equals("shovel"))) ||
+                block.getMaterial() == Material.ROCK ||
+                block.getMaterial() == Material.IRON ||
+                block.getMaterial() == Material.ANVIL ||
+                block.getMaterial() == Material.SAND ||
+                block.getMaterial() == Material.GRASS ||
+                block.getMaterial() == Material.GROUND ||
+                block.getMaterial() == Material.SNOW ||
+                block.getMaterial() == Material.CLAY ||
+                block.getMaterial() == Material.GLASS;
+    }
+
+    public boolean canAOEMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
         return (tool != null && (tool.equals("hammer") || tool.equals("pickaxe"))) ||
                 block.getMaterial() == Material.ROCK ||

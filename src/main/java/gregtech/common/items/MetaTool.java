@@ -1,6 +1,5 @@
 package gregtech.common.items;
 
-import gregtech.api.GTValues;
 import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.toolitem.*;
@@ -11,6 +10,7 @@ import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.tools.*;
+import gregtech.common.tools.largedrills.ToolDrills;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -110,20 +110,31 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
             .setFullRepairCost(3)
             .addOreDict(ToolDictNames.craftingToolBlade);
 
-        DRILL_LV = addItem(23, "tool.drill.lv").setToolStats(new ToolDrillLV())
+        DRILL_LV = addItem(23, "tool.drill.lv").setToolStats(new ToolDrills.ToolDrillLV())
             .setFullRepairCost(4)
             .addOreDict(ToolDictNames.craftingToolMiningDrill)
             .addComponents(ElectricStats.createElectricItem(100000L, 1L));
 
-        DRILL_MV = addItem(24, "tool.drill.mv").setToolStats(new ToolDrillMV())
+        DRILL_MV = addItem(24, "tool.drill.mv").setToolStats(new ToolDrills.ToolDrillMV())
             .setFullRepairCost(4)
             .addOreDict(ToolDictNames.craftingToolMiningDrill)
             .addComponents(ElectricStats.createElectricItem(400000L, 2L));
 
-        DRILL_HV = addItem(25, "tool.drill.hv").setToolStats(new ToolDrillHV())
+        DRILL_HV = addItem(25, "tool.drill.hv").setToolStats(new ToolDrills.ToolDrillHV())
             .setFullRepairCost(4)
             .addOreDict(ToolDictNames.craftingToolMiningDrill)
             .addComponents(ElectricStats.createElectricItem(1600000L, 3L));
+
+        DRILL_EV = addItem(38, "tool.drill.ev").setToolStats(new ToolDrills.ToolDrillEV())
+                .setFullRepairCost(4)
+                .addOreDict(ToolDictNames.craftingToolMiningDrill)
+                .addComponents(ElectricStats.createElectricItem(6400000L, 4L));
+
+        DRILL_IV = addItem(39, "tool.drill.iv").setToolStats(new ToolDrills.ToolDrillIV())
+                .setFullRepairCost(4)
+                .addOreDict(ToolDictNames.craftingToolMiningDrill)
+                .addComponents(ElectricStats.createElectricItem(25600000L, 5L));
+
 
         CHAINSAW_LV = addItem(26, "tool.chainsaw.lv").setToolStats(new ToolChainsawLV())
             .setFullRepairCost(4)
@@ -199,7 +210,7 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
                 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         }
 
-        // for future use: in-game durabilty is 3 per use, maxDurability shown in game is multiplied by 8
+        // for future use: in-game durability is 3 per use, maxDurability shown in game is multiplied by 8
         Function<ToolMetaItem.MetaToolValueItem, ItemStack> woodenToolDataApplier = item ->
             item.setToolData(item.getStackForm(), Materials.Wood, 48, 1, 4.0f, 1.0f);
 

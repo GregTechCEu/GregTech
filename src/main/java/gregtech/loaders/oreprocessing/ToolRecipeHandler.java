@@ -219,34 +219,7 @@ public class ToolRecipeHandler {
     }
 
     public static void processLongStick(OrePrefix orePrefix, IngotMaterial material) {
-        if (material.toolDurability <= 0) return;
-        processSimpleElectricToolHead(orePrefix, material, new MetaToolValueItem[]{MetaItems.SCREWDRIVER_LV});
-
-        for (MetaValueItem batteryItem : batteryItems[2]) {
-            ItemStack batteryStack = batteryItem.getStackForm();
-            long maxCharge = batteryStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null).getMaxCharge();
-            ItemStack chargedHammerStack = MetaItems.JACKHAMMER.getMaxChargeOverrideStack(material, maxCharge);
-            String recipeNameFirst = String.format("jack_hammer_%s_%s_full", batteryItem.unlocalizedName, material.toString());
-
-            ModHandler.addShapedEnergyTransferRecipe(recipeNameFirst, chargedHammerStack,
-                Ingredient.fromStacks(batteryStack), false,
-                "SXd", "PRP", "MPB",
-                'X', new UnificationEntry(OrePrefix.stickLong, material),
-                'M', MetaItems.ELECTRIC_PISTON_HV.getStackForm(),
-                'S', new UnificationEntry(OrePrefix.screw, Materials.Titanium),
-                'P', new UnificationEntry(OrePrefix.plateDense, Materials.Titanium),
-                'R', new UnificationEntry(OrePrefix.spring, Materials.Titanium),
-                'B', batteryStack);
-        }
-
-        ItemStack drillStack = MetaItems.JACKHAMMER.getStackForm(material);
-        ItemStack powerUnitStack = MetaItems.JACKHAMMER_BASE.getStackForm();
-        String recipeNameSecond = String.format("jack_hammer_%s_unit", material);
-        ModHandler.addShapedEnergyTransferRecipe(recipeNameSecond, drillStack,
-            Ingredient.fromStacks(powerUnitStack), true,
-            "wHd", " U ",
-            'H', new UnificationEntry(orePrefix, material),
-            'U', powerUnitStack);
+        // Empty for now.
     }
 
     public static void processDrillHead(OrePrefix drillHead, SolidMaterial solidMaterial) {

@@ -446,13 +446,14 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem DRILL_LV;
     public static ToolMetaItem<?>.MetaToolValueItem DRILL_MV;
     public static ToolMetaItem<?>.MetaToolValueItem DRILL_HV;
+    public static ToolMetaItem<?>.MetaToolValueItem DRILL_EV;
+    public static ToolMetaItem<?>.MetaToolValueItem DRILL_IV;
     public static ToolMetaItem<?>.MetaToolValueItem CHAINSAW_LV;
     public static ToolMetaItem<?>.MetaToolValueItem CHAINSAW_MV;
     public static ToolMetaItem<?>.MetaToolValueItem CHAINSAW_HV;
     public static ToolMetaItem<?>.MetaToolValueItem WRENCH_LV;
     public static ToolMetaItem<?>.MetaToolValueItem WRENCH_MV;
     public static ToolMetaItem<?>.MetaToolValueItem WRENCH_HV;
-    public static ToolMetaItem<?>.MetaToolValueItem JACKHAMMER;
     public static ToolMetaItem<?>.MetaToolValueItem BUZZSAW;
     public static ToolMetaItem<?>.MetaToolValueItem SCREWDRIVER_LV;
 
