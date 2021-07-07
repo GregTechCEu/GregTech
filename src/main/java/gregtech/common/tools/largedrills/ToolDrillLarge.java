@@ -114,7 +114,7 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
         ArrayList<BlockPos> result = new ArrayList<>();
         BlockPos pos = rayTraceResult.getBlockPos();
         IDrillMode drillMode;
-        if (player.isSneaking()) {
+        if (player.isSneaking() || !canAOEMineBlock(player.world.getBlockState(pos), itemStack)) {
             drillMode = IDrillMode.getSingleBlock();
         } else {
             drillMode = this.getModeSwitchBehavior().getModeFromItemStack(itemStack);
@@ -141,7 +141,7 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
             EntityPlayer entityPlayer = (EntityPlayer) entity;
             int damagePerBlockBreak = getToolDamagePerBlockBreak(stack);
             IDrillMode drillMode;
-            if (entityPlayer.isSneaking()) {
+            if (entityPlayer.isSneaking()  || !canAOEMineBlock(entityPlayer.world.getBlockState(pos), stack)) {
                 drillMode = IDrillMode.getSingleBlock();
             } else {
                 drillMode = this.getModeSwitchBehavior().getModeFromItemStack(stack);
