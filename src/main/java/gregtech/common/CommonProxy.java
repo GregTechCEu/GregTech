@@ -110,7 +110,6 @@ public class CommonProxy {
         registry.register(createItemBlock(CABLE, ItemBlockCable::new));
         registry.register(createItemBlock(FLUID_PIPE, ItemBlockFluidPipe::new));
         registry.register(createItemBlock(hermetic_casings, VariantItemBlock::new));
-        registry.register(createItemBlock(BOILER_CASING, VariantItemBlock::new));
 
         registry.register(createItemBlock(BOILER_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_FIREBOX_CASING, VariantItemBlock::new));
