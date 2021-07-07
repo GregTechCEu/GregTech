@@ -602,7 +602,7 @@ public class MetaTileEntities {
         // Quantum Chests, IDs 1560-1574
         for (int i = 0; i < QUANTUM_CHEST.length; i++) {
             String voltageName = GTValues.VN[i + 2].toLowerCase();
-            QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest." + voltageName), i + 2, 64L * 64000 * (i + 1));
+            QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest." + voltageName), i + 2, 64L * 640000 * (i + 1));
             GregTechAPI.registerMetaTileEntity(1560 + i, QUANTUM_CHEST[i]);
         }
 
@@ -651,8 +651,8 @@ public class MetaTileEntities {
         INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1630, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));
 
         super_chest[0] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest" + GTValues.VN[1].toLowerCase()),1,20000000);
-        super_chest[1] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest" + GTValues.VN[6].toLowerCase()),6,32768000);
-        super_chest[2] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest" + GTValues.VN[7].toLowerCase()),7,65536000);
+        super_chest[1] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest" + GTValues.VN[6].toLowerCase()),6,409600000);
+        super_chest[2] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest" + GTValues.VN[7].toLowerCase()),7,1048576000);
         super_chest[3] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest" + GTValues.VN[8].toLowerCase()),8,Integer.MAX_VALUE);
         Super_tank[0] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank" + GTValues.VN[0].toLowerCase()),0,40000000);
         Super_tank[1] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank" + GTValues.VN[1].toLowerCase()),1,80000000);
