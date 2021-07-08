@@ -1,7 +1,7 @@
 package gregtech.common.gui.widget;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.gui.igredient.IRecipeTransferHandlerWidget;
+import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.common.metatileentities.storage.CraftingRecipeResolver;

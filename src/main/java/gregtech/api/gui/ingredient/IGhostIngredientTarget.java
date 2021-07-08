@@ -1,4 +1,4 @@
-package gregtech.api.gui.igredient;
+package gregtech.api.gui.ingredient;
 
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 
