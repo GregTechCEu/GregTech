@@ -2011,6 +2011,7 @@ gregtech.machine.small_wooden_chest.name=Small Wooden Chest
 gregtech.machine.wooden_chest.name=Wooden Chest
 gregtech.machine.bronze_chest.name=Bronze Chest
 gregtech.machine.steel_chest.name=Steel Chest
+gregtech.machine.aluminium_chest.name=Aluminium Chest
 gregtech.machine.stainless_steel_chest.name=Stainless Steel Chest
 gregtech.machine.titanium_chest.name=Titanium Chest
 gregtech.machine.tungstensteel_chest.name=Tungstensteel Chest
@@ -2994,44 +2995,48 @@ gregtech.machine.item_collector.ev.name=Advanced Item Collector III
 gregtech.machine.item_collector.collect_range=Collection Area: %,dx%,d
 gregtech.machine.item_collector.gui.collect_range=Collect in %s blocks
 
-#Quantum chests
+#Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Better than JABBA.
 gregtech.machine.quantum_chest.capacity=Item Capacity: %,d items
 gregtech.machine.quantum_chest.items_stored=Item Amount:
 
-gregtech.machine.quantum_chestlv.name=Super Chest I
-gregtech.machine.quantum_chest.mv.name=Super Chest II
-gregtech.machine.quantum_chest.hv.name=Super Chest III
-gregtech.machine.quantum_chest.ev.name=Super Chest IV
+gregtech.machine.super_chest.lv.name=Super Chest I
+gregtech.machine.super_chest.mv.name=Super Chest II
+gregtech.machine.super_chest.hv.name=Super Chest III
+gregtech.machine.super_chest.ev.name=Super Chest IV
+gregtech.machine.super_chest.iv.name=Super Chest V
 gregtech.machine.quantum_chest.iv.name=Quantum Chest I
-gregtech.machine.quantum_chestluv.name=Quantum Chest II
-gregtech.machine.quantum_chestzpm.name=Quantum Chest III
-gregtech.machine.quantum_chestuv.name=Quantum Chest IV
+gregtech.machine.quantum_chest.luv.name=Quantum Chest II
+gregtech.machine.quantum_chest.zpm.name=Quantum Chest III
+gregtech.machine.quantum_chest.uv.name=Quantum Chest IV
+gregtech.machine.quantum_chest.uhv.name=Quantum Chest V
 
-#Quantum tanks
+#Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids.
 gregtech.machine.quantum_tank.capacity=Fluid Capacity: %,d L
 
-gregtech.machine.quantum_tankulv.name=Super Tank I
-gregtech.machine.quantum_tanklv.name=Super Tank II
-gregtech.machine.quantum_tank.mv.name=Super Tank III
-gregtech.machine.quantum_tank.hv.name=Super Tank IV
-gregtech.machine.quantum_tank.ev.name=Super Tank V
+gregtech.machine.super_tank.lv.name=Super Tank I
+gregtech.machine.super_tank.mv.name=Super Tank II
+gregtech.machine.super_tank.hv.name=Super Tank III
+gregtech.machine.super_tank.ev.name=Super Tank IV
+gregtech.machine.super_tank.iv.name=Super Tank V
 gregtech.machine.quantum_tank.iv.name=Quantum Tank I
-gregtech.machine.quantum_tankluv.name=Quantum Tank II
-gregtech.machine.quantum_tankzpm.name=Quantum Tank III
-gregtech.machine.quantum_tankuv.name=Quantum Tank IV
+gregtech.machine.quantum_tank.luv.name=Quantum Tank II
+gregtech.machine.quantum_tank.zpm.name=Quantum Tank III
+gregtech.machine.quantum_tank.uv.name=Quantum Tank IV
+gregtech.machine.quantum_tank.uhv.name=Quantum Tank V
 
-#hermetic casing
-tile.hermetic_casing.hermetic_casing_ulv.name=Hermetic casing I
-tile.hermetic_casing.hermetic_casing_lv.name=Hermetic casing II
-tile.hermetic_casing.hermetic_casing_mv.name=Hermetic casing III
-tile.hermetic_casing.hermetic_casing_hv.name=Hermetic casing IV
-tile.hermetic_casing.hermetic_casing_ev.name=Hermetic casing V
-tile.hermetic_casing.hermetic_casing_iv.name=Hermetic casing VI
-tile.hermetic_casing.hermetic_casing_luv.name=Hermetic casing VII
-tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic casing VIII
-tile.hermetic_casing.hermetic_casing_uv.name=Hermetic casing IX
+#Hermetic Casing
+tile.hermetic_casing.hermetic_casing_ulv.name=Hermetic Casing I
+tile.hermetic_casing.hermetic_casing_lv.name=Hermetic Casing II
+tile.hermetic_casing.hermetic_casing_mv.name=Hermetic Casing III
+tile.hermetic_casing.hermetic_casing_hv.name=Hermetic Casing IV
+tile.hermetic_casing.hermetic_casing_ev.name=Hermetic Casing V
+tile.hermetic_casing.hermetic_casing_iv.name=Hermetic Casing VI
+tile.hermetic_casing.hermetic_casing_luv.name=Hermetic Casing VII
+tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VIII
+tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing IX
+time.hermetic_casing.hermetic_casing_max.name=Hermetic Casing X
 
 #Air Collectors
 gregtech.machine.air_collector.lv.name=Basic Air Collector

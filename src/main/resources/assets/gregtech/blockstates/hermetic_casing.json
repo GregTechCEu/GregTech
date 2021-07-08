@@ -10,13 +10,6 @@
   },
   "variants": {
     "variant": {
-      "hermetic_casing_ulv": {
-        "textures": {
-          "bottom": "gregtech:blocks/casings/voltage/ulv/bottom",
-          "top": "gregtech:blocks/casings/voltage/ulv/top",
-          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_ulv"
-        }
-      },
       "hermetic_casing_lv": {
         "textures": {
           "bottom": "gregtech:blocks/casings/voltage/lv/bottom",
@@ -71,6 +64,13 @@
           "bottom": "gregtech:blocks/casings/voltage/uv/bottom",
           "top": "gregtech:blocks/casings/voltage/uv/top",
           "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_uv"
+        }
+      },
+      "hermetic_casing_max": {
+        "textures": {
+          "bottom": "gregtech:blocks/casings/voltage/max/bottom",
+          "top": "gregtech:blocks/casings/voltage/max/top",
+          "side": "gregtech:blocks/casings/hermetic_casing/hermetic_casing_max"
         }
       }
     }

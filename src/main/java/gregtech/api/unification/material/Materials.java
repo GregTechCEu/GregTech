@@ -56,7 +56,7 @@ public class Materials {
     public static IngotMaterial Cadmium = new IngotMaterial(19, "cadmium", 0x32323C, SHINY, 2, of(), 0, Elements.get("Cadmium"));
     public static IngotMaterial Cerium = new IngotMaterial(20, "cerium", 0xFFFFFF, METALLIC, 2, of(), 0, Elements.get("Cerium"), 1068);
     public static FluidMaterial Chlorine = new FluidMaterial(21, "chlorine", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Chlorine"));
-    public static IngotMaterial Chrome = new IngotMaterial(22, "chrome", 0xFFE6E6, SHINY, 3, of(), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR, Elements.get("Chrome"), 12.0f, 3.0f, 512, 1700);
+    public static IngotMaterial Chrome = new IngotMaterial(22, "chrome", 0xFFE6E6, SHINY, 3, of(), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_DENSE, Elements.get("Chrome"), 12.0f, 3.0f, 512, 1700);
     public static IngotMaterial Cobalt = new IngotMaterial(23, "cobalt", 0x5050FA, METALLIC, 2, of(), GENERATE_ORE | STD_METAL, Elements.get("Cobalt"), 10.0F, 3.0f, 256);
     public static IngotMaterial Copernicium = new IngotMaterial(24, "copernicium", 0xFFFEFF, DULL, 4, of(), 0, Elements.get("Copernicium"));
     public static IngotMaterial Copper = new IngotMaterial(25, "copper", 0xFF6400, SHINY, 1, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_DENSE | GENERATE_SPRING, Elements.get("Copper"));
@@ -84,7 +84,7 @@ public class Materials {
     public static FluidMaterial Helium3 = new FluidMaterial(47, "helium3", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Helium-3"));
     public static IngotMaterial Indium = new IngotMaterial(48, "indium", 0x400080, METALLIC, 2, of(), 0, Elements.get("Indium"));
     public static DustMaterial Iodine = new DustMaterial(49, "iodine", 0x2C344F, SHINY, 2, of(), 0, Elements.get("Iodine"));
-    public static IngotMaterial Iridium = new IngotMaterial(50, "iridium", 0xF0F0F5, DULL, 3, of(), GENERATE_ORE | EXT2_METAL | GENERATE_ORE | GENERATE_RING | GENERATE_ROTOR, Elements.get("Iridium"), 7.0F, 3.0f, 2560, 2719);
+    public static IngotMaterial Iridium = new IngotMaterial(50, "iridium", 0xF0F0F5, DULL, 3, of(), GENERATE_ORE | EXT2_METAL | GENERATE_ORE | GENERATE_RING | GENERATE_ROTOR | GENERATE_DENSE, Elements.get("Iridium"), 7.0F, 3.0f, 2560, 2719);
     public static IngotMaterial Iron = new IngotMaterial(51, "iron", 0xC8C8C8, METALLIC, 2, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_DENSE | GENERATE_FRAME | GENERATE_LONG_ROD | GENERATE_PLASMA | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, Elements.get("Iron"), 7.0F, 2.5f, 256);
     public static FluidMaterial Krypton = new FluidMaterial(52, "krypton", 0x31C42F, FLUID, of(), 0, Elements.get("Krypton"));
     public static IngotMaterial Lanthanum = new IngotMaterial(53, "lanthanum", 0xFFFFFF, METALLIC, 2, of(), 0, Elements.get("Lanthanum"), 1193);
@@ -109,7 +109,7 @@ public class Materials {
     public static FluidMaterial Nitrogen = new FluidMaterial(72, "nitrogen", 0xFFFFFF, FLUID, of(), STATE_GAS | GENERATE_PLASMA, Elements.get("Nitrogen"));
     public static IngotMaterial Nobelium = new IngotMaterial(73, "nobelium", 0xFFFFFF, SHINY, 2, of(), 0, Elements.get("Nobelium"));
     public static IngotMaterial Oganesson = new IngotMaterial(74, "oganesson", 0x142d64, METALLIC, 3, of(), EXT2_METAL, Elements.get("Oganesson"));
-    public static IngotMaterial Osmium = new IngotMaterial(75, "osmium", 0x3232FF, METALLIC, 4, of(), GENERATE_ORE | EXT2_METAL | GENERATE_RING | GENERATE_ROTOR, Elements.get("Osmium"), 16.0F, 4.0f, 1280, 3306);
+    public static IngotMaterial Osmium = new IngotMaterial(75, "osmium", 0x3232FF, METALLIC, 4, of(), GENERATE_ORE | EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_DENSE, Elements.get("Osmium"), 16.0F, 4.0f, 1280, 3306);
     public static FluidMaterial Oxygen = new FluidMaterial(76, "oxygen", 0xFFFFFF, FLUID, of(), STATE_GAS | GENERATE_PLASMA, Elements.get("Oxygen"));
     public static IngotMaterial Palladium = new IngotMaterial(77, "palladium", 0x808080, SHINY, 2, of(), EXT2_METAL | GENERATE_ORE | GENERATE_FLUID_BLOCK, Elements.get("Palladium"), 8.0f, 2.0f, 512, 1228);
     public static DustMaterial Phosphorus = new DustMaterial(78, "phosphorus", 0xFFFF00, DULL, 2, of(), 0, Elements.get("Phosphorus"));
@@ -929,9 +929,10 @@ public class Materials {
         Titanium.setFluidPipeProperties(5000, 80, true);
         TungstenSteel.setFluidPipeProperties(7500, 100, true);
         NiobiumTitanium.setFluidPipeProperties(2900, 150, true);
+        Naquadah.setFluidPipeProperties(19000, 1500, true);
         Ultimet.setFluidPipeProperties(1500, 12000, true);
         
-        Rubber.setFluidPipeProperties(150,30,true);
+        Rubber.setFluidPipeProperties(150, 30, true);
         Polyethylene.setFluidPipeProperties(350, 60, true);
         Polytetrafluoroethylene.setFluidPipeProperties(600, 80, true);
         Polybenzimidazole.setFluidPipeProperties(1000, 100, true);
