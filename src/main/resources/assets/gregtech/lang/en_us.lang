@@ -3027,16 +3027,15 @@ gregtech.machine.quantum_tank.uv.name=Quantum Tank IV
 gregtech.machine.quantum_tank.uhv.name=Quantum Tank V
 
 #Hermetic Casing
-tile.hermetic_casing.hermetic_casing_ulv.name=Hermetic Casing I
-tile.hermetic_casing.hermetic_casing_lv.name=Hermetic Casing II
-tile.hermetic_casing.hermetic_casing_mv.name=Hermetic Casing III
-tile.hermetic_casing.hermetic_casing_hv.name=Hermetic Casing IV
-tile.hermetic_casing.hermetic_casing_ev.name=Hermetic Casing V
-tile.hermetic_casing.hermetic_casing_iv.name=Hermetic Casing VI
-tile.hermetic_casing.hermetic_casing_luv.name=Hermetic Casing VII
-tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VIII
-tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing IX
-time.hermetic_casing.hermetic_casing_max.name=Hermetic Casing X
+tile.hermetic_casing.hermetic_casing_lv.name=Hermetic Casing I
+tile.hermetic_casing.hermetic_casing_mv.name=Hermetic Casing II
+tile.hermetic_casing.hermetic_casing_hv.name=Hermetic Casing III
+tile.hermetic_casing.hermetic_casing_ev.name=Hermetic Casing IV
+tile.hermetic_casing.hermetic_casing_iv.name=Hermetic Casing V
+tile.hermetic_casing.hermetic_casing_luv.name=Hermetic Casing VI
+tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VII
+tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing VIII
+time.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
 
 #Air Collectors
 gregtech.machine.air_collector.lv.name=Basic Air Collector

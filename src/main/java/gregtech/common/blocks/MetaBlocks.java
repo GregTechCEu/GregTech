@@ -139,7 +139,7 @@ public class MetaBlocks {
         FUSION_COIL.setRegistryName("fusion_coil");
         WARNING_SIGN = new BlockWarningSign();
         WARNING_SIGN.setRegistryName("warning_sign");
-         HERMETIC_CASING = new HermeticCasings();
+        HERMETIC_CASING = new HermeticCasings();
         HERMETIC_CASING.setRegistryName("hermetic_casing");
         GRANITE = new BlockGranite();
         GRANITE.setRegistryName("granite");
