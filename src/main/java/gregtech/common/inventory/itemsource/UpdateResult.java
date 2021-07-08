@@ -1,4 +1,4 @@
-package gregtech.common.pipelike.itempipe.net;
+package gregtech.common.inventory.itemsource;
 
 public enum UpdateResult {
     INVALID,

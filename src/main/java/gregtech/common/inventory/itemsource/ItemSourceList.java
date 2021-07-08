@@ -4,7 +4,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.inventory.IItemInfo;
 import gregtech.common.inventory.IItemList;
-import gregtech.common.pipelike.itempipe.net.UpdateResult;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 
