@@ -5,7 +5,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import codechicken.lib.vec.Vector3;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
 import gregtech.api.capability.impl.FluidTankList;
@@ -32,8 +31,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -97,6 +94,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             pushFluidsIntoNearbyHandlers(currentOutputFacing);
         }
     }
+
     @Override
     protected FluidTankList createImportFluidHandler() {
         return new FluidTankList(false, fluidTank);
@@ -170,12 +168,14 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }
+
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
         buf.writeBoolean(autoOutputFluids);
     }
+
     public EnumFacing getOutputFacing() {
         return outputFacing == null ? EnumFacing.SOUTH : outputFacing;
     }
@@ -206,6 +206,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             getHolder().scheduleChunkForRenderUpdate();
         }
     }
+
     @Override
     public boolean isValidFrontFacing(EnumFacing facing) {
         //use direct outputFacing field instead of getter method because otherwise
@@ -273,6 +274,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         }
         return true;
     }
+
     @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
