@@ -43,7 +43,6 @@ import java.util.List;
 
 public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide {
 
-    private static final double[] rotations = new double[]{180.0, 0.0, -90.0, 90.0};
 
     private final int tier;
     private final int maxFluidCapacity;
