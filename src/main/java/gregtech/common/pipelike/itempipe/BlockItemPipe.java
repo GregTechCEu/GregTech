@@ -6,6 +6,7 @@ import gregtech.api.pipenet.block.simple.EmptyNodeData;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.type.Material;
+import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
@@ -68,12 +69,12 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, EmptyNodeData
     @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
-        /*if (!worldIn.isRemote) {
+        if (!worldIn.isRemote) {
             ItemPipeNet itemPipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
             if (itemPipeNet != null) {
                 itemPipeNet.nodeNeighbourChanged(pos);
             }
-        }*/
+        }
     }
 
     @Override
