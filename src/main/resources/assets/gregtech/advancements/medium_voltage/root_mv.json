@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.root_mv.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.root_mv.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1001
+    },
+    "frame": "goal",
+    "background": "gregtech:textures/blocks/casings/solid/machine_casing_frost_proof.png"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "ingotAluminium"
+          }
+        ]
+      }
+    }
+  }
+}

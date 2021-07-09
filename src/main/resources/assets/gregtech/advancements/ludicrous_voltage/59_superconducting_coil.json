@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.ludicrous_voltage.59_superconducting_coil.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.ludicrous_voltage.59_superconducting_coil.name"
+    },
+    "icon": {
+      "item": "gregtech:fusion_coil",
+      "data": 0
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:fusion_coil",
+            "data": 0
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:ludicrous_voltage/root_luv"
+}

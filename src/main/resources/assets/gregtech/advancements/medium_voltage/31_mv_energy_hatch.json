@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.medium_voltage.31_mv_energy_hatch.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.medium_voltage.31_mv_energy_hatch.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1452
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1452
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:medium_voltage/root_mv"
+}

@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.ultimate_voltage.77_ultimate_battery.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.ultimate_voltage.77_ultimate_battery.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 32605
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_1",
+            "data": 32605
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:ultimate_voltage/76_neutronium"
+}

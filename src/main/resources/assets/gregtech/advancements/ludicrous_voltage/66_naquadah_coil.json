@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.ludicrous_voltage.66_naquadah_coil.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.ludicrous_voltage.66_naquadah_coil.name"
+    },
+    "icon": {
+      "item": "gregtech:wire_coil",
+      "data": 5
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:wire_coil",
+            "data": 5
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:ludicrous_voltage/65_naquadah"
+}

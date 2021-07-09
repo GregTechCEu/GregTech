@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.extreme_voltage.52_soc_wafer.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.extreme_voltage.52_soc_wafer.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32479
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32479
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:extreme_voltage/root_ev"
+}

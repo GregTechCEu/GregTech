@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.insane_voltage.56_quantum_processor.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.insane_voltage.56_quantum_processor.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32517
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32517
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:insane_voltage/55_qbit_cpu_wafer"
+}

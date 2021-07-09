@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.medium_voltage.36_integrated_logic_circuit.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.medium_voltage.36_integrated_logic_circuit.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32504
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32504
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:medium_voltage/35_logic_circuit_wafer"
+}

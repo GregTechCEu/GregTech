@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.extreme_voltage.49_nano_cpu_wafer.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.extreme_voltage.49_nano_cpu_wafer.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32475
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32475
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:extreme_voltage/root_ev"
+}

@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.medium_voltage.35_logic_circuit_wafer.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.medium_voltage.35_logic_circuit_wafer.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32468
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32468
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:medium_voltage/34_silicon_boule"
+}

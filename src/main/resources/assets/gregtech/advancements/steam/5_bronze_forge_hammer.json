@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.steam.5_bronze_forge_hammer.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.steam.5_bronze_forge_hammer.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 13
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 13
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:steam/4_bronze_boiler"
+}

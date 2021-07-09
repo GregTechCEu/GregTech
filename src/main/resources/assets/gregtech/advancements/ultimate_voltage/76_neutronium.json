@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.ultimate_voltage.76_neutronium.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.ultimate_voltage.76_neutronium.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 10357
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "ingotNeutronium"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:ultimate_voltage/75_fusion_reactor_3"
+}
