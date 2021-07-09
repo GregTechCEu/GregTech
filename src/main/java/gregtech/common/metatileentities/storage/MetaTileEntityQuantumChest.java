@@ -5,10 +5,8 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import codechicken.lib.vec.Vector3;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
-import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -36,9 +34,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
@@ -203,7 +198,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         }
     }
 
-//New methods added
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         Builder builder = ModularUI.defaultBuilder();
@@ -232,6 +226,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             markDirty();
         }
     }
+
     @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
@@ -248,7 +243,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.writeInitialSyncData(buf);
         buf.writeByte(getOutputFacing().getIndex());
         buf.writeBoolean(autoOutputItems);
-
     }
 
     @Override
@@ -257,12 +251,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
         this.autoOutputItems = buf.readBoolean();
     }
+
     @Override
     public boolean isValidFrontFacing(EnumFacing facing) {
         //use direct outputFacing field instead of getter method because otherwise
         //it will just return SOUTH for null output facing
         return super.isValidFrontFacing(facing) && facing != outputFacing;
     }
+
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
@@ -282,6 +278,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             markDirty();
         }
     }
+
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE) {
@@ -293,6 +290,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         return super.getCapability(capability, side);
 
     }
+
     @Override
     public boolean canPlaceCoverOnSide(EnumFacing side) {
         //Done to prevent loops as output always acts as input
@@ -324,6 +322,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     public boolean isAllowInputFromOutputSide() {
         return allowInputFromOutputSide;
     }
+
     private class QuantumChestItemHandler implements IItemHandler {
 
         @Override
