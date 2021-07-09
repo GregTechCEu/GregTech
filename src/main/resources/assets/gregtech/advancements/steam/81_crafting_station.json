@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.steam.81_crafting_station.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.steam.81_crafting_station.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1627
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1627
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:steam/root_steam"
+}
