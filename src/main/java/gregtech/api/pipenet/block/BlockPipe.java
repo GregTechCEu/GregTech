@@ -332,7 +332,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @Nullable
     @Override
     public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {
-        return RayTracer.rayTraceCuboidsClosest(start, end, pos, FULL_CUBE_COLLISION);
+        return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos, null)).;
     }
 
     @Override
