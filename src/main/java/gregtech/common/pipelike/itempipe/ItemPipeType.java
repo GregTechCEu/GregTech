@@ -1,15 +1,14 @@
 package gregtech.common.pipelike.itempipe;
 
 import gregtech.api.pipenet.block.material.IMaterialPipeType;
-import gregtech.api.pipenet.block.simple.EmptyNodeData;
 import gregtech.api.unification.ore.OrePrefix;
 
-public enum ItemPipeType implements IMaterialPipeType<EmptyNodeData> {
-    TINY_OPAQUE("tiny", 0.25f, OrePrefix.pipeTiny, true),
-    SMALL_OPAQUE("small", 0.375f, OrePrefix.pipeSmall, true),
-    MEDIUM_OPAQUE("medium", 0.5f, OrePrefix.pipeMedium, true),
-    LARGE_OPAQUE("large", 0.75f, OrePrefix.pipeLarge, true),
-    HUGE_OPAQUE("huge", 0.875f, OrePrefix.pipeHuge, true);
+public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
+    TINY_OPAQUE("tiny", 0.25f, OrePrefix.pipeTinyItem, 0.25f),
+    SMALL_OPAQUE("small", 0.375f, OrePrefix.pipeSmallItem, 0.5f),
+    MEDIUM_OPAQUE("medium", 0.5f, OrePrefix.pipeMediumItem, 1f),
+    LARGE_OPAQUE("large", 0.75f, OrePrefix.pipeLargeItem, 2f),
+    HUGE_OPAQUE("huge", 0.875f, OrePrefix.pipeHugeItem, 4f);
 
     public final String name;
     private final float thickness;

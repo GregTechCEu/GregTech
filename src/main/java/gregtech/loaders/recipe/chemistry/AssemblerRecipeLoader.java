@@ -51,7 +51,7 @@ public class AssemblerRecipeLoader {
         // Other
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(rotor, Titanium, 4)
-                .input(pipeMedium, Titanium, 2)
+                .input(pipeMediumFluid, Titanium, 2)
                 .inputs(METAL_CASING.getItemVariant(TITANIUM_STABLE))
                 .outputs(MULTIBLOCK_CASING.getItemVariant(ENGINE_INTAKE_CASING))
                 .duration(100).EUt(30).buildAndRegister();

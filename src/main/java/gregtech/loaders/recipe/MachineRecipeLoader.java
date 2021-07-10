@@ -423,7 +423,7 @@ public class MachineRecipeLoader {
         for (IngotMaterial cableMaterial : new IngotMaterial[]{Materials.YttriumBariumCuprate, Materials.NiobiumTitanium, Materials.VanadiumGallium, Materials.Naquadah}) {
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.wireGtSingle, cableMaterial, 3)
-                .input(OrePrefix.pipeTiny, Materials.TungstenSteel, 2)
+                .input(OrePrefix.pipeTinyFluid, Materials.TungstenSteel, 2)
                 .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm(2))
                 .fluidInputs(Materials.Nitrogen.getFluid(2000))
                 .outputs(OreDictUnifier.get(OrePrefix.wireGtSingle, Tier.Superconductor, 3))
