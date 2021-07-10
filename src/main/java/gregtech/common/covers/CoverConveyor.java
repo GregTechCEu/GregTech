@@ -18,7 +18,6 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.render.Textures;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.filter.ItemFilterContainer;
@@ -365,12 +364,12 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     public boolean canAttach() {
         return coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide) != null;
     }
-    
+
     @Override
     public boolean shouldCoverInteractWithOutputside() {
         return true;
     }
-    
+
     @Override
     public void onRemoved() {
         NonNullList<ItemStack> drops = NonNullList.create();
@@ -447,7 +446,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         TileEntity tile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
         if(coverTile instanceof TileEntityItemPipe ^ tile instanceof TileEntityItemPipe) {
             primaryGroup.addWidget(new CycleButtonWidget(96, 45, 70, 20,
-                            ItemDistributionMode.class, this::getDistributionMode, this::setDistributionMode));
+                    ItemDistributionMode.class, this::getDistributionMode, this::setDistributionMode));
         }
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 190 + 82)

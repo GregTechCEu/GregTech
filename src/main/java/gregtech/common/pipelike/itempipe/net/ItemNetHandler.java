@@ -1,7 +1,14 @@
 package gregtech.common.pipelike.itempipe.net;
 
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.ICoverable;
+import gregtech.api.pipenet.tile.PipeCoverableImplementation;
+import gregtech.api.util.GTLog;
+import gregtech.common.covers.CoverConveyor;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -28,8 +35,17 @@ public class ItemNetHandler implements IItemHandler {
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
-        // insert first mode
-        /*for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
+        CoverConveyor conveyor = getCover();
+        if(conveyor != null) {
+            if(conveyor.getDistributionMode() == CoverConveyor.ItemDistributionMode.ROUND_ROBIN) {
+                return insertRoundRobin(stack, simulate);
+            }
+        }
+        return insertFirst(stack, simulate);
+    }
+
+    private ItemStack insertFirst(ItemStack stack, boolean simulate) {
+        for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
             GTLog.logger.info(" - try inserting at {} with facing {}", inv.getHandlerPos(), facing);
             if (Objects.equals(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
                 continue;
@@ -38,9 +54,8 @@ public class ItemNetHandler implements IItemHandler {
             stack = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
             if (stack.isEmpty())
                 return ItemStack.EMPTY;
-        }*/
-        //GTLog.logger.info("Remainder {}", stack);
-        return insertRoundRobin(stack, simulate);
+        }
+        return stack;
     }
 
     private ItemStack insertRoundRobin(ItemStack stack, boolean simulate) {
@@ -104,6 +119,23 @@ public class ItemNetHandler implements IItemHandler {
         ItemStack result = stack.copy();
         result.setCount(remaining);
         return result;
+    }
+
+    public CoverConveyor getCover() {
+        PipeCoverableImplementation coverable = pipe.getCoverableImplementation();
+        CoverBehavior coverBehavior = coverable.getCoverAtSide(facing);
+        if(coverBehavior instanceof CoverConveyor && ((CoverConveyor) coverBehavior).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT)
+            return (CoverConveyor) coverBehavior;
+        TileEntity tile = pipe.getWorld().getTileEntity(pipe.getPos().offset(facing));
+        if(tile != null) {
+            ICoverable coverable1 = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
+            if(coverable1 != null) {
+                CoverBehavior coverBehavior1 = coverable1.getCoverAtSide(facing.getOpposite());
+                if(coverBehavior1 instanceof CoverConveyor && ((CoverConveyor) coverBehavior1).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)
+                    return (CoverConveyor) coverBehavior1;
+            }
+        }
+        return null;
     }
 
     @Override
