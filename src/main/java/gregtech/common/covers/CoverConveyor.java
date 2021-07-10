@@ -412,6 +412,10 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return distributionMode;
     }
 
+    public void setDistributionMode(ItemDistributionMode distributionMode) {
+        this.distributionMode = distributionMode;
+    }
+
     protected String getUITitle() {
         return "cover.conveyor.title";
     }
@@ -442,14 +446,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
         TileEntity tile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
         if(coverTile instanceof TileEntityItemPipe ^ tile instanceof TileEntityItemPipe) {
-            primaryGroup.addWidget(new ToggleButtonWidget(126, 45, 20, 20, () -> distributionMode == ItemDistributionMode.INSERT_FIRST, pressed -> {
-                if(pressed)
-                    distributionMode = ItemDistributionMode.INSERT_FIRST;
-            }).setTooltipText(distributionMode.name));
-            primaryGroup.addWidget(new ToggleButtonWidget(146, 45, 20, 20, () -> distributionMode == ItemDistributionMode.ROUND_ROBIN, pressed -> {
-                if(pressed)
-                    distributionMode = ItemDistributionMode.ROUND_ROBIN;
-            }).setTooltipText(distributionMode.name));
+            primaryGroup.addWidget(new CycleButtonWidget(96, 45, 70, 20,
+                            ItemDistributionMode.class, this::getDistributionMode, this::setDistributionMode));
         }
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 190 + 82)
@@ -533,7 +531,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
         @Override
         public String getName() {
-            return null;
+            return name;
         }
     }
 
