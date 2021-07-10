@@ -19,6 +19,7 @@ import gregtech.common.items.MetaItems;
 import gregtech.common.items.potions.PotionFluids;
 import gregtech.common.pipelike.cable.ItemBlockCable;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
+import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.oreprocessing.DecompositionRecipeHandler;
@@ -58,6 +59,7 @@ public class CommonProxy {
         registry.register(MACHINE);
         registry.register(CABLE);
         registry.register(FLUID_PIPE);
+        registry.register(ITEM_PIPE);
         registry.register(HERMETIC_CASING);
 
         registry.register(FOAM);
@@ -109,6 +111,7 @@ public class CommonProxy {
         registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
         registry.register(createItemBlock(CABLE, ItemBlockCable::new));
         registry.register(createItemBlock(FLUID_PIPE, ItemBlockFluidPipe::new));
+        registry.register(createItemBlock(ITEM_PIPE, ItemBlockItemPipe::new));
         registry.register(createItemBlock(HERMETIC_CASING, VariantItemBlock::new));
 
         registry.register(createItemBlock(BOILER_CASING, VariantItemBlock::new));
