@@ -29,31 +29,29 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, EmptyNodeData, WorldItemPipeNet> {
+public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipeProperties, WorldItemPipeNet> {
 
     static {
         //TickableWorldPipeNetEventHandler.registerTickablePipeNet(WorldItemPipeNet::getWorldPipeNet);
     }
 
-    private final List<Material> enabledMaterials = new ArrayList<>();
+    private final Map<Material, ItemPipeProperties> enabledMaterials = new HashMap<>();
 
     public BlockItemPipe() {
         setHarvestLevel("pickaxe", 1);
     }
 
-    public void addPipeMaterial(Material material) {
+    public void addPipeMaterial(Material material, ItemPipeProperties properties) {
         Preconditions.checkNotNull(material, "material");
+        Preconditions.checkNotNull(properties, "itemPipeProperties");
         Preconditions.checkArgument(Material.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
-        this.enabledMaterials.add(material);
+        this.enabledMaterials.put(material, properties);
     }
 
     @Override
-    public TileEntityPipeBase<ItemPipeType, EmptyNodeData> createNewTileEntity(boolean supportsTicking) {
+    public TileEntityPipeBase<ItemPipeType, ItemPipeProperties> createNewTileEntity(boolean supportsTicking) {
         return supportsTicking ? new TileEntityItemPipeTickable() : new TileEntityItemPipe();
     }
 
@@ -69,7 +67,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, EmptyNodeData
     }
 
     @Override
-    public int getActiveNodeConnections(IBlockAccess world, BlockPos nodePos, IPipeTile<ItemPipeType, EmptyNodeData> selfTileEntity) {
+    public int getActiveNodeConnections(IBlockAccess world, BlockPos nodePos, IPipeTile<ItemPipeType, ItemPipeProperties> selfTileEntity) {
         int activeNodeConnections = 0;
         for (EnumFacing side : EnumFacing.VALUES) {
             BlockPos offsetPos = nodePos.offset(side);
@@ -87,8 +85,8 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, EmptyNodeData
     }
 
     @Override
-    protected EmptyNodeData getFallbackType() {
-        return EmptyNodeData.INSTANCE;
+    protected ItemPipeProperties getFallbackType() {
+        return enabledMaterials.values().iterator().next();
     }
 
     @Override
@@ -102,17 +100,17 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, EmptyNodeData
     }
 
     @Override
-    protected EmptyNodeData createProperties(ItemPipeType itemPipeType, Material material) {
-        return EmptyNodeData.INSTANCE;
+    protected ItemPipeProperties createProperties(ItemPipeType itemPipeType, Material material) {
+        return itemPipeType.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
     }
 
     public Collection<Material> getEnabledMaterials() {
-        return Collections.unmodifiableList(enabledMaterials);
+        return Collections.unmodifiableSet(enabledMaterials.keySet());
     }
 
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
-        for (Material material : enabledMaterials) {
+        for (Material material : enabledMaterials.keySet()) {
             for (ItemPipeType fluidPipeType : ItemPipeType.values()) {
                 items.add(getItem(fluidPipeType, material));
             }
@@ -125,12 +123,12 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, EmptyNodeData
     }
 
     @Override
-    protected boolean canPipesConnect(IPipeTile<ItemPipeType, EmptyNodeData> selfTile, EnumFacing side, IPipeTile<ItemPipeType, EmptyNodeData> sideTile) {
+    protected boolean canPipesConnect(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, IPipeTile<ItemPipeType, ItemPipeProperties> sideTile) {
         return selfTile.getNodeData().equals(sideTile.getNodeData());
     }
 
     @Override
-    protected int getActiveVisualConnections(IPipeTile<ItemPipeType, EmptyNodeData> selfTile) {
+    protected int getActiveVisualConnections(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile) {
         int activeNodeConnections = 0;
         for (EnumFacing side : EnumFacing.VALUES) {
             BlockPos offsetPos = selfTile.getPipePos().offset(side);

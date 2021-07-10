@@ -7,6 +7,7 @@ import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.pipelike.cable.WireProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
+import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenProperty;
@@ -45,8 +46,6 @@ public class IngotMaterial extends SolidMaterial {
 
         public static final long GENERATE_ROUND = createFlag(51);
         public static final long GENERATE_DOUBLE_PLATE = createFlag(52);
-
-        public static final long GENERATE_ITEM_PIPE = createFlag(55);
 
         static {
             Material.MatFlags.registerMaterialFlagsHolder(MatFlags.class, IngotMaterial.class);
@@ -91,6 +90,13 @@ public class IngotMaterial extends SolidMaterial {
      */
     @Nullable
     public FluidPipeProperties fluidPipeProperties;
+
+    /**
+     * If set, item pipe will be generated for this materials with stats
+     * specified by this field
+     */
+    @Nullable
+    public ItemPipeProperties itemPipeProperties;
 
     public IngotMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element, float toolSpeed, float attackDamage, int toolDurability, int blastFurnaceTemperature) {
         super(metaItemSubId, name, materialRGB, materialIconSet, harvestLevel, materialComponents, materialGenerationFlags, element, toolSpeed, attackDamage, toolDurability);
@@ -181,6 +187,11 @@ public class IngotMaterial extends SolidMaterial {
     @ZenMethod
     public void setFluidPipeProperties(int maxTemperature, int throughput, boolean gasProof) {
         this.fluidPipeProperties = new FluidPipeProperties(maxTemperature, throughput, gasProof);
+    }
+
+    @ZenMethod
+    public void setItemPipeProperties(int maxRange, float stacksPerSec) {
+        this.itemPipeProperties = new ItemPipeProperties(maxRange, stacksPerSec);
     }
 
 }

@@ -200,8 +200,8 @@ public class MetaBlocks {
                 if (metalMaterial.fluidPipeProperties != null) {
                     FLUID_PIPE.addPipeMaterial(metalMaterial, metalMaterial.fluidPipeProperties);
                 }
-                if(material.hasFlag(IngotMaterial.MatFlags.GENERATE_ITEM_PIPE)) {
-                    ITEM_PIPE.addPipeMaterial(metalMaterial);
+                if (metalMaterial.itemPipeProperties != null) {
+                    ITEM_PIPE.addPipeMaterial(metalMaterial, metalMaterial.itemPipeProperties);
                 }
             }
         }

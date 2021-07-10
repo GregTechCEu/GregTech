@@ -1,8 +1,8 @@
 package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.pipenet.Node;
-import gregtech.api.pipenet.block.simple.EmptyNodeData;
 import gregtech.api.util.GTLog;
+import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -87,7 +87,7 @@ public class ItemNetWalker {
 
     private void checkPos(BlockPos pos) {
         pipes.clear();
-        Node<EmptyNodeData> node = net.getNodeAt(pos);
+        Node<ItemPipeProperties> node = net.getNodeAt(pos);
         if (node == null) return;
 
         TileEntity thisPipe = world.getTileEntity(pos);

@@ -1,11 +1,10 @@
 package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.api.pipenet.block.simple.EmptyNodeData;
-import gregtech.api.pipenet.tickable.TickableWorldPipeNet;
+import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 import net.minecraft.world.World;
 
-public class WorldItemPipeNet extends WorldPipeNet<EmptyNodeData, ItemPipeNet> {
+public class WorldItemPipeNet extends WorldPipeNet<ItemPipeProperties, ItemPipeNet> {
 
     private static final String DATA_ID = "gregtech.item_pipe_net";
 

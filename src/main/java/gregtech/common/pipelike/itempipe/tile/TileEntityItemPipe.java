@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.itempipe.tile;
 
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
-import gregtech.api.pipenet.block.simple.EmptyNodeData;
+import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
@@ -13,7 +13,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 
-public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, EmptyNodeData> {
+public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, ItemPipeProperties> {
 
     private WeakReference<ItemPipeNet> currentPipeNet = new WeakReference<>(null);
 

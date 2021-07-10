@@ -13,14 +13,14 @@ public enum ItemPipeType implements IMaterialPipeType<EmptyNodeData> {
 
     public final String name;
     private final float thickness;
-    private final boolean isPaintable;
+    private final float rateMultiplier;
     private final OrePrefix orePrefix;
 
-    ItemPipeType(String name, float thickness, OrePrefix orePrefix, boolean isPaintable) {
+    ItemPipeType(String name, float thickness, OrePrefix orePrefix, float rateMultiplier) {
         this.name = name;
         this.thickness = thickness;
         this.orePrefix = orePrefix;
-        this.isPaintable = isPaintable;
+        this.rateMultiplier = rateMultiplier;
     }
 
     @Override
@@ -29,13 +29,17 @@ public enum ItemPipeType implements IMaterialPipeType<EmptyNodeData> {
     }
 
     @Override
-    public EmptyNodeData modifyProperties(EmptyNodeData baseProperties) {
+    public ItemPipeProperties modifyProperties(ItemPipeProperties baseProperties) {
         return baseProperties;
+    }
+
+    public float getRateMultiplier() {
+        return rateMultiplier;
     }
 
     @Override
     public boolean isPaintable() {
-        return isPaintable;
+        return true;
     }
 
     @Override

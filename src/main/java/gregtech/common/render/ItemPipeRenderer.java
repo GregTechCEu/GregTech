@@ -16,14 +16,14 @@ import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.pipenet.block.simple.EmptyNodeData;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
-import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
+import gregtech.common.pipelike.itempipe.ItemPipeProperties;
+import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -222,7 +222,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         renderState.bind(buffer);
         renderState.setPipeline(new Vector3(new Vec3d(pos)).translation(), new IconTransformation(sprite));
         BlockItemPipe blockFluidPipe = (BlockItemPipe) state.getBlock();
-        IPipeTile<ItemPipeType, EmptyNodeData> tileEntityPipe = blockFluidPipe.getPipeTileEntity(world, pos);
+        IPipeTile<ItemPipeType, ItemPipeProperties> tileEntityPipe = blockFluidPipe.getPipeTileEntity(world, pos);
         if (tileEntityPipe == null) {
             return;
         }
@@ -271,7 +271,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         return true;
     }
 
-    public Pair<TextureAtlasSprite, Integer> getParticleTexture(IPipeTile<ItemPipeType, EmptyNodeData> tileEntity) {
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture(IPipeTile<ItemPipeType, ItemPipeProperties> tileEntity) {
         if (tileEntity == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }

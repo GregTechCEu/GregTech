@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.itempipe;
 
 import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
-import gregtech.api.pipenet.block.simple.EmptyNodeData;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -11,7 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemBlockItemPipe extends ItemBlockMaterialPipe<ItemPipeType, EmptyNodeData> {
+public class ItemBlockItemPipe extends ItemBlockMaterialPipe<ItemPipeType, ItemPipeProperties> {
 
     public ItemBlockItemPipe(BlockItemPipe block) {
         super(block);

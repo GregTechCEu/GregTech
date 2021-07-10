@@ -3,7 +3,7 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.api.pipenet.block.simple.EmptyNodeData;
+import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -17,11 +17,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ItemPipeNet extends PipeNet<EmptyNodeData> {
+public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
     private final Map<BlockPos, List<Inventory>> NET_DATA = new HashMap<>();
 
-    public ItemPipeNet(WorldPipeNet<EmptyNodeData, ? extends PipeNet<EmptyNodeData>> world) {
+    public ItemPipeNet(WorldPipeNet<ItemPipeProperties, ? extends PipeNet<ItemPipeProperties>> world) {
         super(world);
     }
 
@@ -46,19 +46,21 @@ public class ItemPipeNet extends PipeNet<EmptyNodeData> {
     }
 
     @Override
-    protected void transferNodeData(Map<BlockPos, Node<EmptyNodeData>> transferredNodes, PipeNet<EmptyNodeData> parentNet) {
+    protected void transferNodeData(Map<BlockPos, Node<ItemPipeProperties>> transferredNodes, PipeNet<ItemPipeProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);
         NET_DATA.clear();
         ((ItemPipeNet) parentNet).NET_DATA.clear();
     }
 
     @Override
-    protected void writeNodeData(EmptyNodeData nodeData, NBTTagCompound tagCompound) {
+    protected void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
+        tagCompound.setInteger("Range", nodeData.maxRange);
+        tagCompound.setFloat("Rate", nodeData.transferRate);
     }
 
     @Override
-    protected EmptyNodeData readNodeData(NBTTagCompound tagCompound) {
-        return EmptyNodeData.INSTANCE;
+    protected ItemPipeProperties readNodeData(NBTTagCompound tagCompound) {
+        return new ItemPipeProperties(tagCompound.getInteger("Range"), tagCompound.getFloat("Rate"));
     }
 
     public static class Inventory {
