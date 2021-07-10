@@ -97,6 +97,7 @@ public class MetaBlocks {
     public static BlockWireCoil WIRE_COIL;
     public static BlockFusionCoil FUSION_COIL;
     public static BlockWarningSign WARNING_SIGN;
+    public static HermeticCasings HERMETIC_CASING;
 
     public static BlockGranite GRANITE;
     public static BlockMineral MINERAL;
@@ -150,6 +151,8 @@ public class MetaBlocks {
         FUSION_COIL.setRegistryName("fusion_coil");
         WARNING_SIGN = new BlockWarningSign();
         WARNING_SIGN.setRegistryName("warning_sign");
+        HERMETIC_CASING = new HermeticCasings();
+        HERMETIC_CASING.setRegistryName("hermetic_casing");
         GRANITE = new BlockGranite();
         GRANITE.setRegistryName("granite");
         MINERAL = new BlockMineral();
@@ -318,6 +321,7 @@ public class MetaBlocks {
         registerItemModel(WIRE_COIL);
         registerItemModel(FUSION_COIL);
         registerItemModel(WARNING_SIGN);
+        registerItemModel(HERMETIC_CASING);
         registerItemModel(GRANITE);
         registerItemModel(MINERAL);
         registerItemModel(CONCRETE);

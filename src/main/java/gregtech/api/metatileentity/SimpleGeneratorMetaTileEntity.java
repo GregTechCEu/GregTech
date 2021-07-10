@@ -34,10 +34,10 @@ import java.util.List;
 
 public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
 
-    private FuelRecipeLogic workableHandler;
-    private ItemStackHandler containerInventory;
-    private OrientedOverlayRenderer overlayRenderer;
-    private FuelRecipeMap recipeMap;
+    private final FuelRecipeLogic workableHandler;
+    private final ItemStackHandler containerInventory;
+    private final OrientedOverlayRenderer overlayRenderer;
+    private final FuelRecipeMap recipeMap;
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, FuelRecipeMap recipeMap, OrientedOverlayRenderer renderer, int tier) {
         super(metaTileEntityId, tier);
@@ -56,6 +56,11 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
     protected FluidTankList createImportFluidHandler() {
         return new FluidTankList(false, new FilteredFluidHandler(16000)
             .setFillPredicate(this::canInputFluid));
+    }
+
+    @Override
+    protected FluidTankList createExportFluidHandler() {
+        return new FluidTankList(false, this.importFluids);
     }
 
     private boolean canInputFluid(FluidStack fluid) {
@@ -102,7 +107,8 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
+        if (!getWorld().isRemote && !containerInventory.getStackInSlot(0).isEmpty()) {
+            fillContainerFromInternalTank(containerInventory, containerInventory, 0, 1);
             fillInternalTankFromFluidContainer(containerInventory, containerInventory, 0, 1);
         }
     }
@@ -122,7 +128,7 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
         builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
         builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
         return builder.label(6, 6, getMetaFullName())
-            .widget(new FluidContainerSlotWidget(containerInventory, 0, 90, 17, true)
+            .widget(new FluidContainerSlotWidget(containerInventory, 0, 90, 17, false)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
             .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
             .widget(new SlotWidget(containerInventory, 1, 90, 54, true, false)

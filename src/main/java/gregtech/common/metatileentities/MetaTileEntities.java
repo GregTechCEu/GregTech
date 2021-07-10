@@ -151,6 +151,7 @@ public class MetaTileEntities {
     public static MetaTileEntityChest WOODEN_CHEST;
     public static MetaTileEntityChest BRONZE_CHEST;
     public static MetaTileEntityChest STEEL_CHEST;
+    public static MetaTileEntityChest ALUMINIUM_CHEST;
     public static MetaTileEntityChest STAINLESS_STEEL_CHEST;
     public static MetaTileEntityChest TITANIUM_CHEST;
     public static MetaTileEntityChest TUNGSTENSTEEL_CHEST;
@@ -177,6 +178,8 @@ public class MetaTileEntities {
     public static MetaTileEntityCrate TITANIUM_CRATE;
     public static MetaTileEntityCrate TUNGSTENSTEEL_CRATE;
 
+    public static MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[10];
+    public static MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[10];
 
     //MISC MACHINES SECTION
     public static MetaTileEntityWorkbench WORKBENCH;
@@ -185,8 +188,6 @@ public class MetaTileEntities {
     public static MetaTileEntityAirCollector[] AIR_COLLECTOR = new MetaTileEntityAirCollector[6];
     public static MetaTileEntityItemCollector[] ITEM_COLLECTOR = new MetaTileEntityItemCollector[4];
     public static MetaTileEntityTeslaCoil TESLA_COIL;
-    public static MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[4];
-    public static MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[4];
     public static MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
 
     public static void init() {
@@ -550,9 +551,10 @@ public class MetaTileEntities {
         WOODEN_CHEST = GregTechAPI.registerMetaTileEntity(1486, new MetaTileEntityChest(gregtechId("wooden_chest"), Materials.Wood, 9, 3));
         BRONZE_CHEST = GregTechAPI.registerMetaTileEntity(1487, new MetaTileEntityChest(gregtechId("bronze_chest"), Materials.Bronze, 9, 6));
         STEEL_CHEST = GregTechAPI.registerMetaTileEntity(1488, new MetaTileEntityChest(gregtechId("steel_chest"), Materials.Steel, 9, 8));
-        STAINLESS_STEEL_CHEST = GregTechAPI.registerMetaTileEntity(1489, new MetaTileEntityChest(gregtechId("stainless_steel_chest"), Materials.StainlessSteel, 9, 10));
-        TITANIUM_CHEST = GregTechAPI.registerMetaTileEntity(1490, new MetaTileEntityChest(gregtechId("titanium_chest"), Materials.Titanium, 12, 10));
-        TUNGSTENSTEEL_CHEST = GregTechAPI.registerMetaTileEntity(1491, new MetaTileEntityChest(gregtechId("tungstensteel_chest"), Materials.TungstenSteel, 12, 14));
+        ALUMINIUM_CHEST = GregTechAPI.registerMetaTileEntity(1489, new MetaTileEntityChest(gregtechId("aluminium_chest"), Materials.Aluminium, 9, 10));
+        STAINLESS_STEEL_CHEST = GregTechAPI.registerMetaTileEntity(1490, new MetaTileEntityChest(gregtechId("stainless_steel_chest"), Materials.StainlessSteel, 9, 12));
+        TITANIUM_CHEST = GregTechAPI.registerMetaTileEntity(1491, new MetaTileEntityChest(gregtechId("titanium_chest"), Materials.Titanium, 12, 12));
+        TUNGSTENSTEEL_CHEST = GregTechAPI.registerMetaTileEntity(1492, new MetaTileEntityChest(gregtechId("tungstensteel_chest"), Materials.TungstenSteel, 12, 14));
 
         // Tanks, IDs 1500-1514
         WOODEN_TANK = GregTechAPI.registerMetaTileEntity(1500, new MetaTileEntityTank(gregtechId("wooden_tank"), Materials.Wood, 4000, 1, 3));
@@ -590,18 +592,32 @@ public class MetaTileEntities {
             AIR_COLLECTOR[5] = GregTechAPI.registerMetaTileEntity(1550, new MetaTileEntityAirCollector(gregtechId("air_collector.luv"), 6));
         }
 
-        // Quantum Chests, IDs 1560-1574
-        for (int i = 0; i < QUANTUM_CHEST.length; i++) {
-            String voltageName = GTValues.VN[i + 2].toLowerCase();
-            QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest." + voltageName), i + 2, 64L * 64000 * (i + 1));
+        // Super / Quantum Chests, IDs 1560-1574
+        for (int i = 0; i < 5; i++) {
+            String voltageName = GTValues.VN[i + 1].toLowerCase();
+            QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(gregtechId("super_chest." + voltageName), i + 1, 4000000L * (int) Math.pow(2, i));
             GregTechAPI.registerMetaTileEntity(1560 + i, QUANTUM_CHEST[i]);
         }
 
-        // Quantum Tanks, IDs 1575-1589
-        for (int i = 0; i < QUANTUM_TANK.length; i++) {
-            String voltageName = GTValues.VN[i + 2].toLowerCase();
-            QUANTUM_TANK[i] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank." + voltageName), i + 2, 1000 * 64000 * (i + 1));
+        for (int i = 5; i < QUANTUM_CHEST.length; i++) {
+            String voltageName = GTValues.VN[i].toLowerCase();
+            long capacity = i == GTValues.UHV ? Integer.MAX_VALUE : 4000000L * (int) Math.pow(2, i);
+            QUANTUM_CHEST[i] = new MetaTileEntityQuantumChest(gregtechId("quantum_chest." + voltageName), i, capacity);
+            GregTechAPI.registerMetaTileEntity(1565 + i, QUANTUM_CHEST[i]);
+        }
+
+        // Super / Quantum Tanks, IDs 1575-1589
+        for (int i = 0; i < 5; i++) {
+            String voltageName = GTValues.VN[i + 1].toLowerCase();
+            QUANTUM_TANK[i] = new MetaTileEntityQuantumTank(gregtechId("super_tank." + voltageName), i + 1, 4000000 * (int) Math.pow(2, i));
             GregTechAPI.registerMetaTileEntity(1575 + i, QUANTUM_TANK[i]);
+        }
+
+        for (int i = 5; i < QUANTUM_TANK.length; i++) {
+            String voltageName = GTValues.VN[i].toLowerCase();
+            int capacity = i == GTValues.UHV ? Integer.MAX_VALUE : 4000000 * (int) Math.pow(2, i);
+            QUANTUM_TANK[i] = new MetaTileEntityQuantumTank(gregtechId("quantum_tank." + voltageName), i, capacity);
+            GregTechAPI.registerMetaTileEntity(1580 + i, QUANTUM_TANK[i]);
         }
 
         // Block Breakers, IDs 1590-1594
@@ -638,7 +654,6 @@ public class MetaTileEntities {
         WORKBENCH = GregTechAPI.registerMetaTileEntity(1627, new MetaTileEntityWorkbench(gregtechId("workbench")));
         //PRIMITIVE_WATER_PUMP = GregTechAPI.registerMetaTileEntity(1628, new MetaTileEntityWaterPump(gregtechId("primitive_pump")));
         //PUMP_OUTPUT_HATCH = GregTechAPI.registerMetaTileEntity(1629, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
-
 
 
         /*

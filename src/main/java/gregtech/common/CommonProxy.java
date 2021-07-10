@@ -6,6 +6,7 @@ import gregtech.api.enchants.EnchantmentEnderDamage;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
+import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -59,6 +60,7 @@ public class CommonProxy {
         registry.register(CABLE);
         registry.register(FLUID_PIPE);
         registry.register(ITEM_PIPE);
+        registry.register(HERMETIC_CASING);
 
         registry.register(FOAM);
         registry.register(REINFORCED_FOAM);
@@ -81,7 +83,6 @@ public class CommonProxy {
         registry.register(LOG);
         registry.register(LEAVES);
         registry.register(SAPLING);
-        registry.register(CRUSHER_BLADE);
         registry.register(SURFACE_ROCK);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
@@ -111,6 +112,7 @@ public class CommonProxy {
         registry.register(createItemBlock(CABLE, ItemBlockCable::new));
         registry.register(createItemBlock(FLUID_PIPE, ItemBlockFluidPipe::new));
         registry.register(createItemBlock(ITEM_PIPE, ItemBlockItemPipe::new));
+        registry.register(createItemBlock(HERMETIC_CASING, VariantItemBlock::new));
 
         registry.register(createItemBlock(BOILER_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_FIREBOX_CASING, VariantItemBlock::new));
@@ -129,7 +131,6 @@ public class CommonProxy {
         registry.register(createMultiTexItemBlock(LOG, state -> state.getValue(BlockGregLog.VARIANT).getName()));
         registry.register(createMultiTexItemBlock(LEAVES, state -> state.getValue(BlockGregLeaves.VARIANT).getName()));
         registry.register(createMultiTexItemBlock(SAPLING, state -> state.getValue(BlockGregSapling.VARIANT).getName()));
-        registry.register(createItemBlock(CRUSHER_BLADE, ItemBlock::new));
 
         COMPRESSED.values()
             .stream().distinct()
@@ -158,6 +159,11 @@ public class CommonProxy {
             BlastTemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
                     "tile.wire_coil." + values.getName() + ".name");
         }
+
+        //Registers Fusion tiers for the FusionEUToStartProperty
+        FusionEUToStartProperty.registerFusionTier(6, "(MK1)");
+        FusionEUToStartProperty.registerFusionTier(7, "(MK2)");
+        FusionEUToStartProperty.registerFusionTier(8, "(MK3)");
 
         GTLog.logger.info("Registering ore dictionary...");
 

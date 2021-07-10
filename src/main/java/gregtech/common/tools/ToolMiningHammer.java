@@ -1,13 +1,8 @@
 package gregtech.common.tools;
 
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.IElectricItem;
-import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.util.GTUtility;
-import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.ModeSwitchBehavior;
-import gregtech.common.items.behaviors.ModeSwitchBehavior.ILocalizationKey;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -25,22 +20,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ToolJackHammer extends ToolDrillLV {
+public class ToolMiningHammer extends ToolBase {
 
-    private static final ModeSwitchBehavior<JackHammerMode> MODE_SWITCH_BEHAVIOR = new ModeSwitchBehavior<>(JackHammerMode.class);
-
-    public enum JackHammerMode implements ILocalizationKey {
-        THREE_BY_THREE("metaitem.jack_hammer.mode.three_by_three", 3, 3, 1.2f),
-        VERTICAL_LINE("metaitem.jack_hammer.mode.vertical_line", 3, 1, 2.5f),
-        HORIZONTAL_LINE("metaitem.jack_hammer.mode.horizontal_line", 1, 3, 2.5f),
-        SINGLE_BLOCK("metaitem.jack_hammer.mode.single_block", 1, 1, 3.0f);
+    public enum MiningHammerMode implements ModeSwitchBehavior.ILocalizationKey {
+        THREE_BY_THREE("metaitem.drill.mode.three_by_three", 3, 3, 0.75f),
+        SINGLE_BLOCK("metaitem.drill.mode.single_block", 1, 1, 3.0f);
 
         private final String localizationKey;
         private final int verticalSize;
         private final int horizontalSize;
         private final float digSpeedMultiplier;
 
-        JackHammerMode(String localizationKey, int verticalSize, int horizontalSize, float digSpeedMultiplier) {
+        MiningHammerMode(String localizationKey, int verticalSize, int horizontalSize, float digSpeedMultiplier) {
             this.localizationKey = localizationKey;
             this.verticalSize = verticalSize;
             this.horizontalSize = horizontalSize;
@@ -65,33 +56,20 @@ public class ToolJackHammer extends ToolDrillLV {
         }
     }
 
+
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
-        return enchantment.type.canEnchantItem(Items.IRON_PICKAXE);
+        return enchantment.type.canEnchantItem(Items.IRON_PICKAXE) ||
+                enchantment.type.canEnchantItem(Items.IRON_SHOVEL);
     }
 
     @Override
     public int getToolDamagePerBlockBreak(ItemStack stack) {
-        return 4;
-    }
-
-    @Override
-    public int getToolDamagePerDropConversion(ItemStack stack) {
-        return 4;
+        return 1;
     }
 
     @Override
     public int getToolDamagePerContainerCraft(ItemStack stack) {
-        return 32;
-    }
-
-    @Override
-    public int getToolDamagePerEntityAttack(ItemStack stack) {
-        return 8;
-    }
-
-    @Override
-    public int getBaseQuality(ItemStack stack) {
         return 1;
     }
 
@@ -101,29 +79,18 @@ public class ToolJackHammer extends ToolDrillLV {
     }
 
     @Override
-    public float getDigSpeedMultiplier(ItemStack stack) {
-        JackHammerMode jackHammerMode = MODE_SWITCH_BEHAVIOR.getModeFromItemStack(stack);
-        return jackHammerMode.getDigSpeedMultiplier();
-    }
-
-    @Override
     public float getMaxDurabilityMultiplier(ItemStack stack) {
-        return 29.0F;
+        return 2.5f;
     }
 
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
         return (tool != null && (tool.equals("hammer") || tool.equals("pickaxe"))) ||
-            block.getMaterial() == Material.ROCK ||
-            block.getMaterial() == Material.GLASS ||
-            block.getMaterial() == Material.ICE ||
-            block.getMaterial() == Material.PACKED_ICE;
-    }
-
-    @Override
-    public void onStatsAddedToTool(MetaValueItem metaValueItem) {
-        metaValueItem.addComponents(MODE_SWITCH_BEHAVIOR);
+                block.getMaterial() == Material.ROCK ||
+                block.getMaterial() == Material.GLASS ||
+                block.getMaterial() == Material.ICE ||
+                block.getMaterial() == Material.PACKED_ICE;
     }
 
     @Override
@@ -133,10 +100,15 @@ public class ToolJackHammer extends ToolDrillLV {
         }
         ArrayList<BlockPos> result = new ArrayList<>();
         BlockPos pos = rayTraceResult.getBlockPos();
-        JackHammerMode jackHammerMode = MODE_SWITCH_BEHAVIOR.getModeFromItemStack(itemStack);
+        MiningHammerMode miningHammerMode;
+        if(player.isSneaking()) {
+            miningHammerMode = MiningHammerMode.SINGLE_BLOCK;
+        } else {
+            miningHammerMode = MiningHammerMode.THREE_BY_THREE;
+        }
         EnumFacing horizontalFacing = player.getHorizontalFacing();
-        int xSizeExtend = (jackHammerMode.getHorizontalSize() - 1) / 2;
-        int ySizeExtend = (jackHammerMode.getVerticalSize() - 1) / 2;
+        int xSizeExtend = (miningHammerMode.getHorizontalSize() - 1) / 2;
+        int ySizeExtend = (miningHammerMode.getVerticalSize() - 1) / 2;
         for (int x = -xSizeExtend; x <= xSizeExtend; x++) {
             for (int y = -ySizeExtend; y <= ySizeExtend; y++) {
                 //do not check center block - it's handled now
@@ -153,36 +125,35 @@ public class ToolJackHammer extends ToolDrillLV {
 
     @Override
     public void onBlockDestroyed(ItemStack stack, World world, IBlockState state, BlockPos pos, EntityLivingBase entity) {
-        if(entity instanceof EntityPlayer && !(entity instanceof FakePlayer)) {
+        if (entity instanceof EntityPlayer && !(entity instanceof FakePlayer)) {
             EntityPlayer entityPlayer = (EntityPlayer) entity;
             EnumFacing sideHit = ToolUtility.getSideHit(world, pos, entityPlayer);
             int damagePerBlockBreak = getToolDamagePerBlockBreak(stack);
-            JackHammerMode jackHammerMode = MODE_SWITCH_BEHAVIOR.getModeFromItemStack(stack);
+            MiningHammerMode miningHammerMode;
+            if(entityPlayer.isSneaking()) {
+                miningHammerMode = MiningHammerMode.SINGLE_BLOCK;
+            } else {
+                miningHammerMode = MiningHammerMode.THREE_BY_THREE;
+            }
             EnumFacing horizontalFacing = entity.getHorizontalFacing();
-            int xSizeExtend = (jackHammerMode.getHorizontalSize() - 1) / 2;
-            int ySizeExtend = (jackHammerMode.getVerticalSize() - 1) / 2;
+            int xSizeExtend = (miningHammerMode.getHorizontalSize() - 1) / 2;
+            int ySizeExtend = (miningHammerMode.getVerticalSize() - 1) / 2;
             for (int x = -xSizeExtend; x <= xSizeExtend; x++) {
                 for (int y = -ySizeExtend; y <= ySizeExtend; y++) {
                     //do not check center block - it's handled now
                     if (x == 0 && y == 0) continue;
                     BlockPos offsetPos = rotate(pos, x, y, sideHit, horizontalFacing);
                     IBlockState blockState = world.getBlockState(offsetPos);
-                    if(world.isBlockModifiable(entityPlayer, offsetPos) &&
-                        blockState.getBlock().canHarvestBlock(world, offsetPos, entityPlayer) &&
-                        blockState.getPlayerRelativeBlockHardness(entityPlayer, world, offsetPos) > 0.0f &&
-                        stack.canHarvestBlock(blockState)) {
+                    if (world.isBlockModifiable(entityPlayer, offsetPos) &&
+                            blockState.getBlock().canHarvestBlock(world, offsetPos, entityPlayer) &&
+                            blockState.getPlayerRelativeBlockHardness(entityPlayer, world, offsetPos) > 0.0f &&
+                            stack.canHarvestBlock(blockState)) {
                         GTUtility.harvestBlock(world, offsetPos, entityPlayer);
                         ((ToolMetaItem) stack.getItem()).damageItem(stack, damagePerBlockBreak, false);
                     }
                 }
             }
         }
-    }
-
-    @Override
-    public ItemStack getBrokenStack(ItemStack stack) {
-        IElectricItem electricItem = stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        return MetaItems.JACKHAMMER_BASE.getChargedStackWithOverride(electricItem);
     }
 
     private static BlockPos rotate(BlockPos origin, int x, int y, EnumFacing sideHit, EnumFacing horizontalFacing) {

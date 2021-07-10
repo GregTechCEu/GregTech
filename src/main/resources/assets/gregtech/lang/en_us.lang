@@ -97,7 +97,8 @@ metaitem.dynamite.name=Dynamite
 metaitem.power_unit.lv.name=Power Unit (LV)
 metaitem.power_unit.mv.name=Power Unit (MV)
 metaitem.power_unit.hv.name=Power Unit (HV)
-metaitem.jackhammer_base.name=JackHammer Base (HV)
+metaitem.power_unit.ev.name=Power Unit (EV)
+metaitem.power_unit.iv.name=Power Unit (IV)
 metaitem.nano_saber.name=Nano Saber
 metaitem.nano_saber.tooltip=Ryujin no ken wo kurae!
 metaitem.energy_field_projector.name=Energy Field Projector
@@ -691,6 +692,10 @@ metaitem.tool.rolling_pin.name=%s Rolling Pin
 metaitem.tool.drill.lv.name=%s Drill (LV)
 metaitem.tool.drill.mv.name=%s Drill (MV)
 metaitem.tool.drill.hv.name=%s Drill (HV)
+metaitem.tool.drill.ev.name=%s Drill (EV)
+metaitem.tool.drill.iv.name=%s Drill (IV)
+metaitem.tool.mining_hammer.name=%s Mining Hammer
+metaitem.tool.mining_hammer.tooltip=Mines a 3x3 area at once (unless you're crouching)
 metaitem.tool.chainsaw.lv.name=%s Chainsaw (LV)
 metaitem.tool.chainsaw.lv.tooltip=Can also harvest Ice
 metaitem.tool.chainsaw.mv.name=%s Chainsaw (MV)
@@ -703,8 +708,6 @@ metaitem.tool.wrench.mv.name=%s Wrench (MV)
 metaitem.tool.wrench.mv.tooltip=Hold Leftclick to dismantle Machines
 metaitem.tool.wrench.hv.name=%s Wrench (HV)
 metaitem.tool.wrench.hv.tooltip=Hold Leftclick to dismantle Machines
-metaitem.tool.jackhammer.name=%s JackHammer (HV)
-metaitem.tool.jackhammer.tooltip=Breaks Rocks into pieces
 metaitem.tool.buzzsaw.name=%s Buzzsaw (LV)
 metaitem.tool.buzzsaw.tooltip=Not suitable for harvesting Blocks
 metaitem.tool.screwdriver.lv.name=%s Screwdriver (LV)
@@ -715,10 +718,11 @@ metaitem.turbine_rotor.name=%s Turbine Rotor
 metaitem.turbine_rotor.tooltip=Turbine Rotors for your power station
 metaitem.tool.magnifying_glass.name=%s Magnifying Glass
 
-metaitem.jack_hammer.mode.three_by_three=3x3 Panel
-metaitem.jack_hammer.mode.vertical_line=Vertical Line
-metaitem.jack_hammer.mode.horizontal_line=Horizontal Line
-metaitem.jack_hammer.mode.single_block=Single Block
+metaitem.drill.mode.three_cube=3x3x3 Cube
+metaitem.drill.mode.five_cube=5x5x5 Cube
+metaitem.drill.mode.seven_cube=7x7x7 Cube
+metaitem.drill.mode.nine_cube=9x9x9 Cube
+metaitem.drill.mode.single_block=Single Block
 
 metaitem.behavior.mode_switch.tooltip=Use while sneaking to switch mode
 metaitem.behavior.mode_switch.mode_switched=§eMode Set to: %s
@@ -1932,6 +1936,7 @@ gregtech.machine.small_wooden_chest.name=Small Wooden Chest
 gregtech.machine.wooden_chest.name=Wooden Chest
 gregtech.machine.bronze_chest.name=Bronze Chest
 gregtech.machine.steel_chest.name=Steel Chest
+gregtech.machine.aluminium_chest.name=Aluminium Chest
 gregtech.machine.stainless_steel_chest.name=Stainless Steel Chest
 gregtech.machine.titanium_chest.name=Titanium Chest
 gregtech.machine.tungstensteel_chest.name=Tungstensteel Chest
@@ -2902,24 +2907,47 @@ gregtech.machine.item_collector.ev.name=Advanced Item Collector III
 gregtech.machine.item_collector.collect_range=Collection Area: %,dx%,d
 gregtech.machine.item_collector.gui.collect_range=Collect in %s blocks
 
-#Quantum chests
+#Quantum Chests
 gregtech.machine.quantum_chest.tooltip=Better than JABBA.
 gregtech.machine.quantum_chest.capacity=Item Capacity: %,d items
 gregtech.machine.quantum_chest.items_stored=Item Amount:
 
-gregtech.machine.quantum_chest.mv.name=Basic Quantum Chest
-gregtech.machine.quantum_chest.hv.name=Advanced Quantum Chest
-gregtech.machine.quantum_chest.ev.name=Advanced Quantum Chest II
-gregtech.machine.quantum_chest.iv.name=Black Hole-Quantum Chest III
+gregtech.machine.super_chest.lv.name=Super Chest I
+gregtech.machine.super_chest.mv.name=Super Chest II
+gregtech.machine.super_chest.hv.name=Super Chest III
+gregtech.machine.super_chest.ev.name=Super Chest IV
+gregtech.machine.super_chest.iv.name=Super Chest V
+gregtech.machine.quantum_chest.iv.name=Quantum Chest I
+gregtech.machine.quantum_chest.luv.name=Quantum Chest II
+gregtech.machine.quantum_chest.zpm.name=Quantum Chest III
+gregtech.machine.quantum_chest.uv.name=Quantum Chest IV
+gregtech.machine.quantum_chest.uhv.name=Quantum Chest V
 
-#Quantum tanks
+#Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids.
 gregtech.machine.quantum_tank.capacity=Fluid Capacity: %,d mb
 
-gregtech.machine.quantum_tank.mv.name=Basic Quantum Tank
-gregtech.machine.quantum_tank.hv.name=Advanced Quantum Tank
-gregtech.machine.quantum_tank.ev.name=Advanced Quantum Tank II
-gregtech.machine.quantum_tank.iv.name=Black Hole-Quantum Tank III
+gregtech.machine.super_tank.lv.name=Super Tank I
+gregtech.machine.super_tank.mv.name=Super Tank II
+gregtech.machine.super_tank.hv.name=Super Tank III
+gregtech.machine.super_tank.ev.name=Super Tank IV
+gregtech.machine.super_tank.iv.name=Super Tank V
+gregtech.machine.quantum_tank.iv.name=Quantum Tank I
+gregtech.machine.quantum_tank.luv.name=Quantum Tank II
+gregtech.machine.quantum_tank.zpm.name=Quantum Tank III
+gregtech.machine.quantum_tank.uv.name=Quantum Tank IV
+gregtech.machine.quantum_tank.uhv.name=Quantum Tank V
+
+#Hermetic Casing
+tile.hermetic_casing.hermetic_casing_lv.name=Hermetic Casing I
+tile.hermetic_casing.hermetic_casing_mv.name=Hermetic Casing II
+tile.hermetic_casing.hermetic_casing_hv.name=Hermetic Casing III
+tile.hermetic_casing.hermetic_casing_ev.name=Hermetic Casing IV
+tile.hermetic_casing.hermetic_casing_iv.name=Hermetic Casing V
+tile.hermetic_casing.hermetic_casing_luv.name=Hermetic Casing VI
+tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VII
+tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing VIII
+time.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
 
 #Air Collectors
 gregtech.machine.air_collector.lv.name=Basic Air Collector
@@ -3152,8 +3180,6 @@ achievement.brrrr=Brrrr...
 achievement.brrrr.desc=Craft a Chainsaw(LV)
 achievement.highpowerdrill=High Power Drill
 achievement.highpowerdrill.desc=Craft a Drill(HV)
-achievement.hammertime=Hammertime
-achievement.hammertime.desc=Craft a Jackhammer
 achievement.repair=Repairs
 achievement.repair.desc=Craft a Disassembler
 achievement.unitool=Universal Tool

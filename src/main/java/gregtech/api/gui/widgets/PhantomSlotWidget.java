@@ -1,7 +1,7 @@
 package gregtech.api.gui.widgets;
 
 import com.google.common.collect.Lists;
-import gregtech.api.gui.igredient.IGhostIngredientTarget;
+import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.util.SlotUtil;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.entity.player.EntityPlayer;

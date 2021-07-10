@@ -45,6 +45,8 @@ public class OreDictionaryLoader {
             OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.dust, material), OrePrefix.dye, Color.Blue);
         }
 
+        OreDictUnifier.registerOre(OreDictUnifier.get(OrePrefix.dust, Materials.MetalMixture), OrePrefix.dye, Color.Brown);
+
         OreDictUnifier.registerOre(new ItemStack(Blocks.COAL_ORE), OrePrefix.ore, Materials.Coal);
         OreDictUnifier.registerOre(new ItemStack(Blocks.IRON_ORE), OrePrefix.ore, Materials.Iron);
         OreDictUnifier.registerOre(new ItemStack(Blocks.LAPIS_ORE), OrePrefix.ore, Materials.Lapis);

@@ -3,7 +3,7 @@ package gregtech.api.gui.widgets;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.igredient.IIngredientSlot;
+import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.FluidTooltipUtil;

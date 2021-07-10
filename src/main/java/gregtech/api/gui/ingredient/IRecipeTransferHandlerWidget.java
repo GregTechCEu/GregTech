@@ -1,4 +1,4 @@
-package gregtech.api.gui.igredient;
+package gregtech.api.gui.ingredient;
 
 import gregtech.api.gui.impl.ModularUIContainer;
 import mezz.jei.api.gui.IGuiIngredient;
