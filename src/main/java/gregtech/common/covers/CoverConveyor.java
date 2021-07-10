@@ -62,6 +62,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.transferRate = maxItemTransferRate;
         this.itemsLeftToTransferLastSecond = transferRate;
         this.conveyorMode = ConveyorMode.EXPORT;
+        this.distributionMode = ItemDistributionMode.INSERT_FIRST;
         this.itemFilterContainer = new ItemFilterContainer(this);
     }
 
