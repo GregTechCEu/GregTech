@@ -18,9 +18,11 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.render.Textures;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.filter.ItemFilterContainer;
+import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -43,6 +45,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     public final int maxItemTransferRate;
     protected int transferRate;
     protected ConveyorMode conveyorMode;
+    protected ItemDistributionMode distributionMode;
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
     protected final ItemFilterContainer itemFilterContainer;
     protected int itemsLeftToTransferLastSecond;
@@ -56,6 +59,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.transferRate = maxItemTransferRate;
         this.itemsLeftToTransferLastSecond = transferRate;
         this.conveyorMode = ConveyorMode.EXPORT;
+        this.distributionMode = ItemDistributionMode.INSERT_FIRST;
         this.itemFilterContainer = new ItemFilterContainer(this);
     }
 
@@ -404,6 +408,10 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return defaultValue;
     }
 
+    public ItemDistributionMode getDistributionMode() {
+        return distributionMode;
+    }
+
     protected String getUITitle() {
         return "cover.conveyor.title";
     }
@@ -431,6 +439,19 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
         this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
 
+        TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
+        TileEntity tile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
+        if(coverTile instanceof TileEntityItemPipe ^ tile instanceof TileEntityItemPipe) {
+            primaryGroup.addWidget(new ToggleButtonWidget(126, 45, 20, 20, () -> distributionMode == ItemDistributionMode.INSERT_FIRST, pressed -> {
+                if(pressed)
+                    distributionMode = ItemDistributionMode.INSERT_FIRST;
+            }).setTooltipText(distributionMode.name));
+            primaryGroup.addWidget(new ToggleButtonWidget(146, 45, 20, 20, () -> distributionMode == ItemDistributionMode.ROUND_ROBIN, pressed -> {
+                if(pressed)
+                    distributionMode = ItemDistributionMode.ROUND_ROBIN;
+            }).setTooltipText(distributionMode.name));
+        }
+
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 190 + 82)
             .widget(primaryGroup)
             .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 8, 190);
@@ -452,6 +473,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferRate", transferRate);
         tagCompound.setInteger("ConveyorMode", conveyorMode.ordinal());
+        tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
         tagCompound.setTag("Filter", this.itemFilterContainer.serializeNBT());
@@ -462,6 +484,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
         this.conveyorMode = ConveyorMode.values()[tagCompound.getInteger("ConveyorMode")];
+        this.distributionMode = ItemDistributionMode.values()[tagCompound.getInteger("DistributionMode")];
         //LEGACY SAVE FORMAT SUPPORT
         if (tagCompound.hasKey("AllowManualIO")) {
             this.manualImportExportMode = tagCompound.getBoolean("AllowManualIO")
@@ -495,6 +518,22 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         @Override
         public String getName() {
             return localeName;
+        }
+    }
+
+    public enum ItemDistributionMode implements IStringSerializable {
+        INSERT_FIRST("cover.conveyor.distribution.insert_first"),
+        ROUND_ROBIN("cover.conveyor.distribution.round_robin");
+
+        private final String name;
+
+        ItemDistributionMode(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return null;
         }
     }
 
