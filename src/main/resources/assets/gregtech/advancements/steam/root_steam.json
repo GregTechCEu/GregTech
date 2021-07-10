@@ -19,7 +19,7 @@
         "items": [
           {
             "type": "forge:ore_dict",
-            "ore": "logWood"
+            "ore": "ingotCopper"
           }
         ]
       }

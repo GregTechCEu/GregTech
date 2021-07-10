@@ -3072,7 +3072,7 @@ gregtech.machine.perfect_oc=Does not lose energy efficiency when overclocked.
 
 # Advancements
 gregtech.advancement.root_steam.name=Steam Age
-gregtech.advancement.root_steam.desc=Welcome to GregTech! Everything begins with gathering wood.
+gregtech.advancement.root_steam.desc=Welcome to GregTech! Everything begins with your first copper ingots.
 gregtech.advancement.steam.1_first_tools.name=First Tools
 gregtech.advancement.steam.1_first_tools.desc=Craft a Hammer.
 gregtech.advancement.steam.2_more_tools.name=More Tools
@@ -3173,6 +3173,8 @@ gregtech.advancement.high_voltage.45_large_steam_turbine.name=So Much Steam
 gregtech.advancement.high_voltage.45_large_steam_turbine.desc=Start up a Large Steam Turbine.
 gregtech.advancement.high_voltage.46_hv_macerator.name=Universal Macerator
 gregtech.advancement.high_voltage.46_hv_macerator.desc=Craft an HV Macerator for ore byproducts.
+gregtech.advancement.high_voltage.82_large_chemical_reactor.name=Large Chemical Reactor
+gregtech.advancement.high_voltage.82_large_chemical_reactor.desc=Set up a Large Chemical Reactor for more efficient chemistry.
 gregtech.advancement.root_ev.name=Extreme Voltage
 gregtech.advancement.root_ev.desc=Cool down a Hot Titanium Ingot.
 gregtech.advancement.extreme_voltage.47_nichrome_coil.name=Upgrade your Coils to Level III
