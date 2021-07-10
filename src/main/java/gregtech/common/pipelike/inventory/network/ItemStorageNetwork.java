@@ -2,6 +2,7 @@ package gregtech.common.pipelike.inventory.network;
 
 import gregtech.common.inventory.itemsource.ItemSource;
 import gregtech.common.inventory.itemsource.ItemSourceList;
+import gregtech.common.inventory.itemsource.UpdateResult;
 import gregtech.common.inventory.itemsource.sources.TileItemSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
