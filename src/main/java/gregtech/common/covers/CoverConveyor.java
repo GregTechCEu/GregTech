@@ -90,6 +90,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     public void setDistributionMode(ItemDistributionMode distributionMode) {
         this.distributionMode = distributionMode;
+        coverHolder.markDirty();
     }
 
     public ManualImportExportMode getManualImportExportMode() {
@@ -99,6 +100,10 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     protected void setManualImportExportMode(ManualImportExportMode manualImportExportMode) {
         this.manualImportExportMode = manualImportExportMode;
         coverHolder.markDirty();
+    }
+
+    public ItemFilterContainer getItemFilterContainer() {
+        return itemFilterContainer;
     }
 
     @Override
@@ -375,11 +380,6 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     @Override
     public boolean canAttach() {
         return coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide) != null;
-    }
-
-    @Override
-    public boolean canPipePassThrough() {
-        return true;
     }
 
     @Override

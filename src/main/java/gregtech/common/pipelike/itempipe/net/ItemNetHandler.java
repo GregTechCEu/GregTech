@@ -7,9 +7,11 @@ import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.util.GTLog;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
+import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -36,41 +38,43 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
         CoverConveyor conveyor = getCover();
-        if(conveyor != null) {
-            if(conveyor.getDistributionMode() == CoverConveyor.ItemDistributionMode.ROUND_ROBIN) {
+        if (conveyor != null) {
+            if (conveyor.getDistributionMode() == CoverConveyor.ItemDistributionMode.ROUND_ROBIN) {
                 return insertRoundRobin(stack, simulate);
             }
         }
         return insertFirst(stack, simulate);
     }
 
-    private ItemStack insertFirst(ItemStack stack, boolean simulate) {
+    public ItemStack insertFirst(ItemStack stack, boolean simulate) {
         for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
             GTLog.logger.info(" - try inserting at {} with facing {}", inv.getHandlerPos(), facing);
             if (Objects.equals(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
                 continue;
             IItemHandler handler = inv.getHandler(pipe.getWorld());
             if (handler == null) continue;
-            stack = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
+            stack = insert(new Handler(handler, inv), stack, simulate);
             if (stack.isEmpty())
                 return ItemStack.EMPTY;
         }
         return stack;
     }
 
-    private ItemStack insertRoundRobin(ItemStack stack, boolean simulate) {
-        List<IItemHandler> handlers = new ArrayList<>();
+    public ItemStack insertRoundRobin(ItemStack stack, boolean simulate) {
+        List<Handler> handlers = new ArrayList<>();
         for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
+            if(inv.getDistance() > inv.getProperties().maxRange)
+                continue;
             if (Objects.equals(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
                 continue;
             IItemHandler handler = inv.getHandler(pipe.getWorld());
             if (handler != null)
-                handlers.add(handler);
+                handlers.add(new Handler(handler, inv));
         }
         if (handlers.size() == 0)
             return stack;
         if (handlers.size() == 1)
-            return ItemHandlerHelper.insertItemStacked(handlers.get(0), stack, simulate);
+            return insert(handlers.get(0), stack, simulate);
         ItemStack remaining = insertToHandlers(handlers, stack, simulate);
         if (!remaining.isEmpty())
             remaining = insertToHandlers(handlers, remaining, simulate);
@@ -86,8 +90,8 @@ public class ItemNetHandler implements IItemHandler {
      * @param simulate simulate
      * @return remainder
      */
-    private ItemStack insertToHandlers(List<IItemHandler> handlers, ItemStack stack, boolean simulate) {
-        Iterator<IItemHandler> handlerIterator = handlers.iterator();
+    public ItemStack insertToHandlers(List<Handler> handlers, ItemStack stack, boolean simulate) {
+        Iterator<Handler> handlerIterator = handlers.iterator();
         boolean didInsert = false;
         int remaining = 0;
         int count = stack.getCount();
@@ -102,8 +106,8 @@ public class ItemNetHandler implements IItemHandler {
             if (amount == 0) break;
             ItemStack toInsert = stack.copy();
             toInsert.setCount(amount);
-            IItemHandler handler = handlerIterator.next();
-            int r = ItemHandlerHelper.insertItemStacked(handler, toInsert, simulate).getCount();
+            Handler handler = handlerIterator.next();
+            int r = insert(handler, toInsert, simulate).getCount();
             if (r < stack.getCount())
                 didInsert = true;
             if (r > 0) {
@@ -121,19 +125,58 @@ public class ItemNetHandler implements IItemHandler {
         return result;
     }
 
+    public ItemStack insert(Handler handler, ItemStack stack, boolean simulate) {
+        //GTLog.logger.info("Inserting in handler with dist {} and stack {} and prop {}", handler.getDistance(), stack, handler.getProperties());
+        if(handler.getDistance() > handler.getProperties().maxRange)
+            return stack;
+        CoverConveyor conveyor = getCoverAtPipe(handler.getPipePos(), handler.getFaceToHandler());
+        if(conveyor != null) {
+            if(!conveyor.getItemFilterContainer().testItemStack(stack))
+                return stack;
+        }
+
+        int allowed = ((TileEntityItemPipeTickable)pipe).checkTransferableItems((int) ((handler.getProperties().transferRate * 64) + 0.5), stack.getCount());
+        if(allowed == 0) return stack;
+        ItemStack toInsert = stack.copy();
+        toInsert.setCount(allowed);
+        GTLog.logger.info("Inserting {}, allowed {}", stack, toInsert);
+        int r = ItemHandlerHelper.insertItemStacked(handler.handler, toInsert, simulate).getCount();
+        if(!simulate) ((TileEntityItemPipeTickable)pipe).transferItems(allowed - r);
+        ItemStack remainder = stack.copy();
+        remainder.setCount(r + (stack.getCount() - allowed));
+        GTLog.logger.info("Remainder {}", remainder);
+        return remainder;
+    }
+
+    public CoverConveyor getCoverAtPipe(BlockPos pipePos, EnumFacing handlerFacing) {
+        TileEntity tile = pipe.getWorld().getTileEntity(pipePos);
+        if (tile instanceof TileEntityItemPipe) {
+            ICoverable coverable = ((TileEntityItemPipe) tile).getCoverableImplementation();
+            CoverBehavior cover = coverable.getCoverAtSide(handlerFacing);
+            if (cover instanceof CoverConveyor) return (CoverConveyor) cover;
+        }
+        tile = pipe.getWorld().getTileEntity(pipePos.offset(handlerFacing));
+        if (tile != null) {
+            ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
+            if (coverable == null) return null;
+            CoverBehavior cover = coverable.getCoverAtSide(handlerFacing.getOpposite());
+            if (cover instanceof CoverConveyor) return (CoverConveyor) cover;
+        }
+        return null;
+    }
+
     public CoverConveyor getCover() {
         PipeCoverableImplementation coverable = pipe.getCoverableImplementation();
         CoverBehavior coverBehavior = coverable.getCoverAtSide(facing);
-        if(coverBehavior instanceof CoverConveyor && ((CoverConveyor) coverBehavior).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT)
+        if (coverBehavior instanceof CoverConveyor && ((CoverConveyor) coverBehavior).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT)
             return (CoverConveyor) coverBehavior;
         TileEntity tile = pipe.getWorld().getTileEntity(pipe.getPos().offset(facing));
-        if(tile != null) {
+        if (tile != null) {
             ICoverable coverable1 = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
-            if(coverable1 != null) {
-                CoverBehavior coverBehavior1 = coverable1.getCoverAtSide(facing.getOpposite());
-                if(coverBehavior1 instanceof CoverConveyor && ((CoverConveyor) coverBehavior1).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)
-                    return (CoverConveyor) coverBehavior1;
-            }
+            if (coverable1 == null) return null;
+            CoverBehavior coverBehavior1 = coverable1.getCoverAtSide(facing.getOpposite());
+            if (coverBehavior1 instanceof CoverConveyor && ((CoverConveyor) coverBehavior1).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)
+                return (CoverConveyor) coverBehavior1;
         }
         return null;
     }
@@ -160,4 +203,12 @@ public class ItemNetHandler implements IItemHandler {
         return 64;
     }
 
+    private static class Handler extends ItemPipeNet.Inventory {
+        private final IItemHandler handler;
+
+        private Handler(IItemHandler handler, ItemPipeNet.Inventory inventory) {
+            super(inventory.getPipePos(), inventory.getFaceToHandler(), inventory.getDistance(), inventory.getProperties());
+            this.handler = handler;
+        }
+    }
 }
