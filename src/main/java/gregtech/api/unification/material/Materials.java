@@ -146,7 +146,7 @@ public class Materials {
     public static IngotMaterial Thorium = new IngotMaterial(109, "thorium", 0x001E00, SHINY, 2, of(), STD_METAL | GENERATE_ORE, Elements.get("Thorium"), 6.0F, 2.0f, 512);
     public static IngotMaterial Thallium = new IngotMaterial(110, "thallium", 0xc1c1de, SHINY, 2, of(), 0, Elements.get("Thallium"));
     public static IngotMaterial Thulium = new IngotMaterial(111, "thulium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Thulium"), 1818);
-    public static IngotMaterial Tin = new IngotMaterial(112, "tin", 0xDCDCDC, DULL, 1, of(), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_ROTOR | GENERATE_ORE | GENERATE_ITEM_PIPE, Elements.get("Tin"));
+    public static IngotMaterial Tin = new IngotMaterial(112, "tin", 0xDCDCDC, DULL, 1, of(), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_ROTOR | GENERATE_ORE, Elements.get("Tin"));
     public static IngotMaterial Titanium = new IngotMaterial(113, "titanium", 0xDCA0F0, METALLIC, 3, of(), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_SPRING | GENERATE_FRAME | GENERATE_DENSE, Elements.get("Titanium"), 7.0F, 3.0f, 1600, 1941);
     public static FluidMaterial Tritium = new FluidMaterial(114, "tritium", 0xFFFFFF, METALLIC, of(), STATE_GAS, Elements.get("Tritium"));
     public static IngotMaterial Tungsten = new IngotMaterial(115, "tungsten", 0x323232, METALLIC, 3, of(), EXT2_METAL, Elements.get("Tungsten"), 7.0F, 3.0f, 2560, 3000);
@@ -940,5 +940,7 @@ public class Materials {
         Polyethylene.setFluidPipeProperties(350, 60, true);
         Polytetrafluoroethylene.setFluidPipeProperties(600, 80, true);
         Polybenzimidazole.setFluidPipeProperties(1000, 100, true);
+
+        Tin.setItemPipeProperties(16, 1);
     }
 }
