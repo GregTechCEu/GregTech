@@ -72,8 +72,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     public static void preInit() {
-        //BLOCK_RENDER_TYPE = FluidPipeRenderer.BLOCK_RENDER_TYPE;
-        BLOCK_RENDER_TYPE = BlockRenderingRegistry.createRenderType("gt_fluid_pipe");
+        BLOCK_RENDER_TYPE = BlockRenderingRegistry.createRenderType("gt_item_pipe");
         BlockRenderingRegistry.registerRenderer(BLOCK_RENDER_TYPE, INSTANCE);
         MinecraftForge.EVENT_BUS.register(INSTANCE);
         TextureUtils.addIconRegister(INSTANCE::registerIcons);

@@ -51,7 +51,7 @@ public class WrenchOverlayRenderer {
         TileEntity tileEntity = world.getTileEntity(pos);
         ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
 
-        if (tileEntity != null && shouldDrawOverlayForItem(heldItem, tileEntity) && useGridForRayTraceResult(target)) {
+        if (tileEntity != null && shouldDrawOverlayForItem(heldItem, tileEntity)) {
             EnumFacing facing = target.sideHit;
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);

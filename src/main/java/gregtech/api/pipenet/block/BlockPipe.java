@@ -30,6 +30,7 @@ import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -332,7 +333,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     @Nullable
     @Override
     public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {
-        return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos, null));
+        if(worldIn.isRemote) {
+            return RayTracer.rayTraceCuboidsClosest(start, end, pos, getCollisionBox(worldIn, pos, Minecraft.getMinecraft().player));
+        }
+        return RayTracer.rayTraceCuboidsClosest(start, end, pos, FULL_CUBE_COLLISION);
     }
 
     @Override
@@ -463,8 +467,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         // Check if the machine grid is being rendered
         if (hasPipeCollisionChangingItem(entityIn)) {
             result.add(FULL_CUBE_COLLISION);
-            isFullModel.set(true);
-        } else isFullModel.set(false);
+        }
 
         // Always add normal collision so player doesn't "fall through" the cable/pipe when
         // a tool is put in hand, and will still be standing where they were before.
