@@ -3,7 +3,6 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.util.GTLog;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -11,6 +10,7 @@ import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -37,9 +37,9 @@ public class ItemNetHandler implements IItemHandler {
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
-        CoverConveyor conveyor = getCover();
-        if (conveyor != null) {
-            if (conveyor.getDistributionMode() == CoverConveyor.ItemDistributionMode.ROUND_ROBIN) {
+        Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(pipe.getPos(), facing);
+        if (tuple != null && (tuple.getSecond() ? tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT : tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)) {
+            if (tuple.getFirst().getDistributionMode() == CoverConveyor.ItemDistributionMode.ROUND_ROBIN) {
                 return insertRoundRobin(stack, simulate);
             }
         }
@@ -63,7 +63,7 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insertRoundRobin(ItemStack stack, boolean simulate) {
         List<Handler> handlers = new ArrayList<>();
         for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
-            if(inv.getDistance() > inv.getProperties().maxRange)
+            if (inv.getDistance() > inv.getProperties().maxRange)
                 continue;
             if (Objects.equals(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
                 continue;
@@ -127,56 +127,40 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insert(Handler handler, ItemStack stack, boolean simulate) {
         //GTLog.logger.info("Inserting in handler with dist {} and stack {} and prop {}", handler.getDistance(), stack, handler.getProperties());
-        if(handler.getDistance() > handler.getProperties().maxRange)
+        if (handler.getDistance() > handler.getProperties().maxRange)
             return stack;
-        CoverConveyor conveyor = getCoverAtPipe(handler.getPipePos(), handler.getFaceToHandler());
-        if(conveyor != null) {
-            if(!conveyor.getItemFilterContainer().testItemStack(stack))
+        Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(handler.getPipePos(), handler.getFaceToHandler());
+        if (tuple != null) {
+            if (!tuple.getFirst().getItemFilterContainer().testItemStack(stack))
                 return stack;
         }
 
-        int allowed = ((TileEntityItemPipeTickable)pipe).checkTransferableItems((int) ((handler.getProperties().transferRate * 64) + 0.5), stack.getCount());
-        if(allowed == 0) return stack;
+        int allowed = ((TileEntityItemPipeTickable) pipe).checkTransferableItems((int) ((handler.getProperties().transferRate * 64) + 0.5), stack.getCount());
+        if (allowed == 0) return stack;
         ItemStack toInsert = stack.copy();
         toInsert.setCount(allowed);
         GTLog.logger.info("Inserting {}, allowed {}", stack, toInsert);
         int r = ItemHandlerHelper.insertItemStacked(handler.handler, toInsert, simulate).getCount();
-        if(!simulate) ((TileEntityItemPipeTickable)pipe).transferItems(allowed - r);
+        if (!simulate) ((TileEntityItemPipeTickable) pipe).transferItems(allowed - r);
         ItemStack remainder = stack.copy();
         remainder.setCount(r + (stack.getCount() - allowed));
         GTLog.logger.info("Remainder {}", remainder);
         return remainder;
     }
 
-    public CoverConveyor getCoverAtPipe(BlockPos pipePos, EnumFacing handlerFacing) {
+    public Tuple<CoverConveyor, Boolean> getCoverAtPipe(BlockPos pipePos, EnumFacing handlerFacing) {
         TileEntity tile = pipe.getWorld().getTileEntity(pipePos);
         if (tile instanceof TileEntityItemPipe) {
             ICoverable coverable = ((TileEntityItemPipe) tile).getCoverableImplementation();
             CoverBehavior cover = coverable.getCoverAtSide(handlerFacing);
-            if (cover instanceof CoverConveyor) return (CoverConveyor) cover;
+            if (cover instanceof CoverConveyor) return new Tuple<>((CoverConveyor) cover, true);
         }
         tile = pipe.getWorld().getTileEntity(pipePos.offset(handlerFacing));
         if (tile != null) {
             ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
             if (coverable == null) return null;
             CoverBehavior cover = coverable.getCoverAtSide(handlerFacing.getOpposite());
-            if (cover instanceof CoverConveyor) return (CoverConveyor) cover;
-        }
-        return null;
-    }
-
-    public CoverConveyor getCover() {
-        PipeCoverableImplementation coverable = pipe.getCoverableImplementation();
-        CoverBehavior coverBehavior = coverable.getCoverAtSide(facing);
-        if (coverBehavior instanceof CoverConveyor && ((CoverConveyor) coverBehavior).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT)
-            return (CoverConveyor) coverBehavior;
-        TileEntity tile = pipe.getWorld().getTileEntity(pipe.getPos().offset(facing));
-        if (tile != null) {
-            ICoverable coverable1 = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
-            if (coverable1 == null) return null;
-            CoverBehavior coverBehavior1 = coverable1.getCoverAtSide(facing.getOpposite());
-            if (coverBehavior1 instanceof CoverConveyor && ((CoverConveyor) coverBehavior1).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)
-                return (CoverConveyor) coverBehavior1;
+            if (cover instanceof CoverConveyor) return new Tuple<>((CoverConveyor) cover, false);
         }
         return null;
     }
