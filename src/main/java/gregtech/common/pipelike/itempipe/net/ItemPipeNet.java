@@ -67,11 +67,13 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         private final BlockPos pipePos;
         private final EnumFacing faceToHandler;
         private final int distance;
+        private ItemPipeProperties properties;
 
-        public Inventory(BlockPos pipePos, EnumFacing facing, int distance) {
+        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, ItemPipeProperties properties) {
             this.pipePos = pipePos;
             this.faceToHandler = facing;
             this.distance = distance;
+            this.properties = properties;
         }
 
         public BlockPos getPipePos() {
@@ -84,6 +86,10 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
         public int getDistance() {
             return distance;
+        }
+
+        public ItemPipeProperties getProperties() {
+            return properties;
         }
 
         public BlockPos getHandlerPos() {

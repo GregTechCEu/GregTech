@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.itempipe;
 
 import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -19,9 +20,11 @@ public class ItemBlockItemPipe extends ItemBlockMaterialPipe<ItemPipeType, ItemP
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        //FluidPipeProperties pipeProperties = blockPipe.createItemProperties(stack);
-        //tooltip.add(I18n.format("gregtech.fluid_pipe.throughput", pipeProperties.throughput * 20));
-        //tooltip.add(I18n.format("gregtech.fluid_pipe.max_temperature", pipeProperties.maxFluidTemperature));
-        //if (!pipeProperties.gasProof) tooltip.add(I18n.format("gregtech.fluid_pipe.non_gas_proof"));
+        ItemPipeProperties pipeProperties = blockPipe.createItemProperties(stack);
+        if (pipeProperties.transferRate % 1 != 0)
+            tooltip.add(I18n.format("gregtech.item_pipe.rate_items", (int) ((pipeProperties.transferRate * 64) + 0.5)));
+        else
+            tooltip.add(I18n.format("gregtech.item_pipe.rate_stacks", (int) pipeProperties.transferRate));
+        tooltip.add(I18n.format("gregtech.item_pipe.range", pipeProperties.maxRange));
     }
 }

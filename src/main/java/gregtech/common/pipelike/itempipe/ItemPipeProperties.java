@@ -18,6 +18,17 @@ public class ItemPipeProperties {
         this.transferRate = transferRate;
     }
 
+    public static ItemPipeProperties min(ItemPipeProperties a, ItemPipeProperties b) {
+        if(a == null) {
+            if(b == null)
+                throw new NullPointerException("Properties are null");
+            return b;
+        }
+        if(b == null)
+            return a;
+        return new ItemPipeProperties(Math.min(a.maxRange, b.maxRange), Math.min(a.transferRate, b.transferRate));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -29,5 +40,13 @@ public class ItemPipeProperties {
     @Override
     public int hashCode() {
         return Objects.hash(maxRange, transferRate);
+    }
+
+    @Override
+    public String toString() {
+        return "ItemPipeProperties{" +
+                "maxRange=" + maxRange +
+                ", transferRate=" + transferRate +
+                '}';
     }
 }

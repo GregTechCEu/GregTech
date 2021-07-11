@@ -2,8 +2,10 @@ package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.pipenet.Node;
 import gregtech.api.util.GTLog;
+import gregtech.common.covers.CoverConveyor;
 import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
+import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -18,7 +20,7 @@ public class ItemNetWalker {
 
     public static List<ItemPipeNet.Inventory> createNetData(ItemPipeNet net, World world, BlockPos sourcePipe) {
         log.info("------------------- creating net data for {} --------------------", sourcePipe);
-        ItemNetWalker walker = new ItemNetWalker(net, world, sourcePipe, 0, new ArrayList<>());
+        ItemNetWalker walker = new ItemNetWalker(net, world, sourcePipe, 1, new ArrayList<>(), null);
         int i = 0;
         while (!walker.walk() && i++ < 50) ;
         walker.walked.forEach(TileEntityItemPipe::resetWalk);
@@ -31,25 +33,25 @@ public class ItemNetWalker {
     private final ItemPipeNet net;
     private final World world;
     private final BlockPos sourcePipe;
-    //private final EnumFacing sourceFacing;
     private final List<EnumFacing> pipes = new ArrayList<>();
     private List<ItemNetWalker> walkers;
 
     private BlockPos currentPos;
 
     private int distance;
+    private ItemPipeProperties minProperties;
     private final List<ItemPipeNet.Inventory> inventories;
 
     private final Set<TileEntityItemPipe> walked = new HashSet<>();
 
-    protected ItemNetWalker(ItemPipeNet net, World world, BlockPos sourcePipe, /*EnumFacing facing, */int distance, List<ItemPipeNet.Inventory> inventories) {
+    protected ItemNetWalker(ItemPipeNet net, World world, BlockPos sourcePipe, int distance, List<ItemPipeNet.Inventory> inventories, ItemPipeProperties properties) {
         this.world = world;
         this.net = net;
         this.sourcePipe = sourcePipe;
-        //this.sourceFacing = facing;
         this.distance = distance;
         this.inventories = inventories;
         this.currentPos = sourcePipe;
+        this.minProperties = properties;
     }
 
     private boolean walk() {
@@ -69,7 +71,7 @@ public class ItemNetWalker {
         if (walkers == null) {
             walkers = new ArrayList<>();
             for (EnumFacing side : pipes) {
-                walkers.add(new ItemNetWalker(net, world, currentPos.offset(side), distance + 1, inventories));
+                walkers.add(new ItemNetWalker(net, world, currentPos.offset(side), distance + 1, inventories, minProperties));
             }
         } else {
             Iterator<ItemNetWalker> iterator = walkers.iterator();
@@ -93,14 +95,14 @@ public class ItemNetWalker {
         TileEntity thisPipe = world.getTileEntity(pos);
         if (!(thisPipe instanceof TileEntityItemPipe))
             return;
+        minProperties = ItemPipeProperties.min(minProperties, ((TileEntityItemPipe) thisPipe).getNodeData());
         ((TileEntityItemPipe) thisPipe).markWalked();
         walked.add((TileEntityItemPipe) thisPipe);
-        //log.info("  Process pipe with stack {}", stack);
 
         // check for surrounding pipes and item handlers
         for (EnumFacing accessSide : EnumFacing.VALUES) {
             //skip sides reported as blocked by pipe network
-            if ((node.blockedConnections & 1 << accessSide.getIndex()) > 0)
+            if ((node.blockedConnections & 1 << accessSide.getIndex()) > 0 && !(((TileEntityItemPipe) thisPipe).getCoverableImplementation().getCoverAtSide(accessSide) instanceof CoverConveyor))
                 continue;
             TileEntity tile = world.getTileEntity(pos.offset(accessSide));
             if (tile == null) continue;
@@ -108,15 +110,13 @@ public class ItemNetWalker {
                 if (!((TileEntityItemPipe) tile).isWalked()) {
                     log.info("   - found pipe at " + accessSide);
                     pipes.add(accessSide);
-                    //createPipe(pos, accessSide);
                 }
                 continue;
             }
             IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, accessSide);
             if (handler != null) {
                 log.info("   - found handler at {}, with facing {}", pos.offset(accessSide), accessSide);
-                inventories.add(new ItemPipeNet.Inventory(pos, accessSide, distance));
-                //createHandler(pos, accessSide);
+                inventories.add(new ItemPipeNet.Inventory(pos, accessSide, distance, minProperties));
             }
         }
     }

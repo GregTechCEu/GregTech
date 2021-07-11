@@ -29,7 +29,7 @@ public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
 
     @Override
     public ItemPipeProperties modifyProperties(ItemPipeProperties baseProperties) {
-        return baseProperties;
+        return new ItemPipeProperties(baseProperties.maxRange, baseProperties.transferRate * rateMultiplier);
     }
 
     public float getRateMultiplier() {

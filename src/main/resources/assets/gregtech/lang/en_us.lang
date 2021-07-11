@@ -3494,6 +3494,10 @@ gregtech.fluid_pipe.throughput=§9Transfer Rate: %,d L/s
 gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,dK
 gregtech.fluid_pipe.non_gas_proof=§aCan't transfer gases.
 
+gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
+gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s
+gregtech.item_pipe.range=§9Max Range: %d blocks
+
 gregtech.multiblock.work_paused=Work Paused.
 gregtech.multiblock.running=Running perfectly.
 gregtech.multiblock.idling=Idling.
