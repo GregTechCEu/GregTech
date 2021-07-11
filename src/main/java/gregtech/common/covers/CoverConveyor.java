@@ -49,6 +49,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     protected int transferRate;
     protected ConveyorMode conveyorMode;
     protected ItemDistributionMode distributionMode;
+    protected boolean blocksInput;
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
     protected final ItemFilterContainer itemFilterContainer;
     protected int itemsLeftToTransferLastSecond;
@@ -63,6 +64,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.itemsLeftToTransferLastSecond = transferRate;
         this.conveyorMode = ConveyorMode.EXPORT;
         this.distributionMode = ItemDistributionMode.INSERT_FIRST;
+        this.blocksInput = true;
         this.itemFilterContainer = new ItemFilterContainer(this);
     }
 
@@ -104,6 +106,10 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
     public ItemFilterContainer getItemFilterContainer() {
         return itemFilterContainer;
+    }
+
+    public boolean blocksInput() {
+        return blocksInput;
     }
 
     @Override
@@ -454,8 +460,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
         TileEntity tile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
         if(coverTile instanceof TileEntityItemPipe ^ tile instanceof TileEntityItemPipe) {
-            primaryGroup.addWidget(new CycleButtonWidget(96, 45, 70, 20,
-                    ItemDistributionMode.class, this::getDistributionMode, this::setDistributionMode));
+            primaryGroup.addWidget(new ToggleButtonWidget(127, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE,
+                    () -> distributionMode == ItemDistributionMode.INSERT_FIRST,
+                    val -> distributionMode = val ? ItemDistributionMode.INSERT_FIRST : ItemDistributionMode.ROUND_ROBIN)
+            .setTooltipText("cover.conveyor.distribution"));
+            primaryGroup.addWidget(new ToggleButtonWidget(146, 166, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
         }
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 190 + 82)
@@ -480,6 +489,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         tagCompound.setInteger("TransferRate", transferRate);
         tagCompound.setInteger("ConveyorMode", conveyorMode.ordinal());
         tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
+        tagCompound.setBoolean("BlocksInput", blocksInput);
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
         tagCompound.setTag("Filter", this.itemFilterContainer.serializeNBT());
@@ -491,6 +501,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.transferRate = tagCompound.getInteger("TransferRate");
         this.conveyorMode = ConveyorMode.values()[tagCompound.getInteger("ConveyorMode")];
         this.distributionMode = ItemDistributionMode.values()[tagCompound.getInteger("DistributionMode")];
+        this.blocksInput = tagCompound.getBoolean("BlocksInput");
         //LEGACY SAVE FORMAT SUPPORT
         if (tagCompound.hasKey("AllowManualIO")) {
             this.manualImportExportMode = tagCompound.getBoolean("AllowManualIO")
@@ -533,20 +544,9 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         }
     }
 
-    public enum ItemDistributionMode implements IStringSerializable {
-        INSERT_FIRST("cover.conveyor.distribution.insert_first"),
-        ROUND_ROBIN("cover.conveyor.distribution.round_robin");
-
-        private final String name;
-
-        ItemDistributionMode(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
+    public enum ItemDistributionMode {
+        INSERT_FIRST,
+        ROUND_ROBIN
     }
 
     private class CoverableItemHandlerWrapper extends ItemHandlerDelegate {

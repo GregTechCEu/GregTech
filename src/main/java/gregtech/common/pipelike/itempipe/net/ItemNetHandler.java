@@ -38,7 +38,7 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
         Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(pipe.getPos(), facing);
-        if (tuple != null && (tuple.getSecond() ? tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT : tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)) {
+        if (exportsFromPipe(tuple)) {
             if (tuple.getFirst().getDistributionMode() == CoverConveyor.ItemDistributionMode.ROUND_ROBIN) {
                 return insertRoundRobin(stack, simulate);
             }
@@ -76,7 +76,7 @@ public class ItemNetHandler implements IItemHandler {
         if (handlers.size() == 1)
             return insert(handlers.get(0), stack, simulate);
         ItemStack remaining = insertToHandlers(handlers, stack, simulate);
-        if (!remaining.isEmpty())
+        if (!remaining.isEmpty() && handlers.size() > 0)
             remaining = insertToHandlers(handlers, remaining, simulate);
         return remaining;
     }
@@ -134,6 +134,8 @@ public class ItemNetHandler implements IItemHandler {
             if (!tuple.getFirst().getItemFilterContainer().testItemStack(stack))
                 return stack;
         }
+        if(tuple != null && exportsFromPipe(tuple) && tuple.getFirst().blocksInput())
+           return stack;
 
         int allowed = ((TileEntityItemPipeTickable) pipe).checkTransferableItems((int) ((handler.getProperties().transferRate * 64) + 0.5), stack.getCount());
         if (allowed == 0) return stack;
@@ -163,6 +165,12 @@ public class ItemNetHandler implements IItemHandler {
             if (cover instanceof CoverConveyor) return new Tuple<>((CoverConveyor) cover, false);
         }
         return null;
+    }
+
+    public boolean exportsFromPipe(Tuple<CoverConveyor, Boolean> tuple) {
+        return tuple != null && (tuple.getSecond() ?
+                tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT :
+                tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT);
     }
 
     @Override
