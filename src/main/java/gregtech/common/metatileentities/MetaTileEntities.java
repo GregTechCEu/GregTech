@@ -663,13 +663,13 @@ public class MetaTileEntities {
 
         // Crates, IDs 1611-1624
         if (ConfigHolder.U.registerCrates) {
-            WOODEN_CRATE = GregTechAPI.registerMetaTileEntity(1612, new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27));
-            BRONZE_CRATE = GregTechAPI.registerMetaTileEntity(1613, new MetaTileEntityCrate(gregtechId("crate.bronze"), Materials.Bronze, 54));
-            STEEL_CRATE = GregTechAPI.registerMetaTileEntity(1614, new MetaTileEntityCrate(gregtechId("crate.steel"), Materials.Steel, 72));
-            ALUMINIUM_CRATE = GregTechAPI.registerMetaTileEntity(1615, new MetaTileEntityCrate(gregtechId("crate.aluminum"), Materials.Aluminium, 90));
-            STAINLESS_STEEL_CRATE = GregTechAPI.registerMetaTileEntity(1616, new MetaTileEntityCrate(gregtechId("crate.stainless_steel"), Materials.StainlessSteel, 108));
-            TITANIUM_CRATE = GregTechAPI.registerMetaTileEntity(1617, new MetaTileEntityCrate(gregtechId("crate.titanium"), Materials.Titanium, 144));
-            TUNGSTENSTEEL_CRATE = GregTechAPI.registerMetaTileEntity(1618, new MetaTileEntityCrate(gregtechId("crate.tungstensteel"), Materials.TungstenSteel, 168));
+            WOODEN_CRATE = GregTechAPI.registerMetaTileEntity(1611, new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27));
+            BRONZE_CRATE = GregTechAPI.registerMetaTileEntity(1612, new MetaTileEntityCrate(gregtechId("crate.bronze"), Materials.Bronze, 54));
+            STEEL_CRATE = GregTechAPI.registerMetaTileEntity(1613, new MetaTileEntityCrate(gregtechId("crate.steel"), Materials.Steel, 72));
+            ALUMINIUM_CRATE = GregTechAPI.registerMetaTileEntity(1614, new MetaTileEntityCrate(gregtechId("crate.aluminum"), Materials.Aluminium, 90));
+            STAINLESS_STEEL_CRATE = GregTechAPI.registerMetaTileEntity(1615, new MetaTileEntityCrate(gregtechId("crate.stainless_steel"), Materials.StainlessSteel, 108));
+            TITANIUM_CRATE = GregTechAPI.registerMetaTileEntity(1616, new MetaTileEntityCrate(gregtechId("crate.titanium"), Materials.Titanium, 144));
+            TUNGSTENSTEEL_CRATE = GregTechAPI.registerMetaTileEntity(1617, new MetaTileEntityCrate(gregtechId("crate.tungstensteel"), Materials.TungstenSteel, 168));
         }
 
         // Misc, IDs 1626-2000
