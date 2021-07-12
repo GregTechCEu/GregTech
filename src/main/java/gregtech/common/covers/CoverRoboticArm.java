@@ -11,6 +11,7 @@ import gregtech.api.gui.widgets.CycleButtonWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.render.Textures;
 import gregtech.api.util.ItemStackKey;
+import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockRenderLayer;
@@ -40,6 +41,12 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     protected int doTransferItems(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
+        if(conveyorMode == ConveyorMode.EXPORT && itemHandler instanceof ItemNetHandler) {
+            return 0;
+        }
+        if(conveyorMode == ConveyorMode.IMPORT && myItemHandler instanceof ItemNetHandler) {
+            return 0;
+        }
         switch (transferMode) {
             case TRANSFER_ANY: return doTransferItemsAny(itemHandler, myItemHandler, maxTransferAmount);
             case TRANSFER_EXACT: return doTransferExact(itemHandler, myItemHandler, maxTransferAmount);
@@ -126,7 +133,7 @@ public class CoverRoboticArm extends CoverConveyor {
     @Override
     protected ModularUI buildUI(Builder builder, EntityPlayer player) {
         WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new CycleButtonWidget(91, 45, 75, 20,
+        filterGroup.addWidget(new CycleButtonWidget(91, 45, 76, 20,
             TransferMode.class, this::getTransferMode, this::setTransferMode)
             .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
 

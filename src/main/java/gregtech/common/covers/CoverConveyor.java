@@ -55,6 +55,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     protected int itemsLeftToTransferLastSecond;
     private CoverableItemHandlerWrapper itemHandlerWrapper;
     protected boolean isWorkingAllowed = true;
+    protected boolean simulating = false;
 
     public CoverConveyor(ICoverable coverable, EnumFacing attachedSide, int tier, int itemsPerSecond) {
         super(coverable, attachedSide);
@@ -127,6 +128,14 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         if (timer % 20 == 0) {
             this.itemsLeftToTransferLastSecond = transferRate;
         }
+    }
+
+    public int offer(IItemHandler itemHandler, IItemHandler myItemHandler, boolean simulate) {
+        boolean oldSimulate = simulating;
+        simulate = simulating;
+        int inserted = doTransferItems(itemHandler, myItemHandler, itemsLeftToTransferLastSecond);
+        simulating = oldSimulate;
+        return inserted;
     }
 
     protected int doTransferItems(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
@@ -215,13 +224,13 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         }
 
         //otherwise, perform real insertion and then remove items from the source inventory
-        ItemHandlerHelper.insertItemStacked(targetInventory, resultStack, false);
+        ItemHandlerHelper.insertItemStacked(targetInventory, resultStack, simulating);
 
         //perform real extraction of the items from the source inventory now
         itemsLeftToExtract = itemInfo.totalCount;
         for(int i = 0; i < itemInfo.slots.size(); i++) {
             int slotIndex = itemInfo.slots.get(i);
-            ItemStack extractedStack = sourceInventory.extractItem(slotIndex, itemsLeftToExtract, false);
+            ItemStack extractedStack = sourceInventory.extractItem(slotIndex, itemsLeftToExtract, simulating);
             if(!extractedStack.isEmpty() &&
                 ItemStack.areItemsEqual(resultStack, extractedStack) &&
                 ItemStack.areItemStackTagsEqual(resultStack, extractedStack)) {
@@ -254,11 +263,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             int amountToInsert = extractedStack.getCount() - remainderStack.getCount();
 
             if (amountToInsert > 0) {
-                extractedStack = sourceInventory.extractItem(i, amountToInsert, false);
+                extractedStack = sourceInventory.extractItem(i, amountToInsert, simulating);
 
                 if(!extractedStack.isEmpty()) {
 
-                    ItemHandlerHelper.insertItemStacked(targetInventory, extractedStack, false);
+                    ItemHandlerHelper.insertItemStacked(targetInventory, extractedStack, simulating);
                     itemsLeftToTransfer -= extractedStack.getCount();
                     itemInfo.totalCount -= extractedStack.getCount();
 
@@ -291,9 +300,9 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
             int amountToInsert = sourceStack.getCount() - remainder.getCount();
 
             if (amountToInsert > 0) {
-                sourceStack = sourceInventory.extractItem(srcIndex, amountToInsert, false);
+                sourceStack = sourceInventory.extractItem(srcIndex, amountToInsert, simulating);
                 if (!sourceStack.isEmpty()) {
-                    ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, false);
+                    ItemHandlerHelper.insertItemStacked(targetInventory, sourceStack, simulating);
                     itemsLeftToTransfer -= sourceStack.getCount();
 
                     if (itemsLeftToTransfer == 0) {
@@ -459,7 +468,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
         TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
         TileEntity tile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
-        if(coverTile instanceof TileEntityItemPipe ^ tile instanceof TileEntityItemPipe) {
+        if(!(this instanceof CoverRoboticArm) && coverTile instanceof TileEntityItemPipe ^ tile instanceof TileEntityItemPipe) {
             primaryGroup.addWidget(new ToggleButtonWidget(127, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE,
                     () -> distributionMode == ItemDistributionMode.INSERT_FIRST,
                     val -> distributionMode = val ? ItemDistributionMode.INSERT_FIRST : ItemDistributionMode.ROUND_ROBIN)

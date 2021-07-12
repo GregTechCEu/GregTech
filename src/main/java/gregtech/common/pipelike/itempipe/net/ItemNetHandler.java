@@ -3,8 +3,8 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.util.GTLog;
 import gregtech.common.covers.CoverConveyor;
+import gregtech.common.covers.CoverRoboticArm;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import net.minecraft.item.ItemStack;
@@ -48,7 +48,6 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
         for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
-            GTLog.logger.info(" - try inserting at {} with facing {}", inv.getHandlerPos(), facing);
             if (Objects.equals(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
                 continue;
             IItemHandler handler = inv.getHandler(pipe.getWorld());
@@ -126,27 +125,30 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     public ItemStack insert(Handler handler, ItemStack stack, boolean simulate) {
-        //GTLog.logger.info("Inserting in handler with dist {} and stack {} and prop {}", handler.getDistance(), stack, handler.getProperties());
         if (handler.getDistance() > handler.getProperties().maxRange)
             return stack;
         Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(handler.getPipePos(), handler.getFaceToHandler());
         if (tuple != null) {
+            if (tuple.getFirst() instanceof CoverRoboticArm) {
+                CoverRoboticArm arm = (CoverRoboticArm) tuple.getFirst();
+                OfferingHandler offeringHandler = new OfferingHandler(stack);
+                arm.offer(tuple.getSecond() ? handler.handler : offeringHandler, tuple.getSecond() ? offeringHandler : handler.handler, simulate);
+                return offeringHandler.getStackInSlot(0);
+            }
             if (!tuple.getFirst().getItemFilterContainer().testItemStack(stack))
                 return stack;
+            if (exportsFromPipe(tuple) && tuple.getFirst().blocksInput())
+                return stack;
         }
-        if(tuple != null && exportsFromPipe(tuple) && tuple.getFirst().blocksInput())
-           return stack;
 
         int allowed = ((TileEntityItemPipeTickable) pipe).checkTransferableItems((int) ((handler.getProperties().transferRate * 64) + 0.5), stack.getCount());
         if (allowed == 0) return stack;
         ItemStack toInsert = stack.copy();
         toInsert.setCount(allowed);
-        GTLog.logger.info("Inserting {}, allowed {}", stack, toInsert);
         int r = ItemHandlerHelper.insertItemStacked(handler.handler, toInsert, simulate).getCount();
         if (!simulate) ((TileEntityItemPipeTickable) pipe).transferItems(allowed - r);
         ItemStack remainder = stack.copy();
         remainder.setCount(r + (stack.getCount() - allowed));
-        GTLog.logger.info("Remainder {}", remainder);
         return remainder;
     }
 
