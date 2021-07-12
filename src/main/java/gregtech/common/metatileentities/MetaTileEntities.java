@@ -160,6 +160,7 @@ public class MetaTileEntities {
 
     public static MetaTileEntityTank WOODEN_TANK;
     public static MetaTileEntityTank BRONZE_TANK;
+    public static MetaTileEntityTank ALUMINIUM_TANK;
     public static MetaTileEntityTank STEEL_TANK;
     public static MetaTileEntityTank STAINLESS_STEEL_TANK;
     public static MetaTileEntityTank TITANIUM_TANK;
@@ -583,9 +584,10 @@ public class MetaTileEntities {
         WOODEN_TANK = GregTechAPI.registerMetaTileEntity(1500, new MetaTileEntityTank(gregtechId("wooden_tank"), Materials.Wood, 4000, 1, 3));
         BRONZE_TANK = GregTechAPI.registerMetaTileEntity(1501, new MetaTileEntityTank(gregtechId("bronze_tank"), Materials.Bronze, 8000, 4, 3));
         STEEL_TANK = GregTechAPI.registerMetaTileEntity(1502, new MetaTileEntityTank(gregtechId("steel_tank"), Materials.Steel, 16000, 7, 5));
-        STAINLESS_STEEL_TANK = GregTechAPI.registerMetaTileEntity(1503, new MetaTileEntityTank(gregtechId("stainless_steel_tank"), Materials.StainlessSteel, 32000, 9, 7));
-        TITANIUM_TANK = GregTechAPI.registerMetaTileEntity(1504, new MetaTileEntityTank(gregtechId("titanium_tank"), Materials.Titanium, 48000, 12, 9));
-        TUNGSTENSTEEL_TANK = GregTechAPI.registerMetaTileEntity(1505, new MetaTileEntityTank(gregtechId("tungstensteel_tank"), Materials.TungstenSteel, 64000, 16, 9));
+        ALUMINIUM_TANK = GregTechAPI.registerMetaTileEntity(1503, new MetaTileEntityTank(gregtechId("aluminium_tank"), Materials.Aluminium , 32000, 8, 5));
+        STAINLESS_STEEL_TANK = GregTechAPI.registerMetaTileEntity(1504, new MetaTileEntityTank(gregtechId("stainless_steel_tank"), Materials.StainlessSteel, 64000, 9, 7));
+        TITANIUM_TANK = GregTechAPI.registerMetaTileEntity(1505, new MetaTileEntityTank(gregtechId("titanium_tank"), Materials.Titanium, 128000, 12, 9));
+        TUNGSTENSTEEL_TANK = GregTechAPI.registerMetaTileEntity(1506, new MetaTileEntityTank(gregtechId("tungstensteel_tank"), Materials.TungstenSteel, 512000, 16, 9));
 
         // Fishers, IDs 1515-1529
         FISHER[0] = GregTechAPI.registerMetaTileEntity(1515, new MetaTileEntityFisher(gregtechId("fisher.lv"), 1));
@@ -650,37 +652,37 @@ public class MetaTileEntities {
             GregTechAPI.registerMetaTileEntity(1590 + i, BLOCK_BREAKER[i]);
         }
 
-        // Drums, IDs 1595-1610
+        // Drums, IDs 1595-1609
         if (ConfigHolder.U.registerDrums) {
-            WOODEN_DRUM = GregTechAPI.registerMetaTileEntity(1595, new MetaTileEntityDrum(gregtechId("drum.wood"), Materials.Wood, 8000));
-            BRONZE_DRUM = GregTechAPI.registerMetaTileEntity(1596, new MetaTileEntityDrum(gregtechId("drum.bronze"), Materials.Bronze, 16000));
-            STEEL_DRUM = GregTechAPI.registerMetaTileEntity(1597, new MetaTileEntityDrum(gregtechId("drum.steel"), Materials.Steel, 32000));
-            ALUMINIUM_DRUM = GregTechAPI.registerMetaTileEntity(1598, new MetaTileEntityDrum(gregtechId("drum.aluminum"), Materials.Aluminium, 64000));
-            STAINLESS_STEEL_DRUM = GregTechAPI.registerMetaTileEntity(1599, new MetaTileEntityDrum(gregtechId("drum.stainless_steel"), Materials.StainlessSteel, 128000));
-            TITANIUM_DRUM = GregTechAPI.registerMetaTileEntity(1600, new MetaTileEntityDrum(gregtechId("drum.titanium"), Materials.Titanium, 192000));
-            TUNGSTENSTEEL_DRUM = GregTechAPI.registerMetaTileEntity(1601, new MetaTileEntityDrum(gregtechId("drum.tungstensteel"), Materials.TungstenSteel, 256000));
+            WOODEN_DRUM = GregTechAPI.registerMetaTileEntity(1595, new MetaTileEntityDrum(gregtechId("drum.wood"), Materials.Wood, 4000));
+            BRONZE_DRUM = GregTechAPI.registerMetaTileEntity(1596, new MetaTileEntityDrum(gregtechId("drum.bronze"), Materials.Bronze, 8000));
+            STEEL_DRUM = GregTechAPI.registerMetaTileEntity(1597, new MetaTileEntityDrum(gregtechId("drum.steel"), Materials.Steel, 16000));
+            ALUMINIUM_DRUM = GregTechAPI.registerMetaTileEntity(1598, new MetaTileEntityDrum(gregtechId("drum.aluminium"), Materials.Aluminium, 32000));
+            STAINLESS_STEEL_DRUM = GregTechAPI.registerMetaTileEntity(1599, new MetaTileEntityDrum(gregtechId("drum.stainless_steel"), Materials.StainlessSteel, 64000));
+            TITANIUM_DRUM = GregTechAPI.registerMetaTileEntity(1600, new MetaTileEntityDrum(gregtechId("drum.titanium"), Materials.Titanium, 128000));
+            TUNGSTENSTEEL_DRUM = GregTechAPI.registerMetaTileEntity(1601, new MetaTileEntityDrum(gregtechId("drum.tungstensteel"), Materials.TungstenSteel, 512000));
         }
 
-        // Crates, IDs 1611-1624
+        // Crates, IDs 1610-1624
         if (ConfigHolder.U.registerCrates) {
-            WOODEN_CRATE = GregTechAPI.registerMetaTileEntity(1611, new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27));
-            BRONZE_CRATE = GregTechAPI.registerMetaTileEntity(1612, new MetaTileEntityCrate(gregtechId("crate.bronze"), Materials.Bronze, 54));
-            STEEL_CRATE = GregTechAPI.registerMetaTileEntity(1613, new MetaTileEntityCrate(gregtechId("crate.steel"), Materials.Steel, 72));
-            ALUMINIUM_CRATE = GregTechAPI.registerMetaTileEntity(1614, new MetaTileEntityCrate(gregtechId("crate.aluminum"), Materials.Aluminium, 90));
-            STAINLESS_STEEL_CRATE = GregTechAPI.registerMetaTileEntity(1615, new MetaTileEntityCrate(gregtechId("crate.stainless_steel"), Materials.StainlessSteel, 108));
-            TITANIUM_CRATE = GregTechAPI.registerMetaTileEntity(1616, new MetaTileEntityCrate(gregtechId("crate.titanium"), Materials.Titanium, 144));
-            TUNGSTENSTEEL_CRATE = GregTechAPI.registerMetaTileEntity(1617, new MetaTileEntityCrate(gregtechId("crate.tungstensteel"), Materials.TungstenSteel, 168));
+            WOODEN_CRATE = GregTechAPI.registerMetaTileEntity(161, new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27));
+            BRONZE_CRATE = GregTechAPI.registerMetaTileEntity(1611, new MetaTileEntityCrate(gregtechId("crate.bronze"), Materials.Bronze, 54));
+            STEEL_CRATE = GregTechAPI.registerMetaTileEntity(1612, new MetaTileEntityCrate(gregtechId("crate.steel"), Materials.Steel, 72));
+            ALUMINIUM_CRATE = GregTechAPI.registerMetaTileEntity(1613, new MetaTileEntityCrate(gregtechId("crate.aluminium"), Materials.Aluminium, 90));
+            STAINLESS_STEEL_CRATE = GregTechAPI.registerMetaTileEntity(1614, new MetaTileEntityCrate(gregtechId("crate.stainless_steel"), Materials.StainlessSteel, 108));
+            TITANIUM_CRATE = GregTechAPI.registerMetaTileEntity(1615, new MetaTileEntityCrate(gregtechId("crate.titanium"), Materials.Titanium, 144));
+            TUNGSTENSTEEL_CRATE = GregTechAPI.registerMetaTileEntity(1616, new MetaTileEntityCrate(gregtechId("crate.tungstensteel"), Materials.TungstenSteel, 168));
         }
 
-        // Misc, IDs 1626-2000
+        // Misc, IDs 1625-1699
         TESLA_COIL = new MetaTileEntityTeslaCoil(gregtechId("tesla_coil"));
-        GregTechAPI.registerMetaTileEntity(1626, TESLA_COIL);
-        LOCKED_SAFE = GregTechAPI.registerMetaTileEntity(1628, new MetaTileEntityLockedSafe(gregtechId("locked_safe")));
-        WORKBENCH = GregTechAPI.registerMetaTileEntity(1629, new MetaTileEntityWorkbench(gregtechId("workbench")));
-        //PRIMITIVE_WATER_PUMP = GregTechAPI.registerMetaTileEntity(1630, new MetaTileEntityWaterPump(gregtechId("primitive_pump")));
-        //PUMP_OUTPUT_HATCH = GregTechAPI.registerMetaTileEntity(1631, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
+        GregTechAPI.registerMetaTileEntity(1625, TESLA_COIL);
+        LOCKED_SAFE = GregTechAPI.registerMetaTileEntity(1626, new MetaTileEntityLockedSafe(gregtechId("locked_safe")));
+        WORKBENCH = GregTechAPI.registerMetaTileEntity(1627, new MetaTileEntityWorkbench(gregtechId("workbench")));
+        //PRIMITIVE_WATER_PUMP = GregTechAPI.registerMetaTileEntity(1628, new MetaTileEntityWaterPump(gregtechId("primitive_pump")));
+        //PUMP_OUTPUT_HATCH = GregTechAPI.registerMetaTileEntity(1629, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
 
-        INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1632, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));
+        INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1630, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));
 
         /*
          * FOR ADDON DEVELOPERS:
