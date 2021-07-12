@@ -3042,7 +3042,7 @@ tile.hermetic_casing.hermetic_casing_iv.name=Hermetic Casing V
 tile.hermetic_casing.hermetic_casing_luv.name=Hermetic Casing VI
 tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VII
 tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing VIII
-time.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
+tile.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
 
 #Air Collectors
 gregtech.machine.air_collector.lv.name=Basic Air Collector
