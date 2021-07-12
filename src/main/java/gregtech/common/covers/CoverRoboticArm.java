@@ -115,6 +115,18 @@ public class CoverRoboticArm extends CoverConveyor {
         return doTransferItemsByGroup(itemHandler, myItemHandler, sourceItemAmounts, maxTransferAmount);
     }
 
+    public int getBuffer() {
+        return itemsTransferBuffered;
+    }
+
+    public void buffer(int amount) {
+        itemsTransferBuffered += amount;
+    }
+
+    public void clearBuffer() {
+        itemsTransferBuffered = 0;
+    }
+
     public void setTransferMode(TransferMode transferMode) {
         this.transferMode = transferMode;
         this.coverHolder.markDirty();
@@ -133,7 +145,7 @@ public class CoverRoboticArm extends CoverConveyor {
     @Override
     protected ModularUI buildUI(Builder builder, EntityPlayer player) {
         WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new CycleButtonWidget(91, 45, 76, 20,
+        filterGroup.addWidget(new CycleButtonWidget(91, 45, 75, 20,
             TransferMode.class, this::getTransferMode, this::setTransferMode)
             .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
 

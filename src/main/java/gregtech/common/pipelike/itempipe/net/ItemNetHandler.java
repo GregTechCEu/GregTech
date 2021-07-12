@@ -127,28 +127,27 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insert(Handler handler, ItemStack stack, boolean simulate) {
         if (handler.getDistance() > handler.getProperties().maxRange)
             return stack;
+        int allowed = ((TileEntityItemPipeTickable) pipe).checkTransferableItems(handler.getProperties().transferRate, stack.getCount());
+        if (allowed == 0) return stack;
         Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(handler.getPipePos(), handler.getFaceToHandler());
         if (tuple != null) {
-            if (tuple.getFirst() instanceof CoverRoboticArm) {
-                CoverRoboticArm arm = (CoverRoboticArm) tuple.getFirst();
-                OfferingHandler offeringHandler = new OfferingHandler(stack);
-                arm.offer(tuple.getSecond() ? handler.handler : offeringHandler, tuple.getSecond() ? offeringHandler : handler.handler, simulate);
-                return offeringHandler.getStackInSlot(0);
-            }
             if (!tuple.getFirst().getItemFilterContainer().testItemStack(stack))
                 return stack;
+            if (tuple.getFirst() instanceof CoverRoboticArm && !exportsFromPipe(tuple))
+                return insertOverRobotArm(handler.handler, (CoverRoboticArm) tuple.getFirst(), tuple.getSecond(), stack, simulate, allowed);
             if (exportsFromPipe(tuple) && tuple.getFirst().blocksInput())
                 return stack;
         }
+        return insert(handler.handler, stack, simulate, allowed);
+    }
 
-        int allowed = ((TileEntityItemPipeTickable) pipe).checkTransferableItems((int) ((handler.getProperties().transferRate * 64) + 0.5), stack.getCount());
-        if (allowed == 0) return stack;
+    private ItemStack insert(IItemHandler handler, ItemStack stack, boolean simulate, int allowed) {
         ItemStack toInsert = stack.copy();
-        toInsert.setCount(allowed);
-        int r = ItemHandlerHelper.insertItemStacked(handler.handler, toInsert, simulate).getCount();
-        if (!simulate) ((TileEntityItemPipeTickable) pipe).transferItems(allowed - r);
+        toInsert.setCount(Math.min(allowed, stack.getCount()));
+        int r = ItemHandlerHelper.insertItemStacked(handler, toInsert, simulate).getCount();
+        if (!simulate) ((TileEntityItemPipeTickable) pipe).transferItems(toInsert.getCount() - r);
         ItemStack remainder = stack.copy();
-        remainder.setCount(r + (stack.getCount() - allowed));
+        remainder.setCount(r + (stack.getCount() - toInsert.getCount()));
         return remainder;
     }
 
@@ -173,6 +172,44 @@ public class ItemNetHandler implements IItemHandler {
         return tuple != null && (tuple.getSecond() ?
                 tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT :
                 tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT);
+    }
+
+    public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, boolean isOnPipe, ItemStack stack, boolean simulate, int allowed) {
+        int armRate = arm.getItemFilterContainer().getTransferStackSize();
+        int count;
+        switch (arm.getTransferMode()) {
+            case TRANSFER_ANY:
+                return insert(handler, stack, simulate, allowed);
+            case KEEP_EXACT:
+                count = armRate - countStack(handler, arm);
+                if (count <= 0) return stack;
+                count = Math.min(allowed, Math.min(stack.getCount(), count));
+                return insert(handler, stack, simulate, count);
+            case TRANSFER_EXACT:
+                int max = allowed + arm.getBuffer();
+                count = Math.min(max, Math.min(armRate, stack.getCount()));
+                if (count < armRate) {
+                    arm.buffer(allowed);
+                    return stack;
+                } else {
+                    arm.clearBuffer();
+                }
+                return insert(handler, stack, simulate, count);
+        }
+        return stack;
+    }
+
+    public int countStack(IItemHandler handler, CoverConveyor conveyor) {
+        if (conveyor == null) return 0;
+        int count = 0;
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack slot = handler.getStackInSlot(i);
+            if (slot.isEmpty()) continue;
+            if (conveyor.getItemFilterContainer().testItemStack(slot)) {
+                count += slot.getCount();
+            }
+        }
+        return count;
     }
 
     @Override

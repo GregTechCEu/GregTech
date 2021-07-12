@@ -29,6 +29,10 @@ public class TileEntityItemPipeTickable extends TileEntityItemPipe implements IT
         return true;
     }
 
+    public int checkTransferableItems(float rate, int amount) {
+        return checkTransferableItems((int) ((rate * 64) + 0.5), amount);
+    }
+
     public int checkTransferableItems(int max, int amount) {
         return Math.max(0, Math.min(max - transferredItems, amount));
     }
