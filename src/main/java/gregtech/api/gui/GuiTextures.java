@@ -21,6 +21,7 @@ public class GuiTextures {
     //FLUID & ITEM OUTPUT BUTTONS
     public static final TextureArea BUTTON_FLUID_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_fluid_output.png");
     public static final TextureArea BUTTON_ITEM_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_item_output.png");
+    public static final TextureArea CLIPBOARD_CHECKBOX = TextureArea.fullImage("textures/gui/widget/clipboard_checkbox.png");
     public static final SizedTextureArea VANILLA_BUTTON = SizedTextureArea.fullImage("textures/gui/widget/vanilla_button.png", 200, 40);
     public static final TextureArea BUTTON = TextureArea.fullImage("textures/gui/widget/button.png");
     public static final TextureArea SWITCH = TextureArea.fullImage("textures/gui/widget/switch.png");

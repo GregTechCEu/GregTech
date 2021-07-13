@@ -15,10 +15,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.ConfigHolder;
-import gregtech.common.items.behaviors.FacadeItem;
-import gregtech.common.items.behaviors.ScannerBehavior;
-import gregtech.common.items.behaviors.NanoSaberBehavior;
-import gregtech.common.items.behaviors.TurbineRotorBehavior;
+import gregtech.common.items.behaviors.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -104,6 +101,7 @@ public class MetaItem2 extends MaterialMetaItem {
         ENERGY_FIELD_PROJECTOR = addItem(579, "energy_field_projector").addComponents(ElectricStats.createElectricItem(16000000L, GTValues.EV)).setMaxStackSize(1);
         SCANNER = addItem(580, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, GTValues.LV), new ScannerBehavior(50));
 
+        CLIPBOARD = addItem(540, "clipboard").addComponents(new ClipboardBehaviour());
 
         INGOT_MIXED_METAL = addItem(432, "ingot.mixed_metal");
         ADVANCED_ALLOY_PLATE = addItem(433, "plate.advanced_alloy");

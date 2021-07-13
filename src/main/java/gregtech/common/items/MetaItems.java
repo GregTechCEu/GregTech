@@ -469,6 +469,8 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem BIO_CHAFF;
 
+    public static MetaItem<?>.MetaValueItem CLIPBOARD;
+
     public static void init() {
         MetaItem1 first = new MetaItem1();
         first.setRegistryName("meta_item_1");
