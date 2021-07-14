@@ -666,7 +666,7 @@ public class MetaTileEntities {
 
         // Crates, IDs 1610-1624
         if (ConfigHolder.U.registerCrates) {
-            WOODEN_CRATE = GregTechAPI.registerMetaTileEntity(161, new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27));
+            WOODEN_CRATE = GregTechAPI.registerMetaTileEntity(1610, new MetaTileEntityCrate(gregtechId("crate.wood"), Materials.Wood, 27));
             BRONZE_CRATE = GregTechAPI.registerMetaTileEntity(1611, new MetaTileEntityCrate(gregtechId("crate.bronze"), Materials.Bronze, 54));
             STEEL_CRATE = GregTechAPI.registerMetaTileEntity(1612, new MetaTileEntityCrate(gregtechId("crate.steel"), Materials.Steel, 72));
             ALUMINIUM_CRATE = GregTechAPI.registerMetaTileEntity(1613, new MetaTileEntityCrate(gregtechId("crate.aluminium"), Materials.Aluminium, 90));
