@@ -24,12 +24,16 @@ import java.util.Objects;
 public class ItemNetHandler implements IItemHandler {
 
     private final ItemPipeNet net;
-    private final TileEntityItemPipe pipe;
+    private final TileEntityItemPipeTickable pipe;
     private final EnumFacing facing;
+    private int simulatedTransfers = 0;
 
     public ItemNetHandler(ItemPipeNet net, TileEntityItemPipe pipe, EnumFacing facing) {
         this.net = net;
-        this.pipe = pipe;
+        if (pipe instanceof TileEntityItemPipeTickable)
+            this.pipe = (TileEntityItemPipeTickable) pipe;
+        else
+            this.pipe = (TileEntityItemPipeTickable) pipe.setSupportsTicking();
         this.facing = facing;
     }
 
@@ -37,6 +41,7 @@ public class ItemNetHandler implements IItemHandler {
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
+        simulatedTransfers = 0;
         Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(pipe.getPos(), facing);
         if (exportsFromPipe(tuple)) {
             if (tuple.getFirst().getDistributionMode() == CoverConveyor.ItemDistributionMode.ROUND_ROBIN) {
@@ -107,7 +112,7 @@ public class ItemNetHandler implements IItemHandler {
             toInsert.setCount(amount);
             Handler handler = handlerIterator.next();
             int r = insert(handler, toInsert, simulate).getCount();
-            if (r < stack.getCount())
+            if (r < amount)
                 didInsert = true;
             if (r > 0) {
                 handlerIterator.remove();
@@ -127,25 +132,31 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insert(Handler handler, ItemStack stack, boolean simulate) {
         if (handler.getDistance() > handler.getProperties().maxRange)
             return stack;
-        int allowed = ((TileEntityItemPipeTickable) pipe).checkTransferableItems(handler.getProperties().transferRate, stack.getCount());
+        int allowed = checkTransferable(pipe, handler.getProperties().transferRate, stack.getCount(), simulate);
         if (allowed == 0) return stack;
         Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(handler.getPipePos(), handler.getFaceToHandler());
         if (tuple != null) {
             if (!tuple.getFirst().getItemFilterContainer().testItemStack(stack))
                 return stack;
-            if (tuple.getFirst() instanceof CoverRoboticArm && !exportsFromPipe(tuple))
+            boolean exportsFromPipe = exportsFromPipe(tuple);
+            if (tuple.getFirst() instanceof CoverRoboticArm && !exportsFromPipe)
                 return insertOverRobotArm(handler.handler, (CoverRoboticArm) tuple.getFirst(), tuple.getSecond(), stack, simulate, allowed);
-            if (exportsFromPipe(tuple) && tuple.getFirst().blocksInput())
+            if (exportsFromPipe && tuple.getFirst().blocksInput())
                 return stack;
         }
         return insert(handler.handler, stack, simulate, allowed);
     }
 
     private ItemStack insert(IItemHandler handler, ItemStack stack, boolean simulate, int allowed) {
+        if (stack.getCount() == allowed) {
+            ItemStack re = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
+            transfer(pipe, simulate, stack.getCount() - re.getCount());
+            return re;
+        }
         ItemStack toInsert = stack.copy();
         toInsert.setCount(Math.min(allowed, stack.getCount()));
         int r = ItemHandlerHelper.insertItemStacked(handler, toInsert, simulate).getCount();
-        if (!simulate) ((TileEntityItemPipeTickable) pipe).transferItems(toInsert.getCount() - r);
+        transfer(pipe, simulate, toInsert.getCount() - r);
         ItemStack remainder = stack.copy();
         remainder.setCount(r + (stack.getCount() - toInsert.getCount()));
         return remainder;
@@ -194,6 +205,9 @@ public class ItemNetHandler implements IItemHandler {
                 } else {
                     arm.clearBuffer();
                 }
+                if (insert(handler, stack, true, count).getCount() != count) {
+                    return stack;
+                }
                 return insert(handler, stack, simulate, count);
         }
         return stack;
@@ -210,6 +224,21 @@ public class ItemNetHandler implements IItemHandler {
             }
         }
         return count;
+    }
+
+    private int checkTransferable(TileEntityItemPipeTickable pipe, float rate, int amount, boolean simulate) {
+        int max = (int) ((rate * 64) + 0.5);
+        if (simulate)
+            return Math.max(0, Math.min(max - (pipe.getTransferredItems() + simulatedTransfers), amount));
+        else
+            return Math.max(0, Math.min(max - pipe.getTransferredItems(), amount));
+    }
+
+    private void transfer(TileEntityItemPipeTickable pipe, boolean simulate, int amount) {
+        if (simulate)
+            simulatedTransfers += amount;
+        else
+            pipe.transferItems(amount);
     }
 
     @Override

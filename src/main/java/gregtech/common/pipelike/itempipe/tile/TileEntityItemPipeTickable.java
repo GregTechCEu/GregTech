@@ -19,7 +19,7 @@ public class TileEntityItemPipeTickable extends TileEntityItemPipe implements IT
     @Override
     public void update() {
         getCoverableImplementation().update();
-        if(getTickTimer() % 20 == 0) {
+        if (getTickTimer() % 20 == 0) {
             transferredItems = 0;
         }
     }
@@ -29,16 +29,11 @@ public class TileEntityItemPipeTickable extends TileEntityItemPipe implements IT
         return true;
     }
 
-    public int checkTransferableItems(float rate, int amount) {
-        return checkTransferableItems((int) ((rate * 64) + 0.5), amount);
-    }
-
-    public int checkTransferableItems(int max, int amount) {
-        return Math.max(0, Math.min(max - transferredItems, amount));
-    }
-
     public void transferItems(int amount) {
         transferredItems += amount;
     }
 
+    public int getTransferredItems() {
+        return transferredItems;
+    }
 }
