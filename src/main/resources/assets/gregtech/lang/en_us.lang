@@ -3006,6 +3006,8 @@ gregtech.machine.item_collector.gui.collect_range=Collect in %s blocks
 gregtech.machine.quantum_chest.tooltip=Better than JABBA.
 gregtech.machine.quantum_chest.capacity=Item Capacity: %,d items
 gregtech.machine.quantum_chest.items_stored=Item Amount:
+gregtech.machine.quantum_chest.tooltip.item=Item Stored: §b%s
+gregtech.machine.quantum_chest.tooltip.count=Item Amount: §e%,d
 
 gregtech.machine.super_chest.lv.name=Super Chest I
 gregtech.machine.super_chest.mv.name=Super Chest II
@@ -3021,6 +3023,8 @@ gregtech.machine.quantum_chest.uhv.name=Quantum Chest V
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids.
 gregtech.machine.quantum_tank.capacity=Fluid Capacity: %,d L
+gregtech.machine.quantum_tank.tooltip.name=Fluid Stored: §b%s
+gregtech.machine.quantum_tank.tooltip.count=Fluid Amount: §e%,d L
 
 gregtech.machine.super_tank.lv.name=Super Tank I
 gregtech.machine.super_tank.mv.name=Super Tank II
@@ -3571,3 +3575,5 @@ info.infinite_energy.uiv=Voltage: UIV
 info.infinite_energy.umv=Voltage: UMV
 info.infinite_energy.uxv=Voltage: UXV
 info.infinite_energy.max=Voltage: MAX
+
+gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
