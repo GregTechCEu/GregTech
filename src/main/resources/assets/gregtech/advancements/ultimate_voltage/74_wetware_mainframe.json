@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.ultimate_voltage.74_wetware_mainframe.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.ultimate_voltage.74_wetware_mainframe.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32528
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32528
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:ultimate_voltage/root_uv"
+}

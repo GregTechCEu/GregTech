@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.extreme_voltage.50_nano_processor.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.extreme_voltage.50_nano_processor.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32513
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32513
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:extreme_voltage/49_nano_cpu_wafer"
+}

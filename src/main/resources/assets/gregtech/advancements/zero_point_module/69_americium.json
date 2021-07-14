@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.zero_point_module.69_americium.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.zero_point_module.69_americium.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 10003
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "ingotAmericium"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:zero_point_module/root_zpm"
+}

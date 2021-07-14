@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.extreme_voltage.51_large_combustion_engine.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.extreme_voltage.51_large_combustion_engine.name"
+    },
+    "icon": {
+      "item": "gregtech:turbine_casing",
+      "data": 2
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1007
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:extreme_voltage/root_ev"
+}

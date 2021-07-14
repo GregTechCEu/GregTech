@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.steam.9_coke_oven.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.steam.9_coke_oven.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1016
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1016
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:steam/2_more_tools"
+}

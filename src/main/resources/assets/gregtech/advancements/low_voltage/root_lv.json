@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.root_lv.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.root_lv.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 950
+    },
+    "frame": "challenge",
+    "background": "gregtech:textures/blocks/casings/solid/machine_casing_solid_steel.png"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 950
+          }
+        ]
+      }
+    }
+  }
+}

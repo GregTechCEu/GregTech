@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.steam.1_first_tools.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.steam.1_first_tools.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_tool",
+      "data": 6
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "craftingToolHardHammer"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:steam/root_steam"
+}

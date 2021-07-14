@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.root_steam.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.root_steam.name"
+    },
+    "icon": {
+      "item": "gregtech:fluid_pipe",
+      "data": 2134
+    },
+    "background": "gregtech:textures/blocks/casings/solid/machine_bronze_plated_bricks.png"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "ingotCopper"
+          }
+        ]
+      }
+    }
+  }
+}

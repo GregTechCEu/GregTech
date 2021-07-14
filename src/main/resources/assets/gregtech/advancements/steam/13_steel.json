@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.steam.13_steel.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.steam.13_steel.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 10198
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "ingotSteel"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:steam/3_bronze_dust"
+}

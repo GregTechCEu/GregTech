@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.ludicrous_voltage.62_raw_crystal_chip.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.ludicrous_voltage.62_raw_crystal_chip.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32481
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32481
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:ludicrous_voltage/61_europium"
+}

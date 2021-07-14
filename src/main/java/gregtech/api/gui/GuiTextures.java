@@ -49,6 +49,7 @@ public class GuiTextures {
     public static final TextureArea BRONZE_FURNACE_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/slot_bronze_furnace_background.png");
     public static final TextureArea BRONZE_INGOT_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/overlay_bronze_ingot.png");
     public static final TextureArea BRONZE_DUST_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/overlay_bronze_dust.png");
+    public static final TextureArea BRONZE_COAL_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/overlay_bronze_coal.png");
 
     //ARMOR
     public static final TextureArea CONNECTION_TYPE_POWER = TextureArea.fullImage("textures/gui/armor/connection/power.png");

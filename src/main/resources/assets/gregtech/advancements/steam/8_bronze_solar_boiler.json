@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.steam.8_bronze_solar_boiler.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.steam.8_bronze_solar_boiler.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 3
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 3
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:steam/4_bronze_boiler"
+}

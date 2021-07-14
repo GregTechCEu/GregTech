@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.low_voltage.29_lv_battery_buffer.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.low_voltage.29_lv_battery_buffer.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1320
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1320
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:low_voltage/root_lv"
+}

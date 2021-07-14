@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.extreme_voltage.48_osmium.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.extreme_voltage.48_osmium.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 10075
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "ingotOsmium"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:extreme_voltage/47_nichrome_coil"
+}

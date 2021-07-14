@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.ludicrous_voltage.64_crystal_processor.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.ludicrous_voltage.64_crystal_processor.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32521
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32521
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:ludicrous_voltage/63_crystal_processing_unit"
+}

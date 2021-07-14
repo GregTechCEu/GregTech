@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.steam.11_rubber.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.steam.11_rubber.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 10184
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "ingotRubber"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:steam/7_bronze_extractor"
+}

@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.high_voltage.41_vacuum_freezer.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.high_voltage.41_vacuum_freezer.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1002
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1002
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:high_voltage/40_workstation"
+}

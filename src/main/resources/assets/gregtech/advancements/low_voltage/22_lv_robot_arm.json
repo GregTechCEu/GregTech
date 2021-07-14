@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.low_voltage.22_lv_robot_arm.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.low_voltage.22_lv_robot_arm.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 32650
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_1",
+            "data": 32650
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:low_voltage/root_lv"
+}

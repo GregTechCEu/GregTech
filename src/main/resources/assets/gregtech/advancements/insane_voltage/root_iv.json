@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.root_iv.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.root_iv.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1015
+    },
+    "background": "gregtech:textures/blocks/casings/solid/machine_casing_robust_tungstensteel.png"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "ingotTungstenSteel"
+          }
+        ]
+      }
+    }
+  }
+}

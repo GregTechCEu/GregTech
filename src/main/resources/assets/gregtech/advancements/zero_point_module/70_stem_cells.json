@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.zero_point_module.70_stem_cells.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.zero_point_module.70_stem_cells.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32535
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32535
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:zero_point_module/root_zpm"
+}

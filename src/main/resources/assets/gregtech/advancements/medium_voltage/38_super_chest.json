@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.medium_voltage.38_super_chest.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.medium_voltage.38_super_chest.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1560
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1560
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:medium_voltage/root_mv"
+}
