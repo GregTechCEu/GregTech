@@ -39,7 +39,9 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -234,9 +236,10 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             if (stack.hasTagCompound()) {
                 metaTileEntity.initFromItemStackData(stack.getTagCompound());
             }
-            EnumFacing placeFacing = placer.getHorizontalFacing().getOpposite();
-            if (metaTileEntity.isValidFrontFacing(placeFacing)) {
-                metaTileEntity.setFrontFacing(placeFacing);
+            if (metaTileEntity.isValidFrontFacing(EnumFacing.UP)) {
+                metaTileEntity.setFrontFacing(EnumFacing.getDirectionFromEntityLiving(pos, placer));
+            } else {
+                metaTileEntity.setFrontFacing(placer.getHorizontalFacing().getOpposite());
             }
             if (ConfigHolder.U.GT6.gt6StylePipesCables) {
                 if (placer instanceof EntityPlayer) {
@@ -479,5 +482,11 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @SideOnly(Side.CLIENT)
     protected Pair<TextureAtlasSprite, Integer> getParticleTexture(World world, BlockPos blockPos) {
         return MetaTileEntityRenderer.INSTANCE.getParticleTexture(world, blockPos);
+    }
+
+    @Override
+    public boolean canEntityDestroy(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity) {
+        MetaTileEntity metaTileEntity = getMetaTileEntity(world, pos);
+        return !((entity instanceof EntityWither || entity instanceof EntityWitherSkull) && metaTileEntity.getWitherProof());
     }
 }

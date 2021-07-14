@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.OreConfigUtils;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.generator.GridEntryInfo;
@@ -27,6 +28,7 @@ import java.util.*;
 public class SurfaceRockPopulator implements VeinChunkPopulator {
 
     private Material material;
+    private int failedGenerationCounter = 0;
 
     public SurfaceRockPopulator() {
     }
@@ -70,8 +72,21 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
             if (tileEntity != null)
                 tileEntity.setData(this.material, undergroundMaterials);
         }
+        else {
+            failedGenerationCounter++;
+        }
     }
 
+    /**
+     * Generates the Surface Rock for an underground vein. Replaces the applicable topmost block in the chunk with a
+     * Surface Rock, at a random position in the chunk. Does not run on a Flat world type
+     * @param world - The Minecraft world. Used for finding the top most block and its state
+     * @param chunkX - The X chunk coordinate
+     * @param chunkZ - The Z chunk coordinate
+     * @param random - A Random parameter. Used for determining the number of spawned Surface Blocks and their position
+     * @param definition - The Ore Vein definition
+     * @param gridEntryInfo - Information about the ore generation grid for the current generation section
+     */
     @Override
     public void populateChunk(World world, int chunkX, int chunkZ, Random random, OreDepositDefinition definition, GridEntryInfo gridEntryInfo) {
         int stonesCount = random.nextInt(2);
@@ -84,11 +99,26 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
                 int randomZ = chunkZ * 16 + 8 + random.nextInt(16);
                 BlockPos topBlockPos = world.getTopSolidOrLiquidBlock(new BlockPos(randomX, 0, randomZ));
                 Block blockAtPos = world.getBlockState(topBlockPos).getBlock();
-                if ((world.isAirBlock(topBlockPos) || (blockAtPos.isReplaceable(world, topBlockPos) && !world.getBlockState(topBlockPos).getMaterial().isLiquid()))
-                        && world.isSideSolid(topBlockPos.down(), EnumFacing.UP)) {
-                    setStoneBlock(world, topBlockPos, undergroundMaterials);
+
+                //Checks if the block is a replaceable feature like grass, snow layers, or Air. Liquids are replaceable, so
+                // exclude one deep liquid blocks, for looks
+                if(!blockAtPos.isReplaceable(world, topBlockPos) || world.getBlockState(topBlockPos).getMaterial().isLiquid()) {
+                    continue;
                 }
+
+                //Checks if the block below has a solid top. This method is also used to check what blocks redstone can
+                //be placed on.
+                if(!world.isSideSolid(topBlockPos.down(), EnumFacing.UP)) {
+                    continue;
+                }
+
+                setStoneBlock(world, topBlockPos, undergroundMaterials);
             }
+        }
+
+        //Log if all Surface Rock generation attempts were failed
+        if(failedGenerationCounter == stonesCount && stonesCount > 0 && world.getWorldType() != WorldType.FLAT) {
+            GTLog.logger.debug("Failed to generate surface rocks for vein {} at chunk with position: x: {}, z: {}", definition.getDepositName(), chunkX, chunkZ);
         }
     }
 

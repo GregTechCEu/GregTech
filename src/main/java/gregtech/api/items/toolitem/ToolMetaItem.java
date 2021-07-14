@@ -618,13 +618,6 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         }
 
         @Override
-        @Deprecated
-        public MetaToolValueItem addStats(IMetaItemStats... stats) {
-            super.addStats(stats);
-            return this;
-        }
-
-        @Override
         public MetaToolValueItem addComponents(IItemComponent... stats) {
             super.addComponents(stats);
             return this;

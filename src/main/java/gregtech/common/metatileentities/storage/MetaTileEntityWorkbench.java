@@ -80,6 +80,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     public MetaTileEntityWorkbench(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override

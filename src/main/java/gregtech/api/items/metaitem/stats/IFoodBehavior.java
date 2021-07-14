@@ -17,13 +17,7 @@ public interface IFoodBehavior extends IItemComponent {
 
     EnumAction getFoodAction(ItemStack itemStack);
 
-    // Please call onFoodEaten instead.
-    @Deprecated
-    void onEaten(ItemStack stack, EntityPlayer player);
-
     default ItemStack onFoodEaten(ItemStack stack, EntityPlayer player) {
-        onEaten(stack, player);
-
         return stack;
     }
 

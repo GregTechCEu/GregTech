@@ -17,6 +17,8 @@ import java.util.List;
 @ZenRegister
 public class CTMaterialRegistry {
 
+    static int baseID = 450;
+
     @ZenMethod
     @Nullable
     public static Material get(String name) {
@@ -34,7 +36,7 @@ public class CTMaterialRegistry {
 
     @ZenMethod
     public static FluidMaterial createFluidMaterial(int metaItemSubId, String name, int color, String iconSet, @Optional MaterialStack[] materialComponents) {
-        return new FluidMaterial(metaItemSubId, name, color,
+        return new FluidMaterial(metaItemSubId , name, color,
             MaterialIconSet.getByName(iconSet),
             validateComponentList(materialComponents), 0);
     }
@@ -60,6 +62,36 @@ public class CTMaterialRegistry {
             MaterialIconSet.getByName(iconSet), harvestLevel,
             validateComponentList(materialComponents), 0, null,
             Math.max(0.0f, toolSpeed), Math.max(0.0f, attackDamage), Math.max(0, toolDurability), blastFurnaceTemperature);
+    }
+
+    @ZenMethod
+    public static FluidMaterial createFluidMaterial(String name, int color, String iconSet, @Optional MaterialStack[] materialComponents) {
+        return new FluidMaterial(baseID++, name, color,
+                MaterialIconSet.getByName(iconSet),
+                validateComponentList(materialComponents), 0);
+    }
+
+    @ZenMethod
+    public static DustMaterial createDustMaterial(String name, int color, String iconSet, int harvestLevel, @Optional MaterialStack[] materialComponents) {
+        return new DustMaterial(baseID++, name, color,
+                MaterialIconSet.getByName(iconSet), harvestLevel,
+                validateComponentList(materialComponents), 0);
+    }
+
+    @ZenMethod
+    public static GemMaterial createGemMaterial(String name, int color, String iconSet, int harvestLevel, @Optional MaterialStack[] materialComponents, @Optional float toolSpeed, @Optional float attackDamage, @Optional int toolDurability) {
+        return new GemMaterial(baseID++, name, color,
+                MaterialIconSet.getByName(iconSet), harvestLevel,
+                validateComponentList(materialComponents), 0, null,
+                Math.max(0.0f, toolSpeed), Math.max(0.0f, attackDamage), Math.max(0, toolDurability));
+    }
+
+    @ZenMethod
+    public static IngotMaterial createIngotMaterial(String name, int color, String iconSet, int harvestLevel, @Optional MaterialStack[] materialComponents, @Optional float toolSpeed, @Optional float attackDamage, @Optional int toolDurability, @Optional int blastFurnaceTemperature) {
+        return new IngotMaterial(baseID++, name, color,
+                MaterialIconSet.getByName(iconSet), harvestLevel,
+                validateComponentList(materialComponents), 0, null,
+                Math.max(0.0f, toolSpeed), Math.max(0.0f, attackDamage), Math.max(0, toolDurability), blastFurnaceTemperature);
     }
 
 }

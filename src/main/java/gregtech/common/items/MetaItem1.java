@@ -6,7 +6,6 @@ import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FluidStats;
 import gregtech.api.items.metaitem.FoodStats;
-import gregtech.api.items.metaitem.stats.IItemModelIndexProvider;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -23,7 +22,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -117,15 +115,50 @@ public class MetaItem1 extends MaterialMetaItem {
         SPRAY_EMPTY = addItem(402, "spray.empty")
             .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tin, OrePrefix.plate.materialAmount * 2L), new MaterialStack(Materials.Redstone, OrePrefix.dust.materialAmount)));
 
-        LARGE_FLUID_CELL_STEEL = addItem(405, "large_fluid_cell.steel")
-            .addComponents(new FluidStats(64000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-            .setMaxStackSize(16)
-            .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, OrePrefix.plate.materialAmount * 2L + 2L * OrePrefix.ring.materialAmount)));
+        FLUID_CELL = addItem(403, "fluid_cell").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, false));
 
-        LARGE_FLUID_CELL_TUNGSTEN_STEEL = addItem(406, "large_fluid_cell.tungstensteel")
-            .addComponents(new FluidStats(256000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-            .setMaxStackSize(16)
-            .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, OrePrefix.plate.materialAmount * 2L + 2L * OrePrefix.ring.materialAmount)));
+        UNIVERSAL_FLUID_CELL = addItem(404, "fluid_cell.universal").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, true));
+
+        LARGE_FLUID_CELL_STEEL = addItem(405, "large_fluid_cell.steel")
+            .addComponents(new FluidStats(8000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+            .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+
+        LARGE_FLUID_CELL_ALUMINIUM = addItem(406, "large_fluid_cell.aluminium")
+            .addComponents(new FluidStats(32000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+            .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+
+        LARGE_FLUID_CELL_STAINLESS_STEEL = addItem(407, "large_fluid_cell.stainless_steel")
+            .addComponents(new FluidStats(64000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+            .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+
+        LARGE_FLUID_CELL_TITANIUM = addItem(408, "large_fluid_cell.titanium")
+            .addComponents(new FluidStats(128000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+            .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+
+        LARGE_FLUID_CELL_TUNGSTEN_STEEL = addItem(409, "large_fluid_cell.tungstensteel")
+            .addComponents(new FluidStats(512000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+            .setMaxStackSize(32)
+            .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+
+        LARGE_FLUID_CELL_CHROME = addItem(410, "large_fluid_cell.chrome")
+            .addComponents(new FluidStats(2048000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+            .setMaxStackSize(32)
+            .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Chrome, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+
+        LARGE_FLUID_CELL_IRIDIUM = addItem(411, "large_fluid_cell.iridium")
+            .addComponents(new FluidStats(8192000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+            .setMaxStackSize(2)
+            .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Iridium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+
+        LARGE_FLUID_CELL_OSMIUM = addItem(412, "large_fluid_cell.osmium")
+            .addComponents(new FluidStats(32768000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+            .setMaxStackSize(1)
+            .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+
+        LARGE_FLUID_CELL_NEUTRONIUM = addItem(413, "large_fluid_cell.neutronium")
+                .addComponents(new FluidStats(131072000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
+                .setMaxStackSize(1)
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Neutronium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
 
         for (int i = 0; i < EnumDyeColor.values().length; i++) {
             EnumDyeColor dyeColor = EnumDyeColor.values()[i];
@@ -187,14 +220,14 @@ public class MetaItem1 extends MaterialMetaItem {
         ELECTRIC_MOTOR_ZPM = addItem(607, "electric.motor.zpm");
         ELECTRIC_MOTOR_UV = addItem(608, "electric.motor.uv");
 
-        ELECTRIC_PUMP_LV = addItem(610, "electric.pump.lv");
-        ELECTRIC_PUMP_MV = addItem(611, "electric.pump.mv");
-        ELECTRIC_PUMP_HV = addItem(612, "electric.pump.hv");
-        ELECTRIC_PUMP_EV = addItem(613, "electric.pump.ev");
-        ELECTRIC_PUMP_IV = addItem(614, "electric.pump.iv");
-        ELECTRIC_PUMP_LUV = addItem(615, "electric.pump.luv");
-        ELECTRIC_PUMP_ZPM = addItem(616, "electric.pump.zpm");
-        ELECTRIC_PUMP_UV = addItem(617, "electric.pump.uv");
+        PUMPS[0] = ELECTRIC_PUMP_LV = addItem(610, "electric.pump.lv");
+        PUMPS[1] = ELECTRIC_PUMP_MV = addItem(611, "electric.pump.mv");
+        PUMPS[2] = ELECTRIC_PUMP_HV = addItem(612, "electric.pump.hv");
+        PUMPS[3] = ELECTRIC_PUMP_EV = addItem(613, "electric.pump.ev");
+        PUMPS[4] = ELECTRIC_PUMP_IV = addItem(614, "electric.pump.iv");
+        PUMPS[5] = ELECTRIC_PUMP_LUV = addItem(615, "electric.pump.luv");
+        PUMPS[6] = ELECTRIC_PUMP_ZPM = addItem(616, "electric.pump.zpm");
+        PUMPS[7] = ELECTRIC_PUMP_UV = addItem(617, "electric.pump.uv");
 
         RUBBER_DROP = addItem(627, "rubber_drop").setBurnValue(200);
 
@@ -288,9 +321,8 @@ public class MetaItem1 extends MaterialMetaItem {
         COVER_SOLAR_PANEL_ULV = addItem(751, "cover.solar.panel.ulv");
         COVER_SOLAR_PANEL_LV = addItem(752, "cover.solar.panel.lv");
 
-        FLUID_CELL = addItem(762, "fluid_cell").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, false));
         INTEGRATED_CIRCUIT = addItem(766, "circuit.integrated").addComponents(new IntCircuitBehaviour()).setModelAmount(33);
-        FOAM_SPRAYER = addItem(746, "foam_sprayer").addComponents(new FoamSprayerBehavior());
+        FOAM_SPRAYER = addItem(746, "foam_sprayer").addComponents(new FoamSprayerBehavior()).setMaxStackSize(1);
     }
 
     public void registerRecipes() {

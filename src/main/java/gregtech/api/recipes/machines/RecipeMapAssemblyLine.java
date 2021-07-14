@@ -33,7 +33,7 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
     @Override
     @Nonnull
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids) {
-        ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND_EXTENDED, 176, 216) {
+        ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 176, 216) {
             @Override
             public ModularUI.Builder bindPlayerInventory(InventoryPlayer inventoryPlayer) {
                 this.bindPlayerInventory(inventoryPlayer, 134);

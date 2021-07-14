@@ -47,21 +47,6 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
         public final boolean hasOutputHatch;
         public final OrientedOverlayRenderer frontOverlay;
 
-        /**
-         * @deprecated use {@link TurbineType#TurbineType(FuelRecipeMap, IBlockState, IBlockState, ICubeRenderer, boolean, OrientedOverlayRenderer)}
-         * Deprecated for use due to new constructor accepting a front overlay texture
-         * This is left in place to ensure compatibility with addon mods that add Large Turbines
-         */
-        @Deprecated
-        TurbineType(FuelRecipeMap recipeMap, IBlockState casingState, ICubeRenderer casingRenderer, boolean hasOutputHatch) {
-            this.recipeMap = recipeMap;
-            this.casingState = casingState;
-            this.gearboxState = casingState;
-            this.casingRenderer = casingRenderer;
-            this.hasOutputHatch = hasOutputHatch;
-            this.frontOverlay = Textures.MULTIBLOCK_WORKABLE_OVERLAY;
-        }
-
         TurbineType(FuelRecipeMap recipeMap, IBlockState casingState, IBlockState gearboxState, ICubeRenderer casingRenderer, boolean hasOutputHatch, OrientedOverlayRenderer frontOverlay) {
             this.recipeMap = recipeMap;
             this.casingState = casingState;
@@ -154,7 +139,7 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
                         .build();
     }
 
-    public MultiblockAbility[] getAllowedAbilities() {
+    public MultiblockAbility<?>[] getAllowedAbilities() {
         return turbineType.hasOutputHatch ?
                 new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.EXPORT_FLUIDS} :
                 new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS};
@@ -171,14 +156,6 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return turbineType.casingRenderer;
-    }
-
-    /** Deprecated method please use {@code {@see isRotorFaceFree}} instead
-     *
-     */
-    @Deprecated
-    public boolean isTurbineFaceFree() {
-        return isRotorFaceFree();
     }
 
     @Nonnull

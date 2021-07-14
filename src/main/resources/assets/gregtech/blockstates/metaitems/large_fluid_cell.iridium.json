@@ -1,0 +1,14 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "inventory": {
+      "model": "forge:forgebucket",
+      "textures": {
+        "base": "gregtech:items/metaitems/large_fluid_cell.iridium/base",
+        "fluid": "gregtech:items/metaitems/large_fluid_cell.iridium/overlay",
+        "cover": "gregtech:items/metaitems/large_fluid_cell.iridium/base"
+      },
+      "transform": "forge:default-item"
+    }
+  }
+}

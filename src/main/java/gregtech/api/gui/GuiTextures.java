@@ -11,11 +11,6 @@ public class GuiTextures {
     public static final TextureArea BORDERED_BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/bordered_background.png", 195, 136, 4, 4);
     public static final TextureArea BOXED_BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/boxed_background.png", 256, 174, 11, 11);
 
-    //deprecated texture areas retained for binary & source compatibility
-    @Deprecated public static final TextureArea BACKGROUND_SMALL = BACKGROUND; //replaced by normal background
-    @Deprecated public static final TextureArea BACKGROUND_EXTENDED = BACKGROUND; //replaced by normal background
-    @Deprecated public static final TextureArea BORDERED_BACKGROUND_EXTENDED = BORDERED_BACKGROUND; //replaced by normal background
-
     public static final TextureArea SLOT = AdoptableTextureArea.fullImage("textures/gui/base/slot.png", 18, 18, 1, 1);
     public static final TextureArea FLUID_SLOT = AdoptableTextureArea.fullImage("textures/gui/base/fluid_slot.png", 18, 18, 1, 1);
     public static final TextureArea SLOT_DARKENED = TextureArea.fullImage("textures/gui/base/darkened_slot.png");
@@ -54,6 +49,7 @@ public class GuiTextures {
     public static final TextureArea BRONZE_FURNACE_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/slot_bronze_furnace_background.png");
     public static final TextureArea BRONZE_INGOT_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/overlay_bronze_ingot.png");
     public static final TextureArea BRONZE_DUST_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/overlay_bronze_dust.png");
+    public static final TextureArea BRONZE_COAL_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/overlay_bronze_coal.png");
 
     //ARMOR
     public static final TextureArea CONNECTION_TYPE_POWER = TextureArea.fullImage("textures/gui/armor/connection/power.png");
@@ -125,6 +121,7 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_SIFT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_sift.png");
     public static final TextureArea PROGRESS_BAR_SLICE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_slice.png");
     public static final TextureArea PROGRESS_BAR_WIREMILL = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_wiremill.png");
+    public static final TextureArea PROGRESS_BAR_CIRCUIT_ASSEMBLER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_circuit_assembler.png");
 
     //JEI
     public static final TextureArea MULTIBLOCK_CATEGORY = TextureArea.fullImage("textures/gui/icon/coke_oven.png");

@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.medium_voltage.39_super_tank.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.medium_voltage.39_super_tank.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1575
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1575
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:medium_voltage/root_mv"
+}

@@ -17,6 +17,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gregtech.common.blocks.HermeticCasings.HermeticCasingsType.*;
+import static gregtech.common.blocks.HermeticCasings.HermeticCasingsType.HERMETIC_LV;
+
 public class CraftingComponent {
 
     public static Component CIRCUIT;
@@ -48,6 +51,8 @@ public class CraftingComponent {
     public static Component STICK_ELECTROMAGNETIC;
     public static Component STICK_RADIOACTIVE;
     public static Component PIPE_REACTOR;
+    public static Component HERMETIC_CASINGS;
+
 
     public static void initializeComponents() {
 
@@ -444,10 +449,30 @@ public class CraftingComponent {
                 {6, new UnificationEntry(OrePrefix.pipeMedium, Materials.Polytetrafluoroethylene)},
                 {7, new UnificationEntry(OrePrefix.pipeLarge, Materials.Polytetrafluoroethylene)},
                 {8, new UnificationEntry(OrePrefix.pipeHuge, Materials.Polytetrafluoroethylene)},
+
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.pipeMedium, Materials.Polyethylene)},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+
+        HERMETIC_CASINGS = new Component(Stream.of(new Object[][]{
+
+                {1, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_LV)},
+                {2, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_MV)},
+                {3, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_HV)},
+                {4, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_EV)},
+                {5, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_IV)},
+                {6, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_LUV)},
+                {7, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_ZPM)},
+                {8, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_UV)},
+                {14, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_MAX)},
+
                 {GTValues.FALLBACK, new UnificationEntry(OrePrefix.pipeMedium, Materials.Polyethylene)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
     }
+
+
 
     public static class Component {
 

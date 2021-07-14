@@ -146,6 +146,8 @@ public class Elements {
         add(119, 178, -1, null, "Tritanium", "Tr", false);
         add(120, 180, -1, null, "Duranium", "Dr", false);
         add(121, 172, 140, null, "Naquadah", "Nq", true);
+        add(121, 172, 140, null, "NaquadahEnriched", "Nq+", true);
+        add(121, 172, 140, null, "Naquadria", "*Nq*", true);
         add(0, 5000, -1, null, "Neutronium", "Nt", false);
         add(1000, 1500, -1, null, "Trinium", "Ke", false);
         add(750, 1000, -1, null, "Adamantium", "Ad", false);

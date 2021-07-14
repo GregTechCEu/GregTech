@@ -25,12 +25,23 @@ public class WorkableInfoProvider extends CapabilityInfoProvider<IWorkable> {
     protected void addProbeInfo(IWorkable capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
         int currentProgress = capability.getProgress();
         int maxProgress = capability.getMaxProgress();
+        String suffix;
+
+        if (maxProgress < 20) {
+            currentProgress = capability.getProgress();
+            maxProgress = capability.getMaxProgress();
+            suffix = " t / " + maxProgress + " t";
+        } else {
+            currentProgress = (int) Math.round(currentProgress / 20.0);
+            maxProgress = (int) Math.round(maxProgress / 20.0);
+            suffix = " s / " + maxProgress + " s";
+        }
+
         if (maxProgress > 0) {
-            int progressScaled = maxProgress == 0 ? 0 : (int) Math.floor(currentProgress / (maxProgress * 1.0) * 100);
             IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
             horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.progress*} ");
-            horizontalPane.progress(progressScaled, 100, probeInfo.defaultProgressStyle()
-                .suffix("%")
+            horizontalPane.progress(currentProgress, maxProgress, probeInfo.defaultProgressStyle()
+                .suffix(suffix)
                 .borderColor(0x00000000)
                 .backgroundColor(0x00000000)
                 .filledColor(0xFF000099)

@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.medium_voltage.34_silicon_boule.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.medium_voltage.34_silicon_boule.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32020
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32020
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:medium_voltage/root_mv"
+}

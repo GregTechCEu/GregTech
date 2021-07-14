@@ -22,11 +22,11 @@ import static gregtech.api.recipes.RecipeMaps.BENDER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
 import static gregtech.api.unification.material.type.DustMaterial.MatFlags.GENERATE_PLATE;
 import static gregtech.api.unification.material.type.DustMaterial.MatFlags.NO_SMASHING;
-import static gregtech.api.unification.material.type.IngotMaterial.MatFlags.*;
+import static gregtech.api.unification.material.type.IngotMaterial.MatFlags.GENERATE_BOLT_SCREW;
+import static gregtech.api.unification.material.type.IngotMaterial.MatFlags.GENERATE_DOUBLE_PLATE;
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.GENERATE_ROD;
 import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.MORTAR_GRINDABLE;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.api.unification.ore.OrePrefix.nugget;
 import static gregtech.api.util.DyeUtil.determineDyeColor;
 
 public class PartsRecipeHandler {
@@ -100,9 +100,10 @@ public class PartsRecipeHandler {
     }
 
     public static void processFoil(OrePrefix foilPrefix, IngotMaterial material) {
-        ModHandler.addShapedRecipe(String.format("foil_%s", material.toString()),
-                OreDictUnifier.get(foilPrefix, material, 2),
-                "hP ", 'P', new UnificationEntry(plate, material));
+        if (!material.hasFlag(NO_SMASHING))
+            ModHandler.addShapedRecipe(String.format("foil_%s", material.toString()),
+                    OreDictUnifier.get(foilPrefix, material, 2),
+                    "hP ", 'P', new UnificationEntry(plate, material));
 
         if (ConfigHolder.U.machines.enableClusterMill) {
             RecipeMaps.CLUSTER_MILL_RECIPES.recipeBuilder().EUt(24).duration((int) material.getAverageMass())
@@ -116,7 +117,7 @@ public class PartsRecipeHandler {
                     .output(foilPrefix, material, 4)
                     .duration((int) material.getAverageMass())
                     .EUt(24)
-                    .circuitMeta(0)
+                    .circuitMeta(1)
                     .buildAndRegister();
         }
     }

@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.ludicrous_voltage.60_fusion.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.ludicrous_voltage.60_fusion.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1019
+    },
+    "frame": "challenge"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1019
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:ludicrous_voltage/59_superconducting_coil"
+}

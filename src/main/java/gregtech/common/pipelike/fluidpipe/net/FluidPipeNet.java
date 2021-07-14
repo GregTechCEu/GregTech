@@ -132,4 +132,18 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> {
         return new FluidPipeProperties(maxTemperature, throughput, gasProof);
     }
 
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = super.serializeNBT();
+        nbt.setTag("FluidTankNet", this.fluidNetTank.writeToNBT(new NBTTagCompound()));
+        return nbt;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        super.deserializeNBT(nbt);
+        if (nbt.hasKey("FluidTankNet"))
+            this.fluidNetTank.readFromNBT(nbt.getCompoundTag("FluidTankNet"));
+    }
+
 }

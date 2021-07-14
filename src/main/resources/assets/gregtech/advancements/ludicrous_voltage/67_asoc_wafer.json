@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.ludicrous_voltage.67_asoc_wafer.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.ludicrous_voltage.67_asoc_wafer.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_2",
+      "data": 32467
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_2",
+            "data": 32467
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:ludicrous_voltage/65_naquadah"
+}

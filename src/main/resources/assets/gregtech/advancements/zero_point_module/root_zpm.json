@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.root_zpm.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.root_zpm.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1020
+    },
+    "frame": "challenge",
+    "background": "gregtech:textures/blocks/casings/fusion/machine_casing_fusion.png"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1020
+          }
+        ]
+      }
+    }
+  }
+}

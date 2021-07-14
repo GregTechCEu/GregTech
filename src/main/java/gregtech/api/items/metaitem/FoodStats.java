@@ -67,12 +67,6 @@ public class FoodStats implements IFoodBehavior {
     }
 
     @Override
-    @Deprecated
-    public void onEaten(ItemStack itemStack, EntityPlayer player) {
-        onFoodEaten(itemStack, player);
-    }
-
-    @Override
     public ItemStack onFoodEaten(ItemStack itemStack, EntityPlayer player) {
         if (!player.world.isRemote) {
             for (RandomPotionEffect potionEffect : potionEffects) {

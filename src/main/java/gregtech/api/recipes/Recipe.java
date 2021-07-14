@@ -74,8 +74,9 @@ public class Recipe {
         this.duration = duration;
         this.EUt = EUt;
         this.hidden = hidden;
-        //sort input elements in descending order (i.e not consumables inputs are last)
-        this.inputs.sort(Comparator.comparing(CountableIngredient::getCount).reversed());
+
+        //sort not consumables inputs to the end
+        this.inputs.sort((ing1, ing2) -> ing1.getCount() == 0 ? 1 : 0);
     }
 
     /**

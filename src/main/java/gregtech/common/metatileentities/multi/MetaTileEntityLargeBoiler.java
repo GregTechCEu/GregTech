@@ -103,27 +103,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         public final SimpleCubeRenderer firefoxActiveRenderer;
         public final OrientedOverlayRenderer frontOverlay;
 
-        /**
-         * @deprecated use {@link BoilerType#BoilerType(int, float, int, int, IBlockState, IBlockState, IBlockState, ICubeRenderer, SimpleCubeRenderer, SimpleCubeRenderer, OrientedOverlayRenderer)}
-         * Deprecated for use due to new constructor accepting a front overlay texture
-         * Left in place for compatibility with addon mods
-         */
-        @Deprecated
-        BoilerType(int baseSteamOutput, float fuelConsumptionMultiplier, int temperatureEffBuff, int maxTemperature, IBlockState casingState, IBlockState fireboxState, IBlockState pipeState,
-                   ICubeRenderer solidCasingRenderer, SimpleCubeRenderer fireboxIdleRenderer, SimpleCubeRenderer firefoxActiveRenderer) {
-            this.baseSteamOutput = baseSteamOutput;
-            this.fuelConsumptionMultiplier = fuelConsumptionMultiplier;
-            this.temperatureEffBuff = temperatureEffBuff;
-            this.maxTemperature = maxTemperature;
-            this.casingState = casingState;
-            this.fireboxState = fireboxState;
-            this.pipeState = pipeState;
-            this.solidCasingRenderer = solidCasingRenderer;
-            this.fireboxIdleRenderer = fireboxIdleRenderer;
-            this.firefoxActiveRenderer = firefoxActiveRenderer;
-            this.frontOverlay = Textures.MULTIBLOCK_WORKABLE_OVERLAY;
-        }
-
         BoilerType(int baseSteamOutput, float fuelConsumptionMultiplier, int temperatureEffBuff, int maxTemperature, IBlockState casingState, IBlockState fireboxState, IBlockState pipeState,
                    ICubeRenderer solidCasingRenderer, SimpleCubeRenderer fireboxIdleRenderer, SimpleCubeRenderer firefoxActiveRenderer, OrientedOverlayRenderer frontOverlay) {
             this.baseSteamOutput = baseSteamOutput;

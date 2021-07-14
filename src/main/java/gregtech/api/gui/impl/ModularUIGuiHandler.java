@@ -1,9 +1,9 @@
 package gregtech.api.gui.impl;
 
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.igredient.IGhostIngredientTarget;
-import gregtech.api.gui.igredient.IIngredientSlot;
-import gregtech.api.gui.igredient.IRecipeTransferHandlerWidget;
+import gregtech.api.gui.ingredient.IGhostIngredientTarget;
+import gregtech.api.gui.ingredient.IIngredientSlot;
+import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
 import mezz.jei.api.gui.IAdvancedGuiHandler;
 import mezz.jei.api.gui.IGhostIngredientHandler;
 import mezz.jei.api.gui.IGuiIngredient;

@@ -66,13 +66,13 @@ public class ConfigHolder {
     public static boolean insufficientEnergySupplyWipesRecipeProgress = false;
 
     @Config.Comment("Whether to use modPriorities setting in config for prioritizing ore dictionary item registrations. " +
-        "By default, GTCE will sort ore dictionary registrations alphabetically comparing their owner ModIDs. Default: false")
+            "By default, GTCE will sort ore dictionary registrations alphabetically comparing their owner ModIDs. Default: false")
     @Config.RequiresMcRestart
     public static boolean useCustomModPriorities = false;
 
     @Config.Comment("Specifies priorities of mods in ore dictionary item registration. First ModID has highest priority, last - lowest. " +
-        "Unspecified ModIDs follow standard sorting, but always have lower priority than last specified ModID." +
-        "\nFor this to work \"useCustomModPriorities\" has to be set to true.")
+            "Unspecified ModIDs follow standard sorting, but always have lower priority than last specified ModID." +
+            "\nFor this to work \"useCustomModPriorities\" has to be set to true.")
     @Config.RequiresMcRestart
     public static String[] modPriorities = new String[0];
 
@@ -183,6 +183,14 @@ public class ConfigHolder {
         @Config.RequiresMcRestart
         public boolean registerCrates = true;
 
+        @Config.Comment("Should recipes for EV and IV Drills be enabled, which may cause large amounts of lag when used on some low-end devices? Default: true")
+        @Config.RequiresMcRestart
+        public boolean registerRecipesForHighTierDrills = true;
+
+        @Config.Comment("Should recipes for Mining Hammers be enabled? Default: true")
+        @Config.RequiresMcRestart
+        public boolean registerRecipesForMiningHammers = true;
+
         public static class GT5U {
 
             @Config.Comment("Enable an extra ZPM and UV Battery (this also makes the Ultimate Battery harder to make). Default: false")
@@ -212,6 +220,21 @@ public class ConfigHolder {
 
             @Config.Comment("Whether or not to use polymers instead of rare metals for Carbon Fibers. REMOVES THE CHANCED OUTPUT! Default: false")
             public boolean polymerCarbonFiber = false;
+
+            @Config.Comment("The default color to overlay onto machines. \n16777215 (0xFFFFFF in decimal) is no coloring (default), and 13819135 (0xD2DCFF in decimal) is the classic blue from GT5. This will also recolor machine GUIs.")
+            @Config.Name("Default Machine Color")
+            @Config.RequiresMcRestart
+            public int defaultPaintingColor = 0xFFFFFF;
+
+            @Config.Comment("The default color to overlay onto machines. \n7829367 (0x777777 in decimal) is no coloring (default), and 4210752 (0x404040 in decimal) is the classic black from GT5.")
+            @Config.Name("Default Cable Color")
+            @Config.RequiresMcRestart
+            public int defaultInsulationColor = 0x777777;
+
+            @Config.Comment("Enable temperature based bonuses for the Electric Blast Furnace. Default: true")
+            @Config.Name("Use electric blast furnace temperature bonuses")
+            @Config.RequiresMcRestart
+            public boolean ebfTemperatureBonuses = true;
         }
 
         public static class GT6 {

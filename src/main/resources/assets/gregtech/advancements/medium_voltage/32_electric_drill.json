@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.medium_voltage.32_electric_drill.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.medium_voltage.32_electric_drill.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_tool",
+      "data": 23
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "craftingToolMiningDrill"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:medium_voltage/root_mv"
+}

@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.insane_voltage.58_hss_g_coil.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.insane_voltage.58_hss_g_coil.name"
+    },
+    "icon": {
+      "item": "gregtech:wire_coil",
+      "data": 4
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:wire_coil",
+            "data": 4
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:insane_voltage/57_tungstensteel_coil"
+}

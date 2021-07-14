@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.low_voltage.23_lv_assembler.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.low_voltage.23_lv_assembler.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 125
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 125
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:low_voltage/22_lv_robot_arm"
+}

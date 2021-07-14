@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.insane_voltage.53_plutonium_239.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.insane_voltage.53_plutonium_239.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 81
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "dustTinyPlutonium"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:insane_voltage/root_iv"
+}

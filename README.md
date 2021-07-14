@@ -1,13 +1,13 @@
-# GregTech Community Edition 
+# GregTech CE: Unofficial
 
-This is a fork of GregTech Community Edition for MC 1.12.2 maintained by the Gregicality development team. No work has been done on it at the moment.
+This is a fork of GregTech Community Edition for MC 1.12.2 maintained by the Gregicality development team.
 
-## Welcome to GregTech Community Edition
+## Welcome to GregTech CE: Unofficial
 ### What is this?
-GregTech Community Edition, or **GTCE**, is a Minecraft mod. The repository contains all the code and assets required to build and run that mod.
+GregTech CE Unofficial, or **GTCEu**, is a Minecraft mod. The repository contains all the code and assets required to build and run that mod.
 
 ### GregTech?
-Yes, you have probably heard this name before as it is quite known in the Minecraft modding community. GTCE is an **indirect descendant** and **total rewrite** of _**GregTech**_.  It is **neither created nor maintained by GregoriusT** but was created with his knowledge and permission.
+Yes, you have probably heard this name before as it is quite known in the Minecraft modding community. GTCEu is an **indirect descendant** and **total rewrite** of _**GregTech**_.  It is **neither created nor maintained by GregoriusT** but was created with his knowledge and permission.
 
 This mod is about **technology** and **progression**.
 * From simple crude tools which will allow you to process resources more realistically...
@@ -16,10 +16,10 @@ This mod is about **technology** and **progression**.
 
 A typical GregTech facility features large arrays of both single- and multi-block machines processing numerous resources, creating even more complex materials which will be used in machines of higher tiers.
 
-All of which are powered by GTCE's own power systems, featuring generators from simple wood burning for steam to plasma-powered turbines.
+All of which are powered by GTCEu's own power systems, featuring generators from simple wood burning for steam to plasma-powered turbines.
 
 ### Community Edition?
-**Community Edition** is a necessary part of the **GTCE name**: 
+**Community Edition** is a necessary part of the **GTCEu name**: 
 * It is required by our permission to use the GregTech name
 * It is a reminder that the ideas and design are primarily driven by the community
 * It is a reminder that the implementation and work are solely provided by the community.
@@ -33,14 +33,9 @@ Gregtech 5 Unofficial was used as an original base, with some ideas from GT4 and
 
 We work with our addon-partners to attempt to preserve backwards-compatibility.
 
-### Release cycle
-GTCE follows a two week release cycle (when possible). 
-Changelogs are generated and beautified after merging PRs every other Monday. Changelog is then submitted as a Pull Request (PR).
-Releases are built and deployed on Tuesdays after merging the Changelog PR.
-
 ## Contribution
 ### Current state of project
-GTCE is under active development with regular updates. It is primarily maintained by a "GTCE Council" of contributors of various talent: developers, designers and modpack authors. This council is coordinated by @LAGIdiot. The GTCE community is very active and regularly contributes code, testing and ideas.
+GTCEu is under active development with regular updates. It is primarily maintained by the Gregicality and Omnifactory development teams. The GTCEu community is very active and regularly contributes code, testing and ideas.
 We are always looking for contributors!
 
 ### How to contribute
@@ -48,6 +43,4 @@ Remember: Every contribution counts.
 Found a bug? Please let us know by creating an Issue with the bug template. 
 Something is missing? Thought about a cool feature idea? Of course there's a template for that.  We'll have a look!
 Know how to mod or at least code? Then don't hesitate and jump to Discord channel, contact the Maintainer to discuss possible contribution.
-Anything else? Sure come to Discord.
-
-
+Anything else? Sure come to [Discord](https://discord.gg/7FJM6fVjR5).

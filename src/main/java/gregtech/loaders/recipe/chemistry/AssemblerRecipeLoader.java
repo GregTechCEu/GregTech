@@ -7,8 +7,10 @@ import net.minecraft.item.ItemStack;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.*;
-import static gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType.*;
+import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.BRONZE_BRICKS;
+import static gregtech.common.blocks.BlockMetalCasing.MetalCasingType.TITANIUM_STABLE;
+import static gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING;
+import static gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType.ENGINE_INTAKE_CASING;
 import static gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType.*;
 import static gregtech.common.blocks.MetaBlocks.*;
 import static gregtech.common.items.MetaItems.*;
@@ -79,18 +81,67 @@ public class AssemblerRecipeLoader {
                 .duration(200).EUt(8).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(plateDouble, Steel, 2)
+                .input(plate, Steel, 4)
                 .input(ring, Steel, 8)
                 .output(LARGE_FLUID_CELL_STEEL)
                 .circuitMeta(1)
-                .duration(100).EUt(64).buildAndRegister();
+                .duration(200).EUt(30).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
-                .input(plateDouble, TungstenSteel, 2)
+                .input(plate, Aluminium, 4)
+                .input(ring, Aluminium, 8)
+                .output(LARGE_FLUID_CELL_ALUMINIUM)
+                .circuitMeta(1)
+                .duration(200).EUt(64).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plate, StainlessSteel, 4)
+                .input(ring, StainlessSteel, 8)
+                .output(LARGE_FLUID_CELL_STAINLESS_STEEL)
+                .circuitMeta(1)
+                .duration(200).EUt(120).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plate, Titanium, 4)
+                .input(ring, Titanium, 8)
+                .output(LARGE_FLUID_CELL_TITANIUM)
+                .circuitMeta(1)
+                .duration(200).EUt(256).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plate, TungstenSteel, 4)
                 .input(ring, TungstenSteel, 8)
                 .output(LARGE_FLUID_CELL_TUNGSTEN_STEEL)
                 .circuitMeta(1)
-                .duration(200).EUt(256).buildAndRegister();
+                .duration(200).EUt(480).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plate, Chrome, 4)
+                .input(ring, Chrome, 8)
+                .output(LARGE_FLUID_CELL_CHROME)
+                .circuitMeta(1)
+                .duration(200).EUt(1024).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plate, Iridium, 4)
+                .input(ring, Iridium, 8)
+                .output(LARGE_FLUID_CELL_IRIDIUM)
+                .circuitMeta(1)
+                .duration(200).EUt(1920).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plate, Osmium, 4)
+                .input(ring, Osmium, 8)
+                .output(LARGE_FLUID_CELL_OSMIUM)
+                .circuitMeta(1)
+                .duration(200).EUt(4096).buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plate, Neutronium, 4)
+                .input(ring, Neutronium, 8)
+                .output(LARGE_FLUID_CELL_NEUTRONIUM)
+                .circuitMeta(1)
+                .duration(200).EUt(16384).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Tin, 6)

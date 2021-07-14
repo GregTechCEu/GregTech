@@ -1,0 +1,14 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "inventory": {
+      "model": "forge:forgebucket",
+      "textures": {
+        "base": "gregtech:items/metaitems/large_fluid_cell.stainless_steel/base",
+        "fluid": "gregtech:items/metaitems/large_fluid_cell.stainless_steel/overlay",
+        "cover": "gregtech:items/metaitems/large_fluid_cell.stainless_steel/base"
+      },
+      "transform": "forge:default-item"
+    }
+  }
+}

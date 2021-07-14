@@ -1,0 +1,28 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.ludicrous_voltage.65_naquadah.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.ludicrous_voltage.65_naquadah.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 10353
+    }
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "type": "forge:ore_dict",
+            "ore": "ingotNaquadah"
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:ludicrous_voltage/root_luv"
+}

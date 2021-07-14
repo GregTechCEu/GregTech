@@ -27,6 +27,14 @@ public abstract class RecipeProperty<T> {
         return this.type.cast(value);
     }
 
+    /**
+     * Controls if the property should display any information in JEI
+     * @return true to hide information from JEI
+     */
+    public boolean isHidden() {
+        return false;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

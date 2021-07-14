@@ -2,10 +2,7 @@ package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
@@ -17,6 +14,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static gregtech.api.recipes.RecipeMaps.*;
+import static gregtech.api.unification.material.Materials.*;
+import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class WoodMachineRecipes {
 
@@ -30,63 +31,64 @@ public class WoodMachineRecipes {
     }
 
     private static void initializeWoodRecipes() {
-        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-            .input(OrePrefix.log, Materials.Wood)
-            .outputs(OreDictUnifier.get(OrePrefix.dust, Materials.Wood, 6))
-            .chancedOutput(OreDictUnifier.get(OrePrefix.dust, Materials.Wood), 8000, 680)
-            .buildAndRegister();
 
-        RecipeMaps.LATHE_RECIPES.recipeBuilder()
-            .input(OrePrefix.plank, Materials.Wood)
-            .outputs(OreDictUnifier.get(OrePrefix.stick, Materials.Wood, 2))
-            .duration(10).EUt(8)
-            .buildAndRegister();
+        MACERATOR_RECIPES.recipeBuilder()
+                .input(log, Wood)
+                .output(dust, Wood, 6)
+                .chancedOutput(dust, Wood, 8000, 680)
+                .buildAndRegister();
 
-        RecipeMaps.LATHE_RECIPES.recipeBuilder()
-            .input(OrePrefix.log, Materials.Wood)
-            .outputs(OreDictUnifier.get(OrePrefix.stickLong, Materials.Wood, 4),
-                OreDictUnifier.get(OrePrefix.dust, Materials.Wood, 2))
-            .duration(160).EUt(8)
-            .buildAndRegister();
+        LATHE_RECIPES.recipeBuilder()
+                .input(plank, Wood)
+                .output(stick, Wood, 2)
+                .duration(10).EUt(8)
+                .buildAndRegister();
 
-        RecipeMaps.LATHE_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.SAPLING, 1, GTValues.W))
-            .outputs(new ItemStack(Items.STICK))
-            .output(OrePrefix.dustTiny, Materials.Wood)
-            .duration(16).EUt(8)
-            .buildAndRegister();
+        LATHE_RECIPES.recipeBuilder()
+                .input(log, Wood)
+                .output(stickLong, Wood, 4)
+                .output(dust, Wood, 2)
+                .duration(160).EUt(8)
+                .buildAndRegister();
 
-        RecipeMaps.LATHE_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W))
-            .outputs(new ItemStack(Items.BOWL))
-            .output(OrePrefix.dustSmall, Materials.Wood)
-            .duration(50).EUt(8)
-            .buildAndRegister();
+        LATHE_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.SAPLING, 1, GTValues.W))
+                .outputs(new ItemStack(Items.STICK))
+                .output(dustTiny, Wood)
+                .duration(16).EUt(8)
+                .buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plank, Materials.Wood, 6)
-            .inputs(new ItemStack(Items.BOOK, 3))
-            .outputs(new ItemStack(Blocks.BOOKSHELF, 1))
-            .duration(400).EUt(4)
-            .buildAndRegister();
+        LATHE_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W))
+                .outputs(new ItemStack(Items.BOWL))
+                .output(dustSmall, Wood)
+                .duration(50).EUt(8)
+                .buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plank, Materials.Wood, 3).circuitMeta(3)
-            .outputs(new ItemStack(Blocks.TRAPDOOR, 2))
-            .duration(300).EUt(4)
-            .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plank, Wood, 6)
+                .inputs(new ItemStack(Items.BOOK, 3))
+                .outputs(new ItemStack(Blocks.BOOKSHELF))
+                .duration(400).EUt(4)
+                .buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .input(OrePrefix.plank, Materials.Wood, 8)
-            .outputs(new ItemStack(Blocks.CHEST, 1))
-            .duration(800).EUt(4).circuitMeta(8)
-            .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plank, Wood, 3).circuitMeta(3)
+                .outputs(new ItemStack(Blocks.TRAPDOOR, 2))
+                .duration(300).EUt(4)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plank, Wood, 8)
+                .outputs(new ItemStack(Blocks.CHEST))
+                .duration(800).EUt(4).circuitMeta(8)
+                .buildAndRegister();
     }
 
     private static void processLogOreDictionary() {
         List<ItemStack> allWoodLogs = OreDictUnifier.getAllWithOreDictionaryName("logWood").stream()
-            .flatMap(stack -> ModHandler.getAllSubItems(stack).stream())
-            .collect(Collectors.toList());
+                .flatMap(stack -> ModHandler.getAllSubItems(stack).stream())
+                .collect(Collectors.toList());
 
         for (ItemStack stack : allWoodLogs) {
             Pair<IRecipe, ItemStack> outputPair = ModHandler.getRecipeOutput(null, stack);
@@ -97,11 +99,10 @@ public class WoodMachineRecipes {
             }
             IRecipe outputRecipe = outputPair.getKey();
             if (ConfigHolder.vanillaRecipes.nerfWoodCrafting) {
-                //noinspection ConstantConditions
                 if (originalOutput / 2 > 0) {
                     //noinspection ConstantConditions
                     ModHandler.addShapelessRecipe(outputRecipe.getRegistryName().toString(),
-                        GTUtility.copyAmount(originalOutput / 2, plankStack), stack);
+                            GTUtility.copyAmount(originalOutput / 2, plankStack), stack);
                 } else {
                     //if not enough planks are on output, just remove recipe
                     ModHandler.removeRecipeByName(outputRecipe.getRegistryName());
@@ -109,120 +110,158 @@ public class WoodMachineRecipes {
             }
             //noinspection ConstantConditions
             ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
-                GTUtility.copyAmount(originalOutput, plankStack), "s", "L", 'L', stack);
+                    GTUtility.copyAmount(originalOutput, plankStack), "s", "L", 'L', stack);
 
-            RecipeMaps.CUTTER_RECIPES.recipeBuilder().inputs(stack)
-                .fluidInputs(Materials.Lubricant.getFluid(1))
-                .outputs(GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), OreDictUnifier.get(OrePrefix.dust, Materials.Wood, 2))
-                .duration(200).EUt(8)
-                .buildAndRegister();
+            CUTTER_RECIPES.recipeBuilder().inputs(stack)
+                    .fluidInputs(Lubricant.getFluid(1))
+                    .outputs(GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), OreDictUnifier.get(dust, Wood, 2))
+                    .duration(200).EUt(8)
+                    .buildAndRegister();
 
             ItemStack doorStack = ModHandler.getRecipeOutput(DummyWorld.INSTANCE,
-                plankStack, plankStack, null,
-                plankStack, plankStack, null,
-                plankStack, plankStack, null).getRight();
+                    plankStack, plankStack, null,
+                    plankStack, plankStack, null,
+                    plankStack, plankStack, null).getRight();
 
             if (!doorStack.isEmpty()) {
-                RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(GTUtility.copyAmount(6, plankStack))
-                    .outputs(doorStack)
-                    .duration(600).EUt(4).circuitMeta(6)
-                    .buildAndRegister();
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .inputs(GTUtility.copyAmount(6, plankStack))
+                        .outputs(doorStack)
+                        .duration(600).EUt(4).circuitMeta(6)
+                        .buildAndRegister();
             }
 
             ItemStack slabStack = ModHandler.getRecipeOutput(DummyWorld.INSTANCE, plankStack, plankStack, plankStack).getRight();
 
             if (!slabStack.isEmpty()) {
-                RecipeMaps.CUTTER_RECIPES.recipeBuilder()
-                    .inputs(GTUtility.copyAmount(3, plankStack))
-                    .outputs(slabStack)
-                    .duration(200).EUt(8)
-                    .buildAndRegister();
+                CUTTER_RECIPES.recipeBuilder()
+                        .inputs(GTUtility.copyAmount(3, plankStack))
+                        .outputs(slabStack)
+                        .duration(200).EUt(8)
+                        .buildAndRegister();
             }
         }
     }
 
     private static void registerPyrolyseOvenRecipes() {
-        RecipeMaps.PYROLYSE_RECIPES.recipeBuilder().circuitMeta(0)
-            .input(OrePrefix.gem, Materials.Coal, 16)
-            .outputs(OreDictUnifier.get(OrePrefix.gem, Materials.Coke, 20))
-            .fluidOutputs(Materials.Creosote.getFluid(10000))
-            .duration(440).EUt(96)
-            .buildAndRegister();
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
+                .input(gem, Coal, 16)
+                .output(gem, Coke, 20)
+                .fluidOutputs(Creosote.getFluid(8000))
+                .duration(440).EUt(96)
+                .buildAndRegister();
 
-        RecipeMaps.PYROLYSE_RECIPES.recipeBuilder().circuitMeta(0)
-            .input(OrePrefix.log, Materials.Wood, 16)
-            .outputs(new ItemStack(Items.COAL, 20, 1))
-            .fluidOutputs(Materials.Creosote.getFluid(4000))
-            .duration(440).EUt(64)
-            .buildAndRegister();
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
+                .input(gem, Coal, 16)
+                .fluidInputs(Nitrogen.getFluid(1000))
+                .output(gem, Coke, 20)
+                .fluidOutputs(Creosote.getFluid(8000))
+                .duration(440).EUt(96)
+                .buildAndRegister();
 
-        RecipeMaps.PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
-            .input(OrePrefix.log, Materials.Wood, 16)
-            .fluidInputs(Materials.Nitrogen.getFluid(400))
-            .outputs(new ItemStack(Items.COAL, 20, 1))
-            .fluidOutputs(Materials.Creosote.getFluid(4000))
-            .duration(200).EUt(96)
-            .buildAndRegister();
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
+                .input(block, Coal, 8)
+                .output(block, Coke, 8)
+                .fluidOutputs(Creosote.getFluid(32000))
+                .duration(2560).EUt(96)
+                .buildAndRegister();
 
-        RecipeMaps.PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
-            .input(OrePrefix.log, Materials.Wood, 16)
-            .outputs(OreDictUnifier.get(OrePrefix.dust, Materials.Ash, 4))
-            .fluidOutputs(Materials.OilHeavy.getFluid(200))
-            .duration(280).EUt(192)
-            .buildAndRegister();
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
+                .input(block, Coal, 8)
+                .fluidInputs(Nitrogen.getFluid(1000))
+                .output(block, Coke, 8)
+                .fluidOutputs(Creosote.getFluid(32000))
+                .duration(1280).EUt(96)
+                .buildAndRegister();
 
-        RecipeMaps.PYROLYSE_RECIPES.recipeBuilder().circuitMeta(3)
-            .input(OrePrefix.log, Materials.Wood, 16)
-            .outputs(new ItemStack(Items.COAL, 20, 1))
-            .fluidOutputs(Materials.WoodVinegar.getFluid(3000))
-            .duration(640).EUt(64)
-            .buildAndRegister();
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
+                .input(log, Wood, 16)
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(Creosote.getFluid(4000))
+                .duration(640).EUt(64)
+                .buildAndRegister();
 
-        RecipeMaps.PYROLYSE_RECIPES.recipeBuilder().circuitMeta(4)
-            .input(OrePrefix.log, Materials.Wood, 16)
-            .fluidInputs(Materials.Nitrogen.getFluid(400))
-            .outputs(new ItemStack(Items.COAL, 20, 1))
-            .fluidOutputs(Materials.WoodVinegar.getFluid(3000))
-            .duration(320).EUt(96)
-            .buildAndRegister();
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
+                .input(log, Wood, 16)
+                .fluidInputs(Nitrogen.getFluid(400))
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(Creosote.getFluid(4000))
+                .duration(320).EUt(96)
+                .buildAndRegister();
 
-        RecipeMaps.PYROLYSE_RECIPES.recipeBuilder().circuitMeta(5)
-            .input(OrePrefix.log, Materials.Wood, 16)
-            .outputs(new ItemStack(Items.COAL, 20, 1))
-            .fluidOutputs(Materials.WoodGas.getFluid(1500))
-            .duration(640).EUt(64)
-            .buildAndRegister();
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(3)
+                .input(log, Wood, 16)
+                .output(dust, Ash, 4)
+                .fluidOutputs(OilHeavy.getFluid(200))
+                .duration(320).EUt(192)
+                .buildAndRegister();
 
-        RecipeMaps.PYROLYSE_RECIPES.recipeBuilder().circuitMeta(6)
-            .input(OrePrefix.log, Materials.Wood, 16)
-            .fluidInputs(Materials.Nitrogen.getFluid(400))
-            .outputs(new ItemStack(Items.COAL, 20, 1))
-            .fluidOutputs(Materials.WoodGas.getFluid(1500))
-            .duration(320).EUt(96)
-            .buildAndRegister();
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(4)
+                .input(log, Wood, 16)
+                .fluidInputs(Nitrogen.getFluid(1000))
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(CharcoalByproducts.getFluid(4000))
+                .duration(320).EUt(96)
+                .buildAndRegister();
 
-        RecipeMaps.PYROLYSE_RECIPES.recipeBuilder().circuitMeta(7)
-            .input(OrePrefix.log, Materials.Wood, 16)
-            .outputs(new ItemStack(Items.COAL, 20, 1))
-            .fluidOutputs(Materials.WoodTar.getFluid(1500))
-            .duration(640).EUt(64)
-            .buildAndRegister();
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(5)
+                .input(log, Wood, 16)
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(WoodGas.getFluid(1500))
+                .duration(640).EUt(64)
+                .buildAndRegister();
 
-        RecipeMaps.PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
-            .input(OrePrefix.log, Materials.Wood, 16)
-            .fluidInputs(Materials.Nitrogen.getFluid(400))
-            .outputs(new ItemStack(Items.COAL, 20, 1))
-            .fluidOutputs(Materials.WoodTar.getFluid(1500))
-            .duration(320).EUt(96)
-            .buildAndRegister();
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(6)
+                .input(log, Wood, 16)
+                .fluidInputs(Nitrogen.getFluid(400))
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(WoodGas.getFluid(1500))
+                .duration(320).EUt(96)
+                .buildAndRegister();
 
-        RecipeMaps.PYROLYSE_RECIPES.recipeBuilder().circuitMeta(9)
-            .input(OrePrefix.log, Materials.Wood, 16)
-            .fluidInputs(Materials.Nitrogen.getFluid(400))
-            .outputs(new ItemStack(Items.COAL, 20, 1))
-            .fluidOutputs(Materials.CharcoalByproducts.getFluid(4000))
-            .duration(320).EUt(96)
-            .buildAndRegister();
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(7)
+                .input(log, Wood, 16)
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(WoodVinegar.getFluid(3000))
+                .duration(640).EUt(64)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
+                .input(log, Wood, 16)
+                .fluidInputs(Nitrogen.getFluid(1000))
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(WoodVinegar.getFluid(3000))
+                .duration(320).EUt(96)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(9)
+                .input(log, Wood, 16)
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(WoodTar.getFluid(1500))
+                .duration(640).EUt(64)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(10)
+                .input(log, Wood, 16)
+                .fluidInputs(Nitrogen.getFluid(400))
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(WoodTar.getFluid(1500))
+                .duration(320).EUt(96)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
+                .input(dust, Sugar, 23)
+                .output(dustSmall, Charcoal, 12)
+                .fluidOutputs(Water.getFluid(1500))
+                .duration(320).EUt(64)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
+                .input(dust, Sugar, 23)
+                .fluidInputs(Nitrogen.getFluid(500))
+                .output(dustSmall, Charcoal, 12)
+                .fluidOutputs(Water.getFluid(1500))
+                .duration(160).EUt(96)
+                .buildAndRegister();
     }
 }

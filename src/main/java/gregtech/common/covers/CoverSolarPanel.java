@@ -8,13 +8,18 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
+import gregtech.api.util.GTUtility;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class CoverSolarPanel extends CoverBehavior implements ITickable {
 
@@ -58,5 +63,12 @@ public class CoverSolarPanel extends CoverBehavior implements ITickable {
             }
         }
         return world.isDaytime();
+    }
+
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected TextureAtlasSprite getPlateSprite() {
+        return Textures.VOLTAGE_CASINGS[GTUtility.getTierByVoltage(this.EUt)].getSpriteOnSide(SimpleSidedCubeRenderer.RenderSide.SIDE);
     }
 }

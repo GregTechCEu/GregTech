@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.root_luv.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.root_luv.name"
+    },
+    "icon": {
+      "item": "gregtech:machine",
+      "data": 1018
+    },
+    "frame": "challenge",
+    "background": "gregtech:textures/blocks/casings/solid/machine_casing_inert_ptfe.png"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:machine",
+            "data": 1018
+          }
+        ]
+      }
+    }
+  }
+}

@@ -74,6 +74,7 @@ public abstract class SteamBoiler extends MetaTileEntity {
         BRONZE_SLOT_BACKGROUND_TEXTURE = getGuiTexture("slot_%s");
         SLOT_FURNACE_BACKGROUND = getGuiTexture("slot_%s_furnace_background");
         this.containerInventory = new ItemStackHandler(2);
+        this.setPaintingColor(0xFFFFFF);
     }
 
     @SideOnly(Side.CLIENT)
@@ -270,21 +271,21 @@ public abstract class SteamBoiler extends MetaTileEntity {
         return ModularUI.builder(BRONZE_BACKGROUND_TEXTURE, 176, 166)
             .widget(new LabelWidget(6, 6, getMetaFullName()))
 
-            .widget(new ProgressWidget(this::getTemperaturePercent, 95, 17, 11, 55)
+            .widget(new ProgressWidget(this::getTemperaturePercent, 97, 26, 10, 54)
                 .setProgressBar(getGuiTexture("bar_%s_empty"),
                     getGuiTexture("bar_heat"),
                     MoveType.VERTICAL))
 
-            .widget(new TankWidget(waterFluidTank, 82, 17, 11, 55)
+            .widget(new TankWidget(waterFluidTank, 84, 26, 10, 54)
                 .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
-            .widget(new TankWidget(steamFluidTank, 69, 17, 11, 55)
+            .widget(new TankWidget(steamFluidTank, 71, 26, 10, 54)
                 .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
 
-            .widget(new FluidContainerSlotWidget(containerInventory, 0, 43, 18, true)
+            .widget(new FluidContainerSlotWidget(containerInventory, 0, 44, 26, true)
                 .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_in")))
-            .widget(new SlotWidget(containerInventory, 1, 43, 54, true, false)
+            .widget(new SlotWidget(containerInventory, 1, 44, 62, true, false)
                 .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_out")))
-            .widget(new ImageWidget(42, 35, 18, 18)
+            .widget(new ImageWidget(44, 44, 18, 18)
                 .setImage(getGuiTexture("overlay_%s_fluid_container")))
 
             .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE);

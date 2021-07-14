@@ -1,0 +1,29 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.steam.15_lv_motor.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.steam.15_lv_motor.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 32600
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "location": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "gregtech:meta_item_1",
+            "data": 32600
+          }
+        ]
+      }
+    }
+  },
+  "parent": "gregtech:steam/14_magnetic_iron"
+}
