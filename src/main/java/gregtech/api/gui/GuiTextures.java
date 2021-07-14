@@ -33,6 +33,8 @@ public class GuiTextures {
     public static final TextureArea BUTTON_SWITCH_VIEW = TextureArea.fullImage("textures/gui/widget/button_switch_view.png");
     public static final TextureArea BUTTON_ALLOW_IMPORT_EXPORT = TextureArea.fullImage("textures/gui/widget/button_allow_import_export.png");
     public static final TextureArea BUTTON_CLEAR_GRID = TextureArea.fullImage("textures/gui/widget/button_clear_grid.png");
+    public static final TextureArea BUTTON_LEFT = TextureArea.fullImage("textures/gui/widget/left.png");
+    public static final TextureArea BUTTON_RIGHT = TextureArea.fullImage("textures/gui/widget/right.png");
     public static final TextureArea LOCK = TextureArea.fullImage("textures/gui/widget/lock.png");
 
     //INDICATORS & ICONS

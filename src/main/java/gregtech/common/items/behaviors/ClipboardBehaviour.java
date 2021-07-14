@@ -2,9 +2,10 @@ package gregtech.common.items.behaviors;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.ImageCycleButtonWidget;
+import gregtech.api.gui.widgets.SimpleTextWidget;
 import gregtech.api.gui.widgets.TextFieldWidget;
-import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -33,10 +34,17 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
             int finalI = i;
             builder.widget(new ImageCycleButtonWidget(5, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_CHECKBOX, 2,
                     () -> getButtonState(holder, finalI), (x) -> toggleButton(holder, finalI)));
-            builder.widget(new TextFieldWidget(21, 40 + 20 * i, 140, 10, true,
-                    () -> getString(holder, finalI), (x) -> setString(holder, finalI, x), 23, 8)
-            .setValidator((x) -> true));
+            builder.widget(new TextFieldWidget(21, 40 + 20 * i, 140, 6, true,
+                    () -> getString(holder, finalI), (x) -> setString(holder, finalI, x), 40, 5)
+                    .setValidator((x) -> true));
         }
+
+        builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
+                .setButtonTexture(GuiTextures.BUTTON_LEFT));
+        builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, 1))
+                .setButtonTexture(GuiTextures.BUTTON_RIGHT));
+        builder.widget(new SimpleTextWidget(85, 208, "", 0x000000,
+                () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES));
 
         return builder.build(holder, entityPlayer);
     }
@@ -65,15 +73,15 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
             tagCompound = new NBTTagCompound();
             tagCompound.setShort("PageIndex", (short) 0);
             tagCompound.setShort("TotalPages", (short) 0);
-            tagCompound.setString("PageTitle", "");
 
             NBTTagCompound pageCompound = new NBTTagCompound();
             pageCompound.setShort("ButStat", (short) 0);
-            for(int i = 0; i < 8; i++) {
+            pageCompound.setString("PageTitle", "");
+            for (int i = 0; i < 8; i++) {
                 pageCompound.setString("Task" + i, "");
             }
 
-            for(int i = 0; i < MAX_PAGES; i++) {
+            for (int i = 0; i < MAX_PAGES; i++) {
                 tagCompound.setTag("Page" + i, pageCompound.copy());
             }
 
@@ -124,17 +132,17 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
         ItemStack stack = holder.getSampleItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
             throw new IllegalArgumentException("Given item stack is not a clipboard!");
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        NBTTagCompound tagCompound = getPageCompound(stack);
         assert tagCompound != null;
         tagCompound.setString("Title", newString);
-        stack.setTagCompound(tagCompound);
+        setPageCompound(stack, tagCompound);
     }
 
     private static String getTitle(PlayerInventoryHolder holder) {
         ItemStack stack = holder.getSampleItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
             throw new IllegalArgumentException("Given item stack is not a clipboard!");
-        NBTTagCompound tagCompound = stack.getTagCompound();
+        NBTTagCompound tagCompound = getPageCompound(stack);
         return tagCompound.getString("Title");
     }
 
@@ -155,7 +163,7 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
 
         int currentIndex = tagCompound.getInteger("PageIndex");
         // Clamps currentIndex between 0 and MAX_PAGES.
-        tagCompound.setInteger("PageIndex", Math.max(Math.min(currentIndex + increment, MAX_PAGES), 0));
+        tagCompound.setInteger("PageIndex", Math.max(Math.min(currentIndex + increment, MAX_PAGES - 1), 0));
         stack.setTagCompound(tagCompound);
     }
 
