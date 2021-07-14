@@ -196,6 +196,8 @@ public class MetaTileEntities {
 
     public static MetaTileEntityInfiniteEmitter INFINITE_EMITTER;
 
+    public static MetaTileEntityClipboard CLIPBOARD_TILE;
+
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");
 
@@ -684,6 +686,8 @@ public class MetaTileEntities {
         //PUMP_OUTPUT_HATCH = GregTechAPI.registerMetaTileEntity(1629, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
 
         INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1630, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));
+
+        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1631, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
         /*
          * FOR ADDON DEVELOPERS:

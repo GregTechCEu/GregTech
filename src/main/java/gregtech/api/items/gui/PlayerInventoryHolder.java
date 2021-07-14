@@ -17,7 +17,7 @@ public class PlayerInventoryHolder implements IUIHolder {
     /*package-local*/ ItemStack sampleItem;
 
     @SideOnly(Side.CLIENT)
-        /*package-local*/ PlayerInventoryHolder(EntityPlayer player, EnumHand hand, ItemStack sampleItem) {
+    public PlayerInventoryHolder(EntityPlayer player, EnumHand hand, ItemStack sampleItem) {
         this.player = player;
         this.hand = hand;
         this.sampleItem = sampleItem;
@@ -54,6 +54,10 @@ public class PlayerInventoryHolder implements IUIHolder {
     @Override
     public boolean isRemote() {
         return player.getEntityWorld().isRemote;
+    }
+
+    public ItemStack getSampleItem() {
+        return sampleItem;
     }
 
     public ItemStack getCurrentItem() {
