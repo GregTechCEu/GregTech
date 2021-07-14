@@ -996,9 +996,8 @@ public class MachineRecipeLoader {
             }
 
         for (MetaTileEntityQuantumTank tank : MetaTileEntities.QUANTUM_TANK)
-            if (tank != null) {
+            if (tank != null){
                 ModHandler.addShapelessRecipe("quantum_tank_nbt_" + tank.getTier() + tank.metaTileEntityId, tank.getStackForm(), tank.getStackForm());
-
-            }
     }
+}
 }
