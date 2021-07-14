@@ -120,7 +120,7 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
         double relativeRotorSpeed = rotorHolder.getRelativeRotorSpeed();
         if (rotorHolder.getCurrentRotorSpeed() > 0 && rotorHolder.hasRotorInInventory()) {
             double rotorEfficiency = rotorHolder.getRotorEfficiency();
-            double totalEnergyOutput = (BASE_EU_OUTPUT + getBonusForTurbineType(largeTurbine) * rotorEfficiency) * (relativeRotorSpeed * relativeRotorSpeed);
+            double totalEnergyOutput = ((BASE_EU_OUTPUT + getBonusForTurbineType(largeTurbine)) * rotorEfficiency) * (relativeRotorSpeed * relativeRotorSpeed);
             return MathHelper.ceil(totalEnergyOutput);
         }
         return 0L;
