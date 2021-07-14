@@ -18,6 +18,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
+import net.minecraft.util.NonNullList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -54,6 +55,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     private boolean autoOutputItems;
     private EnumFacing outputFacing;
     private boolean allowInputFromOutputSide;
+    private static final String NBT_ITEMSTACK = "ItemStack";
+    private static final String NBT_PARTIALSTACK = "PartialStack";
+    private static final String NBT_ITEMCOUNT = "ItemAmount";
 
 
 
@@ -77,7 +81,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.VOLTAGE_CASINGS[tier].render(renderState, translation, ArrayUtils.add(pipeline,
-            new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
         Textures.SCREEN.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         if (outputFacing != null) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
@@ -105,15 +109,18 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         if (!getWorld().isRemote) {
             if (itemsStoredInside < maxStoredItems) {
                 ItemStack inputStack = importItems.getStackInSlot(0);
-                if (!inputStack.isEmpty() && (itemStack.isEmpty() || areItemStackIdentical(itemStack, inputStack))) {
-                    int amountOfItemsToInsert = (int) Math.min(inputStack.getCount(), maxStoredItems - itemsStoredInside);
-                    if (this.itemsStoredInside == 0L || itemStack.isEmpty()) {
-                        this.itemStack = GTUtility.copyAmount(1, inputStack);
+                ItemStack outputStack = exportItems.getStackInSlot(0);
+                if (outputStack.isEmpty() || outputStack.isItemEqual(inputStack) && ItemStack.areItemStackTagsEqual(inputStack, outputStack)) {
+                    if (!inputStack.isEmpty() && (itemStack.isEmpty() || areItemStackIdentical(itemStack, inputStack))) {
+                        int amountOfItemsToInsert = (int) Math.min(inputStack.getCount(), maxStoredItems - itemsStoredInside);
+                        if (this.itemsStoredInside == 0L || itemStack.isEmpty()) {
+                            this.itemStack = GTUtility.copyAmount(1, inputStack);
+                        }
+                        inputStack.shrink(amountOfItemsToInsert);
+                        importItems.setStackInSlot(0, inputStack);
+                        this.itemsStoredInside += amountOfItemsToInsert;
+                        markDirty();
                     }
-                    inputStack.shrink(amountOfItemsToInsert);
-                    importItems.setStackInSlot(0, inputStack);
-                    this.itemsStoredInside += amountOfItemsToInsert;
-                    markDirty();
                 }
             }
             if (itemsStoredInside > 0 && !itemStack.isEmpty()) {
@@ -142,7 +149,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
 
     private static boolean areItemStackIdentical(ItemStack first, ItemStack second) {
         return ItemStack.areItemsEqual(first, second) &&
-            ItemStack.areItemStackTagsEqual(first, second);
+                ItemStack.areItemStackTagsEqual(first, second);
     }
 
     protected void addDisplayInformation(List<ITextComponent> textList) {
@@ -155,6 +162,24 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.quantum_chest.capacity", maxStoredItems));
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound != null) {
+            String translationKey = null;
+            long count = 0;
+            if (compound.hasKey(NBT_ITEMSTACK)) {
+                translationKey = new ItemStack(compound.getCompoundTag(NBT_ITEMSTACK)).getDisplayName();
+                count = compound.getLong(NBT_ITEMCOUNT);
+            } else if (compound.hasKey(NBT_PARTIALSTACK)) {
+                ItemStack tempStack = new ItemStack(compound.getCompoundTag(NBT_PARTIALSTACK));
+                translationKey = tempStack.getDisplayName();
+                count = tempStack.getCount();
+            }
+            if (translationKey != null) {
+                tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip.item",
+                        I18n.format(translationKey)));
+                tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip.count", count));
+            }
+        }
     }
 
     @Override
@@ -179,8 +204,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         data.setInteger("OutputFacing", getOutputFacing().getIndex());
         data.setBoolean("AutoOutputItems", autoOutputItems);
         if (!itemStack.isEmpty() && itemsStoredInside > 0L) {
-            tagCompound.setTag("ItemStack", itemStack.writeToNBT(new NBTTagCompound()));
-            tagCompound.setLong("ItemAmount", itemsStoredInside);
+            tagCompound.setTag(NBT_ITEMSTACK, itemStack.writeToNBT(new NBTTagCompound()));
+            tagCompound.setLong(NBT_ITEMCOUNT, itemsStoredInside);
         }
         return tagCompound;
     }
@@ -193,11 +218,39 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         if (data.hasKey("ItemStack", NBT.TAG_COMPOUND)) {
             this.itemStack = new ItemStack(data.getCompoundTag("ItemStack"));
             if (!itemStack.isEmpty()) {
-                this.itemsStoredInside = data.getLong("ItemAmount");
+                this.itemsStoredInside = data.getLong(NBT_ITEMCOUNT);
             }
         }
     }
+    @Override
+    public void initFromItemStackData(NBTTagCompound itemStack) {
+        super.initFromItemStackData(itemStack);
+        if (itemStack.hasKey(NBT_ITEMSTACK, NBT.TAG_COMPOUND)) {
+            this.itemStack = new ItemStack(itemStack.getCompoundTag(NBT_ITEMSTACK));
+            if (!this.itemStack.isEmpty()) {
+                this.itemsStoredInside = itemStack.getLong(NBT_ITEMCOUNT);
+            }
+        } else if (itemStack.hasKey(NBT_PARTIALSTACK, NBT.TAG_COMPOUND)) {
+            exportItems.setStackInSlot(0, new ItemStack(itemStack.getCompoundTag(NBT_PARTIALSTACK)));
+        }
+    }
 
+    @Override
+    public void writeItemStackData(NBTTagCompound itemStack) {
+        super.writeItemStackData(itemStack);
+        if (!this.itemStack.isEmpty()) {
+            itemStack.setTag(NBT_ITEMSTACK, this.itemStack.writeToNBT(new NBTTagCompound()));
+            itemStack.setLong(NBT_ITEMCOUNT, itemsStoredInside + this.itemStack.getMaxStackSize());
+        } else {
+            ItemStack partialStack = exportItems.extractItem(0, 64, false);
+            if (!partialStack.isEmpty()) {
+                itemStack.setTag(NBT_PARTIALSTACK, partialStack.writeToNBT(new NBTTagCompound()));
+            }
+        }
+        this.itemStack = ItemStack.EMPTY;
+        this.itemsStoredInside = 0;
+        exportItems.setStackInSlot(0, ItemStack.EMPTY);
+    }
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         Builder builder = ModularUI.defaultBuilder();
@@ -205,14 +258,18 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
         builder.widget(new AdvancedTextWidget(11, 20, this::addDisplayInformation, 0xFFFFFF));
         return builder.label(6, 6, getMetaFullName())
-            .widget(new SlotWidget(importItems, 0, 90, 17, true, true)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-            .widget(new SlotWidget(exportItems, 0, 90, 54, true, false)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY)).widget(new ToggleButtonWidget(leftButtonStartX, 53, 18, 18,
+                .widget(new SlotWidget(importItems, 0, 90, 17, true, true)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
+                .widget(new SlotWidget(exportItems, 0, 90, 54, true, false)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY)).widget(new ToggleButtonWidget(leftButtonStartX, 53, 18, 18,
                         GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
                         .setTooltipText("gregtech.gui.item_auto_output.tooltip"))
-            .bindPlayerInventory(entityPlayer.inventory)
-            .build(getHolder(), entityPlayer);
+                .bindPlayerInventory(entityPlayer.inventory)
+                .build(getHolder(), entityPlayer);
+    }
+    @Override
+    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+        clearInventory(itemBuffer, importItems);
     }
 
     public EnumFacing getOutputFacing() {
@@ -297,8 +354,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         if (side == getOutputFacing()){
             return false;
         }
-            return true;
-        }
+        return true;
+    }
 
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
@@ -373,8 +430,8 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 return ItemStack.EMPTY;
             }
             if (itemsStoredInside > 0L &&
-                !itemStack.isEmpty() &&
-                !areItemStackIdentical(itemStack, stack)) {
+                    !itemStack.isEmpty() &&
+                    !areItemStackIdentical(itemStack, stack)) {
                 return stack;
             }
             long amountLeftInChest = itemStack.isEmpty() ? maxStoredItems : maxStoredItems - itemsStoredInside;
