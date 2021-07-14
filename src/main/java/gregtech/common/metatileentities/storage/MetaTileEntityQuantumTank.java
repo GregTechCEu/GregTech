@@ -49,7 +49,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     private EnumFacing outputFacing;
     private boolean allowInputFromOutputSide;
 
-
     public MetaTileEntityQuantumTank(ResourceLocation metaTileEntityId, int tier, int maxFluidCapacity) {
         super(metaTileEntityId);
         this.tier = tier;
@@ -96,22 +95,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     @Override
-    protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, fluidTank);
-    }
-
-    @Override
-    protected FluidTankList createExportFluidHandler() {
-        return new FluidTankList(false, fluidTank);
-    }
-
-    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
-        data.setInteger("OutputFacing", getOutputFacing().getIndex());
         data.setTag("ContainerInventory", containerInventory.serializeNBT());
         data.setTag("FluidInventory", fluidTank.writeToNBT(new NBTTagCompound()));
         data.setBoolean("AutoOutputFluids", autoOutputFluids);
+        data.setInteger("OutputFacing", getOutputFacing().getIndex());
         return data;
     }
 
@@ -139,6 +128,40 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
         return new MetaTileEntityQuantumTank(metaTileEntityId, tier, maxFluidCapacity);
     }
+
+    @Override
+    protected FluidTankList createImportFluidHandler() {
+        return new FluidTankList(false, fluidTank);
+    }
+
+    @Override
+    protected FluidTankList createExportFluidHandler() {
+        return new FluidTankList(false, fluidTank);
+    }
+
+    @Override
+    public boolean hasFrontFacing() {
+        return false;
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        Textures.VOLTAGE_CASINGS[tier].render(renderState, translation, ArrayUtils.add(pipeline,
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+        Textures.SCREEN.renderSided(EnumFacing.UP, renderState, translation, pipeline);
+        if (outputFacing != null) {
+            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
+            if (isAutoOutputFluids()) {
+                Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
+            }
+        }
+    }
+
+    @Override
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
+        return Pair.of(Textures.VOLTAGE_CASINGS[tier].getParticleSprite(), getPaintingColor());
+    }
+
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
@@ -168,7 +191,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }
-
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
@@ -209,8 +231,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public boolean isValidFrontFacing(EnumFacing facing) {
-        //use direct outputFacing field instead of getter method because otherwise
-        //it will just return SOUTH for null output facing
         return super.isValidFrontFacing(facing) && facing != outputFacing;
     }
 
@@ -220,31 +240,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
         this.autoOutputFluids = buf.readBoolean();
     }
-
-
-    @Override
-    public boolean hasFrontFacing() {
-        return false;
-    }
-
-    @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        Textures.VOLTAGE_CASINGS[tier].render(renderState, translation, ArrayUtils.add(pipeline,
-            new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
-        Textures.SCREEN.renderSided(EnumFacing.UP, renderState, translation, pipeline);
-        if (outputFacing != null) {
-            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
-            if (isAutoOutputFluids()) {
-                Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
-            }
-        }
-    }
-
-    @Override
-    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
-        return Pair.of(Textures.VOLTAGE_CASINGS[tier].getParticleSprite(), getPaintingColor());
-    }
-
     public void setOutputFacing(EnumFacing outputFacing) {
         this.outputFacing = outputFacing;
         if (!getWorld().isRemote) {
@@ -294,6 +289,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             markDirty();
         }
     }
+
+
 
 
 }
