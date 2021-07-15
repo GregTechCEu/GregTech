@@ -340,7 +340,7 @@ public class SeparationRecipes {
                 .output(dust, Aluminium, 16)
                 .fluidOutputs(Hydrogen.getFluid(10000))
                 .fluidOutputs(Oxygen.getFluid(11000))
-                .duration(2496).EUt(60).buildAndRegister();
+                .duration(624).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Water.getFluid(1000))

@@ -1374,6 +1374,7 @@ material.arsenic_trioxide=Arsenic Trioxide
 material.cupric_oxide=Cupric Oxide
 material.ferrosilite=Ferrosilite
 material.magnesia=Magnesia
+material.metal_mixture=Metal Mixture
 
 material.oil_heavy=Heavy Oil
 material.oil_medium=Raw Oil

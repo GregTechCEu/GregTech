@@ -66,7 +66,9 @@ public class DecompositionRecipeHandler {
             fluidOutputs.forEach(fluidStack -> materialAmounts.add(fluidStack.amount / 1000));
 
             int highestDivisor = 1;
-            for (int i = 2; i <= 64; i++) {
+
+            int smallestMaterialAmount = getSmallestMaterialAmount(materialAmounts);
+            for (int i = 2; i <= smallestMaterialAmount; i++) {
                 if (isEveryMaterialReducible(i, materialAmounts))
                     highestDivisor = i;
             }
@@ -133,6 +135,10 @@ public class DecompositionRecipeHandler {
         return true;
     }
 
+    private static int getSmallestMaterialAmount(List<Integer> materialAmounts) {
+        return materialAmounts.stream().min(Integer::compare).get();
+    }
+
     //todo think something better with this
     private static int getElectrolyzingVoltage(List<IMaterial<?>> components) {
         //tungsten-containing materials electrolyzing requires 1920
@@ -142,7 +148,7 @@ public class DecompositionRecipeHandler {
         if (components.size() <= 2) {
             return 30;
         }
-        return Math.min(2, components.size()) * 30;
+        return Math.max(2, components.size()) * 30;
     }
 
 }
