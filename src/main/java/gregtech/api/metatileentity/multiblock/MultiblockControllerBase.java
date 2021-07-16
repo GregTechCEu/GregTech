@@ -17,6 +17,7 @@ import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityEnergyHatch;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -192,7 +193,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                     }
                 }
                 else {
-                    if (part instanceof MetaTileEntityEnergyHatch || part instanceof MetaTileEntityHolder) {
+                    if (part instanceof MetaTileEntityEnergyHatch || part instanceof MetaTileEntityRotorHolder) {
                         if (part.isAttachedToMultiBlock()) {
                             return;
                         }
