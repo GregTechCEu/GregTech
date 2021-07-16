@@ -3320,9 +3320,8 @@ gregtech.machine.multiblock.universal.controller_information=Controller block fo
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks
-gregtech.machine.disallow.hatch.tooltip=Sharing between Multiblocks disabled
-gregtech.machine.allow.hatch.tooltip=Sharing between Multiblocks enabled
-gregtech.machine.allow.bus.tooltip=Sharing between Multiblocks enabled
+gregtech.machine.disallow.hatch.tooltip=Sharing between Multiblocks: §4Disabled
+gregtech.machine.allow.bus.tooltip=Sharing between Multiblocks: §aEnabled
 
 gregtech.machine.item_bus.import.ulv.name=ULV Input Bus
 gregtech.machine.item_bus.import.lv.name=LV Input Bus
