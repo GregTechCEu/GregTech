@@ -148,7 +148,7 @@ public class DecompositionRecipeHandler {
         if (components.size() <= 2) {
             return 30;
         }
-        return Math.max(2, components.size()) * 30;
+        return 2 * 30;
     }
 
 }
