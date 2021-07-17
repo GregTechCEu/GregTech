@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
+import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
@@ -19,13 +20,18 @@ import gregtech.common.blocks.BlockSteamCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nonnull;
 
 public class MetaTileEntityWaterPump extends MultiblockControllerBase {
 
+    private IFluidTank waterTank;
+
     public MetaTileEntityWaterPump(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
+        resetTileAbilities();
     }
 
     @Override
@@ -46,6 +52,26 @@ public class MetaTileEntityWaterPump extends MultiblockControllerBase {
     @Override
     protected void updateFormedValid() {
 
+    }
+
+    @Override
+    protected void formStructure(PatternMatchContext context) {
+        super.formStructure(context);
+        initializeAbilities();
+    }
+
+    @Override
+    public void invalidateStructure() {
+        super.invalidateStructure();
+        resetTileAbilities();
+    }
+
+    private void initializeAbilities() {
+        this.waterTank = getAbilities(MultiblockAbility.PUMP_FLUID_HATCH).get(0);
+    }
+
+    private void resetTileAbilities() {
+        this.waterTank = new FluidTank(0);
     }
 
     @Override

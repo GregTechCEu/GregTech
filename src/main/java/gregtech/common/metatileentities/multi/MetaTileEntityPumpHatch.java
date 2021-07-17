@@ -106,11 +106,6 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
     }
 
     @Override
-    public ICubeRenderer getBaseTexture() {
-        return Textures.VOLTAGE_CASINGS[0];
-    }
-
-    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return createTankUI(waterTank, containerInventory, getMetaFullName(), entityPlayer)
                 .build(getHolder(), entityPlayer);
