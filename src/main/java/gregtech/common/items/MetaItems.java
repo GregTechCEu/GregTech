@@ -5,6 +5,7 @@ import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.common.render.FacadeItemModel;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -476,6 +477,9 @@ public final class MetaItems {
         dustItem.setRegistryName("meta_item_3");
         MetaTool tool = new MetaTool();
         tool.setRegistryName("meta_tool");
+        for (OrePrefix i : OrePrefix.values()) {
+            i.metaItem.setRegistryName("meta_" + i.name());
+        }
     }
 
     public static void registerOreDict() {
@@ -484,6 +488,8 @@ public final class MetaItems {
                 ((MaterialMetaItem) item).registerOreDict();
             } else if (item instanceof DustMetaItem) {
                 ((DustMetaItem) item).registerOreDict();
+            } else if (item instanceof MetaOrePrefix) {
+                ((MetaOrePrefix) item).registerOreDict();
             }
         }
     }

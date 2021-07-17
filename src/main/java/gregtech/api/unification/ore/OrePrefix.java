@@ -8,6 +8,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTUtility;
+import gregtech.common.items.MetaOrePrefix;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -321,6 +322,7 @@ public enum OrePrefix {
 
     public final String categoryName;
 
+    public final MetaOrePrefix metaItem;
     public final boolean isUnificationEnabled;
     public final boolean isSelfReferencing;
     public final boolean isRecyclingDisallowed;
@@ -349,7 +351,7 @@ public enum OrePrefix {
 
     public byte maxStackSize = 64;
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
-    public float heatDamage = 0.0F; // Negative for Frost Damage
+    public float heatDamage = 0.0F; // Negative for Frost Damage;
 
     OrePrefix(String categoryName, long materialAmount, IMaterial<?> material, MaterialIconType materialIconType, long flags, Predicate<Material> condition) {
         this.categoryName = categoryName;
@@ -360,6 +362,7 @@ public enum OrePrefix {
         this.isFluidContainer = (flags & FLUID_CONTAINER) != 0;
         this.materialIconType = materialIconType;
         this.generationCondition = condition;
+        this.metaItem = new MetaOrePrefix(this);
         if (isSelfReferencing) {
             Preconditions.checkNotNull(material, "Material is null for self-referencing OrePrefix");
             this.materialType = material;
@@ -379,14 +382,14 @@ public enum OrePrefix {
         if (this == block) {
             //glowstone and nether quartz blocks use 4 gems (dusts)
             if (material == Materials.Glowstone ||
-                material == Materials.NetherQuartz ||
-                material == Materials.Brick ||
-                material == Materials.Clay)
+                    material == Materials.NetherQuartz ||
+                    material == Materials.Brick ||
+                    material == Materials.Clay)
                 return M * 4;
                 //glass, ice and obsidian gain only one dust
             else if (material == Materials.Glass ||
-                material == Materials.Ice ||
-                material == Materials.Obsidian)
+                    material == Materials.Ice ||
+                    material == Materials.Obsidian)
                 return M;
         } else if (this == stick) {
             if (material == Materials.Blaze)
