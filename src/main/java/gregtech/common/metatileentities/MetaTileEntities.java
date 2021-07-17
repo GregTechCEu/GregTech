@@ -11,6 +11,7 @@ import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.clipboard.TileEntityClipboard;
 import gregtech.common.metatileentities.electric.*;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityEnergyHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
@@ -196,7 +197,7 @@ public class MetaTileEntities {
 
     public static MetaTileEntityInfiniteEmitter INFINITE_EMITTER;
 
-    public static MetaTileEntityClipboard CLIPBOARD_TILE;
+    public static TileEntityClipboard CLIPBOARD_TILE;
 
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");
@@ -687,7 +688,7 @@ public class MetaTileEntities {
 
         INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1630, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));
 
-        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1631, new MetaTileEntityClipboard(gregtechId("clipboard")));
+        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1631, new TileEntityClipboard(gregtechId("clipboard")));
 
         /*
          * FOR ADDON DEVELOPERS:

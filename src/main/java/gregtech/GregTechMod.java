@@ -23,6 +23,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.MetaEntities;
 import gregtech.common.MetaFluids;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.clipboard.TileEntityClipboardUIFactory;
 import gregtech.common.blocks.modelfactories.BlockCompressedFactory;
 import gregtech.common.blocks.modelfactories.BlockFrameFactory;
 import gregtech.common.blocks.modelfactories.BlockOreFactory;
@@ -73,6 +74,7 @@ public class GregTechMod {
         MetaTileEntityUIFactory.INSTANCE.init();
         PlayerInventoryUIFactory.INSTANCE.init();
         CoverBehaviorUIFactory.INSTANCE.init();
+        TileEntityClipboardUIFactory.INSTANCE.init();
         SimpleCapabilityManager.init();
         OreDictUnifier.init();
         NBTUtil.registerSerializers();

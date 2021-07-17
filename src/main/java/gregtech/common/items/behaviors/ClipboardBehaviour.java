@@ -34,8 +34,8 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
             int finalI = i;
             builder.widget(new ImageCycleButtonWidget(5, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_CHECKBOX, 2,
                     () -> getButtonState(holder, finalI), (x) -> toggleButton(holder, finalI)));
-            builder.widget(new TextFieldWidget(21, 40 + 20 * i, 140, 6, true,
-                    () -> getString(holder, finalI), (x) -> setString(holder, finalI, x), 40, 5)
+            builder.widget(new TextFieldWidget(21, 40 + 20 * i, 140, 10, true,
+                    () -> getString(holder, finalI), (x) -> setString(holder, finalI, x), 23, 8)
                     .setValidator((x) -> true));
         }
 

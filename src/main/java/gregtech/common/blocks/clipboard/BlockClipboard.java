@@ -1,196 +1,130 @@
 package gregtech.common.blocks.clipboard;
-/*
 
+import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.util.GTUtility;
+import gregtech.common.render.clipboard.TileEntityClipboardRenderer;
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockClipboard extends BiblioBlock {
-    public static final String name = "Clipboard";
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public static final BlockClipboard instance = new BlockClipboard();
+public class BlockClipboard extends Block implements ITileEntityProvider {
+
+    private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(5.25 / 16.0, 0.0, 0.0, 5.5 / 16.0, 8.0 / 16.0, 0.3 / 16.0);
+
+    protected ThreadLocal<MetaTileEntityHolder> tileEntities = new ThreadLocal<>();
 
     public BlockClipboard() {
-        super(Material.WOOD, SoundType.WOOD, null, "Clipboard");
+        super(Material.WOOD);
+        setHardness(1.5f);
+        setSoundType(SoundType.WOOD);
+        setTranslationKey("clipboard");
+        setLightOpacity(1);
+        setHarvestLevel("pickaxe", 1);
     }
 
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        return new ArrayList<>();
+    @Override
+    @Nonnull
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return GTUtility.rotateAroundYAxis(CLIPBOARD_AABB, EnumFacing.NORTH, getTileEntity(source, pos).getFrontFacing());
     }
 
-    public boolean onBlockActivatedCustomCommands(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing face, float hitX, float hitY, float hitZ) {
-        if (player.isSneaking() && !world.isRemote) {
-            dropStackInSlot(world, pos, 0, pos);
-            world.setBlockToAir(pos);
-            return true;
+    private ItemStack getDropStack(IBlockAccess blockAccess, BlockPos pos, IBlockState blockState) {
+        if(this.hasTileEntity(blockState)) {
+            return this.tileEntities.get().getMetaTileEntity().getItemInventory().getStackInSlot(0);
         }
-        if (!player.isSneaking() && world.isRemote) {
-            TileEntity tile = world.getTileEntity(pos);
-            if (tile != null && tile instanceof MetaTileEntityClipboard) {
-                MetaTileEntityClipboard clipboard = (MetaTileEntityClipboard)tile;
-                int updatePos = getSelectionPointFromFace(face, hitX, hitY, hitZ);
-                ByteBuf buffer = Unpooled.buffer();
-                buffer.writeInt(pos.getX());
-                buffer.writeInt(pos.getY());
-                buffer.writeInt(pos.getZ());
-                buffer.writeInt(updatePos);
-                BiblioCraft.ch_BiblioClipboard.sendToServer(new FMLProxyPacket(new PacketBuffer(buffer), "BiblioClipboard"));
-                return true;
-            }
-        }
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        return getDropStack(world, pos, state);
+    }
+
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        drops.add(this.getDropStack(world, pos, state));
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 
-    private int getSelectionPointFromFace(EnumFacing face, float hitx, float hity, float hitz) {
-        switch (face) {
-            case NORTH:
-                return getSelectionPoint(1.0F - hitx, 1.0F - hity);
-            case SOUTH:
-                return getSelectionPoint(hitx, 1.0F - hity);
-            case WEST:
-                return getSelectionPoint(hitz, 1.0F - hity);
-            case EAST:
-                return getSelectionPoint(1.0F - hitz, 1.0F - hity);
-        }
-        return -1;
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
     }
 
-    private int getSelectionPoint(float x, float y) {
-        if (x > 0.21F && x < 0.272F) {
-            float spacing = 0.0655F;
-            for (int i = 0; i < 9; i++) {
-                if (y > 0.23D + (i * spacing) && y < 0.285F + i * spacing)
-                    return i;
+    @Override
+    @Nonnull
+    @SideOnly(Side.CLIENT)
+    public EnumBlockRenderType getRenderType(IBlockState state) {
+        return TileEntityClipboardRenderer.BLOCK_RENDER_TYPE;
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        EnumFacing directionHangedFrom = getTileEntity(worldIn, pos).getFrontFacing().getOpposite();
+        if (pos.offset(directionHangedFrom).equals(fromPos)) {
+            if (worldIn.getBlockState(fromPos).getBlockFaceShape(worldIn, fromPos, EnumFacing.UP) != BlockFaceShape.SOLID) {
+                worldIn.destroyBlock(pos, true);
             }
         }
-        if (y > 0.83D && y < 0.868F) {
-            if (x > 0.296F && x < 0.387F)
-                return 10;
-            if (x > 0.599F && x < 0.843F)
-                return 11;
-        }
-        return -1;
     }
 
+    @Override
+    @Nonnull
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+        return BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        TileEntityClipboard tileEntity = getTileEntity(worldIn, pos);
+        if (tileEntity != null) {
+            tileEntities.set(tileEntity.getHolder());
+        }
+
+        super.breakBlock(worldIn, pos, state);
+    }
+
+    @Override
+    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
+        tileEntities.set(te == null ? tileEntities.get() : (MetaTileEntityHolder) te);
+        super.harvestBlock(worldIn, player, pos, state, te, stack);
+        tileEntities.set(null);
+    }
+
+    public static TileEntityClipboard getTileEntity(IBlockAccess world, BlockPos pos) {
+        TileEntity tileEntity = world.getTileEntity(pos);
+        if (tileEntity instanceof MetaTileEntityHolder)
+            return (TileEntityClipboard) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+        return null;
+    }
+
+    @Nullable
+    @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return (TileEntity)new MetaTileEntityClipboard();
-    }
-
-    public List<String> getModelParts(BiblioTileEntity tile) {
-        List<String> modelParts = new ArrayList<>();
-        modelParts.add("Clipboard");
-        if (tile instanceof MetaTileEntityClipboard) {
-            MetaTileEntityClipboard clipboard = (MetaTileEntityClipboard)tile;
-            clipboard.getNBTData();
-            switch (clipboard.button0state) {
-                case 1:
-                    modelParts.add("box1c");
-                    break;
-                case 2:
-                    modelParts.add("box1x");
-                    break;
-            }
-            switch (clipboard.button1state) {
-                case 1:
-                    modelParts.add("box2c");
-                    break;
-                case 2:
-                    modelParts.add("box2x");
-                    break;
-            }
-            switch (clipboard.button2state) {
-                case 1:
-                    modelParts.add("box3c");
-                    break;
-                case 2:
-                    modelParts.add("box3x");
-                    break;
-            }
-            switch (clipboard.button3state) {
-                case 1:
-                    modelParts.add("box4c");
-                    break;
-                case 2:
-                    modelParts.add("box4x");
-                    break;
-            }
-            switch (clipboard.button4state) {
-                case 1:
-                    modelParts.add("box5c");
-                    break;
-                case 2:
-                    modelParts.add("box5x");
-                    break;
-            }
-            switch (clipboard.button5state) {
-                case 1:
-                    modelParts.add("box6c");
-                    break;
-                case 2:
-                    modelParts.add("box6x");
-                    break;
-            }
-            switch (clipboard.button6state) {
-                case 1:
-                    modelParts.add("box7c");
-                    break;
-                case 2:
-                    modelParts.add("box7x");
-                    break;
-            }
-            switch (clipboard.button7state) {
-                case 1:
-                    modelParts.add("box8c");
-                    break;
-                case 2:
-                    modelParts.add("box8x");
-                    break;
-            }
-        }
-        return modelParts;
-    }
-
-    public void additionalPlacementCommands(BiblioTileEntity biblioTile, EntityLivingBase player) {}
-
-    public ItemStack getPickBlockExtras(ItemStack stack, World world, BlockPos pos) {
-        return stack;
-    }
-
-    public ExtendedBlockState getExtendedBlockStateAlternate(ExtendedBlockState state) {
-        return state;
-    }
-
-    public IExtendedBlockState getIExtendedBlockStateAlternate(BiblioTileEntity biblioTile, IExtendedBlockState state) {
-        return state;
-    }
-
-    public TRSRTransformation getAdditionalTransforms(TRSRTransformation transform, BiblioTileEntity tile) {
-        return transform;
-    }
-
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess blockAccess, BlockPos pos) {
-        AxisAlignedBB output = getBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-        TileEntity tile = blockAccess.getTileEntity(pos);
-        if (tile != null && tile instanceof MetaTileEntityClipboard) {
-            MetaTileEntityClipboard clipboard = (MetaTileEntityClipboard)tile;
-            switch (clipboard.getAngle()) {
-                case SOUTH:
-                    output = getBlockBounds(0.97F, 0.08F, 0.15F, 1.0F, 0.92F, 0.85F);
-                    break;
-                case WEST:
-                    output = getBlockBounds(0.15F, 0.08F, 0.97F, 0.85F, 0.92F, 1.0F);
-                    break;
-                case NORTH:
-                    output = getBlockBounds(0.0F, 0.08F, 0.15F, 0.03F, 0.92F, 0.85F);
-                    break;
-                case EAST:
-                    output = getBlockBounds(0.15F, 0.08F, 0.0F, 0.85F, 0.92F, 0.03F);
-                    break;
-            }
-        }
-        return output;
-    }
-
-    public IBlockState getFinalBlockstate(IBlockState state, IBlockState newState) {
-        return newState;
+        return new MetaTileEntityHolder();
     }
 }
-*/

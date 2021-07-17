@@ -16,6 +16,8 @@ import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
+import gregtech.common.blocks.clipboard.BlockClipboard;
+import gregtech.common.blocks.clipboard.TileEntityClipboard;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
 import gregtech.common.blocks.modelfactories.BakedModelHandler;
@@ -104,6 +106,7 @@ public class MetaBlocks {
     public static BlockGregSapling SAPLING;
 
     public static BlockSurfaceRock SURFACE_ROCK;
+    public static BlockClipboard CLIPBOARD_BLOCK;
 
     public static Map<DustMaterial, BlockCompressed> COMPRESSED = new HashMap<>();
     public static Map<SolidMaterial, BlockFrame> FRAMES = new HashMap<>();
@@ -167,6 +170,8 @@ public class MetaBlocks {
 
         SURFACE_ROCK = new BlockSurfaceRock();
         SURFACE_ROCK.setRegistryName("surface_rock_new");
+        CLIPBOARD_BLOCK = new BlockClipboard();
+        CLIPBOARD_BLOCK.setRegistryName("gt_clipboard");
 
         StoneType.init();
 
@@ -280,6 +285,7 @@ public class MetaBlocks {
         GameRegistry.registerTileEntity(TileEntityFluidPipe.class, new ResourceLocation(GTValues.MODID, "fluid_pipe"));
         GameRegistry.registerTileEntity(TileEntityFluidPipeTickable.class, new ResourceLocation(GTValues.MODID, "fluid_pipe_active"));
         GameRegistry.registerTileEntity(TileEntitySurfaceRock.class, new ResourceLocation(GTValues.MODID, "surface_rock"));
+        GameRegistry.registerTileEntity(TileEntityClipboard.class, new ResourceLocation(GTValues.MODID, "clipboard"));
     }
 
     @SideOnly(Side.CLIENT)
