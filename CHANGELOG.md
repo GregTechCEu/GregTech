@@ -1,7 +1,5 @@
 ## Changelog
 
-<<<<<<< HEAD
-=======
 ### 1.17.0
 * Fix many small GUI issues (#1574) - dan
 * Add clarification tooltips to blocks in the multiblock preview (#1584) - ALongStringOfNumbers
@@ -14,7 +12,6 @@
 * Internal make the Fusion Property protected (#1689) - ALongStringOfNumbers
 * Internal change Fusion Property to Long (#1693) - ALongStringOfNumbers
 
->>>>>>> upstream/master
 ### 1.16.1
 * Note: This is hotfix
 * Fixed Surface block spawning (#1681) - ALongStringOfNumbers

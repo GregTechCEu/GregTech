@@ -52,11 +52,6 @@ public abstract class AbstractFuelInfo implements IFuelInfo {
         this.fuelMinConsumed = fuelMinConsumed;
     }
 
-    @Deprecated
-    public void setFuelBurnTime(int fuelBurnTime) {
-        this.fuelBurnTime = fuelBurnTime;
-    }
-
     public void setFuelBurnTime(final long fuelBurnTime) {
         this.fuelBurnTime = fuelBurnTime;
     }
@@ -67,11 +62,6 @@ public abstract class AbstractFuelInfo implements IFuelInfo {
 
     public void addFuelCapacity(int fuelCapacity) {
         this.fuelCapacity += fuelCapacity;
-    }
-
-    @Deprecated
-    public void addFuelBurnTime(int fuelBurnTime) {
-        this.fuelBurnTime += fuelBurnTime;
     }
 
     public void addFuelBurnTime(final long fuelBurnTime) {
