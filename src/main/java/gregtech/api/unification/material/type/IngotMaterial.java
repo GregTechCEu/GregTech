@@ -190,8 +190,8 @@ public class IngotMaterial extends SolidMaterial {
     }
 
     @ZenMethod
-    public void setItemPipeProperties(int maxRange, float stacksPerSec) {
-        this.itemPipeProperties = new ItemPipeProperties(maxRange, stacksPerSec);
+    public void setItemPipeProperties(int resistance, float stacksPerSec) {
+        this.itemPipeProperties = new ItemPipeProperties(resistance, stacksPerSec);
     }
 
 }

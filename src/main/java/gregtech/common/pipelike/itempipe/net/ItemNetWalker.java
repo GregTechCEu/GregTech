@@ -5,7 +5,6 @@ import gregtech.api.util.GTLog;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
-import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -95,7 +94,11 @@ public class ItemNetWalker {
         TileEntity thisPipe = world.getTileEntity(pos);
         if (!(thisPipe instanceof TileEntityItemPipe))
             return;
-        minProperties = ItemPipeProperties.min(minProperties, ((TileEntityItemPipe) thisPipe).getNodeData());
+        ItemPipeProperties pipeProperties = ((TileEntityItemPipe) thisPipe).getNodeData();
+        if(minProperties == null)
+            minProperties = pipeProperties;
+        else
+            minProperties = new ItemPipeProperties(minProperties.resistance + pipeProperties.resistance, Math.min(minProperties.transferRate, pipeProperties.transferRate));
         ((TileEntityItemPipe) thisPipe).markWalked();
         walked.add((TileEntityItemPipe) thisPipe);
 

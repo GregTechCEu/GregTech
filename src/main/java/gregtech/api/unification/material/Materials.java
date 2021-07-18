@@ -941,13 +941,13 @@ public class Materials {
         Polytetrafluoroethylene.setFluidPipeProperties(600, 80, true);
         Polybenzimidazole.setFluidPipeProperties(1000, 100, true);
 
-        Tin.setItemPipeProperties(16, 0.5f);
-        Brass.setItemPipeProperties(14, 1);
-        Electrum.setItemPipeProperties(26, 2);
-        Platinum.setItemPipeProperties(40, 4);
-        Osmium.setItemPipeProperties(60, 8);
-        Cobalt.setItemPipeProperties(20, 2);
-        Aluminium.setItemPipeProperties(32, 2);
-        Ultimet.setItemPipeProperties(128, 16);
+        Tin.setItemPipeProperties(1024, 0.5f);
+        Brass.setItemPipeProperties(512, 1);
+        Electrum.setItemPipeProperties(256, 2);
+        Platinum.setItemPipeProperties(128, 4);
+        Osmium.setItemPipeProperties(64, 8);
+        Cobalt.setItemPipeProperties(600, 2);
+        Aluminium.setItemPipeProperties(420, 2);
+        FluxedElectrum.setItemPipeProperties(32, 12);
     }
 }

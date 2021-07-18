@@ -3498,7 +3498,7 @@ gregtech.fluid_pipe.non_gas_proof=§aCan't transfer gases.
 
 gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
 gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s
-gregtech.item_pipe.range=§9Max Range: %d blocks
+gregtech.item_pipe.resistance=§9Resistance: %d
 
 gregtech.multiblock.work_paused=Work Paused.
 gregtech.multiblock.running=Running perfectly.

@@ -5,28 +5,18 @@ import java.util.Objects;
 public class ItemPipeProperties {
 
     /**
-     * range in blocks
+     * Items will try to take the path with the lowest resistance
      */
-    public final int maxRange;
+    public final int resistance;
+
     /**
      * rate in stacks per sec
      */
     public final float transferRate;
 
-    public ItemPipeProperties(int maxRange, float transferRate) {
-        this.maxRange = maxRange;
+    public ItemPipeProperties(int resistance, float transferRate) {
+        this.resistance = resistance;
         this.transferRate = transferRate;
-    }
-
-    public static ItemPipeProperties min(ItemPipeProperties a, ItemPipeProperties b) {
-        if(a == null) {
-            if(b == null)
-                throw new NullPointerException("Properties are null");
-            return b;
-        }
-        if(b == null)
-            return a;
-        return new ItemPipeProperties(Math.min(a.maxRange, b.maxRange), Math.min(a.transferRate, b.transferRate));
     }
 
     @Override
@@ -34,18 +24,18 @@ public class ItemPipeProperties {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ItemPipeProperties that = (ItemPipeProperties) o;
-        return maxRange == that.maxRange && Float.compare(that.transferRate, transferRate) == 0;
+        return resistance == that.resistance && Float.compare(that.transferRate, transferRate) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(maxRange, transferRate);
+        return Objects.hash(resistance, transferRate);
     }
 
     @Override
     public String toString() {
         return "ItemPipeProperties{" +
-                "maxRange=" + maxRange +
+                "resistance=" + resistance +
                 ", transferRate=" + transferRate +
                 '}';
     }

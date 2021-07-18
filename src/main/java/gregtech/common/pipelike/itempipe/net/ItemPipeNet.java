@@ -29,7 +29,7 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         List<Inventory> data = NET_DATA.get(pipePos);
         if (data == null) {
             data = ItemNetWalker.createNetData(this, getWorldData(), pipePos);
-            data.sort(Comparator.comparingInt(inv -> inv.distance));
+            data.sort(Comparator.comparingInt(inv -> inv.properties.resistance));
             NET_DATA.put(pipePos, data);
         }
         return data;
@@ -54,7 +54,7 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
     @Override
     protected void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
-        tagCompound.setInteger("Range", nodeData.maxRange);
+        tagCompound.setInteger("Resistance", nodeData.resistance);
         tagCompound.setFloat("Rate", nodeData.transferRate);
     }
 

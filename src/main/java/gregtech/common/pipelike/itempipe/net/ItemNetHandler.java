@@ -67,8 +67,6 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insertRoundRobin(ItemStack stack, boolean simulate) {
         List<Handler> handlers = new ArrayList<>();
         for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
-            if (inv.getDistance() > inv.getProperties().maxRange)
-                continue;
             if (Objects.equals(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
                 continue;
             IItemHandler handler = inv.getHandler(pipe.getWorld());
@@ -130,8 +128,6 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     public ItemStack insert(Handler handler, ItemStack stack, boolean simulate) {
-        if (handler.getDistance() > handler.getProperties().maxRange)
-            return stack;
         int allowed = checkTransferable(pipe, handler.getProperties().transferRate, stack.getCount(), simulate);
         if (allowed == 0) return stack;
         Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(handler.getPipePos(), handler.getFaceToHandler());
