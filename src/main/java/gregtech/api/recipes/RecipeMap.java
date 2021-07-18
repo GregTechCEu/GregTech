@@ -56,7 +56,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private final int minOutputs, maxOutputs;
     private final int minFluidInputs, maxFluidInputs;
     private final int minFluidOutputs, maxFluidOutputs;
-    private final TByteObjectMap<TextureArea> slotOverlays;
+    protected final TByteObjectMap<TextureArea> slotOverlays;
+    protected TextureArea specialTexture;
+    protected int[] specialTexturePosition;
     protected TextureArea progressBarTexture;
     protected MoveType moveType;
     public final boolean isHidden;
@@ -300,9 +302,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     //this DOES NOT include machine control widgets or binds player inventory
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids) {
         ModularUI.Builder builder = ModularUI.defaultBuilder();
-        builder.widget(new ProgressWidget(progressSupplier, 78, 22, 20, 20, progressBarTexture, moveType));
+        builder.widget(new ProgressWidget(progressSupplier, 78, 23, 20, 20, progressBarTexture, moveType));
         addInventorySlotGroup(builder, importItems, importFluids, false);
         addInventorySlotGroup(builder, exportItems, exportFluids, true);
+        if (this.specialTexture != null && this.specialTexturePosition != null)
+            addSpecialTexture(builder);
         return builder;
     }
 
@@ -395,6 +399,17 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             itemSlotsToLeft = 2;
         }
         return new int[]{itemSlotsToLeft, itemSlotsToDown};
+    }
+
+    protected RecipeMap<R> setSpecialTexture(int x, int y, int width, int height, TextureArea area) {
+        this.specialTexturePosition = new int[]{x, y, width, height};
+        this.specialTexture = area;
+        return this;
+    }
+
+    protected ModularUI.Builder addSpecialTexture(ModularUI.Builder builder) {
+        builder.image(specialTexturePosition[0], specialTexturePosition[1], specialTexturePosition[2], specialTexturePosition[3], specialTexture);
+        return builder;
     }
 
 

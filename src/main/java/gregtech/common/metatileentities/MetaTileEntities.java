@@ -85,7 +85,7 @@ public class MetaTileEntities {
     public static SimpleMachineMetaTileEntity[] FLUID_EXTRACTOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] FLUID_HEATER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] FLUID_SOLIDIFIER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static MetaTileEntityHammer[] FORGE_HAMMER = new MetaTileEntityHammer[GTValues.V.length - 1];
+    public static SimpleMachineMetaTileEntity[] FORGE_HAMMER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] FORMING_PRESS = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] LATHE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] MICROWAVE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
@@ -338,23 +338,8 @@ public class MetaTileEntities {
                 ConfigHolder.U.machines.midTierFluidSolidifiers, ConfigHolder.U.machines.highTierFluidSolidifiers);
 
         // Forge Hammer, IDs 425-439
-        FORGE_HAMMER[0] = GregTechAPI.registerMetaTileEntity(427, new MetaTileEntityHammer(gregtechId("forge_hammer.lv"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 1, true));
-        FORGE_HAMMER[1] = GregTechAPI.registerMetaTileEntity(428, new MetaTileEntityHammer(gregtechId("forge_hammer.mv"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 2, true));
-        FORGE_HAMMER[2] = GregTechAPI.registerMetaTileEntity(429, new MetaTileEntityHammer(gregtechId("forge_hammer.hv"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 3, true));
-        FORGE_HAMMER[3] = GregTechAPI.registerMetaTileEntity(430, new MetaTileEntityHammer(gregtechId("forge_hammer.ev"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 4, true));
-        FORGE_HAMMER[4] = GregTechAPI.registerMetaTileEntity(431, new MetaTileEntityHammer(gregtechId("forge_hammer.iv"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 5, true));
-        if (ConfigHolder.U.machines.midTierMachines || ConfigHolder.U.machines.midTierMacerators) {
-            FORGE_HAMMER[5] = GregTechAPI.registerMetaTileEntity(432, new MetaTileEntityHammer(gregtechId("forge_hammer.luv"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 6, true));
-            FORGE_HAMMER[6] = GregTechAPI.registerMetaTileEntity(433, new MetaTileEntityHammer(gregtechId("forge_hammer.zpm"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 7, true));
-            FORGE_HAMMER[7] = GregTechAPI.registerMetaTileEntity(434, new MetaTileEntityHammer(gregtechId("forge_hammer.uv"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 8, true));
-        }
-        if (ConfigHolder.U.machines.highTierMachines || ConfigHolder.U.machines.highTierMacerators) {
-            FORGE_HAMMER[8] = GregTechAPI.registerMetaTileEntity(435, new MetaTileEntityHammer(gregtechId("forge_hammer.uhv"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 9, true));
-            FORGE_HAMMER[9] = GregTechAPI.registerMetaTileEntity(436, new MetaTileEntityHammer(gregtechId("forge_hammer.uev"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 10, true));
-            FORGE_HAMMER[10] = GregTechAPI.registerMetaTileEntity(437, new MetaTileEntityHammer(gregtechId("forge_hammer.uiv"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 11, true));
-            FORGE_HAMMER[11] = GregTechAPI.registerMetaTileEntity(438, new MetaTileEntityHammer(gregtechId("forge_hammer.umv"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 12, true));
-            FORGE_HAMMER[12] = GregTechAPI.registerMetaTileEntity(439, new MetaTileEntityHammer(gregtechId("forge_hammer.uxv"), RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY, 13, true));
-        }
+        registerSimpleMetaTileEntity(FORGE_HAMMER, 425, "forge_hammer", RecipeMaps.FORGE_HAMMER_RECIPES, Textures.FORGE_HAMMER_OVERLAY,
+                ConfigHolder.U.machines.midTierForgeHammers, ConfigHolder.U.machines.highTierForgeHammers);
 
         // Forming Press, IDs 440-454
         registerSimpleMetaTileEntity(FORMING_PRESS, 440, "forming_press", RecipeMaps.FORMING_PRESS_RECIPES, Textures.FORMING_PRESS_OVERLAY,
