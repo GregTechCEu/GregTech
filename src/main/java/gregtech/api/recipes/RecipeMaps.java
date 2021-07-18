@@ -723,11 +723,6 @@ public class RecipeMaps {
     // ASSEMBLY_LINE_RECIPES.setSlotOverlay(false, false, GuiTextures.MOLD_OVERLAY); TODO Fix this (???)
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CLUSTER_MILL_RECIPES = new RecipeMap<>("cluster_mill", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder())
-            .setSlotOverlay(false, false, GuiTextures.BENDER_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_BENDING, ProgressWidget.MoveType.HORIZONTAL);
-
-    @ZenProperty
     public static final RecipeMap<CircuitAssemblerRecipeBuilder> CIRCUIT_ASSEMBLER_RECIPES = new RecipeMap<>("circuit_assembler",
             1, 6, 1, 1, 0, 1, 0, 0, new CircuitAssemblerRecipeBuilder())
             .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)

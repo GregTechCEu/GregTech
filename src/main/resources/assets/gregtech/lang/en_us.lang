@@ -1856,7 +1856,6 @@ recipemap.gas_turbine.name=Gas Turbine
 recipemap.steam_turbine.name=Steam Turbine
 recipemap.semi_fluid_generator.name=Semi Fluid Fuels
 recipemap.plasma_generator.name=Plasma Generator
-recipemap.cluster_mill.name=Cluster Mill
 recipemap.circuit_assembler.name=Circuit Assembler
 
 behaviour.hoe=Can till dirt
@@ -2823,22 +2822,6 @@ gregtech.machine.wiremill.uev.name=High-Tech Wiremill II
 gregtech.machine.wiremill.uiv.name=High-Tech Wiremill III
 gregtech.machine.wiremill.umv.name=High-Tech Wiremill IV
 gregtech.machine.wiremill.uxv.name=Ultimate Wiremill
-
-gregtech.machine.cluster_mill.tooltip=Motor Singularity
-
-gregtech.machine.cluster_mill.lv.name=Basic Cluster Mill
-gregtech.machine.cluster_mill.mv.name=Advanced Cluster Mill
-gregtech.machine.cluster_mill.hv.name=Advanced Cluster Mill II
-gregtech.machine.cluster_mill.ev.name=Advanced Cluster Mill III
-gregtech.machine.cluster_mill.iv.name=Elite Cluster Mill
-gregtech.machine.cluster_mill.luv.name=Elite Cluster Mill II
-gregtech.machine.cluster_mill.zpm.name=Elite Cluster Mill III
-gregtech.machine.cluster_mill.uv.name=Elite Cluster Mill IV
-gregtech.machine.cluster_mill.uhv.name=High-Tech Cluster Mill
-gregtech.machine.cluster_mill.uev.name=High-Tech Cluster Mill II
-gregtech.machine.cluster_mill.uiv.name=High-Tech Cluster Mill III
-gregtech.machine.cluster_mill.umv.name=High-Tech Cluster Mill IV
-gregtech.machine.cluster_mill.uxv.name=Ultimate Cluster Mill
 
 gregtech.machine.circuit_assembler.tooltip=Pick-n-Place all over the place
 
