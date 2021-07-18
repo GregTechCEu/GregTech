@@ -140,7 +140,6 @@ public class GTValues {
             ConfigHolder.U.machines.highTierMixers ||
             ConfigHolder.U.machines.highTierOreWashers ||
             ConfigHolder.U.machines.highTierPackers ||
-            ConfigHolder.U.machines.highTierPlasmaArcFurnaces ||
             ConfigHolder.U.machines.highTierPolarizers ||
             ConfigHolder.U.machines.highTierLaserEngravers ||
             ConfigHolder.U.machines.highTierSifters ||

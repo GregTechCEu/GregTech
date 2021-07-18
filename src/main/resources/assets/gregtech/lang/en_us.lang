@@ -1807,7 +1807,6 @@ recipemap.press.name=Forming Press
 recipemap.macerator.name=Pulverization
 recipemap.unpackager.name=Unpackager
 recipemap.fluid_canner.name=Fluid Canning Machine
-recipemap.plasma_arc_furnace.name=Plasma Arc Furnace
 recipemap.arc_furnace.name=Arc Furnace
 recipemap.sifter.name=Sifter
 recipemap.laser_engraver.name=Precision Laser Engraver
@@ -2726,22 +2725,6 @@ gregtech.machine.unpacker.uev.name=High-Tech Unpacker II
 gregtech.machine.unpacker.uiv.name=High-Tech Unpacker III
 gregtech.machine.unpacker.umv.name=High-Tech Unpacker IV
 gregtech.machine.unpacker.uxv.name=Ultimate Unpacker
-
-gregtech.machine.plasma_arc_furnace.tooltip=My days are numbered...
-
-gregtech.machine.plasma_arc_furnace.lv.name=Basic Plasma Arc Furnace
-gregtech.machine.plasma_arc_furnace.mv.name=Advanced Plasma Arc Furnace
-gregtech.machine.plasma_arc_furnace.hv.name=Advanced Plasma Arc Furnace II
-gregtech.machine.plasma_arc_furnace.ev.name=Advanced Plasma Arc Furnace III
-gregtech.machine.plasma_arc_furnace.iv.name=Elite Plasma Arc Furnace
-gregtech.machine.plasma_arc_furnace.luv.name=Elite Plasma Arc Furnace II
-gregtech.machine.plasma_arc_furnace.zpm.name=Elite Plasma Arc Furnace III
-gregtech.machine.plasma_arc_furnace.uv.name=Elite Plasma Arc Furnace IV
-gregtech.machine.plasma_arc_furnace.uhv.name=High-Tech Plasma Arc Furnace
-gregtech.machine.plasma_arc_furnace.uev.name=High-Tech Plasma Arc Furnace II
-gregtech.machine.plasma_arc_furnace.uiv.name=High-Tech Plasma Arc Furnace III
-gregtech.machine.plasma_arc_furnace.umv.name=High-Tech Plasma Arc Furnace IV
-gregtech.machine.plasma_arc_furnace.uxv.name=Ultimate Plasma Arc Furnace
 
 gregtech.machine.polarizer.tooltip=Bipolarising your Magnets
 

@@ -295,7 +295,6 @@ public class ConfigHolder {
             public boolean midTierMixers = false;
             public boolean midTierOreWashers = false;
             public boolean midTierPackers = false;
-            public boolean midTierPlasmaArcFurnaces = false;
             public boolean midTierPolarizers = false;
             public boolean midTierLaserEngravers = false;
             public boolean midTierSifters = false;
@@ -335,7 +334,6 @@ public class ConfigHolder {
             public boolean highTierMixers = false;
             public boolean highTierOreWashers = false;
             public boolean highTierPackers = false;
-            public boolean highTierPlasmaArcFurnaces = false;
             public boolean highTierPolarizers = false;
             public boolean highTierLaserEngravers = false;
             public boolean highTierSifters = false;
