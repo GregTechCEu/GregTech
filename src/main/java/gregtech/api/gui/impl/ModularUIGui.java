@@ -6,7 +6,6 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.net.PacketUIWidgetUpdate;
 import gregtech.api.util.RenderUtil;
-import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -21,15 +20,12 @@ import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.IOException;
 
 public class ModularUIGui extends GuiContainer implements IRenderContext {
 
     private final ModularUI modularUI;
-    private static float rColorForOverlay = ((ConfigHolder.U.GT5u.defaultPaintingColor >> 16) & 0xff) / 255.0F;
-    private static float gColorForOverlay = ((ConfigHolder.U.GT5u.defaultPaintingColor >> 8) & 0xff) / 255.0F;
-    private static float bColorForOverlay = (ConfigHolder.U.GT5u.defaultPaintingColor & 0xff) / 255.0F;
 
     public ModularUI getModularUI() {
         return modularUI;
@@ -208,14 +204,10 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.pushMatrix();
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
-        GlStateManager.enableBlend();
-        GlStateManager.popMatrix();
         modularUI.backgroundPath.draw(guiLeft, guiTop, xSize, ySize);
         modularUI.guiWidgets.values().forEach(widget -> {
             GlStateManager.pushMatrix();
-            GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
+            GlStateManager.color(1.0f, 1.0f, 1.0f);
             GlStateManager.enableBlend();
             widget.drawInBackground(mouseX, mouseY, this);
             GlStateManager.popMatrix();

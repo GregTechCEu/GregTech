@@ -80,7 +80,9 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
             for (FluidPipeType fluidPipeType : FluidPipeType.values()) {
-                items.add(getItem(fluidPipeType, material));
+                if (!fluidPipeType.getOrePrefix().isIgnored(material)) {
+                    items.add(getItem(fluidPipeType, material));
+                }
             }
         }
     }

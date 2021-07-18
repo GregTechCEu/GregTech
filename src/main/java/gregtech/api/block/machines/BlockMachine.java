@@ -272,10 +272,12 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(worldIn, pos);
         if (metaTileEntity != null) {
-            NonNullList<ItemStack> inventoryContents = NonNullList.create();
-            metaTileEntity.clearMachineInventory(inventoryContents);
-            for (ItemStack itemStack : inventoryContents) {
-                Block.spawnAsEntity(worldIn, pos, itemStack);
+            if (!metaTileEntity.keepsInventory()) {
+                NonNullList<ItemStack> inventoryContents = NonNullList.create();
+                metaTileEntity.clearMachineInventory(inventoryContents);
+                for (ItemStack itemStack : inventoryContents) {
+                    Block.spawnAsEntity(worldIn, pos, itemStack);
+                }
             }
             metaTileEntity.dropAllCovers();
             metaTileEntity.onRemoval();

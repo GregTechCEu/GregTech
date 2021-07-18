@@ -34,6 +34,8 @@ import gregtech.common.blocks.wood.BlockGregLog.LogVariant;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.loaders.recipe.chemistry.AssemblerRecipeLoader;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import gregtech.loaders.recipe.chemistry.ChemistryRecipes;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -75,6 +77,7 @@ public class MachineRecipeLoader {
         registerRecyclingRecipes();
         registerStoneBricksRecipes();
         registerOrganicRecyclingRecipes();
+        registerNBTRemoval();
     }
 
     private static void registerBendingCompressingRecipes() {
@@ -986,4 +989,15 @@ public class MachineRecipeLoader {
                 stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL));
         }
     }
+    private static void registerNBTRemoval() {
+        for (MetaTileEntityQuantumChest chest : MetaTileEntities.QUANTUM_CHEST)
+            if (chest != null) {
+                ModHandler.addShapelessRecipe("quantum_chest_nbt_" + chest.getTier() + chest.metaTileEntityId, chest.getStackForm(), chest.getStackForm());
+            }
+
+        for (MetaTileEntityQuantumTank tank : MetaTileEntities.QUANTUM_TANK)
+            if (tank != null){
+                ModHandler.addShapelessRecipe("quantum_tank_nbt_" + tank.getTier() + tank.metaTileEntityId, tank.getStackForm(), tank.getStackForm());
+    }
+}
 }

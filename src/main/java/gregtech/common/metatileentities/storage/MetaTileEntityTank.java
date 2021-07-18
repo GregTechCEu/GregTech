@@ -603,7 +603,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        return getWorld().isRemote || FluidUtil.interactWithFluidHandler(playerIn, hand, fluidInventory);
+        return getWorld().isRemote || (FluidUtil.interactWithFluidHandler(playerIn, hand, fluidInventory) && !playerIn.isSneaking());
     }
 
     @SideOnly(Side.CLIENT)

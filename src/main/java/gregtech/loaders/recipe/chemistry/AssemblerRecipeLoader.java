@@ -174,5 +174,27 @@ public class AssemblerRecipeLoader {
                 .input(dust, TricalciumPhosphate)
                 .output(TOOL_MATCHES, 4)
                 .duration(64).EUt(16).buildAndRegister();
+
+        // Wood Pipes
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
+                .input(plate, Wood)
+                .circuitMeta(12)
+                .fluidInputs(Glue.getFluid(60))
+                .output(pipeSmall, Wood, 6)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
+                .input(plate, Wood, 3)
+                .circuitMeta(4)
+                .fluidInputs(Glue.getFluid(20))
+                .output(pipeMedium, Wood, 4)
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30)
+                .input(plate, Wood, 3)
+                .circuitMeta(2)
+                .fluidInputs(Glue.getFluid(10))
+                .output(pipeLarge, Wood)
+                .buildAndRegister();
     }
 }
