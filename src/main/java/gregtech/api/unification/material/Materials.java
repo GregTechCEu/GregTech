@@ -427,7 +427,7 @@ public class Materials {
     public static SimpleDustMaterial MagnesiumChloride = new SimpleDustMaterial(2, "magnesium_chloride", 0xD40D5C, DULL, of(new MaterialStack(Magnesium, 1), new MaterialStack(Chlorine, 2)), GENERATE_SMALL_TINY);
     public static SimpleDustMaterial RawRubber = new SimpleDustMaterial(3, "raw_rubber", 0xCCC789, DULL, of(new MaterialStack(Carbon, 5), new MaterialStack(Hydrogen, 8)), GENERATE_SMALL_TINY | DISABLE_DECOMPOSITION);
     public static SimpleDustMaterial SodiumSulfide = new SimpleDustMaterial(4, "sodium_sulfide", 0xFFE680, DULL, of(new MaterialStack(Sodium, 2), new MaterialStack(Sulfur, 1)), GENERATE_SMALL_TINY);
-    public static SimpleDustMaterial PhosphorusPentoxide = new SimpleDustMaterial(5, "phosphorus_pentoxide", 0xDCDC00, DULL, of(new MaterialStack(Phosphorus, 4), new MaterialStack(Oxygen, 10)), DISABLE_DECOMPOSITION | GENERATE_SMALL_TINY);
+    public static SimpleDustMaterial PhosphorusPentoxide = new SimpleDustMaterial(5, "phosphorus_pentoxide", 0xDCDC00, DULL, of(new MaterialStack(Phosphorus, 4), new MaterialStack(Oxygen, 10)), DECOMPOSITION_BY_CENTRIFUGING | GENERATE_SMALL_TINY);
     public static SimpleDustMaterial Quicklime = new SimpleDustMaterial(6, "quicklime", 0xF0F0F0, DULL, of(new MaterialStack(Calcium, 1), new MaterialStack(Oxygen, 1)), GENERATE_SMALL_TINY);
     public static SimpleDustMaterial SodiumBisulfate = new SimpleDustMaterial(7, "sodium_bisulfate", 0x004455, DULL, of(new MaterialStack(Sodium, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Sulfur, 1), new MaterialStack(Oxygen, 4)), DISABLE_DECOMPOSITION | GENERATE_SMALL_TINY);
     public static SimpleDustMaterial FerriteMixture = new SimpleDustMaterial(8, "ferrite_mixture", 0xB4B4B4, METALLIC, of(new MaterialStack(Nickel, 1), new MaterialStack(Zinc, 1), new MaterialStack(Iron, 4)), DECOMPOSITION_BY_CENTRIFUGING | GENERATE_SMALL_TINY);
@@ -533,7 +533,7 @@ public class Materials {
     public static DustMaterial GraniteBlack = new DustMaterial(308, "granite_black", 0x0A0A0A, ROUGH, 3, of(new MaterialStack(SiliconDioxide, 4), new MaterialStack(Biotite, 1)), NO_SMASHING | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial GraniteRed = new DustMaterial(309, "granite_red", 0xFF0080, ROUGH, 3, of(new MaterialStack(Aluminium, 2), new MaterialStack(PotassiumFeldspar, 1), new MaterialStack(Oxygen, 3)), NO_SMASHING);
     public static DustMaterial Chrysotile = new DustMaterial(310, "chrysotile", 0x6E8C6E, ROUGH, 2, of(new MaterialStack(Asbestos, 1)), 0);
-    public static DustMaterial Realgar = new DustMaterial(311, "realgar", 0x8C6464, DULL, 2, of(new MaterialStack(Arsenic, 4), new MaterialStack(Sulfur, 4)), DISABLE_DECOMPOSITION);
+    public static DustMaterial Realgar = new DustMaterial(311, "realgar", 0x8C6464, DULL, 2, of(new MaterialStack(Arsenic, 4), new MaterialStack(Sulfur, 4)), DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial VanadiumMagnetite = new DustMaterial(312, "vanadium_magnetite", 0x23233C, METALLIC, 2, of(new MaterialStack(Magnetite, 1), new MaterialStack(Vanadium, 1)), GENERATE_ORE | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial BasalticMineralSand = new DustMaterial(313, "basaltic_mineral_sand", 0x283228, SAND, 1, of(new MaterialStack(Magnetite, 1), new MaterialStack(Basalt, 1)), INDUCTION_SMELTING_LOW_OUTPUT);
     public static DustMaterial GraniticMineralSand = new DustMaterial(314, "granitic_mineral_sand", 0x283C3C, SAND, 1, of(new MaterialStack(Magnetite, 1), new MaterialStack(GraniteBlack, 1)), INDUCTION_SMELTING_LOW_OUTPUT);

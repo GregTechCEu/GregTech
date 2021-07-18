@@ -85,18 +85,18 @@ public class SteamCoalBoiler extends SteamBoiler implements IFuelable {
             return Collections.emptySet();
         final int fuelRemaining = fuelInSlot.getCount();
         final int fuelCapacity = importItems.getSlotLimit(0);
-        final int burnTime = fuelRemaining * TileEntityFurnace.getItemBurnTime(fuelInSlot) * (isHighPressure ? 6 : 12);
+        final long burnTime = fuelRemaining * TileEntityFurnace.getItemBurnTime(fuelInSlot) * (this.isHighPressure ? 6 : 12);
         return Collections.singleton(new ItemFuelInfo(fuelInSlot, fuelRemaining, fuelCapacity, 1, burnTime));
     }
 
     @Override
     public ModularUI createUI(EntityPlayer player) {
         return createUITemplate(player)
-                .widget(new SlotWidget(this.importItems, 0, 115, 54)
-                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, SLOT_FURNACE_BACKGROUND))
-                .widget(new SlotWidget(this.exportItems, 0, 115, 18, true, false)
-                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE))
-                .widget(new ProgressWidget(this::getFuelLeftPercent, 114, 35, 18, 18)
+                .widget(new SlotWidget(this.importItems, 0, 116, 62)
+                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_coal")))
+                .widget(new SlotWidget(this.exportItems, 0, 116, 26, true, false)
+                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_dust")))
+                .widget(new ProgressWidget(this::getFuelLeftPercent, 116, 44, 18, 18)
                         .setProgressBar(getGuiTexture("boiler_%s_fuel"),
                                 getGuiTexture("boiler_%s_fuel_full"),
                                 MoveType.VERTICAL))

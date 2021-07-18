@@ -11,6 +11,10 @@ import gregtech.integration.jei.multiblock.MultiblockShapeInfo;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 
@@ -46,5 +50,17 @@ public class DistillationTowerInfo extends MultiblockInfoPage {
     @Override
     public float getDefaultZoom() {
         return 0.7f;
+    }
+
+    @Override
+    protected void generateBlockTooltips() {
+        super.generateBlockTooltips();
+        ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.preview.limit_per_layer", 1).setStyle(new Style().setColor(TextFormatting.DARK_RED));
+        ITextComponent inputTooltip = new TextComponentTranslation("gregtech.multiblock.preview.only_location", I18n.format("gregtech.multiblock.preview.location.b_c")).setStyle(new Style().setColor(TextFormatting.DARK_RED));
+
+        for(int i = 0; i < GTValues.V.length; i++) {
+            addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(), tooltip);
+            addBlockTooltip(MetaTileEntities.FLUID_IMPORT_HATCH[i].getStackForm(), inputTooltip);
+        }
     }
 }

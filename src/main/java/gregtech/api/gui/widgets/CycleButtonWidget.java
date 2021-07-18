@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.*;
 
+import static gregtech.api.gui.impl.ModularUIGui.*;
+
 public class CycleButtonWidget extends Widget {
 
     protected TextureArea buttonTexture = GuiTextures.VANILLA_BUTTON.getSubArea(0.0, 0.0, 1.0, 0.5);
@@ -88,8 +90,8 @@ public class CycleButtonWidget extends Widget {
         String text = I18n.format(optionNames[currentOption]);
         fontRenderer.drawString(text,
             pos.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
-            pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, textColor);
-        GlStateManager.color(1.0f, 1.0f, 1.0f);
+            pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2 + 1, textColor);
+        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

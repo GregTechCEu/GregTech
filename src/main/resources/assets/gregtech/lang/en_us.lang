@@ -1383,6 +1383,7 @@ material.arsenic_trioxide=Arsenic Trioxide
 material.cupric_oxide=Cupric Oxide
 material.ferrosilite=Ferrosilite
 material.magnesia=Magnesia
+material.metal_mixture=Metal Mixture
 
 material.oil_heavy=Heavy Oil
 material.oil_medium=Raw Oil
@@ -2033,6 +2034,7 @@ gregtech.machine.tungstensteel_chest.name=Tungstensteel Chest
 gregtech.machine.drum.wood.name=Wooden Barrel
 gregtech.machine.drum.bronze.name=Bronze Drum
 gregtech.machine.drum.steel.name=Steel Drum
+gregtech.machine.drum.aluminium.name=Aluminium Drum
 gregtech.machine.drum.stainless_steel.name=Stainless Steel Drum
 gregtech.machine.drum.titanium.name=Titanium Drum
 gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
@@ -2041,6 +2043,7 @@ gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
 gregtech.machine.crate.wood.name=Wooden Crate
 gregtech.machine.crate.bronze.name=Bronze Crate
 gregtech.machine.crate.steel.name=Steel Crate
+gregtech.machine.crate.aluminium.name=Aluminium Crate
 gregtech.machine.crate.stainless_steel.name=Stainless Steel Crate
 gregtech.machine.crate.titanium.name=Titanium Crate
 gregtech.machine.crate.tungstensteel.name=Tungstensteel Crate
@@ -2065,6 +2068,7 @@ gregtech.machine.workbench.tab.container=Container
 gregtech.machine.wooden_tank.name=Wooden Tank
 gregtech.machine.bronze_tank.name=Bronze Tank
 gregtech.machine.steel_tank.name=Steel Tank
+gregtech.machine.aluminium_tank.name=Aluminium Tank
 gregtech.machine.stainless_steel_tank.name=Stainless Steel Tank
 gregtech.machine.titanium_tank.name=Titanium Tank
 gregtech.machine.tungstensteel_tank.name=Tungstensteel Tank
@@ -2195,7 +2199,7 @@ gregtech.machine.gas_turbine.ev.tooltip=Requires flammable Gasses
 
 
 gregtech.machine.magic_energy_absorber.name=Magic Energy Absorber
-gregtech.machine.magic_energy_absorber.tooltip=Max Voltage OUT: §a2048 §7(§aEV§7)/nCollects energy from ender crystals in 64 blocks/nEach ender crystal adds 32 EU/t to output/nPlace Dragon Egg on top to amplify output/n/nWhen amplified:/nEach ender crystal adds 128 EU/t
+gregtech.machine.magic_energy_absorber.tooltip=Max Voltage OUT: §a2048 §7(§aEV§7)/nCollects energy from end crystals on naturally generated obsidian pillars in the End within 64 blocks./nEach ender crystal adds 32 EU/t to output/nPlace Dragon Egg on top to amplify output/n/nWhen amplified:/nEach ender crystal adds 128 EU/t
 gregtech.machine.magic_energy_converter.name=Magic Energy Converter
 gregtech.machine.magic_energy_converter.tooltip=Voltage OUT: §a128 §7(§aMV§7)/nCollects essentia from containers within 16 blocks/nConsumes 20 Potentia per second
 
@@ -3012,6 +3016,8 @@ gregtech.machine.item_collector.gui.collect_range=Collect in %s blocks
 gregtech.machine.quantum_chest.tooltip=Better than JABBA.
 gregtech.machine.quantum_chest.capacity=Item Capacity: %,d items
 gregtech.machine.quantum_chest.items_stored=Item Amount:
+gregtech.machine.quantum_chest.tooltip.item=Item Stored: §b%s
+gregtech.machine.quantum_chest.tooltip.count=Item Amount: §e%,d
 
 gregtech.machine.super_chest.lv.name=Super Chest I
 gregtech.machine.super_chest.mv.name=Super Chest II
@@ -3027,6 +3033,8 @@ gregtech.machine.quantum_chest.uhv.name=Quantum Chest V
 #Quantum Tanks
 gregtech.machine.quantum_tank.tooltip=Compact place to store all your fluids.
 gregtech.machine.quantum_tank.capacity=Fluid Capacity: %,d L
+gregtech.machine.quantum_tank.tooltip.name=Fluid Stored: §b%s
+gregtech.machine.quantum_tank.tooltip.count=Fluid Amount: §e%,d L
 
 gregtech.machine.super_tank.lv.name=Super Tank I
 gregtech.machine.super_tank.mv.name=Super Tank II
@@ -3048,7 +3056,7 @@ tile.hermetic_casing.hermetic_casing_iv.name=Hermetic Casing V
 tile.hermetic_casing.hermetic_casing_luv.name=Hermetic Casing VI
 tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VII
 tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing VIII
-time.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
+tile.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
 
 #Air Collectors
 gregtech.machine.air_collector.lv.name=Basic Air Collector
@@ -3447,7 +3455,7 @@ gregtech.recipe.not_consumed=§bDoes not get consumed in the process
 gregtech.recipe.chance=Chance: %s%% +%s%%/tier
 gregtech.recipe.blast_furnace_temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
-gregtech.recipe.eu_to_start=Energy To Start: %sEU
+gregtech.recipe.eu_to_start=Energy To Start: %,dEU
 
 gregtech.fluid.click_to_fill=§7Click with a empty fluid container to fill it from tank.
 gregtech.fluid.click_to_fill.shift=§7(Shift-clicking will fill all containers in your hand)
@@ -3467,8 +3475,8 @@ gregtech.gui.toggle_view.disabled=Toggle View (Fluids)
 gregtech.gui.toggle_view.enabled=Toggle View (Items)
 gregtech.gui.overclock.enabled=Overclocking Enabled./nClick to Disable
 gregtech.gui.overclock.disabled=Overclocking Disabled./nClick to Enable
-gregtech.gui.overclock.description=Recipes can overclock to this tier./nOFF means no overclocking is performed.
-gregtech.gui.overclock.off=OFF
+gregtech.gui.overclock.description=Recipes can overclock to this tier./nX means no overclocking is performed.
+gregtech.gui.overclock.off=X
 gregtech.gui.sort=Sort
 gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
@@ -3515,6 +3523,12 @@ gregtech.multiblock.preview.zoom=Shift+RMB to zoom
 gregtech.multiblock.preview.pan=LMB+Drag to pan
 gregtech.multiblock.preview.move=RMB+Drag to move
 gregtech.multiblock.preview.reset=Scroll Mousewheel to reset
+gregtech.multiblock.preview.any_hatch=Any tier hatch can be used to form the structure
+gregtech.multiblock.preview.limit=Minimum Limit: %d
+gregtech.multiblock.preview.limit_per_layer=Only %d per layer
+gregtech.multiblock.preview.only=Only %s allowed
+gregtech.multiblock.preview.only_location=Only allowed at %s
+gregtech.multiblock.preview.location.b_c=Bottom Center
 
 gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
@@ -3581,3 +3595,5 @@ info.infinite_energy.uiv=Voltage: UIV
 info.infinite_energy.umv=Voltage: UMV
 info.infinite_energy.uxv=Voltage: UXV
 info.infinite_energy.max=Voltage: MAX
+
+gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!

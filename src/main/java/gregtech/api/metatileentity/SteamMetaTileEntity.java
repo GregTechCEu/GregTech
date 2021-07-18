@@ -47,6 +47,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
         this.renderer = renderer;
         BRONZE_BACKGROUND_TEXTURE = getFullGuiTexture("%s_gui");
         BRONZE_SLOT_BACKGROUND_TEXTURE = getFullGuiTexture("slot_%s");
+        this.setPaintingColor(0xFFFFFF);
     }
 
     @SideOnly(Side.CLIENT)

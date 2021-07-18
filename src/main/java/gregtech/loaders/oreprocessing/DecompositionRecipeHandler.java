@@ -57,11 +57,52 @@ public class DecompositionRecipeHandler {
             }
         }
 
+        //only reduce items
+        if (decomposePrefix != null) {
+            //calculate lowest common denominator
+            List<Integer> materialAmounts = new ArrayList<>();
+            materialAmounts.add(totalInputAmount);
+            outputs.forEach(itemStack -> materialAmounts.add(itemStack.getCount()));
+            fluidOutputs.forEach(fluidStack -> materialAmounts.add(fluidStack.amount / 1000));
+
+            int highestDivisor = 1;
+
+            int smallestMaterialAmount = getSmallestMaterialAmount(materialAmounts);
+            for (int i = 2; i <= smallestMaterialAmount; i++) {
+                if (isEveryMaterialReducible(i, materialAmounts))
+                    highestDivisor = i;
+            }
+
+            //divide components
+            if (highestDivisor != 1) {
+                List<ItemStack> reducedOutputs = new ArrayList<>();
+
+                for (ItemStack itemStack : outputs) {
+                    ItemStack reducedStack = itemStack.copy();
+                    reducedStack.setCount(reducedStack.getCount() / highestDivisor);
+                    reducedOutputs.add(reducedStack);
+                }
+
+                List<FluidStack> reducedFluidOutputs = new ArrayList<>();
+
+                for (FluidStack fluidStack : fluidOutputs) {
+                    FluidStack reducedFluidStack = fluidStack.copy();
+                    reducedFluidStack.amount /= highestDivisor;
+                    reducedFluidOutputs.add(reducedFluidStack);
+                }
+
+                outputs = (ArrayList<ItemStack>) reducedOutputs;
+                fluidOutputs = (ArrayList<FluidStack>) reducedFluidOutputs;
+                totalInputAmount /= highestDivisor;
+            }
+        }
+
+
         //generate builder
         RecipeBuilder<?> builder;
         if (material.hasFlag(Material.MatFlags.DECOMPOSITION_BY_ELECTROLYZING)) {
             builder = RecipeMaps.ELECTROLYZER_RECIPES.recipeBuilder()
-                .duration((int) material.getAverageProtons() * totalInputAmount * 2)
+                .duration(((int) material.getAverageProtons() * totalInputAmount * 2))
                 .EUt(getElectrolyzingVoltage(material.getMaterialComponents().stream()
                     .map(s -> s.material).collect(Collectors.toList())));
         } else {
@@ -86,6 +127,18 @@ public class DecompositionRecipeHandler {
         builder.buildAndRegister();
     }
 
+    private static boolean isEveryMaterialReducible(int divisor, List<Integer> materialAmounts) {
+        for (int amount : materialAmounts) {
+            if (amount % divisor != 0)
+                return false;
+        }
+        return true;
+    }
+
+    private static int getSmallestMaterialAmount(List<Integer> materialAmounts) {
+        return materialAmounts.stream().min(Integer::compare).get();
+    }
+
     //todo think something better with this
     private static int getElectrolyzingVoltage(List<IMaterial<?>> components) {
         //tungsten-containing materials electrolyzing requires 1920
@@ -95,7 +148,7 @@ public class DecompositionRecipeHandler {
         if (components.size() <= 2) {
             return 30;
         }
-        return Math.min(2, components.size()) * 30;
+        return 2 * 30;
     }
 
 }

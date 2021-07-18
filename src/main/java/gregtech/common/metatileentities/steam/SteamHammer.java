@@ -40,11 +40,11 @@ public class SteamHammer extends SteamMetaTileEntity {
         return createUITemplate(player)
             .widget(new SlotWidget(this.importItems, 0, 53, 25)
                 .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getFullGuiTexture("slot_%s_hammer_background")))
-            .widget(new ProgressWidget(workableHandler::getProgressPercent, 78, 25, 20, 18)
+            .widget(new ProgressWidget(workableHandler::getProgressPercent, 79, 25, 20, 18)
                 .setProgressBar(getFullGuiTexture("progress_bar_%s_hammer"),
                     getFullGuiTexture("progress_bar_%s_hammer_filled"),
                     ProgressWidget.MoveType.VERTICAL))
-            .widget(new ImageWidget(78, 41, 21, 18)
+            .widget(new ImageWidget(79, 41, 20, 18)
                 .setImage(getFullGuiTexture("overlay_%s_hammer_base")))
             .widget(new SlotWidget(this.exportItems, 0, 107, 25, true, false)
                 .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE))

@@ -71,6 +71,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller == null) {
+            this.setPaintingColor(DEFAULT_PAINTING_COLOR);
             return Textures.VOLTAGE_CASINGS[tier];
         }
         this.setPaintingColor(0xFFFFFF);

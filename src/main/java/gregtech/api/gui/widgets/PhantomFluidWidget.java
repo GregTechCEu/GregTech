@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static gregtech.api.gui.impl.ModularUIGui.*;
+
 public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhostIngredientTarget {
 
     protected TextureArea backgroundTexture = GuiTextures.FLUID_SLOT;
@@ -169,7 +171,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
             GlStateManager.disableBlend();
             RenderUtil.drawFluidForGui(lastFluidStack, lastFluidStack.amount, pos.x + 1, pos.y + 1, size.width - 1, size.height - 1);
             GlStateManager.enableBlend();
-            GlStateManager.color(1.0f, 1.0f, 1.0f);
+            GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
         }
     }
 

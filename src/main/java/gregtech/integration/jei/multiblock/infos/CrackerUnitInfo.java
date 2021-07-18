@@ -12,6 +12,10 @@ import gregtech.integration.jei.multiblock.MultiblockShapeInfo;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 
@@ -44,4 +48,10 @@ public class CrackerUnitInfo extends MultiblockInfoPage {
         return new String[]{I18n.format("gregtech.multiblock.cracker.description")};
     }
 
+    @Override
+    protected void generateBlockTooltips() {
+        super.generateBlockTooltips();
+        ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.preview.limit", 20).setStyle(new Style().setColor(TextFormatting.AQUA));
+        addBlockTooltip(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.STAINLESS_CLEAN), tooltip);
+    }
 }

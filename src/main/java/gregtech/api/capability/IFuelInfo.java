@@ -27,6 +27,5 @@ public interface IFuelInfo {
     /**
      * @return the estimated amount of time in ticks for burning the remaining fuel
      */
-    int getFuelBurnTime();
-
+    long getFuelBurnTimeLong();
 }

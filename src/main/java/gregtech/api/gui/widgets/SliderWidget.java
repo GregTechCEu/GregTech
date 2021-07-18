@@ -19,6 +19,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
+import static gregtech.api.gui.impl.ModularUIGui.*;
+
 public class SliderWidget extends Widget {
 
     public static final BiFunction<String, Float, String> DEFAULT_TEXT_SUPPLIER = (name, value) -> I18n.format(name, value.intValue());
@@ -103,7 +105,7 @@ public class SliderWidget extends Widget {
         fontRenderer.drawString(displayString,
             pos.x + size.width / 2 - fontRenderer.getStringWidth(displayString) / 2,
             pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, textColor);
-        GlStateManager.color(1.0f, 1.0f, 1.0f);
+        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

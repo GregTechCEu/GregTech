@@ -1,7 +1,0 @@
-{
-  "parent": "item/handheld",
-  "textures": {
-    "layer0": "gregtech:items/void",
-    "layer1": "gregtech:items/tools/rolling_pin"
-  }
-}

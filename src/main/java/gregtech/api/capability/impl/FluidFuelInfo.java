@@ -9,7 +9,7 @@ public class FluidFuelInfo extends AbstractFuelInfo {
 
     private final FluidStack fluidStack;
 
-    public FluidFuelInfo(FluidStack fluidStack, int fuelRemaining, int fuelCapacity, int fuelMinConsumed, int fuelBurnTime) {
+    public FluidFuelInfo(final FluidStack fluidStack, final int fuelRemaining, final int fuelCapacity, final int fuelMinConsumed, final long fuelBurnTime) {
         super(fuelRemaining, fuelCapacity, fuelMinConsumed, fuelBurnTime);
         this.fluidStack = fluidStack;
     }
