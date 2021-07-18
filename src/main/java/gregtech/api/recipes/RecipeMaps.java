@@ -369,9 +369,10 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CENTRIFUGE_RECIPES = new RecipeMap<>("centrifuge", 0, 1, 0, 6, 0, 1, 0, 6, new SimpleRecipeBuilder().EUt(5))
-        .setSlotOverlay(false, false, true, GuiTextures.EXTRACTOR_OVERLAY)
-        .setSlotOverlay(false, true, true, GuiTextures.DARK_CANISTER_OVERLAY)
+    public static final RecipeMap<SimpleRecipeBuilder> CENTRIFUGE_RECIPES = new RecipeMap<>("centrifuge", 0, 2, 0, 6, 0, 1, 0, 6, new SimpleRecipeBuilder().EUt(5))
+            .setSlotOverlay(false, false, false, GuiTextures.EXTRACTOR_OVERLAY)
+            .setSlotOverlay(false, false, true, GuiTextures.CANISTER_OVERLAY)
+            .setSlotOverlay(false, true, true, GuiTextures.CENTRIFUGE_OVERLAY)
         .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
 
     /**

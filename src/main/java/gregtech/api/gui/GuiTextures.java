@@ -6,6 +6,9 @@ import gregtech.api.gui.resources.TextureArea;
 
 public class GuiTextures {
 
+    //GREGTECH
+    public static final TextureArea GREGTECH_LOGO = TextureArea.fullImage("textures/gui/icon/gregtech_logo.png");
+
     //BASE TEXTURES
     public static final TextureArea BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/background.png", 176, 166, 3, 3);
     public static final TextureArea BORDERED_BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/bordered_background.png", 195, 136, 4, 4);
@@ -75,6 +78,7 @@ public class GuiTextures {
     public static final TextureArea CANNER_OVERLAY = TextureArea.fullImage("textures/gui/overlay/canner_overlay.png");
     public static final TextureArea CHARGER_OVERLAY = TextureArea.fullImage("textures/gui/overlay/charger_slot_overlay.png");
     public static final TextureArea CANISTER_OVERLAY = TextureArea.fullImage("textures/gui/overlay/canister_overlay.png");
+    public static final TextureArea CENTRIFUGE_OVERLAY = TextureArea.fullImage("textures/gui/overlay/centrifuge_overlay.png");
     public static final TextureArea CIRCUIT_OVERLAY = TextureArea.fullImage("textures/gui/overlay/circuit_overlay.png");
     public static final TextureArea COMPRESSOR_OVERLAY = TextureArea.fullImage("textures/gui/overlay/compressor_overlay.png");
     public static final TextureArea CRACKING_OVERLAY_1 = TextureArea.fullImage("textures/gui/overlay/cracking_overlay_1.png");
@@ -123,39 +127,39 @@ public class GuiTextures {
     public static final TextureArea WIREMILL_OVERLAY = TextureArea.fullImage("textures/gui/overlay/wiremill_overlay.png");
 
     //PROGRESS BARS
-    public static final TextureArea PROGRESS_BAR_UNLOCK = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_unlock.png");
+    public static final TextureArea PROGRESS_BAR_ARC_FURNACE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arc_furnace.png");
     public static final TextureArea PROGRESS_BAR_ARROW = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arrow.png");
     public static final TextureArea PROGRESS_BAR_ARROW_MULTIPLE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arrow_multiple.png");
     public static final TextureArea PROGRESS_BAR_BATH = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_bath.png");
     public static final TextureArea PROGRESS_BAR_BENDING = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_bending.png");
     public static final TextureArea PROGRESS_BAR_CANNER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_canner.png");
     public static final TextureArea PROGRESS_BAR_CIRCUIT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_circuit.png");
+    public static final TextureArea PROGRESS_BAR_CIRCUIT_ASSEMBLER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_circuit_assembler.png");
     public static final TextureArea PROGRESS_BAR_COMPRESS = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_compress.png");
+    public static final TextureArea PROGRESS_BAR_CRACKING = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_cracking.png");
+    public static final TextureArea PROGRESS_BAR_CRYSTALLIZATION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_crystallization.png");
     public static final TextureArea PROGRESS_BAR_EXTRACT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_extract.png");
     public static final TextureArea PROGRESS_BAR_EXTRUDER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_extruder.png");
+    public static final TextureArea PROGRESS_BAR_FUSION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fusion.png");
     public static final TextureArea PROGRESS_BAR_HAMMER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_hammer.png");
     public static final TextureArea PROGRESS_BAR_HAMMER_BASE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_hammer_base.png");
     public static final TextureArea PROGRESS_BAR_LATHE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_lathe.png");
     public static final TextureArea PROGRESS_BAR_LATHE_BASE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_lathe_base.png");
     public static final TextureArea PROGRESS_BAR_MACERATE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_macerate.png");
     public static final TextureArea PROGRESS_BAR_MAGNET = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_magnet.png");
+    public static final TextureArea PROGRESS_BAR_MASS_FAB = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_mass_fab.png");
     public static final TextureArea PROGRESS_BAR_MIXER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_mixer.png");
+    public static final TextureArea PROGRESS_BAR_PACKER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_packer.png");
     public static final TextureArea PROGRESS_BAR_RECYCLER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_recycler.png");
+    public static final TextureArea PROGRESS_BAR_REPLICATOR = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_replicator.png");
     public static final TextureArea PROGRESS_BAR_SIFT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_sift.png");
     public static final TextureArea PROGRESS_BAR_SLICE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_slice.png");
-    public static final TextureArea PROGRESS_BAR_WIREMILL = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_wiremill.png");
-    public static final TextureArea PROGRESS_BAR_CIRCUIT_ASSEMBLER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_circuit_assembler.png");
-    public static final TextureArea PROGRESS_BAR_CRYSTALLIZATION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_crystallization.png");
+    public static final TextureArea PROGRESS_BAR_UNLOCK = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_unlock.png");
     public static final TextureArea PROGRESS_BAR_UNPACKER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_unpacker.png");
-    public static final TextureArea PROGRESS_BAR_PACKER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_packer.png");
-    public static final TextureArea PROGRESS_BAR_CRACKING = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_cracking.png");
-    public static final TextureArea PROGRESS_BAR_FUSION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fusion.png");
-    public static final TextureArea PROGRESS_BAR_ARC_FURNACE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arc_furnace.png");
-    public static final TextureArea PROGRESS_BAR_MASS_FAB = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_mass_fab.png");
-    public static final TextureArea PROGRESS_BAR_REPLICATOR = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_replicator.png");
+    public static final TextureArea PROGRESS_BAR_WIREMILL = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_wiremill.png");
 
     //JEI
-    public static final TextureArea MULTIBLOCK_CATEGORY = TextureArea.fullImage("textures/gui/icon/coke_oven.png");
     public static final TextureArea INFO_ICON = TextureArea.fullImage("textures/gui/widget/information.png");
+    public static final TextureArea MULTIBLOCK_CATEGORY = TextureArea.fullImage("textures/gui/icon/coke_oven.png");
 
 }
