@@ -171,7 +171,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        return getWorld().isRemote || FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank);
+        return getWorld().isRemote || (FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank) && !playerIn.isSneaking());
     }
 
     @Override

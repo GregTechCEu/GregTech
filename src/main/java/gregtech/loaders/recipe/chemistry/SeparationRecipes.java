@@ -16,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import scala.tools.cmd.Meta;
 
 import java.util.Collection;
 import java.util.List;
@@ -181,21 +180,9 @@ public class SeparationRecipes {
                 .output(dustSmall, Gold, 2)
                 .buildAndRegister();
 
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(424).EUt(10)
-                .input(dust, Realgar, 2)
-                .output(dust, Arsenic)
-                .output(dust, Sulfur)
-                .buildAndRegister();
-
         CENTRIFUGE_RECIPES.recipeBuilder().duration(36).EUt(30)
                 .input(dust, Coal)
                 .output(dust, Carbon, 2)
-                .buildAndRegister();
-
-        CENTRIFUGE_RECIPES.recipeBuilder().duration(140).EUt(30)
-                .input(dust, PhosphorusPentoxide, 7)
-                .output(dust, Phosphorus, 2)
-                .fluidOutputs(Oxygen.getFluid(5000))
                 .buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(320)
@@ -353,7 +340,7 @@ public class SeparationRecipes {
                 .output(dust, Aluminium, 16)
                 .fluidOutputs(Hydrogen.getFluid(10000))
                 .fluidOutputs(Oxygen.getFluid(11000))
-                .duration(2496).EUt(60).buildAndRegister();
+                .duration(624).EUt(60).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
                 .fluidInputs(Water.getFluid(1000))

@@ -1,20 +1,7 @@
-import com.google.gson.JsonObject
-import com.matthewprenger.cursegradle.CurseExtension
-import com.matthewprenger.cursegradle.CurseProject
-import com.matthewprenger.cursegradle.CurseRelation
 import net.minecraftforge.gradle.user.UserBaseExtension
-import org.apache.commons.lang3.StringUtils
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.entity.ContentType
-import org.apache.http.entity.StringEntity
-import org.apache.http.impl.client.HttpClientBuilder
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.Constants
 import org.eclipse.jgit.lib.ObjectId
-import org.eclipse.jgit.revwalk.RevCommit
-import org.eclipse.jgit.revwalk.RevObject
-import org.eclipse.jgit.revwalk.RevTag
-import org.eclipse.jgit.revwalk.RevWalk
 import java.util.*
 
 buildscript {
@@ -215,8 +202,10 @@ fun getVersionFromJava(file: File): String  {
     var major = "0"
     var minor = "0"
     var revision = "0"
+    var extra = ""
 
     val prefix = "public static final int"
+    val extraPrefix = "public static final String"
     file.forEachLine { line ->
         var s = line.trim()
         if (s.startsWith(prefix)) {
@@ -229,15 +218,28 @@ fun getVersionFromJava(file: File): String  {
                 pts[0] == "MINOR" -> minor = pts[pts.size - 1]
                 pts[0] == "REVISION" -> revision = pts[pts.size - 1]
             }
+        } else if (s.startsWith(extraPrefix)) {
+            s = s.substring(extraPrefix.length, s.length - 2)
+            s = s.replace("=", " ").replace(" +", " ").replace("\"", " ").trim()
+            val pts = s.split(" ")
+            when {
+                pts[0] == "EXTRA" -> extra = pts[pts.size - 1]
+            }
         }
     }
 
     val branchNameOrTag = System.getenv("CI_COMMIT_REF_NAME")
     if (branchNameOrTag != null && !branchNameOrTag.startsWith("v") && branchNameOrTag != "master") {
+        if (extra != "") {
+            return "$major.$minor.$revision-$extra-$branchNameOrTag"
+        }
         return "$major.$minor.$revision-$branchNameOrTag"
     }
 
     val build = getBuildNumber()
 
+    if (extra != "") {
+        return "$major.$minor.$revision.$build-$extra"
+    }
     return "$major.$minor.$revision.$build"
 }
