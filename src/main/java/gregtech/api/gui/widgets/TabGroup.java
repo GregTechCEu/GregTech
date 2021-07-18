@@ -11,6 +11,7 @@ import gregtech.api.gui.widgets.tab.VerticalTabListRenderer;
 import gregtech.api.gui.widgets.tab.VerticalTabListRenderer.HorizontalLocation;
 import gregtech.api.gui.widgets.tab.VerticalTabListRenderer.VerticalStartCorner;
 import gregtech.api.util.Position;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 
@@ -19,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+
+import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class TabGroup extends AbstractWidgetGroup {
 
@@ -68,6 +71,7 @@ public class TabGroup extends AbstractWidgetGroup {
     public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
         super.drawInBackground(mouseX, mouseY, context);
         this.tabListRenderer.renderTabs(getPosition(), tabInfos, sizes.getWidth(), sizes.getHeight(), selectedTabIndex);
+        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

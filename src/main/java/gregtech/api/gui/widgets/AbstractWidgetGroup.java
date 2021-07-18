@@ -8,6 +8,7 @@ import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarget, IIngredientSlot {
 
@@ -239,6 +242,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
                 widget.drawInBackground(mouseX, mouseY, context);
             }
         }
+        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

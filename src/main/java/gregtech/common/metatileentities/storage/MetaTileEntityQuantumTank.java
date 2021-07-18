@@ -114,6 +114,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.autoOutputFluids = data.getBoolean("AutoOutputFluids");
         this.outputFacing = EnumFacing.VALUES[data.getInteger("OutputFacing")];
     }
+
     @Override
     public void initFromItemStackData(NBTTagCompound itemStack) {
         super.initFromItemStackData(itemStack);
@@ -125,6 +126,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         super.writeItemStackData(itemStack);
         fluidTank.writeToNBT(itemStack);
     }
+
     @Override
     protected boolean shouldSerializeInventories() {
         return false;

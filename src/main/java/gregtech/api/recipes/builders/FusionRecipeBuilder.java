@@ -34,13 +34,13 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
     @Override
     public boolean applyProperty(String key, Object value) {
         if (key.equals("eu_to_start")) {
-            this.EUToStart(((Number) value).intValue());
+            this.EUToStart(((Number) value).longValue());
             return true;
         }
         return false;
     }
 
-    public FusionRecipeBuilder EUToStart(int EUToStart) {
+    public FusionRecipeBuilder EUToStart(long EUToStart) {
         if (EUToStart <= 0) {
             GTLog.logger.error("EU to start cannot be less than or equal to 0", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;

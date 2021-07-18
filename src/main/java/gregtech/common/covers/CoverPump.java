@@ -174,7 +174,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 184 + 82)
                 .widget(primaryGroup)
-                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 8, 184);
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 184);
         return buildUI(builder, player);
     }
 

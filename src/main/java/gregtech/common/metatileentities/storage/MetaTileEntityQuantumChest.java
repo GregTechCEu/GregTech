@@ -18,7 +18,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
-import net.minecraft.util.NonNullList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,6 +26,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
@@ -58,8 +58,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     private static final String NBT_ITEMSTACK = "ItemStack";
     private static final String NBT_PARTIALSTACK = "PartialStack";
     private static final String NBT_ITEMCOUNT = "ItemAmount";
-
-
 
     public MetaTileEntityQuantumChest(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
         super(metaTileEntityId);
@@ -162,6 +160,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.quantum_chest.tooltip"));
         tooltip.add(I18n.format("gregtech.machine.quantum_chest.capacity", maxStoredItems));
+
         NBTTagCompound compound = stack.getTagCompound();
         if (compound != null) {
             String translationKey = null;
@@ -222,6 +221,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             }
         }
     }
+
     @Override
     public void initFromItemStackData(NBTTagCompound itemStack) {
         super.initFromItemStackData(itemStack);
@@ -266,10 +266,6 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                         .setTooltipText("gregtech.gui.item_auto_output.tooltip"))
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
-    }
-    @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
-        clearInventory(itemBuffer, importItems);
     }
 
     public EnumFacing getOutputFacing() {
@@ -378,6 +374,11 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     @Override
     public boolean isAllowInputFromOutputSide() {
         return allowInputFromOutputSide;
+    }
+
+    @Override
+    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
+        clearInventory(itemBuffer, importItems);
     }
 
     private class QuantumChestItemHandler implements IItemHandler {

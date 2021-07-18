@@ -138,7 +138,7 @@ public class MetaTileEntityBatteryBuffer extends TieredMetaTileEntity implements
                     .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.BATTERY_OVERLAY));
             }
         }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 8, 18 + 18 * rowSize + 12);
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
         return builder.build(getHolder(), entityPlayer);
     }
 

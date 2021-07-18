@@ -6,11 +6,14 @@ import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class ScrollableListWidget extends AbstractWidgetGroup {
 
@@ -105,6 +108,7 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
 
         RenderUtil.useScissor(position.x, position.y, size.width - paneSize, size.height, () ->
             super.drawInBackground(finalMouseX, finalMouseY, context));
+        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

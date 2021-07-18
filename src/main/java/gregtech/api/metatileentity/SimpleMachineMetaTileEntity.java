@@ -6,11 +6,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
-import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.capability.impl.FluidHandlerProxy;
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.ItemHandlerProxy;
-import gregtech.api.capability.impl.RecipeLogicEnergy;
+import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
@@ -329,7 +325,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             .bindPlayerInventory(player.inventory);
 
         int leftButtonStartX = 7;
-        int rightButtonStartX = 176 - 7 - 24;
+        int rightButtonStartX = 176 - 7 - 45;
         if (workable.recipeMap instanceof RecipeMapWithConfigButton) {
             leftButtonStartX += ((RecipeMapWithConfigButton) workable.recipeMap).getLeftButtonOffset();
             rightButtonStartX -= ((RecipeMapWithConfigButton) workable.recipeMap).getRightButtonOffset();
@@ -345,11 +341,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             builder.widget(new ToggleButtonWidget(leftButtonStartX, 62, 18, 18,
                 GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
                 .setTooltipText("gregtech.gui.fluid_auto_output.tooltip"));
+            leftButtonStartX += 18;
         }
 
-        builder.widget(new CycleButtonWidget(rightButtonStartX, 60, 24, 20,
+        builder.widget(new CycleButtonWidget(leftButtonStartX, 62, 18, 18,
                 workable.getAvailableOverclockingTiers(), workable::getOverclockTier, workable::setOverclockTier)
-                .setTooltipHoverString("gregtech.gui.overclock.description"));
+                .setTooltipHoverString("gregtech.gui.overclock.description")
+                .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
 
         return builder;
     }
