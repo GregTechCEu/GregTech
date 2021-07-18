@@ -110,7 +110,7 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
         List<IFluidTank> tanks = getAbilities(MultiblockAbility.PUMP_FLUID_HATCH);
         if (tanks == null || tanks.size() == 0) {
             tanks = getAbilities(MultiblockAbility.EXPORT_FLUIDS);
-            this.hatchModifier = tanks.get(0).getCapacity() == 8000 ? 2 : 3;
+            this.hatchModifier = tanks.get(0).getCapacity() == 8000 ? 2 : 4;
         } else {
             this.hatchModifier = 1;
         }

@@ -43,6 +43,7 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
         this.waterTank = new FluidTank(FLUID_TANK_SIZE);
         this.containerInventory = new ItemStackHandler(2);
         initializeInventory();
+        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override
