@@ -57,7 +57,7 @@ public class MetaTileEntities {
     public static SteamAlloySmelter STEAM_ALLOY_SMELTER_STEEL;
 
     public static MetaTileEntityPumpHatch PUMP_OUTPUT_HATCH;
-    public static MetaTileEntityWaterPump PRIMITIVE_WATER_PUMP;
+    public static MetaTileEntityPrimitiveWaterPump PRIMITIVE_WATER_PUMP;
 
     //SIMPLE MACHINES SECTION
     public static SimpleMachineMetaTileEntity[] ELECTRIC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
@@ -677,7 +677,7 @@ public class MetaTileEntities {
         GregTechAPI.registerMetaTileEntity(1625, TESLA_COIL);
         LOCKED_SAFE = GregTechAPI.registerMetaTileEntity(1626, new MetaTileEntityLockedSafe(gregtechId("locked_safe")));
         WORKBENCH = GregTechAPI.registerMetaTileEntity(1627, new MetaTileEntityWorkbench(gregtechId("workbench")));
-        PRIMITIVE_WATER_PUMP = GregTechAPI.registerMetaTileEntity(1628, new MetaTileEntityWaterPump(gregtechId("primitive_pump")));
+        PRIMITIVE_WATER_PUMP = GregTechAPI.registerMetaTileEntity(1628, new MetaTileEntityPrimitiveWaterPump(gregtechId("primitive_water_pump")));
         PUMP_OUTPUT_HATCH = GregTechAPI.registerMetaTileEntity(1629, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
 
         INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1630, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));

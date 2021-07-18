@@ -37,7 +37,9 @@ public class BlockSteamCasing extends VariantBlock<BlockSteamCasing.SteamCasingT
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        if (getState(stack).ordinal() < 2) {
+        if (getState(stack).ordinal() == 4) {
+            super.addInformation(stack, player, tooltip, advanced);
+        } else if (getState(stack).ordinal() < 2) {
             tooltip.add(I18n.format("tile.steam_casing.bronze.tooltip"));
         } else {
             tooltip.add(I18n.format("tile.steam_casing.steel.tooltip"));

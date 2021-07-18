@@ -85,7 +85,7 @@ public class Materials {
     public static IngotMaterial Indium = new IngotMaterial(48, "indium", 0x400080, METALLIC, 2, of(), 0, Elements.get("Indium"));
     public static DustMaterial Iodine = new DustMaterial(49, "iodine", 0x2C344F, SHINY, 2, of(), 0, Elements.get("Iodine"));
     public static IngotMaterial Iridium = new IngotMaterial(50, "iridium", 0xF0F0F5, DULL, 3, of(), GENERATE_ORE | EXT2_METAL | GENERATE_ORE | GENERATE_RING | GENERATE_ROTOR | GENERATE_DENSE, Elements.get("Iridium"), 7.0F, 3.0f, 2560, 2719);
-    public static IngotMaterial Iron = new IngotMaterial(51, "iron", 0xC8C8C8, METALLIC, 2, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_DENSE | GENERATE_FRAME | GENERATE_LONG_ROD | GENERATE_PLASMA | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, Elements.get("Iron"), 7.0F, 2.5f, 256);
+    public static IngotMaterial Iron = new IngotMaterial(51, "iron", 0xC8C8C8, METALLIC, 2, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_DENSE | GENERATE_FRAME | GENERATE_LONG_ROD | GENERATE_ROTOR | GENERATE_PLASMA | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, Elements.get("Iron"), 7.0F, 2.5f, 256);
     public static FluidMaterial Krypton = new FluidMaterial(52, "krypton", 0x31C42F, FLUID, of(), 0, Elements.get("Krypton"));
     public static IngotMaterial Lanthanum = new IngotMaterial(53, "lanthanum", 0xFFFFFF, METALLIC, 2, of(), 0, Elements.get("Lanthanum"), 1193);
     public static IngotMaterial Lawrencium = new IngotMaterial(54, "lawrencium", 0xFFFFFF, METALLIC, 3, of(), 0, Elements.get("Lawrencium"));

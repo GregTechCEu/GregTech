@@ -11,7 +11,6 @@ import gregtech.integration.jei.multiblock.MultiblockShapeInfo;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.List;
 import java.util.stream.Stream;

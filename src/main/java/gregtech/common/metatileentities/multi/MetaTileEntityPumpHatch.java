@@ -101,6 +101,11 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
     }
 
     @Override
+    public ICubeRenderer getBaseTexture() {
+        return Textures.PRIMITIVE_PUMP;
+    }
+
+    @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
         abilityList.add(waterTank);
     }
@@ -131,7 +136,6 @@ public class MetaTileEntityPumpHatch extends MetaTileEntityMultiblockPart implem
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.pump_hatch.tooltip")); // TODO Add this tooltip
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", FLUID_TANK_SIZE));
     }
 }

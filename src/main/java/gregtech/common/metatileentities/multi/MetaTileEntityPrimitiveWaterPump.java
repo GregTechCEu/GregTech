@@ -31,20 +31,20 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class MetaTileEntityWaterPump extends MultiblockControllerBase {
+public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
 
     private IFluidTank waterTank;
     private int biomeModifier = 0;
     private int hatchModifier = 0;
 
-    public MetaTileEntityWaterPump(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityPrimitiveWaterPump(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
         resetTileAbilities();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityWaterPump(metaTileEntityId);
+        return new MetaTileEntityPrimitiveWaterPump(metaTileEntityId);
     }
 
     @Override
@@ -68,6 +68,8 @@ public class MetaTileEntityWaterPump extends MultiblockControllerBase {
             return 350;
         } else if (biomeClass == BiomeSnow.class) {
             return 300;
+        } else if (biomeClass == BiomePlains.class || biomeClass == BiomeForest.class) {
+            return 250;
         } else if (biomeClass == BiomeTaiga.class) {
             return 175;
         } else if (biomeClass == BiomeBeach.class) {
