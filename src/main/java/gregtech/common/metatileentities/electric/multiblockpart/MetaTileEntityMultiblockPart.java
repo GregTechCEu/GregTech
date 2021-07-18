@@ -75,10 +75,10 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
             hatchColor = controller.getBaseTexture(this);
         }
         if (controller == null && hatchColor != null){
-            this.setPaintingColor(0xFFFFFF);
             return hatchColor;
         }
         if (controller == null) {
+            this.setPaintingColor(DEFAULT_PAINTING_COLOR);
             return Textures.VOLTAGE_CASINGS[tier];
         }
         this.setPaintingColor(0xFFFFFF);
