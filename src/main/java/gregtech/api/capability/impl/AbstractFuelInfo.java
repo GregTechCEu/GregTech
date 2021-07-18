@@ -36,11 +36,6 @@ public abstract class AbstractFuelInfo implements IFuelInfo {
     }
 
     @Override
-    public int getFuelBurnTime() {
-        return this.fuelBurnTime > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) this.fuelBurnTime;
-    }
-
-    @Override
     public long getFuelBurnTimeLong() {
         return this.fuelBurnTime;
     }
