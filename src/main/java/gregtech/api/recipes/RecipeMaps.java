@@ -26,7 +26,7 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> EXTRACTOR_RECIPES = new RecipeMap<>("extractor", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(2))
+    public static final RecipeMap<SimpleRecipeBuilder> EXTRACTOR_RECIPES = new RecipeMap<>("extractor", 0, 1, 0, 1, 0, 1, 0, 1, new SimpleRecipeBuilder().duration(400).EUt(2))
         .setSlotOverlay(false, false, GuiTextures.EXTRACTOR_OVERLAY)
         .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
 
@@ -302,31 +302,6 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> FLUID_SOLIDFICATION_RECIPES = new RecipeMap<>("fluid_solidifier", 1, 1, 1, 1, 1, 1, 0, 0, new SimpleRecipeBuilder())
         .setSlotOverlay(false, false, GuiTextures.SOLIDIFIER_OVERLAY)
         .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
-
-    /**
-     * Examples:
-     * <pre>
-     * 		RecipeMap.FLUID_EXTRACTION_RECIPES.recipeBuilder()
-     * 				.inputs(new ItemStack(Blocks.SNOW))
-     * 				.fluidOutputs(Materials.Water.getFluid(1000))
-     * 				.duration(128)
-     * 				.EUt(4)
-     * 				.buildAndRegister();
-     *
-     * 		RecipeMap.FLUID_EXTRACTION_RECIPES.recipeBuilder()
-     * 				.inputs(GT_ModHandler.getModItem("Forestry", "phosphor", 1))
-     * 				.chancedOutput(OreDictUnifier.get(OrePrefix.dust, Materials.Phosphorus, 1), 1000)
-     * 				.fluidOutputs(Materials.Lava.getFluid(800))
-     * 				.duration(256)
-     * 				.EUt(128)
-     * 				.buildAndRegister();
-     * </pre>
-     */
-
-    @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> FLUID_EXTRACTION_RECIPES = new RecipeMap<>("fluid_extractor", 1, 1, 0, 1, 0, 0, 1, 1, new SimpleRecipeBuilder())
-        .setSlotOverlay(false, false, GuiTextures.EXTRACTOR_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
 
     /**
      * Example:

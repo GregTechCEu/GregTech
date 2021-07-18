@@ -1820,7 +1820,6 @@ recipemap.fluid_heater.name=Fluid Heater
 recipemap.distillery.name=Distillery
 recipemap.fermenter.name=Fermenter
 recipemap.fluid_solidifier.name=Fluid Solidifier
-recipemap.fluid_extractor.name=Fluid Extractor
 recipemap.packager.name=Packager
 recipemap.fusion_reactor.name=Fusion Reactor
 recipemap.fusion_reactor.value=Start: %s EU
@@ -2486,7 +2485,7 @@ gregtech.machine.electromagnetic_separator.uiv.name=High-Tech Electromagnetic Se
 gregtech.machine.electromagnetic_separator.umv.name=High-Tech Electromagnetic Separator IV
 gregtech.machine.electromagnetic_separator.uxv.name=Ultimate Electromagnetic Separator
 
-gregtech.machine.extractor.tooltip=Dejuicer-Device of Doom - D123
+gregtech.machine.extractor.tooltip=Dejuicer-Device of Doom - D123. Now with Fluids!
 
 gregtech.machine.extractor.lv.name=Basic Extractor
 gregtech.machine.extractor.mv.name=Advanced Extractor
@@ -2549,22 +2548,6 @@ gregtech.machine.fluid_canner.uev.name=High-Tech Fluid Canner II
 gregtech.machine.fluid_canner.uiv.name=High-Tech Fluid Canner III
 gregtech.machine.fluid_canner.umv.name=High-Tech Fluid Canner IV
 gregtech.machine.fluid_canner.uxv.name=Ultimate Fluid Canner
-
-gregtech.machine.fluid_extractor.tooltip=Extracting Fluids from Items
-
-gregtech.machine.fluid_extractor.lv.name=Basic Fluid Extractor
-gregtech.machine.fluid_extractor.mv.name=Advanced Fluid Extractor
-gregtech.machine.fluid_extractor.hv.name=Advanced Fluid Extractor II
-gregtech.machine.fluid_extractor.ev.name=Advanced Fluid Extractor III
-gregtech.machine.fluid_extractor.iv.name=Elite Fluid Extractor
-gregtech.machine.fluid_extractor.luv.name=Elite Fluid Extractor II
-gregtech.machine.fluid_extractor.zpm.name=Elite Fluid Extractor III
-gregtech.machine.fluid_extractor.uv.name=Elite Fluid Extractor IV
-gregtech.machine.fluid_extractor.uhv.name=High-Tech Fluid Extractor
-gregtech.machine.fluid_extractor.uev.name=High-Tech Fluid Extractor II
-gregtech.machine.fluid_extractor.uiv.name=High-Tech Fluid Extractor III
-gregtech.machine.fluid_extractor.umv.name=High-Tech Fluid Extractor IV
-gregtech.machine.fluid_extractor.uxv.name=Ultimate Fluid Extractor
 
 gregtech.machine.fluid_heater.tooltip=Heating up your Fluids
 
