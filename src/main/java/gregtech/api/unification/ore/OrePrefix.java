@@ -306,6 +306,9 @@ public enum OrePrefix {
         toolHeadDrill.addSecondaryMaterial(new MaterialStack(Materials.Steel, plate.materialAmount * 4));
         toolHeadChainsaw.addSecondaryMaterial(new MaterialStack(Materials.Steel, plate.materialAmount * 4 + ring.materialAmount * 2));
         toolHeadWrench.addSecondaryMaterial(new MaterialStack(Materials.Steel, ring.materialAmount + screw.materialAmount * 2));
+
+        pipeTiny.setIgnored(Materials.Wood);
+        pipeHuge.setIgnored(Materials.Wood);
     }
 
     private static void excludeAllGems(Material material) {
