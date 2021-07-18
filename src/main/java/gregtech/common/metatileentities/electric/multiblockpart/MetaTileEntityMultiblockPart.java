@@ -25,6 +25,9 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     private final int tier;
     private BlockPos controllerPos;
     private MultiblockControllerBase controllerTile;
+    private MultiblockControllerBase controllerTile2;
+    private MultiblockControllerBase controllerTile3;
+    private MultiblockControllerBase controllerTile4;
 
     public MetaTileEntityMultiblockPart(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId);
@@ -55,24 +58,54 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
 
     public MultiblockControllerBase getController() {
         if (getWorld() != null && getWorld().isRemote) { //check this only clientside
-            if (controllerTile == null && controllerPos != null) {
-                this.controllerTile = (MultiblockControllerBase) BlockMachine.getMetaTileEntity(getWorld(), controllerPos);
+            if (controllerTile4 == null && controllerPos != null) {
+                this.controllerTile4 = (MultiblockControllerBase) BlockMachine.getMetaTileEntity(getWorld(), controllerPos);
+            }
+            else if (controllerTile3 == null && controllerPos != null) {
+                 this.controllerTile3 = (MultiblockControllerBase) BlockMachine.getMetaTileEntity(getWorld(), controllerPos);
+            }
+            else if (controllerTile2 == null && controllerPos != null) {
+                 this.controllerTile2 = (MultiblockControllerBase) BlockMachine.getMetaTileEntity(getWorld(), controllerPos);
+            }
+            else if (controllerTile == null && controllerPos != null) {
+                 this.controllerTile = (MultiblockControllerBase) BlockMachine.getMetaTileEntity(getWorld(), controllerPos);
             }
         }
         if (controllerTile != null && (controllerTile.getHolder() == null ||
-            controllerTile.getHolder().isInvalid() || !(getWorld().isRemote || controllerTile.getMultiblockParts().contains(this)))) {
-            //tile can become invalid for many reasons, and can also forgot to remove us once we aren't in structure anymore
-            //so check it here to prevent bugs with dangling controller reference and wrong texture
-            this.controllerTile = null;
+                controllerTile.getHolder().isInvalid() || !(getWorld().isRemote || controllerTile.getMultiblockParts().contains(this)))) {
+            return this.controllerTile = null;
         }
-        return controllerTile;
+        else if (controllerTile2 != null && (controllerTile2.getHolder() == null ||
+                controllerTile2.getHolder().isInvalid() || !(getWorld().isRemote || controllerTile2.getMultiblockParts().contains(this)))) {
+            return this.controllerTile2 = null;
+        }
+            else if (controllerTile3 != null && (controllerTile3.getHolder() == null ||
+                controllerTile3.getHolder().isInvalid() || !(getWorld().isRemote || controllerTile3.getMultiblockParts().contains(this)))) {
+            return this.controllerTile3 = null;
+            }
+        else if (controllerTile4 != null && (controllerTile4.getHolder() == null ||
+                controllerTile4.getHolder().isInvalid() || !(getWorld().isRemote || controllerTile4.getMultiblockParts().contains(this)))) {
+            return this.controllerTile4 = null;
+        }
+
+if (controllerTile4 != null)
+    return controllerTile4;
+if(controllerTile3 != null)
+    return controllerTile3;
+if (controllerTile2 != null)
+    return controllerTile2;
+else
+    return controllerTile;
     }
 
+
     public ICubeRenderer getBaseTexture() {
+
         MultiblockControllerBase controller = getController();
-        if (controller == null) {
-            this.setPaintingColor(DEFAULT_PAINTING_COLOR);
-            return Textures.VOLTAGE_CASINGS[tier];
+        if (controller == null || !controller.isStructureFormed()) {
+
+            return controller == null ? Textures.VOLTAGE_CASINGS[tier] : controller.getBaseTexture(this);
+
         }
         this.setPaintingColor(0xFFFFFF);
         return controller.getBaseTexture(this);
