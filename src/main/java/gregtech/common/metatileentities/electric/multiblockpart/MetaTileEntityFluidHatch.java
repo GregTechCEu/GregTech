@@ -35,9 +35,9 @@ import java.util.List;
 public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INITIAL_INVENTORY_SIZE = 8000;
-    private ItemStackHandler containerInventory;
-    private FluidTank fluidTank;
-    private boolean isExportHatch;
+    private final ItemStackHandler containerInventory;
+    private final FluidTank fluidTank;
+    private final boolean isExportHatch;
 
     public MetaTileEntityFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
         super(metaTileEntityId, tier);
@@ -56,13 +56,15 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockPart imple
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("ContainerInventory", containerInventory.serializeNBT());
+        //fluidTank.writeToNBT(data);
         return data;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.containerInventory.deserializeNBT(data.getCompoundTag("ContainerInventory"));
+        containerInventory.deserializeNBT(data.getCompoundTag("ContainerInventory"));
+        //fluidTank.readFromNBT(data);
     }
 
     @Override

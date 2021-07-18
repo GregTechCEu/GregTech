@@ -271,21 +271,21 @@ public abstract class SteamBoiler extends MetaTileEntity {
         return ModularUI.builder(BRONZE_BACKGROUND_TEXTURE, 176, 166)
             .widget(new LabelWidget(6, 6, getMetaFullName()))
 
-            .widget(new ProgressWidget(this::getTemperaturePercent, 97, 26, 10, 54)
+            .widget(new ProgressWidget(this::getTemperaturePercent, 96, 26, 10, 54)
                 .setProgressBar(getGuiTexture("bar_%s_empty"),
                     getGuiTexture("bar_heat"),
                     MoveType.VERTICAL))
 
-            .widget(new TankWidget(waterFluidTank, 84, 26, 10, 54)
+            .widget(new TankWidget(waterFluidTank, 83, 26, 10, 54)
                 .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
-            .widget(new TankWidget(steamFluidTank, 71, 26, 10, 54)
+            .widget(new TankWidget(steamFluidTank, 70, 26, 10, 54)
                 .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
 
-            .widget(new FluidContainerSlotWidget(containerInventory, 0, 44, 26, true)
+            .widget(new FluidContainerSlotWidget(containerInventory, 0, 43, 26, true)
                 .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_in")))
-            .widget(new SlotWidget(containerInventory, 1, 44, 62, true, false)
+            .widget(new SlotWidget(containerInventory, 1, 43, 62, true, false)
                 .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_out")))
-            .widget(new ImageWidget(44, 44, 18, 18)
+            .widget(new ImageWidget(43, 44, 18, 18)
                 .setImage(getGuiTexture("overlay_%s_fluid_container")))
 
             .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE);

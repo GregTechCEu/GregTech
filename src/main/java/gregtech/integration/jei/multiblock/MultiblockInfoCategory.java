@@ -53,6 +53,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("fusion_reactor_mk1", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(0)));
         put("fusion_reactor_mk2", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(1)));
         put("fusion_reactor_mk3", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(2)));
+        put("primitive_water_pump", new MultiblockInfoRecipeWrapper(new PrimitivePumpInfo()));
     }};
 
     public static void registerRecipes(IModRegistry registry) {

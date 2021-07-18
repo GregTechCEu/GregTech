@@ -93,6 +93,10 @@ public final class ModularUI implements ISizeProvider {
         return new Builder(GuiTextures.BACKGROUND, 176, 166);
     }
 
+    public static Builder defaultBuilder(TextureArea logo) {
+        return new Builder(GuiTextures.BACKGROUND, 176, 166, logo);
+    }
+
     public static Builder borderedBuilder() {
         return new Builder(GuiTextures.BORDERED_BACKGROUND, 195, 136);
     }
@@ -134,14 +138,20 @@ public final class ModularUI implements ISizeProvider {
         private ImmutableList.Builder<Runnable> openListeners = ImmutableList.builder();
         private ImmutableList.Builder<Runnable> closeListeners = ImmutableList.builder();
         private TextureArea background;
+        private TextureArea logo;
         private int width, height;
         private int nextFreeWidgetId = 0;
 
         public Builder(TextureArea background, int width, int height) {
+            this(background, width, height, GuiTextures.GREGTECH_LOGO);
+        }
+
+        public Builder(TextureArea background, int width, int height, TextureArea logo) {
             Preconditions.checkNotNull(background);
             this.background = background;
             this.width = width;
             this.height = height;
+            this.logo = logo;
         }
 
         public Builder widget(Widget widget) {
@@ -215,6 +225,11 @@ public final class ModularUI implements ISizeProvider {
 
         public Builder bindCloseListener(Runnable onContainerClose) {
             this.closeListeners.add(onContainerClose);
+            return this;
+        }
+
+        public Builder logo(int x, int y) {
+            this.image(x, y, 16, 16, this.logo);
             return this;
         }
 

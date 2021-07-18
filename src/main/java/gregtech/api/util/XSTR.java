@@ -36,10 +36,6 @@ public class XSTR extends Random {
 
     private static final long serialVersionUID = 6208727693524452904L;
     private long seed;
-    private long last;
-    private static final long GAMMA = 0x9e3779b97f4a7c15L;
-    private static final int PROBE_INCREMENT = 0x9e3779b9;
-    private static final long SEEDER_INCREMENT = 0xbb67ae8584caa73bL;
     private static final double DOUBLE_UNIT = 0x1.0p-53;  // 1.0  / (1L << 53)
     private static final float FLOAT_UNIT = 0x1.0p-24f; // 1.0f / (1 << 24)
 
@@ -122,9 +118,6 @@ public class XSTR extends Random {
      * Implementation of George Marsaglia's elegant Xorshift random generator
      * 30% faster and better quality than the built-in java.util.random see also
      * see http://www.javamex.com/tutorials/random_numbers/xorshift.shtml
-     *
-     * @param nbits
-     * @return
      */
     public int next(int nbits) {
         long x = seed;
@@ -214,24 +207,7 @@ public class XSTR extends Random {
      * @since 1.2
      */
     public int nextInt(int bound) {
-        //if (bound <= 0) {
-        //throw new RuntimeException("BadBound");
-        //}
-
-        /*int r = next(31);
-        int m = bound - 1;
-        if ((bound & m) == 0) // i.e., bound is a power of 2
-        {
-            r = (int) ((bound * (long) r) >> 31);
-        } else {
-            for (int u = r;
-                    u - (r = u % bound) + m < 0;
-                    u = next(31))
-                ;
-        }
-        return r;*/
-        //speedup, new nextInt ~+40%
-        last = seed ^ (seed << 21);
+        long last = seed ^ (seed << 21);
         last ^= (last >>> 35);
         last ^= (last << 4);
         seed = last;

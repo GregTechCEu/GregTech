@@ -325,11 +325,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             .bindPlayerInventory(player.inventory);
 
         int leftButtonStartX = 7;
-        int rightButtonStartX = 176 - 7 - 45;
-        if (workable.recipeMap instanceof RecipeMapWithConfigButton) {
-            leftButtonStartX += ((RecipeMapWithConfigButton) workable.recipeMap).getLeftButtonOffset();
-            rightButtonStartX -= ((RecipeMapWithConfigButton) workable.recipeMap).getRightButtonOffset();
-        }
 
         if (exportItems.getSlots() > 0) {
             builder.widget(new ToggleButtonWidget(leftButtonStartX, 62, 18, 18,
@@ -362,12 +357,6 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         super.addInformation(stack, player, tooltip, advanced);
         String key = this.metaTileEntityId.getPath().split("\\.")[0];
         tooltip.add(1, I18n.format(String.format("gregtech.machine.%s.tooltip", key)));
-    }
-
-    public interface RecipeMapWithConfigButton {
-        int getLeftButtonOffset();
-
-        int getRightButtonOffset();
     }
 
     @Override

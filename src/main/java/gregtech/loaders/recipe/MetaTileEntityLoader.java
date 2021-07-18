@@ -356,6 +356,10 @@ public class MetaTileEntityLoader {
 
         ModHandler.addShapedRecipe("magic_energy_absorber", MetaTileEntities.MAGIC_ENERGY_ABSORBER.getStackForm(), "PCP", "PMP", "PCP", 'M', MetaTileEntities.HULL[GTValues.EV].getStackForm(), 'P', MetaItems.SENSOR_EV, 'C', new UnificationEntry(OrePrefix.circuit, Tier.Extreme));
 
+        ModHandler.addShapedRecipe("primitive_pump", MetaTileEntities.PRIMITIVE_WATER_PUMP.getStackForm(), "RGS", "OWd", "CLC", 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron), 'G', new UnificationEntry(OrePrefix.pipeMedium, Materials.Wood), 'S', new UnificationEntry(OrePrefix.screw, Materials.Iron), 'O', new UnificationEntry(OrePrefix.rotor, Materials.Iron), 'W', new ItemStack(Blocks.PLANKS, 1, GTValues.W), 'C', new ItemStack(Blocks.STONE_SLAB, 1, 3), 'L', new UnificationEntry(OrePrefix.pipeLarge, Materials.Wood));
+        ModHandler.addShapedRecipe("pump_deck", MetaBlocks.STEAM_CASING.getItemVariant(PUMP_DECK), "SWS", "dCh", 'S', new UnificationEntry(OrePrefix.screw, Materials.Iron), 'W', new ItemStack(Blocks.PLANKS, 1, GTValues.W), 'C', new ItemStack(Blocks.STONE_SLAB, 1, 3));
+        ModHandler.addShapedRecipe("pump_hatch", MetaTileEntities.PUMP_OUTPUT_HATCH.getStackForm(), "SRd", "PLP", "CRC", 'S', new UnificationEntry(OrePrefix.screw, Materials.Iron), 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron), 'P', new ItemStack(Blocks.PLANKS, 1, GTValues.W), 'L', new UnificationEntry(OrePrefix.pipeLarge, Materials.Wood), 'C', new ItemStack(Blocks.STONE_SLAB, 1, 3));
+
         // MACHINES
         registerMachineRecipe(MetaTileEntities.ALLOY_SMELTER, "ECE", "CMC", "WCW", 'M', HULL, 'E', CIRCUIT, 'W', CABLE, 'C', COIL_HEATING_DOUBLE);
         registerMachineRecipe(MetaTileEntities.ASSEMBLER, "ACA", "VMV", "WCW", 'M', HULL, 'V', CONVEYOR, 'A', ROBOT_ARM, 'C', CIRCUIT, 'W', CABLE);
