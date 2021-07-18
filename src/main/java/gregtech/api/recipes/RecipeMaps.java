@@ -584,7 +584,7 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<IntCircuitRecipeBuilder> BENDER_RECIPES = new RecipeMap<>("metal_bender", 2, 2, 1, 1, 0, 0, 0, 0, new IntCircuitRecipeBuilder())
             .setSlotOverlay(false, false, false, GuiTextures.BENDER_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_COMPRESS, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BENDING, MoveType.HORIZONTAL);
 
 
     @ZenProperty
