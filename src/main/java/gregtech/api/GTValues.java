@@ -135,7 +135,6 @@ public class GTValues {
             ConfigHolder.U.machines.highTierForgeHammers ||
             ConfigHolder.U.machines.highTierFormingPresses ||
             ConfigHolder.U.machines.highTierLathes ||
-            ConfigHolder.U.machines.highTierMicrowaves ||
             ConfigHolder.U.machines.highTierMixers ||
             ConfigHolder.U.machines.highTierOreWashers ||
             ConfigHolder.U.machines.highTierPackers ||

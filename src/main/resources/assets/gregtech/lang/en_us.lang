@@ -1796,7 +1796,6 @@ recipemap.thermal_centrifuge.name=Thermal Centrifuge
 recipemap.extractor.name=Extractor
 recipemap.recycler.name=Recycler
 recipemap.furnace.name=Furnace
-recipemap.microwave.name=Microwave
 recipemap.scanner.name=Scanner
 recipemap.rockbreaker.name=Rock Breaker
 recipemap.byproductlist.name=Ore Byproduct List
@@ -2628,22 +2627,6 @@ gregtech.machine.lathe.uev.name=High-Tech Lathe II
 gregtech.machine.lathe.uiv.name=High-Tech Lathe III
 gregtech.machine.lathe.umv.name=High-Tech Lathe IV
 gregtech.machine.lathe.uxv.name=Ultimate Lathe
-
-gregtech.machine.microwave.tooltip=Did you really read the instruction Manual?
-
-gregtech.machine.microwave.lv.name=Basic Microwave
-gregtech.machine.microwave.mv.name=Advanced Microwave
-gregtech.machine.microwave.hv.name=Advanced Microwave II
-gregtech.machine.microwave.ev.name=Advanced Microwave III
-gregtech.machine.microwave.iv.name=Elite Microwave
-gregtech.machine.microwave.luv.name=Elite Microwave II
-gregtech.machine.microwave.zpm.name=Elite Microwave III
-gregtech.machine.microwave.uv.name=Elite Microwave IV
-gregtech.machine.microwave.uhv.name=High-Tech Microwave
-gregtech.machine.microwave.uev.name=High-Tech Microwave II
-gregtech.machine.microwave.uiv.name=High-Tech Microwave III
-gregtech.machine.microwave.umv.name=High-Tech Microwave IV
-gregtech.machine.microwave.uxv.name=Ultimate Microwave
 
 gregtech.machine.mixer.tooltip=Will it Blend?
 

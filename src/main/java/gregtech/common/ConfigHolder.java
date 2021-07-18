@@ -290,7 +290,6 @@ public class ConfigHolder {
             public boolean midTierForgeHammers = false;
             public boolean midTierFormingPresses = false;
             public boolean midTierLathes = false;
-            public boolean midTierMicrowaves = false;
             public boolean midTierMixers = false;
             public boolean midTierOreWashers = false;
             public boolean midTierPackers = false;
@@ -328,7 +327,6 @@ public class ConfigHolder {
             public boolean highTierForgeHammers = false;
             public boolean highTierFormingPresses = false;
             public boolean highTierLathes = false;
-            public boolean highTierMicrowaves = false;
             public boolean highTierMixers = false;
             public boolean highTierOreWashers = false;
             public boolean highTierPackers = false;

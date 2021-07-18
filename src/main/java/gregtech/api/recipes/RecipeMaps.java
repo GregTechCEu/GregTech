@@ -59,12 +59,6 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> MICROWAVE_RECIPES = new RecipeMapFurnace("microwave", 1, 1, 1, 1, 0, 0, 0, 0, 1, new SimpleRecipeBuilder())
-        .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
-
-
-    @ZenProperty
     public static final RecipeMap<IntCircuitRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMap<>("assembler", 1, 9, 1, 1, 0, 1, 0, 0, new AssemblerRecipeBuilder())
         .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
         .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT, MoveType.HORIZONTAL);

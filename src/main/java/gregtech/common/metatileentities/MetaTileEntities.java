@@ -87,7 +87,6 @@ public class MetaTileEntities {
     public static SimpleMachineMetaTileEntity[] FORGE_HAMMER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] FORMING_PRESS = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] LATHE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] MICROWAVE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] MIXER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] ORE_WASHER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] PACKER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
@@ -344,9 +343,7 @@ public class MetaTileEntities {
         registerSimpleMetaTileEntity(LATHE, 455, "lathe", RecipeMaps.LATHE_RECIPES, Textures.LATHE_OVERLAY,
                 ConfigHolder.U.machines.midTierLathes, ConfigHolder.U.machines.highTierLathes);
 
-        // Microwave, IDs 470-484
-        registerSimpleMetaTileEntity(MICROWAVE, 470, "microwave", RecipeMaps.MICROWAVE_RECIPES, Textures.MICROWAVE_OVERLAY,
-                ConfigHolder.U.machines.midTierMicrowaves, ConfigHolder.U.machines.highTierMicrowaves);
+        // Free Range, IDs 470-484
 
         // Mixer, IDs 485-499
         registerSimpleMetaTileEntity(MIXER, 485, "mixer", RecipeMaps.MIXER_RECIPES, Textures.MIXER_OVERLAY,
