@@ -78,7 +78,7 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return createUITemplate(entityPlayer)
-                .widget(new TankWidget(lavaFluidTank, 110, 26, 10, 54)
+                .widget(new TankWidget(lavaFluidTank, 119, 26, 10, 54)
                         .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
                 .build(getHolder(), entityPlayer);
     }

@@ -698,7 +698,10 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<AmplifierRecipeBuilder> AMPLIFIERS = new RecipeMap<>("uuamplifier", 1, 1, 0, 0, 0, 0, 1, 1, new AmplifierRecipeBuilder().EUt(32));
+    public static final RecipeMap<AmplifierRecipeBuilder> AMPLIFIERS = new RecipeMap<>("uuamplifier", 1, 1, 0, 0, 0, 0, 1, 1, new AmplifierRecipeBuilder().EUt(32))
+            .setSlotOverlay(false, false, GuiTextures.EXTRACTOR_OVERLAY)
+            .setSlotOverlay(true, true, GuiTextures.UUA_SLOT_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
 
     @ZenProperty
     public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = new RecipeMapAssemblyLine<>("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new SimpleRecipeBuilder())

@@ -20,7 +20,6 @@ import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.unification.material.IMaterial;
-import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
@@ -301,7 +300,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     //this DOES NOT include machine control widgets or binds player inventory
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids) {
         ModularUI.Builder builder = ModularUI.defaultBuilder();
-        builder.widget(new ProgressWidget(progressSupplier, 77, 22, 21, 20, progressBarTexture, moveType));
+        builder.widget(new ProgressWidget(progressSupplier, 78, 22, 20, 20, progressBarTexture, moveType));
         addInventorySlotGroup(builder, importItems, importFluids, false);
         addInventorySlotGroup(builder, exportItems, exportFluids, true);
         return builder;
@@ -320,8 +319,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
         int itemSlotsToLeft = inputSlotGrid[0];
         int itemSlotsToDown = inputSlotGrid[1];
-        int startInputsX = isOutputs ? 106 : 69 - itemSlotsToLeft * 18;
-        int startInputsY = 32 - (int) (itemSlotsToDown / 2.0 * 18);
+        int startInputsX = isOutputs ? 106 : 70 - itemSlotsToLeft * 18;
+        int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18);
         boolean wasGroupOutput = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
         if (wasGroupOutput) startInputsY -= 9;
         for (int i = 0; i < itemSlotsToDown; i++) {
@@ -345,7 +344,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 for (int i = 0; i < fluidInputsCount; i++) {
                     int x = isOutputs ? startInputsX + 18 * (i % 3) : startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
                     int y = startSpecY + (i / 3) * 18;
-                    addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    if (itemHandler.getSlots() >= 9)
+                        addSlot(builder, x, y + 2, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    else
+                        addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
                 }
             }
         }

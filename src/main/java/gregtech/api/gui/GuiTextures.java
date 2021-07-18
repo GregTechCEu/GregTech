@@ -100,6 +100,7 @@ public class GuiTextures {
     public static final TextureArea OUT_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/overlay/out_slot_overlay.png");
     public static final TextureArea FILTER_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/overlay/filter_slot_overlay.png");
     public static final TextureArea STRING_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/overlay/string_slot_overlay.png");
+    public static final TextureArea UUA_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/overlay/uua_overlay.png");
 
     //PROGRESS BARS
     public static final TextureArea PROGRESS_BAR_UNLOCK = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_unlock.png");
