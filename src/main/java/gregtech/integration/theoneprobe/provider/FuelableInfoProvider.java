@@ -1,7 +1,5 @@
 package gregtech.integration.theoneprobe.provider;
 
-import java.util.Collection;
-
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IFuelInfo;
 import gregtech.api.capability.IFuelable;
@@ -12,6 +10,8 @@ import mcjty.theoneprobe.api.TextStyleClass;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+
+import java.util.Collection;
 
 public class FuelableInfoProvider extends CapabilityInfoProvider<IFuelable> {
 
@@ -42,7 +42,7 @@ public class FuelableInfoProvider extends CapabilityInfoProvider<IFuelable> {
             final int fuelRemaining = fuelInfo.getFuelRemaining();
             final int fuelCapacity = fuelInfo.getFuelCapacity();
             final int fuelMinConsumed = fuelInfo.getFuelMinConsumed();
-            final int burnTime = fuelInfo.getFuelBurnTime()/20;
+            final long burnTime = fuelInfo.getFuelBurnTimeLong() / 20;
 
             IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
             if (fuelInfo instanceof ItemFuelInfo) {

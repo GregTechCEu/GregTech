@@ -47,8 +47,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.extendedBuilder();
         builder.image(7, 4, 162, 121, GuiTextures.DISPLAY);
-        builder.label(10, 7, getMetaFullName(), 0xFFFFFF);
-        builder.widget(new AdvancedTextWidget(10, 17, this::addDisplayText, 0xFFFFFF)
+        builder.label(11, 9, getMetaFullName(), 0xFFFFFF);
+        builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
             .setMaxWidthLimit(156)
             .setClickHandler(this::handleDisplayClick));
         builder.bindPlayerInventory(entityPlayer.inventory, 134);

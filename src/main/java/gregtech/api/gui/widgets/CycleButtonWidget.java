@@ -88,7 +88,7 @@ public class CycleButtonWidget extends Widget {
         String text = I18n.format(optionNames[currentOption]);
         fontRenderer.drawString(text,
             pos.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
-            pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, textColor);
+            pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2 + 1, textColor);
         GlStateManager.color(1.0f, 1.0f, 1.0f);
     }
 

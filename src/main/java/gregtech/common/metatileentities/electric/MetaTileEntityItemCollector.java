@@ -236,7 +236,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
         }
 
         this.itemFilter.initUI(45 + rowSize * 18 + 5, builder::widget);
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 8, 45 + rowSize * 18 + 105);
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 45 + rowSize * 18 + 105);
         return builder.build(getHolder(), entityPlayer);
     }
 }

@@ -26,7 +26,15 @@ public interface IFuelInfo {
 
     /**
      * @return the estimated amount of time in ticks for burning the remaining fuel
+     * @deprecated use the long version
      */
+    @Deprecated
     int getFuelBurnTime();
 
+    /**
+     * @return the estimated amount of time in ticks for burning the remaining fuel
+     */
+    default long getFuelBurnTimeLong() {
+        return getFuelBurnTime();
+    }
 }

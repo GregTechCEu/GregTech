@@ -82,7 +82,7 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
 
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 105 + 82)
             .widget(filterGroup)
-            .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 8, 105)
+            .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)
             .build(this, player);
     }
 
