@@ -27,9 +27,9 @@ import java.io.IOException;
 public class ModularUIGui extends GuiContainer implements IRenderContext {
 
     private final ModularUI modularUI;
-    private static float rColorForOverlay = ((ConfigHolder.U.GT5u.defaultPaintingColor >> 16) & 0xff) / 255.0F;
-    private static float gColorForOverlay = ((ConfigHolder.U.GT5u.defaultPaintingColor >> 8) & 0xff) / 255.0F;
-    private static float bColorForOverlay = (ConfigHolder.U.GT5u.defaultPaintingColor & 0xff) / 255.0F;
+    public static float rColorForOverlay = ((ConfigHolder.U.GT5u.defaultPaintingColor >> 16) & 0xff) / 255.0F;
+    public static float gColorForOverlay = ((ConfigHolder.U.GT5u.defaultPaintingColor >> 8) & 0xff) / 255.0F;
+    public static float bColorForOverlay = (ConfigHolder.U.GT5u.defaultPaintingColor & 0xff) / 255.0F;
 
     public ModularUI getModularUI() {
         return modularUI;

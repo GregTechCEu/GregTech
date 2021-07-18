@@ -12,6 +12,8 @@ import net.minecraft.network.PacketBuffer;
 
 import java.util.function.Supplier;
 
+import static gregtech.api.gui.impl.ModularUIGui.*;
+
 /**
  * Simple one-line text widget with text synced and displayed
  * as the raw string from the server
@@ -51,7 +53,7 @@ public class SimpleTextWidget extends Widget {
         fontRenderer.drawString(text,
             position.x - fontRenderer.getStringWidth(text) / 2,
             position.y - fontRenderer.FONT_HEIGHT / 2, color);
-        GlStateManager.color(1.0f, 1.0f, 1.0f);
+        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override

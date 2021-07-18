@@ -4,12 +4,15 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class LabelWidget extends Widget {
 
@@ -67,7 +70,7 @@ public class LabelWidget extends Widget {
             fontRenderer.drawString(resultText,
                 pos.x - fontRenderer.getStringWidth(resultText) / 2, pos.y, color);
         }
-        GlStateManager.color(1.0f, 1.0f, 1.0f);
+        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
 }

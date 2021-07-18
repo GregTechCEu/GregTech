@@ -16,6 +16,8 @@ import org.lwjgl.input.Mouse;
 
 import java.util.function.Consumer;
 
+import static gregtech.api.gui.impl.ModularUIGui.*;
+
 public class ClickButtonWidget extends Widget {
 
     protected TextureArea buttonTexture = GuiTextures.VANILLA_BUTTON.getSubArea(0.0, 0.0, 1.0, 0.5);
@@ -54,7 +56,7 @@ public class ClickButtonWidget extends Widget {
         fontRenderer.drawString(text,
             position.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
             position.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, textColor);
-        GlStateManager.color(1.0f, 1.0f, 1.0f);
+        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     @Override
