@@ -1841,7 +1841,6 @@ recipemap.cutting_saw.name=Cutting Saw
 recipemap.slicer.name=Slicer
 recipemap.extruder.name=Extruder
 recipemap.hammer.name=Hammer
-recipemap.uuamplifier.name=UU Amplifier
 recipemap.forming_press.name=Forming Press
 recipemap.forge_hammer.name=Forge Hammer
 recipemap.compressor.name=Compressor
@@ -2250,14 +2249,6 @@ gregtech.machine.alloy_smelter.uev.name=High-Tech Alloy Smelter II
 gregtech.machine.alloy_smelter.uiv.name=High-Tech Alloy Smelter III
 gregtech.machine.alloy_smelter.umv.name=High-Tech Alloy Smelter IV
 gregtech.machine.alloy_smelter.uxv.name=Ultimate Alloy Smelter
-
-gregtech.machine.amplifab.tooltip=Extracting UU Amplifier
-
-gregtech.machine.amplifab.lv.name=Basic Amplifabricator
-gregtech.machine.amplifab.mv.name=Advanced Amplifabricator
-gregtech.machine.amplifab.hv.name=Advanced Amplifabricator II
-gregtech.machine.amplifab.ev.name=Advanced Amplifabricator III
-gregtech.machine.amplifab.iv.name=Elite Amplifabricator
 
 gregtech.machine.arc_furnace.tooltip=Who needs a Blast Furnace?
 

@@ -1433,7 +1433,6 @@ recipemap.cutting_saw.name=板材切割机
 recipemap.slicer.name=食材切片机
 recipemap.extruder.name=压模器
 recipemap.hammer.name=锻造锤
-recipemap.uuamplifier.name=UU增幅液生产器
 recipemap.forming_press.name=冲压机床
 recipemap.forge_hammer.name=锻造锤
 recipemap.compressor.name=压缩机
@@ -1704,12 +1703,6 @@ gregtech.machine.alloy_smelter.lv.name=基础合金炉
 gregtech.machine.alloy_smelter.mv.name=进阶合金炉
 gregtech.machine.alloy_smelter.hv.name=进阶合金炉 II
 gregtech.machine.alloy_smelter.ev.name=进阶合金炉 III
-
-
-gregtech.machine.amplifab.lv.name=基础UU增幅液生产器
-gregtech.machine.amplifab.mv.name=进阶UU增幅液生产器
-gregtech.machine.amplifab.hv.name=进阶UU增幅液生产器 II
-gregtech.machine.amplifab.ev.name=进阶UU增幅液生产器 III
 
 
 gregtech.machine.arc_furnace.lv.name=基础电弧炉
@@ -2736,8 +2729,6 @@ gregtech.machine.alloy_smelter.uev.name=High-Tech Alloy Smelter II
 gregtech.machine.alloy_smelter.uiv.name=High-Tech Alloy Smelter III
 gregtech.machine.alloy_smelter.umv.name=High-Tech Alloy Smelter IV
 gregtech.machine.alloy_smelter.uxv.name=Ultimate Alloy Smelter
-gregtech.machine.amplifab.tooltip=Extracting UU Amplifier
-gregtech.machine.amplifab.iv.name=Elite Amplifabricator
 gregtech.machine.arc_furnace.tooltip=Who needs a Blast Furnace?
 gregtech.machine.arc_furnace.iv.name=Elite Arc Furnace
 gregtech.machine.arc_furnace.luv.name=Elite Arc Furnace II

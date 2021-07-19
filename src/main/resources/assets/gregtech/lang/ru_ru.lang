@@ -1648,7 +1648,6 @@ recipemap.cutting_saw.name=Резочная машина
 recipemap.slicer.name=Слайсер
 recipemap.extruder.name=Экструдер
 recipemap.hammer.name=Молот
-recipemap.uuamplifier.name=Усилитель мощности UU
 recipemap.forming_press.name=Формовочный пресс
 recipemap.forge_hammer.name=Кузнечный молот
 recipemap.compressor.name=Компрессор
@@ -1923,12 +1922,6 @@ gregtech.machine.alloy_smelter.lv.name=Базовая плавильня
 gregtech.machine.alloy_smelter.mv.name=Улучшеная плавильня
 gregtech.machine.alloy_smelter.hv.name=Улучшеная плавильня II
 gregtech.machine.alloy_smelter.ev.name=Улучшеная плавильня III
-
-
-gregtech.machine.amplifab.lv.name=Базовый фабрикатор
-gregtech.machine.amplifab.mv.name=Улучшеный фабрикатор
-gregtech.machine.amplifab.hv.name=Улучшеный фабрикатор II
-gregtech.machine.amplifab.ev.name=Улучшеный фабрикатор III
 
 
 gregtech.machine.arc_furnace.lv.name=Базовая дуговая печь
@@ -2792,8 +2785,6 @@ gregtech.machine.alloy_smelter.uev.name=High-Tech Alloy Smelter II
 gregtech.machine.alloy_smelter.uiv.name=High-Tech Alloy Smelter III
 gregtech.machine.alloy_smelter.umv.name=High-Tech Alloy Smelter IV
 gregtech.machine.alloy_smelter.uxv.name=Ultimate Alloy Smelter
-gregtech.machine.amplifab.tooltip=Extracting UU Amplifier
-gregtech.machine.amplifab.iv.name=Elite Amplifabricator
 gregtech.machine.arc_furnace.tooltip=Who needs a Blast Furnace?
 gregtech.machine.arc_furnace.iv.name=Elite Arc Furnace
 gregtech.machine.arc_furnace.luv.name=Elite Arc Furnace II

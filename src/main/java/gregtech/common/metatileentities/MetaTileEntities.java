@@ -63,7 +63,6 @@ public class MetaTileEntities {
     public static SimpleMachineMetaTileEntity[] ELECTRIC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static MetaTileEntityMacerator[] MACERATOR = new MetaTileEntityMacerator[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] ALLOY_SMELTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] AMPLIFABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] ARC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] AUTOCLAVE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
@@ -243,9 +242,8 @@ public class MetaTileEntities {
         registerSimpleMetaTileEntity(ALLOY_SMELTER, 80, "alloy_smelter", RecipeMaps.ALLOY_SMELTER_RECIPES, Textures.ALLOY_SMELTER_OVERLAY,
                 ConfigHolder.U.machines.midTierAlloySmelter, ConfigHolder.U.machines.highTierAlloySmelter);
 
-        // Amplifabricator, IDs 95-109
+        // Free Range, IDs 95-109
         // Can add higher tier machines if desired, space is left for it
-        registerSimpleMetaTileEntity(AMPLIFABRICATOR, 95, "amplifab", RecipeMaps.AMPLIFIERS, Textures.AMPLIFAB_OVERLAY, false, false);
 
         // Arc Furnace, IDs 110-124
         registerSimpleMetaTileEntity(ARC_FURNACE, 110, "arc_furnace", RecipeMaps.ARC_FURNACE_RECIPES, Textures.ARC_FURNACE_OVERLAY,

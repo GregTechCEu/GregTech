@@ -657,24 +657,6 @@ public class RecipeMaps {
         .setSlotOverlay(false, false, GuiTextures.BOXED_OVERLAY)
         .setProgressBar(GuiTextures.PROGRESS_BAR_UNPACKER, MoveType.HORIZONTAL);
 
-
-    /**
-     * Example:
-     * <pre>
-     *      RecipeMap.AMPLIFIERS.recipeBuilder()
-     *      		.inputs(ItemList.IC2_Scrap.get(9))
-     *      		.duration(180)
-     *      		.amplifierAmountOutputted(1)
-     *      		.buildAndRegister();
-     * </pre>
-     */
-
-    @ZenProperty
-    public static final RecipeMap<AmplifierRecipeBuilder> AMPLIFIERS = new RecipeMap<>("uuamplifier", 1, 1, 0, 0, 0, 0, 1, 1, new AmplifierRecipeBuilder().EUt(32))
-            .setSlotOverlay(false, false, GuiTextures.EXTRACTOR_OVERLAY)
-            .setSlotOverlay(true, true, GuiTextures.UUA_SLOT_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
-
     @ZenProperty
     public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = new RecipeMapAssemblyLine<>("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new SimpleRecipeBuilder())
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
