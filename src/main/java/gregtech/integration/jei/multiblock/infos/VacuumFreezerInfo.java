@@ -54,6 +54,4 @@ public class VacuumFreezerInfo extends MultiblockInfoPage {
         ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.preview.limit", 14).setStyle(new Style().setColor(TextFormatting.AQUA));
         addBlockTooltip(MetaBlocks.METAL_CASING.getItemVariant(MetalCasingType.ALUMINIUM_FROSTPROOF), tooltip);
     }
-
-
 }

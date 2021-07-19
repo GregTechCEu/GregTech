@@ -418,71 +418,69 @@ public class SeparationRecipes {
                 .output(dust, Stone)
                 .duration(500).EUt(48).buildAndRegister();
 
-        // Fluid Extractor
-        FLUID_EXTRACTION_RECIPES.recipeBuilder()
+        // Extractor
+        EXTRACTOR_RECIPES.recipeBuilder()
                 .input(dust, Monazite)
                 .fluidOutputs(Helium.getFluid(200))
                 .duration(64).EUt(64).buildAndRegister();
 
         List<Tuple<ItemStack, Integer>> seedEntries = GTUtility.getGrassSeedEntries();
         for (Tuple<ItemStack, Integer> seedEntry : seedEntries) {
-            FLUID_EXTRACTION_RECIPES.recipeBuilder()
+            EXTRACTOR_RECIPES.recipeBuilder()
                     .duration(32).EUt(2)
                     .inputs(seedEntry.getFirst())
                     .fluidOutputs(SeedOil.getFluid(10))
                     .buildAndRegister();
         }
 
-        FLUID_EXTRACTION_RECIPES.recipeBuilder().duration(32).EUt(2)
+        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
                 .inputs(new ItemStack(Items.BEETROOT_SEEDS))
                 .fluidOutputs(SeedOil.getFluid(10))
                 .buildAndRegister();
 
-        FLUID_EXTRACTION_RECIPES.recipeBuilder().duration(32).EUt(2)
+        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
                 .inputs(new ItemStack(Items.MELON_SEEDS, 1, GTValues.W))
                 .fluidOutputs(SeedOil.getFluid(3))
                 .buildAndRegister();
 
-        FLUID_EXTRACTION_RECIPES.recipeBuilder().duration(32).EUt(2)
+        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(2)
                 .inputs(new ItemStack(Items.PUMPKIN_SEEDS, 1, GTValues.W))
                 .fluidOutputs(SeedOil.getFluid(6))
                 .buildAndRegister();
 
-        FLUID_EXTRACTION_RECIPES.recipeBuilder().duration(600).EUt(28)
+        EXTRACTOR_RECIPES.recipeBuilder().duration(600).EUt(28)
                 .input(dust, Quartzite)
                 .fluidOutputs(Glass.getFluid(L / 2))
                 .buildAndRegister();
 
-        FLUID_EXTRACTION_RECIPES.recipeBuilder().duration(128).EUt(4)
+        EXTRACTOR_RECIPES.recipeBuilder().duration(128).EUt(4)
                 .inputs(new ItemStack(Items.COAL, 1, 1))
                 .chancedOutput(dust, Ash, 1000, 200)
-                .fluidOutputs(Creosote.getFluid(100))
+                .fluidOutputs(WoodTar.getFluid(100))
                 .buildAndRegister();
 
-        FLUID_EXTRACTION_RECIPES.recipeBuilder().duration(16).EUt(4)
+        EXTRACTOR_RECIPES.recipeBuilder().duration(16).EUt(4)
                 .input(dust, Wood)
                 .chancedOutput(PLANT_BALL, 200, 30)
                 .fluidOutputs(Creosote.getFluid(5))
                 .buildAndRegister();
 
-        FLUID_EXTRACTION_RECIPES.recipeBuilder().duration(32).EUt(4)
+        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(4)
                 .input(dust, HydratedCoal)
                 .output(dust, Coal)
                 .fluidOutputs(Water.getFluid(100))
                 .buildAndRegister();
 
-        FLUID_EXTRACTION_RECIPES.recipeBuilder().duration(32).EUt(4)
+        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(4)
                 .inputs(new ItemStack(Items.SNOWBALL))
                 .fluidOutputs(Water.getFluid(250))
                 .buildAndRegister();
 
-        FLUID_EXTRACTION_RECIPES.recipeBuilder().duration(128).EUt(4)
+        EXTRACTOR_RECIPES.recipeBuilder().duration(128).EUt(4)
                 .inputs(new ItemStack(Blocks.SNOW))
                 .fluidOutputs(Water.getFluid(1000))
                 .buildAndRegister();
 
-
-        // Extractor
         EXTRACTOR_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.BRICK_BLOCK))
                 .outputs(new ItemStack(Items.BRICK, 4))

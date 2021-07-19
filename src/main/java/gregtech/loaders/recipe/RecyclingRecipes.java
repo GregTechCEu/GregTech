@@ -64,7 +64,7 @@ public class RecyclingRecipes {
         maceratorRecipeBuilder.buildAndRegister();
 
         if (dustMaterial.shouldGenerateFluid()) {
-            RecipeBuilder<?> fluidExtractorRecipeBuilder = RecipeMaps.FLUID_EXTRACTION_RECIPES.recipeBuilder()
+            RecipeBuilder<?> fluidExtractorRecipeBuilder = RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
                 .fluidOutputs(dustMaterial.getFluid((int) (firstStack.amount * L / M)))
                 .duration((int) Math.max(1L, firstStack.amount * 80 / M))
                 .EUt(32 * voltageMultiplier);

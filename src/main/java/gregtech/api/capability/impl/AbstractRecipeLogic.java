@@ -261,34 +261,26 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         }
         boolean negativeEU = EUt < 0;
         int tier = getOverclockingTier(voltage);
+
+        // Cannot overclock
         if (GTValues.V[tier] <= EUt || tier == 0)
             return new int[]{EUt, duration};
+
         if (negativeEU)
             EUt = -EUt;
-        if (hasPerfectOC) {
-            int resultEUt = EUt;
-            double resultDuration = duration;
-            //do not overclock further if duration is already too small
-            while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1]) {
-                resultEUt *= 4;
-                resultDuration /= 4.0;
-            }
-            return new int[]{negativeEU ? -resultEUt : resultEUt, (int) Math.ceil(resultDuration)};
-        } else if (EUt <= 16) {
-            int multiplier = EUt <= 8 ? tier : tier - 1;
-            int resultEUt = EUt * (1 << multiplier) * (1 << multiplier);
-            int resultDuration = duration / (1 << multiplier);
-            return new int[]{negativeEU ? -resultEUt : resultEUt, resultDuration};
-        } else {
-            int resultEUt = EUt;
-            double resultDuration = duration;
-            //do not overclock further if duration is already too small
-            while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1]) {
-                resultEUt *= 4;
-                resultDuration /= 2.8;
-            }
-            return new int[]{negativeEU ? -resultEUt : resultEUt, (int) Math.ceil(resultDuration)};
+
+        int resultEUt = EUt;
+        double resultDuration = duration;
+        double divisor = hasPerfectOC ? 4.0 : ConfigHolder.U.overclockDivisor;
+        int maxOverclocks = tier - 1; // exclude ULV overclocking
+
+        //do not overclock further if duration is already too small
+        while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1] && maxOverclocks != 0) {
+            resultEUt *= 4;
+            resultDuration /= divisor;
+            maxOverclocks--;
         }
+        return new int[]{negativeEU ? -resultEUt : resultEUt, (int) Math.ceil(resultDuration)};
     }
 
     protected int getOverclockingTier(long voltage) {

@@ -4,6 +4,8 @@ import gregtech.api.gui.resources.AdoptableTextureArea;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
 
+import javax.xml.soap.Text;
+
 public class GuiTextures {
 
     //GREGTECH
@@ -121,10 +123,13 @@ public class GuiTextures {
     public static final TextureArea STRING_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/overlay/string_slot_overlay.png");
     public static final TextureArea TOOL_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/overlay/tool_slot_overlay.png");
     public static final TextureArea TURBINE_OVERLAY = TextureArea.fullImage("textures/gui/overlay/turbine_overlay.png");
-    public static final TextureArea UUA_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/overlay/uua_overlay.png");
     public static final TextureArea VIAL_OVERLAY_1 = TextureArea.fullImage("textures/gui/overlay/vial_overlay_1.png");
     public static final TextureArea VIAL_OVERLAY_2 = TextureArea.fullImage("textures/gui/overlay/vial_overlay_2.png");
     public static final TextureArea WIREMILL_OVERLAY = TextureArea.fullImage("textures/gui/overlay/wiremill_overlay.png");
+    public static final TextureArea POSITIVE_MATTER_OVERLAY = TextureArea.fullImage("textures/gui/overlay/positive_matter_overlay.png");
+    public static final TextureArea NEUTRAL_MATTER_OVERLAY = TextureArea.fullImage("textures/gui/overlay/neutral_matter_overlay.png");
+    public static final TextureArea DATA_ORB_OVERLAY = TextureArea.fullImage("textures/gui/overlay/data_orb_overlay.png");
+    public static final TextureArea SCANNER_OVERLAY = TextureArea.fullImage("textures/gui/overlay/scanner_overlay.png");
 
     //PROGRESS BARS
     public static final TextureArea PROGRESS_BAR_ARC_FURNACE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arc_furnace.png");

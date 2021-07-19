@@ -37,5 +37,4 @@ public class PrimitiveBlastFurnaceInfo extends MultiblockInfoPage {
     public String[] getDescription() {
         return new String[]{I18n.format("gregtech.multiblock.primitive_blast_furnace.description")};
     }
-
 }

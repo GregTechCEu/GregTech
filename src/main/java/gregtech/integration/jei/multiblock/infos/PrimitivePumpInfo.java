@@ -11,6 +11,10 @@ import gregtech.integration.jei.multiblock.MultiblockShapeInfo;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -44,5 +48,11 @@ public class PrimitivePumpInfo extends MultiblockInfoPage {
                 I18n.format("gregtech.multiblock.primitive_water_pump.extra1").split("/n"),
                 I18n.format("gregtech.multiblock.primitive_water_pump.extra2").split("/n")
         ).flatMap(Stream::of).toArray(String[]::new);
+    }
+
+    @Override
+    protected void generateBlockTooltips() {
+        ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.preview.primitive_pump.hatch").setStyle(new Style().setColor(TextFormatting.RED));
+        addBlockTooltip(MetaTileEntities.PUMP_OUTPUT_HATCH.getStackForm(), tooltip);
     }
 }

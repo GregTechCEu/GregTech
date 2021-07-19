@@ -24,21 +24,21 @@ public class AssemblerRecipeLoader {
                 .input(plate, Bronze, 4)
                 .input(gear, Bronze, 2)
                 .input(frameGt, Bronze)
-                .outputs(TURBINE_CASING.getItemVariant(BRONZE_GEARBOX))
+                .outputs(TURBINE_CASING.getItemVariant(BRONZE_GEARBOX, 2))
                 .duration(100).EUt(30).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Steel, 4)
                 .input(gear, Steel, 2)
                 .input(frameGt, Steel)
-                .outputs(TURBINE_CASING.getItemVariant(STEEL_GEARBOX))
+                .outputs(TURBINE_CASING.getItemVariant(STEEL_GEARBOX, 2))
                 .duration(100).EUt(30).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Titanium, 4)
                 .input(gear, Titanium, 2)
                 .input(frameGt, Titanium)
-                .outputs(TURBINE_CASING.getItemVariant(TITANIUM_GEARBOX))
+                .outputs(TURBINE_CASING.getItemVariant(TITANIUM_GEARBOX, 2))
                 .duration(100).EUt(30).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -53,13 +53,13 @@ public class AssemblerRecipeLoader {
                 .input(rotor, Titanium, 4)
                 .input(pipeMedium, Titanium, 2)
                 .inputs(METAL_CASING.getItemVariant(TITANIUM_STABLE))
-                .outputs(MULTIBLOCK_CASING.getItemVariant(ENGINE_INTAKE_CASING))
+                .outputs(MULTIBLOCK_CASING.getItemVariant(ENGINE_INTAKE_CASING, 2))
                 .duration(100).EUt(30).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(plate, Bronze, 6)
                 .inputs(new ItemStack(Blocks.BRICK_BLOCK, 1))
-                .outputs(METAL_CASING.getItemVariant(BRONZE_BRICKS))
+                .outputs(METAL_CASING.getItemVariant(BRONZE_BRICKS, 2))
                 .duration(100).EUt(30).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()

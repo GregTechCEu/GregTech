@@ -105,27 +105,22 @@ public class PartsRecipeHandler {
                     OreDictUnifier.get(foilPrefix, material, 2),
                     "hP ", 'P', new UnificationEntry(plate, material));
 
-        if (ConfigHolder.U.machines.enableClusterMill) {
-            RecipeMaps.CLUSTER_MILL_RECIPES.recipeBuilder().EUt(24).duration((int) material.getAverageMass())
-                    .input(plate, material)
-                    .output(foilPrefix, material, 4)
-                    .buildAndRegister();
-
-        } else {
-            RecipeMaps.BENDER_RECIPES.recipeBuilder()
-                    .input(plate, material)
-                    .output(foilPrefix, material, 4)
-                    .duration((int) material.getAverageMass())
-                    .EUt(24)
-                    .circuitMeta(1)
-                    .buildAndRegister();
-        }
+        RecipeMaps.BENDER_RECIPES.recipeBuilder()
+                .input(plate, material)
+                .output(foilPrefix, material, 4)
+                .duration((int) material.getAverageMass())
+                .EUt(24)
+                .circuitMeta(1)
+                .buildAndRegister();
     }
 
     public static void processFineWire(OrePrefix fineWirePrefix, IngotMaterial material) {
         ItemStack fineWireStack = OreDictUnifier.get(fineWirePrefix, material);
-        ModHandler.addShapelessRecipe(String.format("fine_wire_%s", material.toString()),
-            fineWireStack, 'x', new UnificationEntry(OrePrefix.foil, material));
+
+        if (!OreDictUnifier.get(foil, material).isEmpty())
+            ModHandler.addShapelessRecipe(String.format("fine_wire_%s", material.toString()),
+                fineWireStack, 'x', new UnificationEntry(OrePrefix.foil, material));
+
         if (material.cableProperties != null) {
             RecipeMaps.WIREMILL_RECIPES.recipeBuilder()
                 .input(OrePrefix.wireGtSingle, material)

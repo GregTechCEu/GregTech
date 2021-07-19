@@ -9,7 +9,12 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.jei.multiblock.MultiblockInfoPage;
 import gregtech.integration.jei.multiblock.MultiblockShapeInfo;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,5 +83,16 @@ public class LargeChemicalReactorInfo extends MultiblockInfoPage {
     @Override
     public String[] getDescription() {
         return new String[]{I18n.format("gregtech.multiblock.large_chemical_reactor.description")};
+    }
+
+    @Override
+    protected void generateBlockTooltips() {
+        super.generateBlockTooltips();
+        ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.preview.limit", 10).setStyle(new Style().setColor(TextFormatting.AQUA));
+        addBlockTooltip(MetaBlocks.METAL_CASING.getItemVariant(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING), tooltip);
+
+        ItemStack coils = MetaBlocks.WIRE_COIL.getItemVariant(BlockWireCoil.CoilType.CUPRONICKEL);
+        ITextComponent coilTooltip = new TextComponentTranslation("gregtech.multiblock.preview.only", coils.getDisplayName()).setStyle(new Style().setColor(TextFormatting.RED));
+        addBlockTooltip(coils, coilTooltip);
     }
 }

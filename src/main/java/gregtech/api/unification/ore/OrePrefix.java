@@ -7,13 +7,11 @@ import gregtech.api.unification.material.MaterialIconType;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.Validate;
-import scala.collection.GenTraversableLike;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -309,6 +307,8 @@ public enum OrePrefix {
 
         pipeTiny.setIgnored(Materials.Wood);
         pipeHuge.setIgnored(Materials.Wood);
+        plate.setIgnored(Materials.BorosilicateGlass);
+        foil.setIgnored(Materials.BorosilicateGlass);
     }
 
     private static void excludeAllGems(Material material) {

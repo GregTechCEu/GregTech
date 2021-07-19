@@ -59,5 +59,4 @@ public class PyrolyseOvenInfo extends MultiblockInfoPage {
         ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.preview.only", coils.getDisplayName()).setStyle(new Style().setColor(TextFormatting.RED));
         addBlockTooltip(coils, tooltip);
     }
-
 }
