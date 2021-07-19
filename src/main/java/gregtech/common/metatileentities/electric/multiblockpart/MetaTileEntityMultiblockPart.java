@@ -25,7 +25,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     private final int tier;
     private BlockPos controllerPos;
     private MultiblockControllerBase controllerTile;
-    private ICubeRenderer hatchColor = null;
+    private ICubeRenderer hatchTexture = null;
 
     public MetaTileEntityMultiblockPart(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId);
@@ -72,10 +72,10 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller != null) {
-            hatchColor = controller.getBaseTexture(this);
+            this.hatchTexture = controller.getBaseTexture(this);
         }
-        if (controller == null && hatchColor != null){
-            return hatchColor;
+        if (controller == null && this.hatchTexture != null){
+            return this.hatchTexture;
         }
         if (controller == null) {
             this.setPaintingColor(DEFAULT_PAINTING_COLOR);
