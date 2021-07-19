@@ -44,9 +44,6 @@ public class MaterialRecipeHandler {
         OrePrefix.dust.addProcessingHandler(DustMaterial.class, MaterialRecipeHandler::processDust);
         OrePrefix.dustSmall.addProcessingHandler(DustMaterial.class, MaterialRecipeHandler::processSmallDust);
         OrePrefix.dustTiny.addProcessingHandler(DustMaterial.class, MaterialRecipeHandler::processTinyDust);
-        OrePrefix.dust.addProcessingHandler(SimpleDustMaterial.class, MaterialRecipeHandler::processDust);
-        OrePrefix.dustSmall.addProcessingHandler(SimpleDustMaterial.class, MaterialRecipeHandler::processSmallDust);
-        OrePrefix.dustTiny.addProcessingHandler(SimpleDustMaterial.class, MaterialRecipeHandler::processTinyDust);
 
         for (OrePrefix orePrefix : GEM_ORDER) {
             orePrefix.addProcessingHandler(GemMaterial.class, MaterialRecipeHandler::processGem);

@@ -7,6 +7,7 @@ import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.type.Material;
+import gregtech.api.util.GTLog;
 import net.minecraft.item.ItemStack;
 
 public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
@@ -41,7 +42,11 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
 
     @Override
     public PipeType getItemPipeType(ItemStack itemStack) {
-        return getPipeTypeClass().getEnumConstants()[itemStack.getMetadata() / 1000];
+        GTLog.logger.info(itemStack.getMetadata());
+        if (itemStack.getMetadata() < 32000) {
+            return getPipeTypeClass().getEnumConstants()[itemStack.getMetadata() / 1000];
+        }
+        return getPipeTypeClass().getEnumConstants()[0];
     }
 
     public Material getItemMaterial(ItemStack itemStack) {

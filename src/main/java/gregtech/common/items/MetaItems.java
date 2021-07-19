@@ -1,7 +1,6 @@
 package gregtech.common.items;
 
 import com.google.common.base.CaseFormat;
-import gregtech.api.items.materialitem.DustMetaItem;
 import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
@@ -473,8 +472,8 @@ public final class MetaItems {
             OrePrefix.crushed, OrePrefix.crushedPurified, OrePrefix.crushedCentrifuged, OrePrefix.gem, OrePrefix.nugget,
             OrePrefix.ingot, OrePrefix.ingotHot, OrePrefix.plate, OrePrefix.plateDouble, OrePrefix.plateDense, OrePrefix.stick,
             OrePrefix.lens, OrePrefix.bolt, OrePrefix.screw, OrePrefix.ring, OrePrefix.foil, OrePrefix.round,
-            OrePrefix.oreChunk, OrePrefix.oreEnderChunk, OrePrefix.oreNetherChunk, OrePrefix.oreSandyChunk,
-            OrePrefix.seed, OrePrefix.crop, OrePrefix.essence, OrePrefix.plateCurved, OrePrefix.toolHeadSword, OrePrefix.toolHeadPickaxe, OrePrefix.toolHeadShovel, OrePrefix.toolHeadAxe,
+            OrePrefix.oreChunk,
+            OrePrefix.plateCurved, OrePrefix.toolHeadSword, OrePrefix.toolHeadPickaxe, OrePrefix.toolHeadShovel, OrePrefix.toolHeadAxe,
             OrePrefix.toolHeadHoe, OrePrefix.toolHeadHammer, OrePrefix.toolHeadFile, OrePrefix.toolHeadSaw,
             OrePrefix.toolHeadDrill, OrePrefix.toolHeadChainsaw, OrePrefix.toolHeadWrench, OrePrefix.toolHeadUniversalSpade,
             OrePrefix.toolHeadSense, OrePrefix.toolHeadBuzzSaw, OrePrefix.turbineBlade,
@@ -486,8 +485,6 @@ public final class MetaItems {
         first.setRegistryName("meta_item_1");
         MetaItem2 second = new MetaItem2();
         second.setRegistryName("meta_item_2");
-        DustMetaItem dustItem = new DustMetaItem();
-        dustItem.setRegistryName("meta_item_3");
         MetaTool tool = new MetaTool();
         tool.setRegistryName("meta_tool");
         for (OrePrefix i : orePrefixes) {
@@ -503,8 +500,6 @@ public final class MetaItems {
         for (MetaItem<?> item : ITEMS) {
             if (item instanceof MaterialMetaItem) {
                 ((MaterialMetaItem) item).registerOreDict();
-            } else if (item instanceof DustMetaItem) {
-                ((DustMetaItem) item).registerOreDict();
             } else if (item instanceof MetaOrePrefix) {
                 ((MetaOrePrefix) item).registerOreDict();
             }

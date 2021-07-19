@@ -5,7 +5,10 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.*;
+import gregtech.api.unification.material.type.DustMaterial;
+import gregtech.api.unification.material.type.FluidMaterial;
+import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.type.SimpleFluidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.item.ItemStack;
@@ -26,9 +29,6 @@ public class DecompositionRecipeHandler {
                 OrePrefix prefix = material instanceof DustMaterial ? OrePrefix.dust : null;
                 processDecomposition(prefix, material);
             }
-        }
-        for (SimpleDustMaterial material : SimpleDustMaterial.MATERIAL_REGISTRY) {
-            processDecomposition(OrePrefix.dust, material);
         }
         for (SimpleFluidMaterial material : SimpleFluidMaterial.MATERIAL_REGISTRY) {
             processDecomposition(null, material);

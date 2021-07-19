@@ -3,7 +3,10 @@ package gregtech.api.unification;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Joiner;
 import gregtech.api.unification.material.IMaterial;
-import gregtech.api.unification.material.type.*;
+import gregtech.api.unification.material.type.DustMaterial;
+import gregtech.api.unification.material.type.IngotMaterial;
+import gregtech.api.unification.material.type.MarkerMaterial;
+import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.*;
 import gregtech.api.util.CustomModPriorityComparator;
@@ -133,10 +136,6 @@ public class OreDictUnifier {
                 String underscoreName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, possibleMaterialName); //basaltic_mineral_sand
                 IMaterial<?> possibleMaterial = Material.MATERIAL_REGISTRY.getObject(underscoreName); //Materials.BasalticSand
                 if (possibleMaterial == null) {
-                    //if we didn't found real material, try using simple material registry
-                    possibleMaterial = SimpleDustMaterial.MATERIAL_REGISTRY.getObject(underscoreName);
-                }
-                if (possibleMaterial == null) {
                     //if we didn't found real material, try using marker material registry
                     possibleMaterial = markerMaterialRegistry.get(underscoreName);
                 }
@@ -263,21 +262,8 @@ public class OreDictUnifier {
         return ItemStack.EMPTY;
     }
 
-    public static ItemStack getDust(SimpleDustMaterial material, long materialAmount) {
-        if (materialAmount <= 0)
-            return ItemStack.EMPTY;
-        if (materialAmount % M == 0 || materialAmount >= M * 16)
-            return get(OrePrefix.dust, material, (int) (materialAmount / M));
-        else if ((materialAmount * 4) % M == 0 || materialAmount >= M * 8)
-            return get(OrePrefix.dustSmall, material, (int) ((materialAmount * 4) / M));
-        else if ((materialAmount * 9) >= M)
-            return get(OrePrefix.dustTiny, material, (int) ((materialAmount * 9) / M));
-        return ItemStack.EMPTY;
-    }
 
     public static ItemStack getDust(MaterialStack materialStack) {
-        if (materialStack.material.getMaterialClass() == SimpleDustMaterial.class)
-            return getDust((SimpleDustMaterial) materialStack.material, materialStack.amount);
         return getDust((DustMaterial) materialStack.material, materialStack.amount);
     }
 
