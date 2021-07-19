@@ -223,10 +223,10 @@ public class GTJeiPlugin implements IModPlugin {
 
         registry.addRecipeCatalyst(MetaTileEntities.WORKBENCH.getStackForm(), VanillaRecipeCategoryUid.CRAFTING);
 
-        for (MetaTileEntity machine : MetaTileEntities.FLUID_CANNER) {
+        for (MetaTileEntity machine : MetaTileEntities.CANNER) {
             if (machine == null) continue;
             registry.addIngredientInfo(machine.getStackForm(), VanillaTypes.ITEM,
-                "gregtech.machine.fluid_canner.jei_description");
+                "gregtech.machine.canner.jei_description");
         }
 
         //Multiblock info page registration

@@ -129,7 +129,6 @@ public class GTValues {
             ConfigHolder.U.machines.highTierExtractors ||
             ConfigHolder.U.machines.highTierExtruders ||
             ConfigHolder.U.machines.highTierFermenters ||
-            ConfigHolder.U.machines.highTierFluidCanners ||
             ConfigHolder.U.machines.highTierFluidHeaters ||
             ConfigHolder.U.machines.highTierFluidSolidifiers ||
             ConfigHolder.U.machines.highTierForgeHammers ||

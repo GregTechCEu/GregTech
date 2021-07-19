@@ -70,15 +70,6 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> FLUID_CANNER_RECIPES = new RecipeMapFluidCanner("fluid_canner", 1, 1, 0, 1, 0, 1, 0, 1, 1, new SimpleRecipeBuilder())
-        .setSlotOverlay(false, false, GuiTextures.CANISTER_OVERLAY)
-        .setSlotOverlay(true, false, GuiTextures.CANISTER_OVERLAY)
-        .setSlotOverlay(false, true, GuiTextures.DARK_CANISTER_OVERLAY)
-        .setSlotOverlay(true, true, GuiTextures.DARK_CANISTER_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_CANNER, MoveType.HORIZONTAL);
-
-
-    @ZenProperty
     public static final RecipeMap<ArcFurnaceRecipeBuilder> ARC_FURNACE_RECIPES = new RecipeMap<>("arc_furnace", 1, 1, 1, 4, 1, 1, 0, 1, new ArcFurnaceRecipeBuilder())
         .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, MoveType.HORIZONTAL);
 
@@ -569,10 +560,13 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> CANNER_RECIPES = new RecipeMap<>("canner", 1, 2, 1, 2, 0, 0, 0, 0, new SimpleRecipeBuilder())
-        .setSlotOverlay(false, false, false, GuiTextures.CANNER_OVERLAY)
-        .setSlotOverlay(false, false, true, GuiTextures.CANISTER_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_CANNER, MoveType.HORIZONTAL);
+    public static final RecipeMap<SimpleRecipeBuilder> CANNER_RECIPES = new RecipeMapFluidCanner("canner", 1, 2, 1, 2, 0, 1, 0, 1, new SimpleRecipeBuilder())
+            .setSlotOverlay(false, false, false, GuiTextures.CANNER_OVERLAY)
+            .setSlotOverlay(false, false, true, GuiTextures.CANISTER_OVERLAY)
+            .setSlotOverlay(true, false, GuiTextures.CANISTER_OVERLAY)
+            .setSlotOverlay(false, true, GuiTextures.DARK_CANISTER_OVERLAY)
+            .setSlotOverlay(true, true, GuiTextures.DARK_CANISTER_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_CANNER, MoveType.HORIZONTAL);
 
     /**
      * Example:

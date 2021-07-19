@@ -1805,7 +1805,6 @@ recipemap.assembler.name=Assembler
 recipemap.press.name=Forming Press
 recipemap.macerator.name=Pulverization
 recipemap.unpackager.name=Unpackager
-recipemap.fluid_canner.name=Fluid Canning Machine
 recipemap.arc_furnace.name=Arc Furnace
 recipemap.sifter.name=Sifter
 recipemap.laser_engraver.name=Precision Laser Engraver
@@ -2340,7 +2339,8 @@ gregtech.machine.brewery.uiv.name=High-Tech Brewery III
 gregtech.machine.brewery.umv.name=High-Tech Brewery IV
 gregtech.machine.brewery.uxv.name=Ultimate Brewery
 
-gregtech.machine.canner.tooltip=Immobile Food Canning Machine GTA4
+gregtech.machine.canner.tooltip=Puts Fluids into and out of Containers. Now with Items!
+gregtech.machine.canner.jei_description=You can fill and empty any fluid containers with the Fluid Canner (e.g. Buckets or Fluid Cells)
 
 gregtech.machine.canner.lv.name=Basic Canning Machine
 gregtech.machine.canner.mv.name=Advanced Canning Machine
@@ -2531,22 +2531,6 @@ gregtech.machine.fermenter.uev.name=High-Tech Fermenter II
 gregtech.machine.fermenter.uiv.name=High-Tech Fermenter III
 gregtech.machine.fermenter.umv.name=High-Tech Fermenter IV
 gregtech.machine.fermenter.uxv.name=Ultimate Fermenter
-
-gregtech.machine.fluid_canner.tooltip=Puts Fluids into and out of Containers
-
-gregtech.machine.fluid_canner.lv.name=Basic Fluid Canner
-gregtech.machine.fluid_canner.mv.name=Advanced Fluid Canner
-gregtech.machine.fluid_canner.hv.name=Advanced Fluid Canner II
-gregtech.machine.fluid_canner.ev.name=Advanced Fluid Canner III
-gregtech.machine.fluid_canner.iv.name=Elite Fluid Canner
-gregtech.machine.fluid_canner.luv.name=Elite Fluid Canner II
-gregtech.machine.fluid_canner.zpm.name=Elite Fluid Canner III
-gregtech.machine.fluid_canner.uv.name=Elite Fluid Canner IV
-gregtech.machine.fluid_canner.uhv.name=High-Tech Fluid Canner
-gregtech.machine.fluid_canner.uev.name=High-Tech Fluid Canner II
-gregtech.machine.fluid_canner.uiv.name=High-Tech Fluid Canner III
-gregtech.machine.fluid_canner.umv.name=High-Tech Fluid Canner IV
-gregtech.machine.fluid_canner.uxv.name=Ultimate Fluid Canner
 
 gregtech.machine.fluid_heater.tooltip=Heating up your Fluids
 

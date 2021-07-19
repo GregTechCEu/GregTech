@@ -284,7 +284,6 @@ public class ConfigHolder {
             public boolean midTierExtractors = false;
             public boolean midTierExtruders = false;
             public boolean midTierFermenters = false;
-            public boolean midTierFluidCanners = false;
             public boolean midTierFluidHeaters = false;
             public boolean midTierFluidSolidifiers = false;
             public boolean midTierForgeHammers = false;
@@ -321,7 +320,6 @@ public class ConfigHolder {
             public boolean highTierExtractors = false;
             public boolean highTierExtruders = false;
             public boolean highTierFermenters = false;
-            public boolean highTierFluidCanners = false;
             public boolean highTierFluidHeaters = false;
             public boolean highTierFluidSolidifiers = false;
             public boolean highTierForgeHammers = false;

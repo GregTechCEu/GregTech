@@ -81,7 +81,6 @@ public class MetaTileEntities {
     public static SimpleMachineMetaTileEntity[] EXTRACTOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] EXTRUDER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] FERMENTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] FLUID_CANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] FLUID_HEATER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] FLUID_SOLIDIFIER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static SimpleMachineMetaTileEntity[] FORGE_HAMMER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
@@ -317,9 +316,7 @@ public class MetaTileEntities {
         registerSimpleMetaTileEntity(FERMENTER, 350, "fermenter", RecipeMaps.FERMENTING_RECIPES, Textures.FERMENTER_OVERLAY,
                 ConfigHolder.U.machines.midTierFermenters, ConfigHolder.U.machines.highTierFermenters);
 
-        // Fluid Canner, IDs 365-379
-        registerSimpleMetaTileEntity(FLUID_CANNER, 365, "fluid_canner", RecipeMaps.FLUID_CANNER_RECIPES, Textures.FLUID_CANNER_OVERLAY,
-                ConfigHolder.U.machines.midTierFluidCanners, ConfigHolder.U.machines.highTierFluidCanners);
+        // Free Range, IDs 365-379
 
         // Free Range, IDs 380-394
 
