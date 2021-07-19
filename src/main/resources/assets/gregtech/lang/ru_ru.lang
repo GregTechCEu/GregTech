@@ -2250,10 +2250,6 @@ gregtech.machine.air_collector.hv.name=Улучшеный воздухосбор
 gregtech.machine.air_collector.ev.name=Атмосферный коллектор
 gregtech.machine.air_collector.tooltip=Собирает воздух из соседних блоков
 
-# Катушка Тесла
-gregtech.machine.tesla_coil.name=Катушка Тесла
-gregtech.machine.tesla_coil.description=Наносит урон всем живым существам в радиусе 7 блоков и потребляет 2500EU за 1 очко урона\nЕмкость внутреннего буфера: §e256k EU
-
 #Fisher
 gregtech.machine.fisher.lv.name=Базовый рыболов
 gregtech.machine.fisher.mv.name=Улучшеный рыболов

@@ -2034,10 +2034,6 @@ gregtech.machine.air_collector.hv.name=进阶空气收集器 II
 gregtech.machine.air_collector.ev.name=大气收集器 III
 gregtech.machine.air_collector.tooltip=从临近方块中收集空气
 
-#Tesla Coil
-gregtech.machine.tesla_coil.name=特斯拉线圈
-gregtech.machine.tesla_coil.description=对 7 格以内的所有生物造成伤害/n每点伤害消耗 2500 EU/n电能缓存: §e256000 EU
-
 
 # Creative tabs
 itemGroup.gregtech.main=主体

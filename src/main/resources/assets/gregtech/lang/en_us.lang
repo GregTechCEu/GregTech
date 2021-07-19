@@ -2980,10 +2980,6 @@ gregtech.machine.air_collector.tooltip=Collects air from adjacent blocks at the 
 gregtech.machine.air_collector.collection_speed=Produces %,d L of Air every %,d ticks
 gregtech.machine.air_collector.jei_description=The Air Collector collects air from adjacent blocks for a little bit of EU
 
-#Tesla Coil
-gregtech.machine.tesla_coil.name=Tesla Coil
-gregtech.machine.tesla_coil.description=Damages all living entities within 7 blocks range/nConsumes 2500 EU for 1 damage point/nInternal buffer Capacity: §e256k EU
-
 #Fisher
 gregtech.machine.fisher.lv.name=Basic Fisher
 gregtech.machine.fisher.mv.name=Advanced Fisher
