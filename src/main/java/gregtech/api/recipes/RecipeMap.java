@@ -69,12 +69,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     public RecipeMap(String unlocalizedName,
                      int minInputs, int maxInputs, int minOutputs, int maxOutputs,
                      int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
-                     R defaultRecipe) {
-        this(unlocalizedName, minInputs, maxInputs, minOutputs, maxOutputs, minFluidInputs, maxFluidInputs, minFluidOutputs, maxFluidOutputs, defaultRecipe, false);
-    }
-    public RecipeMap(String unlocalizedName,
-                     int minInputs, int maxInputs, int minOutputs, int maxOutputs,
-                     int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
                      R defaultRecipe, boolean isHidden) {
         this.unlocalizedName = unlocalizedName;
         this.slotOverlays = new TByteObjectHashMap<>();
