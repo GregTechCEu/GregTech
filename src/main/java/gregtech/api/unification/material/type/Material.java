@@ -32,7 +32,7 @@ import static gregtech.api.util.GTUtility.createFlag;
 @ZenRegister
 public abstract class Material implements Comparable<Material>, IMaterial<Material> {
 
-    public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(1000);
+    public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(32768);
     private static final List<IMaterialHandler> materialHandlers = new ArrayList<>();
 
     public static void registerMaterialHandler(IMaterialHandler materialHandler) {

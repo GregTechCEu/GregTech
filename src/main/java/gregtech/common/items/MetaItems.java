@@ -1,5 +1,6 @@
 package gregtech.common.items;
 
+import com.google.common.base.CaseFormat;
 import gregtech.api.items.materialitem.DustMetaItem;
 import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.MetaItem;
@@ -468,6 +469,18 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem BIO_CHAFF;
 
+    private static OrePrefix[] orePrefixes = {OrePrefix.dustTiny, OrePrefix.dustSmall, OrePrefix.dust, OrePrefix.dustImpure, OrePrefix.dustPure,
+            OrePrefix.crushed, OrePrefix.crushedPurified, OrePrefix.crushedCentrifuged, OrePrefix.gem, OrePrefix.nugget,
+            OrePrefix.ingot, OrePrefix.ingotHot, OrePrefix.plate, OrePrefix.plateDouble, OrePrefix.plateDense, OrePrefix.stick,
+            OrePrefix.lens, OrePrefix.bolt, OrePrefix.screw, OrePrefix.ring, OrePrefix.foil, OrePrefix.round,
+            OrePrefix.oreChunk, OrePrefix.oreEnderChunk, OrePrefix.oreNetherChunk, OrePrefix.oreSandyChunk,
+            OrePrefix.seed, OrePrefix.crop, OrePrefix.essence, OrePrefix.plateCurved, OrePrefix.toolHeadSword, OrePrefix.toolHeadPickaxe, OrePrefix.toolHeadShovel, OrePrefix.toolHeadAxe,
+            OrePrefix.toolHeadHoe, OrePrefix.toolHeadHammer, OrePrefix.toolHeadFile, OrePrefix.toolHeadSaw,
+            OrePrefix.toolHeadDrill, OrePrefix.toolHeadChainsaw, OrePrefix.toolHeadWrench, OrePrefix.toolHeadUniversalSpade,
+            OrePrefix.toolHeadSense, OrePrefix.toolHeadBuzzSaw, OrePrefix.turbineBlade,
+            OrePrefix.wireFine, OrePrefix.gearSmall, OrePrefix.rotor, OrePrefix.stickLong, OrePrefix.springSmall, OrePrefix.spring,
+            OrePrefix.gemChipped, OrePrefix.gemFlawed, OrePrefix.gemFlawless, OrePrefix.gemExquisite, OrePrefix.gear};
+
     public static void init() {
         MetaItem1 first = new MetaItem1();
         first.setRegistryName("meta_item_1");
@@ -477,8 +490,12 @@ public final class MetaItems {
         dustItem.setRegistryName("meta_item_3");
         MetaTool tool = new MetaTool();
         tool.setRegistryName("meta_tool");
-        for (OrePrefix i : OrePrefix.values()) {
-            i.metaItem.setRegistryName("meta_" + i.name());
+        for (OrePrefix i : orePrefixes) {
+            String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, i.name());
+            GTLog.logger.info("Registering meta_" + regName);
+            MetaOrePrefix metaOrePrefix = new MetaOrePrefix(i);
+            metaOrePrefix.setRegistryName("meta_" + regName);
+            GTLog.logger.info("Registered meta_" + regName);
         }
     }
 

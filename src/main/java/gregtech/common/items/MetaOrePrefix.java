@@ -1,39 +1,31 @@
 package gregtech.common.items;
 
-import com.google.common.base.Preconditions;
 import gnu.trove.map.hash.TShortObjectHashMap;
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
-import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MaterialIconSet;
+import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.Material;
-import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
-import net.minecraft.block.BlockCauldron;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MetaOrePrefix extends StandardMetaItem {
 
@@ -43,7 +35,7 @@ public class MetaOrePrefix extends StandardMetaItem {
     private OrePrefix prefix;
 
     public MetaOrePrefix(OrePrefix orePrefix) {
-        super((short) (Short.MAX_VALUE));
+        super((short) 32767);
         this.prefix = orePrefix;
         for (Material material : Material.MATERIAL_REGISTRY) {
             short i = (short) Material.MATERIAL_REGISTRY.getIDForObject(material);
@@ -90,6 +82,17 @@ public class MetaOrePrefix extends StandardMetaItem {
 
     @Override
     @SideOnly(Side.CLIENT)
+    protected int getColorForItemStack(ItemStack stack, int tintIndex) {
+        if (tintIndex == 0 && stack.getMetadata() < metaItemOffset) {
+            Material material = Material.MATERIAL_REGISTRY.getObjectById(stack.getMetadata());
+            if (material == null) return 0xFFFFFF;
+            return material.materialRGB;
+        }
+        return super.getColorForItemStack(stack, tintIndex);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
     public void registerModels() {
         super.registerModels();
         TShortObjectHashMap<ModelResourceLocation> alreadyRegistered = new TShortObjectHashMap<>();
@@ -104,6 +107,85 @@ public class MetaOrePrefix extends StandardMetaItem {
             ModelResourceLocation resourceLocation = alreadyRegistered.get(registrationKey);
             metaItemsModels.put(metaItem, resourceLocation);
         }
+    }
+
+    @Override
+    public int getItemStackLimit(ItemStack stack) {
+        if (stack.getItemDamage() < metaItemOffset) {
+            if(prefix == null) return 64;
+            return prefix.maxStackSize;
+        }
+        return super.getItemStackLimit(stack);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        super.getSubItems(tab, subItems);
+        if (tab == GregTechAPI.TAB_GREGTECH_MATERIALS || tab == CreativeTabs.SEARCH) {
+            for (short metadata : generatedItems) {
+                subItems.add(new ItemStack(this, 1, metadata));
+            }
+        }
+    }
+
+    @Override
+    public void onUpdate(ItemStack itemStack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+        super.onUpdate(itemStack, worldIn, entityIn, itemSlot, isSelected);
+        if (itemStack.getItemDamage() < metaItemOffset && generatedItems.contains((short) itemStack.getItemDamage()) && entityIn instanceof EntityLivingBase) {
+            EntityLivingBase entity = (EntityLivingBase) entityIn;
+            if (worldIn.getTotalWorldTime() % 20 == 0) {
+                if (prefix.heatDamage != 0.0) {
+                    if (prefix.heatDamage > 0.0) {
+                        entity.attackEntityFrom(DamageSources.getHeatDamage(), prefix.heatDamage);
+                    } else if (prefix.heatDamage < 0.0) {
+                        entity.attackEntityFrom(DamageSources.getFrostDamage(), -prefix.heatDamage);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack itemStack, @Nullable World worldIn, List<String> lines, ITooltipFlag tooltipFlag) {
+        super.addInformation(itemStack, worldIn, lines, tooltipFlag);
+        int damage = itemStack.getItemDamage();
+        if (damage < this.metaItemOffset) {
+            Material material = Material.MATERIAL_REGISTRY.getObjectById(damage);;
+            if (prefix == null || material == null) return;
+            addMaterialTooltip(itemStack, prefix, material, lines, tooltipFlag);
+        }
+    }
+
+    public Material getMaterial(ItemStack itemStack) {
+        int damage = itemStack.getItemDamage();
+        if (damage < this.metaItemOffset) {
+            return Material.MATERIAL_REGISTRY.getObjectById(damage);
+        }
+        return null;
+    }
+
+    public OrePrefix getOrePrefix(ItemStack itemStack) {
+        int damage = itemStack.getItemDamage();
+        if (damage < this.metaItemOffset) {
+            return this.prefix;
+        }
+        return null;
+    }
+
+    @Override
+    public int getItemBurnTime(ItemStack itemStack) {
+        int damage = itemStack.getItemDamage();
+        if (damage < this.metaItemOffset) {
+            Material material = Material.MATERIAL_REGISTRY.getObjectById(damage);
+            if (material instanceof DustMaterial) {
+                DustMaterial dustMaterial = (DustMaterial) material;
+                return (int) (dustMaterial.burnTime * prefix.materialAmount / GTValues.M);
+            }
+        }
+        return super.getItemBurnTime(itemStack);
+
     }
 
     protected void addMaterialTooltip(ItemStack itemStack, OrePrefix prefix, Material material, List<String> lines, ITooltipFlag tooltipFlag) {

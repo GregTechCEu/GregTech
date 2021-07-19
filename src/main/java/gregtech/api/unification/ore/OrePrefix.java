@@ -8,7 +8,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTUtility;
-import gregtech.common.items.MetaOrePrefix;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -322,7 +321,6 @@ public enum OrePrefix {
 
     public final String categoryName;
 
-    public final MetaOrePrefix metaItem;
     public final boolean isUnificationEnabled;
     public final boolean isSelfReferencing;
     public final boolean isRecyclingDisallowed;
@@ -362,7 +360,6 @@ public enum OrePrefix {
         this.isFluidContainer = (flags & FLUID_CONTAINER) != 0;
         this.materialIconType = materialIconType;
         this.generationCondition = condition;
-        this.metaItem = new MetaOrePrefix(this);
         if (isSelfReferencing) {
             Preconditions.checkNotNull(material, "Material is null for self-referencing OrePrefix");
             this.materialType = material;
