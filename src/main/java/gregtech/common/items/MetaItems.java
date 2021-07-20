@@ -525,13 +525,10 @@ public final class MetaItems {
     public static void init() {
         MetaItem1 first = new MetaItem1();
         first.setRegistryName("meta_item_1");
-        MetaItem2 second = new MetaItem2();
-        second.setRegistryName("meta_item_2");
         MetaTool tool = new MetaTool();
         tool.setRegistryName("meta_tool");
         for (OrePrefix i : orePrefixes) {
             String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, i.name());
-            GTLog.logger.info("Registering meta_" + regName);
             MetaOrePrefix metaOrePrefix = new MetaOrePrefix(i);
             metaOrePrefix.setRegistryName("meta_" + regName);
             GTLog.logger.info("Registered meta_" + regName);
@@ -551,9 +548,7 @@ public final class MetaItems {
     public static void registerRecipes() {
         for (MetaItem<?> item : ITEMS) {
             if (item instanceof MetaItem1)
-                ((MetaItem1) item).registerRecipes();
-            if (item instanceof MetaItem2)
-                ((MetaItem2) item).registerRecipes();
+                ((MetaItem1) item).registerRecipes();;
             if (item instanceof MetaTool)
                 ((MetaTool) item).registerRecipes();
         }
