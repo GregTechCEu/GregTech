@@ -9,6 +9,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
@@ -47,7 +48,7 @@ public class MetaOrePrefix extends StandardMetaItem {
     }};
 
     public MetaOrePrefix(OrePrefix orePrefix) {
-        super((short) 32767);
+        super();
         this.prefix = orePrefix;
         for (Material material : Material.MATERIAL_REGISTRY) {
             short i = (short) Material.MATERIAL_REGISTRY.getIDForObject(material);
@@ -183,6 +184,19 @@ public class MetaOrePrefix extends StandardMetaItem {
         }
         return super.getItemBurnTime(itemStack);
 
+    }
+
+    @Override
+    public boolean isBeaconPayment(ItemStack stack) {
+        int damage = stack.getMetadata();
+
+        Material material = Material.MATERIAL_REGISTRY.getObjectById(damage);
+        if (this.prefix != null && material != null) {
+            boolean isSolidState = this.prefix == OrePrefix.ingot || this.prefix == OrePrefix.gem;
+            boolean isMaterialTiered = material instanceof SolidMaterial && ((SolidMaterial) material).harvestLevel >= 2;
+            return isSolidState && isMaterialTiered;
+        }
+        return false;
     }
 
     @Override

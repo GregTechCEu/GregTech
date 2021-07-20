@@ -1,9 +1,9 @@
 package gregtech.common.items;
 
 import gregtech.api.GTValues;
-import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FoodStats;
+import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.recipes.CountableIngredient;
@@ -28,10 +28,10 @@ import net.minecraft.item.ItemStack;
 import static gregtech.api.util.DyeUtil.getOrdictColorName;
 import static gregtech.common.items.MetaItems.*;
 
-public class MetaItem2 extends MaterialMetaItem {
+public class MetaItem2 extends StandardMetaItem {
 
     public MetaItem2() {
-        super( null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        super();
     }
 
     @Override

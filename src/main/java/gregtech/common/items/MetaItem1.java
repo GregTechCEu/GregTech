@@ -2,16 +2,14 @@ package gregtech.common.items;
 
 import gregtech.api.GTValues;
 import gregtech.api.items.OreDictNames;
-import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.metaitem.FluidStats;
 import gregtech.api.items.metaitem.FoodStats;
+import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
-import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
@@ -19,26 +17,13 @@ import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.items.behaviors.*;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static gregtech.common.items.MetaItems.*;
 
-public class MetaItem1 extends MaterialMetaItem {
-
-    public final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<>();
+public class MetaItem1 extends StandardMetaItem {
 
     public MetaItem1() {
-        super( null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-        registerPurifyRecipes();
-    }
-
-    private void registerPurifyRecipes() {
-        purifyMap.put(OrePrefix.crushed, OrePrefix.crushedPurified);
-        purifyMap.put(OrePrefix.dustImpure, OrePrefix.dust);
-        purifyMap.put(OrePrefix.dustPure, OrePrefix.dust);
+        super();
     }
 
     @Override
@@ -465,22 +450,6 @@ public class MetaItem1 extends MaterialMetaItem {
             .outputs(BATTERY_RE_HV_SODIUM.getStackForm())
             .duration(1600).EUt(2)
             .buildAndRegister();
-    }
-
-    @Override
-    public boolean isBeaconPayment(ItemStack stack) {
-        int damage = stack.getMetadata();
-        if (damage >= this.metaItemOffset) {
-            return false;
-        }
-        Material material = Material.MATERIAL_REGISTRY.getObjectById(damage % 1000);
-        OrePrefix prefix = this.orePrefixes[(damage / 1000)];
-        if(prefix != null && material != null) {
-            boolean isSolidState = prefix == OrePrefix.ingot || prefix == OrePrefix.gem;
-            boolean isMaterialTiered = material instanceof SolidMaterial && ((SolidMaterial) material).harvestLevel >= 2;
-            return isSolidState && isMaterialTiered;
-        }
-        return false;
     }
 
 }
