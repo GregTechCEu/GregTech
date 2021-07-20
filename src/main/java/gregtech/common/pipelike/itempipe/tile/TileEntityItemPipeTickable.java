@@ -15,11 +15,13 @@ public class TileEntityItemPipeTickable extends TileEntityItemPipe implements IT
     }
 
     private int transferredItems = 0;
+    private long timer = 0;
 
     @Override
     public void update() {
+        if(++timer == 1000000000) timer = 0;
         getCoverableImplementation().update();
-        if (getTickTimer() % 20 == 0) {
+        if (timer % 20 == 0) {
             transferredItems = 0;
         }
     }
