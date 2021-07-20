@@ -2,6 +2,7 @@ package gregtech.loaders.recipe;
 
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.IngotMaterial;
 import gregtech.api.unification.ore.OrePrefix;
@@ -20,6 +21,14 @@ import static gregtech.common.items.MetaItems.SHAPE_MOLD_BLOCK;
 public class MiscRecipeLoader {
 
     public static void init() {
+
+        // Potin Recipe
+        ModHandler.addShapelessRecipe("potin_dust", OreDictUnifier.get(dust, Potin, 5),
+                new UnificationEntry(dust, Lead),
+                new UnificationEntry(dust, Lead),
+                new UnificationEntry(dust, Bronze),
+                new UnificationEntry(dust, Bronze),
+                new UnificationEntry(dust, Tin));
 
         // Mixed Metal Ingots
         final MaterialStack[] firstMetal = {
