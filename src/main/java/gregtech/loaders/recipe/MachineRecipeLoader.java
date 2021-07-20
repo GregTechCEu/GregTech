@@ -251,7 +251,8 @@ public class MachineRecipeLoader {
                 .input(OrePrefix.dust, Materials.Lead, 2)
                 .input(OrePrefix.dust, Materials.Bronze, 2)
                 .input(OrePrefix.dust, Materials.Tin, 1)
-                .duration(25).EUt(8)
+                .output(OrePrefix.dust, Materials.Potin, 5)
+                .duration(500).EUt(8)
                 .buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
