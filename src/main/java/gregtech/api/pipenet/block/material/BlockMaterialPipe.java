@@ -44,13 +44,13 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
     public PipeType getItemPipeType(ItemStack itemStack) {
         GTLog.logger.info(itemStack.getMetadata());
         if (itemStack.getMetadata() < 32000) {
-            return getPipeTypeClass().getEnumConstants()[itemStack.getMetadata() / 1000];
+            return getPipeTypeClass().getEnumConstants()[itemStack.getMetadata()];
         }
         return getPipeTypeClass().getEnumConstants()[0];
     }
 
     public Material getItemMaterial(ItemStack itemStack) {
-        return Material.MATERIAL_REGISTRY.getObjectById(itemStack.getMetadata() % 1000);
+        return Material.MATERIAL_REGISTRY.getObjectById(itemStack.getMetadata());
     }
 
     @Override

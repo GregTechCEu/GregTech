@@ -349,7 +349,7 @@ public enum OrePrefix {
 
     public byte maxStackSize = 64;
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
-    public float heatDamage = 0.0F; // Negative for Frost Damage;
+    public float heatDamage = 0.0F; // Negative for Frost Damage
 
     OrePrefix(String categoryName, long materialAmount, IMaterial<?> material, MaterialIconType materialIconType, long flags, Predicate<Material> condition) {
         this.categoryName = categoryName;
