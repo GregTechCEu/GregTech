@@ -311,8 +311,8 @@ public enum OrePrefix {
         toolHeadChainsaw.addSecondaryMaterial(new MaterialStack(Materials.Steel, plate.materialAmount * 4 + ring.materialAmount * 2));
         toolHeadWrench.addSecondaryMaterial(new MaterialStack(Materials.Steel, ring.materialAmount + screw.materialAmount * 2));
 
-        pipeTiny.setIgnored(Materials.Wood);
-        pipeHuge.setIgnored(Materials.Wood);
+        pipeTinyFluid.setIgnored(Materials.Wood);
+        pipeHugeFluid.setIgnored(Materials.Wood);
         plate.setIgnored(Materials.BorosilicateGlass);
         foil.setIgnored(Materials.BorosilicateGlass);
     }
