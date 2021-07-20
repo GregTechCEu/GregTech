@@ -30,15 +30,16 @@ public class BlockClipboard extends Block implements ITileEntityProvider {
 
     private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(5.25 / 16.0, 0.0, 0.0, 5.5 / 16.0, 8.0 / 16.0, 0.3 / 16.0);
 
-    protected ThreadLocal<MetaTileEntityHolder> tileEntities = new ThreadLocal<>();
+    public static final BlockClipboard INSTANCE = new BlockClipboard(); // Mainly to access the default state.
+
+    protected ThreadLocal<TileEntityClipboard> tileEntities = new ThreadLocal<>();
 
     public BlockClipboard() {
         super(Material.WOOD);
-        setHardness(1.5f);
+        setHardness(0);
         setSoundType(SoundType.WOOD);
         setTranslationKey("clipboard");
         setLightOpacity(1);
-        setHarvestLevel("pickaxe", 1);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class BlockClipboard extends Block implements ITileEntityProvider {
 
     private ItemStack getDropStack(IBlockAccess blockAccess, BlockPos pos, IBlockState blockState) {
         if(this.hasTileEntity(blockState)) {
-            return this.tileEntities.get().getMetaTileEntity().getItemInventory().getStackInSlot(0);
+            return this.tileEntities.get().getClipboard();
         }
         return ItemStack.EMPTY;
     }
@@ -102,7 +103,7 @@ public class BlockClipboard extends Block implements ITileEntityProvider {
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         TileEntityClipboard tileEntity = getTileEntity(worldIn, pos);
         if (tileEntity != null) {
-            tileEntities.set(tileEntity.getHolder());
+            tileEntities.set(tileEntity);
         }
 
         super.breakBlock(worldIn, pos, state);
@@ -110,21 +111,28 @@ public class BlockClipboard extends Block implements ITileEntityProvider {
 
     @Override
     public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
-        tileEntities.set(te == null ? tileEntities.get() : (MetaTileEntityHolder) te);
+        tileEntities.set(te == null ? tileEntities.get() : (TileEntityClipboard) te);
         super.harvestBlock(worldIn, player, pos, state, te, stack);
         tileEntities.set(null);
     }
 
     public static TileEntityClipboard getTileEntity(IBlockAccess world, BlockPos pos) {
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity instanceof MetaTileEntityHolder)
-            return (TileEntityClipboard) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+        if (tileEntity instanceof TileEntityClipboard)
+            return ((TileEntityClipboard)tileEntity);
         return null;
     }
 
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new MetaTileEntityHolder();
+        return new TileEntityClipboard();
     }
+
+    @Override
+    public boolean hasTileEntity() {
+        return true;
+    }
+
+
 }

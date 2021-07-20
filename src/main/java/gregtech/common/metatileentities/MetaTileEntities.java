@@ -688,8 +688,6 @@ public class MetaTileEntities {
 
         INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1630, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));
 
-        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1631, new TileEntityClipboard(gregtechId("clipboard")));
-
         /*
          * FOR ADDON DEVELOPERS:
          *

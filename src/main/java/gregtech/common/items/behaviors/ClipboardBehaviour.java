@@ -9,13 +9,21 @@ import gregtech.api.gui.widgets.TextFieldWidget;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.common.blocks.clipboard.BlockClipboard;
+import gregtech.common.blocks.clipboard.TileEntityClipboard;
 import gregtech.common.items.MetaItems;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
@@ -174,6 +182,32 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
         if (!world.isRemote) {
             PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
             holder.openUI();
+        }
+        return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack heldItem = player.getHeldItem(hand);
+        EnumFacing playerFacing = player.getHorizontalFacing();
+        // Make sure it's the right block
+        Block testBlock = world.getBlockState(pos).getBlock();
+        if (!testBlock.isAir(world.getBlockState(pos), world, pos)) {
+            // Step away from the block so you don't replace it, and then give it our fun blockstate
+            BlockPos shiftedPos = pos.offset(playerFacing.getOpposite());
+            Block shiftedBlock = world.getBlockState(shiftedPos).getBlock();
+            if(shiftedBlock.isAir(world.getBlockState(shiftedPos), world, shiftedPos)) {
+                IBlockState state = BlockClipboard.INSTANCE.getDefaultState();
+                world.setBlockState(shiftedPos, state);
+                // Get new TE
+                shiftedBlock.createTileEntity(world, state);
+                // And manipulate it to our liking
+                TileEntityClipboard clipboard = (TileEntityClipboard) world.getTileEntity(pos);
+                if (clipboard != null) {
+                    clipboard.setFrontFacing(playerFacing);
+                    clipboard.setClipboard(heldItem);
+                }
+            }
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
     }

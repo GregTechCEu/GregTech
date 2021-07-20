@@ -82,6 +82,7 @@ public class CommonProxy {
         registry.register(LEAVES);
         registry.register(SAPLING);
         registry.register(SURFACE_ROCK);
+        registry.register(CLIPBOARD_BLOCK);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
         FRAMES.values().stream().distinct().forEach(registry::register);

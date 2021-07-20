@@ -1,0 +1,27 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "gregtech:clipboard",
+    "textures": {
+      "0": "gregtech:items/metaitems/clipboard/clipboard",
+      "1": "gregtech:items/metaitems/clipboard/page",
+      "particle": "gregtech:items/metaitems/clipboard/clipboard"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "facing": {
+      "north": {},
+      "south": {
+        "y": 180
+      },
+      "west": {
+        "y": 270
+      },
+      "east": {
+        "y": 90
+      }
+    }
+  }
+}

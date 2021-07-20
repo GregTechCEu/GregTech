@@ -1,9 +1,9 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "clipboard/clipboard",
-		"1": "clipboard/page",
-		"particle": "clipboard/clipboard"
+     		"0": "gregtech:items/metaitems/clipboard/clipboard",
+     		"1": "gregtech:items/metaitems/clipboard/page",
+      		"particle": "gregtech:items/metaitems/clipboard/clipboard"
 	},
 	"elements": [
 		{

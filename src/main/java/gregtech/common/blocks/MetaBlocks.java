@@ -171,7 +171,7 @@ public class MetaBlocks {
         SURFACE_ROCK = new BlockSurfaceRock();
         SURFACE_ROCK.setRegistryName("surface_rock_new");
         CLIPBOARD_BLOCK = new BlockClipboard();
-        CLIPBOARD_BLOCK.setRegistryName("gt_clipboard");
+        CLIPBOARD_BLOCK.setRegistryName("clipboard");
 
         StoneType.init();
 
@@ -394,6 +394,8 @@ public class MetaBlocks {
         FLUID_BLOCKS.forEach(modelHandler::addFluidBlock);
 
         modelHandler.addBuiltInBlock(SURFACE_ROCK, "stone_andesite");
+        modelHandler.addBuiltInBlock(CLIPBOARD_BLOCK, "stone_andesite");
+
 
         ClientRegistry.bindTileEntitySpecialRenderer(MetaTileEntityHolder.class, new MetaTileEntityTESR());
     }
