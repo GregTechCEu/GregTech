@@ -49,7 +49,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     private final ItemStackHandler containerInventory;
     private boolean autoOutputFluids;
     private EnumFacing outputFacing;
-    private boolean allowInputFromOutputSide;
+    private boolean allowInputFromOutputSide = true;
 
     public MetaTileEntityQuantumTank(ResourceLocation metaTileEntityId, int tier, int maxFluidCapacity) {
         super(metaTileEntityId);

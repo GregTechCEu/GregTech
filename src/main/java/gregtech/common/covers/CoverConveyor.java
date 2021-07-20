@@ -451,7 +451,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
         primaryGroup.addWidget(new CycleButtonWidget(10, 45, 75, 20,
             ConveyorMode.class, this::getConveyorMode, this::setConveyorMode));
-        primaryGroup.addWidget(new CycleButtonWidget(10, 166, 113, 20,
+        primaryGroup.addWidget(new CycleButtonWidget(7, 166, 116, 20,
             ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
             .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 

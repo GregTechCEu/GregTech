@@ -1077,5 +1077,12 @@ public class ReactorRecipes {
             .output(dust, Plutonium239, 8)
             .fluidOutputs(Radon.getFluid(100))
             .duration(12000).EUt(8).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(Items.PAPER)
+                .input(Items.STRING)
+                .fluidInputs(Glyceryl.getFluid(500))
+                .output(MetaItems.DYNAMITE)
+                .duration(160).EUt(4).buildAndRegister();
     }
 }

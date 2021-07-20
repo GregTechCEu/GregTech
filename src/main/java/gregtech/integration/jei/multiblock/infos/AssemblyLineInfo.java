@@ -1,5 +1,6 @@
 package gregtech.integration.jei.multiblock.infos;
 
+import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.common.blocks.*;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -8,6 +9,10 @@ import gregtech.integration.jei.multiblock.MultiblockShapeInfo;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,5 +61,26 @@ public class AssemblyLineInfo extends MultiblockInfoPage {
     @Override
     public float getDefaultZoom() {
         return 0.7f;
+    }
+
+    @Override
+    protected void generateBlockTooltips() {
+        ITextComponent outputTooltip = new TextComponentTranslation(
+                "gregtech.multiblock.preview.only_location",
+                new TextComponentTranslation("gregtech.multiblock.preview.location_end"))
+                .setStyle(new Style().setColor(TextFormatting.RED));
+
+        ITextComponent inputTooltip = new TextComponentTranslation(
+                "gregtech.multiblock.preview.only",
+                new TextComponentTranslation("gregtech.machine.item_bus.export.ulv.name"))
+                .setStyle(new Style().setColor(TextFormatting.RED));
+
+        for(int i = 0; i < GTValues.UHV + 1; i++) {
+            addBlockTooltip(MetaTileEntities.ITEM_EXPORT_BUS[i].getStackForm(), defaultText);
+            addBlockTooltip(MetaTileEntities.ITEM_EXPORT_BUS[i].getStackForm(), outputTooltip);
+            addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(),  defaultText);
+            addBlockTooltip(MetaTileEntities.FLUID_IMPORT_HATCH[i].getStackForm(),  defaultText);
+        }
+        addBlockTooltip(MetaTileEntities.ITEM_IMPORT_BUS[0].getStackForm(), inputTooltip);
     }
 }

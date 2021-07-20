@@ -6,6 +6,7 @@ import gregtech.api.gui.BlankUIHolder;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
@@ -15,6 +16,7 @@ import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fluids.FluidStack;
@@ -22,14 +24,15 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
 
     private final RecipeMap<?> recipeMap;
     private final ModularUI modularUI;
-    private ItemStackHandler importItems, exportItems;
-    private FluidTankList importFluids, exportFluids;
+    private final ItemStackHandler importItems, exportItems;
+    private final FluidTankList importFluids, exportFluids;
     private final IDrawable backgroundDrawable;
 
     public RecipeMapCategory(RecipeMap<?> recipeMap, IGuiHelper guiHelper) {
@@ -51,27 +54,31 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     }
 
     @Override
+    @Nonnull
     public String getUid() {
         return GTValues.MODID + ":" + recipeMap.unlocalizedName;
     }
 
     @Override
+    @Nonnull
     public String getTitle() {
         return recipeMap.getLocalizedName();
     }
 
     @Override
+    @Nonnull
     public String getModName() {
         return GTValues.MODID;
     }
 
     @Override
+    @Nonnull
     public IDrawable getBackground() {
         return backgroundDrawable;
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, GTRecipeWrapper recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, @Nonnull GTRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
         for (Widget uiWidget : modularUI.guiWidgets.values()) {
@@ -97,7 +104,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 TankWidget tankWidget = (TankWidget) uiWidget;
                 if (importFluids.getFluidTanks().contains(tankWidget.fluidTank)) {
                     int importIndex = importFluids.getFluidTanks().indexOf(tankWidget.fluidTank);
-                    List<List<FluidStack>> inputsList = ingredients.getInputs(FluidStack.class);
+                    List<List<FluidStack>> inputsList = ingredients.getInputs(VanillaTypes.FLUID);
                     int fluidAmount = 0;
                     if (inputsList.size() > importIndex && !inputsList.get(importIndex).isEmpty())
                         fluidAmount = inputsList.get(importIndex).get(0).amount;
@@ -111,7 +118,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
 
                 } else if (exportFluids.getFluidTanks().contains(tankWidget.fluidTank)) {
                     int exportIndex = exportFluids.getFluidTanks().indexOf(tankWidget.fluidTank);
-                    List<List<FluidStack>> inputsList = ingredients.getOutputs(FluidStack.class);
+                    List<List<FluidStack>> inputsList = ingredients.getOutputs(VanillaTypes.FLUID);
                     int fluidAmount = 0;
                     if (inputsList.size() > exportIndex && !inputsList.get(exportIndex).isEmpty())
                         fluidAmount = inputsList.get(exportIndex).get(0).amount;
@@ -133,8 +140,9 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     }
 
     @Override
-    public void drawExtras(Minecraft minecraft) {
+    public void drawExtras(@Nonnull Minecraft minecraft) {
         for (Widget widget : modularUI.guiWidgets.values()) {
+            if (widget instanceof ProgressWidget) widget.detectAndSendChanges();
             widget.drawInBackground(0, 0, new IRenderContext() {
             });
             widget.drawInForeground(0, 0);

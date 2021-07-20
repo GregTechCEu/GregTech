@@ -16,8 +16,8 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.FacadeItem;
-import gregtech.common.items.behaviors.ScannerBehavior;
 import gregtech.common.items.behaviors.NanoSaberBehavior;
+import gregtech.common.items.behaviors.ScannerBehavior;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -113,7 +113,6 @@ public class MetaItem2 extends MaterialMetaItem {
 
 
         VACUUM_TUBE = addItem(450, "circuit.vacuum_tube").setUnificationData(OrePrefix.circuit, Tier.Primitive);
-        GLASS_FIBER = addItem(451, "component.glass.fiber");
         GLASS_TUBE = addItem(452, "component.glass.tube");
         SMALL_COIL = addItem(453, "component.small_coil");
         TRANSISTOR = addItem(454, "component.transistor").setUnificationData(OrePrefix.component, Component.Transistor);

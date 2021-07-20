@@ -66,13 +66,14 @@ public class DistillationRecipes {
             .duration(120).EUt(120).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-            .fluidInputs(HydroCrackedLightFuel.getFluid(1000))
-            .fluidOutputs(Naphtha.getFluid(800))
-            .fluidOutputs(Butane.getFluid(150))
-            .fluidOutputs(Propane.getFluid(200))
-            .fluidOutputs(Ethane.getFluid(125))
-            .fluidOutputs(Methane.getFluid(125))
-            .duration(120).EUt(120).buildAndRegister();
+                .fluidInputs(HydroCrackedLightFuel.getFluid(1000))
+                .fluidOutputs(Naphtha.getFluid(800))
+                .fluidOutputs(Octane.getFluid(100))
+                .fluidOutputs(Butane.getFluid(150))
+                .fluidOutputs(Propane.getFluid(200))
+                .fluidOutputs(Ethane.getFluid(125))
+                .fluidOutputs(Methane.getFluid(125))
+                .duration(120).EUt(120).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
             .fluidInputs(SteamCrackedLightFuel.getFluid(1000))

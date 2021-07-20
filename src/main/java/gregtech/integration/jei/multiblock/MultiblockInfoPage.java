@@ -23,9 +23,9 @@ public abstract class MultiblockInfoPage {
 
     private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.comparingAllButCount();
 
-    private Map<ItemStack, List<ITextComponent>> blockTooltips = new Object2ObjectOpenCustomHashMap<>(strategy);
+    private final Map<ItemStack, List<ITextComponent>> blockTooltips = new Object2ObjectOpenCustomHashMap<>(strategy);
 
-    private static final ITextComponent defaultText = new TextComponentTranslation("gregtech.multiblock.preview.any_hatch").setStyle(new Style().setColor(TextFormatting.GREEN));
+    protected static final ITextComponent defaultText = new TextComponentTranslation("gregtech.multiblock.preview.any_hatch").setStyle(new Style().setColor(TextFormatting.GREEN));
 
     public abstract MultiblockControllerBase getController();
 
@@ -63,7 +63,7 @@ public abstract class MultiblockInfoPage {
      */
     protected void generateBlockTooltips() {
 
-        for(int i  = 0; i < GTValues.V.length; i++) {
+        for(int i  = 0; i < GTValues.UHV + 1; i++) {
             addBlockTooltip(MetaTileEntities.ITEM_EXPORT_BUS[i].getStackForm(), defaultText);
             addBlockTooltip(MetaTileEntities.ITEM_IMPORT_BUS[i].getStackForm(),  defaultText);
             addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(),  defaultText);

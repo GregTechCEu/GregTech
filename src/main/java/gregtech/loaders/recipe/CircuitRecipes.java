@@ -747,7 +747,7 @@ public class CircuitRecipes {
 
         // Fiber Reinforced Epoxy Board
         CHEMICAL_BATH_RECIPES.recipeBuilder().duration(240).EUt(16)
-                .input(GLASS_FIBER)
+                .input(wireFine, BorosilicateGlass)
                 .fluidInputs(Epoxy.getFluid(L))
                 .output(plate, ReinforcedEpoxyResin)
                 .buildAndRegister();
@@ -762,12 +762,7 @@ public class CircuitRecipes {
         EXTRUDER_RECIPES.recipeBuilder().duration(160).EUt(96)
                 .input(ingot, BorosilicateGlass)
                 .notConsumable(SHAPE_EXTRUDER_WIRE)
-                .output(GLASS_FIBER, 8)
-                .buildAndRegister();
-
-        WIREMILL_RECIPES.recipeBuilder().duration(200).EUt(120)
-                .input(ingot, BorosilicateGlass)
-                .output(GLASS_FIBER, 8)
+                .output(wireFine, BorosilicateGlass, 8)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(500).EUt(10)

@@ -931,12 +931,12 @@ public class MachineRecipeLoader {
 
 
 
-        FLUID_CANNER_RECIPES.recipeBuilder().duration(100).EUt(30).input(BATTERY_HULL_LV).fluidInputs(Mercury.getFluid(1000)).outputs(BATTERY_SU_LV_MERCURY.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
-        FLUID_CANNER_RECIPES.recipeBuilder().duration(200).EUt(30).input(BATTERY_HULL_MV).fluidInputs(Mercury.getFluid(4000)).outputs(BATTERY_SU_MV_MERCURY.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
-        FLUID_CANNER_RECIPES.recipeBuilder().duration(400).EUt(30).input(BATTERY_HULL_HV).fluidInputs(Mercury.getFluid(16000)).outputs(BATTERY_SU_HV_MERCURY.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
-        FLUID_CANNER_RECIPES.recipeBuilder().duration(100).EUt(30).input(BATTERY_HULL_LV).fluidInputs(SulfuricAcid.getFluid(1000)).outputs(BATTERY_SU_LV_SULFURIC_ACID.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
-        FLUID_CANNER_RECIPES.recipeBuilder().duration(200).EUt(30).input(BATTERY_HULL_MV).fluidInputs(SulfuricAcid.getFluid(4000)).outputs(BATTERY_SU_MV_SULFURIC_ACID.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
-        FLUID_CANNER_RECIPES.recipeBuilder().duration(400).EUt(30).input(BATTERY_HULL_HV).fluidInputs(SulfuricAcid.getFluid(16000)).outputs(BATTERY_SU_HV_SULFURIC_ACID.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
+        CANNER_RECIPES.recipeBuilder().duration(100).EUt(30).input(BATTERY_HULL_LV).fluidInputs(Mercury.getFluid(1000)).outputs(BATTERY_SU_LV_MERCURY.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
+        CANNER_RECIPES.recipeBuilder().duration(200).EUt(30).input(BATTERY_HULL_MV).fluidInputs(Mercury.getFluid(4000)).outputs(BATTERY_SU_MV_MERCURY.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
+        CANNER_RECIPES.recipeBuilder().duration(400).EUt(30).input(BATTERY_HULL_HV).fluidInputs(Mercury.getFluid(16000)).outputs(BATTERY_SU_HV_MERCURY.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
+        CANNER_RECIPES.recipeBuilder().duration(100).EUt(30).input(BATTERY_HULL_LV).fluidInputs(SulfuricAcid.getFluid(1000)).outputs(BATTERY_SU_LV_SULFURIC_ACID.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
+        CANNER_RECIPES.recipeBuilder().duration(200).EUt(30).input(BATTERY_HULL_MV).fluidInputs(SulfuricAcid.getFluid(4000)).outputs(BATTERY_SU_MV_SULFURIC_ACID.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
+        CANNER_RECIPES.recipeBuilder().duration(400).EUt(30).input(BATTERY_HULL_HV).fluidInputs(SulfuricAcid.getFluid(16000)).outputs(BATTERY_SU_HV_SULFURIC_ACID.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
 
 
 

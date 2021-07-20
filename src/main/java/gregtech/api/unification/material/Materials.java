@@ -85,7 +85,7 @@ public class Materials {
     public static IngotMaterial Indium = new IngotMaterial(48, "indium", 0x400080, METALLIC, 2, of(), 0, Elements.get("Indium"));
     public static DustMaterial Iodine = new DustMaterial(49, "iodine", 0x2C344F, SHINY, 2, of(), 0, Elements.get("Iodine"));
     public static IngotMaterial Iridium = new IngotMaterial(50, "iridium", 0xF0F0F5, DULL, 3, of(), GENERATE_ORE | EXT2_METAL | GENERATE_ORE | GENERATE_RING | GENERATE_ROTOR | GENERATE_DENSE, Elements.get("Iridium"), 7.0F, 3.0f, 2560, 2719);
-    public static IngotMaterial Iron = new IngotMaterial(51, "iron", 0xC8C8C8, METALLIC, 2, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_DENSE | GENERATE_FRAME | GENERATE_LONG_ROD | GENERATE_PLASMA | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, Elements.get("Iron"), 7.0F, 2.5f, 256);
+    public static IngotMaterial Iron = new IngotMaterial(51, "iron", 0xC8C8C8, METALLIC, 2, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_DENSE | GENERATE_FRAME | GENERATE_LONG_ROD | GENERATE_ROTOR | GENERATE_PLASMA | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, Elements.get("Iron"), 7.0F, 2.5f, 256);
     public static FluidMaterial Krypton = new FluidMaterial(52, "krypton", 0x31C42F, FLUID, of(), 0, Elements.get("Krypton"));
     public static IngotMaterial Lanthanum = new IngotMaterial(53, "lanthanum", 0xFFFFFF, METALLIC, 2, of(), 0, Elements.get("Lanthanum"), 1193);
     public static IngotMaterial Lawrencium = new IngotMaterial(54, "lawrencium", 0xFFFFFF, METALLIC, 3, of(), 0, Elements.get("Lawrencium"));
@@ -423,6 +423,15 @@ public class Materials {
     public static SimpleFluidMaterial EnrichedUraniumHexafluoride = new SimpleFluidMaterial(137, "enriched_uranium_hexafluoride", 0x4bf52a, GAS, of(new MaterialStack(Uranium235, 1), new MaterialStack(Fluorine, 6)), DISABLE_DECOMPOSITION).setFormula("UF6");
     public static SimpleFluidMaterial DepletedUraniumHexafluoride = new SimpleFluidMaterial(138, "depleted_uranium_hexafluoride", 0x74ba66, GAS, of(new MaterialStack(Uranium238, 1), new MaterialStack(Fluorine, 6)), DISABLE_DECOMPOSITION).setFormula("UF6");
 
+    // HOG
+    public static SimpleFluidMaterial RawGasoline = new SimpleFluidMaterial(139, "raw_gasoline", 0xFF6400, FLUID, of(), DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial Gasoline = new SimpleFluidMaterial(140, "gasoline", 0xFFA500, FLUID, of(), DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial NitrousOxide = new SimpleFluidMaterial(141, "nitrous_oxide", 0x7DC8FF, FLUID, of(new MaterialStack(Nitrogen, 2), new MaterialStack(Oxygen, 1)), 0);
+    public static SimpleFluidMaterial Octane = new SimpleFluidMaterial(142, "octane", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 18)), DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial EthylTertButylEther = new SimpleFluidMaterial(143, "ethyl_tertbutyl_ether", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 14), new MaterialStack(Oxygen, 1)), DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial HighOctaneGasoline = new SimpleFluidMaterial(144, "gasoline_premium", 0xFFA500, FLUID, of(), DISABLE_DECOMPOSITION);
+    public static SimpleFluidMaterial Nitrobenzene = new SimpleFluidMaterial(145, "nitrobenzene", 0x704936, FLUID, of(), DISABLE_DECOMPOSITION);
+
     public static SimpleDustMaterial SodiumHydroxide = new SimpleDustMaterial(1, "sodium_hydroxide", 0x003380, DULL, of(new MaterialStack(Sodium, 1), new MaterialStack(Oxygen, 1), new MaterialStack(Hydrogen, 1)), GENERATE_SMALL_TINY);
     public static SimpleDustMaterial MagnesiumChloride = new SimpleDustMaterial(2, "magnesium_chloride", 0xD40D5C, DULL, of(new MaterialStack(Magnesium, 1), new MaterialStack(Chlorine, 2)), GENERATE_SMALL_TINY);
     public static SimpleDustMaterial RawRubber = new SimpleDustMaterial(3, "raw_rubber", 0xCCC789, DULL, of(new MaterialStack(Carbon, 5), new MaterialStack(Hydrogen, 8)), GENERATE_SMALL_TINY | DISABLE_DECOMPOSITION);
@@ -459,7 +468,7 @@ public class Materials {
     public static IngotMaterial StyreneButadieneRubber = new IngotMaterial(247, "styrene_butadiene_rubber", 0x211A18, SHINY, 1, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 8), new MaterialStack(Butadiene, 3)), GENERATE_PLATE | GENERATE_GEAR | GENERATE_RING | FLAMMABLE | NO_SMASHING | DISABLE_DECOMPOSITION);
     public static FluidMaterial PolyvinylAcetate = new FluidMaterial(248, "polyvinyl_acetate", 0xFF9955, FLUID, of(new MaterialStack(Carbon, 4), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
     public static IngotMaterial ReinforcedEpoxyResin = new IngotMaterial(249, "reinforced_epoxy_resin", 0xA07A10, DULL, 1, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Oxygen, 1)), GENERATE_PLATE | DISABLE_DECOMPOSITION | NO_SMASHING);
-    public static IngotMaterial BorosilicateGlass = new IngotMaterial(250, "borosilicate_glass", 0xE6F3E6, SHINY, 1, of(new MaterialStack(Boron, 1), new MaterialStack(SiliconDioxide, 7)), 0);
+    public static IngotMaterial BorosilicateGlass = new IngotMaterial(250, "borosilicate_glass", 0xE6F3E6, SHINY, 1, of(new MaterialStack(Boron, 1), new MaterialStack(SiliconDioxide, 7)), GENERATE_FINE_WIRE);
     public static IngotMaterial PolyvinylChloride = new IngotMaterial(251, "polyvinyl_chloride", 0xD7E6E6, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 3), new MaterialStack(Chlorine, 1)), EXT_METAL | GENERATE_FOIL | DISABLE_DECOMPOSITION | NO_SMASHING);
     public static IngotMaterial PolyphenyleneSulfide = new IngotMaterial(252, "polyphenylene_sulfide", 0xAA8800, DULL, 1, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Sulfur, 1)), DISABLE_DECOMPOSITION | EXT_METAL | GENERATE_FOIL);
     public static FluidMaterial Glyceryl = new FluidMaterial(253, "glyceryl", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 3), new MaterialStack(Hydrogen, 5), new MaterialStack(Nitrogen, 3), new MaterialStack(Oxygen, 9)), FLAMMABLE | EXPLOSIVE | NO_SMELTING | NO_SMASHING);

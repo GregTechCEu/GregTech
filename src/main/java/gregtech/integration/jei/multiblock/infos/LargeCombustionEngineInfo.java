@@ -45,5 +45,4 @@ public class LargeCombustionEngineInfo extends MultiblockInfoPage {
     public String[] getDescription() {
         return new String[]{I18n.format("gregtech.multiblock.large_combustion_engine.description")};
     }
-
 }

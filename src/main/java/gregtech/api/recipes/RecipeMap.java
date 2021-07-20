@@ -20,7 +20,6 @@ import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.unification.material.IMaterial;
-import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
@@ -57,7 +56,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private final int minOutputs, maxOutputs;
     private final int minFluidInputs, maxFluidInputs;
     private final int minFluidOutputs, maxFluidOutputs;
-    private final TByteObjectMap<TextureArea> slotOverlays;
+    protected final TByteObjectMap<TextureArea> slotOverlays;
+    protected TextureArea specialTexture;
+    protected int[] specialTexturePosition;
     protected TextureArea progressBarTexture;
     protected MoveType moveType;
     public final boolean isHidden;
@@ -65,12 +66,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private final Map<FluidKey, Collection<Recipe>> recipeFluidMap = new HashMap<>();
     private final List<Recipe> recipeList = new ArrayList<>();
 
-    public RecipeMap(String unlocalizedName,
-                     int minInputs, int maxInputs, int minOutputs, int maxOutputs,
-                     int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
-                     R defaultRecipe) {
-        this(unlocalizedName, minInputs, maxInputs, minOutputs, maxOutputs, minFluidInputs, maxFluidInputs, minFluidOutputs, maxFluidOutputs, defaultRecipe, false);
-    }
     public RecipeMap(String unlocalizedName,
                      int minInputs, int maxInputs, int minOutputs, int maxOutputs,
                      int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
@@ -288,15 +283,24 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids) {
-        return createUITemplate(() -> 0.0, importItems, exportItems, importFluids, exportFluids);
+        return createUITemplate(this::jeiProgressBar, importItems, exportItems, importFluids, exportFluids);
+    }
+
+    private double timer = 0;
+    private double jeiProgressBar() {
+        timer += 0.0005;
+        if (timer > 1.0) timer = 0.0;
+        return timer;
     }
 
     //this DOES NOT include machine control widgets or binds player inventory
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids) {
         ModularUI.Builder builder = ModularUI.defaultBuilder();
-        builder.widget(new ProgressWidget(progressSupplier, 77, 22, 21, 20, progressBarTexture, moveType));
+        builder.widget(new ProgressWidget(progressSupplier, 78, 23, 20, 20, progressBarTexture, moveType));
         addInventorySlotGroup(builder, importItems, importFluids, false);
         addInventorySlotGroup(builder, exportItems, exportFluids, true);
+        if (this.specialTexture != null && this.specialTexturePosition != null)
+            addSpecialTexture(builder);
         return builder;
     }
 
@@ -313,8 +317,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
         int itemSlotsToLeft = inputSlotGrid[0];
         int itemSlotsToDown = inputSlotGrid[1];
-        int startInputsX = isOutputs ? 106 : 69 - itemSlotsToLeft * 18;
-        int startInputsY = 32 - (int) (itemSlotsToDown / 2.0 * 18);
+        int startInputsX = isOutputs ? 106 : 70 - itemSlotsToLeft * 18;
+        int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18);
+        boolean wasGroupOutput = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
+        if (wasGroupOutput) startInputsY -= 9;
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
                 int slotIndex = i * itemSlotsToLeft + j;
@@ -323,6 +329,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 addSlot(builder, x, y, slotIndex, itemHandler, fluidHandler, invertFluids, isOutputs);
             }
         }
+        if (wasGroupOutput) startInputsY += 3;
         if (fluidInputsCount > 0 || invertFluids) {
             if (itemSlotsToDown >= fluidInputsCount && itemSlotsToLeft < 3) {
                 int startSpecX = isOutputs ? startInputsX + itemSlotsToLeft * 18 : startInputsX - 18;
@@ -335,7 +342,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 for (int i = 0; i < fluidInputsCount; i++) {
                     int x = isOutputs ? startInputsX + 18 * (i % 3) : startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
                     int y = startSpecY + (i / 3) * 18;
-                    addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    if (itemHandler.getSlots() >= 9)
+                        addSlot(builder, x, y + 2, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    else
+                        addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
                 }
             }
         }
@@ -383,6 +393,17 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             itemSlotsToLeft = 2;
         }
         return new int[]{itemSlotsToLeft, itemSlotsToDown};
+    }
+
+    protected RecipeMap<R> setSpecialTexture(int x, int y, int width, int height, TextureArea area) {
+        this.specialTexturePosition = new int[]{x, y, width, height};
+        this.specialTexture = area;
+        return this;
+    }
+
+    protected ModularUI.Builder addSpecialTexture(ModularUI.Builder builder) {
+        builder.image(specialTexturePosition[0], specialTexturePosition[1], specialTexturePosition[2], specialTexturePosition[3], specialTexture);
+        return builder;
     }
 
 

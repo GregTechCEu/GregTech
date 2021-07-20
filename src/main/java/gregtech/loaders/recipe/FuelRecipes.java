@@ -11,22 +11,25 @@ import static gregtech.api.unification.material.Materials.*;
 public class FuelRecipes {
 
     public static void registerFuels() {
-        //low-tier diesel generator fuels
+        //diesel generator fuels
         registerCombustionGeneratorFuel(Naphtha.getFluid(1), 8, LV);
         registerCombustionGeneratorFuel(Oil.getFluid(2), 1, LV);
         registerCombustionGeneratorFuel(SulfuricLightFuel.getFluid(4), 5, LV);
         registerCombustionGeneratorFuel(Methanol.getFluid(8), 21, LV);
         registerCombustionGeneratorFuel(Ethanol.getFluid(1), 6, LV);
+        registerCombustionGeneratorFuel(Octane.getFluid(2), 5, LV);
         registerCombustionGeneratorFuel(BioDiesel.getFluid(1), 8, LV);
         registerCombustionGeneratorFuel(LightFuel.getFluid(32), 305, LV);
         registerCombustionGeneratorFuel(Diesel.getFluid(1), 15, LV);
         registerCombustionGeneratorFuel(NitroDiesel.getFluid(2), 45, LV);
         registerCombustionGeneratorFuel(RocketFuel.getFluid(2), 7, LV);
+        registerCombustionGeneratorFuel(Gasoline.getFluid(1), 24, LV);
+        registerCombustionGeneratorFuel(HighOctaneGasoline.getFluid(1), 68, LV);
 
         //steam generator fuels
         registerSteamGeneratorFuel(Steam.getFluid(640), 10, LV);
 
-        //low-tier gas turbine fuels
+        //gas turbine fuels
         registerGasGeneratorFuel(NaturalGas.getFluid(8), 5, LV);
         registerGasGeneratorFuel(Hydrogen.getFluid(8), 5, LV);
         registerGasGeneratorFuel(CarbonMonoxide.getFluid(8), 6, LV);
@@ -48,6 +51,7 @@ public class FuelRecipes {
         registerGasGeneratorFuel(Naphtha.getFluid(1), 10, LV);
         registerGasGeneratorFuel(Toluene.getFluid(4), 41, LV);
         registerGasGeneratorFuel(RocketFuel.getFluid(16), 125, LV);
+        registerGasGeneratorFuel(Nitrobenzene.getFluid(1), 40, LV);
 
         //semi-fluid fuels, like creosote
         registerSemiFluidGeneratorFuel(Creosote.getFluid(16), 1, LV);
