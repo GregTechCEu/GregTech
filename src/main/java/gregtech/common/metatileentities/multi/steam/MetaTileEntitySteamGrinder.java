@@ -25,7 +25,7 @@ import static gregtech.api.render.Textures.SOLID_STEEL_CASING;
 
 public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockController {
 
-    private static final double CONVERSION_RATE = ConfigHolder.steamtoEU;
+    private static final double CONVERSION_RATE = ConfigHolder.multiblockSteamtoEU;
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
             MultiblockAbility.STEAM_IMPORT_ITEMS, MultiblockAbility.STEAM_EXPORT_ITEMS, MultiblockAbility.STEAM
@@ -56,12 +56,12 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
     }
 
     public IBlockState getCasingState() {
-        return ConfigHolder.steelMultiblocks ? MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID) : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.BRONZE_BRICKS);
+        return ConfigHolder.steelSteamMultiblocks ? MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID) : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.BRONZE_BRICKS);
     }
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        return ConfigHolder.steelMultiblocks ? SOLID_STEEL_CASING : BRONZE_PLATED_BRICKS;
+        return ConfigHolder.steelSteamMultiblocks ? SOLID_STEEL_CASING : BRONZE_PLATED_BRICKS;
     }
 
     @Override

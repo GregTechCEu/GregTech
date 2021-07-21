@@ -26,7 +26,7 @@ public class SteamGrinderInfo extends MultiblockInfoPage {
     public List<MultiblockShapeInfo> getMatchingShapes() {
         ArrayList<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
 
-        if (ConfigHolder.steelMultiblocks) {
+        if (ConfigHolder.steelSteamMultiblocks) {
             shapeInfo.add(MultiblockShapeInfo.builder()
                     .aisle("XXX", "IXX", "XXX")
                     .aisle("HXX", "S#X", "XXX")

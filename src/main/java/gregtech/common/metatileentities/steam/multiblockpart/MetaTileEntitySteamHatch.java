@@ -56,6 +56,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
         this.containerInventory = new ItemStackHandler(2);
         this.steamFluidTank = new FilteredFluidHandler(INVENTORY_SIZE).setFillPredicate(ModHandler::isSteam);
         initializeInventory();
+        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override
@@ -104,11 +105,11 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     @Override
     public void pullFluidsFromNearbyHandlers(EnumFacing... allowedFaces) {
         BlockPos.PooledMutableBlockPos blockPos = BlockPos.PooledMutableBlockPos.retain();
-        EnumFacing[] var3 = allowedFaces;
-        int var4 = allowedFaces.length;
+        EnumFacing[] AllowedFaces = allowedFaces;
+        int length = allowedFaces.length;
 
-        for(int var5 = 0; var5 < var4; ++var5) {
-            EnumFacing nearbyFacing = var3[var5];
+        for(int i = 0; i < length; ++i) {
+            EnumFacing nearbyFacing = AllowedFaces[i];
             blockPos.setPos(this.getPos()).move(nearbyFacing);
             TileEntity tileEntity = this.getWorld().getTileEntity(blockPos);
             if (tileEntity != null) {
@@ -136,7 +137,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller == null)
-            return ConfigHolder.steelMultiblocks ? Textures.SOLID_STEEL_CASING : Textures.BRONZE_PLATED_BRICKS;
+            return ConfigHolder.steelSteamMultiblocks ? Textures.SOLID_STEEL_CASING : Textures.BRONZE_PLATED_BRICKS;
         return controller.getBaseTexture(this);
     }
 

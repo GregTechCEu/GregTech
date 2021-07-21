@@ -27,7 +27,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController {
 
-    private static final double CONVERSION_RATE = ConfigHolder.steamtoEU;
+    private static final double CONVERSION_RATE = ConfigHolder.multiblockSteamtoEU;
     private boolean isActive;
 
     public MetaTileEntitySteamOven(ResourceLocation metaTileEntityId) {
@@ -71,13 +71,13 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     }
 
     public IBlockState getCasingState() {
-        return ConfigHolder.steelMultiblocks ?
+        return ConfigHolder.steelSteamMultiblocks ?
                 MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID) :
                 MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.BRONZE_BRICKS);
     }
 
     public IBlockState getFireboxState() {
-        return ConfigHolder.steelMultiblocks ?
+        return ConfigHolder.steelSteamMultiblocks ?
                 MetaBlocks.BOILER_FIREBOX_CASING.getState(BlockFireboxCasing.FireboxCasingType.STEEL_FIREBOX) :
                 MetaBlocks.BOILER_FIREBOX_CASING.getState(BlockFireboxCasing.FireboxCasingType.BRONZE_FIREBOX);
     }
@@ -88,7 +88,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        if (ConfigHolder.steelMultiblocks) {
+        if (ConfigHolder.steelSteamMultiblocks) {
             if (sourcePart != null && isFireboxPart(sourcePart)) {
                 return isActive ? Textures.STEEL_FIREBOX_ACTIVE : Textures.STEEL_FIREBOX;
             }

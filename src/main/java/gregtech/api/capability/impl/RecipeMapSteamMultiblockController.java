@@ -76,7 +76,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
 
     @Override
     protected void updateFormedValid() {
-        this.recipeMapWorkable.updateWorkable();
+        recipeMapWorkable.update();
     }
 
     private void initializeAbilities() {

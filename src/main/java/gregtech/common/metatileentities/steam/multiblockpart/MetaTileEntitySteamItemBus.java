@@ -29,6 +29,8 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements
     public MetaTileEntitySteamItemBus(ResourceLocation metaTileEntityId, boolean isExportHatch) {
         super(metaTileEntityId, 1, isExportHatch);
         this.isExportHatch = isExportHatch;
+        initializeInventory();
+        this.setPaintingColor(0xFFFFFF);
     }
 
     @Override
@@ -51,7 +53,7 @@ public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller == null)
-            return ConfigHolder.steelMultiblocks ? Textures.SOLID_STEEL_CASING : Textures.BRONZE_PLATED_BRICKS;
+            return ConfigHolder.steelSteamMultiblocks ? Textures.SOLID_STEEL_CASING : Textures.BRONZE_PLATED_BRICKS;
         return controller.getBaseTexture(this);
     }
 

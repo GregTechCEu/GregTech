@@ -12,11 +12,11 @@ public class ConfigHolder {
 
     @Config.Comment("Whether to enable that Steam Multiblocks use Steel instead of Bronze. Default: false")
     @Config.RequiresMcRestart
-    public static boolean steelMultiblocks = false;
+    public static boolean steelSteamMultiblocks = false;
 
     @Config.Comment("Steam to EU multiplier for Steam Multiblocks. 1.0 means 1 Steam -> 1 EU. 0.5 means 2 Steam -> 1 EU")
     @Config.RequiresMcRestart
-    public static double steamtoEU = 0.5;
+    public static double multiblockSteamtoEU = 0.5;
 
     @Config.Comment("Whether to enable more verbose logging. Default: false")
     public static boolean debug = false;

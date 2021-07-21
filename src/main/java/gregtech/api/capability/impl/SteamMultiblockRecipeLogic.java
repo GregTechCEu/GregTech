@@ -97,10 +97,6 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
         return GTValues.V[GTValues.LV];
     }
 
-    public void updateWorkable() {
-        super.update();
-    }
-
     @Override
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
         RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
