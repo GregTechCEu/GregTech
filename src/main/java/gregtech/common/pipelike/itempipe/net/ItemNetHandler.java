@@ -3,6 +3,7 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.CoverRoboticArm;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -16,10 +17,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class ItemNetHandler implements IItemHandler {
 
@@ -182,26 +180,33 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, boolean isOnPipe, ItemStack stack, boolean simulate, int allowed) {
-        int armRate = arm.getItemFilterContainer().getTransferStackSize();
+        int rate;
+        boolean isStackSpecific = false;
+        Object index = arm.getItemFilterContainer().matchItemStack(stack);
+        if (index instanceof Integer) {
+            rate = arm.getItemFilterContainer().getSlotTransferLimit(index, Collections.singleton(new ItemStackKey(stack)));
+            isStackSpecific = true;
+        } else
+            rate = arm.getItemFilterContainer().getTransferStackSize();
         int count;
         switch (arm.getTransferMode()) {
             case TRANSFER_ANY:
                 return insert(handler, stack, simulate, allowed);
             case KEEP_EXACT:
-                count = armRate - countStack(handler, arm);
+                count = rate - countStack(handler, stack, arm, isStackSpecific);
                 if (count <= 0) return stack;
                 count = Math.min(allowed, Math.min(stack.getCount(), count));
                 return insert(handler, stack, simulate, count);
             case TRANSFER_EXACT:
                 int max = allowed + arm.getBuffer();
-                count = Math.min(max, Math.min(armRate, stack.getCount()));
-                if (count < armRate) {
+                count = Math.min(max, Math.min(rate, stack.getCount()));
+                if (count < rate) {
                     arm.buffer(allowed);
                     return stack;
                 } else {
                     arm.clearBuffer();
                 }
-                if (insert(handler, stack, true, count).getCount() != count) {
+                if (insert(handler, stack, true, count).getCount() != stack.getCount() - count) {
                     return stack;
                 }
                 return insert(handler, stack, simulate, count);
@@ -209,13 +214,14 @@ public class ItemNetHandler implements IItemHandler {
         return stack;
     }
 
-    public int countStack(IItemHandler handler, CoverConveyor conveyor) {
-        if (conveyor == null) return 0;
+    public int countStack(IItemHandler handler, ItemStack stack, CoverRoboticArm arm, boolean isStackSpecific) {
+        if (arm == null) return 0;
+        ItemStackKey key = new ItemStackKey(stack);
         int count = 0;
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack slot = handler.getStackInSlot(i);
             if (slot.isEmpty()) continue;
-            if (conveyor.getItemFilterContainer().testItemStack(slot)) {
+            if (isStackSpecific ? key.isItemStackEqual(slot) : arm.getItemFilterContainer().testItemStack(slot)) {
                 count += slot.getCount();
             }
         }
