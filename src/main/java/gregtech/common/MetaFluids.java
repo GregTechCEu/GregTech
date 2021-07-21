@@ -100,6 +100,7 @@ public class MetaFluids {
 
         setDefaultTexture(Materials.Air, FluidType.NORMAL);
         setDefaultTexture(Materials.Oxygen, FluidType.NORMAL);
+        setDefaultTexture(Materials.Oxygen, FluidType.PLASMA);
         setDefaultTexture(Materials.Hydrogen, FluidType.NORMAL);
         setDefaultTexture(Materials.Deuterium, FluidType.NORMAL);
         setDefaultTexture(Materials.Tritium, FluidType.NORMAL);
@@ -135,7 +136,7 @@ public class MetaFluids {
         setDefaultTexture(Materials.Mercury, FluidType.NORMAL);
         setDefaultTexture(Materials.NitroDiesel, FluidType.NORMAL);
         setDefaultTexture(Materials.SodiumPersulfate, FluidType.NORMAL);
-        setDefaultTexture(Materials.Glyceryl, FluidType.NORMAL);
+        setDefaultTexture(Materials.GlycerylTrinitrate, FluidType.NORMAL);
         setDefaultTexture(Materials.Lubricant, FluidType.NORMAL);
         setDefaultTexture(Materials.Creosote, FluidType.NORMAL);
         setDefaultTexture(Materials.SeedOil, FluidType.NORMAL);
@@ -156,6 +157,9 @@ public class MetaFluids {
         setDefaultTexture(Materials.Glass, FluidType.NORMAL);
         setDefaultTexture(Materials.Toluene, FluidType.NORMAL);
         setDefaultTexture(Materials.Redstone, FluidType.NORMAL);
+        setDefaultTexture(Materials.Krypton, FluidType.NORMAL);
+        setDefaultTexture(Materials.Neon, FluidType.NORMAL);
+        setDefaultTexture(Materials.Xenon, FluidType.NORMAL);
 
         for (Material material : Material.MATERIAL_REGISTRY) {
             if (!(material instanceof FluidMaterial)) continue;
@@ -194,7 +198,10 @@ public class MetaFluids {
      * @param fluidType the type of the fluid
      */
     public static void setDefaultTexture(IMaterial<?> material, FluidType fluidType) {
-        ResourceLocation resourceLocation = new ResourceLocation(GTValues.MODID, "blocks/fluids/fluid." + material.toString());
+        String path = "blocks/fluids/fluid." + material.toString();
+        if (fluidType.equals(FluidType.PLASMA))
+            path += ".plasma";
+        ResourceLocation resourceLocation = new ResourceLocation(GTValues.MODID, path);
         setMaterialFluidTexture(material, fluidType, resourceLocation);
     }
 
@@ -219,9 +226,9 @@ public class MetaFluids {
         if (fluid == null) {
             FluidState fluidState = fluidType.getFluidState(material);
             ResourceLocation textureLocation;
-//            if (fluidType.equals(FluidType.PLASMA))
-//                textureLocation = fluidTextureMap.getOrDefault(Pair.of(material, fluidType), AUTO_GENERATED_PLASMA_TEXTURE); //todo make plasma and regular texture locations different
-//            else
+            if (fluidType.equals(FluidType.PLASMA))
+                textureLocation = fluidTextureMap.getOrDefault(Pair.of(material, fluidType), AUTO_GENERATED_PLASMA_TEXTURE);
+            else
                 textureLocation = fluidTextureMap.getOrDefault(Pair.of(material, fluidType), AUTO_GENERATED_FLUID_TEXTURE);
             fluid = new MaterialFluid(fluidName, material, fluidState, textureLocation);
             fluid.setTemperature(temperature);

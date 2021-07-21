@@ -157,8 +157,9 @@ public abstract class SteamBoiler extends MetaTileEntity {
             updateCurrentTemperature();
             generateSteam();
 
+            fillInternalTankFromFluidContainer(containerInventory, containerInventory, 0, 1);
+            
             if (getOffsetTimer() % 5 == 0) {
-                fillInternalTankFromFluidContainer(containerInventory, containerInventory, 0, 1);
                 pushFluidsIntoNearbyHandlers(STEAM_PUSH_DIRECTIONS);
             }
 
