@@ -29,7 +29,7 @@ public class CraftingComponent {
     public static Component WIRE;
     public static Component CABLE_QUAD;
     public static Component HULL;
-    public static Component PIPE_MEDIUM;
+    public static Component PIPE_NORMAL;
     public static Component PIPE_LARGE;
     public static Component GLASS;
     public static Component PLATE;
@@ -169,7 +169,7 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        PIPE_MEDIUM = new Component(Stream.of(new Object[][]{
+        PIPE_NORMAL = new Component(Stream.of(new Object[][]{
 
                 {0, new UnificationEntry(OrePrefix.pipeNormal, Materials.Bronze)},
                 {1, new UnificationEntry(OrePrefix.pipeNormal, Materials.Bronze)},
