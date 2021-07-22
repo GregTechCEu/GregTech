@@ -3,7 +3,6 @@ package gregtech.loaders.oreprocessing;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.FluidMaterial;
@@ -27,7 +26,7 @@ public class DecompositionRecipeHandler {
         for (Material material : Material.MATERIAL_REGISTRY) {
             if (material instanceof FluidMaterial) {
                 OrePrefix prefix = material instanceof DustMaterial ? OrePrefix.dust : null;
-                processDecomposition(prefix, material);
+                processDecomposition(prefix, (FluidMaterial) material);
             }
         }
         for (SimpleFluidMaterial material : SimpleFluidMaterial.MATERIAL_REGISTRY) {
@@ -35,7 +34,7 @@ public class DecompositionRecipeHandler {
         }
     }
 
-    private static void processDecomposition(OrePrefix decomposePrefix, IMaterial<?> material) {
+    private static void processDecomposition(OrePrefix decomposePrefix, FluidMaterial material) {
         if (material.getMaterialComponents().isEmpty() ||
             (!material.hasFlag(Material.MatFlags.DECOMPOSITION_BY_ELECTROLYZING) &&
                 !material.hasFlag(Material.MatFlags.DECOMPOSITION_BY_CENTRIFUGING)) ||
@@ -140,7 +139,7 @@ public class DecompositionRecipeHandler {
     }
 
     //todo think something better with this
-    private static int getElectrolyzingVoltage(List<IMaterial<?>> components) {
+    private static int getElectrolyzingVoltage(List<Material> components) {
         //tungsten-containing materials electrolyzing requires 1920
         if (components.contains(Materials.Tungsten))
             return 1920; //EV voltage (tungstate and scheelite electrolyzing)

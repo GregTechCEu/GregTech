@@ -9,7 +9,6 @@ import gregtech.api.recipes.builders.CokeOvenRecipeBuilder;
 import gregtech.api.recipes.builders.PBFRecipeBuilder;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
@@ -652,7 +651,7 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
     }
 
-    private static void createSulfurDioxideRecipe(IMaterial<?> inputMaterial, IMaterial<?> outputMaterial, int sulfurDioxideAmount) {
+    private static void createSulfurDioxideRecipe(Material inputMaterial, Material outputMaterial, int sulfurDioxideAmount) {
         BLAST_RECIPES.recipeBuilder().duration(120).EUt(120).blastFurnaceTemp(1200)
                 .input(dust, inputMaterial)
                 .fluidInputs(Oxygen.getFluid(3000))

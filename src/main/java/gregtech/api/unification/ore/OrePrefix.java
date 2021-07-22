@@ -1,7 +1,6 @@
 package gregtech.api.unification.ore;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MaterialIconType;
 import gregtech.api.unification.material.Materials;
@@ -340,18 +339,18 @@ public enum OrePrefix {
      * NOTE: Ore registrations with self-referencing OrePrefix still can occur with other materials
      */
     public @Nullable
-    IMaterial<?> materialType;
+    Material materialType;
 
     private final List<IOreRegistrationHandler> oreProcessingHandlers = new ArrayList<>();
-    private final Set<IMaterial<?>> ignoredMaterials = new HashSet<>();
-    private final Set<IMaterial<?>> generatedMaterials = new HashSet<>();
+    private final Set<Material> ignoredMaterials = new HashSet<>();
+    private final Set<Material> generatedMaterials = new HashSet<>();
     private boolean isMarkerPrefix = false;
 
     public byte maxStackSize = 64;
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
     public float heatDamage = 0.0F; // Negative for Frost Damage
 
-    OrePrefix(String categoryName, long materialAmount, IMaterial<?> material, MaterialIconType materialIconType, long flags, Predicate<Material> condition) {
+    OrePrefix(String categoryName, long materialAmount, Material material, MaterialIconType materialIconType, long flags, Predicate<Material> condition) {
         this.categoryName = categoryName;
         this.materialAmount = materialAmount;
         this.isSelfReferencing = (flags & SELF_REFERENCING) != 0;
@@ -423,7 +422,7 @@ public enum OrePrefix {
         return oreProcessingHandlers.addAll(Arrays.asList(processingHandler));
     }
 
-    public <T extends IMaterial<?>> void addProcessingHandler(Class<T> materialFilter, BiConsumer<OrePrefix, T> handler) {
+    public <T extends Material> void addProcessingHandler(Class<T> materialFilter, BiConsumer<OrePrefix, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
             if (materialFilter.isAssignableFrom(material.getClass())) {
                 //noinspection unchecked
@@ -432,7 +431,7 @@ public enum OrePrefix {
         });
     }
 
-    public void processOreRegistration(@Nullable IMaterial<?> material) {
+    public void processOreRegistration(@Nullable Material material) {
         if (this.isSelfReferencing && material == null) {
             material = materialType; //append default material for self-referencing OrePrefix
         }
@@ -448,19 +447,19 @@ public enum OrePrefix {
     }
 
     private static final ThreadLocal<OrePrefix> currentProcessingPrefix = new ThreadLocal<>();
-    private static final ThreadLocal<IMaterial<?>> currentMaterial = new ThreadLocal<>();
+    private static final ThreadLocal<Material> currentMaterial = new ThreadLocal<>();
 
     public static OrePrefix getCurrentProcessingPrefix() {
         return currentProcessingPrefix.get();
     }
 
-    public static IMaterial<?> getCurrentMaterial() {
+    public static Material getCurrentMaterial() {
         return currentMaterial.get();
     }
 
     private void runGeneratedMaterialHandlers() {
         currentProcessingPrefix.set(this);
-        for (IMaterial<?> registeredMaterial : generatedMaterials) {
+        for (Material registeredMaterial : generatedMaterials) {
             currentMaterial.set(registeredMaterial);
             for (IOreRegistrationHandler registrationHandler : oreProcessingHandlers) {
                 registrationHandler.processMaterial(this, registeredMaterial);
@@ -473,7 +472,7 @@ public enum OrePrefix {
     }
 
     @SideOnly(Side.CLIENT)
-    public String getLocalNameForItem(IMaterial<?> material) {
+    public String getLocalNameForItem(Material material) {
         String specifiedUnlocalized = "item." + material.toString() + "." + this.name();
         if (I18n.hasKey(specifiedUnlocalized)) return I18n.format(specifiedUnlocalized);
         String unlocalized = "item.material.oreprefix." + this.name();
@@ -482,11 +481,11 @@ public enum OrePrefix {
         return formatted.equals(unlocalized) ? matLocalized : formatted;
     }
 
-    public boolean isIgnored(IMaterial<?> material) {
+    public boolean isIgnored(Material material) {
         return ignoredMaterials.contains(material);
     }
 
-    public void setIgnored(IMaterial<?> material) {
+    public void setIgnored(Material material) {
         ignoredMaterials.add(material);
     }
 
