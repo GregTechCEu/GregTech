@@ -25,6 +25,6 @@ public class ItemBlockItemPipe extends ItemBlockMaterialPipe<ItemPipeType, ItemP
             tooltip.add(I18n.format("gregtech.item_pipe.rate_items", (int) ((pipeProperties.transferRate * 64) + 0.5)));
         else
             tooltip.add(I18n.format("gregtech.item_pipe.rate_stacks", (int) pipeProperties.transferRate));
-        tooltip.add(I18n.format("gregtech.item_pipe.resistance", pipeProperties.resistance));
+        tooltip.add(I18n.format("gregtech.item_pipe.priority", pipeProperties.priority));
     }
 }

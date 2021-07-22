@@ -87,7 +87,7 @@ public class ItemNetWalker {
         if (minProperties == null)
             minProperties = pipeProperties;
         else
-            minProperties = new ItemPipeProperties(minProperties.resistance + pipeProperties.resistance, Math.min(minProperties.transferRate, pipeProperties.transferRate));
+            minProperties = new ItemPipeProperties(minProperties.priority + pipeProperties.priority, Math.min(minProperties.transferRate, pipeProperties.transferRate));
         ((TileEntityItemPipe) thisPipe).markWalked();
         walked.add((TileEntityItemPipe) thisPipe);
 

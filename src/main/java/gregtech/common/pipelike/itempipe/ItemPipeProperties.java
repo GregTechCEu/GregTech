@@ -5,17 +5,17 @@ import java.util.Objects;
 public class ItemPipeProperties {
 
     /**
-     * Items will try to take the path with the lowest resistance
+     * Items will try to take the path with the lowest priority
      */
-    public final int resistance;
+    public final int priority;
 
     /**
      * rate in stacks per sec
      */
     public final float transferRate;
 
-    public ItemPipeProperties(int resistance, float transferRate) {
-        this.resistance = resistance;
+    public ItemPipeProperties(int priority, float transferRate) {
+        this.priority = priority;
         this.transferRate = transferRate;
     }
 
@@ -24,18 +24,18 @@ public class ItemPipeProperties {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ItemPipeProperties that = (ItemPipeProperties) o;
-        return resistance == that.resistance && Float.compare(that.transferRate, transferRate) == 0;
+        return priority == that.priority && Float.compare(that.transferRate, transferRate) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(resistance, transferRate);
+        return Objects.hash(priority, transferRate);
     }
 
     @Override
     public String toString() {
         return "ItemPipeProperties{" +
-                "resistance=" + resistance +
+                "priority=" + priority +
                 ", transferRate=" + transferRate +
                 '}';
     }

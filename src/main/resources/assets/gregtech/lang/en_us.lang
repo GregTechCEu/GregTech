@@ -863,8 +863,8 @@ cover.conveyor.mode.export=Mode: Export
 cover.conveyor.mode.import=Mode: Import
 cover.conveyor.distribution.enabled=Item distribution mode for item pipes/n§bInsert First
 cover.conveyor.distribution.disabled=Item distribution mode for item pipes/n§bRound Robin
-cover.conveyor.blocks_input.enabled=If enabled, items will not be inserted when cover is set to put items from cover holder to pipe./n§aEnabled
-cover.conveyor.blocks_input.disabled=If enabled, items will not be inserted when cover is set to put items from cover holder to pipe./n§cDisabled
+cover.conveyor.blocks_input.enabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§aEnabled
+cover.conveyor.blocks_input.disabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§cDisabled
 cover.universal.manual_import_export.mode.disabled=Manual I/O: Disabled
 cover.universal.manual_import_export.mode.filtered=Manual I/O: Filtered
 cover.universal.manual_import_export.mode.unfiltered=Manual I/O: Unfiltered
@@ -3472,7 +3472,7 @@ gregtech.fluid_pipe.non_gas_proof=§aCan't transfer gases.
 
 gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
 gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s
-gregtech.item_pipe.resistance=§9Resistance: %d
+gregtech.item_pipe.priority=§9Priority: %d
 
 gregtech.multiblock.work_paused=Work Paused.
 gregtech.multiblock.running=Running perfectly.
