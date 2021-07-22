@@ -173,7 +173,11 @@ public class ClientProxy extends CommonProxy {
     }
     private static final String[] clearRecipes = new String[]{
             "quantum_tank",
-            "quantum_chest"
+            "quantum_chest",
+            "super_chest",
+            "super_tank",
+            "drum.",
+            "_tank",
     };
 
     @SubscribeEvent

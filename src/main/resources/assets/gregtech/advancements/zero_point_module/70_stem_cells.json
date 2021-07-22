@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.zero_point_module.70_stem_cells.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_2",
-      "data": 32535
+      "item": "gregtech:meta_item_1",
+      "data": 353
     },
     "frame": "challenge"
   },
@@ -18,8 +18,8 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:meta_item_2",
-            "data": 32535
+            "item": "gregtech:meta_item_1",
+            "data": 353
           }
         ]
       }

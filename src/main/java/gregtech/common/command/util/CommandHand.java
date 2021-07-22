@@ -2,7 +2,6 @@ package gregtech.common.command.util;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.items.materialitem.MaterialMetaItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.IToolStats;
@@ -12,6 +11,7 @@ import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.ClipboardUtil;
+import gregtech.api.items.materialitem.MetaPrefixItem;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -79,9 +79,9 @@ public class CommandHand extends CommandBase {
                 MetaItem<?> metaItem = (MetaItem<?>) stackInHand.getItem();
                 MetaValueItem metaValueItem = metaItem.getItem(stackInHand);
                 if (metaValueItem == null) {
-                    if (metaItem instanceof MaterialMetaItem) {
-                        Material material = ((MaterialMetaItem) metaItem).getMaterial(stackInHand);
-                        OrePrefix orePrefix = ((MaterialMetaItem) metaItem).getOrePrefix(stackInHand);
+                    if (metaItem instanceof MetaPrefixItem) {
+                        Material material = ((MetaPrefixItem) metaItem).getMaterial(stackInHand);
+                        OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
                         String oreDictName = new UnificationEntry(orePrefix, material).toString();
                         player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.material_meta_item", orePrefix, material)
                             .setStyle(new Style().setClickEvent(new ClickEvent(Action.OPEN_URL, oreDictName))));

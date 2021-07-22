@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.steam.10_vacuum_tube.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_2",
-      "data": 32450
+      "item": "gregtech:meta_item_1",
+      "data": 261
     }
   },
   "criteria": {
@@ -17,8 +17,8 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:meta_item_2",
-            "data": 32450
+            "item": "gregtech:meta_item_1",
+            "data": 261
           }
         ]
       }
