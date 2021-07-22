@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.ludicrous_voltage.62_raw_crystal_chip.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_2",
-      "data": 32481
+      "item": "gregtech:meta_item_1",
+      "data": 291
     }
   },
   "criteria": {
@@ -17,8 +17,8 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:meta_item_2",
-            "data": 32481
+            "item": "gregtech:meta_item_1",
+            "data": 291
           }
         ]
       }
