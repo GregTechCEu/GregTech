@@ -204,15 +204,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         else {
             currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
         }
-        // If a recipe was found, then inputs were valid.
+        // If a recipe was found, then inputs were valid. Cache found recipe.
         if (currentRecipe != null) {
-            this.invalidInputsForRecipes = false;
             this.previousRecipe = currentRecipe;
-            // Add-ons may Override findRecipe method but not trySearchNewRecipe, in that case
-            // they may return a null recipe. Since we only check for items and fluid here, having
-            // findRecipe return a null recipe with isOutputsFull being true, means we have a valid
-            // recipe in the input waiting for space in the output.
-        } else this.invalidInputsForRecipes = !this.isOutputsFull;
+        }
+        this.invalidInputsForRecipes = (currentRecipe == null);
 
         // proceed if we have a usable recipe.
         if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))

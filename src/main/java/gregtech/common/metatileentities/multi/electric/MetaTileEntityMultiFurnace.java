@@ -155,7 +155,9 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
             /* Iterate over the input items looking for more things to add until we run either out of input items
              * or we have exceeded the number of items permissible from the smelting bonus
              */
-            this.invalidInputsForRecipes = true;
+            boolean matchedRecipe = false;
+            boolean canFitOutputs = true;
+
             for(int index = 0; index < inputs.getSlots() && currentItemsEngaged < maxItemsLimit; index++) {
 
                 // Skip this slot if it is empty.
@@ -170,7 +172,7 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
                 CountableIngredient inputIngredient;
                 if(matchingRecipe != null) {
                     inputIngredient = matchingRecipe.getInputs().get(0);
-                    this.invalidInputsForRecipes = false;
+                    matchedRecipe = true;
                 }
                 else
                     continue;
@@ -198,7 +200,7 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
                     computeOutputItemStacks(temp, matchingRecipe.getOutputs().get(0), recipeMultiplier);
 
                     // determine if there is enough room in the output to fit all of this
-                    boolean canFitOutputs = InventoryUtils.simulateItemStackMerge(temp, this.getOutputInventory());
+                    canFitOutputs = InventoryUtils.simulateItemStackMerge(temp, this.getOutputInventory());
 
                     // if there isn't, we can't process this recipe.
                     if (!canFitOutputs)
@@ -216,13 +218,10 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
                 }
             }
 
-            // If there were no accepted ingredients, then there is no recipe to process.
-            // the output may be filled up
-            if (recipeInputs.isEmpty() && !invalidInputsForRecipes) {
-                //Set here to prevent recipe deadlock on world load with full output bus
-                this.isOutputsFull = true;
-                return null;
-            } else if (recipeInputs.isEmpty()) {
+            this.invalidInputsForRecipes = !matchedRecipe;
+            this.isOutputsFull = !canFitOutputs;
+
+            if (recipeInputs.isEmpty()) {
                 return null;
             }
 
