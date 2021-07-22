@@ -1,4 +1,4 @@
-package gregtech.common.items;
+package gregtech.api.items.materialitem;
 
 import gnu.trove.map.hash.TShortObjectHashMap;
 import gregtech.api.GTValues;
@@ -78,6 +78,10 @@ public class MetaPrefixItem extends StandardMetaItem {
         }
     }
 
+    public List<ItemStack> getEntries() {
+        return items;
+    }
+
     protected boolean canGenerate(OrePrefix orePrefix, Material material) {
         return orePrefix.doGenerateItem(material);
     }
@@ -86,9 +90,8 @@ public class MetaPrefixItem extends StandardMetaItem {
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack itemStack) {
         Material material = Material.MATERIAL_REGISTRY.getObjectById(itemStack.getItemDamage());
-        if (material == null || prefix == null)
-            return "Error: Item has no display name";
-        return this.prefix.getLocalNameForItem(material);
+        if (material == null || prefix == null) return "";
+        return prefix.getLocalNameForItem(material);
     }
 
     @Override
@@ -178,7 +181,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         return Material.MATERIAL_REGISTRY.getObjectById(damage);
     }
 
-    public OrePrefix getOrePrefix(ItemStack itemStack) {
+    public OrePrefix getOrePrefix() {
         return this.prefix;
     }
 

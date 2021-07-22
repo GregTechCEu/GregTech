@@ -1,7 +1,7 @@
 package gregtech.common.items;
 
 import com.google.common.base.CaseFormat;
-import gregtech.api.items.materialitem.MaterialMetaItem;
+import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
@@ -535,9 +535,7 @@ public final class MetaItems {
 
     public static void registerOreDict() {
         for (MetaItem<?> item : ITEMS) {
-            if (item instanceof MaterialMetaItem) {
-                ((MaterialMetaItem) item).registerOreDict();
-            } else if (item instanceof MetaPrefixItem) {
+            if (item instanceof MetaPrefixItem) {
                 ((MetaPrefixItem) item).registerOreDict();
             }
         }
