@@ -463,13 +463,13 @@ public class MetaBlocks {
         for (BlockCable cable : CABLES) {
             for (Material pipeMaterial : cable.getEnabledMaterials()) {
                 ItemStack itemStack = cable.getItem(pipeMaterial);
-                OreDictUnifier.registerOre(itemStack, cable.getPipePrefix(), pipeMaterial);
+                OreDictUnifier.registerOre(itemStack, cable.getPrefix(), pipeMaterial);
             }
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
             for (Material pipeMaterial : pipe.getEnabledMaterials()) {
                 ItemStack itemStack = pipe.getItem(pipeMaterial);
-                OreDictUnifier.registerOre(itemStack, pipe.getPipePrefix(), pipeMaterial);
+                OreDictUnifier.registerOre(itemStack, pipe.getPrefix(), pipeMaterial);
             }
         }
     }

@@ -41,10 +41,9 @@ import java.util.TreeMap;
 public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
 
     private final SortedMap<Material, FluidPipeProperties> enabledMaterials = new TreeMap<>();
-    private final FluidPipeType pipeType;
 
     public BlockFluidPipe(FluidPipeType pipeType) {
-        this.pipeType = pipeType;
+        super(pipeType);
         setHarvestLevel("wrench", 1);
     }
 
@@ -75,18 +74,8 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public OrePrefix getPipePrefix() {
-        return pipeType.getOrePrefix();
-    }
-
-    @Override
     protected FluidPipeProperties getFallbackType() {
         return enabledMaterials.values().iterator().next();
-    }
-
-    @Override
-    public FluidPipeType getItemPipeType(ItemStack itemStack) {
-        return pipeType;
     }
 
     @Override

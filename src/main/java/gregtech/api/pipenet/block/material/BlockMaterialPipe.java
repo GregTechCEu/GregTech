@@ -10,7 +10,13 @@ import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.item.ItemStack;
 
-public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
+public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
+
+    protected final PipeType pipeType;
+
+    public BlockMaterialPipe(PipeType pipeType) {
+        this.pipeType = pipeType;
+    }
 
     @Override
     public NodeDataType createProperties(IPipeTile<PipeType, NodeDataType> pipeTile) {
@@ -24,7 +30,6 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
 
     @Override
     public NodeDataType createItemProperties(ItemStack itemStack) {
-        PipeType pipeType = getItemPipeType(itemStack);
         Material material = getItemMaterial(itemStack);
         if (pipeType == null || material == null) {
             return getFallbackType();
@@ -44,7 +49,7 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
 
     @Override
     public void setTileEntityData(TileEntityPipeBase<PipeType, NodeDataType> pipeTile, ItemStack itemStack) {
-        ((TileEntityMaterialPipeBase<PipeType, NodeDataType>) pipeTile).setPipeData(this, getItemPipeType(itemStack), getItemMaterial(itemStack));
+        ((TileEntityMaterialPipeBase<PipeType, NodeDataType>) pipeTile).setPipeData(this, pipeType, getItemMaterial(itemStack));
     }
 
     @Override
@@ -55,6 +60,11 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
 
     protected abstract NodeDataType createProperties(PipeType pipeType, Material material);
 
-    public abstract OrePrefix getPipePrefix();
+    public OrePrefix getPrefix() {
+        return pipeType.getOrePrefix();
+    }
 
+    public PipeType getItemPipeType(ItemStack is) {
+        return pipeType;
+    }
 }

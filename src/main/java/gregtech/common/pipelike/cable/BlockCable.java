@@ -47,10 +47,9 @@ import java.util.TreeMap;
 public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, WorldENet> implements ITileEntityProvider {
 
     private final Map<Material, WireProperties> enabledMaterials = new TreeMap<>();
-    private final Insulation cableType;
 
     public BlockCable(Insulation cableType) {
-        this.cableType = cableType;
+        super(cableType);
         setHarvestLevel("cutter", 1);
     }
 
@@ -58,7 +57,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(wireProperties, "wireProperties");
         Preconditions.checkArgument(Material.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
-        if (!cableType.orePrefix.isIgnored(material)) {
+        if (!pipeType.orePrefix.isIgnored(material)) {
             this.enabledMaterials.put(material, wireProperties);
         }
     }
@@ -78,18 +77,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public OrePrefix getPipePrefix() {
-        return cableType.getOrePrefix();
-    }
-
-    @Override
     protected WireProperties getFallbackType() {
         return enabledMaterials.values().iterator().next();
-    }
-
-    @Override
-    public Insulation getItemPipeType(ItemStack itemStack) {
-        return cableType;
     }
 
     @Override
