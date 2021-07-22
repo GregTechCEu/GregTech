@@ -2,7 +2,6 @@ package gregtech.common.pipelike.itempipe;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
-import gregtech.api.pipenet.block.simple.EmptyNodeData;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.type.Material;
@@ -29,17 +28,17 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipeProperties, WorldItemPipeNet> {
 
-    static {
-        //TickableWorldPipeNetEventHandler.registerTickablePipeNet(WorldItemPipeNet::getWorldPipeNet);
-    }
-
     private final Map<Material, ItemPipeProperties> enabledMaterials = new HashMap<>();
 
-    public BlockItemPipe() {
+    public BlockItemPipe(ItemPipeType itemPipeType) {
+        super(itemPipeType);
         setHarvestLevel("pickaxe", 1);
     }
 
@@ -111,8 +110,10 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
-            for (ItemPipeType fluidPipeType : ItemPipeType.values()) {
-                items.add(getItem(fluidPipeType, material));
+            for (ItemPipeType itemPipeType : ItemPipeType.values()) {
+                if (!itemPipeType.getOrePrefix().isIgnored(material)) {
+                    items.add(getItem(material));
+                }
             }
         }
     }

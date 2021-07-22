@@ -213,7 +213,9 @@ public class MetaBlocks {
                     }
                 }
                 if (metalMaterial.itemPipeProperties != null) {
-                    ITEM_PIPE.addPipeMaterial(metalMaterial, metalMaterial.itemPipeProperties);
+                    for (BlockItemPipe pipe : ITEM_PIPES) {
+                        pipe.addPipeMaterial(metalMaterial, metalMaterial.itemPipeProperties);
+                    }
                 }
             }
         }
@@ -498,10 +500,10 @@ public class MetaBlocks {
                 OreDictUnifier.registerOre(itemStack, pipe.getPrefix(), pipeMaterial);
             }
         }
-        for (Material pipeMaterial : ITEM_PIPE.getEnabledMaterials()) {
-            for (ItemPipeType itemPipeType : ItemPipeType.values()) {
-                ItemStack itemStack = ITEM_PIPE.getItem(itemPipeType, pipeMaterial);
-                OreDictUnifier.registerOre(itemStack, itemPipeType.getOrePrefix(), pipeMaterial);
+        for (BlockItemPipe pipe : ITEM_PIPES) {
+            for (Material pipeMaterial : pipe.getEnabledMaterials()) {
+                ItemStack itemStack = pipe.getItem(pipeMaterial);
+                OreDictUnifier.registerOre(itemStack, pipe.getPrefix(), pipeMaterial);
             }
         }
     }
