@@ -7,9 +7,16 @@ import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.item.ItemStack;
 
-public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
+public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
+
+    protected final PipeType pipeType;
+
+    public BlockMaterialPipe(PipeType pipeType) {
+        this.pipeType = pipeType;
+    }
 
     @Override
     public NodeDataType createProperties(IPipeTile<PipeType, NodeDataType> pipeTile) {
@@ -23,7 +30,6 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
 
     @Override
     public NodeDataType createItemProperties(ItemStack itemStack) {
-        PipeType pipeType = getItemPipeType(itemStack);
         Material material = getItemMaterial(itemStack);
         if (pipeType == null || material == null) {
             return getFallbackType();
@@ -31,34 +37,34 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
         return createProperties(pipeType, material);
     }
 
-    public ItemStack getItem(PipeType pipeType, Material material) {
-        if (pipeType == null || material == null) {
-            return ItemStack.EMPTY;
-        }
+    public ItemStack getItem(Material material) {
+        if (material == null) return ItemStack.EMPTY;
         int materialId = Material.MATERIAL_REGISTRY.getIDForObject(material);
-        return new ItemStack(this, 1, pipeType.ordinal() * 1000 + materialId);
-    }
-
-    @Override
-    public PipeType getItemPipeType(ItemStack itemStack) {
-        return getPipeTypeClass().getEnumConstants()[itemStack.getMetadata() / 1000];
+        return new ItemStack(this, 1, materialId);
     }
 
     public Material getItemMaterial(ItemStack itemStack) {
-        return Material.MATERIAL_REGISTRY.getObjectById(itemStack.getMetadata() % 1000);
+        return Material.MATERIAL_REGISTRY.getObjectById(itemStack.getMetadata());
     }
 
     @Override
     public void setTileEntityData(TileEntityPipeBase<PipeType, NodeDataType> pipeTile, ItemStack itemStack) {
-        ((TileEntityMaterialPipeBase<PipeType, NodeDataType>) pipeTile).setPipeData(this, getItemPipeType(itemStack), getItemMaterial(itemStack));
+        ((TileEntityMaterialPipeBase<PipeType, NodeDataType>) pipeTile).setPipeData(this, pipeType, getItemMaterial(itemStack));
     }
 
     @Override
     public ItemStack getDropItem(IPipeTile<PipeType, NodeDataType> pipeTile) {
         Material material = ((IMaterialPipeTile<PipeType, NodeDataType>) pipeTile).getPipeMaterial();
-        return getItem(pipeTile.getPipeType(), material);
+        return getItem(material);
     }
 
     protected abstract NodeDataType createProperties(PipeType pipeType, Material material);
 
+    public OrePrefix getPrefix() {
+        return pipeType.getOrePrefix();
+    }
+
+    public PipeType getItemPipeType(ItemStack is) {
+        return pipeType;
+    }
 }

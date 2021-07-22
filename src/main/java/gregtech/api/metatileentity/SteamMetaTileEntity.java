@@ -90,7 +90,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
         IVertexOperation[] colouredPipeline = ArrayUtils.add(pipeline, new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
         getBaseRenderer().render(renderState, translation, colouredPipeline);
         renderer.render(renderState, translation, pipeline, getFrontFacing(), workableHandler.isActive());
-        Textures.PIPE_OUT_OVERLAY.renderSided(workableHandler.getVentingSide(), renderState, translation, pipeline);
+        Textures.STEAM_VENT_OVERLAY.renderSided(workableHandler.getVentingSide(), renderState, translation, pipeline);
     }
 
     protected boolean isBrickedCasing() {

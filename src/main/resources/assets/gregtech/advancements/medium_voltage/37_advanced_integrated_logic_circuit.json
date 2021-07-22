@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.medium_voltage.37_advanced_integrated_logic_circuit.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_2",
-      "data": 32506
+      "item": "gregtech:meta_item_1",
+      "data": 316
     },
     "frame": "challenge"
   },
@@ -18,8 +18,8 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:meta_item_2",
-            "data": 32506
+            "item": "gregtech:meta_item_1",
+            "data": 316
           }
         ]
       }

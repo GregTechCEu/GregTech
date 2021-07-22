@@ -16,13 +16,13 @@ public class PipeRecipeHandler {
     public static void register() {
         OrePrefix.pipeTinyFluid.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeTiny);
         OrePrefix.pipeSmallFluid.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeSmall);
-        OrePrefix.pipeMediumFluid.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeNormal);
+        OrePrefix.pipeNormalFluid.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeNormal);
         OrePrefix.pipeLargeFluid.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeLarge);
         OrePrefix.pipeHugeFluid.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeHuge);
 
         OrePrefix.pipeTinyItem.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeTiny);
         OrePrefix.pipeSmallItem.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeSmall);
-        OrePrefix.pipeMediumItem.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeNormal);
+        OrePrefix.pipeNormalItem.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeNormal);
         OrePrefix.pipeLargeItem.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeLarge);
         OrePrefix.pipeHugeItem.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeHuge);
     }

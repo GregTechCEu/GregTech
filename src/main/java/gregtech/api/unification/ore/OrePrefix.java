@@ -1,7 +1,6 @@
 package gregtech.api.unification.ore;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MaterialIconType;
 import gregtech.api.unification.material.Materials;
@@ -109,7 +108,7 @@ public enum OrePrefix {
     toolHeadDrill("Drill Tips", M * 4, null, MaterialIconType.toolHeadDrill, ENABLE_UNIFICATION, isToolMaterial), // made of 4 Ingots.
     toolHeadChainsaw("Chainsaw Tips", M * 2, null, MaterialIconType.toolHeadChainsaw, ENABLE_UNIFICATION, isToolMaterial), // made of 2 Ingots.
     toolHeadWrench("Wrench Tips", M * 4, null, MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION, isToolMaterial), // made of 4 Ingots.
-    turbineBlade("Turbine Blades", M * 5, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, isToolMaterial), // made of 5 Ingots.
+    turbineBlade("Turbine Blades", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, isToolMaterial), // made of 5 Ingots.
 
     glass("Glasses", -1, Materials.Glass, null, SELF_REFERENCING | DISALLOW_RECYCLING, null),
     paneGlass("Glass Panes", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING | DISALLOW_RECYCLING, null),
@@ -130,15 +129,16 @@ public enum OrePrefix {
 
     pipeTinyFluid("Tiny Fluid Pipes", M / 2, null, MaterialIconType.pipeTiny, ENABLE_UNIFICATION, null),
     pipeSmallFluid("Small Fluid Pipes", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null),
-    pipeMediumFluid("Medium Fluid Pipes", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null),
+    pipeNormalFluid("Normal Fluid Pipes", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null),
     pipeLargeFluid("Large Fluid Pipes", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null),
     pipeHugeFluid("Huge Fluid Pipes", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null),
 
     pipeTinyItem("Tiny Item Pipes", M / 2, null, MaterialIconType.pipeTiny, ENABLE_UNIFICATION, null),
     pipeSmallItem("Small Item Pipes", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null),
-    pipeMediumItem("Medium Item Pipes", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null),
+    pipeNormalItem("Normal Item Pipes", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null),
     pipeLargeItem("Large Item Pipes", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null),
     pipeHugeItem("Huge Item Pipes", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null),
+
 
     wireGtHex("Hex wires", M * 8, null, null, ENABLE_UNIFICATION, null),
     wireGtOctal("Octal wires", M * 4, null, null, ENABLE_UNIFICATION, null),
@@ -346,18 +346,18 @@ public enum OrePrefix {
      * NOTE: Ore registrations with self-referencing OrePrefix still can occur with other materials
      */
     public @Nullable
-    IMaterial<?> materialType;
+    Material materialType;
 
     private final List<IOreRegistrationHandler> oreProcessingHandlers = new ArrayList<>();
-    private final Set<IMaterial<?>> ignoredMaterials = new HashSet<>();
-    private final Set<IMaterial<?>> generatedMaterials = new HashSet<>();
+    private final Set<Material> ignoredMaterials = new HashSet<>();
+    private final Set<Material> generatedMaterials = new HashSet<>();
     private boolean isMarkerPrefix = false;
 
     public byte maxStackSize = 64;
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
     public float heatDamage = 0.0F; // Negative for Frost Damage
 
-    OrePrefix(String categoryName, long materialAmount, IMaterial<?> material, MaterialIconType materialIconType, long flags, Predicate<Material> condition) {
+    OrePrefix(String categoryName, long materialAmount, Material material, MaterialIconType materialIconType, long flags, Predicate<Material> condition) {
         this.categoryName = categoryName;
         this.materialAmount = materialAmount;
         this.isSelfReferencing = (flags & SELF_REFERENCING) != 0;
@@ -385,14 +385,14 @@ public enum OrePrefix {
         if (this == block) {
             //glowstone and nether quartz blocks use 4 gems (dusts)
             if (material == Materials.Glowstone ||
-                material == Materials.NetherQuartz ||
-                material == Materials.Brick ||
-                material == Materials.Clay)
+                    material == Materials.NetherQuartz ||
+                    material == Materials.Brick ||
+                    material == Materials.Clay)
                 return M * 4;
                 //glass, ice and obsidian gain only one dust
             else if (material == Materials.Glass ||
-                material == Materials.Ice ||
-                material == Materials.Obsidian)
+                    material == Materials.Ice ||
+                    material == Materials.Obsidian)
                 return M;
         } else if (this == stick) {
             if (material == Materials.Blaze)
@@ -429,7 +429,7 @@ public enum OrePrefix {
         return oreProcessingHandlers.addAll(Arrays.asList(processingHandler));
     }
 
-    public <T extends IMaterial<?>> void addProcessingHandler(Class<T> materialFilter, BiConsumer<OrePrefix, T> handler) {
+    public <T extends Material> void addProcessingHandler(Class<T> materialFilter, BiConsumer<OrePrefix, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
             if (materialFilter.isAssignableFrom(material.getClass())) {
                 //noinspection unchecked
@@ -438,7 +438,7 @@ public enum OrePrefix {
         });
     }
 
-    public void processOreRegistration(@Nullable IMaterial<?> material) {
+    public void processOreRegistration(@Nullable Material material) {
         if (this.isSelfReferencing && material == null) {
             material = materialType; //append default material for self-referencing OrePrefix
         }
@@ -454,19 +454,19 @@ public enum OrePrefix {
     }
 
     private static final ThreadLocal<OrePrefix> currentProcessingPrefix = new ThreadLocal<>();
-    private static final ThreadLocal<IMaterial<?>> currentMaterial = new ThreadLocal<>();
+    private static final ThreadLocal<Material> currentMaterial = new ThreadLocal<>();
 
     public static OrePrefix getCurrentProcessingPrefix() {
         return currentProcessingPrefix.get();
     }
 
-    public static IMaterial<?> getCurrentMaterial() {
+    public static Material getCurrentMaterial() {
         return currentMaterial.get();
     }
 
     private void runGeneratedMaterialHandlers() {
         currentProcessingPrefix.set(this);
-        for (IMaterial<?> registeredMaterial : generatedMaterials) {
+        for (Material registeredMaterial : generatedMaterials) {
             currentMaterial.set(registeredMaterial);
             for (IOreRegistrationHandler registrationHandler : oreProcessingHandlers) {
                 registrationHandler.processMaterial(this, registeredMaterial);
@@ -479,7 +479,7 @@ public enum OrePrefix {
     }
 
     @SideOnly(Side.CLIENT)
-    public String getLocalNameForItem(IMaterial<?> material) {
+    public String getLocalNameForItem(Material material) {
         String specifiedUnlocalized = "item." + material.toString() + "." + this.name();
         if (I18n.hasKey(specifiedUnlocalized)) return I18n.format(specifiedUnlocalized);
         String unlocalized = "item.material.oreprefix." + this.name();
@@ -488,11 +488,11 @@ public enum OrePrefix {
         return formatted.equals(unlocalized) ? matLocalized : formatted;
     }
 
-    public boolean isIgnored(IMaterial<?> material) {
+    public boolean isIgnored(Material material) {
         return ignoredMaterials.contains(material);
     }
 
-    public void setIgnored(IMaterial<?> material) {
+    public void setIgnored(Material material) {
         ignoredMaterials.add(material);
     }
 

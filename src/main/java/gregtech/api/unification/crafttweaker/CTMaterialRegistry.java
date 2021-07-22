@@ -17,7 +17,7 @@ import java.util.List;
 @ZenRegister
 public class CTMaterialRegistry {
 
-    static int baseID = 450;
+    static int baseID = 32000;
 
     @ZenMethod
     @Nullable
