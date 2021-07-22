@@ -6,7 +6,7 @@ import gregtech.api.unification.ore.OrePrefix;
 public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
     TINY_OPAQUE("tiny", 0.25f, OrePrefix.pipeTinyItem, 0.25f, 2f),
     SMALL_OPAQUE("small", 0.375f, OrePrefix.pipeSmallItem, 0.5f, 1.5f),
-    MEDIUM_OPAQUE("medium", 0.5f, OrePrefix.pipeNormalItem, 1f, 1f),
+    NORMAL_OPAQUE("normal", 0.5f, OrePrefix.pipeNormalItem, 1f, 1f),
     LARGE_OPAQUE("large", 0.75f, OrePrefix.pipeLargeItem, 2f, 0.75f),
     HUGE_OPAQUE("huge", 0.875f, OrePrefix.pipeHugeItem, 4f, 0.5f);
 
