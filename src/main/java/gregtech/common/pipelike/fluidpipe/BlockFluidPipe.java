@@ -6,6 +6,7 @@ import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.FluidPipeFluidHandler;
@@ -40,9 +41,11 @@ import java.util.TreeMap;
 public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
 
     private final SortedMap<Material, FluidPipeProperties> enabledMaterials = new TreeMap<>();
+    private final FluidPipeType pipeType;
 
-    public BlockFluidPipe() {
-        setHarvestLevel("pickaxe", 1);
+    public BlockFluidPipe(FluidPipeType pipeType) {
+        this.pipeType = pipeType;
+        setHarvestLevel("wrench", 1);
     }
 
     public void addPipeMaterial(Material material, FluidPipeProperties fluidPipeProperties) {
@@ -72,8 +75,18 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
+    public OrePrefix getPipePrefix() {
+        return pipeType.getOrePrefix();
+    }
+
+    @Override
     protected FluidPipeProperties getFallbackType() {
         return enabledMaterials.values().iterator().next();
+    }
+
+    @Override
+    public FluidPipeType getItemPipeType(ItemStack itemStack) {
+        return pipeType;
     }
 
     @Override
@@ -81,7 +94,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         for (Material material : enabledMaterials.keySet()) {
             for (FluidPipeType fluidPipeType : FluidPipeType.values()) {
                 if (!fluidPipeType.getOrePrefix().isIgnored(material)) {
-                    items.add(getItem(fluidPipeType, material));
+                    items.add(getItem(material));
                 }
             }
         }

@@ -7,7 +7,7 @@ import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.type.Material;
-import gregtech.api.util.GTLog;
+import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.item.ItemStack;
 
 public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
@@ -32,21 +32,10 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
         return createProperties(pipeType, material);
     }
 
-    public ItemStack getItem(PipeType pipeType, Material material) {
-        if (pipeType == null || material == null) {
-            return ItemStack.EMPTY;
-        }
+    public ItemStack getItem(Material material) {
+        if (material == null) return ItemStack.EMPTY;
         int materialId = Material.MATERIAL_REGISTRY.getIDForObject(material);
-        return new ItemStack(this, 1, pipeType.ordinal() * 1000 + materialId);
-    }
-
-    @Override
-    public PipeType getItemPipeType(ItemStack itemStack) {
-        GTLog.logger.info(itemStack.getMetadata());
-        if (itemStack.getMetadata() < 32000) {
-            return getPipeTypeClass().getEnumConstants()[itemStack.getMetadata() / 1000];
-        }
-        return getPipeTypeClass().getEnumConstants()[0];
+        return new ItemStack(this, 1, materialId);
     }
 
     public Material getItemMaterial(ItemStack itemStack) {
@@ -61,9 +50,11 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
     @Override
     public ItemStack getDropItem(IPipeTile<PipeType, NodeDataType> pipeTile) {
         Material material = ((IMaterialPipeTile<PipeType, NodeDataType>) pipeTile).getPipeMaterial();
-        return getItem(pipeTile.getPipeType(), material);
+        return getItem(material);
     }
 
     protected abstract NodeDataType createProperties(PipeType pipeType, Material material);
+
+    public abstract OrePrefix getPipePrefix();
 
 }
