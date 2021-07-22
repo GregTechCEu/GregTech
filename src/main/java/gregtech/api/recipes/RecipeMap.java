@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private static final List<RecipeMap<?>> RECIPE_MAPS = new ArrayList<>();
+    private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new HashMap<>();
     @ZenProperty
     public static IChanceFunction chanceFunction = (chance, boostPerTier, tier) -> chance + (boostPerTier * tier);
 
@@ -89,6 +90,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         defaultRecipe.setRecipeMap(this);
         this.recipeBuilderSample = defaultRecipe;
         RECIPE_MAPS.add(this);
+        RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
     }
     @ZenMethod
     public static List<RecipeMap<?>> getRecipeMaps() {
@@ -104,9 +106,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenMethod
     public static RecipeMap<?> getByName(String unlocalizedName) {
-        return RECIPE_MAPS.stream()
-            .filter(map -> map.unlocalizedName.equals(unlocalizedName))
-            .findFirst().orElse(null);
+        return RECIPE_MAP_REGISTRY.get(unlocalizedName);
     }
 
     public static IChanceFunction getChanceFunction() {
