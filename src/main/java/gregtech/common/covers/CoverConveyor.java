@@ -460,11 +460,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
         TileEntity tile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
         if(!(this instanceof CoverRoboticArm) && coverTile instanceof TileEntityItemPipe ^ tile instanceof TileEntityItemPipe) {
-            primaryGroup.addWidget(new ToggleButtonWidget(127, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE,
+            primaryGroup.addWidget(new ToggleButtonWidget(130, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE,
                     () -> distributionMode == ItemDistributionMode.INSERT_FIRST,
                     val -> distributionMode = val ? ItemDistributionMode.INSERT_FIRST : ItemDistributionMode.ROUND_ROBIN)
             .setTooltipText("cover.conveyor.distribution"));
-            primaryGroup.addWidget(new ToggleButtonWidget(146, 166, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
+            primaryGroup.addWidget(new ToggleButtonWidget(149, 166, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
         }
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 190 + 82)
