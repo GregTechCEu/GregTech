@@ -1,5 +1,6 @@
 package gregtech.api.recipes;
 
+import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
@@ -45,7 +46,6 @@ import java.util.stream.Collectors;
 @ZenRegister
 public class RecipeMap<R extends RecipeBuilder<R>> {
 
-    private static final List<RecipeMap<?>> RECIPE_MAPS = new ArrayList<>();
     private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new HashMap<>();
     @ZenProperty
     public static IChanceFunction chanceFunction = (chance, boostPerTier, tier) -> chance + (boostPerTier * tier);
@@ -89,16 +89,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.isHidden = isHidden;
         defaultRecipe.setRecipeMap(this);
         this.recipeBuilderSample = defaultRecipe;
-        RECIPE_MAPS.add(this);
         RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
     }
     @ZenMethod
     public static List<RecipeMap<?>> getRecipeMaps() {
-        return Collections.unmodifiableList(RECIPE_MAPS);
+        return ImmutableList.copyOf(RECIPE_MAP_REGISTRY.values());
     }
 
     public static void sortMaps() {
-        for (RecipeMap<?> rmap : RECIPE_MAPS) {
+        for (RecipeMap<?> rmap : RECIPE_MAP_REGISTRY.values()) {
             rmap.recipeList.sort(Comparator.comparingInt(Recipe::getDuration)
                     .thenComparingInt(Recipe::getEUt));
         }
