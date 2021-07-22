@@ -21,7 +21,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("WeakerAccess")
 public final class MetaItems {
 
     private MetaItems() {
@@ -469,7 +468,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem BIO_CHAFF;
 
-    private static List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
+    private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);
         add(OrePrefix.dustSmall);
         add(OrePrefix.dustTiny);
@@ -527,11 +526,10 @@ public final class MetaItems {
         first.setRegistryName("meta_item_1");
         MetaTool tool = new MetaTool();
         tool.setRegistryName("meta_tool");
-        for (OrePrefix i : orePrefixes) {
-            String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, i.name());
-            MetaOrePrefix metaOrePrefix = new MetaOrePrefix(i);
-            metaOrePrefix.setRegistryName("meta_" + regName);
-            GTLog.logger.info("Registered meta_" + regName);
+        for (OrePrefix prefix : orePrefixes) {
+            String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());
+            MetaPrefixItem metaOrePrefix = new MetaPrefixItem(prefix);
+            metaOrePrefix.setRegistryName(String.format("meta_%s", regName));
         }
     }
 
@@ -539,8 +537,8 @@ public final class MetaItems {
         for (MetaItem<?> item : ITEMS) {
             if (item instanceof MaterialMetaItem) {
                 ((MaterialMetaItem) item).registerOreDict();
-            } else if (item instanceof MetaOrePrefix) {
-                ((MetaOrePrefix) item).registerOreDict();
+            } else if (item instanceof MetaPrefixItem) {
+                ((MetaPrefixItem) item).registerOreDict();
             }
         }
     }
@@ -548,7 +546,7 @@ public final class MetaItems {
     public static void registerRecipes() {
         for (MetaItem<?> item : ITEMS) {
             if (item instanceof MetaItem1)
-                ((MetaItem1) item).registerRecipes();;
+                ((MetaItem1) item).registerRecipes();
             if (item instanceof MetaTool)
                 ((MetaTool) item).registerRecipes();
         }
@@ -577,7 +575,7 @@ public final class MetaItems {
     }
 
     @SideOnly(Side.CLIENT)
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static void registerSpecialItemModel(ModelBakeEvent event, MetaValueItem metaValueItem, IBakedModel bakedModel) {
         //god these casts when intellij says you're fine but compiler complains about shit boundaries
         //noinspection RedundantCast

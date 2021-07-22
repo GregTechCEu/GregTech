@@ -35,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MetaOrePrefix extends StandardMetaItem {
+public class MetaPrefixItem extends StandardMetaItem {
 
     private final ArrayList<Short> generatedItems = new ArrayList<>();
     private final ArrayList<ItemStack> items = new ArrayList<>();
@@ -47,7 +47,7 @@ public class MetaOrePrefix extends StandardMetaItem {
         put(OrePrefix.dustPure, OrePrefix.dust);
     }};
 
-    public MetaOrePrefix(OrePrefix orePrefix) {
+    public MetaPrefixItem(OrePrefix orePrefix) {
         super();
         this.prefix = orePrefix;
         for (Material material : Material.MATERIAL_REGISTRY) {
@@ -105,6 +105,7 @@ public class MetaOrePrefix extends StandardMetaItem {
 
     @Override
     @SideOnly(Side.CLIENT)
+    @SuppressWarnings("ConstantConditions")
     public void registerModels() {
         super.registerModels();
         TShortObjectHashMap<ModelResourceLocation> alreadyRegistered = new TShortObjectHashMap<>();
@@ -119,6 +120,13 @@ public class MetaOrePrefix extends StandardMetaItem {
             }
             ModelResourceLocation resourceLocation = alreadyRegistered.get(registrationKey);
             metaItemsModels.put(metaItem, resourceLocation);
+        }
+
+        // Make some default model for meta prefix items without any materials associated
+        if (generatedItems.isEmpty()) {
+            MaterialIconSet defaultIcon = MaterialIconSet.DULL;
+            ResourceLocation defaultLocation = OrePrefix.ingot.materialIconType.getItemModelPath(defaultIcon);
+            ModelBakery.registerItemVariants(this, defaultLocation);
         }
     }
 
@@ -232,5 +240,4 @@ public class MetaOrePrefix extends StandardMetaItem {
             lines.add(I18n.format("metaitem.dust.tooltip.purify"));
         }
     }
-
 }

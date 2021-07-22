@@ -143,7 +143,7 @@ public class MetaItem1 extends StandardMetaItem {
 
         for (int i = 0; i < EnumDyeColor.values().length; i++) {
             EnumDyeColor dyeColor = EnumDyeColor.values()[i];
-            SPRAY_CAN_DYES[i] = addItem(60+1 * i, "spray.can.dyes." + dyeColor.getName()).setMaxStackSize(1);
+            SPRAY_CAN_DYES[i] = addItem(60 + i, "spray.can.dyes." + dyeColor.getName()).setMaxStackSize(1);
             ColorSprayBehaviour behaviour = new ColorSprayBehaviour(SPRAY_EMPTY.getStackForm(), 512, i);
             SPRAY_CAN_DYES[i].addComponents(behaviour);
         }
