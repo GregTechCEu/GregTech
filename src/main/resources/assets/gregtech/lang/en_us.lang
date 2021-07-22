@@ -1960,6 +1960,9 @@ behavior.scanner.analyzing_failed=Analyzing failed!
 behavior.scanner.analyzing_complete=Analyzing complete!
 behavior.scanner.not_enough_energy=Analyzing failed: Not Enough Energy!
 
+metaitem.guide_terminal.name=Guide Terminal
+metaitem.guide_terminal.tooltip=Hope it will help you
+
 tile.casing.ulv=ULV Machine Casing
 tile.casing.lv=LV Machine Casing
 tile.casing.mv=MV Machine Casing
