@@ -3,7 +3,6 @@ package gregtech.loaders.oreprocessing;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.IngotMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -17,7 +16,7 @@ public class PipeRecipeHandler {
     public static void register() {
         OrePrefix.pipeTiny.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeTiny);
         OrePrefix.pipeSmall.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeSmall);
-        OrePrefix.pipeMedium.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeNormal);
+        OrePrefix.pipeNormal.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeNormal);
         OrePrefix.pipeLarge.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeLarge);
         OrePrefix.pipeHuge.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeHuge);
     }

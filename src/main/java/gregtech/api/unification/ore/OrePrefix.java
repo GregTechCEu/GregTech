@@ -130,7 +130,7 @@ public enum OrePrefix {
 
     pipeTiny("Tiny Pipes", M / 2, null, MaterialIconType.pipeTiny, ENABLE_UNIFICATION, null),
     pipeSmall("Small Pipes", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null),
-    pipeMedium("Medium Pipes", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null),
+    pipeNormal("Normal Pipes", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null),
     pipeLarge("Large Pipes", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null),
     pipeHuge("Huge Pipes", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null),
 
