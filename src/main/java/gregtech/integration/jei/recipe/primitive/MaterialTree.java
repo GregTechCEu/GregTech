@@ -15,33 +15,33 @@ import java.util.ArrayList;
 
 public class MaterialTree implements IRecipeWrapper {
 	private final static ImmutableList<OrePrefix> PREFIXES = ImmutableList.of(
-		OrePrefix.ore,
-		OrePrefix.crushed,
-		OrePrefix.crushedPurified,
-		OrePrefix.crushedCentrifuged,
-		OrePrefix.dustImpure,
-		OrePrefix.dustPure,
-		OrePrefix.dust,
-		OrePrefix.ingot,
-		OrePrefix.plate,
-		OrePrefix.block,
-		OrePrefix.plateDense,
-		OrePrefix.foil,
-		OrePrefix.wireFine,
-		OrePrefix.wireGtSingle,
-		OrePrefix.gear,
-		OrePrefix.gearSmall,
-		OrePrefix.lens,
-		OrePrefix.nugget,
-		OrePrefix.round,
-		OrePrefix.dustSmall,
-		OrePrefix.dustTiny,
-		OrePrefix.stick,
-		OrePrefix.stickLong,
-		OrePrefix.spring,
-		OrePrefix.bolt,
-		OrePrefix.screw,
-		OrePrefix.ring
+            OrePrefix.ore,
+            OrePrefix.crushed,
+            OrePrefix.crushedCentrifuged,
+            OrePrefix.crushedPurified,
+            OrePrefix.dustPure,
+            OrePrefix.dustImpure,
+            OrePrefix.dust,
+            OrePrefix.dustSmall,
+            OrePrefix.dustTiny,
+            OrePrefix.ingotHot,
+            OrePrefix.ingot,
+            OrePrefix.gem,
+            OrePrefix.nugget,
+            OrePrefix.block,
+            OrePrefix.round,
+            OrePrefix.plate,
+            OrePrefix.plateDense,
+            OrePrefix.lens,
+            OrePrefix.foil,
+            OrePrefix.stick,
+            OrePrefix.stickLong,
+            OrePrefix.ring,
+            OrePrefix.bolt,
+            OrePrefix.screw,
+            OrePrefix.wireFine,
+            OrePrefix.wireGtSingle,
+            OrePrefix.cableGtSingle
 	);
 
 	private final List<List<ItemStack>> itemInputs = new ArrayList<>();
@@ -89,6 +89,7 @@ public class MaterialTree implements IRecipeWrapper {
     public void getIngredients(IIngredients ingredients) {
 		ingredients.setInputLists(ItemStack.class, this.itemInputs);
 		ingredients.setInputLists(FluidStack.class, this.fluidInputs);
+		// these don't get displayed, but allow the material tree to show up on left *or* right click
 		ingredients.setOutputLists(ItemStack.class, this.itemInputs);
 		ingredients.setOutputLists(FluidStack.class, this.fluidInputs);
     }
