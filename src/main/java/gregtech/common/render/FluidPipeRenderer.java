@@ -109,7 +109,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         FluidPipeType pipeType = blockFluidPipe.getItemPipeType(stack);
         Material material = blockFluidPipe.getItemMaterial(stack);
         if (pipeType != null && material != null) {
-            renderPipeBlock(material, pipeType, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0],
+            renderPipeBlock(material, pipeType, renderState, new IVertexOperation[0],
                     1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
                             1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
         }
@@ -141,7 +141,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
 
             if (renderLayer == BlockRenderLayer.CUTOUT)
-                renderPipeBlock(pipeMaterial, fluidPipeType, paintingColor, renderState, pipeline, connectedSidesMap);
+                renderPipeBlock(pipeMaterial, fluidPipeType, renderState, pipeline, connectedSidesMap);
 
             ICoverable coverable = tileEntityPipe.getCoverableImplementation();
             coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), renderLayer);
@@ -149,14 +149,8 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         return true;
     }
 
-    private int getPipeColor(Material material, int insulationColor) {
-        if(insulationColor == IPipeTile.DEFAULT_INSULATION_COLOR) {
-            return material.materialRGB;
-        } else return insulationColor;
-    }
-
-    public void renderPipeBlock(Material material, FluidPipeType pipeType, int insulationColor, CCRenderState state, IVertexOperation[] pipeline, int connectMask) {
-        int pipeColor = GTUtility.convertRGBtoOpaqueRGBA_CL(getPipeColor(material, insulationColor));
+    public void renderPipeBlock(Material material, FluidPipeType pipeType, CCRenderState state, IVertexOperation[] pipeline, int connectMask) {
+        int pipeColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB);
         float thickness = pipeType.getThickness();
         ColourMultiplier multiplier = new ColourMultiplier(pipeColor);
         PipeTextureInfo textureInfo = this.pipeTextures.get(pipeType);
@@ -281,7 +275,6 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
         TextureAtlasSprite atlasSprite = pipeTextures.get(fluidPipeType).sideTexture;
-        int pipeColor = getPipeColor(material, tileEntity.getInsulationColor());
-        return Pair.of(atlasSprite, pipeColor);
+        return Pair.of(atlasSprite, material.materialRGB);
     }
 }
