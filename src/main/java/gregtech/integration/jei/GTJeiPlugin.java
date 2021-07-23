@@ -80,6 +80,7 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipeCategories(new CokeOvenRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTOreCategory(registry.getJeiHelpers().getGuiHelper()));
+        registry.addRecipeCategories(new MaterialTreeCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -194,6 +195,15 @@ public class GTJeiPlugin implements IModPlugin {
             if (machine == null) continue;
             registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
         }
+
+        //Material Tree
+		List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
+		for (Material material : Material.MATERIAL_REGISTRY) {
+			if (material instanceof DustMaterial) {
+				materialTreeList.add(new MaterialTree((DustMaterial) material));
+			}
+		}
+		registry.addRecipes(materialTreeList, GTValues.MODID + ":" + "material_tree");
 
         //Ore Veins
         List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();
