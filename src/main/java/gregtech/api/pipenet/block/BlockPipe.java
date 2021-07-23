@@ -121,16 +121,14 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
         if (pipeTile != null) {
             setTileEntityData((TileEntityPipeBase<PipeType, NodeDataType>) pipeTile, stack);
-            if (ConfigHolder.U.GT6.gt6StylePipesCables) {
-                if (placer instanceof EntityPlayer) {
-                    EntityPlayer player = (EntityPlayer) placer;
-                    RayTraceResult rt2 = GTUtility.getBlockLookingAt(player, pos);
+            if (ConfigHolder.U.GT6.gt6StylePipesCables && placer instanceof EntityPlayer) {
+                RayTraceResult rt2 = GTUtility.getBlockLookingAt((EntityPlayer) placer, pos);
+                if (rt2 != null) {
                     for (EnumFacing facing : EnumFacing.VALUES) {
                         BlockPos otherPipePos = null;
 
-                        if (rt2 != null)
-                            if (GTUtility.arePosEqual(rt2.getBlockPos(), pos.offset(facing, 1)))
-                                otherPipePos = rt2.getBlockPos();
+                        if (GTUtility.arePosEqual(rt2.getBlockPos(), pos.offset(facing, 1)))
+                            otherPipePos = rt2.getBlockPos();
                         if (otherPipePos != null) {
                             if (canConnect(getPipeTileEntity(worldIn, pos), facing)) {
                                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
@@ -163,7 +161,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             if (facing == null) throw new NullPointerException("Facing is null");
             boolean open = pipeTile.isConnectionOpenVisual(facing);
             boolean canConnect = canConnect(pipeTile, facing);
-            if(!open && canConnect && !ConfigHolder.U.GT6.gt6StylePipesCables)
+            if (!open && canConnect && !ConfigHolder.U.GT6.gt6StylePipesCables)
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
             if (open && !canConnect)
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, true, false);
