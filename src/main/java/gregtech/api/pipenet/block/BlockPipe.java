@@ -124,8 +124,17 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             if (ConfigHolder.U.GT6.gt6StylePipesCables && placer instanceof EntityPlayer) {
                 RayTraceResult rt2 = GTUtility.getBlockLookingAt((EntityPlayer) placer, pos);
                 if (rt2 != null) {
-                    if (canConnect(getPipeTileEntity(worldIn, pos), rt2.sideHit.getOpposite())) {
-                        pipeTile.setConnectionBlocked(AttachmentType.PIPE, rt2.sideHit.getOpposite(), false, false);
+                    for (EnumFacing facing : EnumFacing.VALUES) {
+                        BlockPos otherPipePos = null;
+
+                        if (GTUtility.arePosEqual(rt2.getBlockPos(), pos.offset(facing, 1)))
+                            otherPipePos = rt2.getBlockPos();
+                        if (otherPipePos != null) {
+                            if (canConnect(getPipeTileEntity(worldIn, pos), facing)) {
+                                pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
+                            }
+                            return;
+                        }
                     }
                 }
             } else {
