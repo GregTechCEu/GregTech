@@ -81,7 +81,7 @@ public class MetaBlocks {
     public static BlockMachine MACHINE;
     public static final BlockCable[] CABLES = new BlockCable[10];
     public static final BlockFluidPipe[] FLUID_PIPES = new BlockFluidPipe[5];
-    public static final BlockItemPipe[] ITEM_PIPES = new BlockItemPipe[5];
+    public static final BlockItemPipe[] ITEM_PIPES = new BlockItemPipe[6];
 
     public static BlockBoilerCasing BOILER_CASING;
     public static BlockFireboxCasing BOILER_FIREBOX_CASING;

@@ -139,6 +139,9 @@ public enum OrePrefix {
     pipeLargeItem("Large Item Pipes", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null),
     pipeHugeItem("Huge Item Pipes", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null),
 
+    pipeSmallRestrictive("Small Restrictive Item Pipes", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null),
+    pipeNormalRestrictive("Normal Restrictive Item Pipes", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null),
+    pipeLargeRestrictive("Large Restrictive Item Pipes", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null),
 
     wireGtHex("Hex wires", M * 8, null, null, ENABLE_UNIFICATION, null),
     wireGtOctal("Octal wires", M * 4, null, null, ENABLE_UNIFICATION, null),
