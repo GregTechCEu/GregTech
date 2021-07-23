@@ -41,6 +41,15 @@ public class PipeRecipeHandler {
             case pipeLargeRestrictive: unrestrictive = OrePrefix.pipeLargeItem; break;
             default: return;
         }
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+            .input(unrestrictive, material)
+            .input(OrePrefix.ring, Materials.Iron, 2)
+            .output(pipePrefix, material)
+            .duration(20)
+            .EUt(8)
+            .buildAndRegister();
+
         ModHandler.addShapedRecipe(CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, pipePrefix.toString()) + "_" + material.toCamelCaseString(),
                 OreDictUnifier.get(pipePrefix, material), "PR", "Rh",
                 'P', new UnificationEntry(unrestrictive, material), 'R', OreDictUnifier.get(OrePrefix.ring, Materials.Iron));
