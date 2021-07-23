@@ -18,6 +18,7 @@ import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial;
+import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.worldgen.config.OreDepositDefinition;
@@ -88,6 +89,8 @@ public class GTJeiPlugin implements IModPlugin {
     @Override
     public void register(IModRegistry registry) {
         IJeiHelpers jeiHelpers = registry.getJeiHelpers();
+
+        ingredientRegistry = registry.getIngredientRegistry();
 
         registry.addRecipes(IntCircuitRecipeWrapper.create(), IntCircuitCategory.UID);
         MultiblockInfoCategory.registerRecipes(registry);
@@ -201,8 +204,8 @@ public class GTJeiPlugin implements IModPlugin {
         //Material Tree
 		List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
 		for (Material material : Material.MATERIAL_REGISTRY) {
-			if (material instanceof DustMaterial) {
-				materialTreeList.add(new MaterialTree((DustMaterial) material));
+			if (material instanceof FluidMaterial) {
+				materialTreeList.add(new MaterialTree((FluidMaterial) material));
 			}
 		}
 		registry.addRecipes(materialTreeList, GTValues.MODID + ":" + "material_tree");
@@ -220,7 +223,7 @@ public class GTJeiPlugin implements IModPlugin {
         //Ore Veins End
 
 
-        ingredientRegistry = registry.getIngredientRegistry();
+
         for (int i = 0; i <= IntCircuitIngredient.CIRCUIT_MAX; i++) {
             registry.addIngredientInfo(IntCircuitIngredient.getIntegratedCircuit(i), VanillaTypes.ITEM,
                 "metaitem.circuit.integrated.jei_description");

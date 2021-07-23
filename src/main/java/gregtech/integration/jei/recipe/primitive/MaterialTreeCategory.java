@@ -3,6 +3,7 @@ package gregtech.integration.jei.recipe.primitive;
 import gregtech.api.gui.GuiTextures;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
+import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
@@ -25,11 +26,14 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, MaterialTree recipeWrapper, IIngredients ingredients) {
 		IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-		for (int i = 0; i < recipeWrapper.getPrefixListSize(); i++) {
-			itemStackGroup.init(i, true, (i % 9) * 20, (i / 9) * 20);
+		for (int i = 0; i < recipeWrapper.getPrefixListSize() + 1; i++) {
+			itemStackGroup.init(i, true, (i % 8) * 20, (i / 8) * 20);
 		}
 		itemStackGroup.set(ingredients);
 
+		IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
+		fluidStackGroup.init(0, true, 140, 120);
+		fluidStackGroup.set(ingredients);
     }
 
     @Override
@@ -39,8 +43,8 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
 
 	@Override
 	public void drawExtras(Minecraft minecraft) {
-    	for (int i = 0; i < 176; i += 20){
-    		for (int j = 0; j < 166; j += 20){
+    	for (int i = 0; i < 158; i += 20){
+    		for (int j = 0; j < 148; j += 20){
     			this.slot.draw(minecraft, i, j);
 			}
 		}
