@@ -50,6 +50,6 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
 
     @Override
     public boolean isPaintable() {
-        return false;
+        return true;
     }
 }
