@@ -245,6 +245,15 @@ public class MachineRecipeLoader {
     }
 
     private static void registerMixingCrystallizationRecipes() {
+
+        RecipeMaps.MIXER_RECIPES.recipeBuilder()
+                .input(OrePrefix.dust, Materials.Lead, 2)
+                .input(OrePrefix.dust, Materials.Bronze, 2)
+                .input(OrePrefix.dust, Materials.Tin, 1)
+                .output(OrePrefix.dust, Materials.Potin, 5)
+                .duration(500).EUt(8)
+                .buildAndRegister();
+
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
             .input(OrePrefix.dust, Materials.Stone, 1)
             .fluidInputs(Materials.Lubricant.getFluid(20), ModHandler.getWater(4980))

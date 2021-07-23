@@ -491,6 +491,7 @@ public class Materials {
     /**
      * Second Degree Compounds
      */
+  
     public static GemMaterial Glass = new GemMaterial(284, "glass", 0xFAFAFA, GLASS, 0, of(new MaterialStack(SiliconDioxide, 1)), GENERATE_PLATE | GENERATE_LENSE | NO_SMASHING | NO_RECYCLING | SMELT_INTO_FLUID | EXCLUDE_BLOCK_CRAFTING_RECIPES | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial Perlite = new DustMaterial(285, "perlite", 0x1E141E, DULL, 1, of(new MaterialStack(Obsidian, 2), new MaterialStack(Water, 1)), 0);
     public static DustMaterial Borax = new DustMaterial(286, "borax", 0xFAFAFA, FINE, 1, of(new MaterialStack(Sodium, 2), new MaterialStack(Boron, 4), new MaterialStack(Water, 10), new MaterialStack(Oxygen, 7)), 0);
@@ -577,32 +578,33 @@ public class Materials {
     public static IngotMaterial HSSE = new IngotMaterial(367, "hsse", 0x336600, METALLIC, 4, of(new MaterialStack(HSSG, 6), new MaterialStack(Cobalt, 1), new MaterialStack(Manganese, 1), new MaterialStack(Silicon, 1)), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_FRAME, null, 10.0F, 8.0f, 5120, 5000);
     public static IngotMaterial HSSS = new IngotMaterial(368, "hsss", 0x660033, METALLIC, 4, of(new MaterialStack(HSSG, 6), new MaterialStack(Iridium, 2), new MaterialStack(Osmium, 1)), EXT2_METAL | GENERATE_GEAR | GENERATE_SMALL_GEAR, null, 15.0F, 7.0f, 3000, 5000);
     public static IngotMaterial DiamericiumTitanium = new IngotMaterial(369, "diamericium_titanium", 0x755280, METALLIC, 4, of(new MaterialStack(Americium, 2), new MaterialStack(Titanium, 1)), EXT2_METAL, null, 6.0F, 6.0F, 2200, 10400);
+    public static IngotMaterial Potin = new IngotMaterial(370, "potin", 0xC99781, MaterialIconSet.METALLIC, 6, of(new MaterialStack(Lead, 2), new MaterialStack(Bronze, 2), new MaterialStack(Tin, 1)), EXT2_METAL, null);
 
     /**
      * Fantasy materials
      */
-    public static IngotMaterial Naquadah = new IngotMaterial(370, "naquadah", 0x323232, METALLIC, 4, of(), EXT_METAL | GENERATE_ORE | GENERATE_FOIL| GENERATE_SPRING, Elements.get("Naquadah"), 6.0F, 4.0f, 1280, 5400);
-    public static IngotMaterial NaquadahAlloy = new IngotMaterial(371, "naquadah_alloy", 0x282828, METALLIC, 5, of(new MaterialStack(Naquadah, 1), new MaterialStack(Osmiridium, 1)), EXT2_METAL| GENERATE_SPRING, null, 8.0F, 5.0f, 5120, 7200);
-    public static IngotMaterial NaquadahEnriched = new IngotMaterial(372, "naquadah_enriched", 0x323232, METALLIC, 4, of(), EXT_METAL | GENERATE_ORE | GENERATE_FOIL, Elements.get("NaquadahEnriched"), 6.0F, 4.0f, 1280, 4500);
-    public static IngotMaterial Naquadria = new IngotMaterial(373, "naquadria", 0x1E1E1E, SHINY, 3, of(), EXT_METAL, Elements.get("Naquadria"), 9000);
-    public static IngotMaterial Neutronium = new IngotMaterial(374, "neutronium", 0xFAFAFA, DULL, 6, of(), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_FRAME, Elements.get("Neutronium"), 24.0F, 12F, 655360);
-    public static IngotMaterial Tritanium = new IngotMaterial(375, "tritanium", 0x600000, METALLIC, 6, of(), EXT_METAL | GENERATE_FRAME, Elements.get("Tritanium"), 20.0F, 6.0f, 10240);
-    public static IngotMaterial Duranium = new IngotMaterial(376, "duranium", 0xFFFFFF, METALLIC, 5, of(), EXT_METAL | GENERATE_FOIL, Elements.get("Duranium"), 16.0F, 5.0f, 5120);
-    public static IngotMaterial Trinium = new IngotMaterial(377, "trinium", 0xC8C8D2, SHINY, 7, of(), 0, Elements.get("Trinium"), 8600);
-    public static IngotMaterial Adamantium = new IngotMaterial(378, "adamantium", 0x2d365c, SHINY, 7, of(), 0, Elements.get("Adamantium"), 10850);
-    public static IngotMaterial Vibranium = new IngotMaterial(379, "vibranium", 0x828aad, SHINY, 7, of(), 0, Elements.get("Vibranium"), 11220);
-    public static IngotMaterial Taranium = new IngotMaterial(380, "taranium", 0x0c0c0d, SHINY, 7, of(), 0, Elements.get("Taranium"), 10000);
-    public static IngotMaterial FluxedElectrum = new IngotMaterial(381, "fluxed_electrum", 0xf2ef27, METALLIC, 4, of(new MaterialStack(Electrum, 1), new MaterialStack(NaquadahAlloy, 1), new MaterialStack(BlueSteel, 1), new MaterialStack(RedSteel, 1)), EXT2_METAL, null, 11.0F, 6.0f, 2100, 9000);
+    public static IngotMaterial Naquadah = new IngotMaterial(371, "naquadah", 0x323232, METALLIC, 4, of(), EXT_METAL | GENERATE_ORE | GENERATE_FOIL| GENERATE_SPRING, Elements.get("Naquadah"), 6.0F, 4.0f, 1280, 5400);
+    public static IngotMaterial NaquadahAlloy = new IngotMaterial(372, "naquadah_alloy", 0x282828, METALLIC, 5, of(new MaterialStack(Naquadah, 1), new MaterialStack(Osmiridium, 1)), EXT2_METAL| GENERATE_SPRING, null, 8.0F, 5.0f, 5120, 7200);
+    public static IngotMaterial NaquadahEnriched = new IngotMaterial(373, "naquadah_enriched", 0x323232, METALLIC, 4, of(), EXT_METAL | GENERATE_ORE | GENERATE_FOIL, Elements.get("NaquadahEnriched"), 6.0F, 4.0f, 1280, 4500);
+    public static IngotMaterial Naquadria = new IngotMaterial(374, "naquadria", 0x1E1E1E, SHINY, 3, of(), EXT_METAL, Elements.get("Naquadria"), 9000);
+    public static IngotMaterial Neutronium = new IngotMaterial(375, "neutronium", 0xFAFAFA, DULL, 6, of(), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_FRAME, Elements.get("Neutronium"), 24.0F, 12F, 655360);
+    public static IngotMaterial Tritanium = new IngotMaterial(376, "tritanium", 0x600000, METALLIC, 6, of(), EXT_METAL | GENERATE_FRAME, Elements.get("Tritanium"), 20.0F, 6.0f, 10240);
+    public static IngotMaterial Duranium = new IngotMaterial(377, "duranium", 0xFFFFFF, METALLIC, 5, of(), EXT_METAL | GENERATE_FOIL, Elements.get("Duranium"), 16.0F, 5.0f, 5120);
+    public static IngotMaterial Trinium = new IngotMaterial(378, "trinium", 0xC8C8D2, SHINY, 7, of(), 0, Elements.get("Trinium"), 8600);
+    public static IngotMaterial Adamantium = new IngotMaterial(379, "adamantium", 0x2d365c, SHINY, 7, of(), 0, Elements.get("Adamantium"), 10850);
+    public static IngotMaterial Vibranium = new IngotMaterial(380, "vibranium", 0x828aad, SHINY, 7, of(), 0, Elements.get("Vibranium"), 11220);
+    public static IngotMaterial Taranium = new IngotMaterial(381, "taranium", 0x0c0c0d, SHINY, 7, of(), 0, Elements.get("Taranium"), 10000);
+    public static IngotMaterial FluxedElectrum = new IngotMaterial(382, "fluxed_electrum", 0xf2ef27, METALLIC, 4, of(new MaterialStack(Electrum, 1), new MaterialStack(NaquadahAlloy, 1), new MaterialStack(BlueSteel, 1), new MaterialStack(RedSteel, 1)), EXT2_METAL, null, 11.0F, 6.0f, 2100, 9000);
 
     /**
      * Actual food
      */
-    public static FluidMaterial Milk = new FluidMaterial(382, "milk", 0xFEFEFE, FINE, of(), 0);
-    public static DustMaterial Cocoa = new DustMaterial(383, "cocoa", 0xBE5F00, FINE, 0, of(), 0);
-    public static DustMaterial Wheat = new DustMaterial(384, "wheat", 0xFFFFC4, FINE, 0, of(), 0);
-    public static DustMaterial Meat = new DustMaterial(385, "meat", 12667980, SAND, 1, of(), DISABLE_DECOMPOSITION);
+    public static FluidMaterial Milk = new FluidMaterial(383, "milk", 0xFEFEFE, FINE, of(), 0);
+    public static DustMaterial Cocoa = new DustMaterial(384, "cocoa", 0xBE5F00, FINE, 0, of(), 0);
+    public static DustMaterial Wheat = new DustMaterial(385, "wheat", 0xFFFFC4, FINE, 0, of(), 0);
+    public static DustMaterial Meat = new DustMaterial(386, "meat", 12667980, SAND, 1, of(), DISABLE_DECOMPOSITION);
 
-    // Superconductor here at ID 386. Assigned in MarkerMaterials:98
+    // Superconductor here at ID 387. Assigned in MarkerMaterials:98
 
     static {
         for (DustMaterial dustMaterial : new DustMaterial[]{Bastnasite, Monazite}) {
@@ -940,6 +942,7 @@ public class Materials {
         Polyethylene.setFluidPipeProperties(350, 60, true);
         Polytetrafluoroethylene.setFluidPipeProperties(600, 80, true);
         Polybenzimidazole.setFluidPipeProperties(1000, 100, true);
+        Potin.setFluidPipeProperties(2000, 96, true);
 
         Tin.setItemPipeProperties(1024, 0.5f);
         Brass.setItemPipeProperties(512, 1);
