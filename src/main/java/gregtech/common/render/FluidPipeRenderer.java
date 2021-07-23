@@ -134,7 +134,6 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         FluidPipeType fluidPipeType = tileEntityPipe.getPipeType();
         Material pipeMaterial = tileEntityPipe.getPipeMaterial();
-        int paintingColor = tileEntityPipe.getInsulationColor();
         int connectedSidesMap = blockFluidPipe.getActualConnections(tileEntityPipe, world);
 
         if (fluidPipeType != null && pipeMaterial != null) {
