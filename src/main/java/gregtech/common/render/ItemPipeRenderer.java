@@ -135,7 +135,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         ItemPipeType itemPipeType = tileEntityPipe.getPipeType();
         Material pipeMaterial = tileEntityPipe.getPipeMaterial();
-        int connectedSidesMap = blockFluidPipe.getActualConnections(tileEntityPipe, world);
+        int connectedSidesMap = blockFluidPipe.getVisualConnections(tileEntityPipe);
 
         if (itemPipeType != null && pipeMaterial != null) {
             BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
@@ -168,7 +168,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             }
         } else {
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
-                if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
+                //if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
                     int oppositeIndex = renderedSide.getOpposite().getIndex();
                     if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & ~(1 << oppositeIndex)) == 0) {
                         renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
@@ -177,7 +177,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
                         if(restrictive)
                             renderPipeSide(state, pipeRestrictive, renderedSide, cuboid6);
                     }
-                }
+                //}
             }
             renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, EnumFacing.DOWN, thickness, restrictive);
             renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, EnumFacing.UP, thickness, restrictive);
@@ -233,7 +233,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             return;
         }
         float thickness = fluidPipeType.getThickness();
-        int connectedSidesMask = blockFluidPipe.getActualConnections(tileEntityPipe, world);
+        int connectedSidesMask = blockFluidPipe.getVisualConnections(tileEntityPipe);
         Cuboid6 baseBox = BlockItemPipe.getSideBox(null, thickness);
         BlockRenderer.renderCuboid(renderState, baseBox, 0);
         for (EnumFacing renderSide : EnumFacing.VALUES) {

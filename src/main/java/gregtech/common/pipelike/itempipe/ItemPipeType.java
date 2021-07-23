@@ -54,7 +54,7 @@ public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
 
     @Override
     public boolean isPaintable() {
-        return true;
+        return false;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.pipenet.Node;
+import gregtech.api.util.GTLog;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -19,6 +20,7 @@ public class ItemNetWalker {
         ItemNetWalker walker = new ItemNetWalker(net, world, sourcePipe, 1, new ArrayList<>(), null);
         while (!walker.walk()) ;
         walker.walked.forEach(TileEntityItemPipe::resetWalk);
+        GTLog.logger.info("Walked net and found {} invs", walker.inventories.size());
         return walker.inventories;
     }
 
@@ -78,7 +80,10 @@ public class ItemNetWalker {
     private void checkPos(BlockPos pos) {
         pipes.clear();
         Node<ItemPipeProperties> node = net.getNodeAt(pos);
-        if (node == null) return;
+        if (node == null) {
+            GTLog.logger.info("NEXT NODE IS NULL at {}", pos);
+            return;
+        }
 
         TileEntity thisPipe = world.getTileEntity(pos);
         if (!(thisPipe instanceof TileEntityItemPipe))
@@ -92,20 +97,30 @@ public class ItemNetWalker {
         walked.add((TileEntityItemPipe) thisPipe);
 
         // check for surrounding pipes and item handlers
+        int open = 0;
         for (EnumFacing accessSide : EnumFacing.VALUES) {
             //skip sides reported as blocked by pipe network
-            if ((node.blockedConnections & 1 << accessSide.getIndex()) > 0 && !(((TileEntityItemPipe) thisPipe).getCoverableImplementation().getCoverAtSide(accessSide) instanceof CoverConveyor))
+            if (node.isBlocked(accessSide) && !(((TileEntityItemPipe) thisPipe).getCoverableImplementation().getCoverAtSide(accessSide) instanceof CoverConveyor))
                 continue;
+            open++;
             TileEntity tile = world.getTileEntity(pos.offset(accessSide));
             if (tile == null) continue;
             if (tile instanceof TileEntityItemPipe) {
+                GTLog.logger.info("Found Pipe at {}", pos.offset(accessSide));
                 if (!((TileEntityItemPipe) tile).isWalked())
+                {
+                    GTLog.logger.info("Is unwalked");
                     pipes.add(accessSide);
+                }
                 continue;
             }
             IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, accessSide);
             if (handler != null)
+            {
+                GTLog.logger.info("Found inv at {}", pos.offset(accessSide));
                 inventories.add(new ItemPipeNet.Inventory(pos, accessSide, distance, minProperties));
+            }
         }
+        GTLog.logger.info("Found {} open connections at {}", open, pos);
     }
 }

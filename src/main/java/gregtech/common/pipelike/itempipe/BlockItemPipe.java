@@ -65,9 +65,10 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
         }
     }
 
-    @Override
+    /*@Override
     public int getActiveNodeConnections(IBlockAccess world, BlockPos nodePos, IPipeTile<ItemPipeType, ItemPipeProperties> selfTileEntity) {
-        int activeNodeConnections = 0;
+        return getPipeTileEntity(world, nodePos).getBlockedConnections();
+        /*int activeNodeConnections = 0;
         for (EnumFacing side : EnumFacing.VALUES) {
             BlockPos offsetPos = nodePos.offset(side);
             TileEntity tileEntity = world.getTileEntity(offsetPos);
@@ -76,7 +77,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
             }
         }
         return activeNodeConnections;
-    }
+    }*/
 
     @Override
     public Class<ItemPipeType> getPipeTypeClass() {
@@ -124,13 +125,19 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    protected boolean canPipesConnect(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, IPipeTile<ItemPipeType, ItemPipeProperties> sideTile) {
-        return selfTile.getNodeData().equals(sideTile.getNodeData());
+    public boolean canPipesConnect(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, IPipeTile<ItemPipeType, ItemPipeProperties> sideTile) {
+        return selfTile instanceof TileEntityItemPipe && sideTile instanceof TileEntityItemPipe;
     }
 
     @Override
-    protected int getActiveVisualConnections(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile) {
-        int activeNodeConnections = 0;
+    public boolean canPipeConnectToBlock(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, TileEntity tile) {
+        return tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side) != null;
+    }
+
+    /*@Override
+    public int getActiveVisualConnections(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile) {
+        return selfTile.getBlockedConnections();
+        /*int activeNodeConnections = 0;
         for (EnumFacing side : EnumFacing.VALUES) {
             BlockPos offsetPos = selfTile.getPipePos().offset(side);
             TileEntity tileEntity = selfTile.getPipeWorld().getTileEntity(offsetPos);
@@ -144,7 +151,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
             }
         }
         return activeNodeConnections;
-    }
+    }*/
 
     @Override
     protected void onActiveModeChange(World world, BlockPos pos, boolean isActiveNow, boolean isInitialChange) {

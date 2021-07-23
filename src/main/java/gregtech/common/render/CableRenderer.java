@@ -119,7 +119,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         TileEntityCable tileEntityCable = (TileEntityCable) blockCable.getPipeTileEntity(world, pos);
         if (tileEntityCable == null) return false;
         int paintingColor = tileEntityCable.getInsulationColor();
-        int connectedSidesMask = blockCable.getActualConnections(tileEntityCable, world);
+        int connectedSidesMask = blockCable.getVisualConnections(tileEntityCable);
         Insulation insulation = tileEntityCable.getPipeType();
         Material material = tileEntityCable.getPipeMaterial();
         if (insulation != null && material != null) {
@@ -214,7 +214,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
             return;
         }
         float thickness = insulation.getThickness();
-        int connectedSidesMask = blockCable.getActualConnections(tileEntityCable, world);
+        int connectedSidesMask = blockCable.getVisualConnections(tileEntityCable);
         Cuboid6 baseBox = BlockCable.getSideBox(null, thickness);
         BlockRenderer.renderCuboid(renderState, baseBox, 0);
         for (EnumFacing renderSide : EnumFacing.VALUES) {
