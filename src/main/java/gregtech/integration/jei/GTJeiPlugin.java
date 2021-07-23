@@ -145,11 +145,6 @@ public class GTJeiPlugin implements IModPlugin {
             }
         }
 
-        for (MetaTileEntity breweryTile : MetaTileEntities.BREWERY) {
-            if (breweryTile == null) continue;
-            registry.addRecipeCatalyst(breweryTile.getStackForm(), VanillaRecipeCategoryUid.BREWING);
-        }
-
         String semiFluidMapId = GTValues.MODID + ":" + RecipeMaps.SEMI_FLUID_GENERATOR_FUELS.getUnlocalizedName();
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_BRONZE_BOILER.getStackForm(), semiFluidMapId);
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_STEEL_BOILER.getStackForm(), semiFluidMapId);
@@ -223,10 +218,10 @@ public class GTJeiPlugin implements IModPlugin {
 
         registry.addRecipeCatalyst(MetaTileEntities.WORKBENCH.getStackForm(), VanillaRecipeCategoryUid.CRAFTING);
 
-        for (MetaTileEntity machine : MetaTileEntities.FLUID_CANNER) {
+        for (MetaTileEntity machine : MetaTileEntities.CANNER) {
             if (machine == null) continue;
             registry.addIngredientInfo(machine.getStackForm(), VanillaTypes.ITEM,
-                "gregtech.machine.fluid_canner.jei_description");
+                "gregtech.machine.canner.jei_description");
         }
 
         //Multiblock info page registration

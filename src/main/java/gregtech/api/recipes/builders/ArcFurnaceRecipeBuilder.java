@@ -32,14 +32,14 @@ public class ArcFurnaceRecipeBuilder extends RecipeBuilder<ArcFurnaceRecipeBuild
             fluidInputs(Materials.Oxygen.getFluid(this.duration));
             for (FluidMaterial material : new FluidMaterial[]{Materials.Argon, Materials.Nitrogen}) {
                 int plasmaAmount = (int) Math.max(1L, this.duration / (material.getAverageMass() * 16L));
-                SimpleRecipeBuilder builder = RecipeMaps.PLASMA_ARC_FURNACE_RECIPES.recipeBuilder()
+                RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
                         .inputsIngredients(this.inputs)
                         .outputs(this.outputs)
                         .duration(Math.max(1, this.duration / 16))
                         .EUt(this.EUt / 3)
                         .fluidInputs(material.getPlasma(plasmaAmount))
-                        .fluidOutputs(material.getFluid(plasmaAmount));
-                builder.buildAndRegister();
+                        .fluidOutputs(material.getFluid(plasmaAmount))
+                        .buildAndRegister();
             }
         }
         super.buildAndRegister();

@@ -10,6 +10,7 @@ import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.cable.net.EnergyNet;
@@ -37,6 +38,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -46,7 +48,8 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
 
     private final Map<Material, WireProperties> enabledMaterials = new TreeMap<>();
 
-    public BlockCable() {
+    public BlockCable(Insulation cableType) {
+        super(cableType);
         setHarvestLevel("cutter", 1);
     }
 
@@ -54,7 +57,9 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(wireProperties, "wireProperties");
         Preconditions.checkArgument(Material.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
-        this.enabledMaterials.put(material, wireProperties);
+        if (!pipeType.orePrefix.isIgnored(material)) {
+            this.enabledMaterials.put(material, wireProperties);
+        }
     }
 
     public Collection<Material> getEnabledMaterials() {
@@ -84,9 +89,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     @Override
     public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
         for (Material material : enabledMaterials.keySet()) {
-            for (Insulation insulation : Insulation.values()) {
-                items.add(getItem(insulation, material));
-            }
+            items.add(getItem(material));
         }
     }
 
@@ -125,7 +128,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+    public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
         Insulation insulation = getPipeTileEntity(worldIn, pos).getPipeType();
         boolean damageOnLossless = ConfigHolder.doLosslessWiresDamage;
@@ -143,9 +146,11 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
         }
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
-    public EnumBlockRenderType getRenderType(IBlockState state) {
+    @SuppressWarnings("deprecation")
+    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
         return CableRenderer.BLOCK_RENDER_TYPE;
     }
 

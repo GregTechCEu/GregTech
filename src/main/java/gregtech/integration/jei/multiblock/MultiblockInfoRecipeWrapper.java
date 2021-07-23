@@ -34,6 +34,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -345,9 +346,27 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
                     tooltip.set(k, TextFormatting.GRAY + tooltip.get(k));
                 }
             }
+            Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
+            if(blockTooltipMap.containsKey(tooltipBlockStack)) {
+                List<ITextComponent> tooltips = blockTooltipMap.get(tooltipBlockStack);
+                for(int i = 0; i < tooltips.size(); i++) {
+                    //Start at i+1 due to ItemStack name
+                    tooltip.add(i + 1, tooltips.get(i).getFormattedText());
+                }
+            }
             return tooltip;
         }
         return Collections.emptyList();
+    }
+
+    public void addBlockTooltips(int slotIndex, boolean input, ItemStack itemStack, List<String> tooltip) {
+        Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
+        if(blockTooltipMap.containsKey(itemStack)) {
+            List<ITextComponent> tooltips = blockTooltipMap.get(itemStack);
+            for(int i = 0; i < tooltips.size(); i++) {
+                tooltip.add(i + 1, tooltips.get(i).getFormattedText());
+            }
+        }
     }
 
     private static class PartInfo {

@@ -1,6 +1,6 @@
 package gregtech.api.recipes;
 
-import gregtech.api.unification.material.IMaterial;
+import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.item.ItemStack;
@@ -28,11 +28,11 @@ public class CountableIngredient {
         return new CountableIngredient(new OreIngredient(oredict), count);
     }
 
-    public static CountableIngredient from(OrePrefix prefix, IMaterial<?> material) {
+    public static CountableIngredient from(OrePrefix prefix, Material material) {
         return from(prefix, material, 1);
     }
 
-    public static CountableIngredient from(OrePrefix prefix, IMaterial<?> material, int count) {
+    public static CountableIngredient from(OrePrefix prefix, Material material, int count) {
         return new CountableIngredient(new OreIngredient(new UnificationEntry(prefix, material).toString()), count);
     }
 

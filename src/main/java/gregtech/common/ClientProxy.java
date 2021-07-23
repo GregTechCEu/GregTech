@@ -28,11 +28,13 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.init.Items;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.*;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.ContainerPlayer;
+import net.minecraft.inventory.ContainerWorkbench;
+import net.minecraft.inventory.InventoryCraftResult;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -59,8 +61,9 @@ import java.io.InputStreamReader;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
-
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -172,7 +175,11 @@ public class ClientProxy extends CommonProxy {
     }
     private static final String[] clearRecipes = new String[]{
             "quantum_tank",
-            "quantum_chest"
+            "quantum_chest",
+            "super_chest",
+            "super_tank",
+            "drum.",
+            "_tank",
     };
 
     @SubscribeEvent

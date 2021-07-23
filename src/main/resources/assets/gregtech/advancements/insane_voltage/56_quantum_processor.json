@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.insane_voltage.56_quantum_processor.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_2",
-      "data": 32517
+      "item": "gregtech:meta_item_1",
+      "data": 327
     },
     "frame": "challenge"
   },
@@ -18,8 +18,8 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:meta_item_2",
-            "data": 32517
+            "item": "gregtech:meta_item_1",
+            "data": 327
           }
         ]
       }

@@ -10,6 +10,14 @@ public class ConfigHolder {
     @Config.Name("Unofficial Options")
     public static UnofficialOptions U = new UnofficialOptions();
 
+    @Config.Comment("Whether to enable that Steam Multiblocks use Steel instead of Bronze. Default: false")
+    @Config.RequiresMcRestart
+    public static boolean steelSteamMultiblocks = false;
+
+    @Config.Comment("Steam to EU multiplier for Steam Multiblocks. 1.0 means 1 Steam -> 1 EU. 0.5 means 2 Steam -> 1 EU")
+    @Config.RequiresMcRestart
+    public static double multiblockSteamtoEU = 0.5;
+
     @Config.Comment("Whether to enable more verbose logging. Default: false")
     public static boolean debug = false;
 
@@ -191,6 +199,10 @@ public class ConfigHolder {
         @Config.RequiresMcRestart
         public boolean registerRecipesForMiningHammers = true;
 
+        @Config.Comment("Divisor for Recipe Duration per Overclock. This will be removed eventually, once a value is chosen. Default: 2.0")
+        @Config.RangeDouble(min = 2.0, max = 3.0)
+        public double overclockDivisor = 2.0;
+
         public static class GT5U {
 
             @Config.Comment("Enable an extra ZPM and UV Battery (this also makes the Ultimate Battery harder to make). Default: false")
@@ -264,9 +276,6 @@ public class ConfigHolder {
             @Config.Comment("Should higher tier Air Collectors be registered (IV, LuV)? Separate from other configs. Default: false")
             public boolean highTierAirCollectors = false;
 
-            @Config.Comment("Enable the Cluster Mill for making foils? Will not be overridden by \"higher tier\" settings. Default: false")
-            public boolean enableClusterMill = false;
-
             @Config.Comment("Set these to true to enable LuV-UV tiers of machines. Default (all): false")
             public boolean midTierAlloySmelter = false;
             public boolean midTierArcFurnaces = false;
@@ -280,7 +289,6 @@ public class ConfigHolder {
             public boolean midTierChemicalReactors = false;
             public boolean midTierCompressors = false;
             public boolean midTierCutters = false;
-            public boolean midTierClusterMills = false;
             public boolean midTierDistilleries = false;
             public boolean midTierElectricFurnace = false;
             public boolean midTierElectrolyzers = false;
@@ -288,18 +296,14 @@ public class ConfigHolder {
             public boolean midTierExtractors = false;
             public boolean midTierExtruders = false;
             public boolean midTierFermenters = false;
-            public boolean midTierFluidCanners = false;
-            public boolean midTierFluidExtractors = false;
             public boolean midTierFluidHeaters = false;
             public boolean midTierFluidSolidifiers = false;
             public boolean midTierForgeHammers = false;
             public boolean midTierFormingPresses = false;
             public boolean midTierLathes = false;
-            public boolean midTierMicrowaves = false;
             public boolean midTierMixers = false;
             public boolean midTierOreWashers = false;
             public boolean midTierPackers = false;
-            public boolean midTierPlasmaArcFurnaces = false;
             public boolean midTierPolarizers = false;
             public boolean midTierLaserEngravers = false;
             public boolean midTierSifters = false;
@@ -307,6 +311,9 @@ public class ConfigHolder {
             public boolean midTierMacerators = false;
             public boolean midTierUnpackers = false;
             public boolean midTierWiremills = false;
+            public boolean midTierMassFabricators = false;
+            public boolean midTierReplicators = false;
+            public boolean midTierScanners = false;
 
             @Config.Comment("Set these to true to enable UHV-UXV tiers of machines. THESE WILL HAVE NO RECIPES BY DEFAULT WITHOUT GREGICALITY! Default (all): false")
             public boolean highTierAlloySmelter = false;
@@ -321,7 +328,6 @@ public class ConfigHolder {
             public boolean highTierChemicalReactors = false;
             public boolean highTierCompressors = false;
             public boolean highTierCutters = false;
-            public boolean highTierClusterMills = false;
             public boolean highTierDistilleries = false;
             public boolean highTierElectricFurnace = false;
             public boolean highTierElectrolyzers = false;
@@ -329,18 +335,14 @@ public class ConfigHolder {
             public boolean highTierExtractors = false;
             public boolean highTierExtruders = false;
             public boolean highTierFermenters = false;
-            public boolean highTierFluidCanners = false;
-            public boolean highTierFluidExtractors = false;
             public boolean highTierFluidHeaters = false;
             public boolean highTierFluidSolidifiers = false;
             public boolean highTierForgeHammers = false;
             public boolean highTierFormingPresses = false;
             public boolean highTierLathes = false;
-            public boolean highTierMicrowaves = false;
             public boolean highTierMixers = false;
             public boolean highTierOreWashers = false;
             public boolean highTierPackers = false;
-            public boolean highTierPlasmaArcFurnaces = false;
             public boolean highTierPolarizers = false;
             public boolean highTierLaserEngravers = false;
             public boolean highTierSifters = false;
@@ -348,6 +350,9 @@ public class ConfigHolder {
             public boolean highTierMacerators = false;
             public boolean highTierUnpackers = false;
             public boolean highTierWiremills = false;
+            public boolean highTierMassFabricators = false;
+            public boolean highTierReplicators = false;
+            public boolean highTierScanners = false;
         }
     }
 }

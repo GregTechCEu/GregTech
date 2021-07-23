@@ -79,7 +79,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         this.fluidFilter.initUI(45, fluidFilterGroup::addWidget);
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 105 + 82)
             .widget(fluidFilterGroup)
-            .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 8, 105)
+            .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)
             .build(this, player);
     }
 

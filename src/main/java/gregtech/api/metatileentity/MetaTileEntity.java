@@ -1240,6 +1240,7 @@ public abstract class MetaTileEntity implements ICoverable {
     public boolean keepsInventory() {
         return false;
     }
+
     public boolean getWitherProof(){
         return false;
     }

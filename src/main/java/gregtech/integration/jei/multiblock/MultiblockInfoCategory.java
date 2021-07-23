@@ -8,6 +8,7 @@ import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.gui.IDrawable;
+import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
@@ -52,6 +53,9 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("fusion_reactor_mk1", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(0)));
         put("fusion_reactor_mk2", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(1)));
         put("fusion_reactor_mk3", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(2)));
+        put("primitive_water_pump", new MultiblockInfoRecipeWrapper(new PrimitivePumpInfo()));
+        put("steam_grinder", new MultiblockInfoRecipeWrapper(new SteamGrinderInfo()));
+        put("steam_oven", new MultiblockInfoRecipeWrapper(new SteamOvenInfo()));
     }};
 
     public static void registerRecipes(IModRegistry registry) {
@@ -86,5 +90,8 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, MultiblockInfoRecipeWrapper recipeWrapper, IIngredients ingredients) {
         recipeWrapper.setRecipeLayout((RecipeLayout) recipeLayout, this.guiHelper);
+
+        IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
+        itemStackGroup.addTooltipCallback(recipeWrapper::addBlockTooltips);
     }
 }

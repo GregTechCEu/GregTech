@@ -243,7 +243,7 @@ public class MetaTileEntityChest extends MetaTileEntity implements IFastRenderMe
         for (int y = 0; y < amountOfRows; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
-                builder.slot(inventory, index, 8 + x * 18, 18 + y * 18, GuiTextures.SLOT);
+                builder.slot(inventory, index, 7 + x * 18, 18 + y * 18, GuiTextures.SLOT);
             }
         }
         int startX = (Math.max(176, 14 + rowSize * 18) - 162) / 2;

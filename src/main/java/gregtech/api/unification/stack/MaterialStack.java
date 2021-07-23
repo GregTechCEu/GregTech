@@ -1,7 +1,6 @@
 package gregtech.api.unification.stack;
 
 import crafttweaker.annotations.ZenRegister;
-import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.util.SmallDigits;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -13,11 +12,11 @@ import stanhebben.zenscript.annotations.ZenProperty;
 public class MaterialStack {
 
     @ZenProperty
-    public final IMaterial<?> material;
+    public final Material material;
     @ZenProperty
     public final long amount;
 
-    public MaterialStack(IMaterial<?> material, long amount) {
+    public MaterialStack(Material material, long amount) {
         this.material = material;
         this.amount = amount;
     }

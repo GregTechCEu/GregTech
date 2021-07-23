@@ -5,11 +5,14 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.function.BooleanSupplier;
+
+import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class ImageWidget extends Widget {
 
@@ -62,6 +65,7 @@ public class ImageWidget extends Widget {
         Position position = getPosition();
         Size size = getSize();
         area.draw(position.x, position.y, size.width, size.height);
+        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
 }

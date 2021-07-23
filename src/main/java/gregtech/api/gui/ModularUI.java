@@ -180,12 +180,12 @@ public final class ModularUI implements ISizeProvider {
         }
 
         public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer, int startY) {
-            bindPlayerInventory(inventoryPlayer, GuiTextures.SLOT, 8, startY);
+            bindPlayerInventory(inventoryPlayer, GuiTextures.SLOT, 7, startY);
             return this;
         }
 
         public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer, TextureArea imageLocation) {
-            return bindPlayerInventory(inventoryPlayer, imageLocation, 8, 84);
+            return bindPlayerInventory(inventoryPlayer, imageLocation, 7, 84);
         }
 
         public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer, TextureArea imageLocation, int x, int y) {

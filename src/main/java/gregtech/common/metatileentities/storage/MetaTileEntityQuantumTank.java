@@ -49,7 +49,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     private final ItemStackHandler containerInventory;
     private boolean autoOutputFluids;
     private EnumFacing outputFacing;
-    private boolean allowInputFromOutputSide;
+    private boolean allowInputFromOutputSide = true;
 
     public MetaTileEntityQuantumTank(ResourceLocation metaTileEntityId, int tier, int maxFluidCapacity) {
         super(metaTileEntityId);
@@ -114,6 +114,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.autoOutputFluids = data.getBoolean("AutoOutputFluids");
         this.outputFacing = EnumFacing.VALUES[data.getInteger("OutputFacing")];
     }
+
     @Override
     public void initFromItemStackData(NBTTagCompound itemStack) {
         super.initFromItemStackData(itemStack);
@@ -125,6 +126,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         super.writeItemStackData(itemStack);
         fluidTank.writeToNBT(itemStack);
     }
+
     @Override
     protected boolean shouldSerializeInventories() {
         return false;

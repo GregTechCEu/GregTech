@@ -7,7 +7,7 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
 
     TINY_OPAQUE("tiny", 0.25f, 1, OrePrefix.pipeTiny, true),
     SMALL_OPAQUE("small", 0.375f, 2, OrePrefix.pipeSmall, true),
-    MEDIUM_OPAQUE("medium", 0.5f, 6, OrePrefix.pipeMedium, true),
+    MEDIUM_OPAQUE("normal", 0.5f, 6, OrePrefix.pipeNormal, true),
     LARGE_OPAQUE("large", 0.75f, 12, OrePrefix.pipeLarge, true),
     HUGE_OPAQUE("huge", 0.875f, 24, OrePrefix.pipeHuge, true);
 

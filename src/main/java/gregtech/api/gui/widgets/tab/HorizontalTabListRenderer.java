@@ -2,8 +2,11 @@ package gregtech.api.gui.widgets.tab;
 
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.List;
+
+import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class HorizontalTabListRenderer extends TabListRenderer {
 
@@ -29,6 +32,7 @@ public class HorizontalTabListRenderer extends TabListRenderer {
             tabInfos.get(tabIndex).renderTab(tabTexture, offset.x + finalPosX, offset.y + tabYPosition, TAB_WIDTH, TAB_HEIGHT, isTabSelected);
             currentXOffset += (TAB_WIDTH + SPACE_BETWEEN_TABS);
         }
+        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
     private static TextureArea getTabTexture(boolean isTabSelected, boolean isTabFirst, boolean isTopLine, boolean startLeft) {

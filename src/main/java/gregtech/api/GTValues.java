@@ -129,23 +129,22 @@ public class GTValues {
             ConfigHolder.U.machines.highTierExtractors ||
             ConfigHolder.U.machines.highTierExtruders ||
             ConfigHolder.U.machines.highTierFermenters ||
-            ConfigHolder.U.machines.highTierFluidCanners ||
-            ConfigHolder.U.machines.highTierFluidExtractors ||
             ConfigHolder.U.machines.highTierFluidHeaters ||
             ConfigHolder.U.machines.highTierFluidSolidifiers ||
             ConfigHolder.U.machines.highTierForgeHammers ||
             ConfigHolder.U.machines.highTierFormingPresses ||
             ConfigHolder.U.machines.highTierLathes ||
-            ConfigHolder.U.machines.highTierMicrowaves ||
             ConfigHolder.U.machines.highTierMixers ||
             ConfigHolder.U.machines.highTierOreWashers ||
             ConfigHolder.U.machines.highTierPackers ||
-            ConfigHolder.U.machines.highTierPlasmaArcFurnaces ||
             ConfigHolder.U.machines.highTierPolarizers ||
             ConfigHolder.U.machines.highTierLaserEngravers ||
             ConfigHolder.U.machines.highTierSifters ||
             ConfigHolder.U.machines.highTierThermalCentrifuges ||
             ConfigHolder.U.machines.highTierMacerators ||
             ConfigHolder.U.machines.highTierUnpackers ||
-            ConfigHolder.U.machines.highTierWiremills;
+            ConfigHolder.U.machines.highTierWiremills ||
+            ConfigHolder.U.machines.highTierMassFabricators ||
+            ConfigHolder.U.machines.highTierReplicators ||
+            ConfigHolder.U.machines.highTierScanners;
 }

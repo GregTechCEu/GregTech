@@ -6,7 +6,6 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.material.type.DustMaterial.MatFlags;
@@ -44,9 +43,6 @@ public class MaterialRecipeHandler {
         OrePrefix.dust.addProcessingHandler(DustMaterial.class, MaterialRecipeHandler::processDust);
         OrePrefix.dustSmall.addProcessingHandler(DustMaterial.class, MaterialRecipeHandler::processSmallDust);
         OrePrefix.dustTiny.addProcessingHandler(DustMaterial.class, MaterialRecipeHandler::processTinyDust);
-        OrePrefix.dust.addProcessingHandler(SimpleDustMaterial.class, MaterialRecipeHandler::processDust);
-        OrePrefix.dustSmall.addProcessingHandler(SimpleDustMaterial.class, MaterialRecipeHandler::processSmallDust);
-        OrePrefix.dustTiny.addProcessingHandler(SimpleDustMaterial.class, MaterialRecipeHandler::processTinyDust);
 
         for (OrePrefix orePrefix : GEM_ORDER) {
             orePrefix.addProcessingHandler(GemMaterial.class, MaterialRecipeHandler::processGem);
@@ -59,7 +55,7 @@ public class MaterialRecipeHandler {
         circuitRequiringMaterials.add(material);
     }
 
-    public static void processDust(OrePrefix dustPrefix, IMaterial<?> mat) {
+    public static void processDust(OrePrefix dustPrefix, DustMaterial mat) {
         if (mat instanceof GemMaterial) {
             GemMaterial material = (GemMaterial) mat;
             ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, material);
@@ -132,7 +128,7 @@ public class MaterialRecipeHandler {
         }
     }
 
-    public static void processSmallDust(OrePrefix orePrefix, IMaterial<?> material) {
+    public static void processSmallDust(OrePrefix orePrefix, DustMaterial material) {
         ItemStack smallDustStack = OreDictUnifier.get(orePrefix, material);
         ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
 
@@ -152,7 +148,7 @@ public class MaterialRecipeHandler {
             .buildAndRegister();
     }
 
-    public static void processTinyDust(OrePrefix orePrefix, IMaterial<?> material) {
+    public static void processTinyDust(OrePrefix orePrefix, DustMaterial material) {
         ItemStack tinyDustStack = OreDictUnifier.get(orePrefix, material);
         ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
 
@@ -243,31 +239,35 @@ public class MaterialRecipeHandler {
 
             if (!material.hasFlag(NO_SMASHING)) {
                 ItemStack plateStack = OreDictUnifier.get(OrePrefix.plate, material);
-                RecipeMaps.BENDER_RECIPES.recipeBuilder()
-                    .circuitMeta(1)
-                    .input(ingotPrefix, material)
-                    .outputs(plateStack)
-                    .EUt(24).duration((int) (material.getAverageMass()))
-                    .buildAndRegister();
+                if (!plateStack.isEmpty()) {
+                    RecipeMaps.BENDER_RECIPES.recipeBuilder()
+                            .circuitMeta(1)
+                            .input(ingotPrefix, material)
+                            .outputs(plateStack)
+                            .EUt(24).duration((int) (material.getAverageMass()))
+                            .buildAndRegister();
 
-                RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
-                    .input(ingotPrefix, material, 3)
-                    .outputs(GTUtility.copyAmount(2, plateStack))
-                    .EUt(16).duration((int) (material.getAverageMass() * 2))
-                    .buildAndRegister();
+                    RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
+                            .input(ingotPrefix, material, 3)
+                            .outputs(GTUtility.copyAmount(2, plateStack))
+                            .EUt(16).duration((int) (material.getAverageMass() * 2))
+                            .buildAndRegister();
 
-                ModHandler.addShapedRecipe(String.format("plate_%s", material.toString()),
-                        plateStack, "h", "I", "I", 'I', new UnificationEntry(ingotPrefix, material));
+                    ModHandler.addShapedRecipe(String.format("plate_%s", material.toString()),
+                            plateStack, "h", "I", "I", 'I', new UnificationEntry(ingotPrefix, material));
+                }
             }
 
             int voltageMultiplier = getVoltageMultiplier(material);
-            RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(ingotPrefix, material)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_PLATE)
-                .outputs(OreDictUnifier.get(OrePrefix.plate, material))
-                .duration((int) material.getAverageMass())
-                .EUt(8 * voltageMultiplier)
-                .buildAndRegister();
+            if (!OreDictUnifier.get(plate, material).isEmpty()) {
+                RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
+                        .input(ingotPrefix, material)
+                        .notConsumable(MetaItems.SHAPE_EXTRUDER_PLATE)
+                        .outputs(OreDictUnifier.get(OrePrefix.plate, material))
+                        .duration((int) material.getAverageMass())
+                        .EUt(8 * voltageMultiplier)
+                        .buildAndRegister();
+            }
         }
 
     }
@@ -370,11 +370,13 @@ public class MaterialRecipeHandler {
 
         if (material.hasFlag(MatFlags.GENERATE_PLATE)) {
             ItemStack plateStack = OreDictUnifier.get(OrePrefix.plate, material);
-            RecipeMaps.CUTTER_RECIPES.recipeBuilder()
-                .input(blockPrefix, material)
-                .outputs(GTUtility.copyAmount((int) (materialAmount / M), plateStack))
-                .duration((int) (material.getAverageMass() * 8L)).EUt(30)
-                .buildAndRegister();
+            if (!plateStack.isEmpty()) {
+                RecipeMaps.CUTTER_RECIPES.recipeBuilder()
+                        .input(blockPrefix, material)
+                        .outputs(GTUtility.copyAmount((int) (materialAmount / M), plateStack))
+                        .duration((int) (material.getAverageMass() * 8L)).EUt(30)
+                        .buildAndRegister();
+            }
         }
 
         UnificationEntry blockEntry;

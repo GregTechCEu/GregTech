@@ -5,12 +5,12 @@ import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
-import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.IMaterialHandler;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.SmallDigits;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
@@ -30,9 +30,9 @@ import static gregtech.api.util.GTUtility.createFlag;
 
 @ZenClass("mods.gregtech.material.Material")
 @ZenRegister
-public abstract class Material implements Comparable<Material>, IMaterial<Material> {
+public abstract class Material implements Comparable<Material> {
 
-    public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(1000);
+    public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(32768);
     private static final List<IMaterialHandler> materialHandlers = new ArrayList<>();
 
     public static void registerMaterialHandler(IMaterialHandler materialHandler) {
@@ -41,10 +41,6 @@ public abstract class Material implements Comparable<Material>, IMaterial<Materi
 
     public GTControlledRegistry<String, Material> getRegistry() {
         return MATERIAL_REGISTRY;
-    }
-
-    public Class<Material> getMaterialClass() {
-        return Material.class;
     }
 
     public static void runMaterialHandlers() {
@@ -58,17 +54,26 @@ public abstract class Material implements Comparable<Material>, IMaterial<Materi
 
     public static final class MatFlags {
 
-        private static final Map<String, Entry<Long, Class<? extends IMaterial<?>>>> materialFlagRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        private static final Map<String, Entry<Long, Class<? extends Material>>> materialFlagRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
-        public static void registerMaterialFlag(String name, long value, Class<? extends IMaterial<?>> classFilter) {
+        public static void registerMaterialFlag(String name, long value, Class<? extends Material> classFilter) {
             if (materialFlagRegistry.containsKey(name))
                 throw new IllegalArgumentException("Flag with name " + name + " already registered!");
 
-            for (Map.Entry<Long, Class<? extends IMaterial<?>>> entry : materialFlagRegistry.values()) {
+            for (Map.Entry<Long, Class<? extends Material>> entry : materialFlagRegistry.values()) {
                 if (entry.getKey() == value)
-                    throw new IllegalArgumentException("Flag with ID " + IMaterial.getIntValueOfFlag(value) + " already registered!");
+                    throw new IllegalArgumentException("Flag with ID " + getIntValueOfFlag(value) + " already registered!");
             }
             materialFlagRegistry.put(name, new SimpleEntry<>(value, classFilter));
+        }
+
+        private static int getIntValueOfFlag(long value) {
+            int index = 0;
+            while (value != 1) {
+                value >>= 1;
+                index++;
+            }
+            return index;
         }
 
         public static void registerMaterialFlagsHolder(Class<?> holder, Class<? extends Material> lowerBounds) {
@@ -90,8 +95,8 @@ public abstract class Material implements Comparable<Material>, IMaterial<Materi
             }
         }
 
-        public static long resolveFlag(String name, Class<? extends IMaterial<?>> selfClass) {
-            Entry<Long, Class<? extends IMaterial<?>>> flagEntry = materialFlagRegistry.get(name);
+        public static long resolveFlag(String name, Class<? extends Material> selfClass) {
+            Entry<Long, Class<? extends Material>> flagEntry = materialFlagRegistry.get(name);
             if (flagEntry == null)
                 throw new IllegalArgumentException("Flag with name " + name + " not registered");
             else if (!flagEntry.getValue().isAssignableFrom(selfClass))
@@ -188,6 +193,7 @@ public abstract class Material implements Comparable<Material>, IMaterial<Materi
     @ZenProperty
     public final Element element;
 
+    // TODO Fix isotope tooltips being set toSmallDownNumbers
     private String calculateChemicalFormula() {
         if (element != null) {
             return element.getSymbol();
@@ -282,7 +288,7 @@ public abstract class Material implements Comparable<Material>, IMaterial<Materi
             !hasFlag(MatFlags.DISABLE_DECOMPOSITION)) {
             boolean onlyMetalMaterials = true;
             for (MaterialStack materialStack : materialComponents) {
-                IMaterial<?> material = materialStack.material;
+                Material material = materialStack.material;
                 onlyMetalMaterials &= material instanceof IngotMaterial;
             }
             //allow centrifuging of alloy materials only
@@ -300,7 +306,7 @@ public abstract class Material implements Comparable<Material>, IMaterial<Materi
         this.materialRGB = materialRGB;
     }
 
-    @Override
+    @ZenGetter
     public int getMaterialRGB() {
         return materialRGB;
     }
@@ -401,11 +407,6 @@ public abstract class Material implements Comparable<Material>, IMaterial<Materi
         return totalMass / totalAmount;
     }
 
-    @Override
-    public FluidStack getFluid(int amount) {
-        return null;
-    }
-
     @ZenGetter("camelCaseName")
     public String toCamelCaseString() {
         return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, toString());
@@ -438,5 +439,4 @@ public abstract class Material implements Comparable<Material>, IMaterial<Materi
     public MaterialStack createMaterialStack(long amount) {
         return new MaterialStack(this, amount);
     }
-
 }

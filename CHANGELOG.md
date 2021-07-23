@@ -1,5 +1,17 @@
 ## Changelog
 
+### 1.17.0
+* Fix many small GUI issues (#1574) - dan
+* Add clarification tooltips to blocks in the multiblock preview (#1584) - ALongStringOfNumbers
+* Allow Quantum Chests/Tanks to Keep Inventory on Break (#1555) - dan
+* Apply Rotor Efficiency to all EU output from Turbine (#1694) - ALongStringOfNumbers
+* Fix integer overflow for total fuel burn time (#1683) - Adrian Brock
+* Fix time on Yttrium Barium Cuprate recipe (#1692) - ALongStringOfNumbers
+* Fix consumable Integrated circuit being added to EBF recipe (#1690) - ALongStringOfNumbers
+* Fixed Magic Energy Absorber's tooltip (#1685) - SuperCraftAlex
+* Internal make the Fusion Property protected (#1689) - ALongStringOfNumbers
+* Internal change Fusion Property to Long (#1693) - ALongStringOfNumbers
+
 ### 1.16.1
 * Note: This is hotfix
 * Fixed Surface block spawning (#1681) - ALongStringOfNumbers

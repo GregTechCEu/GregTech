@@ -42,7 +42,7 @@ public class CraftingRecipeLoader {
 
         ToolRecipeHandler.registerPowerUnitRecipes();
         ModHandler.addShapedRecipe("small_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeSmall, Materials.Wood, 6), "WsW", "W W", "WrW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
-        ModHandler.addShapedRecipe("medium_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeMedium, Materials.Wood, 2), "WWW", "s r", "WWW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
+        ModHandler.addShapedRecipe("medium_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeNormal, Materials.Wood, 2), "WWW", "s r", "WWW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
         ModHandler.addShapedRecipe("large_wooden_pipe", OreDictUnifier.get(OrePrefix.pipeLarge, Materials.Wood), "WrW", "W W", "WsW", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood));
 
         ModHandler.addShapelessRecipe("nether_quartz_block_to_nether_quartz", new ItemStack(Items.QUARTZ, 4), Blocks.QUARTZ_BLOCK);
@@ -124,7 +124,6 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("piston_steel", new ItemStack(Blocks.PISTON, 2), "WWW", "CBC", "CRC", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood), 'C', OrePrefix.stoneCobble, 'R', new UnificationEntry(OrePrefix.dust, Materials.Redstone), 'B', new UnificationEntry(OrePrefix.ingot, Materials.Steel));
         ModHandler.addShapedRecipe("piston_titanium", new ItemStack(Blocks.PISTON, 8), "WWW", "CBC", "CRC", 'W', new UnificationEntry(OrePrefix.plank, Materials.Wood), 'C', OrePrefix.stoneCobble, 'R', new UnificationEntry(OrePrefix.dust, Materials.Redstone), 'B', new UnificationEntry(OrePrefix.ingot, Materials.Titanium));
 
-        ModHandler.addShapelessRecipe("dynamite", MetaItems.DYNAMITE.getStackForm(), Items.STRING, Items.PAPER, Items.GUNPOWDER);
         GTLog.logger.info("Modifying vanilla recipes according to config. DON'T BE SCARED OF FML's WARNING ABOUT DANGEROUS ALTERNATIVE PREFIX.");
 
         if (ConfigHolder.vanillaRecipes.bucketRequirePlatesAndHammer) {
