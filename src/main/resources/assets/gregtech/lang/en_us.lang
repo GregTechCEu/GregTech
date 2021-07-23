@@ -1927,7 +1927,6 @@ recipemap.semi_fluid_generator.name=Semi Fluid Fuels
 recipemap.plasma_generator.name=Plasma Generator
 recipemap.circuit_assembler.name=Circuit Assembler
 recipemap.mass_fabricator.name=Mass Fabricator
-//TODO better name, ru/cn
 recipemap.materialtree.name=Material Tree
 
 behaviour.hoe=Can till dirt
@@ -3510,6 +3509,10 @@ gregtech.jei.ore.surface_rock_1=Surface Rocks with this material denote vein spa
 gregtech.jei.ore.surface_rock_2=They can be broken for 3 Tiny Piles of the dust, with Fortune giving a bonus.
 gregtech.jei.ore.biome_weighting=%s Weight: %d
 gregtech.jei.ore.biome_weighting_no_spawn=%s Weight: Cannot Spawn
+
+gregtech.jei.materials.average_mass=Average mass: %,d
+gregtech.jei.materials.average_protons=Average protons: %,d
+gregtech.jei.materials.average_neutrons=Average neutrons: %,d
 
 gregtech.item_filter.empty_item=Empty (No Item)
 gregtech.item_filter.footer=§eClick with item to override
