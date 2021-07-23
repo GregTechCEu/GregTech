@@ -1,6 +1,10 @@
 package gregtech.common.blocks.clipboard;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
+import codechicken.lib.raytracer.RayTracer;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.util.GTUtility;
 import gregtech.common.render.clipboard.TileEntityClipboardRenderer;
 import net.minecraft.block.Block;
@@ -10,10 +14,12 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -28,7 +34,7 @@ import javax.annotation.Nullable;
 
 public class BlockClipboard extends Block implements ITileEntityProvider {
 
-    private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(5.25 / 16.0, 0.0, 0.0, 5.5 / 16.0, 8.0 / 16.0, 0.3 / 16.0);
+    private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(2.75 / 16.0, 0.0, 0.0, 13.25 / 16.0, 1.0, 0.4 / 16.0);
 
     public static final BlockClipboard INSTANCE = new BlockClipboard(); // Mainly to access the default state.
 
@@ -45,7 +51,11 @@ public class BlockClipboard extends Block implements ITileEntityProvider {
     @Override
     @Nonnull
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return GTUtility.rotateAroundYAxis(CLIPBOARD_AABB, EnumFacing.NORTH, getTileEntity(source, pos).getFrontFacing());
+        if(getTileEntity(source, pos) != null) {
+            return GTUtility.rotateAroundYAxis(CLIPBOARD_AABB, EnumFacing.NORTH, getTileEntity(source, pos).getFrontFacing());
+        } else {
+            return CLIPBOARD_AABB;
+        }
     }
 
     private ItemStack getDropStack(IBlockAccess blockAccess, BlockPos pos, IBlockState blockState) {
@@ -126,7 +136,18 @@ public class BlockClipboard extends Block implements ITileEntityProvider {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityClipboard();
+        TileEntityClipboard clipboard = new TileEntityClipboard();
+        clipboard.setWorld(worldIn);
+        tileEntities.set(new TileEntityClipboard());
+        return tileEntities.get();
+    }
+
+    public TileEntity createNewTileEntity(World worldIn, int meta, BlockPos pos) {
+        TileEntityClipboard clipboard = new TileEntityClipboard();
+        clipboard.setWorld(worldIn);
+        clipboard.setPos(pos);
+        tileEntities.set(new TileEntityClipboard());
+        return tileEntities.get();
     }
 
     @Override
@@ -134,5 +155,17 @@ public class BlockClipboard extends Block implements ITileEntityProvider {
         return true;
     }
 
-
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        TileEntityClipboard tileEntity = getTileEntity(worldIn, pos);
+        RayTraceResult rayTraceResult = RayTracer.retraceBlock(worldIn, playerIn, pos);
+        ItemStack itemStack = playerIn.getHeldItem(hand);
+        if (tileEntity == null || rayTraceResult == null) {
+            return false;
+        }
+        if(tileEntity.getWorld() != null && !tileEntity.getWorld().isRemote) {
+            TileEntityClipboardUIFactory.INSTANCE.openUI(this.tileEntities.get(), (EntityPlayerMP) playerIn);
+        }
+        return true;
+    }
 }

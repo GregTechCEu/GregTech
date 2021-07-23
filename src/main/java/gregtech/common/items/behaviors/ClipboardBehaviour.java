@@ -202,13 +202,13 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
                 // Get new TE
                 shiftedBlock.createTileEntity(world, state);
                 // And manipulate it to our liking
-                TileEntityClipboard clipboard = (TileEntityClipboard) world.getTileEntity(pos);
+                TileEntityClipboard clipboard = (TileEntityClipboard) world.getTileEntity(shiftedPos);
                 if (clipboard != null) {
                     clipboard.setFrontFacing(playerFacing);
-                    clipboard.setClipboard(heldItem);
+                    clipboard.setClipboard(heldItem.copy());
                 }
             }
         }
-        return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
+        return ActionResult.newResult(EnumActionResult.SUCCESS, player.isCreative() ? heldItem : ItemStack.EMPTY);
     }
 }

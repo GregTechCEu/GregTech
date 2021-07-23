@@ -41,7 +41,7 @@ import static gregtech.common.items.MetaItems.CLIPBOARD;
 public class TileEntityClipboardRenderer implements ICCBlockRenderer {
     private static final TileEntityClipboardRenderer INSTANCE = new TileEntityClipboardRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
-    public static ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "gt_clipboard"), "normal");
+    public static ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "clipboard"), "normal");
 
 
     public static void preInit() {
@@ -76,7 +76,8 @@ public class TileEntityClipboardRenderer implements ICCBlockRenderer {
             renderState.setBrightness(world, pos);
         }
         renderState.setPipeline(operations);
-        renderState.render();
+        //renderState.setModel(/*????????*/);
+        //renderState.render();
 
 
 

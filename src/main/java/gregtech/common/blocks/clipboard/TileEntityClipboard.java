@@ -4,6 +4,8 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FluidHandlerProxy;
+import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.gui.PlayerInventoryHolder;
@@ -16,6 +18,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.Material;
 import gregtech.common.items.behaviors.ClipboardBehaviour;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,6 +41,12 @@ public class TileEntityClipboard extends TileEntity implements IUIHolder {
 
     private ItemStackHandler clipboardStackHandler = new ItemStackHandler(1);
     protected EnumFacing frontFacing = EnumFacing.NORTH;
+
+
+
+    public void openUI(EntityPlayerMP player) {
+        TileEntityClipboardUIFactory.INSTANCE.openUI( this, player);
+    }
 
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         if(clipboardStackHandler.getStackInSlot(0) == ItemStack.EMPTY) {
