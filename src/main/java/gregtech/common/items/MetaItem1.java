@@ -505,6 +505,8 @@ public class MetaItem1 extends StandardMetaItem {
         CARBON_FIBERS = addItem(355, "carbon.fibers");
         CARBON_MESH = addItem(356, "carbon.mesh");
         CARBON_PLATE = addItem(357, "carbon.plate");
+
+        CLIPBOARD = addItem(362, "clipboard").addComponents(new ClipboardBehaviour());
     }
 
     public void registerRecipes() {
