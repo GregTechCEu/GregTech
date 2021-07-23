@@ -18,7 +18,6 @@ import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.worldgen.config.OreDepositDefinition;
@@ -204,8 +203,8 @@ public class GTJeiPlugin implements IModPlugin {
         //Material Tree
 		List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
 		for (Material material : Material.MATERIAL_REGISTRY) {
-			if (material instanceof FluidMaterial) {
-				materialTreeList.add(new MaterialTree((FluidMaterial) material));
+			if (material instanceof DustMaterial) {
+				materialTreeList.add(new MaterialTree((DustMaterial) material));
 			}
 		}
 		registry.addRecipes(materialTreeList, GTValues.MODID + ":" + "material_tree");
