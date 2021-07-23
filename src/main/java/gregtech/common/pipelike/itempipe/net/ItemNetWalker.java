@@ -20,7 +20,6 @@ public class ItemNetWalker {
         ItemNetWalker walker = new ItemNetWalker(net, world, sourcePipe, 1, new ArrayList<>(), null);
         while (!walker.walk()) ;
         walker.walked.forEach(TileEntityItemPipe::resetWalk);
-        GTLog.logger.info("Walked net and found {} invs", walker.inventories.size());
         return walker.inventories;
     }
 
@@ -80,10 +79,7 @@ public class ItemNetWalker {
     private void checkPos(BlockPos pos) {
         pipes.clear();
         Node<ItemPipeProperties> node = net.getNodeAt(pos);
-        if (node == null) {
-            GTLog.logger.info("NEXT NODE IS NULL at {}", pos);
-            return;
-        }
+        if (node == null) return;
 
         TileEntity thisPipe = world.getTileEntity(pos);
         if (!(thisPipe instanceof TileEntityItemPipe))
@@ -106,21 +102,13 @@ public class ItemNetWalker {
             TileEntity tile = world.getTileEntity(pos.offset(accessSide));
             if (tile == null) continue;
             if (tile instanceof TileEntityItemPipe) {
-                GTLog.logger.info("Found Pipe at {}", pos.offset(accessSide));
                 if (!((TileEntityItemPipe) tile).isWalked())
-                {
-                    GTLog.logger.info("Is unwalked");
                     pipes.add(accessSide);
-                }
                 continue;
             }
             IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, accessSide);
             if (handler != null)
-            {
-                GTLog.logger.info("Found inv at {}", pos.offset(accessSide));
                 inventories.add(new ItemPipeNet.Inventory(pos, accessSide, distance, minProperties));
-            }
         }
-        GTLog.logger.info("Found {} open connections at {}", open, pos);
     }
 }
