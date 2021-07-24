@@ -15,30 +15,32 @@ import java.util.ArrayList;
 
 public class MaterialTree implements IRecipeWrapper {
 	private final static ImmutableList<OrePrefix> PREFIXES = ImmutableList.of(
-            OrePrefix.ore,
-            OrePrefix.crushed,
-            OrePrefix.crushedCentrifuged,
-            OrePrefix.crushedPurified,
-            OrePrefix.dustPure,
-            OrePrefix.dustImpure,
             OrePrefix.dust,
             OrePrefix.dustSmall,
             OrePrefix.dustTiny,
             OrePrefix.ingotHot,
             OrePrefix.ingot,
             OrePrefix.gem,
-            OrePrefix.nugget,
             OrePrefix.block,
+            OrePrefix.stick,
+            OrePrefix.stickLong,
+            OrePrefix.spring,
+            OrePrefix.gemFlawless,
+            OrePrefix.bolt,
+            OrePrefix.screw,
+            OrePrefix.gemExquisite,
+            OrePrefix.ring,
+            OrePrefix.gear,
+            OrePrefix.frameGt,
+            OrePrefix.nugget,
             OrePrefix.round,
             OrePrefix.plate,
             OrePrefix.plateDense,
-            OrePrefix.lens,
+            OrePrefix.gemChipped,
+            OrePrefix.gearSmall,
+            OrePrefix.gemFlawed,
             OrePrefix.foil,
-            OrePrefix.stick,
-            OrePrefix.stickLong,
-            OrePrefix.ring,
-            OrePrefix.bolt,
-            OrePrefix.screw,
+            OrePrefix.lens,
             OrePrefix.wireFine,
             OrePrefix.wireGtSingle,
             OrePrefix.cableGtSingle
@@ -66,11 +68,11 @@ public class MaterialTree implements IRecipeWrapper {
 		}
 
 		FluidStack matFluid = material.getFluid(1000);
+		List<FluidStack> matFluidsStack = new ArrayList<>();
 		if (matFluid != null) {
-			List<FluidStack> matFluidsStack = new ArrayList<>();
 			matFluidsStack.add(matFluid);
-			this.fluidInputs.add(matFluidsStack);
 		}
+		this.fluidInputs.add(matFluidsStack);
 
 		name = material.getLocalizedName();
 		formula = material.getChemicalFormula();
