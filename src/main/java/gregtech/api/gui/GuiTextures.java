@@ -167,4 +167,6 @@ public class GuiTextures {
     public static final TextureArea INFO_ICON = TextureArea.fullImage("textures/gui/widget/information.png");
     public static final TextureArea MULTIBLOCK_CATEGORY = TextureArea.fullImage("textures/gui/icon/coke_oven.png");
 
+    //Terminal
+    public static final TextureArea TERMINAL_BACKGROUND = TextureArea.fullImage("textures/gui/terminal/terminal_background.png");
 }
