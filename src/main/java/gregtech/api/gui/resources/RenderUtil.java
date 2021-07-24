@@ -13,6 +13,9 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.GlStateManager.DestFactor;
+import net.minecraft.client.renderer.GlStateManager.SourceFactor;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class RenderUtil {
@@ -103,5 +106,27 @@ public class RenderUtil {
         tessellator.draw();
     }
 
+    public static void setColor(int color) { // ARGB
+        GlStateManager.color((color >> 16 & 255) / 255.0F,
+                (color >> 8 & 255) / 255.0F,
+                (color & 255) / 255.0F,
+                (color >> 24 & 255) / 255.0F);
+    }
+
+    public static void renderCircle(float x, float y, float r, int color, int detail) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
+        setColor(color);
+        bufferbuilder.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION);
+        for (int i = 0; i < detail; i++) {
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / detail), y + r * Math.sin(-2 * Math.PI * i / detail), 0.0D).endVertex();
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
 
 }
