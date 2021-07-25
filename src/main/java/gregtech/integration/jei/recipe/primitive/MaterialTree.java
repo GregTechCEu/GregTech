@@ -57,6 +57,7 @@ public class MaterialTree implements IRecipeWrapper {
 	private final long avgN;
 
 	public MaterialTree(DustMaterial material) {
+	    // adding an empty list to itemInputs/fluidInputs makes checking if a prefix exists much easier
 		List<ItemStack> inputDusts = new ArrayList<>();
 		for (OrePrefix prefix : PREFIXES) {
 			inputDusts.add(OreDictUnifier.get(prefix, material));
@@ -79,6 +80,7 @@ public class MaterialTree implements IRecipeWrapper {
 		avgM = material.getAverageMass();
 		avgP = material.getAverageProtons();
 		avgN = material.getAverageNeutrons();
+		// not sure of any other good way to signify not having an ebf temp, but this works fine
 		if (material instanceof IngotMaterial) {
 			blastTemp = String.valueOf(((IngotMaterial) material).blastFurnaceTemperature);
 		}
@@ -95,10 +97,6 @@ public class MaterialTree implements IRecipeWrapper {
 		ingredients.setOutputLists(ItemStack.class, this.itemInputs);
 		ingredients.setOutputLists(FluidStack.class, this.fluidInputs);
     }
-
-    public int getPrefixListSize(){
-		return PREFIXES.size();
-	}
 
 	public String getMaterialName() {
 		return name;
