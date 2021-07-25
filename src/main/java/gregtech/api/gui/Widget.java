@@ -152,10 +152,19 @@ public abstract class Widget {
     }
 
     /**
+     * Called each draw tick to draw this widget in GUI (@Deprecated)
+     */
+    @Deprecated
+    @SideOnly(Side.CLIENT)
+    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    }
+
+    /**
      * Called each draw tick to draw this widget in GUI
      */
     @SideOnly(Side.CLIENT)
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        drawInBackground(mouseX, mouseY, context);
     }
 
     /**
@@ -341,24 +350,35 @@ public abstract class Widget {
         public final int button;
         public final boolean isShiftClick;
         public final boolean isCtrlClick;
+        public final boolean isClient;
 
         public ClickData(int button, boolean isShiftClick, boolean isCtrlClick) {
             this.button = button;
             this.isShiftClick = isShiftClick;
             this.isCtrlClick = isCtrlClick;
+            this.isClient = false;
+        }
+
+        public ClickData(int button, boolean isShiftClick, boolean isCtrlClick, boolean isClient) {
+            this.button = button;
+            this.isShiftClick = isShiftClick;
+            this.isCtrlClick = isCtrlClick;
+            this.isClient = isClient;
         }
 
         public void writeToBuf(PacketBuffer buf) {
             buf.writeVarInt(button);
             buf.writeBoolean(isShiftClick);
             buf.writeBoolean(isCtrlClick);
+            buf.writeBoolean(isClient);
         }
 
         public static ClickData readFromBuf(PacketBuffer buf) {
             int button = buf.readVarInt();
             boolean shiftClick = buf.readBoolean();
             boolean ctrlClick = buf.readBoolean();
-            return new ClickData(button, shiftClick, ctrlClick);
+            boolean isClient = buf.readBoolean();
+            return new ClickData(button, shiftClick, ctrlClick, isClient);
         }
     }
 

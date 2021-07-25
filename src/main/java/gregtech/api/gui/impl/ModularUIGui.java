@@ -216,7 +216,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         modularUI.guiWidgets.values().forEach(widget -> {
             GlStateManager.pushMatrix();
             GlStateManager.enableBlend();
-            widget.drawInBackground(mouseX, mouseY, this);
+            widget.drawInBackground(mouseX, mouseY, partialTicks,this);
             GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
             GlStateManager.popMatrix();
         });
