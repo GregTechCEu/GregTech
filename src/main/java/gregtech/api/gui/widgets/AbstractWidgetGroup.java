@@ -236,10 +236,10 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         for (Widget widget : widgets) {
             if (isWidgetVisible(widget)) {
-                widget.drawInBackground(mouseX, mouseY, context);
+                widget.drawInBackground(mouseX, mouseY, partialTicks, context);
             }
         }
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);

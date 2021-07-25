@@ -3,10 +3,12 @@ package gregtech.api.gui.resources;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -106,6 +108,17 @@ public class RenderUtil {
         tessellator.draw();
     }
 
+    public static void renderItemOverLay(float x, float y, float z, float scale, ItemStack itemStack) {
+        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(scale, scale, 0.0001f);
+        GlStateManager.translate(x * 16, y * 16, z * 16);
+        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
+        renderItem.renderItemAndEffectIntoGUI(itemStack, 0, 0 );
+        GlStateManager.popMatrix();
+        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+    }
+
     public static void setColor(int color) { // ARGB
         GlStateManager.color((color >> 16 & 255) / 255.0F,
                 (color >> 8 & 255) / 255.0F,
@@ -113,7 +126,7 @@ public class RenderUtil {
                 (color >> 24 & 255) / 255.0F);
     }
 
-    public static void renderCircle(float x, float y, float r, int color, int detail) {
+    public static void renderCircle(float x, float y, float r, int color, int segments) {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.enableBlend();
@@ -121,8 +134,28 @@ public class RenderUtil {
         GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
         setColor(color);
         bufferbuilder.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION);
-        for (int i = 0; i < detail; i++) {
-            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / detail), y + r * Math.sin(-2 * Math.PI * i / detail), 0.0D).endVertex();
+        for (int i = 0; i < segments; i++) {
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / segments), y + r * Math.sin(-2 * Math.PI * i / segments), 0.0D).endVertex();
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
+
+    public static void renderSector(float x, float y, float r, int color, int segments, int from, int to) {
+        if (from > to || from < 0) return;
+        if(to > segments) to = segments;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA, SourceFactor.ONE, DestFactor.ZERO);
+        setColor(color);
+        bufferbuilder.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION);
+        for (int i = from; i < to; i++) {
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / segments), y + r * Math.sin(-2 * Math.PI * i / segments), 0.0D).endVertex();
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * (i + 1) / segments), y + r * Math.sin(-2 * Math.PI * (i + 1) / segments), 0.0D).endVertex();
+            bufferbuilder.pos(x, y, 0.0D).endVertex();
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();

@@ -22,7 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * This representation doesn't take image size in account, so all image variables are
  * 0.0 - 1.0 bounds
  */
-public class TextureArea {
+public class TextureArea implements IGuiTexture {
 
     public final ResourceLocation imageLocation;
 
