@@ -9,12 +9,11 @@ import gregtech.api.gui.widgets.TextFieldWidget;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.common.blocks.clipboard.BlockClipboard;
-import gregtech.common.blocks.clipboard.TileEntityClipboard;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.common.items.MetaItems;
+import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,8 +22,10 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+
+import static gregtech.common.blocks.MetaBlocks.MACHINE;
+import static gregtech.common.metatileentities.MetaTileEntities.CLIPBOARD_TILE;
 
 public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
     public static final int MAX_PAGES = 25;
@@ -196,16 +197,20 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
             // Step away from the block so you don't replace it, and then give it our fun blockstate
             BlockPos shiftedPos = pos.offset(playerFacing.getOpposite());
             Block shiftedBlock = world.getBlockState(shiftedPos).getBlock();
-            if(shiftedBlock.isAir(world.getBlockState(shiftedPos), world, shiftedPos)) {
-                IBlockState state = BlockClipboard.INSTANCE.getDefaultState();
+            if (shiftedBlock.isAir(world.getBlockState(shiftedPos), world, shiftedPos)) {
+                IBlockState state = MACHINE.getDefaultState();
                 world.setBlockState(shiftedPos, state);
                 // Get new TE
                 shiftedBlock.createTileEntity(world, state);
                 // And manipulate it to our liking
-                TileEntityClipboard clipboard = (TileEntityClipboard) world.getTileEntity(shiftedPos);
-                if (clipboard != null) {
-                    clipboard.setFrontFacing(playerFacing);
-                    clipboard.setClipboard(heldItem.copy());
+                MetaTileEntityHolder holder = (MetaTileEntityHolder) world.getTileEntity(shiftedPos);
+                if (holder != null) {
+                    holder.setMetaTileEntity(CLIPBOARD_TILE);
+                    MetaTileEntityClipboard clipboard = (MetaTileEntityClipboard) holder.getMetaTileEntity();
+                    if (clipboard != null) {
+                        clipboard.setFrontFacing(playerFacing);
+                        clipboard.setClipboard(heldItem);
+                    }
                 }
             }
         }

@@ -200,7 +200,7 @@ public class MetaTileEntities {
 
     public static MetaTileEntityInfiniteEmitter INFINITE_EMITTER;
 
-    public static TileEntityClipboard CLIPBOARD_TILE;
+    public static MetaTileEntityClipboard CLIPBOARD_TILE;
 
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");
@@ -674,6 +674,8 @@ public class MetaTileEntities {
         STEAM_EXPORT_BUS = GregTechAPI.registerMetaTileEntity(1631, new MetaTileEntitySteamItemBus(gregtechId("steam_export_bus"), true));
         STEAM_IMPORT_BUS = GregTechAPI.registerMetaTileEntity(1632, new MetaTileEntitySteamItemBus(gregtechId("steam_import_bus"), false));
         STEAM_HATCH = GregTechAPI.registerMetaTileEntity(1633, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
+
+        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1640, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
         /*
          * FOR ADDON DEVELOPERS:
