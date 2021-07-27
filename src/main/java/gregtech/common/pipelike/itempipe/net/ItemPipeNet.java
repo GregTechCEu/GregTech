@@ -99,7 +99,7 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         public IItemHandler getHandler(World world) {
             TileEntity tile = world.getTileEntity(getHandlerPos());
             if (tile != null)
-                return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, faceToHandler);
+                return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, faceToHandler.getOpposite());
             return null;
         }
     }

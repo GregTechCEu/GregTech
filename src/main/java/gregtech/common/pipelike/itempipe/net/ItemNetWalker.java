@@ -93,12 +93,10 @@ public class ItemNetWalker {
         walked.add((TileEntityItemPipe) thisPipe);
 
         // check for surrounding pipes and item handlers
-        int open = 0;
         for (EnumFacing accessSide : EnumFacing.VALUES) {
             //skip sides reported as blocked by pipe network
-            if (node.isBlocked(accessSide) && !(((TileEntityItemPipe) thisPipe).getCoverableImplementation().getCoverAtSide(accessSide) instanceof CoverConveyor))
+            if (node.isBlocked(accessSide))
                 continue;
-            open++;
             TileEntity tile = world.getTileEntity(pos.offset(accessSide));
             if (tile == null) continue;
             if (tile instanceof TileEntityItemPipe) {
@@ -106,7 +104,7 @@ public class ItemNetWalker {
                     pipes.add(accessSide);
                 continue;
             }
-            IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, accessSide);
+            IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, accessSide.getOpposite());
             if (handler != null)
                 inventories.add(new ItemPipeNet.Inventory(pos, accessSide, distance, minProperties));
         }
