@@ -454,18 +454,18 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         primaryGroup.addWidget(new CycleButtonWidget(7, 166, 116, 20,
             ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
             .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
-
-        this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
+        primaryGroup.addWidget(new ToggleButtonWidget(130, 166, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
 
         TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
-        TileEntity tile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
-        if(!(this instanceof CoverRoboticArm) && coverTile instanceof TileEntityItemPipe ^ tile instanceof TileEntityItemPipe) {
-            primaryGroup.addWidget(new ToggleButtonWidget(130, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE,
+        TileEntity otherTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
+        if(!(this instanceof CoverRoboticArm) && coverTile instanceof TileEntityItemPipe ^ otherTile instanceof TileEntityItemPipe) {
+            primaryGroup.addWidget(new ToggleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE,
                     () -> distributionMode == ItemDistributionMode.INSERT_FIRST,
                     val -> distributionMode = val ? ItemDistributionMode.INSERT_FIRST : ItemDistributionMode.ROUND_ROBIN)
-            .setTooltipText("cover.conveyor.distribution"));
-            primaryGroup.addWidget(new ToggleButtonWidget(149, 166, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
+                    .setTooltipText("cover.conveyor.distribution"));
         }
+
+        this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 190 + 82)
             .widget(primaryGroup)
@@ -558,7 +558,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            if (conveyorMode == ConveyorMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
+            if (blocksInput && conveyorMode == ConveyorMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return stack;
             }
             if (!itemFilterContainer.testItemStack(stack) && manualImportExportMode == ManualImportExportMode.FILTERED) {
