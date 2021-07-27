@@ -25,6 +25,13 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         super.update();
     }
 
+    /**
+     * Used to reset cached values in the Recipe Logic on structure deform
+     */
+    public void invalidate() {
+
+    }
+
     public IEnergyContainer getEnergyContainer() {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         return controller.getEnergyContainer();
