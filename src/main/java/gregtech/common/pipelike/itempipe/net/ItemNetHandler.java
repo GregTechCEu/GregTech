@@ -3,6 +3,8 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.CoverRoboticArm;
@@ -41,7 +43,7 @@ public class ItemNetHandler implements IItemHandler {
         if (stack.isEmpty()) return stack;
         simulatedTransfers = 0;
         Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(pipe.getPos(), facing);
-        if (exportsFromPipe(tuple)) {
+        if (exportsToPipe(tuple)) {
             if (tuple.getFirst().getDistributionMode() == CoverConveyor.ItemDistributionMode.ROUND_ROBIN) {
                 return insertRoundRobin(stack, simulate);
             }
@@ -51,7 +53,7 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
         for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
-            if (Objects.equals(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
+            if (GTUtility.arePosEqual(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
                 continue;
             IItemHandler handler = inv.getHandler(pipe.getWorld());
             if (handler == null) continue;
@@ -65,7 +67,7 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insertRoundRobin(ItemStack stack, boolean simulate) {
         List<Handler> handlers = new ArrayList<>();
         for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
-            if (Objects.equals(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
+            if (GTUtility.arePosEqual(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
                 continue;
             IItemHandler handler = inv.getHandler(pipe.getWorld());
             if (handler != null)
@@ -132,7 +134,7 @@ public class ItemNetHandler implements IItemHandler {
         if (tuple != null) {
             if (!tuple.getFirst().getItemFilterContainer().testItemStack(stack))
                 return stack;
-            boolean exportsFromPipe = exportsFromPipe(tuple);
+            boolean exportsFromPipe = exportsToPipe(tuple);
             if (tuple.getFirst() instanceof CoverRoboticArm && !exportsFromPipe)
                 return insertOverRobotArm(handler.handler, (CoverRoboticArm) tuple.getFirst(), tuple.getSecond(), stack, simulate, allowed);
             if (exportsFromPipe && tuple.getFirst().blocksInput())
@@ -173,7 +175,7 @@ public class ItemNetHandler implements IItemHandler {
         return null;
     }
 
-    public boolean exportsFromPipe(Tuple<CoverConveyor, Boolean> tuple) {
+    public boolean exportsToPipe(Tuple<CoverConveyor, Boolean> tuple) {
         return tuple != null && (tuple.getSecond() ?
                 tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT :
                 tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT);
