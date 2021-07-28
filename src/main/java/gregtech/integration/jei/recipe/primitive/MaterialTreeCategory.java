@@ -232,20 +232,28 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
         drawArrow(minecraft, "right_down_right_53_64_4", 72, 62, itemExists.get(7) && itemExists.get(16));
 
         // material info rendering
+        int linesDrawn = 0;
 		minecraft.fontRenderer.drawString(materialName, 0, 0, 0x111111);
+		linesDrawn++;
 		if (minecraft.fontRenderer.getStringWidth(materialFormula) > 176) {
 		    minecraft.fontRenderer.drawString(minecraft.fontRenderer.trimStringToWidth(materialFormula, 171) + "...",
-                    0, FONT_HEIGHT, 0x111111);
-        } else {
-            minecraft.fontRenderer.drawString(materialFormula, 0, FONT_HEIGHT, 0x111111);
+                    0, FONT_HEIGHT * linesDrawn, 0x111111);
+		    linesDrawn++;
+        }
+		else if (materialFormula.length() != 0) {
+            minecraft.fontRenderer.drawString(materialFormula, 0, FONT_HEIGHT * linesDrawn, 0x111111);
+            linesDrawn++;
         }
 		// don't think theres a good way to get the coil tier other than this
 		if (materialBFTemp != 0) {
-            BlastTemperatureProperty.getInstance().drawInfo(minecraft, 0, 2 * FONT_HEIGHT, 0x111111, materialBFTemp);
+            BlastTemperatureProperty.getInstance().drawInfo(minecraft, 0, FONT_HEIGHT * linesDrawn, 0x111111, materialBFTemp);
+            linesDrawn++;
         }
-		minecraft.fontRenderer.drawString(materialAvgM, 0, 3 * (FONT_HEIGHT), 0x111111);
-		minecraft.fontRenderer.drawString(materialAvgN, 0, 4 * (FONT_HEIGHT), 0x111111);
-		minecraft.fontRenderer.drawString(materialAvgP, 0, 5 * (FONT_HEIGHT), 0x111111);
+		minecraft.fontRenderer.drawString(materialAvgM, 0, FONT_HEIGHT * linesDrawn, 0x111111);
+		linesDrawn++;
+		minecraft.fontRenderer.drawString(materialAvgN, 0, FONT_HEIGHT * linesDrawn, 0x111111);
+		linesDrawn++;
+		minecraft.fontRenderer.drawString(materialAvgP, 0, FONT_HEIGHT * linesDrawn, 0x111111);
 	}
 
 	// a couple wrappers to make the code look less terrible
