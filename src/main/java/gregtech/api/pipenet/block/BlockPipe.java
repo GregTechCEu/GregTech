@@ -112,7 +112,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (pipeTile != null && !((TileEntityPipeBase<?, ?>) pipeTile).wasInDetachedConversionMode()) {
             int activeConnections = pipeTile.getOpenConnections();
             boolean isActiveNode = activeConnections != 0;
-            getWorldPipeNet(worldIn).addNode(pos, createProperties(pipeTile), 0, pipeTile.getOpenConnections(), isActiveNode);
+            getWorldPipeNet(worldIn).addNode(pos, createProperties(pipeTile), 0, activeConnections, isActiveNode);
             onActiveModeChange(worldIn, pos, isActiveNode, true);
         }
     }
@@ -195,7 +195,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (pipeNet != null && pipeTile != null) {
             //int activeConnections = ~getActiveNodeConnections(worldIn, pos, pipeTile);
             int activeConnections = pipeTile.getOpenConnections(); //remove blocked connections
-            boolean isActiveNodeNow = activeConnections == 0;
+            boolean isActiveNodeNow = activeConnections != 0;
             boolean modeChanged = pipeNet.markNodeAsActive(pos, isActiveNodeNow);
             if (modeChanged) {
                 onActiveModeChange(worldIn, pos, isActiveNodeNow, false);

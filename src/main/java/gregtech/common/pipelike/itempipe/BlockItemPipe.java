@@ -131,7 +131,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
 
     @Override
     public boolean canPipeConnectToBlock(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, TileEntity tile) {
-        return tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side) != null;
+        return tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) != null;
     }
 
     /*@Override

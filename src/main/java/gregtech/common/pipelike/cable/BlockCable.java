@@ -118,7 +118,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
 
     @Override
     public boolean canPipeConnectToBlock(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side, TileEntity tile) {
-        return tile != null && tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, side) != null;
+        return tile != null && tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, side.getOpposite()) != null;
     }
 
     @Override
