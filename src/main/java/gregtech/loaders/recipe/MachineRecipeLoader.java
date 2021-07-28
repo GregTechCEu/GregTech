@@ -2,7 +2,6 @@ package gregtech.loaders.recipe;
 
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.CokeOvenRecipeBuilder;
@@ -61,6 +60,7 @@ public class MachineRecipeLoader {
         AssemblerRecipeLoader.init();
         ComponentRecipes.register();
         MiscRecipeLoader.init();
+        VanillaStandardRecipes.init();
 
         CircuitRecipes.init();
         registerCutterRecipes();
@@ -80,15 +80,6 @@ public class MachineRecipeLoader {
     }
 
     private static void registerBendingCompressingRecipes() {
-        COMPRESSOR_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.ICE, 2, GTValues.W)).outputs(new ItemStack(Blocks.PACKED_ICE)).buildAndRegister();
-        COMPRESSOR_RECIPES.recipeBuilder().input(OrePrefix.dust, Materials.Ice, 1).outputs(new ItemStack(Blocks.ICE)).buildAndRegister();
-
-        PACKER_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Items.WHEAT, 9))
-                .inputs(new CountableIngredient(new IntCircuitIngredient(9), 0))
-                .outputs(new ItemStack(Blocks.HAY_BLOCK))
-                .duration(200).EUt(2)
-                .buildAndRegister();
 
         COMPRESSOR_RECIPES.recipeBuilder()
             .input(OrePrefix.dust, Materials.Fireclay)
@@ -479,8 +470,7 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(480).EUt(240).input(OrePrefix.dust, Materials.Graphite, 8).input(OrePrefix.foil, Materials.Silicon, 1).fluidInputs(Materials.Glue.getFluid(250)).outputs(OreDictUnifier.get(OrePrefix.dustSmall, Materials.Graphene, 1)).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(1).inputs(new ItemStack(Items.COAL, 1, GTValues.W)).input(OrePrefix.stick, Materials.Wood, 1).outputs(new ItemStack(Blocks.TORCH, 4)).duration(400).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(4).input(OrePrefix.plate, Materials.Gold, 2).outputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE, 1)).circuitMeta(2).duration(200).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(4).input(OrePrefix.plate, Materials.Iron, 2).outputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE, 1)).circuitMeta(2).duration(200).buildAndRegister();
+
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(4).input(OrePrefix.plate, Materials.Iron, 6).outputs(new ItemStack(Items.IRON_DOOR, 3)).circuitMeta(6).duration(600).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(4).input(OrePrefix.plate, Materials.Iron, 7).outputs(new ItemStack(Items.CAULDRON, 1)).circuitMeta(7).duration(700).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(4).input(OrePrefix.stick, Materials.Iron, 3).outputs(new ItemStack(Blocks.IRON_BARS, 4)).circuitMeta(3).duration(300).buildAndRegister();
@@ -805,37 +795,10 @@ public class MachineRecipeLoader {
     }
 
     private static void registerCutterRecipes() {
-        for (int i = 0; i < 16; i++) {
-            CUTTER_RECIPES.recipeBuilder().duration(50).EUt(8).inputs(new ItemStack(Blocks.STAINED_GLASS, 3, i)).outputs(new ItemStack(Blocks.STAINED_GLASS_PANE, 8, i)).buildAndRegister();
-        }
-        CUTTER_RECIPES.recipeBuilder().duration(50).EUt(8).inputs(new ItemStack(Blocks.GLASS, 3)).outputs(new ItemStack(Blocks.GLASS_PANE, 8)).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(25).EUt(8).inputs(new ItemStack(Blocks.STONE)).outputs(new ItemStack(Blocks.STONE_SLAB, 2)).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(25).EUt(8).inputs(new ItemStack(Blocks.SANDSTONE)).outputs(new ItemStack(Blocks.STONE_SLAB, 2, 1)).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(25).EUt(8).inputs(new ItemStack(Blocks.COBBLESTONE)).outputs(new ItemStack(Blocks.STONE_SLAB, 2, 3)).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(25).EUt(8).inputs(new ItemStack(Blocks.BRICK_BLOCK)).outputs(new ItemStack(Blocks.STONE_SLAB, 2, 4)).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(25).EUt(8).inputs(new ItemStack(Blocks.STONEBRICK)).outputs(new ItemStack(Blocks.STONE_SLAB, 2, 5)).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(25).EUt(8).inputs(new ItemStack(Blocks.NETHER_BRICK)).outputs(new ItemStack(Blocks.STONE_SLAB, 2, 6)).buildAndRegister();
         CUTTER_RECIPES.recipeBuilder().duration(100).EUt(16).inputs(new ItemStack(Blocks.GLOWSTONE)).output(plate, Glowstone, 4).buildAndRegister();
     }
 
     private static void registerRecyclingRecipes() {
-        FORGE_HAMMER_RECIPES.recipeBuilder()
-            .input(stone.name(), 1)
-            .outputs(new ItemStack(Blocks.COBBLESTONE, 1))
-            .EUt(8).duration(200)
-            .buildAndRegister();
-
-        FORGE_HAMMER_RECIPES.recipeBuilder()
-            .input(cobblestone.name(), 1)
-            .outputs(new ItemStack(Blocks.GRAVEL, 1))
-            .EUt(8).duration(200)
-            .buildAndRegister();
-
-        MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Blocks.GRAVEL, 1))
-            .outputs(new ItemStack(Blocks.SAND))
-            .EUt(8).duration(200)
-            .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
             .input(stone, Endstone)

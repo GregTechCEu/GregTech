@@ -16,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import static gregtech.api.recipes.RecipeMaps.FORMING_PRESS_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
-import static gregtech.common.items.MetaItems.SHAPE_MOLD_BLOCK;
 
 public class MiscRecipeLoader {
 
@@ -83,41 +82,6 @@ public class MiscRecipeLoader {
                         .buildAndRegister();
             }
         }
-
-        RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(160).EUt(8)
-                .input(dust, Materials.Flint)
-                .input(dust, Materials.Quartzite, 4)
-                .output(dust, Materials.Glass, 4)
-                .buildAndRegister();
-
-        RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder().duration(20).EUt(30)
-                .inputs(new ItemStack(Blocks.SAND, 1))
-                .outputs(new ItemStack(Blocks.GLASS, 2))
-                .buildAndRegister();
-
-        RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder().duration(100).EUt(30)
-                .input(dust, Materials.Glass)
-                .notConsumable(SHAPE_MOLD_BLOCK.getStackForm())
-                .outputs(new ItemStack(Blocks.GLASS, 1))
-                .buildAndRegister();
-
-        RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder().duration(64).EUt(4)
-                .input(dust, Materials.Glass)
-                .notConsumable(MetaItems.SHAPE_MOLD_BOTTLE)
-                .outputs(new ItemStack(Items.GLASS_BOTTLE))
-                .buildAndRegister();
-
-        RecipeMaps.EXTRUDER_RECIPES.recipeBuilder().duration(32).EUt(16)
-                .input(dust, Materials.Glass)
-                .notConsumable(MetaItems.SHAPE_EXTRUDER_BOTTLE)
-                .outputs(new ItemStack(Items.GLASS_BOTTLE))
-                .buildAndRegister();
-
-        RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(12).EUt(4)
-                .fluidInputs(Materials.Glass.getFluid(144))
-                .notConsumable(MetaItems.SHAPE_MOLD_BOTTLE)
-                .outputs(new ItemStack(Items.GLASS_BOTTLE))
-                .buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(8)
             .input(dust, Sugar)
