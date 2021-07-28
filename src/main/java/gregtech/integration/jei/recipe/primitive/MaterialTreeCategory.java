@@ -26,7 +26,7 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
 
 	protected String materialName;
 	protected String materialFormula;
-	protected String materialBFTemp;
+	protected int materialBFTemp;
 	protected String materialAvgM;
 	protected String materialAvgP;
 	protected String materialAvgN;
@@ -58,7 +58,7 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
             129, 85,  // gear 15
             129, 117, // frameGt
             54, 85,   // nugget
-            54, 117,  // round
+            54, 117,  // pipeNormal
             54, 147,  // plate
             79, 135,  // plateDense 20
             79, 135,  // gemChipped (override)
@@ -93,7 +93,6 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
         registerArrow(guiHelper, "dh_down_16", 5, 16);
         registerArrow(guiHelper, "dh_right_down_16_26", 18, 28);
         registerArrow(guiHelper, "down_12", 5, 12);
-        registerArrow(guiHelper, "down_14", 5, 14);
         registerArrow(guiHelper, "down_16", 5, 16);
         registerArrow(guiHelper, "down_right_8_17", 17, 10);
         registerArrow(guiHelper, "left_up_16_5", 18, 5);
@@ -101,7 +100,6 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
         registerArrow(guiHelper, "right_7", 7, 5);
         registerArrow(guiHelper, "right_down_16_5", 18, 5);
         registerArrow(guiHelper, "right_down_41_5", 43, 5);
-        registerArrow(guiHelper, "right_down_right_3_17_4", 7, 19);
         registerArrow(guiHelper, "right_down_right_3_43_4", 7, 45);
         registerArrow(guiHelper, "right_down_right_53_31_4", 57, 33);
         registerArrow(guiHelper, "right_down_right_53_64_4", 57, 66);
@@ -110,6 +108,7 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
         registerArrow(guiHelper, "right_up_right_3_17_4", 7, 19);
         registerArrow(guiHelper, "right_up_right_3_35_4", 7, 37);
         registerArrow(guiHelper, "right_up_right_3_47_4", 7, 49);
+        registerArrow(guiHelper, "up_12", 5, 12);
         registerArrow(guiHelper, "up_14", 5, 14);
     }
 
@@ -176,8 +175,8 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
         drawArrow(minecraft, "up_14", 160, 103, itemExists.get(27) && itemExists.get(28));
     	// wire -> fine wire
         drawArrow(minecraft, "down_12", 160, 135, itemExists.get(27) && itemExists.get(26));
-        // nugget -> round
-        drawArrow(minecraft, "down_14", 60, 103, itemExists.get(17) && itemExists.get(18));
+        // plate -> normal pipe
+        drawArrow(minecraft, "up_12", 60, 135, itemExists.get(19) && itemExists.get(18));
         // hot ingot -> ingot
         drawArrow(minecraft, "down_16", 35, 85, itemExists.get(3) && itemExists.get(4));
         // long rod -> spring
@@ -224,8 +223,6 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
         drawArrow(minecraft, "right_down_right_3_43_4", 47, 109, itemExists.get(4) && itemExists.get(19));
         // ingot -> nugget
         drawArrow(minecraft, "right_up_right_3_17_4", 47, 91, itemExists.get(4) && itemExists.get(17));
-        // ingot -> round
-        drawArrow(minecraft, "right_down_right_3_17_4", 47, 109, itemExists.get(4) && itemExists.get(18));
         // rod -> gear
         drawArrow(minecraft, "right_down_right_53_31_4", 72, 62, itemExists.get(7) && itemExists.get(15));
         // ingot/gem -> rod
@@ -243,8 +240,8 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
             minecraft.fontRenderer.drawString(materialFormula, 0, FONT_HEIGHT, 0x111111);
         }
 		// don't think theres a good way to get the coil tier other than this
-		if (!materialBFTemp.equals("N/A")) {
-            BlastTemperatureProperty.getInstance().drawInfo(minecraft, 0, 2 * FONT_HEIGHT, 0x111111, Integer.valueOf(materialBFTemp));
+		if (materialBFTemp != 0) {
+            BlastTemperatureProperty.getInstance().drawInfo(minecraft, 0, 2 * FONT_HEIGHT, 0x111111, materialBFTemp);
         }
 		minecraft.fontRenderer.drawString(materialAvgM, 0, 3 * (FONT_HEIGHT), 0x111111);
 		minecraft.fontRenderer.drawString(materialAvgN, 0, 4 * (FONT_HEIGHT), 0x111111);
