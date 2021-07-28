@@ -33,7 +33,7 @@ public class MaterialTree implements IRecipeWrapper {
             OrePrefix.gear,
             OrePrefix.frameGt,
             OrePrefix.nugget,
-            OrePrefix.round,
+            OrePrefix.pipeNormal,
             OrePrefix.plate,
             OrePrefix.plateDense,
             OrePrefix.gemChipped,
@@ -51,7 +51,7 @@ public class MaterialTree implements IRecipeWrapper {
 
 	private final String name;
 	private final String formula;
-	private final String blastTemp;
+	private final int blastTemp;
 	private final long avgM;
 	private final long avgP;
 	private final long avgN;
@@ -80,12 +80,11 @@ public class MaterialTree implements IRecipeWrapper {
 		avgM = material.getAverageMass();
 		avgP = material.getAverageProtons();
 		avgN = material.getAverageNeutrons();
-		// not sure of any other good way to signify not having an ebf temp, but this works fine
 		if (material instanceof IngotMaterial) {
-			blastTemp = String.valueOf(((IngotMaterial) material).blastFurnaceTemperature);
+			blastTemp = ((IngotMaterial) material).blastFurnaceTemperature;
 		}
 		else {
-			blastTemp = "N/A";
+			blastTemp = 0;
 		}
 	}
 
@@ -118,7 +117,7 @@ public class MaterialTree implements IRecipeWrapper {
 		return avgN;
 	}
 
-	public String getBlastTemp() {
+	public int getBlastTemp() {
 		return blastTemp;
 	}
 }
