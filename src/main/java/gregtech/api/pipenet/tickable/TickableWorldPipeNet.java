@@ -39,6 +39,7 @@ public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeD
     public void onChunkLoaded(Chunk chunk) {
         ChunkPos chunkPos = chunk.getPos();
         List<T> pipeNetsInThisChunk = this.pipeNetsByChunk.get(chunkPos);
+        if(pipeNetsInThisChunk == null) return;
         for (T pipeNet : pipeNetsInThisChunk) {
             List<ChunkPos> loadedChunks = getOrCreateChunkListForPipeNet(pipeNet);
             if (loadedChunks.isEmpty()) {
@@ -51,6 +52,7 @@ public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeD
     public void onChunkUnloaded(Chunk chunk) {
         ChunkPos chunkPos = chunk.getPos();
         List<T> pipeNetsInThisChunk = this.pipeNetsByChunk.get(chunkPos);
+        if(pipeNetsInThisChunk == null) return;
         for (T pipeNet : pipeNetsInThisChunk) {
             List<ChunkPos> loadedChunks = this.loadedChunksByPipeNet.get(pipeNet);
             if (loadedChunks != null && loadedChunks.contains(chunkPos)) {

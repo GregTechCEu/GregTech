@@ -66,20 +66,6 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
         }
     }
 
-    /*@Override
-    public int getActiveNodeConnections(IBlockAccess world, BlockPos nodePos, IPipeTile<ItemPipeType, ItemPipeProperties> selfTileEntity) {
-        return getPipeTileEntity(world, nodePos).getBlockedConnections();
-        /*int activeNodeConnections = 0;
-        for (EnumFacing side : EnumFacing.VALUES) {
-            BlockPos offsetPos = nodePos.offset(side);
-            TileEntity tileEntity = world.getTileEntity(offsetPos);
-            if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())) {
-                activeNodeConnections |= 1 << side.getIndex();
-            }
-        }
-        return activeNodeConnections;
-    }*/
-
     @Override
     public Class<ItemPipeType> getPipeTypeClass() {
         return ItemPipeType.class;
@@ -134,25 +120,6 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     public boolean canPipeConnectToBlock(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, TileEntity tile) {
         return tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) != null;
     }
-
-    /*@Override
-    public int getActiveVisualConnections(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile) {
-        return selfTile.getBlockedConnections();
-        /*int activeNodeConnections = 0;
-        for (EnumFacing side : EnumFacing.VALUES) {
-            BlockPos offsetPos = selfTile.getPipePos().offset(side);
-            TileEntity tileEntity = selfTile.getPipeWorld().getTileEntity(offsetPos);
-            if (tileEntity != null) {
-                EnumFacing opposite = side.getOpposite();
-                IItemHandler sourceHandler = selfTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
-                IItemHandler receivedHandler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, opposite);
-                if (sourceHandler != null && receivedHandler != null) {
-                    activeNodeConnections |= 1 << side.getIndex();
-                }
-            }
-        }
-        return activeNodeConnections;
-    }*/
 
     @Override
     protected void onActiveModeChange(World world, BlockPos pos, boolean isActiveNow, boolean isInitialChange) {

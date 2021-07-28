@@ -7,6 +7,7 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -17,7 +18,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import java.util.*;
 import java.util.Map.Entry;
 
-public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCompound> {
+public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCompound>, ITickable {
 
     protected final WorldPipeNet<NodeDataType, PipeNet<NodeDataType>> worldData;
     private final Map<BlockPos, Node<NodeDataType>> nodeByBlockPos = new HashMap<>();
@@ -29,6 +30,10 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     public PipeNet(WorldPipeNet<NodeDataType, ? extends PipeNet> world) {
         //noinspection unchecked
         this.worldData = (WorldPipeNet<NodeDataType, PipeNet<NodeDataType>>) world;
+    }
+
+    @Override
+    public void update() {
     }
 
     public Set<ChunkPos> getContainedChunks() {

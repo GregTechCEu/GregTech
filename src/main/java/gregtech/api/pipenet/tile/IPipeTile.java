@@ -73,4 +73,10 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     boolean isValidTile();
 
     void scheduleChunkForRenderUpdate();
+
+    void markWalked();
+
+    boolean isWalked();
+
+    void resetWalk();
 }

@@ -31,6 +31,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     private TIntIntMap openConnectionsMap = new TIntIntHashMap();
     private int openConnections = 0;
+    private boolean walked = false;
 
     protected int insulationColor = DEFAULT_INSULATION_COLOR;
     protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
@@ -54,6 +55,21 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     public boolean wasInDetachedConversionMode() {
         return wasInDetachedConversionMode;
+    }
+
+    @Override
+    public void markWalked() {
+        walked = true;
+    }
+
+    @Override
+    public boolean isWalked() {
+        return walked;
+    }
+
+    @Override
+    public void resetWalk() {
+        walked = false;
     }
 
     public void setPipeData(BlockPipe<PipeType, NodeDataType, ?> pipeBlock, PipeType pipeType) {
