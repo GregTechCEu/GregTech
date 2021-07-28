@@ -2,6 +2,10 @@ package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.pipenet.Node;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.pipenet.PipeNet;
+import gregtech.api.pipenet.PipeNetWalker;
+import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -10,101 +14,51 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class ItemNetWalker {
+public class ItemNetWalker extends PipeNetWalker {
 
     public static List<ItemPipeNet.Inventory> createNetData(ItemPipeNet net, World world, BlockPos sourcePipe) {
         ItemNetWalker walker = new ItemNetWalker(net, world, sourcePipe, 1, new ArrayList<>(), null);
-        while (!walker.walk()) ;
-        walker.walked.forEach(TileEntityItemPipe::resetWalk);
+        walker.traversePipeNet();
         return walker.inventories;
     }
 
-    private final ItemPipeNet net;
-    private final World world;
-    private final List<EnumFacing> pipes = new ArrayList<>();
-    private List<ItemNetWalker> walkers;
-
-    private BlockPos currentPos;
-
-    private int distance;
     private ItemPipeProperties minProperties;
     private final List<ItemPipeNet.Inventory> inventories;
 
-    private final Set<TileEntityItemPipe> walked = new HashSet<>();
-
-    protected ItemNetWalker(ItemPipeNet net, World world, BlockPos sourcePipe, int distance, List<ItemPipeNet.Inventory> inventories, ItemPipeProperties properties) {
-        this.world = world;
-        this.net = net;
-        this.distance = distance;
+    protected ItemNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int distance, List<ItemPipeNet.Inventory> inventories, ItemPipeProperties properties) {
+        super(net, world, sourcePipe, distance);
         this.inventories = inventories;
-        this.currentPos = sourcePipe;
         this.minProperties = properties;
     }
 
-    private boolean walk() {
-        if (walkers == null)
-            checkPos(currentPos);
-
-        if (pipes.size() == 0)
-            return true;
-        if (pipes.size() == 1) {
-            currentPos = currentPos.offset(pipes.get(0));
-            distance++;
-            return false;
-        }
-
-        if (walkers == null) {
-            walkers = new ArrayList<>();
-            for (EnumFacing side : pipes) {
-                walkers.add(new ItemNetWalker(net, world, currentPos.offset(side), distance + 1, inventories, minProperties));
-            }
-        } else {
-            Iterator<ItemNetWalker> iterator = walkers.iterator();
-            while (iterator.hasNext()) {
-                ItemNetWalker walker = iterator.next();
-                if (walker.walk()) {
-                    walked.addAll(walker.walked);
-                    iterator.remove();
-                }
-            }
-        }
-
-        return walkers.size() == 0;
+    @Override
+    protected PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks) {
+        return new ItemNetWalker(net, world, nextPos, walkedBlocks, inventories, minProperties);
     }
 
-    private void checkPos(BlockPos pos) {
-        pipes.clear();
-        Node<ItemPipeProperties> node = net.getNodeAt(pos);
-        if (node == null) return;
-
-        TileEntity thisPipe = world.getTileEntity(pos);
-        if (!(thisPipe instanceof TileEntityItemPipe))
-            return;
-        ItemPipeProperties pipeProperties = ((TileEntityItemPipe) thisPipe).getNodeData();
+    @Override
+    protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
+        ItemPipeProperties pipeProperties = ((TileEntityItemPipe) pipeTile).getNodeData();
         if (minProperties == null)
             minProperties = pipeProperties;
         else
             minProperties = new ItemPipeProperties(minProperties.priority + pipeProperties.priority, Math.min(minProperties.transferRate, pipeProperties.transferRate));
-        ((TileEntityItemPipe) thisPipe).markWalked();
-        walked.add((TileEntityItemPipe) thisPipe);
+    }
 
-        // check for surrounding pipes and item handlers
-        for (EnumFacing accessSide : EnumFacing.VALUES) {
-            //skip sides reported as blocked by pipe network
-            if (node.isBlocked(accessSide))
-                continue;
-            TileEntity tile = world.getTileEntity(pos.offset(accessSide));
-            if (tile == null) continue;
-            if (tile instanceof TileEntityItemPipe) {
-                if (!((TileEntityItemPipe) tile).isWalked())
-                    pipes.add(accessSide);
-                continue;
-            }
-            IItemHandler handler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, accessSide.getOpposite());
-            if (handler != null)
-                inventories.add(new ItemPipeNet.Inventory(pos, accessSide, distance, minProperties));
-        }
+    @Override
+    protected void checkNeighbour(BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
+        if (neighbourTile == null) return;
+        IItemHandler handler = neighbourTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, faceToNeighbour.getOpposite());
+        if (handler != null)
+            inventories.add(new ItemPipeNet.Inventory(pipePos, faceToNeighbour, getWalkedBlocks(), minProperties));
+    }
+
+    @Override
+    protected boolean isValidPipe(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour) {
+        return pipeTile instanceof TileEntityItemPipe;
     }
 }

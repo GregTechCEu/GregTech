@@ -5,38 +5,64 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.pipenet.tickable.TickableWorldPipeNetEventHandler;
+import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
-public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> {
+public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> implements ITickable {
 
-    private final FluidNetTank fluidNetTank = new FluidNetTank(this);
+    private final Map<BlockPos, List<Inventory>> NET_DATA = new HashMap<>();
+
+    //private final FluidNetTank fluidNetTank = new FluidNetTank(this);
+
+    private final FluidNetHandler fluidNetHandler;
+    private int emptyTimer = 0;
 
     public FluidPipeNet(WorldPipeNet<FluidPipeProperties, FluidPipeNet> world) {
         super(world);
+        this.fluidNetHandler = new FluidNetHandler(this);
     }
 
-    public FluidTank getFluidNetTank() {
-        return fluidNetTank;
-    }
-
-    public int getMaxThroughput() {
-        if (fluidNetTank.getCapacity() == 0) {
-            return 0;
+    public List<Inventory> getNetData(BlockPos pipePos) {
+        List<Inventory> data = NET_DATA.get(pipePos);
+        if (data == null) {
+            data = FluidNetWalker.createNetData(this, getWorldData(), pipePos);
+            data.sort(Comparator.comparingInt(inv -> inv.distance));
+            NET_DATA.put(pipePos, data);
         }
-        return nodeData.throughput;
+        return data;
     }
+
+    public FluidNetHandler getFluidHandler() {
+        return fluidNetHandler;
+    }
+
+    public void nodeNeighbourChanged(BlockPos pos) {
+        NET_DATA.clear();
+    }
+
+    @Override
+    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
+        super.updateBlockedConnections(nodePos, facing, isBlocked);
+        NET_DATA.clear();
+    }
+
+    //public FluidTank getFluidNetTank() {
+    //    return fluidNetTank;
+    //}
 
     public void destroyNetwork(boolean isLeaking, boolean isBurning) {
         World world = worldData.getWorld();
@@ -71,40 +97,22 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> {
     protected void onConnectionsUpdate() {
         super.onConnectionsUpdate();
         //monolithic net always contains exactly one kind of nodes, so this is always safe
-        int newTankCapacity = nodeData.throughput * getAllNodes().size();
-        fluidNetTank.updateTankCapacity(newTankCapacity);
+        //int newTankCapacity = nodeData.throughput * getAllNodes().size();
+        //fluidNetTank.updateTankCapacity(newTankCapacity);
     }
 
     @Override
     protected void transferNodeData(Map<BlockPos, Node<FluidPipeProperties>> transferredNodes, PipeNet<FluidPipeProperties> parentNet1) {
         super.transferNodeData(transferredNodes, parentNet1);
         FluidPipeNet parentNet = (FluidPipeNet) parentNet1;
-        FluidStack parentFluid = parentNet.getFluidNetTank().getFluid();
+        NET_DATA.clear();
+        parentNet.NET_DATA.clear();
+        FluidStack parentFluid = parentNet.getFluidHandler().getFluid();
         if (parentFluid != null && parentFluid.amount > 0) {
             if (parentNet.getAllNodes().isEmpty()) {
                 //if this is merge of pipe nets, just add all fluid to our internal tank
                 //use fillInternal to ignore throughput restrictions
-                getFluidNetTank().fillInternal(parentFluid, true);
-            } else {
-                //otherwise, it is donating of some nodes to our net in result of split
-                //so, we should establish equal amount of fluid in networks
-                int firstNetCapacity = getAllNodes().size() * getNodeData().throughput;
-                int secondNetCapacity = parentNet.getAllNodes().size() * parentNet.getNodeData().throughput;
-                int totalFluidAmount = getFluidNetTank().getFluidAmount() + parentFluid.amount;
-                int fluidAmount1 = totalFluidAmount * firstNetCapacity / (firstNetCapacity + secondNetCapacity);
-                int fluidAmount2 = totalFluidAmount - fluidAmount1;
-
-                if (fluidAmount1 > 0) {
-                    FluidStack fluidStack1 = parentFluid.copy();
-                    fluidStack1.amount = fluidAmount1;
-                    fluidNetTank.setFluid(fluidStack1);
-                } else fluidNetTank.setFluid(null);
-
-                if (fluidAmount2 > 0) {
-                    FluidStack fluidStack2 = parentFluid.copy();
-                    fluidStack2.amount = fluidAmount2;
-                    parentNet.getFluidNetTank().setFluid(fluidStack2);
-                } else parentNet.getFluidNetTank().setFluid(null);
+                getFluidHandler().setContainingFluid(parentFluid);
             }
         }
     }
@@ -113,8 +121,8 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> {
     protected boolean areNodesCustomContactable(FluidPipeProperties first, FluidPipeProperties second, PipeNet<FluidPipeProperties> secondNodeNet) {
         FluidPipeNet fluidPipeNet = (FluidPipeNet) secondNodeNet;
         return super.areNodesCustomContactable(first, second, secondNodeNet) &&
-                (secondNodeNet == null || getFluidNetTank().getFluid() == null || fluidPipeNet.getFluidNetTank().getFluid() == null ||
-                        getFluidNetTank().getFluid().isFluidEqual(fluidPipeNet.getFluidNetTank().getFluid()));
+                (secondNodeNet == null || getFluidHandler().getFluid() == null || fluidPipeNet.getFluidHandler().getFluid() == null ||
+                        getFluidHandler().getFluid().isFluidEqual(fluidPipeNet.getFluidHandler().getFluid()));
     }
 
     @Override
@@ -135,15 +143,64 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> {
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = super.serializeNBT();
-        nbt.setTag("FluidTankNet", this.fluidNetTank.writeToNBT(new NBTTagCompound()));
+        if (getFluidHandler().getFluid() != null)
+            nbt.setTag("Fluid", getFluidHandler().getFluid().writeToNBT(new NBTTagCompound()));
+        nbt.setInteger("Timer", emptyTimer);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt);
-        if (nbt.hasKey("FluidTankNet"))
-            this.fluidNetTank.readFromNBT(nbt.getCompoundTag("FluidTankNet"));
+        if (nbt.hasKey("Fluid"))
+            getFluidHandler().setContainingFluid(FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("Fluid")));
+        this.emptyTimer = nbt.getInteger("Timer");
+    }
+
+    public void setEmptyNetTimer(int ticks) {
+        emptyTimer = ticks;
+    }
+
+    @Override
+    public void update() {
+        if (emptyTimer > 0 && --emptyTimer == 0) {
+            fluidNetHandler.emptyTank();
+        }
+    }
+
+    public static class Inventory {
+        private final BlockPos pipePos;
+        private final EnumFacing faceToHandler;
+        private final int distance;
+
+        public Inventory(BlockPos pipePos, EnumFacing facing, int distance) {
+            this.pipePos = pipePos;
+            this.faceToHandler = facing;
+            this.distance = distance;
+        }
+
+        public BlockPos getPipePos() {
+            return pipePos;
+        }
+
+        public EnumFacing getFaceToHandler() {
+            return faceToHandler;
+        }
+
+        public int getDistance() {
+            return distance;
+        }
+
+        public BlockPos getHandlerPos() {
+            return pipePos.offset(faceToHandler);
+        }
+
+        public IFluidHandler getHandler(World world) {
+            TileEntity tile = world.getTileEntity(getHandlerPos());
+            if (tile != null)
+                return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, faceToHandler);
+            return null;
+        }
     }
 
 }
