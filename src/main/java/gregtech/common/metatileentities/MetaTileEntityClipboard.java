@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.gui.PlayerInventoryHolder;
@@ -14,8 +15,14 @@ import gregtech.api.metatileentity.IRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.common.blocks.models.ModelCache;
 import gregtech.common.items.behaviors.ClipboardBehaviour;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -25,6 +32,12 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
@@ -36,7 +49,8 @@ import static gregtech.common.items.MetaItems.CLIPBOARD;
 
 public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMetaTileEntity {
     private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(2.75 / 16.0, 0.0, 0.0, 13.25 / 16.0, 1.0, 0.4 / 16.0);
-
+    public static final ResourceLocation MODEL_RESOURCE_LOCATION = new ResourceLocation("gregtech", "block/clipboard");
+    public static ModelCache cache = new ModelCache();
 
     public MetaTileEntityClipboard(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
@@ -135,5 +149,16 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     @Override
     public void addCollisionBoundingBox(List<IndexedCuboid6> collisionList) {
         collisionList.add(new IndexedCuboid6(null, GTUtility.rotateAroundYAxis(CLIPBOARD_AABB, EnumFacing.NORTH, this.getFrontFacing())));
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void initModel() {
+        try {
+            IModel model = ModelLoaderRegistry.getModel(MODEL_RESOURCE_LOCATION);
+            IBakedModel bakedModel = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
+            cache.addToCache(bakedModel, "bakedModel");
+        } catch (Exception err) {
+            GTLog.logger.error("MetaTileEntityClipboard did not acquire model! " + err.getMessage());
+        }
     }
 }

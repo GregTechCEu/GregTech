@@ -24,6 +24,7 @@ import gregtech.common.blocks.surfacerock.TileEntitySurfaceRock;
 import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.blocks.wood.BlockGregSapling;
+import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.WireProperties;
@@ -323,6 +324,11 @@ public class MetaBlocks {
         COMPRESSED.values().stream().distinct().forEach(MetaBlocks::registerItemModel);
         FRAMES.values().forEach(MetaBlocks::registerItemModelWithFilteredProperties);
         ORES.stream().distinct().forEach(MetaBlocks::registerItemModel);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void registerSpecialModels() { // For registering particular models in, usually for MTEs.
+        MetaTileEntityClipboard.initModel();
     }
 
     @SideOnly(Side.CLIENT)
