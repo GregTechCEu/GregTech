@@ -24,6 +24,11 @@ public class ItemGuideApp extends GuideApp<MetaItem<?>> {
     }
 
     @Override
+    protected GuideApp<MetaItem<?>> createAPP() {
+        return new ItemGuideApp();
+    }
+
+    @Override
     protected TreeNode<String, Tuple<MetaItem<?>, JsonObject>> getTree() {
         return ROOT;
     }

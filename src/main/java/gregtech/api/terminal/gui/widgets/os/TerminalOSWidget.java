@@ -2,12 +2,14 @@ package gregtech.api.terminal.gui.widgets.os;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.util.Position;
+import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
@@ -18,17 +20,19 @@ import net.minecraft.client.renderer.GlStateManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gregtech.api.gui.impl.ModularUIGui.*;
+
 public class TerminalOSWidget extends AbstractWidgetGroup {
     private IGuiTexture background;
-    private final List<AbstractApplication> apps;
+    private final List<AbstractApplication> openedApps;
     private final TerminalMenuWidget menu;
     private final TerminalDesktopWidget desktop;
 
     public TerminalOSWidget(int xPosition, int yPosition, int width, int height) {
         super(new Position(xPosition, yPosition), new Size(width, height));
-        this.apps = new ArrayList<>();
-        this.desktop = new TerminalDesktopWidget(new Position(0,0), new Size(333, 232), this);
-        this.menu = new TerminalMenuWidget(new Position(0,0), new Size(35, 232), this).setBackground(GuiTextures.TERMINAL_MENU);
+        this.openedApps = new ArrayList<>();
+        this.desktop = new TerminalDesktopWidget(Position.ORIGIN, new Size(333, 232), this);
+        this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(35, 232), this).setBackground(GuiTextures.TERMINAL_MENU);
         this.addWidget(desktop);
         this.addWidget(menu);
     }
@@ -39,39 +43,52 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public void installApplication(AbstractApplication application){
-        apps.add(application);
         menu.addApp(application);
     }
 
     public void openApplication(AbstractApplication application, boolean isClient) {
-        desktop.clearAllWidgets();
-        application.loadApp(desktop, isClient);
+        for (AbstractApplication app : openedApps) {
+            if (app.getClass() == application.getClass()) {
+                app.setVisible(true);
+                return;
+            }
+        }
+        AbstractApplication app = application.openApp(isClient, null);
+        openedApps.add(app);
+        desktop.addWidget(app);
+        menu.hideMenu();
+    }
+
+    public void closeApplication(AbstractApplication application, boolean isClient) {
+        desktop.removeWidget(application);
+        application.closeApp(isClient, null);
     }
 
     public void backToHome() {
-    }
-
-    @Override
-    public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        if (super.mouseClicked(mouseX, mouseY, button)) {
-            return true;
-        } else {
-            if (menu.isHide) {
-                menu.showMenu();
+        List<AbstractApplication> close = new ArrayList<>();
+        for (AbstractApplication app : openedApps) {
+            if (app.isBackgroundApp()) {
+                app.setVisible(false);
             } else {
-                menu.hideMenu();
+                close.add(app);
+                closeApplication(app, isClientSide());
             }
         }
-        return true;
+        close.forEach(openedApps::remove);
+        menu.showMenu();
     }
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        Position position = getPosition();
+        Size size = getSize();
         if( background != null) {
-            background.draw(this.getPosition().x, this.getPosition().y, this.getSize().width, this.getSize().height);
+            background.draw(position.x, position.y, size.width, size.height);
         } else {
-            drawGradientRect(this.getPosition().x, this.getPosition().y, this.getSize().width, this.getSize().height, -1, -1);
+            drawGradientRect(position.x, position.y, size.width, size.height, -1, -1);
         }
-        super.drawInBackground(mouseX, mouseY, partialTicks, context);
+        RenderUtil.useScissor(position.x, position.y, size.width, size.height, ()->{
+            super.drawInBackground(mouseX, mouseY, partialTicks, context);
+        });
     }
 }

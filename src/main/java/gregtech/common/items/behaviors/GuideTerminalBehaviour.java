@@ -7,6 +7,7 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.terminal.TerminalBuilder;
+import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.os.TerminalOSWidget;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -36,10 +37,12 @@ public class GuideTerminalBehaviour implements IItemBehaviour, ItemUIFactory {
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
         TerminalOSWidget os = new TerminalOSWidget(12, 11, 333, 232).setBackground(GuiTextures.TERMINAL_BACKGROUND);
+        CircleButtonWidget home = new CircleButtonWidget(362, 126, 12).setIcon(GuiTextures.TERMINAL_HOME).setFillColors(0xff9197A5).setClickListener(clickData -> os.backToHome());
         TerminalBuilder.getApplications().forEach(os::installApplication);
         return ModularUI.builder(GuiTextures.TERMINAL_FRAME, 380, 256)
                 .widget(os)
                 .widget(new ImageWidget(0, 0, 380, 256, GuiTextures.TERMINAL_FRAME))
+                .widget(home)
                 .build(holder, entityPlayer);
     }
 }

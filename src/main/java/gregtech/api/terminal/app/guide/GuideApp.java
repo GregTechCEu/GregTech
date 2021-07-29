@@ -12,6 +12,7 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.guide.*;
 import gregtech.api.terminal.util.TreeNode;
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 
@@ -34,20 +35,24 @@ public abstract class GuideApp<T> extends AbstractApplication {
         super(name, icon);
     }
 
+    protected abstract GuideApp<T> createAPP();
+
     @Override
-    public void loadApp(WidgetGroup group, boolean isClient) {
+    public GuideApp<T> openApp(boolean isClient, NBTTagCompound nbt) {
+        GuideApp<T> app = createAPP();
         pageWidget = null;
         if (isClient && getTree() != null) {
-            group.addWidget(
+            app.addWidget(
                     new TextTreeWidget<>(0, 0, 133, 232, getTree(), leaf -> {
                         if (pageWidget != null) {
-                            group.removeWidget(pageWidget);
+                            app.removeWidget(pageWidget);
                         }
                         pageWidget = loadLeaf(leaf);
-                        group.addWidget(pageWidget);
+                        app.addWidget(pageWidget);
                     }, this::itemIcon, this::itemName).setNodeTexture(GuiTextures.BORDERED_BACKGROUND).setLeafTexture(GuiTextures.SLOT_DARKENED)
             );
         }
+        return app;
     }
 
     protected IGuiTexture itemIcon(T item) {

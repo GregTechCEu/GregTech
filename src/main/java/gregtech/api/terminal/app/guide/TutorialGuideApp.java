@@ -40,6 +40,11 @@ public class TutorialGuideApp extends GuideApp<IGuiTexture> {
     }
 
     @Override
+    protected GuideApp<IGuiTexture> createAPP() {
+        return new TutorialGuideApp();
+    }
+
+    @Override
     protected TreeNode<String, Tuple<IGuiTexture, JsonObject>> getTree() {
         return ROOT;
     }
