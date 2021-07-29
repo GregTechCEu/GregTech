@@ -12,10 +12,10 @@ import java.util.HashMap;
  * HashMap of IDrawables for JEI rendering
  */
 public class DrawableRegistry {
-    private static Map<String, IDrawable> drawableMap = new HashMap<>();
+    private static final Map<String, IDrawable> drawableMap = new HashMap<>();
 
     public static void initDrawable(IGuiHelper guiHelper, String textureLocation, int width, int height, String key) {
-        drawableMap.put(key, guiHelper.createDrawable(new ResourceLocation(textureLocation), 0, 0, width, height, width, height));
+        drawableMap.put(key, guiHelper.drawableBuilder(new ResourceLocation(textureLocation), 0, 0, width, height).setTextureSize(width, height).build());
     }
 
     public static void drawDrawable(Minecraft minecraft, String key, int x, int y) {
