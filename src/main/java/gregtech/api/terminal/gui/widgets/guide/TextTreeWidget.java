@@ -79,7 +79,7 @@ public class TextTreeWidget<T> extends Widget {
         if (background != null) {
             background.draw(position.x, position.y, size.width, size.height);
         } else {
-            gregtech.api.gui.resources.RenderUtil.renderRect(position.x, position.y, size.width, size.height, 0, 0x8f000000);
+            drawGradientRect(position.x, position.y, size.width, size.height, 0x8f000000, 0x8f000000);
         }
         RenderUtil.useScissor(position.x, position.y, size.width, size.height, ()->{
             FontRenderer fr = Minecraft.getMinecraft().fontRenderer;

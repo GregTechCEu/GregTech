@@ -56,9 +56,9 @@ public class GuidePageWidget extends AbstractWidgetGroup {
         if (interpolator != null && !interpolator.isFinish()) return;
         for (Widget widget : widgets) {
             if (widget instanceof IGuideWidget && ref.equals(((IGuideWidget) widget).getRef())) {
-                interpolator = new Interpolator(scrollYOffset, widget.getSelfPosition().y, 20, Eases.EaseQuadOut, (value)->{
-                    setScrollYOffset(value.intValue());
-                });
+                interpolator = new Interpolator(scrollYOffset, widget.getSelfPosition().y, 20, Eases.EaseQuadOut,
+                        value-> setScrollYOffset(value.intValue()),
+                        value-> interpolator = null);
                 interpolator.start();
             }
         }
