@@ -29,6 +29,11 @@ public class MultiBlockGuideApp extends GuideApp<MetaTileEntity> {
     }
 
     @Override
+    protected GuideApp<MetaTileEntity> createAPP() {
+        return new MultiBlockGuideApp();
+    }
+
+    @Override
     protected IGuiTexture itemIcon(MetaTileEntity item) {
         return new ItemStackTexture(item.getStackForm());
     }

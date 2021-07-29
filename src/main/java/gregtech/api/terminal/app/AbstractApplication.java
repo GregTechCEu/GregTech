@@ -1,14 +1,17 @@
 package gregtech.api.terminal.app;
 
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.util.Position;
+import gregtech.api.util.Size;
+import net.minecraft.nbt.NBTTagCompound;
 
-public abstract class AbstractApplication {
+public abstract class AbstractApplication extends WidgetGroup {
     protected final String name;
     protected final IGuiTexture icon;
 
     public AbstractApplication (String name, IGuiTexture icon) {
+        super(Position.ORIGIN, new Size(333, 232));
         this.name = name;
         this.icon = icon;
     }
@@ -21,12 +24,14 @@ public abstract class AbstractApplication {
         return icon;
     }
 
-    public void loadApp(WidgetGroup group, boolean isClient) {
+    public abstract AbstractApplication openApp(boolean isClient, NBTTagCompound nbt);
+
+    public void closeApp(boolean isClient, NBTTagCompound nbt) {
 
     }
 
-    public void unloadApp(boolean isClient) {
-
+    public boolean isBackgroundApp() {
+        return false;
     }
 
 }

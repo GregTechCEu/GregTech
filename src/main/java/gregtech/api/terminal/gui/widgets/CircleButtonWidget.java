@@ -91,7 +91,7 @@ public class CircleButtonWidget extends Widget {
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
-        if (this.isMouseOverElement(mouseX, mouseY)) {
+        if (hoverText != null && this.isMouseOverElement(mouseX, mouseY)) {
            this.drawHoveringText(ItemStack.EMPTY, Collections.singletonList(I18n.format(hoverText)), 300, mouseX, mouseY);
         }
     }

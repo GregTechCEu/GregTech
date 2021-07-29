@@ -62,6 +62,10 @@ public class TerminalMenuWidget extends WidgetGroup {
 
     public void showMenu() {
         if (isHide && interpolator == null) {
+            if (activeButton != null) {
+                activeButton.setFillColors(0xffffffff);
+            }
+            activeButton = null;
             int y = getSelfPosition().y;
             interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x + getSize().width, 10, Eases.EaseLinear,
                     value-> setSelfPosition(new Position(value.intValue(), y)),
