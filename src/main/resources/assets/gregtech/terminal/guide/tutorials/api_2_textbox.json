@@ -1,11 +1,11 @@
 {
   "section": "Guide Widget API",
-  "title": "TextBox Widget",
+  "title": "1. TextBox Widget",
   "stream": [
     {
       "type": "textbox",
       "content": [
-        "In this section we'll learn how to use the powerful §4§lTextBox§r, which is the most commonly used. So you should read the API documentation carefully.",
+        "In this page we'll learn how to use the powerful §4§lTextBox§r, which is the most commonly used. So you should read the API documentation carefully.",
         "-------------------------------",
         "§lWidget Type§r: §ntextbox§r",
         "-------------------------------",
@@ -15,15 +15,59 @@
         "  \"space\": 1,",
         "  \"fontSize\": 9,",
         "  \"fontColor\": 4278190080,",
-        "  \"fill\": 0,",
-        "  \"stroke\": 0,",
         "  \"isCenter\": false,",
         "  \"isShadow\": false,",
         "  \"content\": [\"content here!\"]",
-        "}"
+        "}",
+        "-------------------------------",
+        "§lContents§r"
       ]
-    }, {
+    },
+    {
       "type": "textbox",
+      "link": "content",
+      "content": [
+        "    1.§ncontent§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "space",
+      "content": [
+        "    2.§nspace§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fontSize",
+      "content": [
+        "    3.§nfontSize§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fontColor",
+      "content": [
+        "    4.§nfontColor§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "isCenter",
+      "content": [
+        "    5.§nisCenter§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "isShadow",
+      "content": [
+        "    6.§nisShadow§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "content",
       "content": [
         "-------------------------------",
         "",
@@ -53,6 +97,7 @@
     },
     {
       "type": "textbox",
+      "ref": "space",
       "content": [
         "-------------------------------",
         "",
@@ -83,6 +128,7 @@
       ]
     },{
       "type": "textbox",
+      "ref": "fontSize",
       "content": [
         "-------------------------------",
         "",
@@ -113,6 +159,7 @@
       ]
     },{
       "type": "textbox",
+      "ref": "fontColor",
       "content": [
         "-------------------------------",
         "",
@@ -141,67 +188,10 @@
         "§ro §oMinecraft",
         "§rr §rMinecraft"
       ]
-    },{
-      "type": "textbox",
-      "content": [
-        "-------------------------------",
-        "",
-        "§lAttr§r: §nfill§r (§6optional§r)",
-        "§ltype§r: Number",
-        "§ldefault§r: 0",
-        "§lillustrate§r: The background color."
-      ]
     },
     {
       "type": "textbox",
-      "isCenter": true,
-      "stroke": 4294901760,
-      "fill": 4278190335,
-      "content": [
-        "§lDemo§r: 4278190335 (0xFF0000FF)",
-        "§nMinecraft Formatting",
-        "§r§00 §11 §22 §33",
-        "§44 §55 §66 §77",
-        "§88 §99 §aa §bb",
-        "§cc §dd §ee §ff",
-        "§r§0k §kMinecraft",
-        "§rl §lMinecraft",
-        "§rm §mMinecraft",
-        "§rn §nMinecraft",
-        "§ro §oMinecraft",
-        "§rr §rMinecraft"
-      ]
-    },{
-      "type": "textbox",
-      "content": [
-        "-------------------------------",
-        "",
-        "§lAttr§r: §nstroke§r (§6optional§r)",
-        "§ltype§r: Number",
-        "§ldefault§r: 0",
-        "§lillustrate§r: The border color."
-      ]
-    },
-    {
-      "type": "textbox",
-      "isCenter": true,
-      "stroke": 4278190335,
-      "content": [
-        "§lDemo§r: 4278190335 (0xFF0000FF)",
-        "§nMinecraft Formatting",
-        "§r§00 §11 §22 §33",
-        "§44 §55 §66 §77",
-        "§88 §99 §aa §bb",
-        "§cc §dd §ee §ff",
-        "§r§0k §kMinecraft",
-        "§rl §lMinecraft",
-        "§rm §mMinecraft",
-        "§rn §nMinecraft",
-        "§ro §oMinecraft",
-        "§rr §rMinecraft"
-      ]
-    },{
-      "type": "textbox",
+      "ref": "isCenter",
       "content": [
         "-------------------------------",
         "",
@@ -231,6 +221,7 @@
       ]
     },{
       "type": "textbox",
+      "ref": "isShadow",
       "content": [
         "-------------------------------",
         "",

@@ -7,6 +7,10 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.ItemStack;
+
+import java.util.List;
 
 public abstract class GuideWidget extends Widget implements IGuideWidget {
     //config
@@ -14,6 +18,8 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
     public int fill;
     public int stroke;
     public int stroke_width = 1;
+    public String link;
+    public List<String> hover_text;
 
     private static final Gson GSON = new Gson();
     protected transient GuidePageWidget page;
@@ -24,6 +30,11 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
 
     public GuideWidget(){
         super(Position.ORIGIN, Size.ZERO);
+    }
+
+    @Override
+    public String getRef() {
+        return ref;
     }
 
     @Override
@@ -56,6 +67,21 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
     }
 
     @Override
+    public void drawInForeground(int mouseX, int mouseY) {
+        if (link != null && isMouseOverElement(mouseX, mouseY)) {
+            Position position = getPosition();
+            Size size = getSize();
+            drawBorder(position.x, position.y, size.width, size.height, 0xff0000ff, stroke_width);
+        }
+        if (hover_text != null && isMouseOverElement(mouseX, mouseY)) {
+            int scrollYOffset = page.getScrollYOffset();
+            GlStateManager.translate(0, scrollYOffset, 0);
+            drawHoveringText(ItemStack.EMPTY, hover_text, 100, mouseX, mouseY - scrollYOffset);
+            GlStateManager.translate(0, -scrollYOffset, 0);
+        }
+    }
+
+    @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position position = getPosition();
         Size size = getSize();
@@ -65,5 +91,14 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
         if (fill != 0) {
             drawGradientRect(position.x, position.y, size.width, size.height, fill, fill);
         }
+    }
+
+    @Override
+    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        if (link != null && isMouseOverElement(mouseX, mouseY)) {
+           page.jumpToRef(link);
+           return true;
+        }
+        return false;
     }
 }
