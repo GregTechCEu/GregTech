@@ -1,6 +1,5 @@
 package gregtech.api.recipes.recipeproperties;
 
-import com.google.common.collect.ImmutableMap;
 import gregtech.api.util.GTLog;
 import org.apache.logging.log4j.LogManager;
 import org.junit.Before;
@@ -54,23 +53,10 @@ public class RecipePropertyStorageTest {
         assertFalse(storage.store(wrongCast, "This is not int"));
     }
 
-    @Test
-    public void storing_property_with_old_format_succeeds() {
-        assertTrue(storage.storeOldFormat(ImmutableMap.of("oldStringKey", "oldString", "oldIntKey", 1)));
-    }
-
 
     @Test
     public void storing_property_without_value_fails() {
         assertFalse(storage.store(propInt1, null));
-    }
-
-    @Test
-    public void storing_property_with_old_format_without_value_fails() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("emptyKey", null);
-
-        assertFalse(storage.storeOldFormat(map));
     }
 
     @Test
@@ -149,26 +135,5 @@ public class RecipePropertyStorageTest {
         Object actualValue = storage.getRawRecipePropertyValue(propInt1.getKey());
 
         assertEquals(expectedValue, actualValue);
-    }
-
-    @Test
-    public void get_recipe_property_value_via_string_returns_correct_value_if_exist() {
-        final int expectedValue = 1;
-        storage.store(propInt1, expectedValue); //succeeds
-
-        AbstractMap.SimpleEntry<RecipeProperty<?>, Object> recipePropertySet = storage.getRecipeProperty(propInt1Key);
-
-        Object actual = recipePropertySet.getKey().castValue(recipePropertySet.getValue());
-
-        assertEquals(expectedValue, actual);
-    }
-
-    @Test
-    public void get_recipe_property_value_via_string_returns_null_value_if_does_not_exists() {
-        storage.store(propInt1, 1); //succeeds
-
-        AbstractMap.SimpleEntry<RecipeProperty<?>, Object> recipePropertySet = storage.getRecipeProperty("not existent key");
-
-        assertNull(recipePropertySet);
     }
 }

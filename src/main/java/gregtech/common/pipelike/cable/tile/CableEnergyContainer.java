@@ -42,8 +42,8 @@ public class CableEnergyContainer implements IEnergyContainer {
                 continue; //do not emit if loss is too high
             }
             BlockPos destinationPos = routePath.destination;
-            int blockedConnections = energyNet.getAllNodes().get(destinationPos).blockedConnections;
-            amperesUsed += dispatchEnergyToNode(destinationPos, blockedConnections,
+            int openConnections = energyNet.getAllNodes().get(destinationPos).openConnections;
+            amperesUsed += dispatchEnergyToNode(destinationPos, openConnections,
                 voltage - routePath.totalLoss, amperage - amperesUsed);
 
             if (voltage > routePath.minVoltage ||
@@ -68,13 +68,13 @@ public class CableEnergyContainer implements IEnergyContainer {
         }
     }
 
-    private long dispatchEnergyToNode(BlockPos nodePos, int nodeBlockedConnections, long voltage, long amperage) {
+    private long dispatchEnergyToNode(BlockPos nodePos, int nodeOpenConnections, long voltage, long amperage) {
         long amperesUsed = 0L;
         //use pooled mutable to avoid creating new objects every tick
         World world = tileEntityCable.getPipeWorld();
         PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
         for (EnumFacing facing : EnumFacing.VALUES) {
-            if ((nodeBlockedConnections & 1 << facing.getIndex()) > 0) {
+            if ((nodeOpenConnections & 1 << facing.getIndex()) == 0) {
                 continue; //do not dispatch energy to blocked sides
             }
             blockPos.setPos(nodePos).move(facing);

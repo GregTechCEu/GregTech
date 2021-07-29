@@ -13,7 +13,6 @@ import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
-import gregtech.api.items.metaitem.stats.IMetaItemStats;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.Material;

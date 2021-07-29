@@ -1,10 +1,11 @@
 package gregtech.common.items;
 
-import gregtech.api.items.materialitem.DustMetaItem;
-import gregtech.api.items.materialitem.MaterialMetaItem;
+import com.google.common.base.CaseFormat;
+import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.common.render.FacadeItemModel;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -17,9 +18,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("WeakerAccess")
 public final class MetaItems {
 
     private MetaItems() {
@@ -467,23 +468,75 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem BIO_CHAFF;
 
+    private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
+        add(OrePrefix.dust);
+        add(OrePrefix.dustSmall);
+        add(OrePrefix.dustTiny);
+        add(OrePrefix.dustImpure);
+        add(OrePrefix.dustPure);
+        add(OrePrefix.crushed);
+        add(OrePrefix.crushedPurified);
+        add(OrePrefix.crushedCentrifuged);
+        add(OrePrefix.gem);
+        add(OrePrefix.gemChipped);
+        add(OrePrefix.gemFlawed);
+        add(OrePrefix.gemFlawless);
+        add(OrePrefix.gemExquisite);
+        add(OrePrefix.ingot);
+        add(OrePrefix.ingotHot);
+        add(OrePrefix.plate);
+        add(OrePrefix.plateCurved);
+        add(OrePrefix.plateDouble);
+        add(OrePrefix.plateDense);
+        add(OrePrefix.foil);
+        add(OrePrefix.stick);
+        add(OrePrefix.stickLong);
+        add(OrePrefix.bolt);
+        add(OrePrefix.screw);
+        add(OrePrefix.ring);
+        add(OrePrefix.nugget);
+        add(OrePrefix.round);
+        add(OrePrefix.spring);
+        add(OrePrefix.springSmall);
+        add(OrePrefix.gear);
+        add(OrePrefix.gearSmall);
+        add(OrePrefix.wireFine);
+        add(OrePrefix.rotor);
+        add(OrePrefix.lens);
+        add(OrePrefix.oreChunk);
+        add(OrePrefix.turbineBlade);
+        add(OrePrefix.toolHeadSword);
+        add(OrePrefix.toolHeadPickaxe);
+        add(OrePrefix.toolHeadShovel);
+        add(OrePrefix.toolHeadAxe);
+        add(OrePrefix.toolHeadHoe);
+        add(OrePrefix.toolHeadHammer);
+        add(OrePrefix.toolHeadFile);
+        add(OrePrefix.toolHeadSaw);
+        add(OrePrefix.toolHeadDrill);
+        add(OrePrefix.toolHeadChainsaw);
+        add(OrePrefix.toolHeadWrench);
+        add(OrePrefix.toolHeadUniversalSpade);
+        add(OrePrefix.toolHeadSense);
+        add(OrePrefix.toolHeadBuzzSaw);
+    }};
+
     public static void init() {
         MetaItem1 first = new MetaItem1();
         first.setRegistryName("meta_item_1");
-        MetaItem2 second = new MetaItem2();
-        second.setRegistryName("meta_item_2");
-        DustMetaItem dustItem = new DustMetaItem();
-        dustItem.setRegistryName("meta_item_3");
         MetaTool tool = new MetaTool();
         tool.setRegistryName("meta_tool");
+        for (OrePrefix prefix : orePrefixes) {
+            String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());
+            MetaPrefixItem metaOrePrefix = new MetaPrefixItem(prefix);
+            metaOrePrefix.setRegistryName(String.format("meta_%s", regName));
+        }
     }
 
     public static void registerOreDict() {
         for (MetaItem<?> item : ITEMS) {
-            if (item instanceof MaterialMetaItem) {
-                ((MaterialMetaItem) item).registerOreDict();
-            } else if (item instanceof DustMetaItem) {
-                ((DustMetaItem) item).registerOreDict();
+            if (item instanceof MetaPrefixItem) {
+                ((MetaPrefixItem) item).registerOreDict();
             }
         }
     }
@@ -492,8 +545,6 @@ public final class MetaItems {
         for (MetaItem<?> item : ITEMS) {
             if (item instanceof MetaItem1)
                 ((MetaItem1) item).registerRecipes();
-            if (item instanceof MetaItem2)
-                ((MetaItem2) item).registerRecipes();
             if (item instanceof MetaTool)
                 ((MetaTool) item).registerRecipes();
         }
@@ -522,12 +573,16 @@ public final class MetaItems {
     }
 
     @SideOnly(Side.CLIENT)
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static void registerSpecialItemModel(ModelBakeEvent event, MetaValueItem metaValueItem, IBakedModel bakedModel) {
         //god these casts when intellij says you're fine but compiler complains about shit boundaries
         //noinspection RedundantCast
         ResourceLocation modelPath = ((MetaItem) metaValueItem.getMetaItem()).createItemModelPath(metaValueItem, "");
         ModelResourceLocation modelResourceLocation = new ModelResourceLocation(modelPath, "inventory");
         event.getModelRegistry().putObject(modelResourceLocation, bakedModel);
+    }
+
+    private static void addOrePrefix(OrePrefix orePrefix) {
+        orePrefixes.add(orePrefix);
     }
 }

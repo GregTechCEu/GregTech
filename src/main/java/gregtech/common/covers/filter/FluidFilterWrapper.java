@@ -19,7 +19,7 @@ public class FluidFilterWrapper {
     }
 
     public void initUI(int y, Consumer<Widget> widgetGroup) {
-        widgetGroup.accept(new ToggleButtonWidget(146, y, 18, 18, GuiTextures.BUTTON_BLACKLIST,
+        widgetGroup.accept(new ToggleButtonWidget(144, y, 18, 18, GuiTextures.BUTTON_BLACKLIST,
             this::isBlacklistFilter, this::setBlacklistFilter).setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFluidFilter));
     }

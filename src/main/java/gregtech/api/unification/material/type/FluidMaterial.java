@@ -59,7 +59,7 @@ public class FluidMaterial extends Material {
     @Nullable
     private Fluid materialPlasma;
 
-    private int fluidTemperature = 300;
+    protected int fluidTemperature = 300;
 
     public FluidMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element) {
         super(metaItemSubId, name, materialRGB, materialIconSet, materialComponents, materialGenerationFlags, element);

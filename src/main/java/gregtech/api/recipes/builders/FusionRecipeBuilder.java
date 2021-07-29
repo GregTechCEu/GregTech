@@ -1,6 +1,5 @@
 package gregtech.api.recipes.builders;
 
-import com.google.common.collect.ImmutableMap;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -19,7 +18,7 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
 
     public FusionRecipeBuilder(Recipe recipe, RecipeMap<FusionRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
-        this.EUToStart = recipe.getRecipePropertyStorage().getRecipePropertyValue(FusionEUToStartProperty.getInstance(), 0L);
+        this.EUToStart = recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L);
     }
 
     public FusionRecipeBuilder(RecipeBuilder<FusionRecipeBuilder> recipeBuilder) {
@@ -52,7 +51,7 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
     public ValidationResult<Recipe> build() {
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
                 duration, EUt, hidden);
-        if (!recipe.getRecipePropertyStorage().store(ImmutableMap.of(FusionEUToStartProperty.getInstance(), EUToStart))) {
+        if (!recipe.setProperty(FusionEUToStartProperty.getInstance(), EUToStart)) {
             return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
         }
 

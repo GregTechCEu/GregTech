@@ -53,10 +53,9 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
     public static void pushFluidsFromTank(IPipeTile<FluidPipeType, FluidPipeProperties> pipeTile) {
         PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
-        int blockedConnections = pipeTile.getBlockedConnections();
         BlockFluidPipe blockFluidPipe = (BlockFluidPipe) pipeTile.getPipeBlock();
         for (EnumFacing side : EnumFacing.VALUES) {
-            if ((blockedConnections & 1 << side.getIndex()) > 0) {
+            if (!pipeTile.isConnectionOpenVisual(side)) {
                 continue; //do not dispatch energy to blocked sides
             }
             blockPos.setPos(pipeTile.getPipePos()).move(side);

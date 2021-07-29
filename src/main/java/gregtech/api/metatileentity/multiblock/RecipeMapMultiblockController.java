@@ -84,6 +84,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void invalidateStructure() {
         super.invalidateStructure();
         resetTileAbilities();
+        this.recipeMapWorkable.invalidate();
     }
 
     @Override

@@ -32,11 +32,19 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     void setInsulationColor(int newInsulationColor);
 
-    int getBlockedConnections();
+    //int getBlockedConnections();
 
-    TIntIntMap getBlockedConnectionsMap();
+    int getOpenConnections();
 
-    boolean isConnectionBlocked(AttachmentType type, EnumFacing side);
+    TIntIntMap getOpenConnectionsMap();
+
+    //boolean isConnectionBlocked(AttachmentType type, EnumFacing side);
+
+    boolean isConnectionOpen(AttachmentType type, EnumFacing side);
+
+    default boolean isConnectionOpenVisual(EnumFacing side) {
+        return (getOpenConnections() & 1 << side.getIndex()) > 0;
+    }
 
     void setConnectionBlocked(AttachmentType type, EnumFacing side, boolean isBlocked, boolean fromNeighbor);
 

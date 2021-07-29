@@ -9,7 +9,6 @@ import gregtech.api.recipes.builders.CokeOvenRecipeBuilder;
 import gregtech.api.recipes.builders.PBFRecipeBuilder;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.IMaterial;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
@@ -246,6 +245,15 @@ public class MachineRecipeLoader {
     }
 
     private static void registerMixingCrystallizationRecipes() {
+
+        RecipeMaps.MIXER_RECIPES.recipeBuilder()
+                .input(OrePrefix.dust, Materials.Lead, 2)
+                .input(OrePrefix.dust, Materials.Bronze, 2)
+                .input(OrePrefix.dust, Materials.Tin, 1)
+                .output(OrePrefix.dust, Materials.Potin, 5)
+                .duration(500).EUt(8)
+                .buildAndRegister();
+
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
             .input(OrePrefix.dust, Materials.Stone, 1)
             .fluidInputs(Materials.Lubricant.getFluid(20), ModHandler.getWater(4980))
@@ -426,7 +434,7 @@ public class MachineRecipeLoader {
         for (IngotMaterial cableMaterial : new IngotMaterial[]{Materials.YttriumBariumCuprate, Materials.NiobiumTitanium, Materials.VanadiumGallium, Materials.Naquadah}) {
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.wireGtSingle, cableMaterial, 3)
-                .input(OrePrefix.pipeTiny, Materials.TungstenSteel, 2)
+                .input(OrePrefix.pipeTinyFluid, Materials.TungstenSteel, 2)
                 .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm(2))
                 .fluidInputs(Materials.Nitrogen.getFluid(2000))
                 .outputs(OreDictUnifier.get(OrePrefix.wireGtSingle, Tier.Superconductor, 3))
@@ -437,7 +445,7 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
             .duration(4096).EUt(4096)
             .inputs(MetaItems.ENERGY_LAPOTRONIC_ORB2.getStackForm(8))
-            .input(OrePrefix.plate, Materials.Darmstadtium, 16)
+            .input(OrePrefix.plate, Materials.Neutronium, 16)
             .outputs(MetaItems.ZPM2.getStackForm())
             .buildAndRegister();
 
@@ -501,16 +509,29 @@ public class MachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Chrome, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.LuV)).circuitMeta(8).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Iridium, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ZPM)).circuitMeta(8).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Osmium, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UV)).circuitMeta(8).duration(50).buildAndRegister();
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Darmstadtium, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.UHV)).circuitMeta(8).duration(50).buildAndRegister();
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Neutronium, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.MAX)).circuitMeta(8).duration(50).buildAndRegister();
 
-        for (CoilType coilType : CoilType.values()) {
-            if (coilType.getMaterial() != null) {
-                ItemStack outputStack = MetaBlocks.WIRE_COIL.getItemVariant(coilType);
-                ASSEMBLER_RECIPES.recipeBuilder()
-                    .circuitMeta(8)
-                    .input(wireGtDouble, coilType.getMaterial(), 8)
-                    .outputs(outputStack)
-                    .duration(50).EUt(16).buildAndRegister();
+        if (ConfigHolder.U.GT5u.harderHeatingCoils) {
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(30).input(OrePrefix.wireGtDouble, Materials.Cupronickel, 8).input(OrePrefix.foil, Materials.Bronze, 8).fluidInputs(Materials.TinAlloy.getFluid(GTValues.L)).outputs(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.CUPRONICKEL)).duration(200).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(120).input(OrePrefix.wireGtDouble, Materials.Kanthal, 8).input(OrePrefix.foil, Materials.Aluminium, 8).fluidInputs(Materials.Copper.getFluid(GTValues.L)).outputs(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.KANTHAL)).duration(300).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(480).input(OrePrefix.wireGtDouble, Materials.Nichrome, 8).input(OrePrefix.foil, Materials.StainlessSteel, 8).fluidInputs(Materials.Aluminium.getFluid(GTValues.L)).outputs(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.NICHROME)).duration(400).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(1920).input(OrePrefix.wireGtDouble, Materials.TungstenSteel, 8).input(OrePrefix.foil, Materials.VanadiumSteel, 8).fluidInputs(Materials.Nichrome.getFluid(GTValues.L)).outputs(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.TUNGSTENSTEEL)).duration(500).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(7680).input(OrePrefix.wireGtDouble, Materials.HSSG, 8).input(OrePrefix.foil, Materials.TungstenCarbide, 8).fluidInputs(Materials.Tungsten.getFluid(GTValues.L)).outputs(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.HSS_G)).duration(600).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(30720).input(OrePrefix.wireGtDouble, Materials.Naquadah, 8).input(OrePrefix.foil, Materials.Osmium, 8).fluidInputs(Materials.TungstenSteel.getFluid(GTValues.L)).outputs(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.NAQUADAH)).duration(700).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(122880).input(OrePrefix.wireGtDouble, Materials.NaquadahAlloy, 8).input(OrePrefix.foil, Materials.Osmiridium, 8).fluidInputs(Materials.Naquadah.getFluid(GTValues.L)).outputs(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.NAQUADAH_ALLOY)).duration(800).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(500000).input(OrePrefix.wireGtDouble, Materials.FluxedElectrum, 8).input(OrePrefix.foil, Materials.Naquadria, 8).fluidInputs(Materials.NaquadahAlloy.getFluid(GTValues.L)).outputs(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.FLUXED_ELECTRUM)).duration(900).buildAndRegister();
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(2000000).input(OrePrefix.wireGtDouble, Materials.DiamericiumTitanium, 8).input(OrePrefix.foil, Materials.Trinium, 8).fluidInputs(Materials.Neutronium.getFluid(GTValues.L)).outputs(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.DIAMERICIUM_TITANIUM)).duration(1000).buildAndRegister();
+
+        } else {
+            for (CoilType coilType : CoilType.values()) {
+                if (coilType.getMaterial() != null) {
+                    ItemStack outputStack = MetaBlocks.WIRE_COIL.getItemVariant(coilType);
+                    ASSEMBLER_RECIPES.recipeBuilder()
+                            .circuitMeta(8)
+                            .input(wireGtDouble, coilType.getMaterial(), 8)
+                            .outputs(outputStack)
+                            .duration(50).EUt(16).buildAndRegister();
+                }
             }
         }
 
@@ -652,7 +673,7 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
     }
 
-    private static void createSulfurDioxideRecipe(IMaterial<?> inputMaterial, IMaterial<?> outputMaterial, int sulfurDioxideAmount) {
+    private static void createSulfurDioxideRecipe(Material inputMaterial, Material outputMaterial, int sulfurDioxideAmount) {
         BLAST_RECIPES.recipeBuilder().duration(120).EUt(120).blastFurnaceTemp(1200)
                 .input(dust, inputMaterial)
                 .fluidInputs(Oxygen.getFluid(3000))
@@ -948,7 +969,6 @@ public class MachineRecipeLoader {
         FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(12).EUt(4).notConsumable(SHAPE_MOLD_BLOCK).fluidInputs(Glowstone.getFluid(L * 4)).outputs(new ItemStack(Blocks.GLOWSTONE)).buildAndRegister();
         FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(12).EUt(4).notConsumable(SHAPE_MOLD_BLOCK).fluidInputs(Glass.getFluid(L)).outputs(new ItemStack(Blocks.GLASS)).buildAndRegister();
 
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(12).EUt(4).notConsumable(SHAPE_MOLD_PLATE).fluidInputs(Glass.getFluid(L)).output(plate, Glass).buildAndRegister();
         FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(128).EUt(16).notConsumable(SHAPE_MOLD_ANVIL).fluidInputs(Iron.getFluid(L * 31)).outputs(new ItemStack(Blocks.ANVIL)).buildAndRegister();
         FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(128).EUt(16).notConsumable(SHAPE_MOLD_ANVIL).fluidInputs(WroughtIron.getFluid(L * 31)).outputs(new ItemStack(Blocks.ANVIL)).buildAndRegister();
         FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(100).EUt(16).notConsumable(SHAPE_MOLD_BALL).fluidInputs(Toluene.getFluid(100)).output(GELLED_TOLUENE).buildAndRegister();
@@ -999,6 +1019,23 @@ public class MachineRecipeLoader {
             if (tank != null) {
                 ModHandler.addShapelessRecipe("quantum_tank_nbt_" + tank.getTier() + tank.metaTileEntityId, tank.getStackForm(), tank.getStackForm());
             }
-    }
+        
+        //Drums
+        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.WOODEN_DRUM.metaTileEntityId, MetaTileEntities.WOODEN_DRUM.getStackForm(), MetaTileEntities.WOODEN_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.BRONZE_DRUM.metaTileEntityId, MetaTileEntities.BRONZE_DRUM.getStackForm(), MetaTileEntities.BRONZE_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.STEEL_DRUM.metaTileEntityId, MetaTileEntities.STEEL_DRUM.getStackForm(), MetaTileEntities.STEEL_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.ALUMINIUM_DRUM.metaTileEntityId, MetaTileEntities.ALUMINIUM_DRUM.getStackForm(), MetaTileEntities.ALUMINIUM_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.STAINLESS_STEEL_DRUM.metaTileEntityId, MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm(), MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.TITANIUM_DRUM.metaTileEntityId, MetaTileEntities.TITANIUM_DRUM.getStackForm(), MetaTileEntities.TITANIUM_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.TUNGSTENSTEEL_DRUM.metaTileEntityId, MetaTileEntities.TUNGSTENSTEEL_DRUM.getStackForm(), MetaTileEntities.TUNGSTENSTEEL_DRUM.getStackForm());
+        //Tanks
+        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.WOODEN_TANK.metaTileEntityId, MetaTileEntities.WOODEN_TANK.getStackForm(), MetaTileEntities.WOODEN_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.BRONZE_TANK.metaTileEntityId, MetaTileEntities.BRONZE_TANK.getStackForm(), MetaTileEntities.BRONZE_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.STEEL_TANK.metaTileEntityId, MetaTileEntities.STEEL_TANK.getStackForm(), MetaTileEntities.STEEL_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.ALUMINIUM_TANK.metaTileEntityId, MetaTileEntities.ALUMINIUM_TANK.getStackForm(), MetaTileEntities.ALUMINIUM_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.STAINLESS_STEEL_TANK.metaTileEntityId, MetaTileEntities.STAINLESS_STEEL_TANK.getStackForm(), MetaTileEntities.STAINLESS_STEEL_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.TITANIUM_TANK.metaTileEntityId, MetaTileEntities.TITANIUM_TANK.getStackForm(), MetaTileEntities.TITANIUM_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.TUNGSTENSTEEL_TANK.metaTileEntityId, MetaTileEntities.TUNGSTENSTEEL_TANK.getStackForm(), MetaTileEntities.TUNGSTENSTEEL_TANK.getStackForm());
 
+    }
 }

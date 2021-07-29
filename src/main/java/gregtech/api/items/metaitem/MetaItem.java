@@ -253,9 +253,9 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return null;
         }
         ArrayList<ICapabilityProvider> providers = new ArrayList<>();
-        for (IMetaItemStats metaItemStats : metaValueItem.getAllStats()) {
-            if (metaItemStats instanceof IItemCapabilityProvider) {
-                IItemCapabilityProvider provider = (IItemCapabilityProvider) metaItemStats;
+        for (IItemComponent itemComponent : metaValueItem.getAllStats()) {
+            if (itemComponent instanceof IItemCapabilityProvider) {
+                IItemCapabilityProvider provider = (IItemCapabilityProvider) itemComponent;
                 providers.add(provider.createProvider(stack));
             }
         }
@@ -600,7 +600,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private IItemContainerItemProvider containerItemProvider;
         private ISubItemHandler subItemHandler = new DefaultSubItemHandler();
 
-        private List<IMetaItemStats> allStats = new ArrayList<>();
+        private List<IItemComponent> allStats = new ArrayList<>();
         private List<IItemBehaviour> behaviours = new ArrayList<>();
         private IItemUseManager useManager;
         private ItemUIFactory uiManager;
@@ -690,8 +690,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return this;
         }
 
-        protected void addItemComponentsInternal(IMetaItemStats... stats) {
-            for (IMetaItemStats itemComponent : stats) {
+        protected void addItemComponentsInternal(IItemComponent... stats) {
+            for (IItemComponent itemComponent : stats) {
                 if (itemComponent instanceof IItemNameProvider) {
                     this.nameProvider = (IItemNameProvider) itemComponent;
                 }
@@ -737,7 +737,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return metaValue;
         }
 
-        public List<IMetaItemStats> getAllStats() {
+        public List<IItemComponent> getAllStats() {
             return Collections.unmodifiableList(allStats);
         }
 

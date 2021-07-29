@@ -60,7 +60,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            if (getOffsetTimer() % 20 == 0 || getTimer() == 0) {
+            if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
                 checkStructurePattern();
             }
             if (isStructureFormed()) {

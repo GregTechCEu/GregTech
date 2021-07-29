@@ -26,7 +26,7 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<SimpleRecipeBuilder> EXTRACTOR_RECIPES = new RecipeMap<>("extractor", 0, 1, 0, 1, 0, 1, 0, 1, new SimpleRecipeBuilder().duration(400).EUt(2), false)
+    public static final RecipeMap<SimpleRecipeBuilder> EXTRACTOR_RECIPES = new RecipeMap<>("extractor", 0, 1, 0, 1, 0, 0, 0, 1, new SimpleRecipeBuilder().duration(400).EUt(2), false)
         .setSlotOverlay(false, false, GuiTextures.EXTRACTOR_OVERLAY)
         .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
 
@@ -449,7 +449,8 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> LARGE_CHEMICAL_RECIPES = new RecipeMap<>("large_chemical_reactor", 0, 3, 0, 3, 0, 5, 0, 4, new SimpleRecipeBuilder().EUt(30), false)
             .setSlotOverlay(false, false, false, GuiTextures.MOLECULAR_OVERLAY_1)
             .setSlotOverlay(false, false, true, GuiTextures.MOLECULAR_OVERLAY_2)
-            .setSlotOverlay(false, true, GuiTextures.MOLECULAR_OVERLAY_3)
+            .setSlotOverlay(false, true, false, GuiTextures.MOLECULAR_OVERLAY_3)
+            .setSlotOverlay(false, true, true, GuiTextures.MOLECULAR_OVERLAY_4)
             .setSlotOverlay(true, false, GuiTextures.VIAL_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.VIAL_OVERLAY_2)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL);

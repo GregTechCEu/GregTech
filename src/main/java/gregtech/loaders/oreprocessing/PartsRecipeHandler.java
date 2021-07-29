@@ -411,19 +411,24 @@ public class PartsRecipeHandler {
             .EUt(400)
             .buildAndRegister();
 
-        RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder()
-            .input(OrePrefix.plateDouble, material, 5)
-            .input(OrePrefix.screw, material, 2)
+        RecipeBuilder<?> builder = RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder();
+            if (material.hasFlag(GENERATE_DOUBLE_PLATE))
+                builder.input(OrePrefix.plateDouble, material, 5);
+            else
+                builder.input(OrePrefix.plate, material, 10);
+
+            builder.input(OrePrefix.screw, material, 2)
             .outputs(OreDictUnifier.get(toolPrefix, material))
             .duration(20)
             .EUt(256)
             .buildAndRegister();
 
-        ModHandler.addShapedRecipe(String.format("turbine_blade_%s", material),
-            OreDictUnifier.get(toolPrefix, material),
-            "PPP", "SPS", "fPd",
-            'P', new UnificationEntry(OrePrefix.plateDouble, material),
-            'S', new UnificationEntry(OrePrefix.screw, material));
+        if (material.hasFlag(GENERATE_DOUBLE_PLATE))
+            ModHandler.addShapedRecipe(String.format("turbine_blade_%s", material),
+                OreDictUnifier.get(toolPrefix, material),
+                "PPP", "SPS", "fPd",
+                'P', new UnificationEntry(OrePrefix.plateDouble, material),
+                'S', new UnificationEntry(OrePrefix.screw, material));
     }
 
     public static void processRound(OrePrefix roundPrefix, IngotMaterial material) {

@@ -32,7 +32,7 @@ public class MetaTileEntityEnergyHatch extends MetaTileEntityMultiblockPart impl
         super(metaTileEntityId, tier);
         this.isExportHatch = isExportHatch;
         if (isExportHatch) {
-            this.energyContainer = EnergyContainerHandler.emitterContainer(this, GTValues.V[tier] * 128L, GTValues.V[tier], 4);
+            this.energyContainer = EnergyContainerHandler.emitterContainer(this, GTValues.V[tier] * 128L, GTValues.V[tier], 1);
             ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
         } else {
             this.energyContainer = EnergyContainerHandler.receiverContainer(this, GTValues.V[tier] * 16L, GTValues.V[tier], 2);

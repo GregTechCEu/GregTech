@@ -29,7 +29,7 @@ public class CraftingComponent {
     public static Component WIRE;
     public static Component CABLE_QUAD;
     public static Component HULL;
-    public static Component PIPE_MEDIUM;
+    public static Component PIPE_NORMAL;
     public static Component PIPE_LARGE;
     public static Component GLASS;
     public static Component PLATE;
@@ -169,31 +169,31 @@ public class CraftingComponent {
             }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
         }
 
-        PIPE_MEDIUM = new Component(Stream.of(new Object[][]{
+        PIPE_NORMAL = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.pipeMedium, Materials.Bronze)},
-                {1, new UnificationEntry(OrePrefix.pipeMedium, Materials.Bronze)},
-                {2, new UnificationEntry(OrePrefix.pipeMedium, Materials.Steel)},
-                {3, new UnificationEntry(OrePrefix.pipeMedium, Materials.StainlessSteel)},
-                {4, new UnificationEntry(OrePrefix.pipeMedium, Materials.Titanium)},
-                {5, new UnificationEntry(OrePrefix.pipeMedium, Materials.TungstenSteel)},
-                {6, new UnificationEntry(OrePrefix.pipeMedium, Materials.NiobiumTitanium)},
-                {7, new UnificationEntry(OrePrefix.pipeMedium, Materials.Ultimet)},
-                {8, new UnificationEntry(OrePrefix.pipeMedium, Materials.Naquadah)},
+                {0, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Bronze)},
+                {1, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Bronze)},
+                {2, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Steel)},
+                {3, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.StainlessSteel)},
+                {4, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Titanium)},
+                {5, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.TungstenSteel)},
+                {6, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.NiobiumTitanium)},
+                {7, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Ultimet)},
+                {8, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Naquadah)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         PIPE_LARGE = new Component(Stream.of(new Object[][]{
 
-                {0, new UnificationEntry(OrePrefix.pipeLarge, Materials.Bronze)},
-                {1, new UnificationEntry(OrePrefix.pipeLarge, Materials.Bronze)},
-                {2, new UnificationEntry(OrePrefix.pipeLarge, Materials.Steel)},
-                {3, new UnificationEntry(OrePrefix.pipeLarge, Materials.StainlessSteel)},
-                {4, new UnificationEntry(OrePrefix.pipeLarge, Materials.Titanium)},
-                {5, new UnificationEntry(OrePrefix.pipeLarge, Materials.TungstenSteel)},
-                {6, new UnificationEntry(OrePrefix.pipeLarge, Materials.NiobiumTitanium)},
-                {7, new UnificationEntry(OrePrefix.pipeLarge, Materials.Ultimet)},
-                {8, new UnificationEntry(OrePrefix.pipeLarge, Materials.Naquadah)},
+                {0, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Bronze)},
+                {1, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Bronze)},
+                {2, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Steel)},
+                {3, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.StainlessSteel)},
+                {4, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Titanium)},
+                {5, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.TungstenSteel)},
+                {6, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.NiobiumTitanium)},
+                {7, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Ultimet)},
+                {8, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Naquadah)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -443,14 +443,14 @@ public class CraftingComponent {
                 {0, new ItemStack(Blocks.GLASS, 1, GTValues.W)},
                 {1, new ItemStack(Blocks.GLASS, 1, GTValues.W)},
                 {2, new ItemStack(Blocks.GLASS, 1, GTValues.W)},
-                {3, new UnificationEntry(OrePrefix.pipeMedium, Materials.Polyethylene)},
-                {4, new UnificationEntry(OrePrefix.pipeLarge, Materials.Polyethylene)},
-                {5, new UnificationEntry(OrePrefix.pipeHuge, Materials.Polyethylene)},
-                {6, new UnificationEntry(OrePrefix.pipeMedium, Materials.Polytetrafluoroethylene)},
-                {7, new UnificationEntry(OrePrefix.pipeLarge, Materials.Polytetrafluoroethylene)},
-                {8, new UnificationEntry(OrePrefix.pipeHuge, Materials.Polytetrafluoroethylene)},
+                {3, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Polyethylene)},
+                {4, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Polyethylene)},
+                {5, new UnificationEntry(OrePrefix.pipeHugeFluid, Materials.Polyethylene)},
+                {6, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Polytetrafluoroethylene)},
+                {7, new UnificationEntry(OrePrefix.pipeLargeFluid, Materials.Polytetrafluoroethylene)},
+                {8, new UnificationEntry(OrePrefix.pipeHugeFluid, Materials.Polytetrafluoroethylene)},
 
-                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.pipeMedium, Materials.Polyethylene)},
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Polyethylene)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -467,7 +467,7 @@ public class CraftingComponent {
                 {8, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_UV)},
                 {14, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_MAX)},
 
-                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.pipeMedium, Materials.Polyethylene)},
+                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Polyethylene)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
     }

@@ -23,7 +23,6 @@ public class BlastTemperatureProperty extends RecipeProperty<Integer> {
         if (INSTANCE == null) {
             INSTANCE = new BlastTemperatureProperty();
         }
-
         return INSTANCE;
     }
 

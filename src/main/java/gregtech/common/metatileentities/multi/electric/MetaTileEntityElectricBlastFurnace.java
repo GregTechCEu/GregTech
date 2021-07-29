@@ -85,7 +85,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
 
     @Override
     public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
-        int recipeRequiredTemp = recipe.getRecipePropertyStorage().getRecipePropertyValue(BlastTemperatureProperty.getInstance(), 0);
+        int recipeRequiredTemp = recipe.getProperty(BlastTemperatureProperty.getInstance(), 0);
         return this.blastFurnaceTemperature >= recipeRequiredTemp;
     }
 
@@ -154,7 +154,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         @Override
         protected void setupRecipe(Recipe recipe) {
             int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.getMaxVoltage(), recipe.getDuration(),
-                    recipe.getRecipePropertyStorage().getRecipePropertyValue(BlastTemperatureProperty.getInstance(), 0));
+                    recipe.getProperty(BlastTemperatureProperty.getInstance(), 0));
 
             this.progressTime = 1;
             setMaxProgress(resultOverclock[1]);

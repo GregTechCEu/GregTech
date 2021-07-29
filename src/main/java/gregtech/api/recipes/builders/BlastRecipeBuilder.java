@@ -1,6 +1,5 @@
 package gregtech.api.recipes.builders;
 
-import com.google.common.collect.ImmutableMap;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -19,7 +18,7 @@ public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
 
     public BlastRecipeBuilder(Recipe recipe, RecipeMap<BlastRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
-        this.blastFurnaceTemp = recipe.getRecipePropertyStorage().getRecipePropertyValue(BlastTemperatureProperty.getInstance(), 0);
+        this.blastFurnaceTemp = recipe.getProperty(BlastTemperatureProperty.getInstance(), 0);
     }
 
     public BlastRecipeBuilder(RecipeBuilder<BlastRecipeBuilder> recipeBuilder) {
@@ -52,7 +51,7 @@ public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
     public ValidationResult<Recipe> build() {
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
                 duration, EUt, hidden);
-        if (!recipe.getRecipePropertyStorage().store(ImmutableMap.of(BlastTemperatureProperty.getInstance(), blastFurnaceTemp))) {
+        if (!recipe.setProperty(BlastTemperatureProperty.getInstance(), blastFurnaceTemp)) {
             return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
         }
 

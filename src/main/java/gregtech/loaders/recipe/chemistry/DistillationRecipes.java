@@ -66,13 +66,14 @@ public class DistillationRecipes {
             .duration(120).EUt(120).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
-            .fluidInputs(HydroCrackedLightFuel.getFluid(1000))
-            .fluidOutputs(Naphtha.getFluid(800))
-            .fluidOutputs(Butane.getFluid(150))
-            .fluidOutputs(Propane.getFluid(200))
-            .fluidOutputs(Ethane.getFluid(125))
-            .fluidOutputs(Methane.getFluid(125))
-            .duration(120).EUt(120).buildAndRegister();
+                .fluidInputs(HydroCrackedLightFuel.getFluid(1000))
+                .fluidOutputs(Naphtha.getFluid(800))
+                .fluidOutputs(Octane.getFluid(100))
+                .fluidOutputs(Butane.getFluid(150))
+                .fluidOutputs(Propane.getFluid(200))
+                .fluidOutputs(Ethane.getFluid(125))
+                .fluidOutputs(Methane.getFluid(125))
+                .duration(120).EUt(120).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
             .fluidInputs(SteamCrackedLightFuel.getFluid(1000))
@@ -341,6 +342,26 @@ public class DistillationRecipes {
             .fluidOutputs(Ethanol.getFluid(240))
             .fluidOutputs(Water.getFluid(240))
             .duration(32).EUt(400).buildAndRegister();
+
+        DISTILLATION_RECIPES.recipeBuilder()
+                .fluidInputs(CoalGas.getFluid(1000))
+                .output(dustSmall, Coke)
+                .fluidOutputs(CoalTar.getFluid(200))
+                .fluidOutputs(Ammonia.getFluid(300))
+                .fluidOutputs(Ethylbenzene.getFluid(250))
+                .fluidOutputs(CarbonDioxide.getFluid(250))
+                .duration(80).EUt(120)
+                .buildAndRegister();
+
+        DISTILLATION_RECIPES.recipeBuilder()
+                .fluidInputs(CoalTar.getFluid(1000))
+                .output(dustSmall, Coke)
+                .fluidOutputs(Naphthalene.getFluid(400))
+                .fluidOutputs(HydrogenSulfide.getFluid(300))
+                .fluidOutputs(Creosote.getFluid(200))
+                .fluidOutputs(Phenol.getFluid(100))
+                .duration(80).EUt(120)
+                .buildAndRegister();
 
         DISTILLERY_RECIPES.recipeBuilder()
             .circuitMeta(1)

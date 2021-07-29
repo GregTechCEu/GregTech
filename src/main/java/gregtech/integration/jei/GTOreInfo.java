@@ -10,6 +10,7 @@ import gregtech.api.worldgen.populator.IVeinPopulator;
 import gregtech.api.worldgen.populator.SurfaceBlockPopulator;
 import gregtech.api.worldgen.populator.SurfaceRockPopulator;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -90,8 +91,8 @@ public class GTOreInfo implements IRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputLists(ItemStack.class, groupedInputsAsItemStacks);
-        ingredients.setOutputLists(ItemStack.class, groupedOutputsAsItemStacks);
+        ingredients.setInputLists(VanillaTypes.ITEM, groupedInputsAsItemStacks);
+        ingredients.setOutputLists(VanillaTypes.ITEM, groupedOutputsAsItemStacks);
     }
 
     //Finds the possible blocks from the Filler definition, and returns them as ItemStacks

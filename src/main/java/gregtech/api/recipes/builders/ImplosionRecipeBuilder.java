@@ -1,6 +1,5 @@
 package gregtech.api.recipes.builders;
 
-import com.google.common.collect.ImmutableMap;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
@@ -25,7 +24,7 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
 
     public ImplosionRecipeBuilder(Recipe recipe, RecipeMap<ImplosionRecipeBuilder> recipeMap) {
         super(recipe, recipeMap);
-        this.explosivesType = recipe.getRecipePropertyStorage().getRecipePropertyValue(ImplosionExplosiveProperty.getInstance(), ItemStack.EMPTY);
+        this.explosivesType = recipe.getProperty(ImplosionExplosiveProperty.getInstance(), ItemStack.EMPTY);
     }
 
     public ImplosionRecipeBuilder(RecipeBuilder<ImplosionRecipeBuilder> recipeBuilder) {
@@ -87,7 +86,7 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
         Recipe recipe = new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs,
                 duration, EUt, hidden);
 
-        if (!recipe.getRecipePropertyStorage().store(ImmutableMap.of(ImplosionExplosiveProperty.getInstance(), explosivesType))) {
+        if (!recipe.setProperty(ImplosionExplosiveProperty.getInstance(), explosivesType)) {
             return ValidationResult.newResult(EnumValidationResult.INVALID, recipe);
         }
 

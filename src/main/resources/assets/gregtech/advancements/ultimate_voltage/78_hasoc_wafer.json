@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.ultimate_voltage.78_hasoc_wafer.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_2",
-      "data": 32466
+      "item": "gregtech:meta_item_1",
+      "data": 276
     },
     "frame": "goal"
   },
@@ -18,8 +18,8 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:meta_item_2",
-            "data": 32466
+            "item": "gregtech:meta_item_1",
+            "data": 276
           }
         ]
       }

@@ -127,21 +127,12 @@ public abstract class MetaTileEntity implements ICoverable {
         }
     }
 
-    /**
-     * @deprecated Use {@link MetaTileEntity#getOffsetTimer()} instead for
-     * a better timer that spreads ticks more evenly.
-     *
-     * This method should only be used to check for first tick behavior, as
-     * a comparison against zero.
-     * @return Timer value, starting at zero.
-     */
-    @Deprecated
-    public long getTimer() {
-        return holder == null ? 0L : holder.getTimer();
+    public boolean isFirstTick() {
+        return holder != null && holder.isFirstTick();
     }
 
     /**
-     * Replacement for {@link MetaTileEntity#getTimer()}.
+     * Replacement for former getTimer() call.
      * @return Timer value, starting at zero, with a random offset [0, 20).
      */
     public long getOffsetTimer() {

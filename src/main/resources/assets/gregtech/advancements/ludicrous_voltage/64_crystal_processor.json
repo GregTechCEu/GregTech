@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.ludicrous_voltage.64_crystal_processor.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_2",
-      "data": 32521
+      "item": "gregtech:meta_item_1",
+      "data": 331
     },
     "frame": "challenge"
   },
@@ -18,8 +18,8 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:meta_item_2",
-            "data": 32521
+            "item": "gregtech:meta_item_1",
+            "data": 331
           }
         ]
       }
