@@ -186,18 +186,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
             parts.sort(Comparator.comparing(it -> ((MetaTileEntity) it).getPos().hashCode()));
             for (IMultiblockPart part : parts) {
-                if (!canShare()) {
-                    if (part.isAttachedToMultiBlock()) {
-
+                if (part.isAttachedToMultiBlock()) {
+                    if (!canShare() || part instanceof MetaTileEntityEnergyHatch || part instanceof MetaTileEntityRotorHolder) {
                         return;
                     }
                 }
-                else {
-                    if (part instanceof MetaTileEntityEnergyHatch || part instanceof MetaTileEntityRotorHolder) {
-                        if (part.isAttachedToMultiBlock()) {
-                            return;
-                        }
-                    }
                 }
             }
             Map<MultiblockAbility<Object>, List<Object>> abilities = new HashMap<>();
