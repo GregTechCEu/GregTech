@@ -35,7 +35,24 @@ public class Materials {
      * Direct Elements
      */
     public static IngotMaterial Actinium = new IngotMaterial(1, "actinium", 0xC3D1FF, METALLIC, 2, of(), 0, Elements.get("Actinium"));
-    public static IngotMaterial Aluminium = new IngotMaterial(2, "aluminium", 0x80C8F0, DULL, 2, of(), EXT2_METAL | GENERATE_SMALL_GEAR | GENERATE_ORE | GENERATE_RING | GENERATE_FRAME, Elements.get("Aluminium"), 10.0F, 2.0f, 128, 1700);
+
+    //new IngotMaterial(2, "aluminium", 0x80C8F0, DULL, 2, of(), , Elements.get("Aluminium"), 10.0F, 2.0f, 128, 1700);
+
+    public static IngotMaterial Aluminium = new MaterialBuilder<>(IngotMaterial.class, 2, "aluminium")
+            .color(0x80C8F0)
+            .iconSet(DULL)
+            .flags(EXT2_METAL | GENERATE_SMALL_GEAR | GENERATE_ORE | GENERATE_RING | GENERATE_FRAME)
+            .element(Elements.get("Aluminium"))
+            .toolStats(10.0f, 2.0f, 128)
+            .blastTemp(1700)
+            .register()
+            //.addOreByProducts(Bauxite)
+            //.setCableProperties(GTValues.V[4], 1, 1)
+            .setItemPipeProperties(1680, 2);
+
+
+
+
     public static IngotMaterial Americium = new IngotMaterial(3, "americium", 0xC8C8C8, METALLIC, 3, of(), STD_METAL | GENERATE_ROD | GENERATE_LONG_ROD, Elements.get("Americium"));
     public static IngotMaterial Antimony = new IngotMaterial(4, "antimony", 0xDCDCF0, SHINY, 2, of(), EXT_METAL | MORTAR_GRINDABLE, Elements.get("Antimony"));
     public static FluidMaterial Argon = new FluidMaterial(5, "argon", 0x01FF01, FLUID, of(), STATE_GAS | GENERATE_PLASMA, Elements.get("Argon"));
@@ -980,7 +997,7 @@ public class Materials {
         Osmiridium.setItemPipeProperties(64, 32);
         Americium.setItemPipeProperties(64, 64);
         DiamericiumTitanium.setItemPipeProperties(32, 128);
-
         PolyvinylChloride.setItemPipeProperties(512, 4);
+        Aluminium.setItemPipeProperties(1680, 2);
     }
 }

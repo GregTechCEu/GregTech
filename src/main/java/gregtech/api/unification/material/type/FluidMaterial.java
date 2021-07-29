@@ -7,6 +7,7 @@ import crafttweaker.api.liquid.ILiquidDefinition;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
 import gregtech.api.unification.Element;
+import gregtech.api.unification.material.MaterialBuilder;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTUtility;
@@ -61,12 +62,18 @@ public class FluidMaterial extends Material {
 
     protected int fluidTemperature = 300;
 
+    @Deprecated
     public FluidMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element) {
         super(metaItemSubId, name, materialRGB, materialIconSet, materialComponents, materialGenerationFlags, element);
     }
 
+    @Deprecated
     public FluidMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags) {
         super(metaItemSubId, name, materialRGB, materialIconSet, materialComponents, materialGenerationFlags, null);
+    }
+
+    public FluidMaterial(MaterialBuilder.MaterialInfo info) {
+        super(info);
     }
 
     @ZenGetter("hasFluid")

@@ -3,6 +3,7 @@ package gregtech.api.unification.material.type;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.Element;
+import gregtech.api.unification.material.MaterialBuilder;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.pipelike.cable.WireProperties;
@@ -98,6 +99,7 @@ public class IngotMaterial extends SolidMaterial {
     @Nullable
     public ItemPipeProperties itemPipeProperties;
 
+    @Deprecated
     public IngotMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element, float toolSpeed, float attackDamage, int toolDurability, int blastFurnaceTemperature) {
         super(metaItemSubId, name, materialRGB, materialIconSet, harvestLevel, materialComponents, materialGenerationFlags, element, toolSpeed, attackDamage, toolDurability);
         this.blastFurnaceTemperature = blastFurnaceTemperature;
@@ -106,24 +108,37 @@ public class IngotMaterial extends SolidMaterial {
         addFlag(SMELT_INTO_FLUID);
     }
 
+    @Deprecated
     public IngotMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element) {
         this(metaItemSubId, name, materialRGB, materialIconSet, harvestLevel, materialComponents, materialGenerationFlags, element, 0, 0, 0, 0);
     }
 
+    @Deprecated
     public IngotMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element, int blastFurnaceTemperature) {
         this(metaItemSubId, name, materialRGB, materialIconSet, harvestLevel, materialComponents, materialGenerationFlags, element, 0, 0, 0, blastFurnaceTemperature);
     }
 
+    @Deprecated
     public IngotMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element, float toolSpeed, float attackDamage, int toolDurability) {
         this(metaItemSubId, name, materialRGB, materialIconSet, harvestLevel, materialComponents, materialGenerationFlags, element, toolSpeed, attackDamage, toolDurability, 0);
     }
 
+    @Deprecated
     public IngotMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, float toolSpeed, float attackDamage, int toolDurability) {
         this(metaItemSubId, name, materialRGB, materialIconSet, harvestLevel, materialComponents, materialGenerationFlags, null, toolSpeed, attackDamage, toolDurability, 0);
     }
 
+    @Deprecated
     public IngotMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags) {
         this(metaItemSubId, name, materialRGB, materialIconSet, harvestLevel, materialComponents, materialGenerationFlags, null, 0, 0, 0, 0);
+    }
+
+    public IngotMaterial(MaterialBuilder.MaterialInfo info) {
+        super(info);
+        this.blastFurnaceTemperature = info.blastFurnaceTemperature;
+        this.smeltInto = this;
+        this.arcSmeltInto = this; // todo
+        addFlag(SMELT_INTO_FLUID);
     }
 
     @Override
@@ -180,18 +195,20 @@ public class IngotMaterial extends SolidMaterial {
     }
 
     @ZenMethod
-    public void setCableProperties(long voltage, int baseAmperage, int lossPerBlock) {
+    public <T extends Material> T setCableProperties(long voltage, int baseAmperage, int lossPerBlock) {
         this.cableProperties = new WireProperties((int) voltage, baseAmperage, lossPerBlock);
+        return (T) this;
     }
 
     @ZenMethod
-    public void setFluidPipeProperties(int maxTemperature, int throughput, boolean gasProof) {
+    public <T extends Material> T setFluidPipeProperties(int maxTemperature, int throughput, boolean gasProof) {
         this.fluidPipeProperties = new FluidPipeProperties(maxTemperature, throughput, gasProof);
+        return (T) this;
     }
 
     @ZenMethod
-    public void setItemPipeProperties(int priority, float stacksPerSec) {
+    public <T extends Material> T setItemPipeProperties(int priority, float stacksPerSec) {
         this.itemPipeProperties = new ItemPipeProperties(priority, stacksPerSec);
+        return (T) this;
     }
-
 }

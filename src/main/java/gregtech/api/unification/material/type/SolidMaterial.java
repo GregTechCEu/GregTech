@@ -6,6 +6,7 @@ import crafttweaker.api.enchantments.IEnchantment;
 import gregtech.api.GTValues;
 import gregtech.api.enchants.EnchantmentData;
 import gregtech.api.unification.Element;
+import gregtech.api.unification.material.MaterialBuilder;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.enchantment.Enchantment;
@@ -72,11 +73,19 @@ public abstract class SolidMaterial extends DustMaterial {
     @ZenProperty
     public DustMaterial macerateInto = this;
 
+    @Deprecated
     public SolidMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element, float toolSpeed, float toolAttackDamage, int toolDurability) {
         super(metaItemSubId, name, materialRGB, materialIconSet, harvestLevel, materialComponents, materialGenerationFlags, element);
         this.toolSpeed = toolSpeed;
         this.toolAttackDamage = toolAttackDamage;
         this.toolDurability = toolDurability;
+    }
+
+    public SolidMaterial(MaterialBuilder.MaterialInfo info) {
+        super(info);
+        this.toolSpeed = info.toolSpeed;
+        this.toolAttackDamage = info.attackDamage;
+        this.toolDurability = info.toolDurability;
     }
 
     @Override

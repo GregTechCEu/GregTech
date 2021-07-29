@@ -3,6 +3,7 @@ package gregtech.api.unification.material.type;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.Element;
+import gregtech.api.unification.material.MaterialBuilder;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -141,14 +142,21 @@ public class DustMaterial extends FluidMaterial {
         this.harvestLevel = harvestLevel;
     }
 
+    @Deprecated
     public DustMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element) {
         super(metaItemSubId, name, materialRGB, materialIconSet, materialComponents, materialGenerationFlags, element);
         this.harvestLevel = harvestLevel;
     }
 
+    @Deprecated
     public DustMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags) {
         super(metaItemSubId, name, materialRGB, materialIconSet, materialComponents, materialGenerationFlags, null);
         this.harvestLevel = harvestLevel;
+    }
+
+    public DustMaterial(MaterialBuilder.MaterialInfo info) {
+        super(info);
+        this.harvestLevel = info.harvestLevel;
     }
 
     @Override
@@ -164,28 +172,29 @@ public class DustMaterial extends FluidMaterial {
         return hasFlag(MatFlags.SMELT_INTO_FLUID);
     }
 
-    public void addOreByProducts(FluidMaterial... byProducts) {
+    public <T extends Material> T addOreByProducts(FluidMaterial... byProducts) {
         this.oreByProducts.addAll(Arrays.asList(byProducts));
+        return (T) this;
     }
 
     //kept here for binary compatibility
-    public void setDirectSmelting(IngotMaterial directSmelting) {
+    public <T extends Material> T setDirectSmelting(SolidMaterial directSmelting) {
         this.directSmelting = directSmelting;
+        return (T) this;
     }
 
-    public void setDirectSmelting(SolidMaterial directSmelting) {
-        this.directSmelting = directSmelting;
-    }
-
-    public void setOreMultiplier(int oreMultiplier) {
+    public <T extends Material> T setOreMultiplier(int oreMultiplier) {
         this.oreMultiplier = oreMultiplier;
+        return (T) this;
     }
 
-    public void setByProductMultiplier(int byProductMultiplier) {
+    public <T extends Material> T setByProductMultiplier(int byProductMultiplier) {
         this.byProductMultiplier = byProductMultiplier;
+        return (T) this;
     }
 
-    public void setBurnTime(int burnTime) {
+    public <T extends Material> T setBurnTime(int burnTime) {
         this.burnTime = burnTime;
+        return (T) this;
     }
 }

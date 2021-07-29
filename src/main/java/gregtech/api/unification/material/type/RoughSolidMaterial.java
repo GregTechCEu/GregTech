@@ -23,6 +23,7 @@ public class RoughSolidMaterial extends SolidMaterial {
         this.solidFormSupplier = solidFormSupplier;
     }
 
+    // TODO
     public RoughSolidMaterial(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, int harvestLevel, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Supplier<OrePrefix> solidFormSupplier) {
         super(metaItemSubId, name, materialRGB, materialIconSet, harvestLevel, materialComponents, materialGenerationFlags, null, 0, 0, 0);
         this.solidFormSupplier = solidFormSupplier;

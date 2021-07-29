@@ -6,6 +6,7 @@ import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.IMaterialHandler;
+import gregtech.api.unification.material.MaterialBuilder;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTControlledRegistry;
@@ -225,6 +226,7 @@ public abstract class Material implements Comparable<Material> {
         return materialComponents;
     }
 
+    @Deprecated
     public Material(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element) {
         this.materialRGB = materialRGB;
         this.materialIconSet = materialIconSet;
@@ -235,6 +237,18 @@ public abstract class Material implements Comparable<Material> {
         calculateDecompositionType();
         initializeMaterial();
         registerMaterial(metaItemSubId, name);
+    }
+
+    public Material(MaterialBuilder.MaterialInfo info) {
+        this.materialRGB = info.color;
+        this.materialIconSet = info.iconSet;
+        this.materialComponents = info.componentList;
+        this.materialGenerationFlags = verifyMaterialBits(info.flags);
+        this.element = info.element;
+        this.chemicalFormula = calculateChemicalFormula();
+        calculateDecompositionType();
+        initializeMaterial();
+        registerMaterial(info.metaItemSubId, info.name);
     }
 
     protected void registerMaterial(int metaItemSubId, String name) {
@@ -441,5 +455,9 @@ public abstract class Material implements Comparable<Material> {
     @ZenOperator(OperatorType.MUL)
     public MaterialStack createMaterialStack(long amount) {
         return new MaterialStack(this, amount);
+    }
+
+    public Class<? extends Material> getType() {
+        return this.getClass();
     }
 }
