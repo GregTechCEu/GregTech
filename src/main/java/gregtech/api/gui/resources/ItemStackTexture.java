@@ -4,13 +4,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class TextureItemStack implements IGuiTexture{
+public class ItemStackTexture implements IGuiTexture{
     private ItemStack itemStack;
 
-    public TextureItemStack(ItemStack itemStack) {
+    public ItemStackTexture(ItemStack itemStack) {
         this.itemStack = itemStack;
+    }
+
+    public ItemStackTexture(Item item) {
+        this.itemStack = new ItemStack(item);
     }
 
     @Override

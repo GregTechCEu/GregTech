@@ -162,4 +162,59 @@ public class RenderUtil {
         GlStateManager.disableBlend();
     }
 
+    public static void renderRect(float x, float y, float width, float height, float z, int color) {
+        renderGradientRect(x, y, width, height, z, color, color, false);
+    }
+
+    public static void renderGradientRect(float x, float y, float width, float height, float z, int startColor, int endColor, boolean horizontal) {
+        float startAlpha = (float) (startColor >> 24 & 255) / 255.0F;
+        float startRed = (float) (startColor >> 16 & 255) / 255.0F;
+        float startGreen = (float) (startColor >> 8 & 255) / 255.0F;
+        float startBlue = (float) (startColor & 255) / 255.0F;
+        float endAlpha = (float) (endColor >> 24 & 255) / 255.0F;
+        float endRed = (float) (endColor >> 16 & 255) / 255.0F;
+        float endGreen = (float) (endColor >> 8 & 255) / 255.0F;
+        float endBlue = (float) (endColor & 255) / 255.0F;
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        if (horizontal) {
+            buffer.pos(x + width, y, z).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            buffer.pos(x, y, z).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x, y + height, z).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x + width, y + height, z).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            tessellator.draw();
+        } else {
+            buffer.pos(x + width, y, z).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x, y, z).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x, y + height, z).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            buffer.pos(x + width, y + height, z).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            tessellator.draw();
+        }
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+    }
+
+    public static void renderTextureArea(TextureArea textureArea, float x, float y, float width, float height, float z) {
+        double imageU = textureArea.offsetX;
+        double imageV = textureArea.offsetY;
+        double imageWidth = textureArea.imageWidth;
+        double imageHeight = textureArea.imageHeight;
+        Minecraft.getMinecraft().renderEngine.bindTexture(textureArea.imageLocation);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        bufferbuilder.pos(x, y + height, z).tex(imageU, imageV + imageHeight).endVertex();
+        bufferbuilder.pos(x + width, y + height, z).tex(imageU + imageWidth, imageV + imageHeight).endVertex();
+        bufferbuilder.pos(x + width, y, z).tex(imageU + imageWidth, imageV).endVertex();
+        bufferbuilder.pos(x, y, z).tex(imageU, imageV).endVertex();
+        tessellator.draw();
+    }
 }

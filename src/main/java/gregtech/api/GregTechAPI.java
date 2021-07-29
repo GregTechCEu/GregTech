@@ -2,6 +2,8 @@ package gregtech.api;
 
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.api.terminal.app.guide.MultiBlockGuideApp;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial;
@@ -11,6 +13,7 @@ import gregtech.api.util.BaseCreativeTab;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.items.MetaItems;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
@@ -32,6 +35,9 @@ public class GregTechAPI {
 
     public static <T extends MetaTileEntity> T registerMetaTileEntity(int id, T sampleMetaTileEntity) {
         META_TILE_ENTITY_REGISTRY.register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);
+        if (sampleMetaTileEntity instanceof MultiblockControllerBase || sampleMetaTileEntity instanceof MetaTileEntityMultiblockPart) {
+            MultiBlockGuideApp.registerMultiBlock(sampleMetaTileEntity);
+        }
         return sampleMetaTileEntity;
     }
 

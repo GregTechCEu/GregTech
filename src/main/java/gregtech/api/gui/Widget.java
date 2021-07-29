@@ -37,13 +37,14 @@ import java.util.function.Supplier;
  */
 public abstract class Widget {
 
-    protected ModularUI gui;
-    protected ISizeProvider sizes;
-    protected WidgetUIAccess uiAccess;
-    private Position parentPosition = Position.ORIGIN;
-    private Position selfPosition;
-    private Position position;
-    private Size size;
+    protected transient ModularUI gui;
+    protected transient ISizeProvider sizes;
+    protected transient WidgetUIAccess uiAccess;
+    private transient Position parentPosition = Position.ORIGIN;
+    private transient Position selfPosition;
+    private transient Position position;
+    private transient Size size;
+    private transient boolean isVisible;
 
     public Widget(Position selfPosition, Size size) {
         Preconditions.checkNotNull(selfPosition, "selfPosition");
@@ -51,6 +52,11 @@ public abstract class Widget {
         this.selfPosition = selfPosition;
         this.size = size;
         this.position = this.parentPosition.add(selfPosition);
+        this.isVisible = true;
+    }
+
+    public Widget(int x, int y, int width, int height) {
+        this(new Position(x, y), new Size(width, height));
     }
 
     public void setGui(ModularUI gui) {
@@ -91,6 +97,14 @@ public abstract class Widget {
         return size;
     }
 
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        isVisible = visible;
+    }
+
     public Rectangle toRectangleBox() {
         Position pos = getPosition();
         Size size = getSize();
@@ -112,7 +126,7 @@ public abstract class Widget {
     }
 
     public boolean isMouseOverElement(int mouseX, int mouseY, boolean correctPositionOnMouseWheelMoveEvent) {
-        mouseX = correctPositionOnMouseWheelMoveEvent ? mouseX + getPosition().x : mouseX;
+        mouseX = correctPositionOnMouseWheelMoveEvent ? mouseX + this.gui.getGuiLeft(): mouseX;
         return isMouseOverElement(mouseX, mouseY);
     }
 
@@ -239,6 +253,14 @@ public abstract class Widget {
         if (uiAccess != null) {
             uiAccess.writeClientAction(this, id, packetBufferWriter);
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void drawBorder(int x, int y, int width, int height, int stroke, int stroke_width) {
+        drawGradientRect(x - stroke_width, y - stroke_width, width + 2 * stroke_width, stroke_width, stroke, stroke);
+        drawGradientRect(x - stroke_width, y + height, width + 2 * stroke_width, stroke_width, stroke, stroke);
+        drawGradientRect(x - stroke_width, y - stroke_width, stroke_width, height + 2 * stroke_width, stroke, stroke);
+        drawGradientRect(x + width, y - stroke_width, stroke_width, height + 2 * stroke_width, stroke, stroke);
     }
 
     @SideOnly(Side.CLIENT)

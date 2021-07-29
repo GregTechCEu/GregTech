@@ -141,7 +141,6 @@ public class TabGroup extends AbstractWidgetGroup {
         return mouseX >= minX && mouseY >= minY && mouseX < maxX && mouseY < maxY;
     }
 
-    @Override
     public boolean isWidgetVisible(Widget widget) {
         return tabWidgets.containsKey(selectedTabIndex) && tabWidgets.get(selectedTabIndex) == widget;
     }

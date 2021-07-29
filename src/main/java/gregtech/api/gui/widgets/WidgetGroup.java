@@ -22,4 +22,14 @@ public class WidgetGroup extends AbstractWidgetGroup {
     public void addWidget(Widget widget) {
         super.addWidget(widget);
     }
+
+    @Override
+    public void removeWidget(Widget widget) {
+        super.removeWidget(widget);
+    }
+
+    @Override
+    public void clearAllWidgets() {
+        super.clearAllWidgets();
+    }
 }
