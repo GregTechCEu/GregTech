@@ -1,0 +1,36 @@
+{
+  "section": "Guide Widget API",
+  "title": "Guide Page",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "In this section we'll learn how to write a guide page.",
+        "-------------------------------",
+        "Let's take a look at an example config file for a guide page.",
+        "§lJSON§r:",
+        "{",
+        "  \"section\": \"section name here\",",
+        "  \"title\": \"title here\",",
+        "  \"stream\": [",
+        "    {",
+        "      \"type\": \"textbox\",",
+        "      \"content\": [\"TextBox widget\"]",
+        "    }",
+        "  ],",
+        "  \"fixed\": [",
+        "    {",
+        "      \"x\": 50,",
+        "      \"y\": 100,",
+        "      \"width\": 150,",
+        "      \"height\": 40,",
+        "      \"type\": 0,",
+        "      \"content\": [\"TextBox widget\"]",
+        "    }",
+        "  ]",
+        "}"
+      ]
+    }
+  ],
+  "fixed": []
+}

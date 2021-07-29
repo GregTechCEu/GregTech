@@ -1,0 +1,24 @@
+{
+  "section": "default",
+  "title": "Missing Guide",
+  "stream": [
+    {
+      "type": "textbox",
+      "isCenter": false,
+      "content": [
+        "If you see this page, §4unfortunately§r, this item lacks a Guide Page.",
+        "You can learn it from the APP §lTutorial§r. Don't worry, it is not difficult, you can easily customize the Guide Page with JSON. We look forward to your contributions.",
+        "-------------------------------"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": false,
+      "content": [
+        "§c§lNote§r: Configuration files should in §n\"assets/gregtech/terminal/guide/multiblocks\"§r",
+        "Please name the file with the registered name of a machine to help the system automatically match the machines."
+      ]
+    }
+  ],
+  "fixed": []
+}

@@ -199,6 +199,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         modularUI.guiWidgets.values().forEach(widget -> {
+            if (!widget.isVisible()) return;
             GlStateManager.pushMatrix();
             GlStateManager.color(1.0f, 1.0f, 1.0f);
             widget.drawInForeground(mouseX, mouseY);
@@ -214,6 +215,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         GlStateManager.popMatrix();
         modularUI.backgroundPath.draw(guiLeft, guiTop, xSize, ySize);
         modularUI.guiWidgets.values().forEach(widget -> {
+            if (!widget.isVisible()) return;
             GlStateManager.pushMatrix();
             GlStateManager.enableBlend();
             widget.drawInBackground(mouseX, mouseY, partialTicks,this);

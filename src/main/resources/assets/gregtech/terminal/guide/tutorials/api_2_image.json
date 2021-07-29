@@ -1,0 +1,80 @@
+{
+  "section": "Guide Widget API",
+  "title": "Image Widget",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "In this section we'll learn how to add an §4§lImage§r. There are three different forms of image supported here: §4Url§r, §4Item§r, and §4ResourceLocation§r. Don't worry, it's easy",
+        "-------------------------------",
+        "§lWidget Type§r: §nimage§r",
+        "-------------------------------",
+        "§lJSON§r:",
+        "{",
+        "  \"type\": \"image\",",
+        "  \"form\": \"Item\",",
+        "  \"source\": \"minecraft:ender_pearl\",",
+        "  \"width\": 100,",
+        "  \"height\": 100",
+        "}"
+      ]
+    }, {
+      "type": "textbox",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nform§r (§4required§r)",
+        "§ltype§r: String",
+        "§lillustrate§r: It can only be set one of §Url§r, §4Item§r, or §4ResourceLocation§r.",
+        "    \"url\" -- image url.",
+        "    \"item\" -- The registered name of the Item in game.",
+        "    \"resource\" -- The resource location."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§lDemo§r: \"url\""
+      ]
+    },
+    {
+      "type": "image",
+      "form": "url",
+      "source": "https://i.pinimg.com/originals/38/9d/e7/389de7ca61163911e72d4adcaabe1433.gif",
+      "stroke": 4278190080,
+      "stroke_width": 2,
+      "width": 100,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§lDemo§r: \"item\""
+      ]
+    },
+    {
+      "type": "image",
+      "form": "item",
+      "source": "minecraft:ender_pearl",
+      "width": 100,
+      "height": 100
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§lDemo§r: \"resource\""
+      ]
+    },
+    {
+      "type": "image",
+      "form": "resource",
+      "source": "textures/gui/icon/gregtech_logo.png",
+      "width": 100,
+      "height": 100
+    }
+  ],
+  "fixed": []
+}

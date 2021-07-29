@@ -15,7 +15,7 @@ import java.awt.*;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-public class CircleButton extends Widget {
+public class CircleButtonWidget extends Widget {
     private int hoverTick;
     private boolean isHover;
     private String hoverText;
@@ -27,33 +27,33 @@ public class CircleButton extends Widget {
             new Color(255, 255, 255).getRGB(),
     };
 
-    public CircleButton(int x, int y, int r) {
+    public CircleButtonWidget(int x, int y, int r) {
         super(new Position(x - r, y - r), new Size(2 * r, 2 * r));
     }
 
-    public CircleButton setIcon(IGuiTexture icon) {
+    public CircleButtonWidget setIcon(IGuiTexture icon) {
         this.icon = icon;
         return this;
     }
 
-    public CircleButton setHoverText(String hoverText) {
+    public CircleButtonWidget setHoverText(String hoverText) {
         this.hoverText = hoverText;
         return this;
     }
 
-    public CircleButton setColors(int stroke, int strokeAnima, int fill) {
+    public CircleButtonWidget setColors(int stroke, int strokeAnima, int fill) {
         colors[0] = stroke;
         colors[1] = strokeAnima;
         colors[2] = fill;
         return this;
     }
 
-    public CircleButton setFillColors(int fill) {
+    public CircleButtonWidget setFillColors(int fill) {
         colors[2] = fill;
         return this;
     }
 
-    public CircleButton setClickListener(Consumer<ClickData> onPressed) {
+    public CircleButtonWidget setClickListener(Consumer<ClickData> onPressed) {
         this.onPressCallback = onPressed;
         return this;
     }

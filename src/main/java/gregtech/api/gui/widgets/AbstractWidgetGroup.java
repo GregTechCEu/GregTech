@@ -23,7 +23,6 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
 
     protected final List<Widget> widgets = new ArrayList<>();
     private final WidgetGroupUIAccess groupUIAccess = new WidgetGroupUIAccess();
-    private boolean isVisible = true;
     private final boolean isDynamicSized;
     private boolean initialized = false;
 
@@ -95,12 +94,8 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     }
 
     public void setVisible(boolean visible) {
-        this.isVisible = visible;
+        super.setVisible(visible);
         widgets.stream().flatMap(it -> it.getNativeWidgets().stream()).forEach(it -> it.setEnabled(visible));
-    }
-
-    public boolean isVisible() {
-        return isVisible;
     }
 
     protected void addWidget(Widget widget) {
@@ -153,12 +148,8 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
         }
     }
 
-    public boolean isWidgetVisible(Widget widget) {
-        return this.isVisible;
-    }
-
     public boolean isWidgetClickable(Widget widget) {
-        return isWidgetVisible(widget);
+        return isVisible();
     }
 
     @Override
@@ -185,7 +176,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
 
     @Override
     public List<Target<?>> getPhantomTargets(Object ingredient) {
-        if (!isVisible) {
+        if (!isVisible()) {
             return Collections.emptyList();
         }
         ArrayList<Target<?>> targets = new ArrayList<>();
@@ -199,7 +190,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
 
     @Override
     public Object getIngredientOverMouse(int mouseX, int mouseY) {
-        if (!isVisible) {
+        if (!isVisible()) {
             return Collections.emptyList();
         }
         for (Widget widget : widgets) {
@@ -229,7 +220,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         for (Widget widget : widgets) {
-            if (isWidgetVisible(widget)) {
+            if (widget.isVisible()) {
                 widget.drawInForeground(mouseX, mouseY);
             }
         }
@@ -238,7 +229,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         for (Widget widget : widgets) {
-            if (isWidgetVisible(widget)) {
+            if (widget.isVisible()) {
                 widget.drawInBackground(mouseX, mouseY, partialTicks, context);
             }
         }
@@ -247,27 +238,52 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
 
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
-        return widgets.stream().filter(this::isWidgetClickable).anyMatch(it -> it.mouseWheelMove(mouseX, mouseY, wheelDelta));
+        for (Widget widget : widgets) {
+            if(widget.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        return widgets.stream().filter(this::isWidgetClickable).anyMatch(it -> it.mouseClicked(mouseX, mouseY, button));
+        for (Widget widget : widgets) {
+            if(widget.mouseClicked(mouseX, mouseY, button)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
-        return widgets.stream().filter(this::isWidgetClickable).anyMatch(it -> it.mouseDragged(mouseX, mouseY, button, timeDragged));
+        for (Widget widget : widgets) {
+            if(widget.mouseDragged(mouseX, mouseY, button, timeDragged)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean mouseReleased(int mouseX, int mouseY, int button) {
-        return widgets.stream().filter(this::isWidgetClickable).anyMatch(it -> it.mouseReleased(mouseX, mouseY, button));
+        for (Widget widget : widgets) {
+            if(widget.mouseReleased(mouseX, mouseY, button)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean keyTyped(char charTyped, int keyCode) {
-        return widgets.stream().filter(this::isWidgetClickable).anyMatch(it -> it.keyTyped(charTyped, keyCode));
+        for (Widget widget : widgets) {
+            if(widget.keyTyped(charTyped, keyCode)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

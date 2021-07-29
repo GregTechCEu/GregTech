@@ -2,14 +2,12 @@ package gregtech.common.items.behaviors;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.resources.TextureItemStack;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.terminal.gui.widgets.CircleButton;
+import gregtech.api.terminal.TerminalBuilder;
+import gregtech.api.terminal.gui.widgets.TerminalMenuWidget;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -36,10 +34,10 @@ public class GuideTerminalBehaviour implements IItemBehaviour, ItemUIFactory {
 
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        CircleButton circleButton = new CircleButton(27, 40, 12)
-                .setIcon(new TextureItemStack(Item.getItemFromBlock(Blocks.CHEST).getDefaultInstance()));
+        TerminalMenuWidget menu = new TerminalMenuWidget(15, 30, 24, 24);
+        TerminalBuilder.getApplications().forEach(menu::addApp);
         return ModularUI.builder(GuiTextures.TERMINAL_BACKGROUND, 380, 256)
-                .widget(circleButton)
+                .widget(menu)
                 .build(holder, entityPlayer);
     }
 }
