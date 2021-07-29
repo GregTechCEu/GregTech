@@ -116,65 +116,94 @@ public class MaterialBuilder <T extends Material> {
     public static class MaterialInfo {
         /**
          * The unlocalized name of this Material.
+         *
+         * Required.
          */
         public String name;
 
         /**
          * The MetaItem ID of this Material.
+         *
+         * Required, except for SimpleFluidMaterials.
          */
         public int metaItemSubId;
 
         /**
          * The color of this Material.
+         *
+         * Default: 0xFFFFFF.
          */
-        public int color;
+        public int color = 0xFFFFFF;
 
         /**
          * The IconSet of this Material.
+         *
+         * Default: DULL.
          */
-        public MaterialIconSet iconSet;
+        public MaterialIconSet iconSet = MaterialIconSet.DULL;
 
         /**
          * The harvest level of this Material.
+         *
+         * Default: 1.
          */
-        public int harvestLevel;
+        public int harvestLevel = 1;
 
+        /**
+         * The components of this Material.
+         *
+         * Default: none.
+         */
         public ImmutableList<MaterialStack> componentList;
 
         /**
          * This Material's flags.
+         *
+         * Default: none.
          */
         public long flags;
 
         /**
          * The Element of this Material, if it is a direct Element.
+         *
+         * Default: none.
          */
         public Element element;
 
         /**
-         * Tool Stats
+         * Tool Stats of this Material.
+         *
+         * Default: 0 for all.
          */
-        public float toolSpeed;
-        public float attackDamage;
-        public int toolDurability;
+        public float toolSpeed = 0f;
+        public float attackDamage = 0f;
+        public int toolDurability = 0;
 
         /**
          * EBF Temperature of this material.
+         *
+         * Default: 0.
          */
         public int blastFurnaceTemperature = 0;
 
         /**
          * During electromagnetic separation, this Material's Ore will be separated into this Material.
+         *
+         * Default: none.
          */
         public Material separatedInto;
 
         /**
          * Material in which this Material's Ore should be washed to give additional output.
+         *
+         * Default: none.
          */
         public Material washedIn;
 
         /**
          * Material which obtained when this Material is Polarized.
+         *
+         * Default: none.
          */
         public Material magneticMaterial;
 
