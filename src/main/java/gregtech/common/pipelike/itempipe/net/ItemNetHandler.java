@@ -7,6 +7,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.CoverConveyor;
 import gregtech.common.covers.CoverRoboticArm;
+import gregtech.common.covers.DistributionMode;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import net.minecraft.item.ItemStack;
@@ -46,7 +47,7 @@ public class ItemNetHandler implements IItemHandler {
         simulatedTransfers = 0;
         Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(pipe.getPos(), facing);
         if (exportsToPipe(tuple)) {
-            if (tuple.getFirst().getDistributionMode() == CoverConveyor.ItemDistributionMode.ROUND_ROBIN) {
+            if (tuple.getFirst().getDistributionMode() == DistributionMode.ROUND_ROBIN) {
                 return insertRoundRobin(stack, simulate);
             }
         }
@@ -169,7 +170,7 @@ public class ItemNetHandler implements IItemHandler {
         }
         tile = pipe.getWorld().getTileEntity(pipePos.offset(handlerFacing));
         if (tile != null) {
-            ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
+            ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, handlerFacing.getOpposite());
             if (coverable == null) return null;
             CoverBehavior cover = coverable.getCoverAtSide(handlerFacing.getOpposite());
             if (cover instanceof CoverConveyor) return new Tuple<>((CoverConveyor) cover, false);
