@@ -191,7 +191,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
                         return;
                     }
                 }
-                }
             }
             Map<MultiblockAbility<Object>, List<Object>> abilities = new HashMap<>();
             for (IMultiblockPart multiblockPart : parts) {
