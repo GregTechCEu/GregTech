@@ -83,6 +83,10 @@ public abstract class Widget {
         recomputePosition();
     }
 
+    public Position getSelfPosition() {
+        return selfPosition;
+    }
+
     protected void setSize(Size size) {
         Preconditions.checkNotNull(size, "size");
         this.size = size;

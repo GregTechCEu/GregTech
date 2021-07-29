@@ -1,6 +1,7 @@
 package gregtech.api.terminal.gui.widgets.guide;
 
 import com.google.gson.JsonObject;
+import gregtech.api.GTValues;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
@@ -9,7 +10,9 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.resources.URLTexture;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 
 public class ImageWidget extends GuideWidget{
     //config
@@ -38,13 +41,13 @@ public class ImageWidget extends GuideWidget{
     protected Widget initFixed(int x, int y, int width, int height, JsonObject config) {
         switch (form) {
             case "url":
-                image = new URLTexture(source);
+                image = new URLTexture("https://i0.hdslb.com/bfs/article/bcd3d609c1899810113fdb90c8d0e1dd4aa8ed38.gif");
                 break;
             case "item":
                 image = new ItemStackTexture(Item.getByNameOrId(source));
                 break;
             case "resource":
-                image = TextureArea.fullImage(source);
+                image = new TextureArea(new ResourceLocation(source), 0.0, 0.0, 1.0, 1.0);
                 break;
         }
         return this;
@@ -54,6 +57,7 @@ public class ImageWidget extends GuideWidget{
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         if (image != null) {
             super.drawInBackground(mouseX, mouseY, partialTicks,context);
+            GlStateManager.color(1,1,1,1);
             Position position = getPosition();
             image.draw(position.x, position.y, width, height);
         }

@@ -132,13 +132,13 @@ public class TextTreeWidget<T> extends Widget {
                         this.selected = node;
                         onSelected.accept(node);
                     }
-                } else if (list.contains(node.children.get(node.children.size() - 1))){
+                } else if (node.children.size() > 0 && list.contains(node.children.get(0))){
                     for (TreeNode<String, Tuple<T, JsonObject>> child : node.children) {
                         list.remove(child);
                     }
                 } else {
-                    for (TreeNode<String, Tuple<T, JsonObject>> child : node.children) {
-                        list.add(index + 1, child);
+                    for (int i = 0; i < node.children.size(); i++) {
+                        list.add(index + 1 + i, node.children.get(i));
                     }
                 }
                 playButtonClickSound();
