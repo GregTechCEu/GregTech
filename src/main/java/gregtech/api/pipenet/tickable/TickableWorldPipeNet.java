@@ -32,7 +32,7 @@ public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeD
 
     public void update() {
         if (getWorld().getTotalWorldTime() % getUpdateRate() == 0L) {
-            tickingPipeNets.forEach(ITickable::update);
+            tickingPipeNets.forEach(net -> net.update());
         }
     }
 

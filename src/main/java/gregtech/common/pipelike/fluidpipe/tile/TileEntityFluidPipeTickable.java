@@ -26,9 +26,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     @Override
     public void update() {
         getCoverableImplementation().update();
-        if (time++ % 20 == 0) {
-            transferredFluids = 0;
-        }
+        transferredFluids = 0;
     }
 
     public void transferFluid(int amount) {

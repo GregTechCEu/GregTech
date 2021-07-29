@@ -18,7 +18,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import java.util.*;
 import java.util.Map.Entry;
 
-public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCompound>, ITickable {
+public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCompound> {
 
     protected final WorldPipeNet<NodeDataType, PipeNet<NodeDataType>> worldData;
     private final Map<BlockPos, Node<NodeDataType>> nodeByBlockPos = new HashMap<>();
@@ -30,10 +30,6 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     public PipeNet(WorldPipeNet<NodeDataType, ? extends PipeNet> world) {
         //noinspection unchecked
         this.worldData = (WorldPipeNet<NodeDataType, PipeNet<NodeDataType>>) world;
-    }
-
-    @Override
-    public void update() {
     }
 
     public Set<ChunkPos> getContainedChunks() {
