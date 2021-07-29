@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.integration.jei.utils.render.DrawableRegistry;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
@@ -11,10 +14,10 @@ import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -80,8 +83,8 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
                 guiHelper.createBlankDrawable(176, 166),
                 guiHelper);
 
-        this.slot = guiHelper.createDrawable(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18, 18, 18);
-        this.icon = guiHelper.createDrawableIngredient(new ItemStack(Item.getByNameOrId("minecraft:iron_ingot")));
+        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
+        this.icon = guiHelper.createDrawableIngredient(OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium));
 
         /* couldn't think of a better way to register all these
         generated with bash, requires imagemagick and sed
@@ -116,7 +119,7 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
     public void setRecipe(IRecipeLayout recipeLayout, MaterialTree recipeWrapper, IIngredients ingredients) {
         // place and check existence of items
 		IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-		List<List<ItemStack>> itemInputs = ingredients.getInputs(ItemStack.class);
+		List<List<ItemStack>> itemInputs = ingredients.getInputs(VanillaTypes.ITEM);
 		itemExists.clear();
 		for (int i = 0; i < ITEM_LOCATIONS.size(); i+=2) {
 			itemStackGroup.init(i, true, ITEM_LOCATIONS.get(i), ITEM_LOCATIONS.get(i + 1));
@@ -126,7 +129,7 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
 
 		// place and check existence of fluid(s)
 		IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
-		List<List<FluidStack>> fluidInputs = ingredients.getInputs(FluidStack.class);
+		List<List<FluidStack>> fluidInputs = ingredients.getInputs(VanillaTypes.FLUID);
 		fluidExists.clear();
         for (int i = 0; i < FLUID_LOCATIONS.size(); i+=2) {
             // fluids annoyingly need to be offset by 1 to fit in the slot graphic

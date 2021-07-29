@@ -6,6 +6,7 @@ import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.IngotMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -90,11 +91,11 @@ public class MaterialTree implements IRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-		ingredients.setInputLists(ItemStack.class, this.itemInputs);
-		ingredients.setInputLists(FluidStack.class, this.fluidInputs);
+		ingredients.setInputLists(VanillaTypes.ITEM, this.itemInputs);
+		ingredients.setInputLists(VanillaTypes.FLUID, this.fluidInputs);
 		// these don't get displayed, but allow the material tree to show up on left *or* right click
-		ingredients.setOutputLists(ItemStack.class, this.itemInputs);
-		ingredients.setOutputLists(FluidStack.class, this.fluidInputs);
+		ingredients.setOutputLists(VanillaTypes.ITEM, this.itemInputs);
+		ingredients.setOutputLists(VanillaTypes.FLUID, this.fluidInputs);
     }
 
 	public String getMaterialName() {
