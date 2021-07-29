@@ -5,6 +5,7 @@ import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.wrapper.ICustomCraftingRecipeWrapper;
 import mezz.jei.gui.CraftingGridHelper;
 import mezz.jei.plugins.vanilla.crafting.ShapedOreRecipeWrapper;
@@ -38,8 +39,8 @@ public class CustomItemReturnRecipeWrapper extends ShapedOreRecipeWrapper implem
     //doesn't allow just adding tooltip to ingredients without fucking overwriting most of it's setRecipe code
     public void setRecipe(IRecipeLayout recipeLayout, IIngredients ingredients) {
         IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
-        List<List<ItemStack>> inputs = ingredients.getInputs(ItemStack.class);
-        List<List<ItemStack>> outputs = ingredients.getOutputs(ItemStack.class);
+        List<List<ItemStack>> inputs = ingredients.getInputs(VanillaTypes.ITEM);
+        List<List<ItemStack>> outputs = ingredients.getOutputs(VanillaTypes.ITEM);
 
         craftingGridHelper.setInputs(guiItemStacks, inputs, getWidth(), getHeight());
         guiItemStacks.set(craftOutputSlot, outputs.get(0));

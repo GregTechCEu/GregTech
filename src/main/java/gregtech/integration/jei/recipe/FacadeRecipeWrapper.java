@@ -3,6 +3,7 @@ package gregtech.integration.jei.recipe;
 import com.google.common.collect.Lists;
 import gregtech.common.items.behaviors.FacadeItem;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.wrapper.ICraftingRecipeWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -25,8 +26,8 @@ public class FacadeRecipeWrapper implements ICraftingRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputs(ItemStack.class, Lists.newArrayList(plateStack, facadeStack));
-        ingredients.setOutput(ItemStack.class, resultStack);
+        ingredients.setInputs(VanillaTypes.ITEM, Lists.newArrayList(plateStack, facadeStack));
+        ingredients.setOutput(VanillaTypes.ITEM, resultStack);
     }
 
     @Nullable

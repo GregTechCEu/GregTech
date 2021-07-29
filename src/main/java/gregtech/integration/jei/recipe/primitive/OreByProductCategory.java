@@ -27,9 +27,9 @@ public class OreByProductCategory extends PrimitiveRecipeCategory<OreByProduct, 
 				guiHelper.createBlankDrawable(176, 166), 
 				guiHelper);
 
-		this.slot = guiHelper.createDrawable(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18, 18, 18);
-		this.arrowBackground = guiHelper.createDrawable(GuiTextures.PROGRESS_BAR_ARROW.imageLocation, 0, 0, 20, 20, 20, 40);
-		this.arrowForeground = guiHelper.createDrawable(GuiTextures.PROGRESS_BAR_ARROW.imageLocation, 0, 20, 20, 20, 20, 40);
+		this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
+		this.arrowBackground = guiHelper.drawableBuilder(GuiTextures.PROGRESS_BAR_ARROW.imageLocation, 0, 0, 20, 20).setTextureSize(20, 40).build();
+		this.arrowForeground = guiHelper.drawableBuilder(GuiTextures.PROGRESS_BAR_ARROW.imageLocation, 0, 20, 20, 20).setTextureSize(20, 40).build();
 		this.arrowAnimation = guiHelper.createAnimatedDrawable(arrowForeground, 30, StartDirection.LEFT, false);
 	}
 
