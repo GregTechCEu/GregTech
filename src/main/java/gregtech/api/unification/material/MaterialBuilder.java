@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.type.SimpleFluidMaterial;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
 
@@ -28,6 +29,16 @@ public class MaterialBuilder <T extends Material> {
         this.type = type;
         this.materialInfo.name = name;
         this.materialInfo.metaItemSubId = id;
+    }
+
+    public MaterialBuilder(Class<T> type, String name) {
+        if (type != SimpleFluidMaterial.class) {
+            throw new IllegalArgumentException("ID must be specified for this Material type!");
+        }
+        this.materialInfo = new MaterialInfo();
+        this.type = type;
+        this.materialInfo.name = name;
+        this.materialInfo.metaItemSubId = 0; // set a dummy default value
     }
 
     public MaterialBuilder<T> color(int color) {
