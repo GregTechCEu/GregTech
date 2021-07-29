@@ -168,5 +168,8 @@ public class GuiTextures {
     public static final TextureArea MULTIBLOCK_CATEGORY = TextureArea.fullImage("textures/gui/icon/coke_oven.png");
 
     //Terminal
+    public static final TextureArea TERMINAL_FRAME = TextureArea.fullImage("textures/gui/terminal/terminal_frame.png");
     public static final TextureArea TERMINAL_BACKGROUND = TextureArea.fullImage("textures/gui/terminal/terminal_background.png");
+    public static final TextureArea TERMINAL_MENU = TextureArea.fullImage("textures/gui/terminal/terminal_menu.png");
+
 }

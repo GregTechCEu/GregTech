@@ -248,8 +248,8 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        for (Widget widget : widgets) {
-            if(widget.mouseClicked(mouseX, mouseY, button)) {
+        for (int i = widgets.size() - 1; i >= 0; i--) {
+            if(widgets.get(i).mouseClicked(mouseX, mouseY, button)) {
                 return true;
             }
         }

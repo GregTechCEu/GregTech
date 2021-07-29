@@ -39,7 +39,7 @@ public abstract class GuideApp<T> extends AbstractApplication {
         pageWidget = null;
         if (isClient && getTree() != null) {
             group.addWidget(
-                    new TextTreeWidget<>(0, 0, 100, 232, getTree(), leaf -> {
+                    new TextTreeWidget<>(0, 0, 133, 232, getTree(), leaf -> {
                         if (pageWidget != null) {
                             group.removeWidget(pageWidget);
                         }
@@ -75,7 +75,7 @@ public abstract class GuideApp<T> extends AbstractApplication {
     }
 
     private GuidePageWidget loadLeaf(TreeNode<String, Tuple<T, JsonObject>> leaf) {
-        GuidePageWidget page = new GuidePageWidget(100, 0, 200, 232);
+        GuidePageWidget page = new GuidePageWidget(133, 0, 200, 232);
         if (leaf.isLeaf() && leaf.content != null) {
             JsonObject config = leaf.content.getSecond();
             // add title

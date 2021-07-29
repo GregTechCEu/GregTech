@@ -2,11 +2,12 @@ package gregtech.common.items.behaviors;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.terminal.TerminalBuilder;
-import gregtech.api.terminal.gui.widgets.TerminalMenuWidget;
+import gregtech.api.terminal.gui.widgets.os.TerminalOSWidget;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -34,10 +35,11 @@ public class GuideTerminalBehaviour implements IItemBehaviour, ItemUIFactory {
 
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        TerminalMenuWidget menu = new TerminalMenuWidget(15, 30, 24, 24);
-        TerminalBuilder.getApplications().forEach(menu::addApp);
-        return ModularUI.builder(GuiTextures.TERMINAL_BACKGROUND, 380, 256)
-                .widget(menu)
+        TerminalOSWidget os = new TerminalOSWidget(12, 11, 333, 232).setBackground(GuiTextures.TERMINAL_BACKGROUND);
+        TerminalBuilder.getApplications().forEach(os::installApplication);
+        return ModularUI.builder(GuiTextures.TERMINAL_FRAME, 380, 256)
+                .widget(os)
+                .widget(new ImageWidget(0, 0, 380, 256, GuiTextures.TERMINAL_FRAME))
                 .build(holder, entityPlayer);
     }
 }
