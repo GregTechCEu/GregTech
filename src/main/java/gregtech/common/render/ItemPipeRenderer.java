@@ -168,19 +168,24 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         Cuboid6 cuboid6 = BlockItemPipe.getSideBox(null, thickness);
         if (connectMask == 0) {
+            // base pipe without connections
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
                 renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
             }
         } else {
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
+                // if connection is blocked
                 if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
                     int oppositeIndex = renderedSide.getOpposite().getIndex();
                     if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & 63 & ~(1 << oppositeIndex)) == 0) {
+                        // render open texture if opposite is open and no other
                         renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
                     } else {
+                        // else render pipe side
                         renderPipeSide(state, pipeSide, renderedSide, cuboid6);
                     }
                 } else {
+                    // else render connection cuboid
                     renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, renderedSide, thickness, restrictive);
                 }
             }
@@ -189,14 +194,18 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
     private void renderPipeCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] pipeConnectSide, IVertexOperation[] pipeRestrictive, EnumFacing side, float thickness, boolean isRestrictive) {
         Cuboid6 cuboid6 = BlockItemPipe.getSideBox(side, thickness);
+        // render connection cuboid
         for (EnumFacing renderedSide : EnumFacing.VALUES) {
             if (renderedSide.getAxis() != side.getAxis()) {
+                // render base side texture
                 renderPipeSide(renderState, pipeline, renderedSide, cuboid6);
                 if (isRestrictive)
+                    // render restrictive texture
                     renderPipeSide(renderState, pipeRestrictive, renderedSide, cuboid6);
             }
         }
         if ((connections & 1 << (6 + side.getIndex())) > 0) {
+            // if neighbour pipe is smaller, render closed texture
             renderPipeSide(renderState, pipeline, side, cuboid6);
         }
     }
