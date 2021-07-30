@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.itempipe;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.cover.CoverBehavior;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -135,6 +136,26 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Nonnull
+    @Override
+    public int getVisualConnections(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile) {
+        int connections = selfTile.getOpenConnections();
+        float selfTHICCness = selfTile.getPipeType().getThickness();
+        for (EnumFacing facing : EnumFacing.values()) {
+            CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
+            if (cover != null) {
+                // adds side to open connections of it isn't already open & has a cover
+                connections |= 1 << facing.getIndex();
+                continue;
+            }
+            // check if neighbour is a smaller item pipe
+            TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
+            if(neighbourTile instanceof TileEntityItemPipe && ((TileEntityItemPipe) neighbourTile).getPipeType().getThickness() < selfTHICCness) {
+                connections |= 1 << (facing.getIndex() + 6);
+            }
+        }
+        return connections;
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {

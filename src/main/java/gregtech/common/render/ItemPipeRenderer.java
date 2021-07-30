@@ -175,16 +175,16 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             }
         } else {
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
-                //if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
-                int oppositeIndex = renderedSide.getOpposite().getIndex();
-                if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & ~(1 << oppositeIndex)) == 0) {
-                    renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
-                } else {
-                    renderPipeSide(state, pipeSide, renderedSide, cuboid6);
-                    if (restrictive)
-                        renderPipeSide(state, pipeRestrictive, renderedSide, cuboid6);
+                if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
+                    int oppositeIndex = renderedSide.getOpposite().getIndex();
+                    if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & ~(1 << oppositeIndex)) == 0) {
+                        renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
+                    } else {
+                        renderPipeSide(state, pipeSide, renderedSide, cuboid6);
+                        if(restrictive)
+                            renderPipeSide(state, pipeRestrictive, renderedSide, cuboid6);
+                    }
                 }
-                //}
             }
             renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, EnumFacing.DOWN, thickness, restrictive);
             renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, EnumFacing.UP, thickness, restrictive);
