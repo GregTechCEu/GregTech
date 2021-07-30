@@ -52,7 +52,7 @@ public class Materials {
                 .color(0x80C8F0)
                 .iconSet(DULL)
                 .flags(EXT2_METAL | GENERATE_SMALL_GEAR | GENERATE_ORE | GENERATE_RING | GENERATE_FRAME)
-                .element(Elements.get("Aluminium"))
+                .element(Elements.Al)
                 .toolStats(10.0f, 2.0f, 128)
                 .blastTemp(1700)
                 .addOreByproducts(Bauxite)

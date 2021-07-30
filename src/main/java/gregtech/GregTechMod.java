@@ -69,7 +69,6 @@ public class GregTechMod {
     public void onPreInit(FMLPreInitializationEvent event) {
         GTLog.init(event.getModLog());
         NetworkHandler.init();
-        Elements.register();
         MetaTileEntityUIFactory.INSTANCE.init();
         PlayerInventoryUIFactory.INSTANCE.init();
         CoverBehaviorUIFactory.INSTANCE.init();
