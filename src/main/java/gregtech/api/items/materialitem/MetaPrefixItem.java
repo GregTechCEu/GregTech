@@ -7,9 +7,8 @@ import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MaterialIconSet;
-import gregtech.api.unification.material.type.DustMaterial;
+import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
@@ -189,10 +188,8 @@ public class MetaPrefixItem extends StandardMetaItem {
     public int getItemBurnTime(ItemStack itemStack) {
         int damage = itemStack.getItemDamage();
         Material material = Material.MATERIAL_REGISTRY.getObjectById(damage);
-        if (material instanceof DustMaterial) {
-            DustMaterial dustMaterial = (DustMaterial) material;
-            return (int) (dustMaterial.burnTime * prefix.materialAmount / GTValues.M);
-        }
+        DustProperty property = material == null ? null : material.getProperties().getDustProperty();
+        if (property != null) return (int) (property.burnTime * prefix.materialAmount / GTValues.M);
         return super.getItemBurnTime(itemStack);
 
     }
@@ -204,7 +201,8 @@ public class MetaPrefixItem extends StandardMetaItem {
         Material material = Material.MATERIAL_REGISTRY.getObjectById(damage);
         if (this.prefix != null && material != null) {
             boolean isSolidState = this.prefix == OrePrefix.ingot || this.prefix == OrePrefix.gem;
-            boolean isMaterialTiered = material instanceof SolidMaterial && ((SolidMaterial) material).harvestLevel >= 2;
+            DustProperty property = material.getProperties().getDustProperty();
+            boolean isMaterialTiered = property != null && property.harvestLevel >= 2;
             return isSolidState && isMaterialTiered;
         }
         return false;

@@ -2,7 +2,6 @@ package gregtech.api.recipes;
 
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.Recipe.ChanceEntry;
-import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -15,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -191,8 +191,8 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(CountableIngredient.from(item.getStackForm(), 0));
     }
 
-    public R notConsumable(FluidMaterial fluidMat) {
-        return fluidInputs(new FluidStack(fluidMat.getFluid(1), 0));
+    public R notConsumable(Fluid fluid) {
+        return fluidInputs(new FluidStack(fluid, 0));
     }
 
     public R notConsumable(FluidStack fluidStack) {

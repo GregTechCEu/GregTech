@@ -2,6 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import gregtech.api.unification.material.Material;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class Properties {
     }
 
     public void verify() {
-        properties.forEach(p -> p.verifyProperty(this, material));
+        properties.forEach(p -> p.verifyProperty(this));
     }
 
     public void setMaterial(Material material) {
@@ -39,46 +40,57 @@ public class Properties {
     //                 GETTERS                   //
     ///////////////////////////////////////////////
 
+    @Nullable
     public BlastProperty getBlastProperty() {
         return blastProperty;
     }
 
+    @Nullable
     public DustProperty getDustProperty() {
         return dustProperty;
     }
 
+    @Nullable
     public FluidPipeProperty getFluidPipeProperty() {
         return fluidPipeProperty;
     }
 
+    @Nullable
     public FluidProperty getFluidProperty() {
         return fluidProperty;
     }
 
+    @Nullable
     public GemProperty getGemProperty() {
         return gemProperty;
     }
 
+    @Nullable
     public IngotProperty getIngotProperty() {
         return ingotProperty;
     }
 
+    @Nullable
     public ItemPipeProperty getItemPipeProperty() {
         return itemPipeProperty;
     }
 
+    @Nullable
     public OreProperty getOreProperty() {
         return oreProperty;
     }
 
+    @Nullable
     public PlasmaProperty getPlasmaProperty() {
         return plasmaProperty;
     }
 
+    @Nullable
     public ToolProperty getToolProperty() {
         return toolProperty;
     }
 
+    @Nullable
     public WireProperty getWireProperty() {
         return wireProperty;
     }
