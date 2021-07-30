@@ -6,23 +6,28 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.itemhandlers.InaccessibleItemStackHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.metatileentity.IRenderMetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.MetaTileEntityUIFactory;
+import gregtech.api.metatileentity.*;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.models.ModelCache;
 import gregtech.common.items.behaviors.ClipboardBehaviour;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -39,6 +44,7 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 
@@ -57,8 +63,25 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     }
 
     @Override
-    public void renderMetaTileEntityDynamic(double x, double y, double z, float partialTicks) {
+    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) { }
 
+    public void renderMetaTileEntityDynamic(double x, double y, double z, float partialTicks) {
+        if(this.getWorld() == null || !this.getWorld().isRemote)
+            return;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferBuilder = tessellator.getBuffer();
+        IBlockState blockState = this.getWorld().getBlockState(this.getPos());
+        BlockRendererDispatcher renderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        if(cache.findModel("bakedModel")) {
+            IBakedModel model = cache.getCurrentMatch();
+            bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+            GlStateManager.pushMatrix();
+            GlStateManager.rotate((frontFacing.getHorizontalAngle()),  0.0F, 1.0F, 0.0F);
+            GlStateManager.translate(x, y, z);
+            renderer.getBlockModelRenderer().renderModel(this.getWorld(), model, blockState, this.getPos(), bufferBuilder, true);
+            tessellator.draw();
+            GlStateManager.popMatrix();
+        }
     }
 
     @Override
@@ -74,8 +97,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     public boolean isOpaqueCube() {
         return false;
     }
-
-
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
@@ -115,12 +136,13 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
 
     @Override
     public void getDrops(NonNullList<ItemStack> dropsList, @Nullable EntityPlayer harvester) {
+        dropsList.clear();
         dropsList.add(this.getClipboard());
     }
 
     @Override
     public float getBlockHardness() {
-        return 0;
+        return 10;
     }
 
     @Override

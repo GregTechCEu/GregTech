@@ -189,7 +189,8 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
 
     @Override
     public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack heldItem = player.getHeldItem(hand);
+        ItemStack heldItem = player.getHeldItem(hand).copy();
+        heldItem.setCount(1); // don't place multiple items at a time
         EnumFacing playerFacing = player.getHorizontalFacing();
         // Make sure it's the right block
         Block testBlock = world.getBlockState(pos).getBlock();

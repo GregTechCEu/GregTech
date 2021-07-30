@@ -77,7 +77,7 @@ public class ModelClipboard implements IBakedModel {
         }
         if (state == null /*&& stack.getItem() == ItemClipboard.instance*/) {
             String cacheName = "clipboard" + getModelPartsNumberString(stack);
-            if (this.cache.hasModel(cacheName)) {
+            if (this.cache.findModel(cacheName)) {
                 this.baseModel = this.cache.getCurrentMatch();
             } else {
                 modelState = new OBJModel.OBJState(getModelParts(stack), true);

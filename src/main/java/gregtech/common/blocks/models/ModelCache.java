@@ -13,7 +13,7 @@ public class ModelCache {
         this.models.add(pack);
     }
 
-    public boolean hasModel(String name) {
+    public boolean findModel(String name) {
         boolean output = false;
         for (int i = 0; i < this.models.size(); i++) {
             ModelCachePackage pack = this.models.get(i);
