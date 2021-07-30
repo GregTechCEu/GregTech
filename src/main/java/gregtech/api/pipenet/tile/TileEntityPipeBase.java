@@ -42,10 +42,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     private boolean wasInDetachedConversionMode;
 
     public TileEntityPipeBase() {
-        if (ConfigHolder.U.GT6.gt6StylePipesCables) {
-            openConnectionsMap.put(AttachmentType.PIPE.ordinal(), 0);
-            recomputeBlockedConnections();
-        }
+        openConnectionsMap.put(AttachmentType.PIPE.ordinal(), 0);
+        recomputeBlockedConnections();
     }
 
     public void setDetachedConversionMode(boolean detachedConversionMode) {

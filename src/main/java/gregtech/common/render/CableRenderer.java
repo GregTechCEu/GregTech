@@ -152,38 +152,28 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         for (EnumFacing renderedSide : EnumFacing.VALUES) {
             if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
                 int oppositeIndex = renderedSide.getOpposite().getIndex();
-                if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & ~(1 << oppositeIndex)) == 0) {
+                if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & 63 & ~(1 << oppositeIndex)) == 0) {
                     //if there is something on opposite side, render overlay + wire
                     renderCableSide(state, wire, renderedSide, cuboid6);
                     renderCableSide(state, overlays, renderedSide, cuboid6);
                 } else {
                     renderCableSide(state, insulation, renderedSide, cuboid6);
                 }
+            } else {
+                renderCableCube(connectMask, state, insulation, wire, overlays, renderedSide, thickness);
             }
         }
-
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.DOWN, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.UP, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.WEST, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.EAST, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.NORTH, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.SOUTH, thickness);
     }
 
     private static void renderCableCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] wire, IVertexOperation[] overlays, EnumFacing side, float thickness) {
-        if ((connections & 1 << side.getIndex()) > 0) {
-            boolean renderFrontSide = (connections & 1 << (6 + side.getIndex())) > 0;
-            Cuboid6 cuboid6 = BlockCable.getSideBox(side, thickness);
-            for (EnumFacing renderedSide : EnumFacing.VALUES) {
-                if (renderedSide == side) {
-                    if (renderFrontSide) {
-                        renderCableSide(renderState, wire, renderedSide, cuboid6);
-                        renderCableSide(renderState, overlays, renderedSide, cuboid6);
-                    }
-                } else if (renderedSide != side.getOpposite()) {
-                    renderCableSide(renderState, pipeline, renderedSide, cuboid6);
-                }
+        Cuboid6 cuboid6 = BlockCable.getSideBox(side, thickness);
+        for (EnumFacing renderedSide : EnumFacing.VALUES) {
+            if (renderedSide.getAxis() != side.getAxis()) {
+                renderCableSide(renderState, pipeline, renderedSide, cuboid6);
             }
+        }
+        if ((connections & 1 << (6 + side.getIndex())) > 0) {
+            renderCableSide(renderState, pipeline, side, cuboid6);
         }
     }
 

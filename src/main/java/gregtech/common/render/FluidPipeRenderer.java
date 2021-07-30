@@ -172,34 +172,23 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
                 if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
                     int oppositeIndex = renderedSide.getOpposite().getIndex();
-                    if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & ~(1 << oppositeIndex)) == 0) {
+                    if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & 63 & ~(1 << oppositeIndex)) == 0) {
                         renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
                     } else {
                         renderPipeSide(state, pipeSide, renderedSide, cuboid6);
                     }
+                } else {
+                    renderPipeCube(state, pipeSide, pipeConnectSide, renderedSide, thickness);
                 }
             }
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.DOWN, thickness);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.UP, thickness);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.WEST, thickness);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.EAST, thickness);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.NORTH, thickness);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.SOUTH, thickness);
         }
     }
 
-    private static void renderPipeCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] pipeConnectSide, EnumFacing side, float thickness) {
-        if ((connections & 1 << side.getIndex()) > 0) {
-            boolean renderFrontSide = (connections & 1 << (6 + side.getIndex())) > 0;
-            Cuboid6 cuboid6 = BlockFluidPipe.getSideBox(side, thickness);
-            for (EnumFacing renderedSide : EnumFacing.VALUES) {
-                if (renderedSide == side) {
-                    if (renderFrontSide) {
-                        renderPipeSide(renderState, pipeConnectSide, renderedSide, cuboid6);
-                    }
-                } else if (renderedSide != side.getOpposite()) {
-                    renderPipeSide(renderState, pipeline, renderedSide, cuboid6);
-                }
+    private static void renderPipeCube(CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] pipeConnectSide, EnumFacing side, float thickness) {
+        Cuboid6 cuboid6 = BlockFluidPipe.getSideBox(side, thickness);
+        for (EnumFacing renderedSide : EnumFacing.VALUES) {
+            if (renderedSide != side.getOpposite()) {
+                renderPipeSide(renderState, pipeline, renderedSide, cuboid6);
             }
         }
     }
