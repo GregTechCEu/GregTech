@@ -1,4 +1,4 @@
-package gregtech.common.pipelike.itempipe;
+package gregtech.api.unification.material.properties;
 
 import java.util.Objects;
 

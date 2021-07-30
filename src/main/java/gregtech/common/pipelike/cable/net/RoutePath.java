@@ -1,6 +1,6 @@
 package gregtech.common.pipelike.cable.net;
 
-import gregtech.common.pipelike.cable.WireProperties;
+import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;

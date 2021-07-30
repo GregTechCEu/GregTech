@@ -25,7 +25,7 @@ import gregtech.api.util.ModCompatibility;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.ItemBlockCable;
-import gregtech.common.pipelike.cable.WireProperties;
+import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;

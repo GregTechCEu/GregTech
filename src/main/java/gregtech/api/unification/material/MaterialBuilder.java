@@ -9,9 +9,9 @@ import gregtech.api.unification.material.type.SimpleFluidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
-import gregtech.common.pipelike.cable.WireProperties;
-import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
-import gregtech.common.pipelike.itempipe.ItemPipeProperties;
+import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.unification.material.properties.ItemPipeProperties;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -45,6 +45,40 @@ public class MaterialBuilder <T extends Material> {
         this.type = type;
         this.materialInfo.name = name;
         this.materialInfo.metaItemSubId = 0; // set a dummy default value
+    }
+
+    /**
+     * Material Types
+     */
+
+    public MaterialBuilder<T> fluid(boolean withPlasma) {
+        //todo
+        return this;
+    }
+
+    public MaterialBuilder<T> dust() {
+        //todo
+        return this;
+    }
+
+    public MaterialBuilder<T> solid() {
+        //todo
+        return this;
+    }
+
+    public MaterialBuilder<T> ingot() {
+        //todo
+        return this;
+    }
+
+    public MaterialBuilder<T> polymer() {
+        //todo
+        return this;
+    }
+
+    public MaterialBuilder<T> gem() {
+        //todo
+        return this;
     }
 
     public MaterialBuilder<T> color(int color) {

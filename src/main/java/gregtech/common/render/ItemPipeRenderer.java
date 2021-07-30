@@ -22,7 +22,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
-import gregtech.common.pipelike.itempipe.ItemPipeProperties;
+import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.block.state.IBlockState;

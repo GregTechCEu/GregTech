@@ -1,4 +1,4 @@
-package gregtech.common.pipelike.fluidpipe;
+package gregtech.api.unification.material.properties;
 
 import java.util.Objects;
 

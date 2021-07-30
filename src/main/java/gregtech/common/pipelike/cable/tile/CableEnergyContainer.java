@@ -4,7 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.pipelike.cable.Insulation;
-import gregtech.common.pipelike.cable.WireProperties;
+import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.RoutePath;
 import gregtech.common.pipelike.cable.net.WorldENet;

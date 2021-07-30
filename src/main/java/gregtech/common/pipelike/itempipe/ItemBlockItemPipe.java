@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.itempipe;
 
 import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
+import gregtech.api.unification.material.properties.ItemPipeProperties;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
