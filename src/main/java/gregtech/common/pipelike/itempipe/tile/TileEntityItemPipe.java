@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.itempipe.tile;
 
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
-import gregtech.common.pipelike.itempipe.ItemPipeProperties;
+import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;

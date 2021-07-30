@@ -4,7 +4,7 @@ import gregtech.api.pipenet.MonolithicPipeNet;
 import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
