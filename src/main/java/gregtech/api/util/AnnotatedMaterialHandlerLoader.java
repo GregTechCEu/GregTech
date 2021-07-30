@@ -70,7 +70,7 @@ public class AnnotatedMaterialHandlerLoader {
             }
             if (denyReason == null) {
                 GTLog.logger.info("Registered material handler {}", materialHandler.getClass().getName());
-                Material.registerMaterialHandler(materialHandler);
+                IMaterialHandler.registerMaterialHandler(materialHandler);
                 materialHandlersRegistered++;
             } else {
                 GTLog.logger.error("Failed to load material handler class {} from {}: {}",

@@ -4,6 +4,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Use this to register your own materials in the right stage before material registry freezing
@@ -17,6 +19,16 @@ import java.lang.annotation.Target;
  * running early material-manipulating CraftTweaker scripts.
  */
 public interface IMaterialHandler {
+
+    List<IMaterialHandler> materialHandlers = new ArrayList<>();
+
+    static void registerMaterialHandler(IMaterialHandler materialHandler) {
+        materialHandlers.add(materialHandler);
+    }
+
+    static void runMaterialHandlers() {
+        materialHandlers.forEach(IMaterialHandler::onMaterialsInit);
+    }
 
     void onMaterialsInit();
 

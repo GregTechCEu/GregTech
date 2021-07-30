@@ -34,18 +34,9 @@ import static gregtech.api.util.GTUtility.createFlag;
 public abstract class Material implements Comparable<Material> {
 
     public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(32768);
-    private static final List<IMaterialHandler> materialHandlers = new ArrayList<>();
-
-    public static void registerMaterialHandler(IMaterialHandler materialHandler) {
-        materialHandlers.add(materialHandler);
-    }
 
     public GTControlledRegistry<String, Material> getRegistry() {
         return MATERIAL_REGISTRY;
-    }
-
-    public static void runMaterialHandlers() {
-        materialHandlers.forEach(IMaterialHandler::onMaterialsInit);
     }
 
     public static void freezeRegistry() {

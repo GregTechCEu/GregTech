@@ -12,6 +12,7 @@ import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.IMaterialHandler;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.util.AnnotatedMaterialHandlerLoader;
@@ -79,7 +80,7 @@ public class GregTechMod {
         //first, register primary materials and run material handlers
         Materials.register();
         AnnotatedMaterialHandlerLoader.discoverAndLoadAnnotatedMaterialHandlers(event.getAsmData());
-        Material.runMaterialHandlers();
+        IMaterialHandler.runMaterialHandlers();
 
         //then, run CraftTweaker early material registration scripts
         if (GTValues.isModLoaded(GTValues.MODID_CT)) {

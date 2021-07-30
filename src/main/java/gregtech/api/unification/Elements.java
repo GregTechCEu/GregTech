@@ -156,7 +156,9 @@ public class Elements {
 
     @ZenMethod
     public static Element add(long protons, long neutrons, long halfLifeSeconds, String decayTo, String name, String symbol, boolean isIsotope) {
-        return elements.put(name, new Element(protons, neutrons, halfLifeSeconds, decayTo, name, symbol, isIsotope));
+        Element element = new Element(protons, neutrons, halfLifeSeconds, decayTo, name, symbol, isIsotope);
+        elements.put(name, element);
+        return element;
     }
 
     @ZenMethod
