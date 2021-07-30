@@ -130,7 +130,7 @@ public abstract class PipeNetWalker {
         // check for surrounding pipes and item handlers
         for (EnumFacing accessSide : EnumFacing.VALUES) {
             //skip sides reported as blocked by pipe network
-            if (!pipeTile.isConnectionOpenVisual(accessSide))
+            if (!pipeTile.isConnectionOpenAny(accessSide))
                 continue;
 
             TileEntity tile = world.getTileEntity(pos.offset(accessSide));

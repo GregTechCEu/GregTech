@@ -160,7 +160,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 }
             }
             if (facing == null) throw new NullPointerException("Facing is null");
-            boolean open = pipeTile.isConnectionOpenVisual(facing);
+            boolean open = pipeTile.isConnectionOpenAny(facing);
             boolean canConnect = canConnect(pipeTile, facing);
             if (!open && canConnect && !ConfigHolder.U.GT6.gt6StylePipesCables)
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
@@ -406,7 +406,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         int connections = selfTile.getOpenConnections();
         for (EnumFacing facing : EnumFacing.values()) {
             // continue if connection is already open
-            if (selfTile.isConnectionOpenVisual(facing)) continue;
+            if (selfTile.isConnectionOpenAny(facing)) continue;
             CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
             if (cover == null) continue;
             // adds side to open connections of it isn't already open & has a cover

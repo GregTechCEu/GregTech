@@ -283,7 +283,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
         if (coverBehavior == null && facing != null) {
             //boolean isBlocked = (getBlockedConnections() & 1 << facing.getIndex()) > 0;
-            return isConnectionOpenVisual(facing) ? defaultValue : null;
+            return isConnectionOpenAny(facing) ? defaultValue : null;
         }
         if (coverBehavior != null) {
             return coverBehavior.getCapability(capability, defaultValue);
