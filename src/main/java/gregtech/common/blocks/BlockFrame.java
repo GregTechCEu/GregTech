@@ -2,9 +2,8 @@ package gregtech.common.blocks;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.ModHandler;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.Material;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockColored;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.state.BlockFaceShape;
@@ -30,9 +29,9 @@ public final class BlockFrame extends Block {
 
     private static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
     private static final int SCAFFOLD_PILLAR_RADIUS_SQ = 10;
-    public final SolidMaterial frameMaterial;
+    public final Material frameMaterial;
 
-    public BlockFrame(SolidMaterial material) {
+    public BlockFrame(Material material) {
         super(ModHandler.isMaterialWood(material) ?
             net.minecraft.block.material.Material.WOOD :
             net.minecraft.block.material.Material.IRON);

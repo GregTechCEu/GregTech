@@ -49,11 +49,11 @@ public class OreConfigUtils {
         } else {
             throw new IllegalArgumentException("Invalid string ore declaration: " + stringDeclaration);
         }
-        DustMaterial material = getMaterialByName(materialName);
+        Material material = getMaterialByName(materialName);
         return getOreForMaterial(material);
     }
 
-    public static Map<StoneType, IBlockState> getOreForMaterial(DustMaterial material) {
+    public static Map<StoneType, IBlockState> getOreForMaterial(Material material) {
         List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
             .filter(ore -> ore.material == material)
             .collect(Collectors.toList());
@@ -70,11 +70,11 @@ public class OreConfigUtils {
         return stoneTypeMap;
     }
 
-    public static DustMaterial getMaterialByName(String name) {
+    public static Material getMaterialByName(String name) {
         Material material = Material.MATERIAL_REGISTRY.getObject(name);
-        if (!(material instanceof DustMaterial))
+        if (material == null || material.getProperties().getOreProperty() == null)
             throw new IllegalArgumentException("Material with name " + name + " not found!");
-        return (DustMaterial) material;
+        return material;
     }
 
     public static Block getBlockByName(String name) {

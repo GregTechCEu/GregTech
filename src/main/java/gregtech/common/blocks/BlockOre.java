@@ -1,14 +1,14 @@
 package gregtech.common.blocks;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.unification.material.type.DustMaterial;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.blocks.properties.PropertyStoneType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -29,9 +29,9 @@ import java.util.Random;
 public class BlockOre extends BlockFalling implements IBlockOre {
 
     public final PropertyStoneType STONE_TYPE;
-    public final DustMaterial material;
+    public final Material material;
 
-    public BlockOre(DustMaterial material, StoneType[] allowedValues) {
+    public BlockOre(Material material, StoneType[] allowedValues) {
         super(net.minecraft.block.material.Material.ROCK);
         setTranslationKey("ore_block");
         setSoundType(SoundType.STONE);
@@ -44,12 +44,12 @@ public class BlockOre extends BlockFalling implements IBlockOre {
 
     @SuppressWarnings("deprecation")
     @Override
-    public Material getMaterial(IBlockState state) {
+    public net.minecraft.block.material.Material getMaterial(IBlockState state) {
         String harvestTool = getHarvestTool(state);
         if (harvestTool != null && harvestTool.equals("shovel")) {
-            return Material.GROUND;
+            return net.minecraft.block.material.Material.GROUND;
         }
-        return Material.ROCK;
+        return net.minecraft.block.material.Material.ROCK;
     }
 
     @Override
@@ -84,8 +84,14 @@ public class BlockOre extends BlockFalling implements IBlockOre {
     public int getHarvestLevel(IBlockState state) {
         StoneType stoneType = state.getValue(STONE_TYPE);
         if (material != null) {
-            int toolQuality = material.harvestLevel;
-            return Math.max(stoneType.stoneMaterial.harvestLevel, toolQuality > 1 ? toolQuality - 1 : toolQuality);
+            DustProperty matProp = material.getProperties().getDustProperty();
+            if (matProp != null) {
+                int toolQuality = material.getProperties().getDustProperty().harvestLevel;
+                DustProperty stoneProp = stoneType.stoneMaterial.getProperties().getDustProperty();
+                if (stoneProp != null) {
+                    return Math.max(stoneProp.harvestLevel, toolQuality > 1 ? toolQuality - 1 : toolQuality);
+                }
+            }
         }
         return 1;
     }
