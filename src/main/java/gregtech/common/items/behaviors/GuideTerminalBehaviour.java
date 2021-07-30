@@ -16,6 +16,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.List;
 
 public class GuideTerminalBehaviour implements IItemBehaviour, ItemUIFactory {
@@ -36,8 +37,13 @@ public class GuideTerminalBehaviour implements IItemBehaviour, ItemUIFactory {
 
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        TerminalOSWidget os = new TerminalOSWidget(12, 11, 333, 232).setBackground(GuiTextures.TERMINAL_BACKGROUND);
-        CircleButtonWidget home = new CircleButtonWidget(362, 126, 12).setIcon(GuiTextures.TERMINAL_HOME).setFillColors(0xff9197A5).setClickListener(clickData -> os.backToHome());
+        TerminalOSWidget os = new TerminalOSWidget(12, 11, 333, 232, holder.getCurrentItem().getOrCreateSubCompound("terminal"))
+                .setBackground(GuiTextures.TERMINAL_BACKGROUND);
+        CircleButtonWidget home = new CircleButtonWidget(362, 126).setIcon(GuiTextures.TERMINAL_HOME)
+                .setColors(new Color(82, 97, 93, 255).getRGB(),
+                        new Color(39, 232, 141).getRGB(),
+                        0xff9197A5)
+                .setClickListener(clickData -> os.homeTrigger(clickData.isClient));
         TerminalBuilder.getApplications().forEach(os::installApplication);
         return ModularUI.builder(GuiTextures.TERMINAL_FRAME, 380, 256)
                 .widget(os)

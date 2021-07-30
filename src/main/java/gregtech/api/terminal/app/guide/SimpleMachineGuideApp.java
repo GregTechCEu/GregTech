@@ -29,11 +29,6 @@ public class SimpleMachineGuideApp extends GuideApp<MetaTileEntity> {
     }
 
     @Override
-    protected GuideApp<MetaTileEntity> createAPP() {
-        return new SimpleMachineGuideApp();
-    }
-
-    @Override
     protected IGuiTexture itemIcon(MetaTileEntity item) {
         return new ItemStackTexture(item.getStackForm());
     }

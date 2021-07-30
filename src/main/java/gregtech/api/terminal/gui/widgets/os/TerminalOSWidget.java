@@ -16,25 +16,33 @@ import gregtech.api.util.interpolate.Interpolator;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class TerminalOSWidget extends AbstractWidgetGroup {
     private IGuiTexture background;
-    private final List<AbstractApplication> openedApps;
-    private final TerminalMenuWidget menu;
-    private final TerminalDesktopWidget desktop;
+    public final List<AbstractApplication> openedApps;
+    public AbstractApplication focusApp;
+    public final TerminalMenuWidget menu;
+    public final TerminalDesktopWidget desktop;
+    public List<AbstractApplication> waitToRemoved;
+    private NBTTagCompound tabletNBT;
 
-    public TerminalOSWidget(int xPosition, int yPosition, int width, int height) {
+    public TerminalOSWidget(int xPosition, int yPosition, int width, int height, NBTTagCompound tabletNBT) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.openedApps = new ArrayList<>();
         this.desktop = new TerminalDesktopWidget(Position.ORIGIN, new Size(333, 232), this);
-        this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(35, 232), this).setBackground(GuiTextures.TERMINAL_MENU);
+        this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, 232), this).setBackground(GuiTextures.TERMINAL_MENU);
         this.addWidget(desktop);
         this.addWidget(menu);
+        this.waitToRemoved = new ArrayList<>();
+        this.tabletNBT = tabletNBT;
     }
 
     public TerminalOSWidget setBackground(IGuiTexture background) {
@@ -43,39 +51,87 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public void installApplication(AbstractApplication application){
-        menu.addApp(application);
+        desktop.installApplication(application);
     }
 
     public void openApplication(AbstractApplication application, boolean isClient) {
+        if (focusApp != null ) {
+            closeApplication(focusApp, isClient);
+        }
         for (AbstractApplication app : openedApps) {
             if (app.getClass() == application.getClass()) {
-                app.setVisible(true);
+                focusApp = app;
+                maximizeApplication(app, isClient);
                 return;
             }
         }
-        AbstractApplication app = application.openApp(isClient, null);
-        openedApps.add(app);
-        desktop.addWidget(app);
-        menu.hideMenu();
+        String name = application.getName();
+        if (!tabletNBT.hasKey(name)) {
+            tabletNBT.setTag(name, new NBTTagCompound());
+        }
+        AbstractApplication app = application.createApp(isClient, tabletNBT.getCompoundTag(application.getName()));
+        if (app != null) {
+            openedApps.add(app);
+            desktop.addWidget(app);
+            focusApp = app;
+            maximizeApplication(app, isClient);
+        }
+    }
+
+    public void maximizeApplication(AbstractApplication application, boolean isClient) {
+        application.setActive(true);
+        if (isClient) {
+            application.maximizeApp(app->desktop.hideDesktop());
+            if (!menu.isHide) {
+                menu.hideMenu();
+            }
+        }
+        desktop.hideDesktop();
+    }
+
+    public void minimizeApplication(AbstractApplication application, boolean isClient) {
+        if (application != null) {
+            if (application.isBackgroundApp()) {
+                application.setActive(false);
+            }
+            if (isClient) {
+                application.minimizeApp(null);
+            }
+            if(focusApp == application) {
+                focusApp = null;
+            }
+            desktop.showDesktop();
+        }
     }
 
     public void closeApplication(AbstractApplication application, boolean isClient) {
-        desktop.removeWidget(application);
-        application.closeApp(isClient, null);
+        if (application != null) {
+            String name = application.getName();
+            if (!tabletNBT.hasKey(name)) {
+                tabletNBT.setTag(name, new NBTTagCompound());
+            }
+            application.closeApp(isClient, tabletNBT.getCompoundTag(name));
+            if (isClient) {
+                application.minimizeApp(waitToRemoved::add);
+            } else {
+                waitToRemoved.add(application);
+            }
+            openedApps.remove(application);
+            if(focusApp == application) {
+                focusApp = null;
+            }
+            desktop.showDesktop();
+        }
     }
 
-    public void backToHome() {
-        List<AbstractApplication> close = new ArrayList<>();
-        for (AbstractApplication app : openedApps) {
-            if (app.isBackgroundApp()) {
-                app.setVisible(false);
+    public void homeTrigger(boolean isClient) {
+        if(isClient) {
+            if (menu.isHide) {
+                menu.showMenu();
             } else {
-                close.add(app);
-                closeApplication(app, isClientSide());
+                menu.hideMenu();
             }
         }
-        close.forEach(openedApps::remove);
-        menu.showMenu();
     }
 
     @Override
@@ -90,5 +146,23 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         RenderUtil.useScissor(position.x, position.y, size.width, size.height, ()->{
             super.drawInBackground(mouseX, mouseY, partialTicks, context);
         });
+    }
+
+    @Override
+    public void updateScreen() {
+        if (waitToRemoved.size() > 0) {
+            waitToRemoved.forEach(desktop::removeWidget);
+        }
+        waitToRemoved.clear();
+        super.updateScreen();
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        if (waitToRemoved.size() > 0) {
+            waitToRemoved.forEach(desktop::removeWidget);
+        }
+        waitToRemoved.clear();
+        super.detectAndSendChanges();
     }
 }

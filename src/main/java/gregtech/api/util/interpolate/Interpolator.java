@@ -35,8 +35,9 @@ public class Interpolator implements ITickable {
         tick = 0;
     }
 
-    public void start() {
+    public Interpolator start() {
         tick = 1;
+        return this;
     }
 
     public boolean isFinish(){

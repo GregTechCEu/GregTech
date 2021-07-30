@@ -24,7 +24,7 @@ public abstract class PictureTexture implements IGuiTexture {
         render((float)x, (float)y, 1, 1, 0, width, height, false, false);
     }
 
-    public void render(float x, float y, float ux, float uv, float rotation, float sizeX, float sizeY, boolean flippedX, boolean flippedY) {
+    public void render(float x, float y, float width, float height, float rotation, float scaleX, float scaleY, boolean flippedX, boolean flippedY) {
         this.beforeRender();
         GlStateManager.color(1,1,1,1);
         GlStateManager.enableBlend();
@@ -35,16 +35,16 @@ public abstract class PictureTexture implements IGuiTexture {
         GlStateManager.pushMatrix();
         GL11.glRotated(rotation, 0, 0, 1);
         GlStateManager.enableRescaleNormal();
-        GL11.glScaled(sizeX, sizeY, 1);
+        GL11.glScaled(scaleX, scaleY, 1);
         GL11.glBegin(GL11.GL_POLYGON);
         GL11.glTexCoord3f(flippedY ? 1 : 0, flippedX ? 1 : 0, 0);
         GL11.glVertex3f(x, y, 0.01f);
         GL11.glTexCoord3f(flippedY ? 1 : 0, flippedX ? 0 : 1, 0);
-        GL11.glVertex3f(x, y + uv, 0.01f);
+        GL11.glVertex3f(x, y + height, 0.01f);
         GL11.glTexCoord3f(flippedY ? 0 : 1, flippedX ? 0 : 1, 0);
-        GL11.glVertex3f(x + ux, y + uv, 0.01f);
+        GL11.glVertex3f(x + width, y + height, 0.01f);
         GL11.glTexCoord3f(flippedY ? 0 : 1, flippedX ? 1 : 0, 0);
-        GL11.glVertex3f(x + ux, y, 0.01f);
+        GL11.glVertex3f(x + width, y, 0.01f);
         GL11.glEnd();
         GlStateManager.popMatrix();
         GlStateManager.disableRescaleNormal();

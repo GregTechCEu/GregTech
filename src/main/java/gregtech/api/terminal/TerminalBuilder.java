@@ -17,6 +17,7 @@ public class TerminalBuilder {
         appRegister.add(new MultiBlockGuideApp());
         appRegister.add(new ItemGuideApp());
         appRegister.add(new TutorialGuideApp());
+        appRegister.add(new GuideEditorApp());
     }
 
     public static List<AbstractApplication> getApplications() {

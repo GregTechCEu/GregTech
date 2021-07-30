@@ -26,6 +26,7 @@ public class ItemStackTexture implements IGuiTexture{
         GlStateManager.translate(x * 16 / width, y * 16 / height, 0);
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         renderItem.renderItemAndEffectIntoGUI(itemStack, 0, 0);
+        GlStateManager.enableAlpha();
         GlStateManager.popMatrix();
         RenderHelper.disableStandardItemLighting();
     }

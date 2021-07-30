@@ -21,7 +21,17 @@ public class ImageWidget extends GuideWidget{
     public int width;
     public int height;
 
-    public IGuiTexture image;
+    public transient IGuiTexture image;
+
+    @Override
+    public JsonObject getTemplate(boolean isFixed) {
+        JsonObject template = super.getTemplate(isFixed);
+        template.addProperty("form", "item");
+        template.addProperty("source", "minecraft:ender_pearl");
+        template.addProperty("width", 100);
+        template.addProperty("height", 100);
+        return template;
+    }
 
     @Override
     public void updateScreen() {

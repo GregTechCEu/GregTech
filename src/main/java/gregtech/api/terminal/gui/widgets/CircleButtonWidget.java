@@ -6,6 +6,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -16,10 +17,12 @@ import java.util.Collections;
 import java.util.function.Consumer;
 
 public class CircleButtonWidget extends Widget {
+    private final int border;
     private int hoverTick;
     private boolean isHover;
     private String hoverText;
     private IGuiTexture icon;
+    private final int iconSize;
     private Consumer<ClickData> onPressCallback;
     private final int[] colors = {
             new Color(146, 146, 146).getRGB(),
@@ -27,8 +30,14 @@ public class CircleButtonWidget extends Widget {
             new Color(255, 255, 255).getRGB(),
     };
 
-    public CircleButtonWidget(int x, int y, int r) {
+    public CircleButtonWidget(int x, int y, int r, int border, int iconSize) {
         super(new Position(x - r, y - r), new Size(2 * r, 2 * r));
+        this.border = border;
+        this.iconSize = iconSize;
+    }
+
+    public CircleButtonWidget(int x, int y) {
+        this(x, y, 12, 2, 16);
     }
 
     public CircleButtonWidget setIcon(IGuiTexture icon) {
@@ -83,9 +92,10 @@ public class CircleButtonWidget extends Widget {
         if (isHover || hoverTick != 0) {
             RenderUtil.renderSector(x, y, r, colors[1], segments, 0, (int) (segments * ((hoverTick + partialTicks) / 8)));
         }
-        RenderUtil.renderCircle(x, y, r - 2, colors[2], segments);
+        RenderUtil.renderCircle(x, y, r - border, colors[2], segments);
         if (icon != null) {
-            icon.draw(x - 8, y - 8, 16, 16);
+            GlStateManager.color(1,1,1,1);
+            icon.draw(x - iconSize / 2f, y - iconSize / 2f, iconSize, iconSize);
         }
     }
 

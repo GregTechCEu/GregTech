@@ -1,15 +1,21 @@
 package gregtech.api.terminal.gui.widgets.guide;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.sun.istack.internal.Nullable;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import javafx.geometry.Pos;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 public abstract class GuideWidget extends Widget implements IGuideWidget {
@@ -30,6 +36,56 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
 
     public GuideWidget(){
         super(Position.ORIGIN, Size.ZERO);
+    }
+
+    public void updateValue(String field, JsonElement value) {
+        try {
+            Field f = this.getClass().getDeclaredField(field);
+            f.set(this, new Gson().fromJson(value, f.getType()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setSize(Size size) {
+        Size oldSize = this.getSize();
+        super.setSize(size);
+        if (page != null) {
+            page.onSizeUpdate(this, oldSize);
+        }
+    }
+
+    @Override
+    protected void recomputePosition() {
+        Position oldPosition = getPosition();
+        super.recomputePosition();
+        if (page != null) {
+            page.onPositionUpdate(this, oldPosition);
+        }
+    }
+
+    @Override
+    public void setSelfPosition(Position selfPosition) {
+        super.setSelfPosition(selfPosition);
+    }
+
+    @Override
+    public JsonObject getTemplate(boolean isFixed) {
+        JsonObject template = new JsonObject();
+        if (isFixed) {
+            template.addProperty("x", 0);
+            template.addProperty("y", 0);
+            template.addProperty("width", 100);
+            template.addProperty("height", 100);
+        }
+        template.addProperty("ref", ref);
+        template.addProperty("stroke", stroke);
+        template.addProperty("stroke_width", stroke_width);
+        template.addProperty("fill", fill);
+        template.addProperty("link", link);
+        template.add("hover_text", new Gson().toJsonTree(hover_text));
+        return template;
     }
 
     @Override

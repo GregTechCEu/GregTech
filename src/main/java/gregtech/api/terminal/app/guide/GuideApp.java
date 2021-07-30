@@ -25,34 +25,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class GuideApp<T> extends AbstractApplication {
-    private static final Map<String, IGuideWidget> REGISTER_WIDGETS = new HashMap<>();
-    static { //register guide widgets
-        REGISTER_WIDGETS.put("textbox", new TextBoxWidget());
-        REGISTER_WIDGETS.put("image", new ImageWidget());
-    }
     private GuidePageWidget pageWidget;
     public GuideApp(String name, IGuiTexture icon) {
         super(name, icon);
     }
 
-    protected abstract GuideApp<T> createAPP();
-
     @Override
-    public GuideApp<T> openApp(boolean isClient, NBTTagCompound nbt) {
-        GuideApp<T> app = createAPP();
-        pageWidget = null;
-        if (isClient && getTree() != null) {
-            app.addWidget(
-                    new TextTreeWidget<>(0, 0, 133, 232, getTree(), leaf -> {
-                        if (pageWidget != null) {
-                            app.removeWidget(pageWidget);
-                        }
-                        pageWidget = loadLeaf(leaf);
-                        app.addWidget(pageWidget);
-                    }, this::itemIcon, this::itemName).setNodeTexture(GuiTextures.BORDERED_BACKGROUND).setLeafTexture(GuiTextures.SLOT_DARKENED)
-            );
+    public AbstractApplication createApp(boolean isClient, NBTTagCompound nbt) {
+        try {
+            GuideApp app = this.getClass().newInstance();
+            if (isClient && getTree() != null) {
+                app.addWidget(
+                        new TextTreeWidget<>(0, 0, 133, 232, getTree(), leaf -> {
+                            if (app.pageWidget != null) {
+                                app.removeWidget(pageWidget);
+                            }
+                            app.pageWidget = new GuidePageWidget(133, 0, 200, 232);
+                            if (leaf.isLeaf() && leaf.content != null) {
+                                app.pageWidget.loadJsonConfig(leaf.content.getSecond());
+                            }
+                            app.addWidget(pageWidget);
+                        }, this::itemIcon, this::itemName).setNodeTexture(GuiTextures.BORDERED_BACKGROUND).setLeafTexture(GuiTextures.SLOT_DARKENED)
+                );
+            }
+            return app;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return app;
+        return null;
     }
 
     protected IGuiTexture itemIcon(T item) {
@@ -77,43 +77,5 @@ public abstract class GuideApp<T> extends AbstractApplication {
         } catch (IOException e) {
             return null;
         }
-    }
-
-    private GuidePageWidget loadLeaf(TreeNode<String, Tuple<T, JsonObject>> leaf) {
-        GuidePageWidget page = new GuidePageWidget(133, 0, 200, 232);
-        if (leaf.isLeaf() && leaf.content != null) {
-            JsonObject config = leaf.content.getSecond();
-            // add title
-            Widget title = new TextBoxWidget(5, 2, 190,
-                    Collections.singletonList(config.get("title").getAsString()),
-                    0, 15, 0xffffffff, 0x6fff0000, 0xff000000,
-                    true, true);
-            page.addWidget(title);
-
-            // add stream widgets
-            if (config.has("stream")) {
-                int y = title.getSize().height + 10;
-                for (JsonElement element : config.getAsJsonArray("stream")) {
-                    JsonObject widgetConfig = element.getAsJsonObject();
-                    Widget widget = REGISTER_WIDGETS.get(widgetConfig.get("type").getAsString()).createStreamWidget(5, y, 190, widgetConfig);
-                    y += widget.getSize().height + 5;
-                    page.addWidget(widget);
-                }
-            }
-            // add fixed widgets
-            if (config.has("fixed")) {
-                for (JsonElement element : config.getAsJsonArray("fixed")) {
-                    JsonObject widgetConfig = element.getAsJsonObject();
-                    Widget widget = REGISTER_WIDGETS.get(widgetConfig.get("type").getAsString()).createFixedWidget(
-                            widgetConfig.get("x").getAsInt(),
-                            widgetConfig.get("y").getAsInt(),
-                            widgetConfig.get("width").getAsInt(),
-                            widgetConfig.get("height").getAsInt(),
-                            widgetConfig);
-                    page.addWidget(widget);
-                }
-            }
-        }
-        return page;
     }
 }
