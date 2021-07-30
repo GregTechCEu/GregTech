@@ -71,6 +71,10 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
         return EnumActionResult.SUCCESS;
     }
 
+    public boolean testItemStack(ItemStack stack) {
+        return itemFilter.testItemStack(stack);
+    }
+
     @Override
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup filterGroup = new WidgetGroup();
