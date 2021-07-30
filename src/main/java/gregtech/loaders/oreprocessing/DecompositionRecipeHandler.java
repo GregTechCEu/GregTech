@@ -6,7 +6,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.FluidMaterial;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.type.SimpleFluidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gregtech.api.unification.material.type.Material.MatFlags.DECOMPOSITION_REQUIRES_HYDROGEN;
-import static gregtech.api.unification.material.type.Material.MatFlags.DISABLE_DECOMPOSITION;
+import static gregtech.api.unification.material.Material.MatFlags.DECOMPOSITION_REQUIRES_HYDROGEN;
+import static gregtech.api.unification.material.Material.MatFlags.DISABLE_DECOMPOSITION;
 
 public class DecompositionRecipeHandler {
 

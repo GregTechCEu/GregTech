@@ -2,7 +2,7 @@ package gregtech.common.pipelike.fluidpipe.net;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.util.PerTickIntCounter;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.unification.material.properties.FluidPipeProperty;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
@@ -25,7 +25,7 @@ public class FluidNetTank extends FluidTank {
         Preconditions.checkNotNull(resource, "resource");
         FluidStack copyStack = resource.copy();
         copyStack.amount = Math.min(copyStack.amount, getMaxThroughput());
-        FluidPipeProperties properties = handle.getNodeData();
+        FluidPipeProperty properties = handle.getNodeData();
         boolean isLeakingPipe = copyStack.getFluid().isGaseous(copyStack) && !properties.gasProof;
         boolean isBurningPipe = copyStack.getFluid().getTemperature(copyStack) > properties.maxFluidTemperature;
         if (isLeakingPipe || isBurningPipe) {

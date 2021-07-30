@@ -1,6 +1,6 @@
 package gregtech.api.recipes.recipeproperties;
 
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.Validate;

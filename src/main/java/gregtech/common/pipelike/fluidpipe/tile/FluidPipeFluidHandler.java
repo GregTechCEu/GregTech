@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.unification.material.properties.FluidPipeProperty;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
@@ -15,10 +15,10 @@ import java.lang.ref.WeakReference;
 
 public class FluidPipeFluidHandler implements IFluidHandler {
 
-    private final IPipeTile<FluidPipeType, FluidPipeProperties> pipeTile;
+    private final IPipeTile<FluidPipeType, FluidPipeProperty> pipeTile;
     private WeakReference<FluidPipeNet> currentPipeNet = new WeakReference<>(null);
 
-    public FluidPipeFluidHandler(IPipeTile<FluidPipeType, FluidPipeProperties> pipeTile) {
+    public FluidPipeFluidHandler(IPipeTile<FluidPipeType, FluidPipeProperty> pipeTile) {
         this.pipeTile = pipeTile;
     }
 

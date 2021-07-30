@@ -2,6 +2,7 @@ package gregtech.api.unification.material.type;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialIconSet;
 
 /**
@@ -26,7 +27,7 @@ public final class MarkerMaterial extends Material {
     }
 
     @Override
-    protected void registerMaterial(int metaItemSubId, String name) {
+    protected void registerMaterial(Material material) {
     }
 
     @Override

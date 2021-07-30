@@ -5,8 +5,8 @@ import gregtech.api.damagesources.DamageSources;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.properties.FluidPipeProperty;
+import gregtech.api.unification.material.Material;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.FluidPipeFluidHandler;
@@ -37,16 +37,16 @@ import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
+public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperty, WorldFluidPipeNet> {
 
-    private final SortedMap<Material, FluidPipeProperties> enabledMaterials = new TreeMap<>();
+    private final SortedMap<Material, FluidPipeProperty> enabledMaterials = new TreeMap<>();
 
     public BlockFluidPipe(FluidPipeType pipeType) {
         super(pipeType);
         setHarvestLevel("wrench", 1);
     }
 
-    public void addPipeMaterial(Material material, FluidPipeProperties fluidPipeProperties) {
+    public void addPipeMaterial(Material material, FluidPipeProperty fluidPipeProperties) {
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(fluidPipeProperties, "fluidPipeProperties");
         Preconditions.checkArgument(Material.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
@@ -68,12 +68,12 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    protected FluidPipeProperties createProperties(FluidPipeType fluidPipeType, Material material) {
+    protected FluidPipeProperty createProperties(FluidPipeType fluidPipeType, Material material) {
         return fluidPipeType.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
     }
 
     @Override
-    protected FluidPipeProperties getFallbackType() {
+    protected FluidPipeProperty getFallbackType() {
         return enabledMaterials.values().iterator().next();
     }
 
@@ -89,12 +89,12 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperty> selfTile, EnumFacing side, IPipeTile<FluidPipeType, FluidPipeProperty> sideTile) {
         return selfTile.getNodeData().equals(sideTile.getNodeData());
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, TileEntity tile) {
+    public boolean canPipeConnectToBlock(IPipeTile<FluidPipeType, FluidPipeProperty> selfTile, EnumFacing side, TileEntity tile) {
         return tile != null && tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()) != null;
     }
 
@@ -136,12 +136,12 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         return activeNodeConnections;
     }*/
 
-    public boolean canPushIntoFluidHandler(IPipeTile<FluidPipeType, FluidPipeProperties> selfTileEntity, TileEntity otherTileEntity, IFluidHandler sourceHandler, IFluidHandler destinationHandler) {
+    public boolean canPushIntoFluidHandler(IPipeTile<FluidPipeType, FluidPipeProperty> selfTileEntity, TileEntity otherTileEntity, IFluidHandler sourceHandler, IFluidHandler destinationHandler) {
         boolean isSourcePipe = sourceHandler instanceof FluidPipeFluidHandler;
         boolean isDestPipe = destinationHandler instanceof FluidPipeFluidHandler;
         if(isSourcePipe && isDestPipe) {
             float sourceThickness = selfTileEntity.getPipeType().getThickness();
-            IPipeTile<FluidPipeType, FluidPipeProperties> otherPipe = getPipeTileEntity(otherTileEntity);
+            IPipeTile<FluidPipeType, FluidPipeProperty> otherPipe = getPipeTileEntity(otherTileEntity);
             if (otherPipe == null) {
                 return false;
             }
@@ -179,7 +179,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public TileEntityPipeBase<FluidPipeType, FluidPipeProperties> createNewTileEntity(boolean supportsTicking) {
+    public TileEntityPipeBase<FluidPipeType, FluidPipeProperty> createNewTileEntity(boolean supportsTicking) {
         return supportsTicking ? new TileEntityFluidPipeTickable() : new TileEntityFluidPipe();
     }
 

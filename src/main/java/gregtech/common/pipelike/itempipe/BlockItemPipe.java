@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.properties.ItemPipeProperty;
+import gregtech.api.unification.material.Material;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -32,16 +32,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipeProperties, WorldItemPipeNet> {
+public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipeProperty, WorldItemPipeNet> {
 
-    private final Map<Material, ItemPipeProperties> enabledMaterials = new HashMap<>();
+    private final Map<Material, ItemPipeProperty> enabledMaterials = new HashMap<>();
 
     public BlockItemPipe(ItemPipeType itemPipeType) {
         super(itemPipeType);
         setHarvestLevel("pickaxe", 1);
     }
 
-    public void addPipeMaterial(Material material, ItemPipeProperties properties) {
+    public void addPipeMaterial(Material material, ItemPipeProperty properties) {
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(properties, "itemPipeProperties");
         Preconditions.checkArgument(Material.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
@@ -49,7 +49,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    public TileEntityPipeBase<ItemPipeType, ItemPipeProperties> createNewTileEntity(boolean supportsTicking) {
+    public TileEntityPipeBase<ItemPipeType, ItemPipeProperty> createNewTileEntity(boolean supportsTicking) {
         return supportsTicking ? new TileEntityItemPipeTickable() : new TileEntityItemPipe();
     }
 
@@ -84,7 +84,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    protected ItemPipeProperties getFallbackType() {
+    protected ItemPipeProperty getFallbackType() {
         return enabledMaterials.values().iterator().next();
     }
 
@@ -99,7 +99,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    protected ItemPipeProperties createProperties(ItemPipeType itemPipeType, Material material) {
+    protected ItemPipeProperty createProperties(ItemPipeType itemPipeType, Material material) {
         return itemPipeType.modifyProperties(enabledMaterials.getOrDefault(material, getFallbackType()));
     }
 
@@ -124,12 +124,12 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     }
 
     @Override
-    public boolean canPipesConnect(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, IPipeTile<ItemPipeType, ItemPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<ItemPipeType, ItemPipeProperty> selfTile, EnumFacing side, IPipeTile<ItemPipeType, ItemPipeProperty> sideTile) {
         return selfTile instanceof TileEntityItemPipe && sideTile instanceof TileEntityItemPipe;
     }
 
     @Override
-    public boolean canPipeConnectToBlock(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, TileEntity tile) {
+    public boolean canPipeConnectToBlock(IPipeTile<ItemPipeType, ItemPipeProperty> selfTile, EnumFacing side, TileEntity tile) {
         return tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) != null;
     }
 

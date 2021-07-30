@@ -3,7 +3,7 @@ package gregtech.common.blocks.modelfactories;
 import gregtech.api.model.AbstractBlockModelFactory;
 import gregtech.api.model.ResourcePackHook;
 import gregtech.api.unification.material.MaterialIconType;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.common.blocks.BlockFrame;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.relauncher.Side;

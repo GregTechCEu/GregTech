@@ -1,10 +1,10 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.unification.material.properties.FluidPipeProperty;
 import net.minecraft.world.World;
 
-public class WorldFluidPipeNet extends WorldPipeNet<FluidPipeProperties, FluidPipeNet> {
+public class WorldFluidPipeNet extends WorldPipeNet<FluidPipeProperty, FluidPipeNet> {
 
     private static final String DATA_ID_BASE = "gregtech.fluid_pipe_net";
 

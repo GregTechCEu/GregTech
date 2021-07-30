@@ -2,7 +2,7 @@ package gregtech.common.pipelike.cable;
 
 import gregtech.api.GTValues;
 import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
-import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.api.unification.material.properties.WireProperty;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProperties> {
+public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProperty> {
 
     public ItemBlockCable(BlockCable block) {
         super(block);
@@ -23,7 +23,7 @@ public class ItemBlockCable extends ItemBlockMaterialPipe<Insulation, WireProper
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        WireProperties wireProperties = blockPipe.createItemProperties(stack);
+        WireProperty wireProperties = blockPipe.createItemProperties(stack);
         String voltageName = GTValues.VN[GTUtility.getTierByVoltage(wireProperties.voltage)];
         tooltip.add(I18n.format("gregtech.cable.voltage", wireProperties.voltage, voltageName));
         tooltip.add(I18n.format("gregtech.cable.amperage", wireProperties.amperage));

@@ -3,7 +3,7 @@ package gregtech.common.blocks.properties;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import net.minecraft.block.properties.PropertyHelper;
 
 import java.util.Arrays;

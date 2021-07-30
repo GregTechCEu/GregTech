@@ -2,7 +2,6 @@ package gregtech.api.unification.material;
 
 import com.google.common.collect.HashBiMap;
 import gregtech.api.unification.material.type.MarkerMaterial;
-import gregtech.api.unification.material.type.Material;
 import net.minecraft.item.EnumDyeColor;
 
 import static com.google.common.collect.ImmutableList.of;

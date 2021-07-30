@@ -3,101 +3,83 @@ package gregtech.api.unification.material;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.Element;
-import gregtech.api.unification.material.type.FluidMaterial;
-import gregtech.api.unification.material.type.Material;
-import gregtech.api.unification.material.type.SimpleFluidMaterial;
+import gregtech.api.unification.material.properties.*;
+import gregtech.api.unification.material.properties.Properties;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
-import gregtech.api.unification.material.properties.WireProperties;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
+import net.minecraft.enchantment.Enchantment;
 
 import java.util.*;
 import java.util.function.Supplier;
 
-public class MaterialBuilder <T extends Material> {
+import static gregtech.api.unification.material.MaterialBuilder.FluidType.*;
 
-    /**
-     * The "type" of this Material. i.e.: IngotMaterial, DustMaterial, etc..
-     */
-    private final Class<T> type;
+public class MaterialBuilder {
 
     private final MaterialInfo materialInfo;
+    private final Properties properties;
+    private final List<IMaterialProperty> materialProperties = new ArrayList<>();
 
     /**
      * The "list" of components for this Material.
      */
     private final SortedMap<Material, Integer> composition = new TreeMap<>();
 
-    public MaterialBuilder(Class<T> type, int id, String name) {
+    public MaterialBuilder(int id, String name) {
         this.materialInfo = new MaterialInfo();
-        this.type = type;
+        this.properties = new Properties();
         this.materialInfo.name = name;
         this.materialInfo.metaItemSubId = id;
-    }
-
-    public MaterialBuilder(Class<T> type, String name) {
-        if (type != SimpleFluidMaterial.class) {
-            throw new IllegalArgumentException("ID must be specified for this Material type!");
-        }
-        this.materialInfo = new MaterialInfo();
-        this.type = type;
-        this.materialInfo.name = name;
-        this.materialInfo.metaItemSubId = 0; // set a dummy default value
     }
 
     /**
      * Material Types
      */
 
-    public MaterialBuilder<T> fluid(boolean withPlasma) {
+    // TODO Clean this up
+    public MaterialBuilder fluid(FluidType type, boolean withBlock) {
+        properties.setFluidProperty(new FluidProperty(withBlock, type == GAS));
+        return this;
+    }
+
+    public MaterialBuilder plasma() {
+        properties.setPlasmaProperty(new PlasmaProperty());
+        return this;
+    }
+
+    public MaterialBuilder dust() {
         //todo
         return this;
     }
 
-    public MaterialBuilder<T> dust() {
+    public MaterialBuilder ingot() {
         //todo
         return this;
     }
 
-    public MaterialBuilder<T> solid() {
+    public MaterialBuilder gem() {
         //todo
         return this;
     }
 
-    public MaterialBuilder<T> ingot() {
-        //todo
-        return this;
-    }
-
-    public MaterialBuilder<T> polymer() {
-        //todo
-        return this;
-    }
-
-    public MaterialBuilder<T> gem() {
-        //todo
-        return this;
-    }
-
-    public MaterialBuilder<T> color(int color) {
+    public MaterialBuilder color(int color) {
         this.materialInfo.color = color;
         return this;
     }
 
-    public MaterialBuilder<T> iconSet(MaterialIconSet iconSet) {
+    public MaterialBuilder iconSet(MaterialIconSet iconSet) {
         this.materialInfo.iconSet = iconSet;
         return this;
     }
 
-    public MaterialBuilder<T> harvestLevel(int harvestLevel) {
+    public MaterialBuilder harvestLevel(int harvestLevel) {
         this.materialInfo.harvestLevel = harvestLevel;
         return this;
     }
 
     // TODO do this more efficiently
-    public MaterialBuilder<T> components(Object... components) {
+    public MaterialBuilder components(Object... components) {
         Preconditions.checkArgument(
                 components.length % 2 == 0,
                 "Material Components list malformed!"
@@ -112,73 +94,78 @@ public class MaterialBuilder <T extends Material> {
         return this;
     }
 
-    public MaterialBuilder<T> flags(long flags) {
+    public MaterialBuilder flags(long flags) {
         this.materialInfo.flags = flags;
         return this;
     }
 
-    public MaterialBuilder<T> element(Element element) {
+    public MaterialBuilder element(Element element) {
         this.materialInfo.element = element;
         return this;
     }
 
-    public MaterialBuilder<T> toolStats(float speed, float damage, int durability) {
-        this.materialInfo.toolSpeed = speed;
-        this.materialInfo.attackDamage = damage;
-        this.materialInfo.toolDurability = durability;
+    public MaterialBuilder toolStats(float speed, float damage, int durability) {
+        properties.setToolProperty(new ToolProperty(speed, damage, durability));
         return this;
     }
 
-    public MaterialBuilder<T> blastTemp(int temp) {
-        this.materialInfo.blastFurnaceTemperature = temp;
+    public MaterialBuilder blastTemp(int temp) {
+        properties.setBlastProperty(new BlastProperty(temp));
         return this;
     }
 
-    public MaterialBuilder<T> fluidTemp(int temp) {
+    // todo
+    public MaterialBuilder fluidTemp(int temp) {
+        Optional<IMaterialProperty> prop = materialProperties.stream().filter(p -> p instanceof FluidProperty).findFirst();
+        if (!prop.isPresent()) {
+            prop = fluid(FLUID, false);
+        } else {
+            return fluid(FLUID, false);
+        }
         this.materialInfo.fluidTemp = temp;
         return this;
     }
 
-    public MaterialBuilder<T> separatesInto(Material m) {
+    public MaterialBuilder separatesInto(Material m) {
         this.materialInfo.separatedInto = m;
         return this;
     }
 
-    public MaterialBuilder<T> washesWith(Material m) {
+    public MaterialBuilder washesWith(Material m) {
         this.materialInfo.washedIn = m;
         return this;
     }
 
-    public MaterialBuilder<T> polarizesInto(Material m) {
+    public MaterialBuilder polarizesInto(Material m) {
         this.materialInfo.magneticMaterial = m;
         return this;
     }
 
-    public MaterialBuilder<T> addOreByproducts(FluidMaterial... byproducts) {
-        this.materialInfo.oreByproducts.addAll(Arrays.asList(byproducts));
+    public MaterialBuilder addOreByproducts(Material... byproducts) {
+        this.materialInfo.oreByproducts.addAll(Arrays.asList(byproducts)); // todo
         return this;
     }
 
-    public MaterialBuilder<T> cableProperties(long voltage, int amperage, int loss) {
-        this.materialInfo.wireProperties = new WireProperties((int) voltage, amperage, loss);
+    public MaterialBuilder cableProperties(long voltage, int amperage, int loss) {
+        properties.setWireProperty(new WireProperty((int) voltage, amperage, loss));
         return this;
     }
 
-    public MaterialBuilder<T> fluidPipeProperties(int maxTemp, int throughput, boolean gasProof) {
-        Preconditions.checkArgument(
-                !materialInfo.hasPipe(),
-                "Material cannot have both Item and Fluid Pipes!"
-        );
-        this.materialInfo.fluidPipeProperties = new FluidPipeProperties(maxTemp, throughput, gasProof);
+    public MaterialBuilder fluidPipeProperties(int maxTemp, int throughput, boolean gasProof) {
+        properties.setFluidPipeProperty(new FluidPipeProperty(maxTemp, throughput, gasProof));
         return this;
     }
 
-    public MaterialBuilder<T> itemPipeProperties(int priority, float stacksPerSec) {
-        Preconditions.checkArgument(
-                !materialInfo.hasPipe(),
-                "Material cannot have both Item and Fluid Pipes!"
-        );
-        this.materialInfo.itemPipeProperties = new ItemPipeProperties(priority, stacksPerSec);
+    public MaterialBuilder itemPipeProperties(int priority, float stacksPerSec) {
+        properties.setItemPipeProperty(new ItemPipeProperty(priority, stacksPerSec));
+        return this;
+    }
+
+    public MaterialBuilder addDefaultEnchant(Enchantment enchant, int level) {
+        ToolProperty prop = properties.getToolProperty();
+        if (prop == null)
+            throw new IllegalArgumentException("Material cannot have an Enchant without Tools!");
+        prop.addEnchantmentForTools(enchant, level); // todo make sure this update-by-reference works
         return this;
     }
 
@@ -186,12 +173,14 @@ public class MaterialBuilder <T extends Material> {
      * Set this to lock a Material to a specific prefix, and ignore all others (including Fluid).
      */
     // TODO Carefully implement this
-    public MaterialBuilder<T> setPrefix(Supplier<OrePrefix> prefix) {
+    public MaterialBuilder setPrefix(Supplier<OrePrefix> prefix) {
         this.materialInfo.prefixSupplier = prefix;
         return this;
     }
 
-    public T register() {
+    // todo fix
+    public Material build() {
+        //verifyProperties();
         final List<MaterialStack> materialList = new ArrayList<>();
         this.composition.forEach((k, v) -> materialList.add(new MaterialStack(k, v)));
         this.materialInfo.componentList = ImmutableList.copyOf(materialList);
@@ -203,6 +192,20 @@ public class MaterialBuilder <T extends Material> {
         return null;
     }
 
+    // TODO push this to *after* the builder, or make the material and verify properties here
+    private void verifyProperties() {
+        if (!materialProperties.stream()
+                .anyMatch(p ->
+                        p instanceof FluidProperty
+                     || p instanceof IngotProperty
+                     || p instanceof DustProperty
+                     || p instanceof GemProperty))
+            throw new IllegalArgumentException("Material must have at least one of: [fluid, ingot, dust, gem] specified!");
+    }
+
+    /**
+     * Holds the basic info for a Material, like the name, color, id, etc..
+     */
     public static class MaterialInfo {
         /**
          * The unlocalized name of this Material.
@@ -214,7 +217,7 @@ public class MaterialBuilder <T extends Material> {
         /**
          * The MetaItem ID of this Material.
          *
-         * Required, except for SimpleFluidMaterials.
+         * Required.
          */
         public int metaItemSubId;
 
@@ -261,27 +264,6 @@ public class MaterialBuilder <T extends Material> {
         public Element element;
 
         /**
-         * Tool Stats of this Material.
-         *
-         * Default: 0 for all.
-         */
-        public float toolSpeed = 0f;
-        public float attackDamage = 0f;
-        public int toolDurability = 0;
-
-        /**
-         * EBF Temperature of this material.
-         *
-         * Default: 0.
-         */
-        public int blastFurnaceTemperature = 0;
-
-        /**
-         * The temperature of this Material as a Fluid.
-         */
-        public int fluidTemp;
-
-        /**
          * During electromagnetic separation, this Material's Ore will be separated into this Material.
          *
          * Default: none.
@@ -303,15 +285,6 @@ public class MaterialBuilder <T extends Material> {
         public Material magneticMaterial;
 
         /**
-         * Used only for {@link gregtech.api.unification.material.type.SimpleFluidMaterial}.
-         * Do not attempt to use this anywhere else!
-         */
-        public MaterialInfo setID(int id) {
-            this.metaItemSubId = id;
-            return this;
-        }
-
-        /**
          * Explicit OrePrefix for this Material.
          */
         public Supplier<OrePrefix> prefixSupplier;
@@ -321,20 +294,10 @@ public class MaterialBuilder <T extends Material> {
          *
          * Default: none (meaning just this material as byproducts).
          */
-        public List<FluidMaterial> oreByproducts = new ArrayList<>();
+        public List<Material> oreByproducts = new ArrayList<>();
+    }
 
-        /**
-         * Wire and Pipe properties of this Material.
-         * A material cannot have both Item and Fluid Pipe Properties.
-         *
-         * Default: none for all.
-         */
-        public WireProperties wireProperties = null;
-        public FluidPipeProperties fluidPipeProperties = null;
-        public ItemPipeProperties itemPipeProperties = null;
-
-        private boolean hasPipe() {
-            return fluidPipeProperties != null || itemPipeProperties != null;
-        }
+    public enum FluidType {
+        FLUID, GAS
     }
 }

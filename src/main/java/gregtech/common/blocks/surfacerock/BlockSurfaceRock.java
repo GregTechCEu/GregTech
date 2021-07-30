@@ -3,7 +3,7 @@ package gregtech.common.blocks.surfacerock;
 import gregtech.api.items.toolitem.IScannableBlock;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.render.StoneRenderer;
 import net.minecraft.block.Block;

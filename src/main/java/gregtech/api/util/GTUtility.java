@@ -677,10 +677,6 @@ public class GTUtility {
         return replacement;
     }
 
-    public static long createFlag(int id) {
-        return 1L << id;
-    }
-
     public static void doOvervoltageExplosion(MetaTileEntity metaTileEntity, long voltage) {
         BlockPos pos = metaTileEntity.getPos();
         metaTileEntity.getWorld().setBlockToAir(pos);

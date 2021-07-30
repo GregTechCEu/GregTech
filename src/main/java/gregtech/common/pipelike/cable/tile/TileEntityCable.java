@@ -4,13 +4,13 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.common.pipelike.cable.Insulation;
-import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.api.unification.material.properties.WireProperty;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 
-public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties> {
+public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperty> {
 
     private IEnergyContainer energyContainer;
 

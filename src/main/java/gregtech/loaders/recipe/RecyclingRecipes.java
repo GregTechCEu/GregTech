@@ -7,7 +7,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.GemMaterial;
 import gregtech.api.unification.material.type.IngotMaterial;
-import gregtech.api.unification.material.type.Material.MatFlags;
+import gregtech.api.unification.material.Material.MatFlags;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.item.ItemStack;

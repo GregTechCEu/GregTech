@@ -1,151 +1,29 @@
-package gregtech.api.unification.material.type;
+package gregtech.api.unification.material;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
-import gregtech.api.unification.material.IMaterialHandler;
-import gregtech.api.unification.material.MaterialBuilder;
-import gregtech.api.unification.material.MaterialIconSet;
+import gregtech.api.unification.material.properties.IMaterialProperty;
+import gregtech.api.unification.material.properties.Properties;
+import gregtech.api.unification.material.type.MaterialFlags;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTControlledRegistry;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import stanhebben.zenscript.annotations.*;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import static gregtech.api.util.GTUtility.createFlag;
+import java.util.stream.Stream;
 
 @ZenClass("mods.gregtech.material.Material")
 @ZenRegister
 public abstract class Material implements Comparable<Material> {
 
+    // TODO remove
     public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(32768);
-
-    public GTControlledRegistry<String, Material> getRegistry() {
-        return MATERIAL_REGISTRY;
-    }
-
-    public static void freezeRegistry() {
-        GTLog.logger.info("Freezing material registry...");
-        MATERIAL_REGISTRY.freezeRegistry();
-    }
-
-    public static final class MatFlags {
-
-        private static final Map<String, Entry<Long, Class<? extends Material>>> materialFlagRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-
-        public static void registerMaterialFlag(String name, long value, Class<? extends Material> classFilter) {
-            if (materialFlagRegistry.containsKey(name))
-                throw new IllegalArgumentException("Flag with name " + name + " already registered!");
-
-            for (Map.Entry<Long, Class<? extends Material>> entry : materialFlagRegistry.values()) {
-                if (entry.getKey() == value)
-                    throw new IllegalArgumentException("Flag with ID " + getIntValueOfFlag(value) + " already registered!");
-            }
-            materialFlagRegistry.put(name, new SimpleEntry<>(value, classFilter));
-        }
-
-        private static int getIntValueOfFlag(long value) {
-            int index = 0;
-            while (value != 1) {
-                value >>= 1;
-                index++;
-            }
-            return index;
-        }
-
-        public static void registerMaterialFlagsHolder(Class<?> holder, Class<? extends Material> lowerBounds) {
-            for (Field holderField : holder.getFields()) {
-                int modifiers = holderField.getModifiers();
-                if (holderField.getType() != long.class ||
-                    !Modifier.isPublic(modifiers) ||
-                    !Modifier.isStatic(modifiers) ||
-                    !Modifier.isFinal(modifiers))
-                    continue;
-                String flagName = holderField.getName();
-                long flagValue;
-                try {
-                    flagValue = holderField.getLong(null);
-                } catch (IllegalAccessException exception) {
-                    throw new RuntimeException(exception);
-                }
-                registerMaterialFlag(flagName, flagValue, lowerBounds);
-            }
-        }
-
-        public static long resolveFlag(String name, Class<? extends Material> selfClass) {
-            Entry<Long, Class<? extends Material>> flagEntry = materialFlagRegistry.get(name);
-            if (flagEntry == null)
-                throw new IllegalArgumentException("Flag with name " + name + " not registered");
-            else if (!flagEntry.getValue().isAssignableFrom(selfClass))
-                throw new IllegalArgumentException("Flag " + name + " cannot be applied to material type " +
-                    selfClass.getSimpleName() + ", lower bound is " + flagEntry.getValue().getSimpleName());
-            return flagEntry.getKey();
-        }
-
-        /**
-         * Add to material if it is some kind of explosive
-         */
-        public static final long EXPLOSIVE = createFlag(4);
-
-        /**
-         * Add to material to disable it's unification fully
-         */
-        public static final long NO_UNIFICATION = createFlag(5);
-
-        /**
-         * Add to material if any of it's items cannot be recycled to get scrub
-         */
-        public static final long NO_RECYCLING = createFlag(6);
-
-        /**
-         * Add to material if it has constantly burning aura
-         */
-        public static final long BURNING = createFlag(7);
-
-        /**
-         * Decomposition recipe requires hydrogen as additional input. Amount is equal to input amount
-         */
-        public static final long DECOMPOSITION_REQUIRES_HYDROGEN = createFlag(8);
-
-        /**
-         * Enables electrolyzer decomposition recipe generation
-         */
-        public static final long DECOMPOSITION_BY_ELECTROLYZING = createFlag(40);
-
-        /**
-         * Enables centrifuge decomposition recipe generation
-         */
-        public static final long DECOMPOSITION_BY_CENTRIFUGING = createFlag(41);
-
-        /**
-         * Add to material if it is some kind of flammable
-         */
-        public static final long FLAMMABLE = createFlag(42);
-
-        /**
-         * Disables decomposition recipe generation for this material and all materials that has it as component
-         */
-        public static final long DISABLE_DECOMPOSITION = createFlag(43);
-
-        static {
-            registerMaterialFlagsHolder(MatFlags.class, Material.class);
-        }
-    }
 
     /**
      * Color of material in RGB format
@@ -173,11 +51,11 @@ public abstract class Material implements Comparable<Material> {
     /**
      * Generation flags of this material
      *
-     * @see MatFlags
-     * @see DustMaterial.MatFlags
+     * @see MaterialFlags
      */
     @ZenProperty("generationFlagsRaw")
-    protected long materialGenerationFlags;
+
+    private final Properties properties;
 
     /**
      * Element of this material consist of
@@ -217,6 +95,9 @@ public abstract class Material implements Comparable<Material> {
         return materialComponents;
     }
 
+    protected final String name;
+    protected final int id;
+
     @Deprecated
     public Material(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element) {
         this.materialRGB = materialRGB;
@@ -226,27 +107,27 @@ public abstract class Material implements Comparable<Material> {
         this.element = element;
         this.chemicalFormula = calculateChemicalFormula();
         calculateDecompositionType();
-        initializeMaterial();
         registerMaterial(metaItemSubId, name);
     }
 
-    public Material(MaterialBuilder.MaterialInfo info) {
+    public Material(MaterialBuilder.MaterialInfo info, Properties properties) {
+        this.name = info.name;
+        this.id = info.metaItemSubId;
         this.materialRGB = info.color;
         this.materialIconSet = info.iconSet;
         this.materialComponents = info.componentList;
         this.materialGenerationFlags = verifyMaterialBits(info.flags);
         this.element = info.element;
         this.chemicalFormula = calculateChemicalFormula();
+        this.properties = properties;
         calculateDecompositionType();
-        initializeMaterial();
-        registerMaterial(info.metaItemSubId, info.name);
+        this.properties.setMaterial(this);
+        verifyProperties();
+        registerMaterial(this);
     }
 
-    protected void registerMaterial(int metaItemSubId, String name) {
-        MATERIAL_REGISTRY.register(metaItemSubId, name, this);
-    }
-
-    protected void initializeMaterial() {
+    protected void registerMaterial(Material material) {
+        MaterialRegistry.register(this);
     }
 
     public long verifyMaterialBits(long materialBits) {
@@ -270,22 +151,8 @@ public abstract class Material implements Comparable<Material> {
     }
 
     @ZenMethod
-    public void addFlags(String... flagNames) {
-        addFlag(convertMaterialFlags(getClass(), flagNames));
-    }
-
-    public static long convertMaterialFlags(Class<? extends Material> materialClass, String... flagNames) {
-        long combined = 0;
-        for (String flagName : flagNames) {
-            long materialFlagId = MatFlags.resolveFlag(flagName, materialClass);
-            combined |= materialFlagId;
-        }
-        return combined;
-    }
-
-    @ZenMethod
     public boolean hasFlag(String flagName) {
-        long materialFlagId = MatFlags.resolveFlag(flagName, getClass());
+        long materialFlagId = MaterialFlags.resolveFlag(flagName, getClass());
         return hasFlag(materialFlagId);
     }
 
@@ -450,5 +317,14 @@ public abstract class Material implements Comparable<Material> {
 
     public Class<? extends Material> getType() {
         return this.getClass();
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    //todo is this needed?
+    public void verifyProperties() {
+        properties.verify();
     }
 }

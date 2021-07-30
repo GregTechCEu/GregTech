@@ -1,7 +1,7 @@
 package gregtech.common.blocks;
 
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;

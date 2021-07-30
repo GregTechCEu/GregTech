@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.itempipe.net;
 
 import gregtech.api.pipenet.Node;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.unification.material.properties.ItemPipeProperty;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -29,12 +29,12 @@ public class ItemNetWalker {
     private BlockPos currentPos;
 
     private int distance;
-    private ItemPipeProperties minProperties;
+    private ItemPipeProperty minProperties;
     private final List<ItemPipeNet.Inventory> inventories;
 
     private final Set<TileEntityItemPipe> walked = new HashSet<>();
 
-    protected ItemNetWalker(ItemPipeNet net, World world, BlockPos sourcePipe, int distance, List<ItemPipeNet.Inventory> inventories, ItemPipeProperties properties) {
+    protected ItemNetWalker(ItemPipeNet net, World world, BlockPos sourcePipe, int distance, List<ItemPipeNet.Inventory> inventories, ItemPipeProperty properties) {
         this.world = world;
         this.net = net;
         this.distance = distance;
@@ -76,17 +76,17 @@ public class ItemNetWalker {
 
     private void checkPos(BlockPos pos) {
         pipes.clear();
-        Node<ItemPipeProperties> node = net.getNodeAt(pos);
+        Node<ItemPipeProperty> node = net.getNodeAt(pos);
         if (node == null) return;
 
         TileEntity thisPipe = world.getTileEntity(pos);
         if (!(thisPipe instanceof TileEntityItemPipe))
             return;
-        ItemPipeProperties pipeProperties = ((TileEntityItemPipe) thisPipe).getNodeData();
+        ItemPipeProperty pipeProperties = ((TileEntityItemPipe) thisPipe).getNodeData();
         if (minProperties == null)
             minProperties = pipeProperties;
         else
-            minProperties = new ItemPipeProperties(minProperties.priority + pipeProperties.priority, Math.min(minProperties.transferRate, pipeProperties.transferRate));
+            minProperties = new ItemPipeProperty(minProperties.priority + pipeProperties.priority, Math.min(minProperties.transferRate, pipeProperties.transferRate));
         ((TileEntityItemPipe) thisPipe).markWalked();
         walked.add((TileEntityItemPipe) thisPipe);
 

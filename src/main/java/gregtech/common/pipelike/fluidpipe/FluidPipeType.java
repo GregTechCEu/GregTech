@@ -1,10 +1,10 @@
 package gregtech.common.pipelike.fluidpipe;
 
 import gregtech.api.pipenet.block.material.IMaterialPipeType;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.unification.material.properties.FluidPipeProperty;
 import gregtech.api.unification.ore.OrePrefix;
 
-public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
+public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperty> {
 
     TINY_OPAQUE("tiny", 0.25f, 1, OrePrefix.pipeTinyFluid, true),
     SMALL_OPAQUE("small", 0.375f, 2, OrePrefix.pipeSmallFluid, true),
@@ -42,8 +42,8 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
     }
 
     @Override
-    public FluidPipeProperties modifyProperties(FluidPipeProperties baseProperties) {
-        return new FluidPipeProperties(
+    public FluidPipeProperty modifyProperties(FluidPipeProperty baseProperties) {
+        return new FluidPipeProperty(
             baseProperties.maxFluidTemperature,
             baseProperties.throughput * capacityMultiplier,
             baseProperties.gasProof);

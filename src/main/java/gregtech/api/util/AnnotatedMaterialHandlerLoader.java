@@ -1,7 +1,6 @@
 package gregtech.api.util;
 
 import gregtech.api.unification.material.IMaterialHandler;
-import gregtech.api.unification.material.type.Material;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 

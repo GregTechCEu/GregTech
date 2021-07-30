@@ -3,7 +3,7 @@ package gregtech.common.pipelike.fluidpipe.tile;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.unification.material.properties.FluidPipeProperty;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -51,7 +51,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         this.isActive = compound.getBoolean("ActiveNode");
     }
 
-    public static void pushFluidsFromTank(IPipeTile<FluidPipeType, FluidPipeProperties> pipeTile) {
+    public static void pushFluidsFromTank(IPipeTile<FluidPipeType, FluidPipeProperty> pipeTile) {
         PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
         BlockFluidPipe blockFluidPipe = (BlockFluidPipe) pipeTile.getPipeBlock();
         for (EnumFacing side : EnumFacing.VALUES) {

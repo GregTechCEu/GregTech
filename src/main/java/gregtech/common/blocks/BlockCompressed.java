@@ -1,8 +1,8 @@
 package gregtech.common.blocks;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.*;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;

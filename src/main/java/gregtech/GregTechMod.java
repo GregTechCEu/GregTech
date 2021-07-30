@@ -10,11 +10,10 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.model.ResourcePackHook;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.unification.Elements;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.IMaterialHandler;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
 import gregtech.api.util.AnnotatedMaterialHandlerLoader;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
@@ -89,7 +88,7 @@ public class GregTechMod {
         }
 
         //freeze material registry before processing items, blocks and fluids
-        Material.freezeRegistry();
+        MaterialRegistry.freeze();
 
         MetaBlocks.init();
         MetaItems.init();

@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.api.unification.material.type.FluidMaterial.MatFlags;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.type.SimpleFluidMaterial;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;

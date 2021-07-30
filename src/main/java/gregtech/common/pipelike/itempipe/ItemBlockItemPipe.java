@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.itempipe;
 
 import gregtech.api.pipenet.block.material.ItemBlockMaterialPipe;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.unification.material.properties.ItemPipeProperty;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemBlockItemPipe extends ItemBlockMaterialPipe<ItemPipeType, ItemPipeProperties> {
+public class ItemBlockItemPipe extends ItemBlockMaterialPipe<ItemPipeType, ItemPipeProperty> {
 
     public ItemBlockItemPipe(BlockItemPipe block) {
         super(block);
@@ -21,7 +21,7 @@ public class ItemBlockItemPipe extends ItemBlockMaterialPipe<ItemPipeType, ItemP
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        ItemPipeProperties pipeProperties = blockPipe.createItemProperties(stack);
+        ItemPipeProperty pipeProperties = blockPipe.createItemProperties(stack);
         if (pipeProperties.transferRate % 1 != 0)
             tooltip.add(I18n.format("gregtech.item_pipe.rate_items", (int) ((pipeProperties.transferRate * 64) + 0.5)));
         else

@@ -1,6 +1,6 @@
 package gregtech.common.blocks;
 
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;

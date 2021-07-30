@@ -4,7 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.pipelike.cable.Insulation;
-import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.api.unification.material.properties.WireProperty;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.RoutePath;
 import gregtech.common.pipelike.cable.net.WorldENet;
@@ -20,12 +20,12 @@ import java.util.List;
 
 public class CableEnergyContainer implements IEnergyContainer {
 
-    private final IPipeTile<Insulation, WireProperties> tileEntityCable;
+    private final IPipeTile<Insulation, WireProperty> tileEntityCable;
     private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
     private long lastCachedUpdate;
     private List<RoutePath> pathsCache;
 
-    public CableEnergyContainer(IPipeTile<Insulation, WireProperties> tileEntityCable) {
+    public CableEnergyContainer(IPipeTile<Insulation, WireProperty> tileEntityCable) {
         this.tileEntityCable = tileEntityCable;
     }
 

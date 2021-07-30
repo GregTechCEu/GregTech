@@ -1,10 +1,10 @@
 package gregtech.common.pipelike.itempipe;
 
 import gregtech.api.pipenet.block.material.IMaterialPipeType;
-import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.unification.material.properties.ItemPipeProperty;
 import gregtech.api.unification.ore.OrePrefix;
 
-public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
+public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperty> {
     //TINY_OPAQUE("tiny", 0.25f, OrePrefix.pipeTinyItem, 0.25f, 2f),
     SMALL("small", 0.375f, OrePrefix.pipeSmallItem, 0.5f, 1.5f),
     NORMAL("normal", 0.5f, OrePrefix.pipeNormalItem, 1f, 1f),
@@ -45,8 +45,8 @@ public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
     }
 
     @Override
-    public ItemPipeProperties modifyProperties(ItemPipeProperties baseProperties) {
-        return new ItemPipeProperties((int) ((baseProperties.priority * resistanceMultiplier) + 0.5), baseProperties.transferRate * rateMultiplier);
+    public ItemPipeProperty modifyProperties(ItemPipeProperty baseProperties) {
+        return new ItemPipeProperty((int) ((baseProperties.priority * resistanceMultiplier) + 0.5), baseProperties.transferRate * rateMultiplier);
     }
 
     public float getRateMultiplier() {

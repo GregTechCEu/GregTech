@@ -15,7 +15,7 @@ import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;

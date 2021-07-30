@@ -1,11 +1,11 @@
 package gregtech.common.pipelike.cable;
 
 import gregtech.api.pipenet.block.material.IMaterialPipeType;
-import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.api.unification.material.properties.WireProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 
-public enum Insulation implements IMaterialPipeType<WireProperties> {
+public enum Insulation implements IMaterialPipeType<WireProperty> {
 
     WIRE_SINGLE("wire_single", 0.1f, 1, 2, OrePrefix.wireGtSingle, -1),
     WIRE_DOUBLE("wire_double", 0.2f, 2, 2, OrePrefix.wireGtDouble, -1),
@@ -52,14 +52,14 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
 
 
     @Override
-    public WireProperties modifyProperties(WireProperties baseProperties) {
+    public WireProperty modifyProperties(WireProperty baseProperties) {
 
         int lossPerBlock;
         if (ConfigHolder.doLosslessWiresMakeLossyCables && baseProperties.lossPerBlock == 0)
             lossPerBlock = (int)(0.75 * lossMultiplier);
         else lossPerBlock = baseProperties.lossPerBlock * lossMultiplier;
 
-        return new WireProperties(baseProperties.voltage, baseProperties.amperage * amperage, lossPerBlock);
+        return new WireProperty(baseProperties.voltage, baseProperties.amperage * amperage, lossPerBlock);
     }
 
     @Override

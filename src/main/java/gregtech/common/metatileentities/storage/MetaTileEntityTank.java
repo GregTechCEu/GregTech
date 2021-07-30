@@ -18,7 +18,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.TankRenderer;
 import gregtech.api.render.Textures;
-import gregtech.api.unification.material.type.Material.MatFlags;
+import gregtech.api.unification.material.Material.MatFlags;
 import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.util.ByteBufUtils;
 import gregtech.api.util.FluidTooltipUtil;

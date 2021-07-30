@@ -2,23 +2,31 @@ package gregtech.api.unification.material.properties;
 
 import java.util.Objects;
 
-public class FluidPipeProperties {
+public class FluidPipeProperty implements IMaterialProperty {
 
     public final int maxFluidTemperature;
     public final int throughput;
     public final boolean gasProof;
 
-    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof) {
+    public FluidPipeProperty(int maxFluidTemperature, int throughput, boolean gasProof) {
         this.maxFluidTemperature = maxFluidTemperature;
         this.throughput = throughput;
         this.gasProof = gasProof;
     }
 
     @Override
+    public void verifyProperty(Properties properties) {
+        if (properties.getIngotProperty() == null) {
+            properties.setIngotProperty(new IngotProperty());
+            properties.verify();
+        }
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof FluidPipeProperties)) return false;
-        FluidPipeProperties that = (FluidPipeProperties) o;
+        if (!(o instanceof FluidPipeProperty)) return false;
+        FluidPipeProperty that = (FluidPipeProperty) o;
         return maxFluidTemperature == that.maxFluidTemperature &&
             throughput == that.throughput;
     }
@@ -31,8 +39,9 @@ public class FluidPipeProperties {
     @Override
     public String toString() {
         return "FluidPipeProperties{" +
-            ", maxFluidTemperature=" + maxFluidTemperature +
-            ", throughput=" + throughput +
-            '}';
+                ", maxFluidTemperature=" + maxFluidTemperature +
+                ", throughput=" + throughput +
+                ", gasProof=" + gasProof +
+                '}';
     }
 }
