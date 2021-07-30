@@ -195,18 +195,21 @@ public class IngotMaterial extends SolidMaterial {
     }
 
     @ZenMethod
+    @Deprecated
     public <T extends Material> T setCableProperties(long voltage, int baseAmperage, int lossPerBlock) {
         this.cableProperties = new WireProperties((int) voltage, baseAmperage, lossPerBlock);
         return (T) this;
     }
 
     @ZenMethod
+    @Deprecated
     public <T extends Material> T setFluidPipeProperties(int maxTemperature, int throughput, boolean gasProof) {
         this.fluidPipeProperties = new FluidPipeProperties(maxTemperature, throughput, gasProof);
         return (T) this;
     }
 
     @ZenMethod
+    @Deprecated
     public <T extends Material> T setItemPipeProperties(int priority, float stacksPerSec) {
         this.itemPipeProperties = new ItemPipeProperties(priority, stacksPerSec);
         return (T) this;

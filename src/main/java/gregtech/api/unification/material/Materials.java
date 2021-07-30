@@ -19,6 +19,15 @@ import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.*;
 @SuppressWarnings("unused")
 public class Materials {
 
+    /**
+     * Material Declarations
+     */
+
+    /**
+     * Elements
+     */
+    public static IngotMaterial Aluminium;
+
     public static void register() {
         MarkerMaterials.register();
     }
@@ -38,18 +47,19 @@ public class Materials {
 
     //new IngotMaterial(2, "aluminium", 0x80C8F0, DULL, 2, of(), , Elements.get("Aluminium"), 10.0F, 2.0f, 128, 1700);
 
-    public static IngotMaterial Aluminium = new MaterialBuilder<>(IngotMaterial.class, 2, "aluminium")
-            .color(0x80C8F0)
-            .iconSet(DULL)
-            .flags(EXT2_METAL | GENERATE_SMALL_GEAR | GENERATE_ORE | GENERATE_RING | GENERATE_FRAME)
-            .element(Elements.get("Aluminium"))
-            .toolStats(10.0f, 2.0f, 128)
-            .blastTemp(1700)
-            .register()
-            //.addOreByProducts(Bauxite)
-            //.setCableProperties(GTValues.V[4], 1, 1)
-            .setItemPipeProperties(1680, 2);
-
+    public static void initializeElements() {
+        Aluminium = new MaterialBuilder<>(IngotMaterial.class, 2, "aluminium")
+                .color(0x80C8F0)
+                .iconSet(DULL)
+                .flags(EXT2_METAL | GENERATE_SMALL_GEAR | GENERATE_ORE | GENERATE_RING | GENERATE_FRAME)
+                .element(Elements.get("Aluminium"))
+                .toolStats(10.0f, 2.0f, 128)
+                .blastTemp(1700)
+                .addOreByproducts(Bauxite)
+                .cableProperties(GTValues.V[4], 1, 1)
+                .itemPipeProperties(1680, 2)
+                .register();
+    }
 
 
 

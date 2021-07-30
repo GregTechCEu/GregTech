@@ -172,6 +172,7 @@ public class DustMaterial extends FluidMaterial {
         return hasFlag(MatFlags.SMELT_INTO_FLUID);
     }
 
+    @Deprecated
     public <T extends Material> T addOreByProducts(FluidMaterial... byProducts) {
         this.oreByProducts.addAll(Arrays.asList(byProducts));
         return (T) this;

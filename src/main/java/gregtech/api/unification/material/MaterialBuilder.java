@@ -3,12 +3,18 @@ package gregtech.api.unification.material;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.Element;
+import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.material.type.SimpleFluidMaterial;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTLog;
+import gregtech.common.pipelike.cable.WireProperties;
+import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
+import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class MaterialBuilder <T extends Material> {
 
@@ -94,6 +100,11 @@ public class MaterialBuilder <T extends Material> {
         return this;
     }
 
+    public MaterialBuilder<T> fluidTemp(int temp) {
+        this.materialInfo.fluidTemp = temp;
+        return this;
+    }
+
     public MaterialBuilder<T> separatesInto(Material m) {
         this.materialInfo.separatedInto = m;
         return this;
@@ -109,13 +120,47 @@ public class MaterialBuilder <T extends Material> {
         return this;
     }
 
+    public MaterialBuilder<T> addOreByproducts(FluidMaterial... byproducts) {
+        this.materialInfo.oreByproducts.addAll(Arrays.asList(byproducts));
+        return this;
+    }
+
+    public MaterialBuilder<T> cableProperties(long voltage, int amperage, int loss) {
+        this.materialInfo.wireProperties = new WireProperties((int) voltage, amperage, loss);
+        return this;
+    }
+
+    public MaterialBuilder<T> fluidPipeProperties(int maxTemp, int throughput, boolean gasProof) {
+        Preconditions.checkArgument(
+                !materialInfo.hasPipe(),
+                "Material cannot have both Item and Fluid Pipes!"
+        );
+        this.materialInfo.fluidPipeProperties = new FluidPipeProperties(maxTemp, throughput, gasProof);
+        return this;
+    }
+
+    public MaterialBuilder<T> itemPipeProperties(int priority, float stacksPerSec) {
+        Preconditions.checkArgument(
+                !materialInfo.hasPipe(),
+                "Material cannot have both Item and Fluid Pipes!"
+        );
+        this.materialInfo.itemPipeProperties = new ItemPipeProperties(priority, stacksPerSec);
+        return this;
+    }
+
+    /**
+     * Set this to lock a Material to a specific prefix, and ignore all others (including Fluid).
+     */
+    // TODO Carefully implement this
+    public MaterialBuilder<T> setPrefix(Supplier<OrePrefix> prefix) {
+        this.materialInfo.prefixSupplier = prefix;
+        return this;
+    }
+
     public T register() {
         final List<MaterialStack> materialList = new ArrayList<>();
-        for (Map.Entry<Material, Integer> entry : this.composition.entrySet()) {
-            materialList.add(new MaterialStack(entry.getKey(), entry.getValue()));
-        }
+        this.composition.forEach((k, v) -> materialList.add(new MaterialStack(k, v)));
         this.materialInfo.componentList = ImmutableList.copyOf(materialList);
-
         try {
             return type.getConstructor(MaterialInfo.class).newInstance(this.materialInfo);
         } catch (Exception e) {
@@ -198,6 +243,11 @@ public class MaterialBuilder <T extends Material> {
         public int blastFurnaceTemperature = 0;
 
         /**
+         * The temperature of this Material as a Fluid.
+         */
+        public int fluidTemp;
+
+        /**
          * During electromagnetic separation, this Material's Ore will be separated into this Material.
          *
          * Default: none.
@@ -225,6 +275,32 @@ public class MaterialBuilder <T extends Material> {
         public MaterialInfo setID(int id) {
             this.metaItemSubId = id;
             return this;
+        }
+
+        /**
+         * Explicit OrePrefix for this Material.
+         */
+        public Supplier<OrePrefix> prefixSupplier;
+
+        /**
+         * Ore Byproducts of this Material.
+         *
+         * Default: none (meaning just this material as byproducts).
+         */
+        public List<FluidMaterial> oreByproducts = new ArrayList<>();
+
+        /**
+         * Wire and Pipe properties of this Material.
+         * A material cannot have both Item and Fluid Pipe Properties.
+         *
+         * Default: none for all.
+         */
+        public WireProperties wireProperties = null;
+        public FluidPipeProperties fluidPipeProperties = null;
+        public ItemPipeProperties itemPipeProperties = null;
+
+        private boolean hasPipe() {
+            return fluidPipeProperties != null || itemPipeProperties != null;
         }
     }
 }
