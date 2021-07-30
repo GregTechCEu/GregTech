@@ -172,6 +172,6 @@ public class GuiTextures {
     public static final TextureArea TERMINAL_BACKGROUND = TextureArea.fullImage("textures/gui/terminal/terminal_background.png");
     public static final TextureArea TERMINAL_MENU = TextureArea.fullImage("textures/gui/terminal/terminal_menu.png");
     public static final TextureArea TERMINAL_HOME = TextureArea.fullImage("textures/gui/terminal/terminal_home.png");
-
+    public static final TextureArea TERMINAL_SETTING = TextureArea.fullImage("textures/gui/terminal/terminal_setting.png");
 
 }

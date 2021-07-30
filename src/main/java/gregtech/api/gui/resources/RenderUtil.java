@@ -139,7 +139,6 @@ public class RenderUtil {
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
     }
 
     public static void renderSector(float x, float y, float r, int color, int segments, int from, int to) {
@@ -159,7 +158,6 @@ public class RenderUtil {
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
     }
 
     public static void renderRect(float x, float y, float width, float height, float z, int color) {

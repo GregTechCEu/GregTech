@@ -8,4 +8,5 @@ public interface IGuideWidget {
     Widget createFixedWidget(int x, int y, int width, int height, JsonObject config);
     void setPage(GuidePageWidget page);
     String getRef();
+    JsonObject getTemplate(boolean isFixed);
 }

@@ -1,9 +1,9 @@
 package gregtech.api.terminal.gui.widgets.os;
 
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -11,11 +11,11 @@ import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
 
+import java.awt.*;
+
 public class TerminalMenuWidget extends WidgetGroup {
     private Interpolator interpolator;
-    private int appCount;
     private IGuiTexture background;
-    private CircleButtonWidget activeButton;
     private final TerminalOSWidget os;
     public boolean isHide;
 
@@ -23,6 +23,31 @@ public class TerminalMenuWidget extends WidgetGroup {
     public TerminalMenuWidget(Position position, Size size, TerminalOSWidget os) {
         super(position, size);
         this.os = os;
+        this.addWidget(new CircleButtonWidget(5, 10, 4, 1, 0)
+                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                        new Color(255, 255, 255).getRGB(),
+                        new Color(239, 105, 105).getRGB())
+                .setHoverText("close")
+                .setClickListener(this::close));
+        this.addWidget(new CircleButtonWidget(15, 10, 4, 1, 0)
+                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                        new Color(255, 255, 255).getRGB(),
+                        new Color(243, 217, 117).getRGB())
+                .setHoverText("minimize")
+                .setClickListener(this::minimize));
+        this.addWidget(new CircleButtonWidget(25, 10, 4, 1, 0)
+                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                        new Color(255, 255, 255).getRGB(),
+                        new Color(154, 243, 122).getRGB())
+                .setHoverText("maximize")
+                .setClickListener(this::maximize));
+        this.addWidget(new CircleButtonWidget(15, 40, 10, 1, 14)
+                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                        new Color(255, 255, 255).getRGB(),
+                        new Color(80, 80, 80).getRGB())
+                .setHoverText("setting")
+                .setIcon(GuiTextures.TERMINAL_SETTING)
+                .setClickListener(this::setting));
     }
 
     public TerminalMenuWidget setBackground(IGuiTexture background) {
@@ -30,23 +55,20 @@ public class TerminalMenuWidget extends WidgetGroup {
         return this;
     }
 
-    public void addApp(AbstractApplication application){
-        int x = this.getSize().width / 2;
-        int r = 12;
-        int y = appCount * (2 * r + 4) + r + 20;
-        CircleButtonWidget button = new CircleButtonWidget(x,y,r).setIcon(application.getIcon()).setHoverText(application.getName());
-        button.setClickListener(clickData -> {
-            if (button != activeButton) {
-                os.openApplication(application, clickData.isClient);
-                if (activeButton != null) {
-                    activeButton.setFillColors(0xffffffff);
-                }
-                activeButton = button;
-                activeButton.setFillColors(0xFFAAF1DB);
-            }
-        });
-        this.addWidget(button);
-        appCount++;
+    public void close(ClickData clickData) {
+        os.closeApplication(os.focusApp, clickData.isClient);
+    }
+
+    public void minimize(ClickData clickData) {
+        os.minimizeApplication(os.focusApp, clickData.isClient);
+    }
+
+    public void maximize(ClickData clickData) {
+
+    }
+
+    public void setting(ClickData clickData) {
+
     }
 
     public void hideMenu() {
@@ -54,24 +76,26 @@ public class TerminalMenuWidget extends WidgetGroup {
             int y = getSelfPosition().y;
             interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x - getSize().width, 10, Eases.EaseLinear,
                     value-> setSelfPosition(new Position(value.intValue(), y)),
-                    value-> interpolator = null);
+                    value-> {
+                        setVisible(false);
+                        interpolator = null;
+                        isHide = true;
+                    });
             interpolator.start();
-            isHide = true;
         }
     }
 
     public void showMenu() {
         if (isHide && interpolator == null) {
-            if (activeButton != null) {
-                activeButton.setFillColors(0xffffffff);
-            }
-            activeButton = null;
+            setVisible(true);
             int y = getSelfPosition().y;
             interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x + getSize().width, 10, Eases.EaseLinear,
                     value-> setSelfPosition(new Position(value.intValue(), y)),
-                    value-> interpolator = null);
+                    value-> {
+                        interpolator = null;
+                        isHide = false;
+                    });
             interpolator.start();
-            isHide = false;
         }
     }
 

@@ -45,6 +45,7 @@ public abstract class Widget {
     private transient Position position;
     private transient Size size;
     private transient boolean isVisible;
+    private transient boolean isActive;
 
     public Widget(Position selfPosition, Size size) {
         Preconditions.checkNotNull(selfPosition, "selfPosition");
@@ -53,6 +54,7 @@ public abstract class Widget {
         this.size = size;
         this.position = this.parentPosition.add(selfPosition);
         this.isVisible = true;
+        this.isActive = true;
     }
 
     public Widget(int x, int y, int width, int height) {
@@ -77,7 +79,7 @@ public abstract class Widget {
         recomputePosition();
     }
 
-    protected void setSelfPosition(Position selfPosition) {
+    public void setSelfPosition(Position selfPosition) {
         Preconditions.checkNotNull(selfPosition, "selfPosition");
         this.selfPosition = selfPosition;
         recomputePosition();
@@ -87,7 +89,7 @@ public abstract class Widget {
         return selfPosition;
     }
 
-    protected void setSize(Size size) {
+    public void setSize(Size size) {
         Preconditions.checkNotNull(size, "size");
         this.size = size;
         onSizeUpdate();
@@ -109,13 +111,21 @@ public abstract class Widget {
         isVisible = visible;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public Rectangle toRectangleBox() {
         Position pos = getPosition();
         Size size = getSize();
         return new Rectangle(pos.x, pos.y, size.width, size.height);
     }
 
-    private void recomputePosition() {
+    protected void recomputePosition() {
         this.position = this.parentPosition.add(selfPosition);
         onPositionUpdate();
     }

@@ -1,5 +1,6 @@
 package gregtech.api.terminal.gui.widgets.guide;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TextBoxWidget extends GuideWidget {
@@ -23,7 +25,7 @@ public class TextBoxWidget extends GuideWidget {
     public boolean isShadow = false;
     public boolean isCenter = false;
 
-    private List<String> textLines;
+    private transient List<String> textLines;
 
     public TextBoxWidget(int x, int y, int width, List<String> content, int space, int fontSize, int fontColor, int fill, int stroke, boolean isCenter, boolean isShadow) {
         super(x, y, width, 0);
@@ -39,6 +41,18 @@ public class TextBoxWidget extends GuideWidget {
     }
 
     public TextBoxWidget() {}
+
+    @Override
+    public JsonObject getTemplate(boolean isFixed) {
+        JsonObject template = super.getTemplate(isFixed);
+        template.addProperty("space", space);
+        template.addProperty("fontSize", fontSize);
+        template.addProperty("fontColor", fontColor);
+        template.addProperty("isCenter", isCenter);
+        template.addProperty("isShadow", isShadow);
+        template.add("content", new Gson().toJsonTree(Arrays.asList("this is", "textbox!")));
+        return template;
+    }
 
     @Override
     protected Widget initFixed(int x, int y, int width, int height, JsonObject config) {
