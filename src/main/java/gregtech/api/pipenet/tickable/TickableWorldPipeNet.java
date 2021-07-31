@@ -8,16 +8,13 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType> & ITickable> extends WorldPipeNet<NodeDataType, T> {
 
     private final Map<T, List<ChunkPos>> loadedChunksByPipeNet = new HashMap<>();
-    private final List<T> tickingPipeNets = new ArrayList<>();
+    private final Set<T> tickingPipeNets = new HashSet<>();
 
     public TickableWorldPipeNet(String name) {
         super(name);
@@ -25,6 +22,7 @@ public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeD
 
     private boolean isChunkLoaded(ChunkPos chunkPos) {
         WorldServer worldServer = (WorldServer) getWorld();
+        if(worldServer == null) return false;
         return worldServer.getChunkProvider().chunkExists(chunkPos.x, chunkPos.z);
     }
 
