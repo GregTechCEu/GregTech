@@ -80,7 +80,7 @@ public class MaterialBuilder {
     }
 
     public MaterialBuilder ingot(int harvestLevel, int burnTime) {
-        if (properties.getDustProperty() == null) dust(harvestLevel, burnTime);
+        if (properties.getDustProperty() == null) dust(harvestLevel, burnTime); // todo should I use these values if DustProp is already made?
         properties.setIngotProperty(new IngotProperty());
         return this;
     }
@@ -244,7 +244,7 @@ public class MaterialBuilder {
         final List<MaterialStack> materialList = new ArrayList<>();
         this.composition.forEach((k, v) -> materialList.add(new MaterialStack(k, v)));
         materialInfo.componentList = ImmutableList.copyOf(materialList);
-        return new Material(materialInfo, properties);
+        return new Material(materialInfo, properties, flags);
     }
 
     /**

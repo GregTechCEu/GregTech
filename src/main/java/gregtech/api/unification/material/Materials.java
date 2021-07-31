@@ -2,183 +2,211 @@ package gregtech.api.unification.material;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.Elements;
+import gregtech.api.unification.material.materials.ElementMaterials;
 import gregtech.api.unification.material.type.*;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.init.Enchantments;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static com.google.common.collect.ImmutableList.of;
 import static gregtech.api.unification.material.MaterialIconSet.*;
 import static gregtech.api.unification.material.type.MaterialFlags.*;
 
-@SuppressWarnings("unused")
+/**
+ * Material Registration.
+ *
+ * All Material Builders should follow this general formatting:
+ *
+ * material = new MaterialBuilder(id, name)
+ *     .ingot().fluid().ore()                <--- types
+ *     .color().iconSet()                    <--- appearance
+ *     .flags()                              <--- special generation
+ *     .element() / .components()            <--- composition
+ *     .toolStats()                          <---
+ *     .oreByProducts()                         | additional properties
+ *     ...                                   <---
+ *     .blastTemp()                          <--- blast temperature
+ *     .build();
+ *
+ * Use defaults to your advantage! Some defaults:
+ * - iconSet: DULL
+ * - color: 0xFFFFFF
+ */
 public class Materials {
 
-    /**
-     * Material Declarations
+    /*
+     * TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
+     *
+     * Flag additions as of this branch being created:
+     * - Gold: ring
+     * - Zinc: ring
+     * - Diamond: bolt_screw
+     * - Steel: both Springs
+     * - Quartzite: plate
+     * - Iron: small gear, both springs
+     * - Obsidian: plate
+     *
+     * TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
      */
-
-    /**
-     * Elements
-     */
-    //public static IngotMaterial Aluminium;
 
     public static void register() {
         MarkerMaterials.register();
+        ElementMaterials.register();
     }
 
-    private static final long STD_SOLID = GENERATE_PLATE | GENERATE_ROD | GENERATE_BOLT_SCREW | GENERATE_LONG_ROD;
-    private static final long STD_GEM = GENERATE_ORE | STD_SOLID | GENERATE_LENS;
-    private static final long STD_METAL = GENERATE_PLATE;
-    private static final long EXT_METAL = STD_METAL | GENERATE_ROD | GENERATE_BOLT_SCREW | GENERATE_LONG_ROD;
-    private static final long EXT2_METAL = EXT_METAL | GENERATE_GEAR | GENERATE_FOIL | GENERATE_FINE_WIRE | GENERATE_ROUND;
+    public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();
+    public static final List<MaterialFlag> STD_GEM = new ArrayList<>(); // TODO Had ORE flag
+    public static final List<MaterialFlag> STD_METAL = new ArrayList<>();
+    public static final List<MaterialFlag> EXT_METAL = new ArrayList<>();
+    public static final List<MaterialFlag> EXT2_METAL = new ArrayList<>();
+
+    static {
+        STD_SOLID.addAll(Arrays.asList(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD));
+
+        STD_GEM.addAll(STD_SOLID);
+        STD_GEM.add(GENERATE_LENS);
+
+        STD_METAL.add(GENERATE_PLATE);
+
+        EXT_METAL.addAll(STD_METAL);
+        EXT_METAL.addAll(Arrays.asList(GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD));
+
+        EXT2_METAL.addAll(EXT_METAL);
+        EXT2_METAL.addAll(Arrays.asList(GENERATE_GEAR, GENERATE_FOIL, GENERATE_FINE_WIRE, GENERATE_ROUND));
+    }
 
     public static final MarkerMaterial _NULL = new MarkerMaterial("_null");
 
     /**
      * Direct Elements
      */
-    public static IngotMaterial Actinium = new IngotMaterial(1, "actinium", 0xC3D1FF, METALLIC, 2, of(), 0, Elements.get("Actinium"));
-
-    public static IngotMaterial Aluminium = new IngotMaterial(2, "aluminium", 0x80C8F0, DULL, 2, of(), EXT2_METAL | GENERATE_SMALL_GEAR | GENERATE_ORE | GENERATE_RING | GENERATE_FRAME, Elements.Al, 10.0F, 2.0f, 128, 1700);
-
-    public static void initializeElements() {
-        /*Aluminium = new MaterialBuilder<>(IngotMaterial.class, 2, "aluminium")
-                .color(0x80C8F0)
-                .iconSet(DULL)
-                .flags(EXT2_METAL | GENERATE_SMALL_GEAR | GENERATE_ORE | GENERATE_RING | GENERATE_FRAME)
-                .element(Elements.Al)
-                .toolStats(10.0f, 2.0f, 128)
-                .blastTemp(1700)
-                .addOreByproducts(Bauxite)
-                .cableProperties(GTValues.V[4], 1, 1)
-                .itemPipeProperties(1680, 2)
-                .register();*/
-    }
-
-
-
-    public static IngotMaterial Americium = new IngotMaterial(3, "americium", 0xC8C8C8, METALLIC, 3, of(), STD_METAL | GENERATE_ROD | GENERATE_LONG_ROD, Elements.get("Americium"));
-    public static IngotMaterial Antimony = new IngotMaterial(4, "antimony", 0xDCDCF0, SHINY, 2, of(), EXT_METAL | MORTAR_GRINDABLE, Elements.get("Antimony"));
-    public static FluidMaterial Argon = new FluidMaterial(5, "argon", 0x01FF01, FLUID, of(), STATE_GAS | GENERATE_PLASMA, Elements.get("Argon"));
-    public static DustMaterial Arsenic = new DustMaterial(6, "arsenic", 0xFFFFFF, DULL, 2, of(), 0, Elements.get("Arsenic"));
-    public static IngotMaterial Astatine = new IngotMaterial(7, "astatine", 0x241a24, DULL, 2, of(), 0, Elements.get("Astatine"));
-    public static IngotMaterial Barium = new IngotMaterial(8, "barium", 0xFFFFFF, METALLIC, 2, of(), 0, Elements.get("Barium"));
-    public static IngotMaterial Berkelium = new IngotMaterial(9, "berkelium", 0x645A88, METALLIC, 3, of(), EXT2_METAL, Elements.get("Berkelium"));
-    public static IngotMaterial Beryllium = new IngotMaterial(10, "beryllium", 0x64B464, METALLIC, 2, of(), STD_METAL | GENERATE_ORE, Elements.get("Beryllium"));
-    public static IngotMaterial Bismuth = new IngotMaterial(11, "bismuth", 0x64A0A0, METALLIC, 1, of(), GENERATE_ORE, Elements.get("Bismuth"));
-    public static IngotMaterial Bohrium = new IngotMaterial(12, "bohrium", 0xdc57ff, SHINY, 7, of(), 0, Elements.get("Bohrium"));
-    public static DustMaterial Boron = new DustMaterial(13, "boron", 0xD2FAD2, DULL, 2, of(), 0, Elements.get("Boron"));
-    public static FluidMaterial Bromine = new FluidMaterial(14, "bromine", 0x500A0A, SHINY, of(), 0, Elements.get("Bromine"));
-    public static IngotMaterial Caesium = new IngotMaterial(15, "caesium", 0xFFFFFF, METALLIC, 2, of(), 0, Elements.get("Caesium"));
-    public static IngotMaterial Calcium = new IngotMaterial(16, "calcium", 0xFFF5F5, METALLIC, 2, of(), 0, Elements.get("Calcium"));
-    public static IngotMaterial Californium = new IngotMaterial(17, "californium", 0xA85A12, METALLIC, 3, of(), EXT2_METAL, Elements.get("Californium"));
-    public static IngotMaterial Carbon = new IngotMaterial(18, "carbon", 0x141414, DULL, 2, of(), 0, Elements.get("Carbon"));
-    public static IngotMaterial Cadmium = new IngotMaterial(19, "cadmium", 0x32323C, SHINY, 2, of(), 0, Elements.get("Cadmium"));
-    public static IngotMaterial Cerium = new IngotMaterial(20, "cerium", 0xFFFFFF, METALLIC, 2, of(), 0, Elements.get("Cerium"), 1068);
-    public static FluidMaterial Chlorine = new FluidMaterial(21, "chlorine", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Chlorine"));
-    public static IngotMaterial Chrome = new IngotMaterial(22, "chrome", 0xFFE6E6, SHINY, 3, of(), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_DENSE, Elements.get("Chrome"), 12.0f, 3.0f, 512, 1700);
-    public static IngotMaterial Cobalt = new IngotMaterial(23, "cobalt", 0x5050FA, METALLIC, 2, of(), GENERATE_ORE | STD_METAL, Elements.get("Cobalt"), 10.0F, 3.0f, 256);
-    public static IngotMaterial Copernicium = new IngotMaterial(24, "copernicium", 0xFFFEFF, DULL, 4, of(), 0, Elements.get("Copernicium"));
-    public static IngotMaterial Copper = new IngotMaterial(25, "copper", 0xFF6400, SHINY, 1, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_DENSE | GENERATE_SPRING, Elements.get("Copper"));
-    public static IngotMaterial Curium = new IngotMaterial(26, "curium", 0x7B544E, METALLIC, 3, of(), EXT2_METAL, Elements.get("Curium"));
-    public static IngotMaterial Darmstadtium = new IngotMaterial(27, "darmstadtium", 0xAAAAAA, METALLIC, 2, of(), 0, Elements.get("Darmstadtium"));
-    public static FluidMaterial Deuterium = new FluidMaterial(28, "deuterium", 0xFFFFFF, FLUID, of(), STATE_GAS, Elements.get("Deuterium"));
-    public static IngotMaterial Dubnium = new IngotMaterial(29, "dubnium", 0xD3FDFF, SHINY, 7, of(), EXT2_METAL, Elements.get("Dubnium"));
-    public static IngotMaterial Dysprosium = new IngotMaterial(30, "dysprosium", 0xFFFFFF, METALLIC, 2, of(), 0, Elements.get("Dysprosium"), 1680);
-    public static IngotMaterial Einsteinium = new IngotMaterial(31, "einsteinium", 0xCE9F00, METALLIC, 3, of(), EXT2_METAL, Elements.get("Einsteinium"));
-    public static IngotMaterial Erbium = new IngotMaterial(32, "erbium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Erbium"), 1802);
-    public static IngotMaterial Europium = new IngotMaterial(33, "europium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL | GENERATE_ROD, Elements.get("Europium"), 1099);
-    public static IngotMaterial Fermium = new IngotMaterial(34, "fermium", 0x984ACF, METALLIC, 3, of(), EXT2_METAL, Elements.get("Fermium"));
-    public static IngotMaterial Flerovium = new IngotMaterial(35, "flerovium", 0xFFFFFF, SHINY, 3, of(), EXT2_METAL, Elements.get("Flerovium"));
-    public static FluidMaterial Fluorine = new FluidMaterial(36, "fluorine", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Fluorine")).setFluidTemperature(253);
-    public static IngotMaterial Francium = new IngotMaterial(37, "francium", 0xAAAAAA, SHINY, 2, of(), 0, Elements.get("Francium"));
-    public static IngotMaterial Gadolinium = new IngotMaterial(38, "gadolinium", 0xDDDDFF, METALLIC, 2, of(), 0, Elements.get("Gadolinium"), 1585);
-    public static IngotMaterial Gallium = new IngotMaterial(39, "gallium", 0xDCDCFF, SHINY, 2, of(), GENERATE_PLATE | GENERATE_FOIL, Elements.get("Gallium"));
-    public static IngotMaterial Germanium = new IngotMaterial(40, "germanium", 0x434343, SHINY, 2, of(), 0, Elements.get("Germanium"));
-    public static IngotMaterial Gold = new IngotMaterial(41, "gold", 0xFFFF1E, SHINY, 2, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_RING | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, Elements.get("Gold"));
-    public static IngotMaterial Hafnium = new IngotMaterial(42, "hafnium", 0x99999a, SHINY, 2, of(), 0, Elements.get("Hafnium"));
-    public static IngotMaterial Hassium = new IngotMaterial(43, "hassium", 0xDDDDDD, DULL, 3, of(), EXT2_METAL, Elements.get("Hassium"));
-    public static IngotMaterial Holmium = new IngotMaterial(44, "holmium", 0xFFFFFF, METALLIC, 2, of(), 0, Elements.get("Holmium"), 1734);
-    public static FluidMaterial Hydrogen = new FluidMaterial(45, "hydrogen", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Hydrogen"));
-    public static FluidMaterial Helium = new FluidMaterial(46, "helium", 0xFFFFFF, GAS, of(), STATE_GAS | GENERATE_PLASMA, Elements.get("Helium"));
-    public static FluidMaterial Helium3 = new FluidMaterial(47, "helium3", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Helium-3"));
-    public static IngotMaterial Indium = new IngotMaterial(48, "indium", 0x400080, METALLIC, 2, of(), 0, Elements.get("Indium"));
-    public static DustMaterial Iodine = new DustMaterial(49, "iodine", 0x2C344F, SHINY, 2, of(), 0, Elements.get("Iodine"));
-    public static IngotMaterial Iridium = new IngotMaterial(50, "iridium", 0xF0F0F5, DULL, 3, of(), GENERATE_ORE | EXT2_METAL | GENERATE_ORE | GENERATE_RING | GENERATE_ROTOR | GENERATE_DENSE, Elements.get("Iridium"), 7.0F, 3.0f, 2560, 2719);
-    public static IngotMaterial Iron = new IngotMaterial(51, "iron", 0xC8C8C8, METALLIC, 2, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_DENSE | GENERATE_FRAME | GENERATE_LONG_ROD | GENERATE_ROTOR | GENERATE_PLASMA | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES | GENERATE_SPRING | GENERATE_SPRING_SMALL | GENERATE_SMALL_GEAR, Elements.get("Iron"), 7.0F, 2.5f, 256);
-    public static FluidMaterial Krypton = new FluidMaterial(52, "krypton", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Krypton"));
-    public static IngotMaterial Lanthanum = new IngotMaterial(53, "lanthanum", 0xFFFFFF, METALLIC, 2, of(), 0, Elements.get("Lanthanum"), 1193);
-    public static IngotMaterial Lawrencium = new IngotMaterial(54, "lawrencium", 0xFFFFFF, METALLIC, 3, of(), 0, Elements.get("Lawrencium"));
-    public static IngotMaterial Lead = new IngotMaterial(55, "lead", 0x8C648C, DULL, 1, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_DENSE, Elements.get("Lead"));
-    public static IngotMaterial Lithium = new IngotMaterial(56, "lithium", 0xE1DCE1, DULL, 2, of(), STD_METAL | GENERATE_ORE, Elements.get("Lithium"));
-    public static IngotMaterial Livermorium = new IngotMaterial(57, "livermorium" , 0xc7b204, SHINY, 2, of(), 0, Elements.get("Livermorium"));
-    public static IngotMaterial Lutetium = new IngotMaterial(58, "lutetium", 0xFFFFFF, METALLIC, 2, of(), 0, Elements.get("Lutetium"), 1925);
-    public static IngotMaterial Magnesium = new IngotMaterial(59, "magnesium", 0xE1C8C8, METALLIC, 2, of(), 0, Elements.get("Magnesium"));
-    public static IngotMaterial Mendelevium = new IngotMaterial(60, "mendelevium", 0x1D4ACF, METALLIC, 3, of(), EXT2_METAL, Elements.get("Mendelevium"));
-    public static IngotMaterial Manganese = new IngotMaterial(61, "manganese", 0xFAFAFA, DULL, 2, of(), GENERATE_FOIL, Elements.get("Manganese"), 7.0F, 2.0f, 512);
-    public static IngotMaterial Meitnerium = new IngotMaterial(62, "meitnerium" , 0x2246be, SHINY, 2, of(), 0, Elements.get("Meitnerium"));
-    public static FluidMaterial Mercury = new FluidMaterial(63, "mercury", 0xFFFFFF, FLUID, of(), SMELT_INTO_FLUID, Elements.get("Mercury"));
-    public static IngotMaterial Molybdenum = new IngotMaterial(64, "molybdenum", 0xB4B4DC, SHINY, 2, of(), GENERATE_ORE, Elements.get("Molybdenum"), 7.0F, 2.0f, 512);
-    public static IngotMaterial Moscovium = new IngotMaterial(65, "moscovium" , 0x7854ad, SHINY, 2, of(), 0, Elements.get("Moscovium"));
-    public static IngotMaterial Neodymium = new IngotMaterial(66, "neodymium", 0x646464, METALLIC, 2, of(), STD_METAL | GENERATE_ROD | GENERATE_ORE, Elements.get("Neodymium"), 7.0F, 2.0f, 512, 1297);
-    public static FluidMaterial Neon = new FluidMaterial(67, "neon", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Neon"));
-    public static IngotMaterial Neptunium = new IngotMaterial(68, "neptunium", 0x284D7B, METALLIC, 3, of(), EXT2_METAL, Elements.get("Neptunium"));
-    public static IngotMaterial Nickel = new IngotMaterial(69, "nickel", 0xC8C8FA, METALLIC, 2, of(), STD_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_PLASMA, Elements.get("Nickel"));
-    public static IngotMaterial Nihonium = new IngotMaterial(70, "nihonium" , 0x08269e, SHINY, 2, of(), 0, Elements.get("Nihonium"));
-    public static IngotMaterial Niobium = new IngotMaterial(71, "niobium", 0xBEB4C8, METALLIC, 2, of(), STD_METAL | GENERATE_ORE, Elements.get("Niobium"), 2750);
-    public static FluidMaterial Nitrogen = new FluidMaterial(72, "nitrogen", 0xFFFFFF, FLUID, of(), STATE_GAS | GENERATE_PLASMA, Elements.get("Nitrogen"));
-    public static IngotMaterial Nobelium = new IngotMaterial(73, "nobelium", 0xFFFFFF, SHINY, 2, of(), 0, Elements.get("Nobelium"));
-    public static IngotMaterial Oganesson = new IngotMaterial(74, "oganesson", 0x142d64, METALLIC, 3, of(), EXT2_METAL, Elements.get("Oganesson"));
-    public static IngotMaterial Osmium = new IngotMaterial(75, "osmium", 0x3232FF, METALLIC, 4, of(), GENERATE_ORE | EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_DENSE, Elements.get("Osmium"), 16.0F, 4.0f, 1280, 3306);
-    public static FluidMaterial Oxygen = new FluidMaterial(76, "oxygen", 0xFFFFFF, GAS, of(), STATE_GAS | GENERATE_PLASMA, Elements.get("Oxygen"));
-    public static IngotMaterial Palladium = new IngotMaterial(77, "palladium", 0x808080, SHINY, 2, of(), EXT2_METAL | GENERATE_ORE | GENERATE_FLUID_BLOCK, Elements.get("Palladium"), 8.0f, 2.0f, 512, 1228);
-    public static DustMaterial Phosphorus = new DustMaterial(78, "phosphorus", 0xFFFF00, DULL, 2, of(), 0, Elements.get("Phosphorus"));
-    public static IngotMaterial Polonium = new IngotMaterial(79, "polonium", 0xC9D47E, DULL, 4, of(), 0, Elements.get("Polonium"));
-    public static IngotMaterial Platinum = new IngotMaterial(80, "platinum", 0xFFFFC8, SHINY, 2, of(), EXT2_METAL | GENERATE_ORE | GENERATE_FLUID_BLOCK, Elements.get("Platinum"));
-    public static IngotMaterial Plutonium239 = new IngotMaterial(81, "plutonium", 0xF03232, METALLIC, 3, of(), EXT_METAL, Elements.get("Plutonium-239"));
-    public static IngotMaterial Plutonium241 = new IngotMaterial(82, "plutonium241", 0xFA4646, SHINY, 3, of(), EXT_METAL, Elements.get("Plutonium-241"));
-    public static IngotMaterial Potassium = new IngotMaterial(83, "potassium", 0xFAFAFA, METALLIC, 1, of(), EXT_METAL, Elements.get("Potassium"));
-    public static IngotMaterial Praseodymium = new IngotMaterial(84, "praseodymium", 0xCECECE, METALLIC, 2, of(), EXT_METAL, Elements.get("Praseodymium"), 1208);
-    public static IngotMaterial Promethium = new IngotMaterial(85, "promethium", 0xFFFFFF, METALLIC, 2, of(), EXT_METAL, Elements.get("Promethium"), 1315);
-    public static IngotMaterial Protactinium = new IngotMaterial(86, "protactinium", 0xA78B6D, METALLIC, 3, of(), EXT2_METAL, Elements.get("Protactinium"));
-    public static FluidMaterial Radon = new FluidMaterial(87, "radon", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Radon"));
-    public static IngotMaterial Radium = new IngotMaterial(88, "radium", 0xFFC840, SHINY, 2, of(), 0, Elements.get("Radium"));
-    public static IngotMaterial Rhenium = new IngotMaterial(89, "rhenium", 0xb6bac3, SHINY, 2, of(), EXT2_METAL, Elements.get("Rhenium"));
-    public static IngotMaterial Rhodium = new IngotMaterial(90, "rhodium", 0xF4F4F4, METALLIC, 2, of(), EXT2_METAL, Elements.get("Rhodium"), 2237);
-    public static IngotMaterial Roentgenium = new IngotMaterial(91, "roentgenium" , 0xe3fdec, SHINY, 2, of(), 0, Elements.get("Roentgenium"));
-    public static IngotMaterial Rubidium = new IngotMaterial(92, "rubidium", 0xF01E1E, METALLIC, 2, of(), STD_METAL, Elements.get("Rubidium"));
-    public static IngotMaterial Ruthenium = new IngotMaterial(93, "ruthenium", 0x646464, METALLIC, 2, of(), EXT2_METAL, Elements.get("Ruthenium"), 2607);
-    public static IngotMaterial Rutherfordium = new IngotMaterial(94, "rutherfordium", 0xFFF6A1, SHINY, 7, of(), EXT2_METAL, Elements.get("Rutherfordium"));
-    public static IngotMaterial Samarium = new IngotMaterial(95, "samarium", 0xFFFFCC, METALLIC, 2, of(), STD_METAL, Elements.get("Samarium"), 1345);
-    public static IngotMaterial Scandium = new IngotMaterial(96, "scandium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Scandium"), 1814);
-    public static IngotMaterial Seaborgium = new IngotMaterial(97, "seaborgium", 0x19c5ff, SHINY, 7, of(), 0, Elements.get("Seaborgium"));
-    public static DustMaterial Selenium = new IngotMaterial(98, "selenium", 0xB6BA6B, SHINY, 2, of(), 0, Elements.get("Selenium"));
-    public static IngotMaterial Silicon = new IngotMaterial(99, "silicon", 0x3C3C50, METALLIC, 2, of(), STD_METAL | GENERATE_FOIL, Elements.get("Silicon"), 1687);
-    public static IngotMaterial Silver = new IngotMaterial(100, "silver", 0xDCDCFF, SHINY, 2, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE, Elements.get("Silver"));
-    public static IngotMaterial Sodium = new IngotMaterial(101, "sodium", 0x000096, METALLIC, 2, of(), STD_METAL, Elements.get("Sodium"));
-    public static IngotMaterial Strontium = new IngotMaterial(102, "strontium", 0xC8C8C8, METALLIC, 2, of(), STD_METAL, Elements.get("Strontium"));
-    public static DustMaterial Sulfur = new DustMaterial(103, "sulfur", 0xC8C800, DULL, 2, of(), NO_SMASHING | NO_SMELTING | FLAMMABLE | GENERATE_ORE, Elements.get("Sulfur"));
-    public static IngotMaterial Tantalum = new IngotMaterial(104, "tantalum", 0xFFFFFF, METALLIC, 2, of(), STD_METAL | GENERATE_FOIL, Elements.get("Tantalum"));
-    public static IngotMaterial Technetium = new IngotMaterial(105, "technetium", 0x545455, SHINY, 2, of(), 0, Elements.get("Technetium"));
-    public static IngotMaterial Tellurium = new IngotMaterial(106, "tellurium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Tellurium"));
-    public static IngotMaterial Tennessine = new IngotMaterial(107, "tennessine" , 0x977fd6, SHINY, 2, of(), 0, Elements.get("Tennessine"));
-    public static IngotMaterial Terbium = new IngotMaterial(108, "terbium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Terbium"), 1629);
-    public static IngotMaterial Thorium = new IngotMaterial(109, "thorium", 0x001E00, SHINY, 2, of(), STD_METAL | GENERATE_ORE, Elements.get("Thorium"), 6.0F, 2.0f, 512);
-    public static IngotMaterial Thallium = new IngotMaterial(110, "thallium", 0xc1c1de, SHINY, 2, of(), 0, Elements.get("Thallium"));
-    public static IngotMaterial Thulium = new IngotMaterial(111, "thulium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Thulium"), 1818);
-    public static IngotMaterial Tin = new IngotMaterial(112, "tin", 0xDCDCDC, DULL, 1, of(), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_ROTOR | GENERATE_ORE, Elements.get("Tin"));
-    public static IngotMaterial Titanium = new IngotMaterial(113, "titanium", 0xDCA0F0, METALLIC, 3, of(), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_SPRING | GENERATE_FRAME | GENERATE_DENSE, Elements.get("Titanium"), 7.0F, 3.0f, 1600, 1941);
-    public static FluidMaterial Tritium = new FluidMaterial(114, "tritium", 0xFFFFFF, METALLIC, of(), STATE_GAS, Elements.get("Tritium"));
-    public static IngotMaterial Tungsten = new IngotMaterial(115, "tungsten", 0x323232, METALLIC, 3, of(), EXT2_METAL, Elements.get("Tungsten"), 7.0F, 3.0f, 2560, 3000);
-    public static IngotMaterial Uranium238 = new IngotMaterial(116, "uranium", 0x32F032, METALLIC, 3, of(), STD_METAL | GENERATE_ORE, Elements.get("Uranium-238"), 6.0F, 3.0f, 512);
-    public static IngotMaterial Uranium235 = new IngotMaterial(117, "uranium235", 0x46FA46, SHINY, 3, of(), STD_METAL | GENERATE_ORE | GENERATE_ROD, Elements.get("Uranium-235"), 6.0F, 3.0f, 512);
-    public static IngotMaterial Vanadium = new IngotMaterial(118, "vanadium", 0x323232, METALLIC, 2, of(), STD_METAL, Elements.get("Vanadium"), 2183);
-    public static FluidMaterial Xenon = new FluidMaterial(119, "xenon", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Xenon"));
-    public static IngotMaterial Ytterbium = new IngotMaterial(120, "ytterbium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Ytterbium"), 1097);
-    public static IngotMaterial Yttrium = new IngotMaterial(121, "yttrium", 0xDCFADC, METALLIC, 2, of(), STD_METAL, Elements.get("Yttrium"), 1799);
-    public static IngotMaterial Zinc = new IngotMaterial(122, "zinc", 0xFAF0F0, METALLIC, 1, of(), STD_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_FOIL | GENERATE_RING, Elements.get("Zinc"));
-    public static IngotMaterial Zirconium = new IngotMaterial(123, "zirconium", 0xE0E1E1, METALLIC, 6, of(), EXT2_METAL, Elements.get("Zirconium"));
+    public static Material Actinium;
+    public static Material Aluminium;
+    public static Material Americium;
+    public static Material Antimony;
+    public static Material Argon;
+    public static Material Arsenic;
+    public static Material Astatine;
+    public static Material Barium;
+    public static Material Berkelium;
+    public static Material Beryllium;
+    public static Material Bismuth;
+    public static Material Bohrium;
+    public static Material Boron;
+    public static Material Bromine;
+    public static Material Caesium;
+    public static Material Calcium;
+    public static Material Californium;
+    public static Material Carbon;
+    public static Material Cadmium;
+    public static Material Cerium;
+    public static Material Chlorine;
+    public static Material Chrome;
+    public static Material Cobalt;
+    public static Material Copernicium;
+    public static Material Copper;
+    public static Material Curium;
+    public static Material Darmstadtium;
+    public static Material Deuterium;
+    public static Material Dubnium;
+    public static Material Dysprosium;
+    public static Material Einsteinium;
+    public static Material Erbium;
+    public static Material Europium;
+    public static Material Fermium;
+    public static Material Flerovium;
+    public static Material Fluorine;
+    public static Material Francium;
+    public static Material Gadolinium;
+    public static Material Gallium;
+    public static Material Germanium;
+    public static Material Gold;
+    public static Material Hafnium;
+    public static Material Hassium;
+    public static Material Holmium;
+    public static Material Hydrogen;
+    public static Material Helium;
+    public static Material Helium3;
+    public static Material Indium;
+    public static Material Iodine;
+    public static Material Iridium;
+    public static Material Iron;
+    public static Material Krypton;
+    public static Material Lanthanum;
+    public static Material Lawrencium;
+    public static Material Lead;
+    public static Material Lithium;
+    public static Material Livermorium;
+    public static Material Lutetium;
+    public static Material Magnesium;
+    public static Material Mendelevium;
+    public static Material Manganese;
+    public static Material Meitnerium;
+    public static Material Mercury;
+    public static Material Molybdenum;
+    public static Material Moscovium;
+    public static Material Neodymium;
+    public static Material Neon;
+    public static Material Neptunium;
+    public static Material Nickel;
+    public static Material Nihonium;
+    public static Material Niobium;
+    public static Material Nitrogen;
+    public static Material Nobelium;
+    public static Material Oganesson;
+    public static Material Osmium;
+    public static Material Oxygen;
+    public static Material Palladium;
+    public static Material Phosphorus;
+    public static Material Polonium;
+    public static Material Platinum;
+    public static Material Plutonium239;
+    public static Material Plutonium241;
+    public static Material Potassium;
+    public static Material Praseodymium;
+    public static Material Promethium;
+    public static Material Protactinium;
+    public static Material Radon;
+    public static Material Radium;
+    public static Material Rhenium;
+    public static Material Rhodium;
+    public static Material Roentgenium;
+    public static Material Rubidium;
+    public static Material Ruthenium;
+    public static Material Rutherfordium;
+    public static Material Samarium;
+    public static Material Scandium;
+    public static Material Seaborgium;
+    public static Material Selenium;
+    public static Material Silicon;
+    public static Material Silver;
+    public static Material Sodium;
+    public static Material Strontium;
+    public static Material Sulfur;
+    public static Material Tantalum;
+    public static Material Technetium;
+    public static Material Tellurium;
+    public static Material Tennessine;
+    public static Material Terbium;
+    public static Material Thorium;
+    public static Material Thallium;
+    public static Material Thulium;
+    public static Material Tin;
+    public static Material Titanium;
+    public static Material Tritium;
+    public static Material Tungsten;
+    public static Material Uranium238;
+    public static Material Uranium235;
+    public static Material Vanadium;
+    public static Material Xenon;
+    public static Material Ytterbium;
+    public static Material Yttrium;
+    public static Material Zinc;
+    public static Material Zirconium;
 
     /**
      * First Degree Compounds
@@ -519,7 +547,7 @@ public class Materials {
     /**
      * Second Degree Compounds
      */
-  
+
     public static GemMaterial Glass = new GemMaterial(284, "glass", 0xFAFAFA, GLASS, 0, of(new MaterialStack(SiliconDioxide, 1)), GENERATE_PLATE | GENERATE_LENS | NO_SMASHING | NO_RECYCLING | SMELT_INTO_FLUID | EXCLUDE_BLOCK_CRAFTING_RECIPES | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial Perlite = new DustMaterial(285, "perlite", 0x1E141E, DULL, 1, of(new MaterialStack(Obsidian, 2), new MaterialStack(Water, 1)), 0);
     public static DustMaterial Borax = new DustMaterial(286, "borax", 0xFAFAFA, FINE, 1, of(new MaterialStack(Sodium, 2), new MaterialStack(Boron, 4), new MaterialStack(Water, 10), new MaterialStack(Oxygen, 7)), 0);

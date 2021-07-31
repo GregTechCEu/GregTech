@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 public class Material implements Comparable<Material> {
 
     // TODO remove
-    public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(32768);
+    //public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(32768);
 
     /**
      * Color of material in RGB format
@@ -118,6 +118,7 @@ public class Material implements Comparable<Material> {
 
         this.properties.setMaterial(this);
         this.properties.verify();
+        this.flags.verify(this);
         registerMaterial(this);
     }
 

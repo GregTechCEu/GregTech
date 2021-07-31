@@ -37,6 +37,7 @@ public class Properties {
     }
 
     public void verify() {
+        // TODO this will CME
         properties.forEach(p -> p.verifyProperty(this));
         if (!isValid)
             throw new IllegalArgumentException("Material must have at least one of: [dust, ingot, gem, fluid, plasma] specified!");
