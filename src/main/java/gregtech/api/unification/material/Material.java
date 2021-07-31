@@ -120,8 +120,6 @@ public class Material implements Comparable<Material> {
         // TODO these verifications probably need to be done in deferred registry,
         // TODO due to some things (ore extra materials) possibly being uninitialized.
         this.properties.setMaterial(this);
-        this.properties.verify();
-        this.flags.verify(this);
         registerMaterial(this);
     }
 
@@ -313,5 +311,10 @@ public class Material implements Comparable<Material> {
     @Nonnull
     public Properties getProperties() {
         return properties;
+    }
+
+    protected void verifyMaterial() {
+        properties.verify();
+        flags.verify(this);
     }
 }

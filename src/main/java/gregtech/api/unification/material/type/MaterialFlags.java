@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class MaterialFlags {
 
-    private Set<MaterialFlag> flags = new HashSet<>();
+    private final Set<MaterialFlag> flags = new HashSet<>();
 
     public MaterialFlags addFlags(MaterialFlag... flags) {
         this.flags.addAll(Arrays.asList(flags));

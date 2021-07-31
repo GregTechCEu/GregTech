@@ -3,8 +3,8 @@ package gregtech.api.unification.material.type;
 import com.google.common.base.Preconditions;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.IMaterialProperty;
-import scala.actors.threadpool.Arrays;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
