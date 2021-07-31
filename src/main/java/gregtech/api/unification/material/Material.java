@@ -16,11 +16,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import stanhebben.zenscript.annotations.*;
 
+import javax.annotation.Nonnull;
 import java.util.stream.Stream;
 
 @ZenClass("mods.gregtech.material.Material")
 @ZenRegister
-public abstract class Material implements Comparable<Material> {
+public class Material implements Comparable<Material> {
 
     // TODO remove
     public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(32768);
@@ -122,7 +123,7 @@ public abstract class Material implements Comparable<Material> {
         this.properties = properties;
         calculateDecompositionType();
         this.properties.setMaterial(this);
-        verifyProperties();
+        this.properties.verify();
         registerMaterial(this);
     }
 
@@ -319,12 +320,8 @@ public abstract class Material implements Comparable<Material> {
         return this.getClass();
     }
 
+    @Nonnull
     public Properties getProperties() {
         return properties;
-    }
-
-    //todo is this needed?
-    public void verifyProperties() {
-        properties.verify();
     }
 }

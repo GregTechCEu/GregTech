@@ -34,6 +34,13 @@ public class FluidProperty implements IMaterialProperty {
         this.isGas = isGas;
     }
 
+    /**
+     * Default values of: no Block, not Gas.
+     */
+    public FluidProperty() {
+        this(false, false);
+    }
+
     //@ZenGetter("hasFluid")
     public boolean shouldGenerateFluid() {
         return true;

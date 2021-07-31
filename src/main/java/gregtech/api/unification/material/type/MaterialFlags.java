@@ -166,7 +166,7 @@ public class MaterialFlags {
 
     // TODO Generation Flags TODO
 
-    public static final long GENERATE_ORE = createFlag(11);
+    public static final long GENERATE_ORE = createFlag(11); // todo remove
 
     /**
      * Generate a plate for this material

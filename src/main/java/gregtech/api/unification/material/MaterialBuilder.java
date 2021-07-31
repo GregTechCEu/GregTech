@@ -19,7 +19,6 @@ public class MaterialBuilder {
 
     private final MaterialInfo materialInfo;
     private final Properties properties;
-    private final List<IMaterialProperty> materialProperties = new ArrayList<>();
 
     /**
      * The "list" of components for this Material.
@@ -27,10 +26,8 @@ public class MaterialBuilder {
     private final SortedMap<Material, Integer> composition = new TreeMap<>();
 
     public MaterialBuilder(int id, String name) {
-        this.materialInfo = new MaterialInfo();
-        this.properties = new Properties();
-        this.materialInfo.name = name;
-        this.materialInfo.metaItemSubId = id;
+        materialInfo = new MaterialInfo(id, name);
+        properties = new Properties();
     }
 
     /**
@@ -49,17 +46,26 @@ public class MaterialBuilder {
     }
 
     public MaterialBuilder dust() {
-        //todo
+        properties.setDustProperty(new DustProperty());
+        return this;
+    }
+
+    public MaterialBuilder dust(int harvestLevel) {
+        return dust(harvestLevel, 0);
+    }
+
+    public MaterialBuilder dust(int harvestLevel, int burnTime) {
+        properties.setDustProperty(new DustProperty(harvestLevel, burnTime));
         return this;
     }
 
     public MaterialBuilder ingot() {
-        //todo
+        properties.setIngotProperty(new IngotProperty());
         return this;
     }
 
     public MaterialBuilder gem() {
-        //todo
+        properties.setGemProperty(new GemProperty());
         return this;
     }
 
@@ -69,12 +75,7 @@ public class MaterialBuilder {
     }
 
     public MaterialBuilder iconSet(MaterialIconSet iconSet) {
-        this.materialInfo.iconSet = iconSet;
-        return this;
-    }
-
-    public MaterialBuilder harvestLevel(int harvestLevel) {
-        this.materialInfo.harvestLevel = harvestLevel;
+        materialInfo.iconSet = iconSet;
         return this;
     }
 
@@ -114,35 +115,60 @@ public class MaterialBuilder {
         return this;
     }
 
-    // todo
+    public MaterialBuilder ore() {
+        return ore(1, 1);
+    }
+
+    public MaterialBuilder ore(int oreMultiplier, int byproductMultiplier) {
+        properties.setOreProperty(new OreProperty(oreMultiplier, byproductMultiplier));
+        return this;
+    }
+
     public MaterialBuilder fluidTemp(int temp) {
-        Optional<IMaterialProperty> prop = materialProperties.stream().filter(p -> p instanceof FluidProperty).findFirst();
-        if (!prop.isPresent()) {
-            prop = fluid(FLUID, false);
-        } else {
-            return fluid(FLUID, false);
-        }
-        this.materialInfo.fluidTemp = temp;
+        if (properties.getFluidProperty() == null) fluid(FLUID, false);
+        properties.getFluidProperty().setFluidTemperature(temp);
         return this;
     }
 
     public MaterialBuilder separatesInto(Material m) {
-        this.materialInfo.separatedInto = m;
+        if (properties.getOreProperty() == null) ore();
+        properties.getOreProperty().setSeparatedInto(m);
         return this;
     }
 
-    public MaterialBuilder washesWith(Material m) {
-        this.materialInfo.washedIn = m;
+    public MaterialBuilder washedIn(Material m) {
+        if (properties.getOreProperty() == null) ore();
+        properties.getOreProperty().setWashedIn(m);
+        return this;
+    }
+
+    public MaterialBuilder separatedInto(Material m) {
+        if (properties.getOreProperty() == null) ore();
+        properties.getOreProperty().setSeparatedInto(m);
         return this;
     }
 
     public MaterialBuilder polarizesInto(Material m) {
-        this.materialInfo.magneticMaterial = m;
+        if (properties.getIngotProperty() == null) ingot();
+        properties.getIngotProperty().setMagneticMaterial(m);
+        return this;
+    }
+
+    public MaterialBuilder arcSmeltInto(Material m) {
+        if (properties.getIngotProperty() == null) ingot();
+        properties.getIngotProperty().setArcSmeltingInto(m);
+        return this;
+    }
+
+    public MaterialBuilder smeltInto(Material m) {
+        if (properties.getIngotProperty() == null) ingot();
+        properties.getIngotProperty().setSmeltingInto(m);
         return this;
     }
 
     public MaterialBuilder addOreByproducts(Material... byproducts) {
-        this.materialInfo.oreByproducts.addAll(Arrays.asList(byproducts)); // todo
+        if (properties.getOreProperty() == null) ore();
+        properties.getOreProperty().setOreByProducts(byproducts);
         return this;
     }
 
@@ -162,10 +188,9 @@ public class MaterialBuilder {
     }
 
     public MaterialBuilder addDefaultEnchant(Enchantment enchant, int level) {
-        ToolProperty prop = properties.getToolProperty();
-        if (prop == null)
+        if (properties.getToolProperty() == null) // cannot assign default here
             throw new IllegalArgumentException("Material cannot have an Enchant without Tools!");
-        prop.addEnchantmentForTools(enchant, level); // todo make sure this update-by-reference works
+        properties.getToolProperty().addEnchantmentForTools(enchant, level);
         return this;
     }
 
@@ -174,33 +199,15 @@ public class MaterialBuilder {
      */
     // TODO Carefully implement this
     public MaterialBuilder setPrefix(Supplier<OrePrefix> prefix) {
-        this.materialInfo.prefixSupplier = prefix;
+        materialInfo.prefixSupplier = prefix;
         return this;
     }
 
-    // todo fix
     public Material build() {
-        //verifyProperties();
         final List<MaterialStack> materialList = new ArrayList<>();
         this.composition.forEach((k, v) -> materialList.add(new MaterialStack(k, v)));
-        this.materialInfo.componentList = ImmutableList.copyOf(materialList);
-        try {
-            return type.getConstructor(MaterialInfo.class).newInstance(this.materialInfo);
-        } catch (Exception e) {
-            GTLog.logger.error("Error registering Material with name {}, please report this error!", this.materialInfo.name);
-        }
-        return null;
-    }
-
-    // TODO push this to *after* the builder, or make the material and verify properties here
-    private void verifyProperties() {
-        if (!materialProperties.stream()
-                .anyMatch(p ->
-                        p instanceof FluidProperty
-                     || p instanceof IngotProperty
-                     || p instanceof DustProperty
-                     || p instanceof GemProperty))
-            throw new IllegalArgumentException("Material must have at least one of: [fluid, ingot, dust, gem] specified!");
+        materialInfo.componentList = ImmutableList.copyOf(materialList);
+        return new Material(materialInfo, properties);
     }
 
     /**
@@ -212,14 +219,14 @@ public class MaterialBuilder {
          *
          * Required.
          */
-        public String name;
+        public final String name;
 
         /**
          * The MetaItem ID of this Material.
          *
          * Required.
          */
-        public int metaItemSubId;
+        public final int metaItemSubId;
 
         /**
          * The color of this Material.
@@ -234,13 +241,6 @@ public class MaterialBuilder {
          * Default: DULL.
          */
         public MaterialIconSet iconSet = MaterialIconSet.DULL;
-
-        /**
-         * The harvest level of this Material.
-         *
-         * Default: 1.
-         */
-        public int harvestLevel = 1;
 
         /**
          * The components of this Material.
@@ -264,37 +264,14 @@ public class MaterialBuilder {
         public Element element;
 
         /**
-         * During electromagnetic separation, this Material's Ore will be separated into this Material.
-         *
-         * Default: none.
-         */
-        public Material separatedInto;
-
-        /**
-         * Material in which this Material's Ore should be washed to give additional output.
-         *
-         * Default: none.
-         */
-        public Material washedIn;
-
-        /**
-         * Material which obtained when this Material is Polarized.
-         *
-         * Default: none.
-         */
-        public Material magneticMaterial;
-
-        /**
          * Explicit OrePrefix for this Material.
          */
-        public Supplier<OrePrefix> prefixSupplier;
+        public Supplier<OrePrefix> prefixSupplier; // todo PrefixProperty?
 
-        /**
-         * Ore Byproducts of this Material.
-         *
-         * Default: none (meaning just this material as byproducts).
-         */
-        public List<Material> oreByproducts = new ArrayList<>();
+        private MaterialInfo(int metaItemSubId, String name) {
+            this.metaItemSubId = metaItemSubId;
+            this.name = name;
+        }
     }
 
     public enum FluidType {

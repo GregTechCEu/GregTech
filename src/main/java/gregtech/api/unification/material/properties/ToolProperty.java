@@ -12,26 +12,33 @@ import java.util.List;
 public class ToolProperty implements IMaterialProperty {
 
     /**
-     * Speed of tools made from this material
+     * Speed of tools made from this Material.
+     *
+     * Default:
      */
     //@ZenProperty
     public final float toolSpeed;
 
     /**
-     * Attack damage of tools made from this material
-     * Usually equal to material's harvest level
+     * Attack damage of tools made from this Material
+     *
+     * Default:
      */
     //@ZenProperty
     public final float toolAttackDamage;
 
     /**
-     * Durability of tools made from this material
+     * Durability of tools made from this Material.
+     *
+     * Default:
      */
     //@ZenProperty
     public final int toolDurability;
 
     /**
-     * Enchantment to be applied to tools made from this material
+     * Enchantment to be applied to tools made from this Material.
+     *
+     * Default: none.
      */
     //@ZenProperty
     public final List<EnchantmentData> toolEnchantments = new ArrayList<>();
@@ -40,6 +47,13 @@ public class ToolProperty implements IMaterialProperty {
         this.toolSpeed = toolSpeed;
         this.toolAttackDamage = toolAttackDamage;
         this.toolDurability = toolDurability;
+    }
+
+    /**
+     * Default values constructor.
+     */
+    public ToolProperty() {
+        this(1.0f, 1.0f, 100);
     }
 
     @Override

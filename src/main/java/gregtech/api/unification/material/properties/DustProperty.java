@@ -1,37 +1,47 @@
 package gregtech.api.unification.material.properties;
 
-import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.FluidMaterial;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.type.SolidMaterial;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-//@ZenExpansion("mods.gregtech.material.Material")
+//@ZenClass("mods.gregtech.material.DustMaterial")
 //@ZenRegister
-// TODO extends FluidMaterial
 public class DustProperty implements IMaterialProperty {
 
     /**
-     * Tool level needed to harvest block of this material
+     * Tool level needed to harvest block of this Material.
+     *
+     * Default: 2 (Iron).
      */
     //@ZenProperty
-    public int harvestLevel;
+    private int harvestLevel;
 
     /**
-     * Burn time of this material when used as fuel in furnace smelting
-     * Zero or negative value indicates that this material cannot be used as fuel
+     * Burn time of this Material when used as fuel in Furnace smelting.
+     * Zero or negative value indicates that this Material cannot be used as fuel.
+     *
+     * Default: 0.
      */
     //@ZenProperty
-    public int burnTime = 0;
+    private int burnTime;
+
+    public DustProperty(int harvestLevel, int burnTime) {
+        this.harvestLevel = harvestLevel;
+        this.burnTime = burnTime;
+    }
+
+    /**
+     * Default property values.
+     */
+    public DustProperty() {
+        this(2, 0);
+    }
 
     //@ZenMethod
     public void setHarvestLevel(int harvestLevel) {
         this.harvestLevel = harvestLevel;
     }
 
+    public void setBurnTime(int burnTime) {
+        this.burnTime = burnTime;
+    }
+/*
     @Override
     protected void initializeMaterial() {
         super.initializeMaterial();
@@ -39,24 +49,8 @@ public class DustProperty implements IMaterialProperty {
             setFluidTemperature(1200); //default value for dusts
         }
     }
-
-    public void addOreByProducts(FluidMaterial... byProducts) {
-        this.oreByProducts.addAll(Arrays.asList(byProducts));
-    }
-
-    public void setDirectSmelting(SolidMaterial directSmelting) {
-        this.directSmelting = directSmelting;
-    }
-
-    public void setOreMultiplier(int oreMultiplier) {
-        this.oreMultiplier = oreMultiplier;
-    }
-
-    public void setByProductMultiplier(int byProductMultiplier) {
-        this.byProductMultiplier = byProductMultiplier;
-    }
-
-    public void setBurnTime(int burnTime) {
-        this.burnTime = burnTime;
+*/
+    @Override
+    public void verifyProperty(Properties properties) {
     }
 }

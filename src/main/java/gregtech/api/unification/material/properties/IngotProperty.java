@@ -12,18 +12,18 @@ public class IngotProperty implements IMaterialProperty {
     /**
      * Specifies a material into which this material parts turn when heated
      */
-    public Material smeltInto;
+    private Material smeltInto;
 
     /**
      * Specifies a material into which this material parts turn when heated in arc furnace
      */
-    public Material arcSmeltInto;
+    private Material arcSmeltInto; // ingot required
 
     /**
      * Material which obtained when this material is polarized
      */
     @Nullable
-    public Material magneticMaterial;
+    private Material magneticMaterial;
 
     // todo move
     public long verifyMaterialBits(long generationBits) {
@@ -60,13 +60,16 @@ public class IngotProperty implements IMaterialProperty {
         return super.verifyMaterialBits(generationBits);
     }
 
-    // todo remove these (builder)
     public void setSmeltingInto(Material smeltInto) {
         this.smeltInto = smeltInto;
     }
 
     public void setArcSmeltingInto(Material arcSmeltingInto) {
         this.arcSmeltInto = arcSmeltingInto;
+    }
+
+    public void setMagneticMaterial(@Nullable Material magneticMaterial) {
+        this.magneticMaterial = magneticMaterial;
     }
 
     @Override
@@ -76,7 +79,7 @@ public class IngotProperty implements IMaterialProperty {
             properties.verify();
         }
 
-        if (smeltInto == null) smeltInto = material;
+        if (smeltInto == null) smeltInto = properties.getMaterial();
         else {
             Properties smeltIntoProperties = smeltInto.getProperties();
             if (smeltIntoProperties.getIngotProperty() == null) {
@@ -85,7 +88,7 @@ public class IngotProperty implements IMaterialProperty {
             }
         }
 
-        if (arcSmeltInto == null) arcSmeltInto = material;
+        if (arcSmeltInto == null) arcSmeltInto = properties.getMaterial();
         else {
             Properties arcSmeltIntoProperties = arcSmeltInto.getProperties();
             if (arcSmeltIntoProperties.getIngotProperty() == null) {

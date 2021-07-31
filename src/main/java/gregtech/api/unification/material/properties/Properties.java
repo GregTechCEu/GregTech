@@ -24,16 +24,29 @@ public class Properties {
 
     private Material material;
 
+    /**
+     * True if at least one of:
+     * - Dust, Ingot, Gem, Fluid, Plasma
+     * properties are set.
+     */
+    private boolean isValid = false;
+
     public List<IMaterialProperty> getAll() {
         return properties;
     }
 
     public void verify() {
         properties.forEach(p -> p.verifyProperty(this));
+        if (!isValid)
+            throw new IllegalArgumentException("Material must have at least one of: [dust, ingot, gem, fluid, plasma] specified!");
     }
 
     public void setMaterial(Material material) {
         this.material = material;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 
     ///////////////////////////////////////////////
@@ -112,6 +125,7 @@ public class Properties {
         if (this.dustProperty == null) {
             this.dustProperty = dustProperty;
             properties.add(this.dustProperty);
+            isValid = true;
         } else throw new IllegalArgumentException("Dust Property already set for this Material!");
     }
 
@@ -129,6 +143,7 @@ public class Properties {
         if (this.fluidProperty == null) {
             this.fluidProperty = fluidProperty;
             properties.add(this.fluidProperty);
+            isValid = true;
         } else throw new IllegalArgumentException("Fluid Property already set for this Material!");
     }
 
@@ -136,6 +151,7 @@ public class Properties {
         if (this.gemProperty == null) {
             this.gemProperty = gemProperty;
             properties.add(this.gemProperty);
+            isValid = true;
         } else throw new IllegalArgumentException("Gem Property already set for this Material!");
     }
 
@@ -146,6 +162,7 @@ public class Properties {
         if (this.ingotProperty == null) {
             this.ingotProperty = ingotProperty;
             properties.add(this.ingotProperty);
+            isValid = true;
         } else throw new IllegalArgumentException("Ingot Property already set for this Material!");
     }
 
@@ -170,6 +187,7 @@ public class Properties {
         if (this.plasmaProperty == null) {
             this.plasmaProperty = plasmaProperty;
             properties.add(this.plasmaProperty);
+            isValid = true;
         } else throw new IllegalArgumentException("Plasma Property already set for this Material!");
     }
 
