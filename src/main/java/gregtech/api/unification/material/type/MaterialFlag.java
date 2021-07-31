@@ -37,10 +37,13 @@ public class MaterialFlag {
                 "Material " + material.toString() + " must have " + requiredType.getName() + " for Flag " + this.name + "!"
         );
 
-        return requiredFlags.stream()
+        Set<MaterialFlag> thisAndDependencies = new HashSet<>(requiredFlags);
+        thisAndDependencies.addAll(requiredFlags.stream()
                 .map(f -> f.verifyFlag(material))
                 .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet()));
+
+        return thisAndDependencies;
     }
 
     public static class Builder {
