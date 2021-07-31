@@ -348,6 +348,23 @@ public class Materials {
     public static Material SodiumPersulfate;
 
     /**
+     * Organic chemistry
+     */
+    public static Material SiliconeRubber;
+    public static Material Polystyrene;
+    public static Material RawRubber;
+    public static Material RawStyreneButadieneRubber;
+    public static Material StyreneButadieneRubber;
+    public static Material PolyvinylAcetate;
+    public static Material ReinforcedEpoxyResin;
+    public static Material BorosilicateGlass;
+    public static Material PolyvinylChloride;
+    public static Material PolyphenyleneSulfide;
+    public static Material GlycerylTrinitrate;
+    public static Material Polybenzimidazole;
+    public static Material Polydimethylsiloxane;
+
+    /**
      * Water Related
      */
     public static FluidMaterial Steam = new FluidMaterial(254, "steam", 0xFFFFFF, GAS, of(new MaterialStack(Hydrogen, 2), new MaterialStack(Oxygen, 1)), NO_RECYCLING | GENERATE_FLUID_BLOCK | DISABLE_DECOMPOSITION | STATE_GAS).setFluidTemperature(380);
@@ -510,22 +527,8 @@ public class Materials {
     public static SimpleFluidMaterial Ethylbenzene = new SimpleFluidMaterial("ethylbenzene", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 10)), DISABLE_DECOMPOSITION).setFormula("C6H5CH2CH3", true);
     public static SimpleFluidMaterial Naphthalene = new SimpleFluidMaterial("naphthalene", 0xF4F4D7, FLUID, of(new MaterialStack(Carbon, 10), new MaterialStack(Hydrogen, 8)), DISABLE_DECOMPOSITION);
 
-    /**
-     * Organic chemistry
-     */
-    public static IngotMaterial SiliconeRubber = new IngotMaterial(256, "silicon_rubber", 0xDCDCDC, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 1), new MaterialStack(Silicon, 1)), GENERATE_PLATE | GENERATE_GEAR | GENERATE_RING | FLAMMABLE | NO_SMASHING | GENERATE_FOIL | DISABLE_DECOMPOSITION);
-    public static IngotMaterial Polystyrene = new IngotMaterial(257, "polystyrene", 0xBEB4AA, DULL, 1, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 8)), DISABLE_DECOMPOSITION | GENERATE_FOIL | NO_SMASHING);
-    public static DustMaterial RawRubber = new DustMaterial(258, "raw_rubber", 0xCCC789, DULL, 1, of(new MaterialStack(Carbon, 5), new MaterialStack(Hydrogen, 8)), DISABLE_DECOMPOSITION);
-    public static DustMaterial RawStyreneButadieneRubber = new DustMaterial(259, "raw_styrene_butadiene_rubber", 0x54403D, SHINY, 1, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 8), new MaterialStack(Butadiene, 3)), DISABLE_DECOMPOSITION);
-    public static IngotMaterial StyreneButadieneRubber = new IngotMaterial(260, "styrene_butadiene_rubber", 0x211A18, SHINY, 1, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 8), new MaterialStack(Butadiene, 3)), GENERATE_PLATE | GENERATE_GEAR | GENERATE_RING | FLAMMABLE | NO_SMASHING | DISABLE_DECOMPOSITION);
-    public static FluidMaterial PolyvinylAcetate = new FluidMaterial(261, "polyvinyl_acetate", 0xFF9955, FLUID, of(new MaterialStack(Carbon, 4), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
-    public static IngotMaterial ReinforcedEpoxyResin = new IngotMaterial(262, "reinforced_epoxy_resin", 0xA07A10, DULL, 1, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Oxygen, 1)), GENERATE_PLATE | DISABLE_DECOMPOSITION | NO_SMASHING);
+    //TODO
     public static IngotMaterial BorosilicateGlass = new IngotMaterial(263, "borosilicate_glass", 0xE6F3E6, SHINY, 1, of(new MaterialStack(Boron, 1), new MaterialStack(SiliconDioxide, 7)), GENERATE_FINE_WIRE);
-    public static IngotMaterial PolyvinylChloride = new IngotMaterial(264, "polyvinyl_chloride", 0xD7E6E6, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 3), new MaterialStack(Chlorine, 1)), EXT_METAL | GENERATE_FOIL | DISABLE_DECOMPOSITION | NO_SMASHING);
-    public static IngotMaterial PolyphenyleneSulfide = new IngotMaterial(265, "polyphenylene_sulfide", 0xAA8800, DULL, 1, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Sulfur, 1)), DISABLE_DECOMPOSITION | EXT_METAL | GENERATE_FOIL);
-    public static FluidMaterial GlycerylTrinitrate = new FluidMaterial(266, "glyceryl_trinitrate", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 3), new MaterialStack(Hydrogen, 5), new MaterialStack(Nitrogen, 3), new MaterialStack(Oxygen, 9)), FLAMMABLE | EXPLOSIVE | NO_SMELTING | NO_SMASHING);
-    public static IngotMaterial Polybenzimidazole = new IngotMaterial(267, "polybenzimidazole", 0x2D2D2D, DULL, 0, of(new MaterialStack(Carbon, 20), new MaterialStack(Hydrogen, 12), new MaterialStack(Nitrogen, 4)), EXCLUDE_BLOCK_CRAFTING_RECIPES | SMELT_INTO_FLUID | NO_SMASHING | DISABLE_DECOMPOSITION | GENERATE_FOIL);
-    public static DustMaterial Polydimethylsiloxane = new DustMaterial(268, "polydimethylsiloxane", 0xF5F5F5, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 1), new MaterialStack(Silicon, 1)), DISABLE_DECOMPOSITION);
 
     /**
      * Not possible to determine exact Components
