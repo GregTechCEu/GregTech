@@ -185,7 +185,7 @@ public class MaterialBuilder {
         return this;
     }
 
-    public MaterialBuilder oreDirectSmelt(Material m) {
+    public MaterialBuilder oreSmeltInto(Material m) {
         if (properties.getOreProperty() == null) ore();
         properties.getOreProperty().setDirectSmeltResult(m);
         return this;
