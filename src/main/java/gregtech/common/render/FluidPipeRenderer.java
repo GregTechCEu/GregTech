@@ -109,9 +109,10 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         FluidPipeType pipeType = blockFluidPipe.getItemPipeType(stack);
         Material material = blockFluidPipe.getItemMaterial(stack);
         if (pipeType != null && material != null) {
-            renderPipeBlock(material, pipeType, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0],
-                    1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
-                            1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
+            int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
+                    1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex());
+            connections |= 1 << 12;
+            renderPipeBlock(material, pipeType, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0], connections);
         }
         renderState.draw();
         GlStateManager.disableBlend();
@@ -178,18 +179,21 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
                         renderPipeSide(state, pipeSide, renderedSide, cuboid6);
                     }
                 } else {
-                    renderPipeCube(state, pipeSide, pipeConnectSide, renderedSide, thickness);
+                    renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, renderedSide, thickness);
                 }
             }
         }
     }
 
-    private static void renderPipeCube(CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] pipeConnectSide, EnumFacing side, float thickness) {
+    private static void renderPipeCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] pipeConnectSide, EnumFacing side, float thickness) {
         Cuboid6 cuboid6 = BlockFluidPipe.getSideBox(side, thickness);
         for (EnumFacing renderedSide : EnumFacing.VALUES) {
-            if (renderedSide != side.getOpposite()) {
+            if (renderedSide.getAxis() != side.getAxis()) {
                 renderPipeSide(renderState, pipeline, renderedSide, cuboid6);
             }
+        }
+        if ((connections & 1 << 12) > 0) {
+            renderPipeSide(renderState, pipeConnectSide, side, cuboid6);
         }
     }
 

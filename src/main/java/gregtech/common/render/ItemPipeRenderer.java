@@ -110,9 +110,10 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         ItemPipeType pipeType = blockFluidPipe.getItemPipeType(stack);
         Material material = blockFluidPipe.getItemMaterial(stack);
         if (pipeType != null && material != null) {
-            renderPipeBlock(material, pipeType, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0],
-                    1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
-                            1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
+            int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
+                    1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex());
+            connections |= 1 << 12;
+            renderPipeBlock(material, pipeType, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0], connections);
         }
         renderState.draw();
         GlStateManager.disableBlend();
@@ -204,7 +205,9 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
                     renderPipeSide(renderState, pipeRestrictive, renderedSide, cuboid6);
             }
         }
-        if ((connections & 1 << (6 + side.getIndex())) > 0) {
+        if ((connections & 1 << 12) > 0) {
+            renderPipeSide(renderState, pipeConnectSide, side, cuboid6);
+        } else if ((connections & 1 << (6 + side.getIndex())) > 0) {
             // if neighbour pipe is smaller, render closed texture
             renderPipeSide(renderState, pipeline, side, cuboid6);
         }
