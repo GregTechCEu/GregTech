@@ -1,5 +1,6 @@
 package gregtech.api.unification.material.materials;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.MaterialBuilder;
 import gregtech.api.unification.material.MaterialBuilder.FluidType;
@@ -23,6 +24,9 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME)
                 .element(Elements.Al)
                 .toolStats(10.0f, 2.0f, 128)
+                .addOreByproducts(Bauxite)
+                .cableProperties(GTValues.V[4], 1, 1)
+                .fluidPipeProperties(1166, 35, true)
                 .blastTemp(1700)
                 .build();
 
@@ -34,10 +38,13 @@ public class ElementMaterials {
                 .build();
 
         Antimony = new MaterialBuilder(4, "antimony")
-                .ingot().fluid()
+                .ingot().fluid()//.ore()
                 .color(0xDCDCF0).iconSet(SHINY)
                 .flags(EXT_METAL, MORTAR_GRINDABLE)
                 .element(Elements.Sb)
+                //.separatedInto(Iron)
+                //.washedIn(SodiumPersulfate)
+                //.addOreByproducts(Zinc, Iron, Zinc)
                 .build();
 
         Argon = new MaterialBuilder(5, "argon")
@@ -146,11 +153,14 @@ public class ElementMaterials {
                 .build();
 
         Chrome = new MaterialBuilder(22, "chrome")
-                .ingot(3).fluid()
+                .ingot(3).fluid()//.ore()
                 .color(0xFFE6E6).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .element(Elements.Cr)
                 .toolStats(12.0f, 3.0f, 512)
+                //.separatedInto(Iron)
+                //.addOreByproducts(Iron, Magnesium)
+                .fluidPipeProperties(2725, 40, true)
                 .blastTemp(1700)
                 .build();
 
@@ -160,6 +170,10 @@ public class ElementMaterials {
                 .flags(STD_METAL)
                 .element(Elements.Co)
                 .toolStats(10.0f, 3.0f, 256)
+                .washedIn(SodiumPersulfate)
+                .addOreByproducts(Cobaltite)
+                .cableProperties(GTValues.V[1], 2, 2)
+                .itemPipeProperties(2560, 2.0f)
                 .build();
 
         Copernicium = new MaterialBuilder(24, "copernicium")
@@ -173,6 +187,11 @@ public class ElementMaterials {
                 .color(0xFF6400).iconSet(SHINY)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_DENSE, GENERATE_SPRING)
                 .element(Elements.Cu)
+                .washedIn(Mercury)
+                .arcSmeltInto(AnnealedCopper)
+                .addOreByproducts(Cobalt, Gold, Nickel, Gold)
+                .cableProperties(GTValues.V[2], 1, 2)
+                .fluidPipeProperties(1696, 10, true)
                 .build();
 
         Curium = new MaterialBuilder(26, "curium")
@@ -228,6 +247,7 @@ public class ElementMaterials {
                 .iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_ROD)
                 .element(Elements.Eu)
+                .fluidPipeProperties(7780, 1200, true)
                 .blastTemp(1099)
                 .build();
 
@@ -283,6 +303,10 @@ public class ElementMaterials {
                 .color(0xFFFF1E).iconSet(SHINY)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .element(Elements.Au)
+                .washedIn(Mercury)
+                .addOreByproducts(Copper, Nickel, Gold)
+                .cableProperties(GTValues.V[3], 2, 2)
+                .fluidPipeProperties(1671, 35, true)
                 .build();
 
         Hafnium = new MaterialBuilder(42, "hafnium")
@@ -340,15 +364,23 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .element(Elements.Ir)
                 .toolStats(7.0f, 3.0f, 2560)
+                .washedIn(Mercury)
+                .addOreByproducts(Platinum, Osmium, Platinum)
+                .fluidPipeProperties(3398, 140, true)
                 .blastTemp(2719)
                 .build();
 
         Iron = new MaterialBuilder(51, "iron")
                 .ingot().fluid().plasma().ore()
                 .color(0xC8C8C8).iconSet(METALLIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_DENSE, GENERATE_FRAME, GENERATE_ROTOR, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_DENSE, GENERATE_FRAME, GENERATE_ROTOR, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, BLAST_FURNACE_CALCITE_TRIPLE)
                 .element(Elements.Fe)
                 .toolStats(7.0f, 2.5f, 256)
+                .washedIn(SodiumPersulfate)
+                .polarizesInto(IronMagnetic)
+                .arcSmeltInto(WroughtIron)
+                .addOreByproducts(Nickel, Tin, Nickel)
+                .cableProperties(GTValues.V[2], 2, 3)
                 .build();
 
         Krypton = new MaterialBuilder(52, "krypton")
@@ -375,6 +407,10 @@ public class ElementMaterials {
                 .color(0x8C648C)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_DENSE)
                 .element(Elements.Pb)
+                .washedIn(Mercury)
+                .addOreByproducts(Silver, Sulfur, Silver)
+                .cableProperties(GTValues.V[1], 2, 2)
+                .fluidPipeProperties(1200, 15, true)
                 .build();
 
         Lithium = new MaterialBuilder(56, "lithium")
@@ -382,6 +418,7 @@ public class ElementMaterials {
                 .color(0xE1DCE1)
                 .flags(STD_METAL)
                 .element(Elements.Li)
+                .addOreByproducts(Lithium)
                 .build();
 
         Livermorium = new MaterialBuilder(57, "livermorium")
@@ -449,6 +486,7 @@ public class ElementMaterials {
                 .flags(STD_METAL, GENERATE_ROD)
                 .element(Elements.Nd)
                 .toolStats(7.0f, 2.0f, 512)
+                .polarizesInto(NeodymiumMagnetic)
                 .blastTemp(1297)
                 .build();
 
@@ -470,6 +508,11 @@ public class ElementMaterials {
                 .color(0xC8C8FA).iconSet(METALLIC)
                 .flags(STD_METAL, MORTAR_GRINDABLE)
                 .element(Elements.Ni)
+                .separatedInto(Iron)
+                .washedIn(Mercury)
+                .addOreByproducts(Cobalt, Platinum, Iron, Platinum)
+                .cableProperties(GTValues.V[2], 3, 3)
+                .itemPipeProperties(2048, 1.0f)
                 .build();
 
         Nihonium = new MaterialBuilder(70, "nihonium")
@@ -511,6 +554,10 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .element(Elements.Os)
                 .toolStats(16.0f, 4.0f, 1280)
+                .washedIn(Mercury)
+                .addOreByproducts(Iridium, Osmium)
+                .cableProperties(GTValues.V[5], 4, 2)
+                .itemPipeProperties(256, 8.0f)
                 .blastTemp(3306)
                 .build();
 
@@ -526,6 +573,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL)
                 .element(Elements.Pd)
                 .toolStats(8.0f, 2.0f, 512)
+                .cableProperties(GTValues.V[5], 2, 1)
                 .blastTemp(1228)
                 .build();
 
@@ -546,6 +594,9 @@ public class ElementMaterials {
                 .color(0xFFFFC8).iconSet(SHINY)
                 .flags(EXT2_METAL)
                 .element(Elements.Pt)
+                .washedIn(Mercury)
+                .cableProperties(GTValues.V[5], 2, 1)
+                .itemPipeProperties(512, 4.0f)
                 .build();
 
         Plutonium239 = new MaterialBuilder(81, "plutonium")
@@ -553,6 +604,7 @@ public class ElementMaterials {
                 .color(0xF03232).iconSet(METALLIC)
                 .flags(EXT_METAL)
                 .element(Elements.Pu239)
+                //.addOreByproducts(Uranium238, Lead)
                 .build();
 
         Plutonium241 = new MaterialBuilder(82, "plutonium241")
@@ -680,6 +732,7 @@ public class ElementMaterials {
                 .color(0x3C3C50).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_FOIL)
                 .element(Elements.Si)
+                //.addOreByproducts(SiliconDioxide)
                 .blastTemp(1687)
                 .build();
 
@@ -688,6 +741,9 @@ public class ElementMaterials {
                 .color(0xDCDCFF).iconSet(SHINY)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE)
                 .element(Elements.Ag)
+                .washedIn(Mercury)
+                .addOreByproducts(Lead, Sulfur, Silver)
+                .cableProperties(GTValues.V[3], 1, 1)
                 .build();
 
         Sodium = new MaterialBuilder(101, "sodium")
@@ -709,6 +765,7 @@ public class ElementMaterials {
                 .color(0xC8C800)
                 .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE)
                 .element(Elements.S)
+                .addOreByproducts(Sulfur)
                 .build();
 
         Tantalum = new MaterialBuilder(104, "tantalum")
@@ -751,6 +808,7 @@ public class ElementMaterials {
                 .flags(STD_METAL)
                 .element(Elements.Th)
                 .toolStats(6.0f, 2.0f, 512)
+                .addOreByproducts(Uranium238, Lead)
                 .build();
 
         Thallium = new MaterialBuilder(110, "thallium")
@@ -772,6 +830,11 @@ public class ElementMaterials {
                 .color(0xDCDCDC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR)
                 .element(Elements.Sn)
+                .separatedInto(Iron)
+                .washedIn(SodiumPersulfate)
+                .addOreByproducts(Iron, Zinc)
+                .cableProperties(GTValues.V[1], 1, 1)
+                .itemPipeProperties(4096, 0.5f)
                 .build();
 
         Titanium = new MaterialBuilder(113, "titanium") // todo Ore?
@@ -780,6 +843,9 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_SPRING, GENERATE_FRAME, GENERATE_DENSE)
                 .element(Elements.Ti)
                 .toolStats(7.0f, 3.0f, 1600)
+                //.addOreByproducts(Almandine)
+                .cableProperties(GTValues.V[4], 4, 2)
+                .fluidPipeProperties(2426, 80, true)
                 .blastTemp(1941)
                 .build();
 
@@ -795,6 +861,9 @@ public class ElementMaterials {
                 .flags(EXT2_METAL)
                 .element(Elements.W)
                 .toolStats(7.0f, 3.0f, 2560)
+                //.addOreByproducts(Manganese, Molybdenum)
+                .cableProperties(GTValues.V[5], 2, 2)
+                .fluidPipeProperties(4618, 90, true)
                 .blastTemp(3000)
                 .build();
 
@@ -804,6 +873,7 @@ public class ElementMaterials {
                 .flags(STD_METAL)
                 .element(Elements.U238)
                 .toolStats(6.0f, 3.0f, 512)
+                .addOreByproducts(Lead, Uranium235, Thorium)
                 .build();
 
         Uranium235 = new MaterialBuilder(117, "uranium235")
@@ -849,6 +919,9 @@ public class ElementMaterials {
                 .color(0xFAF0F0).iconSet(METALLIC)
                 .flags(STD_METAL, MORTAR_GRINDABLE, GENERATE_FOIL)
                 .element(Elements.Zn)
+                .washedIn(SodiumPersulfate)
+                .addOreByproducts(Tin, Gallium)
+                .cableProperties(GTValues.V[1], 1, 1)
                 .build();
 
         Zirconium = new MaterialBuilder(123, "zirconium")

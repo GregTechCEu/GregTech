@@ -671,25 +671,23 @@ public class Materials {
         for (DustMaterial dustMaterial : new DustMaterial[]{Magnetite, VanadiumMagnetite, BasalticMineralSand, GraniticMineralSand}) {
             dustMaterial.separatedOnto = Gold;
         }
-        for (DustMaterial dustMaterial : new DustMaterial[]{YellowLimonite, BrownLimonite, Pyrite, BandedIron, Nickel, Vermiculite, Glauconite, GlauconiteSand, Pentlandite, Tin, Antimony, Ilmenite, Manganese, Chrome, Chromite, Andradite}) {
+        for (DustMaterial dustMaterial : new DustMaterial[]{YellowLimonite, BrownLimonite, Pyrite, BandedIron, Vermiculite, Glauconite, GlauconiteSand, Pentlandite, Ilmenite, Manganese, Chromite, Andradite}) {
             dustMaterial.separatedOnto = Iron;
         }
         for (DustMaterial dustMaterial : new DustMaterial[]{Pyrite, YellowLimonite, BasalticMineralSand, GraniticMineralSand}) {
             dustMaterial.addFlag(BLAST_FURNACE_CALCITE_DOUBLE);
         }
-        for (DustMaterial dustMaterial : new DustMaterial[]{Iron, PigIron, WroughtIron, BrownLimonite}) {
+        for (DustMaterial dustMaterial : new DustMaterial[]{PigIron, WroughtIron, BrownLimonite}) {
             dustMaterial.addFlag(BLAST_FURNACE_CALCITE_TRIPLE);
         }
-        for (DustMaterial dustMaterial : new DustMaterial[]{Gold, Silver, Osmium, Platinum, Cooperite, Chalcopyrite, Bornite, Tungstate, Lead, Nickel, Magnetite, Iridium, Galena, Copper}) {
+        for (DustMaterial dustMaterial : new DustMaterial[]{Cooperite, Chalcopyrite, Bornite, Tungstate, Magnetite, Galena}) {
             dustMaterial.washedIn = Mercury;
         }
-        for (DustMaterial dustMaterial : new DustMaterial[]{Zinc, Cobalt, Cobaltite, Tetrahedrite, Sphalerite, Iron, Malachite, Tin, Garnierite, YellowLimonite, Antimony, Pentlandite}) {
+        for (DustMaterial dustMaterial : new DustMaterial[]{Cobaltite, Tetrahedrite, Sphalerite, Malachite, Garnierite, YellowLimonite, Pentlandite}) {
             dustMaterial.washedIn = SodiumPersulfate;
         }
 
-        Neodymium.magneticMaterial = NeodymiumMagnetic;
         Steel.magneticMaterial = SteelMagnetic;
-        Iron.magneticMaterial = IronMagnetic;
 
         NeodymiumMagnetic.setSmeltingInto(Neodymium);
         NeodymiumMagnetic.setArcSmeltingInto(Neodymium);
@@ -703,8 +701,6 @@ public class Materials {
         IronMagnetic.setArcSmeltingInto(WroughtIron);
         IronMagnetic.setMaceratingInto(Iron);
 
-        Iron.setArcSmeltingInto(WroughtIron);
-        Copper.setArcSmeltingInto(AnnealedCopper);
         Tetrahedrite.setDirectSmelting(Copper);
         Malachite.setDirectSmelting(Copper);
         Chalcopyrite.setDirectSmelting(Copper);
@@ -810,8 +806,6 @@ public class Materials {
         Galena.addOreByProducts(Sulfur, Silver, Lead, Silver);
         Lapis.addOreByProducts(Lazurite, Sodalite, Pyrite);
         Pyrite.addOreByProducts(Sulfur, TricalciumPhosphate, Iron);
-        Copper.addOreByProducts(Cobalt, Gold, Nickel, Gold);
-        Nickel.addOreByProducts(Cobalt, Platinum, Iron, Platinum);
         GarnetRed.addOreByProducts(Spessartine, Pyrope, Almandine);
         GarnetYellow.addOreByProducts(Andradite, Grossular, Uvarovite);
         Cooperite.addOreByProducts(Palladium, Nickel, Iridium, Cooperite);
@@ -821,7 +815,6 @@ public class Materials {
         Chrysotile.addOreByProducts(Asbestos, Silicon, Magnesium);
         Asbestos.addOreByProducts(Asbestos, Silicon, Magnesium);
         Pentlandite.addOreByProducts(Iron, Sulfur, Cobalt);
-        Uranium238.addOreByProducts(Lead, Uranium235, Thorium);
         Scheelite.addOreByProducts(Manganese, Molybdenum, Calcium);
         Tungstate.addOreByProducts(Manganese, Silver, Lithium, Silver);
         Bauxite.addOreByProducts(Grossular, Rutile, Gallium);
@@ -836,18 +829,8 @@ public class Materials {
         Neodymium.addOreByProducts(Monazite, RareEarth);
         Bastnasite.addOreByProducts(Neodymium, RareEarth);
         Glowstone.addOreByProducts(Redstone, Gold);
-        Zinc.addOreByProducts(Tin, Gallium);
-        Tungsten.addOreByProducts(Manganese, Molybdenum);
         Diatomite.addOreByProducts(BandedIron, Sapphire);
-        Iron.addOreByProducts(Nickel, Tin, Nickel);
         Lepidolite.addOreByProducts(Lithium, Caesium);
-        Gold.addOreByProducts(Copper, Nickel, Gold);
-        Tin.addOreByProducts(Iron, Zinc);
-        Antimony.addOreByProducts(Zinc, Iron, Zinc);
-        Silver.addOreByProducts(Lead, Sulfur, Silver);
-        Lead.addOreByProducts(Silver, Sulfur, Silver);
-        Thorium.addOreByProducts(Uranium238, Lead);
-        Plutonium239.addOreByProducts(Uranium238, Lead);
         Electrum.addOreByProducts(Gold, Silver);
         Bronze.addOreByProducts(Copper, Tin);
         Brass.addOreByProducts(Copper, Zinc);
@@ -859,7 +842,6 @@ public class Materials {
         Platinum.addOreByProducts(Nickel, Iridium);
         Emerald.addOreByProducts(Beryllium, Aluminium);
         Olivine.addOreByProducts(Pyrope, Magnesium, Manganese);
-        Chrome.addOreByProducts(Iron, Magnesium);
         Chromite.addOreByProducts(Iron, Magnesium);
         Tetrahedrite.addOreByProducts(Antimony, Zinc, Tetrahedrite);
         GarnetSand.addOreByProducts(GarnetRed, GarnetYellow);
@@ -873,7 +855,6 @@ public class Materials {
         Spodumene.addOreByProducts(Aluminium, Lithium);
         Ruby.addOreByProducts(Chrome, GarnetRed);
         TricalciumPhosphate.addOreByProducts(Apatite, Phosphate);
-        Iridium.addOreByProducts(Platinum, Osmium, Platinum);
         Pyrope.addOreByProducts(GarnetRed, Magnesium);
         Almandine.addOreByProducts(GarnetRed, Aluminium);
         Spessartine.addOreByProducts(GarnetRed, Manganese);
@@ -899,14 +880,9 @@ public class Materials {
         Netherrack.addOreByProducts(Sulfur);
         Flint.addOreByProducts(Obsidian);
         Cobaltite.addOreByProducts(Cobalt, Cobaltite);
-        Cobalt.addOreByProducts(Cobaltite);
-        Sulfur.addOreByProducts(Sulfur);
         Saltpeter.addOreByProducts(Saltpeter);
         Endstone.addOreByProducts(Helium3);
-        Osmium.addOreByProducts(Iridium, Osmium);
         Magnesium.addOreByProducts(Olivine);
-        Aluminium.addOreByProducts(Bauxite);
-        Titanium.addOreByProducts(Almandine);
         Obsidian.addOreByProducts(Olivine);
         Ash.addOreByProducts(Carbon);
         DarkAsh.addOreByProducts(Carbon);
@@ -926,8 +902,6 @@ public class Materials {
         BlueTopaz.addOreByProducts(Topaz);
         Niter.addOreByProducts(Saltpeter);
         Vinteum.addOreByProducts(Vinteum);
-        Lithium.addOreByProducts(Lithium);
-        Silicon.addOreByProducts(SiliconDioxide);
         Salt.addOreByProducts(RockSalt, Borax);
         RockSalt.addOreByProducts(Salt, Borax);
         Andesite.addOreByProducts(Basalt);
@@ -941,38 +915,21 @@ public class Materials {
         BismuthBronze.addEnchantmentForTools(Enchantments.BANE_OF_ARTHROPODS, 5);
 
         RedAlloy.setCableProperties(GTValues.V[0], 1, 0);
-        Tin.setCableProperties(GTValues.V[1], 1, 1);
-        Copper.setCableProperties(GTValues.V[2], 1, 2);
 
-        Cobalt.setCableProperties(GTValues.V[1], 2, 2);
-        Lead.setCableProperties(GTValues.V[1], 2, 2);
-        Tin.setCableProperties(GTValues.V[1], 1, 1);
-        Zinc.setCableProperties(GTValues.V[1], 1, 1);
         SolderingAlloy.setCableProperties(GTValues.V[1], 1, 1);
 
-        Iron.setCableProperties(GTValues.V[2], 2, 3);
-        Nickel.setCableProperties(GTValues.V[2], 3, 3);
         Cupronickel.setCableProperties(GTValues.V[2], 2, 3);
-        Copper.setCableProperties(GTValues.V[2], 1, 2);
         AnnealedCopper.setCableProperties(GTValues.V[2], 1, 1);
 
         Kanthal.setCableProperties(GTValues.V[3], 4, 3);
-        Gold.setCableProperties(GTValues.V[3], 2, 2);
         Electrum.setCableProperties(GTValues.V[3], 3, 2);
-        Silver.setCableProperties(GTValues.V[3], 1, 1);
 
         Nichrome.setCableProperties(GTValues.V[4], 4, 4);
         Steel.setCableProperties(GTValues.V[4], 2, 2);
         BlackSteel.setCableProperties(GTValues.V[4], 3, 2);
-        Titanium.setCableProperties(GTValues.V[4], 4, 2);
-        Aluminium.setCableProperties(GTValues.V[4], 1, 1);
 
         Graphene.setCableProperties(GTValues.V[5], 1, 1);
-        Osmium.setCableProperties(GTValues.V[5], 4, 2);
-        Platinum.setCableProperties(GTValues.V[5], 2, 1);
-        Palladium.setCableProperties(GTValues.V[5], 2, 1);
         TungstenSteel.setCableProperties(GTValues.V[5], 3, 2);
-        Tungsten.setCableProperties(GTValues.V[5], 2, 2);
 
         HSSG.setCableProperties(GTValues.V[6], 4, 2);
         NiobiumTitanium.setCableProperties(GTValues.V[6], 4, 2);
@@ -986,26 +943,17 @@ public class Materials {
         FluxedElectrum.setCableProperties(GTValues.V[8], 3, 2);
         DiamericiumTitanium.setCableProperties(GTValues.V[10], 8, 16);
 
-        Copper.setFluidPipeProperties(1696, 10, true);
-        Lead.setFluidPipeProperties(1200, 15, true);
         Bronze.setFluidPipeProperties(1696, 20, true);
         WroughtIron.setFluidPipeProperties(2387, 30, true);
-        Aluminium.setFluidPipeProperties(1166, 35, true);
-        Gold.setFluidPipeProperties(1671, 35, true);
         TinAlloy.setFluidPipeProperties(1572, 38, true);
         Invar.setFluidPipeProperties(2395, 40, true);
         Steel.setFluidPipeProperties(2557, 40, true);
-        Chrome.setFluidPipeProperties(2725, 40, true);
         StainlessSteel.setFluidPipeProperties(2428, 60, true);
-        Titanium.setFluidPipeProperties(2426, 80, true);
-        Tungsten.setFluidPipeProperties(4618, 90, true);
         Potin.setFluidPipeProperties(2023, 96, true);
         VanadiumSteel.setFluidPipeProperties(2073, 100, true);
         TungstenSteel.setFluidPipeProperties(7568, 100, true);
         TungstenCarbide.setFluidPipeProperties(7568, 125, true);
-        Iridium.setFluidPipeProperties(3398, 140, true);
         NiobiumTitanium.setFluidPipeProperties(2900, 150, true);
-        Europium.setFluidPipeProperties(7780, 1200, true);
         Naquadah.setFluidPipeProperties(19200, 1500, true);
         Duranium.setFluidPipeProperties(100000, 2000, true);
         Neutronium.setFluidPipeProperties(1000000, 2800, true);
@@ -1014,25 +962,19 @@ public class Materials {
         Polytetrafluoroethylene.setFluidPipeProperties(600, 80, true);
         Polybenzimidazole.setFluidPipeProperties(1000, 100, true);
 
-        Tin.setItemPipeProperties(4096, 0.5f);
-        Cobalt.setItemPipeProperties(2560, 2);
         Brass.setItemPipeProperties(2048, 1);
         CobaltBrass.setItemPipeProperties(2048, 1);
-        Nickel.setItemPipeProperties(2048, 1);
         Cupronickel.setItemPipeProperties(2048, 1);
         Electrum.setItemPipeProperties(1024, 2);
         SterlingSilver.setItemPipeProperties(1024, 2);
         RoseGold.setItemPipeProperties(1024, 2);
         Magnalium.setItemPipeProperties(1024, 2);
         BlackBronze.setItemPipeProperties(1024, 2);
-        Platinum.setItemPipeProperties(512, 4);
-        Osmium.setItemPipeProperties(256, 8);
         FluxedElectrum.setItemPipeProperties(128, 16);
         Ultimet.setItemPipeProperties(128, 16);
         Osmiridium.setItemPipeProperties(64, 32);
         Americium.setItemPipeProperties(64, 64);
         DiamericiumTitanium.setItemPipeProperties(32, 128);
         PolyvinylChloride.setItemPipeProperties(512, 4);
-        Aluminium.setItemPipeProperties(1680, 2);
     }
 }
