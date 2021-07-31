@@ -4,7 +4,6 @@ import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.MaterialBuilder;
 import gregtech.api.unification.material.MaterialBuilder.FluidType;
 
-import static com.google.common.collect.ImmutableList.of;
 import static gregtech.api.unification.material.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.type.MaterialFlags.*;
@@ -479,59 +478,384 @@ public class ElementMaterials {
                 .element(Elements.Nh)
                 .build();
 
-        Nihonium = new IngotMaterial(70, "nihonium" , 0x08269e, SHINY, 2, of(), 0, Elements.get("Nihonium"));
-        Niobium = new IngotMaterial(71, "niobium", 0xBEB4C8, METALLIC, 2, of(), STD_METAL | GENERATE_ORE, Elements.get("Niobium"), 2750);
-        Nitrogen = new FluidMaterial(72, "nitrogen", 0xFFFFFF, FLUID, of(), STATE_GAS | GENERATE_PLASMA, Elements.get("Nitrogen"));
-        Nobelium = new IngotMaterial(73, "nobelium", 0xFFFFFF, SHINY, 2, of(), 0, Elements.get("Nobelium"));
-        Oganesson = new IngotMaterial(74, "oganesson", 0x142d64, METALLIC, 3, of(), EXT2_METAL, Elements.get("Oganesson"));
-        Osmium = new IngotMaterial(75, "osmium", 0x3232FF, METALLIC, 4, of(), GENERATE_ORE | EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_DENSE, Elements.get("Osmium"), 16.0F, 4.0f, 1280, 3306);
-        Oxygen = new FluidMaterial(76, "oxygen", 0xFFFFFF, GAS, of(), STATE_GAS | GENERATE_PLASMA, Elements.get("Oxygen"));
-        Palladium = new IngotMaterial(77, "palladium", 0x808080, SHINY, 2, of(), EXT2_METAL | GENERATE_ORE | GENERATE_FLUID_BLOCK, Elements.get("Palladium"), 8.0f, 2.0f, 512, 1228);
-        Phosphorus = new DustMaterial(78, "phosphorus", 0xFFFF00, DULL, 2, of(), 0, Elements.get("Phosphorus"));
-        Polonium = new IngotMaterial(79, "polonium", 0xC9D47E, DULL, 4, of(), 0, Elements.get("Polonium"));
-        Platinum = new IngotMaterial(80, "platinum", 0xFFFFC8, SHINY, 2, of(), EXT2_METAL | GENERATE_ORE | GENERATE_FLUID_BLOCK, Elements.get("Platinum"));
-        Plutonium239 = new IngotMaterial(81, "plutonium", 0xF03232, METALLIC, 3, of(), EXT_METAL, Elements.get("Plutonium-239"));
-        Plutonium241 = new IngotMaterial(82, "plutonium241", 0xFA4646, SHINY, 3, of(), EXT_METAL, Elements.get("Plutonium-241"));
-        Potassium = new IngotMaterial(83, "potassium", 0xFAFAFA, METALLIC, 1, of(), EXT_METAL, Elements.get("Potassium"));
-        Praseodymium = new IngotMaterial(84, "praseodymium", 0xCECECE, METALLIC, 2, of(), EXT_METAL, Elements.get("Praseodymium"), 1208);
-        Promethium = new IngotMaterial(85, "promethium", 0xFFFFFF, METALLIC, 2, of(), EXT_METAL, Elements.get("Promethium"), 1315);
-        Protactinium = new IngotMaterial(86, "protactinium", 0xA78B6D, METALLIC, 3, of(), EXT2_METAL, Elements.get("Protactinium"));
-        Radon = new FluidMaterial(87, "radon", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Radon"));
-        Radium = new IngotMaterial(88, "radium", 0xFFC840, SHINY, 2, of(), 0, Elements.get("Radium"));
-        Rhenium = new IngotMaterial(89, "rhenium", 0xb6bac3, SHINY, 2, of(), EXT2_METAL, Elements.get("Rhenium"));
-        Rhodium = new IngotMaterial(90, "rhodium", 0xF4F4F4, METALLIC, 2, of(), EXT2_METAL, Elements.get("Rhodium"), 2237);
-        Roentgenium = new IngotMaterial(91, "roentgenium" , 0xe3fdec, SHINY, 2, of(), 0, Elements.get("Roentgenium"));
-        Rubidium = new IngotMaterial(92, "rubidium", 0xF01E1E, METALLIC, 2, of(), STD_METAL, Elements.get("Rubidium"));
-        Ruthenium = new IngotMaterial(93, "ruthenium", 0x646464, METALLIC, 2, of(), EXT2_METAL, Elements.get("Ruthenium"), 2607);
-        Rutherfordium = new IngotMaterial(94, "rutherfordium", 0xFFF6A1, SHINY, 7, of(), EXT2_METAL, Elements.get("Rutherfordium"));
-        Samarium = new IngotMaterial(95, "samarium", 0xFFFFCC, METALLIC, 2, of(), STD_METAL, Elements.get("Samarium"), 1345);
-        Scandium = new IngotMaterial(96, "scandium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Scandium"), 1814);
-        Seaborgium = new IngotMaterial(97, "seaborgium", 0x19c5ff, SHINY, 7, of(), 0, Elements.get("Seaborgium"));
-        Selenium = new IngotMaterial(98, "selenium", 0xB6BA6B, SHINY, 2, of(), 0, Elements.get("Selenium"));
-        Silicon = new IngotMaterial(99, "silicon", 0x3C3C50, METALLIC, 2, of(), STD_METAL | GENERATE_FOIL, Elements.get("Silicon"), 1687);
-        Silver = new IngotMaterial(100, "silver", 0xDCDCFF, SHINY, 2, of(), EXT2_METAL | GENERATE_ORE | MORTAR_GRINDABLE, Elements.get("Silver"));
-        Sodium = new IngotMaterial(101, "sodium", 0x000096, METALLIC, 2, of(), STD_METAL, Elements.get("Sodium"));
-        Strontium = new IngotMaterial(102, "strontium", 0xC8C8C8, METALLIC, 2, of(), STD_METAL, Elements.get("Strontium"));
-        Sulfur = new DustMaterial(103, "sulfur", 0xC8C800, DULL, 2, of(), NO_SMASHING | NO_SMELTING | FLAMMABLE | GENERATE_ORE, Elements.get("Sulfur"));
-        Tantalum = new IngotMaterial(104, "tantalum", 0xFFFFFF, METALLIC, 2, of(), STD_METAL | GENERATE_FOIL, Elements.get("Tantalum"));
-        Technetium = new IngotMaterial(105, "technetium", 0x545455, SHINY, 2, of(), 0, Elements.get("Technetium"));
-        Tellurium = new IngotMaterial(106, "tellurium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Tellurium"));
-        Tennessine = new IngotMaterial(107, "tennessine" , 0x977fd6, SHINY, 2, of(), 0, Elements.get("Tennessine"));
-        Terbium = new IngotMaterial(108, "terbium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Terbium"), 1629);
-        Thorium = new IngotMaterial(109, "thorium", 0x001E00, SHINY, 2, of(), STD_METAL | GENERATE_ORE, Elements.get("Thorium"), 6.0F, 2.0f, 512);
-        Thallium = new IngotMaterial(110, "thallium", 0xc1c1de, SHINY, 2, of(), 0, Elements.get("Thallium"));
-        Thulium = new IngotMaterial(111, "thulium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Thulium"), 1818);
-        Tin = new IngotMaterial(112, "tin", 0xDCDCDC, DULL, 1, of(), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_ROTOR | GENERATE_ORE, Elements.get("Tin"));
-        Titanium = new IngotMaterial(113, "titanium", 0xDCA0F0, METALLIC, 3, of(), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_SPRING | GENERATE_FRAME | GENERATE_DENSE, Elements.get("Titanium"), 7.0F, 3.0f, 1600, 1941);
-        Tritium = new FluidMaterial(114, "tritium", 0xFFFFFF, METALLIC, of(), STATE_GAS, Elements.get("Tritium"));
-        Tungsten = new IngotMaterial(115, "tungsten", 0x323232, METALLIC, 3, of(), EXT2_METAL, Elements.get("Tungsten"), 7.0F, 3.0f, 2560, 3000);
-        Uranium238 = new IngotMaterial(116, "uranium", 0x32F032, METALLIC, 3, of(), STD_METAL | GENERATE_ORE, Elements.get("Uranium-238"), 6.0F, 3.0f, 512);
-        Uranium235 = new IngotMaterial(117, "uranium235", 0x46FA46, SHINY, 3, of(), STD_METAL | GENERATE_ORE | GENERATE_ROD, Elements.get("Uranium-235"), 6.0F, 3.0f, 512);
-        Vanadium = new IngotMaterial(118, "vanadium", 0x323232, METALLIC, 2, of(), STD_METAL, Elements.get("Vanadium"), 2183);
-        Xenon = new FluidMaterial(119, "xenon", 0xFFFFFF, GAS, of(), STATE_GAS, Elements.get("Xenon"));
-        Ytterbium = new IngotMaterial(120, "ytterbium", 0xFFFFFF, METALLIC, 2, of(), STD_METAL, Elements.get("Ytterbium"), 1097);
-        Yttrium = new IngotMaterial(121, "yttrium", 0xDCFADC, METALLIC, 2, of(), STD_METAL, Elements.get("Yttrium"), 1799);
-        Zinc = new IngotMaterial(122, "zinc", 0xFAF0F0, METALLIC, 1, of(), STD_METAL | GENERATE_ORE | MORTAR_GRINDABLE | GENERATE_FOIL, Elements.get("Zinc"));
-        Zirconium = new IngotMaterial(123, "zirconium", 0xE0E1E1, METALLIC, 6, of(), EXT2_METAL, Elements.get("Zirconium"));
+        Niobium = new MaterialBuilder(71, "niobium")
+                .ingot().fluid().ore()
+                .color(0xBEB4C8).iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.Nb)
+                .blastTemp(2750)
+                .build();
+
+        Nitrogen = new MaterialBuilder(72, "nitrogen")
+                .fluid(FluidType.GAS).plasma()
+                .iconSet(FLUID)
+                .element(Elements.N)
+                .build();
+
+        Nobelium = new MaterialBuilder(73, "nobelium")
+                .ingot().fluid()
+                .iconSet(SHINY)
+                .element(Elements.No)
+                .build();
+
+        Oganesson = new MaterialBuilder(74, "oganesson")
+                .ingot(3).fluid()
+                .color(0x142D64).iconSet(METALLIC)
+                .flags(EXT2_METAL)
+                .element(Elements.Og)
+                .build();
+
+        Osmium = new MaterialBuilder(75, "osmium")
+                .ingot(4).fluid().ore()
+                .color(0x3232FF).iconSet(METALLIC)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
+                .element(Elements.Os)
+                .toolStats(16.0f, 4.0f, 1280)
+                .blastTemp(3306)
+                .build();
+
+        Oxygen = new MaterialBuilder(76, "oxygen")
+                .fluid(FluidType.GAS).plasma()
+                .iconSet(GAS)
+                .element(Elements.O)
+                .build();
+
+        Palladium = new MaterialBuilder(77, "palladium")
+                .ingot().fluid(FluidType.FLUID, true).ore()
+                .color(0x808080).iconSet(SHINY)
+                .flags(EXT2_METAL)
+                .element(Elements.Pd)
+                .toolStats(8.0f, 2.0f, 512)
+                .blastTemp(1228)
+                .build();
+
+        Phosphorus = new MaterialBuilder(78, "phosphorus")
+                .dust()
+                .color(0xFFFF00)
+                .element(Elements.P)
+                .build();
+
+        Polonium = new MaterialBuilder(79, "polonium")
+                .ingot(4).fluid()
+                .color(0xC9D47E)
+                .element(Elements.Po)
+                .build();
+
+        Platinum = new MaterialBuilder(80, "platinum")
+                .ingot().fluid(FluidType.GAS, true).ore()
+                .color(0xFFFFC8).iconSet(SHINY)
+                .flags(EXT2_METAL)
+                .element(Elements.Pt)
+                .build();
+
+        Plutonium239 = new MaterialBuilder(81, "plutonium")
+                .ingot(3).fluid()
+                .color(0xF03232).iconSet(METALLIC)
+                .flags(EXT_METAL)
+                .element(Elements.Pu239)
+                .build();
+
+        Plutonium241 = new MaterialBuilder(82, "plutonium241")
+                .ingot(3).fluid()
+                .color(0xFA4646).iconSet(SHINY)
+                .flags(EXT_METAL)
+                .element(Elements.Pu241)
+                .build();
+
+        Potassium = new MaterialBuilder(83, "potassium")
+                .ingot(1).fluid()
+                .color(0xFAFAFA).iconSet(METALLIC)
+                .flags(EXT_METAL)
+                .element(Elements.K)
+                .build();
+
+        Praseodymium = new MaterialBuilder(84, "praseodymium")
+                .ingot().fluid()
+                .color(0xCECECE).iconSet(METALLIC)
+                .flags(EXT_METAL)
+                .element(Elements.Pr)
+                .blastTemp(1208)
+                .build();
+
+        Promethium = new MaterialBuilder(85, "promethium")
+                .ingot().fluid()
+                .iconSet(METALLIC)
+                .flags(EXT_METAL)
+                .element(Elements.Pm)
+                .blastTemp(1315)
+                .build();
+
+        Protactinium = new MaterialBuilder(86, "protactinium")
+                .ingot(3).fluid()
+                .color(0xA78B6D).iconSet(METALLIC)
+                .flags(EXT2_METAL)
+                .element(Elements.Pa)
+                .build();
+
+        Radon = new MaterialBuilder(87, "radon")
+                .fluid(FluidType.GAS)
+                .iconSet(GAS)
+                .element(Elements.Rn)
+                .build();
+
+        Radium = new MaterialBuilder(88, "radium")
+                .ingot().fluid()
+                .color(0xFFC840).iconSet(SHINY)
+                .element(Elements.Ra)
+                .build();
+
+        Rhenium = new MaterialBuilder(89, "rhenium")
+                .ingot().fluid()
+                .color(0xB6BAC3).iconSet(SHINY)
+                .flags(EXT2_METAL)
+                .element(Elements.Re)
+                .build();
+
+        Rhodium = new MaterialBuilder(90, "rhodium")
+                .ingot().fluid()
+                .color(0xF4F4F4).iconSet(METALLIC)
+                .flags(EXT2_METAL)
+                .element(Elements.Rh)
+                .blastTemp(2237)
+                .build();
+
+        Roentgenium = new MaterialBuilder(91, "roentgenium")
+                .ingot().fluid()
+                .color(0xE3FDEC).iconSet(SHINY)
+                .element(Elements.Rg)
+                .build();
+
+        Rubidium = new MaterialBuilder(92, "rubidium")
+                .ingot().fluid()
+                .color(0xF01E1E).iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.Rb)
+                .build();
+
+        Ruthenium = new MaterialBuilder(93, "ruthenium")
+                .ingot().fluid()
+                .color(0x646464).iconSet(METALLIC)
+                .flags(EXT2_METAL)
+                .element(Elements.Ru)
+                .blastTemp(2607)
+                .build();
+
+        Rutherfordium = new MaterialBuilder(94, "rutherfordium")
+                .ingot(7).fluid()
+                .color(0xFFF6A1).iconSet(SHINY)
+                .flags(EXT2_METAL)
+                .element(Elements.Rf)
+                .build();
+
+        Samarium = new MaterialBuilder(95, "samarium")
+                .ingot().fluid()
+                .color(0xFFFFCC).iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.Sm)
+                .blastTemp(1345)
+                .build();
+
+        Scandium = new MaterialBuilder(96, "scandium")
+                .ingot().fluid()
+                .iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.Sc)
+                .blastTemp(1814)
+                .build();
+
+        Seaborgium = new MaterialBuilder(97, "seaborgium")
+                .ingot(7).fluid()
+                .color(0x19C5FF).iconSet(SHINY)
+                .element(Elements.Sg)
+                .build();
+
+        Selenium = new MaterialBuilder(98, "selenium")
+                .ingot().fluid()
+                .color(0xB6BA6B).iconSet(SHINY)
+                .element(Elements.Se)
+                .build();
+
+        Silicon = new MaterialBuilder(99, "silicon")
+                .ingot().fluid()
+                .color(0x3C3C50).iconSet(METALLIC)
+                .flags(STD_METAL, GENERATE_FOIL)
+                .element(Elements.Si)
+                .blastTemp(1687)
+                .build();
+
+        Silver = new MaterialBuilder(100, "silver")
+                .ingot().fluid().ore()
+                .color(0xDCDCFF).iconSet(SHINY)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE)
+                .element(Elements.Ag)
+                .build();
+
+        Sodium = new MaterialBuilder(101, "sodium")
+                .ingot().fluid()
+                .color(0x000096).iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.Na)
+                .build();
+
+        Strontium = new MaterialBuilder(102, "strontium")
+                .ingot().fluid()
+                .color(0xC8C8C8).iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.Sr)
+                .build();
+
+        Sulfur = new MaterialBuilder(103, "sulfur") // todo fluid?
+                .dust().ore()
+                .color(0xC8C800)
+                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE)
+                .element(Elements.S)
+                .build();
+
+        Tantalum = new MaterialBuilder(104, "tantalum")
+                .ingot().fluid()
+                .iconSet(METALLIC)
+                .flags(STD_METAL, GENERATE_FOIL)
+                .element(Elements.Ta)
+                .build();
+
+        Technetium = new MaterialBuilder(105, "technetium")
+                .ingot().fluid()
+                .color(0x545455).iconSet(SHINY)
+                .element(Elements.Tc)
+                .build();
+
+        Tellurium = new MaterialBuilder(106, "tellurium")
+                .ingot().fluid()
+                .iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.Te)
+                .build();
+
+        Tennessine = new MaterialBuilder(107, "tennessine")
+                .ingot().fluid()
+                .color(0x977FD6).iconSet(SHINY)
+                .element(Elements.Ts)
+                .build();
+
+        Terbium = new MaterialBuilder(108, "terbium")
+                .ingot().fluid()
+                .iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.Tb)
+                .blastTemp(1629)
+                .build();
+
+        Thorium = new MaterialBuilder(109, "thorium")
+                .ingot().fluid().ore()
+                .color(0x001E00).iconSet(SHINY)
+                .flags(STD_METAL)
+                .element(Elements.Th)
+                .toolStats(6.0f, 2.0f, 512)
+                .build();
+
+        Thallium = new MaterialBuilder(110, "thallium")
+                .ingot().fluid()
+                .color(0xC1C1DE).iconSet(SHINY)
+                .element(Elements.Tl)
+                .build();
+
+        Thulium = new MaterialBuilder(111, "thulium")
+                .ingot().fluid()
+                .iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.Tm)
+                .blastTemp(1818)
+                .build();
+
+        Tin = new MaterialBuilder(112, "tin")
+                .ingot(1).fluid().ore()
+                .color(0xDCDCDC)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR)
+                .element(Elements.Sn)
+                .build();
+
+        Titanium = new MaterialBuilder(113, "titanium") // todo Ore?
+                .ingot(3).fluid()
+                .color(0xDCA0F0).iconSet(METALLIC)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_SPRING, GENERATE_FRAME, GENERATE_DENSE)
+                .element(Elements.Ti)
+                .toolStats(7.0f, 3.0f, 1600)
+                .blastTemp(1941)
+                .build();
+
+        Tritium = new MaterialBuilder(114, "tritium")
+                .fluid(FluidType.GAS)
+                .iconSet(METALLIC)
+                .element(Elements.T)
+                .build();
+
+        Tungsten = new MaterialBuilder(115, "tungsten")
+                .ingot(3).fluid()
+                .color(0x323232).iconSet(METALLIC)
+                .flags(EXT2_METAL)
+                .element(Elements.W)
+                .toolStats(7.0f, 3.0f, 2560)
+                .blastTemp(3000)
+                .build();
+
+        Uranium238 = new MaterialBuilder(116, "uranium")
+                .ingot(3).fluid().ore()
+                .color(0x32F032).iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.U238)
+                .toolStats(6.0f, 3.0f, 512)
+                .build();
+
+        Uranium235 = new MaterialBuilder(117, "uranium235")
+                .ingot(3).fluid().ore()
+                .color(0x46FA46).iconSet(SHINY)
+                .flags(STD_METAL, GENERATE_ROD)
+                .element(Elements.U235)
+                .toolStats(6.0f, 3.0f, 512)
+                .build();
+
+        Vanadium = new MaterialBuilder(118, "vanadium")
+                .ingot().fluid()
+                .color(0x323232).iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.V)
+                .blastTemp(2183)
+                .build();
+
+        Xenon = new MaterialBuilder(119, "xenon")
+                .fluid(FluidType.GAS)
+                .iconSet(GAS)
+                .element(Elements.Xe)
+                .build();
+
+        Ytterbium = new MaterialBuilder(120, "ytterbium")
+                .ingot().fluid()
+                .iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.Yb)
+                .blastTemp(1097)
+                .build();
+
+        Yttrium = new MaterialBuilder(121, "yttrium")
+                .ingot().fluid()
+                .color(0xDCFADC).iconSet(METALLIC)
+                .flags(STD_METAL)
+                .element(Elements.Yt)
+                .blastTemp(1799)
+                .build();
+
+        Zinc = new MaterialBuilder(122, "zinc")
+                .ingot(1).fluid().ore()
+                .color(0xFAF0F0).iconSet(METALLIC)
+                .flags(STD_METAL, MORTAR_GRINDABLE, GENERATE_FOIL)
+                .element(Elements.Zn)
+                .build();
+
+        Zirconium = new MaterialBuilder(123, "zirconium")
+                .ingot(6).fluid()
+                .color(0xE0E1E1).iconSet(METALLIC)
+                .flags(EXT2_METAL)
+                .element(Elements.Zr)
+                .build();
     }
 }
