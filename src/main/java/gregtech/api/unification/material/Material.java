@@ -12,6 +12,7 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import stanhebben.zenscript.annotations.*;
@@ -116,6 +117,8 @@ public class Material implements Comparable<Material> {
         this.flags = flags;
         calculateDecompositionType();
 
+        // TODO these verifications probably need to be done in deferred registry,
+        // TODO due to some things (ore extra materials) possibly being uninitialized.
         this.properties.setMaterial(this);
         this.properties.verify();
         this.flags.verify(this);
@@ -160,6 +163,12 @@ public class Material implements Comparable<Material> {
                 flags.addFlags(MaterialFlags.DECOMPOSITION_BY_ELECTROLYZING);
             }
         }
+    }
+
+    public FluidStack getFluid(int amount) {
+        if (properties.getFluidProperty() == null)
+            throw new IllegalArgumentException("Material " + this.name + " does not have a Fluid!");
+        return properties.getFluidProperty().getFluid(amount);
     }
 
     //@ZenMethod
