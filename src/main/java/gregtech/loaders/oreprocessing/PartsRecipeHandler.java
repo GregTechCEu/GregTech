@@ -44,7 +44,6 @@ public class PartsRecipeHandler {
         OrePrefix.plate.addProcessingHandler(dustProperty, PartsRecipeHandler::processPlate);
         OrePrefix.plateDouble.addProcessingHandler(ingotProperty, PartsRecipeHandler::processPlateDouble);
         OrePrefix.plateDense.addProcessingHandler(ingotProperty, PartsRecipeHandler::processPlateDense);
-        OrePrefix.compressed.addProcessingHandler(ingotProperty, PartsRecipeHandler::processCompressed);
 
         OrePrefix.turbineBlade.addProcessingHandler(ingotProperty, PartsRecipeHandler::processTurbine);
         OrePrefix.rotor.addProcessingHandler(ingotProperty, PartsRecipeHandler::processRotor);
@@ -241,16 +240,6 @@ public class PartsRecipeHandler {
                     .circuitMeta(2)
                     .buildAndRegister();
         }
-    }
-
-    public static void processCompressed(OrePrefix compressed, Material material) {
-        if (!material.hasFlag(GENERATE_PLATE)) return;
-        ItemStack compressedStack = OreDictUnifier.get(compressed, material);
-        RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
-            .input(OrePrefix.plank, material, 2)
-            .explosivesAmount(2)
-            .outputs(compressedStack, OreDictUnifier.get(OrePrefix.dustTiny, Materials.DarkAsh))
-            .buildAndRegister();
     }
 
     public static void processPlateDense(OrePrefix orePrefix, Material material, IngotProperty property) {

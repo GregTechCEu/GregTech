@@ -2,8 +2,6 @@ package gregtech.loaders.oreprocessing;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
-import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.IngotMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.loaders.recipe.RecyclingRecipes;

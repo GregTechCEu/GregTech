@@ -4,9 +4,8 @@ import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.toolitem.*;
 import gregtech.api.recipes.ModHandler;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.IngotMaterial;
-import gregtech.api.unification.material.type.SolidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.tools.*;
@@ -187,11 +186,11 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
     }
 
     public void registerRecipes() {
-        IngotMaterial[] mortarMaterials = new IngotMaterial[]{Materials.Bronze, Materials.Iron,
+        Material[] mortarMaterials = new Material[]{Materials.Bronze, Materials.Iron,
             Materials.Steel, Materials.DamascusSteel, Materials.WroughtIron, Materials.RedSteel,
             Materials.BlackSteel, Materials.BlueSteel};
 
-        for (IngotMaterial material : mortarMaterials) {
+        for (Material material : mortarMaterials) {
             ModHandler.addShapedRecipe("mortar_" + material.toString(),
                 MORTAR.getStackForm(material),
                 " I ", "SIS", "SSS",
@@ -199,11 +198,11 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
                 'S', OrePrefix.stone);
         }
 
-        SolidMaterial[] softHammerMaterials = new SolidMaterial[]{
+        Material[] softHammerMaterials = new Material[]{
             Materials.Wood, Materials.Rubber, Materials.Polyethylene, Materials.Polytetrafluoroethylene, Materials.Polybenzimidazole
         };
         for (int i = 0; i < softHammerMaterials.length; i++) {
-            SolidMaterial solidMaterial = softHammerMaterials[i];
+            Material solidMaterial = softHammerMaterials[i];
             ItemStack itemStack = MetaItems.SOFT_HAMMER.getStackForm();
             MetaItems.SOFT_HAMMER.setToolData(itemStack, solidMaterial, 128 * (1 << i), 1, 4.0f, 1.0f);
             ModHandler.addShapedRecipe(String.format("soft_hammer_%s", solidMaterial.toString()), itemStack,

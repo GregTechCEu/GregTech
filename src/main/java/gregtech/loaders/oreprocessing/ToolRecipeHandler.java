@@ -126,7 +126,7 @@ public class ToolRecipeHandler {
                 new UnificationEntry(toolPrefix, material),
                 new UnificationEntry(OrePrefix.stick, handleMaterial));
 
-        if (material.getProperties().getIngotProperty() != null && mMaterial.hasFlag(GENERATE_PLATE)) {
+        if (material.getProperties().getIngotProperty() != null && material.hasFlag(GENERATE_PLATE)) {
             addSimpleToolRecipe(toolPrefix, material, toolItem,
                     new UnificationEntry(OrePrefix.plate, material),
                     new UnificationEntry(OrePrefix.ingot, material), recipe);

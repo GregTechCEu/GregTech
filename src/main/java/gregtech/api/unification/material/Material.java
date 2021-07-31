@@ -175,6 +175,12 @@ public class Material implements Comparable<Material> {
         return properties.getFluidProperty().getFluid(amount);
     }
 
+    public int getHarvestLevel() {
+        if (properties.getDustProperty() == null)
+            throw new IllegalArgumentException("Material " + this.name + " does not have a harvest level! Is probably a Fluid");
+        return properties.getDustProperty().getHarvestLevel();
+    }
+
     //@ZenMethod
     public void setMaterialRGB(int materialRGB) {
         this.materialRGB = materialRGB;
