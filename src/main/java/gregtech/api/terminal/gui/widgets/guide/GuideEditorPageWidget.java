@@ -115,13 +115,4 @@ public class GuideEditorPageWidget extends GuidePageWidget {
         configMap.remove(widget);
     }
 
-    @Override
-    public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
-    public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
-        return super.mouseDragged(mouseX, mouseY, button, timeDragged);
-    }
 }

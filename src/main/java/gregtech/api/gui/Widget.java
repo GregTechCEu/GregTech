@@ -256,14 +256,14 @@ public abstract class Widget {
     /**
      * Writes data to be sent to client's {@link #readUpdateInfo}
      */
-    protected final void writeUpdateInfo(int id, Consumer<PacketBuffer> packetBufferWriter) {
+    protected void writeUpdateInfo(int id, Consumer<PacketBuffer> packetBufferWriter) {
         if (uiAccess != null && gui != null) {
             uiAccess.writeUpdateInfo(this, id, packetBufferWriter);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    protected final void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
+    protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
         if (uiAccess != null) {
             uiAccess.writeClientAction(this, id, packetBufferWriter);
         }
