@@ -6,6 +6,8 @@ import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.pipenet.tickable.TickableWorldPipeNetEventHandler;
+import gregtech.api.pipenet.*;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.init.Blocks;
@@ -65,30 +67,23 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
         NET_DATA.clear();
     }
 
-    public void destroyNetwork(boolean isLeaking, boolean isBurning) {
-        World world = worldData.getWorld();
-        ((WorldFluidPipeNet) (Object) worldData).removePipeNet(this);
-        for (BlockPos nodePos : getAllNodes().keySet()) {
-            TileEntity tileEntity = world.getTileEntity(nodePos);
-            if (tileEntity instanceof TileEntityFluidPipe) {
-                if (isBurning) {
-                    world.setBlockState(nodePos, Blocks.FIRE.getDefaultState());
-                } else {
-                    world.setBlockToAir(nodePos);
-                }
-            }
-
+    public void destroyNetwork(BlockPos source, boolean isLeaking, boolean isBurning) {
+        World world = getWorldData();
+        List<IPipeTile<?, ?>> pipes = PipeGatherer.gatherPipesInDistance(this, world, source, pipe -> pipe instanceof TileEntityFluidPipe, 2 + world.rand.nextInt(5));
+        for(IPipeTile<?, ?> pipeTile : pipes) {
+            BlockPos pos = pipeTile.getPipePos();
             Random random = world.rand;
-            if (isBurning) {
-                TileEntityFluidPipe.spawnParticles(world, nodePos, EnumFacing.UP,
+            if(isBurning) {
+                world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+                TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP,
                         EnumParticleTypes.FLAME, 3 + random.nextInt(2), random);
-                if (random.nextInt(4) == 0) {
-                    TileEntityFluidPipe.setNeighboursToFire(world, nodePos);
-                }
-            }
+                if (random.nextInt(4) == 0)
+                    TileEntityFluidPipe.setNeighboursToFire(world, pos);
+            } else
+                world.setBlockToAir(pos);
             if (isLeaking && world.rand.nextInt(isBurning ? 3 : 7) == 0) {
                 world.createExplosion(null,
-                        nodePos.getX() + 0.5, nodePos.getY() + 0.5, nodePos.getZ() + 0.5,
+                        pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                         1.0f + world.rand.nextFloat(), false);
             }
         }

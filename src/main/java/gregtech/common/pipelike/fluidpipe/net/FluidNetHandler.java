@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.common.covers.*;
+import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.tileentity.TileEntity;
@@ -87,6 +88,15 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
 
         if (tileCover != null && !checkImportCover(tileCover, false, resource))
             return 0;
+
+        // check if pipes can handle fluid and destroy of not
+        FluidPipeProperties properties = net.getNodeData();
+        boolean isLeakingPipe = resource.getFluid().isGaseous(resource) && !properties.gasProof;
+        boolean isBurningPipe = resource.getFluid().getTemperature(resource) > properties.maxFluidTemperature;
+        if (isLeakingPipe || isBurningPipe) {
+            net.destroyNetwork(pipe.getPipePos(), isLeakingPipe, isBurningPipe);
+            return 0;
+        }
 
         if (!pipePump && !tilePump)
             return insertFirst(resource, doFill);
