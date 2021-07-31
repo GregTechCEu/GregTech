@@ -44,9 +44,9 @@ public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
         this.pipeNets.forEach(PipeNet::onConnectionsUpdate);
     }
 
-    public void addNode(BlockPos nodePos, NodeDataType nodeData, int mark, int blockedConnections, boolean isActive) {
+    public void addNode(BlockPos nodePos, NodeDataType nodeData, int mark, int openConnections, boolean isActive) {
         T myPipeNet = null;
-        Node<NodeDataType> node = new Node<>(nodeData, blockedConnections, mark, isActive);
+        Node<NodeDataType> node = new Node<>(nodeData, openConnections, mark, isActive);
         for (EnumFacing facing : EnumFacing.VALUES) {
             BlockPos offsetPos = nodePos.offset(facing);
             T pipeNet = getNetFromPos(offsetPos);

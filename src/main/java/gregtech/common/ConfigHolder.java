@@ -233,12 +233,12 @@ public class ConfigHolder {
             @Config.Comment("Whether or not to use polymers instead of rare metals for Carbon Fibers. REMOVES THE CHANCED OUTPUT! Default: false")
             public boolean polymerCarbonFiber = false;
 
-            @Config.Comment("The default color to overlay onto machines. \n16777215 (0xFFFFFF in decimal) is no coloring (default), and 13819135 (0xD2DCFF in decimal) is the classic blue from GT5.")
+            @Config.Comment("The default color to overlay onto machines. \n16777215 (0xFFFFFF in decimal) is no coloring (default), and 13819135 (0xD2DCFF in decimal) is the classic blue from GT5. THIS IS SERVER SIDE!!!")
             @Config.Name("Default Machine Color")
             @Config.RequiresMcRestart
             public int defaultPaintingColor = 0xFFFFFF;
 
-            @Config.Comment("The default color to overlay onto machines. \n7829367 (0x777777 in decimal) is no coloring (default), and 4210752 (0x404040 in decimal) is the classic black from GT5.")
+            @Config.Comment("The default color to overlay onto cable insulation. \n7829367 (0x777777 in decimal) is no coloring (default), and 4210752 (0x404040 in decimal) is the classic black from GT5. THIS IS SERVER SIDE!!!")
             @Config.Name("Default Cable Color")
             @Config.RequiresMcRestart
             public int defaultInsulationColor = 0x777777;
@@ -247,6 +247,10 @@ public class ConfigHolder {
             @Config.Name("Use electric blast furnace temperature bonuses")
             @Config.RequiresMcRestart
             public boolean ebfTemperatureBonuses = true;
+
+            @Config.Comment("Enable more challenging recipes for Electric Blast Furnace Coils. Default: true")
+            @Config.Name("Enable harder heating coil recipes")
+            public boolean harderHeatingCoils = true;
         }
 
         public static class GT6 {

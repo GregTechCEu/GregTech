@@ -19,6 +19,7 @@ import gregtech.common.covers.facade.FacadeRenderer;
 import gregtech.common.items.MetaItems;
 import gregtech.common.render.CableRenderer;
 import gregtech.common.render.FluidPipeRenderer;
+import gregtech.common.render.ItemPipeRenderer;
 import gregtech.common.render.StoneRenderer;
 import gregtech.common.render.clipboard.TileEntityClipboardRenderer;
 import net.minecraft.block.BlockColored;
@@ -105,6 +106,7 @@ public class ClientProxy extends CommonProxy {
         MetaTileEntityRenderer.preInit();
         CableRenderer.preInit();
         FluidPipeRenderer.preInit();
+        ItemPipeRenderer.preInit();
         StoneRenderer.preInit();
         TileEntityClipboardRenderer.preInit();
         MetaEntities.initRenderers();

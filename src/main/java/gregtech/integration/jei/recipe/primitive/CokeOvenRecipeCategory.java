@@ -24,10 +24,10 @@ public class CokeOvenRecipeCategory extends PrimitiveRecipeCategory<CokeOvenReci
             "gregtech.machine.coke_oven.name",
             guiHelper.createBlankDrawable(176, 166), guiHelper);
 
-        this.slot = guiHelper.createDrawable(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18, 18, 18);
-        this.progressBar = guiHelper.createDrawable(GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR.imageLocation, 0, 0, 20, 15, 20, 30);
-		this.fluidTank = guiHelper.createDrawable(GuiTextures.FLUID_TANK_BACKGROUND.imageLocation, 0, 0, 20, 58, 20, 58);
-		this.fluidTankOverlay = guiHelper.createDrawable(GuiTextures.FLUID_TANK_OVERLAY.imageLocation, 0, 0, 20, 58, 20, 58);
+        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
+        this.progressBar = guiHelper.drawableBuilder(GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR.imageLocation, 0, 0, 20, 15).setTextureSize(20, 30).build();
+		this.fluidTank = guiHelper.drawableBuilder(GuiTextures.FLUID_TANK_BACKGROUND.imageLocation, 0, 0, 20, 58).setTextureSize(20, 58).build();
+		this.fluidTankOverlay = guiHelper.drawableBuilder(GuiTextures.FLUID_TANK_OVERLAY.imageLocation, 0, 0, 20, 58).setTextureSize(20, 58).build();
 	}
 
 	@Override

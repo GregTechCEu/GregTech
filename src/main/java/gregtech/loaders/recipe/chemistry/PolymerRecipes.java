@@ -86,6 +86,22 @@ public class PolymerRecipes {
                 .fluidOutputs(Water.getFluid(18000))
                 .buildAndRegister();
 
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(30).duration(125)
+                .fluidInputs(Naphthalene.getFluid(2000))
+                .fluidInputs(SulfuricAcid.getFluid(1000))
+                .input(dustTiny, Potassium)
+                .fluidOutputs(PhthalicAcid.getFluid(2500))
+                .fluidOutputs(HydrogenSulfide.getFluid(1000))
+                .buildAndRegister();
+
+        LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(30).duration(1125)
+                .fluidInputs(Naphthalene.getFluid(18000))
+                .fluidInputs(SulfuricAcid.getFluid(9000))
+                .input(dust, Potassium)
+                .fluidOutputs(PhthalicAcid.getFluid(22500))
+                .fluidOutputs(HydrogenSulfide.getFluid(9000))
+                .buildAndRegister();
+
         LARGE_CHEMICAL_RECIPES.recipeBuilder().EUt(120).duration(4000)
                 .fluidInputs(Methane.getFluid(1000))
                 .fluidInputs(Benzene.getFluid(1000))

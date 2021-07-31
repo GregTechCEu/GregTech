@@ -199,7 +199,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 this.initializedQueue = false;
             }
 
-            if (!initializedQueue || getOffsetTimer() % 6000 == 0 || getTimer() == 0) {
+            if (!initializedQueue || getOffsetTimer() % 6000 == 0 || isFirstTick()) {
                 this.initializedQueue = true;
                 //just add ourselves to check list and see how this will go
                 this.blocksToCheck.add(selfPos);

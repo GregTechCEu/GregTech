@@ -10,7 +10,7 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
-import gregtech.common.pipelike.inventory.InventoryPipeType;
+import gregtech.common.pipelike.itempipe.ItemPipeType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -51,7 +51,7 @@ public class WrenchOverlayRenderer {
         TileEntity tileEntity = world.getTileEntity(pos);
         ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
 
-        if (tileEntity != null && shouldDrawOverlayForItem(heldItem, tileEntity) && useGridForRayTraceResult(target)) {
+        if (tileEntity != null && shouldDrawOverlayForItem(heldItem, tileEntity)) {
             EnumFacing facing = target.sideHit;
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -102,7 +102,7 @@ public class WrenchOverlayRenderer {
             }
 
             // Pipes
-            if (pipeClass == FluidPipeType.class || pipeClass == InventoryPipeType.class) {
+            if (pipeClass == FluidPipeType.class || pipeClass == ItemPipeType.class) {
                 return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null) ||
                         itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null)
                         || GTUtility.isCoverBehaviorItem(itemStack);

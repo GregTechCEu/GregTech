@@ -878,6 +878,10 @@ cover.conveyor.title=Conveyor Cover Settings (%s)
 cover.conveyor.transfer_rate=%s items/sec
 cover.conveyor.mode.export=Mode: Export
 cover.conveyor.mode.import=Mode: Import
+cover.conveyor.distribution.enabled=Item distribution mode for item pipes/n§bInsert First
+cover.conveyor.distribution.disabled=Item distribution mode for item pipes/n§bRound Robin
+cover.conveyor.blocks_input.enabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§aEnabled
+cover.conveyor.blocks_input.disabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§cDisabled
 cover.universal.manual_import_export.mode.disabled=Manual I/O: Disabled
 cover.universal.manual_import_export.mode.filtered=Manual I/O: Filtered
 cover.universal.manual_import_export.mode.unfiltered=Manual I/O: Unfiltered
@@ -1008,16 +1012,21 @@ item.material.oreprefix.toolShears=%s Shears
 item.material.oreprefix.compressed=Compressed %s
 item.material.oreprefix.block=Block of %s
 item.material.oreprefix.frameGt=%s Frame Box
-item.material.oreprefix.pipeTiny=Tiny %s Fluid Pipe
-item.material.oreprefix.pipeSmall=Small %s Fluid Pipe
-item.material.oreprefix.pipeNormal=Normal %s Fluid Pipe
-item.material.oreprefix.pipeLarge=Large %s Fluid Pipe
-item.material.oreprefix.pipeHuge=Huge %s Fluid Pipe
-item.material.oreprefix.pipeRestrictiveTiny=Tiny Restrictive %s Pipe
-item.material.oreprefix.pipeRestrictiveSmall=Small Restrictive %s Pipe
-item.material.oreprefix.pipeRestrictiveMedium=Medium Restrictive %s Pipe
-item.material.oreprefix.pipeRestrictiveLarge=Large Restrictive %s Pipe
-item.material.oreprefix.pipeRestrictiveHuge=Huge Restrictive %s Pipe
+item.material.oreprefix.pipeTinyFluid=Tiny %s Fluid Pipe
+item.material.oreprefix.pipeSmallFluid=Small %s Fluid Pipe
+item.material.oreprefix.pipeNormalFluid=Normal %s Fluid Pipe
+item.material.oreprefix.pipeLargeFluid=Large %s Fluid Pipe
+item.material.oreprefix.pipeHugeFluid=Huge %s Fluid Pipe
+item.material.oreprefix.pipeTinyItem=Tiny %s Item Pipe
+item.material.oreprefix.pipeSmallItem=Small %s Item Pipe
+item.material.oreprefix.pipeNormalItem=Normal %s Item Pipe
+item.material.oreprefix.pipeLargeItem=Large %s Item Pipe
+item.material.oreprefix.pipeHugeItem=Huge %s Item Pipe
+item.material.oreprefix.pipeTinyRestrictive=Tiny Restrictive %s Item Pipe
+item.material.oreprefix.pipeSmallRestrictive=Small Restrictive %s Item Pipe
+item.material.oreprefix.pipeNormalRestrictive=Normal Restrictive %s Item Pipe
+item.material.oreprefix.pipeLargeRestrictive=Large Restrictive %s Item Pipe
+item.material.oreprefix.pipeHugeRestrictive=Huge Restrictive %s Item Pipe
 item.material.oreprefix.pipe=%s Pipe
 item.material.oreprefix.wireGtHex=16x %s Wire
 item.material.oreprefix.wireGtOctal=8x %s Wire
@@ -1607,6 +1616,11 @@ material.octane=Octane
 material.ethyl_tertbutyl_ether=Ethyl Tert-Butyl Ether
 material.gasoline_premium=High Octane Gasoline
 material.nitrobenzene=Nitrobenzene
+
+material.coal_gas=Coal Gas
+material.coal_tar=Coal Tar
+material.ethylbenzene=Ethylbenzene
+material.naphthalene=Naphthalene
 
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
 item.gunpowder.dustTiny=Tiny Pile of Gunpowder
@@ -3306,6 +3320,8 @@ gregtech.machine.multiblock.universal.controller_information=Controller block fo
 
 # Multiblock machine parts
 gregtech.machine.item_bus.import.tooltip=Item Input for Multiblocks
+gregtech.universal.disabled=Sharing between Multiblocks: §4Disabled
+gregtech.universal.enabled=Sharing between Multiblocks: §aEnabled
 
 gregtech.machine.item_bus.import.ulv.name=ULV Input Bus
 gregtech.machine.item_bus.import.lv.name=LV Input Bus
@@ -3478,6 +3494,10 @@ gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
 gregtech.fluid_pipe.throughput=§9Transfer Rate: %,d L/s
 gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,dK
 gregtech.fluid_pipe.non_gas_proof=§aCan't transfer gases.
+
+gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
+gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s
+gregtech.item_pipe.priority=§9Priority: %d
 
 gregtech.multiblock.work_paused=Work Paused.
 gregtech.multiblock.running=Running perfectly.

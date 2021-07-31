@@ -3,6 +3,7 @@ package gregtech.common.tools;
 import gregtech.api.items.toolitem.IToolStats;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 
 public abstract class ToolBase implements IToolStats {
@@ -14,7 +15,7 @@ public abstract class ToolBase implements IToolStats {
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
-        return false;
+        return enchantment == Enchantments.UNBREAKING;
     }
 
     @Override

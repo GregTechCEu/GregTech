@@ -20,6 +20,8 @@ import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.ItemBlockCable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
+import gregtech.common.pipelike.itempipe.BlockItemPipe;
+import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.oreprocessing.DecompositionRecipeHandler;
@@ -57,8 +59,11 @@ public class CommonProxy {
         IForgeRegistry<Block> registry = event.getRegistry();
 
         registry.register(MACHINE);
+
         for (BlockCable cable : CABLES) registry.register(cable);
         for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(pipe);
+        for (BlockItemPipe pipe : ITEM_PIPES) registry.register(pipe);
+
         registry.register(HERMETIC_CASING);
         registry.register(FOAM);
         registry.register(REINFORCED_FOAM);
@@ -106,8 +111,11 @@ public class CommonProxy {
         ToolRecipeHandler.initializeMetaItems();
 
         registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
+      
         for (BlockCable cable : CABLES) registry.register(createItemBlock(cable, ItemBlockCable::new));
         for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
+        for (BlockItemPipe pipe : ITEM_PIPES) registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
+      
         registry.register(createItemBlock(HERMETIC_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_FIREBOX_CASING, VariantItemBlock::new));

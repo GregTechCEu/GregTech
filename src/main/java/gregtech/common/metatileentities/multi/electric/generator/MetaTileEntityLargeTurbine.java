@@ -144,6 +144,11 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
                 new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.EXPORT_FLUIDS} :
                 new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS};
     }
+    @Override
+    public boolean canShare(){
+        return false;
+
+    }
 
     public IBlockState getCasingState() {
         return turbineType.casingState;

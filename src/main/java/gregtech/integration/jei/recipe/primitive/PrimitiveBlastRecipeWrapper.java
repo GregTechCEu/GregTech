@@ -6,6 +6,7 @@ import gregtech.api.recipes.recipes.PrimitiveBlastFurnaceRecipe;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.common.metatileentities.multi.MetaTileEntityPrimitiveBlastFurnace;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -44,8 +45,8 @@ public class PrimitiveBlastRecipeWrapper implements IRecipeWrapper {
 
 	@Override
 	public void getIngredients(IIngredients ingredients) {
-		ingredients.setInputLists(ItemStack.class, this.matchingInputs);
-		ingredients.setOutputLists(ItemStack.class, this.outputs);
+		ingredients.setInputLists(VanillaTypes.ITEM, this.matchingInputs);
+		ingredients.setOutputLists(VanillaTypes.ITEM, this.outputs);
 	}
 
 	@Override

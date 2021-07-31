@@ -51,7 +51,7 @@ public class AssemblerRecipeLoader {
         // Other
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(rotor, Titanium, 4)
-                .input(pipeNormal, Titanium, 2)
+                .input(pipeNormalFluid, Titanium, 2)
                 .inputs(METAL_CASING.getItemVariant(TITANIUM_STABLE))
                 .outputs(MULTIBLOCK_CASING.getItemVariant(ENGINE_INTAKE_CASING, 2))
                 .duration(100).EUt(30).buildAndRegister();
@@ -180,21 +180,21 @@ public class AssemblerRecipeLoader {
                 .input(plate, Wood)
                 .circuitMeta(12)
                 .fluidInputs(Glue.getFluid(60))
-                .output(pipeSmall, Wood, 6)
+                .output(pipeSmallFluid, Wood, 6)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
                 .input(plate, Wood, 3)
                 .circuitMeta(4)
                 .fluidInputs(Glue.getFluid(20))
-                .output(pipeNormal, Wood, 4)
+                .output(pipeNormalFluid, Wood, 4)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30)
                 .input(plate, Wood, 3)
                 .circuitMeta(2)
                 .fluidInputs(Glue.getFluid(10))
-                .output(pipeLarge, Wood)
+                .output(pipeLargeFluid, Wood)
                 .buildAndRegister();
     }
 }

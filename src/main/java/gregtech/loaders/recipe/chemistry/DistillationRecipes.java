@@ -343,6 +343,26 @@ public class DistillationRecipes {
             .fluidOutputs(Water.getFluid(240))
             .duration(32).EUt(400).buildAndRegister();
 
+        DISTILLATION_RECIPES.recipeBuilder()
+                .fluidInputs(CoalGas.getFluid(1000))
+                .output(dustSmall, Coke)
+                .fluidOutputs(CoalTar.getFluid(200))
+                .fluidOutputs(Ammonia.getFluid(300))
+                .fluidOutputs(Ethylbenzene.getFluid(250))
+                .fluidOutputs(CarbonDioxide.getFluid(250))
+                .duration(80).EUt(120)
+                .buildAndRegister();
+
+        DISTILLATION_RECIPES.recipeBuilder()
+                .fluidInputs(CoalTar.getFluid(1000))
+                .output(dustSmall, Coke)
+                .fluidOutputs(Naphthalene.getFluid(400))
+                .fluidOutputs(HydrogenSulfide.getFluid(300))
+                .fluidOutputs(Creosote.getFluid(200))
+                .fluidOutputs(Phenol.getFluid(100))
+                .duration(80).EUt(120)
+                .buildAndRegister();
+
         DISTILLERY_RECIPES.recipeBuilder()
             .circuitMeta(1)
             .fluidInputs(Toluene.getFluid(30))

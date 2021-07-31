@@ -212,10 +212,13 @@ public abstract class Material implements Comparable<Material> {
         return chemicalFormula;
     }
 
-    @ZenMethod
     public <T extends Material> T setFormula(String formula) {
-        this.chemicalFormula = formula;
-        return (T)this;
+        return setFormula(formula, false);
+    }
+
+    public <T extends Material> T setFormula(String formula, boolean withFormatting) {
+        this.chemicalFormula = withFormatting ? SmallDigits.toSmallDownNumbers(formula) : formula;
+        return (T) this;
     }
 
     public ImmutableList<MaterialStack> getMaterialComponents() {

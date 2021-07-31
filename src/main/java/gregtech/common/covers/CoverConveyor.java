@@ -22,6 +22,7 @@ import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.filter.ItemFilterContainer;
+import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,6 +48,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     public final int maxItemTransferRate;
     protected int transferRate;
     protected ConveyorMode conveyorMode;
+    protected ItemDistributionMode distributionMode;
+    protected boolean blocksInput;
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
     protected final ItemFilterContainer itemFilterContainer;
     protected int itemsLeftToTransferLastSecond;
@@ -60,6 +63,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.transferRate = maxItemTransferRate;
         this.itemsLeftToTransferLastSecond = transferRate;
         this.conveyorMode = ConveyorMode.EXPORT;
+        this.distributionMode = ItemDistributionMode.INSERT_FIRST;
+        this.blocksInput = true;
         this.itemFilterContainer = new ItemFilterContainer(this);
     }
 
@@ -81,6 +86,15 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return conveyorMode;
     }
 
+    public ItemDistributionMode getDistributionMode() {
+        return distributionMode;
+    }
+
+    public void setDistributionMode(ItemDistributionMode distributionMode) {
+        this.distributionMode = distributionMode;
+        coverHolder.markDirty();
+    }
+
     public ManualImportExportMode getManualImportExportMode() {
         return manualImportExportMode;
     }
@@ -88,6 +102,14 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     protected void setManualImportExportMode(ManualImportExportMode manualImportExportMode) {
         this.manualImportExportMode = manualImportExportMode;
         coverHolder.markDirty();
+    }
+
+    public ItemFilterContainer getItemFilterContainer() {
+        return itemFilterContainer;
+    }
+
+    public boolean blocksInput() {
+        return blocksInput;
     }
 
     @Override
@@ -365,7 +387,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     public boolean canAttach() {
         return coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, attachedSide) != null;
     }
-    
+
     @Override
     public boolean shouldCoverInteractWithOutputside() {
         return true;
@@ -432,6 +454,16 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         primaryGroup.addWidget(new CycleButtonWidget(7, 166, 116, 20,
             ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
             .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+        primaryGroup.addWidget(new ToggleButtonWidget(130, 166, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
+
+        TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
+        TileEntity otherTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
+        if(!(this instanceof CoverRoboticArm) && coverTile instanceof TileEntityItemPipe ^ otherTile instanceof TileEntityItemPipe) {
+            primaryGroup.addWidget(new ToggleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE,
+                    () -> distributionMode == ItemDistributionMode.INSERT_FIRST,
+                    val -> distributionMode = val ? ItemDistributionMode.INSERT_FIRST : ItemDistributionMode.ROUND_ROBIN)
+                    .setTooltipText("cover.conveyor.distribution"));
+        }
 
         this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
 
@@ -456,6 +488,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferRate", transferRate);
         tagCompound.setInteger("ConveyorMode", conveyorMode.ordinal());
+        tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
+        tagCompound.setBoolean("BlocksInput", blocksInput);
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
         tagCompound.setTag("Filter", this.itemFilterContainer.serializeNBT());
@@ -466,6 +500,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
         this.conveyorMode = ConveyorMode.values()[tagCompound.getInteger("ConveyorMode")];
+        this.distributionMode = ItemDistributionMode.values()[tagCompound.getInteger("DistributionMode")];
+        this.blocksInput = tagCompound.getBoolean("BlocksInput");
         //LEGACY SAVE FORMAT SUPPORT
         if (tagCompound.hasKey("AllowManualIO")) {
             this.manualImportExportMode = tagCompound.getBoolean("AllowManualIO")
@@ -508,6 +544,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         }
     }
 
+    public enum ItemDistributionMode {
+        INSERT_FIRST,
+        ROUND_ROBIN
+    }
+
     private class CoverableItemHandlerWrapper extends ItemHandlerDelegate {
 
         public CoverableItemHandlerWrapper(IItemHandler delegate) {
@@ -517,7 +558,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            if (conveyorMode == ConveyorMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
+            if (blocksInput && conveyorMode == ConveyorMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return stack;
             }
             if (!itemFilterContainer.testItemStack(stack) && manualImportExportMode == ManualImportExportMode.FILTERED) {

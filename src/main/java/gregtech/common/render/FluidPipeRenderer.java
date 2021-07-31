@@ -135,7 +135,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         FluidPipeType fluidPipeType = tileEntityPipe.getPipeType();
         Material pipeMaterial = tileEntityPipe.getPipeMaterial();
         int paintingColor = tileEntityPipe.getInsulationColor();
-        int connectedSidesMap = blockFluidPipe.getActualConnections(tileEntityPipe, world);
+        int connectedSidesMap = blockFluidPipe.getVisualConnections(tileEntityPipe);
 
         if (fluidPipeType != null && pipeMaterial != null) {
             BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
@@ -231,7 +231,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             return;
         }
         float thickness = fluidPipeType.getThickness();
-        int connectedSidesMask = blockFluidPipe.getActualConnections(tileEntityPipe, world);
+        int connectedSidesMask = blockFluidPipe.getVisualConnections(tileEntityPipe);
         Cuboid6 baseBox = BlockFluidPipe.getSideBox(null, thickness);
         BlockRenderer.renderCuboid(renderState, baseBox, 0);
         for (EnumFacing renderSide : EnumFacing.VALUES) {

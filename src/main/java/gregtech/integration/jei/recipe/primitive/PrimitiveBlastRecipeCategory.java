@@ -20,8 +20,8 @@ public class PrimitiveBlastRecipeCategory extends PrimitiveRecipeCategory<Primit
             "gregtech.machine.primitive_blast_furnace.bronze.name",
             guiHelper.createBlankDrawable(140, 60), guiHelper);
 
-        this.slot = guiHelper.createDrawable(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18, 18, 18);
-        this.progressBar = guiHelper.createDrawable(GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR.imageLocation, 0, 0, 20, 15, 20, 30);
+        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
+        this.progressBar = guiHelper.drawableBuilder(GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR.imageLocation, 0, 0, 20, 15).setTextureSize(20, 30).build();
 	}
 
 	@Override

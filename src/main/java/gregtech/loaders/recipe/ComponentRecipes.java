@@ -389,16 +389,16 @@ public class ComponentRecipes {
 
 
         //Pumps Start---------------------------------------------------------------------------------------------------
-            ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_lv", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_LV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.Tin), 'X', new UnificationEntry(OrePrefix.rotor, Materials.Tin), 'P', new UnificationEntry(OrePrefix.pipeNormal, Materials.Bronze), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin), 'M', MetaItems.ELECTRIC_MOTOR_LV.getStackForm());
-            ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_mv", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_MV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.Bronze), 'X', new UnificationEntry(OrePrefix.rotor, Materials.Bronze), 'P', new UnificationEntry(OrePrefix.pipeNormal, Materials.Steel), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper), 'M', MetaItems.ELECTRIC_MOTOR_MV.getStackForm());
-            ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_hv", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_HV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.Steel), 'X', new UnificationEntry(OrePrefix.rotor, Materials.Steel), 'P', new UnificationEntry(OrePrefix.pipeNormal, Materials.StainlessSteel), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold), 'M', MetaItems.ELECTRIC_MOTOR_HV.getStackForm());
-            ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_ev", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_EV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.StainlessSteel), 'X', new UnificationEntry(OrePrefix.rotor, Materials.StainlessSteel), 'P', new UnificationEntry(OrePrefix.pipeNormal, Materials.Titanium), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium), 'M', MetaItems.ELECTRIC_MOTOR_EV.getStackForm());
+            ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_lv", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_LV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.Tin), 'X', new UnificationEntry(OrePrefix.rotor, Materials.Tin), 'P', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Bronze), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin), 'M', MetaItems.ELECTRIC_MOTOR_LV.getStackForm());
+            ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_mv", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_MV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.Bronze), 'X', new UnificationEntry(OrePrefix.rotor, Materials.Bronze), 'P', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Steel), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper), 'M', MetaItems.ELECTRIC_MOTOR_MV.getStackForm());
+            ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_hv", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_HV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.Steel), 'X', new UnificationEntry(OrePrefix.rotor, Materials.Steel), 'P', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.StainlessSteel), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold), 'M', MetaItems.ELECTRIC_MOTOR_HV.getStackForm());
+            ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_ev", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_EV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.StainlessSteel), 'X', new UnificationEntry(OrePrefix.rotor, Materials.StainlessSteel), 'P', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Titanium), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium), 'M', MetaItems.ELECTRIC_MOTOR_EV.getStackForm());
             if (!materialEntry.getValue().equals(Materials.Rubber))
-                ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_iv", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_IV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.TungstenSteel), 'X', new UnificationEntry(OrePrefix.rotor, Materials.TungstenSteel), 'P', new UnificationEntry(OrePrefix.pipeNormal, Materials.TungstenSteel), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tungsten), 'M', MetaItems.ELECTRIC_MOTOR_IV.getStackForm());
+                ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_iv", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_IV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.TungstenSteel), 'X', new UnificationEntry(OrePrefix.rotor, Materials.TungstenSteel), 'P', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.TungstenSteel), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tungsten), 'M', MetaItems.ELECTRIC_MOTOR_IV.getStackForm());
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .input(OrePrefix.cableGtSingle, Materials.Tin)
-                    .input(OrePrefix.pipeNormal, Materials.Bronze)
+                    .input(OrePrefix.pipeNormalFluid, Materials.Bronze)
                     .input(OrePrefix.screw, Materials.Tin)
                     .input(OrePrefix.rotor, Materials.Tin)
                     .input(OrePrefix.ring, materialEntry.getValue(), 2)
@@ -408,7 +408,7 @@ public class ComponentRecipes {
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .input(OrePrefix.cableGtSingle, Materials.Copper)
-                    .input(OrePrefix.pipeNormal, Materials.Steel)
+                    .input(OrePrefix.pipeNormalFluid, Materials.Steel)
                     .input(OrePrefix.screw, Materials.Bronze)
                     .input(OrePrefix.rotor, Materials.Bronze)
                     .input(OrePrefix.ring, materialEntry.getValue(), 2)
@@ -418,7 +418,7 @@ public class ComponentRecipes {
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .input(OrePrefix.cableGtSingle, Materials.Copper)
-                    .input(OrePrefix.pipeNormal, Materials.StainlessSteel)
+                    .input(OrePrefix.pipeNormalFluid, Materials.StainlessSteel)
                     .input(OrePrefix.screw, Materials.Steel)
                     .input(OrePrefix.rotor, Materials.Steel)
                     .input(OrePrefix.ring, materialEntry.getValue(), 2)
@@ -428,7 +428,7 @@ public class ComponentRecipes {
 
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .input(OrePrefix.cableGtSingle, Materials.Aluminium)
-                    .input(OrePrefix.pipeNormal, Materials.Titanium)
+                    .input(OrePrefix.pipeNormalFluid, Materials.Titanium)
                     .input(OrePrefix.screw, Materials.StainlessSteel)
                     .input(OrePrefix.rotor, Materials.StainlessSteel)
                     .input(OrePrefix.ring, materialEntry.getValue(), 2)
@@ -439,7 +439,7 @@ public class ComponentRecipes {
             if (!materialEntry.getValue().equals(Materials.Rubber))
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                     .input(OrePrefix.cableGtSingle, Materials.Tungsten)
-                    .input(OrePrefix.pipeNormal, Materials.TungstenSteel)
+                    .input(OrePrefix.pipeNormalFluid, Materials.TungstenSteel)
                     .input(OrePrefix.screw, Materials.TungstenSteel)
                     .input(OrePrefix.rotor, Materials.TungstenSteel)
                     .input(OrePrefix.ring, materialEntry.getValue(), 2)

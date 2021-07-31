@@ -15,6 +15,7 @@ import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -69,8 +70,8 @@ public class OreByProduct implements IRecipeWrapper {
 
 	@Override
 	public void getIngredients(IIngredients ingredients) {
-		ingredients.setInputLists(ItemStack.class, this.matchingInputs);
-		ingredients.setOutputs(ItemStack.class, this.outputs);
+		ingredients.setInputLists(VanillaTypes.ITEM, this.matchingInputs);
+		ingredients.setOutputs(VanillaTypes.ITEM, this.outputs);
 	}
 
      public boolean hasByProducts() {

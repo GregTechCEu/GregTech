@@ -35,8 +35,13 @@ import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
+import gregtech.common.pipelike.itempipe.BlockItemPipe;
+import gregtech.common.pipelike.itempipe.ItemPipeType;
+import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
+import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import gregtech.common.render.CableRenderer;
 import gregtech.common.render.FluidPipeRenderer;
+import gregtech.common.render.ItemPipeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog.EnumAxis;
 import net.minecraft.block.properties.IProperty;
@@ -77,6 +82,7 @@ public class MetaBlocks {
     public static BlockMachine MACHINE;
     public static final BlockCable[] CABLES = new BlockCable[10];
     public static final BlockFluidPipe[] FLUID_PIPES = new BlockFluidPipe[5];
+    public static final BlockItemPipe[] ITEM_PIPES = new BlockItemPipe[6];
 
     public static BlockBoilerCasing BOILER_CASING;
     public static BlockFireboxCasing BOILER_FIREBOX_CASING;
@@ -122,6 +128,10 @@ public class MetaBlocks {
         for (FluidPipeType type : FluidPipeType.values()) {
             FLUID_PIPES[type.ordinal()] = new BlockFluidPipe(type);
             FLUID_PIPES[type.ordinal()].setRegistryName(String.format("fluid_pipe_%s", type.name));
+        }
+        for (ItemPipeType type : ItemPipeType.values()) {
+            ITEM_PIPES[type.ordinal()] = new BlockItemPipe(type);
+            ITEM_PIPES[type.ordinal()].setRegistryName(String.format("item_pipe_%s", type.name));
         }
 
         BOILER_CASING = new BlockBoilerCasing();
@@ -203,10 +213,15 @@ public class MetaBlocks {
                         pipe.addPipeMaterial(metalMaterial, metalMaterial.fluidPipeProperties);
                     }
                 }
+                if (metalMaterial.itemPipeProperties != null) {
+                    for (BlockItemPipe pipe : ITEM_PIPES) {
+                        pipe.addPipeMaterial(metalMaterial, metalMaterial.itemPipeProperties);
+                    }
+                }
             }
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
-            pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 20, false));
+            pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperties(310, 5, false));
         }
         for (BlockCable cable : CABLES) {
             cable.addCableMaterial(MarkerMaterials.Tier.Superconductor, new WireProperties(Integer.MAX_VALUE, 4, 0));
@@ -293,7 +308,9 @@ public class MetaBlocks {
         GameRegistry.registerTileEntity(TileEntityCable.class, new ResourceLocation(GTValues.MODID, "cable"));
         GameRegistry.registerTileEntity(TileEntityCableTickable.class, new ResourceLocation(GTValues.MODID, "cable_tickable"));
         GameRegistry.registerTileEntity(TileEntityFluidPipe.class, new ResourceLocation(GTValues.MODID, "fluid_pipe"));
+        GameRegistry.registerTileEntity(TileEntityItemPipe.class, new ResourceLocation(GTValues.MODID, "item_pipe"));
         GameRegistry.registerTileEntity(TileEntityFluidPipeTickable.class, new ResourceLocation(GTValues.MODID, "fluid_pipe_active"));
+        GameRegistry.registerTileEntity(TileEntityItemPipeTickable.class, new ResourceLocation(GTValues.MODID, "item_pipe_active"));
         GameRegistry.registerTileEntity(TileEntitySurfaceRock.class, new ResourceLocation(GTValues.MODID, "surface_rock"));
     }
 
@@ -302,6 +319,7 @@ public class MetaBlocks {
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE), stack -> MetaTileEntityRenderer.MODEL_LOCATION);
         for (BlockCable cable : CABLES) ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(cable), stack -> CableRenderer.MODEL_LOCATION);
         for (BlockFluidPipe pipe : FLUID_PIPES) ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> FluidPipeRenderer.MODEL_LOCATION);
+        for (BlockItemPipe pipe : ITEM_PIPES) ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> ItemPipeRenderer.MODEL_LOCATION);
         registerItemModel(BOILER_CASING);
         registerItemModel(BOILER_FIREBOX_CASING);
         registerItemModel(METAL_CASING);
@@ -374,6 +392,7 @@ public class MetaBlocks {
                 return MetaTileEntityRenderer.MODEL_LOCATION;
             }
         });
+
         for (BlockCable cable : CABLES) {
             ModelLoader.setCustomStateMapper(cable, new DefaultStateMapper() {
                 @Override
@@ -390,6 +409,15 @@ public class MetaBlocks {
                 }
             });
         }
+        for (BlockItemPipe pipe : ITEM_PIPES) {
+            ModelLoader.setCustomStateMapper(pipe, new DefaultStateMapper() {
+                @Override
+                protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                    return ItemPipeRenderer.MODEL_LOCATION;
+                }
+            });
+        }
+
         IStateMapper normalStateMapper = new StateMapperBase() {
             @Override
             protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
@@ -469,6 +497,12 @@ public class MetaBlocks {
             }
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
+            for (Material pipeMaterial : pipe.getEnabledMaterials()) {
+                ItemStack itemStack = pipe.getItem(pipeMaterial);
+                OreDictUnifier.registerOre(itemStack, pipe.getPrefix(), pipeMaterial);
+            }
+        }
+        for (BlockItemPipe pipe : ITEM_PIPES) {
             for (Material pipeMaterial : pipe.getEnabledMaterials()) {
                 ItemStack itemStack = pipe.getItem(pipeMaterial);
                 OreDictUnifier.registerOre(itemStack, pipe.getPrefix(), pipeMaterial);

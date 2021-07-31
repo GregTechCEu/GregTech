@@ -51,7 +51,7 @@ public class FuelRecipes {
         registerGasGeneratorFuel(Naphtha.getFluid(1), 10, LV);
         registerGasGeneratorFuel(Toluene.getFluid(4), 41, LV);
         registerGasGeneratorFuel(RocketFuel.getFluid(16), 125, LV);
-        registerGasGeneratorFuel(Nitrobenzene.getFluid(1), 40, LV);
+        registerGasGeneratorFuel(Nitrobenzene.getFluid(1), 40, LV); // TODO Too OP pls nerf
 
         //semi-fluid fuels, like creosote
         registerSemiFluidGeneratorFuel(Creosote.getFluid(16), 1, LV);

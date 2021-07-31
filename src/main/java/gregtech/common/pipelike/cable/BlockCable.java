@@ -94,30 +94,14 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
-    public int getActiveNodeConnections(IBlockAccess world, BlockPos nodePos, IPipeTile<Insulation, WireProperties> selfTileEntity) {
-        int activeNodeConnections = 0;
-        for (EnumFacing side : EnumFacing.VALUES) {
-            BlockPos offsetPos = nodePos.offset(side);
-            TileEntity tileEntity = world.getTileEntity(offsetPos);
-            //do not connect to null cables and ignore cables
-            if (tileEntity == null || getPipeTileEntity(tileEntity) != null) continue;
-            EnumFacing opposite = side.getOpposite();
-            IEnergyContainer energyContainer = tileEntity.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite);
-            if (energyContainer != null) {
-                activeNodeConnections |= 1 << side.getIndex();
-            }
-        }
-        return activeNodeConnections;
-    }
-
-    @Override
     public int onPipeToolUsed(ItemStack stack, EnumFacing coverSide, IPipeTile<Insulation, WireProperties> pipeTile, EntityPlayer entityPlayer) {
         ICutterItem cutterItem = stack.getCapability(GregtechCapabilities.CAPABILITY_CUTTER, null);
         if (cutterItem != null) {
             if (cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, true)) {
                 if (!entityPlayer.world.isRemote) {
-                    boolean isBlocked = pipeTile.isConnectionBlocked(AttachmentType.PIPE, coverSide);
-                    pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, !isBlocked, false);
+                    boolean isOpen = pipeTile.isConnectionOpen(AttachmentType.PIPE, coverSide);
+                    if(isOpen || canConnect(pipeTile, coverSide))
+                        pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, isOpen, false);
                     cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, false);
                 }
                 return 1;
@@ -125,6 +109,16 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
             return 0;
         }
         return -1;
+    }
+
+    @Override
+    public boolean canPipesConnect(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side, IPipeTile<Insulation, WireProperties> sideTile) {
+        return true;
+    }
+
+    @Override
+    public boolean canPipeConnectToBlock(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side, TileEntity tile) {
+        return tile != null && tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, side.getOpposite()) != null;
     }
 
     @Override

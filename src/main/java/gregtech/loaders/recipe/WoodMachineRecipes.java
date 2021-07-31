@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
+import static gregtech.common.items.MetaItems.BIO_CHAFF;
 
 public class WoodMachineRecipes {
 
@@ -144,58 +145,9 @@ public class WoodMachineRecipes {
     }
 
     private static void registerPyrolyseOvenRecipes() {
-        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
-                .input(gem, Coal, 16)
-                .output(gem, Coke, 20)
-                .fluidOutputs(Creosote.getFluid(8000))
-                .duration(440).EUt(96)
-                .buildAndRegister();
+        // Logs ================================================
 
-        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
-                .input(gem, Coal, 16)
-                .fluidInputs(Nitrogen.getFluid(1000))
-                .output(gem, Coke, 20)
-                .fluidOutputs(Creosote.getFluid(8000))
-                .duration(440).EUt(96)
-                .buildAndRegister();
-
-        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
-                .input(block, Coal, 8)
-                .output(block, Coke, 8)
-                .fluidOutputs(Creosote.getFluid(32000))
-                .duration(2560).EUt(96)
-                .buildAndRegister();
-
-        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
-                .input(block, Coal, 8)
-                .fluidInputs(Nitrogen.getFluid(1000))
-                .output(block, Coke, 8)
-                .fluidOutputs(Creosote.getFluid(32000))
-                .duration(1280).EUt(96)
-                .buildAndRegister();
-
-        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
-                .input(log, Wood, 16)
-                .outputs(new ItemStack(Items.COAL, 20, 1))
-                .fluidOutputs(Creosote.getFluid(4000))
-                .duration(640).EUt(64)
-                .buildAndRegister();
-
-        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
-                .input(log, Wood, 16)
-                .fluidInputs(Nitrogen.getFluid(400))
-                .outputs(new ItemStack(Items.COAL, 20, 1))
-                .fluidOutputs(Creosote.getFluid(4000))
-                .duration(320).EUt(96)
-                .buildAndRegister();
-
-        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(3)
-                .input(log, Wood, 16)
-                .output(dust, Ash, 4)
-                .fluidOutputs(OilHeavy.getFluid(200))
-                .duration(320).EUt(192)
-                .buildAndRegister();
-
+        // Charcoal Byproducts
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(4)
                 .input(log, Wood, 16)
                 .fluidInputs(Nitrogen.getFluid(1000))
@@ -204,6 +156,23 @@ public class WoodMachineRecipes {
                 .duration(320).EUt(96)
                 .buildAndRegister();
 
+        // Wood Tar
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(9)
+                .input(log, Wood, 16)
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(WoodTar.getFluid(1500))
+                .duration(640).EUt(64)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(10)
+                .input(log, Wood, 16)
+                .fluidInputs(Nitrogen.getFluid(1000))
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(WoodTar.getFluid(1500))
+                .duration(320).EUt(96)
+                .buildAndRegister();
+
+        // Wood Gas
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(5)
                 .input(log, Wood, 16)
                 .outputs(new ItemStack(Items.COAL, 20, 1))
@@ -213,12 +182,13 @@ public class WoodMachineRecipes {
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(6)
                 .input(log, Wood, 16)
-                .fluidInputs(Nitrogen.getFluid(400))
+                .fluidInputs(Nitrogen.getFluid(1000))
                 .outputs(new ItemStack(Items.COAL, 20, 1))
                 .fluidOutputs(WoodGas.getFluid(1500))
                 .duration(320).EUt(96)
                 .buildAndRegister();
 
+        // Wood Vinegar
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(7)
                 .input(log, Wood, 16)
                 .outputs(new ItemStack(Items.COAL, 20, 1))
@@ -234,24 +204,80 @@ public class WoodMachineRecipes {
                 .duration(320).EUt(96)
                 .buildAndRegister();
 
-        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(9)
+        // Creosote
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
                 .input(log, Wood, 16)
                 .outputs(new ItemStack(Items.COAL, 20, 1))
-                .fluidOutputs(WoodTar.getFluid(1500))
+                .fluidOutputs(Creosote.getFluid(4000))
                 .duration(640).EUt(64)
                 .buildAndRegister();
 
-        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(10)
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
                 .input(log, Wood, 16)
-                .fluidInputs(Nitrogen.getFluid(400))
+                .fluidInputs(Nitrogen.getFluid(1000))
                 .outputs(new ItemStack(Items.COAL, 20, 1))
-                .fluidOutputs(WoodTar.getFluid(1500))
+                .fluidOutputs(Creosote.getFluid(4000))
+                .duration(320).EUt(96)
+                .buildAndRegister();
+
+        // Heavy Oil
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(3)
+                .input(log, Wood, 16)
+                .output(dust, Ash, 4)
+                .fluidOutputs(OilHeavy.getFluid(200))
+                .duration(320).EUt(192)
+                .buildAndRegister();
+
+        // Creosote
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
+                .input(gem, Coal, 16)
+                .output(gem, Coke, 16)
+                .fluidOutputs(Creosote.getFluid(8000))
+                .duration(640).EUt(64)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
+                .input(gem, Coal, 16)
+                .fluidInputs(Nitrogen.getFluid(1000))
+                .output(gem, Coke, 16)
+                .fluidOutputs(Creosote.getFluid(8000))
                 .duration(320).EUt(96)
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
+                .input(block, Coal, 8)
+                .output(block, Coke, 8)
+                .fluidOutputs(Creosote.getFluid(32000))
+                .duration(2560).EUt(64)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
+                .input(block, Coal, 8)
+                .fluidInputs(Nitrogen.getFluid(1000))
+                .output(block, Coke, 8)
+                .fluidOutputs(Creosote.getFluid(32000))
+                .duration(1280).EUt(96)
+                .buildAndRegister();
+
+        // Biomass
+        PYROLYSE_RECIPES.recipeBuilder().EUt(10).duration(200)
+                .input(BIO_CHAFF)
+                .circuitMeta(2)
+                .fluidInputs(Water.getFluid(1500))
+                .fluidOutputs(FermentedBiomass.getFluid(1500))
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().EUt(10).duration(900)
+                .input(BIO_CHAFF, 4)
+                .circuitMeta(1)
+                .fluidInputs(Water.getFluid(4000))
+                .fluidOutputs(Biomass.getFluid(5000))
+                .buildAndRegister();
+
+        // Sugar to Charcoal
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(1)
                 .input(dust, Sugar, 23)
-                .output(dustSmall, Charcoal, 12)
+                .output(dust, Charcoal, 12)
                 .fluidOutputs(Water.getFluid(1500))
                 .duration(320).EUt(64)
                 .buildAndRegister();
@@ -259,9 +285,58 @@ public class WoodMachineRecipes {
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(2)
                 .input(dust, Sugar, 23)
                 .fluidInputs(Nitrogen.getFluid(500))
-                .output(dustSmall, Charcoal, 12)
+                .output(dust, Charcoal, 12)
                 .fluidOutputs(Water.getFluid(1500))
                 .duration(160).EUt(96)
+                .buildAndRegister();
+
+        // COAL GAS ============================================
+
+        // From Log
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(20)
+                .input(log, Wood, 16)
+                .fluidInputs(Steam.getFluid(1000))
+                .outputs(new ItemStack(Items.COAL, 20, 1))
+                .fluidOutputs(CoalGas.getFluid(2000))
+                .duration(640).EUt(64)
+                .buildAndRegister();
+
+        // From Coal
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(22)
+                .input(gem, Coal, 16)
+                .fluidInputs(Steam.getFluid(1000))
+                .output(gem, Coke, 16)
+                .fluidOutputs(CoalGas.getFluid(4000))
+                .duration(320).EUt(96)
+                .buildAndRegister();
+
+        // COAL TAR ============================================
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
+                .inputs(new ItemStack(Items.COAL, 32, 1))
+                .output(dustSmall, Ash, 2)
+                .fluidOutputs(CoalTar.getFluid(1000))
+                .duration(640).EUt(64)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
+                .input(gem, Lignite, 16)
+                .output(dustSmall, DarkAsh, 2)
+                .fluidOutputs(CoalTar.getFluid(2000))
+                .duration(640).EUt(64)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
+                .inputs(new ItemStack(Items.COAL, 12))
+                .output(dustSmall, DarkAsh, 2)
+                .fluidOutputs(CoalTar.getFluid(3000))
+                .duration(320).EUt(96)
+                .buildAndRegister();
+
+        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
+                .input(gem, Coke, 8)
+                .output(dustSmall, Ash, 3)
+                .fluidOutputs(CoalTar.getFluid(4000))
+                .duration(320).EUt(96)
                 .buildAndRegister();
     }
 }
