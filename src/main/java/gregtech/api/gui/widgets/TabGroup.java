@@ -68,8 +68,8 @@ public class TabGroup extends AbstractWidgetGroup {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        super.drawInBackground(mouseX, mouseY, context);
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        super.drawInBackground(mouseX, mouseY, partialTicks, context);
         this.tabListRenderer.renderTabs(getPosition(), tabInfos, sizes.getWidth(), sizes.getHeight(), selectedTabIndex);
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }

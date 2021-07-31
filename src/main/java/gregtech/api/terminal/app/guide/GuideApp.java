@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;
@@ -13,6 +14,7 @@ import gregtech.api.terminal.gui.widgets.guide.*;
 import gregtech.api.terminal.util.TreeNode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 
@@ -23,6 +25,7 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public abstract class GuideApp<T> extends AbstractApplication {
     private GuidePageWidget pageWidget;
@@ -38,13 +41,13 @@ public abstract class GuideApp<T> extends AbstractApplication {
                 app.addWidget(
                         new TextTreeWidget<>(0, 0, 133, 232, getTree(), leaf -> {
                             if (app.pageWidget != null) {
-                                app.removeWidget(pageWidget);
+                                app.removeWidget(app.pageWidget);
                             }
                             app.pageWidget = new GuidePageWidget(133, 0, 200, 232);
                             if (leaf.isLeaf() && leaf.content != null) {
                                 app.pageWidget.loadJsonConfig(leaf.content.getSecond());
                             }
-                            app.addWidget(pageWidget);
+                            app.addWidget(app.pageWidget);
                         }, this::itemIcon, this::itemName).setNodeTexture(GuiTextures.BORDERED_BACKGROUND).setLeafTexture(GuiTextures.SLOT_DARKENED)
                 );
             }
@@ -53,6 +56,10 @@ public abstract class GuideApp<T> extends AbstractApplication {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
     }
 
     protected IGuiTexture itemIcon(T item) {
