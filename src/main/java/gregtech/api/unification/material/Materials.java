@@ -3,6 +3,8 @@ package gregtech.api.unification.material;
 import gregtech.api.GTValues;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.materials.ElementMaterials;
+import gregtech.api.unification.material.materials.FirstDegreeMaterials;
+import gregtech.api.unification.material.materials.OrganicChemistryMaterials;
 import gregtech.api.unification.material.type.MarkerMaterial;
 import gregtech.api.unification.material.type.MaterialFlag;
 import gregtech.api.unification.material.type.RoughSolidMaterial;
@@ -58,6 +60,8 @@ public class Materials {
     public static void register() {
         MarkerMaterials.register();
         ElementMaterials.register();
+        FirstDegreeMaterials.register();
+        OrganicChemistryMaterials.register();
     }
 
     public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();
@@ -365,51 +369,6 @@ public class Materials {
     public static Material IronMagnetic;
     public static Material TungstenCarbide;
 
-
-
-    //todo move to ochem
-    public static Material Polyethylene;
-    public static Material Epoxy;
-    public static Material Polysiloxane;
-    public static Material Polycaprolactam;
-    public static Material Polytetrafluoroethylene;
-
-
-    Polyethylene = new MaterialBuilder(174, "plastic") //todo add polyethylene oredicts
-                .ingot(1).fluid()
-                .color(0xC8C8C8)
-                .flags(GENERATE_FOIL, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
-                .components(Carbon, 1, Hydrogen, 2)
-                .build();
-
-    Epoxy = new MaterialBuilder(175, "epoxy")
-                .ingot(1).fluid()
-                .color(0xC88C14)
-                .flags(EXT2_METAL, DISABLE_DECOMPOSITION, NO_SMASHING)
-                .components(Carbon, 21, Hydrogen, 25, Chlorine, 1, Oxygen, 5)
-                .build();
-
-    Polysiloxane = new MaterialBuilder(176, "polysiloxane")
-                .ingot(1).fluid()
-                .color(0xDCDCDC)
-                .flags(STD_METAL, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
-                .components(Carbon, 1, Hydrogen, 1, Silicon, 2, Oxygen, 1)
-                .build();
-
-    Polycaprolactam = new MaterialBuilder(177, "polycaprolactam")
-                .ingot(1).fluid()
-                .color(0x323232)
-                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING)
-                .components(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1)
-                .build();
-
-    Polytetrafluoroethylene = new MaterialBuilder(178, "polytetrafluoroethylene")
-                .ingot(1).flags()
-                .color(0x646464)
-                .flags(STD_METAL, GENERATE_FRAME, DISABLE_DECOMPOSITION, NO_SMASHING)
-                .components(Carbon, 2, Fluorine, 4)
-                .build();
-
     /**
      * Organic chemistry
      */
@@ -426,6 +385,11 @@ public class Materials {
     public static Material GlycerylTrinitrate;
     public static Material Polybenzimidazole;
     public static Material Polydimethylsiloxane;
+    public static Material Polyethylene;
+    public static Material Epoxy;
+    public static Material Polysiloxane;
+    public static Material Polycaprolactam;
+    public static Material Polytetrafluoroethylene;
 
     /**
      * Water Related
@@ -760,8 +724,8 @@ public class Materials {
         NeodymiumMagnetic.setMaceratingInto(Neodymium);
 
         SteelMagnetic.setSmeltingInto(Steel);
-        IronMagnetic.setArcSmeltingInto(Steel);
-        IronMagnetic.setMaceratingInto(Steel);
+        SteelMagnetic.setArcSmeltingInto(Steel);
+        SteelMagnetic.setMaceratingInto(Steel);
 
         IronMagnetic.setSmeltingInto(Iron);
         IronMagnetic.setArcSmeltingInto(WroughtIron);
@@ -795,190 +759,71 @@ public class Materials {
         Chromite.setDirectSmelting(Chrome);
         Galena.setDirectSmelting(Lead);
 
-        Salt.setOreMultiplier(2);
-        RockSalt.setOreMultiplier(2);
-        Lepidolite.setOreMultiplier(5);
-
-        Spodumene.setOreMultiplier(2);
-        Spessartine.setOreMultiplier(2);
-        Soapstone.setOreMultiplier(3);
-
-        Almandine.setOreMultiplier(6);
-        Grossular.setOreMultiplier(6);
         Bentonite.setOreMultiplier(7);
-        Pyrope.setOreMultiplier(4);
 
         GarnetYellow.setOreMultiplier(4);
         GarnetRed.setOreMultiplier(4);
         Olivine.setOreMultiplier(2);
-        Topaz.setOreMultiplier(2);
 
-        Bastnasite.setOreMultiplier(2);
-        Tennantite.setOreMultiplier(2);
-        Enargite.setOreMultiplier(2);
-        Tantalite.setOreMultiplier(2);
-        Tanzanite.setOreMultiplier(2);
         Pitchblende.setOreMultiplier(2);
-
-        Scheelite.setOreMultiplier(2);
-        Tungstate.setOreMultiplier(2);
-        Ilmenite.setOreMultiplier(3);
-        Bauxite.setOreMultiplier(3);
-        Rutile.setOreMultiplier(3);
-
-        Cassiterite.setOreMultiplier(2);
-        CassiteriteSand.setOreMultiplier(2);
-        NetherQuartz.setOreMultiplier(2);
-        CertusQuartz.setOreMultiplier(2);
-        Quartzite.setOreMultiplier(2);
-
         TricalciumPhosphate.setOreMultiplier(3);
-        Saltpeter.setOreMultiplier(4);
         Apatite.setOreMultiplier(4);
         Apatite.setByProductMultiplier(2);
         Redstone.setOreMultiplier(5);
 
         Lapis.setOreMultiplier(6);
         Lapis.setByProductMultiplier(4);
-        Sodalite.setOreMultiplier(6);
-        Sodalite.setByProductMultiplier(4);
-        Lazurite.setOreMultiplier(6);
-        Lazurite.setByProductMultiplier(4);
         Monazite.setOreMultiplier(8);
         Monazite.setByProductMultiplier(2);
 
-        Coal.setBurnTime(1600); //default coal burn time in vanilla
-        Charcoal.setBurnTime(1600); //default coal burn time in vanilla
         Lignite.setBurnTime(1200); //2/3 of burn time of coal
-        Coke.setBurnTime(3200); //2x burn time of coal
         Wood.setBurnTime(300); //default wood burn time in vanilla
 
-        Tenorite.addOreByProducts(Iron, Manganese, Malachite);
-        Bornite.addOreByProducts(Pyrite, Cobalt, Cadmium, Gold);
-        Chalcocite.addOreByProducts(Sulfur, Lead, Silver);
-        Cuprite.addOreByProducts(Iron, Antimony, Malachite);
-        Enargite.addOreByProducts(Pyrite, Zinc, Quartzite);
-        Tennantite.addOreByProducts(Iron, Antimony, Zinc);
 
-        Chalcopyrite.addOreByProducts(Pyrite, Cobalt, Cadmium, Gold);
-        Sphalerite.addOreByProducts(GarnetYellow, Cadmium, Gallium, Zinc);
-        GlauconiteSand.addOreByProducts(Sodium, Aluminium, Iron);
-        Glauconite.addOreByProducts(Sodium, Aluminium, Iron);
         Vermiculite.addOreByProducts(Iron, Aluminium, Magnesium);
         FullersEarth.addOreByProducts(Aluminium, Silicon, Magnesium);
         Bentonite.addOreByProducts(Aluminium, Calcium, Magnesium);
-        Uraninite.addOreByProducts(Uranium238, Thorium, Uranium235);
         Pitchblende.addOreByProducts(Thorium, Uranium238, Lead);
-        Galena.addOreByProducts(Sulfur, Silver, Lead, Silver);
         Lapis.addOreByProducts(Lazurite, Sodalite, Pyrite);
-        Pyrite.addOreByProducts(Sulfur, TricalciumPhosphate, Iron);
         GarnetRed.addOreByProducts(Spessartine, Pyrope, Almandine);
         GarnetYellow.addOreByProducts(Andradite, Grossular, Uvarovite);
-        Cooperite.addOreByProducts(Palladium, Nickel, Iridium, Cooperite);
-        Cinnabar.addOreByProducts(Redstone, Sulfur, Glowstone);
-        Tantalite.addOreByProducts(Manganese, Niobium, Tantalum);
         Pollucite.addOreByProducts(Caesium, Aluminium, Rubidium);
         Chrysotile.addOreByProducts(Asbestos, Silicon, Magnesium);
-        Asbestos.addOreByProducts(Asbestos, Silicon, Magnesium);
-        Pentlandite.addOreByProducts(Iron, Sulfur, Cobalt);
-        Scheelite.addOreByProducts(Manganese, Molybdenum, Calcium);
-        Tungstate.addOreByProducts(Manganese, Silver, Lithium, Silver);
-        Bauxite.addOreByProducts(Grossular, Rutile, Gallium);
         QuartzSand.addOreByProducts(CertusQuartz, Quartzite, Barite);
-        Quartzite.addOreByProducts(CertusQuartz, Barite);
-        CertusQuartz.addOreByProducts(Quartzite, Barite);
         Redstone.addOreByProducts(Cinnabar, RareEarth, Glowstone);
         Monazite.addOreByProducts(Thorium, Neodymium, RareEarth);
-        Malachite.addOreByProducts(Copper, BrownLimonite, Calcite, Copper);
-        YellowLimonite.addOreByProducts(Nickel, BrownLimonite, Cobalt, Nickel);
-        BrownLimonite.addOreByProducts(Malachite, YellowLimonite);
-        Neodymium.addOreByProducts(Monazite, RareEarth);
-        Bastnasite.addOreByProducts(Neodymium, RareEarth);
         Glowstone.addOreByProducts(Redstone, Gold);
         Diatomite.addOreByProducts(BandedIron, Sapphire);
-        Lepidolite.addOreByProducts(Lithium, Caesium);
-        Electrum.addOreByProducts(Gold, Silver);
-        Bronze.addOreByProducts(Copper, Tin);
-        Brass.addOreByProducts(Copper, Zinc);
-        Coal.addOreByProducts(Lignite, Thorium);
-        Ilmenite.addOreByProducts(Iron, Rutile);
-        Manganese.addOreByProducts(Chrome, Iron);
-        Sapphire.addOreByProducts(Aluminium, GreenSapphire);
-        GreenSapphire.addOreByProducts(Aluminium, Sapphire);
-        Platinum.addOreByProducts(Nickel, Iridium);
-        Emerald.addOreByProducts(Beryllium, Aluminium);
         Olivine.addOreByProducts(Pyrope, Magnesium, Manganese);
-        Chromite.addOreByProducts(Iron, Magnesium);
-        Tetrahedrite.addOreByProducts(Antimony, Zinc, Tetrahedrite);
         GarnetSand.addOreByProducts(GarnetRed, GarnetYellow);
-        Magnetite.addOreByProducts(Iron, Gold);
         GraniticMineralSand.addOreByProducts(GraniteBlack, Magnetite);
         BasalticMineralSand.addOreByProducts(Basalt, Magnetite);
         Basalt.addOreByProducts(Olivine, DarkAsh);
         VanadiumMagnetite.addOreByProducts(Magnetite, Vanadium);
-        Lazurite.addOreByProducts(Sodalite, Lapis);
-        Sodalite.addOreByProducts(Lazurite, Lapis);
-        Spodumene.addOreByProducts(Aluminium, Lithium);
-        Ruby.addOreByProducts(Chrome, GarnetRed);
         TricalciumPhosphate.addOreByProducts(Apatite, Phosphate);
-        Pyrope.addOreByProducts(GarnetRed, Magnesium);
-        Almandine.addOreByProducts(GarnetRed, Aluminium);
-        Spessartine.addOreByProducts(GarnetRed, Manganese);
-        Andradite.addOreByProducts(GarnetYellow, Iron);
-        Grossular.addOreByProducts(GarnetYellow, Calcium);
-        Uvarovite.addOreByProducts(GarnetYellow, Chrome);
-        Calcite.addOreByProducts(Andradite, Malachite);
         NaquadahEnriched.addOreByProducts(Naquadah, Naquadria);
         Naquadah.addOreByProducts(NaquadahEnriched);
-        Pyrolusite.addOreByProducts(Manganese);
-        Molybdenite.addOreByProducts(Molybdenum);
-        Stibnite.addOreByProducts(Antimony);
-        Garnierite.addOreByProducts(Nickel);
         Lignite.addOreByProducts(Coal);
-        Diamond.addOreByProducts(Graphite);
-        Beryllium.addOreByProducts(Emerald);
         Apatite.addOreByProducts(TricalciumPhosphate);
-        Magnesite.addOreByProducts(Magnesium);
-        NetherQuartz.addOreByProducts(Netherrack);
-        PigIron.addOreByProducts(Iron);
-        Steel.addOreByProducts(Iron);
-        Graphite.addOreByProducts(Carbon);
         Netherrack.addOreByProducts(Sulfur);
         Flint.addOreByProducts(Obsidian);
-        Cobaltite.addOreByProducts(Cobalt, Cobaltite);
-        Saltpeter.addOreByProducts(Saltpeter);
         Endstone.addOreByProducts(Helium3);
-        Magnesium.addOreByProducts(Olivine);
         Obsidian.addOreByProducts(Olivine);
-        Ash.addOreByProducts(Carbon);
-        DarkAsh.addOreByProducts(Carbon);
         Redrock.addOreByProducts(Clay);
         Marble.addOreByProducts(Calcite);
-        Clay.addOreByProducts(Clay);
-        Cassiterite.addOreByProducts(Tin, Bismuth);
-        CassiteriteSand.addOreByProducts(Tin);
         GraniteBlack.addOreByProducts(Biotite);
         GraniteRed.addOreByProducts(PotassiumFeldspar);
         Phosphate.addOreByProducts(Phosphorus);
-        Phosphorus.addOreByProducts(Phosphate);
-        Tanzanite.addOreByProducts(Opal);
         Opal.addOreByProducts(Tanzanite);
         Amethyst.addOreByProducts(Amethyst);
-        Topaz.addOreByProducts(BlueTopaz);
-        BlueTopaz.addOreByProducts(Topaz);
         Niter.addOreByProducts(Saltpeter);
         Vinteum.addOreByProducts(Vinteum);
-        Salt.addOreByProducts(RockSalt, Borax);
-        RockSalt.addOreByProducts(Salt, Borax);
         Andesite.addOreByProducts(Basalt);
         Diorite.addOreByProducts(NetherQuartz);
-        Lepidolite.addOreByProducts(Boron);
+
 
         Vinteum.addEnchantmentForTools(Enchantments.FORTUNE, 2);
-        BlackBronze.addEnchantmentForTools(Enchantments.SMITE, 2);
-        RoseGold.addEnchantmentForTools(Enchantments.SMITE, 4);
-        Invar.addEnchantmentForTools(Enchantments.BANE_OF_ARTHROPODS, 3);
-        BismuthBronze.addEnchantmentForTools(Enchantments.BANE_OF_ARTHROPODS, 5);
+
 
         RedAlloy.setCableProperties(GTValues.V[0], 1, 0);
 
@@ -1009,38 +854,20 @@ public class Materials {
         FluxedElectrum.setCableProperties(GTValues.V[8], 3, 2);
         DiamericiumTitanium.setCableProperties(GTValues.V[10], 8, 16);
 
-        Bronze.setFluidPipeProperties(1696, 20, true);
-        WroughtIron.setFluidPipeProperties(2387, 30, true);
-        TinAlloy.setFluidPipeProperties(1572, 38, true);
-        Invar.setFluidPipeProperties(2395, 40, true);
+
+
+
+
         Steel.setFluidPipeProperties(2557, 40, true);
-        StainlessSteel.setFluidPipeProperties(2428, 60, true);
         Potin.setFluidPipeProperties(2023, 96, true);
         VanadiumSteel.setFluidPipeProperties(2073, 100, true);
         TungstenSteel.setFluidPipeProperties(7568, 100, true);
-        TungstenCarbide.setFluidPipeProperties(7568, 125, true);
-        NiobiumTitanium.setFluidPipeProperties(2900, 150, true);
         Naquadah.setFluidPipeProperties(19200, 1500, true);
         Duranium.setFluidPipeProperties(100000, 2000, true);
         Neutronium.setFluidPipeProperties(1000000, 2800, true);
 
-        Polyethylene.setFluidPipeProperties(350, 60, true);
-        Polytetrafluoroethylene.setFluidPipeProperties(600, 80, true);
-        Polybenzimidazole.setFluidPipeProperties(1000, 100, true);
-
-        Brass.setItemPipeProperties(2048, 1);
         CobaltBrass.setItemPipeProperties(2048, 1);
         Cupronickel.setItemPipeProperties(2048, 1);
-        Electrum.setItemPipeProperties(1024, 2);
-        SterlingSilver.setItemPipeProperties(1024, 2);
-        RoseGold.setItemPipeProperties(1024, 2);
-        Magnalium.setItemPipeProperties(1024, 2);
-        BlackBronze.setItemPipeProperties(1024, 2);
         FluxedElectrum.setItemPipeProperties(128, 16);
-        Ultimet.setItemPipeProperties(128, 16);
-        Osmiridium.setItemPipeProperties(64, 32);
-        Americium.setItemPipeProperties(64, 64);
-        DiamericiumTitanium.setItemPipeProperties(32, 128);
-        PolyvinylChloride.setItemPipeProperties(512, 4);
     }
 }

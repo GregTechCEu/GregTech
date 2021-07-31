@@ -35,6 +35,7 @@ public class ElementMaterials {
                 .color(0xC8C8C8).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_ROD, GENERATE_LONG_ROD)
                 .element(Elements.Am)
+                .itemPipeProperties(64, 64)
                 .build();
 
         Antimony = new MaterialBuilder(4, "antimony")
@@ -82,6 +83,7 @@ public class ElementMaterials {
                 .color(0x64B464).iconSet(METALLIC)
                 .flags(STD_METAL)
                 .element(Elements.Be)
+                .addOreByproducts(Emerald)
                 .build();
 
         Bismuth = new MaterialBuilder(11, "bismuth")
@@ -438,6 +440,7 @@ public class ElementMaterials {
                 .ingot().fluid()
                 .color(0xE1C8C8).iconSet(METALLIC)
                 .element(Elements.Mg)
+                .addOreByproducts(Olivine)
                 .build();
 
         Mendelevium = new MaterialBuilder(60, "mendelevium")
@@ -452,6 +455,7 @@ public class ElementMaterials {
                 .color(0xFAFAFA)
                 .flags(STD_METAL, GENERATE_FOIL)
                 .element(Elements.Mn)
+                .addOreByproducts(Chrome, Iron)
                 .toolStats(7.0f, 2.0f, 512)
                 .build();
 
@@ -487,6 +491,7 @@ public class ElementMaterials {
                 .element(Elements.Nd)
                 .toolStats(7.0f, 2.0f, 512)
                 .polarizesInto(NeodymiumMagnetic)
+                .addOreByproducts(Monazite, RareEarth)
                 .blastTemp(1297)
                 .build();
 
@@ -581,6 +586,7 @@ public class ElementMaterials {
                 .dust()
                 .color(0xFFFF00)
                 .element(Elements.P)
+                .addOreByproducts(Phosphate)
                 .build();
 
         Polonium = new MaterialBuilder(79, "polonium")
@@ -597,6 +603,7 @@ public class ElementMaterials {
                 .washedIn(Mercury)
                 .cableProperties(GTValues.V[5], 2, 1)
                 .itemPipeProperties(512, 4.0f)
+                .addOreByproducts(Nickel, Iridium)
                 .build();
 
         Plutonium239 = new MaterialBuilder(81, "plutonium")
