@@ -7,10 +7,12 @@ import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.material.properties.Properties;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
-import gregtech.api.util.GTLog;
 import net.minecraft.enchantment.Enchantment;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 import static gregtech.api.unification.material.MaterialBuilder.FluidType.*;
@@ -23,7 +25,7 @@ public class MaterialBuilder {
     /**
      * The "list" of components for this Material.
      */
-    private final SortedMap<Material, Integer> composition = new TreeMap<>();
+    private final SortedMap<Material, Integer> composition = new TreeMap<>(); // todo do this better
 
     public MaterialBuilder(int id, String name) {
         materialInfo = new MaterialInfo(id, name);
@@ -34,7 +36,15 @@ public class MaterialBuilder {
      * Material Types
      */
 
-    // TODO Clean this up
+    public MaterialBuilder fluid() {
+        properties.setFluidProperty(new FluidProperty());
+        return this;
+    }
+
+    public MaterialBuilder fluid(FluidType type) {
+        return fluid(type, false);
+    }
+
     public MaterialBuilder fluid(FluidType type, boolean withBlock) {
         properties.setFluidProperty(new FluidProperty(withBlock, type == GAS));
         return this;
@@ -64,8 +74,28 @@ public class MaterialBuilder {
         return this;
     }
 
+    public MaterialBuilder ingot(int harvestLevel) {
+        return ingot(harvestLevel, 0);
+    }
+
+    public MaterialBuilder ingot(int harvestLevel, int burnTime) {
+        if (properties.getDustProperty() == null) dust(harvestLevel, burnTime);
+        properties.setIngotProperty(new IngotProperty());
+        return this;
+    }
+
     public MaterialBuilder gem() {
         properties.setGemProperty(new GemProperty());
+        return this;
+    }
+
+    public MaterialBuilder gem(int harvestLevel) {
+        return gem(harvestLevel, 0);
+    }
+
+    public MaterialBuilder gem(int harvestLevel, int burnTime) {
+        if (properties.getDustProperty() == null) dust(harvestLevel, burnTime);
+        properties.setIngotProperty(new IngotProperty());
         return this;
     }
 
