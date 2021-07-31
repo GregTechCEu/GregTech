@@ -24,34 +24,34 @@ import static gregtech.api.unification.ore.OrePrefix.Flags.*;
 
 public enum OrePrefix {
 
-    ore("Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial), // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
+    ore("Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
 
-    oreBlackgranite("Black Granite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
-    oreRedgranite("Red Granite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreBlackgranite("Black Granite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreRedgranite("Red Granite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
 
-    oreMarble("Marble Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
-    oreBasalt("Basalt Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreMarble("Marble Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreBasalt("Basalt Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
 
-    oreSand("Sand Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null), // In case of an Sand-Ores Mod. Ore -> Material is a Oneway Operation!
-    oreGravel("Gravel Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null), // In case of an Gravel-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreSand("Sand Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null), // In case of an Sand-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreGravel("Gravel Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null), // In case of an Gravel-Ores Mod. Ore -> Material is a Oneway Operation!
 
-    oreNetherrack("Netherrack Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial), // Prefix of the Nether-Ores Mod. Causes Ores to double. Ore -> Material is a Oneway Operation!
-    oreEndstone("Endstone Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreNetherrack("Netherrack Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // Prefix of the Nether-Ores Mod. Causes Ores to double. Ore -> Material is a Oneway Operation!
+    oreEndstone("Endstone Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
 
-    crushedCentrifuged("Centrifuged Ores", -1, null, MaterialIconType.crushedCentrifuged, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial),
-    crushedPurified("Purified Ores", -1, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial),
-    crushed("Crushed Ores", -1, null, MaterialIconType.crushed, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial),
+    crushedCentrifuged("Centrifuged Ores", -1, null, MaterialIconType.crushedCentrifuged, ENABLE_UNIFICATION, isOreMaterial),
+    crushedPurified("Purified Ores", -1, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, isOreMaterial),
+    crushed("Crushed Ores", -1, null, MaterialIconType.crushed, ENABLE_UNIFICATION, isOreMaterial),
 
-    shard("Crystallised Shards", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null), // Introduced by Mekanism
-    clump("Clumps", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
-    reduced("Reduced Gravels", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
-    crystalline("Crystallised Metals", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+    shard("Crystallised Shards", -1, null, null, ENABLE_UNIFICATION, null), // Introduced by Mekanism
+    clump("Clumps", -1, null, null, ENABLE_UNIFICATION, null),
+    reduced("Reduced Gravels", -1, null, null, ENABLE_UNIFICATION, null),
+    crystalline("Crystallised Metals", -1, null, null, ENABLE_UNIFICATION, null),
 
-    cleanGravel("Clean Gravels", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
-    dirtyGravel("Dirty Gravels", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+    cleanGravel("Clean Gravels", -1, null, null, ENABLE_UNIFICATION, null),
+    dirtyGravel("Dirty Gravels", -1, null, null, ENABLE_UNIFICATION, null),
 
-    ingotHot("Hot Ingots", M, null, MaterialIconType.ingotHot, ENABLE_UNIFICATION | DISALLOW_RECYCLING, hasBlastProperty.and(mat -> mat.getProperties().getBlastProperty().getBlastTemperature() > 1750)), // A hot Ingot, which has to be cooled down by a Vacuum Freezer.
-    ingot("Ingots", M, null, MaterialIconType.ingot, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isIngotProperty), // A regular Ingot. Introduced by Eloraam
+    ingotHot("Hot Ingots", M, null, MaterialIconType.ingotHot, ENABLE_UNIFICATION, isBlastMaterial.and(mat -> mat.getProperties().getBlastProperty().getBlastTemperature() > 1750)), // A hot Ingot, which has to be cooled down by a Vacuum Freezer.
+    ingot("Ingots", M, null, MaterialIconType.ingot, ENABLE_UNIFICATION, isIngotMaterial), // A regular Ingot. Introduced by Eloraam
 
     gem("Gemstones", M, null, MaterialIconType.gem, ENABLE_UNIFICATION, mat -> mat.getProperties().getGemProperty() != null), // A regular Gem worth one Dust. Introduced by Eloraam
     gemChipped("Chipped Gemstones", M / 4, null, MaterialIconType.gemChipped, ENABLE_UNIFICATION, isGemMaterial), // A regular Gem worth one small Dust. Introduced by TerraFirmaCraft
@@ -59,17 +59,17 @@ public enum OrePrefix {
     gemFlawless("Flawless Gemstones", M * 2, null, MaterialIconType.gemFlawless, ENABLE_UNIFICATION, isGemMaterial), // A regular Gem worth two Dusts. Introduced by TerraFirmaCraft
     gemExquisite("Exquisite Gemstones", M * 4, null, MaterialIconType.gemExquisite, ENABLE_UNIFICATION, isGemMaterial), // A regular Gem worth four Dusts. Introduced by TerraFirmaCraft
 
-    dustSmall("Small Dusts", M / 4, null, MaterialIconType.dustSmall, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isDustMaterial), // 1/4th of a Dust.
-    dustTiny("Tiny Dusts", M / 9, null, MaterialIconType.dustTiny, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isDustMaterial), // 1/9th of a Dust.
-    dustImpure("Impure Dusts", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial), // Dust with impurities. 1 Unit of Main Material and 1/9 - 1/4 Unit of secondary Material
-    dustPure("Purified Dusts", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isOreMaterial),
-    dust("Dusts", M, null, MaterialIconType.dust, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isDustMaterial), // Pure Dust worth of one Ingot or Gem. Introduced by Alblaka.
+    dustSmall("Small Dusts", M / 4, null, MaterialIconType.dustSmall, ENABLE_UNIFICATION, isDustMaterial), // 1/4th of a Dust.
+    dustTiny("Tiny Dusts", M / 9, null, MaterialIconType.dustTiny, ENABLE_UNIFICATION, isDustMaterial), // 1/9th of a Dust.
+    dustImpure("Impure Dusts", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, isOreMaterial), // Dust with impurities. 1 Unit of Main Material and 1/9 - 1/4 Unit of secondary Material
+    dustPure("Purified Dusts", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, isOreMaterial),
+    dust("Dusts", M, null, MaterialIconType.dust, ENABLE_UNIFICATION, isDustMaterial), // Pure Dust worth of one Ingot or Gem. Introduced by Alblaka.
 
-    nugget("Nuggets", M / 9, null, MaterialIconType.nugget, ENABLE_UNIFICATION | DISALLOW_RECYCLING, isIngotProperty), // A Nugget. Introduced by Eloraam
+    nugget("Nuggets", M / 9, null, MaterialIconType.nugget, ENABLE_UNIFICATION, isIngotMaterial), // A Nugget. Introduced by Eloraam
 
     plateCurved("Curved Plates", M, null, MaterialIconType.plateCurved, ENABLE_UNIFICATION, null),
     plateDense("Dense Plates", M * 9, null, MaterialIconType.plateDense, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_DENSE) && !mat.hasFlag(NO_SMASHING)), // 9 Plates combined in one Item.
-    plateDouble("Double Plates", M * 2, null, MaterialIconType.plateDouble, ENABLE_UNIFICATION, isIngotProperty.and(mat -> mat.hasFlag(GENERATE_PLATE) && !mat.hasFlag(NO_SMASHING))), // 2 Plates combined in one Item
+    plateDouble("Double Plates", M * 2, null, MaterialIconType.plateDouble, ENABLE_UNIFICATION, isIngotMaterial.and(mat -> mat.hasFlag(GENERATE_PLATE) && !mat.hasFlag(NO_SMASHING))), // 2 Plates combined in one Item
     plate("Plates", M, null, MaterialIconType.plate, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_PLATE)), // Regular Plate made of one Ingot/Dust. Introduced by Calclavia
     compressed("Compressed Materials", M * 2, null, null, ENABLE_UNIFICATION, null), // Compressed Material, worth 1 Unit. Introduced by Galacticraft
 
@@ -107,20 +107,20 @@ public enum OrePrefix {
     toolHeadWrench("Wrench Tips", M * 4, null, MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION, isToolMaterial), // made of 4 Ingots.
     turbineBlade("Turbine Blades", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, isToolMaterial), // made of 5 Ingots.
 
-    glass("Glasses", -1, Materials.Glass, null, SELF_REFERENCING | DISALLOW_RECYCLING, null),
-    paneGlass("Glass Panes", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING | DISALLOW_RECYCLING, null),
-    blockGlass("Glass Blocks", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING | DISALLOW_RECYCLING, null),
+    glass("Glasses", -1, Materials.Glass, null, SELF_REFERENCING, null),
+    paneGlass("Glass Panes", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null),
+    blockGlass("Glass Blocks", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null),
 
-    blockWool("Wool Blocks", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING | DISALLOW_RECYCLING, null),
+    blockWool("Wool Blocks", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null),
     block("Storage Blocks", M * 9, null, MaterialIconType.block, ENABLE_UNIFICATION, null), // Storage Block consisting out of 9 Ingots/Gems/Dusts. Introduced by CovertJaguar
 
-    log("Logs", -1, null, null, DISALLOW_RECYCLING, null), // Prefix used for Logs. Usually as "logWood". Introduced by Eloraam
-    plank("Planks", -1, null, null, DISALLOW_RECYCLING, null), // Prefix for Planks. Usually "plankWood". Introduced by Eloraam
+    log("Logs", -1, null, null, 0, null), // Prefix used for Logs. Usually as "logWood". Introduced by Eloraam
+    plank("Planks", -1, null, null, 0, null), // Prefix for Planks. Usually "plankWood". Introduced by Eloraam
 
-    stone("Stones", -1, Materials.Stone, null, SELF_REFERENCING | DISALLOW_RECYCLING, null), // Prefix to determine which kind of Rock this is.
-    cobblestone("Cobblestones", -1, Materials.Stone, null, SELF_REFERENCING | DISALLOW_RECYCLING, null),
-    rock("Rocks", -1, Materials.Stone, null, SELF_REFERENCING | DISALLOW_RECYCLING, null), // Prefix to determine which kind of Rock this is.
-    stoneCobble("Cobblestones", -1, Materials.Stone, null, SELF_REFERENCING | DISALLOW_RECYCLING, null), // Cobblestone Prefix for all Cobblestones.
+    stone("Stones", -1, Materials.Stone, null, SELF_REFERENCING, null), // Prefix to determine which kind of Rock this is.
+    cobblestone("Cobblestones", -1, Materials.Stone, null, SELF_REFERENCING, null),
+    rock("Rocks", -1, Materials.Stone, null, SELF_REFERENCING, null), // Prefix to determine which kind of Rock this is.
+    stoneCobble("Cobblestones", -1, Materials.Stone, null, SELF_REFERENCING, null), // Cobblestone Prefix for all Cobblestones.
 
     frameGt("Frame Boxes", (long) (M * 1.375), null, null, ENABLE_UNIFICATION, material -> material.hasFlag(GENERATE_FRAME)),
 
@@ -152,49 +152,39 @@ public enum OrePrefix {
     cableGtDouble("Double cables", M, null, null, ENABLE_UNIFICATION, null),
     cableGtSingle("Single cables", M / 2, null, null, ENABLE_UNIFICATION, null),
 
-    craftingLens("Crafting Ingredients", -1, null, null, DISALLOW_RECYCLING, null), // Special Prefix used mainly for the Crafting Handler.
-    dye("Dyes", -1, null, null, DISALLOW_RECYCLING, null), // Used for the 16 dyes. Introduced by Eloraam
+    craftingLens("Crafting Ingredients", -1, null, null, 0, null), // Special Prefix used mainly for the Crafting Handler.
+    dye("Dyes", -1, null, null, 0, null), // Used for the 16 dyes. Introduced by Eloraam
 
-    /* Electric Components.
+    /**
+     * Electric Components.
      *
-     * usual Materials for this are:
-     * Primitive (Tier 1)
-     * Basic (Tier 2)
-     * Good (Tier 3)
-     * Advanced (Tier 4)
-     * Data (Tier 5)
-     * Elite (Tier 6)
-     * Master (Tier 7)
-     * Ultimate (Tier 8)
-     * Infinite
+     * @see MarkerMaterials.Tier
      */
-    batterySingleUse("Single Use Batteries", -1, null, null, DISALLOW_RECYCLING, null),
-    battery("Reusable Batteries", -1, null, null, DISALLOW_RECYCLING, null), // Introduced by Calclavia
-    circuit("Circuits", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null), // Introduced by Calclavia
-    chipset("Chipsets", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null), // Introduced by Buildcraft
-    component("Components", -1, null, null, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+    batterySingleUse("Single Use Batteries", -1, null, null, 0, null),
+    battery("Reusable Batteries", -1, null, null, 0, null), // Introduced by Calclavia
+    circuit("Circuits", -1, null, null, ENABLE_UNIFICATION, null), // Introduced by Calclavia
+    chipset("Chipsets", -1, null, null, ENABLE_UNIFICATION, null), // Introduced by Buildcraft
+    component("Components", -1, null, null, ENABLE_UNIFICATION, null),
 
     // Used for Gregification Addon
 
     // Ex Nihilo Compat
-    oreChunk("Ore Chunk", -1, null, MaterialIconType.oreChunk, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
-    oreEnderChunk("Ore Chunk", -1, null, MaterialIconType.oreEnderChunk, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
-    oreNetherChunk("Ore Chunk", -1, null, MaterialIconType.oreNetherChunk, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
-    oreSandyChunk("Ore Chunk", -1, null, MaterialIconType.oreSandyChunk, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+    oreChunk("Ore Chunk", -1, null, MaterialIconType.oreChunk, ENABLE_UNIFICATION, null),
+    oreEnderChunk("Ore Chunk", -1, null, MaterialIconType.oreEnderChunk, ENABLE_UNIFICATION, null),
+    oreNetherChunk("Ore Chunk", -1, null, MaterialIconType.oreNetherChunk, ENABLE_UNIFICATION, null),
+    oreSandyChunk("Ore Chunk", -1, null, MaterialIconType.oreSandyChunk, ENABLE_UNIFICATION, null),
 
     // Myst Ag Compat
-    seed("Seed", -1, null, MaterialIconType.seed, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
-    crop("Crop", -1, null, MaterialIconType.crop, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
-    essence("Essence", -1, null, MaterialIconType.essence, ENABLE_UNIFICATION | DISALLOW_RECYCLING, null),
+    seed("Seed", -1, null, MaterialIconType.seed, ENABLE_UNIFICATION, null),
+    crop("Crop", -1, null, MaterialIconType.crop, ENABLE_UNIFICATION, null),
+    essence("Essence", -1, null, MaterialIconType.essence, ENABLE_UNIFICATION, null),
     ;
 
     public static final String DUST_REGULAR = "dustRegular";
 
     public static class Flags {
-        public static final long ENABLE_UNIFICATION = GTUtility.createFlag(0);
-        public static final long SELF_REFERENCING = GTUtility.createFlag(1);
-        public static final long FLUID_CONTAINER = GTUtility.createFlag(2);
-        public static final long DISALLOW_RECYCLING = GTUtility.createFlag(3);
+        public static final long ENABLE_UNIFICATION = 1;
+        public static final long SELF_REFERENCING = 1 << 1;
     }
 
     public static class Conditions {
@@ -202,8 +192,8 @@ public enum OrePrefix {
         public static final Predicate<Material> isOreMaterial = mat -> mat.getProperties().getOreProperty() != null;
         public static final Predicate<Material> isGemMaterial = mat -> mat.getProperties().getGemProperty() != null;
         public static final Predicate<Material> isDustMaterial = mat -> mat.getProperties().getDustProperty() != null;
-        public static final Predicate<Material> isIngotProperty = mat -> mat.getProperties().getIngotProperty() != null;
-        public static final Predicate<Material> hasBlastProperty = mat -> mat.getProperties().getBlastProperty() != null;
+        public static final Predicate<Material> isIngotMaterial = mat -> mat.getProperties().getIngotProperty() != null;
+        public static final Predicate<Material> isBlastMaterial = mat -> mat.getProperties().getBlastProperty() != null;
     }
 
     static {
@@ -334,8 +324,6 @@ public enum OrePrefix {
 
     public final boolean isUnificationEnabled;
     public final boolean isSelfReferencing;
-    public final boolean isRecyclingDisallowed;
-    public final boolean isFluidContainer;
 
     private @Nullable
     Predicate<Material> generationCondition;
@@ -367,8 +355,6 @@ public enum OrePrefix {
         this.materialAmount = materialAmount;
         this.isSelfReferencing = (flags & SELF_REFERENCING) != 0;
         this.isUnificationEnabled = (flags & ENABLE_UNIFICATION) != 0;
-        this.isRecyclingDisallowed = (flags & DISALLOW_RECYCLING) != 0;
-        this.isFluidContainer = (flags & FLUID_CONTAINER) != 0;
         this.materialIconType = materialIconType;
         this.generationCondition = condition;
         if (isSelfReferencing) {
