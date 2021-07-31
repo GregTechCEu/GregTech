@@ -97,6 +97,12 @@ public class SeparationRecipes {
                 .fluidOutputs(Methane.getFluid(18))
                 .buildAndRegister();
 
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(500).EUt(5)
+                .inputs(new ItemStack(Items.MAGMA_CREAM))
+                .outputs(new ItemStack(Items.BLAZE_POWDER))
+                .outputs(new ItemStack(Items.SLIME_BALL))
+                .buildAndRegister();
+
 
         if (ConfigHolder.addFoodMethaneRecipes) {
             for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {

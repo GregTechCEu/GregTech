@@ -46,16 +46,22 @@ public class WoodMachineRecipes {
             if (ConfigHolder.vanillaRecipes.nerfWoodCrafting) {
                 //remove the old recipe
                 ModHandler.removeRecipeByName(outputRecipe.getRegistryName());
+
+                // new wood recipes
+                //noinspection ConstantConditions
+                ModHandler.addShapelessRecipe(outputRecipe.getRegistryName().toString(),
+                        GTUtility.copyAmount(Math.max(1, originalOutput / 2), plankStack), stack);
+
+                ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
+                        GTUtility.copyAmount(originalOutput, plankStack), "s", "L", 'L', stack);
+            } else {
+                //noinspection ConstantConditions
+                ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
+                        GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), "s", "L", 'L', stack);
             }
 
-            // new wood recipes
-            //noinspection ConstantConditions
-            ModHandler.addShapelessRecipe(outputRecipe.getRegistryName().toString(),
-                    GTUtility.copyAmount(Math.max(1, originalOutput / 2), plankStack), stack);
 
-            ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
-                    GTUtility.copyAmount(originalOutput, plankStack), "s", "L", 'L', stack);
-
+            //todo prevent rubber wood from making jungle slabs
             CUTTER_RECIPES.recipeBuilder().inputs(stack)
                     .fluidInputs(Lubricant.getFluid(1))
                     .outputs(GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), OreDictUnifier.get(dust, Wood, 2))

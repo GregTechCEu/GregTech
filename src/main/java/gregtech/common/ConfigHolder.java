@@ -125,11 +125,8 @@ public class ConfigHolder {
 
     public static class VanillaRecipes {
 
-        @Config.Comment("Whether to nerf the paper crafting recipe. Default: true")
-        public boolean nerfPaperCrafting = true;
-
-        @Config.Comment("Whether to make flint and steel recipe require a steel nugget instead of an iron ingot. Default: true.")
-        public boolean flintAndSteelRequireSteel = true;
+        @Config.Comment("Whether to make glass related recipes harder. Default: true")
+        public boolean hardGlassRecipes = true;
 
         @Config.Comment("Whether to nerf wood crafting to 2 planks from 1 log. Default: false")
         public boolean nerfWoodCrafting = false;
@@ -137,14 +134,29 @@ public class ConfigHolder {
         @Config.Comment("Whether to nerf wood crafting to 2 sticks from 2 planks. Default: false")
         public boolean nerfStickCrafting = false;
 
+        @Config.Comment("Whether to nerf the paper crafting recipe. Default: true")
+        public boolean nerfPaperCrafting = true;
+
+        @Config.Comment("Whether to make wood related recipes harder. Excludes sticks and planks. Default: false")
+        public boolean hardWoodRecipes = false;
+
+        @Config.Comment("Whether to make redstone related recipes harder. Default: false")
+        public boolean hardRedstoneRecipes = false;
+
+        @Config.Comment("Recipes for items like iron doors, trapdoors, pressure plates, cauldrons, hoppers, and iron bars require iron plates, sticks, and more. Default: true")
+        public boolean hardIronRecipes = true;
+
+        @Config.Comment("Whether to make miscellaneous recipes harder. Default: false")
+        public boolean hardMiscRecipes = false;
+
+        @Config.Comment("Whether to make flint and steel recipe require a steel of iron. Default: true.")
+        public boolean flintAndSteelRequireSteel = true;
+
         @Config.Comment("Whether to make the iron bucket recipe harder by requiring a hammer and plates. Default: true")
         public boolean bucketRequirePlatesAndHammer = true;
 
-        @Config.Comment("Recipes for items like iron doors, trapdoors, pressure plates, cauldrons, hoppers, and iron bars require iron plates and a hammer. Default: true")
-        public boolean ironConsumingCraftingRecipesRequirePlates = true;
-
-        @Config.Comment("Whether crafting a bowl requires a knife instead of only planks. Default: true")
-        public boolean bowlRequireKnife = true;
+        @Config.Comment("Whether to make vanilla tools and armor recipes harder. Excludes flint and steel, and buckets. Default: false")
+        public boolean hardToolArmorRecipes = false;
     }
 
     public static class NanoSaberConfiguration {
