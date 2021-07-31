@@ -554,9 +554,6 @@ public class Materials {
     public static SimpleFluidMaterial Ethylbenzene = new SimpleFluidMaterial("ethylbenzene", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 10)), DISABLE_DECOMPOSITION).setFormula("C6H5CH2CH3", true);
     public static SimpleFluidMaterial Naphthalene = new SimpleFluidMaterial("naphthalene", 0xF4F4D7, FLUID, of(new MaterialStack(Carbon, 10), new MaterialStack(Hydrogen, 8)), DISABLE_DECOMPOSITION);
 
-    //TODO
-    public static IngotMaterial BorosilicateGlass = new IngotMaterial(263, "borosilicate_glass", 0xE6F3E6, SHINY, 1, of(new MaterialStack(Boron, 1), new MaterialStack(SiliconDioxide, 7)), GENERATE_FINE_WIRE);
-
     /**
      * Not possible to determine exact Components
      */
@@ -644,6 +641,8 @@ public class Materials {
     public static Material Brick;
     public static Material Fireclay;
     public static Material HydratedCoal;
+    public static IngotMaterial BorosilicateGlass = new IngotMaterial(263, "borosilicate_glass", 0xE6F3E6, SHINY, 1, of(new MaterialStack(Boron, 1), new MaterialStack(SiliconDioxide, 7)), GENERATE_FINE_WIRE);
+
 
     Brick = new MaterialBuilder(191, "brick")
                 .dust(1)
@@ -660,7 +659,7 @@ public class Materials {
                 .build();
 
 
-    HydratedCoal = new MaterialBuilder(240, "hydrated_coal") //todo first degree
+    HydratedCoal = new MaterialBuilder(240, "hydrated_coal")
                 .dust(1)
                 .color(0x464664).iconSet(ROUGH)
                 .components(Coal, 8, Water, 1)
