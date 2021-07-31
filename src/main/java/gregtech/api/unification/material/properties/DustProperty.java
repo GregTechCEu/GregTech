@@ -27,7 +27,7 @@ public class DustProperty implements IMaterialProperty {
     }
 
     /**
-     * Default property values.
+     * Default property constructor.
      */
     public DustProperty() {
         this(2, 0);
@@ -41,16 +41,27 @@ public class DustProperty implements IMaterialProperty {
     public void setBurnTime(int burnTime) {
         this.burnTime = burnTime;
     }
-/*
-    @Override
-    protected void initializeMaterial() {
-        super.initializeMaterial();
-        if (shouldGenerateFluid()) {
-            setFluidTemperature(1200); //default value for dusts
-        }
-    }
-*/
+
     @Override
     public void verifyProperty(Properties properties) {
+        FluidProperty prop = properties.getFluidProperty();
+        if (prop != null && prop.getFluidTemperature() == FluidProperty.BASE_TEMP) {
+            prop.setFluidTemperature(1200);
+        }
+    }
+
+    @Override
+    public boolean doesMatch(IMaterialProperty otherProp) {
+        return otherProp instanceof DustProperty;
+    }
+
+    @Override
+    public String getName() {
+        return "dust_property";
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

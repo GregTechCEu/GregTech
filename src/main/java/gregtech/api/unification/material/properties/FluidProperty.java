@@ -29,9 +29,9 @@ public class FluidProperty implements IMaterialProperty {
     private boolean isGas;
     private int fluidTemperature = BASE_TEMP;
 
-    public FluidProperty(boolean hasBlock, boolean isGas) {
-        this.hasBlock = hasBlock;
+    public FluidProperty(boolean isGas, boolean hasBlock) {
         this.isGas = isGas;
+        this.hasBlock = hasBlock;
     }
 
     /**
@@ -94,5 +94,20 @@ public class FluidProperty implements IMaterialProperty {
             hasBlock = false;
             isGas = false;
         }
+    }
+
+    @Override
+    public boolean doesMatch(IMaterialProperty otherProp) {
+        return otherProp instanceof FluidProperty;
+    }
+
+    @Override
+    public String getName() {
+        return "fluid_property";
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

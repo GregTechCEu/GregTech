@@ -5,8 +5,8 @@ import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
-import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.Properties;
+import gregtech.api.unification.material.type.MaterialFlag;
 import gregtech.api.unification.material.type.MaterialFlags;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.GTControlledRegistry;
@@ -17,10 +17,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nonnull;
-import java.util.stream.Stream;
 
-@ZenClass("mods.gregtech.material.Material")
-@ZenRegister
+//@ZenClass("mods.gregtech.material.Material")
+//@ZenRegister
 public class Material implements Comparable<Material> {
 
     // TODO remove
@@ -29,7 +28,7 @@ public class Material implements Comparable<Material> {
     /**
      * Color of material in RGB format
      */
-    @ZenProperty("color")
+    //@ZenProperty("color")
     public int materialRGB;
 
     /**
@@ -40,28 +39,33 @@ public class Material implements Comparable<Material> {
     /**
      * Icon set for this material meta-items generation
      */
-    @ZenProperty("iconSet")
+    //@ZenProperty("iconSet")
     public MaterialIconSet materialIconSet;
 
     /**
      * List of this material component
      */
-    @ZenProperty("components")
+    //@ZenProperty("components")
     public final ImmutableList<MaterialStack> materialComponents;
+
+    /**
+     * Properties of this Material.
+     *
+     * @see Properties
+     */
+    private final Properties properties;
 
     /**
      * Generation flags of this material
      *
      * @see MaterialFlags
      */
-    @ZenProperty("generationFlagsRaw")
-
-    private final Properties properties;
+    private final MaterialFlags flags;
 
     /**
      * Element of this material consist of
      */
-    @ZenProperty
+    //@ZenProperty
     public final Element element;
 
     // TODO Fix isotope tooltips being set toSmallDownNumbers
@@ -78,7 +82,7 @@ public class Material implements Comparable<Material> {
         return "";
     }
 
-    @ZenGetter
+    //@ZenGetter
     public String getChemicalFormula() {
         return chemicalFormula;
     }
@@ -99,29 +103,19 @@ public class Material implements Comparable<Material> {
     protected final String name;
     protected final int id;
 
-    @Deprecated
-    public Material(int metaItemSubId, String name, int materialRGB, MaterialIconSet materialIconSet, ImmutableList<MaterialStack> materialComponents, long materialGenerationFlags, Element element) {
-        this.materialRGB = materialRGB;
-        this.materialIconSet = materialIconSet;
-        this.materialComponents = materialComponents;
-        this.materialGenerationFlags = verifyMaterialBits(materialGenerationFlags);
-        this.element = element;
-        this.chemicalFormula = calculateChemicalFormula();
-        calculateDecompositionType();
-        registerMaterial(metaItemSubId, name);
-    }
-
-    public Material(MaterialBuilder.MaterialInfo info, Properties properties) {
+    public Material(MaterialBuilder.MaterialInfo info, Properties properties, MaterialFlags flags) {
         this.name = info.name;
         this.id = info.metaItemSubId;
         this.materialRGB = info.color;
         this.materialIconSet = info.iconSet;
         this.materialComponents = info.componentList;
-        this.materialGenerationFlags = verifyMaterialBits(info.flags);
         this.element = info.element;
         this.chemicalFormula = calculateChemicalFormula();
+
         this.properties = properties;
+        this.flags = flags;
         calculateDecompositionType();
+
         this.properties.setMaterial(this);
         this.properties.verify();
         registerMaterial(this);
@@ -131,68 +125,58 @@ public class Material implements Comparable<Material> {
         MaterialRegistry.register(this);
     }
 
-    public long verifyMaterialBits(long materialBits) {
-        return materialBits;
-    }
-
-    public void addFlag(long... materialGenerationFlags) {
-        if (MATERIAL_REGISTRY.isFrozen()) {
+    public void addFlag(MaterialFlag... flags) {
+        if (MaterialRegistry.isFrozen())
             throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
-        }
-        long combined = 0;
-        for (long materialGenerationFlag : materialGenerationFlags) {
-            combined |= materialGenerationFlag;
-        }
-        this.materialGenerationFlags |= verifyMaterialBits(combined);
+        this.flags.addFlags(flags).verify(this);
     }
 
-    @ZenMethod("hasFlagRaw")
-    public boolean hasFlag(long generationFlag) {
-        return (materialGenerationFlags & generationFlag) >= generationFlag;
+    //@ZenMethod("hasFlagRaw")
+    public boolean hasFlag(MaterialFlag flag) {
+        return flags.hasFlag(flag);
     }
 
-    @ZenMethod
-    public boolean hasFlag(String flagName) {
-        long materialFlagId = MaterialFlags.resolveFlag(flagName, getClass());
-        return hasFlag(materialFlagId);
-    }
+    //@ZenMethod
+    //public boolean hasFlag(String flagName) {
+    //    long materialFlagId = MaterialFlags.resolveFlag(flagName, getClass());
+    //    return hasFlag(materialFlagId);
+    //}
 
     protected void calculateDecompositionType() {
         if (!materialComponents.isEmpty() &&
-            !hasFlag(MatFlags.DECOMPOSITION_BY_CENTRIFUGING) &&
-            !hasFlag(MatFlags.DECOMPOSITION_BY_ELECTROLYZING) &&
-            !hasFlag(MatFlags.DISABLE_DECOMPOSITION)) {
+            !hasFlag(MaterialFlags.DECOMPOSITION_BY_CENTRIFUGING) &&
+            !hasFlag(MaterialFlags.DECOMPOSITION_BY_ELECTROLYZING) &&
+            !hasFlag(MaterialFlags.DISABLE_DECOMPOSITION)) {
             boolean onlyMetalMaterials = true;
             for (MaterialStack materialStack : materialComponents) {
                 Material material = materialStack.material;
-                onlyMetalMaterials &= material instanceof IngotMaterial;
+                onlyMetalMaterials &= material.properties.getIngotProperty() != null;
             }
             //allow centrifuging of alloy materials only
             if (onlyMetalMaterials) {
-                materialGenerationFlags |= MatFlags.DECOMPOSITION_BY_CENTRIFUGING;
+                flags.addFlags(MaterialFlags.DECOMPOSITION_BY_CENTRIFUGING);
             } else {
-                //otherwise, we use electrolyzing to break material into components
-                materialGenerationFlags |= MatFlags.DECOMPOSITION_BY_ELECTROLYZING;
+                flags.addFlags(MaterialFlags.DECOMPOSITION_BY_ELECTROLYZING);
             }
         }
     }
 
-    @ZenMethod
+    //@ZenMethod
     public void setMaterialRGB(int materialRGB) {
         this.materialRGB = materialRGB;
     }
 
-    @ZenGetter
+    //@ZenGetter
     public int getMaterialRGB() {
         return materialRGB;
     }
 
-    @ZenMethod
+    //@ZenMethod
     public void setMaterialIconSet(MaterialIconSet materialIconSet) {
         this.materialIconSet = materialIconSet;
     }
 
-    @ZenGetter("radioactive")
+    //@ZenGetter("radioactive")
     public boolean isRadioactive() {
         if (element != null)
             return element.halfLifeSeconds >= 0;
@@ -201,7 +185,7 @@ public class Material implements Comparable<Material> {
         return false;
     }
 
-    @ZenGetter("protons")
+    //@ZenGetter("protons")
     public long getProtons() {
         if (element != null)
             return element.getProtons();
@@ -214,7 +198,7 @@ public class Material implements Comparable<Material> {
         return totalProtons;
     }
 
-    @ZenGetter("neutrons")
+    //@ZenGetter("neutrons")
     public long getNeutrons() {
         if (element != null)
             return element.getNeutrons();
@@ -227,7 +211,7 @@ public class Material implements Comparable<Material> {
         return totalNeutrons;
     }
 
-    @ZenGetter("mass")
+    //@ZenGetter("mass")
     public long getMass() {
         if (element != null)
             return element.getMass();
@@ -240,7 +224,7 @@ public class Material implements Comparable<Material> {
         return totalMass;
     }
 
-    @ZenGetter("averageProtons")
+    //@ZenGetter("averageProtons")
     public long getAverageProtons() {
         if (element != null)
             return element.getProtons();
@@ -254,7 +238,7 @@ public class Material implements Comparable<Material> {
         return totalProtons / totalAmount;
     }
 
-    @ZenGetter("averageNeutrons")
+    //@ZenGetter("averageNeutrons")
     public long getAverageNeutrons() {
         if (element != null)
             return element.getNeutrons();
@@ -269,7 +253,7 @@ public class Material implements Comparable<Material> {
     }
 
 
-    @ZenGetter("averageMass")
+    //@ZenGetter("averageMass")
     public long getAverageMass() {
         if (element != null)
             return element.getMass();
@@ -283,41 +267,37 @@ public class Material implements Comparable<Material> {
         return totalMass / totalAmount;
     }
 
-    @ZenGetter("camelCaseName")
+    //@ZenGetter("camelCaseName")
     public String toCamelCaseString() {
         return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, toString());
     }
 
-    @ZenGetter("unlocalizedName")
+    //@ZenGetter("unlocalizedName")
     public String getUnlocalizedName() {
-        return "material." + toString();
+        return "material." + name;
     }
 
     @SideOnly(Side.CLIENT)
-    @ZenGetter("localizedName")
+    //@ZenGetter("localizedName")
     public String getLocalizedName() {
         return I18n.format(getUnlocalizedName());
     }
 
     @Override
-    @ZenMethod
+    //@ZenMethod
     public int compareTo(Material material) {
         return toString().compareTo(material.toString());
     }
 
     @Override
-    @ZenGetter("name")
+    //@ZenGetter("name")
     public String toString() {
-        return MATERIAL_REGISTRY.getNameForObject(this);
+        return name;
     }
 
     @ZenOperator(OperatorType.MUL)
     public MaterialStack createMaterialStack(long amount) {
         return new MaterialStack(this, amount);
-    }
-
-    public Class<? extends Material> getType() {
-        return this.getClass();
     }
 
     @Nonnull

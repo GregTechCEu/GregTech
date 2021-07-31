@@ -5,14 +5,13 @@ import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.material.properties.Properties;
+import gregtech.api.unification.material.type.MaterialFlag;
+import gregtech.api.unification.material.type.MaterialFlags;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.enchantment.Enchantment;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.function.Supplier;
 
 import static gregtech.api.unification.material.MaterialBuilder.FluidType.*;
@@ -21,6 +20,7 @@ public class MaterialBuilder {
 
     private final MaterialInfo materialInfo;
     private final Properties properties;
+    private final MaterialFlags flags;
 
     /**
      * The "list" of components for this Material.
@@ -30,6 +30,7 @@ public class MaterialBuilder {
     public MaterialBuilder(int id, String name) {
         materialInfo = new MaterialInfo(id, name);
         properties = new Properties();
+        flags = new MaterialFlags();
     }
 
     /**
@@ -45,8 +46,8 @@ public class MaterialBuilder {
         return fluid(type, false);
     }
 
-    public MaterialBuilder fluid(FluidType type, boolean withBlock) {
-        properties.setFluidProperty(new FluidProperty(withBlock, type == GAS));
+    public MaterialBuilder fluid(FluidType type, boolean hasBlock) {
+        properties.setFluidProperty(new FluidProperty(type == GAS, hasBlock));
         return this;
     }
 
@@ -125,8 +126,14 @@ public class MaterialBuilder {
         return this;
     }
 
-    public MaterialBuilder flags(long flags) {
-        this.materialInfo.flags = flags;
+    public MaterialBuilder flags(MaterialFlag... flags) {
+        this.flags.addFlags(flags);
+        return this;
+    }
+
+    public MaterialBuilder flags(Collection<MaterialFlag> f1, MaterialFlag... f2) {
+        this.flags.addFlags(f1.toArray(new MaterialFlag[0]));
+        this.flags.addFlags(f2);
         return this;
     }
 

@@ -14,12 +14,29 @@ public class FluidPipeProperty implements IMaterialProperty {
         this.gasProof = gasProof;
     }
 
+    /**
+     * Default property constructor.
+     */
+    public FluidPipeProperty() {
+        this(300, 1, false);
+    }
+
     @Override
     public void verifyProperty(Properties properties) {
         if (properties.getIngotProperty() == null) {
             properties.setIngotProperty(new IngotProperty());
             properties.verify();
         }
+    }
+
+    @Override
+    public boolean doesMatch(IMaterialProperty otherProp) {
+        return otherProp instanceof FluidPipeProperty;
+    }
+
+    @Override
+    public String getName() {
+        return "fluid_pipe_property";
     }
 
     @Override

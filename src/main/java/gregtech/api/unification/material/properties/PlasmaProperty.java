@@ -20,9 +20,19 @@ public class PlasmaProperty implements IMaterialProperty {
     public void verifyProperty(Properties properties) {
     }
 
-    //@ZenGetter("hasPlasma") // todo relocate and rework
-    public boolean shouldGeneratePlasma() {
-        return true;
+    @Override
+    public boolean doesMatch(IMaterialProperty otherProp) {
+        return otherProp instanceof PlasmaProperty;
+    }
+
+    @Override
+    public String getName() {
+        return "plasma_property";
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     /**

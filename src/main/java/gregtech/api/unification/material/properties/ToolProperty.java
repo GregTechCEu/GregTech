@@ -64,6 +64,21 @@ public class ToolProperty implements IMaterialProperty {
         }
     }
 
+    @Override
+    public boolean doesMatch(IMaterialProperty otherProp) {
+        return otherProp instanceof ToolProperty;
+    }
+
+    @Override
+    public String getName() {
+        return "tool_property";
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     public void addEnchantmentForTools(Enchantment enchantment, int level) {
         toolEnchantments.add(new EnchantmentData(enchantment, level));
     }

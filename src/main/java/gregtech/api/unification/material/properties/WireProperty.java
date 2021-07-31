@@ -23,6 +23,21 @@ public class WireProperty implements IMaterialProperty {
     }
 
     @Override
+    public boolean doesMatch(IMaterialProperty otherProp) {
+        return otherProp instanceof WireProperty;
+    }
+
+    @Override
+    public String getName() {
+        return "wire_property";
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof WireProperty)) return false;

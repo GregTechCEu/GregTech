@@ -19,12 +19,29 @@ public class ItemPipeProperty implements IMaterialProperty {
         this.transferRate = transferRate;
     }
 
+    /**
+     * Default property constructor.
+     */
+    public ItemPipeProperty() {
+        this(1, 0.25f);
+    }
+
     @Override
     public void verifyProperty(Properties properties) {
         if (properties.getIngotProperty() == null) {
             properties.setIngotProperty(new IngotProperty());
             properties.verify();
         }
+    }
+
+    @Override
+    public boolean doesMatch(IMaterialProperty otherProp) {
+        return otherProp instanceof ItemPipeProperty;
+    }
+
+    @Override
+    public String getName() {
+        return "item_pipe_property";
     }
 
     @Override

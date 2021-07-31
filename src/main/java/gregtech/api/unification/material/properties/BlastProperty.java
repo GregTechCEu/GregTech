@@ -16,6 +16,17 @@ public class BlastProperty implements IMaterialProperty {
         this.blastTemperature = blastTemperature;
     }
 
+    /**
+     * Default property constructor.
+     */
+    public BlastProperty() {
+        this(0);
+    }
+
+    public int getBlastTemperature() {
+        return blastTemperature;
+    }
+
     @Override
     public void verifyProperty(Properties properties) {
         if (properties.getIngotProperty() == null) {
@@ -28,7 +39,18 @@ public class BlastProperty implements IMaterialProperty {
             fluidProperty.setFluidTemperature(blastTemperature);
     }
 
-    public int getBlastTemperature() {
-        return blastTemperature;
+    @Override
+    public boolean doesMatch(IMaterialProperty otherProp) {
+        return otherProp instanceof BlastProperty;
+    }
+
+    @Override
+    public String getName() {
+        return "blast_property";
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

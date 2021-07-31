@@ -4,6 +4,7 @@ import gregtech.api.unification.material.Material;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class Properties {
@@ -47,6 +48,10 @@ public class Properties {
 
     public Material getMaterial() {
         return material;
+    }
+
+    public boolean hasProperty(IMaterialProperty property) {
+        return properties.stream().anyMatch(p -> p.doesMatch(property));
     }
 
     ///////////////////////////////////////////////

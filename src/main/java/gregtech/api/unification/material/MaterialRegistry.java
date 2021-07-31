@@ -26,6 +26,10 @@ public class MaterialRegistry {
         FLUID_REGISTRY.freezeRegistry();
     }
 
+    public static boolean isFrozen() {
+        return MATERIAL_REGISTRY.isFrozen();
+    }
+
     private static final AtomicInteger fluidCounter = new AtomicInteger(0);
 
     private static void finalizeRegistry(Material material) {

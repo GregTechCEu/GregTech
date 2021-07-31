@@ -1,11 +1,10 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.unification.material.Material;
-import scala.actors.threadpool.Arrays;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class OreProperty implements IMaterialProperty {
@@ -71,7 +70,7 @@ public class OreProperty implements IMaterialProperty {
     }
 
     /**
-     * Default values of: no Ore or Byproduct multiplier.
+     * Default values constructor.
      */
     public OreProperty() {
         this(1, 1);
@@ -129,5 +128,20 @@ public class OreProperty implements IMaterialProperty {
             p.setDustProperty(new DustProperty());
             p.verify();
         }
+    }
+
+    @Override
+    public boolean doesMatch(IMaterialProperty otherProp) {
+        return otherProp instanceof OreProperty;
+    }
+
+    @Override
+    public String getName() {
+        return "ore_property";
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

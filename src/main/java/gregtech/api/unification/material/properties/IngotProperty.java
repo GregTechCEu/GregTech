@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 
 //@ZenClass("mods.gregtech.material.IngotMaterial")
 //@ZenRegister
-// todo extends SolidMaterial
 public class IngotProperty implements IMaterialProperty {
 
     /**
@@ -24,41 +23,6 @@ public class IngotProperty implements IMaterialProperty {
      */
     @Nullable
     private Material magneticMaterial;
-
-    // todo move
-    public long verifyMaterialBits(long generationBits) {
-        if ((generationBits & GENERATE_DENSE) > 0) {
-            generationBits |= GENERATE_PLATE;
-        }
-        if ((generationBits & GENERATE_ROTOR) > 0) {
-            generationBits |= GENERATE_BOLT_SCREW;
-            generationBits |= GENERATE_RING;
-            generationBits |= GENERATE_PLATE;
-        }
-        if ((generationBits & GENERATE_SMALL_GEAR) > 0) {
-            generationBits |= GENERATE_PLATE;
-        }
-        if ((generationBits & GENERATE_FINE_WIRE) > 0) {
-            generationBits |= GENERATE_FOIL;
-        }
-        if ((generationBits & GENERATE_FOIL) > 0) {
-            generationBits |= GENERATE_PLATE;
-        }
-        if ((generationBits & GENERATE_RING) > 0) {
-            generationBits |= GENERATE_ROD;
-        }
-        if ((generationBits & GENERATE_BOLT_SCREW) > 0) {
-            generationBits |= GENERATE_ROD;
-        }
-        if ((generationBits & GENERATE_FRAME) > 0) {
-            generationBits |= GENERATE_ROD;
-        }
-        if ((generationBits & GENERATE_DOUBLE_PLATE) > 0) {
-            generationBits |= GENERATE_PLATE;
-        }
-
-        return super.verifyMaterialBits(generationBits);
-    }
 
     public void setSmeltingInto(Material smeltInto) {
         this.smeltInto = smeltInto;
@@ -104,5 +68,20 @@ public class IngotProperty implements IMaterialProperty {
                 magneticProperties.verify();
             }
         }
+    }
+
+    @Override
+    public boolean doesMatch(IMaterialProperty otherProp) {
+        return otherProp instanceof IngotProperty;
+    }
+
+    @Override
+    public String getName() {
+        return "ingot_property";
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }
