@@ -15,7 +15,7 @@ public class OrganicChemistryMaterials {
         SiliconeRubber = new MaterialBuilder(500, "silicone_rubber")
                 .ingot().fluid()
                 .color(0xDCDCDC)
-                .flags(GENERATE_PLATE, GENERATE_GEAR, GENERATE_RING, FLAMMABLE, NO_SMASHING, GENERATE_FOIL, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_GEAR, GENERATE_RING, FLAMMABLE, NO_SMASHING, GENERATE_FOIL, DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1, Silicon, 1)
                 .build();
 
@@ -78,7 +78,7 @@ public class OrganicChemistryMaterials {
 
         GlycerylTrinitrate = new MaterialBuilder(509, "glyceryl_trinitrate")
                 .fluid()
-                .color(0xFFFFFF).iconSet(FLUID)
+                .iconSet(FLUID)
                 .flags(FLAMMABLE, EXPLOSIVE, NO_SMELTING, NO_SMASHING)
                 .components(Carbon, 3, Hydrogen, 5, Nitrogen, 3, Oxygen, 9)
                 .build();
@@ -134,6 +134,5 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 2, Fluorine, 4)
                 .fluidPipeProperties(600, 80, true)
                 .build();
-
     }
 }

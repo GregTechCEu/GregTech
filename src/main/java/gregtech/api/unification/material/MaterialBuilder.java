@@ -185,6 +185,12 @@ public class MaterialBuilder {
         return this;
     }
 
+    public MaterialBuilder oreDirectSmelt(Material m) {
+        if (properties.getOreProperty() == null) ore();
+        properties.getOreProperty().setDirectSmeltResult(m);
+        return this;
+    }
+
     public MaterialBuilder polarizesInto(Material m) {
         if (properties.getIngotProperty() == null) ingot();
         properties.getIngotProperty().setMagneticMaterial(m);
@@ -197,7 +203,7 @@ public class MaterialBuilder {
         return this;
     }
 
-    public MaterialBuilder smeltInto(Material m) {
+    public MaterialBuilder ingotSmeltInto(Material m) {
         if (properties.getIngotProperty() == null) ingot();
         properties.getIngotProperty().setSmeltingInto(m);
         return this;

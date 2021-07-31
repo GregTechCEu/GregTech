@@ -456,6 +456,7 @@ public class ElementMaterials {
                 .flags(STD_METAL, GENERATE_FOIL)
                 .element(Elements.Mn)
                 .addOreByproducts(Chrome, Iron)
+                .separatedInto(Iron)
                 .toolStats(7.0f, 2.0f, 512)
                 .build();
 

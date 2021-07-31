@@ -694,30 +694,20 @@ public class Materials {
     // Superconductor here at ID 387. Assigned in MarkerMaterials:98
 
     static {
-        for (DustMaterial dustMaterial : new DustMaterial[]{Bastnasite, Monazite}) {
+        for (DustMaterial dustMaterial : new DustMaterial[]{Monazite}) {
             dustMaterial.separatedOnto = Neodymium;
         }
-        for (DustMaterial dustMaterial : new DustMaterial[]{Magnetite, VanadiumMagnetite, BasalticMineralSand, GraniticMineralSand}) {
+        for (DustMaterial dustMaterial : new DustMaterial[]{VanadiumMagnetite, BasalticMineralSand, GraniticMineralSand}) {
             dustMaterial.separatedOnto = Gold;
         }
-        for (DustMaterial dustMaterial : new DustMaterial[]{YellowLimonite, BrownLimonite, Pyrite, BandedIron, Vermiculite, Glauconite, GlauconiteSand, Pentlandite, Ilmenite, Manganese, Chromite, Andradite}) {
+        for (DustMaterial dustMaterial : new DustMaterial[]{Vermiculite}) {
             dustMaterial.separatedOnto = Iron;
         }
-        for (DustMaterial dustMaterial : new DustMaterial[]{Pyrite, YellowLimonite, BasalticMineralSand, GraniticMineralSand}) {
+        for (DustMaterial dustMaterial : new DustMaterial[]{BasalticMineralSand, GraniticMineralSand}) {
             dustMaterial.addFlag(BLAST_FURNACE_CALCITE_DOUBLE);
         }
-        for (DustMaterial dustMaterial : new DustMaterial[]{PigIron, WroughtIron, BrownLimonite}) {
-            dustMaterial.addFlag(BLAST_FURNACE_CALCITE_TRIPLE);
-        }
-        for (DustMaterial dustMaterial : new DustMaterial[]{Cooperite, Chalcopyrite, Bornite, Tungstate, Magnetite, Galena}) {
-            dustMaterial.washedIn = Mercury;
-        }
-        for (DustMaterial dustMaterial : new DustMaterial[]{Cobaltite, Tetrahedrite, Sphalerite, Malachite, Garnierite, YellowLimonite, Pentlandite}) {
-            dustMaterial.washedIn = SodiumPersulfate;
-        }
 
-        Steel.magneticMaterial = SteelMagnetic;
-
+        // TODO Leave these 9 for now /////////////////////
         NeodymiumMagnetic.setSmeltingInto(Neodymium);
         NeodymiumMagnetic.setArcSmeltingInto(Neodymium);
         NeodymiumMagnetic.setMaceratingInto(Neodymium);
@@ -729,47 +719,20 @@ public class Materials {
         IronMagnetic.setSmeltingInto(Iron);
         IronMagnetic.setArcSmeltingInto(WroughtIron);
         IronMagnetic.setMaceratingInto(Iron);
+        // TODO ///////////////////////////////////////////
 
-        Tetrahedrite.setDirectSmelting(Copper);
-        Malachite.setDirectSmelting(Copper);
-        Chalcopyrite.setDirectSmelting(Copper);
-        Tenorite.setDirectSmelting(Copper);
-        Bornite.setDirectSmelting(Copper);
-        Chalcocite.setDirectSmelting(Copper);
-        Cuprite.setDirectSmelting(Copper);
-        Pentlandite.setDirectSmelting(Nickel);
-        Sphalerite.setDirectSmelting(Zinc);
-        Pyrite.setDirectSmelting(Iron);
-        Magnetite.setDirectSmelting(Iron);
-        YellowLimonite.setDirectSmelting(Iron);
-        BrownLimonite.setDirectSmelting(Iron);
-        BandedIron.setDirectSmelting(Iron);
-        Cassiterite.setDirectSmelting(Tin);
-        CassiteriteSand.setDirectSmelting(Tin);
-        Garnierite.setDirectSmelting(Nickel);
-        Cobaltite.setDirectSmelting(Cobalt);
-        Stibnite.setDirectSmelting(Antimony);
-        Cooperite.setDirectSmelting(Platinum);
-        Pyrolusite.setDirectSmelting(Manganese);
-        Magnesite.setDirectSmelting(Magnesium);
-        Molybdenite.setDirectSmelting(Molybdenum);
         BasalticMineralSand.setDirectSmelting(Iron);
         GraniticMineralSand.setDirectSmelting(Iron);
-        Chromite.setDirectSmelting(Chrome);
-        Galena.setDirectSmelting(Lead);
 
         Bentonite.setOreMultiplier(7);
-
         GarnetYellow.setOreMultiplier(4);
         GarnetRed.setOreMultiplier(4);
         Olivine.setOreMultiplier(2);
-
         Pitchblende.setOreMultiplier(2);
         TricalciumPhosphate.setOreMultiplier(3);
         Apatite.setOreMultiplier(4);
         Apatite.setByProductMultiplier(2);
         Redstone.setOreMultiplier(5);
-
         Lapis.setOreMultiplier(6);
         Lapis.setByProductMultiplier(4);
         Monazite.setOreMultiplier(8);
@@ -777,7 +740,6 @@ public class Materials {
 
         Lignite.setBurnTime(1200); //2/3 of burn time of coal
         Wood.setBurnTime(300); //default wood burn time in vanilla
-
 
         Vermiculite.addOreByProducts(Iron, Aluminium, Magnesium);
         FullersEarth.addOreByProducts(Aluminium, Silicon, Magnesium);
@@ -820,42 +782,28 @@ public class Materials {
         Andesite.addOreByProducts(Basalt);
         Diorite.addOreByProducts(NetherQuartz);
 
-
         Vinteum.addEnchantmentForTools(Enchantments.FORTUNE, 2);
 
-
         RedAlloy.setCableProperties(GTValues.V[0], 1, 0);
-
         SolderingAlloy.setCableProperties(GTValues.V[1], 1, 1);
-
         Cupronickel.setCableProperties(GTValues.V[2], 2, 3);
         AnnealedCopper.setCableProperties(GTValues.V[2], 1, 1);
-
         Kanthal.setCableProperties(GTValues.V[3], 4, 3);
         Electrum.setCableProperties(GTValues.V[3], 3, 2);
-
         Nichrome.setCableProperties(GTValues.V[4], 4, 4);
         Steel.setCableProperties(GTValues.V[4], 2, 2);
         BlackSteel.setCableProperties(GTValues.V[4], 3, 2);
-
         Graphene.setCableProperties(GTValues.V[5], 1, 1);
         TungstenSteel.setCableProperties(GTValues.V[5], 3, 2);
-
         HSSG.setCableProperties(GTValues.V[6], 4, 2);
         NiobiumTitanium.setCableProperties(GTValues.V[6], 4, 2);
         VanadiumGallium.setCableProperties(GTValues.V[6], 4, 2);
         YttriumBariumCuprate.setCableProperties(GTValues.V[6], 4, 4);
-
         Naquadah.setCableProperties(GTValues.V[7], 2, 2);
-
         NaquadahAlloy.setCableProperties(GTValues.V[8], 2, 4);
         Duranium.setCableProperties(GTValues.V[8], 1, 8);
         FluxedElectrum.setCableProperties(GTValues.V[8], 3, 2);
         DiamericiumTitanium.setCableProperties(GTValues.V[10], 8, 16);
-
-
-
-
 
         Steel.setFluidPipeProperties(2557, 40, true);
         Potin.setFluidPipeProperties(2023, 96, true);
