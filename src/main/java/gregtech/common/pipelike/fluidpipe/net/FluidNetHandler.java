@@ -3,7 +3,6 @@ package gregtech.common.pipelike.fluidpipe.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.util.GTLog;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
@@ -16,7 +15,6 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -25,9 +23,6 @@ import java.util.List;
 
 public class FluidNetHandler implements IFluidHandler, IFluidTank {
 
-    private static final Logger log = GTLog.logger;
-
-    private FluidStack stack;
     private final FluidPipeNet net;
     private TileEntityFluidPipeTickable pipe;
     private EnumFacing facing;
@@ -35,7 +30,6 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
     private int capacity;
 
     public FluidNetHandler(FluidPipeNet net, TileEntityFluidPipe pipe, EnumFacing facing) {
-        this.stack = null;
         this.net = net;
         if (pipe instanceof TileEntityFluidPipeTickable)
             this.pipe = (TileEntityFluidPipeTickable) pipe;
@@ -45,21 +39,13 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
         this.capacity = net.getNodeData().throughput;
     }
 
-    public void emptyTank() {
-        this.stack = null;
-    }
-
-    protected void setContainingFluid(FluidStack stack) {
-        net.setContainingFluid(stack);
-    }
-
     @Override
     public IFluidTankProperties[] getTankProperties() {
         return new IFluidTankProperties[]{
-                new FluidTankProperties(stack, getCapacity(), true, false) {
+                new FluidTankProperties(getFluid(), getCapacity(), true, false) {
                     @Override
                     public boolean canFillFluidType(FluidStack fluidStack) {
-                        return stack == null || stack.isFluidEqual(fluidStack);
+                        return getFluid() == null || getFluid().isFluidEqual(fluidStack);
                     }
                 }
         };
@@ -73,7 +59,7 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
 
     @Override
     public int getFluidAmount() {
-        return stack.amount;
+        return net.getContainedFluid() == null ? 0 : net.getContainedFluid().amount;
     }
 
     @Override
@@ -83,14 +69,14 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
 
     @Override
     public FluidTankInfo getInfo() {
-        return new FluidTankInfo(stack, getCapacity());
+        return new FluidTankInfo(net.getContainedFluid(), getCapacity());
     }
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
+        FluidStack netFluid = net.getContainedFluid();
         if (resource == null || resource.amount <= 0 || resource.getFluid() == null) return 0;
-        if (stack != null && !resource.isFluidEqual(stack)) return 0;
-        log.info("Try insert {}", resource);
+        if (netFluid != null && !resource.isFluidEqual(netFluid)) return 0;
         simulatedTransfers = 0;
         CoverBehavior pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
         CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);
@@ -99,29 +85,22 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
         // abort if there are two conveyors
         if (pipePump && tilePump) return 0;
 
-        if (tileCover != null && !checkImportCover(tileCover, false, stack))
+        if (tileCover != null && !checkImportCover(tileCover, false, resource))
             return 0;
 
         if (!pipePump && !tilePump)
-            return insertFirst(stack, doFill);
+            return insertFirst(resource, doFill);
 
         CoverPump pump = (CoverPump) (pipePump ? pipeCover : tileCover);
         if (pump.getPumpMode() == (pipePump ? CoverPump.PumpMode.IMPORT : CoverPump.PumpMode.EXPORT) &&
                 pump.getDistributionMode() == DistributionMode.ROUND_ROBIN) {
-            return insertRoundRobin(stack, doFill);
+            return insertRoundRobin(resource, doFill);
         }
 
-        /*Tuple<CoverPump, Boolean> tuple = getCoverAtPipe(pipe.getPos(), facing);
-        if (exportsToPipe(tuple)) {
-            if (tuple.getFirst().getDistributionMode() == DistributionMode.ROUND_ROBIN) {
-                return insertRoundRobin(stack, doFill);
-            }
-        }*/
         return insertFirst(resource, doFill);
     }
 
     public boolean checkImportCover(CoverBehavior cover, boolean onPipe, FluidStack stack) {
-        if (cover == null) return true;
         if (cover instanceof CoverFluidFilter) {
             CoverFluidFilter filter = (CoverFluidFilter) cover;
             return (filter.getFilterMode() != FluidFilterMode.FILTER_BOTH &&
@@ -146,11 +125,11 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
     protected int insertFirst(FluidStack stack, boolean doFill) {
         int amount = stack.amount;
         for (Handler handler : createHandlers()) {
-            stack.amount = insert(handler, stack, doFill);
+            stack.amount -= insert(handler, stack, doFill);
             if (stack.amount == 0)
                 return amount;
         }
-        return stack.amount;
+        return amount - stack.amount;
     }
 
     protected int insertRoundRobin(FluidStack stack, boolean doFill) {
@@ -161,10 +140,10 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
             return 0;
         if (handlers.size() == 1)
             return insert(handlers.get(0), stack, doFill);
-        stack.amount = insertToHandlers(handlers, stack, doFill);
-        if (stack.amount != amount && handlers.size() > 0)
-            stack.amount = insertToHandlers(handlers, stack, doFill);
-        return stack.amount;
+        stack.amount -= insertToHandlers(handlers, stack, doFill);
+        if (stack.amount != 0 && handlers.size() > 0)
+            stack.amount -= insertToHandlers(handlers, stack, doFill);
+        return amount - stack.amount;
     }
 
     public int insertToHandlers(List<Handler> handlers, FluidStack stack, boolean doFill) {
@@ -197,7 +176,7 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
         if (allowed == 0) return 0;
         CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
         CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
-        if(pipeCover instanceof CoverFluidRegulator && tileCover instanceof CoverFluidRegulator)
+        if (pipeCover instanceof CoverFluidRegulator && tileCover instanceof CoverFluidRegulator)
             return 0;
         if (pipeCover != null && !checkExportCover(pipeCover, true, stack))
             return 0;
@@ -213,15 +192,19 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
     private int insert(IFluidHandler handler, FluidStack stack, boolean doFill, int max) {
         if (max >= stack.amount) {
             int inserted = handler.fill(stack, doFill);
-            if (inserted > 0)
+            if (inserted > 0) {
+                if (doFill) net.setContainingFluid(stack);
                 transfer(pipe, doFill, inserted);
+            }
             return inserted;
         }
         FluidStack toInsert = stack.copy();
         toInsert.amount = Math.min(max, stack.amount);
         int inserted = handler.fill(toInsert, doFill);
-        if (inserted > 0)
+        if (inserted > 0) {
+            if (doFill) net.setContainingFluid(toInsert);
             transfer(pipe, doFill, inserted);
+        }
         return inserted;
     }
 
@@ -266,7 +249,6 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
     public boolean checkExportCover(CoverBehavior cover, boolean onPipe, FluidStack stack) {
         if (cover instanceof CoverFluidFilter) {
             CoverFluidFilter filter = (CoverFluidFilter) cover;
-            GTLog.logger.info("Is fluid filter, on pipe {}, stack {}, testResult {}", onPipe, stack, filter.testFluidStack(stack));
             return (filter.getFilterMode() != FluidFilterMode.FILTER_BOTH &&
                     (filter.getFilterMode() != FluidFilterMode.FILTER_FILL || onPipe) &&
                     (filter.getFilterMode() != FluidFilterMode.FILTER_DRAIN || !onPipe)) || filter.testFluidStack(stack);
@@ -303,7 +285,6 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
     private void transfer(TileEntityFluidPipeTickable pipe, boolean doFill, int amount) {
         if (doFill) {
             pipe.transferFluid(amount);
-            net.setEmptyNetTimer(20);
         } else
             simulatedTransfers += amount;
     }

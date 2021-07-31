@@ -26,23 +26,20 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
 
     private final Map<BlockPos, List<Inventory>> NET_DATA = new HashMap<>();
 
-    //private final FluidNetTank fluidNetTank = new FluidNetTank(this);
-
     private FluidStack fluid;
-    private int emptyTimer = 0;
+    private int emptyTimer;
 
     public FluidPipeNet(WorldPipeNet<FluidPipeProperties, FluidPipeNet> world) {
         super(world);
+        this.emptyTimer = 0;
     }
 
     public List<Inventory> getNetData(BlockPos pipePos) {
-        List<Inventory> data = NET_DATA.get(pipePos);
-        if (data == null) {
-            data = FluidNetWalker.createNetData(this, getWorldData(), pipePos);
+        return NET_DATA.computeIfAbsent(pipePos, pos -> {
+            List<Inventory> data = FluidNetWalker.createNetData(this, getWorldData(), pos);
             data.sort(Comparator.comparingInt(inv -> inv.distance));
-            NET_DATA.put(pipePos, data);
-        }
-        return data;
+            return data;
+        });
     }
 
     public FluidStack getContainedFluid() {
@@ -51,9 +48,10 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
 
     protected void setContainingFluid(FluidStack stack) {
         this.fluid = stack;
+        this.emptyTimer = 20;
     }
 
-    public void emptyTank() {
+    private void emptyTank() {
         this.fluid = null;
     }
 
@@ -146,22 +144,20 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = super.serializeNBT();
-        if (getContainedFluid() != null)
+        if (getContainedFluid() != null) {
             nbt.setTag("Fluid", getContainedFluid().writeToNBT(new NBTTagCompound()));
-        nbt.setInteger("Timer", emptyTimer);
+            nbt.setInteger("Timer", emptyTimer);
+        }
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt);
-        if (nbt.hasKey("Fluid"))
+        if (nbt.hasKey("Fluid")) {
             setContainingFluid(FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("Fluid")));
-        this.emptyTimer = nbt.getInteger("Timer");
-    }
-
-    public void setEmptyNetTimer(int ticks) {
-        emptyTimer = ticks;
+            this.emptyTimer = nbt.getInteger("Timer");
+        }
     }
 
     @Override
@@ -201,7 +197,7 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
         public IFluidHandler getHandler(World world) {
             TileEntity tile = world.getTileEntity(getHandlerPos());
             if (tile != null)
-                return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, faceToHandler);
+                return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, faceToHandler.getOpposite());
             return null;
         }
     }

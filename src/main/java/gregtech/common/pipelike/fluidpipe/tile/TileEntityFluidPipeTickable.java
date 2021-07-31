@@ -21,7 +21,6 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     }
 
     private int transferredFluids = 0;
-    private long time = 0;
 
     @Override
     public void update() {
