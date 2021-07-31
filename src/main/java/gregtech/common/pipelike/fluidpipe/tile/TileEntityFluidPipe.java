@@ -3,6 +3,7 @@ package gregtech.common.pipelike.fluidpipe.tile;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
+import gregtech.common.pipelike.fluidpipe.net.FluidNetHandler;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import net.minecraft.block.state.IBlockState;
@@ -42,7 +43,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             FluidPipeNet net = getFluidPipeNet();
             if (net == null) return null;
-            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(net.getFluidHandler().with(this, facing));
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(new FluidNetHandler(net, this, facing));
         }
         return super.getCapabilityInternal(capability, facing);
     }

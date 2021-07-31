@@ -4,14 +4,11 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.util.GTLog;
-import gregtech.common.covers.CoverFluidRegulator;
-import gregtech.common.covers.CoverPump;
-import gregtech.common.covers.DistributionMode;
+import gregtech.common.covers.*;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -35,21 +32,17 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
     private TileEntityFluidPipeTickable pipe;
     private EnumFacing facing;
     private int simulatedTransfers = 0;
-    private int capacity = 0;
+    private int capacity;
 
-    public FluidNetHandler(FluidPipeNet net) {
+    public FluidNetHandler(FluidPipeNet net, TileEntityFluidPipe pipe, EnumFacing facing) {
         this.stack = null;
         this.net = net;
-    }
-
-    public FluidNetHandler with(TileEntityFluidPipe pipe, EnumFacing facing) {
         if (pipe instanceof TileEntityFluidPipeTickable)
             this.pipe = (TileEntityFluidPipeTickable) pipe;
         else
             this.pipe = (TileEntityFluidPipeTickable) pipe.setSupportsTicking();
         this.facing = facing;
         this.capacity = net.getNodeData().throughput;
-        return this;
     }
 
     public void emptyTank() {
@@ -57,7 +50,7 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
     }
 
     protected void setContainingFluid(FluidStack stack) {
-        this.stack = stack;
+        net.setContainingFluid(stack);
     }
 
     @Override
@@ -75,7 +68,7 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
     @Nullable
     @Override
     public FluidStack getFluid() {
-        return stack;
+        return net.getContainedFluid();
     }
 
     @Override
@@ -99,13 +92,43 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
         if (stack != null && !resource.isFluidEqual(stack)) return 0;
         log.info("Try insert {}", resource);
         simulatedTransfers = 0;
-        Tuple<CoverPump, Boolean> tuple = getCoverAtPipe(pipe.getPos(), facing);
+        CoverBehavior pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
+        CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);
+
+        boolean pipePump = pipeCover instanceof CoverPump, tilePump = tileCover instanceof CoverPump;
+        // abort if there are two conveyors
+        if (pipePump && tilePump) return 0;
+
+        if (tileCover != null && !checkImportCover(tileCover, false, stack))
+            return 0;
+
+        if (!pipePump && !tilePump)
+            return insertFirst(stack, doFill);
+
+        CoverPump pump = (CoverPump) (pipePump ? pipeCover : tileCover);
+        if (pump.getPumpMode() == (pipePump ? CoverPump.PumpMode.IMPORT : CoverPump.PumpMode.EXPORT) &&
+                pump.getDistributionMode() == DistributionMode.ROUND_ROBIN) {
+            return insertRoundRobin(stack, doFill);
+        }
+
+        /*Tuple<CoverPump, Boolean> tuple = getCoverAtPipe(pipe.getPos(), facing);
         if (exportsToPipe(tuple)) {
             if (tuple.getFirst().getDistributionMode() == DistributionMode.ROUND_ROBIN) {
                 return insertRoundRobin(stack, doFill);
             }
-        }
+        }*/
         return insertFirst(resource, doFill);
+    }
+
+    public boolean checkImportCover(CoverBehavior cover, boolean onPipe, FluidStack stack) {
+        if (cover == null) return true;
+        if (cover instanceof CoverFluidFilter) {
+            CoverFluidFilter filter = (CoverFluidFilter) cover;
+            return (filter.getFilterMode() != FluidFilterMode.FILTER_BOTH &&
+                    (filter.getFilterMode() != FluidFilterMode.FILTER_FILL || !onPipe) &&
+                    (filter.getFilterMode() != FluidFilterMode.FILTER_DRAIN || onPipe)) || filter.testFluidStack(stack);
+        }
+        return true;
     }
 
     protected List<Handler> createHandlers() {
@@ -172,16 +195,18 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
     private int insert(Handler handler, FluidStack stack, boolean doFill) {
         int allowed = checkTransferable(pipe, pipe.getNodeData().throughput, stack.amount, doFill);
         if (allowed == 0) return 0;
-        Tuple<CoverPump, Boolean> tuple = getCoverAtPipe(handler.getPipePos(), handler.getFaceToHandler());
-        if (tuple != null) {
-            if (!tuple.getFirst().getFluidFilterContainer().testFluidStack(stack))
-                return 0;
-            boolean exportsFromPipe = exportsToPipe(tuple);
-            if (exportsFromPipe && tuple.getFirst().blocksInput())
-                return 0;
-            if (tuple.getFirst() instanceof CoverFluidRegulator && !exportsFromPipe)
-                return insertOverRegulator(handler.handler, (CoverFluidRegulator) tuple.getFirst(), tuple.getSecond(), stack, doFill, allowed);
-        }
+        CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
+        CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
+        if(pipeCover instanceof CoverFluidRegulator && tileCover instanceof CoverFluidRegulator)
+            return 0;
+        if (pipeCover != null && !checkExportCover(pipeCover, true, stack))
+            return 0;
+
+        if (pipeCover instanceof CoverFluidRegulator && ((CoverFluidRegulator) pipeCover).getPumpMode() == CoverPump.PumpMode.EXPORT)
+            return insertOverRegulator(handler.handler, (CoverFluidRegulator) pipeCover, stack, doFill, allowed);
+        if (tileCover instanceof CoverFluidRegulator && ((CoverFluidRegulator) tileCover).getPumpMode() == CoverPump.PumpMode.IMPORT)
+            return insertOverRegulator(handler.handler, (CoverFluidRegulator) tileCover, stack, doFill, allowed);
+
         return insert(handler.handler, stack, doFill, allowed);
     }
 
@@ -200,7 +225,7 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
         return inserted;
     }
 
-    public int insertOverRegulator(IFluidHandler handler, CoverFluidRegulator regulator, boolean isOnPipe, FluidStack stack, boolean doFill, int allowed) {
+    public int insertOverRegulator(IFluidHandler handler, CoverFluidRegulator regulator, FluidStack stack, boolean doFill, int allowed) {
         int rate = regulator.getTransferAmount();
         int count;
         switch (regulator.getTransferMode()) {
@@ -238,27 +263,34 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
         return count;
     }
 
-    public Tuple<CoverPump, Boolean> getCoverAtPipe(BlockPos pipePos, EnumFacing handlerFacing) {
-        TileEntity tile = pipe.getWorld().getTileEntity(pipePos);
+    public boolean checkExportCover(CoverBehavior cover, boolean onPipe, FluidStack stack) {
+        if (cover instanceof CoverFluidFilter) {
+            CoverFluidFilter filter = (CoverFluidFilter) cover;
+            GTLog.logger.info("Is fluid filter, on pipe {}, stack {}, testResult {}", onPipe, stack, filter.testFluidStack(stack));
+            return (filter.getFilterMode() != FluidFilterMode.FILTER_BOTH &&
+                    (filter.getFilterMode() != FluidFilterMode.FILTER_FILL || onPipe) &&
+                    (filter.getFilterMode() != FluidFilterMode.FILTER_DRAIN || !onPipe)) || filter.testFluidStack(stack);
+        }
+        return true;
+    }
+
+    public CoverBehavior getCoverOnPipe(BlockPos pos, EnumFacing handlerFacing) {
+        TileEntity tile = pipe.getWorld().getTileEntity(pos);
         if (tile instanceof TileEntityFluidPipe) {
             ICoverable coverable = ((TileEntityFluidPipe) tile).getCoverableImplementation();
-            CoverBehavior cover = coverable.getCoverAtSide(handlerFacing);
-            if (cover instanceof CoverPump) return new Tuple<>((CoverPump) cover, true);
-        }
-        tile = pipe.getWorld().getTileEntity(pipePos.offset(handlerFacing));
-        if (tile != null) {
-            ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, handlerFacing.getOpposite());
-            if (coverable == null) return null;
-            CoverBehavior cover = coverable.getCoverAtSide(handlerFacing.getOpposite());
-            if (cover instanceof CoverPump) return new Tuple<>((CoverPump) cover, false);
+            return coverable.getCoverAtSide(handlerFacing);
         }
         return null;
     }
 
-    public boolean exportsToPipe(Tuple<CoverPump, Boolean> tuple) {
-        return tuple != null && (tuple.getSecond() ?
-                tuple.getFirst().getPumpMode() == CoverPump.PumpMode.IMPORT :
-                tuple.getFirst().getPumpMode() == CoverPump.PumpMode.EXPORT);
+    public CoverBehavior getCoverOnNeighbour(BlockPos pos, EnumFacing handlerFacing) {
+        TileEntity tile = pipe.getWorld().getTileEntity(pos.offset(handlerFacing));
+        if (tile != null) {
+            ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, handlerFacing.getOpposite());
+            if (coverable == null) return null;
+            return coverable.getCoverAtSide(handlerFacing.getOpposite());
+        }
+        return null;
     }
 
     private int checkTransferable(TileEntityFluidPipeTickable pipe, int throughput, int amount, boolean doFill) {

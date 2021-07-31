@@ -49,8 +49,6 @@ public class ItemNetHandler implements IItemHandler {
         // abort if there are two conveyors
         if (pipeConveyor && tileConveyor) return stack;
 
-        if (pipeCover != null && !checkImportCover(pipeCover, true, stack))
-            return stack;
         if (tileCover != null && !checkImportCover(tileCover, false, stack))
             return stack;
 
@@ -58,7 +56,8 @@ public class ItemNetHandler implements IItemHandler {
             return insertFirst(stack, simulate);
 
         CoverConveyor conveyor = (CoverConveyor) (pipeConveyor ? pipeCover : tileCover);
-        if (conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN) {
+        if (conveyor.getConveyorMode() == (pipeConveyor ? CoverConveyor.ConveyorMode.IMPORT : CoverConveyor.ConveyorMode.EXPORT) &&
+                conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN) {
             return insertRoundRobin(stack, simulate);
         }
 
@@ -157,9 +156,9 @@ public class ItemNetHandler implements IItemHandler {
         if (allowed == 0) return stack;
         CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
         CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
-        if (pipeCover != null && !checkExportCover(pipeCover, true, stack))
+        if(pipeCover instanceof CoverRoboticArm && tileCover instanceof CoverRoboticArm)
             return stack;
-        if (tileCover != null && !checkExportCover(tileCover, false, stack))
+        if (pipeCover != null && !checkExportCover(pipeCover, true, stack))
             return stack;
 
         if (pipeCover instanceof CoverRoboticArm && ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)
@@ -171,7 +170,6 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     public boolean checkExportCover(CoverBehavior cover, boolean onPipe, ItemStack stack) {
-        if (cover == null) return true;
         if (cover instanceof CoverItemFilter) {
             CoverItemFilter filter = (CoverItemFilter) cover;
             return (filter.getFilterMode() != ItemFilterMode.FILTER_BOTH &&

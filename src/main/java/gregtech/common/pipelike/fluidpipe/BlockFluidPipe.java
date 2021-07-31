@@ -124,7 +124,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             FluidPipeNet pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
             if (pipeNet != null) {
-                FluidStack fluidStack = pipeNet.getFluidHandler().getFluid();
+                FluidStack fluidStack = pipeNet.getContainedFluid();
                 if (fluidStack == null) {
                     return; //pipe network is empty
                 }

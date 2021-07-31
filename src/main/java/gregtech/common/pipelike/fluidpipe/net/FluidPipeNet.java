@@ -28,12 +28,11 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
 
     //private final FluidNetTank fluidNetTank = new FluidNetTank(this);
 
-    private final FluidNetHandler fluidNetHandler;
+    private FluidStack fluid;
     private int emptyTimer = 0;
 
     public FluidPipeNet(WorldPipeNet<FluidPipeProperties, FluidPipeNet> world) {
         super(world);
-        this.fluidNetHandler = new FluidNetHandler(this);
     }
 
     public List<Inventory> getNetData(BlockPos pipePos) {
@@ -46,8 +45,16 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
         return data;
     }
 
-    public FluidNetHandler getFluidHandler() {
-        return fluidNetHandler;
+    public FluidStack getContainedFluid() {
+        return fluid;
+    }
+
+    protected void setContainingFluid(FluidStack stack) {
+        this.fluid = stack;
+    }
+
+    public void emptyTank() {
+        this.fluid = null;
     }
 
     public void nodeNeighbourChanged(BlockPos pos) {
@@ -59,10 +66,6 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
         super.updateBlockedConnections(nodePos, facing, isBlocked);
         NET_DATA.clear();
     }
-
-    //public FluidTank getFluidNetTank() {
-    //    return fluidNetTank;
-    //}
 
     public void destroyNetwork(boolean isLeaking, boolean isBurning) {
         World world = worldData.getWorld();
@@ -107,12 +110,12 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
         FluidPipeNet parentNet = (FluidPipeNet) parentNet1;
         NET_DATA.clear();
         parentNet.NET_DATA.clear();
-        FluidStack parentFluid = parentNet.getFluidHandler().getFluid();
+        FluidStack parentFluid = parentNet.getContainedFluid();
         if (parentFluid != null && parentFluid.amount > 0) {
             if (parentNet.getAllNodes().isEmpty()) {
                 //if this is merge of pipe nets, just add all fluid to our internal tank
                 //use fillInternal to ignore throughput restrictions
-                getFluidHandler().setContainingFluid(parentFluid);
+                setContainingFluid(parentFluid);
             }
         }
     }
@@ -121,8 +124,8 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
     protected boolean areNodesCustomContactable(FluidPipeProperties first, FluidPipeProperties second, PipeNet<FluidPipeProperties> secondNodeNet) {
         FluidPipeNet fluidPipeNet = (FluidPipeNet) secondNodeNet;
         return super.areNodesCustomContactable(first, second, secondNodeNet) &&
-                (secondNodeNet == null || getFluidHandler().getFluid() == null || fluidPipeNet.getFluidHandler().getFluid() == null ||
-                        getFluidHandler().getFluid().isFluidEqual(fluidPipeNet.getFluidHandler().getFluid()));
+                (secondNodeNet == null || getContainedFluid() == null || fluidPipeNet.getContainedFluid() == null ||
+                        getContainedFluid().isFluidEqual(fluidPipeNet.getContainedFluid()));
     }
 
     @Override
@@ -143,8 +146,8 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = super.serializeNBT();
-        if (getFluidHandler().getFluid() != null)
-            nbt.setTag("Fluid", getFluidHandler().getFluid().writeToNBT(new NBTTagCompound()));
+        if (getContainedFluid() != null)
+            nbt.setTag("Fluid", getContainedFluid().writeToNBT(new NBTTagCompound()));
         nbt.setInteger("Timer", emptyTimer);
         return nbt;
     }
@@ -153,7 +156,7 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt);
         if (nbt.hasKey("Fluid"))
-            getFluidHandler().setContainingFluid(FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("Fluid")));
+            setContainingFluid(FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("Fluid")));
         this.emptyTimer = nbt.getInteger("Timer");
     }
 
@@ -164,7 +167,7 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
     @Override
     public void update() {
         if (emptyTimer > 0 && --emptyTimer == 0) {
-            fluidNetHandler.emptyTank();
+            emptyTank();
         }
     }
 

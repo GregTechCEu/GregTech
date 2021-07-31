@@ -64,6 +64,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.fluidLeftToTransferLastSecond = transferRate;
         this.pumpMode = PumpMode.EXPORT;
         this.distributionMode = DistributionMode.INSERT_FIRST;
+        this.blocksInput = true;
         this.bucketMode = BucketMode.MILLI_BUCKET;
         this.fluidFilter = new FluidFilterContainer(this);
     }
@@ -192,12 +193,12 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
            ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
             .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
-        primaryGroup.addWidget(new ToggleButtonWidget(130, 166, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
+        primaryGroup.addWidget(new ToggleButtonWidget(130, 160, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
 
         TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
         TileEntity otherTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
         if(!(this instanceof CoverFluidRegulator) && coverTile instanceof TileEntityFluidPipe ^ otherTile instanceof TileEntityFluidPipe) {
-            primaryGroup.addWidget(new ToggleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE,
+            primaryGroup.addWidget(new ToggleButtonWidget(149, 160, 20, 20, GuiTextures.DISTRIBUTION_MODE,
                     () -> distributionMode == DistributionMode.INSERT_FIRST,
                     val -> distributionMode = val ? DistributionMode.INSERT_FIRST : DistributionMode.ROUND_ROBIN)
                     .setTooltipText("cover.conveyor.distribution"));
