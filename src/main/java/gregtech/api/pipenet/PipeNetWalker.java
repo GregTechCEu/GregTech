@@ -1,6 +1,8 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.common.pipelike.itempipe.net.ItemNetWalker;
+import gregtech.common.pipelike.fluidpipe.net.FluidNetWalker;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -9,6 +11,14 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.*;
 
+/**
+ * This is a helper class to get information about a pipe net
+ * <p>The walker is written that it will always find the shortest path to any destination
+ * <p>On the way it can collect information about the pipes and it's neighbours
+ * <p>After creating a walker simply call {@link #traversePipeNet()} to start walking, then you can just collect the data
+ * <p><b>Do not walk a walker more than once</b>
+ * <p>For example implementations look at {@link ItemNetWalker} and {@link FluidNetWalker}
+ */
 public abstract class PipeNetWalker {
 
     private final PipeNet<?> net;
@@ -121,7 +131,7 @@ public abstract class PipeNetWalker {
         pipes.clear();
         TileEntity thisPipe = world.getTileEntity(pos);
         IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) thisPipe;
-        if(pipeTile == null)
+        if (pipeTile == null)
             throw new IllegalStateException("PipeTile was not null last walk, but now is");
         checkPipe(pipeTile, pos);
         pipeTile.markWalked();
