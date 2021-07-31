@@ -5,6 +5,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.IMaterialProperty;
 import scala.actors.threadpool.Arrays;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,14 +31,15 @@ public class MaterialFlag {
         return false;
     }
 
-    protected Set<MaterialFlag> verifyFlag(Set<MaterialFlag> allFlags, Material material) {
+    protected Set<MaterialFlag> verifyFlag(Material material) {
         Preconditions.checkArgument(
                 material.getProperties().hasProperty(requiredType),
                 "Material " + material.toString() + " must have " + requiredType.getName() + " for Flag " + this.name + "!"
         );
 
-        return allFlags.stream()
-                .filter(f -> !requiredFlags.contains(f))
+        return requiredFlags.stream()
+                .map(f -> f.verifyFlag(material))
+                .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
     }
 

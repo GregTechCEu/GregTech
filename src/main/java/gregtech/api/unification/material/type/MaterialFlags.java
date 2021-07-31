@@ -22,10 +22,10 @@ public class MaterialFlags {
     }
 
     public void verify(Material material) {
-        flags = flags.stream()
-                .map(f -> f.verifyFlag(flags, material))
+        flags.addAll(flags.stream()
+                .map(f -> f.verifyFlag(material))
                 .flatMap(Collection::stream)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet()));
     }
 
     public boolean hasFlag(MaterialFlag flag) {
