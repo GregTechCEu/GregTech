@@ -5,35 +5,40 @@ import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.IngotMaterial;
+import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.IMaterialProperty;
+import gregtech.api.unification.material.properties.ItemPipeProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
 
+import static gregtech.api.unification.material.properties.DummyProperties.fluidPipeProperty;
+import static gregtech.api.unification.material.properties.DummyProperties.itemPipeProperty;
+
 public class PipeRecipeHandler {
 
     public static void register() {
-        OrePrefix.pipeTinyFluid.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeTiny);
-        OrePrefix.pipeSmallFluid.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeSmall);
-        OrePrefix.pipeNormalFluid.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeNormal);
-        OrePrefix.pipeLargeFluid.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeLarge);
-        OrePrefix.pipeHugeFluid.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeHuge);
+        OrePrefix.pipeTinyFluid.addProcessingHandler(fluidPipeProperty, PipeRecipeHandler::processPipeTiny);
+        OrePrefix.pipeSmallFluid.addProcessingHandler(fluidPipeProperty, PipeRecipeHandler::processPipeSmall);
+        OrePrefix.pipeNormalFluid.addProcessingHandler(fluidPipeProperty, PipeRecipeHandler::processPipeNormal);
+        OrePrefix.pipeLargeFluid.addProcessingHandler(fluidPipeProperty, PipeRecipeHandler::processPipeLarge);
+        OrePrefix.pipeHugeFluid.addProcessingHandler(fluidPipeProperty, PipeRecipeHandler::processPipeHuge);
 
-        OrePrefix.pipeTinyItem.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeTiny);
-        OrePrefix.pipeSmallItem.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeSmall);
-        OrePrefix.pipeNormalItem.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeNormal);
-        OrePrefix.pipeLargeItem.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeLarge);
-        OrePrefix.pipeHugeItem.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processPipeHuge);
+        OrePrefix.pipeTinyItem.addProcessingHandler(itemPipeProperty, PipeRecipeHandler::processPipeTiny);
+        OrePrefix.pipeSmallItem.addProcessingHandler(itemPipeProperty, PipeRecipeHandler::processPipeSmall);
+        OrePrefix.pipeNormalItem.addProcessingHandler(itemPipeProperty, PipeRecipeHandler::processPipeNormal);
+        OrePrefix.pipeLargeItem.addProcessingHandler(itemPipeProperty, PipeRecipeHandler::processPipeLarge);
+        OrePrefix.pipeHugeItem.addProcessingHandler(itemPipeProperty, PipeRecipeHandler::processPipeHuge);
 
-        OrePrefix.pipeSmallRestrictive.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processRestrictivePipe);
-        OrePrefix.pipeNormalRestrictive.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processRestrictivePipe);
-        OrePrefix.pipeLargeRestrictive.addProcessingHandler(IngotMaterial.class, PipeRecipeHandler::processRestrictivePipe);
+        OrePrefix.pipeSmallRestrictive.addProcessingHandler(itemPipeProperty, PipeRecipeHandler::processRestrictivePipe);
+        OrePrefix.pipeNormalRestrictive.addProcessingHandler(itemPipeProperty, PipeRecipeHandler::processRestrictivePipe);
+        OrePrefix.pipeLargeRestrictive.addProcessingHandler(itemPipeProperty, PipeRecipeHandler::processRestrictivePipe);
     }
 
-    private static void processRestrictivePipe(OrePrefix pipePrefix, IngotMaterial material) {
+    private static void processRestrictivePipe(OrePrefix pipePrefix, Material material, ItemPipeProperty property) {
         OrePrefix unrestrictive;
         switch (pipePrefix) {
             case pipeSmallRestrictive: unrestrictive = OrePrefix.pipeSmallItem; break;
@@ -55,7 +60,7 @@ public class PipeRecipeHandler {
                 'P', new UnificationEntry(unrestrictive, material), 'R', OreDictUnifier.get(OrePrefix.ring, Materials.Iron));
     }
 
-    private static void processPipeTiny(OrePrefix pipePrefix, IngotMaterial material) {
+    private static void processPipeTiny(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
             .input(OrePrefix.ingot, material, 1)
@@ -70,7 +75,7 @@ public class PipeRecipeHandler {
                 'X', new UnificationEntry(OrePrefix.plate, material));
     }
 
-    private static void processPipeSmall(OrePrefix pipePrefix, IngotMaterial material) {
+    private static void processPipeSmall(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
             .input(OrePrefix.ingot, material, 1)
@@ -85,7 +90,7 @@ public class PipeRecipeHandler {
             'X', new UnificationEntry(OrePrefix.plate, material));
     }
 
-    private static void processPipeNormal(OrePrefix pipePrefix, IngotMaterial material) {
+    private static void processPipeNormal(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
             .input(OrePrefix.ingot, material, 3)
@@ -100,7 +105,7 @@ public class PipeRecipeHandler {
             'X', new UnificationEntry(OrePrefix.plate, material));
     }
 
-    private static void processPipeLarge(OrePrefix pipePrefix, IngotMaterial material) {
+    private static void processPipeLarge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
             .input(OrePrefix.ingot, material, 6)
@@ -115,7 +120,7 @@ public class PipeRecipeHandler {
                 'X', new UnificationEntry(OrePrefix.plate, material));
     }
 
-    private static void processPipeHuge(OrePrefix pipePrefix, IngotMaterial material) {
+    private static void processPipeHuge(OrePrefix pipePrefix, Material material, IMaterialProperty property) {
         ItemStack pipeStack = OreDictUnifier.get(pipePrefix, material);
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 12)
@@ -132,7 +137,7 @@ public class PipeRecipeHandler {
 
 
     private static int getVoltageMultiplier(Material material) {
-        return material instanceof IngotMaterial && ((IngotMaterial) material)
-            .blastFurnaceTemperature >= 2800 ? 32 : 8;
+        BlastProperty prop = material.getProperties().getBlastProperty();
+        return prop != null && prop.getBlastTemperature() >= 2800 ? 32 : 8;
     }
 }

@@ -80,24 +80,51 @@ public class OreProperty implements IMaterialProperty {
         this.oreMultiplier = multiplier;
     }
 
+    public int getOreMultiplier() {
+        return this.oreMultiplier;
+    }
+
     public void setByProductMultiplier(int multiplier) {
         this.byProductMultiplier = multiplier;
+    }
+
+    public int getByProductMultiplier() {
+        return this.byProductMultiplier;
     }
 
     public void setDirectSmeltResult(@Nullable Material m) {
         this.directSmeltResult = m;
     }
 
+    @Nullable
+    public Material getDirectSmeltResult() {
+        return this.directSmeltResult;
+    }
+
     public void setWashedIn(@Nullable Material m) {
         this.washedIn = m;
+    }
+
+    @Nullable
+    public Material getWashedIn() {
+        return this.washedIn;
     }
 
     public void setSeparatedInto(@Nullable Material m) {
         this.separatedInto = m;
     }
 
+    @Nullable
+    public Material getSeparatedInto() {
+        return this.separatedInto;
+    }
+
     public void setOreByProducts(Material... materials) {
         this.oreByProducts.addAll(Arrays.asList(materials));
+    }
+
+    public List<Material> getOreByProducts() {
+        return this.oreByProducts;
     }
 
     @Override

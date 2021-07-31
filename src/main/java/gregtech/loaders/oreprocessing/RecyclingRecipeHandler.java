@@ -1,5 +1,7 @@
 package gregtech.loaders.oreprocessing;
 
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.type.DustMaterial;
 import gregtech.api.unification.material.type.IngotMaterial;
 import gregtech.api.unification.ore.OrePrefix;
@@ -10,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+
+import static gregtech.api.unification.material.properties.DummyProperties.dustProperty;
 
 public class RecyclingRecipeHandler {
 
@@ -39,18 +43,19 @@ public class RecyclingRecipeHandler {
                 else if (object instanceof Predicate)
                     return ((Predicate<OrePrefix>) object).test(orePrefix);
                 else return false;
-            })) orePrefix.addProcessingHandler(DustMaterial.class, RecyclingRecipeHandler::processCrushing);
+            })) orePrefix.addProcessingHandler(dustProperty, RecyclingRecipeHandler::processCrushing);
         }
     }
 
-    public static void processCrushing(OrePrefix thingPrefix, DustMaterial material) {
+    public static void processCrushing(OrePrefix thingPrefix, Material material, DustProperty property) {
         ArrayList<MaterialStack> materialStacks = new ArrayList<>();
         materialStacks.add(new MaterialStack(material, thingPrefix.getMaterialAmount(material)));
         materialStacks.addAll(thingPrefix.secondaryMaterials);
         //only ignore arc smelting for blacklisted prefixes if yielded material is the same as input material
         //if arc smelting gives different material, allow it
         boolean ignoreArcSmelting = IGNORE_ARC_SMELTING.contains(thingPrefix) && !(
-            material instanceof IngotMaterial && ((IngotMaterial) material).arcSmeltInto != material);
+            material.getProperties().getIngotProperty() != null
+                    && material.getProperties().getIngotProperty().getArcSmeltInto() != material);
         RecyclingRecipes.registerArcRecyclingRecipe(builder -> builder.input(thingPrefix, material), materialStacks, ignoreArcSmelting);
     }
 

@@ -86,10 +86,10 @@ public class BlockOre extends BlockFalling implements IBlockOre {
         if (material != null) {
             DustProperty matProp = material.getProperties().getDustProperty();
             if (matProp != null) {
-                int toolQuality = material.getProperties().getDustProperty().harvestLevel;
+                int toolQuality = material.getProperties().getDustProperty().getHarvestLevel();
                 DustProperty stoneProp = stoneType.stoneMaterial.getProperties().getDustProperty();
                 if (stoneProp != null) {
-                    return Math.max(stoneProp.harvestLevel, toolQuality > 1 ? toolQuality - 1 : toolQuality);
+                    return Math.max(stoneProp.getHarvestLevel(), toolQuality > 1 ? toolQuality - 1 : toolQuality);
                 }
             }
         }

@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class Properties {
 
@@ -52,7 +53,11 @@ public class Properties {
     }
 
     public boolean hasProperty(IMaterialProperty property) {
-        return properties.stream().anyMatch(p -> p.doesMatch(property));
+        return getProperty(property) != null;
+    }
+
+    public IMaterialProperty getProperty(IMaterialProperty dummy) {
+        return properties.stream().filter(p -> p.doesMatch(dummy)).findFirst().orElse(null);
     }
 
     ///////////////////////////////////////////////

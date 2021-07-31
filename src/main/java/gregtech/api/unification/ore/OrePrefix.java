@@ -5,7 +5,9 @@ import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialIconType;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.function.TriConsumer;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -419,11 +421,11 @@ public enum OrePrefix {
         return oreProcessingHandlers.addAll(Arrays.asList(processingHandler));
     }
 
-    public <T extends Material> void addProcessingHandler(Class<T> materialFilter, BiConsumer<OrePrefix, T> handler) {
+    public <T extends IMaterialProperty> void addProcessingHandler(T property, TriConsumer<OrePrefix, Material, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
-            if (materialFilter.isAssignableFrom(material.getClass())) {
+            if (material.hasProperty(property) && this.doGenerateItem(material)) {
                 //noinspection unchecked
-                handler.accept(orePrefix, (T) material);
+                handler.accept(orePrefix, material, (T) material.getProperty(property));
             }
         });
     }

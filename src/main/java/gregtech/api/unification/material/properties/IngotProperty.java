@@ -32,8 +32,16 @@ public class IngotProperty implements IMaterialProperty {
         this.arcSmeltInto = arcSmeltingInto;
     }
 
+    public Material getArcSmeltInto() {
+        return this.arcSmeltInto;
+    }
+
     public void setMagneticMaterial(@Nullable Material magneticMaterial) {
         this.magneticMaterial = magneticMaterial;
+    }
+
+    public Material getMagneticMaterial() {
+        return magneticMaterial;
     }
 
     @Override

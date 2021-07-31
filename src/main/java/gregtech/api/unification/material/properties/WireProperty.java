@@ -14,6 +14,13 @@ public class WireProperty implements IMaterialProperty {
         this.lossPerBlock = lossPerBlock;
     }
 
+    /**
+     * Default values constructor
+     */
+    public WireProperty() {
+        this(8, 1, 1);
+    }
+
     @Override
     public void verifyProperty(Properties properties) {
         if (properties.getIngotProperty() == null) {

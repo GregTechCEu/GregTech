@@ -11,7 +11,7 @@ public class MaterialRegistry {
     private MaterialRegistry() {
     }
 
-    private static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
+    public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
 
     private static List<Material> DEFERRED_REGISTRY = new ArrayList<>();
 

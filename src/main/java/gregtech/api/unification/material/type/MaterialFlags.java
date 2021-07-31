@@ -1,16 +1,14 @@
 package gregtech.api.unification.material.type;
 
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.DustProperty;
-import gregtech.api.unification.material.properties.GemProperty;
-import gregtech.api.unification.material.properties.IngotProperty;
-import gregtech.api.unification.material.properties.OreProperty;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static gregtech.api.unification.material.properties.DummyProperties.*;
 
 public class MaterialFlags {
 
@@ -82,7 +80,6 @@ public class MaterialFlags {
     //////////////////
     //     DUST     //
     //////////////////
-    private static final DustProperty dustProperty = new DustProperty();
 
     /**
      * Generate a plate for this material
@@ -136,7 +133,6 @@ public class MaterialFlags {
     /////////////////
     //    INGOT    //
     /////////////////
-    private static final IngotProperty ingotProperty = new IngotProperty();
 
     /**
      * Add to material if it cannot be worked by any other means, than smashing or smelting. This is used for coated Materials.
@@ -193,7 +189,7 @@ public class MaterialFlags {
 
     public static final MaterialFlag GENERATE_SMALL_GEAR =
             new MaterialFlag.Builder(26, "generate_small_gear")
-                    .requireType(ingotProperty).requireFlags(GENERATE_PLATE, GENERATE_ROD).build();
+                    .requireType(dustProperty).requireFlags(GENERATE_PLATE, GENERATE_ROD).build();
 
     public static final MaterialFlag GENERATE_FINE_WIRE =
             new MaterialFlag.Builder(27, "generate_fine_wire")
@@ -216,7 +212,6 @@ public class MaterialFlags {
     /////////////////
     //     GEM     //
     /////////////////
-    private static final GemProperty gemProperty = new GemProperty();
 
     /**
      * If this material can be crystallized.
@@ -235,5 +230,5 @@ public class MaterialFlags {
 
     public static final MaterialFlag HIGH_SIFTER_OUTPUT =
             new MaterialFlag.Builder(33, "high_sifter_output")
-                    .requireType(new OreProperty()).build();
+                    .requireType(oreProperty).build();
 }

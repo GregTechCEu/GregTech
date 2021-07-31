@@ -7,62 +7,66 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.OreProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 
+import static gregtech.api.unification.material.properties.DummyProperties.oreProperty;
+import static gregtech.api.unification.material.type.MaterialFlags.HIGH_SIFTER_OUTPUT;
+
 public class OreRecipeHandler {
 
     public static void register() {
-        OrePrefix.ore.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processOre);
-        OrePrefix.oreBasalt.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processOre);
-        OrePrefix.oreBlackgranite.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processOre);
-        OrePrefix.oreEndstone.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processOre);
-        OrePrefix.oreGravel.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processOre);
-        OrePrefix.oreNetherrack.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processOre);
-        OrePrefix.oreMarble.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processOre);
-        OrePrefix.oreRedgranite.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processOre);
-        OrePrefix.oreSand.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processOre);
+        OrePrefix.ore.addProcessingHandler(oreProperty, OreRecipeHandler::processOre);
+        OrePrefix.oreBasalt.addProcessingHandler(oreProperty, OreRecipeHandler::processOre);
+        OrePrefix.oreBlackgranite.addProcessingHandler(oreProperty, OreRecipeHandler::processOre);
+        OrePrefix.oreEndstone.addProcessingHandler(oreProperty, OreRecipeHandler::processOre);
+        OrePrefix.oreGravel.addProcessingHandler(oreProperty, OreRecipeHandler::processOre);
+        OrePrefix.oreNetherrack.addProcessingHandler(oreProperty, OreRecipeHandler::processOre);
+        OrePrefix.oreMarble.addProcessingHandler(oreProperty, OreRecipeHandler::processOre);
+        OrePrefix.oreRedgranite.addProcessingHandler(oreProperty, OreRecipeHandler::processOre);
+        OrePrefix.oreSand.addProcessingHandler(oreProperty, OreRecipeHandler::processOre);
 
-        OrePrefix.crushed.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processCrushedOre);
-        OrePrefix.crushedPurified.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processCrushedPurified);
-        OrePrefix.crushedCentrifuged.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processCrushedCentrifuged);
-        OrePrefix.crystalline.addProcessingHandler(SolidMaterial.class, OreRecipeHandler::processCrystallizedPurified);
-        OrePrefix.dustImpure.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processDirtyDust);
-        OrePrefix.dustPure.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processPureDust);
-        OrePrefix.dust.addProcessingHandler(DustMaterial.class, OreRecipeHandler::processCleanDust);
+        OrePrefix.crushed.addProcessingHandler(oreProperty, OreRecipeHandler::processCrushedOre);
+        OrePrefix.crushedPurified.addProcessingHandler(oreProperty, OreRecipeHandler::processCrushedPurified);
+        OrePrefix.crushedCentrifuged.addProcessingHandler(oreProperty, OreRecipeHandler::processCrushedCentrifuged);
+        OrePrefix.dustImpure.addProcessingHandler(oreProperty, OreRecipeHandler::processDirtyDust);
+        OrePrefix.dustPure.addProcessingHandler(oreProperty, OreRecipeHandler::processPureDust);
+        OrePrefix.dust.addProcessingHandler(oreProperty, OreRecipeHandler::processCleanDust);
     }
 
 
-    private static void processMetalSmelting(OrePrefix crushedPrefix, DustMaterial material) {
-        DustMaterial smeltingMaterial = material.directSmelting == null ? material : material.directSmelting;
-        if (smeltingMaterial instanceof IngotMaterial) {
-            ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingMaterial);
+    private static void processMetalSmelting(OrePrefix crushedPrefix, Material material, OreProperty property) {
+        Material smeltingResult = property.getDirectSmeltResult() != null ? property.getDirectSmeltResult() : material;
 
-            if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingMaterial)) {
+        if (smeltingResult.getProperties().getIngotProperty() != null) {
+            ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingResult);
+
+            if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingResult)) {
                 ModHandler.addSmeltingRecipe(new UnificationEntry(crushedPrefix, material), ingotStack);
             }
         }
     }
 
-    public static void processOre(OrePrefix orePrefix, DustMaterial material) {
-        DustMaterial byproductMaterial = GTUtility.selectItemInList(0, material, material.oreByProducts, DustMaterial.class);
+    public static void processOre(OrePrefix orePrefix, Material material, OreProperty property) {
+        Material byproductMaterial = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
         ItemStack byproductStack = OreDictUnifier.get(OrePrefix.dust, byproductMaterial);
         ItemStack crushedStack = OreDictUnifier.get(OrePrefix.crushed, material.crushedInto);
         ItemStack ingotStack;
-        DustMaterial smeltingMaterial = material.directSmelting == null ? material : material.directSmelting;
-        double amountOfCrushedOre = material.oreMultiplier;
-        if (smeltingMaterial instanceof IngotMaterial) {
+        Material smeltingMaterial = property.getDirectSmeltResult() == null ? material : property.getDirectSmeltResult();
+        double amountOfCrushedOre = property.getOreMultiplier();
+        if (smeltingMaterial.getProperties().getIngotProperty() != null) {
             ingotStack = OreDictUnifier.get(OrePrefix.ingot, smeltingMaterial);
-        } else if (smeltingMaterial instanceof GemMaterial) {
+        } else if (smeltingMaterial.getProperties().getGemProperty() != null) {
             ingotStack = OreDictUnifier.get(OrePrefix.gem, smeltingMaterial);
         } else {
             ingotStack = OreDictUnifier.get(OrePrefix.dust, smeltingMaterial);
         }
-        ingotStack.setCount(ingotStack.getCount() * material.oreMultiplier);
-        crushedStack.setCount(crushedStack.getCount() * material.oreMultiplier);
+        ingotStack.setCount(ingotStack.getCount() * property.getOreMultiplier());
+        crushedStack.setCount(crushedStack.getCount() * property.getOreMultiplier());
 
         if (!crushedStack.isEmpty()) {
             RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
@@ -77,7 +81,7 @@ public class OreRecipeHandler {
                 .chancedOutput(byproductStack, 1400, 850)
                 .duration(400).EUt(12);
             for (MaterialStack secondaryMaterial : orePrefix.secondaryMaterials) {
-                if (secondaryMaterial.material instanceof DustMaterial) {
+                if (secondaryMaterial.material.getProperties().getDustProperty() != null) {
                     ItemStack dustStack = OreDictUnifier.getDust(secondaryMaterial);
                     builder.chancedOutput(dustStack, 6700, 800);
                 }
@@ -86,15 +90,15 @@ public class OreRecipeHandler {
         }
 
         //do not try to add smelting recipes for materials which require blast furnace
-        if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingMaterial) && !material.disableDirectSmelting) {
+        if (!ingotStack.isEmpty() && doesMaterialUseNormalFurnace(smeltingMaterial)) {
             ModHandler.addSmeltingRecipe(new UnificationEntry(orePrefix, material), ingotStack);
         }
     }
 
-    public static void processCrushedOre(OrePrefix crushedPrefix, DustMaterial material) {
+    public static void processCrushedOre(OrePrefix crushedPrefix, Material material, OreProperty property) {
         ItemStack impureDustStack = OreDictUnifier.get(OrePrefix.dustImpure, material);
         // TODO RIGHT HERE. JEI Page will need to be updated for this
-        DustMaterial byproductMaterial = GTUtility.selectItemInList(0, material, material.oreByProducts, DustMaterial.class);
+        Material byproductMaterial = GTUtility.selectItemInList(0, material, property.getOreByProducts(), Material.class);
 
         //fallback for dirtyGravel, shard & clump
         if (impureDustStack.isEmpty()) {
@@ -115,7 +119,7 @@ public class OreRecipeHandler {
             .input(crushedPrefix, material)
             .outputs(impureDustStack)
             .duration(200).EUt(12)
-            .chancedOutput(OreDictUnifier.get(OrePrefix.dust, byproductMaterial, material.byProductMultiplier), 1400, 850)
+            .chancedOutput(OreDictUnifier.get(OrePrefix.dust, byproductMaterial, property.getByProductMultiplier()), 1400, 850)
             .buildAndRegister();
 
         ItemStack crushedPurifiedOre = GTUtility.copy(
@@ -146,17 +150,17 @@ public class OreRecipeHandler {
             .input(crushedPrefix, material)
             .duration((int) material.getAverageMass() * 20)
             .outputs(crushedCentrifugedOre,
-                OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, material.byProductMultiplier * 3),
+                OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, property.getByProductMultiplier() * 3),
                 OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
             .buildAndRegister();
 
-        if (material.washedIn != null) {
-            DustMaterial washingByproduct = GTUtility.selectItemInList(3, material, material.oreByProducts, DustMaterial.class);
+        if (property.getWashedIn() != null) {
+            Material washingByproduct = GTUtility.selectItemInList(3, material, property.getOreByProducts(), Material.class);
             RecipeMaps.CHEMICAL_BATH_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
-                .fluidInputs(material.washedIn.getFluid(material.washedIn == Materials.SodiumPersulfate ? 100 : 1000))
+                .fluidInputs(property.getWashedIn().getFluid(property.getWashedIn() == Materials.SodiumPersulfate ? 100 : 1000))
                 .outputs(crushedPurifiedOre)
-                .chancedOutput(OreDictUnifier.get(OrePrefix.dust, washingByproduct, material.byProductMultiplier), 7000, 580)
+                .chancedOutput(OreDictUnifier.get(OrePrefix.dust, washingByproduct, property.getByProductMultiplier()), 7000, 580)
                 .chancedOutput(OreDictUnifier.get(OrePrefix.dust, Materials.Stone), 4000, 650)
                 .duration(800).EUt(8)
                 .buildAndRegister();
@@ -165,13 +169,13 @@ public class OreRecipeHandler {
         ModHandler.addShapelessRecipe(String.format("crushed_ore_to_dust_%s", material),
             impureDustStack, 'h', new UnificationEntry(crushedPrefix, material));
 
-        processMetalSmelting(crushedPrefix, material);
+        processMetalSmelting(crushedPrefix, material, property);
     }
 
-    public static void processCrushedCentrifuged(OrePrefix centrifugedPrefix, DustMaterial material) {
+    public static void processCrushedCentrifuged(OrePrefix centrifugedPrefix, Material material, OreProperty property) {
         ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
         ItemStack byproductStack = OreDictUnifier.get(OrePrefix.dust, GTUtility.selectItemInList(2,
-            material, material.oreByProducts, DustMaterial.class), 1);
+            material, property.getOreByProducts(), Material.class), 1);
 
         RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
             .input(centrifugedPrefix, material)
@@ -189,13 +193,14 @@ public class OreRecipeHandler {
         ModHandler.addShapelessRecipe(String.format("centrifuged_ore_to_dust_%s", material), dustStack,
             'h', new UnificationEntry(centrifugedPrefix, material));
 
-        processMetalSmelting(centrifugedPrefix, material);
+        processMetalSmelting(centrifugedPrefix, material, property);
     }
 
-    public static void processCrushedPurified(OrePrefix purifiedPrefix, DustMaterial material) {
+    public static void processCrushedPurified(OrePrefix purifiedPrefix, Material material, OreProperty property) {
         ItemStack crushedCentrifugedStack = OreDictUnifier.get(OrePrefix.crushedCentrifuged, material);
         ItemStack dustStack = OreDictUnifier.get(OrePrefix.dustPure, material);
-        Material byproductMaterial = GTUtility.selectItemInList(1, material, material.oreByProducts, DustMaterial.class);
+        Material byproductMaterial = GTUtility.selectItemInList(
+                1, material, property.getOreByProducts(), Material.class);
         ItemStack byproductStack = OreDictUnifier.get(OrePrefix.dust, byproductMaterial);
 
         RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
@@ -225,14 +230,14 @@ public class OreRecipeHandler {
                 .buildAndRegister();
         }
 
-        if (material instanceof GemMaterial) {
+        if (material.getProperties().getGemProperty() != null) {
             ItemStack exquisiteStack = OreDictUnifier.get(OrePrefix.gemExquisite, material);
             ItemStack flawlessStack = OreDictUnifier.get(OrePrefix.gemFlawless, material);
             ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, material);
             ItemStack flawedStack = OreDictUnifier.get(OrePrefix.gemFlawed, material);
             ItemStack chippedStack = OreDictUnifier.get(OrePrefix.gemChipped, material);
 
-            if (material.hasFlag(GemMaterial.MatFlags.HIGH_SIFTER_OUTPUT)) {
+            if (material.hasFlag(HIGH_SIFTER_OUTPUT)) {
                 RecipeMaps.SIFTER_RECIPES.recipeBuilder()
                     .input(purifiedPrefix, material)
                     .chancedOutput(exquisiteStack, 300, 60)
@@ -256,29 +261,30 @@ public class OreRecipeHandler {
                     .buildAndRegister();
             }
         }
-        processMetalSmelting(purifiedPrefix, material);
+        processMetalSmelting(purifiedPrefix, material, property);
     }
 
-    public static void processDirtyDust(OrePrefix dustPrefix, DustMaterial material) {
+    public static void processDirtyDust(OrePrefix dustPrefix, Material material, OreProperty property) {
         ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
-        if (dustPrefix == OrePrefix.dustPure && material.separatedOnto != null) {
-            ItemStack separatedStack = OreDictUnifier.get(OrePrefix.dustSmall, material.separatedOnto);
+        if (dustPrefix == OrePrefix.dustPure && property.getSeparatedInto() != null) {
+            ItemStack separatedStack = OreDictUnifier.get(OrePrefix.dustSmall, property.getSeparatedInto());
             RecipeMaps.ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
                 .input(dustPrefix, material)
                 .outputs(dustStack)
                 .chancedOutput(separatedStack, 4000, 850)
-                .duration((int) material.separatedOnto.getAverageMass()).EUt(24)
+                .duration((int) property.getSeparatedInto().getAverageMass()).EUt(24)
                 .buildAndRegister();
         }
 
-        FluidMaterial byproduct = GTUtility.selectItemInList(2, material, material.oreByProducts, FluidMaterial.class);
+        Material byproduct = GTUtility.selectItemInList(
+                2, material, property.getOreByProducts(), Material.class);
 
         RecipeBuilder<?> builder = RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
             .input(dustPrefix, material)
             .outputs(dustStack)
             .duration((int) (material.getAverageMass() * 4)).EUt(24);
 
-        if (byproduct instanceof DustMaterial) {
+        if (byproduct.getProperties().getDustProperty() != null) {
             builder.outputs(OreDictUnifier.get(OrePrefix.dustTiny, byproduct, 3));
         } else {
             builder.fluidOutputs(byproduct.getFluid(GTValues.L / 9));
@@ -287,11 +293,12 @@ public class OreRecipeHandler {
         builder.buildAndRegister();
 
         //dust gains same amount of material as normal dust
-        processMetalSmelting(dustPrefix, material);
+        processMetalSmelting(dustPrefix, material, property);
     }
 
-    public static void processPureDust(OrePrefix purePrefix, DustMaterial material) {
-        DustMaterial byproductMaterial = GTUtility.selectItemInList(1, material, material.oreByProducts, DustMaterial.class);
+    public static void processPureDust(OrePrefix purePrefix, Material material, OreProperty property) {
+        Material byproductMaterial = GTUtility.selectItemInList(
+                1, material, property.getOreByProducts(), Material.class);
         ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
 
         if (dustStack.isEmpty()) {
@@ -308,37 +315,15 @@ public class OreRecipeHandler {
             .EUt(5)
             .buildAndRegister();
 
-        processMetalSmelting(purePrefix, material);
+        processMetalSmelting(purePrefix, material, property);
     }
 
-
-    public static void processCrystallizedPurified(OrePrefix crystallizedPrefix, SolidMaterial material) {
-        DustMaterial resultMaterial = material.macerateInto == null ? material : material.macerateInto;
-        ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, resultMaterial);
-        RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
-            .input(crystallizedPrefix, material)
-            .outputs(dustStack)
-            .duration(10)
-            .EUt(10)
-            .buildAndRegister();
-
-        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-            .input(crystallizedPrefix, material)
-            .outputs(dustStack)
-            .duration(20)
-            .EUt(16)
-            .buildAndRegister();
-
-        processMetalSmelting(crystallizedPrefix, material);
-    }
-
-    public static void processCleanDust(OrePrefix dustPrefix, DustMaterial material) {
-        processMetalSmelting(dustPrefix, material);
+    public static void processCleanDust(OrePrefix dustPrefix, Material material, OreProperty property) {
+        processMetalSmelting(dustPrefix, material, property);
     }
 
     private static boolean doesMaterialUseNormalFurnace(Material material) {
-        return !(material instanceof IngotMaterial) ||
-            ((IngotMaterial) material).blastFurnaceTemperature <= 0;
+        return material.getProperties().getBlastProperty() != null;
     }
 
 }

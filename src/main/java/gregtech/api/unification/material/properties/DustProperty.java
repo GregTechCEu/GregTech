@@ -38,6 +38,10 @@ public class DustProperty implements IMaterialProperty {
         this.harvestLevel = harvestLevel;
     }
 
+    public int getHarvestLevel() {
+        return this.harvestLevel;
+    }
+
     public void setBurnTime(int burnTime) {
         this.burnTime = burnTime;
     }

@@ -10,6 +10,8 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.BlastProperty;
+import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
@@ -22,44 +24,41 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
 
-import static gregtech.api.unification.material.type.DustMaterial.MatFlags.GENERATE_PLATE;
-import static gregtech.api.unification.material.type.DustMaterial.MatFlags.NO_WORKING;
-import static gregtech.api.unification.material.type.IngotMaterial.MatFlags.GENERATE_BOLT_SCREW;
-import static gregtech.api.unification.material.type.SolidMaterial.MatFlags.GENERATE_ROD;
+import static gregtech.api.unification.material.properties.DummyProperties.toolProperty;
+import static gregtech.api.unification.material.type.MaterialFlags.*;
 
 public class ToolRecipeHandler {
 
     public static void register() {
-        OrePrefix.plate.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processPlate);
-        OrePrefix.stick.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processStick);
+        OrePrefix.plate.addProcessingHandler(toolProperty, ToolRecipeHandler::processPlate);
+        OrePrefix.stick.addProcessingHandler(toolProperty, ToolRecipeHandler::processStick);
 
-        OrePrefix.toolHeadShovel.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processShovelHead);
-        OrePrefix.toolHeadAxe.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processAxeHead);
-        OrePrefix.toolHeadPickaxe.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processPickaxeHead);
-        OrePrefix.toolHeadSword.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processSwordHead);
-        OrePrefix.toolHeadHoe.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processHoeHead);
-        OrePrefix.toolHeadSaw.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processSawHead);
-        OrePrefix.toolHeadChainsaw.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processChainSawHead);
-        OrePrefix.toolHeadDrill.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processDrillHead);
+        OrePrefix.toolHeadShovel.addProcessingHandler(toolProperty, ToolRecipeHandler::processShovelHead);
+        OrePrefix.toolHeadAxe.addProcessingHandler(toolProperty, ToolRecipeHandler::processAxeHead);
+        OrePrefix.toolHeadPickaxe.addProcessingHandler(toolProperty, ToolRecipeHandler::processPickaxeHead);
+        OrePrefix.toolHeadSword.addProcessingHandler(toolProperty, ToolRecipeHandler::processSwordHead);
+        OrePrefix.toolHeadHoe.addProcessingHandler(toolProperty, ToolRecipeHandler::processHoeHead);
+        OrePrefix.toolHeadSaw.addProcessingHandler(toolProperty, ToolRecipeHandler::processSawHead);
+        OrePrefix.toolHeadChainsaw.addProcessingHandler(toolProperty, ToolRecipeHandler::processChainSawHead);
+        OrePrefix.toolHeadDrill.addProcessingHandler(toolProperty, ToolRecipeHandler::processDrillHead);
 
-        OrePrefix.toolHeadSense.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processSenseHead);
-        OrePrefix.toolHeadWrench.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processWrenchHead);
-        OrePrefix.toolHeadBuzzSaw.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processBuzzSawHead);
-        OrePrefix.toolHeadFile.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processFileHead);
-        OrePrefix.toolHeadUniversalSpade.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processSpadeHead);
-        OrePrefix.toolHeadScrewdriver.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processScrewdriverHead);
-        OrePrefix.toolHeadHammer.addProcessingHandler(SolidMaterial.class, ToolRecipeHandler::processHammerHead);
+        OrePrefix.toolHeadSense.addProcessingHandler(toolProperty, ToolRecipeHandler::processSenseHead);
+        OrePrefix.toolHeadWrench.addProcessingHandler(toolProperty, ToolRecipeHandler::processWrenchHead);
+        OrePrefix.toolHeadBuzzSaw.addProcessingHandler(toolProperty, ToolRecipeHandler::processBuzzSawHead);
+        OrePrefix.toolHeadFile.addProcessingHandler(toolProperty, ToolRecipeHandler::processFileHead);
+        OrePrefix.toolHeadUniversalSpade.addProcessingHandler(toolProperty, ToolRecipeHandler::processSpadeHead);
+        OrePrefix.toolHeadScrewdriver.addProcessingHandler(toolProperty, ToolRecipeHandler::processScrewdriverHead);
+        OrePrefix.toolHeadHammer.addProcessingHandler(toolProperty, ToolRecipeHandler::processHammerHead);
     }
 
-
     public static MetaValueItem[] motorItems;
-    public static SolidMaterial[] baseMaterials;
+    public static Material[] baseMaterials;
     public static MetaValueItem[][] batteryItems;
     public static MetaValueItem[] powerUnitItems;
 
     public static void initializeMetaItems() {
         motorItems = new MetaValueItem[]{MetaItems.ELECTRIC_MOTOR_LV, MetaItems.ELECTRIC_MOTOR_MV, MetaItems.ELECTRIC_MOTOR_HV, MetaItems.ELECTRIC_MOTOR_EV, MetaItems.ELECTRIC_MOTOR_IV};
-        baseMaterials = new SolidMaterial[]{Materials.Aluminium, Materials.StainlessSteel, Materials.Titanium, Materials.TungstenSteel, Materials.HSSS};
+        baseMaterials = new Material[]{Materials.Aluminium, Materials.StainlessSteel, Materials.Titanium, Materials.TungstenSteel, Materials.HSSS};
         powerUnitItems = new MetaValueItem[]{MetaItems.POWER_UNIT_LV, MetaItems.POWER_UNIT_MV, MetaItems.POWER_UNIT_HV, MetaItems.POWER_UNIT_EV, MetaItems.POWER_UNIT_IV};
         batteryItems = new MetaValueItem[][]{
                 {MetaItems.BATTERY_RE_LV_LITHIUM, MetaItems.BATTERY_RE_LV_CADMIUM, MetaItems.BATTERY_RE_LV_SODIUM},
@@ -89,7 +88,7 @@ public class ToolRecipeHandler {
         }
     }
 
-    public static void processSimpleElectricToolHead(OrePrefix toolPrefix, SolidMaterial solidMaterial, MetaToolValueItem[] toolItems) {
+    public static void processSimpleElectricToolHead(OrePrefix toolPrefix, Material solidMaterial, MetaToolValueItem[] toolItems) {
         for (int i = 0; i < toolItems.length; i++) {
             for (MetaValueItem batteryItem : batteryItems[i]) {
                 ItemStack batteryStack = batteryItem.getStackForm();
@@ -119,32 +118,31 @@ public class ToolRecipeHandler {
         }
     }
 
-    public static void processSimpleToolHead(OrePrefix toolPrefix, SolidMaterial solidMaterial, MetaToolValueItem toolItem, Object... recipe) {
+    public static void processSimpleToolHead(OrePrefix toolPrefix, Material material, MetaToolValueItem toolItem, Object... recipe) {
         Material handleMaterial = Materials.Wood;
 
-        ModHandler.addShapelessRecipe(String.format("%s_%s_%s", toolPrefix.name(), solidMaterial, handleMaterial),
-                toolItem.getStackForm(solidMaterial),
-                new UnificationEntry(toolPrefix, solidMaterial),
+        ModHandler.addShapelessRecipe(String.format("%s_%s_%s", toolPrefix.name(), material, handleMaterial),
+                toolItem.getStackForm(material),
+                new UnificationEntry(toolPrefix, material),
                 new UnificationEntry(OrePrefix.stick, handleMaterial));
 
-        if (solidMaterial instanceof IngotMaterial && solidMaterial.hasFlag(GENERATE_PLATE)) {
-            addSimpleToolRecipe(toolPrefix, solidMaterial, toolItem,
-                    new UnificationEntry(OrePrefix.plate, solidMaterial),
-                    new UnificationEntry(OrePrefix.ingot, solidMaterial), recipe);
-        }
-        if (solidMaterial instanceof GemMaterial) {
-            addSimpleToolRecipe(toolPrefix, solidMaterial, toolItem,
-                    new UnificationEntry(OrePrefix.gem, solidMaterial),
-                    new UnificationEntry(OrePrefix.gem, solidMaterial), recipe);
+        if (material.getProperties().getIngotProperty() != null && mMaterial.hasFlag(GENERATE_PLATE)) {
+            addSimpleToolRecipe(toolPrefix, material, toolItem,
+                    new UnificationEntry(OrePrefix.plate, material),
+                    new UnificationEntry(OrePrefix.ingot, material), recipe);
+        } else if (material.getProperties().getGemProperty() != null) {
+            addSimpleToolRecipe(toolPrefix, material, toolItem,
+                    new UnificationEntry(OrePrefix.gem, material),
+                    new UnificationEntry(OrePrefix.gem, material), recipe);
         }
     }
 
-    public static void processStick(OrePrefix stickPrefix, SolidMaterial material) {
-        if (material.hasFlag(DustMaterial.MatFlags.NO_SMASHING)) {
+    public static void processStick(OrePrefix stickPrefix, Material material, ToolProperty property) {
+        if (material.hasFlag(NO_SMASHING)) {
             return;
         }
 
-        if (material instanceof IngotMaterial && material.toolDurability > 0) {
+        if (material.getProperties().getIngotProperty() != null) {
             ModHandler.addShapedRecipe(String.format("plunger_%s", material),
                     MetaItems.PLUNGER.getStackForm(material),
                     "xRR", " SR", "S f",
@@ -152,8 +150,8 @@ public class ToolRecipeHandler {
                     'R', new UnificationEntry(OrePrefix.plate, Materials.Rubber));
         }
 
-        SolidMaterial handleMaterial = Materials.Wood;
-        if (material.hasFlag(GENERATE_ROD) && material.toolDurability > 0) {
+        Material handleMaterial = Materials.Wood;
+        if (material.hasFlag(GENERATE_ROD)) {
             ModHandler.addShapedRecipe(String.format("screwdriver_%s_%s", material.toString(), handleMaterial.toString()),
                     MetaItems.SCREWDRIVER.getStackForm(material),
                     " fS", " Sh", "W  ",
@@ -173,7 +171,7 @@ public class ToolRecipeHandler {
                     'W', new ItemStack(Blocks.WOOL, 1, GTValues.W));
         }
 
-        if (material.hasFlag(GENERATE_PLATE) && material.toolDurability > 0) {
+        if (material.hasFlag(GENERATE_PLATE)) {
             ModHandler.addShapedRecipe(String.format("knife_%s", material.toString()),
                     MetaItems.KNIFE.getStackForm(material),
                     "fPh", " S ",
@@ -181,7 +179,7 @@ public class ToolRecipeHandler {
                     'P', new UnificationEntry(OrePrefix.plate, material));
         }
 
-        if (material.hasFlag(GENERATE_PLATE | GENERATE_ROD) && material.toolDurability > 0) {
+        if (material.hasFlags(GENERATE_PLATE, GENERATE_ROD)) {
             ModHandler.addShapedRecipe(String.format("butchery_knife_%s", material.toString()),
                     MetaItems.BUTCHERY_KNIFE.getStackForm(material),
                     "PPf", "PP ", "Sh ",
@@ -189,7 +187,7 @@ public class ToolRecipeHandler {
                     'P', new UnificationEntry(OrePrefix.plate, material));
         }
 
-        if (material.hasFlag(GENERATE_PLATE | GENERATE_ROD | GENERATE_BOLT_SCREW) && material.toolDurability > 0) {
+        if (material.hasFlags(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW)) {
             ModHandler.addShapedRecipe(String.format("wire_cutter_%s", material.toString()),
                     MetaItems.WIRE_CUTTER.getStackForm(material),
                     "PfP", "hPd", "STS",
@@ -206,8 +204,8 @@ public class ToolRecipeHandler {
         }
     }
 
-    public static void processPlate(OrePrefix platePrefix, SolidMaterial material) {
-        if (material.toolDurability > 0 && ConfigHolder.U.registerRecipesForMiningHammers) {
+    public static void processPlate(OrePrefix platePrefix, Material material, ToolProperty property) {
+        if (ConfigHolder.U.registerRecipesForMiningHammers) {
             ModHandler.addShapedRecipe(String.format("mining_hammer_%s", material.toString()),
                     MetaItems.MINING_HAMMER.getStackForm(material),
                     "PIP", "IBI", "fRh",
@@ -219,7 +217,7 @@ public class ToolRecipeHandler {
     }
 
 
-    public static void processDrillHead(OrePrefix drillHead, SolidMaterial solidMaterial) {
+    public static void processDrillHead(OrePrefix drillHead, Material solidMaterial, ToolProperty property) {
         if (ConfigHolder.U.registerRecipesForHighTierDrills) {
             processSimpleElectricToolHead(drillHead, solidMaterial, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV, MetaItems.DRILL_EV, MetaItems.DRILL_IV});
         } else {
@@ -232,7 +230,7 @@ public class ToolRecipeHandler {
                 'S', new UnificationEntry(OrePrefix.plate, Materials.Steel));
     }
 
-    public static void processChainSawHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processChainSawHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleElectricToolHead(toolPrefix, solidMaterial, new MetaToolValueItem[]{MetaItems.CHAINSAW_LV, MetaItems.CHAINSAW_MV, MetaItems.CHAINSAW_HV});
         ModHandler.addShapedRecipe(String.format("chainsaw_head_%s", solidMaterial.toString()),
                 OreDictUnifier.get(toolPrefix, solidMaterial),
@@ -242,7 +240,7 @@ public class ToolRecipeHandler {
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Steel));
     }
 
-    public static void processWrenchHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processWrenchHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleElectricToolHead(toolPrefix, solidMaterial, new MetaToolValueItem[]{MetaItems.WRENCH_LV, MetaItems.WRENCH_MV, MetaItems.WRENCH_HV});
         ModHandler.addShapedRecipe(String.format("wrench_head_%s", solidMaterial.toString()),
                 OreDictUnifier.get(OrePrefix.toolHeadWrench, solidMaterial),
@@ -252,7 +250,7 @@ public class ToolRecipeHandler {
                 'W', new UnificationEntry(OrePrefix.screw, Materials.Steel));
     }
 
-    public static void processBuzzSawHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processBuzzSawHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleElectricToolHead(toolPrefix, solidMaterial, new MetaToolValueItem[]{MetaItems.BUZZSAW});
         ModHandler.addShapedRecipe(String.format("buzzsaw_head_%s", solidMaterial.toString()),
                 OreDictUnifier.get(OrePrefix.toolHeadBuzzSaw, solidMaterial),
@@ -260,17 +258,15 @@ public class ToolRecipeHandler {
                 'X', new UnificationEntry(OrePrefix.plate, solidMaterial));
     }
 
-    public static void processScrewdriverHead(OrePrefix toolPrefix, Material material) {
-        if (!(material instanceof SolidMaterial)) return;
-        SolidMaterial solidMaterial = (SolidMaterial) material;
-        processSimpleElectricToolHead(toolPrefix, solidMaterial, new MetaToolValueItem[]{MetaItems.SCREWDRIVER_LV});
-        ModHandler.addShapedRecipe(String.format("screwdriver_head_%s", solidMaterial.toString()),
-                OreDictUnifier.get(OrePrefix.toolHeadScrewdriver, solidMaterial),
+    public static void processScrewdriverHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleElectricToolHead(toolPrefix, material, new MetaToolValueItem[]{MetaItems.SCREWDRIVER_LV});
+        ModHandler.addShapedRecipe(String.format("screwdriver_head_%s", material.toString()),
+                OreDictUnifier.get(OrePrefix.toolHeadScrewdriver, material),
                 "fX", "Xh",
-                'X', new UnificationEntry(OrePrefix.stick, solidMaterial));
+                'X', new UnificationEntry(OrePrefix.stick, material));
     }
 
-    public static void addSimpleToolRecipe(OrePrefix toolPrefix, SolidMaterial solidMaterial, MetaToolValueItem toolItem, UnificationEntry plate, UnificationEntry ingot, Object[] recipe) {
+    public static void addSimpleToolRecipe(OrePrefix toolPrefix, Material solidMaterial, MetaToolValueItem toolItem, UnificationEntry plate, UnificationEntry ingot, Object[] recipe) {
         ArrayList<Character> usedChars = new ArrayList<>();
         for (Object object : recipe) {
             if (!(object instanceof String))
@@ -292,7 +288,7 @@ public class ToolRecipeHandler {
                 OreDictUnifier.get(toolPrefix, solidMaterial), recipe);
     }
 
-    public static void processAxeHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processAxeHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.AXE, "PIh", "P  ", "f  ");
 
         int voltageMultiplier = getVoltageMultiplier(solidMaterial);
@@ -307,7 +303,7 @@ public class ToolRecipeHandler {
 
     }
 
-    public static void processHoeHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processHoeHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.HOE, "PIh", "f  ");
 
         int voltageMultiplier = getVoltageMultiplier(solidMaterial);
@@ -321,7 +317,7 @@ public class ToolRecipeHandler {
                 .buildAndRegister();
     }
 
-    public static void processPickaxeHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processPickaxeHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.PICKAXE, "PII", "f h");
 
         int voltageMultiplier = getVoltageMultiplier(solidMaterial);
@@ -336,7 +332,7 @@ public class ToolRecipeHandler {
 
     }
 
-    public static void processSawHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processSawHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.SAW, "PP", "fh");
 
         int voltageMultiplier = getVoltageMultiplier(solidMaterial);
@@ -350,11 +346,11 @@ public class ToolRecipeHandler {
                 .buildAndRegister();
     }
 
-    public static void processSenseHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processSenseHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.SENSE, "PPI", "hf ");
     }
 
-    public static void processShovelHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processShovelHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.SHOVEL, "fPh");
 
         int voltageMultiplier = getVoltageMultiplier(solidMaterial);
@@ -368,7 +364,7 @@ public class ToolRecipeHandler {
                 .buildAndRegister();
     }
 
-    public static void processSwordHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processSwordHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.SWORD, " P ", "fPh");
 
         int voltageMultiplier = getVoltageMultiplier(solidMaterial);
@@ -382,15 +378,15 @@ public class ToolRecipeHandler {
                 .buildAndRegister();
     }
 
-    public static void processSpadeHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processSpadeHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.UNIVERSAL_SPADE, "PPP", "IhI", " I ");
     }
 
-    public static void processHammerHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processHammerHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         if (!solidMaterial.hasFlag(NO_WORKING)) {
             processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.HARD_HAMMER, "II ", "IIh", "II ");
         }
-        SolidMaterial handleMaterial = Materials.Wood;
+        Material handleMaterial = Materials.Wood;
         if (!solidMaterial.hasFlag(NO_WORKING)) {
             ModHandler.addShapedRecipe(String.format("hammer_%s", solidMaterial.toString()),
                     MetaItems.HARD_HAMMER.getStackForm(solidMaterial),
@@ -399,7 +395,7 @@ public class ToolRecipeHandler {
                     'S', new UnificationEntry(OrePrefix.stick, handleMaterial));
         }
 
-        if (!solidMaterial.hasFlag(DustMaterial.MatFlags.NO_SMASHING)) {
+        if (!solidMaterial.hasFlag(NO_SMASHING)) {
             int voltageMultiplier = getVoltageMultiplier(solidMaterial);
 
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
@@ -412,10 +408,10 @@ public class ToolRecipeHandler {
         }
     }
 
-    public static void processFileHead(OrePrefix toolPrefix, SolidMaterial solidMaterial) {
+    public static void processFileHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
         processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.FILE, " I ", " I ", " fh");
-        if (solidMaterial instanceof IngotMaterial) {
-            SolidMaterial handleMaterial = Materials.Wood;
+        if (solidMaterial.getProperties().getIngotProperty() != null) {
+            Material handleMaterial = Materials.Wood;
             ModHandler.addShapedRecipe(String.format("file_%s", solidMaterial),
                     MetaItems.FILE.getStackForm(solidMaterial),
                     "P", "P", "S",
@@ -436,8 +432,7 @@ public class ToolRecipeHandler {
     }
 
     private static int getVoltageMultiplier(Material material) {
-        return material instanceof IngotMaterial && ((IngotMaterial) material)
-                .blastFurnaceTemperature >= 2800 ? 32 : 8;
+        BlastProperty prop = material.getProperties().getBlastProperty();
+        return prop != null && prop.getBlastTemperature() > 2800 ? 32 : 8;
     }
-
 }

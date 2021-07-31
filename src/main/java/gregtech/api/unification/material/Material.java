@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
+import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.Properties;
 import gregtech.api.unification.material.type.MaterialFlag;
 import gregtech.api.unification.material.type.MaterialFlags;
@@ -18,6 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 
 //@ZenClass("mods.gregtech.material.Material")
 //@ZenRegister
@@ -136,6 +138,10 @@ public class Material implements Comparable<Material> {
     //@ZenMethod("hasFlagRaw")
     public boolean hasFlag(MaterialFlag flag) {
         return flags.hasFlag(flag);
+    }
+
+    public boolean hasFlags(MaterialFlag... flags) {
+        return Arrays.stream(flags).allMatch(this::hasFlag);
     }
 
     //@ZenMethod
@@ -311,6 +317,14 @@ public class Material implements Comparable<Material> {
     @Nonnull
     public Properties getProperties() {
         return properties;
+    }
+
+    public IMaterialProperty getProperty(IMaterialProperty dummy) {
+        return properties.getProperty(dummy);
+    }
+
+    public boolean hasProperty(IMaterialProperty dummy) {
+        return properties.hasProperty(dummy);
     }
 
     protected void verifyMaterial() {
