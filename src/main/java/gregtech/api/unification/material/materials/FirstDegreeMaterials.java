@@ -1,9 +1,7 @@
 package gregtech.api.unification.material.materials;
 
 import gregtech.api.unification.material.MaterialBuilder;
-import gregtech.api.unification.stack.MaterialStack;
 
-import static com.google.common.collect.ImmutableList.of;
 import static gregtech.api.unification.material.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.type.MaterialFlags.*;
@@ -202,121 +200,822 @@ public class FirstDegreeMaterials {
                 .components(Silver, 1, Gold, 1)
                 .build();
 
+        Emerald = new MaterialBuilder(152, "emerald")
+                .gem().ore()
+                .color(0x50FF50).iconSet(EMERALD)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
+                .components(Beryllium, 3, Aluminium, 2, Silicon, 6, Oxygen, 18)
+                .toolStats(10.0f, 2.0f, 368)
+                .build();
 
+        Galena = new MaterialBuilder(153, "galena")
+                .dust(3).ore()
+                .color(0x643C64)
+                .flags(NO_SMELTING)
+                .components(Lead, 3, Silver, 3, Sulfur, 2)
+                .build();
 
+        Garnierite = new MaterialBuilder(154, "garnierite")
+                .dust(3).ore()
+                .color(0x32C846).iconSet(METALLIC)
+                .components(Nickel, 1, Oxygen, 1)
+                .build();
 
+        GreenSapphire = new MaterialBuilder(155, "green_sapphire")
+                .gem().ore()
+                .color(0x64C882).iconSet(GEM_HORIZONTAL)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .components(Aluminium, 2, Oxygen, 3)
+                .toolStats(8.0f, 3.0f, 368)
+                .build();
 
+        Grossular = new MaterialBuilder(156, "grossular")
+                .dust(1).ore()
+                .color(0xC86400).iconSet(ROUGH)
+                .components(Calcium, 3, Aluminium, 2, Silicon, 3, Oxygen, 12)
+                .build();
 
+        Ice = new MaterialBuilder(157, "ice")
+                .dust(0).fluid()
+                .color(0xC8C8FF).iconSet(SHINY)
+                .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
+                .components(Hydrogen, 2, Oxygen, 1)
+                .build();
 
+        Ilmenite = new MaterialBuilder(158, "ilmenite")
+                .dust(3).ore()
+                .color(0x463732).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Iron, 1, Titanium, 1, Oxygen, 3)
+                .build();
 
+        Rutile = new MaterialBuilder(159, "rutile")
+                .gem().ore()
+                .color(0xD40D5C).iconSet(GEM_HORIZONTAL)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Titanium, 1, Oxygen, 2)
+                .build();
 
+        Bauxite = new MaterialBuilder(160, "bauxite")
+                .dust(1).ore()
+                .color(0xC86400)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Rutile, 2, Aluminium, 16, Hydrogen, 10, Oxygen, 11)
+                .build();
 
+        Invar = new MaterialBuilder(161, "invar")
+                .ingot().fluid()
+                .color(0xB4B478).iconSet(METALLIC)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_FRAME)
+                .components(Iron, 2, Nickel, 1)
+                .toolStats(7.0f, 3.0f, 512)
+                .build();
 
+        Kanthal = new MaterialBuilder(162, "kanthal")
+                .ingot().fluid()
+                .color(0xC2D2DF).iconSet(METALLIC)
+                .flags(EXT_METAL, GENERATE_SPRING)
+                .components(Iron, 1, Aluminium, 1, Chrome, 1)
+                .blastTemp(1800)
+                .build();
 
-        Emerald = new MaterialBuilder(152, "emerald", 0x50FF50, EMERALD, 2, of(new MaterialStack(Beryllium, 3), new MaterialStack(Aluminium, 2), new MaterialStack(Silicon, 6), new MaterialStack(Oxygen, 18)), STD_GEM | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, 10.0F, 2.0f, 368);
-        Galena = new MaterialBuilder(153, "galena", 0x643C64, DULL, 3, of(new MaterialStack(Lead, 3), new MaterialStack(Silver, 3), new MaterialStack(Sulfur, 2)), GENERATE_ORE | NO_SMELTING);
-        Garnierite = new MaterialBuilder(154, "garnierite", 0x32C846, METALLIC, 3, of(new MaterialStack(Nickel, 1), new MaterialStack(Oxygen, 1)), GENERATE_ORE);
-        GreenSapphire = new MaterialBuilder(155, "green_sapphire", 0x64C882, GEM_HORIZONTAL, 2, of(new MaterialStack(Aluminium, 2), new MaterialStack(Oxygen, 3)), GENERATE_ORE | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT | GENERATE_LENS | GENERATE_PLATE, 8.0F, 3.0f, 368);
-        Grossular = new MaterialBuilder(156, "grossular", 0xC86400, ROUGH, 1, of(new MaterialStack(Calcium, 3), new MaterialStack(Aluminium, 2), new MaterialStack(Silicon, 3), new MaterialStack(Oxygen, 12)), GENERATE_ORE);
-        Ice = new MaterialBuilder(157, "ice", 0xC8C8FF, SHINY, 0, of(new MaterialStack(Hydrogen, 2), new MaterialStack(Oxygen, 1)), NO_SMASHING | NO_RECYCLING | SMELT_INTO_FLUID | EXCLUDE_BLOCK_CRAFTING_RECIPES | DISABLE_DECOMPOSITION);
-        Ilmenite = new MaterialBuilder(158, "ilmenite", 0x463732, METALLIC, 3, of(new MaterialStack(Iron, 1), new MaterialStack(Titanium, 1), new MaterialStack(Oxygen, 3)), GENERATE_ORE | DISABLE_DECOMPOSITION);
-        Rutile = new MaterialBuilder(159, "rutile", 0xD40D5C, GEM_HORIZONTAL, 2, of(new MaterialStack(Titanium, 1), new MaterialStack(Oxygen, 2)), STD_GEM | DISABLE_DECOMPOSITION);
-        Bauxite = new MaterialBuilder(160, "bauxite", 0xC86400, DULL, 1, of(new MaterialStack(Rutile, 2), new MaterialStack(Aluminium, 16), new MaterialStack(Hydrogen, 10), new MaterialStack(Oxygen, 11)), GENERATE_ORE | DISABLE_DECOMPOSITION);
-        Invar = new MaterialBuilder(161, "invar", 0xB4B478, METALLIC, 2, of(new MaterialStack(Iron, 2), new MaterialStack(Nickel, 1)), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_FRAME, 7.0F, 3.0f, 512);
-        Kanthal = new MaterialBuilder(162, "kanthal", 0xC2D2DF, METALLIC, 2, of(new MaterialStack(Iron, 1), new MaterialStack(Aluminium, 1), new MaterialStack(Chrome, 1)), EXT_METAL| GENERATE_SPRING, null, 1800);
-        Lazurite = new MaterialBuilder(163, "lazurite", 0x6478FF, LAPIS, 1, of(new MaterialStack(Aluminium, 6), new MaterialStack(Silicon, 6), new MaterialStack(Calcium, 8), new MaterialStack(Sodium, 8)), GENERATE_PLATE | GENERATE_ORE | NO_SMASHING | NO_SMELTING | CRYSTALLIZABLE | GENERATE_ROD | DECOMPOSITION_BY_ELECTROLYZING);
-        Magnalium = new MaterialBuilder(164, "magnalium", 0xC8BEFF, DULL, 2, of(new MaterialStack(Magnesium, 1), new MaterialStack(Aluminium, 2)), EXT2_METAL | GENERATE_LONG_ROD, 6.0F, 2.0f, 256);
-        Magnesite = new MaterialBuilder(165, "magnesite", 0xFAFAB4, METALLIC, 2, of(new MaterialStack(Magnesium, 1), new MaterialStack(Carbon, 1), new MaterialStack(Oxygen, 3)), GENERATE_ORE);
-        Magnetite = new MaterialBuilder(166, "magnetite", 0x1E1E1E, METALLIC, 2, of(new MaterialStack(Iron, 3), new MaterialStack(Oxygen, 4)), GENERATE_ORE);
-        Molybdenite = new MaterialBuilder(167, "molybdenite", 0x191919, METALLIC, 2, of(new MaterialStack(Molybdenum, 1), new MaterialStack(Sulfur, 2)), GENERATE_ORE);
-        Nichrome = new MaterialBuilder(168, "nichrome", 0xCDCEF6, METALLIC, 2, of(new MaterialStack(Nickel, 4), new MaterialStack(Chrome, 1)), EXT_METAL| GENERATE_SPRING, null, 2700);
-        NiobiumNitride = new MaterialBuilder(169, "niobium_nitride", 0x1D291D, DULL, 2, of(new MaterialStack(Niobium, 1), new MaterialStack(Nitrogen, 1)), EXT_METAL, null, 2573);
-        NiobiumTitanium = new MaterialBuilder(170, "niobium_titanium", 0x1D1D29, DULL, 2, of(new MaterialStack(Niobium, 1), new MaterialStack(Titanium, 1)), EXT2_METAL, null, 4500);
-        Obsidian = new MaterialBuilder(171, "obsidian", 0x503264, DULL, 3, of(new MaterialStack(Magnesium, 1), new MaterialStack(Iron, 1), new MaterialStack(Silicon, 2), new MaterialStack(Oxygen, 8)), NO_SMASHING | EXCLUDE_BLOCK_CRAFTING_RECIPES);
-        Phosphate = new MaterialBuilder(172, "phosphate", 0xFFFF00, DULL, 1, of(new MaterialStack(Phosphorus, 1), new MaterialStack(Oxygen, 4)), GENERATE_ORE | NO_SMASHING | NO_SMELTING | FLAMMABLE | EXPLOSIVE);
-        PigIron = new MaterialBuilder(173, "pig_iron", 0xC8B4B4, METALLIC, 2, of(new MaterialStack(Iron, 1)), EXT_METAL | GENERATE_RING, 6.0F, 4.0f, 384);
-        Polyethylene = new MaterialBuilder(174, "plastic", 0xC8C8C8, DULL, 1, of(new MaterialStack(Carbon, 1), new MaterialStack(Hydrogen, 2)), GENERATE_PLATE | GENERATE_FOIL | FLAMMABLE | NO_SMASHING | SMELT_INTO_FLUID | DISABLE_DECOMPOSITION); //todo add polyethylene oredicts
-        Epoxy = new MaterialBuilder(175, "epoxy", 0xC88C14, DULL, 1, of(new MaterialStack(Carbon, 21), new MaterialStack(Hydrogen, 25), new MaterialStack(Chlorine, 1), new MaterialStack(Oxygen, 5)), EXT2_METAL | DISABLE_DECOMPOSITION | NO_SMASHING);
-        Polysiloxane = new MaterialBuilder(176, "polysiloxane", 0xDCDCDC, DULL, 1, of(new MaterialStack(Carbon, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Silicon, 2), new MaterialStack(Oxygen, 1)), GENERATE_PLATE | FLAMMABLE | NO_SMASHING | SMELT_INTO_FLUID | DISABLE_DECOMPOSITION);
-        Polycaprolactam = new MaterialBuilder(177, "polycaprolactam", 0x323232, DULL, 1, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 11), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 1)), GENERATE_PLATE | DISABLE_DECOMPOSITION | NO_SMASHING);
-        Polytetrafluoroethylene = new MaterialBuilder(178, "polytetrafluoroethylene", 0x646464, DULL, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Fluorine, 4)), GENERATE_PLATE | GENERATE_FRAME | SMELT_INTO_FLUID  | DISABLE_DECOMPOSITION | NO_SMASHING);
-        Powellite = new MaterialBuilder(179, "powellite", 0xFFFF00, DULL, 2, of(new MaterialStack(Calcium, 1), new MaterialStack(Molybdenum, 1), new MaterialStack(Oxygen, 4)), GENERATE_ORE);
-        Pyrite = new MaterialBuilder(180, "pyrite", 0x967828, ROUGH, 1, of(new MaterialStack(Iron, 1), new MaterialStack(Sulfur, 2)), GENERATE_ORE);
-        Pyrolusite = new MaterialBuilder(181, "pyrolusite", 0x9696AA, DULL, 2, of(new MaterialStack(Manganese, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE);
-        Pyrope = new MaterialBuilder(182, "pyrope", 0x783264, METALLIC, 2, of(new MaterialStack(Aluminium, 2), new MaterialStack(Magnesium, 3), new MaterialStack(Silicon, 3), new MaterialStack(Oxygen, 12)), GENERATE_ORE);
-        RockSalt = new MaterialBuilder(183, "rock_salt", 0xF0C8C8, FINE, 1, of(new MaterialStack(Potassium, 1), new MaterialStack(Chlorine, 1)), GENERATE_ORE | NO_SMASHING);
-        Rubber = new MaterialBuilder(184, "rubber", 0x000000, SHINY, 0, of(new MaterialStack(Carbon, 5), new MaterialStack(Hydrogen, 8)), GENERATE_PLATE | GENERATE_GEAR | GENERATE_RING | FLAMMABLE | NO_SMASHING | GENERATE_RING | DISABLE_DECOMPOSITION);
-        Ruby = new MaterialBuilder(185, "ruby", 0xFF6464, RUBY, 2, of(new MaterialStack(Chrome, 1), new MaterialStack(Aluminium, 2), new MaterialStack(Oxygen, 3)), STD_GEM | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT, 8.5F, 3.0f, 256);
-        Salt = new MaterialBuilder(186, "salt", 0xFAFAFA, FINE, 1, of(new MaterialStack(Sodium, 1), new MaterialStack(Chlorine, 1)), GENERATE_ORE | NO_SMASHING);
-        Saltpeter = new MaterialBuilder(187, "saltpeter", 0xE6E6E6, FINE, 1, of(new MaterialStack(Potassium, 1), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 3)), GENERATE_ORE | NO_SMASHING | NO_SMELTING | FLAMMABLE);
-        Sapphire = new MaterialBuilder(188, "sapphire", 0x6464C8, GEM_VERTICAL, 2, of(new MaterialStack(Aluminium, 2), new MaterialStack(Oxygen, 3)), STD_GEM | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT, null, 7.5F, 4.0f, 256);
-        Scheelite = new MaterialBuilder(189, "scheelite", 0xC88C14, DULL, 3, of(new MaterialStack(Tungsten, 1), new MaterialStack(Calcium, 2), new MaterialStack(Oxygen, 4)), GENERATE_ORE | DECOMPOSITION_REQUIRES_HYDROGEN);
-        Sodalite = new MaterialBuilder(190, "sodalite", 0x1414FF, LAPIS, 1, of(new MaterialStack(Aluminium, 3), new MaterialStack(Silicon, 3), new MaterialStack(Sodium, 4), new MaterialStack(Chlorine, 1)), GENERATE_ORE | GENERATE_PLATE | GENERATE_ROD | NO_SMASHING | NO_SMELTING | CRYSTALLIZABLE | GENERATE_ROD | DECOMPOSITION_BY_ELECTROLYZING);
-        Brick = new MaterialBuilder(191, "brick", 0x9B5643, ROUGH, 1, of(new MaterialStack(Clay, 1)), EXCLUDE_BLOCK_CRAFTING_RECIPES | DECOMPOSITION_BY_CENTRIFUGING);
-        Fireclay = new MaterialBuilder(192, "fireclay", 0xADA09B, ROUGH, 2, of(new MaterialStack(Clay, 1), new MaterialStack(Brick, 1)), DECOMPOSITION_BY_CENTRIFUGING);
-        Coke = new MaterialBuilder(193, "coke", 0x666666, LIGNITE, 1, of(new MaterialStack(Carbon, 1)), FLAMMABLE | NO_SMELTING | NO_SMASHING | MORTAR_GRINDABLE);
+        Lazurite = new MaterialBuilder(163, "lazurite")
+                .gem(1).ore()
+                .color(0x6478FF).iconSet(LAPIS)
+                .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_ROD, DECOMPOSITION_BY_ELECTROLYZING)
+                .components(Aluminium, 6, Silicon, 6, Calcium, 8, Sodium, 8)
+                .build();
 
+        Magnalium = new MaterialBuilder(164, "magnalium")
+                .ingot().fluid()
+                .color(0xC8BEFF)
+                .flags(EXT2_METAL)
+                .components(Magnesium, 1, Aluminium, 2)
+                .toolStats(6.0f, 2.0f, 256)
+                .build();
 
-        SolderingAlloy = new MaterialBuilder(194, "soldering_alloy", 0x9696A0, DULL, 1, of(new MaterialStack(Tin, 9), new MaterialStack(Antimony, 1)), EXT_METAL | GENERATE_FINE_WIRE, null);
-        Spessartine = new MaterialBuilder(195, "spessartine", 0xFF6464, DULL, 2, of(new MaterialStack(Aluminium, 2), new MaterialStack(Manganese, 3), new MaterialStack(Silicon, 3), new MaterialStack(Oxygen, 12)), GENERATE_ORE);
-        Sphalerite = new MaterialBuilder(196, "sphalerite", 0xFFFFFF, DULL, 1, of(new MaterialStack(Zinc, 1), new MaterialStack(Sulfur, 1)), GENERATE_ORE | DISABLE_DECOMPOSITION);
-        StainlessSteel = new MaterialBuilder(197, "stainless_steel", 0xC8C8DC, SHINY, 2, of(new MaterialStack(Iron, 6), new MaterialStack(Chrome, 1), new MaterialStack(Manganese, 1), new MaterialStack(Nickel, 1)), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_FRAME | GENERATE_LONG_ROD, null, 7.0F, 4.0f, 480, 1700);
-        Steel = new MaterialBuilder(198, "steel", 0x808080, METALLIC, 2, of(new MaterialStack(Iron, 1)), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_DENSE | DISABLE_DECOMPOSITION | GENERATE_FRAME | GENERATE_LONG_ROD, null, 6.0F, 3.0f, 512, 1000);
-        Stibnite = new MaterialBuilder(199, "stibnite", 0x464646, METALLIC, 2, of(new MaterialStack(Antimony, 2), new MaterialStack(Sulfur, 3)), GENERATE_ORE | DECOMPOSITION_BY_CENTRIFUGING);
-        Tanzanite = new MaterialBuilder(200, "tanzanite", 0x4000C8, GEM_VERTICAL, 2, of(new MaterialStack(Calcium, 2), new MaterialStack(Aluminium, 3), new MaterialStack(Silicon, 3), new MaterialStack(Hydrogen, 1), new MaterialStack(Oxygen, 13)), EXT_METAL | GENERATE_ORE | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT, null, 7.0F, 2.0f, 256);
-        Tetrahedrite = new MaterialBuilder(201, "tetrahedrite", 0xC82000, DULL, 2, of(new MaterialStack(Copper, 3), new MaterialStack(Antimony, 1), new MaterialStack(Sulfur, 3), new MaterialStack(Iron, 1)), GENERATE_ORE);
-        TinAlloy = new MaterialBuilder(202, "tin_alloy", 0xC8C8C8, METALLIC, 2, of(new MaterialStack(Tin, 1), new MaterialStack(Iron, 1)), EXT2_METAL, null);
-        Topaz = new MaterialBuilder(203, "topaz", 0xFF8000, GEM_HORIZONTAL, 3, of(new MaterialStack(Aluminium, 2), new MaterialStack(Silicon, 1), new MaterialStack(Fluorine, 2), new MaterialStack(Hydrogen, 2), new MaterialStack(Oxygen, 6)), STD_GEM | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT, null, 7.0F, 2.0f, 256);
-        Tungstate = new MaterialBuilder(204, "tungstate", 0x373223, DULL, 3, of(new MaterialStack(Tungsten, 1), new MaterialStack(Lithium, 2), new MaterialStack(Oxygen, 4)), GENERATE_ORE | DECOMPOSITION_REQUIRES_HYDROGEN, null);
-        Ultimet = new MaterialBuilder(205, "ultimet", 0xB4B4E6, SHINY, 4, of(new MaterialStack(Cobalt, 5), new MaterialStack(Chrome, 2), new MaterialStack(Nickel, 1), new MaterialStack(Molybdenum, 1)), EXT2_METAL, null, 9.0F, 4.0f, 2048, 2700);
-        Uraninite = new MaterialBuilder(206, "uraninite", 0x232323, METALLIC, 3, of(new MaterialStack(Uranium238, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE | DISABLE_DECOMPOSITION).setFormula("UO2", true);
-        Uvarovite = new MaterialBuilder(207, "uvarovite", 0xB4FFB4, DIAMOND, 2, of(new MaterialStack(Calcium, 3), new MaterialStack(Chrome, 2), new MaterialStack(Silicon, 3), new MaterialStack(Oxygen, 12)), 0);
-        VanadiumGallium = new MaterialBuilder(208, "vanadium_gallium", 0x80808C, SHINY, 2, of(new MaterialStack(Vanadium, 3), new MaterialStack(Gallium, 1)), STD_METAL | GENERATE_FOIL | GENERATE_ROD, null, 4500);
-        WroughtIron = new MaterialBuilder(209, "wrought_iron", 0xC8B4B4, METALLIC, 2, of(new MaterialStack(Iron, 1)), EXT2_METAL | MORTAR_GRINDABLE | GENERATE_RING | GENERATE_LONG_ROD | DISABLE_DECOMPOSITION, null, 6.0F, 3.5f, 384);
-        Wulfenite = new MaterialBuilder(210, "wulfenite", 0xFF8000, DULL, 3, of(new MaterialStack(Lead, 1), new MaterialStack(Molybdenum, 1), new MaterialStack(Oxygen, 4)), GENERATE_ORE);
-        YellowLimonite = new MaterialBuilder(211, "yellow_limonite", 0xC8C800, METALLIC, 2, of(new MaterialStack(Iron, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Oxygen, 2)), GENERATE_ORE | DECOMPOSITION_BY_CENTRIFUGING);
-        YttriumBariumCuprate = new MaterialBuilder(212, "yttrium_barium_cuprate", 0x504046, METALLIC, 2, of(new MaterialStack(Yttrium, 1), new MaterialStack(Barium, 2), new MaterialStack(Copper, 3), new MaterialStack(Oxygen, 7)), EXT_METAL | GENERATE_FOIL | GENERATE_FINE_WIRE, null, 4500);
-        NetherQuartz = new MaterialBuilder(213, "nether_quartz", 0xE6D2D2, QUARTZ, 1, of(), STD_SOLID | NO_SMELTING | CRYSTALLIZABLE | GENERATE_ORE | EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES);
-        CertusQuartz = new MaterialBuilder(214, "certus_quartz", 0xD2D2E6, QUARTZ, 1, of(), STD_SOLID | NO_SMELTING | CRYSTALLIZABLE | GENERATE_ORE);
-        Quartzite = new MaterialBuilder(215, "quartzite", 0xD2E6D2, QUARTZ, 1, of(), NO_SMELTING | CRYSTALLIZABLE | GENERATE_ORE);
-        Graphite = new MaterialBuilder(216, "graphite", 0x808080, DULL, 2, of(), GENERATE_PLATE | GENERATE_ORE | NO_SMELTING | FLAMMABLE);
-        Graphene = new MaterialBuilder(217, "graphene", 0x808080, SHINY, 2, of(), GENERATE_PLATE | GENERATE_FOIL);
-        Jasper = new MaterialBuilder(218, "jasper", 0xC85050, EMERALD, 2, of(), STD_GEM | NO_SMELTING | HIGH_SIFTER_OUTPUT);
-        Osmiridium = new MaterialBuilder(219, "osmiridium", 0x6464FF, METALLIC, 3, of(new MaterialStack(Iridium, 3), new MaterialStack(Osmium, 1)), EXT2_METAL, null, 9.0F, 3.0f, 3152, 2500);
-        Tenorite = new MaterialBuilder(220, "tenorite", 0x606060, DULL, 1, of(new MaterialStack(Copper, 1), new MaterialStack(Oxygen, 1)), GENERATE_ORE);
-        Cuprite = new MaterialBuilder(221, "cuprite", 0x770000, RUBY, 2, of(new MaterialStack(Copper, 2), new MaterialStack(Oxygen, 1)), GENERATE_ORE);
-        Bornite = new MaterialBuilder(222, "bornite", 0x97662B, METALLIC, 1, of(new MaterialStack(Copper, 5), new MaterialStack(Iron, 1), new MaterialStack(Sulfur, 4)), GENERATE_ORE);
-        Chalcocite = new MaterialBuilder(223, "chalcocite", 0x353535, GEM_VERTICAL, 2, of(new MaterialStack(Copper, 2), new MaterialStack(Sulfur, 1)), GENERATE_ORE);
-        Enargite = new MaterialBuilder(224, "enargite", 0xBBBBBB, METALLIC, 2, of(new MaterialStack(Copper, 3), new MaterialStack(Arsenic, 1), new MaterialStack(Sulfur, 4)), GENERATE_ORE);
-        Tennantite = new MaterialBuilder(225, "tennantite", 0x909090, METALLIC, 2, of(new MaterialStack(Copper, 12), new MaterialStack(Arsenic, 4), new MaterialStack(Sulfur, 13)), GENERATE_ORE);
+        Magnesite = new MaterialBuilder(165, "magnesite")
+                .dust().ore()
+                .color(0xFAFAB4).iconSet(METALLIC)
+                .components(Magnesium, 1, Carbon, 1, Oxygen, 3)
+                .build();
 
-        GalliumArsenide = new MaterialBuilder(226, "gallium_arsenide", 0xA0A0A0, DULL, 1, of(new MaterialStack(Arsenic, 1), new MaterialStack(Gallium, 1)), DECOMPOSITION_BY_CENTRIFUGING | GENERATE_PLATE, null, 1200);
-        Potash = new MaterialBuilder(227, "potash", 0x784137, DULL, 1, of(new MaterialStack(Potassium, 2), new MaterialStack(Oxygen, 1)), 0);
-        SodaAsh = new MaterialBuilder(228, "soda_ash", 0xDCDCFF, DULL, 1, of(new MaterialStack(Sodium, 2), new MaterialStack(Carbon, 1), new MaterialStack(Oxygen, 3)), 0);
-        IndiumGalliumPhosphide = new MaterialBuilder(229, "indium_gallium_phosphide", 0xA08CBE, DULL, 1, of(new MaterialStack(Indium, 1), new MaterialStack(Gallium, 1), new MaterialStack(Phosphorus, 1)), DECOMPOSITION_BY_CENTRIFUGING | GENERATE_PLATE);
-        NickelZincFerrite = new MaterialBuilder(230, "nickel_zinc_ferrite", 0x3C3C3C, METALLIC, 0, of(new MaterialStack(Nickel, 1), new MaterialStack(Zinc, 1), new MaterialStack(Iron, 4), new MaterialStack(Oxygen, 8)), EXT_METAL | GENERATE_RING, null, 1500);
-        SiliconDioxide = new MaterialBuilder(231, "silicon_dioxide", 0xC8C8C8, QUARTZ, 1, of(new MaterialStack(Silicon, 1), new MaterialStack(Oxygen, 2)), NO_SMASHING | NO_SMELTING | CRYSTALLIZABLE);
-        MagnesiumChloride = new MaterialBuilder(232, "magnesium_chloride", 0xD40D5C, DULL, 1, of(new MaterialStack(Magnesium, 1), new MaterialStack(Chlorine, 2)), 0);
-        SodiumSulfide = new MaterialBuilder(233, "sodium_sulfide", 0xFFE680, DULL, 1, of(new MaterialStack(Sodium, 2), new MaterialStack(Sulfur, 1)), 0);
-        PhosphorusPentoxide = new MaterialBuilder(234, "phosphorus_pentoxide", 0xDCDC00, DULL, 1, of(new MaterialStack(Phosphorus, 4), new MaterialStack(Oxygen, 10)), DECOMPOSITION_BY_CENTRIFUGING );
-        Quicklime = new MaterialBuilder(235, "quicklime", 0xF0F0F0, DULL, 1, of(new MaterialStack(Calcium, 1), new MaterialStack(Oxygen, 1)), 0);
-        SodiumBisulfate = new MaterialBuilder(236, "sodium_bisulfate", 0x004455, DULL, 1, of(new MaterialStack(Sodium, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Sulfur, 1), new MaterialStack(Oxygen, 4)), DISABLE_DECOMPOSITION);
-        FerriteMixture = new MaterialBuilder(237, "ferrite_mixture", 0xB4B4B4, METALLIC, 1, of(new MaterialStack(Nickel, 1), new MaterialStack(Zinc, 1), new MaterialStack(Iron, 4)), DECOMPOSITION_BY_CENTRIFUGING );
-        Magnesia = new MaterialBuilder(238, "magnesia", 0x887878, DULL, 1, of(new MaterialStack(Magnesium, 1), new MaterialStack(Oxygen, 1)), 0);
-        PlatinumGroupSludge = new MaterialBuilder(239, "platinum_group_sludge", 0x001E00, FINE, 1, of(), DISABLE_DECOMPOSITION);
-        HydratedCoal = new MaterialBuilder(240, "hydrated_coal", 0x464664, ROUGH, 1, of(new MaterialStack(Coal, 8), new MaterialStack(Water, 1)), 0);
-        SodiumBicarbonate = new MaterialBuilder(241, "sodium_bicarbonate", 0x565b96, ROUGH, 1, of(new MaterialStack(Sodium, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Carbon, 1), new MaterialStack(Oxygen, 3)), 0);
-        PotassiumDichromate = new MaterialBuilder(242, "potassium_dichromate", 0xFF084E, DULL, 1, of(new MaterialStack(Potassium, 2), new MaterialStack(Chrome, 2), new MaterialStack(Oxygen, 7)), 0);
-        ChromiumTrioxide = new MaterialBuilder(243, "chromium_trioxide", 0xFFE4E1, DULL, 1, of(new MaterialStack(Chrome, 1), new MaterialStack(Oxygen, 3)), 0);
-        AntimonyTrioxide = new MaterialBuilder(244, "antimony_trioxide", 0xE6E6F0, DULL, 1, of(new MaterialStack(Antimony, 2), new MaterialStack(Oxygen, 3)),0);
-        Zincite = new MaterialBuilder(245, "zincite", 0xFFFFF5, DULL, 1, of(new MaterialStack(Zinc, 1), new MaterialStack(Oxygen, 1)), 0);
-        CupricOxide = new MaterialBuilder(246, "cupric_oxide", 0x0F0F0F, DULL, 1, of(new MaterialStack(Copper, 1), new MaterialStack(Oxygen, 1)), 0);
-        CobaltOxide = new MaterialBuilder(247, "cobalt_oxide", 0x788000, DULL, 1, of(new MaterialStack(Cobalt, 1), new MaterialStack(Oxygen, 1)), 0);
-        ArsenicTrioxide = new MaterialBuilder(248, "arsenic_trioxide", 0xFFFFFF, ROUGH, 1, of(new MaterialStack(Arsenic, 2), new MaterialStack(Oxygen, 3)),0);
-        Massicot = new MaterialBuilder(249, "massicot", 0xFFDD55, DULL, 1, of(new MaterialStack(Lead, 1), new MaterialStack(Oxygen, 1)), 0);
-        Ferrosilite = new MaterialBuilder(250, "ferrosilite", 0x97632A, DULL, 1, of(new MaterialStack(Iron, 1), new MaterialStack(Silicon, 1), new MaterialStack(Oxygen, 3)), 0);
-        MetalMixture = new MaterialBuilder(251, "metal_mixture", 0x502d16, METALLIC, 1, of(), DISABLE_DECOMPOSITION);
-        SodiumHydroxide = new MaterialBuilder(252, "sodium_hydroxide", 0x003380, DULL, 1, of(new MaterialStack(Sodium, 1), new MaterialStack(Oxygen, 1), new MaterialStack(Hydrogen, 1)), 0);
-        SodiumPersulfate = new MaterialBuilder(253, "sodium_persulfate", 0xFFFFFF, FLUID, of(new MaterialStack(Sodium, 2), new MaterialStack(Sulfur, 2), new MaterialStack(Oxygen, 8)), 0);
+        Magnetite = new MaterialBuilder(166, "magnetite")
+                .dust().ore()
+                .color(0x1E1E1E).iconSet(METALLIC)
+                .components(Iron, 3, Oxygen, 4)
+                .build();
+
+        Molybdenite = new MaterialBuilder(167, "molybdenite")
+                .dust().ore()
+                .color(0x191919).iconSet(METALLIC)
+                .components(Molybdenum, Sulfur, 2)
+                .build();
+
+        Nichrome = new MaterialBuilder(168, "nichrome")
+                .ingot().fluid()
+                .color(0xCDCEF6).iconSet(METALLIC)
+                .flags(EXT_METAL, GENERATE_SPRING)
+                .components(Nickel, 4, Chrome, 1)
+                .blastTemp(2700)
+                .build();
+
+        NiobiumNitride = new MaterialBuilder(169, "niobium_nitride")
+                .ingot().fluid()
+                .color(0x1D291D)
+                .flags(EXT_METAL)
+                .components(Niobium, 1, Nitrogen, 1)
+                .blastTemp(2573)
+                .build();
+
+        NiobiumTitanium = new MaterialBuilder(170, "niobium_titanium")
+                .ingot().fluid()
+                .color(0x1D1D29)
+                .flags(EXT2_METAL)
+                .components(Niobium, 1, Titanium, 1)
+                .blastTemp(4500)
+                .build();
+
+        Obsidian = new MaterialBuilder(171, "obsidian")
+                .dust(3)
+                .color(0x503264)
+                .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES)
+                .components(Magnesium, 1, Iron, 1, Silicon, 2, Oxygen, 4)
+                .build();
+
+        Phosphate = new MaterialBuilder(172, "phosphate")
+                .dust(1).ore()
+                .color(0xFFFF00)
+                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE)
+                .components(Phosphorus, Oxygen, 4)
+                .build();
+
+        PigIron = new MaterialBuilder(173, "pig_iron")
+                .ingot().fluid()
+                .color(0xC8B4B4).iconSet(METALLIC)
+                .flags(EXT_METAL, GENERATE_RING)
+                .components(Iron, 1)
+                .toolStats(6.0f, 4.0f, 384)
+                .build();
+
+        SterlingSilver = new MaterialBuilder(174, "sterling_silver")
+                .ingot().fluid()
+                .color(0xFADCE1).iconSet(SHINY)
+                .flags(EXT2_METAL)
+                .components(Copper, 1, Silver, 4)
+                .toolStats(13.0f, 2.0f, 196)
+                .blastTemp(1700)
+                .build();
+
+        RoseGold = new MaterialBuilder(175, "rose_gold")
+                .ingot().fluid()
+                .color(0xFFE61E).iconSet(SHINY)
+                .flags(EXT2_METAL)
+                .components(Copper, 1, Gold, 4)
+                .toolStats(14.0f, 2.0f, 152)
+                .blastTemp(1600)
+                .build();
+
+        BlackBronze = new MaterialBuilder(176, "black_bronze")
+                .ingot().fluid()
+                .color(0x64327D)
+                .flags(EXT2_METAL)
+                .components(Gold, 1, Silver, 1, Copper, 3)
+                .toolStats(12.0f, 2.0f, 256)
+                .blastTemp(2000)
+                .build();
+
+        BismuthBronze = new MaterialBuilder(177, "bismuth_bronze")
+                .ingot().fluid()
+                .color(0x647D7D)
+                .flags(EXT2_METAL)
+                .components(Bismuth, 1, Zinc, 1, Copper, 3)
+                .toolStats(8.0f, 3.0f, 256)
+                .blastTemp(1100)
+                .build();
+
+        Biotite = new MaterialBuilder(178, "biotite")
+                .dust(1)
+                .color(0x141E14).iconSet(METALLIC)
+                .components(Potassium, 1, Magnesium, 3, Aluminium, 3, Fluorine, 2, Silicon, 3, Oxygen, 10)
+                .build();
+
+        Powellite = new MaterialBuilder(179, "powellite")
+                .dust().ore()
+                .color(0xFFFF00)
+                .components(Calcium, 1, Molybdenum, 1, Oxygen, 4)
+                .build();
+
+        Pyrite = new MaterialBuilder(180, "pyrite")
+                .dust(1).ore()
+                .color(0x967828).iconSet(ROUGH)
+                .components(Iron, 1, Sulfur, 2)
+                .build();
+
+        Pyrolusite = new MaterialBuilder(181, "pyrolusite")
+                .dust().ore()
+                .color(0x9696AA)
+                .components(Manganese, 1, Oxygen, 2)
+                .build();
+
+        Pyrope = new MaterialBuilder(182, "pyrope")
+                .dust().ore()
+                .color(0x783264).iconSet(METALLIC)
+                .components(Aluminium, 2, Magnesium, 3, Silicon, 3, Oxygen, 12)
+                .build();
+
+        RockSalt = new MaterialBuilder(183, "rock_salt")
+                .dust(1).ore()
+                .color(0xF0C8C8).iconSet(FINE)
+                .flags(NO_SMASHING)
+                .components(Potassium, 1, Chlorine, 1)
+                .build();
+
+        Rubber = new MaterialBuilder(184, "rubber")
+                .ingot(0).fluid()
+                .color(0x000000).iconSet(SHINY)
+                .flags(GENERATE_GEAR, GENERATE_RING, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
+                .components(Carbon, 5, Hydrogen, 8)
+                .build();
+
+        Ruby = new MaterialBuilder(185, "ruby")
+                .gem().ore()
+                .color(0xFF6464).iconSet(RUBY)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .components(Chrome, 1, Aluminium, 2, Oxygen, 3)
+                .toolStats(8.5f, 3.0f, 256)
+                .build();
+
+        Salt = new MaterialBuilder(186, "salt")
+                .dust(1).ore()
+                .color(0xFAFAFA).iconSet(FINE)
+                .flags(NO_SMASHING)
+                .components(Sodium, 1, Chlorine, 1)
+                .build();
+
+        Saltpeter = new MaterialBuilder(187, "saltpeter")
+                .dust(1).ore()
+                .color(0xE6E6E6).iconSet(FINE)
+                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE)
+                .components(Potassium, 1, Nitrogen, 1, Oxygen, 3)
+                .build();
+
+        Sapphire = new MaterialBuilder(188, "sapphire")
+                .gem().ore()
+                .color(0x6464C8).iconSet(GEM_VERTICAL)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .components(Aluminium, 2, Oxygen, 3)
+                .toolStats(7.5f, 4.0f, 256)
+                .build();
+
+        Scheelite = new MaterialBuilder(189, "scheelite")
+                .dust(3).ore()
+                .color(0xC88C14)
+                .flags(DECOMPOSITION_REQUIRES_HYDROGEN)
+                .components(Tungsten, 1, Calcium, 2, Oxygen, 4)
+                .build();
+
+        Sodalite = new MaterialBuilder(190, "sodalite")
+                .gem(1).ore()
+                .color(0x1414FF).iconSet(LAPIS)
+                .flags(GENERATE_PLATE, GENERATE_ROD, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, DECOMPOSITION_BY_ELECTROLYZING)
+                .components(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1)
+                .build();
+
+        DiamericiumTitanium = new MaterialBuilder(191, "diamericium_titanium")
+                .ingot(4).fluid()
+                .color(0x755280).iconSet(METALLIC)
+                .components(Americium, 2, Titanium, 1)
+                .toolStats(6.0f, 6.0f, 2200)
+                .blastTemp(10400)
+                .build();
+
+        Tantalite = new MaterialBuilder(192, "tantalite")
+                .dust(3).ore()
+                .color(0x915028).iconSet(METALLIC)
+                .components(Manganese, 1, Tantalum, 2, Oxygen, 6)
+                .build();
+
+        Coke = new MaterialBuilder(193, "coke")
+                .gem()
+                .color(0x666666).iconSet(LIGNITE)
+                .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE)
+                .components(Carbon, 1)
+                .build();
+
+        SolderingAlloy = new MaterialBuilder(194, "soldering_alloy")
+                .ingot(1).fluid()
+                .color(0x9696A0)
+                .flags(EXT_METAL, GENERATE_FINE_WIRE)
+                .components(Tin, 9, Antimony, 1)
+                .build();
+
+        Spessartine = new MaterialBuilder(195, "spessarite")
+                .dust().ore()
+                .color(0xFF6464)
+                .components(Aluminium, 2, Manganese, 3, Silicon, 3, Oxygen, 12)
+                .build();
+
+        Sphalerite = new MaterialBuilder(196, "sphalerite")
+                .dust(1).ore()
+                .color(0xFFFFFF)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Zinc, 1, Sulfur)
+                .build();
+
+        StainlessSteel = new MaterialBuilder(197, "stainless_steel")
+                .ingot().fluid()
+                .color(0xC8C8DC).iconSet(SHINY)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_LONG_ROD)
+                .components(Iron, 7, Chrome, 1, Manganese, 1, Nickel, 1)
+                .toolStats(7.0f, 4.0f, 480)
+                .blastTemp(1700)
+                .build();
+
+        Steel = new MaterialBuilder(198, "steel")
+                .ingot().fluid()
+                .color(0x808080).iconSet(METALLIC)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME, GENERATE_LONG_ROD, DISABLE_DECOMPOSITION)
+                .components(Iron, 1)
+                .toolStats(6.0f, 3.0f, 512)
+                .blastTemp(1000)
+                .build();
+
+        Stibnite = new MaterialBuilder(199, "stibnite")
+                .dust().ore()
+                .color(0x464646).iconSet(METALLIC)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Antimony, 2, Sulfur, 3)
+                .build();
+
+        Tanzanite = new MaterialBuilder(200, "tanzanite")
+                .gem().ore()
+                .color(0x4000C8).iconSet(GEM_VERTICAL)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .components(Calcium, 2, Aluminium, 3, Silicon, 3, Hydrogen, 1)
+                .toolStats(7.0f, 2.0f, 256)
+                .build();
+
+        Tetrahedrite = new MaterialBuilder(201, "tetrahedrite")
+                .dust().ore()
+                .color(0xC82000)
+                .components(Copper, 3, Antimony, 1, Sulfur, 3, Iron, 1)
+                .build();
+
+        TinAlloy = new MaterialBuilder(202, "tin_alloy")
+                .ingot().fluid()
+                .color(0xC8C8C8).iconSet(METALLIC)
+                .components(Tin, 1, Iron, 1)
+                .flags(EXT2_METAL)
+                .build();
+
+        Topaz = new MaterialBuilder(203, "topaz")
+                .gem(3).ore()
+                .color(0xFF8000).iconSet(GEM_HORIZONTAL)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .components(Aluminium, 2, Silicon, 1, Fluorine, 1, Hydrogen, 2)
+                .toolStats(7.0f, 2.0f, 256)
+                .build();
+
+        Tungstate = new MaterialBuilder(204, "tungstate")
+                .dust(3).ore()
+                .color(0x373223)
+                .flags(DECOMPOSITION_REQUIRES_HYDROGEN)
+                .components(Tungsten, 1, Lithium, 2, Oxygen, 4)
+                .build();
+
+        Ultimet = new MaterialBuilder(205, "ultimet")
+                .ingot(4).fluid()
+                .color(0xB4B4E6).iconSet(SHINY)
+                .flags(EXT2_METAL)
+                .components(Cobalt, 5, Chrome, 2, Nickel, 1, Molybdenum, 1)
+                .toolStats(9.0f, 4.0f, 2048)
+                .blastTemp(2700)
+                .build();
+
+        Uraninite = new MaterialBuilder(206, "uraninite")
+                .dust(3).ore()
+                .color(0x232323).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Uranium238, 1, Oxygen, 2)
+                .build()
+                .setFormula("UO2", true);
+
+        Uvarovite = new MaterialBuilder(207, "uvarovite")
+                .dust()
+                .color(0xB4FFB4).iconSet(DIAMOND)
+                .components(Calcium, 3, Chrome, 2, Silicon, 3, Oxygen, 12)
+                .build();
+
+        VanadiumGallium = new MaterialBuilder(208, "vanadium_gallium")
+                .ingot().fluid()
+                .color(0x80808C).iconSet(SHINY)
+                .flags(STD_METAL, GENERATE_FOIL, GENERATE_ROD)
+                .components(Vanadium, 3, Gallium, 1)
+                .blastTemp(4500)
+                .build();
+
+        WroughtIron = new MaterialBuilder(209, "wrought_iron")
+                .ingot().fluid()
+                .color(0xC8B4B4).iconSet(METALLIC)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_RING, GENERATE_LONG_ROD, DISABLE_DECOMPOSITION)
+                .components(Iron, 1)
+                .toolStats(6.0f, 3.5f, 384)
+                .build();
+
+        Wulfenite = new MaterialBuilder(210, "wulfenite")
+                .dust(3).ore()
+                .color(0xFF8000)
+                .components(Lead, 1, Molybdenum, 1, Oxygen, 4)
+                .build();
+
+        YellowLimonite = new MaterialBuilder(211, "yellow_limonite")
+                .dust().ore()
+                .color(0xC8C800).iconSet(METALLIC)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Iron, 1, Hydrogen, 1, Oxygen, 2)
+                .build();
+
+        YttriumBariumCuprate = new MaterialBuilder(212, "yttrium_barium_cuprate")
+                .ingot().fluid()
+                .color(0x504046).iconSet(METALLIC)
+                .flags(EXT_METAL, GENERATE_FINE_WIRE)
+                .components(Yttrium, 1, Barium, 2, Copper, 3, Oxygen, 7)
+                .build();
+
+        NetherQuartz = new MaterialBuilder(213, "nether_quartz")
+                .gem(1).ore()
+                .color(0xE6D2D2).iconSet(QUARTZ)
+                .flags(STD_SOLID, NO_SMELTING, CRYSTALLIZABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
+                .components(Silicon, 1, Oxygen, 2)
+                .build();
+
+        CertusQuartz = new MaterialBuilder(214, "certus_quartz")
+                .gem(1).ore()
+                .color(0xD2D2E6).iconSet(QUARTZ)
+                .flags(STD_SOLID, NO_SMELTING, CRYSTALLIZABLE, DISABLE_DECOMPOSITION)
+                .components(Silicon, 1, Oxygen, 2)
+                .build();
+
+        Quartzite = new MaterialBuilder(215, "quartzite")
+                .gem(1).ore()
+                .color(0xD2E6D2).iconSet(QUARTZ)
+                .flags(NO_SMELTING, CRYSTALLIZABLE, DISABLE_DECOMPOSITION)
+                .components(Silicon, 1, Oxygen, 2)
+                .build();
+
+        Graphite = new MaterialBuilder(216, "graphite")
+                .ingot().ore().fluid()
+                .color(0x808080)
+                .flags(STD_METAL, NO_SMELTING, FLAMMABLE, DISABLE_DECOMPOSITION)
+                .components(Carbon, 1)
+                .build();
+
+        Graphene = new MaterialBuilder(217, "graphene")
+                .ingot().fluid()
+                .color(0x808080).iconSet(SHINY)
+                .flags(GENERATE_FOIL, DISABLE_DECOMPOSITION)
+                .components(Carbon, 1)
+                .build();
+
+        Jasper = new MaterialBuilder(218, "jasper")
+                .gem().ore()
+                .color(0xC85050).iconSet(EMERALD)
+                .flags(NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .build();
+
+        Osmiridium = new MaterialBuilder(219, "osmiridium")
+                .ingot(3).fluid()
+                .color(0x6464FF).iconSet(METALLIC)
+                .flags(EXT2_METAL)
+                .components(Iridium, 3, Osmium, 1)
+                .toolStats(9.0f, 3.0f, 3152)
+                .blastTemp(2500)
+                .build();
+
+        Tenorite = new MaterialBuilder(220, "tenorite")
+                .dust(1).ore()
+                .color(0x606060)
+                .components(Copper, 1, Oxygen, 1)
+                .build();
+
+        Cuprite = new MaterialBuilder(221, "cuprite")
+                .dust().ore()
+                .color(0x770000).iconSet(RUBY)
+                .components(Copper, 2, Oxygen, 1)
+                .build();
+
+        Bornite = new MaterialBuilder(222, "bornite")
+                .dust(1).ore()
+                .color(0x97662B).iconSet(METALLIC)
+                .components(Copper, 5, Iron, 1, Sulfur, 4)
+                .build();
+
+        Chalcocite = new MaterialBuilder(223, "chalcocite")
+                .dust().ore()
+                .color(0x353535).iconSet(GEM_VERTICAL)
+                .components(Copper, 2, Sulfur, 1)
+                .build();
+
+        Enargite = new MaterialBuilder(224, "enargite")
+                .dust().ore()
+                .color(0xBBBBBB).iconSet(METALLIC)
+                .components(Copper, 3, Arsenic, 1, Sulfur, 4)
+                .build();
+
+        Tennantite = new MaterialBuilder(225, "tennantite")
+                .dust().ore()
+                .color(0x909090).iconSet(METALLIC)
+                .components(Copper, 12, Arsenic, 4, Sulfur, 13)
+                .build();
+
+        GalliumArsenide = new MaterialBuilder(226, "gallium_arsenide")
+                .ingot(1).fluid()
+                .color(0xA0A0A0)
+                .flags(STD_METAL, DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Gallium, 1, Arsenic, 1)
+                .blastTemp(1200)
+                .build();
+
+        Potash = new MaterialBuilder(227, "potash")
+                .dust(1)
+                .color(0x784137)
+                .components(Potassium, 2, Oxygen, 1)
+                .build();
+
+        SodaAsh = new MaterialBuilder(288, "soda_ash")
+                .dust(1)
+                .color(0xDCDCFF)
+                .components(Sodium, 2, Carbon, 1, Oxygen, 3)
+                .build();
+
+        IndiumGalliumPhosphide = new MaterialBuilder(229, "indium_gallium_phosphide")
+                .ingot(1).fluid()
+                .color(0xA08CBE)
+                .flags(STD_METAL, DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Indium, 1, Gallium, 1, Phosphorus, 1)
+                .build();
+
+        NickelZincFerrite = new MaterialBuilder(230, "nickel_zinc_ferrite")
+                .ingot(0).fluid()
+                .color(0x3C3C3C).iconSet(METALLIC)
+                .flags(EXT_METAL, GENERATE_RING)
+                .components(Nickel, 1, Zinc, 1, Iron, 4)
+                .build();
+
+        SiliconDioxide = new MaterialBuilder(232, "silicon_dioxide")
+                .dust(1)
+                .color(0xC8C8C8).iconSet(QUARTZ)
+                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
+                .components(Silicon, 1, Oxygen, 2)
+                .build();
+
+        MagnesiumChloride = new MaterialBuilder(232, "magnesium_chloride")
+                .dust(1)
+                .color(0xD40D5C)
+                .components(Magnesium, 1, Chlorine, 2)
+                .build();
+
+        SodiumSulfide = new MaterialBuilder(233, "sodium_sulfide")
+                .dust(1)
+                .color(0xFFE680)
+                .components(Sodium, 2, Sulfur, 1)
+                .build();
+
+        PhosphorusPentoxide = new MaterialBuilder(234, "phosphorus_pentoxide")
+                .dust(1)
+                .color(0xDCDC00)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Phosphorus, 4, Oxygen, 10)
+                .build();
+
+        Quicklime = new MaterialBuilder(235, "quicklime")
+                .dust(1)
+                .color(0xF0F0F0)
+                .components(Calcium, 1, Oxygen, 1)
+                .build();
+
+        SodiumBisulfate = new MaterialBuilder(236, "sodium_bisulfate")
+                .dust(1)
+                .color(0x004455)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Sodium, 1, Hydrogen, 1, Sulfur, 1, Oxygen, 4)
+                .build();
+
+        FerriteMixture = new MaterialBuilder(237, "ferrite_mixture")
+                .dust(1)
+                .color(0xB4B4B4).iconSet(METALLIC)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Nickel, 1, Zinc, 1, Iron, 4)
+                .build();
+
+        Magnesia = new MaterialBuilder(238, "magnesia")
+                .dust(1)
+                .color(0x887878)
+                .components(Magnesium, 1, Oxygen, 1)
+                .build();
+
+        PlatinumGroupSludge = new MaterialBuilder(239, "platinum_group_sludge")
+                .dust(1)
+                .color(0x001E00).iconSet(FINE)
+                .flags(DISABLE_DECOMPOSITION)
+                .build();
+
+        RealGar = new MaterialBuilder(240, "realgar")
+                .dust(2)
+                .color(0x8C6464)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Arsenic, 4, Sulfur, 4)
+                .build();
+
+        SodiumBicarbonate = new MaterialBuilder(241, "sodium_bicarbonate")
+                .dust(1)
+                .color(0x565b96).iconSet(ROUGH)
+                .components(Sodium, 1, Hydrogen, 1, Carbon, 1, Oxygen, 5)
+                .build();
+
+        PotassiumDichromate = new MaterialBuilder(242, "potassium_dichromate")
+                .dust(1)
+                .color(0xFF084E)
+                .components(Potassium, 2, Chrome, 2, Oxygen, 7)
+                .build();
+
+        ChromiumTrioxide = new MaterialBuilder(243, "chromium_trioxide")
+                .dust(1)
+                .color(0xFFE4E1)
+                .components(Chrome, 1, Oxygen, 3)
+                .build();
+
+        AntimonyTrioxide = new MaterialBuilder(244, "antimony_trioxide")
+                .dust(1)
+                .color(0xE6E6F0)
+                .components(Antimony, 2, Oxygen, 3)
+                .build();
+
+        Zincite = new MaterialBuilder(245, "zincite")
+                .dust(1)
+                .color(0xFFFFF5)
+                .components(Zinc, 1, Oxygen, 1)
+                .build();
+
+        CupricOxide = new MaterialBuilder(246, "cupric_oxide")
+                .dust(1)
+                .color(0x0F0F0F)
+                .components(Copper, 1, Oxygen, 1)
+                .build();
+
+        CobaltOxide = new MaterialBuilder(247, "cobalt_oxide")
+                .dust(1)
+                .color(0x788000)
+                .components(Cobalt, 1, Oxygen, 1)
+                .build();
+
+        ArsenicTrioxide = new MaterialBuilder(248, "arsenic_tioxide")
+                .dust(1)
+                .iconSet(ROUGH)
+                .components(Arsenic, 2, Oxygen, 3)
+                .build();
+
+        Massicot = new MaterialBuilder(249, "massicot")
+                .dust(1)
+                .color(0xFFDD55)
+                .components(Lead, 1, Oxygen, 1)
+                .build();
+
+        Ferrosilite = new MaterialBuilder(250, "ferrosilite")
+                .dust(1)
+                .color(0x97632A)
+                .components(Iron, 1, Silicon, 1, Oxygen, 3)
+                .build();
+
+        MetalMixture = new MaterialBuilder(251, "metal_mixture")
+                .dust(1)
+                .color(0x502d16).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
+                .build();
+
+        SodiumHydroxide = new MaterialBuilder(252, "sodium_hydroxide")
+                .dust(1)
+                .color(0x003380)
+                .components(Sodium, 1, Oxygen, 1, Hydrogen, 1)
+                .build();
+
+        SodiumPersulfate = new MaterialBuilder(253, "sodium_persulfate")
+                .fluid()
+                .components(Sodium, 2, Sulfur, 2, Oxygen, 8)
+                .build();
+
+        Bastnasite = new MaterialBuilder(254, "bastnasite")
+                .dust().ore()
+                .color(0xC86E2D).iconSet(FINE)
+                .components(Cerium, 1, Carbon, 1, Fluorine, 1, Oxygen, 3)
+                .build();
+
+        Pentlandite = new MaterialBuilder(255, "pentlandite")
+                .dust().ore()
+                .color(0xA59605)
+                .components(Nickel, 9, Sulfur, 8)
+                .build();
+
+        Spodumene = new MaterialBuilder(256, "spodumene")
+                .dust().ore()
+                .color(0xBEAAAA)
+                .components(Lithium, 1, Aluminium, 1, Silicon, 2, Oxygen, 6)
+                .build();
+
+        Lepidolite = new MaterialBuilder(257, "lepidolite")
+                .dust().ore()
+                .color(0xF0328C).iconSet(FINE)
+                .components(Potassium, 1, Lithium, 3, Aluminium, 4, Fluorine, 2, Oxygen, 10)
+                .build();
+
+        Glauconite = new MaterialBuilder(258, "glauconite")
+                .dust().ore()
+                .color(0x82B43C)
+                .components(Potassium, 1, Magnesium, 2, Aluminium, 4, Hydrogen, 2, Oxygen, 12)
+                .build();
+
+        GlauconiteSand = new MaterialBuilder(259, "glauconite_sand")
+                .dust()
+                .color(0x82B43C).iconSet(SAND)
+                .components(Potassium, 1, Magnesium, 2, Aluminium, 4, Hydrogen, 2, Oxygen, 12)
+                .build();
+
+        Malachite = new MaterialBuilder(260, "malachite")
+                .dust().ore()
+                .color(0x055F05)
+                .components(Copper, 2, Carbon, 1, Hydrogen, 2, Oxygen, 5)
+                .build();
+
+        Mica = new MaterialBuilder(261, "mica")
+                .dust()
+                .color(0xC3C3CD).iconSet(FINE)
+                .components(Potassium, 1, Aluminium, 3, Silicon, 3, Fluorine, 2, Oxygen, 10)
+                .build();
+
+        Barite = new MaterialBuilder(262, "barite")
+                .dust().ore()
+                .color(0xE6EBEB)
+                .components(Barium, 1, Sulfur, 1, Oxygen, 4)
+                .build();
+
+        Alunite = new MaterialBuilder(263, "alunite")
+                .dust()
+                .color(0xE1B441).iconSet(METALLIC)
+                .components(Potassium, 1, Aluminium, 3, Silicon, 2, Hydrogen, 6, Oxygen, 14)
+                .build();
+
+        Dolomite = new MaterialBuilder(264, "dolomite")
+                .dust(1)
+                .color(0xE1CDCD).iconSet(FLINT)
+                .components(Calcium, 1, Magnesium, 1, Carbon, 2, Oxygen, 6)
+                .build();
+
+        Wollastonite = new MaterialBuilder(265, "wollastonite")
+                .dust()
+                .color(0xF0F0F0)
+                .components(Calcium, 1, Silicon, 1, Oxygen, 3)
+                .build();
+
+        Kaolinite = new MaterialBuilder(267, "kaolinite")
+                .dust()
+                .color(0xF3EBEB)
+                .components(Aluminium, 2, Silicon, 2, Hydrogen, 4, Oxygen, 9)
+                .build();
+
+        Talc = new MaterialBuilder(268, "talc")
+                .dust().ore()
+                .color(0x5AB45A).iconSet(FINE)
+                .components(Magnesium, 3, Silicon, 4, Hydrogen, 2, Oxygen, 12)
+                .build();
+
+        Soapstone = new MaterialBuilder(269, "soapstone")
+                .dust(1).ore()
+                .color(0x5F915F)
+                .components(Magnesium, 3, Silicon, 4, Hydrogen, 2, Oxygen, 12)
+                .build();
+
+        Kyanite = new MaterialBuilder(270, "kyanite")
+                .dust()
+                .color(0x6E6EFA).iconSet(FLINT)
+                .components(Aluminium, 2, Silicon, 1, Oxygen, 5)
+                .build();
+
+        IronMagnetic = new MaterialBuilder(271, "iron_magnetic")
+                .ingot().fluid()
+                .color(0xC8C8C8).iconSet(MAGNETIC)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE)
+                .components(Iron, 1)
+                .build();
+
+        TungstenCarbide = new MaterialBuilder(272, "tungsten_carbide")
+                .ingot().fluid()
+                .color(0x330066).iconSet(METALLIC)
+                .flags(EXT2_METAL)
+                .components(Tungsten, 1, Carbon, 1)
+                .toolStats(12.0f, 4.0f, 1280)
+                .blastTemp(2460)
+                .build();
+
     }
 }
