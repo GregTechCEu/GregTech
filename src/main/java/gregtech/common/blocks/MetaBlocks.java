@@ -327,11 +327,6 @@ public class MetaBlocks {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void registerSpecialModels() { // For registering particular models in, usually for MTEs.
-        MetaTileEntityClipboard.initModel();
-    }
-
-    @SideOnly(Side.CLIENT)
     private static void registerItemModel(Block block) {
         for (IBlockState state : block.getBlockState().getValidStates()) {
             //noinspection ConstantConditions

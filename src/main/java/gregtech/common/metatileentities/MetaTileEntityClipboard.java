@@ -4,28 +4,26 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.itemhandlers.InaccessibleItemStackHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.metatileentity.*;
-import gregtech.api.util.GTLog;
+import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.util.GTUtility;
-import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.models.ModelCache;
 import gregtech.common.items.behaviors.ClipboardBehaviour;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,61 +34,49 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.World;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
-
 import java.util.List;
 import java.util.Optional;
 
+import static gregtech.api.render.Textures.CLIPBOARD_RENDERER;
 import static gregtech.common.items.MetaItems.CLIPBOARD;
 
-public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMetaTileEntity {
+public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRenderMetaTileEntity {
     private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(2.75 / 16.0, 0.0, 0.0, 13.25 / 16.0, 1.0, 0.4 / 16.0);
     public static final ResourceLocation MODEL_RESOURCE_LOCATION = new ResourceLocation("gregtech", "block/clipboard");
     public static ModelCache cache = new ModelCache();
+
 
     public MetaTileEntityClipboard(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
 
     @Override
-    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) { }
-
-    public void renderMetaTileEntityDynamic(double x, double y, double z, float partialTicks) {
-        if(this.getWorld() == null || !this.getWorld().isRemote)
-            return;
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-        IBlockState blockState = this.getWorld().getBlockState(this.getPos());
-        BlockRendererDispatcher renderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
-        if(cache.findModel("bakedModel")) {
-            IBakedModel model = cache.getCurrentMatch();
-            bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-            GlStateManager.pushMatrix();
-            GlStateManager.rotate((frontFacing.getHorizontalAngle()),  0.0F, 1.0F, 0.0F);
-            GlStateManager.translate(x, y, z);
-            renderer.getBlockModelRenderer().renderModel(this.getWorld(), model, blockState, this.getPos(), bufferBuilder, true);
-            tessellator.draw();
-            GlStateManager.popMatrix();
-        }
+    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
     }
+
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        this.renderMetaTileEntityFast(renderState, translation, 0);
+    }
+
+    @Override
+    public int getLightOpacity() {
+        return 0;
+    }
+
+    @Override
+    public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
+        CLIPBOARD_RENDERER.render(renderState, translation, new IVertexOperation[]{}, getFrontFacing());
     }
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        return GTUtility.rotateAroundYAxis(CLIPBOARD_AABB, EnumFacing.NORTH, this.getFrontFacing());
+        return new AxisAlignedBB(getPos().add(-1, 0, -1), getPos().add(2, 2, 2));
     }
 
     @Override
@@ -105,12 +91,12 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        if(getClipboard().isItemEqual(CLIPBOARD.getStackForm())) {
+        if (getClipboard().isItemEqual(CLIPBOARD.getStackForm())) {
             List<IItemBehaviour> behaviours = ((MetaItem<?>) getClipboard().getItem()).getBehaviours(getClipboard());
             Optional<IItemBehaviour> clipboardBehaviour = behaviours.stream().filter((x) -> x instanceof ClipboardBehaviour).findFirst();
-            if(!clipboardBehaviour.isPresent())
+            if (!clipboardBehaviour.isPresent())
                 return null;
-            if(clipboardBehaviour.get() instanceof ClipboardBehaviour) {
+            if (clipboardBehaviour.get() instanceof ClipboardBehaviour) {
                 return ((ClipboardBehaviour) clipboardBehaviour.get()).createUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
             }
         }
@@ -124,7 +110,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     }
 
     public ItemStack getClipboard() {
-        if(this.itemInventory.getStackInSlot(0) == ItemStack.EMPTY) {
+        if (this.itemInventory.getStackInSlot(0) == ItemStack.EMPTY) {
             ((InaccessibleItemStackHandler) this.itemInventory).setStackInSlot(0, CLIPBOARD.getStackForm());
         }
         return this.itemInventory.getStackInSlot(0);
@@ -152,7 +138,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if(playerIn.isSneaking()) {
+        if (playerIn.isSneaking()) {
             if (getWorld() != null && !getWorld().isRemote) {
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
@@ -173,14 +159,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         collisionList.add(new IndexedCuboid6(null, GTUtility.rotateAroundYAxis(CLIPBOARD_AABB, EnumFacing.NORTH, this.getFrontFacing())));
     }
 
-    @SideOnly(Side.CLIENT)
-    public static void initModel() {
-        try {
-            IModel model = ModelLoaderRegistry.getModel(MODEL_RESOURCE_LOCATION);
-            IBakedModel bakedModel = model.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK, location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
-            cache.addToCache(bakedModel, "bakedModel");
-        } catch (Exception err) {
-            GTLog.logger.error("MetaTileEntityClipboard did not acquire model! " + err.getMessage());
-        }
+    @Override
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
+        return Pair.of(CLIPBOARD_RENDERER.getParticleTexture(), 0xFFFFFF);
     }
 }

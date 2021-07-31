@@ -170,6 +170,7 @@ public class Textures {
     public static SimpleOverlayRenderer BLOWER_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_blower_active");
     public static SimpleOverlayRenderer INFINITE_EMITTER_FACE = new SimpleOverlayRenderer("overlay/machine/energy_emitter");
     public static SimpleOverlayRenderer STEAM_VENT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/steam_vent");
+    public static ClipboardRenderer CLIPBOARD_RENDERER = new ClipboardRenderer();
 
     static {
         for (int i = 0; i < VOLTAGE_CASINGS.length; i++) {

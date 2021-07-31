@@ -211,11 +211,16 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
                     if (clipboard != null) {
                         clipboard.setFrontFacing(playerFacing);
                         clipboard.setClipboard(heldItem);
-                        return ActionResult.newResult(EnumActionResult.SUCCESS, player.isCreative() ? heldItem : ItemStack.EMPTY);
+                        ItemStack returnedStack = player.getHeldItem(hand);
+                        if(!player.isCreative())
+                        {
+                            returnedStack.setCount(player.getHeldItem(hand).getCount() - 1);
+                        }
+                        return ActionResult.newResult(EnumActionResult.SUCCESS, returnedStack);
                     }
                 }
             }
         }
-        return ActionResult.newResult(EnumActionResult.FAIL, heldItem);
+        return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
     }
 }
