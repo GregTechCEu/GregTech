@@ -1,5 +1,6 @@
 package gregtech.api.unification.material.materials;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 
 import static gregtech.api.unification.material.MaterialIconSet.*;
@@ -81,23 +82,35 @@ public class HigherDegreeMaterials {
                 .addOreByproducts(GarnetRed, GarnetYellow)
                 .build();
 
+        HSSG = new Material.Builder(2016, "hssg")
+                .ingot(3).fluid()
+                .color(0x999900).iconSet(METALLIC)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_SPRING)
+                .components(TungstenSteel, 5, Chrome, 1, Molybdenum, 2, Vanadium, 1)
+                .toolStats(10.0f, 5.5f, 4000)
+                .cableProperties(GTValues.V[6], 4, 2)
+                .blastTemp(4200)
+                .build();
+
         /**
          * Fourth Degree
          */
-        RedAlloy = new Material.Builder(2016, "red_alloy")
+        RedAlloy = new Material.Builder(2017, "red_alloy")
                 .ingot(0).fluid()
                 .color(0xC80000)
                 .flags(STD_METAL, GENERATE_FINE_WIRE, GENERATE_BOLT_SCREW)
                 .components(Copper, 1, Redstone, 1)
+                .cableProperties(GTValues.V[0], 1, 0)
                 .build();
 
-        BasalticMineralSand = new Material.Builder(2017, "basaltic_mineral_sand")
+        BasalticMineralSand = new Material.Builder(2018, "basaltic_mineral_sand")
                 .dust(1)
                 .color(0x283228).iconSet(SAND)
                 .components(Magnetite, 1, Basalt, 1)
+                .addOreByproducts(Basalt, Magnetite)
                 .build();
 
-        HSSE = new Material.Builder(2018, "hsse")
+        HSSE = new Material.Builder(2019, "hsse")
                 .ingot(4).fluid()
                 .color(0x336600).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME)
@@ -106,7 +119,7 @@ public class HigherDegreeMaterials {
                 .blastTemp(5000)
                 .build();
 
-        HSSS = new Material.Builder(2019, "hsss")
+        HSSS = new Material.Builder(2020, "hsss")
                 .ingot(4).fluid()
                 .color(0x660033).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR)
@@ -115,12 +128,14 @@ public class HigherDegreeMaterials {
                 .blastTemp(5000)
                 .build();
 
-        FluxedElectrum = new Material.Builder(2020, "fluxed_electrum")
+        FluxedElectrum = new Material.Builder(2021, "fluxed_electrum")
                 .ingot(5).fluid()
                 .color(0xf2ef27).iconSet(METALLIC)
                 .flags(EXT2_METAL)
                 .components(Electrum, 1, NaquadahAlloy, 1, BlueSteel, 1, RedSteel, 1)
                 .toolStats(11.0f, 6.0f, 2100)
+                .cableProperties(GTValues.V[8], 3, 2)
+                .itemPipeProperties(128, 16)
                 .blastTemp(9000)
                 .build();
     }

@@ -1,6 +1,5 @@
 package gregtech.api.unification.material;
 
-import gregtech.api.GTValues;
 import gregtech.api.unification.material.materials.*;
 import gregtech.api.unification.material.type.MarkerMaterial;
 import gregtech.api.unification.material.type.MaterialFlag;
@@ -701,28 +700,6 @@ public class Materials {
         BasalticMineralSand.setDirectSmelting(Iron);
         GraniticMineralSand.setDirectSmelting(Iron);
 
-        BasalticMineralSand.addOreByProducts(Basalt, Magnetite);
         Flint.addOreByProducts(Obsidian);
-
-        RedAlloy.setCableProperties(GTValues.V[0], 1, 0);
-        SolderingAlloy.setCableProperties(GTValues.V[1], 1, 1);
-        Cupronickel.setCableProperties(GTValues.V[2], 2, 3);
-        AnnealedCopper.setCableProperties(GTValues.V[2], 1, 1);
-        Kanthal.setCableProperties(GTValues.V[3], 4, 3);
-        Electrum.setCableProperties(GTValues.V[3], 3, 2);
-        Nichrome.setCableProperties(GTValues.V[4], 4, 4);
-        Steel.setCableProperties(GTValues.V[4], 2, 2);
-        BlackSteel.setCableProperties(GTValues.V[4], 3, 2);
-        Graphene.setCableProperties(GTValues.V[5], 1, 1);
-        TungstenSteel.setCableProperties(GTValues.V[5], 3, 2);
-        HSSG.setCableProperties(GTValues.V[6], 4, 2);
-        NiobiumTitanium.setCableProperties(GTValues.V[6], 4, 2);
-        VanadiumGallium.setCableProperties(GTValues.V[6], 4, 2);
-        YttriumBariumCuprate.setCableProperties(GTValues.V[6], 4, 4);
-        NaquadahAlloy.setCableProperties(GTValues.V[8], 2, 4);
-        FluxedElectrum.setCableProperties(GTValues.V[8], 3, 2);
-        DiamericiumTitanium.setCableProperties(GTValues.V[10], 8, 16);
-
-        FluxedElectrum.setItemPipeProperties(128, 16);
     }
 }

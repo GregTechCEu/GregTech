@@ -1,5 +1,6 @@
 package gregtech.api.unification.material.materials;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import net.minecraft.init.Enchantments;
 
@@ -33,6 +34,7 @@ public class FirstDegreeMaterials {
                 .color(0xFF7814).iconSet(SHINY)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE)
                 .components(Copper, 1)
+                .cableProperties(GTValues.V[1], 1, 1)
                 .build();
 
         Asbestos = new Material.Builder(253, "asbestos")
@@ -210,6 +212,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_SPRING)
                 .components(Copper, 1, Nickel, 1)
                 .itemPipeProperties(2048, 1)
+                .cableProperties(GTValues.V[1], 1, 1)
                 .build();
 
         DarkAsh = new Material.Builder(275, "dark_ash")
@@ -235,6 +238,7 @@ public class FirstDegreeMaterials {
                 .components(Silver, 1, Gold, 1)
                 .addOreByproducts(Gold, Silver)
                 .itemPipeProperties(1024, 2)
+                .cableProperties(GTValues.V[3], 3, 2)
                 .build();
 
         Emerald = new Material.Builder(278, "emerald")
@@ -327,6 +331,7 @@ public class FirstDegreeMaterials {
                 .color(0xC2D2DF).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_SPRING)
                 .components(Iron, 1, Aluminium, 1, Chrome, 1)
+                .cableProperties(GTValues.V[3], 4, 3)
                 .blastTemp(1800)
                 .build();
 
@@ -378,6 +383,7 @@ public class FirstDegreeMaterials {
                 .color(0xCDCEF6).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_SPRING)
                 .components(Nickel, 4, Chrome, 1)
+                .cableProperties(GTValues.V[4], 4, 4)
                 .blastTemp(2700)
                 .build();
 
@@ -395,6 +401,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL)
                 .components(Niobium, 1, Titanium, 1)
                 .fluidPipeProperties(2900, 150, true)
+                .cableProperties(GTValues.V[6], 4, 2)
                 .blastTemp(4500)
                 .build();
 
@@ -572,6 +579,7 @@ public class FirstDegreeMaterials {
                 .components(Americium, 2, Titanium, 1)
                 .toolStats(6.0f, 6.0f, 2200)
                 .itemPipeProperties(32, 128)
+                .cableProperties(GTValues.V[10], 8, 16)
                 .blastTemp(10400)
                 .build();
 
@@ -594,6 +602,7 @@ public class FirstDegreeMaterials {
                 .color(0x9696A0)
                 .flags(EXT_METAL, GENERATE_FINE_WIRE)
                 .components(Tin, 9, Antimony, 1)
+                .cableProperties(GTValues.V[1], 1, 1)
                 .build();
 
         Spessartine = new Material.Builder(321, "spessarite")
@@ -627,11 +636,12 @@ public class FirstDegreeMaterials {
                 .ingot().fluid()
                 .color(0x808080).iconSet(METALLIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_SPRING,
-                        GENERATE_SPRING_SMALL, GENERATE_FRAME, GENERATE_LONG_ROD, DISABLE_DECOMPOSITION)
+                        GENERATE_SPRING_SMALL, GENERATE_FRAME, DISABLE_DECOMPOSITION)
                 .components(Iron, 1)
                 .toolStats(6.0f, 3.0f, 512)
                 .polarizesInto(SteelMagnetic)
                 .fluidPipeProperties(2557, 40, true)
+                .cableProperties(GTValues.V[4], 2, 2)
                 .blastTemp(1000)
                 .build();
 
@@ -719,6 +729,7 @@ public class FirstDegreeMaterials {
                 .color(0x80808C).iconSet(SHINY)
                 .flags(STD_METAL, GENERATE_FOIL, GENERATE_ROD)
                 .components(Vanadium, 3, Gallium, 1)
+                .cableProperties(GTValues.V[6], 4, 2)
                 .blastTemp(4500)
                 .build();
 
@@ -753,6 +764,7 @@ public class FirstDegreeMaterials {
                 .color(0x504046).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FINE_WIRE)
                 .components(Yttrium, 1, Barium, 2, Copper, 3, Oxygen, 7)
+                .cableProperties(GTValues.V[6], 4, 4)
                 .build();
 
         NetherQuartz = new Material.Builder(339, "nether_quartz")
@@ -792,6 +804,7 @@ public class FirstDegreeMaterials {
                 .color(0x808080).iconSet(SHINY)
                 .flags(GENERATE_FOIL, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
+                .cableProperties(GTValues.V[5], 1, 1)
                 .build();
 
         Jasper = new Material.Builder(343, "jasper")

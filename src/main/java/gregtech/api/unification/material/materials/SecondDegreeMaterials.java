@@ -1,5 +1,6 @@
 package gregtech.api.unification.material.materials;
 
+import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.type.RoughSolidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
@@ -105,6 +106,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT_METAL)
                 .components(Nickel, 1, BlackBronze, 1, Steel, 3)
                 .toolStats(6.5f, 6.5f, 768)
+                .cableProperties(GTValues.V[4], 3, 2)
                 .blastTemp(1200)
                 .build();
 
@@ -124,6 +126,7 @@ public class SecondDegreeMaterials {
                 .components(Steel, 1, Tungsten, 1)
                 .toolStats(8.0f, 4.0f, 2560)
                 .fluidPipeProperties(7568, 100, true)
+                .cableProperties(GTValues.V[5], 3, 2)
                 .blastTemp(3000)
                 .build();
 
@@ -343,6 +346,7 @@ public class SecondDegreeMaterials {
                 .flags(EXT2_METAL, GENERATE_SPRING)
                 .components(Naquadah, 1, Osmiridium, 1)
                 .toolStats(8.0f, 5.0f, 5120)
+                .cableProperties(GTValues.V[8], 2, 4)
                 .blastTemp(7200)
                 .build();
 
@@ -399,10 +403,7 @@ public class SecondDegreeMaterials {
                 .components(Nitrogen, 40, Oxygen, 11, Argon, 1, NobleGases, 1)
                 .build();
 
-        public static DustMaterial Diatomite = new DustMaterial(297, "diatomite", 0xE1E1E1, DULL, 1, of(new MaterialStack(Flint, 8), new MaterialStack(BandedIron, 1), new MaterialStack(Sapphire, 1)), 0);
-
-
         //todo roughsolid
-        public static RoughSolidMaterial Flint = new RoughSolidMaterial(296, "flint", 0x002040, FLINT, 1, of(new MaterialStack(SiliconDioxide, 1)), NO_SMASHING | MORTAR_GRINDABLE | DECOMPOSITION_BY_CENTRIFUGING, () -> OrePrefix.gem);
+        RoughSolidMaterial Flint = new RoughSolidMaterial(296, "flint", 0x002040, FLINT, 1, of(new MaterialStack(SiliconDioxide, 1)), NO_SMASHING | MORTAR_GRINDABLE | DECOMPOSITION_BY_CENTRIFUGING, () -> OrePrefix.gem);
     }
 }
