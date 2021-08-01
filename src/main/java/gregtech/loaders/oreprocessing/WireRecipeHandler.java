@@ -23,7 +23,7 @@ import static gregtech.api.GTValues.M;
 import static gregtech.api.recipes.RecipeMaps.PACKER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.UNPACKER_RECIPES;
 import static gregtech.api.unification.material.properties.DummyProperties.wireProperty;
-import static gregtech.api.unification.material.type.MaterialFlags.NO_WORKING;
+import static gregtech.api.unification.material.info.MaterialFlags.NO_WORKING;
 
 public class WireRecipeHandler {
 

@@ -3,7 +3,7 @@ package gregtech.api.unification;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Joiner;
 import gregtech.api.unification.material.MaterialRegistry;
-import gregtech.api.unification.material.type.MarkerMaterial;
+import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.*;

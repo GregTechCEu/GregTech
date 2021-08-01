@@ -1,10 +1,7 @@
 package gregtech.api.unification.material;
 
 import com.google.common.collect.HashBiMap;
-import gregtech.api.unification.material.type.MarkerMaterial;
 import net.minecraft.item.EnumDyeColor;
-
-import static com.google.common.collect.ImmutableList.of;
 
 public class MarkerMaterials {
 
@@ -94,8 +91,8 @@ public class MarkerMaterials {
         public static Material Elite = new MarkerMaterial("elite");
         public static Material Master = new MarkerMaterial("master");
         public static Material Ultimate = new MarkerMaterial("ultimate");
-        public static Material Superconductor = new Material(387, "superconductor", 0xFFFFFF, MaterialIconSet.NONE, of(), 0L, null) {
-        };
+        public static Material Superconductor = new MarkerMaterial("superconductor");
+        //new Material(387, "superconductor", 0xFFFFFF, MaterialIconSet.NONE, of(), 0L, null) {};
         public static Material Infinite = new MarkerMaterial("infinite");
 
         public static Material UEVCircuit = new MarkerMaterial("uev");

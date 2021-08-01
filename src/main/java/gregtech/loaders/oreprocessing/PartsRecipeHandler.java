@@ -11,7 +11,7 @@ import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.GemProperty;
 import gregtech.api.unification.material.properties.IngotProperty;
-import gregtech.api.unification.material.type.MarkerMaterial;
+import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
@@ -25,7 +25,7 @@ import static gregtech.api.GTValues.L;
 import static gregtech.api.recipes.RecipeMaps.BENDER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
 import static gregtech.api.unification.material.properties.DummyProperties.*;
-import static gregtech.api.unification.material.type.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.api.util.DyeUtil.determineDyeColor;
 

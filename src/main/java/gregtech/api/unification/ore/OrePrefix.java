@@ -3,7 +3,7 @@ package gregtech.api.unification.ore;
 import com.google.common.base.Preconditions;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialIconType;
+import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.stack.MaterialStack;
@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static gregtech.api.GTValues.M;
-import static gregtech.api.unification.material.type.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.Conditions.*;
 import static gregtech.api.unification.ore.OrePrefix.Flags.*;
 

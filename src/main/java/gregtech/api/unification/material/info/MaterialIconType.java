@@ -1,4 +1,4 @@
-package gregtech.api.unification.material;
+package gregtech.api.unification.material.info;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableMap;

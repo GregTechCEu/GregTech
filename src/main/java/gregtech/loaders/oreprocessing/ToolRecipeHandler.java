@@ -25,7 +25,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.ArrayList;
 
 import static gregtech.api.unification.material.properties.DummyProperties.toolProperty;
-import static gregtech.api.unification.material.type.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 public class ToolRecipeHandler {
 

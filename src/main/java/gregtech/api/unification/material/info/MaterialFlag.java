@@ -1,4 +1,4 @@
-package gregtech.api.unification.material.type;
+package gregtech.api.unification.material.info;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.unification.material.Material;

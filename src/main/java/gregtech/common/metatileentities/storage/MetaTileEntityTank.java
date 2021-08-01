@@ -61,7 +61,7 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-import static gregtech.api.unification.material.type.MaterialFlags.FLAMMABLE;
+import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
 import static gregtech.api.util.GTUtility.convertOpaqueRGBA_CLtoRGB;
 
 public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMetaTileEntity {

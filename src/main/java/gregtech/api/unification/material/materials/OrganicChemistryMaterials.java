@@ -2,10 +2,10 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.unification.material.Material;
 
-import static gregtech.api.unification.material.MaterialIconSet.FINE;
-import static gregtech.api.unification.material.MaterialIconSet.SHINY;
+import static gregtech.api.unification.material.info.MaterialIconSet.FINE;
+import static gregtech.api.unification.material.info.MaterialIconSet.SHINY;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.material.type.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 public class OrganicChemistryMaterials {
     /**

@@ -5,10 +5,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
+import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.Properties;
 import gregtech.api.unification.material.properties.*;
-import gregtech.api.unification.material.type.MaterialFlag;
-import gregtech.api.unification.material.type.MaterialFlags;
+import gregtech.api.unification.material.info.MaterialFlag;
+import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.SmallDigits;
@@ -100,7 +101,7 @@ public class Material implements Comparable<Material> {
     }
 
     // thou shall not call
-    private Material() {
+    protected Material() {
         materialInfo = new MaterialInfo(0, "");
         properties = new Properties();
         flags = new MaterialFlags();

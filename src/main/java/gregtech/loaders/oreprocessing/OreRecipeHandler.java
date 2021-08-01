@@ -15,7 +15,7 @@ import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.unification.material.properties.DummyProperties.oreProperty;
-import static gregtech.api.unification.material.type.MaterialFlags.HIGH_SIFTER_OUTPUT;
+import static gregtech.api.unification.material.info.MaterialFlags.HIGH_SIFTER_OUTPUT;
 
 public class OreRecipeHandler {
 

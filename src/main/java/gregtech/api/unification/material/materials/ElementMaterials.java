@@ -6,9 +6,9 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Material.FluidType;
 
 import static com.google.common.collect.ImmutableList.of;
-import static gregtech.api.unification.material.MaterialIconSet.*;
+import static gregtech.api.unification.material.info.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.material.type.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 public class ElementMaterials {
 

@@ -4,9 +4,9 @@ import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import net.minecraft.init.Enchantments;
 
-import static gregtech.api.unification.material.MaterialIconSet.*;
+import static gregtech.api.unification.material.info.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.material.type.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 public class FirstDegreeMaterials {
     /**

@@ -1,9 +1,6 @@
-package gregtech.api.unification.material.type;
+package gregtech.api.unification.material;
 
-import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialIconSet;
 
 /**
  * MarkerMaterial is type of material used for generic things like material re-registration and use in recipes
@@ -16,18 +13,21 @@ public final class MarkerMaterial extends Material {
     private final String name;
 
     public MarkerMaterial(String name) {
-        super(-1, name,
-            0xFFFFFF,
-            MaterialIconSet.NONE,
-            ImmutableList.of(),
-            0,
-            null);
+        super();
         this.name = name;
         OreDictUnifier.registerMarkerMaterial(this);
     }
 
     @Override
     protected void registerMaterial(Material material) {
+    }
+
+    @Override
+    protected void verifyMaterial() {
+    }
+
+    @Override
+    protected void postVerify() {
     }
 
     @Override

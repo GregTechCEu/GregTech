@@ -1,4 +1,4 @@
-package gregtech.api.unification.material;
+package gregtech.api.unification.material.info;
 
 import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;

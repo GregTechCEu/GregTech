@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static gregtech.api.GTValues.L;
 import static gregtech.api.GTValues.M;
-import static gregtech.api.unification.material.type.MaterialFlags.FLAMMABLE;
+import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
 
 public class RecyclingRecipes {
 

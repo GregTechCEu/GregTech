@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
-import static gregtech.api.unification.material.type.MaterialFlags.FLAMMABLE;
+import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
 
 public class MetaTileEntityDrum extends MetaTileEntity {
     private final int tankSize;

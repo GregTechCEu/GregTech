@@ -14,7 +14,7 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialIconSet;
+import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.DustProperty;

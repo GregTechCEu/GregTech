@@ -69,7 +69,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static gregtech.api.unification.material.type.MaterialFlags.GENERATE_FRAME;
+import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FRAME;
 import static gregtech.common.ClientProxy.*;
 
 public class MetaBlocks {

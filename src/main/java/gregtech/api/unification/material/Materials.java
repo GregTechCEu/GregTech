@@ -1,14 +1,13 @@
 package gregtech.api.unification.material;
 
 import gregtech.api.unification.material.materials.*;
-import gregtech.api.unification.material.type.MarkerMaterial;
-import gregtech.api.unification.material.type.MaterialFlag;
+import gregtech.api.unification.material.info.MaterialFlag;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static gregtech.api.unification.material.type.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 /**
  * Material Registration.

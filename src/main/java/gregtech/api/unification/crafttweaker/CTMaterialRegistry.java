@@ -4,10 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
-import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 

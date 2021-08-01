@@ -6,7 +6,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.MaterialIconSet;
+import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.Material;
