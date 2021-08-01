@@ -4,9 +4,9 @@ import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import net.minecraft.init.Enchantments;
 
-import static gregtech.api.unification.material.info.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialIconSet.*;
 
 public class FirstDegreeMaterials {
     /**
@@ -417,7 +417,7 @@ public class FirstDegreeMaterials {
                 .dust(1).ore()
                 .color(0xFFFF00)
                 .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE)
-                .components(Phosphorus, Oxygen, 4)
+                .components(Phosphorus, 1, Oxygen, 4)
                 .addOreByproducts(Phosphorus)
                 .build();
 
@@ -616,7 +616,7 @@ public class FirstDegreeMaterials {
                 .dust(1).ore()
                 .color(0xFFFFFF)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Zinc, 1, Sulfur)
+                .components(Zinc, 1, Sulfur, 1)
                 .addOreByproducts(GarnetYellow, Cadmium, Gallium, Zinc)
                 .washedIn(SodiumPersulfate)
                 .oreSmeltInto(Zinc)
@@ -1268,7 +1268,7 @@ public class FirstDegreeMaterials {
                 .fluid(Material.FluidType.GAS)
                 .color(0x42D126)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Uranium238, Fluorine, 6)
+                .components(Uranium238, 1, Fluorine, 6)
                 .build()
                 .setFormula("UF6", true);
 
