@@ -134,7 +134,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     public void renderCableBlock(Material material, Insulation insulation1, int insulationColor1, CCRenderState state, IVertexOperation[] pipeline, int connectMask) {
-        int wireColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB);
+        int wireColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB());
         float thickness = insulation1.thickness;
 
         IVertexOperation[] wire = ArrayUtils.addAll(pipeline, new IconTransformation(wireTexture), new ColourMultiplier(wireColor));
@@ -267,7 +267,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         int particleColor;
         if(insulation.insulationLevel == -1) {
             atlasSprite = wireTexture;
-            particleColor = material.materialRGB;
+            particleColor = material.getMaterialRGB();
         } else {
             atlasSprite = insulationTextures[5];
             particleColor = tileEntity.getInsulationColor();

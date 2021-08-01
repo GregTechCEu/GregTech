@@ -46,7 +46,7 @@ public class BlockOreFactory extends AbstractBlockModelFactory {
                     .replace("$BASE_TEXTURE_TOP$", stoneType.backgroundTopTexture.toString())
                     .replace("$BASE_TEXTURE_SIDE$", stoneType.backgroundSideTexture.toString()))
                 .collect(Collectors.toList())))
-            .replace("$MATERIAL_TEXTURE_NORMAL$", MaterialIconType.ore.getBlockPath(((BlockOre) block).material.materialIconSet).toString());
+            .replace("$MATERIAL_TEXTURE_NORMAL$", MaterialIconType.ore.getBlockPath(((BlockOre) block).material.getMaterialIconSet()).toString());
     }
 
 }

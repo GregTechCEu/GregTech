@@ -172,7 +172,7 @@ public class BlockOre extends BlockFalling implements IBlockOre {
     @SideOnly(Side.CLIENT)
     @Override
     public int getDustColor(IBlockState state) {
-        return this.material.materialRGB;
+        return this.material.getMaterialRGB();
     }
 
     @Override

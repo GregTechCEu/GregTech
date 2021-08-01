@@ -464,21 +464,21 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     }
 
     public static int getMaterialEnchantability(Material material) {
-        if (material.materialIconSet == MaterialIconSet.SHINY ||
-            material.materialIconSet == MaterialIconSet.RUBY) {
+        if (material.getMaterialIconSet() == MaterialIconSet.SHINY ||
+            material.getMaterialIconSet() == MaterialIconSet.RUBY) {
             return 33; //all shiny metals have gold enchantability
-        } else if (material.materialIconSet == MaterialIconSet.DULL ||
-            material.materialIconSet == MaterialIconSet.METALLIC) {
+        } else if (material.getMaterialIconSet() == MaterialIconSet.DULL ||
+            material.getMaterialIconSet() == MaterialIconSet.METALLIC) {
             return 21; //dull metals have iron enchantability
-        } else if (material.materialIconSet == MaterialIconSet.GEM_VERTICAL ||
-            material.materialIconSet == MaterialIconSet.GEM_HORIZONTAL ||
-            material.materialIconSet == MaterialIconSet.DIAMOND ||
-            material.materialIconSet == MaterialIconSet.OPAL ||
-            material.materialIconSet == MaterialIconSet.NETHERSTAR) {
+        } else if (material.getMaterialIconSet() == MaterialIconSet.GEM_VERTICAL ||
+            material.getMaterialIconSet() == MaterialIconSet.GEM_HORIZONTAL ||
+            material.getMaterialIconSet() == MaterialIconSet.DIAMOND ||
+            material.getMaterialIconSet() == MaterialIconSet.OPAL ||
+            material.getMaterialIconSet() == MaterialIconSet.NETHERSTAR) {
             return 15; //standard gems have diamond enchantability
-        } else if (material.materialIconSet == MaterialIconSet.WOOD ||
-            material.materialIconSet == MaterialIconSet.ROUGH ||
-            material.materialIconSet == MaterialIconSet.FINE) {
+        } else if (material.getMaterialIconSet() == MaterialIconSet.WOOD ||
+            material.getMaterialIconSet() == MaterialIconSet.ROUGH ||
+            material.getMaterialIconSet() == MaterialIconSet.FINE) {
             return 11; //wood and stone has their default enchantability
         }
         return 10; //otherwise return lowest enchantability
