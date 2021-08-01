@@ -55,7 +55,7 @@ public class ElementMaterials {
                 .build();
 
         Arsenic = new MaterialBuilder(6, "arsenic")
-                .dust().fluid()
+                .dust()
                 .element(Elements.As)
                 .build();
 
@@ -99,7 +99,7 @@ public class ElementMaterials {
                 .build();
 
         Boron = new MaterialBuilder(13, "boron")
-                .dust().fluid()
+                .dust()
                 .color(0xD2FAD2)
                 .element(Elements.B)
                 .build();
@@ -150,7 +150,6 @@ public class ElementMaterials {
 
         Chlorine = new MaterialBuilder(21, "chlorine")
                 .fluid(FluidType.GAS)
-                .iconSet(GAS)
                 .element(Elements.Cl)
                 .build();
 
@@ -269,7 +268,6 @@ public class ElementMaterials {
 
         Fluorine = new MaterialBuilder(36, "fluorine")
                 .fluid(FluidType.GAS)
-                .iconSet(GAS)
                 .element(Elements.F)
                 .fluidTemp(253)
                 .build();
@@ -332,19 +330,16 @@ public class ElementMaterials {
 
         Hydrogen = new MaterialBuilder(45, "hydrogen")
                 .fluid(FluidType.GAS)
-                .iconSet(GAS)
                 .element(Elements.H)
                 .build();
 
         Helium = new MaterialBuilder(46, "helium")
                 .fluid(FluidType.GAS).plasma()
-                .iconSet(GAS)
                 .element(Elements.He)
                 .build();
 
         Helium3 = new MaterialBuilder(47, "helium3")
                 .fluid(FluidType.GAS)
-                .iconSet(GAS)
                 .element(Elements.He3)
                 .build();
 
@@ -355,7 +350,7 @@ public class ElementMaterials {
                 .build();
 
         Iodine = new MaterialBuilder(49, "iodine")
-                .dust().fluid()
+                .dust()
                 .color(0x2C344F).iconSet(SHINY)
                 .element(Elements.I)
                 .build();
@@ -388,7 +383,6 @@ public class ElementMaterials {
 
         Krypton = new MaterialBuilder(52, "krypton")
                 .fluid(FluidType.GAS)
-                .iconSet(GAS)
                 .element(Elements.Kr)
                 .build();
 
@@ -469,7 +463,6 @@ public class ElementMaterials {
 
         Mercury = new MaterialBuilder(63, "mercury")
                 .fluid()
-                .iconSet(FLUID)
                 .element(Elements.Hg)
                 .build();
 
@@ -499,7 +492,6 @@ public class ElementMaterials {
 
         Neon = new MaterialBuilder(67, "neon")
                 .fluid(FluidType.GAS)
-                .iconSet(GAS)
                 .element(Elements.Ne)
                 .build();
 
@@ -570,7 +562,6 @@ public class ElementMaterials {
 
         Oxygen = new MaterialBuilder(76, "oxygen")
                 .fluid(FluidType.GAS).plasma()
-                .iconSet(GAS)
                 .element(Elements.O)
                 .build();
 
@@ -655,7 +646,6 @@ public class ElementMaterials {
 
         Radon = new MaterialBuilder(87, "radon")
                 .fluid(FluidType.GAS)
-                .iconSet(GAS)
                 .element(Elements.Rn)
                 .build();
 
@@ -903,7 +893,6 @@ public class ElementMaterials {
 
         Xenon = new MaterialBuilder(119, "xenon")
                 .fluid(FluidType.GAS)
-                .iconSet(GAS)
                 .element(Elements.Xe)
                 .build();
 

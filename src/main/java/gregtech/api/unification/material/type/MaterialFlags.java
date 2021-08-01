@@ -173,7 +173,7 @@ public class MaterialFlags {
 
     public static final MaterialFlag GENERATE_BOLT_SCREW =
             new MaterialFlag.Builder(22, "generate_bolt_screw")
-                    .requireType(ingotProperty).or(gemProperty).requireFlags(GENERATE_ROD).build();
+                    .requireType(dustProperty).requireFlags(GENERATE_ROD).build();
 
     public static final MaterialFlag GENERATE_RING =
             new MaterialFlag.Builder(23, "generate_ring")

@@ -166,7 +166,7 @@ public class FirstDegreeMaterials {
 
         Water = new MaterialBuilder(143, "water")
                 .fluid()
-                .color(0x0000FF).iconSet(FLUID)
+                .color(0x0000FF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();

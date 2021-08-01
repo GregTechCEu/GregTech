@@ -27,14 +27,14 @@ public class OrganicChemistryMaterials {
                 .build();
 
         RawRubber = new MaterialBuilder(502, "raw_rubber")
-                .dust().fluid()
+                .dust()
                 .color(0xCCC789)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 5, Hydrogen, 8)
                 .build();
 
         RawStyreneButadieneRubber = new MaterialBuilder(503, "raw_styrene_butadiene_rubber")
-                .dust().fluid()
+                .dust()
                 .color(0x54403D).iconSet(SHINY)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 8, Hydrogen, 8)
@@ -49,7 +49,7 @@ public class OrganicChemistryMaterials {
 
         PolyvinylAcetate = new MaterialBuilder(505, "polyvinyl_acetate")
                 .fluid()
-                .color(0xFF9955).iconSet(FLUID)
+                .color(0xFF9955)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 4, Hydrogen, 6, Oxygen, 2)
                 .itemPipeProperties(512, 4)
@@ -78,7 +78,6 @@ public class OrganicChemistryMaterials {
 
         GlycerylTrinitrate = new MaterialBuilder(509, "glyceryl_trinitrate")
                 .fluid()
-                .iconSet(FLUID)
                 .flags(FLAMMABLE, EXPLOSIVE, NO_SMELTING, NO_SMASHING)
                 .components(Carbon, 3, Hydrogen, 5, Nitrogen, 3, Oxygen, 9)
                 .build();
@@ -92,7 +91,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Polydimethylsiloxane = new MaterialBuilder(511, "polydimethylsiloxane")
-                .dust().fluid()
+                .dust()
                 .color(0xF5F5F5)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1, Silicon, 1)
@@ -128,7 +127,7 @@ public class OrganicChemistryMaterials {
                 .build();
 
         Polytetrafluoroethylene = new MaterialBuilder(178, "polytetrafluoroethylene")
-                .ingot(1).flags()
+                .ingot(1).fluid()
                 .color(0x646464)
                 .flags(STD_METAL, GENERATE_FRAME, DISABLE_DECOMPOSITION, NO_SMASHING)
                 .components(Carbon, 2, Fluorine, 4)

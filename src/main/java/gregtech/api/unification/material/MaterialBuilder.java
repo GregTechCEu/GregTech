@@ -282,8 +282,9 @@ public class MaterialBuilder {
         /**
          * The IconSet of this Material.
          *
-         * Default: - DULL if has Dust, Ingot, or Gem Property.
-         *          - FLUID or GAS if only has FluidProperty (ignoring Plasma), depending on {@link FluidType}.
+         * Default: - GEM_VERTICAL if it has GemProperty.
+         *          - DULL if has DustProperty or IngotProperty.
+         *          - FLUID or GAS if only has FluidProperty or PlasmaProperty, depending on {@link FluidType}.
          */
         public MaterialIconSet iconSet;
 
@@ -320,13 +321,16 @@ public class MaterialBuilder {
 
         private void verifyIconSet(Properties p) {
             if (iconSet != null) {
-                if (p.getDustProperty() != null || p.getIngotProperty() != null || p.getGemProperty() != null) {
+                if (p.getGemProperty() != null) {
+                    iconSet = MaterialIconSet.GEM_VERTICAL;
+                } else if (p.getDustProperty() != null || p.getIngotProperty() != null) {
                     iconSet = MaterialIconSet.DULL;
                 } else if (p.getFluidProperty() != null) {
                     if (p.getFluidProperty().isGas()) {
                         iconSet = MaterialIconSet.GAS;
                     } else iconSet = MaterialIconSet.FLUID;
-                }
+                } else if (p.getPlasmaProperty() != null)
+                    iconSet = MaterialIconSet.FLUID;
             }
         }
     }
