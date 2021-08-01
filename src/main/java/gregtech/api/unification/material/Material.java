@@ -700,7 +700,7 @@ public class Material implements Comparable<Material> {
         }
 
         private void verifyIconSet(Properties p) {
-            if (iconSet != null) {
+            if (iconSet == null) {
                 if (p.getGemProperty() != null) {
                     iconSet = MaterialIconSet.GEM_VERTICAL;
                 } else if (p.getDustProperty() != null || p.getIngotProperty() != null) {
