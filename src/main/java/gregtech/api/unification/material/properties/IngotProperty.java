@@ -16,7 +16,14 @@ public class IngotProperty implements IMaterialProperty {
     /**
      * Specifies a material into which this material parts turn when heated in arc furnace
      */
-    private Material arcSmeltInto; // ingot required
+    private Material arcSmeltInto;
+
+    /**
+     * Specifies a Material into which this Material Macerates into.
+     *
+     * Default: this Material.
+     */
+    private Material macerateInto;
 
     /**
      * Material which obtained when this material is polarized
@@ -40,8 +47,17 @@ public class IngotProperty implements IMaterialProperty {
         this.magneticMaterial = magneticMaterial;
     }
 
+    @Nullable
     public Material getMagneticMaterial() {
         return magneticMaterial;
+    }
+
+    public void setMacerateInto(Material macerateInto) {
+        this.macerateInto = macerateInto;
+    }
+
+    public Material getMacerateInto() {
+        return macerateInto;
     }
 
     @Override
@@ -66,6 +82,15 @@ public class IngotProperty implements IMaterialProperty {
             if (arcSmeltIntoProperties.getIngotProperty() == null) {
                 arcSmeltIntoProperties.setIngotProperty(new IngotProperty());
                 arcSmeltIntoProperties.verify();
+            }
+        }
+
+        if (macerateInto == null) macerateInto = properties.getMaterial();
+        else {
+            Properties macerateIntoProperties = macerateInto.getProperties();
+            if (macerateIntoProperties.getIngotProperty() == null) {
+                macerateIntoProperties.setIngotProperty(new IngotProperty());
+                macerateIntoProperties.verify();
             }
         }
 

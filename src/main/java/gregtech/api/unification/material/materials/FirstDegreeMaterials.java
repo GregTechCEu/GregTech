@@ -1145,6 +1145,9 @@ public class FirstDegreeMaterials {
                 .color(0xC8C8C8).iconSet(MAGNETIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE)
                 .components(Iron, 1)
+                .ingotSmeltInto(Iron)
+                .arcSmeltInto(Iron)
+                .macerateInto(Iron)
                 .build();
 
         TungstenCarbide = new Material.Builder(396, "tungsten_carbide")
@@ -1292,6 +1295,9 @@ public class FirstDegreeMaterials {
                 .color(0x646464).iconSet(MAGNETIC)
                 .flags(EXT2_METAL, GENERATE_LONG_ROD)
                 .components(Neodymium, 1)
+                .ingotSmeltInto(Neodymium)
+                .arcSmeltInto(Neodymium)
+                .macerateInto(Neodymium)
                 .blastTemp(1297)
                 .build();
 

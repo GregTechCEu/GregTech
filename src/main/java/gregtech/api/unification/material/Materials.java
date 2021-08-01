@@ -712,19 +712,9 @@ public class Materials {
             dustMaterial.addFlag(BLAST_FURNACE_CALCITE_DOUBLE);
         }
 
-        // TODO Leave these 9 for now /////////////////////
-        NeodymiumMagnetic.setSmeltingInto(Neodymium);
-        NeodymiumMagnetic.setArcSmeltingInto(Neodymium);
-        NeodymiumMagnetic.setMaceratingInto(Neodymium);
-
         SteelMagnetic.setSmeltingInto(Steel);
         SteelMagnetic.setArcSmeltingInto(Steel);
         SteelMagnetic.setMaceratingInto(Steel);
-
-        IronMagnetic.setSmeltingInto(Iron);
-        IronMagnetic.setArcSmeltingInto(WroughtIron);
-        IronMagnetic.setMaceratingInto(Iron);
-        // TODO ///////////////////////////////////////////
 
         BasalticMineralSand.setDirectSmelting(Iron);
         GraniticMineralSand.setDirectSmelting(Iron);

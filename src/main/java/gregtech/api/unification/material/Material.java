@@ -527,6 +527,12 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        public Builder macerateInto(Material m) {
+            if (properties.getIngotProperty() == null) ingot();
+            properties.getIngotProperty().setMacerateInto(m);
+            return this;
+        }
+
         public Builder ingotSmeltInto(Material m) {
             if (properties.getIngotProperty() == null) ingot();
             properties.getIngotProperty().setSmeltingInto(m);
