@@ -5,10 +5,9 @@ import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Material.FluidType;
 
-import static com.google.common.collect.ImmutableList.of;
-import static gregtech.api.unification.material.info.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialIconSet.*;
 
 public class ElementMaterials {
 
@@ -763,7 +762,7 @@ public class ElementMaterials {
         Sulfur = new Material.Builder(103, "sulfur") // todo fluid?
                 .dust().ore()
                 .color(0xC8C800)
-                .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE)
+                .flags(NO_SMELTING, FLAMMABLE)
                 .element(Elements.S)
                 .addOreByproducts(Sulfur)
                 .build();
