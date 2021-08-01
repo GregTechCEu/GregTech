@@ -15,73 +15,73 @@ public class UnknownCompositionMaterials {
 
     public static void register() {
 
-        WoodGas = new Material.Builder(1000, "wood_gas")
+        WoodGas = new Material.Builder(1500, "wood_gas")
                 .fluid(FluidType.GAS).color(0xDECD87).build();
 
-        WoodVinegar = new Material.Builder(1001, "wood_vinegar")
+        WoodVinegar = new Material.Builder(1501, "wood_vinegar")
                 .fluid().color(0xD45500).build();
 
-        WoodTar = new Material.Builder(1002, "wood_tar")
+        WoodTar = new Material.Builder(1502, "wood_tar")
                 .fluid().color(0x28170B).build();
 
-        CharcoalByproducts = new Material.Builder(1003, "charcoal_byproducts")
+        CharcoalByproducts = new Material.Builder(1503, "charcoal_byproducts")
                 .fluid().color(0x784421).build();
 
-        Biomass = new Material.Builder(1004, "biomass")
+        Biomass = new Material.Builder(1504, "biomass")
                 .fluid().color(0x00FF00).build();
 
-        BioDiesel = new Material.Builder(1005, "bio_diesel")
+        BioDiesel = new Material.Builder(1505, "bio_diesel")
                 .fluid().color(0xFF8000).build();
 
-        FermentedBiomass = new Material.Builder(1006, "fermented_biomass")
+        FermentedBiomass = new Material.Builder(1506, "fermented_biomass")
                 .fluid().color(0x445500).build();
 
-        Creosote = new Material.Builder(1007, "creosote")
+        Creosote = new Material.Builder(1507, "creosote")
                 .fluid().color(0x804000).build();
 
-        Diesel = new Material.Builder(1008, "fuel")
+        Diesel = new Material.Builder(1508, "fuel")
                 .fluid().build();
 
-        RocketFuel = new Material.Builder(1009, "rocket_fuel")
+        RocketFuel = new Material.Builder(1509, "rocket_fuel")
                 .fluid().color(0xBDB78C).build();
 
-        Glue = new Material.Builder(1010, "glue")
+        Glue = new Material.Builder(1510, "glue")
                 .fluid().color(0xC8C400).build();
 
-        Lubricant = new Material.Builder(1011, "lubricant")
+        Lubricant = new Material.Builder(1511, "lubricant")
                 .fluid().build();
 
-        McGuffium239 = new Material.Builder(1012, "mc_guffium239")
+        McGuffium239 = new Material.Builder(1512, "mc_guffium239")
                 .fluid().build();
 
-        IndiumConcentrate = new Material.Builder(1013, "indium_concentrate")
+        IndiumConcentrate = new Material.Builder(1513, "indium_concentrate")
                 .fluid().color(0x0E2950).build();
 
-        SeedOil = new Material.Builder(1014, "seed_oil")
+        SeedOil = new Material.Builder(1514, "seed_oil")
                 .fluid().color(0xC4FF00).build();
 
-        DrillingFluid = new Material.Builder(1015, "drilling_fluid")
+        DrillingFluid = new Material.Builder(1515, "drilling_fluid")
                 .fluid().color(0xFFFFAA).build();
 
-        ConstructionFoam = new Material.Builder(1016, "construction_foam")
+        ConstructionFoam = new Material.Builder(1516, "construction_foam")
                 .fluid().color(0x808080).build();
 
-        HydroCrackedEthane = new Material.Builder(1017, "hydrocracked_ethane")
+        HydroCrackedEthane = new Material.Builder(1517, "hydrocracked_ethane")
                 .fluid(FluidType.GAS).color(0x9696BC).build();
 
-        HydroCrackedEthylene = new Material.Builder(1018, "hydrocracked_ethylene")
+        HydroCrackedEthylene = new Material.Builder(1518, "hydrocracked_ethylene")
                 .fluid(FluidType.GAS).color(0xA3A3A0).build();
 
-        HydroCrackedPropene = new Material.Builder(1019, "hydrocracked_propene")
+        HydroCrackedPropene = new Material.Builder(1519, "hydrocracked_propene")
                 .fluid(FluidType.GAS).color(0xBEA540).build();
 
-        HydroCrackedPropane = new Material.Builder(1020, "hydrocracked_propane")
+        HydroCrackedPropane = new Material.Builder(1520, "hydrocracked_propane")
                 .fluid(FluidType.GAS).color(0xBEA540).build();
 
-        HydroCrackedLightFuel = new Material.Builder(1021, "hydrocracked_light_fuel")
+        HydroCrackedLightFuel = new Material.Builder(1521, "hydrocracked_light_fuel")
                 .fluid().color(0xB7AF08).build();
 
-        HydroCrackedButane = new Material.Builder(1022, "hydrocracked_butane")
+        HydroCrackedButane = new Material.Builder(1522, "hydrocracked_butane")
                 .fluid(FluidType.GAS).color(0x852C18).build();
 
         public static SimpleFluidMaterial HydroCrackedNaphtha = new SimpleFluidMaterial("hydrocracked_naphtha", 0xBFB608, FLUID, of(), 0);
@@ -153,8 +153,9 @@ public class UnknownCompositionMaterials {
         public static DustMaterial Cocoa = new DustMaterial(384, "cocoa", 0xBE5F00, FINE, 0, of(), 0);
         public static DustMaterial Wheat = new DustMaterial(385, "wheat", 0xFFFFC4, FINE, 0, of(), 0);
         public static DustMaterial Meat = new DustMaterial(386, "meat", 12667980, SAND, 1, of(), DISABLE_DECOMPOSITION);
+
+
         public static RoughSolidMaterial Wood = new RoughSolidMaterial(269, "wood", 0x643200, WOOD, 0, of(), STD_SOLID | FLAMMABLE | NO_SMELTING | GENERATE_GEAR | GENERATE_LONG_ROD | GENERATE_FRAME, () -> OrePrefix.plank);
         public static RoughSolidMaterial Paper = new RoughSolidMaterial(272, "paper", 0xFAFAFA, PAPER, 0, of(), GENERATE_PLATE | FLAMMABLE | NO_SMELTING | NO_SMASHING | MORTAR_GRINDABLE | GENERATE_RING | EXCLUDE_PLATE_COMPRESSOR_RECIPE, () -> OrePrefix.plate);
-
     }
 }
