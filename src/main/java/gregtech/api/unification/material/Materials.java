@@ -412,6 +412,8 @@ public class Materials {
     public static Material NeodymiumMagnetic;
     public static Material NobleGases;
     public static Material HydrochloricAcid;
+    public static Material Steam;
+    public static Material DistilledWater;
 
 
 
@@ -533,12 +535,6 @@ public class Materials {
     public static Material Meat;
     public static Material Wood;
     public static Material Paper;
-
-    /**
-     * Water Related
-     */
-    public static FluidMaterial Steam = new FluidMaterial(254, "steam", 0xFFFFFF, GAS, of(new MaterialStack(Hydrogen, 2), new MaterialStack(Oxygen, 1)), NO_RECYCLING | GENERATE_FLUID_BLOCK | DISABLE_DECOMPOSITION | STATE_GAS).setFluidTemperature(380);
-    public static FluidMaterial DistilledWater = new FluidMaterial(255, "distilled_water", 0x0000FF, FLUID, of(new MaterialStack(Hydrogen, 2), new MaterialStack(Oxygen, 1)), NO_RECYCLING | DISABLE_DECOMPOSITION);
 
     /**
      * Simple Fluids

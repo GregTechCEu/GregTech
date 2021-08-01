@@ -1306,5 +1306,19 @@ public class FirstDegreeMaterials {
                 .fluid()
                 .components(Hydrogen, 1, Chlorine, 1)
                 .build();
-      }
+
+        Steam = new Material.Builder(421, "steam")
+                .fluid(Material.FluidType.GAS, true)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hydrogen, 2, Oxygen, 1)
+                .fluidTemp(380)
+                .build();
+
+        DistilledWater = new Material.Builder(422, "distilled_water")
+                .fluid()
+                .color(0x0000FF)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Hydrogen, 2, Oxygen, 1)
+                .build();
+    }
 }
