@@ -89,7 +89,6 @@ public class FluidProperty implements IMaterialProperty {
 
     @Override
     public void verifyProperty(Properties properties) {
-        if (isGas) hasBlock = false;
         if (properties.getPlasmaProperty() != null) {
             hasBlock = false;
             isGas = false;

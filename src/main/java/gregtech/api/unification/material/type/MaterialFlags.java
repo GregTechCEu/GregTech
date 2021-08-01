@@ -146,14 +146,14 @@ public class MaterialFlags {
      */
     public static final MaterialFlag NO_SMASHING =
             new MaterialFlag.Builder(17, "no_smashing")
-                    .requireType(ingotProperty).build();
+                    .requireType(ingotProperty).or(gemProperty).build();
 
     /**
      * Add to material if it's impossible to smelt it
      */
     public static final MaterialFlag NO_SMELTING =
             new MaterialFlag.Builder(18, "no_smelting")
-                    .requireType(ingotProperty).build();
+                    .requireType(ingotProperty).or(gemProperty).build();
 
     /**
      * Add this to your Material if you want to have its Ore Calcite heated in a Blast Furnace for more output. Already listed are:

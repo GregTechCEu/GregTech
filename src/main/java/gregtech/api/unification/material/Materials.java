@@ -1,7 +1,6 @@
 package gregtech.api.unification.material;
 
 import gregtech.api.GTValues;
-import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.materials.*;
 import gregtech.api.unification.material.type.MarkerMaterial;
 import gregtech.api.unification.material.type.MaterialFlag;
@@ -448,6 +447,8 @@ public class Materials {
     public static Material SteamCrackedGas;
     public static Material SteamCrackedButene;
     public static Material SteamCrackedButadiene;
+    public static Material SteamCrackedLightFuel;
+    public static Material SteamCrackedHeavyFuel;
     public static Material SulfuricGas;
     public static Material RefineryGas;
     public static Material SulfuricNaphtha;
@@ -457,10 +458,6 @@ public class Materials {
     public static Material LightFuel;
     public static Material HeavyFuel;
     public static Material LPG;
-    public static Material SteamCrackedLightFuel;
-    public static Material SteamCrackedHeavyFuel;
-    public static Material UUAmplifier;
-    public static Material UUMatter;
     public static Material Honey;
     public static Material Juice;
     public static Material RawGrowthMedium;
@@ -745,7 +742,6 @@ public class Materials {
         Monazite.setByProductMultiplier(2);
 
         Lignite.setBurnTime(1200); //2/3 of burn time of coal
-        Wood.setBurnTime(300); //default wood burn time in vanilla
 
         Vermiculite.addOreByProducts(Iron, Aluminium, Magnesium);
         FullersEarth.addOreByProducts(Aluminium, Silicon, Magnesium);
@@ -782,11 +778,8 @@ public class Materials {
         Opal.addOreByProducts(Tanzanite);
         Amethyst.addOreByProducts(Amethyst);
         Niter.addOreByProducts(Saltpeter);
-        Vinteum.addOreByProducts(Vinteum);
         Andesite.addOreByProducts(Basalt);
         Diorite.addOreByProducts(NetherQuartz);
-
-        Vinteum.addEnchantmentForTools(Enchantments.FORTUNE, 2);
 
         RedAlloy.setCableProperties(GTValues.V[0], 1, 0);
         SolderingAlloy.setCableProperties(GTValues.V[1], 1, 1);
@@ -804,7 +797,6 @@ public class Materials {
         VanadiumGallium.setCableProperties(GTValues.V[6], 4, 2);
         YttriumBariumCuprate.setCableProperties(GTValues.V[6], 4, 4);
         NaquadahAlloy.setCableProperties(GTValues.V[8], 2, 4);
-        Duranium.setCableProperties(GTValues.V[8], 1, 8);
         FluxedElectrum.setCableProperties(GTValues.V[8], 3, 2);
         DiamericiumTitanium.setCableProperties(GTValues.V[10], 8, 16);
 

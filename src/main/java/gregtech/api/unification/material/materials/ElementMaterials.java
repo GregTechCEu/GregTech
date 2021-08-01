@@ -983,6 +983,7 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Dr)
                 .toolStats(16.0f, 5.0f, 5120)
+                .cableProperties(GTValues.V[8], 1, 8)
                 .fluidPipeProperties(100000, 2000, true)
                 .build();
 
