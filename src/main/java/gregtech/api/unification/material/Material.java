@@ -89,14 +89,9 @@ public class Material implements Comparable<Material> {
 
     private Material(MaterialInfo materialInfo, Properties properties, MaterialFlags flags) {
         this.materialInfo = materialInfo;
-        this.chemicalFormula = calculateChemicalFormula();
-
         this.properties = properties;
         this.flags = flags;
-        calculateDecompositionType();
 
-        // TODO these verifications probably need to be done in deferred registry,
-        // TODO due to some things (ore extra materials) possibly being uninitialized.
         this.properties.setMaterial(this);
         registerMaterial(this);
     }
@@ -323,6 +318,11 @@ public class Material implements Comparable<Material> {
     protected void verifyMaterial() {
         properties.verify();
         flags.verify(this);
+    }
+
+    protected void postVerify() {
+        this.chemicalFormula = calculateChemicalFormula();
+        calculateDecompositionType();
     }
 
     public static class Builder {

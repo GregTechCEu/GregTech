@@ -18,6 +18,7 @@ public class MaterialRegistry {
     public static void freeze() {
         GTLog.logger.info("Freezing material registry...");
         DEFERRED_REGISTRY.forEach(MaterialRegistry::finalizeRegistry);
+        DEFERRED_REGISTRY.forEach(MaterialRegistry::postVerify);
         DEFERRED_REGISTRY = null; // destroy the deferred registry
         MATERIAL_REGISTRY.freezeRegistry();
     }
@@ -29,6 +30,10 @@ public class MaterialRegistry {
     private static void finalizeRegistry(Material material) {
         material.verifyMaterial();
         MATERIAL_REGISTRY.register(material.getId(), material.toString(), material);
+    }
+
+    private static void postVerify(Material material) {
+        material.postVerify();
     }
 
     public static void register(Material material) {
