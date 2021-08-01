@@ -39,8 +39,9 @@ public class Properties {
     }
 
     public void verify() {
-        // TODO this will CME
-        properties.forEach(p -> p.verifyProperty(this));
+        List<IMaterialProperty> oldList = new ArrayList<>(properties);
+        do oldList.forEach(p -> p.verifyProperty(this));
+        while (oldList.size() != properties.size());
         if (!isValid)
             throw new IllegalArgumentException("Material must have at least one of: [dust, ingot, gem, fluid, plasma] specified!");
     }
