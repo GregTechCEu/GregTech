@@ -4,14 +4,11 @@ import gregtech.api.unification.material.materials.*;
 import gregtech.api.unification.material.type.MarkerMaterial;
 import gregtech.api.unification.material.type.MaterialFlag;
 import gregtech.api.unification.material.type.RoughSolidMaterial;
-import gregtech.api.unification.stack.MaterialStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.google.common.collect.ImmutableList.of;
-import static gregtech.api.unification.material.MaterialIconSet.*;
 import static gregtech.api.unification.material.type.MaterialFlags.*;
 
 /**
@@ -220,7 +217,9 @@ public class Materials {
     public static Material Zinc;
     public static Material Zirconium;
 
-    // Fantasy elements
+    /**
+     * Fantasy Elements
+     */
     public static Material Naquadah;
     public static Material NaquadahEnriched;
     public static Material Naquadria;
@@ -413,9 +412,6 @@ public class Materials {
     public static Material Steam;
     public static Material DistilledWater;
 
-
-
-
     /**
      * Organic chemistry
      */
@@ -437,6 +433,55 @@ public class Materials {
     public static Material Polycaprolactam;
     public static Material Polytetrafluoroethylene;
     public static Material Sugar;
+    public static Material Methane;
+    public static Material Epichlorohydrin;
+    public static Material Monochloramine;
+    public static Material Chloroform;
+    public static Material Cumene;
+    public static Material Tetrafluoroethylene;
+    public static Material Chloromethane;
+    public static Material AllylChloride;
+    public static Material Isoprene;
+    public static Material Propane;
+    public static Material Propene;
+    public static Material Ethane;
+    public static Material Butene;
+    public static Material Butane;
+    public static Material DissolvedCalciumAcetate;
+    public static Material VinylAcetate;
+    public static Material MethylAcetate;
+    public static Material Ethenone;
+    public static Material Tetranitromethane;
+    public static Material Dimethylamine;
+    public static Material Dimethylhydrazine;
+    public static Material DinitrogenTetroxide;
+    public static Material Dimethyldichlorosilane;
+    public static Material Styrene;
+    public static Material Butadiene;
+    public static Material Dichlorobenzene;
+    public static Material AceticAcid;
+    public static Material Phenol;
+    public static Material BisphenolA;
+    public static Material VinylChloride;
+    public static Material Ethylene;
+    public static Material Benzene;
+    public static Material Acetone;
+    public static Material Glycerol;
+    public static Material Methanol;
+    public static Material SaltWater;
+    public static Material Ethanol;
+    public static Material Toluene;
+    public static Material DiphenylIsophtalate;
+    public static Material PhthalicAcid;
+    public static Material Dimethylbenzene;
+    public static Material Diaminobenzidine;
+    public static Material Dichlorobenzidine;
+    public static Material Nitrochlorobenzene;
+    public static Material Chlorobenzene;
+    public static Material Octane;
+    public static Material EthylTertButylEther;
+    public static Material Ethylbenzene;
+    public static Material Naphthalene;
 
     /**
      * Not possible to determine exact Components
@@ -535,71 +580,8 @@ public class Materials {
     public static Material Paper;
 
     /**
-     * Simple Fluids
-     */
-    public static SimpleFluidMaterial Methane = new SimpleFluidMaterial("methane", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 1), new MaterialStack(Hydrogen, 4)), STATE_GAS);
-    public static SimpleFluidMaterial Epichlorohydrin = new SimpleFluidMaterial("epichlorohydrin", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 3), new MaterialStack(Hydrogen, 5), new MaterialStack(Chlorine, 1), new MaterialStack(Oxygen, 1)), 0);
-    public static SimpleFluidMaterial Monochloramine = new SimpleFluidMaterial("monochloramine", 0x3F9F80, GAS, of(new MaterialStack(Nitrogen, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(HydrochloricAcid, 1)), STATE_GAS).tooltip("NH2Cl");
-    public static SimpleFluidMaterial Chloroform = new SimpleFluidMaterial("chloroform", 0x892CA0, FLUID, of(new MaterialStack(Carbon, 1), new MaterialStack(Hydrogen, 1), new MaterialStack(Chlorine, 3)), 0);
-    public static SimpleFluidMaterial Cumene = new SimpleFluidMaterial("cumene", 0x552200, FLUID, of(new MaterialStack(Carbon, 9), new MaterialStack(Hydrogen, 12)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Tetrafluoroethylene = new SimpleFluidMaterial("tetrafluoroethylene", 0x7D7D7D, GAS, of(new MaterialStack(Carbon, 2), new MaterialStack(Fluorine, 4)), STATE_GAS | DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Chloromethane = new SimpleFluidMaterial("chloromethane", 0xC82CA0, GAS, of(new MaterialStack(Carbon, 1), new MaterialStack(Hydrogen, 3), new MaterialStack(Chlorine, 1)), STATE_GAS | DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial AllylChloride = new SimpleFluidMaterial("allyl_chloride", 0x87DEAA, FLUID, of(new MaterialStack(Carbon, 2), new MaterialStack(Methane, 1), new MaterialStack(HydrochloricAcid, 1)), 0);
-    public static SimpleFluidMaterial Isoprene = new SimpleFluidMaterial("isoprene", 0x141414, FLUID, of(new MaterialStack(Carbon, 5), new MaterialStack(Hydrogen, 8)), 0);
-    public static SimpleFluidMaterial Propane = new SimpleFluidMaterial("propane", 0xFAE250, GAS, of(new MaterialStack(Carbon, 3), new MaterialStack(Hydrogen, 8)), STATE_GAS);
-    public static SimpleFluidMaterial Propene = new SimpleFluidMaterial("propene", 0xFFDD55, GAS, of(new MaterialStack(Carbon, 3), new MaterialStack(Hydrogen, 6)), STATE_GAS);
-    public static SimpleFluidMaterial Ethane = new SimpleFluidMaterial("ethane", 0xC8C8FF, GAS, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 6)), STATE_GAS);
-    public static SimpleFluidMaterial Butene = new SimpleFluidMaterial("butene", 0xCF5005, GAS, of(new MaterialStack(Carbon, 4), new MaterialStack(Hydrogen, 8)), STATE_GAS);
-    public static SimpleFluidMaterial Butane = new SimpleFluidMaterial("butane", 0xB6371E, GAS, of(new MaterialStack(Carbon, 4), new MaterialStack(Hydrogen, 10)), STATE_GAS);
-    public static SimpleFluidMaterial DissolvedCalciumAcetate = new SimpleFluidMaterial("dissolved_calcium_acetate", 0xDCC8B4, FLUID, of(new MaterialStack(Calcium, 1), new MaterialStack(Carbon, 4), new MaterialStack(Oxygen, 4), new MaterialStack(Hydrogen, 6), new MaterialStack(Water, 1)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial VinylAcetate = new SimpleFluidMaterial("vinyl_acetate", 0xE1B380, FLUID, of(new MaterialStack(Carbon, 4), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial MethylAcetate = new SimpleFluidMaterial("methyl_acetate", 0xEEC6AF, FLUID, of(new MaterialStack(Carbon, 3), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Ethenone = new SimpleFluidMaterial("ethenone", 0x141446, FLUID, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 2), new MaterialStack(Oxygen, 1)), DISABLE_DECOMPOSITION | STATE_GAS);
-    public static SimpleFluidMaterial Tetranitromethane = new SimpleFluidMaterial("tetranitromethane", 0x0F2828, FLUID, of(new MaterialStack(Carbon, 1), new MaterialStack(Nitrogen, 4), new MaterialStack(Oxygen, 8)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Dimethylamine = new SimpleFluidMaterial("dimethylamine", 0x554469, GAS, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 7), new MaterialStack(Nitrogen, 1)), STATE_GAS | DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Dimethylhydrazine = new SimpleFluidMaterial("dimethylhidrazine", 0x000055, FLUID, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 8), new MaterialStack(Nitrogen, 2)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial DinitrogenTetroxide = new SimpleFluidMaterial("dinitrogen_tetroxide", 0x004184, GAS, of(new MaterialStack(Nitrogen, 2), new MaterialStack(Oxygen, 4)), STATE_GAS);
-    public static SimpleFluidMaterial Dimethyldichlorosilane = new SimpleFluidMaterial("dimethyldichlorosilane", 0x441650, FLUID, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 6), new MaterialStack(Chlorine, 2), new MaterialStack(Silicon, 1)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Styrene = new SimpleFluidMaterial("styrene", 0xD2C8BE, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 8)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Butadiene = new SimpleFluidMaterial("butadiene", 11885072, GAS, of(new MaterialStack(Carbon, 4), new MaterialStack(Hydrogen, 6)), DISABLE_DECOMPOSITION | STATE_GAS);
-    public static SimpleFluidMaterial Dichlorobenzene = new SimpleFluidMaterial("dichlorobenzene", 0x004455, FLUID, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Chlorine, 2)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial AceticAcid = new SimpleFluidMaterial("acetic_acid", 0xC8B4A0, FLUID, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 4), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Phenol = new SimpleFluidMaterial("phenol", 0x784421, FLUID, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 1)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial BisphenolA = new SimpleFluidMaterial("bisphenol_a", 0xD4AA00, FLUID, of(new MaterialStack(Carbon, 15), new MaterialStack(Hydrogen, 16), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial VinylChloride = new SimpleFluidMaterial("vinyl_chloride", 0xE1F0F0, GAS, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 3), new MaterialStack(Chlorine, 1)), STATE_GAS | DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Ethylene = new SimpleFluidMaterial("ethylene", 0xE1E1E1, GAS, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 4)), STATE_GAS);
-    public static SimpleFluidMaterial Benzene = new SimpleFluidMaterial("benzene", 0x1A1A1A, FLUID, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 6)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Acetone = new SimpleFluidMaterial("acetone", 0xAFAFAF, FLUID, of(new MaterialStack(Carbon, 3), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 1)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Glycerol = new SimpleFluidMaterial("glycerol", 0x87DE87, FLUID, of(new MaterialStack(Carbon, 3), new MaterialStack(Hydrogen, 8), new MaterialStack(Oxygen, 3)), 0);
-    public static SimpleFluidMaterial Methanol = new SimpleFluidMaterial("methanol", 0xAA8800, FLUID, of(new MaterialStack(Carbon, 1), new MaterialStack(Hydrogen, 4), new MaterialStack(Oxygen, 1)), 0);
-    public static SimpleFluidMaterial SaltWater = new SimpleFluidMaterial("salt_water", 0x0000C8, FLUID, of(new MaterialStack(Salt, 1), new MaterialStack(Water, 1)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Ethanol = new SimpleFluidMaterial("ethanol", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 2), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 1)), DISABLE_DECOMPOSITION);
-
-    public static SimpleFluidMaterial Toluene = new SimpleFluidMaterial("toluene", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 7), new MaterialStack(Hydrogen, 8)), DISABLE_DECOMPOSITION);
-
-    public static SimpleFluidMaterial DiphenylIsophtalate = new SimpleFluidMaterial("diphenyl_isophthalate", 0x246E57, DULL, of(new MaterialStack(Carbon, 20), new MaterialStack(Hydrogen, 14), new MaterialStack(Oxygen, 4)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial PhthalicAcid = new SimpleFluidMaterial("phthalic_acid", 0xD1D1D1, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 6), new MaterialStack(Oxygen, 4)), GENERATE_FLUID_BLOCK | DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Dimethylbenzene = new SimpleFluidMaterial("dimethylbenzene", 0x669C40, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 10)), DISABLE_DECOMPOSITION).setFormula("C6H4(CH3)2", true);
-    public static SimpleFluidMaterial Diaminobenzidine = new SimpleFluidMaterial("diaminobenzidine", 0x337D59, DULL, of(new MaterialStack(Carbon, 12), new MaterialStack(Hydrogen, 14), new MaterialStack(Nitrogen, 4)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Dichlorobenzidine = new SimpleFluidMaterial("dichlorobenzidine", 0xA1DEA6, DULL, of(new MaterialStack(Carbon, 12), new MaterialStack(Hydrogen, 10), new MaterialStack(Chlorine, 2), new MaterialStack(Nitrogen, 2)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Nitrochlorobenzene = new SimpleFluidMaterial("nitrochlorobenzene", 0x8FB51A, DULL, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 4), new MaterialStack(Chlorine, 1), new MaterialStack(Nitrogen, 1), new MaterialStack(Oxygen, 2)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial Chlorobenzene = new SimpleFluidMaterial("chlorobenzene", 0x326A3E, DULL, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 5), new MaterialStack(Chlorine, 1)), DISABLE_DECOMPOSITION);
-    // HOG
-
-
-    public static SimpleFluidMaterial Octane = new SimpleFluidMaterial("octane", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 18)), DISABLE_DECOMPOSITION);
-    public static SimpleFluidMaterial EthylTertButylEther = new SimpleFluidMaterial("ethyl_tertbutyl_ether", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 6), new MaterialStack(Hydrogen, 14), new MaterialStack(Oxygen, 1)), DISABLE_DECOMPOSITION);
-
-
-    // COAL GAS
-
-    public static SimpleFluidMaterial Ethylbenzene = new SimpleFluidMaterial("ethylbenzene", 0xFFFFFF, FLUID, of(new MaterialStack(Carbon, 8), new MaterialStack(Hydrogen, 10)), DISABLE_DECOMPOSITION).setFormula("C6H5CH2CH3", true);
-    public static SimpleFluidMaterial Naphthalene = new SimpleFluidMaterial("naphthalene", 0xF4F4D7, FLUID, of(new MaterialStack(Carbon, 10), new MaterialStack(Hydrogen, 8)), DISABLE_DECOMPOSITION);
-
-    /**
      * Second Degree Compounds
      */
-
     public static Material Glass;
     public static Material Perlite;
     public static Material Borax;
