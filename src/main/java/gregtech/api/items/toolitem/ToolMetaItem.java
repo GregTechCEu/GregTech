@@ -13,10 +13,10 @@ import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialIconSet;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.GTLog;
@@ -743,7 +743,11 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         private Map<Enchantment, Integer> bakeEnchantmentsMap(ItemStack itemStack, Collection<Material> materials) {
             Map<Enchantment, Integer> enchantments = new HashMap<>();
             for (Material material : materials) {
-                for (EnchantmentData enchantmentData : material.toolEnchantments) {
+                ToolProperty prop = material.getProperties().getToolProperty();
+                if (prop == null)
+                    continue;
+
+                for (EnchantmentData enchantmentData : prop.toolEnchantments) {
                     if (enchantments.containsKey(enchantmentData.enchantment)) {
                         int level = Math.min(enchantments.get(enchantmentData.enchantment) + enchantmentData.level,
                             enchantmentData.enchantment.getMaxLevel());
