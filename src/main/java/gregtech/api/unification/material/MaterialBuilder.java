@@ -250,6 +250,7 @@ public class MaterialBuilder {
         final List<MaterialStack> materialList = new ArrayList<>();
         this.composition.forEach((k, v) -> materialList.add(new MaterialStack(k, v)));
         materialInfo.componentList = ImmutableList.copyOf(materialList);
+        materialInfo.verifyIconSet(properties);
         return new Material(materialInfo, properties, flags);
     }
 
@@ -281,9 +282,10 @@ public class MaterialBuilder {
         /**
          * The IconSet of this Material.
          *
-         * Default: DULL.
+         * Default: - DULL if has Dust, Ingot, or Gem Property.
+         *          - FLUID or GAS if only has FluidProperty (ignoring Plasma), depending on {@link FluidType}.
          */
-        public MaterialIconSet iconSet = MaterialIconSet.DULL;
+        public MaterialIconSet iconSet;
 
         /**
          * The components of this Material.
@@ -314,6 +316,18 @@ public class MaterialBuilder {
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
             this.name = name;
+        }
+
+        private void verifyIconSet(Properties p) {
+            if (iconSet != null) {
+                if (p.getDustProperty() != null || p.getIngotProperty() != null || p.getGemProperty() != null) {
+                    iconSet = MaterialIconSet.DULL;
+                } else if (p.getFluidProperty() != null) {
+                    if (p.getFluidProperty().isGas()) {
+                        iconSet = MaterialIconSet.GAS;
+                    } else iconSet = MaterialIconSet.FLUID;
+                }
+            }
         }
     }
 
