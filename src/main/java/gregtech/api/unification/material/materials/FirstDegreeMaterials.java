@@ -373,7 +373,7 @@ public class FirstDegreeMaterials {
         Molybdenite = new Material.Builder(293, "molybdenite")
                 .dust().ore()
                 .color(0x191919).iconSet(METALLIC)
-                .components(Molybdenum, Sulfur, 2)
+                .components(Molybdenum, 1, Sulfur, 2)
                 .addOreByproducts(Molybdenum)
                 .oreSmeltInto(Molybdenum)
                 .build();
