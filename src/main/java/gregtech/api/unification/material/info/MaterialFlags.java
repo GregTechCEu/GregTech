@@ -161,11 +161,11 @@ public class MaterialFlags {
      */
     public static final MaterialFlag BLAST_FURNACE_CALCITE_DOUBLE =
             new MaterialFlag.Builder(19, "blast_furnace_calcite_double")
-                    .requireType(ingotProperty).build();
+                    .requireType(dustProperty).build();
 
     public static final MaterialFlag BLAST_FURNACE_CALCITE_TRIPLE =
             new MaterialFlag.Builder(20, "blast_furnace_calcite_triple")
-                    .requireType(ingotProperty).build();
+                    .requireType(dustProperty).build();
 
     public static final MaterialFlag GENERATE_FOIL =
             new MaterialFlag.Builder(21, "generate_foil")
