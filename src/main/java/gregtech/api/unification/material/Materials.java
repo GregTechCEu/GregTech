@@ -654,14 +654,14 @@ public class Materials {
     public static IngotMaterial BorosilicateGlass = new IngotMaterial(263, "borosilicate_glass", 0xE6F3E6, SHINY, 1, of(new MaterialStack(Boron, 1), new MaterialStack(SiliconDioxide, 7)), GENERATE_FINE_WIRE);
 
 
-    Brick = new MaterialBuilder(191, "brick")
+    Brick = new Material.Builder(191, "brick")
                 .dust(1)
                 .color(0x9B5643).iconSet(ROUGH)
                 .flags(EXCLUDE_BLOCK_CRAFTING_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Clay, 1)
                 .build();
 
-    Fireclay = new MaterialBuilder(192, "fireclay")
+    Fireclay = new Material.Builder(192, "fireclay")
                 .dust()
                 .color(0xADA09B).iconSet(ROUGH)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
@@ -669,7 +669,7 @@ public class Materials {
                 .build();
 
 
-    HydratedCoal = new MaterialBuilder(240, "hydrated_coal")
+    HydratedCoal = new Material.Builder(240, "hydrated_coal")
                 .dust(1)
                 .color(0x464664).iconSet(ROUGH)
                 .components(Coal, 8, Water, 1)

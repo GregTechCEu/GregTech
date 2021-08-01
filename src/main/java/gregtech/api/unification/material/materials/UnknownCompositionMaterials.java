@@ -1,6 +1,7 @@
 package gregtech.api.unification.material.materials;
 
-import gregtech.api.unification.material.MaterialBuilder;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Material.FluidType;
 import gregtech.api.unification.material.type.RoughSolidMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
@@ -8,18 +9,24 @@ import gregtech.api.unification.stack.MaterialStack;
 import static com.google.common.collect.ImmutableList.of;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.MaterialIconSet.*;
-import static gregtech.api.unification.material.MaterialIconSet.FLUID;
 import static gregtech.api.unification.material.type.MaterialFlags.*;
-import static gregtech.api.unification.material.type.MaterialFlags.NO_SMELTING;
 
 public class UnknownCompositionMaterials {
 
     public static void register() {
 
-        WoodGas = new MaterialBuilder()
+        WoodGas = new Material.Builder(1000, "wood_gas")
+                .fluid(FluidType.GAS)
+                .color(0xDECD87)
+                .build();
 
-        public static SimpleFluidMaterial WoodGas = new SimpleFluidMaterial("wood_gas", 0xDECD87, GAS, of(), STATE_GAS);
-        public static SimpleFluidMaterial WoodVinegar = new SimpleFluidMaterial("wood_vinegar", 0xD45500, FLUID, of(), 0);
+        WoodVinegar = new Material.Builder(1001, "wood_vinegar")
+                .fluid()
+                .color(0xD45500)
+                .build();
+
+        WoodTar = new Material.Builder()
+
         public static SimpleFluidMaterial WoodTar = new SimpleFluidMaterial("wood_tar", 0x28170B, FLUID, of(), 0);
         public static SimpleFluidMaterial CharcoalByproducts = new SimpleFluidMaterial("charcoal_byproducts", 0x784421, FLUID, of(), 0);
         public static SimpleFluidMaterial Biomass = new SimpleFluidMaterial("biomass", 0x00FF00, FLUID, of(), 0);
