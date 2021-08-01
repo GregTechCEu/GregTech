@@ -63,12 +63,12 @@ public class Materials {
         /*
          * Ranges 2000-2499
          */
-        HighDegreeMaterials.register();
+        SecondDegreeMaterials.register();
 
         /*
          * Ranges 2500-2999
          */
-        ThirdDegreeMaterials.register();
+        HigherDegreeMaterials.register();
     }
 
     public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();
@@ -672,11 +672,11 @@ public class Materials {
     /**
      * Fourth Degree Materials
      */
-    public static IngotMaterial RedAlloy = new IngotMaterial(310, "red_alloy", 0xC80000, DULL, 0, of(new MaterialStack(Copper, 1), new MaterialStack(Redstone, 1)), GENERATE_PLATE | GENERATE_FINE_WIRE | GENERATE_BOLT_SCREW);
-    public static DustMaterial BasalticMineralSand = new DustMaterial(330, "basaltic_mineral_sand", 0x283228, SAND, 1, of(new MaterialStack(Magnetite, 1), new MaterialStack(Basalt, 1)), 0);
-    public static IngotMaterial HSSE = new IngotMaterial(367, "hsse", 0x336600, METALLIC, 4, of(new MaterialStack(HSSG, 6), new MaterialStack(Cobalt, 1), new MaterialStack(Manganese, 1), new MaterialStack(Silicon, 1)), EXT2_METAL | GENERATE_RING | GENERATE_ROTOR | GENERATE_SMALL_GEAR | GENERATE_LONG_ROD | GENERATE_FRAME, null, 10.0F, 8.0f, 5120, 5000);
-    public static IngotMaterial HSSS = new IngotMaterial(368, "hsss", 0x660033, METALLIC, 4, of(new MaterialStack(HSSG, 6), new MaterialStack(Iridium, 2), new MaterialStack(Osmium, 1)), EXT2_METAL | GENERATE_GEAR | GENERATE_SMALL_GEAR, null, 15.0F, 7.0f, 3000, 5000);
-    public static IngotMaterial FluxedElectrum = new IngotMaterial(382, "fluxed_electrum", 0xf2ef27, METALLIC, 4, of(new MaterialStack(Electrum, 1), new MaterialStack(NaquadahAlloy, 1), new MaterialStack(BlueSteel, 1), new MaterialStack(RedSteel, 1)), EXT2_METAL, null, 11.0F, 6.0f, 2100, 9000);
+    public static Material RedAlloy;
+    public static Material BasalticMineralSand;
+    public static Material HSSE;
+    public static Material HSSS;
+    public static Material FluxedElectrum;
 
     // Superconductor here at ID 387. Assigned in MarkerMaterials:98
 
@@ -703,8 +703,6 @@ public class Materials {
 
         BasalticMineralSand.addOreByProducts(Basalt, Magnetite);
         Flint.addOreByProducts(Obsidian);
-        Andesite.addOreByProducts(Basalt);
-        Diorite.addOreByProducts(NetherQuartz);
 
         RedAlloy.setCableProperties(GTValues.V[0], 1, 0);
         SolderingAlloy.setCableProperties(GTValues.V[1], 1, 1);

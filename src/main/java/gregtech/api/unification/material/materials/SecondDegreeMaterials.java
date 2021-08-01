@@ -10,7 +10,7 @@ import static gregtech.api.unification.material.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.type.MaterialFlags.*;
 
-public class HighDegreeMaterials {
+public class SecondDegreeMaterials {
 
     public static void register() {
 

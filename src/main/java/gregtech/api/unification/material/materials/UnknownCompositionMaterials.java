@@ -306,10 +306,14 @@ public class UnknownCompositionMaterials {
         Andesite = new Material.Builder(1609, "andesite")
                 .dust()
                 .color(0xBEBEBE).iconSet(ROUGH)
+                .addOreByproducts(Basalt)
                 .build();
 
         Diorite = new Material.Builder(1610, "diorite")
-                .dust().iconSet(ROUGH).build();
+                .dust()
+                .iconSet(ROUGH)
+                .addOreByproducts(NetherQuartz)
+                .build();
 
         Granite = new Material.Builder(1611, "granite")
                 .dust()
