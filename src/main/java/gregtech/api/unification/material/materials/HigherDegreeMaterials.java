@@ -61,10 +61,13 @@ public class HigherDegreeMaterials {
                 .build();
 
         GraniticMineralSand = new Material.Builder(2013, "granitic_mineral_sand")
-                .dust(1)
+                .dust(1).ore()
                 .color(0x283C3C).iconSet(SAND)
                 .components(Magnetite, 1, GraniteBlack, 1)
+                .flags(BLAST_FURNACE_CALCITE_DOUBLE)
                 .addOreByproducts(GraniteBlack, Magnetite)
+                .separatedInto(Gold)
+                .oreSmeltInto(Iron)
                 .build();
 
         Redrock = new Material.Builder(2014, "redrock")
@@ -104,10 +107,13 @@ public class HigherDegreeMaterials {
                 .build();
 
         BasalticMineralSand = new Material.Builder(2018, "basaltic_mineral_sand")
-                .dust(1)
+                .dust(1).ore()
                 .color(0x283228).iconSet(SAND)
                 .components(Magnetite, 1, Basalt, 1)
+                .flags(BLAST_FURNACE_CALCITE_DOUBLE)
                 .addOreByproducts(Basalt, Magnetite)
+                .separatesInto(Gold)
+                .oreSmeltInto(Iron)
                 .build();
 
         HSSE = new Material.Builder(2019, "hsse")

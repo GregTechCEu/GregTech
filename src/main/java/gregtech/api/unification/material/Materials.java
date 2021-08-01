@@ -3,7 +3,6 @@ package gregtech.api.unification.material;
 import gregtech.api.unification.material.materials.*;
 import gregtech.api.unification.material.type.MarkerMaterial;
 import gregtech.api.unification.material.type.MaterialFlag;
-import gregtech.api.unification.material.type.RoughSolidMaterial;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +67,7 @@ public class Materials {
     }
 
     public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();
-    public static final List<MaterialFlag> STD_GEM = new ArrayList<>(); // TODO Had ORE flag
+    public static final List<MaterialFlag> STD_GEM = new ArrayList<>();
     public static final List<MaterialFlag> STD_METAL = new ArrayList<>();
     public static final List<MaterialFlag> EXT_METAL = new ArrayList<>();
     public static final List<MaterialFlag> EXT2_METAL = new ArrayList<>();
@@ -633,8 +632,7 @@ public class Materials {
     public static Material DilutedHydrochloricAcid;
     public static Material Air;
     public static Material LiquidAir;
-    //todo roughsolid
-    public static RoughSolidMaterial Flint;
+    public static Material Flint;
 
     /**
      * Third Degree Materials
@@ -659,29 +657,5 @@ public class Materials {
     public static Material HSSS;
     public static Material FluxedElectrum;
 
-    // Superconductor here at ID 387. Assigned in MarkerMaterials:98
-
-    static {
-        for (DustMaterial dustMaterial : new DustMaterial[]{Monazite}) {
-            dustMaterial.separatedOnto = Neodymium;
-        }
-        for (DustMaterial dustMaterial : new DustMaterial[]{VanadiumMagnetite, BasalticMineralSand, GraniticMineralSand}) {
-            dustMaterial.separatedOnto = Gold;
-        }
-        for (DustMaterial dustMaterial : new DustMaterial[]{Vermiculite}) {
-            dustMaterial.separatedOnto = Iron;
-        }
-        for (DustMaterial dustMaterial : new DustMaterial[]{BasalticMineralSand, GraniticMineralSand}) {
-            dustMaterial.addFlag(BLAST_FURNACE_CALCITE_DOUBLE);
-        }
-
-        SteelMagnetic.setSmeltingInto(Steel);
-        SteelMagnetic.setArcSmeltingInto(Steel);
-        SteelMagnetic.setMaceratingInto(Steel);
-
-        BasalticMineralSand.setDirectSmelting(Iron);
-        GraniticMineralSand.setDirectSmelting(Iron);
-
-        Flint.addOreByProducts(Obsidian);
-    }
+    // TODO Superconductor here at ID 387. Assigned in MarkerMaterials:98
 }

@@ -201,6 +201,7 @@ public class SecondDegreeMaterials {
                 .color(0x23233C).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .addOreByproducts(Magnetite, Vanadium)
+                .separatesInto(Gold)
                 .build();
 
         QuartzSand = new Material.Builder(2023, "quartz_sand")
@@ -222,6 +223,7 @@ public class SecondDegreeMaterials {
                 .color(0xC8B40F).iconSet(METALLIC)
                 .components(Iron, 3, Aluminium, 4, Silicon, 4, Hydrogen, 2, Water, 4, Oxygen, 12)
                 .addOreByproducts(Iron, Aluminium, Magnesium)
+                .separatesInto(Iron)
                 .build();
 
         Bentonite = new Material.Builder(2026, "bentonite")
@@ -253,6 +255,7 @@ public class SecondDegreeMaterials {
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
                 .components(RareEarth, 1, Phosphate, 1)
                 .addOreByproducts(Thorium, Neodymium, RareEarth)
+                .separatedInto(Neodymium)
                 .build();
 
         Mirabilite = new Material.Builder(2030, "mirabilite")
@@ -291,6 +294,9 @@ public class SecondDegreeMaterials {
                 .color(0x808080).iconSet(MAGNETIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, MORTAR_GRINDABLE)
                 .components(Steel, 1)
+                .ingotSmeltInto(Steel)
+                .arcSmeltInto(Steel)
+                .macerateInto(Steel)
                 .blastTemp(1000)
                 .build();
 
@@ -404,6 +410,8 @@ public class SecondDegreeMaterials {
                 .build();
 
         //todo roughsolid
-        RoughSolidMaterial Flint = new RoughSolidMaterial(296, "flint", 0x002040, FLINT, 1, of(new MaterialStack(SiliconDioxide, 1)), NO_SMASHING | MORTAR_GRINDABLE | DECOMPOSITION_BY_CENTRIFUGING, () -> OrePrefix.gem);
+        Flint = new RoughSolidMaterial(296, "flint", 0x002040, FLINT, 1, of(new MaterialStack(SiliconDioxide, 1)), NO_SMASHING | MORTAR_GRINDABLE | DECOMPOSITION_BY_CENTRIFUGING, () -> OrePrefix.gem);
+        Flint.addOreByProducts(Obsidian);
+
     }
 }
