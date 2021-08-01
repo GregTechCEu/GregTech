@@ -11,7 +11,7 @@ import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.GemProperty;
 import gregtech.api.unification.material.properties.IngotProperty;
-import gregtech.api.unification.material.type.*;
+import gregtech.api.unification.material.type.MarkerMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
@@ -25,11 +25,7 @@ import static gregtech.api.GTValues.L;
 import static gregtech.api.recipes.RecipeMaps.BENDER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
 import static gregtech.api.unification.material.properties.DummyProperties.*;
-import static gregtech.api.unification.material.type.MaterialFlags.GENERATE_BOLT_SCREW;
-import static gregtech.api.unification.material.type.MaterialFlags.GENERATE_PLATE;
-import static gregtech.api.unification.material.type.MaterialFlags.GENERATE_ROD;
-import static gregtech.api.unification.material.type.MaterialFlags.MORTAR_GRINDABLE;
-import static gregtech.api.unification.material.type.MaterialFlags.NO_SMASHING;
+import static gregtech.api.unification.material.type.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.api.util.DyeUtil.determineDyeColor;
 
@@ -202,7 +198,7 @@ public class PartsRecipeHandler {
             .EUt(16)
             .buildAndRegister();
 
-        EnumDyeColor dyeColor = determineDyeColor(material.materialRGB);
+        EnumDyeColor dyeColor = determineDyeColor(material.getMaterialRGB());
         MarkerMaterial colorMaterial = MarkerMaterials.Color.COLORS.get(dyeColor);
         OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, colorMaterial);
     }
