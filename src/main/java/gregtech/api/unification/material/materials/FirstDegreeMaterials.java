@@ -15,7 +15,7 @@ public class FirstDegreeMaterials {
     public static void register() {
         Almandine = new Material.Builder(250, "almandine")
                 .gem(1).ore(6, 1)
-                .color(0xFF0000).iconSet(GEM_VERTICAL)
+                .color(0xFF0000)
                 .flags(STD_GEM)
                 .components(Aluminium, 2, Iron, 3, Silicon, 3, Oxygen, 12)
                 .addOreByproducts(GarnetRed, Aluminium)

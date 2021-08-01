@@ -762,7 +762,7 @@ public class ElementMaterials {
         Sulfur = new Material.Builder(103, "sulfur") // todo fluid?
                 .dust().ore()
                 .color(0xC8C800)
-                .flags(FLAMMABLE)
+//                .flags(FLAMMABLE) //todo fix this
                 .element(Elements.S)
                 .addOreByproducts(Sulfur)
                 .build();
