@@ -8,6 +8,7 @@ import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.WireProperty;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
@@ -54,7 +55,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperty, Worl
     public void addCableMaterial(Material material, WireProperty wireProperties) {
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(wireProperties, "wireProperties");
-        Preconditions.checkArgument(Material.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
+        Preconditions.checkArgument(MaterialRegistry.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
         if (!pipeType.orePrefix.isIgnored(material)) {
             this.enabledMaterials.put(material, wireProperties);
         }

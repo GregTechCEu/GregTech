@@ -9,6 +9,7 @@ import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.MetaTileEntityTESR;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.Properties;
 import gregtech.api.unification.material.Material;
@@ -68,6 +69,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static gregtech.api.unification.material.type.MaterialFlags.GENERATE_FRAME;
 import static gregtech.common.ClientProxy.*;
 
 public class MetaBlocks {
@@ -187,7 +189,7 @@ public class MetaBlocks {
             material -> material.getProperties().getDustProperty() != null && !OrePrefix.block.isIgnored(material),
             MetaBlocks::createCompressedBlock);
 
-        for (Material material : Material.MATERIAL_REGISTRY) {
+        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
             Properties matProps = material.getProperties();
 
             if (matProps.getOreProperty() != null)
@@ -238,9 +240,9 @@ public class MetaBlocks {
 
         Map<Integer, Material[]> blocksToGenerate = new TreeMap<>();
 
-        for(Material material : Material.MATERIAL_REGISTRY)
+        for(Material material : MaterialRegistry.MATERIAL_REGISTRY)
             if(materialPredicate.test(material)) {
-                int id = Material.MATERIAL_REGISTRY.getIDForObject(material);
+                int id = material.getId();
                 int metaBlockID = id / 16;
                 int subBlockID = id % 16;
 

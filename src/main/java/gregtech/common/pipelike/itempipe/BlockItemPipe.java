@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.ItemPipeProperty;
 import gregtech.api.unification.material.Material;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
@@ -44,7 +45,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     public void addPipeMaterial(Material material, ItemPipeProperty properties) {
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(properties, "itemPipeProperties");
-        Preconditions.checkArgument(Material.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
+        Preconditions.checkArgument(MaterialRegistry.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
         this.enabledMaterials.put(material, properties);
     }
 

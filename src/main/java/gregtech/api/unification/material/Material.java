@@ -28,9 +28,6 @@ import java.util.function.Supplier;
 //@ZenRegister
 public class Material implements Comparable<Material> {
 
-    // TODO remove
-    //public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(32768);
-
     /**
      * Basic Info of this Material.
      */
