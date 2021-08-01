@@ -30,7 +30,10 @@ public class Material implements Comparable<Material> {
 
     /**
      * Basic Info of this Material.
+     *
+     * @see MaterialInfo
      */
+    @Nonnull
     private final MaterialInfo materialInfo;
 
     /**
@@ -38,6 +41,7 @@ public class Material implements Comparable<Material> {
      *
      * @see Properties
      */
+    @Nonnull
     private final Properties properties;
 
     /**
@@ -45,6 +49,7 @@ public class Material implements Comparable<Material> {
      *
      * @see MaterialFlags
      */
+    @Nonnull
     private final MaterialFlags flags;
 
     /**
