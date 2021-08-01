@@ -345,6 +345,8 @@ public class Material implements Comparable<Material> {
         private final Properties properties;
         private final MaterialFlags flags;
 
+        private Material magneticTemp;
+
         /**
          * The "list" of components for this Material.
          */
@@ -491,6 +493,21 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        public Builder setMagnetic() {
+            if (properties.getMagneticProperty() != null) return this; // todo do I want to do this better?
+
+            Builder b = new Builder(materialInfo.metaItemSubId + 1, materialInfo.name + "_magnetic")
+                    .ingot()
+                    .color(materialInfo.color).iconSet(MaterialIconSet.MAGNETIC)
+                    .flags(Materials.EXT2_METAL);
+
+            if (properties.getBlastProperty() != null) {
+                b.blastTemp(properties.getBlastProperty().getBlastTemperature());
+            }
+            magneticTemp = b.build();
+            return polarizesInto(magneticTemp);
+        }
+
         public Builder separatesInto(Material m) {
             if (properties.getOreProperty() == null) ore();
             properties.getOreProperty().setSeparatedInto(m);
@@ -581,9 +598,20 @@ public class Material implements Comparable<Material> {
             this.composition.forEach((k, v) -> materialList.add(new MaterialStack(k, v)));
             materialInfo.componentList = ImmutableList.copyOf(materialList);
             materialInfo.verifyIconSet(properties);
-            return new Material(materialInfo, properties, flags);
+            Material m = new Material(materialInfo, properties, flags);
+            testMagnetic(m);
+            return m;
         }
 
+        private void testMagnetic(Material thisM) {
+            if (magneticTemp != null) {
+                IngotProperty prop = magneticTemp.getProperties().getIngotProperty();
+                prop.setMacerateInto(thisM);
+                prop.setSmeltingInto(thisM);
+                prop.setArcSmeltingInto(thisM);
+                magneticTemp.materialInfo.componentList = thisM.materialInfo.componentList;
+            }
+        }
     }
 
     /**
