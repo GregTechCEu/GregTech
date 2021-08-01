@@ -3,8 +3,8 @@ package gregtech.loaders.recipe;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.IngotMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -49,10 +49,10 @@ public class MiscRecipeLoader {
 
         int multiplier;
         for (MaterialStack metal1 : firstMetal) {
-            IngotMaterial material1 = (IngotMaterial) metal1.material;
+            Material material1 = metal1.material;
             int multiplier1 = (int) metal1.amount;
             for (MaterialStack metal2 : lastMetal) {
-                IngotMaterial material2 = (IngotMaterial) metal2.material;
+                Material material2 = metal2.material;
                 if ((int) metal1.amount == 1) multiplier = 0;
                 else multiplier = (int) metal2.amount;
                 ModHandler.addShapedRecipe("mixed_metal_1_" + material1.toString() + "_" + material2.toString(), MetaItems.INGOT_MIXED_METAL.getStackForm(multiplier1 + multiplier),

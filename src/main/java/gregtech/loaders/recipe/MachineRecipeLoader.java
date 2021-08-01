@@ -11,7 +11,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.IngotMaterial;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
@@ -332,7 +331,7 @@ public class MachineRecipeLoader {
 
     private static void registerAlloyRecipes() {
         for (MaterialStack[] stack : alloySmelterList) {
-            if (stack[0].material instanceof IngotMaterial) {
+            if (stack[0].material.getProperties().getIngotProperty() != null) {
                 RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
                     .duration((int) stack[2].amount * 50).EUt(16)
                     .input(OrePrefix.ingot, stack[0].material, (int) stack[0].amount)
@@ -340,7 +339,7 @@ public class MachineRecipeLoader {
                     .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
                     .buildAndRegister();
             }
-            if (stack[1].material instanceof IngotMaterial) {
+            if (stack[1].material.getProperties().getIngotProperty() != null) {
                 RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
                     .duration((int) stack[2].amount * 50).EUt(16)
                     .input(OrePrefix.dust, stack[0].material, (int) stack[0].amount)
@@ -348,7 +347,8 @@ public class MachineRecipeLoader {
                     .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
                     .buildAndRegister();
             }
-            if (stack[0].material instanceof IngotMaterial && stack[1].material instanceof IngotMaterial) {
+            if (stack[0].material.getProperties().getIngotProperty() != null
+                    && stack[1].material.getProperties().getIngotProperty() != null) {
                 RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
                     .duration((int) stack[2].amount * 50).EUt(16)
                     .input(OrePrefix.ingot, stack[0].material, (int) stack[0].amount)
@@ -412,7 +412,7 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
         }
 
-        for (IngotMaterial cableMaterial : new IngotMaterial[]{Materials.YttriumBariumCuprate, Materials.NiobiumTitanium, Materials.VanadiumGallium, Materials.Naquadah}) {
+        for (Material cableMaterial : new Material[]{Materials.YttriumBariumCuprate, Materials.NiobiumTitanium, Materials.VanadiumGallium, Materials.Naquadah}) {
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.wireGtSingle, cableMaterial, 3)
                 .input(OrePrefix.pipeTinyFluid, Materials.TungstenSteel, 2)

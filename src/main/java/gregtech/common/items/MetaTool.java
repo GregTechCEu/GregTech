@@ -202,12 +202,12 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
             Materials.Wood, Materials.Rubber, Materials.Polyethylene, Materials.Polytetrafluoroethylene, Materials.Polybenzimidazole
         };
         for (int i = 0; i < softHammerMaterials.length; i++) {
-            Material solidMaterial = softHammerMaterials[i];
+            Material material = softHammerMaterials[i];
             ItemStack itemStack = MetaItems.SOFT_HAMMER.getStackForm();
-            MetaItems.SOFT_HAMMER.setToolData(itemStack, solidMaterial, 128 * (1 << i), 1, 4.0f, 1.0f);
-            ModHandler.addShapedRecipe(String.format("soft_hammer_%s", solidMaterial.toString()), itemStack,
+            MetaItems.SOFT_HAMMER.setToolData(itemStack, material, 128 * (1 << i), 1, 4.0f, 1.0f);
+            ModHandler.addShapedRecipe(String.format("soft_hammer_%s", material.toString()), itemStack,
                 "XX ", "XXS", "XX ",
-                'X', new UnificationEntry(OrePrefix.ingot, solidMaterial),
+                'X', new UnificationEntry(OrePrefix.ingot, material),
                 'S', new UnificationEntry(OrePrefix.stick, Materials.Wood));
         }
 

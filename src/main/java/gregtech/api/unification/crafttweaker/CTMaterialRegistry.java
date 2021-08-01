@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialIconSet;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -22,18 +23,18 @@ public class CTMaterialRegistry {
     @ZenMethod
     @Nullable
     public static Material get(String name) {
-        return Material.MATERIAL_REGISTRY.getObject(name);
+        return MaterialRegistry.MATERIAL_REGISTRY.getObject(name);
     }
 
     @ZenMethod
     public static List<Material> getAllMaterials() {
-        return Lists.newArrayList(Material.MATERIAL_REGISTRY);
+        return Lists.newArrayList(MaterialRegistry.MATERIAL_REGISTRY);
     }
 
     private static ImmutableList<MaterialStack> validateComponentList(@Nullable MaterialStack[] components) {
         return components == null || components.length == 0 ? ImmutableList.of() : ImmutableList.copyOf(components);
     }
-
+/*
     @ZenMethod
     public static FluidMaterial createFluidMaterial(int metaItemSubId, String name, int color, String iconSet, @Optional MaterialStack[] materialComponents) {
         return new FluidMaterial(metaItemSubId , name, color,
@@ -93,5 +94,5 @@ public class CTMaterialRegistry {
                 validateComponentList(materialComponents), 0, null,
                 Math.max(0.0f, toolSpeed), Math.max(0.0f, attackDamage), Math.max(0, toolDurability), blastFurnaceTemperature);
     }
-
+*/
 }

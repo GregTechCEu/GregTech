@@ -15,7 +15,6 @@ import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import static gregtech.api.GTValues.M;
@@ -25,23 +24,23 @@ import static gregtech.api.unification.ore.OrePrefix.Flags.*;
 
 public enum OrePrefix {
 
-    ore("Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
+    ore("Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
 
-    oreBlackgranite("Black Granite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
-    oreRedgranite("Red Granite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreBlackgranite("Black Granite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreRedgranite("Red Granite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
 
-    oreMarble("Marble Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
-    oreBasalt("Basalt Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreMarble("Marble Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreBasalt("Basalt Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
 
     oreSand("Sand Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null), // In case of an Sand-Ores Mod. Ore -> Material is a Oneway Operation!
     oreGravel("Gravel Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null), // In case of an Gravel-Ores Mod. Ore -> Material is a Oneway Operation!
 
-    oreNetherrack("Netherrack Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // Prefix of the Nether-Ores Mod. Causes Ores to double. Ore -> Material is a Oneway Operation!
-    oreEndstone("Endstone Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, isOreMaterial), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreNetherrack("Netherrack Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // Prefix of the Nether-Ores Mod. Causes Ores to double. Ore -> Material is a Oneway Operation!
+    oreEndstone("Endstone Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
 
-    crushedCentrifuged("Centrifuged Ores", -1, null, MaterialIconType.crushedCentrifuged, ENABLE_UNIFICATION, isOreMaterial),
-    crushedPurified("Purified Ores", -1, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, isOreMaterial),
-    crushed("Crushed Ores", -1, null, MaterialIconType.crushed, ENABLE_UNIFICATION, isOreMaterial),
+    crushedCentrifuged("Centrifuged Ores", -1, null, MaterialIconType.crushedCentrifuged, ENABLE_UNIFICATION, hasOreProperty),
+    crushedPurified("Purified Ores", -1, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty),
+    crushed("Crushed Ores", -1, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty),
 
     shard("Crystallised Shards", -1, null, null, ENABLE_UNIFICATION, null), // Introduced by Mekanism
     clump("Clumps", -1, null, null, ENABLE_UNIFICATION, null),
@@ -51,26 +50,26 @@ public enum OrePrefix {
     cleanGravel("Clean Gravels", -1, null, null, ENABLE_UNIFICATION, null),
     dirtyGravel("Dirty Gravels", -1, null, null, ENABLE_UNIFICATION, null),
 
-    ingotHot("Hot Ingots", M, null, MaterialIconType.ingotHot, ENABLE_UNIFICATION, isBlastMaterial.and(mat -> mat.getProperties().getBlastProperty().getBlastTemperature() > 1750)), // A hot Ingot, which has to be cooled down by a Vacuum Freezer.
-    ingot("Ingots", M, null, MaterialIconType.ingot, ENABLE_UNIFICATION, isIngotMaterial), // A regular Ingot. Introduced by Eloraam
+    ingotHot("Hot Ingots", M, null, MaterialIconType.ingotHot, ENABLE_UNIFICATION, hasBlastProperty.and(mat -> mat.getProperties().getBlastProperty().getBlastTemperature() > 1750)), // A hot Ingot, which has to be cooled down by a Vacuum Freezer.
+    ingot("Ingots", M, null, MaterialIconType.ingot, ENABLE_UNIFICATION, hasIngotProperty), // A regular Ingot. Introduced by Eloraam
 
     gem("Gemstones", M, null, MaterialIconType.gem, ENABLE_UNIFICATION, mat -> mat.getProperties().getGemProperty() != null), // A regular Gem worth one Dust. Introduced by Eloraam
-    gemChipped("Chipped Gemstones", M / 4, null, MaterialIconType.gemChipped, ENABLE_UNIFICATION, isGemMaterial), // A regular Gem worth one small Dust. Introduced by TerraFirmaCraft
-    gemFlawed("Flawed Gemstones", M / 2, null, MaterialIconType.gemFlawed, ENABLE_UNIFICATION, isGemMaterial), // A regular Gem worth two small Dusts. Introduced by TerraFirmaCraft
-    gemFlawless("Flawless Gemstones", M * 2, null, MaterialIconType.gemFlawless, ENABLE_UNIFICATION, isGemMaterial), // A regular Gem worth two Dusts. Introduced by TerraFirmaCraft
-    gemExquisite("Exquisite Gemstones", M * 4, null, MaterialIconType.gemExquisite, ENABLE_UNIFICATION, isGemMaterial), // A regular Gem worth four Dusts. Introduced by TerraFirmaCraft
+    gemChipped("Chipped Gemstones", M / 4, null, MaterialIconType.gemChipped, ENABLE_UNIFICATION, hasGemProperty), // A regular Gem worth one small Dust. Introduced by TerraFirmaCraft
+    gemFlawed("Flawed Gemstones", M / 2, null, MaterialIconType.gemFlawed, ENABLE_UNIFICATION, hasGemProperty), // A regular Gem worth two small Dusts. Introduced by TerraFirmaCraft
+    gemFlawless("Flawless Gemstones", M * 2, null, MaterialIconType.gemFlawless, ENABLE_UNIFICATION, hasGemProperty), // A regular Gem worth two Dusts. Introduced by TerraFirmaCraft
+    gemExquisite("Exquisite Gemstones", M * 4, null, MaterialIconType.gemExquisite, ENABLE_UNIFICATION, hasGemProperty), // A regular Gem worth four Dusts. Introduced by TerraFirmaCraft
 
-    dustSmall("Small Dusts", M / 4, null, MaterialIconType.dustSmall, ENABLE_UNIFICATION, isDustMaterial), // 1/4th of a Dust.
-    dustTiny("Tiny Dusts", M / 9, null, MaterialIconType.dustTiny, ENABLE_UNIFICATION, isDustMaterial), // 1/9th of a Dust.
-    dustImpure("Impure Dusts", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, isOreMaterial), // Dust with impurities. 1 Unit of Main Material and 1/9 - 1/4 Unit of secondary Material
-    dustPure("Purified Dusts", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, isOreMaterial),
-    dust("Dusts", M, null, MaterialIconType.dust, ENABLE_UNIFICATION, isDustMaterial), // Pure Dust worth of one Ingot or Gem. Introduced by Alblaka.
+    dustSmall("Small Dusts", M / 4, null, MaterialIconType.dustSmall, ENABLE_UNIFICATION, hasDustProperty), // 1/4th of a Dust.
+    dustTiny("Tiny Dusts", M / 9, null, MaterialIconType.dustTiny, ENABLE_UNIFICATION, hasDustProperty), // 1/9th of a Dust.
+    dustImpure("Impure Dusts", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, hasOreProperty), // Dust with impurities. 1 Unit of Main Material and 1/9 - 1/4 Unit of secondary Material
+    dustPure("Purified Dusts", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty),
+    dust("Dusts", M, null, MaterialIconType.dust, ENABLE_UNIFICATION, hasDustProperty), // Pure Dust worth of one Ingot or Gem. Introduced by Alblaka.
 
-    nugget("Nuggets", M / 9, null, MaterialIconType.nugget, ENABLE_UNIFICATION, isIngotMaterial), // A Nugget. Introduced by Eloraam
+    nugget("Nuggets", M / 9, null, MaterialIconType.nugget, ENABLE_UNIFICATION, hasIngotProperty), // A Nugget. Introduced by Eloraam
 
     plateCurved("Curved Plates", M, null, MaterialIconType.plateCurved, ENABLE_UNIFICATION, null),
     plateDense("Dense Plates", M * 9, null, MaterialIconType.plateDense, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_DENSE) && !mat.hasFlag(NO_SMASHING)), // 9 Plates combined in one Item.
-    plateDouble("Double Plates", M * 2, null, MaterialIconType.plateDouble, ENABLE_UNIFICATION, isIngotMaterial.and(mat -> mat.hasFlag(GENERATE_PLATE) && !mat.hasFlag(NO_SMASHING))), // 2 Plates combined in one Item
+    plateDouble("Double Plates", M * 2, null, MaterialIconType.plateDouble, ENABLE_UNIFICATION, hasIngotProperty.and(mat -> mat.hasFlag(GENERATE_PLATE) && !mat.hasFlag(NO_SMASHING))), // 2 Plates combined in one Item
     plate("Plates", M, null, MaterialIconType.plate, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_PLATE)), // Regular Plate made of one Ingot/Dust. Introduced by Calclavia
     compressed("Compressed Materials", M * 2, null, null, ENABLE_UNIFICATION, null), // Compressed Material, worth 1 Unit. Introduced by Galacticraft
 
@@ -91,22 +90,22 @@ public enum OrePrefix {
     gear("Gears", M * 4, null, MaterialIconType.gear, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_GEAR)), // Introduced by me because BuildCraft has ruined the gear Prefix...
     lens("Lenses", (M * 3) / 4, null, MaterialIconType.lens, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_LENS)), // 3/4 of a Plate or Gem used to shape a Lense. Normally only used on Transparent Materials.
 
-    toolHeadSword("Sword Blades", M * 2, null, MaterialIconType.toolHeadSword, ENABLE_UNIFICATION, isToolMaterial), // made of 2 Ingots.
-    toolHeadPickaxe("Pickaxe Heads", M * 3, null, MaterialIconType.toolHeadPickaxe, ENABLE_UNIFICATION, isToolMaterial), // made of 3 Ingots.
-    toolHeadShovel("Shovel Heads", M, null, MaterialIconType.toolHeadShovel, ENABLE_UNIFICATION, isToolMaterial), // made of 1 Ingots.
-    toolHeadUniversalSpade("Universal Spade Heads", M, null, MaterialIconType.toolHeadUniversalSpade, ENABLE_UNIFICATION, isToolMaterial), // made of 1 Ingots.
-    toolHeadAxe("Axe Heads", M * 3, null, MaterialIconType.toolHeadAxe, ENABLE_UNIFICATION, isToolMaterial), // made of 3 Ingots.
-    toolHeadHoe("Hoe Heads", M * 2, null, MaterialIconType.toolHeadHoe, ENABLE_UNIFICATION, isToolMaterial), // made of 2 Ingots.
-    toolHeadSense("Sense Blades", M * 3, null, MaterialIconType.toolHeadSense, ENABLE_UNIFICATION, isToolMaterial), // made of 3 Ingots.
-    toolHeadFile("File Heads", M * 2, null, MaterialIconType.toolHeadFile, ENABLE_UNIFICATION, isToolMaterial), // made of 2 Ingots.
-    toolHeadHammer("Hammer Heads", M * 6, null, MaterialIconType.toolHeadHammer, ENABLE_UNIFICATION, isToolMaterial), // made of 6 Ingots.
-    toolHeadSaw("Saw Blades", M * 2, null, MaterialIconType.toolHeadSaw, ENABLE_UNIFICATION, isToolMaterial), // made of 2 Ingots.
-    toolHeadBuzzSaw("Buzzsaw Blades", M * 4, null, MaterialIconType.toolHeadBuzzSaw, ENABLE_UNIFICATION, isToolMaterial), // made of 4 Ingots.
-    toolHeadScrewdriver("Screwdriver Tips", M, null, MaterialIconType.toolHeadScrewdriver, ENABLE_UNIFICATION, isToolMaterial), // made of 1 Ingots.
-    toolHeadDrill("Drill Tips", M * 4, null, MaterialIconType.toolHeadDrill, ENABLE_UNIFICATION, isToolMaterial), // made of 4 Ingots.
-    toolHeadChainsaw("Chainsaw Tips", M * 2, null, MaterialIconType.toolHeadChainsaw, ENABLE_UNIFICATION, isToolMaterial), // made of 2 Ingots.
-    toolHeadWrench("Wrench Tips", M * 4, null, MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION, isToolMaterial), // made of 4 Ingots.
-    turbineBlade("Turbine Blades", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, isToolMaterial), // made of 5 Ingots.
+    toolHeadSword("Sword Blades", M * 2, null, MaterialIconType.toolHeadSword, ENABLE_UNIFICATION, hasToolProperty), // made of 2 Ingots.
+    toolHeadPickaxe("Pickaxe Heads", M * 3, null, MaterialIconType.toolHeadPickaxe, ENABLE_UNIFICATION, hasToolProperty), // made of 3 Ingots.
+    toolHeadShovel("Shovel Heads", M, null, MaterialIconType.toolHeadShovel, ENABLE_UNIFICATION, hasToolProperty), // made of 1 Ingots.
+    toolHeadUniversalSpade("Universal Spade Heads", M, null, MaterialIconType.toolHeadUniversalSpade, ENABLE_UNIFICATION, hasToolProperty), // made of 1 Ingots.
+    toolHeadAxe("Axe Heads", M * 3, null, MaterialIconType.toolHeadAxe, ENABLE_UNIFICATION, hasToolProperty), // made of 3 Ingots.
+    toolHeadHoe("Hoe Heads", M * 2, null, MaterialIconType.toolHeadHoe, ENABLE_UNIFICATION, hasToolProperty), // made of 2 Ingots.
+    toolHeadSense("Sense Blades", M * 3, null, MaterialIconType.toolHeadSense, ENABLE_UNIFICATION, hasToolProperty), // made of 3 Ingots.
+    toolHeadFile("File Heads", M * 2, null, MaterialIconType.toolHeadFile, ENABLE_UNIFICATION, hasToolProperty), // made of 2 Ingots.
+    toolHeadHammer("Hammer Heads", M * 6, null, MaterialIconType.toolHeadHammer, ENABLE_UNIFICATION, hasToolProperty), // made of 6 Ingots.
+    toolHeadSaw("Saw Blades", M * 2, null, MaterialIconType.toolHeadSaw, ENABLE_UNIFICATION, hasToolProperty), // made of 2 Ingots.
+    toolHeadBuzzSaw("Buzzsaw Blades", M * 4, null, MaterialIconType.toolHeadBuzzSaw, ENABLE_UNIFICATION, hasToolProperty), // made of 4 Ingots.
+    toolHeadScrewdriver("Screwdriver Tips", M, null, MaterialIconType.toolHeadScrewdriver, ENABLE_UNIFICATION, hasToolProperty), // made of 1 Ingots.
+    toolHeadDrill("Drill Tips", M * 4, null, MaterialIconType.toolHeadDrill, ENABLE_UNIFICATION, hasToolProperty), // made of 4 Ingots.
+    toolHeadChainsaw("Chainsaw Tips", M * 2, null, MaterialIconType.toolHeadChainsaw, ENABLE_UNIFICATION, hasToolProperty), // made of 2 Ingots.
+    toolHeadWrench("Wrench Tips", M * 4, null, MaterialIconType.toolHeadWrench, ENABLE_UNIFICATION, hasToolProperty), // made of 4 Ingots.
+    turbineBlade("Turbine Blades", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasToolProperty), // made of 5 Ingots.
 
     glass("Glasses", -1, Materials.Glass, null, SELF_REFERENCING, null),
     paneGlass("Glass Panes", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null),
@@ -189,12 +188,12 @@ public enum OrePrefix {
     }
 
     public static class Conditions {
-        public static final Predicate<Material> isToolMaterial = mat -> mat.getProperties().getToolProperty() != null;
-        public static final Predicate<Material> isOreMaterial = mat -> mat.getProperties().getOreProperty() != null;
-        public static final Predicate<Material> isGemMaterial = mat -> mat.getProperties().getGemProperty() != null;
-        public static final Predicate<Material> isDustMaterial = mat -> mat.getProperties().getDustProperty() != null;
-        public static final Predicate<Material> isIngotMaterial = mat -> mat.getProperties().getIngotProperty() != null;
-        public static final Predicate<Material> isBlastMaterial = mat -> mat.getProperties().getBlastProperty() != null;
+        public static final Predicate<Material> hasToolProperty = mat -> mat.getProperties().getToolProperty() != null;
+        public static final Predicate<Material> hasOreProperty = mat -> mat.getProperties().getOreProperty() != null;
+        public static final Predicate<Material> hasGemProperty = mat -> mat.getProperties().getGemProperty() != null;
+        public static final Predicate<Material> hasDustProperty = mat -> mat.getProperties().getDustProperty() != null;
+        public static final Predicate<Material> hasIngotProperty = mat -> mat.getProperties().getIngotProperty() != null;
+        public static final Predicate<Material> hasBlastProperty = mat -> mat.getProperties().getBlastProperty() != null;
     }
 
     static {

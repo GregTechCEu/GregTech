@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.type.DustMaterial;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.BlockOre;
@@ -71,7 +71,7 @@ public class OreConfigUtils {
     }
 
     public static Material getMaterialByName(String name) {
-        Material material = Material.MATERIAL_REGISTRY.getObject(name);
+        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(name);
         if (material == null || material.getProperties().getOreProperty() == null)
             throw new IllegalArgumentException("Material with name " + name + " not found!");
         return material;

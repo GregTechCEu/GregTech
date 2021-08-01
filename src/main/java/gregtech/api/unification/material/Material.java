@@ -315,6 +315,14 @@ public class Material implements Comparable<Material> {
         return properties.hasProperty(dummy);
     }
 
+    public boolean isSolid() {
+        return properties.getIngotProperty() != null || properties.getGemProperty() != null;
+    }
+
+    public boolean hasFluid() {
+        return properties.getFluidProperty() != null;
+    }
+
     protected void verifyMaterial() {
         properties.verify();
         flags.verify(this);

@@ -46,6 +46,10 @@ public class DustProperty implements IMaterialProperty {
         this.burnTime = burnTime;
     }
 
+    public int getBurnTime() {
+        return burnTime;
+    }
+
     @Override
     public void verifyProperty(Properties properties) {
         FluidProperty prop = properties.getFluidProperty();

@@ -16,7 +16,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.Textures;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -48,7 +48,7 @@ public class MetaTileEntityChest extends MetaTileEntity implements IFastRenderMe
 
     private static final IndexedCuboid6 CHEST_COLLISION = new IndexedCuboid6(null, new Cuboid6(1 / 16.0, 1 / 16.0, 1 / 16.0, 15 / 16.0, 14 / 16.0, 15 / 16.0));
 
-    private final SolidMaterial material;
+    private final Material material;
     private final int rowSize;
     private final int amountOfRows;
     private ItemStackHandler inventory;
@@ -57,7 +57,7 @@ public class MetaTileEntityChest extends MetaTileEntity implements IFastRenderMe
     private float prevLidAngle;
     private int numPlayersUsing;
 
-    public MetaTileEntityChest(ResourceLocation metaTileEntityId, SolidMaterial material, int rowSize, int amountOfRows) {
+    public MetaTileEntityChest(ResourceLocation metaTileEntityId, Material material, int rowSize, int amountOfRows) {
         super(metaTileEntityId);
         this.material = material;
         this.rowSize = rowSize;
@@ -193,7 +193,7 @@ public class MetaTileEntityChest extends MetaTileEntity implements IFastRenderMe
             return Pair.of(Textures.WOODEN_CHEST.getParticleTexture(), getPaintingColor());
         } else {
             int color = ColourRGBA.multiply(
-                GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB),
+                GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
                 GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColor())
             );
             color = convertOpaqueRGBA_CLtoRGB(color);
@@ -220,7 +220,7 @@ public class MetaTileEntityChest extends MetaTileEntity implements IFastRenderMe
             Textures.WOODEN_CHEST.render(renderState, translation, new IVertexOperation[]{multiplier}, getFrontFacing(), resultLidAngle);
         } else {
             ColourMultiplier multiplier = new ColourMultiplier(ColourRGBA.multiply(
-                GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB),
+                GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
                 GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
             Textures.METAL_CHEST.render(renderState, translation, new IVertexOperation[]{multiplier}, getFrontFacing(), resultLidAngle);
         }

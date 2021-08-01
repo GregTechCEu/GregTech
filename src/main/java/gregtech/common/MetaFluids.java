@@ -1,11 +1,11 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.FluidMaterial;
-import gregtech.api.unification.material.type.FluidMaterial.MatFlags;
+import gregtech.api.unification.material.properties.FluidProperty;
+import gregtech.api.unification.material.properties.PlasmaProperty;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.type.SimpleFluidMaterial;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
@@ -22,8 +22,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-
-import static gregtech.api.unification.material.type.FluidMaterial.MatFlags.GENERATE_PLASMA;
 
 public class MetaFluids {
 
@@ -43,7 +41,7 @@ public class MetaFluids {
         new ResourceLocation("blocks/water_flow"));
 
     public enum FluidType {
-        NORMAL("", material -> material.hasFlag(MatFlags.STATE_GAS) ? FluidState.GAS : FluidState.LIQUID),
+        NORMAL("", material -> material.hasFluid() && material.getProperties().getFluidProperty().isGas() ? FluidState.GAS : FluidState.LIQUID),
         PLASMA("plasma.", material -> FluidState.PLASMA);
 
         private final String prefix;
@@ -54,12 +52,12 @@ public class MetaFluids {
             this.stateFunction = stateFunction;
         }
 
-        public String getFluidName(Material fluidMaterial) {
-            return prefix + fluidMaterial.toString();
+        public String getFluidName(Material material) {
+            return prefix + material.toString();
         }
 
-        public FluidState getFluidState(Material fluidMaterial) {
-            return stateFunction.apply(fluidMaterial);
+        public FluidState getFluidState(Material material) {
+            return stateFunction.apply(material);
         }
     }
 
@@ -80,11 +78,11 @@ public class MetaFluids {
     }
 
     public static void init() {
-        Materials.Water.setMaterialFluid(FluidRegistry.WATER);
-        Materials.Lava.setMaterialFluid(FluidRegistry.LAVA);
+        Materials.Water.getProperties().getFluidProperty().setFluid(FluidRegistry.WATER);
+        Materials.Lava.getProperties().getFluidProperty().setFluid(FluidRegistry.LAVA);
 
         FluidRegistry.registerFluid(DISTILLED_WATER);
-        Materials.DistilledWater.setMaterialFluid(DISTILLED_WATER);
+        Materials.DistilledWater.getProperties().getFluidProperty().setFluid(DISTILLED_WATER);
         fluidSprites.add(AUTO_GENERATED_FLUID_TEXTURE);
         fluidSprites.add(AUTO_GENERATED_PLASMA_TEXTURE);
 
@@ -130,7 +128,6 @@ public class MetaFluids {
         setDefaultTexture(Materials.LPG, FluidType.NORMAL);
         setDefaultTexture(Materials.SteamCrackedLightFuel, FluidType.NORMAL);
         setDefaultTexture(Materials.SteamCrackedHeavyFuel, FluidType.NORMAL);
-        setDefaultTexture(Materials.UUAmplifier, FluidType.NORMAL);
         setDefaultTexture(Materials.Chlorine, FluidType.NORMAL);
         setDefaultTexture(Materials.Mercury, FluidType.NORMAL);
         setDefaultTexture(Materials.NitroDiesel, FluidType.NORMAL);
@@ -160,31 +157,22 @@ public class MetaFluids {
         setDefaultTexture(Materials.Neon, FluidType.NORMAL);
         setDefaultTexture(Materials.Xenon, FluidType.NORMAL);
 
-        for (Material material : Material.MATERIAL_REGISTRY) {
-            if (!(material instanceof FluidMaterial)) continue;
-            FluidMaterial fluidMaterial = (FluidMaterial) material;
-            if (fluidMaterial.shouldGenerateFluid() && fluidMaterial.getMaterialFluid() == null) {
-                int temperature = fluidMaterial.getFluidTemperature();
-                Fluid fluid = registerFluid(fluidMaterial, FluidType.NORMAL, temperature);
-                fluidMaterial.setMaterialFluid(fluid);
-                FluidTooltipUtil.registerTooltip(fluid, fluidMaterial.getChemicalFormula());
-            }
-            if (fluidMaterial.shouldGeneratePlasma() && fluidMaterial.getMaterialPlasma() == null) {
-                Fluid fluid = registerFluid(fluidMaterial, FluidType.PLASMA, 30000);
-                fluidMaterial.setMaterialPlasma(fluid);
-                FluidTooltipUtil.registerTooltip(fluid, fluidMaterial.getChemicalFormula());
-            }
-        }
-        for (SimpleFluidMaterial material : SimpleFluidMaterial.MATERIAL_REGISTRY) {
-            if (material.getMaterialFluid() == null) {
-                Fluid fluid = registerFluid(material, FluidType.NORMAL, material.getFluidTemperature());
-                material.setMaterialFluid(fluid);
+        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+            FluidProperty property = material.getProperties().getFluidProperty();
+            if (property == null) continue;
+
+            if (property.getFluid() == null) {
+                int temperature = property.getFluidTemperature();
+                Fluid fluid = registerFluid(material, FluidType.NORMAL, temperature, property.hasBlock());
+                property.setFluid(fluid);
                 FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
             }
-            if (material.hasFlag(GENERATE_PLASMA) && material.getMaterialPlasma() == null) {
-                Fluid plasma = registerFluid(material, FluidType.PLASMA, 30000);
-                material.setMaterialPlasma(plasma);
-                FluidTooltipUtil.registerTooltip(plasma, material.getChemicalFormula());
+
+            PlasmaProperty plasmaProperty = material.getProperties().getPlasmaProperty();
+            if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
+                Fluid fluid = registerFluid(material, FluidType.PLASMA, 30000, false);
+                plasmaProperty.setPlasma(fluid);
+                FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
             }
         }
     }
@@ -213,7 +201,7 @@ public class MetaFluids {
         alternativeFluidNames.put(fluidType.getFluidName(material), alternativeName);
     }
 
-    public static Fluid registerFluid(Material material, FluidType fluidType, int temperature) {
+    public static Fluid registerFluid(Material material, FluidType fluidType, int temperature, boolean generateBlock) {
         String materialName = material.toString();
         String fluidName = fluidType.getFluidName(material);
         Fluid fluid = FluidRegistry.getFluid(fluidName);
@@ -240,7 +228,7 @@ public class MetaFluids {
 
         FluidRegistry.addBucketForFluid(fluid);
 
-        if (material.hasFlag(MatFlags.GENERATE_FLUID_BLOCK) && fluid.getBlock() == null && fluidType != FluidType.PLASMA) {
+        if (generateBlock && fluid.getBlock() == null && fluidType != FluidType.PLASMA) {
             BlockFluidBase fluidBlock = new BlockFluidClassic(fluid, net.minecraft.block.material.Material.WATER);
             fluidBlock.setRegistryName("fluid." + materialName);
             MetaBlocks.FLUID_BLOCKS.add(fluidBlock);
@@ -250,10 +238,10 @@ public class MetaFluids {
         return fluid;
     }
 
-    public static FluidMaterial getMaterialFromFluid(Fluid fluid) {
+    public static Material getMaterialFromFluid(Fluid fluid) {
         Material material = fluidToMaterialMappings.get(fluid.getName());
-        if (material instanceof FluidMaterial)
-            return (FluidMaterial) material;
+        if (material.hasFluid())
+            return material;
         return null;
     }
 

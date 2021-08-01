@@ -12,7 +12,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.render.Textures;
-import gregtech.api.unification.material.type.IngotMaterial;
+import gregtech.api.unification.material.Material;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.metatileentities.multi.electric.generator.RotorHolderMultiblockController;
 import net.minecraft.block.state.IBlockState;
@@ -40,7 +40,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     private static final int NORMAL_MAXIMUM_SPEED = 6000;
     private static final float DAMAGE_PER_INTERACT = 40.0f;
 
-    private InventoryRotorHolder rotorInventory;
+    private final InventoryRotorHolder rotorInventory;
     private final int maxRotorSpeed;
     private int currentRotorSpeed;
 
@@ -343,8 +343,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
             if (behavior == null) {
                 return -1;
             }
-            IngotMaterial material = behavior.getPartMaterial(itemStack);
-            return material.materialRGB;
+            Material material = behavior.getPartMaterial(itemStack);
+            return material.getMaterialRGB();
         }
 
         public double getRotorEfficiency() {

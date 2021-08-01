@@ -5,8 +5,8 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FuelRecipeLogic;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.recipes.FuelRecipe;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaFluids;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
@@ -95,7 +95,7 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
                 largeTurbine.exportFluidHandler.fill(waterStack, true);
             }
         } else if (largeTurbine.turbineType == TurbineType.PLASMA) {
-            FluidMaterial material = MetaFluids.getMaterialFromFluid(currentRecipe.getRecipeFluid().getFluid());
+            Material material = MetaFluids.getMaterialFromFluid(currentRecipe.getRecipeFluid().getFluid());
             if (material != null) {
                 largeTurbine.exportFluidHandler.fill(material.getFluid(fuelAmountUsed), true);
             }

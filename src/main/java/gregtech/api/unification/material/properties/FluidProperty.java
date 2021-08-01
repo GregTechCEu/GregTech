@@ -59,9 +59,12 @@ public class FluidProperty implements IMaterialProperty {
         this.fluid = materialFluid;
     }
 
-    @Nonnull
     public Fluid getFluid() {
         return fluid;
+    }
+
+    public boolean hasBlock() {
+        return hasBlock;
     }
 
     @Nonnull

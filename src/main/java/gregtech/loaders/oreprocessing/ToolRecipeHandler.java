@@ -88,18 +88,18 @@ public class ToolRecipeHandler {
         }
     }
 
-    public static void processSimpleElectricToolHead(OrePrefix toolPrefix, Material solidMaterial, MetaToolValueItem[] toolItems) {
+    public static void processSimpleElectricToolHead(OrePrefix toolPrefix, Material material, MetaToolValueItem[] toolItems) {
         for (int i = 0; i < toolItems.length; i++) {
             for (MetaValueItem batteryItem : batteryItems[i]) {
                 ItemStack batteryStack = batteryItem.getStackForm();
                 long maxCharge = batteryStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null).getMaxCharge();
-                ItemStack chargedDrillStack = toolItems[i].getMaxChargeOverrideStack(solidMaterial, maxCharge);
+                ItemStack chargedDrillStack = toolItems[i].getMaxChargeOverrideStack(material, maxCharge);
 
-                String recipeNameFirst = String.format("%s_%s_%s_full", toolItems[i].unlocalizedName, solidMaterial, batteryItem.unlocalizedName);
+                String recipeNameFirst = String.format("%s_%s_%s_full", toolItems[i].unlocalizedName, material, batteryItem.unlocalizedName);
                 ModHandler.addShapedEnergyTransferRecipe(recipeNameFirst, chargedDrillStack,
                         Ingredient.fromStacks(batteryStack), false,
                         "SXd", "GMG", "PBP",
-                        'X', new UnificationEntry(toolPrefix, solidMaterial),
+                        'X', new UnificationEntry(toolPrefix, material),
                         'M', motorItems[i].getStackForm(),
                         'S', new UnificationEntry(OrePrefix.screw, baseMaterials[i]),
                         'P', new UnificationEntry(OrePrefix.plate, baseMaterials[i]),
@@ -107,13 +107,13 @@ public class ToolRecipeHandler {
                         'B', batteryStack);
             }
 
-            ItemStack drillStack = toolItems[i].getStackForm(solidMaterial);
+            ItemStack drillStack = toolItems[i].getStackForm(material);
             ItemStack powerUnitStack = powerUnitItems[i].getStackForm();
-            String recipeNameSecond = String.format("%s_%s_unit", toolItems[i].unlocalizedName, solidMaterial);
+            String recipeNameSecond = String.format("%s_%s_unit", toolItems[i].unlocalizedName, material);
             ModHandler.addShapedEnergyTransferRecipe(recipeNameSecond, drillStack,
                     Ingredient.fromStacks(powerUnitStack), true,
                     "wHd", " U ",
-                    'H', new UnificationEntry(toolPrefix, solidMaterial),
+                    'H', new UnificationEntry(toolPrefix, material),
                     'U', powerUnitStack);
         }
     }
@@ -217,45 +217,45 @@ public class ToolRecipeHandler {
     }
 
 
-    public static void processDrillHead(OrePrefix drillHead, Material solidMaterial, ToolProperty property) {
+    public static void processDrillHead(OrePrefix drillHead, Material material, ToolProperty property) {
         if (ConfigHolder.U.registerRecipesForHighTierDrills) {
-            processSimpleElectricToolHead(drillHead, solidMaterial, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV, MetaItems.DRILL_EV, MetaItems.DRILL_IV});
+            processSimpleElectricToolHead(drillHead, material, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV, MetaItems.DRILL_EV, MetaItems.DRILL_IV});
         } else {
-            processSimpleElectricToolHead(drillHead, solidMaterial, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV});
+            processSimpleElectricToolHead(drillHead, material, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV});
         }
-        ModHandler.addShapedRecipe(String.format("drill_head_%s", solidMaterial.toString()),
-                OreDictUnifier.get(OrePrefix.toolHeadDrill, solidMaterial),
+        ModHandler.addShapedRecipe(String.format("drill_head_%s", material.toString()),
+                OreDictUnifier.get(OrePrefix.toolHeadDrill, material),
                 "XSX", "XSX", "ShS",
-                'X', new UnificationEntry(OrePrefix.plate, solidMaterial),
+                'X', new UnificationEntry(OrePrefix.plate, material),
                 'S', new UnificationEntry(OrePrefix.plate, Materials.Steel));
     }
 
-    public static void processChainSawHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleElectricToolHead(toolPrefix, solidMaterial, new MetaToolValueItem[]{MetaItems.CHAINSAW_LV, MetaItems.CHAINSAW_MV, MetaItems.CHAINSAW_HV});
-        ModHandler.addShapedRecipe(String.format("chainsaw_head_%s", solidMaterial.toString()),
-                OreDictUnifier.get(toolPrefix, solidMaterial),
+    public static void processChainSawHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleElectricToolHead(toolPrefix, material, new MetaToolValueItem[]{MetaItems.CHAINSAW_LV, MetaItems.CHAINSAW_MV, MetaItems.CHAINSAW_HV});
+        ModHandler.addShapedRecipe(String.format("chainsaw_head_%s", material.toString()),
+                OreDictUnifier.get(toolPrefix, material),
                 "SRS", "XhX", "SRS",
-                'X', new UnificationEntry(OrePrefix.plate, solidMaterial),
+                'X', new UnificationEntry(OrePrefix.plate, material),
                 'S', new UnificationEntry(OrePrefix.plate, Materials.Steel),
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Steel));
     }
 
-    public static void processWrenchHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleElectricToolHead(toolPrefix, solidMaterial, new MetaToolValueItem[]{MetaItems.WRENCH_LV, MetaItems.WRENCH_MV, MetaItems.WRENCH_HV});
-        ModHandler.addShapedRecipe(String.format("wrench_head_%s", solidMaterial.toString()),
-                OreDictUnifier.get(OrePrefix.toolHeadWrench, solidMaterial),
+    public static void processWrenchHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleElectricToolHead(toolPrefix, material, new MetaToolValueItem[]{MetaItems.WRENCH_LV, MetaItems.WRENCH_MV, MetaItems.WRENCH_HV});
+        ModHandler.addShapedRecipe(String.format("wrench_head_%s", material.toString()),
+                OreDictUnifier.get(OrePrefix.toolHeadWrench, material),
                 "hXW", "XRX", "WXd",
-                'X', new UnificationEntry(OrePrefix.plate, solidMaterial),
+                'X', new UnificationEntry(OrePrefix.plate, material),
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Steel),
                 'W', new UnificationEntry(OrePrefix.screw, Materials.Steel));
     }
 
-    public static void processBuzzSawHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleElectricToolHead(toolPrefix, solidMaterial, new MetaToolValueItem[]{MetaItems.BUZZSAW});
-        ModHandler.addShapedRecipe(String.format("buzzsaw_head_%s", solidMaterial.toString()),
-                OreDictUnifier.get(OrePrefix.toolHeadBuzzSaw, solidMaterial),
+    public static void processBuzzSawHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleElectricToolHead(toolPrefix, material, new MetaToolValueItem[]{MetaItems.BUZZSAW});
+        ModHandler.addShapedRecipe(String.format("buzzsaw_head_%s", material.toString()),
+                OreDictUnifier.get(OrePrefix.toolHeadBuzzSaw, material),
                 "wXh", "X X", "fXx",
-                'X', new UnificationEntry(OrePrefix.plate, solidMaterial));
+                'X', new UnificationEntry(OrePrefix.plate, material));
     }
 
     public static void processScrewdriverHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
@@ -266,7 +266,7 @@ public class ToolRecipeHandler {
                 'X', new UnificationEntry(OrePrefix.stick, material));
     }
 
-    public static void addSimpleToolRecipe(OrePrefix toolPrefix, Material solidMaterial, MetaToolValueItem toolItem, UnificationEntry plate, UnificationEntry ingot, Object[] recipe) {
+    public static void addSimpleToolRecipe(OrePrefix toolPrefix, Material material, MetaToolValueItem toolItem, UnificationEntry plate, UnificationEntry ingot, Object[] recipe) {
         ArrayList<Character> usedChars = new ArrayList<>();
         for (Object object : recipe) {
             if (!(object instanceof String))
@@ -284,148 +284,148 @@ public class ToolRecipeHandler {
         }
 
         ModHandler.addShapedRecipe(
-                String.format("head_%s_%s", toolPrefix.name(), solidMaterial.toString()),
-                OreDictUnifier.get(toolPrefix, solidMaterial), recipe);
+                String.format("head_%s_%s", toolPrefix.name(), material.toString()),
+                OreDictUnifier.get(toolPrefix, material), recipe);
     }
 
-    public static void processAxeHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.AXE, "PIh", "P  ", "f  ");
+    public static void processAxeHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleToolHead(toolPrefix, material, MetaItems.AXE, "PIh", "P  ", "f  ");
 
-        int voltageMultiplier = getVoltageMultiplier(solidMaterial);
+        int voltageMultiplier = getVoltageMultiplier(material);
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, solidMaterial, 3)
+                .input(OrePrefix.ingot, material, 3)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_AXE)
-                .outputs(OreDictUnifier.get(toolPrefix, solidMaterial))
-                .duration((int) solidMaterial.getAverageMass() * 3)
+                .outputs(OreDictUnifier.get(toolPrefix, material))
+                .duration((int) material.getAverageMass() * 3)
                 .EUt(8 * voltageMultiplier)
                 .buildAndRegister();
 
     }
 
-    public static void processHoeHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.HOE, "PIh", "f  ");
+    public static void processHoeHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleToolHead(toolPrefix, material, MetaItems.HOE, "PIh", "f  ");
 
-        int voltageMultiplier = getVoltageMultiplier(solidMaterial);
+        int voltageMultiplier = getVoltageMultiplier(material);
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, solidMaterial, 3)
+                .input(OrePrefix.ingot, material, 3)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_HOE)
-                .outputs(OreDictUnifier.get(toolPrefix, solidMaterial))
-                .duration((int) solidMaterial.getAverageMass() * 3)
+                .outputs(OreDictUnifier.get(toolPrefix, material))
+                .duration((int) material.getAverageMass() * 3)
                 .EUt(8 * voltageMultiplier)
                 .buildAndRegister();
     }
 
-    public static void processPickaxeHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.PICKAXE, "PII", "f h");
+    public static void processPickaxeHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleToolHead(toolPrefix, material, MetaItems.PICKAXE, "PII", "f h");
 
-        int voltageMultiplier = getVoltageMultiplier(solidMaterial);
+        int voltageMultiplier = getVoltageMultiplier(material);
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, solidMaterial, 3)
+                .input(OrePrefix.ingot, material, 3)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_PICKAXE)
-                .outputs(OreDictUnifier.get(toolPrefix, solidMaterial))
-                .duration((int) solidMaterial.getAverageMass() * 3)
+                .outputs(OreDictUnifier.get(toolPrefix, material))
+                .duration((int) material.getAverageMass() * 3)
                 .EUt(8 * voltageMultiplier)
                 .buildAndRegister();
 
     }
 
-    public static void processSawHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.SAW, "PP", "fh");
+    public static void processSawHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleToolHead(toolPrefix, material, MetaItems.SAW, "PP", "fh");
 
-        int voltageMultiplier = getVoltageMultiplier(solidMaterial);
+        int voltageMultiplier = getVoltageMultiplier(material);
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, solidMaterial, 2)
+                .input(OrePrefix.ingot, material, 2)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_SAW)
-                .outputs(OreDictUnifier.get(OrePrefix.toolHeadSaw, solidMaterial))
-                .duration((int) solidMaterial.getAverageMass() * 2)
+                .outputs(OreDictUnifier.get(OrePrefix.toolHeadSaw, material))
+                .duration((int) material.getAverageMass() * 2)
                 .EUt(8 * voltageMultiplier)
                 .buildAndRegister();
     }
 
-    public static void processSenseHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.SENSE, "PPI", "hf ");
+    public static void processSenseHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleToolHead(toolPrefix, material, MetaItems.SENSE, "PPI", "hf ");
     }
 
-    public static void processShovelHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.SHOVEL, "fPh");
+    public static void processShovelHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleToolHead(toolPrefix, material, MetaItems.SHOVEL, "fPh");
 
-        int voltageMultiplier = getVoltageMultiplier(solidMaterial);
+        int voltageMultiplier = getVoltageMultiplier(material);
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, solidMaterial)
+                .input(OrePrefix.ingot, material)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_SHOVEL)
-                .outputs(OreDictUnifier.get(toolPrefix, solidMaterial))
-                .duration((int) solidMaterial.getAverageMass())
+                .outputs(OreDictUnifier.get(toolPrefix, material))
+                .duration((int) material.getAverageMass())
                 .EUt(8 * voltageMultiplier)
                 .buildAndRegister();
     }
 
-    public static void processSwordHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.SWORD, " P ", "fPh");
+    public static void processSwordHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleToolHead(toolPrefix, material, MetaItems.SWORD, " P ", "fPh");
 
-        int voltageMultiplier = getVoltageMultiplier(solidMaterial);
+        int voltageMultiplier = getVoltageMultiplier(material);
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, solidMaterial, 2)
+                .input(OrePrefix.ingot, material, 2)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_SWORD)
-                .outputs(OreDictUnifier.get(toolPrefix, solidMaterial))
-                .duration((int) solidMaterial.getAverageMass() * 2)
+                .outputs(OreDictUnifier.get(toolPrefix, material))
+                .duration((int) material.getAverageMass() * 2)
                 .EUt(8 * voltageMultiplier)
                 .buildAndRegister();
     }
 
-    public static void processSpadeHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.UNIVERSAL_SPADE, "PPP", "IhI", " I ");
+    public static void processSpadeHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleToolHead(toolPrefix, material, MetaItems.UNIVERSAL_SPADE, "PPP", "IhI", " I ");
     }
 
-    public static void processHammerHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        if (!solidMaterial.hasFlag(NO_WORKING)) {
-            processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.HARD_HAMMER, "II ", "IIh", "II ");
+    public static void processHammerHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        if (!material.hasFlag(NO_WORKING)) {
+            processSimpleToolHead(toolPrefix, material, MetaItems.HARD_HAMMER, "II ", "IIh", "II ");
         }
         Material handleMaterial = Materials.Wood;
-        if (!solidMaterial.hasFlag(NO_WORKING)) {
-            ModHandler.addShapedRecipe(String.format("hammer_%s", solidMaterial.toString()),
-                    MetaItems.HARD_HAMMER.getStackForm(solidMaterial),
+        if (!material.hasFlag(NO_WORKING)) {
+            ModHandler.addShapedRecipe(String.format("hammer_%s", material.toString()),
+                    MetaItems.HARD_HAMMER.getStackForm(material),
                     "XX ", "XXS", "XX ",
-                    'X', new UnificationEntry(OrePrefix.ingot, solidMaterial),
+                    'X', new UnificationEntry(OrePrefix.ingot, material),
                     'S', new UnificationEntry(OrePrefix.stick, handleMaterial));
         }
 
-        if (!solidMaterial.hasFlag(NO_SMASHING)) {
-            int voltageMultiplier = getVoltageMultiplier(solidMaterial);
+        if (!material.hasFlag(NO_SMASHING)) {
+            int voltageMultiplier = getVoltageMultiplier(material);
 
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.ingot, solidMaterial, 6)
+                    .input(OrePrefix.ingot, material, 6)
                     .notConsumable(MetaItems.SHAPE_EXTRUDER_HAMMER)
-                    .outputs(OreDictUnifier.get(toolPrefix, solidMaterial))
-                    .duration((int) solidMaterial.getAverageMass() * 6)
+                    .outputs(OreDictUnifier.get(toolPrefix, material))
+                    .duration((int) material.getAverageMass() * 6)
                     .EUt(8 * voltageMultiplier)
                     .buildAndRegister();
         }
     }
 
-    public static void processFileHead(OrePrefix toolPrefix, Material solidMaterial, ToolProperty property) {
-        processSimpleToolHead(toolPrefix, solidMaterial, MetaItems.FILE, " I ", " I ", " fh");
-        if (solidMaterial.getProperties().getIngotProperty() != null) {
+    public static void processFileHead(OrePrefix toolPrefix, Material material, ToolProperty property) {
+        processSimpleToolHead(toolPrefix, material, MetaItems.FILE, " I ", " I ", " fh");
+        if (material.getProperties().getIngotProperty() != null) {
             Material handleMaterial = Materials.Wood;
-            ModHandler.addShapedRecipe(String.format("file_%s", solidMaterial),
-                    MetaItems.FILE.getStackForm(solidMaterial),
+            ModHandler.addShapedRecipe(String.format("file_%s", material),
+                    MetaItems.FILE.getStackForm(material),
                     "P", "P", "S",
-                    'P', new UnificationEntry(OrePrefix.plate, solidMaterial),
+                    'P', new UnificationEntry(OrePrefix.plate, material),
                     'S', new UnificationEntry(OrePrefix.stick, handleMaterial));
         }
 
-        int voltageMultiplier = getVoltageMultiplier(solidMaterial);
+        int voltageMultiplier = getVoltageMultiplier(material);
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, solidMaterial, 2)
+                .input(OrePrefix.ingot, material, 2)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_FILE)
-                .outputs(OreDictUnifier.get(toolPrefix, solidMaterial))
-                .duration((int) solidMaterial.getAverageMass() * 2)
+                .outputs(OreDictUnifier.get(toolPrefix, material))
+                .duration((int) material.getAverageMass() * 2)
                 .EUt(8 * voltageMultiplier)
                 .buildAndRegister();
 

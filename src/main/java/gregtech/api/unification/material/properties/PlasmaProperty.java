@@ -43,7 +43,6 @@ public class PlasmaProperty implements IMaterialProperty {
         this.plasma = plasma;
     }
 
-    @Nonnull
     public Fluid getPlasma() {
         return plasma;
     }
