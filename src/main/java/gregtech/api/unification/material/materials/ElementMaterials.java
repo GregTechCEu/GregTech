@@ -5,6 +5,7 @@ import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Material.FluidType;
 
+import static com.google.common.collect.ImmutableList.of;
 import static gregtech.api.unification.material.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.type.MaterialFlags.*;
@@ -927,6 +928,85 @@ public class ElementMaterials {
                 .color(0xE0E1E1).iconSet(METALLIC)
                 .flags(EXT2_METAL)
                 .element(Elements.Zr)
+                .build();
+
+        Naquadah = new Material.Builder(124, "naquadah")
+                .ingot(4).fluid().ore()
+                .color(0x323232).iconSet(METALLIC)
+                .flags(EXT_METAL, GENERATE_FOIL, GENERATE_SPRING)
+                .element(Elements.Nq)
+                .toolStats(6.0f, 4.0f, 1280)
+                .blastTemp(5400)
+                .build();
+
+        NaquadahEnriched = new Material.Builder(125, "naquadah_enriched")
+                .ingot(4).fluid().ore()
+                .color(0x323232).iconSet(METALLIC)
+                .flags(EXT_METAL, GENERATE_FOIL)
+                .element(Elements.Nq1)
+                .toolStats(6.0f, 4.0f, 1280)
+                .blastTemp(4500)
+                .build();
+
+        Naquadria = new Material.Builder(126, "naquadria")
+                .ingot(3).fluid()
+                .color(0x1E1E1E).iconSet(SHINY)
+                .flags(EXT_METAL, GENERATE_FOIL)
+                .element(Elements.Nq2)
+                .blastTemp(9000)
+                .build();
+
+        Neutronium = new Material.Builder(127, "neutronium")
+                .ingot(6).fluid()
+                .color(0xFAFAFA)
+                .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME)
+                .element(Elements.Nt)
+                .toolStats(24.0f, 12.0f, 655360)
+                .build();
+
+        Tritanium = new Material.Builder(128, "tritanium")
+                .ingot(6).fluid()
+                .color(0x600000).iconSet(METALLIC)
+                .flags(EXT_METAL, GENERATE_FRAME)
+                .element(Elements.Tr)
+                .toolStats(20.0f, 6.0f, 10240)
+                .build();
+
+        Duranium = new Material.Builder(129, "duranium")
+                .ingot(5).fluid()
+                .iconSet(METALLIC)
+                .flags(EXT_METAL, GENERATE_FOIL)
+                .element(Elements.Dr)
+                .toolStats(16.0f, 5.0f, 5120)
+                .build();
+
+        Trinium = new Material.Builder(130, "trinium")
+                .ingot(7).fluid()
+                .color(0xC8C8D2).iconSet(SHINY)
+                .flags(GENERATE_FOIL)
+                .element(Elements.Ke)
+                .blastTemp(8600)
+                .build();
+
+        Adamantium = new Material.Builder(131, "adamantium")
+                .ingot(7).fluid()
+                .color(0x2D365C).iconSet(SHINY)
+                .element(Elements.Ad)
+                .blastTemp(10850)
+                .build();
+
+        Vibranium = new Material.Builder(132, "vibranium")
+                .ingot(7).fluid()
+                .color(0x828AAD).iconSet(SHINY)
+                .element(Elements.Vb)
+                .blastTemp(11220)
+                .build();
+
+        Taranium = new Material.Builder(133, "taranium")
+                .ingot(7).fluid()
+                .color(0x0C0C0D).iconSet(SHINY)
+                .element(Elements.Tn)
+                .blastTemp(10000)
                 .build();
     }
 }

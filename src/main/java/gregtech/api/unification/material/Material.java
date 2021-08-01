@@ -298,6 +298,10 @@ public class Material implements Comparable<Material> {
         return materialInfo.name;
     }
 
+    public int getId() {
+        return materialInfo.metaItemSubId;
+    }
+
     @ZenOperator(OperatorType.MUL)
     public MaterialStack createMaterialStack(long amount) {
         return new MaterialStack(this, amount);
