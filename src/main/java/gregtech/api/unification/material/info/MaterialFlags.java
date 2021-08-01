@@ -30,6 +30,13 @@ public class MaterialFlags {
         return flags.contains(flag);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        flags.forEach(f -> sb.append(f.toString()).append("\n"));
+        return sb.toString();
+    }
+
     /////////////////
     //   GENERIC   //
     /////////////////

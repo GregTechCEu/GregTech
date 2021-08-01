@@ -64,6 +64,13 @@ public class Properties {
         return properties.stream().filter(p -> p.doesMatch(dummy)).findFirst().orElse(null);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        properties.forEach(p -> sb.append(p.getName()).append("\n"));
+        return sb.toString();
+    }
+
     ///////////////////////////////////////////////
     //                 GETTERS                   //
     ///////////////////////////////////////////////

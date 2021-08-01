@@ -59,6 +59,11 @@ public class MaterialFlag {
         else return m.hasProperty(requiredType) || m.hasProperty(secondaryType);
     }
 
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
     public static class Builder {
 
         final int id;
