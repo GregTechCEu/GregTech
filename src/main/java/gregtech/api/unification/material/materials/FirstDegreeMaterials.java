@@ -1157,5 +1157,154 @@ public class FirstDegreeMaterials {
                 .blastTemp(2460)
                 .build();
 
-    }
+        CarbonDioxide = new Material.Builder(397, "carbon_dioxide")
+                .fluid(Material.FluidType.GAS)
+                .color(0xA9D0F5)
+                .components(Carbon, 1, Oxygen, 2)
+                .build();
+
+        TitaniumTetrachloride = new Material.Builder(398, "titanium_tetrachloride")
+                .fluidTemp(2220)
+                .color(0xD40D5C)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Titanium, 1, Chlorine, 4)
+                .build();
+
+        NitrogenDioxide = new Material.Builder(399, "nitrogen_dioxide")
+                .fluid(Material.FluidType.GAS)
+                .components(Nitrogen, 1, Oxygen, 2)
+                .build();
+
+        HydrogenSulfide = new Material.Builder(400, "hydrogen_sulfide")
+                .fluid(Material.FluidType.GAS)
+                .build();
+
+        NitricAcid = new Material.Builder(401, "nitric_acid")
+                .fluid()
+                .color(0xCCCC00)
+                .components(Hydrogen, 1, Nitrogen, 1, Oxygen, 3)
+                .build();
+
+        SulfuricAcid = new Material.Builder(402, "sulfuric_acid")
+                .fluid()
+                .components(Hydrogen, 2, Sulfur, 1, Oxygen, 4)
+                .build();
+
+        PhosphoricAcid = new Material.Builder(403, "phosphoric_acid")
+                .fluid()
+                .color(0xDCDC01)
+                .components(Hydrogen, 3, Phosphorus, 1, Oxygen, 4)
+                .build();
+
+        SulfurTrioxide = new Material.Builder(404, "sulfur_trioxide")
+                .fluid(Material.FluidType.GAS)
+                .color(0xA0A014)
+                .components(Sulfur, 1, Oxygen, 3)
+                .build();
+
+        SulfurDioxide = new Material.Builder(405, "sulfur_dioxide")
+                .fluid(Material.FluidType.GAS)
+                .color(0xC8C819)
+                .components(Sulfur, 1, Oxygen, 2)
+                .build();
+
+        CarbonMonoxide = new Material.Builder(406, "carbon_monoxide")
+                .fluid(Material.FluidType.GAS)
+                .color(0x0E4880)
+                .components(Carbon, 1, Oxygen, 1)
+                .build();
+
+        HypochlorousAcid = new Material.Builder(407, "hypochlorous_acid")
+                .fluid()
+                .color(0x6F8A91)
+                .components(Hydrogen, 1, Chlorine, 1, Oxygen, 1)
+                .build();
+
+        Ammonia = new Material.Builder(408, "ammonia")
+                .fluid(Material.FluidType.GAS)
+                .color(0x3F3480)
+                .components(Nitrogen, 1, Hydrogen, 3)
+                .build();
+
+        HydrofluoricAcid = new Material.Builder(409, "hydrofluoric_acid")
+                .fluid()
+                .color(0x0088AA)
+                .components(Hydrogen, 1, Fluorine, 1)
+                .build();
+
+        NitricOxide = new Material.Builder(410, "nitric_oxide")
+                .fluid(Material.FluidType.GAS)
+                .color(0x7DC8F0)
+                .components(Nitrogen, 1, Oxygen, 1)
+                .build();
+
+        Iron3Chloride = new Material.Builder(411, "iron_iii_chloride")
+                .fluid()
+                .color(0x060B0B)
+                .flags(DECOMPOSITION_BY_ELECTROLYZING)
+                .build();
+
+        UraniumHexafluoride = new Material.Builder(412, "uranium_hexafluoride")
+                .fluid(Material.FluidType.GAS)
+                .color(0x42D126)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Uranium238, Fluorine, 6)
+                .build()
+                .setFormula("UF6", true);
+
+        EnrichedUraniumHexafluoride = new Material.Builder(413, "enriched_uranium_hexafluoride")
+                .fluid(Material.FluidType.GAS)
+                .color(0x4BF52A)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Uranium235, 1, Fluorine, 6)
+                .build()
+                .setFormula("UF6", true);
+
+        DepletedUraniumHexafluoride = new Material.Builder(414, "depleted_uranium_hexafluoride")
+                .fluid(Material.FluidType.GAS)
+                .color(0x74BA66)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Uranium238, 1, Fluorine, 6)
+                .build()
+                .setFormula("UF6", true);
+
+        NitrousOxide = new Material.Builder(415, "nitrous_oxide")
+                .fluid(Material.FluidType.GAS)
+                .color(0x7DC8FF)
+                .components(Nitrogen, 2, Oxygen, 1)
+                .build();
+
+        EnderPearl = new Material.Builder(416, "ender_pearl")
+                .gem(1)
+                .color(0x6CDCC8)
+                .flags(GENERATE_LENS, NO_SMASHING, NO_SMELTING)
+                .components(Beryllium, 1, Potassium, 4, Nitrogen, 5)
+                .build();
+
+        PotassiumFeldspar = new Material.Builder(417, "potassium_feldspar")
+                .dust(1)
+                .color(0x782828).iconSet(FINE)
+                .components(Potassium, 1, Aluminium, 1, Silicon, 1, Oxygen, 8)
+                .build();
+
+        NeodymiumMagnetic = new Material.Builder(418, "neodymium_magnetic")
+                .ingot().fluid()
+                .color(0x646464).iconSet(MAGNETIC)
+                .flags(EXT2_METAL, GENERATE_LONG_ROD)
+                .components(Neodymium, 1)
+                .blastTemp(1297)
+                .build();
+
+        //todo this is stupid
+        NobleGases = new Material.Builder(419, "noble_gases")
+                .fluid(Material.FluidType.GAS)
+                .color(0xA9D0F5)
+                .components(CarbonDioxide, 25, Helium, 11, Methane, 4, Deuterium, 2, Radon, 1)
+                .build();
+
+        HydrochloricAcid = new Material.Builder(420, "hydrochloric_acid")
+                .fluid()
+                .components(Hydrogen, 1, Chlorine, 1)
+                .build();
+      }
 }
