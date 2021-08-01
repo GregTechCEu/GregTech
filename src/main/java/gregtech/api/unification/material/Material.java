@@ -3,11 +3,10 @@ package gregtech.api.unification.material;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
-import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.material.properties.Properties;
+import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.material.type.MaterialFlag;
 import gregtech.api.unification.material.type.MaterialFlags;
 import gregtech.api.unification.ore.OrePrefix;
@@ -18,7 +17,8 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import stanhebben.zenscript.annotations.*;
+import stanhebben.zenscript.annotations.OperatorType;
+import stanhebben.zenscript.annotations.ZenOperator;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -269,6 +269,17 @@ public class Material implements Comparable<Material> {
             totalMass += material.amount * material.material.getAverageMass();
         }
         return totalMass / totalAmount;
+    }
+
+    //@ZenGetter("blastTemperature")
+    public int getBlastTemperature() {
+        BlastProperty prop = properties.getBlastProperty();
+        return prop == null ? 0 : prop.getBlastTemperature();
+    }
+
+    public FluidStack getPlasma(int amount) {
+        PlasmaProperty prop = properties.getPlasmaProperty();
+        return prop == null ? null : prop.getPlasma(amount);
     }
 
     //@ZenGetter("camelCaseName")
