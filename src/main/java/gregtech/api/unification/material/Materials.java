@@ -1,7 +1,7 @@
 package gregtech.api.unification.material;
 
-import gregtech.api.unification.material.materials.*;
 import gregtech.api.unification.material.info.MaterialFlag;
+import gregtech.api.unification.material.materials.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -405,7 +405,6 @@ public class Materials {
     public static Material EnderPearl;
     public static Material PotassiumFeldspar;
     public static Material NeodymiumMagnetic;
-    public static Material NobleGases;
     public static Material HydrochloricAcid;
     public static Material Steam;
     public static Material DistilledWater;
@@ -629,9 +628,10 @@ public class Materials {
     public static Material NitrationMixture;
     public static Material DilutedSulfuricAcid;
     public static Material DilutedHydrochloricAcid;
+    public static Material Flint;
+    public static Material NobleGases;
     public static Material Air;
     public static Material LiquidAir;
-    public static Material Flint;
 
     /**
      * Third Degree Materials

@@ -1318,26 +1318,19 @@ public class FirstDegreeMaterials {
                 .blastTemp(1297)
                 .build();
 
-        //todo this is stupid
-        NobleGases = new Material.Builder(419, "noble_gases")
-                .fluid(Material.FluidType.GAS)
-                .color(0xA9D0F5)
-                .components(CarbonDioxide, 25, Helium, 11, Methane, 4, Deuterium, 2, Radon, 1)
-                .build();
-
-        HydrochloricAcid = new Material.Builder(420, "hydrochloric_acid")
+        HydrochloricAcid = new Material.Builder(419, "hydrochloric_acid")
                 .fluid()
                 .components(Hydrogen, 1, Chlorine, 1)
                 .build();
 
-        Steam = new Material.Builder(421, "steam")
+        Steam = new Material.Builder(420, "steam")
                 .fluid(Material.FluidType.GAS, true)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .fluidTemp(380)
                 .build();
 
-        DistilledWater = new Material.Builder(422, "distilled_water")
+        DistilledWater = new Material.Builder(421, "distilled_water")
                 .fluid()
                 .color(0x0000FF)
                 .flags(DISABLE_DECOMPOSITION)

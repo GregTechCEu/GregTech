@@ -3,9 +3,9 @@ package gregtech.api.unification.material.materials;
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 
-import static gregtech.api.unification.material.info.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialIconSet.*;
 
 public class SecondDegreeMaterials {
 
@@ -391,24 +391,32 @@ public class SecondDegreeMaterials {
                 .components(HydrochloricAcid, 1, Water, 1)
                 .build();
 
-        Air = new Material.Builder(2047, "air")
+
+        Flint = new Material.Builder(2049, "flint")
+                .gem(1)
+                .color(0x002040).iconSet(FLINT)
+                .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
+                .build();
+
+        //todo this is stupid
+        NobleGases = new Material.Builder(2050, "noble_gases")
+                .fluid(Material.FluidType.GAS)
+                .color(0xA9D0F5)
+                .components(CarbonDioxide, 25, Helium, 11, Methane, 4, Deuterium, 2, Radon, 1)
+                .build();
+
+        Air = new Material.Builder(2051, "air")
                 .fluid(Material.FluidType.GAS)
                 .color(0xA9D0F5)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nitrogen, 40, Oxygen, 11, Argon, 1, NobleGases, 1)
                 .build();
 
-        LiquidAir = new Material.Builder(2048, "liquid_air")
+        LiquidAir = new Material.Builder(2052, "liquid_air")
                 .fluid()
                 .color(0xA9D0F5)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Nitrogen, 40, Oxygen, 11, Argon, 1, NobleGases, 1)
-                .build();
-
-        Flint = new Material.Builder(2049, "flint")
-                .gem(1)
-                .color(0x002040).iconSet(FLINT)
-                .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
                 .build();
     }
 }
