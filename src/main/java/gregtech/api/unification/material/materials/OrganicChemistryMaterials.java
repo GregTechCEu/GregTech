@@ -2,6 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.unification.material.Material;
 
+import static gregtech.api.unification.material.MaterialIconSet.FINE;
 import static gregtech.api.unification.material.MaterialIconSet.SHINY;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.type.MaterialFlags.*;
@@ -131,6 +132,12 @@ public class OrganicChemistryMaterials {
                 .flags(STD_METAL, GENERATE_FRAME, DISABLE_DECOMPOSITION, NO_SMASHING)
                 .components(Carbon, 2, Fluorine, 4)
                 .fluidPipeProperties(600, 80, true)
+                .build();
+
+        Sugar = new Material.Builder(1017, "sugar")
+                .dust(1)
+                .color(0xFAFAFA).iconSet(FINE)
+                .components(Carbon, 2, Water, 5, Oxygen, 25)
                 .build();
     }
 }

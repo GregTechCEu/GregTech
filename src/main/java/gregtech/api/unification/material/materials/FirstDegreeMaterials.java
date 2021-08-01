@@ -209,6 +209,7 @@ public class FirstDegreeMaterials {
                 .color(0xE39680).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_SPRING)
                 .components(Copper, 1, Nickel, 1)
+                .itemPipeProperties(2048, 1)
                 .build();
 
         DarkAsh = new Material.Builder(275, "dark_ash")
@@ -402,6 +403,7 @@ public class FirstDegreeMaterials {
                 .color(0x503264)
                 .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, GENERATE_PLATE)
                 .components(Magnesium, 1, Iron, 1, Silicon, 2, Oxygen, 4)
+                .addOreByproducts(Olivine)
                 .build();
 
         Phosphate = new Material.Builder(298, "phosphate")
@@ -409,6 +411,7 @@ public class FirstDegreeMaterials {
                 .color(0xFFFF00)
                 .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE)
                 .components(Phosphorus, Oxygen, 4)
+                .addOreByproducts(Phosphorus)
                 .build();
 
         PigIron = new Material.Builder(299, "pig_iron")
@@ -628,6 +631,7 @@ public class FirstDegreeMaterials {
                 .components(Iron, 1)
                 .toolStats(6.0f, 3.0f, 512)
                 .polarizesInto(SteelMagnetic)
+                .fluidPipeProperties(2557, 40, true)
                 .blastTemp(1000)
                 .build();
 
