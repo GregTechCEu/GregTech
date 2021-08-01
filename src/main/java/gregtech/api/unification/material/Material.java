@@ -32,27 +32,9 @@ public class Material implements Comparable<Material> {
     //public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(32768);
 
     /**
-     * Color of material in RGB format
+     * Basic Info of this Material.
      */
-    //@ZenProperty("color")
-    public int materialRGB;
-
-    /**
-     * Chemical formula of this material
-     */
-    private String chemicalFormula;
-
-    /**
-     * Icon set for this material meta-items generation
-     */
-    //@ZenProperty("iconSet")
-    public MaterialIconSet materialIconSet;
-
-    /**
-     * List of this material component
-     */
-    //@ZenProperty("components")
-    public final ImmutableList<MaterialStack> materialComponents;
+    private final MaterialInfo materialInfo;
 
     /**
      * Properties of this Material.
@@ -69,19 +51,18 @@ public class Material implements Comparable<Material> {
     private final MaterialFlags flags;
 
     /**
-     * Element of this material consist of
+     * Chemical formula of this material
      */
-    //@ZenProperty
-    public final Element element;
+    private String chemicalFormula;
 
     // TODO Fix isotope tooltips being set toSmallDownNumbers
     private String calculateChemicalFormula() {
-        if (element != null) {
-            return element.getSymbol();
+        if (materialInfo.element != null) {
+            return materialInfo.element.getSymbol();
         }
-        if (!materialComponents.isEmpty()) {
+        if (!materialInfo.componentList.isEmpty()) {
             StringBuilder components = new StringBuilder();
-            for (MaterialStack component : materialComponents)
+            for (MaterialStack component : materialInfo.componentList)
                 components.append(component.toString());
             return components.toString();
         }
@@ -103,19 +84,11 @@ public class Material implements Comparable<Material> {
     }
 
     public ImmutableList<MaterialStack> getMaterialComponents() {
-        return materialComponents;
+        return materialInfo.componentList;
     }
 
-    protected final String name;
-    protected final int id;
-
-    private Material(MaterialInfo info, Properties properties, MaterialFlags flags) {
-        this.name = info.name;
-        this.id = info.metaItemSubId;
-        this.materialRGB = info.color;
-        this.materialIconSet = info.iconSet;
-        this.materialComponents = info.componentList;
-        this.element = info.element;
+    private Material(MaterialInfo materialInfo, Properties properties, MaterialFlags flags) {
+        this.materialInfo = materialInfo;
         this.chemicalFormula = calculateChemicalFormula();
 
         this.properties = properties;
@@ -130,12 +103,9 @@ public class Material implements Comparable<Material> {
 
     // thou shall not call
     private Material() {
-        this.name = "";
-        this.id = 0;
-        materialComponents = ImmutableList.of();
+        materialInfo = new MaterialInfo(0, "");
         properties = new Properties();
         flags = new MaterialFlags();
-        element = null;
     }
 
     protected void registerMaterial(Material material) {
@@ -164,12 +134,12 @@ public class Material implements Comparable<Material> {
     //}
 
     protected void calculateDecompositionType() {
-        if (!materialComponents.isEmpty() &&
+        if (!materialInfo.componentList.isEmpty() &&
             !hasFlag(MaterialFlags.DECOMPOSITION_BY_CENTRIFUGING) &&
             !hasFlag(MaterialFlags.DECOMPOSITION_BY_ELECTROLYZING) &&
             !hasFlag(MaterialFlags.DISABLE_DECOMPOSITION)) {
             boolean onlyMetalMaterials = true;
-            for (MaterialStack materialStack : materialComponents) {
+            for (MaterialStack materialStack : materialInfo.componentList) {
                 Material material = materialStack.material;
                 onlyMetalMaterials &= material.properties.getIngotProperty() != null;
             }
@@ -184,48 +154,48 @@ public class Material implements Comparable<Material> {
 
     public FluidStack getFluid(int amount) {
         if (properties.getFluidProperty() == null)
-            throw new IllegalArgumentException("Material " + this.name + " does not have a Fluid!");
+            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a Fluid!");
         return properties.getFluidProperty().getFluid(amount);
     }
 
     public int getHarvestLevel() {
         if (properties.getDustProperty() == null)
-            throw new IllegalArgumentException("Material " + this.name + " does not have a harvest level! Is probably a Fluid");
+            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a harvest level! Is probably a Fluid");
         return properties.getDustProperty().getHarvestLevel();
     }
 
     //@ZenMethod
     public void setMaterialRGB(int materialRGB) {
-        this.materialRGB = materialRGB;
+        materialInfo.color = materialRGB;
     }
 
     //@ZenGetter
     public int getMaterialRGB() {
-        return materialRGB;
+        return materialInfo.color;
     }
 
     //@ZenMethod
     public void setMaterialIconSet(MaterialIconSet materialIconSet) {
-        this.materialIconSet = materialIconSet;
+        materialInfo.iconSet = materialIconSet;
     }
 
     //@ZenGetter("radioactive")
     public boolean isRadioactive() {
-        if (element != null)
-            return element.halfLifeSeconds >= 0;
-        for (MaterialStack material : materialComponents)
+        if (materialInfo.element != null)
+            return materialInfo.element.halfLifeSeconds >= 0;
+        for (MaterialStack material : materialInfo.componentList)
             if (material.material.isRadioactive()) return true;
         return false;
     }
 
     //@ZenGetter("protons")
     public long getProtons() {
-        if (element != null)
-            return element.getProtons();
-        if (materialComponents.isEmpty())
+        if (materialInfo.element != null)
+            return materialInfo.element.getProtons();
+        if (materialInfo.componentList.isEmpty())
             return Elements.get("Neutronium").getProtons();
         long totalProtons = 0;
-        for (MaterialStack material : materialComponents) {
+        for (MaterialStack material : materialInfo.componentList) {
             totalProtons += material.amount * material.material.getProtons();
         }
         return totalProtons;
@@ -233,12 +203,12 @@ public class Material implements Comparable<Material> {
 
     //@ZenGetter("neutrons")
     public long getNeutrons() {
-        if (element != null)
-            return element.getNeutrons();
-        if (materialComponents.isEmpty())
+        if (materialInfo.element != null)
+            return materialInfo.element.getNeutrons();
+        if (materialInfo.componentList.isEmpty())
             return Elements.get("Neutronium").getNeutrons();
         long totalNeutrons = 0;
-        for (MaterialStack material : materialComponents) {
+        for (MaterialStack material : materialInfo.componentList) {
             totalNeutrons += material.amount * material.material.getNeutrons();
         }
         return totalNeutrons;
@@ -246,12 +216,12 @@ public class Material implements Comparable<Material> {
 
     //@ZenGetter("mass")
     public long getMass() {
-        if (element != null)
-            return element.getMass();
-        if (materialComponents.isEmpty())
+        if (materialInfo.element != null)
+            return materialInfo.element.getMass();
+        if (materialInfo.componentList.isEmpty())
             return Elements.get("Neutronium").getMass();
         long totalMass = 0;
-        for (MaterialStack material : materialComponents) {
+        for (MaterialStack material : materialInfo.componentList) {
             totalMass += material.amount * material.material.getMass();
         }
         return totalMass;
@@ -259,12 +229,12 @@ public class Material implements Comparable<Material> {
 
     //@ZenGetter("averageProtons")
     public long getAverageProtons() {
-        if (element != null)
-            return element.getProtons();
-        if (materialComponents.isEmpty())
+        if (materialInfo.element != null)
+            return materialInfo.element.getProtons();
+        if (materialInfo.componentList.isEmpty())
             return Math.max(1, Elements.get("Neutronium").getProtons());
         long totalProtons = 0, totalAmount = 0;
-        for (MaterialStack material : materialComponents) {
+        for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
             totalProtons += material.amount * material.material.getAverageProtons();
         }
@@ -273,12 +243,12 @@ public class Material implements Comparable<Material> {
 
     //@ZenGetter("averageNeutrons")
     public long getAverageNeutrons() {
-        if (element != null)
-            return element.getNeutrons();
-        if (materialComponents.isEmpty())
+        if (materialInfo.element != null)
+            return materialInfo.element.getNeutrons();
+        if (materialInfo.componentList.isEmpty())
             return Elements.get("Neutronium").getNeutrons();
         long totalNeutrons = 0, totalAmount = 0;
-        for (MaterialStack material : materialComponents) {
+        for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
             totalNeutrons += material.amount * material.material.getAverageNeutrons();
         }
@@ -288,12 +258,12 @@ public class Material implements Comparable<Material> {
 
     //@ZenGetter("averageMass")
     public long getAverageMass() {
-        if (element != null)
-            return element.getMass();
-        if (materialComponents.size() <= 0)
+        if (materialInfo.element != null)
+            return materialInfo.element.getMass();
+        if (materialInfo.componentList.size() <= 0)
             return Elements.get("Neutronium").getMass();
         long totalMass = 0, totalAmount = 0;
-        for (MaterialStack material : materialComponents) {
+        for (MaterialStack material : materialInfo.componentList) {
             totalAmount += material.amount;
             totalMass += material.amount * material.material.getAverageMass();
         }
@@ -307,7 +277,7 @@ public class Material implements Comparable<Material> {
 
     //@ZenGetter("unlocalizedName")
     public String getUnlocalizedName() {
-        return "material." + name;
+        return "material." + materialInfo.name;
     }
 
     @SideOnly(Side.CLIENT)
@@ -325,7 +295,7 @@ public class Material implements Comparable<Material> {
     @Override
     //@ZenGetter("name")
     public String toString() {
-        return name;
+        return materialInfo.name;
     }
 
     @ZenOperator(OperatorType.MUL)
@@ -595,27 +565,27 @@ public class Material implements Comparable<Material> {
     /**
      * Holds the basic info for a Material, like the name, color, id, etc..
      */
-    public static class MaterialInfo {
+    private static class MaterialInfo {
         /**
          * The unlocalized name of this Material.
          *
          * Required.
          */
-        public final String name;
+        private final String name;
 
         /**
          * The MetaItem ID of this Material.
          *
          * Required.
          */
-        public final int metaItemSubId;
+        private final int metaItemSubId;
 
         /**
          * The color of this Material.
          *
          * Default: 0xFFFFFF.
          */
-        public int color = 0xFFFFFF;
+        private int color = 0xFFFFFF;
 
         /**
          * The IconSet of this Material.
@@ -624,33 +594,33 @@ public class Material implements Comparable<Material> {
          *          - DULL if has DustProperty or IngotProperty.
          *          - FLUID or GAS if only has FluidProperty or PlasmaProperty, depending on {@link FluidType}.
          */
-        public MaterialIconSet iconSet;
+        private MaterialIconSet iconSet;
 
         /**
          * The components of this Material.
          *
          * Default: none.
          */
-        public ImmutableList<MaterialStack> componentList;
+        private ImmutableList<MaterialStack> componentList;
 
         /**
          * This Material's flags.
          *
          * Default: none.
          */
-        public long flags;
+        private long flags;
 
         /**
          * The Element of this Material, if it is a direct Element.
          *
          * Default: none.
          */
-        public Element element;
+        private Element element;
 
         /**
          * Explicit OrePrefix for this Material.
          */
-        public Supplier<OrePrefix> prefixSupplier; // todo PrefixProperty?
+        private Supplier<OrePrefix> prefixSupplier; // todo PrefixProperty?
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
