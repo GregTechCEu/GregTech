@@ -89,7 +89,7 @@ public class Material implements Comparable<Material> {
         return materialInfo.componentList;
     }
 
-    private Material(MaterialInfo materialInfo, Properties properties, MaterialFlags flags) {
+    private Material(@Nonnull MaterialInfo materialInfo, @Nonnull Properties properties, @Nonnull MaterialFlags flags) {
         this.materialInfo = materialInfo;
         this.properties = properties;
         this.flags = flags;
