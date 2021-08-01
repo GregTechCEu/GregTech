@@ -14,6 +14,7 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -147,6 +148,12 @@ public class Material implements Comparable<Material> {
                 flags.addFlags(MaterialFlags.DECOMPOSITION_BY_ELECTROLYZING);
             }
         }
+    }
+
+    public Fluid getFluid() {
+        if (properties.getFluidProperty() == null)
+            throw new IllegalArgumentException("Material " + materialInfo.name + " does not have a Fluid!");
+        return properties.getFluidProperty().getFluid();
     }
 
     public FluidStack getFluid(int amount) {

@@ -92,7 +92,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     private int getResultRenderingColor() {
         int paintingColor = getPaintingColorForRendering();
         if (paintingColor == DEFAULT_PAINTING_COLOR) {
-            paintingColor = Materials.Bronze.materialRGB;
+            paintingColor = Materials.Bronze.getMaterialRGB();
         }
         return paintingColor;
     }
