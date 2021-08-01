@@ -772,8 +772,6 @@ public class Materials {
         Basalt.addOreByProducts(Olivine, DarkAsh);
         VanadiumMagnetite.addOreByProducts(Magnetite, Vanadium);
         TricalciumPhosphate.addOreByProducts(Apatite, Phosphate);
-        NaquadahEnriched.addOreByProducts(Naquadah, Naquadria);
-        Naquadah.addOreByProducts(NaquadahEnriched);
         Lignite.addOreByProducts(Coal);
         Apatite.addOreByProducts(TricalciumPhosphate);
         Netherrack.addOreByProducts(Sulfur);
@@ -809,7 +807,6 @@ public class Materials {
         NiobiumTitanium.setCableProperties(GTValues.V[6], 4, 2);
         VanadiumGallium.setCableProperties(GTValues.V[6], 4, 2);
         YttriumBariumCuprate.setCableProperties(GTValues.V[6], 4, 4);
-        Naquadah.setCableProperties(GTValues.V[7], 2, 2);
         NaquadahAlloy.setCableProperties(GTValues.V[8], 2, 4);
         Duranium.setCableProperties(GTValues.V[8], 1, 8);
         FluxedElectrum.setCableProperties(GTValues.V[8], 3, 2);
@@ -819,9 +816,6 @@ public class Materials {
         Potin.setFluidPipeProperties(2023, 96, true);
         VanadiumSteel.setFluidPipeProperties(2073, 100, true);
         TungstenSteel.setFluidPipeProperties(7568, 100, true);
-        Naquadah.setFluidPipeProperties(19200, 1500, true);
-        Duranium.setFluidPipeProperties(100000, 2000, true);
-        Neutronium.setFluidPipeProperties(1000000, 2800, true);
 
         CobaltBrass.setItemPipeProperties(2048, 1);
         Cupronickel.setItemPipeProperties(2048, 1);

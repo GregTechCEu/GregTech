@@ -936,6 +936,9 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_SPRING)
                 .element(Elements.Nq)
                 .toolStats(6.0f, 4.0f, 1280)
+                .addOreByproducts(NaquadahEnriched)
+                .cableProperties(GTValues.V[7], 2, 2)
+                .fluidPipeProperties(19200, 1500, true)
                 .blastTemp(5400)
                 .build();
 
@@ -945,6 +948,7 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Nq1)
                 .toolStats(6.0f, 4.0f, 1280)
+                .addOreByproducts(Naquadah, Naquadria)
                 .blastTemp(4500)
                 .build();
 
@@ -962,6 +966,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME)
                 .element(Elements.Nt)
                 .toolStats(24.0f, 12.0f, 655360)
+                .fluidPipeProperties(1000000, 2800, true)
                 .build();
 
         Tritanium = new Material.Builder(128, "tritanium")
@@ -978,6 +983,7 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Dr)
                 .toolStats(16.0f, 5.0f, 5120)
+                .fluidPipeProperties(100000, 2000, true)
                 .build();
 
         Trinium = new Material.Builder(130, "trinium")
