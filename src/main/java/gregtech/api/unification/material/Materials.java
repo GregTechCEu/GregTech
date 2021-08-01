@@ -42,21 +42,6 @@ import static gregtech.api.unification.material.type.MaterialFlags.*;
  */
 public class Materials {
 
-    /*
-     * TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-     *
-     * Flag additions as of this branch being created:
-     * - Gold: ring
-     * - Zinc: ring
-     * - Diamond: bolt_screw
-     * - Steel: both Springs
-     * - Quartzite: plate
-     * - Iron: small gear, both springs
-     * - Obsidian: plate
-     *
-     * TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
-     */
-
     public static void register() {
         MarkerMaterials.register();
         ElementMaterials.register();

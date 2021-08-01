@@ -221,7 +221,8 @@ public class FirstDegreeMaterials {
         Diamond = new MaterialBuilder(150, "diamond")
                 .gem(3).ore()
                 .color(0xC8FFFF).iconSet(DIAMOND)
-                .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING, FLAMMABLE, HIGH_SIFTER_OUTPUT, DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
+                .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING, FLAMMABLE, GENERATE_BOLT_SCREW,
+                        HIGH_SIFTER_OUTPUT, DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .toolStats(8.0f, 3.0f, 1280)
                 .addOreByproducts(Graphite)
                 .build();
@@ -399,7 +400,7 @@ public class FirstDegreeMaterials {
         Obsidian = new MaterialBuilder(171, "obsidian")
                 .dust(3)
                 .color(0x503264)
-                .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES)
+                .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, GENERATE_PLATE)
                 .components(Magnesium, 1, Iron, 1, Silicon, 2, Oxygen, 4)
                 .build();
 
@@ -622,7 +623,8 @@ public class FirstDegreeMaterials {
         Steel = new MaterialBuilder(198, "steel")
                 .ingot().fluid()
                 .color(0x808080).iconSet(METALLIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME, GENERATE_LONG_ROD, DISABLE_DECOMPOSITION)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_SPRING,
+                        GENERATE_SPRING_SMALL, GENERATE_FRAME, GENERATE_LONG_ROD, DISABLE_DECOMPOSITION)
                 .components(Iron, 1)
                 .toolStats(6.0f, 3.0f, 512)
                 .polarizesInto(SteelMagnetic)
@@ -768,7 +770,7 @@ public class FirstDegreeMaterials {
         Quartzite = new MaterialBuilder(215, "quartzite")
                 .gem(1).ore(2, 1)
                 .color(0xD2E6D2).iconSet(QUARTZ)
-                .flags(NO_SMELTING, CRYSTALLIZABLE, DISABLE_DECOMPOSITION)
+                .flags(NO_SMELTING, CRYSTALLIZABLE, DISABLE_DECOMPOSITION, GENERATE_PLATE)
                 .components(Silicon, 1, Oxygen, 2)
                 .addOreByproducts(CertusQuartz, Barite)
                 .build();
