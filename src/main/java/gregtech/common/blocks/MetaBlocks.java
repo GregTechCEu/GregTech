@@ -193,7 +193,7 @@ public class MetaBlocks {
             if (matProps.getOreProperty() != null)
                 createOreBlock(material);
 
-            if (material.getProperties().getIngotProperty() != null && material.hasFlag(GENERATE_FRAME)) {
+            if (material.getProperties().getDustProperty() != null && material.hasFlag(GENERATE_FRAME)) {
                 BlockFrame blockFrame = new BlockFrame(material);
                 blockFrame.setRegistryName("frame_" + material.toString());
                 FRAMES.put(material, blockFrame);
