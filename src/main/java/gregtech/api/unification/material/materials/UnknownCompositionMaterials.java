@@ -148,7 +148,11 @@ public class UnknownCompositionMaterials {
         public static DustMaterial Andesite = new DustMaterial(314, "andesite", 0xBEBEBE, ROUGH, 2, of(), NO_SMASHING);
         public static DustMaterial Diorite = new DustMaterial(315, "diorite", 0xFFFFFF, ROUGH, 2, of(), NO_SMASHING);
         public static DustMaterial Granite = new DustMaterial(316, "granite", 0xCFA18C, ROUGH, 2, of(), NO_SMASHING);
-
+        public static GemMaterial Vinteum = new GemMaterial(321, "vinteum", 0x64C8FF, EMERALD, 3, of(), STD_GEM | NO_SMASHING | NO_SMELTING, 12.0F, 3.0f, 128);
+        public static FluidMaterial Milk = new FluidMaterial(383, "milk", 0xFEFEFE, FINE, of(), 0);
+        public static DustMaterial Cocoa = new DustMaterial(384, "cocoa", 0xBE5F00, FINE, 0, of(), 0);
+        public static DustMaterial Wheat = new DustMaterial(385, "wheat", 0xFFFFC4, FINE, 0, of(), 0);
+        public static DustMaterial Meat = new DustMaterial(386, "meat", 12667980, SAND, 1, of(), DISABLE_DECOMPOSITION);
         public static RoughSolidMaterial Wood = new RoughSolidMaterial(269, "wood", 0x643200, WOOD, 0, of(), STD_SOLID | FLAMMABLE | NO_SMELTING | GENERATE_GEAR | GENERATE_LONG_ROD | GENERATE_FRAME, () -> OrePrefix.plank);
         public static RoughSolidMaterial Paper = new RoughSolidMaterial(272, "paper", 0xFAFAFA, PAPER, 0, of(), GENERATE_PLATE | FLAMMABLE | NO_SMELTING | NO_SMASHING | MORTAR_GRINDABLE | GENERATE_RING | EXCLUDE_PLATE_COMPRESSOR_RECIPE, () -> OrePrefix.plate);
 

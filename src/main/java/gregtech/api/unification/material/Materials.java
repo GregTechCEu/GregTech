@@ -498,6 +498,11 @@ public class Materials {
     public static Material Andesite;
     public static Material Diorite;
     public static Material Granite;
+    public static Material Vinteum;
+    public static Material Milk;
+    public static Material Cocoa;
+    public static Material Wheat;
+    public static Material Meat;
     public static Material Wood;
     public static Material Paper;
 
@@ -633,7 +638,6 @@ public class Materials {
     public static GemMaterial GarnetYellow = new GemMaterial(318, "garnet_yellow", 0xC8C850, RUBY, 2, of(new MaterialStack(Andradite, 5), new MaterialStack(Grossular, 8), new MaterialStack(Uvarovite, 3)), STD_SOLID | GENERATE_LENS | NO_SMASHING | NO_SMELTING | HIGH_SIFTER_OUTPUT | GENERATE_ORE | DECOMPOSITION_BY_CENTRIFUGING, null, 7.5F, 3.0f, 156);
     public static DustMaterial Marble = new DustMaterial(319, "marble", 0xC8C8C8, FINE, 1, of(new MaterialStack(Magnesium, 1), new MaterialStack(Calcite, 7)), NO_SMASHING | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial Sugar = new DustMaterial(320, "sugar", 0xFAFAFA, FINE, 1, of(new MaterialStack(Carbon, 2), new MaterialStack(Water, 5), new MaterialStack(Oxygen, 25)), 0);
-    public static GemMaterial Vinteum = new GemMaterial(321, "vinteum", 0x64C8FF, EMERALD, 3, of(), STD_GEM | NO_SMASHING | NO_SMELTING, 12.0F, 3.0f, 128);
     public static DustMaterial Redrock = new DustMaterial(322, "redrock", 0xFF5032, ROUGH, 1, of(new MaterialStack(Calcite, 2), new MaterialStack(Flint, 1), new MaterialStack(Clay, 1)), NO_SMASHING | DECOMPOSITION_BY_CENTRIFUGING);
     public static DustMaterial PotassiumFeldspar = new DustMaterial(323, "potassium_feldspar", 0x782828, FINE, 1, of(new MaterialStack(Potassium, 1), new MaterialStack(Aluminium, 1), new MaterialStack(Silicon, 3), new MaterialStack(Oxygen, 8)), 0);
     public static DustMaterial GraniteBlack = new DustMaterial(325, "granite_black", 0x0A0A0A, ROUGH, 3, of(new MaterialStack(SiliconDioxide, 4), new MaterialStack(Biotite, 1)), NO_SMASHING | DECOMPOSITION_BY_CENTRIFUGING);
@@ -692,14 +696,6 @@ public class Materials {
 
     public static IngotMaterial NaquadahAlloy = new IngotMaterial(372, "naquadah_alloy", 0x282828, METALLIC, 5, of(new MaterialStack(Naquadah, 1), new MaterialStack(Osmiridium, 1)), EXT2_METAL| GENERATE_SPRING, null, 8.0F, 5.0f, 5120, 7200);
     public static IngotMaterial FluxedElectrum = new IngotMaterial(382, "fluxed_electrum", 0xf2ef27, METALLIC, 4, of(new MaterialStack(Electrum, 1), new MaterialStack(NaquadahAlloy, 1), new MaterialStack(BlueSteel, 1), new MaterialStack(RedSteel, 1)), EXT2_METAL, null, 11.0F, 6.0f, 2100, 9000);
-
-    /**
-     * Actual food
-     */
-    public static FluidMaterial Milk = new FluidMaterial(383, "milk", 0xFEFEFE, FINE, of(), 0);
-    public static DustMaterial Cocoa = new DustMaterial(384, "cocoa", 0xBE5F00, FINE, 0, of(), 0);
-    public static DustMaterial Wheat = new DustMaterial(385, "wheat", 0xFFFFC4, FINE, 0, of(), 0);
-    public static DustMaterial Meat = new DustMaterial(386, "meat", 12667980, SAND, 1, of(), DISABLE_DECOMPOSITION);
 
     // Superconductor here at ID 387. Assigned in MarkerMaterials:98
 
