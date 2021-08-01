@@ -73,13 +73,14 @@ public class GregTechMod {
         PlayerInventoryUIFactory.INSTANCE.init();
         CoverBehaviorUIFactory.INSTANCE.init();
         SimpleCapabilityManager.init();
-        OreDictUnifier.init();
-        NBTUtil.registerSerializers();
 
         //first, register primary materials and run material handlers
         Materials.register();
         AnnotatedMaterialHandlerLoader.discoverAndLoadAnnotatedMaterialHandlers(event.getAsmData());
         IMaterialHandler.runMaterialHandlers();
+
+        OreDictUnifier.init();
+        NBTUtil.registerSerializers();
 
         //then, run CraftTweaker early material registration scripts
         if (GTValues.isModLoaded(GTValues.MODID_CT)) {
