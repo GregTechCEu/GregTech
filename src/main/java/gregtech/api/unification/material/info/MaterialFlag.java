@@ -53,13 +53,10 @@ public class MaterialFlag {
     }
 
     private boolean checkType(Material m) {
-        if (andOrOr) {
-            return m.hasProperty(requiredType) || m.hasProperty(secondaryType);
-        } else {
-            if (secondaryType != null) {
-                return m.hasProperty(requiredType) && m.hasProperty(secondaryType);
-            } else return m.hasProperty(requiredType);
-        }
+        if (requiredType == null) return true;
+        else if (secondaryType == null) return m.hasProperty(requiredType);
+        else if (andOrOr) return m.hasProperty(requiredType) && m.hasProperty(secondaryType);
+        else return m.hasProperty(requiredType) || m.hasProperty(secondaryType);
     }
 
     public static class Builder {
