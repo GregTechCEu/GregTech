@@ -441,7 +441,7 @@ public class Material implements Comparable<Material> {
 
         public Builder gem(int harvestLevel, int burnTime) {
             if (properties.getDustProperty() == null) dust(harvestLevel, burnTime);
-            properties.setIngotProperty(new IngotProperty());
+            properties.setGemProperty(new GemProperty());
             return this;
         }
 
