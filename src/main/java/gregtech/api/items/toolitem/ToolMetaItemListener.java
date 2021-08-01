@@ -4,7 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.type.RoughSolidMaterial;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -74,12 +74,12 @@ public class ToolMetaItemListener {
     }
 
     private static OrePrefix getSolidPrefix(Material material) {
-        if (material.getProperties().getIngotProperty() != null) {
+        if (material == Materials.Wood) {
+            return OrePrefix.plank;
+        } else if (material.getProperties().getIngotProperty() != null) {
             return OrePrefix.ingot;
         } else if (material.getProperties().getGemProperty() != null) {
             return OrePrefix.gem;
-        } else if (material instanceof RoughSolidMaterial) {
-            return ((RoughSolidMaterial) material).solidFormSupplier.get();
         } else return null;
     }
 

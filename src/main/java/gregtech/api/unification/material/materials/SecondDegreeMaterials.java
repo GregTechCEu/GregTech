@@ -2,11 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.type.RoughSolidMaterial;
-import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.MaterialStack;
 
-import static com.google.common.collect.ImmutableList.of;
 import static gregtech.api.unification.material.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.type.MaterialFlags.*;
@@ -409,9 +405,10 @@ public class SecondDegreeMaterials {
                 .components(Nitrogen, 40, Oxygen, 11, Argon, 1, NobleGases, 1)
                 .build();
 
-        //todo roughsolid
-        Flint = new RoughSolidMaterial(296, "flint", 0x002040, FLINT, 1, of(new MaterialStack(SiliconDioxide, 1)), NO_SMASHING | MORTAR_GRINDABLE | DECOMPOSITION_BY_CENTRIFUGING, () -> OrePrefix.gem);
-        Flint.addOreByProducts(Obsidian);
-
+        Flint = new Material.Builder(2049, "flint")
+                .gem(1)
+                .color(0x002040).iconSet(FLINT)
+                .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
+                .build();
     }
 }

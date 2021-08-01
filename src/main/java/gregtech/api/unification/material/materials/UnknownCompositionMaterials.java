@@ -2,11 +2,8 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Material.FluidType;
-import gregtech.api.unification.material.type.RoughSolidMaterial;
-import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.init.Enchantments;
 
-import static com.google.common.collect.ImmutableList.of;
 import static gregtech.api.unification.material.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.type.MaterialFlags.*;
@@ -349,10 +346,17 @@ public class UnknownCompositionMaterials {
                 .color(0xC14C4C).iconSet(SAND)
                 .build();
 
+        Wood = new Material.Builder(1617, "wood")
+                .dust(0, 300)
+                .color(0x643200).iconSet(WOOD)
+                .flags(STD_SOLID, FLAMMABLE, GENERATE_GEAR, GENERATE_FRAME)
+                .build();
 
-        // TODO
-        public static RoughSolidMaterial Wood = new RoughSolidMaterial(269, "wood", 0x643200, WOOD, 0, of(), STD_SOLID | FLAMMABLE | NO_SMELTING | GENERATE_GEAR | GENERATE_LONG_ROD | GENERATE_FRAME, () -> OrePrefix.plank);
-        public static RoughSolidMaterial Paper = new RoughSolidMaterial(272, "paper", 0xFAFAFA, PAPER, 0, of(), GENERATE_PLATE | FLAMMABLE | NO_SMELTING | NO_SMASHING | MORTAR_GRINDABLE | GENERATE_RING | EXCLUDE_PLATE_COMPRESSOR_RECIPE, () -> OrePrefix.plate);
-        Wood.setBurnTime(300); //default wood burn time in vanilla
+        Paper = new Material.Builder(1618, "paper")
+                .dust(0)
+                .color(0xFAFAFA).iconSet(PAPER)
+                .flags(GENERATE_PLATE, FLAMMABLE, NO_SMELTING, NO_SMASHING,
+                        MORTAR_GRINDABLE, GENERATE_RING, EXCLUDE_PLATE_COMPRESSOR_RECIPE)
+                .build();
     }
 }
