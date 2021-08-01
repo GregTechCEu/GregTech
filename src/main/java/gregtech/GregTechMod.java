@@ -79,9 +79,6 @@ public class GregTechMod {
         AnnotatedMaterialHandlerLoader.discoverAndLoadAnnotatedMaterialHandlers(event.getAsmData());
         IMaterialHandler.runMaterialHandlers();
 
-        OreDictUnifier.init();
-        NBTUtil.registerSerializers();
-
         //then, run CraftTweaker early material registration scripts
         if (GTValues.isModLoaded(GTValues.MODID_CT)) {
             GTLog.logger.info("Running early CraftTweaker initialization scripts...");
@@ -90,6 +87,9 @@ public class GregTechMod {
 
         //freeze material registry before processing items, blocks and fluids
         MaterialRegistry.freeze();
+
+        OreDictUnifier.init();
+        NBTUtil.registerSerializers();
 
         MetaBlocks.init();
         MetaItems.init();
