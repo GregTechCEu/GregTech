@@ -56,7 +56,9 @@ public class MaterialFlag {
         if (andOrOr) {
             return m.hasProperty(requiredType) || m.hasProperty(secondaryType);
         } else {
-            return m.hasProperty(requiredType) && m.hasProperty(secondaryType);
+            if (secondaryType != null) {
+                return m.hasProperty(requiredType) && m.hasProperty(secondaryType);
+            } else return m.hasProperty(requiredType);
         }
     }
 
