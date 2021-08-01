@@ -174,6 +174,10 @@ public class Material implements Comparable<Material> {
         materialInfo.iconSet = materialIconSet;
     }
 
+    public MaterialIconSet getMaterialIconSet() {
+        return materialInfo.iconSet;
+    }
+
     //@ZenGetter("radioactive")
     public boolean isRadioactive() {
         if (materialInfo.element != null)

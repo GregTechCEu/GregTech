@@ -82,7 +82,7 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
     @Override
     public int getItemStackColor(ItemStack itemStack, int tintIndex) {
         Material material = getPartMaterial(itemStack);
-        return material.materialRGB;
+        return material.getMaterialRGB();
     }
 
     @Override
