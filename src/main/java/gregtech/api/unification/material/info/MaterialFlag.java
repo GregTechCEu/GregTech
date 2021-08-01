@@ -1,6 +1,5 @@
 package gregtech.api.unification.material.info;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.IMaterialProperty;
 
@@ -38,10 +37,10 @@ public class MaterialFlag {
     }
 
     protected Set<MaterialFlag> verifyFlag(Material material) {
-        Preconditions.checkArgument(
-                checkType(material),
-                "Material " + material.toString() + " must have " + requiredType.getName() + " for Flag " + this.name + "!"
-        );
+//        Preconditions.checkArgument( todo
+//                checkType(material),
+//                "Material " + material.toString() + " must have " + requiredType.getName() + " for Flag " + this.name + "!"
+//        );
 
         Set<MaterialFlag> thisAndDependencies = new HashSet<>(requiredFlags);
         thisAndDependencies.addAll(requiredFlags.stream()

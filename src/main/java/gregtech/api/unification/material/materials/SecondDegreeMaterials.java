@@ -358,33 +358,33 @@ public class SecondDegreeMaterials {
                 .components(Nickel, 1, Sulfur, 1, Oxygen, 4, Water, 6)
                 .build();
 
-        CopperSulfateSolution = new Material.Builder(2043, "blue_vitriol_water_solution")
+        CopperSulfateSolution = new Material.Builder(2044, "blue_vitriol_water_solution")
                 .fluid()
                 .color(0x48A5C0)
                 .components(Copper, 1, Sulfur, 1, Oxygen, 4, Water, 5)
                 .build();
 
-        LeadZincSolution = new Material.Builder(2043, "lead_zinc_solution")
+        LeadZincSolution = new Material.Builder(2045, "lead_zinc_solution")
                 .fluid()
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Lead, 1, Silver, 1, Zinc, 1, Sulfur, 3, Water, 1)
                 .build();
 
-        NitrationMixture = new Material.Builder(2044, "nitration_mixture")
+        NitrationMixture = new Material.Builder(2046, "nitration_mixture")
                 .fluid()
                 .color(0xE6E2AB)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitricAcid, 1, SulfuricAcid, 1)
                 .build();
 
-        DilutedSulfuricAcid = new Material.Builder(2045, "diluted_sulfuric_acid")
+        DilutedSulfuricAcid = new Material.Builder(2047, "diluted_sulfuric_acid")
                 .fluid()
                 .color(0xC07820)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(SulfuricAcid, 2, Water, 1)
                 .build();
 
-        DilutedHydrochloricAcid = new Material.Builder(2046, "diluted_hydrochloric_acid")
+        DilutedHydrochloricAcid = new Material.Builder(2048, "diluted_hydrochloric_acid")
                 .fluid()
                 .color(0x99A7A3)
                 .flags(DISABLE_DECOMPOSITION)
