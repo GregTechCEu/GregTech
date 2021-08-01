@@ -8,11 +8,11 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.MetaTileEntityTESR;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.MarkerMaterials;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.FluidPipeProperty;
 import gregtech.api.unification.material.properties.Properties;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.foam.BlockFoam;
@@ -25,11 +25,9 @@ import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.blocks.wood.BlockGregSapling;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
-import gregtech.api.unification.material.properties.WireProperty;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
-import gregtech.api.unification.material.properties.FluidPipeProperty;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
@@ -218,7 +216,7 @@ public class MetaBlocks {
             pipe.addPipeMaterial(Materials.Wood, new FluidPipeProperty(310, 5, false));
         }
         for (BlockCable cable : CABLES) {
-            cable.addCableMaterial(MarkerMaterials.Tier.Superconductor, new WireProperty(Integer.MAX_VALUE, 4, 0));
+//            cable.addCableMaterial(MarkerMaterials.Tier.Superconductor, new WireProperty(Integer.MAX_VALUE, 4, 0)); todo fix
         }
         registerTileEntity();
 
