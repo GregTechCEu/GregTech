@@ -77,13 +77,13 @@ public class Material implements Comparable<Material> {
         return chemicalFormula;
     }
 
-    public <T extends Material> T setFormula(String formula) {
+    public Material setFormula(String formula) {
         return setFormula(formula, false);
     }
 
-    public <T extends Material> T setFormula(String formula, boolean withFormatting) {
+    public Material setFormula(String formula, boolean withFormatting) {
         this.chemicalFormula = withFormatting ? SmallDigits.toSmallDownNumbers(formula) : formula;
-        return (T) this;
+        return this;
     }
 
     public ImmutableList<MaterialStack> getMaterialComponents() {
@@ -364,90 +364,242 @@ public class Material implements Comparable<Material> {
         private final Properties properties;
         private final MaterialFlags flags;
 
-        /**
-         * The "list" of components for this Material.
+        /*
+         * The temporary list of components for this Material.
          */
         private final List<MaterialStack> composition = new ArrayList<>();
 
+        /**
+         *
+         * @param id   The MetaItemSubID for this Material. Must be unique.
+         * @param name The Name of this Material. Will be formatted as
+         *             "material.<name>" for the Translation Key.
+         */
         public Builder(int id, String name) {
             materialInfo = new MaterialInfo(id, name);
             properties = new Properties();
             flags = new MaterialFlags();
         }
 
-        /**
+        /*
          * Material Types
          */
 
+        /**
+         * Add a {@link FluidProperty} to this Material.<br>
+         * Will be created as a {@link FluidType#FLUID}, without a Fluid Block.
+         *
+         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         */
         public Builder fluid() {
             properties.setFluidProperty(new FluidProperty());
             return this;
         }
 
+        /**
+         * Add a {@link FluidProperty} to this Material.<br>
+         * Will be created without a Fluid Block.
+         *
+         * @param type The {@link FluidType} of this Material, either Fluid or Gas.
+         *
+         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         */
         public Builder fluid(FluidType type) {
             return fluid(type, false);
         }
 
+        /**
+         * Add a {@link FluidProperty} to this Material.
+         *
+         * @param type     The {@link FluidType} of this Material, either Fluid or Gas.
+         * @param hasBlock If true, create a Fluid Block for this Material.
+         *
+         * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
+         */
         public Builder fluid(FluidType type, boolean hasBlock) {
             properties.setFluidProperty(new FluidProperty(type == FluidType.GAS, hasBlock));
             return this;
         }
 
+        /**
+         * Add a {@link PlasmaProperty} to this Material.<br>
+         * Is not required to have a {@link FluidProperty}, and will not automatically apply one.
+         *
+         * @throws IllegalArgumentException If a {@link PlasmaProperty} has already been added to this Material.
+         */
         public Builder plasma() {
             properties.setPlasmaProperty(new PlasmaProperty());
             return this;
         }
 
+        /**
+         * Add a {@link DustProperty} to this Material.<br>
+         * Will be created with a Harvest Level of 2 and no Burn Time (Furnace Fuel).
+         *
+         * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
+         */
         public Builder dust() {
             properties.setDustProperty(new DustProperty());
             return this;
         }
 
+        /**
+         * Add a {@link DustProperty} to this Material.<br>
+         * Will be created with no Burn Time (Furnace Fuel).
+         *
+         * @param harvestLevel The Harvest Level of this block for Mining.<br>
+         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     also be used to determine the tool's Mining Level.
+         *
+         * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
+         */
         public Builder dust(int harvestLevel) {
             return dust(harvestLevel, 0);
         }
 
+        /**
+         * Add a {@link DustProperty} to this Material.
+         *
+         * @param harvestLevel The Harvest Level of this block for Mining.<br>
+         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     also be used to determine the tool's Mining Level.
+         * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.
+         *
+         * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
+         */
         public Builder dust(int harvestLevel, int burnTime) {
             properties.setDustProperty(new DustProperty(harvestLevel, burnTime));
             return this;
         }
 
+        /**
+         * Add an {@link IngotProperty} to this Material.<br>
+         * Will be created with a Harvest Level of 2 and no Burn Time (Furnace Fuel).<br>
+         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
+         *
+         * @throws IllegalArgumentException If a {@link IngotProperty} has already been added to this Material.
+         */
         public Builder ingot() {
             properties.setIngotProperty(new IngotProperty());
             return this;
         }
 
+        /**
+         * Add an {@link IngotProperty} to this Material.<br>
+         * Will be created with no Burn Time (Furnace Fuel).<br>
+         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
+         *
+         * @param harvestLevel The Harvest Level of this block for Mining.<br>
+         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     also be used to determine the tool's Mining level.<br>
+         *                     If this Material already had a Harvest Level defined, it will be overridden.
+         *
+         * @throws IllegalArgumentException If a {@link IngotProperty} has already been added to this Material.
+         */
         public Builder ingot(int harvestLevel) {
             return ingot(harvestLevel, 0);
         }
 
+        /**
+         * Add an {@link IngotProperty} to this Material.<br>
+         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
+         *
+         * @param harvestLevel The Harvest Level of this block for Mining.<br>
+         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     also be used to determine the tool's Mining level.<br>
+         *                     If this Material already had a Harvest Level defined, it will be overridden.
+         * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.<br>
+         *                     If this Material already had a Burn Time defined, it will be overridden.
+         *
+         * @throws IllegalArgumentException If a {@link IngotProperty} has already been added to this Material.
+         */
         public Builder ingot(int harvestLevel, int burnTime) {
-            if (properties.getDustProperty() == null)
-                dust(harvestLevel, burnTime); // todo should I use these values if DustProp is already made?
+            DustProperty prop = properties.getDustProperty();
+            if (prop == null) dust(harvestLevel, burnTime);
+            else {
+                if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
+                if (prop.getBurnTime() == 0) prop.setBurnTime(burnTime);
+            }
             properties.setIngotProperty(new IngotProperty());
             return this;
         }
 
+        /**
+         * Add a {@link GemProperty} to this Material.<br>
+         * Will be created with a Harvest Level of 2 and no Burn Time (Furnace Fuel).<br>
+         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
+         *
+         * @throws IllegalArgumentException If a {@link GemProperty} has already been added to this Material.
+         */
         public Builder gem() {
             properties.setGemProperty(new GemProperty());
             return this;
         }
 
+        /**
+         * Add a {@link GemProperty} to this Material.<br>
+         * Will be created with no Burn Time (Furnace Fuel).<br>
+         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
+         *
+         * @param harvestLevel The Harvest Level of this block for Mining.<br>
+         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     also be used to determine the tool's Mining level.<br>
+         *                     If this Material already had a Harvest Level defined, it will be overridden.
+         *
+         * @throws IllegalArgumentException If a {@link GemProperty} has already been added to this Material.
+         */
         public Builder gem(int harvestLevel) {
             return gem(harvestLevel, 0);
         }
 
+        /**
+         * Add a {@link GemProperty} to this Material.<br>
+         * Will automatically add a {@link DustProperty} to this Material if it does not already have one.
+         *
+         * @param harvestLevel The Harvest Level of this block for Mining.<br>
+         *                     If this Material also has a {@link ToolProperty}, this value will
+         *                     also be used to determine the tool's Mining level.<br>
+         *                     If this Material already had a Harvest Level defined, it will be overridden.
+         * @param burnTime     The Burn Time (in ticks) of this Material as a Furnace Fuel.<br>
+         *                     If this Material already had a Burn Time defined, it will be overridden.
+         *
+         */
         public Builder gem(int harvestLevel, int burnTime) {
-            if (properties.getDustProperty() == null) dust(harvestLevel, burnTime);
+            DustProperty prop = properties.getDustProperty();
+            if (prop == null) dust(harvestLevel, burnTime);
+            else {
+                if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
+                if (prop.getBurnTime() == 0) prop.setBurnTime(burnTime);
+            }
             properties.setGemProperty(new GemProperty());
             return this;
         }
 
+        /**
+         * Set the Color of this Material.<br>
+         * Defaults to 0xFFFFFF.
+         *
+         * @param color The RGB-formatted Color.
+         */
         public Builder color(int color) {
             this.materialInfo.color = color;
             return this;
         }
 
+        /**
+         * Set the {@link MaterialIconSet} of this Material.<br>
+         * Defaults vary depending on if the Material has a:<br>
+         * <ul>
+         * <li> {@link GemProperty}, it will default to {@link MaterialIconSet#GEM_VERTICAL}
+         * <li> {@link IngotProperty} or {@link DustProperty}, it will default to {@link MaterialIconSet#DULL}
+         * <li> {@link FluidProperty}, it will default to either {@link MaterialIconSet#FLUID}
+         *      or {@link MaterialIconSet#GAS}, depending on the {@link FluidType}
+         * <li> {@link PlasmaProperty}, it will default to {@link MaterialIconSet#FLUID}
+         * </ul>
+         * Default will be determined by first-found Property in this order, unless specified.
+         *
+         * @param iconSet The {@link MaterialIconSet} of this Material.
+         */
         public Builder iconSet(MaterialIconSet iconSet) {
             materialInfo.iconSet = iconSet;
             return this;
@@ -469,11 +621,24 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        /**
+         * Add {@link MaterialFlags} to this Material.<br>
+         * Dependent Flags (for example, {@link MaterialFlags#GENERATE_LONG_ROD} requiring
+         * {@link MaterialFlags#GENERATE_ROD}) will be automatically applied.
+         */
         public Builder flags(MaterialFlag... flags) {
             this.flags.addFlags(flags);
             return this;
         }
 
+        /**
+         * Add {@link MaterialFlags} to this Material.<br>
+         * Dependent Flags (for example, {@link MaterialFlags#GENERATE_LONG_ROD} requiring
+         * {@link MaterialFlags#GENERATE_ROD}) will be automatically applied.
+         *
+         * @param f1 A {@link Collection} of {@link MaterialFlag}. Provided this way for easy Flag presets to be applied.
+         * @param f2 An Array of {@link MaterialFlag}. If no {@link Collection} is required, use {@link Builder#flags(MaterialFlag...)}.
+         */
         public Builder flags(Collection<MaterialFlag> f1, MaterialFlag... f2) {
             this.flags.addFlags(f1.toArray(new MaterialFlag[0]));
             this.flags.addFlags(f2);
