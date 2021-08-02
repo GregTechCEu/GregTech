@@ -215,16 +215,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     @Nullable
-    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int outputFluidTankCapacity) {
-        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), outputFluidTankCapacity, MatchingMode.DEFAULT);
-    }
-
-    @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity) {
-        return this.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, MatchingMode.DEFAULT);
-    }
-
-    @Nullable
     public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int outputFluidTankCapacity, MatchingMode matchingMode) {
         return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), outputFluidTankCapacity, matchingMode);
     }
@@ -422,7 +412,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             Arrays.stream(fluidInputs)
                 .map(CraftTweakerMC::getLiquidStack)
                 .collect(Collectors.toList());
-        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, outputFluidTankCapacity);
+        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, outputFluidTankCapacity, MatchingMode.DEFAULT);
         return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
     }
 

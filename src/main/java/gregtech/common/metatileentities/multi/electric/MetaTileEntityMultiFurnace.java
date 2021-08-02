@@ -149,7 +149,7 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
                 // Determine if there is a valid recipe for this item. If not, skip it.
                 Recipe matchingRecipe = recipeMap.findRecipe(maxVoltage,
                                                              Collections.singletonList(currentInputItem),
-                                                             Collections.emptyList(), 0);
+                                                             Collections.emptyList(), 0, MatchingMode.DEFAULT);
                 CountableIngredient inputIngredient;
                 if(matchingRecipe != null)
                     inputIngredient = matchingRecipe.getInputs().get(0);

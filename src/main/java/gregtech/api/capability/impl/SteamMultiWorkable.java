@@ -3,6 +3,7 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.recipes.CountableIngredient;
+import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.util.InventoryUtils;
@@ -73,7 +74,8 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
             // Check recipe for item in slot
             Recipe matchingRecipe = recipeMap.findRecipe(maxVoltage,
                     Collections.singletonList(currentInputItem),
-                    Collections.emptyList(), 0);
+                    Collections.emptyList(), 0,
+                    MatchingMode.DEFAULT);
             CountableIngredient inputIngredient;
             if (matchingRecipe != null) {
                 if (matchingRecipe.getOutputs().isEmpty())

@@ -1,6 +1,7 @@
 package gregtech.common.tools;
 
 import codechicken.lib.raytracer.RayTracer;
+import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
@@ -96,7 +97,7 @@ public class ToolUtility {
 
     public static void applyHammerDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, EntityPlayer player) {
         ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
-        Recipe recipe = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0);
+        Recipe recipe = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.DEFAULT);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();
             for (ItemStack outputStack : recipe.getResultItemOutputs(Integer.MAX_VALUE, random, 0)) {
