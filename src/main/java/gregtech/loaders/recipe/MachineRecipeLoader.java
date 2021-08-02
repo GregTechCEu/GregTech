@@ -9,7 +9,6 @@ import gregtech.api.recipes.builders.PBFRecipeBuilder;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
-import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -413,16 +412,17 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
         }
 
-        for (Material cableMaterial : new Material[]{Materials.YttriumBariumCuprate, Materials.NiobiumTitanium, Materials.VanadiumGallium, Materials.Naquadah}) {
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.wireGtSingle, cableMaterial, 3)
-                .input(OrePrefix.pipeTinyFluid, Materials.TungstenSteel, 2)
-                .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm(2))
-                .fluidInputs(Materials.Nitrogen.getFluid(2000))
-                .outputs(OreDictUnifier.get(OrePrefix.wireGtSingle, Tier.Superconductor, 3))
-                .duration(20).EUt(512)
-                .buildAndRegister();
-        }
+        //todo fix
+//        for (Material cableMaterial : new Material[]{Materials.YttriumBariumCuprate, Materials.NiobiumTitanium, Materials.VanadiumGallium, Materials.Naquadah}) {
+//            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+//                .input(OrePrefix.wireGtSingle, cableMaterial, 3)
+//                .input(OrePrefix.pipeTinyFluid, Materials.TungstenSteel, 2)
+//                .inputs(MetaItems.ELECTRIC_PUMP_LV.getStackForm(2))
+//                .fluidInputs(Materials.Nitrogen.getFluid(2000))
+//                .outputs(OreDictUnifier.get(OrePrefix.wireGtSingle, Tier.Superconductor, 3))
+//                .duration(20).EUt(512)
+//                .buildAndRegister();
+//        }
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
             .duration(4096).EUt(4096)
