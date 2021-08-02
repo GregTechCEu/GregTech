@@ -3,7 +3,7 @@
  * (IngotMaterial, DustMaterial, etc.).<br><br>
  *
  * To create your own Material Property, it should follow this general structure:
- * <code>
+ * <pre>{@code
  *     public class MyProperty extends IMaterialProperty<MyProperty> {
  *
  *         ... private, non-final fields ...
@@ -38,12 +38,12 @@
  *             // Like above, ensure you call "ensureSet(Key, true)" to re-verify.
  *         }
  *     }
- * </code><br><br>
+ * }</pre><br><br>
  *
  * You must also create a new {@link gregtech.api.unification.material.properties.PropertyKey} Object, like:
- * <code>
+ * <pre>{@code
  *     public static final PropertyKey<MyProperty> MY_PROPERTY = new PropertyKey<>("my_property", MyProperty.class);
- * </code>
+ * }</code>
  *
  * @author dan
  * @since GTCEu 2.0.0
