@@ -52,7 +52,6 @@ public class OrganicChemistryMaterials {
                 .color(0xFF9955)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 4, Hydrogen, 6, Oxygen, 2)
-                .itemPipeProperties(512, 4)
                 .build();
 
         ReinforcedEpoxyResin = new Material.Builder(1006, "reinforced_epoxy_resin")
@@ -67,6 +66,7 @@ public class OrganicChemistryMaterials {
                 .color(0xD7E6E6)
                 .flags(EXT_METAL, GENERATE_FOIL, DISABLE_DECOMPOSITION, NO_SMASHING)
                 .components(Carbon, 2, Hydrogen, 3, Chlorine, 1)
+                .itemPipeProperties(512, 4)
                 .build();
 
         PolyphenyleneSulfide = new Material.Builder(1008, "polyphenylene_sulfide")
