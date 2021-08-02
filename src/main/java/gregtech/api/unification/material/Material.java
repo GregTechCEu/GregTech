@@ -10,7 +10,6 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.Properties;
 import gregtech.api.unification.material.properties.*;
-import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.client.resources.I18n;
@@ -24,7 +23,6 @@ import stanhebben.zenscript.annotations.ZenOperator;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.function.Supplier;
 
 //@ZenClass("mods.gregtech.material.Material")
 //@ZenRegister
@@ -366,8 +364,6 @@ public class Material implements Comparable<Material> {
         private final Properties properties;
         private final MaterialFlags flags;
 
-        private Material magneticTemp;
-
         /**
          * The "list" of components for this Material.
          */
@@ -514,21 +510,6 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder setMagnetic() {
-            if (properties.getMagneticProperty() != null) return this; // todo do I want to do this better?
-
-            Builder b = new Builder(materialInfo.metaItemSubId + 1, materialInfo.name + "_magnetic")
-                    .ingot()
-                    .color(materialInfo.color).iconSet(MaterialIconSet.MAGNETIC)
-                    .flags(Materials.EXT2_METAL);
-
-            if (properties.getBlastProperty() != null) {
-                b.blastTemp(properties.getBlastProperty().getBlastTemperature());
-            }
-            magneticTemp = b.build();
-            return polarizesInto(magneticTemp);
-        }
-
         public Builder separatesInto(Material m) {
             if (properties.getOreProperty() == null) ore();
             properties.getOreProperty().setSeparatedInto(m);
@@ -605,31 +586,10 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        /**
-         * Set this to lock a Material to a specific prefix, and ignore all others (including Fluid).
-         */
-        // TODO Carefully implement this
-        public Builder setPrefix(Supplier<OrePrefix> prefix) {
-            materialInfo.prefixSupplier = prefix;
-            return this;
-        }
-
         public Material build() {
             materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyIconSet(properties);
-            Material m = new Material(materialInfo, properties, flags);
-            testMagnetic(m);
-            return m;
-        }
-
-        private void testMagnetic(Material thisM) {
-            if (magneticTemp != null) {
-                IngotProperty prop = magneticTemp.getProperties().getIngotProperty();
-                prop.setMacerateInto(thisM);
-                prop.setSmeltingInto(thisM);
-                prop.setArcSmeltingInto(thisM);
-                magneticTemp.materialInfo.componentList = thisM.materialInfo.componentList;
-            }
+            return new Material(materialInfo, properties, flags);
         }
     }
 
@@ -675,23 +635,11 @@ public class Material implements Comparable<Material> {
         private ImmutableList<MaterialStack> componentList;
 
         /**
-         * This Material's flags.
-         *
-         * Default: none.
-         */
-        private long flags;
-
-        /**
          * The Element of this Material, if it is a direct Element.
          *
          * Default: none.
          */
         private Element element;
-
-        /**
-         * Explicit OrePrefix for this Material.
-         */
-        private Supplier<OrePrefix> prefixSupplier; // todo PrefixProperty?
 
         private MaterialInfo(int metaItemSubId, String name) {
             this.metaItemSubId = metaItemSubId;
@@ -710,6 +658,7 @@ public class Material implements Comparable<Material> {
                     } else iconSet = MaterialIconSet.FLUID;
                 } else if (p.getPlasmaProperty() != null)
                     iconSet = MaterialIconSet.FLUID;
+                else iconSet = MaterialIconSet.DULL;
             }
         }
     }

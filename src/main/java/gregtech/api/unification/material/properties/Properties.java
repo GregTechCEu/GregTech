@@ -4,9 +4,7 @@ import gregtech.api.unification.material.Material;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 public class Properties {
 
@@ -21,7 +19,6 @@ public class Properties {
     private PlasmaProperty plasmaProperty;
     private ToolProperty toolProperty;
     private WireProperty wireProperty;
-    private MagneticProperty magneticProperty;
 
     private final List<IMaterialProperty> properties = new ArrayList<>();
 
@@ -130,11 +127,6 @@ public class Properties {
         return wireProperty;
     }
 
-    @Nullable
-    public MagneticProperty getMagneticProperty() {
-        return magneticProperty;
-    }
-
     ///////////////////////////////////////////////
     //                 SETTERS                   //
     ///////////////////////////////////////////////
@@ -230,12 +222,5 @@ public class Properties {
             this.wireProperty = wireProperty;
             properties.add(this.wireProperty);
         } else throw new IllegalArgumentException("Wire Property already set for this Material!");
-    }
-
-    public void setMagneticProperty(MagneticProperty magneticProperty) {
-        if (this.magneticProperty == null) {
-            this.magneticProperty = magneticProperty;
-            properties.add(this.magneticProperty);
-        } else throw new IllegalArgumentException("Magnetic Property already set for this Material!");
     }
 }

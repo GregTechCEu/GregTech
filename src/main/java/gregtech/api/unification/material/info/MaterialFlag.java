@@ -14,18 +14,11 @@ public class MaterialFlag {
     private final int id;
     private final String name;
 
-    private final IMaterialProperty requiredType;
-    private final IMaterialProperty secondaryType;
-    private final boolean andOrOr;
-
     private final Set<MaterialFlag> requiredFlags;
 
-    private MaterialFlag(int id, String name, IMaterialProperty requiredType, IMaterialProperty secondaryType, boolean andOrOr, Set<MaterialFlag> requiredFlags) {
+    private MaterialFlag(int id, String name, Set<MaterialFlag> requiredFlags) {
         this.id = id;
         this.name = name;
-        this.requiredType = requiredType;
-        this.secondaryType = secondaryType;
-        this.andOrOr = andOrOr;
         this.requiredFlags = requiredFlags;
     }
 
@@ -37,11 +30,6 @@ public class MaterialFlag {
     }
 
     protected Set<MaterialFlag> verifyFlag(Material material) {
-//        Preconditions.checkArgument( todo
-//                checkType(material),
-//                "Material " + material.toString() + " must have " + requiredType.getName() + " for Flag " + this.name + "!"
-//        );
-
         Set<MaterialFlag> thisAndDependencies = new HashSet<>(requiredFlags);
         thisAndDependencies.addAll(requiredFlags.stream()
                 .map(f -> f.verifyFlag(material))
@@ -49,13 +37,6 @@ public class MaterialFlag {
                 .collect(Collectors.toSet()));
 
         return thisAndDependencies;
-    }
-
-    private boolean checkType(Material m) {
-        if (requiredType == null) return true;
-        else if (secondaryType == null) return m.hasProperty(requiredType);
-        else if (andOrOr) return m.hasProperty(requiredType) && m.hasProperty(secondaryType);
-        else return m.hasProperty(requiredType) || m.hasProperty(secondaryType);
     }
 
     @Override
@@ -68,32 +49,11 @@ public class MaterialFlag {
         final int id;
         final String name;
 
-        IMaterialProperty requiredType = null;
-        IMaterialProperty secondaryType = null;
-        boolean andOrOr = false;
-
         final Set<MaterialFlag> requiredFlags = new HashSet<>();
 
         public Builder(int id, String name) {
             this.id = id;
             this.name = name;
-        }
-
-        public Builder requireType(IMaterialProperty type) {
-            requiredType = type;
-            return this;
-        }
-
-        public Builder and(IMaterialProperty type) {
-            secondaryType = type;
-            andOrOr = true;
-            return this;
-        }
-
-        public Builder or(IMaterialProperty type) {
-            secondaryType = type;
-            andOrOr = false;
-            return this;
         }
 
         public Builder requireFlags(MaterialFlag... flags) {
@@ -102,7 +62,7 @@ public class MaterialFlag {
         }
 
         public MaterialFlag build() {
-            return new MaterialFlag(id, name, requiredType, secondaryType, andOrOr, requiredFlags);
+            return new MaterialFlag(id, name, requiredFlags);
         }
     }
 }
