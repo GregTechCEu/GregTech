@@ -139,6 +139,7 @@ public class RenderUtil {
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();
+        GlStateManager.color(1,1,1,1);
     }
 
     public static void renderSector(float x, float y, float r, int color, int segments, int from, int to) {

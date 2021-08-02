@@ -24,11 +24,17 @@ public class ClickButtonWidget extends Widget {
     protected final String displayText;
     protected int textColor = 0xFFFFFF;
     protected final Consumer<ClickData> onPressCallback;
+    protected boolean shouldClientCallback;
 
     public ClickButtonWidget(int xPosition, int yPosition, int width, int height, String displayText, Consumer<ClickData> onPressed) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.displayText = displayText;
         this.onPressCallback = onPressed;
+    }
+
+    public ClickButtonWidget setShouldClientCallback(boolean shouldClientCallback) {
+        this.shouldClientCallback = shouldClientCallback;
+        return this;
     }
 
     public ClickButtonWidget setButtonTexture(TextureArea buttonTexture) {
@@ -71,6 +77,9 @@ public class ClickButtonWidget extends Widget {
     protected void triggerButton() {
         ClickData clickData = new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown());
         writeClientAction(1, clickData::writeToBuf);
+        if (shouldClientCallback) {
+           onPressCallback.accept(clickData);
+        }
         playButtonClickSound();
     }
 

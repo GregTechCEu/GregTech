@@ -1,10 +1,14 @@
 package gregtech.api.terminal.gui.widgets.guide;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.RenderUtil;
+import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+import gregtech.api.terminal.gui.widgets.guide.congiurator.NumberConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.congiurator.TextListConfigurator;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
@@ -15,8 +19,11 @@ import net.minecraft.client.resources.I18n;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class TextBoxWidget extends GuideWidget {
+    public final static String NAME = "textbox";
+
     // config
     public List<String> content;
     public int space = 1;
@@ -43,6 +50,19 @@ public class TextBoxWidget extends GuideWidget {
     public TextBoxWidget() {}
 
     @Override
+    public String getRegistryName() {
+        return NAME;
+    }
+
+    @Override
+    public void updateValue(String field, JsonElement value) {
+        super.updateValue(field, value);
+        if (field.equals("space") || field.equals("fontSize") || field.equals("content")) {
+            initFixed(getSelfPosition().x, getSelfPosition().y, getSize().width, getSize().height, null);
+        }
+    }
+
+    @Override
     public JsonObject getTemplate(boolean isFixed) {
         JsonObject template = super.getTemplate(isFixed);
         template.addProperty("space", space);
@@ -50,8 +70,16 @@ public class TextBoxWidget extends GuideWidget {
         template.addProperty("fontColor", fontColor);
         template.addProperty("isCenter", isCenter);
         template.addProperty("isShadow", isShadow);
-        template.add("content", new Gson().toJsonTree(Arrays.asList("this is", "textbox!")));
+        template.add("content", new Gson().toJsonTree(Arrays.asList("this is a", "textbox!")));
         return template;
+    }
+
+    @Override
+    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
+        super.loadConfigurator(group, config, isFixed, needUpdate);
+        group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "space", 1).setOnUpdated(needUpdate));
+        group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "fontSize", 9).setOnUpdated(needUpdate));
+        group.addWidget(new TextListConfigurator(5, group.getWidgetBottomHeight() + 5, 200, config, "content", false).setOnUpdated(needUpdate));
     }
 
     @Override
