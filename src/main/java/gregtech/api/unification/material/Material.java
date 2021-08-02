@@ -371,7 +371,7 @@ public class Material implements Comparable<Material> {
         /**
          * The "list" of components for this Material.
          */
-        private final SortedMap<Material, Integer> composition = new TreeMap<>(); // todo do this better
+        private final List<MaterialStack> composition = new ArrayList<>();
 
         public Builder(int id, String name) {
             materialInfo = new MaterialInfo(id, name);
@@ -465,10 +465,10 @@ public class Material implements Comparable<Material> {
             );
 
             for (int i = 0; i < components.length; i += 2) {
-                this.composition.put(
+                composition.add(new MaterialStack(
                         (Material) components[i],
                         (Integer) components[i + 1]
-                );
+                ));
             }
             return this;
         }
@@ -615,9 +615,7 @@ public class Material implements Comparable<Material> {
         }
 
         public Material build() {
-            final List<MaterialStack> materialList = new ArrayList<>();
-            this.composition.forEach((k, v) -> materialList.add(new MaterialStack(k, v)));
-            materialInfo.componentList = ImmutableList.copyOf(materialList);
+            materialInfo.componentList = ImmutableList.copyOf(composition);
             materialInfo.verifyIconSet(properties);
             Material m = new Material(materialInfo, properties, flags);
             testMagnetic(m);
