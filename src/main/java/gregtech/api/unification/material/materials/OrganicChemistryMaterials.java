@@ -450,12 +450,6 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 6, Hydrogen, 14, Oxygen, 1)
                 .build();
 
-        HighOctaneGasoline = new Material.Builder(1065, "gasoline_premium")
-                .fluid()
-                .flags(DISABLE_DECOMPOSITION)
-                .color(0xFFA500)
-                .build();
-
         Ethylbenzene = new Material.Builder(1066, "ethylbenzene")
                 .fluid()
                 .flags(DISABLE_DECOMPOSITION)
