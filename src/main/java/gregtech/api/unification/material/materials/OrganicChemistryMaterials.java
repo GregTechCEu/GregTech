@@ -2,10 +2,10 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.unification.material.Material;
 
-import static gregtech.api.unification.material.info.MaterialIconSet.FINE;
-import static gregtech.api.unification.material.info.MaterialIconSet.SHINY;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialIconSet.FINE;
+import static gregtech.api.unification.material.info.MaterialIconSet.SHINY;
 
 public class OrganicChemistryMaterials {
     /**
@@ -438,5 +438,35 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 6, Hydrogen, 5, Chlorine, 1)
                 .build();
 
+        Octane = new Material.Builder(1063, "octane")
+                .fluid()
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Carbon, 8, Hydrogen, 18)
+                .build();
+
+        EthylTertButylEther = new Material.Builder(1064, "ethyl_tertbutyl_ether")
+                .fluid()
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Carbon, 6, Hydrogen, 14, Oxygen, 1)
+                .build();
+
+        HighOctaneGasoline = new Material.Builder(1065, "gasoline_premium")
+                .fluid()
+                .flags(DISABLE_DECOMPOSITION)
+                .color(0xFFA500)
+                .build();
+
+        Ethylbenzene = new Material.Builder(1066, "ethylbenzene")
+                .fluid()
+                .flags(DISABLE_DECOMPOSITION)
+                .components(Carbon, 8, Hydrogen, 10)
+                .build();
+
+        Naphthalene = new Material.Builder(1067, "naphthalene")
+                .fluid()
+                .flags(DISABLE_DECOMPOSITION)
+                .color(0xF4F4D7)
+                .components(Carbon, 10, Hydrogen, 8)
+                .build();
     }
 }
