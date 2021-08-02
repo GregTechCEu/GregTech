@@ -605,7 +605,7 @@ public class FirstDegreeMaterials {
                 .cableProperties(GTValues.V[1], 1, 1)
                 .build();
 
-        Spessartine = new Material.Builder(321, "spessarite")
+        Spessartine = new Material.Builder(321, "spessartine")
                 .dust().ore(2, 1)
                 .color(0xFF6464)
                 .components(Aluminium, 2, Manganese, 3, Silicon, 3, Oxygen, 12)
@@ -1011,7 +1011,7 @@ public class FirstDegreeMaterials {
                 .components(Cobalt, 1, Oxygen, 1)
                 .build();
 
-        ArsenicTrioxide = new Material.Builder(373, "arsenic_tioxide")
+        ArsenicTrioxide = new Material.Builder(373, "arsenic_trioxide")
                 .dust(1)
                 .iconSet(ROUGH)
                 .components(Arsenic, 2, Oxygen, 3)
