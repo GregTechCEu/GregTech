@@ -61,6 +61,7 @@ public class Material implements Comparable<Material> {
 
     // TODO Fix isotope tooltips being set toSmallDownNumbers
     private String calculateChemicalFormula() {
+        if (chemicalFormula != null) return this.chemicalFormula;
         if (materialInfo.element != null) {
             return materialInfo.element.getSymbol();
         }
