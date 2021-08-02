@@ -398,7 +398,7 @@ public class Material implements Comparable<Material> {
          * @throws IllegalArgumentException If a {@link FluidProperty} has already been added to this Material.
          */
         public Builder fluid() {
-            properties.setProperty(PropertyKey.FLUID, new FluidProperty());
+            properties.ensureSet(PropertyKey.FLUID);
             return this;
         }
 
@@ -434,7 +434,7 @@ public class Material implements Comparable<Material> {
          * @throws IllegalArgumentException If a {@link PlasmaProperty} has already been added to this Material.
          */
         public Builder plasma() {
-            properties.setProperty(PropertyKey.PLASMA, new PlasmaProperty());
+            properties.ensureSet(PropertyKey.PLASMA);
             return this;
         }
 
@@ -445,7 +445,7 @@ public class Material implements Comparable<Material> {
          * @throws IllegalArgumentException If a {@link DustProperty} has already been added to this Material.
          */
         public Builder dust() {
-            properties.setProperty(PropertyKey.DUST, new DustProperty());
+            properties.ensureSet(PropertyKey.DUST);
             return this;
         }
 
@@ -486,7 +486,7 @@ public class Material implements Comparable<Material> {
          * @throws IllegalArgumentException If an {@link IngotProperty} has already been added to this Material.
          */
         public Builder ingot() {
-            properties.setProperty(PropertyKey.INGOT, new IngotProperty());
+            properties.ensureSet(PropertyKey.INGOT);
             return this;
         }
 
@@ -526,7 +526,7 @@ public class Material implements Comparable<Material> {
                 if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
                 if (prop.getBurnTime() == 0) prop.setBurnTime(burnTime);
             }
-            properties.setProperty(PropertyKey.INGOT, new IngotProperty());
+            properties.ensureSet(PropertyKey.INGOT);
             return this;
         }
 
@@ -538,7 +538,7 @@ public class Material implements Comparable<Material> {
          * @throws IllegalArgumentException If a {@link GemProperty} has already been added to this Material.
          */
         public Builder gem() {
-            properties.setProperty(PropertyKey.GEM, new GemProperty());
+            properties.ensureSet(PropertyKey.GEM);
             return this;
         }
 
@@ -577,7 +577,7 @@ public class Material implements Comparable<Material> {
                 if (prop.getHarvestLevel() == 2) prop.setHarvestLevel(harvestLevel);
                 if (prop.getBurnTime() == 0) prop.setBurnTime(burnTime);
             }
-            properties.setProperty(PropertyKey.GEM, new GemProperty());
+            properties.ensureSet(PropertyKey.GEM);
             return this;
         }
 
@@ -667,7 +667,8 @@ public class Material implements Comparable<Material> {
         }
 
         public Builder ore() {
-            return ore(1, 1);
+            properties.ensureSet(PropertyKey.ORE);
+            return this;
         }
 
         public Builder ore(int oreMultiplier, int byproductMultiplier) {
