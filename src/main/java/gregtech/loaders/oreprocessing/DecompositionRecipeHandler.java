@@ -6,6 +6,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.item.ItemStack;
@@ -21,7 +22,7 @@ public class DecompositionRecipeHandler {
 
     public static void runRecipeGeneration() {
         for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
-            OrePrefix prefix = material.getProperties().getDustProperty() != null ? OrePrefix.dust : null;
+            OrePrefix prefix = material.hasProperty(PropertyKey.DUST) ? OrePrefix.dust : null;
             processDecomposition(prefix, material);
         }
     }
@@ -40,9 +41,9 @@ public class DecompositionRecipeHandler {
         //compute outputs
         for (MaterialStack component : material.getMaterialComponents()) {
             totalInputAmount += component.amount;
-            if (component.material.getProperties().getDustProperty() != null) {
+            if (component.material.hasProperty(PropertyKey.DUST)) {
                 outputs.add(OreDictUnifier.get(OrePrefix.dust, component.material, (int) component.amount));
-            } else if (component.material.getProperties().getFluidProperty() != null) {
+            } else if (component.material.hasProperty(PropertyKey.FLUID)) {
                 fluidOutputs.add(component.material.getFluid((int) (1000 * component.amount)));
             }
         }

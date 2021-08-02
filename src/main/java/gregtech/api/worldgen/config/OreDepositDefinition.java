@@ -6,6 +6,7 @@ import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.world.IBiome;
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.WorldBlockPredicate;
 import gregtech.api.worldgen.filler.BlockFiller;
@@ -90,7 +91,7 @@ public class OreDepositDefinition {
         //legacy surface rock specifier support
         if (configRoot.has("surface_stone_material")) {
             Material surfaceStoneMaterial = OreConfigUtils.getMaterialByName(configRoot.get("surface_stone_material").getAsString());
-            if (surfaceStoneMaterial.getProperties().getOreProperty() == null) {
+            if (!surfaceStoneMaterial.hasProperty(PropertyKey.ORE)) {
                 throw new IllegalArgumentException("Material " + surfaceStoneMaterial + " doesn't have surface rock variant");
             }
             this.veinPopulator = new SurfaceRockPopulator(surfaceStoneMaterial);

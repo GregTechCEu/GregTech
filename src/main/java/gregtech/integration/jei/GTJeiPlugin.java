@@ -18,6 +18,7 @@ import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.blocks.MetaBlocks;
@@ -165,7 +166,7 @@ public class GTJeiPlugin implements IModPlugin {
 
         List<OreByProduct> oreByproductList = new CopyOnWriteArrayList<>();
         for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
-            if (material.getProperties().getOreProperty() != null) {
+            if (material.hasProperty(PropertyKey.ORE)) {
                 final OreByProduct oreByProduct = new OreByProduct(material);
                 if (oreByProduct.hasByProducts())
                     oreByproductList.add(oreByProduct);

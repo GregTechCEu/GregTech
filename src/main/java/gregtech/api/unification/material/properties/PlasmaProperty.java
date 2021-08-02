@@ -9,7 +9,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 
-public class PlasmaProperty implements IMaterialProperty {
+public class PlasmaProperty implements IMaterialProperty<PlasmaProperty> {
 
     /**
      * Internal material plasma fluid field
@@ -17,22 +17,7 @@ public class PlasmaProperty implements IMaterialProperty {
     private Fluid plasma;
 
     @Override
-    public void verifyProperty(Properties properties) {
-    }
-
-    @Override
-    public boolean doesMatch(IMaterialProperty otherProp) {
-        return otherProp instanceof PlasmaProperty;
-    }
-
-    @Override
-    public String getName() {
-        return "plasma_property";
-    }
-
-    @Override
-    public String toString() {
-        return getName();
+    public void verifyProperty(MaterialProperties properties) {
     }
 
     /**

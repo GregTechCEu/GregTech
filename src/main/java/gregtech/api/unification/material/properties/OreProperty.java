@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class OreProperty implements IMaterialProperty {
+public class OreProperty implements IMaterialProperty<OreProperty> {
 
     /**
      * List of Ore byproducts.
@@ -128,47 +128,11 @@ public class OreProperty implements IMaterialProperty {
     }
 
     @Override
-    public void verifyProperty(Properties properties) {
+    public void verifyProperty(MaterialProperties properties) {
+        properties.ensureSet(PropertyKey.DUST, true);
 
-        // This Material must be a Dust
-        if (properties.getDustProperty() == null) {
-            properties.setDustProperty(new DustProperty());
-            properties.verify();
-        }
-
-        Properties p;
-
-        // Direct Smelt must be a Dust
-        if (directSmeltResult != null && (p = directSmeltResult.getProperties()).getDustProperty() == null) {
-            p.setDustProperty(new DustProperty());
-            p.verify();
-        }
-
-        // Washed In must be a Fluid
-        if (washedIn != null && (p = washedIn.getProperties()).getFluidProperty() == null) {
-            p.setFluidProperty(new FluidProperty());
-            p.verify();
-        }
-
-        // Separated Into must be a Dust
-        if (separatedInto != null && (p = separatedInto.getProperties()).getDustProperty() == null) {
-            p.setDustProperty(new DustProperty());
-            p.verify();
-        }
-    }
-
-    @Override
-    public boolean doesMatch(IMaterialProperty otherProp) {
-        return otherProp instanceof OreProperty;
-    }
-
-    @Override
-    public String getName() {
-        return "ore_property";
-    }
-
-    @Override
-    public String toString() {
-        return getName();
+        if (directSmeltResult != null) directSmeltResult.getProperties().ensureSet(PropertyKey.DUST, true);
+        if (washedIn != null) washedIn.getProperties().ensureSet(PropertyKey.FLUID, true);
+        if (separatedInto != null) separatedInto.getProperties().ensureSet(PropertyKey.DUST, true);
     }
 }

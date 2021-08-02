@@ -12,7 +12,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.FluidPipeProperty;
-import gregtech.api.unification.material.properties.Properties;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.foam.BlockFoam;
@@ -184,32 +184,31 @@ public class MetaBlocks {
         StoneType.init();
 
         createGeneratedBlock(
-            material -> material.getProperties().getDustProperty() != null && !OrePrefix.block.isIgnored(material),
+            material -> material.hasProperty(PropertyKey.DUST) && !OrePrefix.block.isIgnored(material),
             MetaBlocks::createCompressedBlock);
 
         for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
-            Properties matProps = material.getProperties();
 
-            if (matProps.getOreProperty() != null)
+            if (material.hasProperty(PropertyKey.ORE))
                 createOreBlock(material);
 
-            if (material.getProperties().getDustProperty() != null && material.hasFlag(GENERATE_FRAME)) {
+            if (material.hasProperty(PropertyKey.DUST) && material.hasFlag(GENERATE_FRAME)) {
                 BlockFrame blockFrame = new BlockFrame(material);
                 blockFrame.setRegistryName("frame_" + material.toString());
                 FRAMES.put(material, blockFrame);
             }
 
-            if (matProps.getWireProperty() != null) {
+            if (material.hasProperty(PropertyKey.WIRE)) {
                 for (BlockCable cable : CABLES)
-                    cable.addCableMaterial(material, matProps.getWireProperty());
+                    cable.addCableMaterial(material, material.getProperty(PropertyKey.WIRE));
             }
-            if (matProps.getFluidPipeProperty() != null) {
+            if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
                 for (BlockFluidPipe pipe : FLUID_PIPES)
-                    pipe.addPipeMaterial(material, matProps.getFluidPipeProperty());
+                    pipe.addPipeMaterial(material, material.getProperty(PropertyKey.FLUID_PIPE));
             }
-            if (matProps.getItemPipeProperty() != null) {
+            if (material.hasProperty(PropertyKey.ITEM_PIPE)) {
                 for (BlockItemPipe pipe : ITEM_PIPES)
-                    pipe.addPipeMaterial(material, matProps.getItemPipeProperty());
+                    pipe.addPipeMaterial(material, material.getProperty(PropertyKey.ITEM_PIPE));
             }
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
@@ -260,7 +259,7 @@ public class MetaBlocks {
         BlockCompressed block = new BlockCompressed(materials);
         block.setRegistryName("meta_block_compressed_" + index);
         for (Material material : materials) {
-            if (material.getProperties().getDustProperty() != null) {
+            if (material.hasProperty(PropertyKey.DUST)) {
                 COMPRESSED.put(material, block);
             }
         }

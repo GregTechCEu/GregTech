@@ -2,6 +2,7 @@ package gregtech.loaders.oreprocessing;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.loaders.recipe.RecyclingRecipes;
@@ -10,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-
-import static gregtech.api.unification.material.properties.DummyProperties.dustProperty;
 
 public class RecyclingRecipeHandler {
 
@@ -41,7 +40,7 @@ public class RecyclingRecipeHandler {
                 else if (object instanceof Predicate)
                     return ((Predicate<OrePrefix>) object).test(orePrefix);
                 else return false;
-            })) orePrefix.addProcessingHandler(dustProperty, RecyclingRecipeHandler::processCrushing);
+            })) orePrefix.addProcessingHandler(PropertyKey.DUST, RecyclingRecipeHandler::processCrushing);
         }
     }
 
@@ -52,8 +51,8 @@ public class RecyclingRecipeHandler {
         //only ignore arc smelting for blacklisted prefixes if yielded material is the same as input material
         //if arc smelting gives different material, allow it
         boolean ignoreArcSmelting = IGNORE_ARC_SMELTING.contains(thingPrefix) && !(
-            material.getProperties().getIngotProperty() != null
-                    && material.getProperties().getIngotProperty().getArcSmeltInto() != material);
+            material.hasProperty(PropertyKey.INGOT)
+                    && material.getProperty(PropertyKey.INGOT).getArcSmeltInto() != material);
         RecyclingRecipes.registerArcRecyclingRecipe(builder -> builder.input(thingPrefix, material), materialStacks, ignoreArcSmelting);
     }
 

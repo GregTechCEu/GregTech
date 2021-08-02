@@ -5,6 +5,7 @@ import com.google.common.base.Joiner;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.*;
 import gregtech.api.util.CustomModPriorityComparator;
@@ -249,7 +250,7 @@ public class OreDictUnifier {
     }
 
     public static ItemStack getDust(Material material, long materialAmount) {
-        if (material.getProperties().getDustProperty() == null) return ItemStack.EMPTY;
+        if (!material.hasProperty(PropertyKey.DUST)) return ItemStack.EMPTY;
         if (materialAmount <= 0)
             return ItemStack.EMPTY;
         if (materialAmount % M == 0 || materialAmount >= M * 16)
@@ -267,7 +268,7 @@ public class OreDictUnifier {
     }
 
     public static ItemStack getIngot(Material material, long materialAmount) {
-        if (material.getProperties().getIngotProperty() == null) return ItemStack.EMPTY;
+        if (!material.hasProperty(PropertyKey.INGOT)) return ItemStack.EMPTY;
         if (materialAmount <= 0)
             return ItemStack.EMPTY;
         if (materialAmount % M == 0 || materialAmount >= M * 16)

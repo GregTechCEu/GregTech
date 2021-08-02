@@ -8,6 +8,8 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.BlastProperty;
+import gregtech.api.unification.material.properties.MaterialProperties;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.WireProperty;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -22,7 +24,6 @@ import java.util.Map;
 import static gregtech.api.GTValues.M;
 import static gregtech.api.recipes.RecipeMaps.PACKER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.UNPACKER_RECIPES;
-import static gregtech.api.unification.material.properties.DummyProperties.wireProperty;
 import static gregtech.api.unification.material.info.MaterialFlags.NO_WORKING;
 
 public class WireRecipeHandler {
@@ -36,15 +37,15 @@ public class WireRecipeHandler {
     }
 
     public static void register() {
-        OrePrefix.wireGtSingle.addProcessingHandler(wireProperty, WireRecipeHandler::processWireSingle);
-        OrePrefix.wireGtSingle.addProcessingHandler(wireProperty, WireRecipeHandler::processWireCompression);
+        OrePrefix.wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::processWireSingle);
+        OrePrefix.wireGtSingle.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::processWireCompression);
         for (OrePrefix wirePrefix : WIRE_DOUBLING_ORDER) {
-            wirePrefix.addProcessingHandler(wireProperty, WireRecipeHandler::generateWireRecipe);
-            wirePrefix.addProcessingHandler(wireProperty, WireRecipeHandler::generateWireCombiningRecipe);
+            wirePrefix.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::generateWireRecipe);
+            wirePrefix.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::generateWireCombiningRecipe);
         }
 
         for (OrePrefix cablePrefix : CABLE_DOUBLING_ORDER) {
-            cablePrefix.addProcessingHandler(wireProperty, WireRecipeHandler::generateCableCombiningRecipe);
+            cablePrefix.addProcessingHandler(PropertyKey.WIRE, WireRecipeHandler::generateCableCombiningRecipe);
         }
     }
 
@@ -216,8 +217,7 @@ public class WireRecipeHandler {
     }
 
     private static int getVoltageMultiplier(Material material) {
-        BlastProperty prop = material.getProperties().getBlastProperty();
-        return prop != null && prop.getBlastTemperature() >= 2800 ? 32 : 8;
+        return material.getBlastTemperature() >= 2800 ? 32 : 8;
     }
 
 }

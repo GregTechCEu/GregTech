@@ -5,6 +5,7 @@ import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -76,9 +77,9 @@ public class ToolMetaItemListener {
     private static OrePrefix getSolidPrefix(Material material) {
         if (material == Materials.Wood) {
             return OrePrefix.plank;
-        } else if (material.getProperties().getIngotProperty() != null) {
+        } else if (material.hasProperty(PropertyKey.INGOT)) {
             return OrePrefix.ingot;
-        } else if (material.getProperties().getGemProperty() != null) {
+        } else if (material.hasProperty(PropertyKey.GEM)) {
             return OrePrefix.gem;
         } else return null;
     }

@@ -4,6 +4,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -44,7 +45,7 @@ public final class BlockCompressed extends DelayedStateBlock {
         Material material = state.getValue(variantProperty);
         if (material.isSolid()) {
             return "pickaxe";
-        } else if (material.getProperties().getDustProperty() != null) {
+        } else if (material.hasProperty(PropertyKey.DUST)) {
             return "shovel";
         }
         return "pickaxe";
@@ -53,7 +54,7 @@ public final class BlockCompressed extends DelayedStateBlock {
     @Override
     public int getHarvestLevel(IBlockState state) {
         Material material = state.getValue(variantProperty);
-        DustProperty prop = material.getProperties().getDustProperty();
+        DustProperty prop = material.getProperty(PropertyKey.DUST);
         if (prop != null) {
             return material.getHarvestLevel();
         }
@@ -98,11 +99,11 @@ public final class BlockCompressed extends DelayedStateBlock {
     @SuppressWarnings("deprecation")
     public net.minecraft.block.material.Material getMaterial(IBlockState state) {
         Material material = state.getValue(variantProperty);
-        if (material.getProperties().getGemProperty() != null) {
+        if (material.hasProperty(PropertyKey.GEM)) {
             return net.minecraft.block.material.Material.ROCK;
-        } else if (material.getProperties().getIngotProperty() != null) {
+        } else if (material.hasProperty(PropertyKey.INGOT)) {
             return net.minecraft.block.material.Material.IRON;
-        } else if (material.getProperties().getDustProperty() != null) {
+        } else if (material.hasProperty(PropertyKey.DUST)) {
             return net.minecraft.block.material.Material.SAND;
         }
         return net.minecraft.block.material.Material.ROCK;
@@ -118,11 +119,11 @@ public final class BlockCompressed extends DelayedStateBlock {
     @Override
     public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
         Material material = state.getValue(variantProperty);
-        if (material.getProperties().getGemProperty() != null) {
+        if (material.hasProperty(PropertyKey.GEM)) {
             return SoundType.STONE;
-        } else if (material.getProperties().getIngotProperty() != null) {
+        } else if (material.hasProperty(PropertyKey.INGOT)) {
             return SoundType.METAL;
-        } else if (material.getProperties().getDustProperty() != null) {
+        } else if (material.hasProperty(PropertyKey.DUST)) {
             return SoundType.SAND;
         }
         return SoundType.STONE;

@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 //@ZenClass("mods.gregtech.material.IngotMaterial")
 //@ZenRegister
-public class IngotProperty implements IMaterialProperty {
+public class IngotProperty implements IMaterialProperty<IngotProperty> {
 
     /**
      * Specifies a material into which this material parts turn when heated
@@ -61,60 +61,23 @@ public class IngotProperty implements IMaterialProperty {
     }
 
     @Override
-    public void verifyProperty(Properties properties) {
-        if (properties.getDustProperty() == null) {
-            properties.setDustProperty(new DustProperty());
-            properties.verify();
+    public void verifyProperty(MaterialProperties properties) {
+        properties.ensureSet(PropertyKey.DUST, true);
+        if (properties.hasProperty(PropertyKey.GEM)) {
+            throw new IllegalStateException(
+                    "Material " + properties.getMaterial() +
+                            " has both Ingot and Gem Property, which is not allowed!");
         }
 
         if (smeltInto == null) smeltInto = properties.getMaterial();
-        else {
-            Properties smeltIntoProperties = smeltInto.getProperties();
-            if (smeltIntoProperties.getIngotProperty() == null) {
-                smeltIntoProperties.setIngotProperty(new IngotProperty());
-                smeltIntoProperties.verify();
-            }
-        }
+        else smeltInto.getProperties().ensureSet(PropertyKey.INGOT, true);
 
         if (arcSmeltInto == null) arcSmeltInto = properties.getMaterial();
-        else {
-            Properties arcSmeltIntoProperties = arcSmeltInto.getProperties();
-            if (arcSmeltIntoProperties.getIngotProperty() == null) {
-                arcSmeltIntoProperties.setIngotProperty(new IngotProperty());
-                arcSmeltIntoProperties.verify();
-            }
-        }
+        else arcSmeltInto.getProperties().ensureSet(PropertyKey.INGOT, true);
 
         if (macerateInto == null) macerateInto = properties.getMaterial();
-        else {
-            Properties macerateIntoProperties = macerateInto.getProperties();
-            if (macerateIntoProperties.getIngotProperty() == null) {
-                macerateIntoProperties.setIngotProperty(new IngotProperty());
-                macerateIntoProperties.verify();
-            }
-        }
+        else macerateInto.getProperties().ensureSet(PropertyKey.INGOT, true);
 
-        if (magneticMaterial != null) {
-            Properties magneticProperties = magneticMaterial.getProperties();
-            if (magneticProperties.getIngotProperty() == null) {
-                magneticProperties.setIngotProperty(new IngotProperty());
-                magneticProperties.verify();
-            }
-        }
-    }
-
-    @Override
-    public boolean doesMatch(IMaterialProperty otherProp) {
-        return otherProp instanceof IngotProperty;
-    }
-
-    @Override
-    public String getName() {
-        return "ingot_property";
-    }
-
-    @Override
-    public String toString() {
-        return getName();
+        if (magneticMaterial != null) magneticMaterial.getProperties().ensureSet(PropertyKey.INGOT, true);
     }
 }

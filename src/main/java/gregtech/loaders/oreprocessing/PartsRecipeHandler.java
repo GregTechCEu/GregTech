@@ -7,10 +7,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.BlastProperty;
-import gregtech.api.unification.material.properties.DustProperty;
-import gregtech.api.unification.material.properties.GemProperty;
-import gregtech.api.unification.material.properties.IngotProperty;
+import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -24,7 +21,6 @@ import net.minecraft.item.ItemStack;
 import static gregtech.api.GTValues.L;
 import static gregtech.api.recipes.RecipeMaps.BENDER_RECIPES;
 import static gregtech.api.recipes.RecipeMaps.LATHE_RECIPES;
-import static gregtech.api.unification.material.properties.DummyProperties.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.api.util.DyeUtil.determineDyeColor;
@@ -35,26 +31,26 @@ public class PartsRecipeHandler {
     }
 
     public static void register() {
-        OrePrefix.stick.addProcessingHandler(dustProperty, PartsRecipeHandler::processStick);
-        OrePrefix.stickLong.addProcessingHandler(dustProperty, PartsRecipeHandler::processLongStick);
-        OrePrefix.plate.addProcessingHandler(dustProperty, PartsRecipeHandler::processPlate);
-        OrePrefix.plateDouble.addProcessingHandler(ingotProperty, PartsRecipeHandler::processPlateDouble);
-        OrePrefix.plateDense.addProcessingHandler(ingotProperty, PartsRecipeHandler::processPlateDense);
+        OrePrefix.stick.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processStick);
+        OrePrefix.stickLong.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processLongStick);
+        OrePrefix.plate.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processPlate);
+        OrePrefix.plateDouble.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processPlateDouble);
+        OrePrefix.plateDense.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processPlateDense);
 
-        OrePrefix.turbineBlade.addProcessingHandler(ingotProperty, PartsRecipeHandler::processTurbine);
-        OrePrefix.rotor.addProcessingHandler(ingotProperty, PartsRecipeHandler::processRotor);
-        OrePrefix.bolt.addProcessingHandler(dustProperty, PartsRecipeHandler::processBolt);
-        OrePrefix.screw.addProcessingHandler(dustProperty, PartsRecipeHandler::processScrew);
-        OrePrefix.wireFine.addProcessingHandler(ingotProperty, PartsRecipeHandler::processFineWire);
-        OrePrefix.foil.addProcessingHandler(ingotProperty, PartsRecipeHandler::processFoil);
-        OrePrefix.lens.addProcessingHandler(gemProperty, PartsRecipeHandler::processLens);
+        OrePrefix.turbineBlade.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processTurbine);
+        OrePrefix.rotor.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRotor);
+        OrePrefix.bolt.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processBolt);
+        OrePrefix.screw.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processScrew);
+        OrePrefix.wireFine.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processFineWire);
+        OrePrefix.foil.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processFoil);
+        OrePrefix.lens.addProcessingHandler(PropertyKey.GEM, PartsRecipeHandler::processLens);
 
-        OrePrefix.gear.addProcessingHandler(dustProperty, PartsRecipeHandler::processGear);
-        OrePrefix.gearSmall.addProcessingHandler(dustProperty, PartsRecipeHandler::processGear);
-        OrePrefix.ring.addProcessingHandler(ingotProperty, PartsRecipeHandler::processRing);
-        OrePrefix.springSmall.addProcessingHandler(ingotProperty, PartsRecipeHandler::processSpringSmall);
-        OrePrefix.spring.addProcessingHandler(ingotProperty, PartsRecipeHandler::processSpring);
-        OrePrefix.round.addProcessingHandler(ingotProperty, PartsRecipeHandler::processRound);
+        OrePrefix.gear.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processGear);
+        OrePrefix.gearSmall.addProcessingHandler(PropertyKey.DUST, PartsRecipeHandler::processGear);
+        OrePrefix.ring.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRing);
+        OrePrefix.springSmall.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processSpringSmall);
+        OrePrefix.spring.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processSpring);
+        OrePrefix.round.addProcessingHandler(PropertyKey.INGOT, PartsRecipeHandler::processRound);
     }
 
     public static void processBolt(OrePrefix boltPrefix, Material material, DustProperty property) {
@@ -120,7 +116,7 @@ public class PartsRecipeHandler {
             ModHandler.addShapelessRecipe(String.format("fine_wire_%s", material.toString()),
                 fineWireStack, 'x', new UnificationEntry(OrePrefix.foil, material));
 
-        if (material.getProperties().getWireProperty() != null) {
+        if (material.hasProperty(PropertyKey.WIRE)) {
             RecipeMaps.WIREMILL_RECIPES.recipeBuilder()
                 .input(OrePrefix.wireGtSingle, material)
                 .outputs(OreDictUnifier.get(OrePrefix.wireFine, material, 4))
@@ -139,7 +135,7 @@ public class PartsRecipeHandler {
 
     public static void processGear(OrePrefix gearPrefix, Material material, DustProperty property) {
         ItemStack stack = OreDictUnifier.get(gearPrefix, material);
-        if (gearPrefix == OrePrefix.gear && material.getProperties().getIngotProperty() != null) {
+        if (gearPrefix == OrePrefix.gear && material.hasProperty(PropertyKey.INGOT)) {
             int voltageMultiplier = getVoltageMultiplier(material);
             RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
                 .input(OrePrefix.ingot, material, 4)
@@ -158,7 +154,7 @@ public class PartsRecipeHandler {
                 .buildAndRegister();
         }
 
-        if (material.getProperties().getFluidProperty() != null) {
+        if (material.hasFluid()) {
             boolean isSmall = gearPrefix == OrePrefix.gearSmall;
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                 .notConsumable(isSmall ? MetaItems.SHAPE_MOLD_GEAR_SMALL : MetaItems.SHAPE_MOLD_GEAR)
@@ -204,7 +200,7 @@ public class PartsRecipeHandler {
     }
 
     public static void processPlate(OrePrefix platePrefix, Material material, DustProperty property) {
-        if (material.getProperties().getFluidProperty() != null) {
+        if (material.hasFluid()) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                 .notConsumable(MetaItems.SHAPE_MOLD_PLATE)
                 .fluidInputs(material.getFluid(L))
@@ -307,7 +303,7 @@ public class PartsRecipeHandler {
             'R', new UnificationEntry(OrePrefix.ring, material),
             'S', new UnificationEntry(OrePrefix.screw, material));
 
-        if (material.getProperties().getFluidProperty() != null) {
+        if (material.hasFluid()) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                 .notConsumable(MetaItems.SHAPE_MOLD_ROTOR)
                 .fluidInputs(material.getFluid(L * 4))
@@ -319,9 +315,9 @@ public class PartsRecipeHandler {
     }
 
     public static void processStick(OrePrefix stickPrefix, Material material, DustProperty property) {
-        if (material.getProperties().getGemProperty() != null || material.getProperties().getIngotProperty() != null) {
+        if (material.hasProperty(PropertyKey.GEM) || material.hasProperty(PropertyKey.GEM)) {
             RecipeBuilder<?> builder = RecipeMaps.LATHE_RECIPES.recipeBuilder()
-                .input(material.getProperties().getGemProperty() != null ? OrePrefix.gem : OrePrefix.ingot, material)
+                .input(material.hasProperty(PropertyKey.GEM) ? OrePrefix.gem : OrePrefix.ingot, material)
                 .duration((int) Math.max(material.getAverageMass() * 2, 1))
                 .EUt(16);
 
@@ -434,7 +430,6 @@ public class PartsRecipeHandler {
     }
 
     private static int getVoltageMultiplier(Material material) {
-        BlastProperty prop = material.getProperties().getBlastProperty();
-        return prop != null && prop.getBlastTemperature() > 2800 ? 32 : 8;
+        return material.getBlastTemperature() > 2800 ? 32 : 8;
     }
 }

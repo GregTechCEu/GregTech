@@ -11,6 +11,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.ConfigHolder;
@@ -331,7 +332,7 @@ public class MachineRecipeLoader {
 
     private static void registerAlloyRecipes() {
         for (MaterialStack[] stack : alloySmelterList) {
-            if (stack[0].material.getProperties().getIngotProperty() != null) {
+            if (stack[0].material.hasProperty(PropertyKey.INGOT)) {
                 RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
                     .duration((int) stack[2].amount * 50).EUt(16)
                     .input(OrePrefix.ingot, stack[0].material, (int) stack[0].amount)
@@ -339,7 +340,7 @@ public class MachineRecipeLoader {
                     .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
                     .buildAndRegister();
             }
-            if (stack[1].material.getProperties().getIngotProperty() != null) {
+            if (stack[1].material.hasProperty(PropertyKey.INGOT)) {
                 RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
                     .duration((int) stack[2].amount * 50).EUt(16)
                     .input(OrePrefix.dust, stack[0].material, (int) stack[0].amount)
@@ -347,8 +348,8 @@ public class MachineRecipeLoader {
                     .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
                     .buildAndRegister();
             }
-            if (stack[0].material.getProperties().getIngotProperty() != null
-                    && stack[1].material.getProperties().getIngotProperty() != null) {
+            if (stack[0].material.hasProperty(PropertyKey.INGOT)
+                    && stack[1].material.hasProperty(PropertyKey.INGOT)) {
                 RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
                     .duration((int) stack[2].amount * 50).EUt(16)
                     .input(OrePrefix.ingot, stack[0].material, (int) stack[0].amount)

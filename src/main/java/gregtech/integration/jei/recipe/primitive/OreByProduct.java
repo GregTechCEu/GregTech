@@ -10,6 +10,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.OreProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import mezz.jei.api.ingredients.IIngredients;
@@ -40,7 +41,7 @@ public class OreByProduct implements IRecipeWrapper {
 
 	public OreByProduct(Material material) {
 		this.material = material;
-		this.property = material.getProperties().getOreProperty();
+		this.property = material.getProperty(PropertyKey.ORE);
 		this.oreIngredients = new ArrayList<ItemStack>();
 		for (OrePrefix ore : ORES)
 			this.oreIngredients.add(OreDictUnifier.get(ore, material));

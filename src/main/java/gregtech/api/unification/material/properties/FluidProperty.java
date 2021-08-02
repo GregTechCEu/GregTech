@@ -1,22 +1,18 @@
 package gregtech.api.unification.material.properties;
 
 import com.google.common.base.Preconditions;
-import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.liquid.ILiquidDefinition;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional;
-import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenGetter;
-import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nonnull;
 
 //@ZenClass("mods.gregtech.material.FluidMaterial")
 //@ZenRegister
-public class FluidProperty implements IMaterialProperty {
+public class FluidProperty implements IMaterialProperty<FluidProperty> {
 
     public static final int BASE_TEMP = 300;
 
@@ -91,25 +87,9 @@ public class FluidProperty implements IMaterialProperty {
     }
 
     @Override
-    public void verifyProperty(Properties properties) {
-        if (properties.getPlasmaProperty() != null) {
+    public void verifyProperty(MaterialProperties properties) {
+        if (properties.hasProperty(PropertyKey.PLASMA)) {
             hasBlock = false;
-            isGas = false;
         }
-    }
-
-    @Override
-    public boolean doesMatch(IMaterialProperty otherProp) {
-        return otherProp instanceof FluidProperty;
-    }
-
-    @Override
-    public String getName() {
-        return "fluid_property";
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 }

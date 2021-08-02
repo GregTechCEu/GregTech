@@ -1,6 +1,6 @@
 package gregtech.api.unification.material.properties;
 
-public class BlastProperty implements IMaterialProperty {
+public class BlastProperty implements IMaterialProperty<BlastProperty> {
 
     /**
      * Blast Furnace Temperature of this Material.
@@ -28,29 +28,11 @@ public class BlastProperty implements IMaterialProperty {
     }
 
     @Override
-    public void verifyProperty(Properties properties) {
-        if (properties.getIngotProperty() == null) {
-            properties.setIngotProperty(new IngotProperty());
-            properties.verify();
-        }
+    public void verifyProperty(MaterialProperties properties) {
+        properties.ensureSet(PropertyKey.INGOT, true);
 
-        FluidProperty fluidProperty = properties.getFluidProperty();
+        FluidProperty fluidProperty = properties.getProperty(PropertyKey.FLUID);
         if (fluidProperty != null && fluidProperty.getFluidTemperature() == FluidProperty.BASE_TEMP)
             fluidProperty.setFluidTemperature(blastTemperature);
-    }
-
-    @Override
-    public boolean doesMatch(IMaterialProperty otherProp) {
-        return otherProp instanceof BlastProperty;
-    }
-
-    @Override
-    public String getName() {
-        return "blast_property";
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 }

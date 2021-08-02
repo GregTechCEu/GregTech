@@ -1,10 +1,7 @@
 package gregtech.api.unification.material.properties;
 
-public interface IMaterialProperty {
+@FunctionalInterface
+public interface IMaterialProperty<T> {
 
-    void verifyProperty(Properties properties);
-
-    boolean doesMatch(IMaterialProperty otherProp);
-
-    String getName();
+    void verifyProperty(MaterialProperties properties);
 }

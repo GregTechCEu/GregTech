@@ -6,6 +6,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.FluidProperty;
 import gregtech.api.unification.material.properties.PlasmaProperty;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
@@ -41,7 +42,7 @@ public class MetaFluids {
         new ResourceLocation("blocks/water_flow"));
 
     public enum FluidType {
-        NORMAL("", material -> material.hasFluid() && material.getProperties().getFluidProperty().isGas() ? FluidState.GAS : FluidState.LIQUID),
+        NORMAL("", material -> material.hasFluid() && material.getProperty(PropertyKey.FLUID).isGas() ? FluidState.GAS : FluidState.LIQUID),
         PLASMA("plasma.", material -> FluidState.PLASMA);
 
         private final String prefix;
@@ -78,11 +79,11 @@ public class MetaFluids {
     }
 
     public static void init() {
-        Materials.Water.getProperties().getFluidProperty().setFluid(FluidRegistry.WATER);
-        Materials.Lava.getProperties().getFluidProperty().setFluid(FluidRegistry.LAVA);
+        Materials.Water.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.WATER);
+        Materials.Lava.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.LAVA);
 
         FluidRegistry.registerFluid(DISTILLED_WATER);
-        Materials.DistilledWater.getProperties().getFluidProperty().setFluid(DISTILLED_WATER);
+        Materials.DistilledWater.getProperty(PropertyKey.FLUID).setFluid(DISTILLED_WATER);
         fluidSprites.add(AUTO_GENERATED_FLUID_TEXTURE);
         fluidSprites.add(AUTO_GENERATED_PLASMA_TEXTURE);
 
@@ -158,7 +159,7 @@ public class MetaFluids {
         setDefaultTexture(Materials.Xenon, FluidType.NORMAL);
 
         for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
-            FluidProperty property = material.getProperties().getFluidProperty();
+            FluidProperty property = material.getProperty(PropertyKey.FLUID);
             if (property == null) continue;
 
             if (property.getFluid() == null) {
@@ -168,7 +169,7 @@ public class MetaFluids {
                 FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
             }
 
-            PlasmaProperty plasmaProperty = material.getProperties().getPlasmaProperty();
+            PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
             if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
                 Fluid fluid = registerFluid(material, FluidType.PLASMA, 30000, false);
                 plasmaProperty.setPlasma(fluid);

@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Optional;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ToolProperty implements IMaterialProperty {
+public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
     /**
      * Speed of tools made from this Material.
@@ -57,26 +57,8 @@ public class ToolProperty implements IMaterialProperty {
     }
 
     @Override
-    public void verifyProperty(Properties properties) {
-        if (properties.getIngotProperty() == null && properties.getGemProperty() == null) {
-            properties.setIngotProperty(new IngotProperty()); // default to Ingot if not specified
-            properties.verify();
-        }
-    }
-
-    @Override
-    public boolean doesMatch(IMaterialProperty otherProp) {
-        return otherProp instanceof ToolProperty;
-    }
-
-    @Override
-    public String getName() {
-        return "tool_property";
-    }
-
-    @Override
-    public String toString() {
-        return getName();
+    public void verifyProperty(MaterialProperties properties) {
+        if (!properties.hasProperty(PropertyKey.GEM)) properties.ensureSet(PropertyKey.INGOT, true);
     }
 
     public void addEnchantmentForTools(Enchantment enchantment, int level) {

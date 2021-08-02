@@ -2,7 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import java.util.Objects;
 
-public class ItemPipeProperty implements IMaterialProperty {
+public class ItemPipeProperty implements IMaterialProperty<ItemPipeProperty> {
 
     /**
      * Items will try to take the path with the lowest priority
@@ -27,21 +27,14 @@ public class ItemPipeProperty implements IMaterialProperty {
     }
 
     @Override
-    public void verifyProperty(Properties properties) {
-        if (properties.getIngotProperty() == null) {
-            properties.setIngotProperty(new IngotProperty());
-            properties.verify();
+    public void verifyProperty(MaterialProperties properties) {
+        properties.ensureSet(PropertyKey.INGOT, true);
+
+        if (properties.hasProperty(PropertyKey.FLUID_PIPE)) {
+            throw new IllegalStateException(
+                    "Material " + properties.getMaterial() +
+                            " has both Fluid and Item Pipe Property, which is not allowed!");
         }
-    }
-
-    @Override
-    public boolean doesMatch(IMaterialProperty otherProp) {
-        return otherProp instanceof ItemPipeProperty;
-    }
-
-    @Override
-    public String getName() {
-        return "item_pipe_property";
     }
 
     @Override

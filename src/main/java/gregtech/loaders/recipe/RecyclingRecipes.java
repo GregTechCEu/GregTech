@@ -5,6 +5,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.item.ItemStack;
@@ -38,15 +39,15 @@ public class RecyclingRecipes {
 
     public static void registerArcRecyclingRecipe(Consumer<RecipeBuilder<?>> inputSupplier, List<MaterialStack> components, boolean ignoreArcSmelting) {
         List<MaterialStack> materials = components.stream()
-            .filter(stack -> stack.material.getProperties().getDustProperty() != null)
+            .filter(stack -> stack.material.hasProperty(PropertyKey.DUST))
             .filter(stack -> stack.amount >= M / 9) //do only materials which have at least one nugget
             .collect(Collectors.toList());
         if (materials.isEmpty()) return;
         MaterialStack firstStack = materials.get(0);
         Material material = firstStack.material;
         int voltageMultiplier = 1;
-        if (material.getProperties().getBlastProperty() != null) {
-            int blastFurnaceTemperature = material.getProperties().getBlastProperty().getBlastTemperature();
+        if (material.hasProperty(PropertyKey.BLAST)) {
+            int blastFurnaceTemperature = material.getProperty(PropertyKey.BLAST).getBlastTemperature();
             voltageMultiplier = blastFurnaceTemperature == 0 ? 1 : blastFurnaceTemperature > 2000 ? 16 : 4;
         } else {
             //do not apply arc smelting for gems, solid materials and dust materials
@@ -61,7 +62,7 @@ public class RecyclingRecipes {
         inputSupplier.accept(maceratorRecipeBuilder);
         maceratorRecipeBuilder.buildAndRegister();
 
-        if (material.getProperties().getFluidProperty() != null) {
+        if (material.hasFluid()) {
             RecipeBuilder<?> fluidExtractorRecipeBuilder = RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
                 .fluidOutputs(material.getFluid((int) (firstStack.amount * L / M)))
                 .duration((int) Math.max(1L, firstStack.amount * 80 / M))
@@ -88,7 +89,7 @@ public class RecyclingRecipes {
         long materialAmount = materialStack.amount;
         if (material.hasFlag(FLAMMABLE)) {
             return OreDictUnifier.getDust(Materials.Ash, materialAmount);
-        } else if (material.getProperties().getGemProperty() != null) {
+        } else if (material.hasProperty(PropertyKey.GEM)) {
             if (materialStack.material.getMaterialComponents().stream()
                 .anyMatch(stack -> stack.material == Materials.Oxygen)) {
                 return OreDictUnifier.getDust(Materials.Ash, materialAmount);
@@ -98,8 +99,8 @@ public class RecyclingRecipes {
                 return OreDictUnifier.getDust(Materials.Carbon, materialAmount);
             }
             return OreDictUnifier.getDust(Materials.DarkAsh, materialAmount);
-        } else if (material.getProperties().getIngotProperty() != null) {
-            Material arcSmelt = material.getProperties().getIngotProperty().getArcSmeltInto();
+        } else if (material.hasProperty(PropertyKey.INGOT)) {
+            Material arcSmelt = material.getProperty(PropertyKey.INGOT).getArcSmeltInto();
             if (arcSmelt != null)
                 return OreDictUnifier.getIngot(arcSmelt, materialAmount);
             return OreDictUnifier.getIngot(material, materialAmount);

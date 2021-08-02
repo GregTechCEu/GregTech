@@ -7,6 +7,7 @@ import gregtech.api.items.metaitem.stats.IItemNameProvider;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,14 +36,14 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
         }
         String materialName = compound.getString("Material");
         Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(materialName);
-        if (material == null || material.getProperties().getIngotProperty() == null) {
+        if (material == null || !material.hasProperty(PropertyKey.INGOT)) {
             return defaultMaterial;
         }
         return material;
     }
 
     public void setPartMaterial(ItemStack itemStack, Material material) {
-        if (material.getProperties().getIngotProperty() == null)
+        if (!material.hasProperty(PropertyKey.INGOT))
             throw new IllegalArgumentException("Part material must have an Ingot!");
         NBTTagCompound compound = getOrCreatePartStatsTag(itemStack);
         compound.setString("Material", material.toString());

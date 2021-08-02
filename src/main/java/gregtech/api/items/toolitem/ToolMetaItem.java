@@ -18,6 +18,7 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -495,7 +496,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             if (toolTag != null && toolTag.hasKey("MaxDurability")) {
                 materialDurability = toolTag.getInteger("MaxDurability");
             } else if (toolMaterial != null) {
-                ToolProperty prop = toolMaterial.getProperties().getToolProperty();
+                ToolProperty prop = toolMaterial.getProperty(PropertyKey.TOOL);
                 if (prop != null) materialDurability = prop.toolDurability;
                 else return 0;
             }
@@ -515,7 +516,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             if (toolTag != null && toolTag.hasKey("DigSpeed")) {
                 toolSpeed = toolTag.getFloat("DigSpeed");
             } else if (toolMaterial != null) {
-                ToolProperty prop = toolMaterial.getProperties().getToolProperty();
+                ToolProperty prop = toolMaterial.getProperty(PropertyKey.TOOL);
                 if (prop != null) toolSpeed = prop.toolSpeed;
                 else return 0;
             }
@@ -535,7 +536,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             if (toolTag != null && toolTag.hasKey("HarvestLevel")) {
                 harvestLevel = toolTag.getInteger("HarvestLevel");
             } else if (toolMaterial != null) {
-                DustProperty prop = toolMaterial.getProperties().getDustProperty();
+                DustProperty prop = toolMaterial.getProperty(PropertyKey.DUST);
                 if (prop != null) harvestLevel = prop.getHarvestLevel();
                 else return 0;
             }
@@ -557,7 +558,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             } else if (toolTag != null && toolTag.hasKey("HarvestLevel")) {
                 attackDamage = toolTag.getInteger("HarvestLevel");
             } else if (toolMaterial != null) {
-                ToolProperty prop = toolMaterial.getProperties().getToolProperty();
+                ToolProperty prop = toolMaterial.getProperty(PropertyKey.TOOL);
                 if (prop != null) attackDamage = prop.toolAttackDamage;
                 else return 0;
             }
@@ -610,7 +611,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             return Materials.Aluminium;
         }
         Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(toolMaterialName);
-        if (material == null || material.getProperties().getToolProperty() != null) {
+        if (material == null || !material.hasProperty(PropertyKey.TOOL)) {
             return material;
         }
         return Materials.Aluminium;
@@ -743,7 +744,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         private Map<Enchantment, Integer> bakeEnchantmentsMap(ItemStack itemStack, Collection<Material> materials) {
             Map<Enchantment, Integer> enchantments = new HashMap<>();
             for (Material material : materials) {
-                ToolProperty prop = material.getProperties().getToolProperty();
+                ToolProperty prop = material.getProperty(PropertyKey.TOOL);
                 if (prop == null)
                     continue;
 

@@ -2,7 +2,7 @@ package gregtech.api.unification.material.properties;
 
 import java.util.Objects;
 
-public class WireProperty implements IMaterialProperty {
+public class WireProperty implements IMaterialProperty<WireProperty> {
 
     public final int voltage;
     public final int amperage;
@@ -22,26 +22,8 @@ public class WireProperty implements IMaterialProperty {
     }
 
     @Override
-    public void verifyProperty(Properties properties) {
-        if (properties.getIngotProperty() == null) {
-            properties.setIngotProperty(new IngotProperty());
-            properties.verify();
-        }
-    }
-
-    @Override
-    public boolean doesMatch(IMaterialProperty otherProp) {
-        return otherProp instanceof WireProperty;
-    }
-
-    @Override
-    public String getName() {
-        return "wire_property";
-    }
-
-    @Override
-    public String toString() {
-        return getName();
+    public void verifyProperty(MaterialProperties properties) {
+        properties.ensureSet(PropertyKey.INGOT, true);
     }
 
     @Override

@@ -2,7 +2,7 @@ package gregtech.api.unification.material.properties;
 
 //@ZenClass("mods.gregtech.material.DustMaterial")
 //@ZenRegister
-public class DustProperty implements IMaterialProperty {
+public class DustProperty implements IMaterialProperty<DustProperty> {
 
     /**
      * Tool level needed to harvest block of this Material.
@@ -51,25 +51,10 @@ public class DustProperty implements IMaterialProperty {
     }
 
     @Override
-    public void verifyProperty(Properties properties) {
-        FluidProperty prop = properties.getFluidProperty();
+    public void verifyProperty(MaterialProperties properties) {
+        FluidProperty prop = properties.getProperty(PropertyKey.FLUID);
         if (prop != null && prop.getFluidTemperature() == FluidProperty.BASE_TEMP) {
             prop.setFluidTemperature(1200);
         }
-    }
-
-    @Override
-    public boolean doesMatch(IMaterialProperty otherProp) {
-        return otherProp instanceof DustProperty;
-    }
-
-    @Override
-    public String getName() {
-        return "dust_property";
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 }

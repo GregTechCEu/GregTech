@@ -6,6 +6,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.IMaterialProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.function.TriConsumer;
 import net.minecraft.client.resources.I18n;
@@ -50,10 +51,10 @@ public enum OrePrefix {
     cleanGravel("Clean Gravels", -1, null, null, ENABLE_UNIFICATION, null),
     dirtyGravel("Dirty Gravels", -1, null, null, ENABLE_UNIFICATION, null),
 
-    ingotHot("Hot Ingots", M, null, MaterialIconType.ingotHot, ENABLE_UNIFICATION, hasBlastProperty.and(mat -> mat.getProperties().getBlastProperty().getBlastTemperature() > 1750)), // A hot Ingot, which has to be cooled down by a Vacuum Freezer.
+    ingotHot("Hot Ingots", M, null, MaterialIconType.ingotHot, ENABLE_UNIFICATION, hasBlastProperty.and(mat -> mat.getProperty(PropertyKey.BLAST).getBlastTemperature() > 1750)), // A hot Ingot, which has to be cooled down by a Vacuum Freezer.
     ingot("Ingots", M, null, MaterialIconType.ingot, ENABLE_UNIFICATION, hasIngotProperty), // A regular Ingot. Introduced by Eloraam
 
-    gem("Gemstones", M, null, MaterialIconType.gem, ENABLE_UNIFICATION, mat -> mat.getProperties().getGemProperty() != null), // A regular Gem worth one Dust. Introduced by Eloraam
+    gem("Gemstones", M, null, MaterialIconType.gem, ENABLE_UNIFICATION, hasGemProperty), // A regular Gem worth one Dust. Introduced by Eloraam
     gemChipped("Chipped Gemstones", M / 4, null, MaterialIconType.gemChipped, ENABLE_UNIFICATION, hasGemProperty), // A regular Gem worth one small Dust. Introduced by TerraFirmaCraft
     gemFlawed("Flawed Gemstones", M / 2, null, MaterialIconType.gemFlawed, ENABLE_UNIFICATION, hasGemProperty), // A regular Gem worth two small Dusts. Introduced by TerraFirmaCraft
     gemFlawless("Flawless Gemstones", M * 2, null, MaterialIconType.gemFlawless, ENABLE_UNIFICATION, hasGemProperty), // A regular Gem worth two Dusts. Introduced by TerraFirmaCraft
@@ -188,12 +189,12 @@ public enum OrePrefix {
     }
 
     public static class Conditions {
-        public static final Predicate<Material> hasToolProperty = mat -> mat.getProperties().getToolProperty() != null;
-        public static final Predicate<Material> hasOreProperty = mat -> mat.getProperties().getOreProperty() != null;
-        public static final Predicate<Material> hasGemProperty = mat -> mat.getProperties().getGemProperty() != null;
-        public static final Predicate<Material> hasDustProperty = mat -> mat.getProperties().getDustProperty() != null;
-        public static final Predicate<Material> hasIngotProperty = mat -> mat.getProperties().getIngotProperty() != null;
-        public static final Predicate<Material> hasBlastProperty = mat -> mat.getProperties().getBlastProperty() != null;
+        public static final Predicate<Material> hasToolProperty = mat -> mat.hasProperty(PropertyKey.TOOL);
+        public static final Predicate<Material> hasOreProperty = mat -> mat.hasProperty(PropertyKey.ORE);
+        public static final Predicate<Material> hasGemProperty = mat -> mat.hasProperty(PropertyKey.GEM);
+        public static final Predicate<Material> hasDustProperty = mat -> mat.hasProperty(PropertyKey.DUST);
+        public static final Predicate<Material> hasIngotProperty = mat -> mat.hasProperty(PropertyKey.INGOT);
+        public static final Predicate<Material> hasBlastProperty = mat -> mat.hasProperty(PropertyKey.BLAST);
     }
 
     static {
@@ -420,11 +421,10 @@ public enum OrePrefix {
         return oreProcessingHandlers.addAll(Arrays.asList(processingHandler));
     }
 
-    public <T extends IMaterialProperty> void addProcessingHandler(T property, TriConsumer<OrePrefix, Material, T> handler) {
+    public <T extends IMaterialProperty<T>> void addProcessingHandler(PropertyKey<T> propertyKey, TriConsumer<OrePrefix, Material, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
-            if (material.hasProperty(property) && orePrefix.doGenerateItem(material)) {
-                //noinspection unchecked
-                handler.accept(orePrefix, material, (T) material.getProperty(property));
+            if (material.hasProperty(propertyKey) && orePrefix.doGenerateItem(material)) {
+                handler.accept(orePrefix, material, material.getProperty(propertyKey));
             }
         });
     }

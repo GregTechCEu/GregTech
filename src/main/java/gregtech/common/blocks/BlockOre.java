@@ -3,6 +3,7 @@ package gregtech.common.blocks;
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.blocks.properties.PropertyStoneType;
@@ -84,10 +85,10 @@ public class BlockOre extends BlockFalling implements IBlockOre {
     public int getHarvestLevel(IBlockState state) {
         StoneType stoneType = state.getValue(STONE_TYPE);
         if (material != null) {
-            DustProperty matProp = material.getProperties().getDustProperty();
+            DustProperty matProp = material.getProperty(PropertyKey.DUST);
             if (matProp != null) {
-                int toolQuality = material.getProperties().getDustProperty().getHarvestLevel();
-                DustProperty stoneProp = stoneType.stoneMaterial.getProperties().getDustProperty();
+                int toolQuality = matProp.getHarvestLevel();
+                DustProperty stoneProp = stoneType.stoneMaterial.getProperty(PropertyKey.DUST);
                 if (stoneProp != null) {
                     return Math.max(stoneProp.getHarvestLevel(), toolQuality > 1 ? toolQuality - 1 : toolQuality);
                 }
