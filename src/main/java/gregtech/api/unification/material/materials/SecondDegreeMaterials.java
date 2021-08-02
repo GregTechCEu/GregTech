@@ -196,6 +196,7 @@ public class SecondDegreeMaterials {
                 .dust().ore()
                 .color(0x23233C).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Magnetite, 1, Vanadium, 1)
                 .addOreByproducts(Magnetite, Vanadium)
                 .separatesInto(Gold)
                 .build();

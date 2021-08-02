@@ -4,9 +4,9 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Material.FluidType;
 import net.minecraft.init.Enchantments;
 
-import static gregtech.api.unification.material.info.MaterialIconSet.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
+import static gregtech.api.unification.material.info.MaterialIconSet.*;
 
 public class UnknownCompositionMaterials {
 
@@ -257,7 +257,6 @@ public class UnknownCompositionMaterials {
                 .dust(1).fluid()
                 .color(0xFFFF00).iconSet(SHINY)
                 .flags(NO_SMASHING, GENERATE_PLATE, EXCLUDE_PLATE_COMPRESSOR_RECIPE)
-                .addOreByproducts(Redstone, Gold)
                 .build();
 
         NetherStar = new Material.Builder(1602, "nether_star")
@@ -269,14 +268,12 @@ public class UnknownCompositionMaterials {
         Endstone = new Material.Builder(1603, "endstone")
                 .dust(1)
                 .flags(NO_SMASHING)
-                .addOreByproducts(Helium3)
                 .build();
 
         Netherrack = new Material.Builder(1604, "netherrack")
                 .dust(1)
                 .color(0xC80000)
                 .flags(NO_SMASHING, FLAMMABLE)
-                .addOreByproducts(Sulfur)
                 .build();
 
         NitroDiesel = new Material.Builder(1605, "nitro_fuel")
@@ -303,13 +300,11 @@ public class UnknownCompositionMaterials {
         Andesite = new Material.Builder(1609, "andesite")
                 .dust()
                 .color(0xBEBEBE).iconSet(ROUGH)
-                .addOreByproducts(Basalt)
                 .build();
 
         Diorite = new Material.Builder(1610, "diorite")
                 .dust()
                 .iconSet(ROUGH)
-                .addOreByproducts(NetherQuartz)
                 .build();
 
         Granite = new Material.Builder(1611, "granite")
