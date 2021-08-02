@@ -38,6 +38,11 @@
  *             // Like above, ensure you call "ensureSet(Key, true)" to re-verify.
  *         }
  *     }
+ * </code><br><br>
+ *
+ * You must also create a new {@link gregtech.api.unification.material.properties.PropertyKey} Object, like:
+ * <code>
+ *     public static final PropertyKey<MyProperty> MY_PROPERTY = new PropertyKey<>("my_property", MyProperty.class);
  * </code>
  *
  * @author dan
