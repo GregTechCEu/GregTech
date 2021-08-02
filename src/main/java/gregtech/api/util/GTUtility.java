@@ -654,7 +654,7 @@ public class GTUtility {
             ImmutableList.Builder<T>::build);
     }
 
-    public static <M, E extends M> E selectItemInList(int index, E replacement, List<? extends M> list, Class<E> minClass) {
+    public static <M> M selectItemInList(int index, M replacement, List<M> list, Class<M> minClass) {
         if (list.isEmpty())
             return replacement;
 
@@ -665,9 +665,7 @@ public class GTUtility {
             maybeResult = list.get(0);
         } else maybeResult = list.get(index);
 
-        if (minClass.isAssignableFrom(maybeResult.getClass())) {
-            return minClass.cast(maybeResult);
-        }
+        if (maybeResult != null) return maybeResult;
         return replacement;
     }
 
