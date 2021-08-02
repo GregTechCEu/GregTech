@@ -24,12 +24,21 @@ public class SimpleTextWidget extends Widget {
     protected int color;
     protected Supplier<String> textSupplier;
     protected String lastText = "";
+    protected boolean clientWidget;
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
         super(new Position(xPosition, yPosition), Size.ZERO);
         this.color = color;
         this.formatLocale = formatLocale;
         this.textSupplier = textSupplier;
+    }
+
+    public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier, boolean clientWidget) {
+        super(new Position(xPosition, yPosition), Size.ZERO);
+        this.color = color;
+        this.formatLocale = formatLocale;
+        this.textSupplier = textSupplier;
+        this.clientWidget = clientWidget;
     }
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, Supplier<String> textSupplier) {
@@ -42,6 +51,19 @@ public class SimpleTextWidget extends Widget {
         setSize(new Size(stringWidth, fontRenderer.FONT_HEIGHT));
         if (uiAccess != null) {
             uiAccess.notifySizeChange();
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        if (clientWidget && textSupplier != null) {
+            String newString = textSupplier.get();
+            if (!newString.equals(lastText)) {
+                lastText = newString;
+                updateSize();
+            }
+            lastText = newString;
         }
     }
 

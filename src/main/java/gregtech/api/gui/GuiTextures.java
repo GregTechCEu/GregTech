@@ -173,5 +173,9 @@ public class GuiTextures {
     public static final TextureArea TERMINAL_MENU = TextureArea.fullImage("textures/gui/terminal/terminal_menu.png");
     public static final TextureArea TERMINAL_HOME = TextureArea.fullImage("textures/gui/terminal/terminal_home.png");
     public static final TextureArea TERMINAL_SETTING = TextureArea.fullImage("textures/gui/terminal/terminal_setting.png");
+    public static final TextureArea TERMINAL_DELETE = TextureArea.fullImage("textures/gui/terminal/terminal_delete.png");
+    public static final TextureArea TERMINAL_UP = TextureArea.fullImage("textures/gui/terminal/terminal_up.png");
+    public static final TextureArea TERMINAL_DOWN = TextureArea.fullImage("textures/gui/terminal/terminal_down.png");
+    public static final TextureArea TERMINAL_ADD = TextureArea.fullImage("textures/gui/terminal/terminal_add.png");
 
 }

@@ -5,11 +5,17 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
+import java.awt.*;
+
 public class ColorRectTexture implements IGuiTexture{
     private final int color;
 
     public ColorRectTexture(int color) {
         this.color = color;
+    }
+
+    public ColorRectTexture(Color color) {
+        this.color = color.getRGB();
     }
 
     @Override

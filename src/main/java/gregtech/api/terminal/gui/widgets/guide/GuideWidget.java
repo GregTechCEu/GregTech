@@ -1,24 +1,26 @@
 package gregtech.api.terminal.gui.widgets.guide;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.sun.istack.internal.Nullable;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+import gregtech.api.terminal.gui.IDraggable;
+import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+import gregtech.api.terminal.gui.widgets.guide.congiurator.NumberConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.congiurator.StringConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.congiurator.TextListConfigurator;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
-import javafx.geometry.Pos;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
-public abstract class GuideWidget extends Widget implements IGuideWidget {
+public abstract class GuideWidget extends Widget implements IGuideWidget, IDraggable {
     //config
     public String ref;
     public int fill;
@@ -28,6 +30,7 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
     public List<String> hover_text;
 
     private static final Gson GSON = new Gson();
+    public boolean allowDrag;
     protected transient GuidePageWidget page;
 
     public GuideWidget(int x, int y, int width, int height) {
@@ -38,13 +41,26 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
         super(Position.ORIGIN, Size.ZERO);
     }
 
+    public abstract String getRegistryName();
+
     public void updateValue(String field, JsonElement value) {
         try {
-            Field f = this.getClass().getDeclaredField(field);
-            f.set(this, new Gson().fromJson(value, f.getType()));
+            Field f = this.getClass().getField(field);
+            if (value.isJsonNull()) {  // default
+                f.set(this, f.get(GuidePageWidget.REGISTER_WIDGETS.get(getRegistryName())));
+            } else {
+                f.set(this, new Gson().fromJson(value, f.getType()));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+
+    @Override
+    public void setStroke(int color) {
+        this.stroke = color;
     }
 
     @Override
@@ -89,6 +105,14 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
     }
 
     @Override
+    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
+        group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "stroke_width").setOnUpdated(needUpdate));
+        group.addWidget(new StringConfigurator(5, group.getWidgetBottomHeight() + 5, config, "ref", "").setOnUpdated(needUpdate));
+        group.addWidget(new StringConfigurator(5, group.getWidgetBottomHeight() + 5, config, "link", "").setOnUpdated(needUpdate));
+        group.addWidget(new TextListConfigurator(5, group.getWidgetBottomHeight() + 5, 40, config, "hover_text", true).setOnUpdated(needUpdate));
+    }
+
+    @Override
     public String getRef() {
         return ref;
     }
@@ -129,11 +153,12 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
             Size size = getSize();
             drawBorder(position.x, position.y, size.width, size.height, 0xff0000ff, stroke_width);
         }
-        if (hover_text != null && isMouseOverElement(mouseX, mouseY)) {
-            int scrollYOffset = page.getScrollYOffset();
-            GlStateManager.translate(0, scrollYOffset, 0);
-            drawHoveringText(ItemStack.EMPTY, hover_text, 100, mouseX, mouseY - scrollYOffset);
-            GlStateManager.translate(0, -scrollYOffset, 0);
+        if ((hover_text != null || link != null) && isMouseOverElement(mouseX, mouseY)) {
+            List<String> tooltip = hover_text == null ? new ArrayList<>() : new ArrayList<>(hover_text);
+            if (link != null) {
+                tooltip.add("§9Ctrl+Click§r §e(" + link + ")§r");
+            }
+            drawHoveringText(ItemStack.EMPTY, tooltip, 100, mouseX, mouseY);
         }
     }
 
@@ -151,10 +176,21 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        if (link != null && isMouseOverElement(mouseX, mouseY)) {
+        if (link != null && isMouseOverElement(mouseX, mouseY) && isCtrlDown()) {
            page.jumpToRef(link);
            return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean allowDrag(int mouseX, int mouseY, int button) {
+        return allowDrag && isMouseOverElement(mouseX, mouseY);
+    }
+
+    @Override
+    public boolean setDraggable(boolean isDraggable) {
+        allowDrag = isDraggable;
+        return allowDrag;
     }
 }

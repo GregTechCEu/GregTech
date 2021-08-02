@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import static gregtech.api.gui.impl.ModularUIGui.*;
@@ -27,8 +28,14 @@ public class TabGroup extends AbstractWidgetGroup {
 
     private final List<ITabInfo> tabInfos = new ArrayList<>();
     private final Map<Integer, AbstractWidgetGroup> tabWidgets = new HashMap<>();
-    private int selectedTabIndex = 0;
+    protected int selectedTabIndex = 0;
     private final TabListRenderer tabListRenderer;
+    private BiConsumer<Integer, Integer> onTabChanged;
+
+    public TabGroup(int x, int y, TabListRenderer tabListRenderer) {
+        super(new Position(x, y));
+        this.tabListRenderer = tabListRenderer;
+    }
 
     public TabGroup(TabLocation tabLocation, Position position) {
         super(position);
@@ -39,12 +46,18 @@ public class TabGroup extends AbstractWidgetGroup {
         this(tabLocation, Position.ORIGIN);
     }
 
-    public void addTab(ITabInfo tabInfo, AbstractWidgetGroup tabWidget) {
+    public TabGroup addTab(ITabInfo tabInfo, AbstractWidgetGroup tabWidget) {
         this.tabInfos.add(tabInfo);
         int tabIndex = tabInfos.size() - 1;
         this.tabWidgets.put(tabIndex, tabWidget);
         tabWidget.setVisible(tabIndex == selectedTabIndex);
         addWidget(tabWidget);
+        return this;
+    }
+
+    public TabGroup setOnTabChanged(BiConsumer<Integer, Integer> onTabChanged) {
+        this.onTabChanged = onTabChanged;
+        return this;
     }
 
     @Override
@@ -104,9 +117,13 @@ public class TabGroup extends AbstractWidgetGroup {
     }
 
     private void setSelectedTab(int tabIndex) {
+        int old = selectedTabIndex;
         this.tabWidgets.get(selectedTabIndex).setVisible(false);
         this.tabWidgets.get(tabIndex).setVisible(true);
         this.selectedTabIndex = tabIndex;
+        if (this.onTabChanged != null) {
+            onTabChanged.accept(old, tabIndex);
+        }
     }
 
     @Override

@@ -4,13 +4,13 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
 
-public class ScrollablePanelWidgetGroup extends WidgetGroup {
+public class DraggableScrollableWidgetGroup extends WidgetGroup {
     protected int scrollXOffset;
     protected int scrollYOffset;
     protected int xBarHeight;
@@ -23,47 +23,49 @@ public class ScrollablePanelWidgetGroup extends WidgetGroup {
     protected IGuiTexture xBarF;
     protected IGuiTexture yBarB;
     protected IGuiTexture yBarF;
+    protected boolean focus;
 
     private int lastMouseX;
     private int lastMouseY;
     private boolean draggedPanel;
     private boolean draggedOnXScrollBar;
     private boolean draggedOnYScrollBar;
+    private Widget draggedWidget;
 
 
-    public ScrollablePanelWidgetGroup(int x, int y, int width, int height) {
+    public DraggableScrollableWidgetGroup(int x, int y, int width, int height) {
         super(new Position(x, y), new Size(width, height));
         maxHeight = height;
         maxWidth = width;
     }
 
-    public ScrollablePanelWidgetGroup availableXScrollBarHeight(int xBar) {
+    public DraggableScrollableWidgetGroup setXScrollBarHeight(int xBar) {
         this.xBarHeight = xBar;
         return this;
     }
 
-    public ScrollablePanelWidgetGroup availableYScrollBarWidth(int yBar) {
+    public DraggableScrollableWidgetGroup setYScrollBarWidth(int yBar) {
         this.yBarWidth = yBar;
         return this;
     }
 
-    public ScrollablePanelWidgetGroup setDraggable(boolean draggable) {
+    public DraggableScrollableWidgetGroup setDraggable(boolean draggable) {
         this.draggable = draggable;
         return this;
     }
 
-    public ScrollablePanelWidgetGroup setBackground(IGuiTexture background) {
+    public DraggableScrollableWidgetGroup setBackground(IGuiTexture background) {
         this.background = background;
         return this;
     }
 
-    public ScrollablePanelWidgetGroup setXBarStyle(IGuiTexture background, IGuiTexture bar) {
+    public DraggableScrollableWidgetGroup setXBarStyle(IGuiTexture background, IGuiTexture bar) {
         this.xBarB = background;
         this.xBarF = bar;
         return this;
     }
 
-    public ScrollablePanelWidgetGroup setYBarStyle(IGuiTexture background, IGuiTexture bar) {
+    public DraggableScrollableWidgetGroup setYBarStyle(IGuiTexture background, IGuiTexture bar) {
         this.yBarB = background;
         this.yBarF = bar;
         return this;
@@ -81,6 +83,7 @@ public class ScrollablePanelWidgetGroup extends WidgetGroup {
     public void addWidget(Widget widget) {
         maxHeight = Math.max(maxHeight, widget.getSize().height + widget.getSelfPosition().y);
         maxWidth = Math.max(maxWidth, widget.getSize().width + widget.getSelfPosition().x);
+        widget.addSelfPosition(- scrollXOffset, - scrollYOffset);
         super.addWidget(widget);
     }
 
@@ -103,11 +106,50 @@ public class ScrollablePanelWidgetGroup extends WidgetGroup {
     }
 
     protected void computeMax() {
-        maxHeight = getSize().height;
-        maxWidth = getSize().width;
+        int mh = 0;
+        int mw = 0;
         for (Widget widget : widgets) {
-            maxHeight = Math.max(maxHeight, widget.getSize().height + widget.getSelfPosition().y);
-            maxWidth = Math.max(maxWidth, widget.getSize().width + widget.getSelfPosition().x);
+            mh = Math.max(mh, widget.getSize().height + widget.getSelfPosition().y + scrollYOffset);
+            mw = Math.max(mw, widget.getSize().width + widget.getSelfPosition().x + scrollXOffset);
+        }
+        int offsetY = 0;
+        int offsetX = 0;
+        if (mh > getSize().height && mh < maxHeight) {
+            offsetY = maxHeight - mh;
+            maxHeight = mh;
+            if (scrollYOffset - offsetY < 0) {
+                offsetY = scrollYOffset;
+            }
+            scrollYOffset -= offsetY;
+        } else if (mh < getSize().height) {
+            offsetY = maxHeight - getSize().height;
+            maxHeight = getSize().height;
+            if (scrollYOffset - offsetY < 0) {
+                offsetY = scrollYOffset;
+            }
+            scrollYOffset -= offsetY;
+        }
+        if (mw > getSize().width && mw < maxWidth) {
+            offsetX = maxWidth - mw;
+            maxWidth = mw;
+            if (scrollXOffset - offsetX < 0) {
+                offsetX = scrollXOffset;
+            }
+            scrollXOffset -= offsetX;
+        }else if (mw < getSize().width) {
+            offsetX = maxWidth - getSize().width;
+            maxWidth = getSize().width;
+            if (scrollXOffset - offsetX < 0) {
+                offsetX = scrollXOffset;
+            }
+            scrollXOffset -= offsetX;
+        }
+        if (offsetX != 0 || offsetY != 0) {
+            for (Widget widget : widgets) {
+                Position newPos = widget.addSelfPosition(offsetX, offsetY);
+                widget.setVisible(newPos.x < getSize().width - yBarWidth && newPos.x + widget.getSize().width > 0);
+                widget.setVisible(newPos.y < getSize().height - xBarHeight && newPos.y + widget.getSize().height > 0);
+            }
         }
     }
 
@@ -119,23 +161,31 @@ public class ScrollablePanelWidgetGroup extends WidgetGroup {
         return maxWidth + yBarWidth;
     }
 
+    public int getWidgetBottomHeight() {
+        int y = 0;
+        for (Widget widget : widgets) {
+            y = Math.max(y, widget.getSize().height + widget.getSelfPosition().y);
+        }
+        return y;
+    }
+
     protected void setScrollXOffset(int scrollXOffset) {
         if (scrollXOffset == this.scrollXOffset) return;
+        int offset = scrollXOffset - this.scrollXOffset;
         this.scrollXOffset = scrollXOffset;
-        int minX = this.scrollXOffset + getPosition().x;
-        int maxX = minX + getSize().width;
         for (Widget widget : widgets) {
-            widget.setVisible(widget.getPosition().x < maxX && widget.getPosition().x + widget.getSize().width > minX);
+            Position newPos = widget.addSelfPosition( - offset, 0);
+            widget.setVisible(newPos.x < getSize().width - yBarWidth && newPos.x + widget.getSize().width > 0);
         }
     }
 
     protected void setScrollYOffset(int scrollYOffset) {
         if (scrollYOffset == this.scrollYOffset) return;
+        int offset = scrollYOffset - this.scrollYOffset;
         this.scrollYOffset = scrollYOffset;
-        int minY = this.scrollYOffset + getPosition().y;
-        int maxY = minY + getSize().height;
         for (Widget widget : widgets) {
-            widget.setVisible(widget.getPosition().y < maxY && widget.getPosition().y + widget.getSize().height > minY);
+            Position newPos = widget.addSelfPosition(0, - offset);
+            widget.setVisible(newPos.y < getSize().height - xBarHeight && newPos.y + widget.getSize().height > 0);
         }
     }
 
@@ -151,6 +201,10 @@ public class ScrollablePanelWidgetGroup extends WidgetGroup {
         return isMouseOver(pos.x + size.width - yBarWidth, pos.y, yBarWidth, size.height, mouseX, mouseY);
     }
 
+    protected boolean hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        return false;
+    }
+
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position position = getPosition();
@@ -158,11 +212,11 @@ public class ScrollablePanelWidgetGroup extends WidgetGroup {
         if (background != null) {
             background.draw(position.x, position.y, size.width, size.height);
         }
-        GlStateManager.translate(-scrollXOffset, -scrollYOffset, 0);
         RenderUtil.useScissor(position.x, position.y, size.width - yBarWidth, size.height - xBarHeight, ()->{
-            super.drawInBackground(mouseX +scrollXOffset, mouseY + scrollYOffset, partialTicks, context);
+            if(!hookDrawInBackground(mouseX, mouseY, partialTicks, context)) {
+                super.drawInBackground(mouseX, mouseY, partialTicks, context);
+            }
         });
-        GlStateManager.translate(scrollXOffset, scrollYOffset, 0);
         if (xBarHeight > 0) {
             if (xBarB != null) {
                 xBarB.draw(position.x, position.y - xBarHeight, size.width, xBarHeight);
@@ -181,26 +235,6 @@ public class ScrollablePanelWidgetGroup extends WidgetGroup {
                 yBarF.draw(position.x + size.width  - yBarWidth, position.y + scrollYOffset * size.height * 1.0f / getMaxHeight(), yBarWidth, barHeight);
             }
         }
-
-    }
-
-    private void drawBar(Position position, Size size, int barSize, IGuiTexture barB, IGuiTexture barF, int anotherBarSize) {
-        if (barSize > 0) {
-            if (barB != null) {
-                barB.draw(position.x, position.y - barSize, size.width, barSize);
-            }
-            if (barF != null) {
-                int barWidth = (size.width + anotherBarSize) / getMaxWidth();
-                barF.draw(position.x + scrollXOffset - barSize, position.y, barWidth, barSize);
-            }
-        }
-    }
-
-    @Override
-    public void drawInForeground(int mouseX, int mouseY) {
-        GlStateManager.translate(-scrollXOffset, -scrollYOffset, 0);
-        super.drawInForeground(mouseX, mouseY + scrollYOffset);
-        GlStateManager.translate(scrollXOffset, scrollYOffset, 0);
     }
 
     @Override
@@ -209,17 +243,42 @@ public class ScrollablePanelWidgetGroup extends WidgetGroup {
         lastMouseY = mouseY;
         if (xBarHeight > 0 && isOnXScrollPane(mouseX, mouseY)) {
             this.draggedOnXScrollBar = true;
+            focus = true;
             return true;
         }
         else if (yBarWidth > 0 && isOnYScrollPane(mouseX, mouseY)) {
             this.draggedOnYScrollBar = true;
+            focus = true;
             return true;
         } else if(isMouseOverElement(mouseX, mouseY)){
-            if (super.mouseClicked(mouseX + scrollXOffset, mouseY + scrollYOffset, button)) {
+            focus = true;
+            if (checkClickedDragged(mouseX, mouseY, button)) {
                 return true;
-            } else if (draggable) {
+            }
+            if (draggable) {
                 this.draggedPanel = true;
                 return true;
+            }
+            return false;
+        } else if (checkClickedDragged(mouseX, mouseY, button)) {
+            return true;
+        }
+        focus = false;
+        return false;
+    }
+
+    private boolean checkClickedDragged(int mouseX, int mouseY, int button) {
+        draggedWidget = null;
+        for (int i = widgets.size() - 1; i >= 0; i--) {
+            Widget widget = widgets.get(i);
+            if(widget.isVisible()) {
+                if(widget.mouseClicked(mouseX, mouseY, button)) {
+                    return true;
+                } else if (widget instanceof IDraggable && ((IDraggable) widget).allowDrag(mouseX, mouseY, button)) {
+                    draggedWidget = widget;
+                    ((IDraggable) widget).startDrag(mouseX, mouseY);
+                    return true;
+                }
             }
         }
         return false;
@@ -228,7 +287,7 @@ public class ScrollablePanelWidgetGroup extends WidgetGroup {
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         if (this.isMouseOverElement(mouseX, mouseY, true)) {
-            if (super.mouseWheelMove(mouseX + scrollXOffset, mouseY + scrollYOffset, wheelDelta)) {
+            if (super.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
                 return true;
             }
             int moveDelta = -MathHelper.clamp(wheelDelta, -1, 1) * 5;
@@ -237,22 +296,31 @@ public class ScrollablePanelWidgetGroup extends WidgetGroup {
             }
             return true;
         }
+        focus = false;
         return false;
     }
 
     @Override
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
-        if (draggedOnXScrollBar) {
-            setScrollXOffset(MathHelper.clamp(scrollXOffset + (mouseX - lastMouseX) * getMaxWidth() / getSize().width, 0, Math.max(getMaxWidth() - getSize().width, 0)));
-        } else if (draggedOnYScrollBar) {
-            setScrollYOffset(MathHelper.clamp(scrollYOffset + (mouseY - lastMouseY) * getMaxHeight() / getSize().height, 0, Math.max(getMaxHeight() - getSize().height, 0)));
-        } else if (draggedPanel) {
-            setScrollXOffset(MathHelper.clamp(scrollXOffset + lastMouseX - mouseX, 0, Math.max(getMaxWidth() - yBarWidth - getSize().width, 0)));
-            setScrollYOffset(MathHelper.clamp(scrollYOffset + lastMouseY - mouseY, 0, Math.max(getMaxHeight() - xBarHeight - getSize().height, 0)));
-        }
+        int deltaX = mouseX - lastMouseX;
+        int deltaY = mouseY - lastMouseY;
         lastMouseX = mouseX;
         lastMouseY = mouseY;
-        return super.mouseDragged(mouseX + scrollXOffset, mouseY + scrollYOffset, button, timeDragged);
+        if (draggedOnXScrollBar) {
+            setScrollXOffset(MathHelper.clamp(scrollXOffset + deltaX * getMaxWidth() / getSize().width, 0, Math.max(getMaxWidth() - getSize().width, 0)));
+            return true;
+        } else if (draggedOnYScrollBar) {
+            setScrollYOffset(MathHelper.clamp(scrollYOffset + deltaY * getMaxHeight() / getSize().height, 0, Math.max(getMaxHeight() - getSize().height, 0)));
+            return true;
+        } else if (draggedWidget != null && ((IDraggable)draggedWidget).dragging(mouseX, mouseY, deltaX, deltaY)) {
+            draggedWidget.addSelfPosition(deltaX, deltaY);
+            return true;
+        } else if (draggedPanel) {
+            setScrollXOffset(MathHelper.clamp(scrollXOffset - deltaX, 0, Math.max(getMaxWidth() - yBarWidth - getSize().width, 0)));
+            setScrollYOffset(MathHelper.clamp(scrollYOffset - deltaY, 0, Math.max(getMaxHeight() - xBarHeight - getSize().height, 0)));
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, timeDragged);
     }
 
     @Override
@@ -261,10 +329,13 @@ public class ScrollablePanelWidgetGroup extends WidgetGroup {
             draggedOnXScrollBar = false;
         } else if (draggedOnYScrollBar) {
             draggedOnYScrollBar = false;
+        } else if (draggedWidget != null) {
+            ((IDraggable)draggedWidget).endDrag(mouseX, mouseY);
+            draggedWidget = null;
         } else if (draggedPanel) {
             draggedPanel = false;
         } else {
-            return super.mouseReleased(mouseX + scrollXOffset, mouseY + scrollYOffset, button);
+            return super.mouseReleased(mouseX, mouseY, button);
         }
         return true;
     }

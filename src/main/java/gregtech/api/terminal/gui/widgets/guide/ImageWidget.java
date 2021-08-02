@@ -1,5 +1,6 @@
 package gregtech.api.terminal.gui.widgets.guide;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.GTValues;
 import gregtech.api.gui.IRenderContext;
@@ -8,13 +9,19 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.resources.URLTexture;
+import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+import gregtech.api.terminal.gui.widgets.guide.congiurator.NumberConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.congiurator.StringConfigurator;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.function.Consumer;
+
 public class ImageWidget extends GuideWidget{
+    public final static String NAME = "image";
     //config
     public String form;
     public String source;
@@ -24,13 +31,38 @@ public class ImageWidget extends GuideWidget{
     public transient IGuiTexture image;
 
     @Override
+    public String getRegistryName() {
+        return NAME;
+    }
+
+    @Override
+    public void updateValue(String field, JsonElement value) {
+        super.updateValue(field, value);
+        if (field.equals("width") || field.equals("height")) {
+            this.setSelfPosition(new Position(getSelfPosition().x - (width - getSize().width) / 2, getSelfPosition().y));
+            this.setSize(new Size(width, height));
+        }
+        if (field.equals("form") || field.equals("source")) {
+            initFixed(0,0,0,0,null);
+        }
+    }
+
+    @Override
     public JsonObject getTemplate(boolean isFixed) {
         JsonObject template = super.getTemplate(isFixed);
         template.addProperty("form", "item");
         template.addProperty("source", "minecraft:ender_pearl");
-        template.addProperty("width", 100);
-        template.addProperty("height", 100);
+        template.addProperty("width", 50);
+        template.addProperty("height", 50);
         return template;
+    }
+
+    @Override
+    public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
+        super.loadConfigurator(group, config, isFixed, needUpdate);
+        group.addWidget(new StringConfigurator(5, group.getWidgetBottomHeight() + 5, config, "source").setOnUpdated(needUpdate));
+        group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "width").setOnUpdated(needUpdate));
+        group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "height").setOnUpdated(needUpdate));
     }
 
     @Override
@@ -51,7 +83,7 @@ public class ImageWidget extends GuideWidget{
     protected Widget initFixed(int x, int y, int width, int height, JsonObject config) {
         switch (form) {
             case "url":
-                image = new URLTexture("https://i0.hdslb.com/bfs/article/bcd3d609c1899810113fdb90c8d0e1dd4aa8ed38.gif");
+                image = new URLTexture(source);
                 break;
             case "item":
                 image = new ItemStackTexture(Item.getByNameOrId(source));
@@ -69,7 +101,7 @@ public class ImageWidget extends GuideWidget{
             super.drawInBackground(mouseX, mouseY, partialTicks,context);
             GlStateManager.color(1,1,1,1);
             Position position = getPosition();
-            image.draw(position.x, position.y, width, height);
+            image.draw(position.x, position.y, getSize().width, getSize().height);
         }
     }
 }

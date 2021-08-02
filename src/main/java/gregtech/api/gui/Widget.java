@@ -85,6 +85,12 @@ public abstract class Widget {
         recomputePosition();
     }
 
+    public Position addSelfPosition(int addX, int addY) {
+        this.selfPosition = new Position(selfPosition.x + addX, selfPosition.y + addY);
+        recomputePosition();
+        return this.selfPosition;
+    }
+
     public Position getSelfPosition() {
         return selfPosition;
     }

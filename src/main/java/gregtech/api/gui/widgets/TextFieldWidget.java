@@ -41,6 +41,15 @@ public class TextFieldWidget extends Widget {
         this.textResponder = textResponder;
     }
 
+    public void setCurrentString(String currentString) {
+        this.currentString = currentString;
+        this.textField.setText(currentString);
+    }
+
+    public String getCurrentString() {
+        return this.textField.getText();
+    }
+
     @Override
     protected void onPositionUpdate() {
         if (isClientSide() && textField != null) {

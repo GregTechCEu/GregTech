@@ -17,14 +17,14 @@ import java.util.Collections;
 import java.util.function.Consumer;
 
 public class CircleButtonWidget extends Widget {
-    private final int border;
-    private int hoverTick;
-    private boolean isHover;
-    private String hoverText;
-    private IGuiTexture icon;
-    private final int iconSize;
-    private Consumer<ClickData> onPressCallback;
-    private final int[] colors = {
+    protected int border;
+    protected int hoverTick;
+    protected boolean isHover;
+    protected String hoverText;
+    protected IGuiTexture icon;
+    protected final int iconSize;
+    protected Consumer<ClickData> onPressCallback;
+    protected final int[] colors = {
             new Color(146, 146, 146).getRGB(),
             new Color(39, 232, 141).getRGB(),
             new Color(255, 255, 255).getRGB(),
@@ -57,7 +57,17 @@ public class CircleButtonWidget extends Widget {
         return this;
     }
 
-    public CircleButtonWidget setFillColors(int fill) {
+    public CircleButtonWidget setStroke(int stroke) {
+        colors[0] = stroke;
+        return this;
+    }
+
+    public CircleButtonWidget setStrokeAnima(int strokeAnima) {
+        colors[1] = strokeAnima;
+        return this;
+    }
+
+    public CircleButtonWidget setFill(int fill) {
         colors[2] = fill;
         return this;
     }
@@ -94,7 +104,6 @@ public class CircleButtonWidget extends Widget {
         }
         RenderUtil.renderCircle(x, y, r - border, colors[2], segments);
         if (icon != null) {
-            GlStateManager.color(1,1,1,1);
             icon.draw(x - iconSize / 2f, y - iconSize / 2f, iconSize, iconSize);
         }
     }

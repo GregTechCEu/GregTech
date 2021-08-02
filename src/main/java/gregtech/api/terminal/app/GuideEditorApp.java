@@ -1,8 +1,8 @@
 package gregtech.api.terminal.app;
 
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.terminal.gui.widgets.guide.GuideEditor;
-import gregtech.api.terminal.gui.widgets.guide.GuideEditorPageWidget;
+import gregtech.api.terminal.gui.widgets.guide.GuideConfigEditor;
+import gregtech.api.terminal.gui.widgets.guide.GuidePageEditorWidget;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
@@ -19,8 +19,12 @@ public class GuideEditorApp extends AbstractApplication{
     public AbstractApplication createApp(boolean isClient, NBTTagCompound nbt) {
         if (isClient) {
             GuideEditorApp app = new GuideEditorApp();
-            app.addWidget(new GuideEditor(0, 20, 133, 232));
-            app.addWidget(new GuideEditorPageWidget(133, 0, 200, 232));
+            GuideConfigEditor configEditor = new GuideConfigEditor(0, 0, 133, 232);
+            GuidePageEditorWidget pageEditor = new GuidePageEditorWidget(133, 0, 200, 232);
+            configEditor.setGuidePageEditorWidget(pageEditor);
+            pageEditor.setGuideConfigEditor(configEditor);
+            app.addWidget(pageEditor);
+            app.addWidget(configEditor);
             return app;
         }
         return null;
