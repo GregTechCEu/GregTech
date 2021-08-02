@@ -43,8 +43,8 @@ public class PartsRecipeHandler {
 
         OrePrefix.turbineBlade.addProcessingHandler(ingotProperty, PartsRecipeHandler::processTurbine);
         OrePrefix.rotor.addProcessingHandler(ingotProperty, PartsRecipeHandler::processRotor);
-        OrePrefix.bolt.addProcessingHandler(ingotProperty, PartsRecipeHandler::processBolt);
-        OrePrefix.screw.addProcessingHandler(ingotProperty, PartsRecipeHandler::processScrew);
+        OrePrefix.bolt.addProcessingHandler(dustProperty, PartsRecipeHandler::processBolt);
+        OrePrefix.screw.addProcessingHandler(dustProperty, PartsRecipeHandler::processScrew);
         OrePrefix.wireFine.addProcessingHandler(ingotProperty, PartsRecipeHandler::processFineWire);
         OrePrefix.foil.addProcessingHandler(ingotProperty, PartsRecipeHandler::processFoil);
         OrePrefix.lens.addProcessingHandler(gemProperty, PartsRecipeHandler::processLens);
@@ -57,7 +57,7 @@ public class PartsRecipeHandler {
         OrePrefix.round.addProcessingHandler(ingotProperty, PartsRecipeHandler::processRound);
     }
 
-    public static void processBolt(OrePrefix boltPrefix, Material material, IngotProperty property) {
+    public static void processBolt(OrePrefix boltPrefix, Material material, DustProperty property) {
         ItemStack boltStack = OreDictUnifier.get(boltPrefix, material);
         ItemStack ingotStack = OreDictUnifier.get(OrePrefix.ingot, material);
 
@@ -83,7 +83,7 @@ public class PartsRecipeHandler {
         }
     }
 
-    public static void processScrew(OrePrefix screwPrefix, Material material, IngotProperty property) {
+    public static void processScrew(OrePrefix screwPrefix, Material material, DustProperty property) {
         ItemStack screwStack = OreDictUnifier.get(screwPrefix, material);
 
         RecipeMaps.LATHE_RECIPES.recipeBuilder()
