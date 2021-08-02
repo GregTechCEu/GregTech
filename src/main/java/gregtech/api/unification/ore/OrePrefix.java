@@ -422,7 +422,7 @@ public enum OrePrefix {
 
     public <T extends IMaterialProperty> void addProcessingHandler(T property, TriConsumer<OrePrefix, Material, T> handler) {
         addProcessingHandler((orePrefix, material) -> {
-            if (material.hasProperty(property) && this.doGenerateItem(material)) {
+            if (material.hasProperty(property) && orePrefix.doGenerateItem(material)) {
                 //noinspection unchecked
                 handler.accept(orePrefix, material, (T) material.getProperty(property));
             }
