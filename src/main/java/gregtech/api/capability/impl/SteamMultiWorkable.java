@@ -1,7 +1,6 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
@@ -39,7 +38,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
         if(dirty || forceRecipeRecheck) {
             this.forceRecipeRecheck = false;
 
-            currentRecipe = findRecipe(maxVoltage, importInventory, null);
+            currentRecipe = findRecipe(maxVoltage, importInventory, null, MatchingMode.DEFAULT);
             if (currentRecipe != null) {
                 this.previousRecipe = currentRecipe;
             }
@@ -53,7 +52,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
     }
 
     @Override
-    protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
+    protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
         int currentItemsEngaged = 0;
         final ArrayList<CountableIngredient> recipeInputs = new ArrayList<>();
         final ArrayList<ItemStack> recipeOutputs = new ArrayList<>();
