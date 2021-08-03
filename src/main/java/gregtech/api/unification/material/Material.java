@@ -347,7 +347,6 @@ public class Material implements Comparable<Material> {
     }
 
     protected void verifyMaterial() {
-        System.out.println("Material Name: " + this.toString()); //todo remove
         properties.verify();
         flags.verify(this);
     }
@@ -611,7 +610,6 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        // TODO do this more efficiently
         public Builder components(Object... components) {
             Preconditions.checkArgument(
                     components.length % 2 == 0,
