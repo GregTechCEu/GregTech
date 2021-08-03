@@ -288,7 +288,7 @@ public class SecondDegreeMaterials {
                 .build();
 
         SteelMagnetic = new Material.Builder(2035, "steel_magnetic")
-                .ingot().fluid()
+                .ingot()
                 .color(0x808080).iconSet(MAGNETIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, MORTAR_GRINDABLE)
                 .components(Steel, 1)

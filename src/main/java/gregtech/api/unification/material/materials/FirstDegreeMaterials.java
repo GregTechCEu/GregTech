@@ -1158,7 +1158,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         IronMagnetic = new Material.Builder(395, "iron_magnetic")
-                .ingot().fluid()
+                .ingot()
                 .color(0xC8C8C8).iconSet(MAGNETIC)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE)
                 .components(Iron, 1)
@@ -1309,7 +1309,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         NeodymiumMagnetic = new Material.Builder(418, "neodymium_magnetic")
-                .ingot().fluid()
+                .ingot()
                 .color(0x646464).iconSet(MAGNETIC)
                 .flags(EXT2_METAL, GENERATE_LONG_ROD)
                 .components(Neodymium, 1)
