@@ -149,7 +149,9 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
             }
             // check if neighbour is a smaller item pipe
             TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
-            if(neighbourTile instanceof TileEntityItemPipe && ((TileEntityItemPipe) neighbourTile).getPipeType().getThickness() < selfTHICCness) {
+            if(neighbourTile instanceof TileEntityItemPipe &&
+                    ((TileEntityItemPipe) neighbourTile).isConnectionOpenAny(facing.getOpposite()) &&
+                    ((TileEntityItemPipe) neighbourTile).getPipeType().getThickness() < selfTHICCness) {
                 connections |= 1 << (facing.getIndex() + 6);
             }
         }
