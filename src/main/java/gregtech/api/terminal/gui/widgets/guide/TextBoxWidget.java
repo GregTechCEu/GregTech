@@ -45,7 +45,7 @@ public class TextBoxWidget extends GuideWidget {
         this.stroke = stroke;
         this.isCenter = isCenter;
         this.isShadow = isShadow;
-        this.initFixed(x, y, width, 0, null);
+        this.initFixed();
     }
 
     public TextBoxWidget() {}
@@ -53,14 +53,6 @@ public class TextBoxWidget extends GuideWidget {
     @Override
     public String getRegistryName() {
         return NAME;
-    }
-
-    @Override
-    public void updateValue(String field, JsonElement value) {
-        super.updateValue(field, value);
-        if (field.equals("space") || field.equals("fontSize") || field.equals("content")) {
-            initFixed(getSelfPosition().x, getSelfPosition().y, getSize().width, getSize().height, null);
-        }
     }
 
     @Override
@@ -87,12 +79,12 @@ public class TextBoxWidget extends GuideWidget {
     }
 
     @Override
-    protected Widget initFixed(int x, int y, int width, int height, JsonObject config) {
+    protected Widget initFixed() {
         this.textLines = new ArrayList<>();
         FontRenderer font = Minecraft.getMinecraft().fontRenderer;
         this.space = Math.max(space, 0);
         this.fontSize = Math.max(fontSize, 1);
-        int wrapWidth = width * font.FONT_HEIGHT / fontSize;
+        int wrapWidth = getSize().width * font.FONT_HEIGHT / fontSize;
         if (content != null) {
             for (String textLine : content) {
                 this.textLines.addAll(font.listFormattedStringToWidth(I18n.format(textLine), wrapWidth));

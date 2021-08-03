@@ -25,18 +25,26 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
     protected TextBoxWidget title;
     protected List<Widget> stream = new ArrayList<>();
     protected List<Widget> fixed = new ArrayList<>();
-//    protected int pageWdith;
-
     protected Interpolator interpolator;
+    private final int margin;
 
-    public GuidePageWidget(int xPosition, int yPosition, int width, int height) {
+    public GuidePageWidget(int xPosition, int yPosition, int width, int height, int margin) {
         super(xPosition, yPosition, width, height);
+        this.margin = margin;
         this.setBackground(new ColorRectTexture(-1))
                 .setDraggable(true)
                 .setYScrollBarWidth(4)
                 .setYBarStyle(new ColorRectTexture(new Color(142, 142, 142)),
                         new ColorRectTexture(new Color(148, 226, 193)));
 
+    }
+
+    public int getPageWidth() {
+        return this.getSize().width - yBarWidth;
+    }
+
+    public int getMargin() {
+        return margin;
     }
 
     public void setTitle(String config) {
@@ -69,7 +77,8 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
     }
 
     public void loadJsonConfig(JsonObject config) {
-        int pageWidth = this.getSize().width - yBarWidth;
+        int pageWidth = getPageWidth();
+        int margin = getMargin();
         // add title
         setTitle(config.get("title").getAsString());
 
@@ -79,7 +88,7 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
             int y = title.getSize().height + 10;
             for (JsonElement element : config.getAsJsonArray("stream")) {
                 JsonObject widgetConfig = element.getAsJsonObject();
-                Widget widget = REGISTER_WIDGETS.get(widgetConfig.get("type").getAsString()).createStreamWidget(5, y, pageWidth - 10, widgetConfig);
+                Widget widget = REGISTER_WIDGETS.get(widgetConfig.get("type").getAsString()).createStreamWidget(margin, y, pageWidth - 2 * margin, widgetConfig);
                 y += widget.getSize().height + 5;
                 stream.add(widget);
                 this.addWidget(widget);

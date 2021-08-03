@@ -4,7 +4,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+import gregtech.api.util.Position;
+import gregtech.api.util.Size;
 
 import java.util.function.Consumer;
 
@@ -17,4 +20,5 @@ public interface IGuideWidget {
     JsonObject getTemplate(boolean isFixed);
     void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate);
     void setStroke(int color);
+    void onFixedPositionSizeChanged(Position position, Size size);
 }
