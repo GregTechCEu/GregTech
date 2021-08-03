@@ -238,7 +238,6 @@ public class FirstDegreeMaterials {
                 .color(0xFFFF64).iconSet(SHINY)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE)
                 .components(Silver, 1, Gold, 1)
-                .addOreByproducts(Gold, Silver)
                 .itemPipeProperties(1024, 2)
                 .cableProperties(GTValues.V[3], 3, 2)
                 .build();
@@ -412,7 +411,6 @@ public class FirstDegreeMaterials {
                 .color(0x503264)
                 .flags(NO_SMASHING, EXCLUDE_BLOCK_CRAFTING_RECIPES, GENERATE_PLATE)
                 .components(Magnesium, 1, Iron, 1, Silicon, 2, Oxygen, 4)
-                .addOreByproducts(Olivine)
                 .build();
 
         Phosphate = new Material.Builder(298, "phosphate")
@@ -876,7 +874,7 @@ public class FirstDegreeMaterials {
                 .ingot(1).fluid()
                 .color(0xA0A0A0)
                 .flags(STD_METAL, DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Gallium, 1, Arsenic, 1)
+                .components(Arsenic, 1, Gallium, 1)
                 .blastTemp(1200)
                 .build();
 

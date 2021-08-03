@@ -24,7 +24,6 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME)
                 .element(Elements.Al)
                 .toolStats(10.0f, 2.0f, 128)
-                .addOreByproducts(Bauxite)
                 .cableProperties(GTValues.V[4], 1, 1)
                 .fluidPipeProperties(1166, 35, true)
                 .blastTemp(1700)
@@ -39,13 +38,10 @@ public class ElementMaterials {
                 .build();
 
         Antimony = new Material.Builder(4, "antimony")
-                .ingot().fluid()//.ore()
+                .ingot().fluid().ore()
                 .color(0xDCDCF0).iconSet(SHINY)
                 .flags(EXT_METAL, MORTAR_GRINDABLE)
                 .element(Elements.Sb)
-                //.separatedInto(Iron) //todo
-                //.washedIn(SodiumPersulfate)
-                //.addOreByproducts(Zinc, Iron, Zinc)
                 .build();
 
         Argon = new Material.Builder(5, "argon")
@@ -154,13 +150,11 @@ public class ElementMaterials {
                 .build();
 
         Chrome = new Material.Builder(22, "chrome")
-                .ingot(3).fluid()//.ore()
+                .ingot(3).fluid().ore()
                 .color(0xFFE6E6).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .element(Elements.Cr)
                 .toolStats(12.0f, 3.0f, 512)
-                //.separatedInto(Iron)
-                //.addOreByproducts(Iron, Magnesium)
                 .fluidPipeProperties(2725, 40, true)
                 .blastTemp(1700)
                 .build();
@@ -575,7 +569,6 @@ public class ElementMaterials {
                 .dust()
                 .color(0xFFFF00)
                 .element(Elements.P)
-                .addOreByproducts(Phosphate)
                 .build();
 
         Polonium = new Material.Builder(79, "polonium")
