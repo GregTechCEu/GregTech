@@ -1054,6 +1054,8 @@ item.material.oreprefix.pipeSmallFluid=Small %s Fluid Pipe
 item.material.oreprefix.pipeNormalFluid=Normal %s Fluid Pipe
 item.material.oreprefix.pipeLargeFluid=Large %s Fluid Pipe
 item.material.oreprefix.pipeHugeFluid=Huge %s Fluid Pipe
+item.material.oreprefix.pipeQuadrupleFluid=Quadruple %s Fluid Pipe
+item.material.oreprefix.pipeNonupleFluid=Nonuple %s Fluid Pipe
 item.material.oreprefix.pipeTinyItem=Tiny %s Item Pipe
 item.material.oreprefix.pipeSmallItem=Small %s Item Pipe
 item.material.oreprefix.pipeNormalItem=Normal %s Item Pipe
@@ -3519,6 +3521,7 @@ gregtech.cable.loss_per_block=Loss/Meter/Ampere: §c%,d§7 EU-Volt
 gregtech.fluid_pipe.throughput=§9Transfer Rate: %,d L/s
 gregtech.fluid_pipe.max_temperature=§cTemperature Limit: %,dK
 gregtech.fluid_pipe.non_gas_proof=§aCan't transfer gases.
+gregtech.fluid_pipe.channels=§eChannels: %d
 
 gregtech.item_pipe.rate_items=§9Transfer Rate: %d items/s
 gregtech.item_pipe.rate_stacks=§9Transfer Rate: %d stacks/s

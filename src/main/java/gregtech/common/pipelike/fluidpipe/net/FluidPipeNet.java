@@ -12,6 +12,7 @@ import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
@@ -28,12 +29,11 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
 
     private final Map<BlockPos, List<Inventory>> NET_DATA = new HashMap<>();
 
-    private FluidStack fluid;
-    private int emptyTimer;
+    private FluidStack[] fluids;
+    private int[] emptyTimer;
 
     public FluidPipeNet(WorldPipeNet<FluidPipeProperties, FluidPipeNet> world) {
         super(world);
-        this.emptyTimer = 0;
     }
 
     public List<Inventory> getNetData(BlockPos pipePos) {
@@ -44,17 +44,21 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
         });
     }
 
-    public FluidStack getContainedFluid() {
-        return fluid;
+    public FluidStack getContainedFluid(int channel) {
+        return fluids == null ? null : fluids[channel];
     }
 
-    protected void setContainingFluid(FluidStack stack) {
-        this.fluid = stack;
-        this.emptyTimer = 20;
+    public FluidStack[] getContainedFluids() {
+        return Arrays.copyOf(fluids, fluids.length);
     }
 
-    private void emptyTank() {
-        this.fluid = null;
+    protected void setContainingFluid(FluidStack stack, int channel) {
+        this.fluids[channel] = stack;
+        this.emptyTimer[channel] = 20;
+    }
+
+    private void emptyTank(int channel) {
+        this.fluids[channel] = null;
     }
 
     public void nodeNeighbourChanged(BlockPos pos) {
@@ -67,13 +71,23 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
         NET_DATA.clear();
     }
 
+    @Override
+    protected void addNode(BlockPos nodePos, Node<FluidPipeProperties> node) {
+        super.addNode(nodePos, node);
+        if (fluids == null) {
+            fluids = new FluidStack[node.data.tanks];
+            emptyTimer = new int[node.data.tanks];
+            Arrays.fill(emptyTimer, 0);
+        }
+    }
+
     public void destroyNetwork(BlockPos source, boolean isLeaking, boolean isBurning) {
         World world = getWorldData();
         List<IPipeTile<?, ?>> pipes = PipeGatherer.gatherPipesInDistance(this, world, source, pipe -> pipe instanceof TileEntityFluidPipe, 2 + world.rand.nextInt(5));
-        for(IPipeTile<?, ?> pipeTile : pipes) {
+        for (IPipeTile<?, ?> pipeTile : pipes) {
             BlockPos pos = pipeTile.getPipePos();
             Random random = world.rand;
-            if(isBurning) {
+            if (isBurning) {
                 world.setBlockState(pos, Blocks.FIRE.getDefaultState());
                 TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP,
                         EnumParticleTypes.FLAME, 3 + random.nextInt(2), random);
@@ -90,35 +104,86 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
     }
 
     @Override
-    protected void onConnectionsUpdate() {
-        super.onConnectionsUpdate();
-        //monolithic net always contains exactly one kind of nodes, so this is always safe
-        //int newTankCapacity = nodeData.throughput * getAllNodes().size();
-        //fluidNetTank.updateTankCapacity(newTankCapacity);
-    }
-
-    @Override
     protected void transferNodeData(Map<BlockPos, Node<FluidPipeProperties>> transferredNodes, PipeNet<FluidPipeProperties> parentNet1) {
         super.transferNodeData(transferredNodes, parentNet1);
         FluidPipeNet parentNet = (FluidPipeNet) parentNet1;
         NET_DATA.clear();
         parentNet.NET_DATA.clear();
-        FluidStack parentFluid = parentNet.getContainedFluid();
+        FluidStack parentFluid = parentNet.getContainedFluid(0);
         if (parentFluid != null && parentFluid.amount > 0) {
             if (parentNet.getAllNodes().isEmpty()) {
                 //if this is merge of pipe nets, just add all fluid to our internal tank
                 //use fillInternal to ignore throughput restrictions
-                setContainingFluid(parentFluid);
+                for (int i = 0; i < fluids.length; i++) {
+                    setContainingFluid(parentNet.getContainedFluid(i), i);
+                }
+
             }
         }
+    }
+
+    public boolean areTanksEmpty() {
+        if (fluids == null) return true;
+        for (FluidStack fluidStack : fluids)
+            if (fluidStack != null)
+                return false;
+        return true;
+    }
+
+    /**
+     * Finds a channel for the given stack
+     * if fluids are null an array will be created with the given pipe
+     *
+     * @param pipe  to create fluids for
+     * @param stack to find a channel for
+     * @return channel
+     */
+    public int findChannelWith(TileEntityFluidPipe pipe, FluidStack stack) {
+        if (fluids == null || fluids.length != pipe.getNodeData().tanks) {
+            fluids = new FluidStack[pipe.getNodeData().tanks];
+            emptyTimer = new int[pipe.getNodeData().tanks];
+            Arrays.fill(emptyTimer, 0);
+            return 0;
+        }
+        return findChannel(stack);
+    }
+
+    /**
+     * Finds a channel for the given fluid
+     *
+     * @param stack to find a channel fot
+     * @return channel
+     * @throws NullPointerException if fluids are null
+     */
+    public int findChannel(FluidStack stack) {
+        if (fluids == null)
+            throw new NullPointerException("Fluids can't be null");
+        if (fluids.length == 1) {
+            FluidStack channelStack = fluids[0];
+            return (channelStack == null || channelStack.amount <= 0 || channelStack.isFluidEqual(stack)) ? 0 : -1;
+        }
+        int emptyTank = -1;
+        for (int i = fluids.length - 1; i >= 0; i--) {
+            FluidStack channelStack = fluids[i];
+            if (channelStack == null || channelStack.amount <= 0)
+                emptyTank = i;
+            else if (channelStack.isFluidEqual(stack))
+                return i;
+        }
+        return emptyTank;
     }
 
     @Override
     protected boolean areNodesCustomContactable(FluidPipeProperties first, FluidPipeProperties second, PipeNet<FluidPipeProperties> secondNodeNet) {
         FluidPipeNet fluidPipeNet = (FluidPipeNet) secondNodeNet;
-        return super.areNodesCustomContactable(first, second, secondNodeNet) &&
-                (secondNodeNet == null || getContainedFluid() == null || fluidPipeNet.getContainedFluid() == null ||
-                        getContainedFluid().isFluidEqual(fluidPipeNet.getContainedFluid()));
+        if (!super.areNodesCustomContactable(first, second, secondNodeNet)) return false;
+        if (first.tanks == 1) {
+            return secondNodeNet == null ||
+                    getContainedFluid(0) == null ||
+                    fluidPipeNet.getContainedFluid(0) == null ||
+                    getContainedFluid(0).isFluidEqual(fluidPipeNet.getContainedFluid(0));
+        }
+        return secondNodeNet == null || areTanksEmpty() || fluidPipeNet.areTanksEmpty();
     }
 
     @Override
@@ -139,26 +204,42 @@ public class FluidPipeNet extends MonolithicPipeNet<FluidPipeProperties> impleme
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = super.serializeNBT();
-        if (getContainedFluid() != null) {
-            nbt.setTag("Fluid", getContainedFluid().writeToNBT(new NBTTagCompound()));
-            nbt.setInteger("Timer", emptyTimer);
+        NBTTagList list = new NBTTagList();
+        for (int i = 0; i < fluids.length; i++) {
+            FluidStack stack1 = fluids[i];
+            NBTTagCompound fluidTag = new NBTTagCompound();
+            fluidTag.setInteger("Timer", emptyTimer[i]);
+            if (stack1 == null)
+                fluidTag.setBoolean("isNull", true);
+            else
+                list.appendTag(stack1.writeToNBT(fluidTag));
         }
+        nbt.setTag("Fluids", list);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
         super.deserializeNBT(nbt);
-        if (nbt.hasKey("Fluid")) {
-            setContainingFluid(FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("Fluid")));
-            this.emptyTimer = nbt.getInteger("Timer");
+        NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
+        if (fluids == null) {
+            fluids = new FluidStack[list.tagCount()];
+            emptyTimer = new int[list.tagCount()];
+        }
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTTagCompound tag = list.getCompoundTagAt(i);
+            emptyTimer[i] = tag.getInteger("Timer");
+            if (!tag.hasKey("isNull"))
+                fluids[i] = FluidStack.loadFluidStackFromNBT(tag);
         }
     }
 
     @Override
     public void update() {
-        if (emptyTimer > 0 && --emptyTimer == 0) {
-            emptyTank();
+        if (fluids == null) return;
+        for (int i = 0; i < fluids.length; i++) {
+            if (emptyTimer[i] > 0 && --emptyTimer[i] == 0)
+                emptyTank(i);
         }
     }
 

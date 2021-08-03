@@ -92,6 +92,8 @@ public enum MaterialIconType {
     pipeMedium,
     pipeLarge,
     pipeHuge,
+    pipeQuadruple,
+    pipeNonuple,
 
     //USED FOR GREGIFICATION ADDON
     oreChunk,

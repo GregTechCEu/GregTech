@@ -11,8 +11,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
@@ -22,13 +20,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class FluidNetHandler implements IFluidHandler, IFluidTank {
+public class FluidNetHandler implements IFluidHandler {
 
     private final FluidPipeNet net;
-    private TileEntityFluidPipeTickable pipe;
-    private EnumFacing facing;
+    private final TileEntityFluidPipeTickable pipe;
+    private final EnumFacing facing;
     private int simulatedTransfers = 0;
-    private int capacity;
+    private final int capacity;
+    private int channel = -1;
 
     public FluidNetHandler(FluidPipeNet net, TileEntityFluidPipe pipe, EnumFacing facing) {
         this.net = net;
@@ -42,42 +41,23 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
 
     @Override
     public IFluidTankProperties[] getTankProperties() {
-        return new IFluidTankProperties[]{
-                new FluidTankProperties(getFluid(), getCapacity(), true, false) {
-                    @Override
-                    public boolean canFillFluidType(FluidStack fluidStack) {
-                        return getFluid() == null || getFluid().isFluidEqual(fluidStack);
-                    }
+        FluidStack[] netFluids = net.getContainedFluids();
+        FluidTankProperties[] properties = new FluidTankProperties[netFluids.length];
+        for (int i = 0; i < netFluids.length; i++) {
+            properties[i] = new FluidTankProperties(netFluids[i], capacity, true, false) {
+                @Override
+                public boolean canFillFluidType(FluidStack fluidStack) {
+                    return net.findChannelWith(pipe, fluidStack) >= 0;
                 }
-        };
-    }
-
-    @Nullable
-    @Override
-    public FluidStack getFluid() {
-        return net.getContainedFluid();
-    }
-
-    @Override
-    public int getFluidAmount() {
-        return net.getContainedFluid() == null ? 0 : net.getContainedFluid().amount;
-    }
-
-    @Override
-    public int getCapacity() {
-        return capacity;
-    }
-
-    @Override
-    public FluidTankInfo getInfo() {
-        return new FluidTankInfo(net.getContainedFluid(), getCapacity());
+            };
+        }
+        return properties;
     }
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
-        FluidStack netFluid = net.getContainedFluid();
         if (resource == null || resource.amount <= 0 || resource.getFluid() == null) return 0;
-        if (netFluid != null && !resource.isFluidEqual(netFluid)) return 0;
+        if ((channel = net.findChannelWith(pipe, resource)) < 0) return 0;
         simulatedTransfers = 0;
         CoverBehavior pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
         CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);
@@ -203,7 +183,7 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
         if (max >= stack.amount) {
             int inserted = handler.fill(stack, doFill);
             if (inserted > 0) {
-                if (doFill) net.setContainingFluid(stack);
+                if (doFill) net.setContainingFluid(stack, channel);
                 transfer(pipe, doFill, inserted);
             }
             return inserted;
@@ -212,7 +192,7 @@ public class FluidNetHandler implements IFluidHandler, IFluidTank {
         toInsert.amount = Math.min(max, stack.amount);
         int inserted = handler.fill(toInsert, doFill);
         if (inserted > 0) {
-            if (doFill) net.setContainingFluid(toInsert);
+            if (doFill) net.setContainingFluid(toInsert, channel);
             transfer(pipe, doFill, inserted);
         }
         return inserted;
