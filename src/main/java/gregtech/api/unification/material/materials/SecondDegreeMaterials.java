@@ -2,6 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
@@ -296,6 +297,7 @@ public class SecondDegreeMaterials {
                 .macerateInto(Steel)
                 .blastTemp(1000)
                 .build();
+        Steel.getProperty(PropertyKey.INGOT).setMagneticMaterial(SteelMagnetic);
 
         VanadiumSteel = new Material.Builder(2036, "vanadium_steel")
                 .ingot(3).fluid()

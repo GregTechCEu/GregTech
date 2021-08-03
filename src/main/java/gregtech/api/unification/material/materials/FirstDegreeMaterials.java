@@ -2,6 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import net.minecraft.init.Enchantments;
 
 import static gregtech.api.unification.material.Materials.*;
@@ -36,6 +37,7 @@ public class FirstDegreeMaterials {
                 .components(Copper, 1)
                 .cableProperties(GTValues.V[1], 1, 1)
                 .build();
+        Copper.getProperty(PropertyKey.INGOT).setArcSmeltingInto(AnnealedCopper);
 
         Asbestos = new Material.Builder(253, "asbestos")
                 .dust(1)
@@ -639,7 +641,6 @@ public class FirstDegreeMaterials {
                         GENERATE_SPRING_SMALL, GENERATE_FRAME, DISABLE_DECOMPOSITION)
                 .components(Iron, 1)
                 .toolStats(6.0f, 3.0f, 512)
-                .polarizesInto(SteelMagnetic)
                 .fluidPipeProperties(2557, 40, true)
                 .cableProperties(GTValues.V[4], 2, 2)
                 .blastTemp(1000)
@@ -741,6 +742,7 @@ public class FirstDegreeMaterials {
                 .toolStats(6.0f, 3.5f, 384)
                 .fluidPipeProperties(2387, 30, true)
                 .build();
+        Iron.getProperty(PropertyKey.INGOT).setSmeltingInto(WroughtIron);
 
         Wulfenite = new Material.Builder(336, "wulfenite")
                 .dust(3).ore()
@@ -1166,6 +1168,7 @@ public class FirstDegreeMaterials {
                 .arcSmeltInto(Iron)
                 .macerateInto(Iron)
                 .build();
+        Iron.getProperty(PropertyKey.INGOT).setMagneticMaterial(IronMagnetic);
 
         TungstenCarbide = new Material.Builder(396, "tungsten_carbide")
                 .ingot().fluid()
@@ -1317,6 +1320,7 @@ public class FirstDegreeMaterials {
                 .macerateInto(Neodymium)
                 .blastTemp(1297)
                 .build();
+        Neodymium.getProperty(PropertyKey.INGOT).setMagneticMaterial(NeodymiumMagnetic);
 
         HydrochloricAcid = new Material.Builder(419, "hydrochloric_acid")
                 .fluid()

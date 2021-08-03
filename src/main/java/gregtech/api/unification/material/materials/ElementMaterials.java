@@ -189,7 +189,6 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_DENSE, GENERATE_SPRING)
                 .element(Elements.Cu)
                 .washedIn(Mercury)
-                .arcSmeltInto(AnnealedCopper)
                 .addOreByproducts(Cobalt, Gold, Nickel, Gold)
                 .cableProperties(GTValues.V[2], 1, 2)
                 .fluidPipeProperties(1696, 10, true)
@@ -375,8 +374,6 @@ public class ElementMaterials {
                 .element(Elements.Fe)
                 .toolStats(7.0f, 2.5f, 256)
                 .washedIn(SodiumPersulfate)
-                .polarizesInto(IronMagnetic)
-                .arcSmeltInto(WroughtIron)
                 .addOreByproducts(Nickel, Tin, Nickel)
                 .cableProperties(GTValues.V[2], 2, 3)
                 .build();
@@ -485,7 +482,6 @@ public class ElementMaterials {
                 .flags(STD_METAL, GENERATE_ROD)
                 .element(Elements.Nd)
                 .toolStats(7.0f, 2.0f, 512)
-                .polarizesInto(NeodymiumMagnetic)
                 .addOreByproducts(Monazite, RareEarth)
                 .blastTemp(1297)
                 .build();
