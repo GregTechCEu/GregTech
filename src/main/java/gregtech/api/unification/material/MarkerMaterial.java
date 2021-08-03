@@ -13,7 +13,7 @@ public final class MarkerMaterial extends Material {
     private final String name;
 
     public MarkerMaterial(String name) {
-        super();
+        super(name);
         this.name = name;
         OreDictUnifier.registerMarkerMaterial(this);
     }
