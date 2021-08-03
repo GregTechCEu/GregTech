@@ -315,7 +315,7 @@ public class PartsRecipeHandler {
     }
 
     public static void processStick(OrePrefix stickPrefix, Material material, DustProperty property) {
-        if (material.hasProperty(PropertyKey.GEM) || material.hasProperty(PropertyKey.GEM)) {
+        if (material.hasProperty(PropertyKey.GEM) || material.hasProperty(PropertyKey.INGOT)) {
             RecipeBuilder<?> builder = RecipeMaps.LATHE_RECIPES.recipeBuilder()
                 .input(material.hasProperty(PropertyKey.GEM) ? OrePrefix.gem : OrePrefix.ingot, material)
                 .duration((int) Math.max(material.getAverageMass() * 2, 1))
