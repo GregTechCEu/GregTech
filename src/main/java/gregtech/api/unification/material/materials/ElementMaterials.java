@@ -43,7 +43,7 @@ public class ElementMaterials {
                 .color(0xDCDCF0).iconSet(SHINY)
                 .flags(EXT_METAL, MORTAR_GRINDABLE)
                 .element(Elements.Sb)
-                //.separatedInto(Iron)
+                //.separatedInto(Iron) //todo
                 //.washedIn(SodiumPersulfate)
                 //.addOreByproducts(Zinc, Iron, Zinc)
                 .build();
@@ -759,10 +759,10 @@ public class ElementMaterials {
                 .element(Elements.Sr)
                 .build();
 
-        Sulfur = new Material.Builder(103, "sulfur") // todo fluid?
+        Sulfur = new Material.Builder(103, "sulfur")
                 .dust().ore()
                 .color(0xC8C800)
-//                .flags(FLAMMABLE) //todo fix this
+                .flags(FLAMMABLE)
                 .element(Elements.S)
                 .addOreByproducts(Sulfur)
                 .build();

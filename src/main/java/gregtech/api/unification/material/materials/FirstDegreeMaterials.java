@@ -47,7 +47,7 @@ public class FirstDegreeMaterials {
         Ash = new Material.Builder(254, "ash")
                 .dust(1)
                 .color(0x969696)
-//                .flags(DISABLE_DECOMPOSITION) todo fix
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
                 .build();
 
