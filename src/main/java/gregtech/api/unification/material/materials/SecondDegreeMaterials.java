@@ -36,7 +36,6 @@ public class SecondDegreeMaterials {
                 .color(0x644646).iconSet(LIGNITE)
                 .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE)
                 .components(Carbon, 3, Water, 1)
-                .addOreByproducts(Coal)
                 .build();
 
         Olivine = new Material.Builder(2004, "olivine")
@@ -45,7 +44,6 @@ public class SecondDegreeMaterials {
                 .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Magnesium, 2, Iron, 1, SiliconDioxide, 2)
                 .toolStats(7.5f, 3.0f, 312)
-                .addOreByproducts(Pyrope, Magnesium, Manganese)
                 .build();
 
         Opal = new Material.Builder(2005, "opal")
@@ -54,7 +52,6 @@ public class SecondDegreeMaterials {
                 .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
                 .toolStats(7.5f, 3.0f, 312)
-                .addOreByproducts(Tanzanite)
                 .build();
 
         Amethyst = new Material.Builder(2006, "amethyst")
@@ -63,7 +60,6 @@ public class SecondDegreeMaterials {
                 .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(SiliconDioxide, 4, Iron, 1)
                 .toolStats(7.5f, 3.0f, 312)
-                .addOreByproducts(Amethyst)
                 .build();
 
         Lapis = new Material.Builder(2007, "lapis")
@@ -71,7 +67,6 @@ public class SecondDegreeMaterials {
                 .color(0x4646DC).iconSet(LAPIS)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, NO_WORKING, DECOMPOSITION_BY_ELECTROLYZING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Lazurite, 12, Sodalite, 2, Pyrite, 1, Calcite, 1)
-                .addOreByproducts(Lazurite, Sodalite, Pyrite)
                 .build();
 
         Blaze = new Material.Builder(2008, "blaze")
@@ -86,7 +81,6 @@ public class SecondDegreeMaterials {
                 .color(0xFFC8C8).iconSet(FLINT)
                 .flags(NO_SMASHING, NO_SMELTING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Saltpeter, 1)
-                .addOreByproducts(Saltpeter)
                 .build();
 
         Apatite = new Material.Builder(2010, "apatite")
@@ -94,7 +88,6 @@ public class SecondDegreeMaterials {
                 .color(0xC8C8FF).iconSet(DIAMOND)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
                 .components(Calcium, 5, Phosphate, 3, Chlorine, 1)
-                .addOreByproducts(TricalciumPhosphate)
                 .build();
 
         BlackSteel = new Material.Builder(2011, "black_steel")
@@ -141,7 +134,6 @@ public class SecondDegreeMaterials {
                 .color(0xFFFF00).iconSet(FLINT)
                 .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Calcium, 3, Phosphate, 2)
-                .addOreByproducts(Apatite, Phosphate)
                 .build();
 
         GarnetRed = new Material.Builder(2016, "garnet_red")
@@ -150,7 +142,6 @@ public class SecondDegreeMaterials {
                 .flags(STD_SOLID, GENERATE_LENS, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Pyrope, 3, Almandine, 5, Spessartine, 8)
                 .toolStats(7.5f, 3.0f, 156)
-                .addOreByproducts(Spessartine, Pyrope, Almandine)
                 .build();
 
         GarnetYellow = new Material.Builder(2017, "garnet_yellow")
@@ -159,7 +150,6 @@ public class SecondDegreeMaterials {
                 .flags(STD_SOLID, GENERATE_LENS, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
                 .toolStats(7.5f, 3.0f, 156)
-                .addOreByproducts(Andradite, Grossular, Uvarovite)
                 .build();
 
         Marble = new Material.Builder(2018, "marble")
@@ -167,7 +157,6 @@ public class SecondDegreeMaterials {
                 .color(0xC8C8C8).iconSet(FINE)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Magnesium, 1, Calcite, 7)
-                .addOreByproducts(Calcite)
                 .build();
 
         GraniteBlack = new Material.Builder(2019, "granite_black")
@@ -175,7 +164,6 @@ public class SecondDegreeMaterials {
                 .color(0x0A0A0A).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 4, Biotite, 1)
-                .addOreByproducts(Biotite)
                 .build();
 
         GraniteRed = new Material.Builder(2020, "granite_red")
@@ -183,14 +171,12 @@ public class SecondDegreeMaterials {
                 .color(0xFF0080).iconSet(ROUGH)
                 .flags(NO_SMASHING)
                 .components(Aluminium, 2, PotassiumFeldspar, 1, Oxygen, 3)
-                .addOreByproducts(PotassiumFeldspar)
                 .build();
 
         Chrysotile = new Material.Builder(2021, "chrysotile")
                 .dust()
                 .color(0x6E8C6E).iconSet(ROUGH)
                 .components(Asbestos, 1)
-                .addOreByproducts(Asbestos, Silicon, Magnesium)
                 .build();
 
         VanadiumMagnetite = new Material.Builder(2022, "vanadium_magnetite")
@@ -198,44 +184,36 @@ public class SecondDegreeMaterials {
                 .color(0x23233C).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Magnetite, 1, Vanadium, 1)
-                .addOreByproducts(Magnetite, Vanadium)
-                .separatesInto(Gold)
                 .build();
 
         QuartzSand = new Material.Builder(2023, "quartz_sand")
                 .dust(1)
                 .color(0xC8C8C8).iconSet(SAND)
                 .components(CertusQuartz, 1, Quartzite, 1)
-                .addOreByproducts(CertusQuartz, Quartzite, Barite)
                 .build();
 
         Pollucite = new Material.Builder(2024, "pollucite")
                 .dust()
                 .color(0xF0D2D2)
                 .components(Caesium, 2, Aluminium, 2, Silicon, 4, Water, 2, Oxygen, 12)
-                .addOreByproducts(Caesium, Aluminium, Rubidium)
                 .build();
 
         Vermiculite = new Material.Builder(2025, "vermiculite")
                 .dust()
                 .color(0xC8B40F).iconSet(METALLIC)
                 .components(Iron, 3, Aluminium, 4, Silicon, 4, Hydrogen, 2, Water, 4, Oxygen, 12)
-                .addOreByproducts(Iron, Aluminium, Magnesium)
-                .separatesInto(Iron)
                 .build();
 
         Bentonite = new Material.Builder(2026, "bentonite")
                 .dust().ore(7, 1)
                 .color(0xF5D7D2).iconSet(ROUGH)
                 .components(Sodium, 1, Magnesium, 6, Silicon, 12, Hydrogen, 4, Water, 5, Oxygen, 36)
-                .addOreByproducts(Aluminium, Calcium, Magnesium)
                 .build();
 
         FullersEarth = new Material.Builder(2027, "fullers_earth")
-                .dust()
+                .dust().ore()
                 .color(0xA0A078).iconSet(FINE)
                 .components(Magnesium, 1, Silicon, 4, Hydrogen, 1, Water, 4, Oxygen, 11)
-                .addOreByproducts(Aluminium, Silicon, Magnesium)
                 .build();
 
         Pitchblende = new Material.Builder(2028, "pitchblende")
@@ -243,7 +221,6 @@ public class SecondDegreeMaterials {
                 .color(0xC8D200)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Uraninite, 3, Thorium, 1, Lead, 1)
-                .addOreByproducts(Thorium, Uranium238, Lead)
                 .build()
                 .setFormula("(UO2)3ThPb", true);
 
@@ -252,8 +229,6 @@ public class SecondDegreeMaterials {
                 .color(0x324632).iconSet(DIAMOND)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
                 .components(RareEarth, 1, Phosphate, 1)
-                .addOreByproducts(Thorium, Neodymium, RareEarth)
-                .separatedInto(Neodymium)
                 .build();
 
         Mirabilite = new Material.Builder(2030, "mirabilite")

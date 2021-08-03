@@ -18,7 +18,6 @@ public class HigherDegreeMaterials {
                 .color(0xC80000).iconSet(ROUGH)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3)
-                .addOreByproducts(Cinnabar, RareEarth, Glowstone)
                 .build();
 
         EnderEye = new Material.Builder(2508, "ender_eye")
@@ -28,10 +27,9 @@ public class HigherDegreeMaterials {
                 .build();
 
         Diatomite = new Material.Builder(2509, "diatomite")
-                .dust(1)
+                .dust(1).ore()
                 .color(0xE1E1E1)
                 .components(Flint, 8, BandedIron, 1, Sapphire, 1)
-                .addOreByproducts(BandedIron, Sapphire)
                 .build();
 
         RedSteel = new Material.Builder(2510, "red_steel")
@@ -57,7 +55,6 @@ public class HigherDegreeMaterials {
                 .color(0x1E1414).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Olivine, 1, Calcite, 3, Flint, 8, DarkAsh, 4)
-                .addOreByproducts(Olivine, DarkAsh)
                 .build();
 
         GraniticMineralSand = new Material.Builder(2513, "granitic_mineral_sand")
@@ -65,9 +62,6 @@ public class HigherDegreeMaterials {
                 .color(0x283C3C).iconSet(SAND)
                 .components(Magnetite, 1, GraniteBlack, 1)
                 .flags(BLAST_FURNACE_CALCITE_DOUBLE)
-                .addOreByproducts(GraniteBlack, Magnetite)
-                .separatedInto(Gold)
-                .oreSmeltInto(Iron)
                 .build();
 
         Redrock = new Material.Builder(2514, "redrock")
@@ -75,14 +69,12 @@ public class HigherDegreeMaterials {
                 .color(0xFF5032).iconSet(ROUGH)
                 .flags(NO_SMASHING, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Calcite, 2, Flint, 1)
-                .addOreByproducts(Clay)
                 .build();
 
         GarnetSand = new Material.Builder(2515, "garnet_sand")
                 .dust(1)
                 .color(0xC86400).iconSet(SAND)
                 .components(GarnetRed, 1, GarnetYellow, 1)
-                .addOreByproducts(GarnetRed, GarnetYellow)
                 .build();
 
         HSSG = new Material.Builder(2516, "hssg")
@@ -111,9 +103,6 @@ public class HigherDegreeMaterials {
                 .color(0x283228).iconSet(SAND)
                 .components(Magnetite, 1, Basalt, 1)
                 .flags(BLAST_FURNACE_CALCITE_DOUBLE)
-                .addOreByproducts(Basalt, Magnetite)
-                .separatesInto(Gold)
-                .oreSmeltInto(Iron)
                 .build();
 
         HSSE = new Material.Builder(2519, "hsse")

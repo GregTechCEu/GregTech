@@ -63,6 +63,11 @@ public class Materials {
          * Ranges 2500-2999
          */
         HigherDegreeMaterials.register();
+
+        /*
+         * Register info for cyclical references
+         */
+        MaterialFlagAddition.register();
     }
 
     public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();

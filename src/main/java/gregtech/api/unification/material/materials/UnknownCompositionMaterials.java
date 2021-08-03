@@ -317,7 +317,6 @@ public class UnknownCompositionMaterials {
                 .color(0x64C8FF).iconSet(EMERALD)
                 .flags(STD_GEM, NO_SMASHING, NO_SMELTING)
                 .toolStats(12.0f, 3.0f, 128)
-                .addOreByproducts(Vinteum)
                 .addDefaultEnchant(Enchantments.FORTUNE, 2)
                 .build();
 

@@ -19,15 +19,12 @@ public class FirstDegreeMaterials {
                 .color(0xFF0000)
                 .flags(STD_GEM)
                 .components(Aluminium, 2, Iron, 3, Silicon, 3, Oxygen, 12)
-                .addOreByproducts(GarnetRed, Aluminium)
                 .build();
 
         Andradite = new Material.Builder(251, "andradite")
                 .dust(1)
                 .color(0x967800).iconSet(ROUGH)
                 .components(Calcium, 3, Iron, 2, Silicon, 3, Oxygen, 12)
-                .addOreByproducts(GarnetYellow, Iron)
-                .separatedInto(Iron)
                 .build();
 
         AnnealedCopper = new Material.Builder(252, "annealed_copper")
@@ -40,10 +37,9 @@ public class FirstDegreeMaterials {
         Copper.getProperty(PropertyKey.INGOT).setArcSmeltingInto(AnnealedCopper);
 
         Asbestos = new Material.Builder(253, "asbestos")
-                .dust(1)
+                .dust(1).ore()
                 .color(0xE6E6E6)
                 .components(Magnesium, 3, Silicon, 2, Hydrogen, 4, Oxygen, 9)
-                .addOreByproducts(Asbestos, Silicon, Magnesium)
                 .build();
 
         Ash = new Material.Builder(254, "ash")
@@ -57,8 +53,6 @@ public class FirstDegreeMaterials {
                 .dust().ore()
                 .color(0x915A5A)
                 .components(Iron, 2, Oxygen, 3)
-                .separatedInto(Iron)
-                .oreSmeltInto(Iron)
                 .build();
 
         BatteryAlloy = new Material.Builder(256, "battery_alloy")
@@ -74,7 +68,6 @@ public class FirstDegreeMaterials {
                 .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 2, Hydrogen, 2, Oxygen, 6)
                 .toolStats(7.0f, 3.0f, 256)
-                .addOreByproducts(Topaz)
                 .build();
 
         Bone = new Material.Builder(258, "bone")
@@ -107,41 +100,30 @@ public class FirstDegreeMaterials {
                 .color(0xC86400).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING, BLAST_FURNACE_CALCITE_TRIPLE)
                 .components(Iron, 1, Hydrogen, 1, Oxygen, 2)
-                .addOreByproducts(Malachite, YellowLimonite)
-                .separatedInto(Iron)
-                .oreSmeltInto(Iron)
                 .build();
 
         Calcite = new Material.Builder(262, "calcite")
                 .dust(1).ore()
                 .color(0xFAE6DC)
                 .components(Calcium, 1, Carbon, 1, Oxygen, 3)
-                .addOreByproducts(Andradite, Malachite)
                 .build();
 
         Cassiterite = new Material.Builder(263, "cassiterite")
                 .dust(1).ore(2, 1)
                 .color(0xDCDCDC).iconSet(METALLIC)
                 .components(Tin, 1, Oxygen, 2)
-                .addOreByproducts(Tin, Bismuth)
-                .oreSmeltInto(Tin)
                 .build();
 
         CassiteriteSand = new Material.Builder(264, "cassiterite_sand")
                 .dust(1).ore(2, 1)
                 .color(0xDCDCDC).iconSet(SAND)
                 .components(Tin, 1, Oxygen, 2)
-                .addOreByproducts(Tin)
-                .oreSmeltInto(Tin)
                 .build();
 
         Chalcopyrite = new Material.Builder(265, "chalcopyrite")
                 .dust(1).ore()
                 .color(0xA07828)
                 .components(Copper, 1, Iron, 1, Sulfur, 2)
-                .addOreByproducts(Pyrite, Cobalt, Cadmium, Gold)
-                .washedIn(Mercury)
-                .oreSmeltInto(Copper)
                 .build();
 
         Charcoal = new Material.Builder(266, "charcoal")
@@ -155,9 +137,6 @@ public class FirstDegreeMaterials {
                 .dust(1).ore()
                 .color(0x23140F).iconSet(METALLIC)
                 .components(Iron, 1, Chrome, 2, Oxygen, 4)
-                .addOreByproducts(Iron, Magnesium)
-                .separatedInto(Iron)
-                .oreSmeltInto(Chrome)
                 .build();
 
         Cinnabar = new Material.Builder(268, "cinnabar")
@@ -165,7 +144,6 @@ public class FirstDegreeMaterials {
                 .color(0x960000).iconSet(EMERALD)
                 .flags(CRYSTALLIZABLE, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Mercury, 1, Sulfur, 1)
-                .addOreByproducts(Redstone, Sulfur, Glowstone)
                 .build();
 
         Water = new Material.Builder(269, "water")
@@ -187,25 +165,18 @@ public class FirstDegreeMaterials {
                 .color(0x464646).iconSet(LIGNITE)
                 .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
-                .addOreByproducts(Lignite, Thorium)
                 .build();
 
         Cobaltite = new Material.Builder(272, "cobaltite")
                 .dust(1).ore()
                 .color(0x5050FA).iconSet(METALLIC)
                 .components(Cobalt, 1, Arsenic, 1, Sulfur, 1)
-                .addOreByproducts(Cobalt, Cobaltite)
-                .washedIn(SodiumPersulfate)
-                .oreSmeltInto(Cobalt)
                 .build();
 
         Cooperite = new Material.Builder(273, "cooperite")
                 .dust(1).ore()
                 .color(0xFFFFC8).iconSet(METALLIC)
                 .components(Platinum, 3, Nickel, 1, Sulfur, 1, Palladium, 1)
-                .addOreByproducts(Palladium, Nickel, Iridium, Cooperite)
-                .washedIn(Mercury)
-                .oreSmeltInto(Platinum)
                 .build();
 
         Cupronickel = new Material.Builder(274, "cupronickel")
@@ -230,7 +201,6 @@ public class FirstDegreeMaterials {
                 .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING, FLAMMABLE, GENERATE_BOLT_SCREW,
                         HIGH_SIFTER_OUTPUT, DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .toolStats(8.0f, 3.0f, 1280)
-                .addOreByproducts(Graphite)
                 .build();
 
         Electrum = new Material.Builder(277, "electrum")
@@ -248,7 +218,6 @@ public class FirstDegreeMaterials {
                 .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Beryllium, 3, Aluminium, 2, Silicon, 6, Oxygen, 18)
                 .toolStats(10.0f, 2.0f, 368)
-                .addOreByproducts(Beryllium, Aluminium)
                 .build();
 
         Galena = new Material.Builder(279, "galena")
@@ -256,18 +225,12 @@ public class FirstDegreeMaterials {
                 .color(0x643C64)
                 .flags(NO_SMELTING)
                 .components(Lead, 3, Silver, 3, Sulfur, 2)
-                .addOreByproducts(Sulfur, Silver, Lead, Silver)
-                .washedIn(Mercury)
-                .oreSmeltInto(Lead)
                 .build();
 
         Garnierite = new Material.Builder(280, "garnierite")
                 .dust(3).ore()
                 .color(0x32C846).iconSet(METALLIC)
                 .components(Nickel, 1, Oxygen, 1)
-                .addOreByproducts(Nickel)
-                .washedIn(SodiumPersulfate)
-                .oreSmeltInto(Nickel)
                 .build();
 
         GreenSapphire = new Material.Builder(281, "green_sapphire")
@@ -276,14 +239,12 @@ public class FirstDegreeMaterials {
                 .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(8.0f, 3.0f, 368)
-                .addOreByproducts(Aluminium, Sapphire)
                 .build();
 
         Grossular = new Material.Builder(282, "grossular")
                 .dust(1).ore(6, 1)
                 .color(0xC86400).iconSet(ROUGH)
                 .components(Calcium, 3, Aluminium, 2, Silicon, 3, Oxygen, 12)
-                .addOreByproducts(GarnetYellow, Calcium)
                 .build();
 
         Ice = new Material.Builder(283, "ice")
@@ -298,8 +259,6 @@ public class FirstDegreeMaterials {
                 .color(0x463732).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Iron, 1, Titanium, 1, Oxygen, 3)
-                .addOreByproducts(Iron, Rutile)
-                .separatedInto(Iron)
                 .build();
 
         Rutile = new Material.Builder(285, "rutile")
@@ -314,7 +273,6 @@ public class FirstDegreeMaterials {
                 .color(0xC86400)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Rutile, 2, Aluminium, 16, Hydrogen, 10, Oxygen, 11)
-                .addOreByproducts(Grossular, Rutile, Gallium)
                 .build();
 
         Invar = new Material.Builder(287, "invar")
@@ -341,7 +299,6 @@ public class FirstDegreeMaterials {
                 .color(0x6478FF).iconSet(LAPIS)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_ROD, DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Aluminium, 6, Silicon, 6, Calcium, 8, Sodium, 8)
-                .addOreByproducts(Sodalite, Lapis)
                 .build();
 
         Magnalium = new Material.Builder(290, "magnalium")
@@ -357,26 +314,18 @@ public class FirstDegreeMaterials {
                 .dust().ore()
                 .color(0xFAFAB4).iconSet(METALLIC)
                 .components(Magnesium, 1, Carbon, 1, Oxygen, 3)
-                .addOreByproducts(Magnesium)
-                .oreSmeltInto(Magnesium)
                 .build();
 
         Magnetite = new Material.Builder(292, "magnetite")
                 .dust().ore()
                 .color(0x1E1E1E).iconSet(METALLIC)
                 .components(Iron, 3, Oxygen, 4)
-                .addOreByproducts(Iron, Gold)
-                .separatedInto(Gold)
-                .washedIn(Mercury)
-                .oreSmeltInto(Iron)
                 .build();
 
         Molybdenite = new Material.Builder(293, "molybdenite")
                 .dust().ore()
                 .color(0x191919).iconSet(METALLIC)
                 .components(Molybdenum, 1, Sulfur, 2)
-                .addOreByproducts(Molybdenum)
-                .oreSmeltInto(Molybdenum)
                 .build();
 
         Nichrome = new Material.Builder(294, "nichrome")
@@ -418,7 +367,6 @@ public class FirstDegreeMaterials {
                 .color(0xFFFF00)
                 .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE, EXPLOSIVE)
                 .components(Phosphorus, 1, Oxygen, 4)
-                .addOreByproducts(Phosphorus)
                 .build();
 
         PigIron = new Material.Builder(299, "pig_iron")
@@ -488,24 +436,18 @@ public class FirstDegreeMaterials {
                 .color(0x967828).iconSet(ROUGH)
                 .flags(BLAST_FURNACE_CALCITE_DOUBLE)
                 .components(Iron, 1, Sulfur, 2)
-                .addOreByproducts(Sulfur, TricalciumPhosphate, Iron)
-                .separatedInto(Iron)
-                .oreSmeltInto(Iron)
                 .build();
 
         Pyrolusite = new Material.Builder(307, "pyrolusite")
                 .dust().ore()
                 .color(0x9696AA)
                 .components(Manganese, 1, Oxygen, 2)
-                .addOreByproducts(Manganese)
-                .oreSmeltInto(Manganese)
                 .build();
 
         Pyrope = new Material.Builder(308, "pyrope")
                 .dust().ore(4, 1)
                 .color(0x783264).iconSet(METALLIC)
                 .components(Aluminium, 2, Magnesium, 3, Silicon, 3, Oxygen, 12)
-                .addOreByproducts(GarnetRed, Magnesium)
                 .build();
 
         RockSalt = new Material.Builder(309, "rock_salt")
@@ -513,7 +455,6 @@ public class FirstDegreeMaterials {
                 .color(0xF0C8C8).iconSet(FINE)
                 .flags(NO_SMASHING)
                 .components(Potassium, 1, Chlorine, 1)
-                .addOreByproducts(Salt, Borax)
                 .build();
 
         Rubber = new Material.Builder(310, "rubber")
@@ -529,7 +470,6 @@ public class FirstDegreeMaterials {
                 .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Chrome, 1, Aluminium, 2, Oxygen, 3)
                 .toolStats(8.5f, 3.0f, 256)
-                .addOreByproducts(Chrome, GarnetRed)
                 .build();
 
         Salt = new Material.Builder(312, "salt")
@@ -537,7 +477,6 @@ public class FirstDegreeMaterials {
                 .color(0xFAFAFA).iconSet(FINE)
                 .flags(NO_SMASHING)
                 .components(Sodium, 1, Chlorine, 1)
-                .addOreByproducts(RockSalt, Borax)
                 .build();
 
         Saltpeter = new Material.Builder(313, "saltpeter")
@@ -545,7 +484,6 @@ public class FirstDegreeMaterials {
                 .color(0xE6E6E6).iconSet(FINE)
                 .flags(NO_SMASHING, NO_SMELTING, FLAMMABLE)
                 .components(Potassium, 1, Nitrogen, 1, Oxygen, 3)
-                .addOreByproducts(Saltpeter)
                 .build();
 
         Sapphire = new Material.Builder(314, "sapphire")
@@ -554,7 +492,6 @@ public class FirstDegreeMaterials {
                 .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(7.5f, 4.0f, 256)
-                .addOreByproducts(Aluminium, GreenSapphire)
                 .build();
 
         Scheelite = new Material.Builder(315, "scheelite")
@@ -562,7 +499,6 @@ public class FirstDegreeMaterials {
                 .color(0xC88C14)
                 .flags(DECOMPOSITION_REQUIRES_HYDROGEN)
                 .components(Tungsten, 1, Calcium, 2, Oxygen, 4)
-                .addOreByproducts(Manganese, Molybdenum, Calcium)
                 .build();
 
         Sodalite = new Material.Builder(316, "sodalite")
@@ -570,7 +506,6 @@ public class FirstDegreeMaterials {
                 .color(0x1414FF).iconSet(LAPIS)
                 .flags(GENERATE_PLATE, GENERATE_ROD, NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Aluminium, 3, Silicon, 3, Sodium, 4, Chlorine, 1)
-                .addOreByproducts(Lazurite, Lapis)
                 .build();
 
         DiamericiumTitanium = new Material.Builder(317, "diamericium_titanium")
@@ -587,7 +522,6 @@ public class FirstDegreeMaterials {
                 .dust(3).ore(2, 1)
                 .color(0x915028).iconSet(METALLIC)
                 .components(Manganese, 1, Tantalum, 2, Oxygen, 6)
-                .addOreByproducts(Manganese, Niobium, Tantalum)
                 .build();
 
         Coke = new Material.Builder(319, "coke")
@@ -609,7 +543,6 @@ public class FirstDegreeMaterials {
                 .dust().ore(2, 1)
                 .color(0xFF6464)
                 .components(Aluminium, 2, Manganese, 3, Silicon, 3, Oxygen, 12)
-                .addOreByproducts(GarnetRed, Manganese)
                 .build();
 
         Sphalerite = new Material.Builder(322, "sphalerite")
@@ -617,9 +550,6 @@ public class FirstDegreeMaterials {
                 .color(0xFFFFFF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Zinc, 1, Sulfur, 1)
-                .addOreByproducts(GarnetYellow, Cadmium, Gallium, Zinc)
-                .washedIn(SodiumPersulfate)
-                .oreSmeltInto(Zinc)
                 .build();
 
         StainlessSteel = new Material.Builder(323, "stainless_steel")
@@ -649,8 +579,6 @@ public class FirstDegreeMaterials {
                 .color(0x464646).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Antimony, 2, Sulfur, 3)
-                .addOreByproducts(Antimony)
-                .oreSmeltInto(Antimony)
                 .build();
 
         Tanzanite = new Material.Builder(326, "tanzanite")
@@ -659,16 +587,12 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Calcium, 2, Aluminium, 3, Silicon, 3, Hydrogen, 1)
                 .toolStats(7.0f, 2.0f, 256)
-                .addOreByproducts(Opal)
                 .build();
 
         Tetrahedrite = new Material.Builder(327, "tetrahedrite")
                 .dust().ore()
                 .color(0xC82000)
                 .components(Copper, 3, Antimony, 1, Sulfur, 3, Iron, 1)
-                .addOreByproducts(Antimony, Zinc, Tetrahedrite)
-                .washedIn(SodiumPersulfate)
-                .oreSmeltInto(Copper)
                 .build();
 
         TinAlloy = new Material.Builder(328, "tin_alloy")
@@ -685,7 +609,6 @@ public class FirstDegreeMaterials {
                 .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 1, Hydrogen, 2)
                 .toolStats(7.0f, 2.0f, 256)
-                .addOreByproducts(BlueTopaz)
                 .build();
 
         Tungstate = new Material.Builder(330, "tungstate")
@@ -693,8 +616,6 @@ public class FirstDegreeMaterials {
                 .color(0x373223)
                 .flags(DECOMPOSITION_REQUIRES_HYDROGEN)
                 .components(Tungsten, 1, Lithium, 2, Oxygen, 4)
-                .addOreByproducts(Manganese, Silver, Lithium, Silver)
-                .washedIn(Mercury)
                 .build();
 
         Ultimet = new Material.Builder(331, "ultimet")
@@ -712,7 +633,6 @@ public class FirstDegreeMaterials {
                 .color(0x232323).iconSet(METALLIC)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Uranium238, 1, Oxygen, 2)
-                .addOreByproducts(Uranium238, Thorium, Uranium235)
                 .build()
                 .setFormula("UO2", true);
 
@@ -720,7 +640,6 @@ public class FirstDegreeMaterials {
                 .dust()
                 .color(0xB4FFB4).iconSet(DIAMOND)
                 .components(Calcium, 3, Chrome, 2, Silicon, 3, Oxygen, 12)
-                .addOreByproducts(GarnetYellow, Chrome)
                 .build();
 
         VanadiumGallium = new Material.Builder(334, "vanadium_gallium")
@@ -753,10 +672,6 @@ public class FirstDegreeMaterials {
                 .color(0xC8C800).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING, BLAST_FURNACE_CALCITE_DOUBLE)
                 .components(Iron, 1, Hydrogen, 1, Oxygen, 2)
-                .addOreByproducts(Nickel, BrownLimonite, Cobalt, Nickel)
-                .separatedInto(Iron)
-                .washedIn(SodiumPersulfate)
-                .oreSmeltInto(Iron)
                 .build();
 
         YttriumBariumCuprate = new Material.Builder(338, "yttrium_barium_cuprate")
@@ -772,7 +687,6 @@ public class FirstDegreeMaterials {
                 .color(0xE6D2D2).iconSet(QUARTZ)
                 .flags(STD_SOLID, NO_SMELTING, CRYSTALLIZABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DISABLE_DECOMPOSITION)
                 .components(Silicon, 1, Oxygen, 2)
-                .addOreByproducts(Netherrack)
                 .build();
 
         CertusQuartz = new Material.Builder(214, "certus_quartz")
@@ -780,7 +694,6 @@ public class FirstDegreeMaterials {
                 .color(0xD2D2E6).iconSet(QUARTZ)
                 .flags(STD_SOLID, NO_SMELTING, CRYSTALLIZABLE, DISABLE_DECOMPOSITION)
                 .components(Silicon, 1, Oxygen, 2)
-                .addOreByproducts(Quartzite, Barite)
                 .build();
 
         Quartzite = new Material.Builder(340, "quartzite")
@@ -788,7 +701,6 @@ public class FirstDegreeMaterials {
                 .color(0xD2E6D2).iconSet(QUARTZ)
                 .flags(NO_SMELTING, CRYSTALLIZABLE, DISABLE_DECOMPOSITION, GENERATE_PLATE)
                 .components(Silicon, 1, Oxygen, 2)
-                .addOreByproducts(CertusQuartz, Barite)
                 .build();
 
         Graphite = new Material.Builder(341, "graphite")
@@ -796,7 +708,6 @@ public class FirstDegreeMaterials {
                 .color(0x808080)
                 .flags(STD_METAL, NO_SMELTING, FLAMMABLE, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1)
-                .addOreByproducts(Carbon)
                 .build();
 
         Graphene = new Material.Builder(342, "graphene")
@@ -827,47 +738,36 @@ public class FirstDegreeMaterials {
                 .dust(1).ore()
                 .color(0x606060)
                 .components(Copper, 1, Oxygen, 1)
-                .addOreByproducts(Iron, Manganese, Malachite)
-                .oreSmeltInto(Copper)
                 .build();
 
         Cuprite = new Material.Builder(346, "cuprite")
                 .dust().ore()
                 .color(0x770000).iconSet(RUBY)
                 .components(Copper, 2, Oxygen, 1)
-                .addOreByproducts(Iron, Antimony, Malachite)
-                .oreSmeltInto(Copper)
                 .build();
 
         Bornite = new Material.Builder(347, "bornite")
                 .dust(1).ore()
                 .color(0x97662B).iconSet(METALLIC)
                 .components(Copper, 5, Iron, 1, Sulfur, 4)
-                .addOreByproducts(Pyrite, Cobalt, Cadmium, Gold)
-                .washedIn(Mercury)
-                .oreSmeltInto(Copper)
                 .build();
 
         Chalcocite = new Material.Builder(348, "chalcocite")
                 .dust().ore()
                 .color(0x353535).iconSet(GEM_VERTICAL)
                 .components(Copper, 2, Sulfur, 1)
-                .addOreByproducts(Sulfur, Lead, Silver)
-                .oreSmeltInto(Copper)
                 .build();
 
         Enargite = new Material.Builder(349, "enargite")
                 .dust().ore(2, 1)
                 .color(0xBBBBBB).iconSet(METALLIC)
                 .components(Copper, 3, Arsenic, 1, Sulfur, 4)
-                .addOreByproducts(Pyrite, Zinc, Quartzite)
                 .build();
 
         Tennantite = new Material.Builder(350, "tennantite")
                 .dust().ore(2, 1)
                 .color(0x909090).iconSet(METALLIC)
                 .components(Copper, 12, Arsenic, 4, Sulfur, 13)
-                .addOreByproducts(Iron, Antimony, Zinc)
                 .build();
 
         GalliumArsenide = new Material.Builder(351, "gallium_arsenide")
@@ -1050,57 +950,42 @@ public class FirstDegreeMaterials {
                 .dust().ore(2, 1)
                 .color(0xC86E2D).iconSet(FINE)
                 .components(Cerium, 1, Carbon, 1, Fluorine, 1, Oxygen, 3)
-                .addOreByproducts(Neodymium, RareEarth)
-                .separatedInto(Neodymium)
                 .build();
 
         Pentlandite = new Material.Builder(380, "pentlandite")
                 .dust().ore()
                 .color(0xA59605)
                 .components(Nickel, 9, Sulfur, 8)
-                .addOreByproducts(Iron, Sulfur, Cobalt)
-                .separatedInto(Iron)
-                .washedIn(SodiumPersulfate)
-                .oreSmeltInto(Nickel)
                 .build();
 
         Spodumene = new Material.Builder(381, "spodumene")
                 .dust().ore(2, 1)
                 .color(0xBEAAAA)
                 .components(Lithium, 1, Aluminium, 1, Silicon, 2, Oxygen, 6)
-                .addOreByproducts(Aluminium, Lithium)
                 .build();
 
         Lepidolite = new Material.Builder(382, "lepidolite")
                 .dust().ore(5, 1)
                 .color(0xF0328C).iconSet(FINE)
                 .components(Potassium, 1, Lithium, 3, Aluminium, 4, Fluorine, 2, Oxygen, 10)
-                .addOreByproducts(Lithium, Caesium, Boron)
                 .build();
 
         Glauconite = new Material.Builder(383, "glauconite")
                 .dust().ore()
                 .color(0x82B43C)
                 .components(Potassium, 1, Magnesium, 2, Aluminium, 4, Hydrogen, 2, Oxygen, 12)
-                .addOreByproducts(Sodium, Aluminium, Iron)
-                .separatedInto(Iron)
                 .build();
 
         GlauconiteSand = new Material.Builder(384, "glauconite_sand")
                 .dust()
                 .color(0x82B43C).iconSet(SAND)
                 .components(Potassium, 1, Magnesium, 2, Aluminium, 4, Hydrogen, 2, Oxygen, 12)
-                .addOreByproducts(Sodium, Aluminium, Iron)
-                .separatedInto(Iron)
                 .build();
 
         Malachite = new Material.Builder(385, "malachite")
                 .dust().ore()
                 .color(0x055F05)
                 .components(Copper, 2, Carbon, 1, Hydrogen, 2, Oxygen, 5)
-                .addOreByproducts(Copper, BrownLimonite, Calcite, Copper)
-                .washedIn(SodiumPersulfate)
-                .oreSmeltInto(Copper)
                 .build();
 
         Mica = new Material.Builder(386, "mica")
