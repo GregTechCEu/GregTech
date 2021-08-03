@@ -51,7 +51,7 @@ public class PipeGatherer extends PipeNetWalker {
     }
 
     @Override
-    protected boolean isValidPipe(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        return pipePredicate.test(pipeTile);
+    protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
+        return pipePredicate.test(neighbourPipe);
     }
 }
