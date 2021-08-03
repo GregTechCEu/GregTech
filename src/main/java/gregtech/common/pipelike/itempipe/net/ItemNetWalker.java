@@ -58,7 +58,7 @@ public class ItemNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected boolean isValidPipe(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        return pipeTile instanceof TileEntityItemPipe;
+    protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
+        return neighbourPipe instanceof TileEntityItemPipe;
     }
 }

@@ -1,8 +1,8 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.common.pipelike.itempipe.net.ItemNetWalker;
 import gregtech.common.pipelike.fluidpipe.net.FluidNetWalker;
+import gregtech.common.pipelike.itempipe.net.ItemNetWalker;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -70,12 +70,13 @@ public abstract class PipeNetWalker {
     /**
      * If the pipe is valid to perform a walk on
      *
-     * @param pipeTile        tile to check
+     * @param currentPipe     current pipe
+     * @param neighbourPipe   neighbour pipe to check
      * @param pipePos         current pos (tile.getPipePos() != pipePos)
      * @param faceToNeighbour face to pipeTile
      * @return if the pipe is valid
      */
-    protected abstract boolean isValidPipe(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour);
+    protected abstract boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour);
 
     public void traversePipeNet() {
         traversePipeNet(Integer.MAX_VALUE);
@@ -146,10 +147,14 @@ public abstract class PipeNetWalker {
             TileEntity tile = world.getTileEntity(pos.offset(accessSide));
             if (tile instanceof IPipeTile) {
                 IPipeTile<?, ?> otherPipe = (IPipeTile<?, ?>) tile;
-                if (!otherPipe.isWalked() && isValidPipe(otherPipe, pos, accessSide))
+                if (otherPipe.isWalked())
+                    continue;
+                if (isValidPipe(pipeTile, otherPipe, pos, accessSide)) {
                     pipes.add(accessSide);
-            } else
-                checkNeighbour(pos, accessSide, tile);
+                    continue;
+                }
+            }
+            checkNeighbour(pos, accessSide, tile);
         }
     }
 

@@ -48,7 +48,7 @@ public class FluidNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected boolean isValidPipe(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        return pipeTile instanceof TileEntityFluidPipe;
+    protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
+        return neighbourPipe instanceof TileEntityFluidPipe && ((TileEntityFluidPipe) currentPipe).getNodeData().tanks == ((TileEntityFluidPipe) neighbourPipe).getNodeData().tanks;
     }
 }
