@@ -339,6 +339,14 @@ public class Material implements Comparable<Material> {
         return properties.getProperty(key);
     }
 
+    public <T extends IMaterialProperty<T>> void setProperty(PropertyKey<T> key, IMaterialProperty<T> property) {
+        if (MaterialRegistry.isFrozen()) {
+            throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
+        }
+        properties.setProperty(key, property);
+        properties.ensureSet(key, true);
+    }
+
     public boolean isSolid() {
         return hasProperty(PropertyKey.INGOT) || hasProperty(PropertyKey.GEM);
     }
