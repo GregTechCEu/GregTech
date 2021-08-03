@@ -177,15 +177,18 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             syncPipeConnections(attachmentType, side);
             return;
         }
-
-        int openConnections = openConnectionsMap.get(attachmentType.ordinal());
+        int at = attachmentType.ordinal();
+        int openConnections = openConnectionsMap.get(at);
         this.openConnectionsMap.put(attachmentType.ordinal(), withSideConnectionBlocked(openConnections, side, blocked));
         recomputeBlockedConnections();
         if (!getWorld().isRemote) {
             if (!detachedConversionMode) {
                 updateSideBlockedConnection(side);
             }
-            writeCustomData(-2, buffer -> buffer.writeVarInt(this.openConnections));
+            writeCustomData(-2, buffer -> {
+                buffer.writeVarInt(at);
+                buffer.writeVarInt(openConnectionsMap.get(at));
+            });
             markDirty();
         }
         if (attachmentType == AttachmentType.PIPE && !fromNeighbor) {
@@ -379,7 +382,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             this.insulationColor = buf.readInt();
             scheduleChunkForRenderUpdate();
         } else if (discriminator == -2) {
-            this.openConnections = buf.readVarInt();
+            this.openConnectionsMap.put(buf.readVarInt(), buf.readVarInt());
+            recomputeBlockedConnections();
             scheduleChunkForRenderUpdate();
         } else if (discriminator == -3) {
             this.coverableImplementation.readCustomData(buf.readVarInt(), buf);
