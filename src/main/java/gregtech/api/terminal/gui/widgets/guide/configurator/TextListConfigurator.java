@@ -1,4 +1,4 @@
-package gregtech.api.terminal.gui.widgets.guide.congiurator;
+package gregtech.api.terminal.gui.widgets.guide.configurator;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -10,7 +10,7 @@ import gregtech.api.terminal.gui.widgets.TextEditorWidget;
 import java.util.List;
 
 public class TextListConfigurator extends ConfiguratorWidget{
-//    private TextEditorWidget textEditorWidget;
+
     public TextListConfigurator(int x, int y, int height, JsonObject config, String name, boolean canDefault) {
         super(x, y, config, name, canDefault);
         JsonElement element = config.get(name);
@@ -29,20 +29,8 @@ public class TextListConfigurator extends ConfiguratorWidget{
         }
     }
 
-//    public TextListConfigurator(int x, int y, int height, JsonObject config, String name, String defaultS) {
-//        super(x, y, config, name, false);
-//        StringBuilder s = new StringBuilder();
-//        for (int i = 0; i < defaultS.size(); i++) {
-//            s.append(defaultS.get(i));
-//            if(i != defaultS.size() - 1) {
-//                s.append('\n');
-//            }
-//        }
-//        init(height, s.toString());
-//    }
-
     private void init(int height, String init) {
-        this.addWidget(new TextEditorWidget(0, 11, 116, height, init, this::updateTextList).setBackground(new ColorRectTexture(-1)));
+        this.addWidget(new TextEditorWidget(0, 15, 116, height, init, this::updateTextList).setBackground(new ColorRectTexture(0xA3FFFFFF)));
     }
 
     private void updateTextList(String saved) {

@@ -8,9 +8,10 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
-import gregtech.api.terminal.gui.widgets.guide.congiurator.NumberConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.congiurator.StringConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.congiurator.TextListConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.configurator.ColorConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.configurator.NumberConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.configurator.StringConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.configurator.TextListConfigurator;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.item.ItemStack;
@@ -106,7 +107,9 @@ public abstract class GuideWidget extends Widget implements IGuideWidget, IDragg
 
     @Override
     public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
-        group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "stroke_width").setOnUpdated(needUpdate));
+        group.addWidget(new ColorConfigurator(5, group.getWidgetBottomHeight() + 5, config, "fill", 0).setOnUpdated(needUpdate));
+        group.addWidget(new ColorConfigurator(5, group.getWidgetBottomHeight() + 5, config, "stroke", 0).setOnUpdated(needUpdate));
+        group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "stroke_width", 1).setOnUpdated(needUpdate));
         group.addWidget(new StringConfigurator(5, group.getWidgetBottomHeight() + 5, config, "ref", "").setOnUpdated(needUpdate));
         group.addWidget(new StringConfigurator(5, group.getWidgetBottomHeight() + 5, config, "link", "").setOnUpdated(needUpdate));
         group.addWidget(new TextListConfigurator(5, group.getWidgetBottomHeight() + 5, 40, config, "hover_text", true).setOnUpdated(needUpdate));

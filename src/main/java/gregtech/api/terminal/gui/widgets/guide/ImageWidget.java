@@ -2,7 +2,6 @@ package gregtech.api.terminal.gui.widgets.guide;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import gregtech.api.GTValues;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
@@ -10,14 +9,16 @@ import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.resources.URLTexture;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
-import gregtech.api.terminal.gui.widgets.guide.congiurator.NumberConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.congiurator.StringConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.configurator.NumberConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.configurator.SelectorConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.configurator.StringConfigurator;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class ImageWidget extends GuideWidget{
@@ -39,7 +40,7 @@ public class ImageWidget extends GuideWidget{
     public void updateValue(String field, JsonElement value) {
         super.updateValue(field, value);
         if (field.equals("width") || field.equals("height")) {
-            this.setSelfPosition(new Position(getSelfPosition().x - (width - getSize().width) / 2, getSelfPosition().y));
+            this.addSelfPosition(- (width - getSize().width) / 2, 0);
             this.setSize(new Size(width, height));
         }
         if (field.equals("form") || field.equals("source")) {
@@ -60,6 +61,7 @@ public class ImageWidget extends GuideWidget{
     @Override
     public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
         super.loadConfigurator(group, config, isFixed, needUpdate);
+        group.addWidget(new SelectorConfigurator(5, group.getWidgetBottomHeight() + 5, config, "form", Arrays.asList("url", "item", "resource")).setOnUpdated(needUpdate));
         group.addWidget(new StringConfigurator(5, group.getWidgetBottomHeight() + 5, config, "source").setOnUpdated(needUpdate));
         group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "width").setOnUpdated(needUpdate));
         group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "height").setOnUpdated(needUpdate));

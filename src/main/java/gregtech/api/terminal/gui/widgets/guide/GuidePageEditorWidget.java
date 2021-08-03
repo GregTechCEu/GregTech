@@ -100,7 +100,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
     }
 
     public JsonObject addGuideWidget(IGuideWidget widget, boolean isFixed) {
-        int pageWidth = this.getSize().width - 5;
+        int pageWidth = this.getSize().width - yBarWidth;
         JsonObject widgetConfig = widget.getTemplate(isFixed);
         Widget guideWidget;
         if (isFixed) {
@@ -117,7 +117,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             this.addWidget(guideWidget);
         } else {
             int y = getStreamBottom();
-            guideWidget = widget.createStreamWidget(5, y + 5, pageWidth, widgetConfig);
+            guideWidget = widget.createStreamWidget(5, y + 5, pageWidth - 10, widgetConfig);
             stream.add(guideWidget);
             this.addWidget(guideWidget);
         }
@@ -280,7 +280,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
 
     @Override
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
-        if (super.mouseDragged(mouseX, mouseY, button, timeDragged)) {
+        if (super.mouseDragged(mouseX, mouseY, button, timeDragged) && toolButtons.isVisible()) {
             setToolButton(selected.getSelfPosition().x, selected.getSelfPosition().y, selected.getSize().width, selected.getSize().height);
             return true;
         }
