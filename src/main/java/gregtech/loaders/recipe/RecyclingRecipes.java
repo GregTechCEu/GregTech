@@ -49,7 +49,7 @@ public class RecyclingRecipes {
         if (material.hasProperty(PropertyKey.BLAST)) {
             int blastFurnaceTemperature = material.getProperty(PropertyKey.BLAST).getBlastTemperature();
             voltageMultiplier = blastFurnaceTemperature == 0 ? 1 : blastFurnaceTemperature > 2000 ? 16 : 4;
-        } else {
+        } else if (!material.hasProperty(PropertyKey.INGOT)){
             //do not apply arc smelting for gems, solid materials and dust materials
             //only generate recipes for ingot materials
             ignoreArcSmelting = true;
