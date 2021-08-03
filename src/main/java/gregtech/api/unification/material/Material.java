@@ -102,6 +102,7 @@ public class Material implements Comparable<Material> {
     // thou shall not call
     protected Material() {
         materialInfo = new MaterialInfo(0, "");
+        materialInfo.iconSet = MaterialIconSet.NONE;
         properties = new MaterialProperties();
         flags = new MaterialFlags();
     }
