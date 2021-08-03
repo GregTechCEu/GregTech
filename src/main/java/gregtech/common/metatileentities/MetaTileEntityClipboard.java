@@ -18,24 +18,21 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.models.ModelCache;
 import gregtech.common.items.behaviors.ClipboardBehaviour;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -48,6 +45,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(2.75 / 16.0, 0.0, 0.0, 13.25 / 16.0, 1.0, 0.4 / 16.0);
     public static final ResourceLocation MODEL_RESOURCE_LOCATION = new ResourceLocation("gregtech", "block/clipboard");
     public static ModelCache cache = new ModelCache();
+    public static final float scale = 1;
 
 
     public MetaTileEntityClipboard(ResourceLocation metaTileEntityId) {
@@ -71,7 +69,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
-        CLIPBOARD_RENDERER.render(renderState, translation, new IVertexOperation[]{}, getFrontFacing());
+        CLIPBOARD_RENDERER.render(renderState, translation, new IVertexOperation[]{}, getFrontFacing(), this);
     }
 
     @Override
@@ -90,7 +88,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     }
 
     @Override
-    protected ModularUI createUI(EntityPlayer entityPlayer) {
+    public ModularUI createUI(EntityPlayer entityPlayer) {
         if (getClipboard().isItemEqual(CLIPBOARD.getStackForm())) {
             List<IItemBehaviour> behaviours = ((MetaItem<?>) getClipboard().getItem()).getBehaviours(getClipboard());
             Optional<IItemBehaviour> clipboardBehaviour = behaviours.stream().filter((x) -> x instanceof ClipboardBehaviour).findFirst();
@@ -163,4 +161,75 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(CLIPBOARD_RENDERER.getParticleTexture(), 0xFFFFFF);
     }
+
+    @SideOnly(Side.CLIENT)
+    public Pair<Double, Double> checkLookingAt(float partialTicks) {
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        if (this.getWorld() != null && player != null) {
+            RayTraceResult rayTraceResult = player.rayTrace(Minecraft.getMinecraft().playerController.getBlockReachDistance(), partialTicks);
+            if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit == this.getFrontFacing()) {
+                int i = -1, j = -1;
+                TileEntity tileEntity = this.getWorld().getTileEntity(rayTraceResult.getBlockPos());
+                if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
+                    MetaTileEntityClipboard clipboardHit = (MetaTileEntityClipboard) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+                    double[] pos = handleRayTraceResult(rayTraceResult, this.getFrontFacing());
+                    pos[0] /= this.scale;
+                    pos[1] /= this.scale;
+                    if (pos[0] >= 0 && pos[0] <= 1 && pos[1] >= 0 && pos[1] <= 1)
+                        return Pair.of(pos[0], pos[1]);
+                }
+            }
+        }
+        return null;
+    }
+
+    private double[] handleRayTraceResult(RayTraceResult rayTraceResult, EnumFacing spin) {
+        double x = 0;
+        double y = 0;
+        double dX = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.X
+                ? rayTraceResult.hitVec.z - rayTraceResult.getBlockPos().getZ()
+                : rayTraceResult.hitVec.x - rayTraceResult.getBlockPos().getX();
+        double dY = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.Y
+                ? rayTraceResult.hitVec.z - rayTraceResult.getBlockPos().getZ()
+                : rayTraceResult.hitVec.y - rayTraceResult.getBlockPos().getY();
+        if (spin == EnumFacing.NORTH) {
+            x = 1 - dX;
+            y = 1 - dY;
+            if (rayTraceResult.sideHit.getYOffset() < 0) {
+                y = 1 - y;
+            }
+        } else if (spin == EnumFacing.SOUTH) {
+            x = dX;
+            y = dY;
+            if (rayTraceResult.sideHit.getYOffset() < 0) {
+                y = 1 - y;
+            }
+        } else if (spin == EnumFacing.EAST) {
+            x = 1 - dY;
+            y = dX;
+            if (rayTraceResult.sideHit.getXOffset() < 0 || rayTraceResult.sideHit.getZOffset() > 0) {
+                x = 1 - x;
+                y = 1 - y;
+            } else if (rayTraceResult.sideHit.getYOffset() < 0) {
+                y = 1 - y;
+            }
+        } else {
+            x = dY;
+            y = 1 - dX;
+            if (rayTraceResult.sideHit.getXOffset() < 0 || rayTraceResult.sideHit.getZOffset() > 0) {
+                x = 1 - x;
+                y = 1 - y;
+            } else if (rayTraceResult.sideHit.getYOffset() < 0) {
+                y = 1 - y;
+            }
+        }
+        if (rayTraceResult.sideHit == EnumFacing.WEST || rayTraceResult.sideHit == EnumFacing.SOUTH) {
+            x = 1 - x;
+        } else if (rayTraceResult.sideHit == EnumFacing.UP) {
+            x = 1 - x;
+            y = 1 - y;
+        }
+        return new double[]{x, y};
+    }
+
 }
