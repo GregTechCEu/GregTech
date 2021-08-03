@@ -194,6 +194,9 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         }
         if ((connections & 1 << 12) > 0) {
             renderPipeSide(renderState, pipeConnectSide, side, cuboid6);
+        } else if ((connections & 1 << (6 + side.getIndex())) > 0) {
+            // if neighbour pipe is smaller, render closed texture
+            renderPipeSide(renderState, pipeline, side, cuboid6);
         }
     }
 
