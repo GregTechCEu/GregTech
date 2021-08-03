@@ -21,6 +21,7 @@ public class LabelWidget extends Widget {
     protected String text;
     protected Object[] formatting;
     private int color;
+    private boolean dropShadow;
 
     public LabelWidget(int xPosition, int yPosition, String text, Object... formatting) {
         this(xPosition, yPosition, text, 0x404040, formatting);
@@ -36,6 +37,11 @@ public class LabelWidget extends Widget {
         this.color = color;
         this.formatting = formatting;
         recomputeSize();
+    }
+
+    public LabelWidget setShadow(boolean dropShadow){
+        this.dropShadow = dropShadow;
+        return this;
     }
 
     private String getResultText() {
@@ -65,10 +71,9 @@ public class LabelWidget extends Widget {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         Position pos = getPosition();
         if (!xCentered) {
-            fontRenderer.drawString(resultText, pos.x, pos.y, color);
+            fontRenderer.drawString(resultText, pos.x, pos.y, color, dropShadow);
         } else {
-            fontRenderer.drawString(resultText,
-                pos.x - fontRenderer.getStringWidth(resultText) / 2, pos.y, color);
+            fontRenderer.drawString(resultText, pos.x - fontRenderer.getStringWidth(resultText) / 2.0f, pos.y, color, dropShadow);
         }
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }

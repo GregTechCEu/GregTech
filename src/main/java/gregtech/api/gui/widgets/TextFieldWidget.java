@@ -2,6 +2,7 @@ package gregtech.api.gui.widgets;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.MCGuiUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -23,15 +24,23 @@ public class TextFieldWidget extends Widget {
 
     protected int maxStringLength = 32;
     protected Predicate<String> textValidator;
-    protected final Supplier<String> textSupplier;
-    protected final Consumer<String> textResponder;
+    protected Supplier<String> textSupplier;
+    protected Consumer<String> textResponder;
     protected String currentString;
+    private IGuiTexture background;
+    private boolean enableBackground;
+    private boolean isClient;
 
     public TextFieldWidget(int xPosition, int yPosition, int width, int height, boolean enableBackground, Supplier<String> textSupplier, Consumer<String> textResponder) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         if (isClientSide()) {
+            this.enableBackground = enableBackground;
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-            this.textField = new GuiTextField(0, fontRenderer, xPosition, yPosition, width, height);
+            if (enableBackground) {
+                this.textField = new GuiTextField(0, fontRenderer, xPosition, yPosition, width, height);
+            } else {
+                this.textField = new GuiTextField(0, fontRenderer, xPosition + 1, yPosition + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, width - 2, height);
+            }
             this.textField.setCanLoseFocus(true);
             this.textField.setEnableBackgroundDrawing(enableBackground);
             this.textField.setMaxStringLength(maxStringLength);
@@ -39,6 +48,34 @@ public class TextFieldWidget extends Widget {
         }
         this.textSupplier = textSupplier;
         this.textResponder = textResponder;
+    }
+
+    public TextFieldWidget(int xPosition, int yPosition, int width, int height, IGuiTexture background, Supplier<String> textSupplier, Consumer<String> textResponder) {
+        super(new Position(xPosition, yPosition), new Size(width, height));
+        if (isClientSide()) {
+            this.enableBackground = false;
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+            this.textField = new GuiTextField(0, fontRenderer, xPosition + 1, yPosition + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, width - 2, height);
+            this.textField.setCanLoseFocus(true);
+            this.textField.setEnableBackgroundDrawing(false);
+            this.textField.setMaxStringLength(maxStringLength);
+            this.textField.setGuiResponder(MCGuiUtil.createTextFieldResponder(this::onTextChanged));
+        }
+        this.background = background;
+        this.textSupplier = textSupplier;
+        this.textResponder = textResponder;
+    }
+
+    public TextFieldWidget setTextSupplier(Supplier<String> textSupplier, boolean isClient) {
+        this.isClient = isClient;
+        this.textSupplier = textSupplier;
+        return this;
+    }
+
+    public TextFieldWidget setTextResponder(Consumer<String> textResponder, boolean isClient) {
+        this.isClient = isClient;
+        this.textResponder = textResponder;
+        return this;
     }
 
     public void setCurrentString(String currentString) {
@@ -53,26 +90,37 @@ public class TextFieldWidget extends Widget {
     @Override
     protected void onPositionUpdate() {
         if (isClientSide() && textField != null) {
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
             Position position = getPosition();
+            Size size = getSize();
             GuiTextField textField = this.textField;
-            textField.x = position.x;
-            textField.y = position.y;
+            textField.x = enableBackground ? position.x : position.x + 1;
+            textField.y = enableBackground ? position.y : position.y + (size.height - fontRenderer.FONT_HEIGHT) / 2 + 1;
         }
     }
 
     @Override
     protected void onSizeUpdate() {
         if (isClientSide() && textField != null) {
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+            Position position = getPosition();
             Size size = getSize();
             GuiTextField textField = this.textField;
-            textField.width = size.width;
+            textField.width = enableBackground ? size.width : size.width - 2;
             textField.height = size.height;
+            textField.y = enableBackground ? position.y : position.y + (getSize().height - fontRenderer.FONT_HEIGHT) / 2 + 1;
+
         }
     }
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
         super.drawInBackground(mouseX, mouseY, context);
+        if (background != null) {
+            Position position = getPosition();
+            Size size = getSize();
+            background.draw(position.x, position.y, size.width, size.height);
+        }
         this.textField.drawTextBox();
     }
 
@@ -84,6 +132,14 @@ public class TextFieldWidget extends Widget {
     @Override
     public boolean keyTyped(char charTyped, int keyCode) {
         return this.textField.textboxKeyTyped(charTyped, keyCode);
+    }
+
+    @Override
+    public void updateScreen() {
+        if (textSupplier != null && isClient) {
+            this.currentString = textSupplier.get();
+            this.textField.setText(currentString);
+        }
     }
 
     @Override
@@ -106,7 +162,11 @@ public class TextFieldWidget extends Widget {
 
     protected void onTextChanged(String newTextString) {
         if (textValidator.test(newTextString)) {
-            writeClientAction(1, buffer -> buffer.writeString(newTextString));
+            if (isClient && textResponder != null) {
+                textResponder.accept(newTextString);
+            } else {
+                writeClientAction(1, buffer -> buffer.writeString(newTextString));
+            }
         }
     }
 

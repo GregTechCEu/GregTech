@@ -286,8 +286,9 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
 
     @Override
     public boolean keyTyped(char charTyped, int keyCode) {
-        for (Widget widget : widgets) {
-            if(widget.keyTyped(charTyped, keyCode)) {
+        for (int i = widgets.size() - 1; i >= 0; i--) {
+            Widget widget = widgets.get(i);
+            if(widget.isVisible() && widget.keyTyped(charTyped, keyCode)) {
                 return true;
             }
         }

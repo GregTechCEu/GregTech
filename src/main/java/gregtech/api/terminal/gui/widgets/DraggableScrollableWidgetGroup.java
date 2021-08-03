@@ -96,7 +96,10 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
     @Override
     public void clearAllWidgets() {
         super.clearAllWidgets();
-        computeMax();
+        maxHeight = getSize().height;
+        maxWidth = getSize().width;
+        scrollXOffset = 0;
+        scrollYOffset = 0;
     }
 
     @Override

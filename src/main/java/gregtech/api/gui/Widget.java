@@ -1,6 +1,7 @@
 package gregtech.api.gui;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.gui.widgets.WidgetUIAccess;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -8,10 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -29,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import org.lwjgl.opengl.GL11;
 
 /**
  * Widget is functional element of ModularUI
@@ -365,8 +365,88 @@ public abstract class Widget {
 
     @SideOnly(Side.CLIENT)
     protected static void drawGradientRect(int x, int y, int width, int height, int startColor, int endColor) {
-        GuiUtils.drawGradientRect(0, x, y, x + width, y + height, startColor, endColor);
+        drawGradientRect(x, y, width, height, startColor, endColor, false);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawGradientRect(float x, float y, float width, float height, int startColor, int endColor, boolean horizontal) {
+        float startAlpha = (float) (startColor >> 24 & 255) / 255.0F;
+        float startRed = (float) (startColor >> 16 & 255) / 255.0F;
+        float startGreen = (float) (startColor >> 8 & 255) / 255.0F;
+        float startBlue = (float) (startColor & 255) / 255.0F;
+        float endAlpha = (float) (endColor >> 24 & 255) / 255.0F;
+        float endRed = (float) (endColor >> 16 & 255) / 255.0F;
+        float endGreen = (float) (endColor >> 8 & 255) / 255.0F;
+        float endBlue = (float) (endColor & 255) / 255.0F;
+        GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        if (horizontal) {
+            buffer.pos(x + width, y, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            buffer.pos(x, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x, y + height, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x + width, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            tessellator.draw();
+        } else {
+            buffer.pos(x + width, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            buffer.pos(x + width, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            tessellator.draw();
+        }
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void setColor(int color) { // ARGB
+        GlStateManager.color((color >> 16 & 255) / 255.0F,
+                (color >> 8 & 255) / 255.0F,
+                (color & 255) / 255.0F,
+                (color >> 24 & 255) / 255.0F);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void renderCircle(float x, float y, float r, int color, int segments) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        setColor(color);
+        bufferbuilder.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION);
+        for (int i = 0; i < segments; i++) {
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / segments), y + r * Math.sin(-2 * Math.PI * i / segments), 0.0D).endVertex();
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1,1,1,1);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void renderSector(float x, float y, float r, int color, int segments, int from, int to) {
+        if (from > to || from < 0) return;
+        if(to > segments) to = segments;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        setColor(color);
+        bufferbuilder.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION);
+        for (int i = from; i < to; i++) {
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / segments), y + r * Math.sin(-2 * Math.PI * i / segments), 0.0D).endVertex();
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * (i + 1) / segments), y + r * Math.sin(-2 * Math.PI * (i + 1) / segments), 0.0D).endVertex();
+            bufferbuilder.pos(x, y, 0.0D).endVertex();
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
     }
 
     @SideOnly(Side.CLIENT)

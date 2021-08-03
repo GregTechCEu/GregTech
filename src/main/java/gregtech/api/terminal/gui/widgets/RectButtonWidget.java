@@ -1,10 +1,23 @@
 package gregtech.api.terminal.gui.widgets;
 
 import gregtech.api.gui.IRenderContext;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import net.minecraft.network.PacketBuffer;
+import org.lwjgl.input.Mouse;
+
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public class RectButtonWidget extends CircleButtonWidget{
+    private IGuiTexture pressedIcon;
+    private BiConsumer<ClickData, Boolean> onPressed;
+    private boolean isPressed;
+    private Supplier<Boolean> supplier;
+    private boolean isClient;
+
+
     public RectButtonWidget(int x, int y, int width, int height) {
         this(x, y, width, height,2);
     }
@@ -14,6 +27,78 @@ public class RectButtonWidget extends CircleButtonWidget{
         setSelfPosition(new Position(x, y));
         setSize(new Size(width, height));
         this.border = border;
+    }
+
+    public RectButtonWidget setToggleButton(IGuiTexture pressedIcon, BiConsumer<ClickData, Boolean> onPressed) {
+        this.pressedIcon = pressedIcon;
+        this.onPressed = onPressed;
+        return this;
+    }
+
+    public RectButtonWidget setValueSupplier(boolean isClient, Supplier<Boolean> supplier) {
+        this.isClient = isClient;
+        this.supplier = supplier;
+        return this;
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        if (isClient && supplier != null) {
+            isPressed = supplier.get();
+        }
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        if (!isClient && supplier != null) {
+            if(supplier.get() != isPressed) {
+                isPressed = !isPressed;
+                writeUpdateInfo(1, buffer -> buffer.writeBoolean(isPressed));
+            }
+        }
+    }
+
+    @Override
+    public void readUpdateInfo(int id, PacketBuffer buffer) {
+        if (id == 1) {
+            isPressed = buffer.readBoolean();
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        if (onPressed == null) {
+            return super.mouseClicked(mouseX, mouseY, button);
+        } else {
+            if (isMouseOverElement(mouseX, mouseY)) {
+                isPressed = !isPressed;
+                ClickData clickData = new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown(), false);
+                writeClientAction(1, buffer -> {
+                    clickData.writeToBuf(buffer);
+                    buffer.writeBoolean(isPressed);
+                });
+                playButtonClickSound();
+                onPressed.accept(new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown(), true), isPressed);
+                return true;
+            }
+            return false;
+        }
+    }
+
+    @Override
+    public void handleClientAction(int id, PacketBuffer buffer) {
+        if (onPressed == null) {
+            super.handleClientAction(id, buffer);
+        } else {
+            if (id == 1) {
+                ClickData clickData = ClickData.readFromBuf(buffer);
+                isPressed = buffer.readBoolean();
+                if (onPressCallback != null) {
+                    onPressed.accept(clickData, isPressed);
+                }
+            }
+        }
     }
 
     @Override
@@ -33,7 +118,11 @@ public class RectButtonWidget extends CircleButtonWidget{
             drawSolidRect(x, (int) ((1 - per) * height) + y, border, (int) (height * per), colors[1]);
         }
         drawSolidRect(x + border, y + border, width - 2 * border, height - 2 * border, colors[2]);
-        if (icon != null) {
+        if (isPressed) {
+            if (pressedIcon != null) {
+                pressedIcon.draw(x + border, y + border, width - 2 * border, height - 2 * border);
+            }
+        } else if (icon != null) {
             icon.draw(x + border, y + border, width - 2 * border, height - 2 * border);
         }
     }

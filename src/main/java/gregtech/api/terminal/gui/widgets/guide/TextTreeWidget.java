@@ -96,7 +96,7 @@ public class TextTreeWidget<T> extends Widget {
                     if (leafTexture != null) {
                         leafTexture.draw(position.x, y, size.width, ITEM_HEIGHT);
                     } else {
-                        gregtech.api.gui.resources.RenderUtil.renderRect(position.x, y, size.width, ITEM_HEIGHT, 0, 0xffff0000);
+                        drawSolidRect(position.x, y, size.width, ITEM_HEIGHT, 0xffff0000);
                     }
                     if (node.content != null) {
                         String nameS = nameSupplier.apply(node.content.getFirst());
@@ -110,11 +110,11 @@ public class TextTreeWidget<T> extends Widget {
                     if (nodeTexture != null) {
                         nodeTexture.draw(position.x, y, size.width, ITEM_HEIGHT);
                     } else {
-                        gregtech.api.gui.resources.RenderUtil.renderRect(position.x, y, size.width, ITEM_HEIGHT, 0, 0xffffff00);
+                        drawSolidRect(position.x, y, size.width, ITEM_HEIGHT, 0xffffff00);
                     }
                 }
                 if (node == selected) {
-                    gregtech.api.gui.resources.RenderUtil.renderRect(position.x, y, size.width, ITEM_HEIGHT, 0, 0x7f000000);
+                    drawSolidRect(position.x, y, size.width, ITEM_HEIGHT, 0x7f000000);
                 }
                 fr.drawString(I18n.format(name), x, y + 2, 0xff000000);
             }

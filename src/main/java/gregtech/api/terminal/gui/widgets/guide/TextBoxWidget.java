@@ -5,10 +5,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
-import gregtech.api.terminal.gui.widgets.guide.congiurator.NumberConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.congiurator.TextListConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.configurator.BooleanConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.configurator.ColorConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.configurator.NumberConfigurator;
+import gregtech.api.terminal.gui.widgets.guide.configurator.TextListConfigurator;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
@@ -79,6 +80,9 @@ public class TextBoxWidget extends GuideWidget {
         super.loadConfigurator(group, config, isFixed, needUpdate);
         group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "space", 1).setOnUpdated(needUpdate));
         group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "fontSize", 9).setOnUpdated(needUpdate));
+        group.addWidget(new ColorConfigurator(5, group.getWidgetBottomHeight() + 5, config, "fontColor", 0xff000000).setOnUpdated(needUpdate));
+        group.addWidget(new BooleanConfigurator(5, group.getWidgetBottomHeight() + 5, config, "isShadow", false).setOnUpdated(needUpdate));
+        group.addWidget(new BooleanConfigurator(5, group.getWidgetBottomHeight() + 5, config, "isCenter", false).setOnUpdated(needUpdate));
         group.addWidget(new TextListConfigurator(5, group.getWidgetBottomHeight() + 5, 200, config, "content", false).setOnUpdated(needUpdate));
     }
 
