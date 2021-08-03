@@ -20,7 +20,7 @@ public class GuideEditorApp extends AbstractApplication{
         if (isClient) {
             GuideEditorApp app = new GuideEditorApp();
             GuideConfigEditor configEditor = new GuideConfigEditor(0, 0, 133, 232);
-            GuidePageEditorWidget pageEditor = new GuidePageEditorWidget(133, 0, 200, 232);
+            GuidePageEditorWidget pageEditor = new GuidePageEditorWidget(133, 0, 200, 232, 5);
             configEditor.setGuidePageEditorWidget(pageEditor);
             pageEditor.setGuideConfigEditor(configEditor);
             app.addWidget(pageEditor);

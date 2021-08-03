@@ -1,6 +1,5 @@
 package gregtech.api.terminal.gui.widgets.guide;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -37,18 +36,6 @@ public class ImageWidget extends GuideWidget{
     }
 
     @Override
-    public void updateValue(String field, JsonElement value) {
-        super.updateValue(field, value);
-        if (field.equals("width") || field.equals("height")) {
-            this.addSelfPosition(- (width - getSize().width) / 2, 0);
-            this.setSize(new Size(width, height));
-        }
-        if (field.equals("form") || field.equals("source")) {
-            initFixed(0,0,0,0,null);
-        }
-    }
-
-    @Override
     public JsonObject getTemplate(boolean isFixed) {
         JsonObject template = super.getTemplate(isFixed);
         template.addProperty("form", "item");
@@ -75,14 +62,23 @@ public class ImageWidget extends GuideWidget{
     }
 
     @Override
-    protected Widget initStream(int x, int y, int pageWidth, JsonObject config) {
+    protected Widget initStream() {
+        int pageWidth = getSize().width;
+        int x = getSelfPosition().x;
+        int y = getSelfPosition().y;
+        if (page != null) {
+            x = page.getMargin();
+            pageWidth = page.getPageWidth() - 2 * x;
+        }
         this.setSelfPosition(new Position(x + (pageWidth - width) / 2, y));
         this.setSize(new Size(width, height));
-        return super.initStream(x, y, pageWidth, config);
+        return initFixed();
     }
 
     @Override
-    protected Widget initFixed(int x, int y, int width, int height, JsonObject config) {
+    protected Widget initFixed() {
+        width = getSize().width;
+        height = getSize().height;
         switch (form) {
             case "url":
                 image = new URLTexture(source);

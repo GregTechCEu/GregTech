@@ -280,7 +280,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
                 } else if (widget instanceof IDraggable && ((IDraggable) widget).allowDrag(mouseX, mouseY, button)) {
                     draggedWidget = widget;
                     ((IDraggable) widget).startDrag(mouseX, mouseY);
-                    return true;
+                    return false;
                 }
             }
         }
@@ -294,8 +294,8 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
                 return true;
             }
             int moveDelta = -MathHelper.clamp(wheelDelta, -1, 1) * 5;
-            if (getMaxHeight() - getSize().height > 0) {
-                setScrollYOffset(MathHelper.clamp(scrollYOffset + moveDelta, 0, getMaxHeight() - getSize().height + 5));
+            if (getMaxHeight() - getSize().height > 0 || scrollYOffset > getMaxHeight() - getSize().height) {
+                setScrollYOffset(MathHelper.clamp(scrollYOffset + moveDelta, 0, getMaxHeight() - getSize().height));
             }
             return true;
         }
@@ -309,11 +309,11 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         int deltaY = mouseY - lastMouseY;
         lastMouseX = mouseX;
         lastMouseY = mouseY;
-        if (draggedOnXScrollBar) {
-            setScrollXOffset(MathHelper.clamp(scrollXOffset + deltaX * getMaxWidth() / getSize().width, 0, Math.max(getMaxWidth() - getSize().width, 0)));
+        if (draggedOnXScrollBar && (getMaxWidth() - getSize().width > 0 || scrollYOffset > getMaxWidth() - getSize().width)) {
+            setScrollXOffset(MathHelper.clamp(scrollXOffset + deltaX * getMaxWidth() / getSize().width, 0, getMaxWidth() - getSize().width));
             return true;
-        } else if (draggedOnYScrollBar) {
-            setScrollYOffset(MathHelper.clamp(scrollYOffset + deltaY * getMaxHeight() / getSize().height, 0, Math.max(getMaxHeight() - getSize().height, 0)));
+        } else if (draggedOnYScrollBar && (getMaxHeight() - getSize().height > 0 || scrollYOffset > getMaxHeight() - getSize().height)) {
+            setScrollYOffset(MathHelper.clamp(scrollYOffset + deltaY * getMaxHeight() / getSize().height, 0, getMaxHeight() - getSize().height));
             return true;
         } else if (draggedWidget != null && ((IDraggable)draggedWidget).dragging(mouseX, mouseY, deltaX, deltaY)) {
             draggedWidget.addSelfPosition(deltaX, deltaY);

@@ -3,10 +3,8 @@ package gregtech.api.terminal.gui.widgets.guide;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.sun.istack.internal.Nullable;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
-import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.guide.configurator.ColorConfigurator;
 import gregtech.api.terminal.gui.widgets.guide.configurator.NumberConfigurator;
@@ -21,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class GuideWidget extends Widget implements IGuideWidget, IDraggable {
+public abstract class GuideWidget extends Widget implements IGuideWidget {
     //config
     public String ref;
     public int fill;
@@ -31,7 +29,7 @@ public abstract class GuideWidget extends Widget implements IGuideWidget, IDragg
     public List<String> hover_text;
 
     private static final Gson GSON = new Gson();
-    public boolean allowDrag;
+    private transient boolean isFixed;
     protected transient GuidePageWidget page;
 
     public GuideWidget(int x, int y, int width, int height) {
@@ -52,12 +50,24 @@ public abstract class GuideWidget extends Widget implements IGuideWidget, IDragg
             } else {
                 f.set(this, new Gson().fromJson(value, f.getType()));
             }
+            if (isFixed) {
+                initFixed();
+            } else {
+                initStream();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public boolean isFixed() {
+        return isFixed;
+    }
 
+    @Override
+    public void onFixedPositionSizeChanged(Position position, Size size) {
+        this.initFixed();
+    }
 
     @Override
     public void setStroke(int color) {
@@ -123,24 +133,26 @@ public abstract class GuideWidget extends Widget implements IGuideWidget, IDragg
     @Override
     public Widget createStreamWidget(int x, int y, int pageWidth, JsonObject config) {
         GuideWidget widget = GSON.fromJson(config, this.getClass());
+        widget.isFixed = false;
         widget.setSelfPosition(new Position(x, y));
         widget.setSize(new Size(pageWidth, 0));
-        return widget.initStream(x, y, pageWidth, config);
+        return widget.initStream();
     }
 
     @Override
     public Widget createFixedWidget(int x, int y, int width, int height, JsonObject config) {
         GuideWidget widget = GSON.fromJson(config, this.getClass());
+        widget.isFixed = true;
         widget.setSelfPosition(new Position(x, y));
         widget.setSize(new Size(width, height));
-        return widget.initFixed(x, y, width, height, config);
+        return widget.initFixed();
     }
 
-    protected Widget initStream(int x, int y, int pageWidth, @Nullable JsonObject config) {
-        return initFixed(x, y, pageWidth, 0, config);
+    protected Widget initStream() {
+        return initFixed();
     }
 
-    protected Widget initFixed(int x, int y, int width, int height, @Nullable JsonObject config) {
+    protected Widget initFixed() {
         return this;
     }
 
@@ -184,16 +196,5 @@ public abstract class GuideWidget extends Widget implements IGuideWidget, IDragg
            return true;
         }
         return false;
-    }
-
-    @Override
-    public boolean allowDrag(int mouseX, int mouseY, int button) {
-        return allowDrag && isMouseOverElement(mouseX, mouseY);
-    }
-
-    @Override
-    public boolean setDraggable(boolean isDraggable) {
-        allowDrag = isDraggable;
-        return allowDrag;
     }
 }

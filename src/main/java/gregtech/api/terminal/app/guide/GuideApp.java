@@ -43,7 +43,7 @@ public abstract class GuideApp<T> extends AbstractApplication {
                             if (app.pageWidget != null) {
                                 app.removeWidget(app.pageWidget);
                             }
-                            app.pageWidget = new GuidePageWidget(133, 0, 200, 232);
+                            app.pageWidget = new GuidePageWidget(133, 0, 200, 232, 5);
                             if (leaf.isLeaf() && leaf.content != null) {
                                 app.pageWidget.loadJsonConfig(leaf.content.getSecond());
                             }

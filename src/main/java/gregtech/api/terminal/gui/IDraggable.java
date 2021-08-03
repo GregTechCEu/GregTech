@@ -1,7 +1,6 @@
 package gregtech.api.terminal.gui;
 
 public interface IDraggable {
-    boolean setDraggable(boolean isDraggable);
     boolean allowDrag(int mouseX, int mouseY, int button);
     default void startDrag(int mouseX, int mouseY) {}
     default boolean dragging(int mouseX, int mouseY, int deltaX, int deltaY) {return true;}

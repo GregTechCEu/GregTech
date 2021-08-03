@@ -8,8 +8,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
+import gregtech.api.terminal.gui.widgets.CustomPositionSizeWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Eases;
@@ -26,13 +26,15 @@ public class GuidePageEditorWidget extends GuidePageWidget {
     private final Map<Widget, JsonObject> configMap;
     private Widget selected;
     private final WidgetGroup toolButtons;
+    private final CustomPositionSizeWidget customPositionSizeWidget;
     private GuideConfigEditor configEditor;
 
-    public GuidePageEditorWidget(int xPosition, int yPosition, int width, int height) {
-        super(xPosition, yPosition, width, height);
+    public GuidePageEditorWidget(int xPosition, int yPosition, int width, int height, int margin) {
+        super(xPosition, yPosition, width, height, margin);
         this.setDraggable(false);
         configMap = new HashMap<>();
         setTitle("Template");
+        customPositionSizeWidget = new CustomPositionSizeWidget(0xff0000ff, 0xffff0000, 2).setOnUpdated(this::onPosSizeChanged);
         toolButtons = new WidgetGroup(Position.ORIGIN, Size.ZERO);
         toolButtons.setVisible(false);
         toolButtons.addWidget(new CircleButtonWidget(-20, -4, 8, 1, 12)
@@ -56,23 +58,33 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                 .setIcon(GuiTextures.TERMINAL_DELETE)
                 .setHoverText("delete")
                 .setClickListener(this::delete));
+        addWidget(customPositionSizeWidget);
         addWidget(toolButtons);
+    }
+
+    private void onPosSizeChanged(Position pos, Size size) {
+        if (customPositionSizeWidget.getControlled() instanceof IGuideWidget) {
+            ((IGuideWidget) customPositionSizeWidget.getControlled()).onFixedPositionSizeChanged(pos, size);
+        }
+        toolButtons.setSelfPosition(new Position(pos.x + size.width / 2, pos.y));
     }
 
     public void setGuideConfigEditor(GuideConfigEditor configEditor) {
         this.configEditor = configEditor;
     }
 
-    private void setToolButton(int x, int y, int width, int height) {
+    private void setToolButton(Widget widget) {
+        customPositionSizeWidget.setControlled(widget);
         toolButtons.setVisible(true);
-        toolButtons.setSelfPosition(new Position(x + width / 2, y));
+        toolButtons.setSelfPosition(new Position(widget.getSelfPosition().x + widget.getSize().width / 2, widget.getSelfPosition().y));
     }
 
     private void delete(ClickData clickData) {
         removeWidget(selected);
         selected = null;
         configEditor.loadConfigurator(null, null, true);
-        toolButtons.setSelfPosition(new Position(0, 0));
+        toolButtons.setSelfPosition(new Position(-scrollYOffset, -scrollYOffset));
+        customPositionSizeWidget.setControlled(null);
         toolButtons.setVisible(false);
     }
 
@@ -100,7 +112,8 @@ public class GuidePageEditorWidget extends GuidePageWidget {
     }
 
     public JsonObject addGuideWidget(IGuideWidget widget, boolean isFixed) {
-        int pageWidth = this.getSize().width - yBarWidth;
+        int pageWidth = getPageWidth();
+        int margin = getMargin();
         JsonObject widgetConfig = widget.getTemplate(isFixed);
         Widget guideWidget;
         if (isFixed) {
@@ -117,7 +130,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             this.addWidget(guideWidget);
         } else {
             int y = getStreamBottom();
-            guideWidget = widget.createStreamWidget(5, y + 5, pageWidth - 10, widgetConfig);
+            guideWidget = widget.createStreamWidget(margin, y + 5, pageWidth - 2 * margin, widgetConfig);
             stream.add(guideWidget);
             this.addWidget(guideWidget);
         }
@@ -139,7 +152,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                     widget.setSelfPosition(new Position(widget.getSelfPosition().x, (int) (y1 - value.floatValue() * offsetU)));
                     target.setSelfPosition(new Position(target.getSelfPosition().x, (int) (y2 + value.floatValue() * offsetD)));
                     if (widget == selected) {
-                        setToolButton(selected.getSelfPosition().x, selected.getSelfPosition().y, selected.getSize().width, selected.getSize().height);
+                        setToolButton(selected);
                     }
                     widget.setVisible(widget.getSelfPosition().y < scrollYOffset + getSize().height && widget.getSelfPosition().y + widget.getSize().height > 0);
                     target.setVisible(target.getSelfPosition().y < scrollYOffset + getSize().height && target.getSelfPosition().y + target.getSize().height > 0);
@@ -165,7 +178,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                     widget.setSelfPosition(new Position(widget.getSelfPosition().x, (int) (y1 + value.floatValue() * offsetD)));
                     target.setSelfPosition(new Position(target.getSelfPosition().x, (int) (y2 - value.floatValue() * offsetU)));
                     if (widget == selected) {
-                        setToolButton(selected.getSelfPosition().x, selected.getSelfPosition().y, selected.getSize().width, selected.getSize().height);
+                        setToolButton(selected);
                     }
                     widget.setVisible(widget.getSelfPosition().y < getSize().height - xBarHeight && widget.getSelfPosition().y + widget.getSize().height > 0);
                     target.setVisible(target.getSelfPosition().y < getSize().height - xBarHeight && target.getSelfPosition().y + target.getSize().height > 0);
@@ -211,33 +224,35 @@ public class GuidePageEditorWidget extends GuidePageWidget {
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        if (super.mouseClicked(mouseX, mouseY, button)) {
+            return true;
+        }
         boolean flag = false;
         for (Widget widget : fixed) {
             if (widget.isMouseOverElement(mouseX, mouseY)) {
                 if (widget instanceof IGuideWidget && widget != selected) {
                     configEditor.loadConfigurator((IGuideWidget) widget, configMap.get(widget), true);
                     selected = widget;
-                    setToolButton(selected.getSelfPosition().x, selected.getSelfPosition().y, selected.getSize().width, selected.getSize().height);
+                    setToolButton(selected);
                 }
                 playButtonClickSound();
                 flag = true;
                 break;
             }
         }
-        for (Widget widget : stream) {
-            if (widget.isMouseOverElement(mouseX, mouseY)) {
-                if (widget instanceof IGuideWidget && widget != selected) {
-                    configEditor.loadConfigurator((IGuideWidget) widget, configMap.get(widget), false);
-                    selected = widget;
-                    setToolButton(selected.getSelfPosition().x, selected.getSelfPosition().y, selected.getSize().width, selected.getSize().height);
+        if (!flag) {
+            for (Widget widget : stream) {
+                if (widget.isMouseOverElement(mouseX, mouseY)) {
+                    if (widget instanceof IGuideWidget && widget != selected) {
+                        configEditor.loadConfigurator((IGuideWidget) widget, configMap.get(widget), false);
+                        selected = widget;
+                        setToolButton(selected);
+                    }
+                    playButtonClickSound();
+                    flag = true;
+                    break;
                 }
-                playButtonClickSound();
-                flag = true;
-                break;
             }
-        }
-        if (super.mouseClicked(mouseX, mouseY, button)) {
-            return true;
         }
         return flag;
     }
@@ -246,8 +261,18 @@ public class GuidePageEditorWidget extends GuidePageWidget {
     protected boolean hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position position = getPosition();
         Size size = getSize();
-        for (Widget widget : widgets) {
-            if (widget != toolButtons && widget.isVisible()) {
+        if(title.isVisible()) {
+            title.drawInBackground(mouseX, mouseY, partialTicks, context);
+        }
+        for (Widget widget : stream) {
+            if (widget.isVisible()) {
+                widget.drawInBackground(mouseX, mouseY, partialTicks, context);
+            }
+        }
+
+        boolean flag = false;
+        for (Widget widget : fixed) {
+            if (widget.isVisible()) {
                 widget.drawInBackground(mouseX, mouseY, partialTicks, context);
                 if (widget.isMouseOverElement(mouseX, mouseY)) {
                     if (widget != selected) {
@@ -255,23 +280,40 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                         Size s = widget.getSize();
                         if (stream.contains(widget)) {
                             drawSolidRect(position.x, pos.y, size.width - yBarWidth, s.height, 0x6f000000);
+
                         } else {
                             drawSolidRect(pos.x, pos.y, s.width, s.height, 0x6f000000);
                         }
                     }
+                    flag = true;
                 }
             }
         }
-        if (selected != null) {
-            Position pos = selected.getPosition();
-            Size s = selected.getSize();
-            if (stream.contains(selected)) {
-                drawSolidRect(position.x, pos.y, size.width - yBarWidth, s.height, 0x6f0000ff);
-            } else {
-                drawSolidRect(pos.x, pos.y, s.width, s.height, 0x6f0000ff);
+        if (!flag) {
+            for (Widget widget : stream) {
+                if (widget.isVisible() && widget != selected && widget.isMouseOverElement(mouseX, mouseY)) {
+                    Position pos = widget.getPosition();
+                    Size s = widget.getSize();
+                    if (stream.contains(widget)) {
+                        drawSolidRect(position.x, pos.y, size.width - yBarWidth, s.height, 0x6f000000);
+                    } else {
+                        drawSolidRect(pos.x, pos.y, s.width, s.height, 0x6f000000);
+                    }
+                }
             }
         }
+
+        if (selected != null) {
+//            Position pos = selected.getPosition();
+//            Size s = selected.getSize();
+//            if (stream.contains(selected)) {
+//                drawSolidRect(position.x, pos.y, size.width - yBarWidth, s.height, 0x6f0000ff);
+//            } else {
+//                drawSolidRect(pos.x, pos.y, s.width, s.height, 0x6f0000ff);
+//            }
+        }
         if(toolButtons.isVisible()) {
+            customPositionSizeWidget.drawInBackground(mouseX, mouseY, partialTicks, context);
             toolButtons.drawInBackground(mouseX, mouseY, partialTicks, context);
         }
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
@@ -281,17 +323,9 @@ public class GuidePageEditorWidget extends GuidePageWidget {
     @Override
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
         if (super.mouseDragged(mouseX, mouseY, button, timeDragged) && toolButtons.isVisible()) {
-            setToolButton(selected.getSelfPosition().x, selected.getSelfPosition().y, selected.getSize().width, selected.getSize().height);
+            setToolButton(selected);
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void addWidget(Widget widget) {
-        super.addWidget(widget);
-        if(fixed.contains(widget) && widget instanceof IDraggable) {
-            ((IDraggable) widget).setDraggable(true);
-        }
     }
 }
