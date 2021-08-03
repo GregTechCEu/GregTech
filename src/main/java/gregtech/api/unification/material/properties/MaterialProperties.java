@@ -56,7 +56,7 @@ public class MaterialProperties {
         } while (oldList.size() != propertyMap.size());
 
         if (propertyMap.keySet().stream().noneMatch(baseTypes::contains))
-            throw new IllegalArgumentException("Material must have at least one of: [dust, ingot, gem, fluid, plasma] specified!");
+            throw new IllegalArgumentException("Material must have at least one of: " + baseTypes + " specified!");
     }
 
     public void setMaterial(Material material) {

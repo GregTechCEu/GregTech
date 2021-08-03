@@ -29,11 +29,11 @@ public class MaterialRegistry {
 
     private static void finalizeRegistry(Material material) {
         material.verifyMaterial();
-        MATERIAL_REGISTRY.register(material.getId(), material.toString(), material);
     }
 
     private static void postVerify(Material material) {
         material.postVerify();
+        MATERIAL_REGISTRY.register(material.getId(), material.toString(), material);
     }
 
     public static void register(Material material) {
