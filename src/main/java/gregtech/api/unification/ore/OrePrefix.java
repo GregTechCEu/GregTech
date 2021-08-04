@@ -27,6 +27,10 @@ public enum OrePrefix {
 
     ore("Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
 
+    oreGranite("Granite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
+    oreDiorite("Diorite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
+    oreAndesite("Andesite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // Regular Ore Prefix. Ore -> Material is a Oneway Operation! Introduced by Eloraam
+
     oreBlackgranite("Black Granite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
     oreRedgranite("Red Granite Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
 
@@ -34,6 +38,7 @@ public enum OrePrefix {
     oreBasalt("Basalt Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // In case of an End-Ores Mod. Ore -> Material is a Oneway Operation!
 
     oreSand("Sand Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null), // In case of an Sand-Ores Mod. Ore -> Material is a Oneway Operation!
+    oreRedSand("Red Sand Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null), // In case of an Sand-Ores Mod. Ore -> Material is a Oneway Operation!
     oreGravel("Gravel Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, null), // In case of an Gravel-Ores Mod. Ore -> Material is a Oneway Operation!
 
     oreNetherrack("Netherrack Ores", -1, null, MaterialIconType.ore, ENABLE_UNIFICATION, hasOreProperty), // Prefix of the Nether-Ores Mod. Causes Ores to double. Ore -> Material is a Oneway Operation!
@@ -292,11 +297,15 @@ public enum OrePrefix {
         block.setIgnored(Materials.Blaze);
 
         ore.addSecondaryMaterial(new MaterialStack(Materials.Stone, dust.materialAmount));
+        oreGranite.addSecondaryMaterial(new MaterialStack(Materials.Granite, dust.materialAmount));
+        oreDiorite.addSecondaryMaterial(new MaterialStack(Materials.Diorite, dust.materialAmount));
+        oreAndesite.addSecondaryMaterial(new MaterialStack(Materials.Andesite, dust.materialAmount));
         oreRedgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteRed, dust.materialAmount));
         oreBlackgranite.addSecondaryMaterial(new MaterialStack(Materials.GraniteBlack, dust.materialAmount));
         oreBasalt.addSecondaryMaterial(new MaterialStack(Materials.Basalt, dust.materialAmount));
         oreMarble.addSecondaryMaterial(new MaterialStack(Materials.Marble, dust.materialAmount));
         oreSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
+        oreRedSand.addSecondaryMaterial(new MaterialStack(Materials.SiliconDioxide, dustTiny.materialAmount));
         oreGravel.addSecondaryMaterial(new MaterialStack(Materials.Flint, dustTiny.materialAmount));
         oreNetherrack.addSecondaryMaterial(new MaterialStack(Materials.Netherrack, dust.materialAmount));
         oreEndstone.addSecondaryMaterial(new MaterialStack(Materials.Endstone, dust.materialAmount));

@@ -21,7 +21,10 @@ import net.minecraft.item.ItemStack;
 
 public class OreByProduct implements IRecipeWrapper {
 	private final static ImmutableList<OrePrefix> ORES = ImmutableList.of(
-			OrePrefix.ore, 
+			OrePrefix.ore,
+            OrePrefix.oreGranite,
+            OrePrefix.oreDiorite,
+            OrePrefix.oreAndesite,
 			OrePrefix.oreBasalt,
 			OrePrefix.oreBlackgranite, 
 			OrePrefix.oreEndstone, 
@@ -29,7 +32,8 @@ public class OreByProduct implements IRecipeWrapper {
 			OrePrefix.oreMarble,
 			OrePrefix.oreNetherrack, 
 			OrePrefix.oreRedgranite, 
-			OrePrefix.oreSand);
+			OrePrefix.oreSand,
+            OrePrefix.oreRedSand);
 
 	private final List<List<ItemStack>> matchingInputs = new ArrayList<>();
 	private final List<ItemStack> oreProcessingSteps = new ArrayList<>();
