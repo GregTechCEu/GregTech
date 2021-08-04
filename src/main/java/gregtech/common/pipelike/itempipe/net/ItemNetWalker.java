@@ -50,7 +50,7 @@ public class ItemNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected void checkNeighbour(BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
+    protected void checkNeighbour(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
         if (neighbourTile == null) return;
         IItemHandler handler = neighbourTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, faceToNeighbour.getOpposite());
         if (handler != null)

@@ -3,6 +3,7 @@ package gregtech.common.pipelike.fluidpipe.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.util.GTLog;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
@@ -26,8 +27,6 @@ public class FluidNetHandler implements IFluidHandler {
     private final TileEntityFluidPipeTickable pipe;
     private final EnumFacing facing;
     private int simulatedTransfers = 0;
-    private final int capacity;
-    private int channel = -1;
 
     public FluidNetHandler(FluidPipeNet net, TileEntityFluidPipe pipe, EnumFacing facing) {
         this.net = net;
@@ -36,20 +35,14 @@ public class FluidNetHandler implements IFluidHandler {
         else
             this.pipe = (TileEntityFluidPipeTickable) pipe.setSupportsTicking();
         this.facing = facing;
-        this.capacity = net.getNodeData().throughput;
     }
 
     @Override
     public IFluidTankProperties[] getTankProperties() {
-        FluidStack[] netFluids = net.getContainedFluids();
+        FluidStack[] netFluids = pipe.getContainedFluids();
         FluidTankProperties[] properties = new FluidTankProperties[netFluids.length];
         for (int i = 0; i < netFluids.length; i++) {
-            properties[i] = new FluidTankProperties(netFluids[i], capacity, true, false) {
-                @Override
-                public boolean canFillFluidType(FluidStack fluidStack) {
-                    return net.findChannelWith(pipe, fluidStack) >= 0;
-                }
-            };
+            properties[i] = new FluidTankProperties(netFluids[i], Integer.MAX_VALUE, true, false);
         }
         return properties;
     }
@@ -57,7 +50,7 @@ public class FluidNetHandler implements IFluidHandler {
     @Override
     public int fill(FluidStack resource, boolean doFill) {
         if (resource == null || resource.amount <= 0 || resource.getFluid() == null) return 0;
-        if ((channel = net.findChannelWith(pipe, resource)) < 0) return 0;
+        if ((pipe.findChannel(resource)) < 0) return 0;
         simulatedTransfers = 0;
         CoverBehavior pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
         CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);
@@ -70,13 +63,7 @@ public class FluidNetHandler implements IFluidHandler {
             return 0;
 
         // check if pipes can handle fluid and destroy of not
-        FluidPipeProperties properties = net.getNodeData();
-        boolean isLeakingPipe = resource.getFluid().isGaseous(resource) && !properties.gasProof;
-        boolean isBurningPipe = resource.getFluid().getTemperature(resource) > properties.maxFluidTemperature;
-        if (isLeakingPipe || isBurningPipe) {
-            net.destroyNetwork(pipe.getPipePos(), isLeakingPipe, isBurningPipe);
-            return 0;
-        }
+
 
         if (!pipePump && !tilePump)
             return insertFirst(resource, doFill);
@@ -162,7 +149,7 @@ public class FluidNetHandler implements IFluidHandler {
     }
 
     private int insert(Handler handler, FluidStack stack, boolean doFill) {
-        int allowed = checkTransferable(pipe, pipe.getNodeData().throughput, stack.amount, doFill);
+        int allowed = checkTransferable(pipe, handler.getMinThroughput(), stack.amount, doFill);
         if (allowed == 0) return 0;
         CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
         CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
@@ -172,40 +159,68 @@ public class FluidNetHandler implements IFluidHandler {
             return 0;
 
         if (pipeCover instanceof CoverFluidRegulator && ((CoverFluidRegulator) pipeCover).getPumpMode() == CoverPump.PumpMode.EXPORT)
-            return insertOverRegulator(handler.handler, (CoverFluidRegulator) pipeCover, stack, doFill, allowed);
+            return insertOverRegulator(handler, (CoverFluidRegulator) pipeCover, stack, doFill, allowed);
         if (tileCover instanceof CoverFluidRegulator && ((CoverFluidRegulator) tileCover).getPumpMode() == CoverPump.PumpMode.IMPORT)
-            return insertOverRegulator(handler.handler, (CoverFluidRegulator) tileCover, stack, doFill, allowed);
+            return insertOverRegulator(handler, (CoverFluidRegulator) tileCover, stack, doFill, allowed);
 
-        return insert(handler.handler, stack, doFill, allowed);
+        return insert(handler, stack, doFill, allowed);
     }
 
-    private int insert(IFluidHandler handler, FluidStack stack, boolean doFill, int max) {
+    private int insert(Handler handler, FluidStack stack, boolean doFill, int max) {
+        for(TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes()) {
+            if(!tickingPipe.findAndSetChannel(stack)) {
+                GTLog.logger.info("Couldn't find channel at {}", tickingPipe.getPipePos());
+                return 0;
+            }
+        }
+
+        IFluidHandler fluidHandler = handler.handler;
+        // check every pipe in path, but only if the last transferred fluid is not the same as the current
+        if(!stack.isFluidEqual(handler.getLastTransferredFluid())) {
+            boolean isGaseous = stack.getFluid().isGaseous(stack);
+            int temp = stack.getFluid().getTemperature(stack);
+            for(TileEntityFluidPipe pipe : handler.getPipesInPath()) {
+                FluidPipeProperties properties = pipe.getNodeData();
+                boolean isLeakingPipe = isGaseous && !properties.gasProof;
+                boolean isBurningPipe = temp > properties.maxFluidTemperature;
+                if (isLeakingPipe || isBurningPipe) {
+                    net.destroyNetwork(pipe.getPipePos(), isLeakingPipe, isBurningPipe);
+                    return 0;
+                }
+            }
+            handler.setLastTransferredFluid(stack);
+        }
+
         if (max >= stack.amount) {
-            int inserted = handler.fill(stack, doFill);
+            int inserted = fluidHandler.fill(stack, doFill);
             if (inserted > 0) {
-                if (doFill) net.setContainingFluid(stack, channel);
+                if (doFill)
+                    for(TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
+                        tickingPipe.setContainingFluid(stack, tickingPipe.getCurrentChannel());
                 transfer(pipe, doFill, inserted);
             }
             return inserted;
         }
         FluidStack toInsert = stack.copy();
         toInsert.amount = Math.min(max, stack.amount);
-        int inserted = handler.fill(toInsert, doFill);
+        int inserted = fluidHandler.fill(toInsert, doFill);
         if (inserted > 0) {
-            if (doFill) net.setContainingFluid(toInsert, channel);
+            if (doFill)
+                for(TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
+                    tickingPipe.setContainingFluid(toInsert, tickingPipe.getCurrentChannel());
             transfer(pipe, doFill, inserted);
         }
         return inserted;
     }
 
-    public int insertOverRegulator(IFluidHandler handler, CoverFluidRegulator regulator, FluidStack stack, boolean doFill, int allowed) {
+    public int insertOverRegulator(Handler handler, CoverFluidRegulator regulator, FluidStack stack, boolean doFill, int allowed) {
         int rate = regulator.getTransferAmount();
         int count;
         switch (regulator.getTransferMode()) {
             case TRANSFER_ANY:
                 return insert(handler, stack, doFill, allowed);
             case KEEP_EXACT:
-                count = rate - countStack(handler, stack, regulator);
+                count = rate - countStack(handler.handler, stack, regulator);
                 if (count <= 0) return 0;
                 count = Math.min(allowed, Math.min(stack.amount, count));
                 return insert(handler, stack, doFill, count);
@@ -295,7 +310,8 @@ public class FluidNetHandler implements IFluidHandler {
         private final IFluidHandler handler;
 
         public Handler(IFluidHandler handler, FluidPipeNet.Inventory inv) {
-            super(inv.getPipePos(), inv.getFaceToHandler(), inv.getDistance());
+            super(inv.getPipePos(), inv.getFaceToHandler(), inv.getDistance(), inv.getPipesInPath(), inv.getMinThroughput(), inv.getTickingPipes());
+            setLastTransferredFluid(inv.getLastTransferredFluid());
             this.handler = handler;
         }
     }

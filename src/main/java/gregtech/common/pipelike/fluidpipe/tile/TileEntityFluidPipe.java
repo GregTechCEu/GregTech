@@ -8,6 +8,7 @@ import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.BlockPos;
@@ -35,6 +36,22 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     @Override
     public boolean supportsTicking() {
         return false;
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        nbt.setBoolean("Ticking", this instanceof TileEntityFluidPipeTickable);
+        return nbt;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        if(nbt.getBoolean("Ticking") && !(this instanceof TileEntityFluidPipeTickable)) {
+            TileEntityFluidPipeTickable tickable = (TileEntityFluidPipeTickable) setSupportsTicking();
+            tickable.readFromNBT(nbt);
+        }
     }
 
     @Nullable

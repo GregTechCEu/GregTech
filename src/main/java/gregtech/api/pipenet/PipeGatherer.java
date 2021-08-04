@@ -47,7 +47,7 @@ public class PipeGatherer extends PipeNetWalker {
     }
 
     @Override
-    protected void checkNeighbour(BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
+    protected void checkNeighbour(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
     }
 
     @Override

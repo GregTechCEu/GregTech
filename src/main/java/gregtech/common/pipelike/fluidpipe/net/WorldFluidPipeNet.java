@@ -6,7 +6,7 @@ import gregtech.api.pipenet.tickable.TickableWorldPipeNet;
 import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
 import net.minecraft.world.World;
 
-public class WorldFluidPipeNet extends TickableWorldPipeNet<FluidPipeProperties, FluidPipeNet> {
+public class WorldFluidPipeNet extends WorldPipeNet<FluidPipeProperties, FluidPipeNet> {
 
     private static final String DATA_ID = "gregtech.fluid_pipe_net";
 
@@ -22,11 +22,6 @@ public class WorldFluidPipeNet extends TickableWorldPipeNet<FluidPipeProperties,
 
     public WorldFluidPipeNet(String name) {
         super(name);
-    }
-
-    @Override
-    protected int getUpdateRate() {
-        return 1;
     }
 
     @Override

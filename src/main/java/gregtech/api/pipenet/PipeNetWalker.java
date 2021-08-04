@@ -65,7 +65,7 @@ public abstract class PipeNetWalker {
      * @param faceToNeighbour face to neighbour
      * @param neighbourTile   neighbour tile
      */
-    protected abstract void checkNeighbour(BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile);
+    protected abstract void checkNeighbour(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile);
 
     /**
      * If the pipe is valid to perform a walk on
@@ -154,7 +154,7 @@ public abstract class PipeNetWalker {
                     continue;
                 }
             }
-            checkNeighbour(pos, accessSide, tile);
+            checkNeighbour(pipeTile, pos, accessSide, tile);
         }
     }
 
