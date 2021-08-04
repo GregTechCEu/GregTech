@@ -14,6 +14,7 @@ import gregtech.api.terminal.gui.widgets.guide.configurator.StringConfigurator;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 

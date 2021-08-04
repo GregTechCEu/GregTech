@@ -1,10 +1,7 @@
 package gregtech.api.terminal.gui.widgets.guide;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.WidgetGroup;
-import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;

@@ -45,7 +45,10 @@ public abstract class GuideApp<T> extends AbstractApplication {
                             }
                             app.pageWidget = new GuidePageWidget(133, 0, 200, 232, 5);
                             if (leaf.isLeaf() && leaf.content != null) {
-                                app.pageWidget.loadJsonConfig(leaf.content.getSecond());
+                                JsonObject page = getPage(leaf.content);
+                                if (page != null) {
+                                    app.pageWidget.loadJsonConfig(page);
+                                }
                             }
                             app.addWidget(app.pageWidget);
                         }, this::itemIcon, this::itemName).setNodeTexture(GuiTextures.BORDERED_BACKGROUND).setLeafTexture(GuiTextures.SLOT_DARKENED)
@@ -70,8 +73,9 @@ public abstract class GuideApp<T> extends AbstractApplication {
         return null;
     }
 
+    protected abstract JsonObject getPage(T item);
 
-    protected abstract TreeNode<String, Tuple<T, JsonObject>> getTree();
+    protected abstract TreeNode<String, T> getTree();
 
     public static JsonObject getConfig(String fileName) {
         try {

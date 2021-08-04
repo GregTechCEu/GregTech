@@ -47,13 +47,20 @@ public class GuideConfigEditor extends TabGroup {
                addButton[1].setVisible(false);
            }
         });
-//        addButton[0] = new CircleButtonWidget(100, -5, 5, 1, 3)
-//                .setColors(new Color(255, 255, 255, 0).getRGB(),
-//                        new Color(255, 255, 255).getRGB(),
-//                        new Color(146, 253, 118).getRGB())
-//                .setIcon(GuiTextures.TERMINAL_ADD)
-//                .setHoverText("add stream")
-//                .setClickListener(this::getJson);
+        this.addWidget(new CircleButtonWidget(100, -5, 5, 1, 3)
+                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                        new Color(255, 255, 255).getRGB(),
+                        new Color(243, 208, 116).getRGB())
+                .setIcon(GuiTextures.TERMINAL_ADD)
+                .setHoverText("Import Guide")
+                .setClickListener(this::loadJson));
+        this.addWidget(new CircleButtonWidget(120, -5, 5, 1, 3)
+                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                        new Color(255, 255, 255).getRGB(),
+                        new Color(146, 253, 118).getRGB())
+                .setIcon(GuiTextures.TERMINAL_ADD)
+                .setHoverText("Export Config")
+                .setClickListener(this::getJson));
         addButton[0] = new CircleButtonWidget(115, 15, 8, 1, 8)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         new Color(255, 255, 255).getRGB(),
@@ -68,6 +75,8 @@ public class GuideConfigEditor extends TabGroup {
                 .setIcon(GuiTextures.TERMINAL_ADD)
                 .setHoverText("add fixed")
                 .setClickListener(this::addFixed);
+        addButton[0].setVisible(false);
+        addButton[1].setVisible(false);
         this.addWidget(addButton[0]);
         this.addWidget(addButton[1]);
     }
@@ -92,11 +101,21 @@ public class GuideConfigEditor extends TabGroup {
                 .setValidator(s->true));
         group.addWidget(new ImageWidget(5, 48,116, 1, new ColorRectTexture(-1)));
         group.addWidget(new LabelWidget(5, 55, "title", -1).setShadow(true));
-        group.addWidget(new TextEditorWidget(5, 65, 116, 40, "Template", s->{
+        group.addWidget(new TextEditorWidget(5, 65, 116, 70, "Template", s->{
             if (pageEditor != null) {
                 pageEditor.setTitle(s);
             }
-        }).setBackground(new ColorRectTexture(0xA3FFFFFF)));
+        }, true).setBackground(new ColorRectTexture(0xA3FFFFFF)));
+//        group.addWidget(new ImageWidget(5, 148,116, 1, new ColorRectTexture(-1)));
+//        group.addWidget(new LabelWidget(5, 155, "translate key", -1).setShadow(true));
+//        group.addWidget(new TextFieldWidget(5, 165, 116, 20, new ColorRectTexture(0x9f000000), null, null)
+//                .setTextResponder(s->{
+//                    if (pageEditor != null) {
+//                        pageEditor.setTranslateKey(s);
+//                    }
+//                }, true)
+//                .setMaxStringLength(Integer.MAX_VALUE)
+//                .setValidator(s->true));
         return group;
     }
 
@@ -128,6 +147,12 @@ public class GuideConfigEditor extends TabGroup {
         widgetConfigurator.clearAllWidgets();
         if (widget != null) {
             widget.loadConfigurator(widgetConfigurator, widget.getConfig(), widget.isFixed(), widget::updateValue);
+        }
+    }
+
+    private void loadJson(ClickData data) {
+        if(pageEditor != null) {
+            System.out.println(pageEditor.getJsonString());
         }
     }
 
