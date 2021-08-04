@@ -37,19 +37,39 @@ public class ColorWidget extends WidgetGroup {
         this.barHeight= barHeight;
         IGuiTexture textFieldBackground = new ColorRectTexture(0x9f000000);
         TextFieldWidget redField = new TextFieldWidget(barWidth + 5, 0, 30, barHeight, textFieldBackground, null, null)
-                .setTextResponder((t) -> setRed(t.isEmpty()?  0 : Integer.parseInt(t)), true)
+                .setTextResponder((t) -> {
+                    setRed(t.isEmpty()?  0 : Integer.parseInt(t));
+                    if (onColorChanged != null) {
+                        onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
+                    }
+                }, true)
                 .setTextSupplier(() -> Integer.toString(red), true)
                 .setValidator(this::checkValid);
         TextFieldWidget greenField = new TextFieldWidget(barWidth + 5, barHeight + 5, 30, barHeight, textFieldBackground, null, null)
-                .setTextResponder((t) -> setGreen(t.isEmpty()?  0 : Integer.parseInt(t)), true)
+                .setTextResponder((t) -> {
+                    setGreen(t.isEmpty()?  0 : Integer.parseInt(t));
+                    if (onColorChanged != null) {
+                        onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
+                    }
+                }, true)
                 .setTextSupplier(() -> Integer.toString(green), true)
                 .setValidator(this::checkValid);
         TextFieldWidget blueField = new TextFieldWidget(barWidth + 5, (barHeight + 5) * 2, 30, barHeight, textFieldBackground, null, null)
-                .setTextResponder((t) -> setBlue(t.isEmpty()?  0 : Integer.parseInt(t)), true)
+                .setTextResponder((t) -> {
+                    setBlue(t.isEmpty()?  0 : Integer.parseInt(t));
+                    if (onColorChanged != null) {
+                        onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
+                    }
+                }, true)
                 .setTextSupplier(() -> Integer.toString(blue), true)
                 .setValidator(this::checkValid);
         TextFieldWidget alphaField = new TextFieldWidget(barWidth + 5, (barHeight + 5) * 3, 30, barHeight, textFieldBackground, null, null)
-                .setTextResponder((t) -> setAlpha(t.isEmpty()?  0 : Integer.parseInt(t)), true)
+                .setTextResponder((t) -> {
+                    setAlpha(t.isEmpty()?  0 : Integer.parseInt(t));
+                    if (onColorChanged != null) {
+                        onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
+                    }
+                }, true)
                 .setTextSupplier(() -> Integer.toString(alpha), true)
                 .setValidator(this::checkValid);
         this.addWidget(redField);
@@ -82,11 +102,11 @@ public class ColorWidget extends WidgetGroup {
         super.detectAndSendChanges();
         if (!isClient && colorSupplier!= null) {
             int c = colorSupplier.get();
-            int r = (c & 0x00ff0000) >> 16;
-            int g = (c & 0x0000ff00) >> 8;
+            int r = (c & 0x00ff0000) >>> 16;
+            int g = (c & 0x0000ff00) >>> 8;
             int b = (c & 0x000000ff);
-            int a = (c & 0xff000000) >> 24;
-            if (r != red || g != green || b != blue || a ==alpha) {
+            int a = (c & 0xff000000) >>> 24;
+            if (r != red || g != green || b != blue || a !=alpha) {
                 setRed(r);
                 setGreen(g);
                 setBlue(b);
@@ -101,11 +121,11 @@ public class ColorWidget extends WidgetGroup {
         super.updateScreen();
         if (isClient && colorSupplier!= null) {
             int c = colorSupplier.get();
-            int r = (c & 0x00ff0000) >> 16;
-            int g = (c & 0x0000ff00) >> 8;
+            int r = (c & 0x00ff0000) >>> 16;
+            int g = (c & 0x0000ff00) >>> 8;
             int b = (c & 0x000000ff);
-            int a = (c & 0xff000000) >> 24;
-            if (r != red || g != green || b != blue || a ==alpha) {
+            int a = (c & 0xff000000) >>> 24;
+            if (r != red || g != green || b != blue || a != alpha) {
                 setRed(r);
                 setGreen(g);
                 setBlue(b);
@@ -123,15 +143,18 @@ public class ColorWidget extends WidgetGroup {
     private void handleColor(int id, PacketBuffer buffer) {
         if (id == 2) {
             int c = buffer.readInt();
-            int r = (c & 0x00ff0000) >> 16;
-            int g = (c & 0x0000ff00) >> 8;
+            int r = (c & 0x00ff0000) >>> 16;
+            int g = (c & 0x0000ff00) >>> 8;
             int b = (c & 0x000000ff);
-            int a = (c & 0xff000000) >> 24;
-            if (r != red || g != green || b != blue || a ==alpha) {
+            int a = (c & 0xff000000) >>> 24;
+            if (r != red || g != green || b != blue || a != alpha) {
                 setRed(r);
                 setGreen(g);
                 setBlue(b);
                 setAlpha(a);
+                if (onColorChanged != null) {
+                    onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
+                }
             }
         }
     }
@@ -145,9 +168,6 @@ public class ColorWidget extends WidgetGroup {
         if (this.red != red) {
             this.red = red;
             redButton.setSelfPosition(new Position(red * barWidth / 255 - 4, redButton.getSelfPosition().y));
-            if (onColorChanged != null) {
-                onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
-            }
         }
     }
 
@@ -155,9 +175,6 @@ public class ColorWidget extends WidgetGroup {
         if (this.green != green) {
             this.green = green;
             greenButton.setSelfPosition(new Position(green * barWidth / 255 - 4, greenButton.getSelfPosition().y));
-            if (onColorChanged != null) {
-                onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
-            }
         }
     }
 
@@ -165,9 +182,6 @@ public class ColorWidget extends WidgetGroup {
         if (this.blue != blue) {
             this.blue = blue;
             blueButton.setSelfPosition(new Position(blue * barWidth / 255 - 4, blueButton.getSelfPosition().y));
-            if (onColorChanged != null) {
-                onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
-            }
         }
     }
 
@@ -175,9 +189,6 @@ public class ColorWidget extends WidgetGroup {
         if (this.alpha != alpha) {
             this.alpha = alpha;
             alphaButton.setSelfPosition(new Position(alpha * barWidth / 255 - 4, alphaButton.getSelfPosition().y));
-            if (onColorChanged != null) {
-                onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
-            }
         }
     }
 
@@ -199,9 +210,9 @@ public class ColorWidget extends WidgetGroup {
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         int x = getPosition().x;
         int y = getPosition().y;
-        drawGradientRect(x, y + 2, barWidth, 5, 0xFF000000, 0xFFFF0000, true);
-        drawGradientRect(x, y + barHeight + 5 + 2, barWidth, 5, 0xFF000000, 0xFF00ff00, true);
-        drawGradientRect(x, y + 2 * (barHeight + 5) + 2, barWidth, 5, 0xFF000000, 0xFF0000ff, true);
+        drawGradientRect(x, y + 2, barWidth, 5, (255 << 24) | (0) | (green << 8) | (blue), (255 << 24) | (255 << 16) | (green << 8) | (blue), true);
+        drawGradientRect(x, y + barHeight + 5 + 2, barWidth, 5, (255 << 24) | (red << 16) | (0) | (blue), (255 << 24) | (red << 16) | (255 << 8) | (blue), true);
+        drawGradientRect(x, y + 2 * (barHeight + 5) + 2, barWidth, 5, (255 << 24) | (red << 16) | (green << 8) | (0), (255 << 24) | (red << 16) | (green << 8) | (255), true);
         drawGradientRect(x, y + 3 * (barHeight + 5) + 2, barWidth, 5, (0) | (red << 16) | (green << 8) | (blue), (255 << 24) | (red << 16) | (green << 8) | (blue), true);
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
@@ -247,6 +258,9 @@ public class ColorWidget extends WidgetGroup {
                 setBlue(newX * 255 / barWidth);
             } else if (dragged == alphaButton) {
                 setAlpha(newX * 255 / barWidth);
+            }
+            if (onColorChanged != null) {
+                onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
             }
             dragged.setSelfPosition(new Position(newX - 4, dragged.getSelfPosition().y));
             return true;

@@ -58,11 +58,11 @@ public class TextBoxWidget extends GuideWidget {
     @Override
     public JsonObject getTemplate(boolean isFixed) {
         JsonObject template = super.getTemplate(isFixed);
-        template.addProperty("space", space);
-        template.addProperty("fontSize", fontSize);
-        template.addProperty("fontColor", fontColor);
-        template.addProperty("isCenter", isCenter);
-        template.addProperty("isShadow", isShadow);
+        template.addProperty("space", (String) null);
+        template.addProperty("fontSize", (String) null);
+        template.addProperty("fontColor", (String) null);
+        template.addProperty("isCenter", (String) null);
+        template.addProperty("isShadow", (String) null);
         template.add("content", new Gson().toJsonTree(Arrays.asList("this is a", "textbox!")));
         return template;
     }

@@ -17,22 +17,19 @@ import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 
 import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class GuidePageEditorWidget extends GuidePageWidget {
-    private final Map<Widget, JsonObject> configMap;
     private Widget selected;
     private final WidgetGroup toolButtons;
     private final CustomPositionSizeWidget customPositionSizeWidget;
     private GuideConfigEditor configEditor;
+    private String section = "default";
 
     public GuidePageEditorWidget(int xPosition, int yPosition, int width, int height, int margin) {
         super(xPosition, yPosition, width, height, margin);
         this.setDraggable(false);
-        configMap = new HashMap<>();
         setTitle("Template");
         customPositionSizeWidget = new CustomPositionSizeWidget(0xff0000ff, 0xffff0000, 2).setOnUpdated(this::onPosSizeChanged);
         toolButtons = new WidgetGroup(Position.ORIGIN, Size.ZERO);
@@ -62,9 +59,31 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         addWidget(toolButtons);
     }
 
+    public void setSection(String section) {
+        this.section = section;
+    }
+
     private void onPosSizeChanged(Position pos, Size size) {
-        if (customPositionSizeWidget.getControlled() instanceof IGuideWidget) {
-            ((IGuideWidget) customPositionSizeWidget.getControlled()).onFixedPositionSizeChanged(pos, size);
+        Widget widget = customPositionSizeWidget.getControlled();
+        if (widget instanceof IGuideWidget && ((IGuideWidget) widget).isFixed()) {
+            JsonObject config = ((IGuideWidget) widget).getConfig();
+            if (config.has("x")) {
+                config.addProperty("x", pos.x + scrollXOffset);
+                ((IGuideWidget) widget).updateValue("x");
+            }
+            if (config.has("y")) {
+                config.addProperty("y", pos.y + scrollYOffset);
+                ((IGuideWidget) widget).updateValue("y");
+            }
+            if (config.has("width")) {
+                config.addProperty("width", size.width);
+                ((IGuideWidget) widget).updateValue("width");
+            }
+            if (config.has("height")) {
+                config.addProperty("height", size.height);
+                ((IGuideWidget) widget).updateValue("height");
+            }
+            ((IGuideWidget) widget).onFixedPositionSizeChanged(pos, size);
         }
         toolButtons.setSelfPosition(new Position(pos.x + size.width / 2, pos.y));
     }
@@ -75,6 +94,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
 
     private void setToolButton(Widget widget) {
         customPositionSizeWidget.setControlled(widget);
+        customPositionSizeWidget.setActive(!(widget instanceof IGuideWidget) || ((IGuideWidget) widget).isFixed());
         toolButtons.setVisible(true);
         toolButtons.setSelfPosition(new Position(widget.getSelfPosition().x + widget.getSize().width / 2, widget.getSelfPosition().y));
     }
@@ -82,7 +102,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
     private void delete(ClickData clickData) {
         removeWidget(selected);
         selected = null;
-        configEditor.loadConfigurator(null, null, true);
+        configEditor.loadConfigurator(null);
         toolButtons.setSelfPosition(new Position(-scrollYOffset, -scrollYOffset));
         customPositionSizeWidget.setControlled(null);
         toolButtons.setVisible(false);
@@ -98,15 +118,23 @@ public class GuidePageEditorWidget extends GuidePageWidget {
 
     public String getJsonString() {
         JsonObject json = new JsonObject();
-        json.addProperty("section", "");
+        json.addProperty("section", section);
         json.addProperty("title", title.content.get(0));
         JsonArray array = new JsonArray();
         json.add("stream", array);
-        stream.forEach(widget -> array.add(configMap.get(widget)));
+        stream.forEach(widget -> {
+            if (widget instanceof IGuideWidget) {
+                array.add(((IGuideWidget) widget).getConfig());
+            }
+        });
 
         JsonArray array2 = new JsonArray();
         json.add("fixed", array2);
-        fixed.forEach(widget -> array2.add(configMap.get(widget)));
+        fixed.forEach(widget -> {
+            if (widget instanceof IGuideWidget) {
+                array2.add(((IGuideWidget) widget).getConfig());
+            }
+        });
 
         return new Gson().toJson(json);
     }
@@ -134,7 +162,6 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             stream.add(guideWidget);
             this.addWidget(guideWidget);
         }
-        configMap.put(guideWidget, widgetConfig);
         return widgetConfig;
     }
 
@@ -219,7 +246,6 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             fixed.remove(widget);
         }
         super.removeWidget(widget);
-        configMap.remove(widget);
     }
 
     @Override
@@ -231,7 +257,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         for (Widget widget : fixed) {
             if (widget.isMouseOverElement(mouseX, mouseY)) {
                 if (widget instanceof IGuideWidget && widget != selected) {
-                    configEditor.loadConfigurator((IGuideWidget) widget, configMap.get(widget), true);
+                    configEditor.loadConfigurator((IGuideWidget) widget);
                     selected = widget;
                     setToolButton(selected);
                 }
@@ -244,7 +270,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             for (Widget widget : stream) {
                 if (widget.isMouseOverElement(mouseX, mouseY)) {
                     if (widget instanceof IGuideWidget && widget != selected) {
-                        configEditor.loadConfigurator((IGuideWidget) widget, configMap.get(widget), false);
+                        configEditor.loadConfigurator((IGuideWidget) widget);
                         selected = widget;
                         setToolButton(selected);
                     }

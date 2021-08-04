@@ -48,16 +48,22 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
     }
 
     public void setTitle(String config) {
+        int x = 5;
+        int y = 2;
+        int width = this.getSize().width - yBarWidth - 10;
         int height = 0;
         if (title != null) {
             height = title.getSize().height;
+            x = title.getSelfPosition().x;
+            y = title.getSelfPosition().y;
             removeWidget(title);
         }
-        title = new TextBoxWidget(5, 2, this.getSize().width - yBarWidth - 10,
+        title = new TextBoxWidget(5, 2, width,
                 Collections.singletonList(config),
                 0, 15, 0xffffffff, 0x6fff0000, 0xff000000,
                 true, true);
         this.addWidget(title);
+        title.setSelfPosition(new Position(x, y));
         int offset = title.getSize().height - height;
         if (offset != 0) {
             for (Widget widget : stream) {
@@ -126,7 +132,7 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
         if (oldPosition.y + widget.getSize().height == maxHeight) {
             maxHeight = 0;
             for (Widget widget1 : widgets) {
-                maxHeight = Math.max(maxHeight, widget1.getSize().height + widget1.getSelfPosition().y);
+                maxHeight = Math.max(maxHeight, widget1.getSize().height + widget1.getSelfPosition().y + scrollYOffset);
             }
         }
     }

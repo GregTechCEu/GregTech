@@ -50,8 +50,10 @@ public class ImageWidget extends GuideWidget{
         super.loadConfigurator(group, config, isFixed, needUpdate);
         group.addWidget(new SelectorConfigurator(5, group.getWidgetBottomHeight() + 5, config, "form", Arrays.asList("url", "item", "resource")).setOnUpdated(needUpdate));
         group.addWidget(new StringConfigurator(5, group.getWidgetBottomHeight() + 5, config, "source").setOnUpdated(needUpdate));
-        group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "width").setOnUpdated(needUpdate));
-        group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "height").setOnUpdated(needUpdate));
+        if (!isFixed) {
+            group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "width").setOnUpdated(needUpdate));
+            group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "height").setOnUpdated(needUpdate));
+        }
     }
 
     @Override
@@ -59,6 +61,11 @@ public class ImageWidget extends GuideWidget{
         if (image != null) {
             image.updateTick();
         }
+    }
+
+    @Override
+    public void onFixedPositionSizeChanged(Position position, Size size) {
+        super.onFixedPositionSizeChanged(position, size);
     }
 
     @Override
@@ -71,14 +78,12 @@ public class ImageWidget extends GuideWidget{
             pageWidth = page.getPageWidth() - 2 * x;
         }
         this.setSelfPosition(new Position(x + (pageWidth - width) / 2, y));
-        this.setSize(new Size(width, height));
         return initFixed();
     }
 
     @Override
     protected Widget initFixed() {
-        width = getSize().width;
-        height = getSize().height;
+        this.setSize(new Size(width, height));
         switch (form) {
             case "url":
                 image = new URLTexture(source);
