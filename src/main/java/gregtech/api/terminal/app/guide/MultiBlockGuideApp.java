@@ -57,6 +57,7 @@ public class MultiBlockGuideApp extends GuideApp<MetaTileEntity> {
             MAP.put(mte, config);
         }
         if (MAP.get(mte) == null) {
+            DEFAULT.addProperty("title", "Missing: §4" + mte.metaTileEntityId.getPath() + ".json");
             return DEFAULT;
         }
         return MAP.get(mte);

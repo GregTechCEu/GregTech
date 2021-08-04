@@ -53,6 +53,7 @@ public class ItemGuideApp extends GuideApp<MetaItem<?>.MetaValueItem> {
             MAP.put(item, config);
         }
         if (MAP.get(item) == null) {
+            DEFAULT.addProperty("title", "Missing: §4" + item.unlocalizedName + ".json");
             return DEFAULT;
         }
         return MAP.get(item);
