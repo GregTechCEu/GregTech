@@ -56,6 +56,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
 
     private static int inputTankCapacity = ConfigHolder.U.GT5u.useCustomMachineTankSizes ? ConfigHolder.U.GT5u.customMachineTankSizes[0] : 64000;
     private static int outputTankCapacity = ConfigHolder.U.GT5u.useCustomMachineTankSizes ? ConfigHolder.U.GT5u.customMachineTankSizes[1] : 64000;
+    private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
     public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier) {
         this(metaTileEntityId, recipeMap, renderer, tier, true);
@@ -316,30 +317,36 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     }
 
     protected ModularUI.Builder createGuiTemplate(EntityPlayer player) {
-        ModularUI.Builder builder = workable.recipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids)
+        RecipeMap<?> workableRecipeMap = workable.recipeMap;
+        int yOffset = 0;
+        if (workableRecipeMap.getMaxInputs() > 6 || workableRecipeMap.getMaxFluidInputs() > 6 || workableRecipeMap.getMaxOutputs() > 6 || workableRecipeMap.getMaxFluidOutputs() > 6) {
+            yOffset = FONT_HEIGHT;
+        }
+
+        ModularUI.Builder builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset)
             .widget(new LabelWidget(5, 5, getMetaFullName()))
-            .widget(new SlotWidget(chargerInventory, 0, 79, 62)
+            .widget(new SlotWidget(chargerInventory, 0, 79, 62 + yOffset)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY))
-            .widget(new ImageWidget(79, 42, 18, 18, GuiTextures.INDICATOR_NO_ENERGY)
+            .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY)
                 .setPredicate(workable::isHasNotEnoughEnergy))
-            .bindPlayerInventory(player.inventory);
+            .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
         int leftButtonStartX = 7;
 
         if (exportItems.getSlots() > 0) {
-            builder.widget(new ToggleButtonWidget(leftButtonStartX, 62, 18, 18,
+            builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
                 GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
                 .setTooltipText("gregtech.gui.item_auto_output.tooltip"));
             leftButtonStartX += 18;
         }
         if (exportFluids.getTanks() > 0) {
-            builder.widget(new ToggleButtonWidget(leftButtonStartX, 62, 18, 18,
+            builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
                 GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
                 .setTooltipText("gregtech.gui.fluid_auto_output.tooltip"));
             leftButtonStartX += 18;
         }
 
-        builder.widget(new CycleButtonWidget(leftButtonStartX, 62, 18, 18,
+        builder.widget(new CycleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
                 workable.getAvailableOverclockingTiers(), workable::getOverclockTier, workable::setOverclockTier)
                 .setTooltipHoverString("gregtech.gui.overclock.description")
                 .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));

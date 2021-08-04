@@ -406,7 +406,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends MultiblockControllerBas
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INGOT_OVERLAY))
             .widget(new SlotWidget(exportItems, 1, 103, 24, true, false)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUST_OVERLAY))
-            .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT)
+            .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 0)
             .build(getHolder(), entityPlayer);
     }
 }

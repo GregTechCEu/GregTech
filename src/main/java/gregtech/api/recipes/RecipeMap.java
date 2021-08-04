@@ -271,8 +271,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids) {
-        return createUITemplate(this::jeiProgressBar, importItems, exportItems, importFluids, exportFluids);
+    public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+        return createUITemplate(this::jeiProgressBar, importItems, exportItems, importFluids, exportFluids, yOffset);
     }
 
     private double timer = 0;
@@ -283,17 +283,17 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     //this DOES NOT include machine control widgets or binds player inventory
-    public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids) {
-        ModularUI.Builder builder = ModularUI.defaultBuilder();
-        builder.widget(new ProgressWidget(progressSupplier, 78, 23, 20, 20, progressBarTexture, moveType));
-        addInventorySlotGroup(builder, importItems, importFluids, false);
-        addInventorySlotGroup(builder, exportItems, exportFluids, true);
+    public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+        ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
+        builder.widget(new ProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType));
+        addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
+        addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
         if (this.specialTexture != null && this.specialTexturePosition != null)
             addSpecialTexture(builder);
         return builder;
     }
 
-    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isOutputs) {
+    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
         int itemInputsCount = itemHandler.getSlots();
         int fluidInputsCount = fluidHandler.getTanks();
         boolean invertFluids = false;
@@ -307,7 +307,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int itemSlotsToLeft = inputSlotGrid[0];
         int itemSlotsToDown = inputSlotGrid[1];
         int startInputsX = isOutputs ? 106 : 70 - itemSlotsToLeft * 18;
-        int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18);
+        int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
         boolean wasGroupOutput = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
         if (wasGroupOutput) startInputsY -= 9;
         for (int i = 0; i < itemSlotsToDown; i++) {
@@ -331,10 +331,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 for (int i = 0; i < fluidInputsCount; i++) {
                     int x = isOutputs ? startInputsX + 18 * (i % 3) : startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
                     int y = startSpecY + (i / 3) * 18;
-                    if (itemHandler.getSlots() >= 9)
-                        addSlot(builder, x, y + 2, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
-                    else
-                        addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
                 }
             }
         }

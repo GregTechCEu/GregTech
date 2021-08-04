@@ -270,7 +270,7 @@ public class MetaTileEntityCokeOven extends MultiblockControllerBase {
                 .setBackgroundTexture(GuiTextures.FLUID_TANK_BACKGROUND)
                 .setOverlayTexture(GuiTextures.FLUID_TANK_OVERLAY)
                 .setContainerClicking(true, false))
-            .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT)
+            .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 0)
             .build(getHolder(), entityPlayer);
     }
 }

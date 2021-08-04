@@ -119,6 +119,6 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
             .widget(new LabelWidget(6, 6, getMetaFullName()))
             .widget(new ImageWidget(79, 42, 18, 18, getFullGuiTexture("not_enough_steam_%s"))
                 .setPredicate(() -> workableHandler.isHasNotEnoughEnergy()))
-            .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE);
+            .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE, 0);
     }
 }

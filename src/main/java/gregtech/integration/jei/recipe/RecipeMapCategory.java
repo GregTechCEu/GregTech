@@ -35,6 +35,8 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     private final FluidTankList importFluids, exportFluids;
     private final IDrawable backgroundDrawable;
 
+    private final int FONT_HEIGHT = 9;
+
     public RecipeMapCategory(RecipeMap<?> recipeMap, IGuiHelper guiHelper) {
         this.recipeMap = recipeMap;
         FluidTank[] importFluidTanks = new FluidTank[recipeMap.getMaxFluidInputs()];
@@ -47,7 +49,9 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
             (importItems = new ItemStackHandler(recipeMap.getMaxInputs())),
             (exportItems = new ItemStackHandler(recipeMap.getMaxOutputs())),
             (importFluids = new FluidTankList(false, importFluidTanks)),
-            (exportFluids = new FluidTankList(false, exportFluidTanks))
+            (exportFluids = new FluidTankList(false, exportFluidTanks)),
+            (recipeMap.getMaxOutputs() > 6 || recipeMap.getMaxInputs() > 6 ||
+                    recipeMap.getMaxFluidOutputs() > 6 || recipeMap.getMaxFluidInputs() > 6) ? FONT_HEIGHT : 0
         ).build(new BlankUIHolder(), Minecraft.getMinecraft().player);
         this.modularUI.initWidgets();
         this.backgroundDrawable = guiHelper.createBlankDrawable(modularUI.getWidth(), modularUI.getHeight() * 2 / 3);
