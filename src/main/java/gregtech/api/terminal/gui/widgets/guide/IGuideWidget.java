@@ -12,10 +12,12 @@ import gregtech.api.util.Size;
 import java.util.function.Consumer;
 
 public interface IGuideWidget {
+    JsonObject getConfig();
+    boolean isFixed();
     Widget createStreamWidget(int x, int y, int pageWidth, JsonObject config);
     Widget createFixedWidget(int x, int y, int width, int height, JsonObject config);
     void setPage(GuidePageWidget page);
-    void updateValue(String field, JsonElement value);
+    void updateValue(String field);
     String getRef();
     JsonObject getTemplate(boolean isFixed);
     void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate);

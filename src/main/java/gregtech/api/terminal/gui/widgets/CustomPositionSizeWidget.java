@@ -70,6 +70,38 @@ public class CustomPositionSizeWidget extends Widget implements IDraggable {
         }
     }
 
+    private boolean hoverUp(int x, int y, int width, int height, int mouseX, int mouseY) {
+        return isMouseOver(x, y, width / 5, border, mouseX, mouseY) ||
+                isMouseOver(x + width * 2 / 5, y, width / 5, border, mouseX, mouseY) ||
+                isMouseOver(x + width * 4 / 5, y, width / 5, border, mouseX, mouseY) ||
+                isMouseOver(x, y, border, height / 5, mouseX, mouseY) ||
+                isMouseOver(x + width - border, y, border, height / 5, mouseX, mouseY);
+    }
+
+    private boolean hoverDown(int x, int y, int width, int height, int mouseX, int mouseY) {
+        return isMouseOver(x, y + height - border, width / 5, border, mouseX, mouseY) ||
+                isMouseOver(x + width * 2 / 5, y + height - border, width / 5, border, mouseX, mouseY) ||
+                isMouseOver(x + width * 4 / 5, y + height - border, width / 5, border, mouseX, mouseY) ||
+                isMouseOver(x, y + height * 4 / 5, border, height / 5, mouseX, mouseY) ||
+                isMouseOver(x + width - border, y + height * 4 / 5, border, height / 5, mouseX, mouseY);
+    }
+
+    private boolean hoverLeft(int x, int y, int width, int height, int mouseX, int mouseY) {
+        return isMouseOver(x, y, border, height / 5, mouseX, mouseY) ||
+                isMouseOver(x, y + height * 2 / 5, border, height / 5, mouseX, mouseY) ||
+                isMouseOver(x, y + height * 4 / 5, border, height / 5, mouseX, mouseY) ||
+                isMouseOver(x, y, width / 5, border, mouseX, mouseY) ||
+                isMouseOver(x, y + height - border, width / 5, border, mouseX, mouseY);
+    }
+
+    private boolean hoverRight(int x, int y, int width, int height, int mouseX, int mouseY) {
+        return isMouseOver(x + width - border, y, border, height / 5, mouseX, mouseY) ||
+                isMouseOver(x + width - border, y + height * 2 / 5, border, height / 5, mouseX, mouseY) ||
+                isMouseOver(x + width - border, y + height * 4 / 5, border, height / 5, mouseX, mouseY) ||
+                isMouseOver(x + width * 4 / 5, y, width / 5, border, mouseX, mouseY) ||
+                isMouseOver(x + width * 4 / 5, y + height - border, width / 5, border, mouseX, mouseY);
+    }
+
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         if (controlled == null) return;
@@ -83,83 +115,52 @@ public class CustomPositionSizeWidget extends Widget implements IDraggable {
         boolean hoverLeft = false;
         boolean hoverRight = false;
         // UP
-        if (isMouseOver(x, y, width / 5, border, mouseX, mouseY) ||
-                isMouseOver(x + width * 2 / 5, y, width / 5, border, mouseX, mouseY) ||
-                isMouseOver(x + width * 4 / 5, y, width / 5, border, mouseX, mouseY) ||
-                isMouseOver(x, y, border, height / 5, mouseX, mouseY) ||
-                isMouseOver(x + width - border, y, border, height / 5, mouseX, mouseY)) {
+        if (dragUp || hoverUp(x, y, width, height, mouseX, mouseY)) {
             hoverUp = true;
         }
-        if (isMouseOver(x, y + height - border, width / 5, border, mouseX, mouseY) ||
-                isMouseOver(x + width * 2 / 5, y + height - border, width / 5, border, mouseX, mouseY) ||
-                isMouseOver(x + width * 4 / 5, y + height - border, width / 5, border, mouseX, mouseY) ||
-                isMouseOver(x, y + height * 4 / 5, border, height / 5, mouseX, mouseY) ||
-                isMouseOver(x + width - border, y + height * 4 / 5, border, height / 5, mouseX, mouseY)) {
+        if (dragDown || hoverDown(x, y, width, height, mouseX, mouseY)) {
             hoverDown = true;
         }
-        if (isMouseOver(x, y, border, height / 5, mouseX, mouseY) ||
-                isMouseOver(x, y + height * 2 / 5, border, height / 5, mouseX, mouseY) ||
-                isMouseOver(x, y + height * 4 / 5, border, height / 5, mouseX, mouseY) ||
-                isMouseOver(x, y, width / 5, border, mouseX, mouseY) ||
-                isMouseOver(x, y + height - border, width / 5, border, mouseX, mouseY)) {
+        if (dragLeft || hoverLeft(x, y, width, height, mouseX, mouseY)) {
             hoverLeft = true;
         }
-        if (isMouseOver(x + width - border, y, border, height / 5, mouseX, mouseY) ||
-                isMouseOver(x + width - border, y + height * 2 / 5, border, height / 5, mouseX, mouseY) ||
-                isMouseOver(x + width - border, y + height * 4 / 5, border, height / 5, mouseX, mouseY) ||
-                isMouseOver(x + width * 4 / 5, y, width / 5, border, mouseX, mouseY) ||
-                isMouseOver(x + width * 4 / 5, y + height - border, width / 5, border, mouseX, mouseY)) {
+        if (dragRight || hoverRight(x, y, width, height, mouseX, mouseY)) {
             hoverRight = true;
         }
-        drawSolidRect(x, y, width / 5, border, hoverUp ? hoverColor : borderColor);
-        drawSolidRect(x + width * 2 / 5, y, width / 5, border, hoverUp ? hoverColor : borderColor);
-        drawSolidRect(x + width * 4 / 5, y, width / 5, border, hoverUp ? hoverColor : borderColor);
+        // UP
+        drawSolidRect(x, y, width / 5, border, hoverUp && !hoverRight ? hoverColor : borderColor);
+        drawSolidRect(x + width * 2 / 5, y, width / 5, border, hoverUp && !hoverLeft && !hoverRight ? hoverColor : borderColor);
+        drawSolidRect(x + width * 4 / 5, y, width / 5, border, hoverUp && !hoverLeft ? hoverColor : borderColor);
         // DOWN
-        drawSolidRect(x, y + height - border, width / 5, border, hoverDown ? hoverColor : borderColor);
-        drawSolidRect(x + width * 2 / 5, y + height - border, width / 5, border, hoverDown ? hoverColor : borderColor);
-        drawSolidRect(x + width * 4 / 5, y + height - border, width / 5, border, hoverDown ? hoverColor : borderColor);
+        drawSolidRect(x, y + height - border, width / 5, border, hoverDown && !hoverRight ? hoverColor : borderColor);
+        drawSolidRect(x + width * 2 / 5, y + height - border, width / 5, border, hoverDown && !hoverLeft && !hoverRight ? hoverColor : borderColor);
+        drawSolidRect(x + width * 4 / 5, y + height - border, width / 5, border, hoverDown && !hoverLeft ? hoverColor : borderColor);
         // LEFT
-        drawSolidRect(x, y, border, height / 5, hoverLeft ? hoverColor : borderColor);
-        drawSolidRect(x, y + height * 2 / 5, border, height / 5, hoverLeft ? hoverColor : borderColor);
-        drawSolidRect(x, y + height * 4 / 5, border, height / 5, hoverLeft ? hoverColor : borderColor);
+        drawSolidRect(x, y, border, height / 5, hoverLeft && !hoverDown ? hoverColor : borderColor);
+        drawSolidRect(x, y + height * 2 / 5, border, height / 5, hoverLeft && !hoverDown && !hoverUp ? hoverColor : borderColor);
+        drawSolidRect(x, y + height * 4 / 5, border, height / 5, hoverLeft && !hoverUp ? hoverColor : borderColor);
         // RIGHT
-        drawSolidRect(x + width - border, y, border, height / 5, hoverRight ? hoverColor : borderColor);
-        drawSolidRect(x + width - border, y + height * 2 / 5, border, height / 5, hoverRight ? hoverColor : borderColor);
-        drawSolidRect(x + width - border, y + height * 4 / 5, border, height / 5, hoverRight ? hoverColor : borderColor);
+        drawSolidRect(x + width - border, y, border, height / 5, hoverRight && !hoverDown ? hoverColor : borderColor);
+        drawSolidRect(x + width - border, y + height * 2 / 5, border, height / 5, hoverRight && !hoverDown && !hoverUp ? hoverColor : borderColor);
+        drawSolidRect(x + width - border, y + height * 4 / 5, border, height / 5, hoverRight && !hoverUp ? hoverColor : borderColor);
     }
 
     @Override
     public boolean allowDrag(int mouseX, int mouseY, int button) {
-        if (controlled == null) return false;
+        if (controlled == null || !isActive()) return false;
         int x = controlled.getPosition().x;
         int y = controlled.getPosition().y;
         int width = controlled.getSize().width;
         int height = controlled.getSize().height;
         if (isMouseOver(x, y, width, height, mouseX, mouseY)) {
             // UP
-            dragUp = isMouseOver(x, y, width / 5, border, mouseX, mouseY) ||
-                    isMouseOver(x + width * 2 / 5, y, width / 5, border, mouseX, mouseY) ||
-                    isMouseOver(x + width * 4 / 5, y, width / 5, border, mouseX, mouseY) ||
-                    isMouseOver(x, y, border, height / 5, mouseX, mouseY) ||
-                    isMouseOver(x + width - border, y, border, height / 5, mouseX, mouseY);
+            dragUp = hoverUp(x, y, width, height, mouseX, mouseY);
             // DOWN
-            dragDown = isMouseOver(x, y + height - border, width / 5, border, mouseX, mouseY) ||
-                    isMouseOver(x + width * 2 / 5, y + height - border, width / 5, border, mouseX, mouseY) ||
-                    isMouseOver(x + width * 4 / 5, y + height - border, width / 5, border, mouseX, mouseY) ||
-                    isMouseOver(x, y + height * 4 / 5, border, height / 5, mouseX, mouseY) ||
-                    isMouseOver(x + width - border, y + height * 4 / 5, border, height / 5, mouseX, mouseY);
+            dragDown = hoverDown(x, y, width, height, mouseX, mouseY);
             // LEFT
-            dragLeft = isMouseOver(x, y, border, height / 5, mouseX, mouseY) ||
-                    isMouseOver(x, y + height * 2 / 5, border, height / 5, mouseX, mouseY) ||
-                    isMouseOver(x, y + height * 4 / 5, border, height / 5, mouseX, mouseY) ||
-                    isMouseOver(x, y, width / 5, border, mouseX, mouseY) ||
-                    isMouseOver(x, y + height - border, width / 5, border, mouseX, mouseY);
+            dragLeft = hoverLeft(x, y, width, height, mouseX, mouseY);
             // RIGHT
-            dragRight = isMouseOver(x + width - border, y, border, height / 5, mouseX, mouseY) ||
-                    isMouseOver(x + width - border, y + height * 2 / 5, border, height / 5, mouseX, mouseY) ||
-                    isMouseOver(x + width - border, y + height * 4 / 5, border, height / 5, mouseX, mouseY) ||
-                    isMouseOver(x + width * 4 / 5, y, width / 5, border, mouseX, mouseY) ||
-                    isMouseOver(x + width * 4 / 5, y + height - border, width / 5, border, mouseX, mouseY);
+            dragRight = hoverRight(x, y, width, height, mouseX, mouseY);
             dragPos = !dragUp && !dragDown && !dragLeft && !dragRight;
             return true;
         }
@@ -168,7 +169,7 @@ public class CustomPositionSizeWidget extends Widget implements IDraggable {
 
     @Override
     public boolean dragging(int mouseX, int mouseY, int deltaX, int deltaY) {
-        if (controlled == null) return false;
+        if (controlled == null || !isActive()) return false;
         int width = controlled.getSize().width;
         int height = controlled.getSize().height;
         int addX = 0, addY = 0;

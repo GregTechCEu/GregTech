@@ -31,6 +31,7 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
     private static final Gson GSON = new Gson();
     private transient boolean isFixed;
     protected transient GuidePageWidget page;
+    protected transient JsonObject config;
 
     public GuideWidget(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -42,24 +43,32 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
 
     public abstract String getRegistryName();
 
-    public void updateValue(String field, JsonElement value) {
-        try {
-            Field f = this.getClass().getField(field);
-            if (value.isJsonNull()) {  // default
-                f.set(this, f.get(GuidePageWidget.REGISTER_WIDGETS.get(getRegistryName())));
-            } else {
-                f.set(this, new Gson().fromJson(value, f.getType()));
+    public void updateValue(String field) {
+        if (config != null && config.has(field)) {
+            try {
+                Field f = this.getClass().getField(field);
+                JsonElement value = config.get(field);
+                if (value.isJsonNull()) {  // default
+                    f.set(this, f.get(GuidePageWidget.REGISTER_WIDGETS.get(getRegistryName())));
+                } else {
+                    f.set(this, new Gson().fromJson(value, f.getType()));
+                }
+                if (isFixed) {
+                    initFixed();
+                } else {
+                    initStream();
+                }
+            } catch (Exception e) {
             }
-            if (isFixed) {
-                initFixed();
-            } else {
-                initStream();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
+    @Override
+    public JsonObject getConfig() {
+        return config;
+    }
+
+    @Override
     public boolean isFixed() {
         return isFixed;
     }
@@ -100,17 +109,18 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
     @Override
     public JsonObject getTemplate(boolean isFixed) {
         JsonObject template = new JsonObject();
+        template.addProperty("type", getRegistryName());
         if (isFixed) {
             template.addProperty("x", 0);
             template.addProperty("y", 0);
             template.addProperty("width", 100);
             template.addProperty("height", 100);
         }
-        template.addProperty("ref", ref);
-        template.addProperty("stroke", stroke);
-        template.addProperty("stroke_width", stroke_width);
-        template.addProperty("fill", fill);
-        template.addProperty("link", link);
+        template.addProperty("ref", (String) null);
+        template.addProperty("stroke", (String) null);
+        template.addProperty("stroke_width", (String) null);
+        template.addProperty("fill", (String) null);
+        template.addProperty("link", (String) null);
         template.add("hover_text", new Gson().toJsonTree(hover_text));
         return template;
     }
@@ -136,6 +146,7 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
         widget.isFixed = false;
         widget.setSelfPosition(new Position(x, y));
         widget.setSize(new Size(pageWidth, 0));
+        widget.config = config;
         return widget.initStream();
     }
 
@@ -145,6 +156,7 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
         widget.isFixed = true;
         widget.setSelfPosition(new Position(x, y));
         widget.setSize(new Size(width, height));
+        widget.config = config;
         return widget.initFixed();
     }
 

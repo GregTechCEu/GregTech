@@ -118,7 +118,7 @@ public class TextEditorWidget extends WidgetGroup {
                     contentString += TextFormatting.GRAY + "_";
                 }
             }
-            this.fontRenderer.drawSplitString(contentString, getPosition().x, getPosition().y+ SPACE, getSize().width - yBarWidth, 0);
+            this.fontRenderer.drawSplitString(contentString, getPosition().x, getPosition().y + SPACE, getSize().width - yBarWidth, 0);
             return true;
         }
     }
