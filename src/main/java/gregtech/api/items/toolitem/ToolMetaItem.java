@@ -600,7 +600,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
     public static Material getToolMaterial(ItemStack itemStack) {
         NBTTagCompound statsTag = getToolStatsTag(itemStack);
         if (statsTag == null) {
-            return Materials.Aluminium;
+            return Materials.Neutronium;
         }
         String toolMaterialName;
         if (statsTag.hasKey("Material")) {
@@ -608,13 +608,13 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         } else if (statsTag.hasKey("PrimaryMaterial")) {
             toolMaterialName = statsTag.getString("PrimaryMaterial");
         } else {
-            return Materials.Aluminium;
+            return Materials.Neutronium;
         }
         Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(toolMaterialName);
-        if (material == null || !material.hasProperty(PropertyKey.TOOL)) {
+        if (material != null && material.hasProperty(PropertyKey.TOOL)) {
             return material;
         }
-        return Materials.Aluminium;
+        return Materials.Neutronium;
     }
 
     public class MetaToolValueItem extends MetaValueItem {
