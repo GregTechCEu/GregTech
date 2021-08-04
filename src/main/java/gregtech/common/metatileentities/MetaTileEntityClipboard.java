@@ -10,10 +10,7 @@ import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.itemhandlers.InaccessibleItemStackHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
-import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.MetaTileEntityUIFactory;
+import gregtech.api.metatileentity.*;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.models.ModelCache;
 import gregtech.common.items.behaviors.ClipboardBehaviour;
@@ -41,7 +38,7 @@ import java.util.Optional;
 import static gregtech.api.render.Textures.CLIPBOARD_RENDERER;
 import static gregtech.common.items.MetaItems.CLIPBOARD;
 
-public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRenderMetaTileEntity {
+public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMetaTileEntity {
     private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(2.75 / 16.0, 0.0, 0.0, 13.25 / 16.0, 1.0, 0.4 / 16.0);
     public static final ResourceLocation MODEL_RESOURCE_LOCATION = new ResourceLocation("gregtech", "block/clipboard");
     public static ModelCache cache = new ModelCache();
@@ -59,7 +56,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        this.renderMetaTileEntityFast(renderState, translation, 0);
+        // Just gonna ignore all of those parameters lul
+        //this.renderMetaTileEntityDynamic(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ(), Minecraft.getMinecraft().getRenderPartialTicks());
     }
 
     @Override
@@ -67,12 +65,17 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
         return 0;
     }
 
-    @Override
-    public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
-        CLIPBOARD_RENDERER.render(renderState, translation, new IVertexOperation[]{}, getFrontFacing(), this);
-    }
 
     @Override
+    public void renderMetaTileEntityDynamic(double x, double y, double z, float partialTicks) {
+        Matrix4 translation = new Matrix4().translate(x, y, z);
+        CCRenderState renderState = CCRenderState.instance();
+        renderState.reset();
+        CLIPBOARD_RENDERER.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
+        if(this.getClipboard() != null)
+            CLIPBOARD_RENDERER.renderGUI(translation, this, partialTicks);
+    }
+
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(getPos().add(-1, 0, -1), getPos().add(2, 2, 2));
     }
