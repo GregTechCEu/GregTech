@@ -26,6 +26,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
     private final CustomPositionSizeWidget customPositionSizeWidget;
     private GuideConfigEditor configEditor;
     private String section = "default";
+//    private String translateKey = "";
 
     public GuidePageEditorWidget(int xPosition, int yPosition, int width, int height, int margin) {
         super(xPosition, yPosition, width, height, margin);
@@ -62,6 +63,10 @@ public class GuidePageEditorWidget extends GuidePageWidget {
     public void setSection(String section) {
         this.section = section;
     }
+
+//    public void setTranslateKey(String translateKey) {
+//        this.translateKey = translateKey;
+//    }
 
     private void onPosSizeChanged(Position pos, Size size) {
         Widget widget = customPositionSizeWidget.getControlled();

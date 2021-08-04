@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public abstract class GuideWidget extends Widget implements IGuideWidget {

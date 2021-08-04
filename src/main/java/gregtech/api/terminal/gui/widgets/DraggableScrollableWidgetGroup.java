@@ -184,6 +184,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
 
     protected void setScrollYOffset(int scrollYOffset) {
         if (scrollYOffset == this.scrollYOffset) return;
+        if (scrollYOffset < 0) scrollYOffset = 0;
         int offset = scrollYOffset - this.scrollYOffset;
         this.scrollYOffset = scrollYOffset;
         for (Widget widget : widgets) {

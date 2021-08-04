@@ -23,18 +23,18 @@ import java.util.function.Function;
 public class TextTreeWidget<T> extends Widget {
     private static final int ITEM_HEIGHT = 11;
     protected int scrollOffset;
-    protected List<TreeNode<String, Tuple<T, JsonObject>>> list;
-    protected TreeNode<String, Tuple<T, JsonObject>> selected;
+    protected List<TreeNode<String, T>> list;
+    protected TreeNode<String, T> selected;
     protected IGuiTexture background;
     protected IGuiTexture nodeTexture;
     protected IGuiTexture leafTexture;
-    protected Consumer<TreeNode<String, Tuple<T, JsonObject>>> onSelected;
+    protected Consumer<TreeNode<String, T>> onSelected;
     protected Function<T, IGuiTexture> iconSupplier;
     protected Function<T, String> nameSupplier;
 
     public TextTreeWidget(int xPosition, int yPosition, int width, int height,
-                          TreeNode<String, Tuple<T, JsonObject>> root,
-                          Consumer<TreeNode<String, Tuple<T, JsonObject>>> onSelected,
+                          TreeNode<String, T> root,
+                          Consumer<TreeNode<String, T>> onSelected,
                           Function<T, IGuiTexture> iconSupplier,
                           Function<T, String> nameSupplier) {
         super(new Position(xPosition, yPosition), new Size(width, height));
@@ -88,7 +88,7 @@ public class TextTreeWidget<T> extends Widget {
 
             for (int i = minToRender; i < maxToRender; i++) {
                 GlStateManager.color(1,1,1,1);
-                TreeNode<String, Tuple<T, JsonObject>> node = list.get(i);
+                TreeNode<String, T> node = list.get(i);
                 int x = position.x + 10 * node.dimension;
                 int y = position.y - scrollOffset + i * ITEM_HEIGHT;
                 String name = node.key;
@@ -99,9 +99,9 @@ public class TextTreeWidget<T> extends Widget {
                         drawSolidRect(position.x, y, size.width, ITEM_HEIGHT, 0xffff0000);
                     }
                     if (node.content != null) {
-                        String nameS = nameSupplier.apply(node.content.getFirst());
+                        String nameS = nameSupplier.apply(node.content);
                         name = nameS == null ? name : nameS;
-                        IGuiTexture icon = iconSupplier.apply(node.content.getFirst());
+                        IGuiTexture icon = iconSupplier.apply(node.content);
                         if (icon != null) {
                             icon.draw(x - 9, y + 1, 8, 8);
                         }
@@ -126,14 +126,14 @@ public class TextTreeWidget<T> extends Widget {
         if (this.isMouseOverElement(mouseX, mouseY)) {
             int index = ((mouseY - getPosition().y) + scrollOffset) / ITEM_HEIGHT;
             if (index < list.size()) {
-                TreeNode<String, Tuple<T, JsonObject>> node = list.get(index);
+                TreeNode<String, T> node = list.get(index);
                 if (node.isLeaf()) {
                     if (node != this.selected) {
                         this.selected = node;
                         onSelected.accept(node);
                     }
                 } else if (node.children.size() > 0 && list.contains(node.children.get(0))){
-                    for (TreeNode<String, Tuple<T, JsonObject>> child : node.children) {
+                    for (TreeNode<String, T> child : node.children) {
                         list.remove(child);
                     }
                 } else {

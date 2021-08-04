@@ -18,6 +18,7 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.*;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
+import gregtech.api.terminal.app.guide.ItemGuideApp;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
@@ -220,6 +221,20 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         }
         metaItems.put((short) metaValue, metaValueItem);
         names.put(unlocalizedName, metaValueItem);
+        ItemGuideApp.registerItem(metaValueItem, "default");
+        return metaValueItem;
+    }
+
+    public final T addItem(int metaValue, String unlocalizedName, String section) {
+        Validate.inclusiveBetween(0, Short.MAX_VALUE - 1, metaValue + metaItemOffset, "MetaItem ID should be in range from 0 to Short.MAX_VALUE-1");
+        T metaValueItem = constructMetaValueItem((short) metaValue, unlocalizedName);
+        if (metaItems.containsKey((short) metaValue)) {
+            T registeredItem = metaItems.get((short) metaValue);
+            throw new IllegalArgumentException(String.format("MetaId %d is already occupied by item %s (requested by item %s)", metaValue, registeredItem.unlocalizedName, unlocalizedName));
+        }
+        metaItems.put((short) metaValue, metaValueItem);
+        names.put(unlocalizedName, metaValueItem);
+        ItemGuideApp.registerItem(metaValueItem, section);
         return metaValueItem;
     }
 
