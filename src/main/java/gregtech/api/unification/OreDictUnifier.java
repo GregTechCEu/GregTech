@@ -250,8 +250,7 @@ public class OreDictUnifier {
     }
 
     public static ItemStack getDust(Material material, long materialAmount) {
-        if (!material.hasProperty(PropertyKey.DUST)) return ItemStack.EMPTY;
-        if (materialAmount <= 0)
+        if (!material.hasProperty(PropertyKey.DUST) || materialAmount <= 0)
             return ItemStack.EMPTY;
         if (materialAmount % M == 0 || materialAmount >= M * 16)
             return get(OrePrefix.dust, material, (int) (materialAmount / M));
@@ -268,8 +267,7 @@ public class OreDictUnifier {
     }
 
     public static ItemStack getIngot(Material material, long materialAmount) {
-        if (!material.hasProperty(PropertyKey.INGOT)) return ItemStack.EMPTY;
-        if (materialAmount <= 0)
+        if (!material.hasProperty(PropertyKey.INGOT) || materialAmount <= 0)
             return ItemStack.EMPTY;
         if (materialAmount % M == 0 || materialAmount >= M * 16)
             return get(OrePrefix.ingot, material, (int) (materialAmount / M));
