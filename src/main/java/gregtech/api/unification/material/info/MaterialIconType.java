@@ -81,11 +81,12 @@ public enum MaterialIconType {
 
     //BLOCK TEXTURES
     block,
-    foilBlock,
-    wire,
+    fluid,
+    foilBlock, //todo unused
+    wire, //todo unused
     ore,
     frameGt,
-    pipeSide,
+    pipeSide, //todo unused
     pipeTiny,
     pipeSmall,
     pipeMedium,
