@@ -225,7 +225,7 @@ public class SecondDegreeMaterials {
                 .setFormula("(UO2)3ThPb", true);
 
         Monazite = new Material.Builder(2029, "monazite")
-                .gem(1).ore(8, 2)
+                .gem(1).ore(8, 2) // todo does this need 8x ore multiplier?
                 .color(0x324632).iconSet(DIAMOND)
                 .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
                 .components(RareEarth, 1, Phosphate, 1)
@@ -313,12 +313,7 @@ public class SecondDegreeMaterials {
                 .components(Clay, 1)
                 .build();
 
-
-        HydratedCoal = new Material.Builder(2041, "hydrated_coal")
-                .dust(1)
-                .color(0x464664).iconSet(ROUGH)
-                .components(Coal, 8, Water, 1)
-                .build();
+        // FREE ID 2041
 
         NaquadahAlloy = new Material.Builder(2042, "naquadah_alloy")
                 .ingot(5).fluid()
@@ -336,7 +331,7 @@ public class SecondDegreeMaterials {
                 .components(Nickel, 1, Sulfur, 1, Oxygen, 4, Water, 6)
                 .build();
 
-        CopperSulfateSolution = new Material.Builder(2044, "blue_vitriol_water_solution")
+        CopperSulfateSolution = new Material.Builder(2044, "copper_sulfate_water_solution")
                 .fluid()
                 .color(0x48A5C0)
                 .components(Copper, 1, Sulfur, 1, Oxygen, 4, Water, 5)

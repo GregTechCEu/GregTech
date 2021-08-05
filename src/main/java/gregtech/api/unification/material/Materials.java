@@ -356,7 +356,7 @@ public class Materials {
     public static Material FerriteMixture;
     public static Material Magnesia;
     public static Material PlatinumGroupSludge;
-    public static Material RealGar;
+    public static Material Realgar;
     public static Material SodiumBicarbonate;
     public static Material PotassiumDichromate;
     public static Material ChromiumTrioxide;

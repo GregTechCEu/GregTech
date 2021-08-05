@@ -9,7 +9,7 @@ import static gregtech.api.unification.material.info.MaterialIconSet.SHINY;
 
 public class OrganicChemistryMaterials {
     /**
-     * ID RANGE: 500-511 (incl.)
+     * ID RANGE: 1000-1068 (incl.)
      */
     public static void register() {
         SiliconeRubber = new Material.Builder(1000, "silicone_rubber")
@@ -220,7 +220,7 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 2, Hydrogen, 8)
                 .build();
 
-        Butane = new Material.Builder(1031, "butene")
+        Butane = new Material.Builder(1031, "butane")
                 .fluid(Material.FluidType.GAS)
                 .color(0xB6371E)
                 .components(Carbon, 4, Hydrogen, 10)
@@ -364,7 +364,7 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 3, Hydrogen, 8, Oxygen, 3)
                 .build();
 
-        Methanol = new Material.Builder(1052, "glycerol")
+        Methanol = new Material.Builder(1052, "methanol")
                 .fluid()
                 .color(0xAA8800)
                 .components(Carbon, 1, Hydrogen, 4, Oxygen, 1)
@@ -461,6 +461,13 @@ public class OrganicChemistryMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .color(0xF4F4D7)
                 .components(Carbon, 10, Hydrogen, 8)
+                .build();
+
+        Rubber = new Material.Builder(1068, "rubber")
+                .ingot(0).fluid()
+                .color(0x000000).iconSet(SHINY)
+                .flags(GENERATE_GEAR, GENERATE_RING, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
+                .components(Carbon, 5, Hydrogen, 8)
                 .build();
     }
 }

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+// TODO Make this not take an explicit ID and Name
 public class MaterialFlag {
 
     private final int id;

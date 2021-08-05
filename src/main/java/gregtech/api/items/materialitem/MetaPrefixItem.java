@@ -6,6 +6,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.DustProperty;
@@ -77,6 +78,11 @@ public class MetaPrefixItem extends StandardMetaItem {
             case oreEnderChunk: OreDictUnifier.registerOre(item, OrePrefix.oreEndstone.name(), material); break;
             case oreNetherChunk: OreDictUnifier.registerOre(item, OrePrefix.oreNetherrack.name(), material); break;
             case oreSandyChunk: OreDictUnifier.registerOre(item, OrePrefix.oreSand.name(), material); break;
+        }
+        if (material == Materials.Plutonium239) {
+            OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "239");
+        } else if (material == Materials.Uranium238) {
+            OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "238");
         }
     }
 

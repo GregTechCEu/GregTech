@@ -19,7 +19,7 @@ public class ElementMaterials {
                 .build();
 
         Aluminium = new Material.Builder(2, "aluminium")
-                .ingot().fluid().ore() // todo use this to test lack of "ingot()" call (tool guarantees)
+                .ingot().fluid().ore()
                 .color(0x80C8F0)
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME)
                 .element(Elements.Al)

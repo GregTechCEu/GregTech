@@ -36,7 +36,7 @@ public class UnknownCompositionMaterials {
         Creosote = new Material.Builder(1507, "creosote")
                 .fluid().color(0x804000).build();
 
-        Diesel = new Material.Builder(1508, "fuel")
+        Diesel = new Material.Builder(1508, "diesel")
                 .fluid().build();
 
         RocketFuel = new Material.Builder(1509, "rocket_fuel")

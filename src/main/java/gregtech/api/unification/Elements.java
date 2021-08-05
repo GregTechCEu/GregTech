@@ -154,6 +154,8 @@ public class Elements {
     public static final Element Vb = add(850, 900, -1, null, "Vibranium", "Vb", false);
     public static final Element Tn = add(550, 670, -1, null, "Taranium", "Tn", false);
 
+    // TODO Cosmic Neutronium, other Gregicality Elements
+
     @ZenMethod
     public static Element add(long protons, long neutrons, long halfLifeSeconds, String decayTo, String name, String symbol, boolean isIsotope) {
         Element element = new Element(protons, neutrons, halfLifeSeconds, decayTo, name, symbol, isIsotope);

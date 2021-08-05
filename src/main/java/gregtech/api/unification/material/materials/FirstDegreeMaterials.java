@@ -198,7 +198,7 @@ public class FirstDegreeMaterials {
         Diamond = new Material.Builder(276, "diamond")
                 .gem(3).ore()
                 .color(0xC8FFFF).iconSet(DIAMOND)
-                .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING, FLAMMABLE, GENERATE_BOLT_SCREW,
+                .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING, FLAMMABLE,
                         HIGH_SIFTER_OUTPUT, DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .toolStats(8.0f, 3.0f, 1280)
                 .build();
@@ -457,12 +457,7 @@ public class FirstDegreeMaterials {
                 .components(Potassium, 1, Chlorine, 1)
                 .build();
 
-        Rubber = new Material.Builder(310, "rubber")
-                .ingot(0).fluid()
-                .color(0x000000).iconSet(SHINY)
-                .flags(GENERATE_GEAR, GENERATE_RING, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
-                .components(Carbon, 5, Hydrogen, 8)
-                .build();
+        // FREE ID 310
 
         Ruby = new Material.Builder(311, "ruby")
                 .gem().ore()
@@ -862,7 +857,7 @@ public class FirstDegreeMaterials {
                 .flags(DISABLE_DECOMPOSITION)
                 .build();
 
-        RealGar = new Material.Builder(365, "realgar")
+        Realgar = new Material.Builder(365, "realgar")
                 .dust(2)
                 .color(0x8C6464)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
@@ -1070,7 +1065,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         TitaniumTetrachloride = new Material.Builder(398, "titanium_tetrachloride")
-                .fluidTemp(2220)
+                .fluid().fluidTemp(2220)
                 .color(0xD40D5C)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Titanium, 1, Chlorine, 4)
