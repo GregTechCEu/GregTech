@@ -443,12 +443,14 @@ public class OrganicChemistryMaterials {
         Octane = new Material.Builder(1063, "octane")
                 .fluid()
                 .flags(DISABLE_DECOMPOSITION)
+                .color(0x8A0A09)
                 .components(Carbon, 8, Hydrogen, 18)
                 .build();
 
         EthylTertButylEther = new Material.Builder(1064, "ethyl_tertbutyl_ether")
                 .fluid()
                 .flags(DISABLE_DECOMPOSITION)
+                .color(0xB15C06)
                 .components(Carbon, 6, Hydrogen, 14, Oxygen, 1)
                 .build();
 
