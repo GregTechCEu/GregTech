@@ -167,12 +167,9 @@ public class FluidNetHandler implements IFluidHandler {
     }
 
     private int insert(Handler handler, FluidStack stack, boolean doFill, int max) {
-        for(TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes()) {
-            if(!tickingPipe.findAndSetChannel(stack)) {
-                GTLog.logger.info("Couldn't find channel at {}", tickingPipe.getPipePos());
+        for(TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
+            if(!tickingPipe.findAndSetChannel(stack))
                 return 0;
-            }
-        }
 
         IFluidHandler fluidHandler = handler.handler;
         // check every pipe in path, but only if the last transferred fluid is not the same as the current
