@@ -591,7 +591,8 @@ public class Material implements Comparable<Material> {
 
         /**
          * Set the Color of this Material.<br>
-         * Defaults to 0xFFFFFF.
+         * Defaults to 0xFFFFFF if {@link MaterialInfo#componentList} is empty, otherwise
+         * will be the average of all Material colors in the Component List.
          *
          * @param color The RGB-formatted Color.
          */
@@ -767,7 +768,7 @@ public class Material implements Comparable<Material> {
 
         public Material build() {
             materialInfo.componentList = ImmutableList.copyOf(composition);
-            materialInfo.verifyIconSet(properties);
+            materialInfo.verifyInfo(properties);
             return new Material(materialInfo, properties, flags);
         }
     }
@@ -793,9 +794,9 @@ public class Material implements Comparable<Material> {
         /**
          * The color of this Material.
          *
-         * Default: 0xFFFFFF.
+         * Default: 0xFFFFFF if no Components, otherwise it will be the average of Components.
          */
-        private int color = 0xFFFFFF;
+        private int color = -1;
 
         /**
          * The IconSet of this Material.
@@ -825,7 +826,9 @@ public class Material implements Comparable<Material> {
             this.name = name;
         }
 
-        private void verifyIconSet(MaterialProperties p) {
+        private void verifyInfo(MaterialProperties p) {
+
+            // Verify IconSet
             if (iconSet == null) {
                 if (p.hasProperty(PropertyKey.GEM)) {
                     iconSet = MaterialIconSet.GEM_VERTICAL;
@@ -838,6 +841,20 @@ public class Material implements Comparable<Material> {
                 } else if (p.hasProperty(PropertyKey.PLASMA))
                     iconSet = MaterialIconSet.FLUID;
                 else iconSet = MaterialIconSet.DULL;
+            }
+
+            // Verify MaterialRGB
+            if (color == -1) {
+                if (componentList.isEmpty()) color = 0xFFFFFF;
+                else {
+                    long colorTemp = 0;
+                    int divisor = 0;
+                    for (MaterialStack stack : componentList) {
+                        colorTemp += stack.material.getMaterialRGB();
+                        divisor++;
+                    }
+                    color = (int) (colorTemp / divisor);
+                }
             }
         }
     }
