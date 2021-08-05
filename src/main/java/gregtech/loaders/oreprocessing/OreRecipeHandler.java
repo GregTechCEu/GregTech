@@ -270,15 +270,6 @@ public class OreRecipeHandler {
 
     public static void processDirtyDust(OrePrefix dustPrefix, Material material, OreProperty property) {
         ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
-        if (dustPrefix == OrePrefix.dustPure && property.getSeparatedInto() != null) {
-            ItemStack separatedStack = OreDictUnifier.get(OrePrefix.dustSmall, property.getSeparatedInto());
-            RecipeMaps.ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
-                .input(dustPrefix, material)
-                .outputs(dustStack)
-                .chancedOutput(separatedStack, 4000, 850)
-                .duration((int) property.getSeparatedInto().getAverageMass()).EUt(24)
-                .buildAndRegister();
-        }
 
         Material byproduct = GTUtility.selectItemInList(
                 2, material, property.getOreByProducts(), Material.class);
@@ -304,6 +295,16 @@ public class OreRecipeHandler {
         Material byproductMaterial = GTUtility.selectItemInList(
                 1, material, property.getOreByProducts(), Material.class);
         ItemStack dustStack = OreDictUnifier.get(OrePrefix.dust, material);
+
+        if (property.getSeparatedInto() != null) {
+            ItemStack separatedStack = OreDictUnifier.get(OrePrefix.dustSmall, property.getSeparatedInto());
+            RecipeMaps.ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
+                    .input(purePrefix, material)
+                    .outputs(dustStack)
+                    .chancedOutput(separatedStack, 4000, 850)
+                    .duration((int) property.getSeparatedInto().getAverageMass()).EUt(24)
+                    .buildAndRegister();
+        }
 
         if (dustStack.isEmpty()) {
             //fallback for reduced & cleanGravel
