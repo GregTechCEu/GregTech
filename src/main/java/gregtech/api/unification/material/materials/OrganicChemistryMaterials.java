@@ -374,6 +374,7 @@ public class OrganicChemistryMaterials {
         SaltWater = new Material.Builder(1053, "salt_water")
                 .fluid()
                 .color(0x0000C8)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Salt, 1, Water, 1)
                 .build();
 

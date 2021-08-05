@@ -198,7 +198,6 @@ public class ElementMaterials {
 
         Deuterium = new Material.Builder(28, "deuterium")
                 .fluid(FluidType.GAS)
-                .iconSet(FLUID)
                 .element(Elements.D)
                 .build();
 
