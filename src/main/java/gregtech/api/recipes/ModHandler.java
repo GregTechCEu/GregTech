@@ -52,20 +52,6 @@ public class ModHandler {
     }
 
     /**
-     * Returns a Liquid Stack with given amount of Water.
-     */
-    public static FluidStack getWater(int amount) {
-        return new FluidStack(FluidRegistry.WATER, amount);
-    }
-
-    /**
-     * Returns a Liquid Stack with given amount of distilled Water.
-     */
-    public static FluidStack getDistilledWater(int amount) {
-        return Materials.Water.getFluid(amount);
-    }
-
-    /**
      * Returns if that Liquid is Lava
      */
     public static boolean isLava(FluidStack fluid) {

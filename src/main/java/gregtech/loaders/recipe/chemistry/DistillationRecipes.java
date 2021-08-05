@@ -1,6 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.api.recipes.ModHandler;
+import gregtech.api.unification.material.Materials;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -293,7 +293,7 @@ public class DistillationRecipes {
         DISTILLERY_RECIPES.recipeBuilder()
             .fluidInputs(Water.getFluid(5))
             .circuitMeta(5)
-            .fluidOutputs(ModHandler.getDistilledWater(5))
+            .fluidOutputs(Materials.DistilledWater.getFluid(5))
             .duration(16).EUt(10).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()

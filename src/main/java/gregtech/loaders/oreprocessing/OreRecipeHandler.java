@@ -135,7 +135,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
             .input(crushedPrefix, material)
-            .fluidInputs(ModHandler.getWater(1000))
+            .fluidInputs(Materials.Water.getFluid(1000))
             .outputs(crushedPurifiedOre,
                 OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, 3),
                 OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
@@ -143,7 +143,7 @@ public class OreRecipeHandler {
 
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
             .input(crushedPrefix, material)
-            .fluidInputs(ModHandler.getDistilledWater(1000))
+            .fluidInputs(Materials.DistilledWater.getFluid(1000))
             .outputs(crushedPurifiedOre,
                 OreDictUnifier.get(OrePrefix.dustTiny, byproductMaterial, 3),
                 OreDictUnifier.get(OrePrefix.dust, Materials.Stone))

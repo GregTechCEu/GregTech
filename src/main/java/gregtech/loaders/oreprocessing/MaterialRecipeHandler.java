@@ -8,7 +8,10 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.*;
+import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.GemProperty;
+import gregtech.api.unification.material.properties.IngotProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
@@ -69,7 +72,7 @@ public class MaterialRecipeHandler {
 
                 RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
                     .input(dustPrefix, mat)
-                    .fluidInputs(ModHandler.getDistilledWater(36))
+                    .fluidInputs(Materials.DistilledWater.getFluid(36))
                     .chancedOutput(gemStack, 9000, 1000)
                     .duration(1200).EUt(24)
                     .buildAndRegister();

@@ -236,7 +236,7 @@ public class MachineRecipeLoader {
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
             .input(OrePrefix.dust, Materials.Stone, 1)
-            .fluidInputs(Materials.Lubricant.getFluid(20), ModHandler.getWater(4980))
+            .fluidInputs(Materials.Lubricant.getFluid(20), Materials.Water.getFluid(4980))
             .fluidOutputs(Materials.DrillingFluid.getFluid(5000))
             .duration(64).EUt(16)
             .buildAndRegister();
@@ -280,14 +280,14 @@ public class MachineRecipeLoader {
 
         RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
             .inputs(MetaItems.ENERGIUM_DUST.getStackForm(9))
-            .fluidInputs(ModHandler.getDistilledWater(1800))
+            .fluidInputs(Materials.DistilledWater.getFluid(1800))
             .outputs(MetaItems.ENERGY_CRYSTAL.getStackForm())
             .duration(1500).EUt(120)
             .buildAndRegister();
 
         RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
             .input(OrePrefix.dust, Materials.SiliconDioxide)
-            .fluidInputs(ModHandler.getDistilledWater(200))
+            .fluidInputs(Materials.DistilledWater.getFluid(200))
             .chancedOutput(OreDictUnifier.get(OrePrefix.gem, Materials.Quartzite), 1000, 1000)
             .duration(1500).EUt(24).buildAndRegister();
 
