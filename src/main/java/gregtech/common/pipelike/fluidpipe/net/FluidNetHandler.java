@@ -184,7 +184,7 @@ public class FluidNetHandler implements IFluidHandler {
                 boolean isLeakingPipe = isGaseous && !properties.gasProof;
                 boolean isBurningPipe = temp > properties.maxFluidTemperature;
                 if (isLeakingPipe || isBurningPipe) {
-                    net.destroyNetwork(pipe.getPipePos(), isLeakingPipe, isBurningPipe);
+                    net.destroyNetwork(pipe.getPos(), isLeakingPipe, isBurningPipe, temp);
                     return 0;
                 }
             }

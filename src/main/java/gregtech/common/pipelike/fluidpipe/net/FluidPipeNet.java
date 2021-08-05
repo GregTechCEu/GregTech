@@ -53,9 +53,15 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         NET_DATA.clear();
     }
 
-    public void destroyNetwork(BlockPos source, boolean isLeaking, boolean isBurning) {
+    public void destroyNetwork(BlockPos source, boolean isLeaking, boolean isBurning, int temp) {
         World world = getWorldData();
-        List<IPipeTile<?, ?>> pipes = PipeGatherer.gatherPipesInDistance(this, world, source, pipe -> pipe instanceof TileEntityFluidPipe, 2 + world.rand.nextInt(5));
+        List<IPipeTile<?, ?>> pipes = PipeGatherer.gatherPipesInDistance(this, world, source, pipe -> {
+            if(pipe instanceof TileEntityFluidPipe) {
+                TileEntityFluidPipe fluidPipe = (TileEntityFluidPipe) pipe;
+                return (isBurning && fluidPipe.getNodeData().maxFluidTemperature < temp) || (isLeaking && !fluidPipe.getNodeData().gasProof);
+            }
+            return false;
+        }, 2 + world.rand.nextInt(4));
         for (IPipeTile<?, ?> pipeTile : pipes) {
             BlockPos pos = pipeTile.getPipePos();
             Random random = world.rand;
