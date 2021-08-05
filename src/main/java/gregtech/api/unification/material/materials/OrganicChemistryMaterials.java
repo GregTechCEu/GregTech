@@ -4,8 +4,7 @@ import gregtech.api.unification.material.Material;
 
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
-import static gregtech.api.unification.material.info.MaterialIconSet.FINE;
-import static gregtech.api.unification.material.info.MaterialIconSet.SHINY;
+import static gregtech.api.unification.material.info.MaterialIconSet.*;
 
 public class OrganicChemistryMaterials {
     /**
@@ -142,17 +141,19 @@ public class OrganicChemistryMaterials {
 
         Methane = new Material.Builder(1018, "methane")
                 .fluid(Material.FluidType.GAS)
+                .color(0xFF0078).iconSet(GAS)
                 .components(Carbon, 1, Hydrogen, 4)
                 .build();
 
         Epichlorohydrin = new Material.Builder(1019, "epichlorohydrin")
                 .fluid()
+                .color(0x712400)
                 .components(Carbon, 3, Hydrogen, 5, Chlorine, 1, Oxygen, 1)
                 .build();
 
         Monochloramine = new Material.Builder(1020, "monochloramine")
                 .fluid(Material.FluidType.GAS)
-                .color(0x3F9F80).iconSet(FINE)
+                .color(0x3F9F80)
                 .components(Hydrogen, 1, HydrochloricAcid, 1)
                 .build()
                 .setFormula("NH2Cl", true);

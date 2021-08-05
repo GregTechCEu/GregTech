@@ -46,7 +46,7 @@ public class ElementMaterials {
 
         Argon = new Material.Builder(5, "argon")
                 .fluid(FluidType.GAS).plasma()
-                .color(0x01FF01).iconSet(FLUID)
+                .color(0x00FF00).iconSet(GAS)
                 .element(Elements.Ar)
                 .build();
 
@@ -316,6 +316,7 @@ public class ElementMaterials {
 
         Hydrogen = new Material.Builder(45, "hydrogen")
                 .fluid(FluidType.GAS)
+                .color(0x0000B5)
                 .element(Elements.H)
                 .build();
 
@@ -363,6 +364,7 @@ public class ElementMaterials {
 
         Krypton = new Material.Builder(52, "krypton")
                 .fluid(FluidType.GAS)
+                .color(0x80FF80).iconSet(GAS)
                 .element(Elements.Kr)
                 .build();
 
@@ -437,6 +439,7 @@ public class ElementMaterials {
 
         Mercury = new Material.Builder(63, "mercury")
                 .fluid()
+                .color(0xE6DCDC).iconSet(DULL)
                 .element(Elements.Hg)
                 .build();
 
@@ -464,6 +467,7 @@ public class ElementMaterials {
 
         Neon = new Material.Builder(67, "neon")
                 .fluid(FluidType.GAS)
+                .color(0xFAB4B4).iconSet(GAS)
                 .element(Elements.Ne)
                 .build();
 
@@ -499,7 +503,7 @@ public class ElementMaterials {
 
         Nitrogen = new Material.Builder(72, "nitrogen")
                 .fluid(FluidType.GAS).plasma()
-                .iconSet(FLUID)
+                .color(0x00BFC1).iconSet(GAS)
                 .element(Elements.N)
                 .build();
 
@@ -529,6 +533,7 @@ public class ElementMaterials {
 
         Oxygen = new Material.Builder(76, "oxygen")
                 .fluid(FluidType.GAS).plasma()
+                .color(0x4CC3FF)
                 .element(Elements.O)
                 .build();
 
@@ -609,6 +614,7 @@ public class ElementMaterials {
 
         Radon = new Material.Builder(87, "radon")
                 .fluid(FluidType.GAS)
+                .color(0xFF39FF)
                 .element(Elements.Rn)
                 .build();
 
@@ -845,6 +851,7 @@ public class ElementMaterials {
 
         Xenon = new Material.Builder(119, "xenon")
                 .fluid(FluidType.GAS)
+                .color(0x00FFFF).iconSet(GAS)
                 .element(Elements.Xe)
                 .build();
 

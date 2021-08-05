@@ -8,7 +8,6 @@ import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
-import gregtech.api.unification.material.properties.MaterialProperties;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.SmallDigits;
@@ -22,7 +21,10 @@ import stanhebben.zenscript.annotations.OperatorType;
 import stanhebben.zenscript.annotations.ZenOperator;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 //@ZenClass("mods.gregtech.material.Material")
 //@ZenRegister
@@ -845,7 +847,8 @@ public class Material implements Comparable<Material> {
 
             // Verify MaterialRGB
             if (color == -1) {
-                if (componentList.isEmpty()) color = 0xFFFFFF;
+                if (componentList.isEmpty() || p.hasProperty(PropertyKey.FLUID))
+                    color = 0xFFFFFF;
                 else {
                     long colorTemp = 0;
                     int divisor = 0;

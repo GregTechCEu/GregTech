@@ -171,23 +171,14 @@ public class MetaFluids {
         setAlternativeFluidName(Materials.Diesel, FluidType.NORMAL, "fuel");
 
         setMaterialFluidTexture(Materials.Air, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Oxygen, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Oxygen, FluidType.PLASMA);
-        setMaterialFluidTexture(Materials.Hydrogen, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Deuterium, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.DistilledWater, FluidType.NORMAL, new ResourceLocation("blocks/water_still"));
         setMaterialFluidTexture(Materials.Tritium, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Helium, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Helium, FluidType.PLASMA);
         setMaterialFluidTexture(Materials.Helium3, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Argon, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Radon, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Fluorine, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.TitaniumTetrachloride, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Methane, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Nitrogen, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Nitrogen, FluidType.PLASMA);
-        setMaterialFluidTexture(Materials.NitrogenDioxide, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Steam, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.OilHeavy, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.OilMedium, FluidType.NORMAL);
@@ -205,7 +196,6 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.SteamCrackedLightFuel, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.SteamCrackedHeavyFuel, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Chlorine, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Mercury, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.NitroDiesel, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.SodiumPersulfate, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.GlycerylTrinitrate, FluidType.NORMAL);
@@ -223,14 +213,8 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.Glue, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.HydrochloricAcid, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.LeadZincSolution, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Epichlorohydrin, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.NaturalGas, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Blaze, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Toluene, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Redstone, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Krypton, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Neon, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Xenon, FluidType.NORMAL);
 
         for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
             FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);

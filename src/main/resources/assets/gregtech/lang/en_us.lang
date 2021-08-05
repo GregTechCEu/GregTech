@@ -1232,6 +1232,7 @@ material.chromium_dioxide=Chromium Dioxide
 material.cinnabar=Cinnabar
 material.water=Water
 material.steam=Steam
+material.distilled_water=Distilled Water
 material.clay=Clay
 material.coal=Coal
 material.cobaltite=Cobaltite
@@ -1930,8 +1931,6 @@ tile.casing.mv=MV Machine Casing
 tile.casing.hv=HV Machine Casing
 tile.casing.ev=EV Machine Casing
 tile.casing.iv=IV Machine Casing
-
-fluid.distilled_water=Distilled Water
 
 # Wire coil blocks
 tile.wire_coil.tooltip_ebf=When used in §aElectric Blast Furnace§7:

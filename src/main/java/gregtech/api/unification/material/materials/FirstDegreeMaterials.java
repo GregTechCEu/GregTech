@@ -1073,6 +1073,7 @@ public class FirstDegreeMaterials {
 
         NitrogenDioxide = new Material.Builder(399, "nitrogen_dioxide")
                 .fluid(Material.FluidType.GAS)
+                .color(0x85FCFF).iconSet(GAS)
                 .components(Nitrogen, 1, Oxygen, 2)
                 .build();
 
@@ -1214,7 +1215,7 @@ public class FirstDegreeMaterials {
 
         DistilledWater = new Material.Builder(421, "distilled_water")
                 .fluid()
-                .color(0x0000FF)
+                .color(0xEEEEFF)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(Hydrogen, 2, Oxygen, 1)
                 .build();

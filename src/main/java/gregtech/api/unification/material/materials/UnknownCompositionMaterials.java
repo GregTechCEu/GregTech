@@ -43,7 +43,7 @@ public class UnknownCompositionMaterials {
                 .fluid().color(0xBDB78C).build();
 
         Glue = new Material.Builder(1510, "glue")
-                .fluid().color(0xC8C400).build();
+                .fluid().build();
 
         Lubricant = new Material.Builder(1511, "lubricant")
                 .fluid().build();
