@@ -88,10 +88,6 @@ public class MetaFluids {
 
     private static final Map<Pair<Material, FluidType>, ResourceLocation> fluidTextureMap = new HashMap<>();
 
-    public static final Fluid DISTILLED_WATER = new Fluid("distilled_water",
-        new ResourceLocation("blocks/water_still"),
-        new ResourceLocation("blocks/water_flow"));
-
     public enum FluidType {
         NORMAL("", material -> material.hasFluid() && material.getProperty(PropertyKey.FLUID).isGas() ? FluidState.GAS : FluidState.LIQUID),
         PLASMA("plasma.", material -> FluidState.PLASMA);
@@ -167,12 +163,6 @@ public class MetaFluids {
         Materials.Water.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.WATER);
         Materials.Lava.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.LAVA);
 
-        FluidRegistry.registerFluid(DISTILLED_WATER);
-        Materials.DistilledWater.getProperty(PropertyKey.FLUID).setFluid(DISTILLED_WATER);
-
-        FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, FluidTooltipUtil.getWaterTooltip());
-        FluidTooltipUtil.registerTooltip(DISTILLED_WATER, FluidTooltipUtil.getWaterTooltip());
-
         //alternative names for forestry fluids
         setAlternativeFluidName(Materials.Ethanol, FluidType.NORMAL, "bio.ethanol");
         setAlternativeFluidName(Materials.Honey, FluidType.NORMAL, "for.honey");
@@ -185,6 +175,7 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.Oxygen, FluidType.PLASMA);
         setMaterialFluidTexture(Materials.Hydrogen, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Deuterium, FluidType.NORMAL);
+        setMaterialFluidTexture(Materials.DistilledWater, FluidType.NORMAL, new ResourceLocation("blocks/water_still"));
         setMaterialFluidTexture(Materials.Tritium, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Helium, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Helium, FluidType.PLASMA);
@@ -318,8 +309,6 @@ public class MetaFluids {
 
             fluid = new MaterialFluid(fluidName, material, fluidState, textureLocation);
             fluid.setTemperature(temperature);
-
-            // apply color overlay to texture
             fluid.setColor(GTUtility.convertRGBtoOpaqueRGBA_MC(material.getMaterialRGB()));
 
             // set properties and register

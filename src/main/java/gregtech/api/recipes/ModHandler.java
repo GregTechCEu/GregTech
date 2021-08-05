@@ -5,8 +5,8 @@ import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.recipes.DummyRecipe;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -14,7 +14,6 @@ import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
-import gregtech.common.MetaFluids;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.InventoryCrafting;
@@ -49,7 +48,7 @@ public class ModHandler {
      */
     public static boolean isWater(FluidStack fluid) {
         return new FluidStack(FluidRegistry.WATER, 1).isFluidEqual(fluid)
-            || new FluidStack(MetaFluids.DISTILLED_WATER, 1).isFluidEqual(fluid);
+            || Materials.DistilledWater.getFluid(1).isFluidEqual(fluid);
     }
 
     /**
@@ -63,7 +62,7 @@ public class ModHandler {
      * Returns a Liquid Stack with given amount of distilled Water.
      */
     public static FluidStack getDistilledWater(int amount) {
-        return new FluidStack(MetaFluids.DISTILLED_WATER, amount);
+        return Materials.Water.getFluid(amount);
     }
 
     /**
