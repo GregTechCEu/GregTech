@@ -47,12 +47,12 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     }
 
     public FluidStack getContainedFluid(int channel) {
-        if(channel < 0) return null;
+        if (channel < 0) return null;
         return getContainedFluids()[channel];
     }
 
     public FluidStack[] getContainedFluids() {
-        if(fluids == null) {
+        if (fluids == null) {
             int tanks = getNodeData().tanks;
             this.fluids = new FluidStack[tanks];
             this.emptyTimer = new int[tanks];
@@ -62,14 +62,14 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     }
 
     public void setContainingFluid(FluidStack stack, int channel) {
-        if(channel < 0) return;
+        if (channel < 0) return;
         this.getContainedFluids()[channel] = stack;
         this.emptyTimer[channel] = 20;
         this.currentChannel = -1;
     }
 
     private void emptyTank(int channel) {
-        if(channel < 0) return;
+        if (channel < 0) return;
         this.getContainedFluids()[channel] = null;
     }
 
@@ -91,7 +91,6 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
      *
      * @param stack to find a channel fot
      * @return channel
-     * @throws NullPointerException if fluids are null
      */
     public int findChannel(FluidStack stack) {
         if (getContainedFluids().length == 1) {
@@ -134,7 +133,8 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             if (stack1 == null)
                 fluidTag.setBoolean("isNull", true);
             else
-                list.appendTag(stack1.writeToNBT(fluidTag));
+                stack1.writeToNBT(fluidTag);
+            list.appendTag(fluidTag);
         }
         nbt.setTag("Fluids", list);
         return nbt;
@@ -145,14 +145,12 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         super.readFromNBT(nbt);
         this.isActive = nbt.getBoolean("ActiveNode");
         NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
-        if (fluids == null) {
-            fluids = new FluidStack[list.tagCount()];
-            emptyTimer = new int[list.tagCount()];
-        }
+        fluids = new FluidStack[list.tagCount()];
+        emptyTimer = new int[list.tagCount()];
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tag = list.getCompoundTagAt(i);
             emptyTimer[i] = tag.getInteger("Timer");
-            if (!tag.hasKey("isNull"))
+            if (!tag.getBoolean("isNull"))
                 fluids[i] = FluidStack.loadFluidStackFromNBT(tag);
         }
     }
