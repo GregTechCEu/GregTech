@@ -624,7 +624,6 @@ public class Materials {
     public static Material Potin;
     public static Material Brick;
     public static Material Fireclay;
-    public static Material HydratedCoal;
     public static Material BorosilicateGlass;
     public static Material NaquadahAlloy;
     public static Material NickelSulfateSolution;

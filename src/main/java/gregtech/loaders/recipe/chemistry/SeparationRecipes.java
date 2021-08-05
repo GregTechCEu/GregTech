@@ -472,12 +472,6 @@ public class SeparationRecipes {
                 .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(4)
-                .input(dust, HydratedCoal)
-                .output(dust, Coal)
-                .fluidOutputs(Water.getFluid(100))
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(4)
                 .inputs(new ItemStack(Items.SNOWBALL))
                 .fluidOutputs(Water.getFluid(250))
                 .buildAndRegister();

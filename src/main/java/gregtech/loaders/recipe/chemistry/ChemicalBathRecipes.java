@@ -10,11 +10,6 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 public class ChemicalBathRecipes {
 
     public static void init() {
-        CHEMICAL_BATH_RECIPES.recipeBuilder()
-            .input(dust, Coal)
-            .fluidInputs(Water.getFluid(125))
-            .output(dust, HydratedCoal)
-            .duration(12).EUt(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
             .input(dust, Wood)
@@ -33,12 +28,6 @@ public class ChemicalBathRecipes {
             .fluidInputs(Water.getFluid(100))
             .output(Items.PAPER)
             .duration(100).EUt(8).buildAndRegister();
-
-        CHEMICAL_BATH_RECIPES.recipeBuilder()
-            .input(dust, Coal)
-            .fluidInputs(DistilledWater.getFluid(125))
-            .output(dust, HydratedCoal)
-            .duration(12).EUt(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
             .input(dust, Wood)
