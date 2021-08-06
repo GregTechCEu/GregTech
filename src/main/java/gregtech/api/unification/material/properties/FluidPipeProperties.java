@@ -14,9 +14,9 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
     }
 
     /**
-     * Should only be called from {@link FluidPipeType#modifyProperties(FluidPipeProperties)}
+     * Should only be called from {@link gregtech.common.pipelike.fluidpipe.FluidPipeType#modifyProperties(FluidPipeProperties)}
      */
-    protected FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, int tanks) {
+    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, int tanks) {
         this.maxFluidTemperature = maxFluidTemperature;
         this.throughput = throughput;
         this.gasProof = gasProof;

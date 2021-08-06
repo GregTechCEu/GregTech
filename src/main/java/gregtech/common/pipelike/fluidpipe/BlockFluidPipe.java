@@ -3,19 +3,16 @@ package gregtech.common.pipelike.fluidpipe;
 import com.google.common.base.Preconditions;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
-import gregtech.api.pipenet.tickable.TickableWorldPipeNetEventHandler;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.type.Material;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
-import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.render.FluidPipeRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -114,7 +111,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
 
     @Override
     public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
-        if (worldIn.isRemote) return;
+        if (worldIn.isRemote) return; // todo should this be commented out?
         /*if (entityIn instanceof EntityLivingBase && entityIn.world.getWorldTime() % 20 == 0L) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             FluidPipeNet pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);

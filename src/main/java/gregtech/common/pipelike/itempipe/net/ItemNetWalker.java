@@ -1,11 +1,9 @@
 package gregtech.common.pipelike.itempipe.net;
 
-import gregtech.api.pipenet.Node;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
