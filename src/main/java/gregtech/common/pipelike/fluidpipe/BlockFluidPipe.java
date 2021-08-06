@@ -2,6 +2,8 @@ package gregtech.common.pipelike.fluidpipe;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.cover.CoverBehavior;
+import gregtech.api.damagesources.DamageSources;
+import gregtech.api.pipenet.PipeGatherer;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -19,6 +21,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -26,6 +29,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -112,28 +116,27 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return; // todo should this be commented out?
-        /*if (entityIn instanceof EntityLivingBase && entityIn.world.getWorldTime() % 20 == 0L) {
+        if (entityIn instanceof EntityLivingBase && entityIn.world.getWorldTime() % 20 == 0L) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             FluidPipeNet pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (pipeNet != null && pipeNet.getContainedFluids().length == 1) {
-                FluidStack fluidStack = pipeNet.getContainedFluid(0);
-                if (fluidStack == null) {
-                    return; //pipe network is empty
-                }
-                int fluidTemperature = fluidStack.getFluid().getTemperature(fluidStack);
-                if (fluidTemperature >= 373) {
-                    //100C, temperature of boiling water
-                    float damageAmount = (fluidTemperature - 363) / 4.0f;
-                    entityLiving.attackEntityFrom(DamageSources.getHeatDamage(), damageAmount);
+            if (pipeNet == null) return;
+            TileEntityFluidPipeTickable pipeTile = (TileEntityFluidPipeTickable) PipeGatherer.findFirstMatching(pipeNet, worldIn, pos, pipe -> pipe instanceof TileEntityFluidPipeTickable);
+            if (pipeTile == null || pipeTile.getNodeData().tanks > 1) return;
+            FluidStack fluidStack = pipeTile.getContainedFluid(0);
+            if (fluidStack == null)
+                return; //pipe network is empty
+            int fluidTemperature = fluidStack.getFluid().getTemperature(fluidStack);
+            if (fluidTemperature >= 373) {
+                //100C, temperature of boiling water
+                float damageAmount = (fluidTemperature - 363) / 4.0f;
+                entityLiving.attackEntityFrom(DamageSources.getHeatDamage(), damageAmount);
 
-                } else if (fluidTemperature <= 183) {
-                    //-90C, temperature of freezing of most gaseous elements
-                    float damageAmount = fluidTemperature / 4.0f;
-                    entityLiving.attackEntityFrom(DamageSources.getFrostDamage(), damageAmount);
-
-                }
+            } else if (fluidTemperature <= 183) {
+                //-90C, temperature of freezing of most gaseous elements
+                float damageAmount = fluidTemperature / 4.0f;
+                entityLiving.attackEntityFrom(DamageSources.getFrostDamage(), damageAmount);
             }
-        }*/
+        }
     }
 
     @Override
@@ -169,7 +172,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             }
             // check if neighbour is a smaller item pipe
             TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
-            if(neighbourTile instanceof TileEntityFluidPipe &&
+            if (neighbourTile instanceof TileEntityFluidPipe &&
                     ((TileEntityFluidPipe) neighbourTile).isConnectionOpenAny(facing.getOpposite()) &&
                     ((TileEntityFluidPipe) neighbourTile).getPipeType().getThickness() < selfTHICCness) {
                 connections |= 1 << (facing.getIndex() + 6);

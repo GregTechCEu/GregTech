@@ -13,6 +13,14 @@ import java.util.function.Predicate;
 
 public class PipeGatherer extends PipeNetWalker {
 
+    @Nullable
+    public static IPipeTile<?, ?> findFirstMatching(PipeNet<?> net, World world, BlockPos sourcePipe, Predicate<IPipeTile<?, ?>> pipePredicate) {
+        PipeGatherer gatherer = new PipeGatherer(net, world, sourcePipe, 1, pipePredicate, new ArrayList<>());
+        gatherer.returnAfterFirst = true;
+        gatherer.traversePipeNet();
+        return gatherer.pipes.size() > 0 ? gatherer.pipes.get(0) : null;
+    }
+
     public static List<IPipeTile<?, ?>> gatherPipes(PipeNet<?> net, World world, BlockPos sourcePipe, Predicate<IPipeTile<?, ?>> pipePredicate) {
         PipeGatherer gatherer = new PipeGatherer(net, world, sourcePipe, 1, pipePredicate, new ArrayList<>());
         gatherer.traversePipeNet();
@@ -27,6 +35,7 @@ public class PipeGatherer extends PipeNetWalker {
 
     private final Predicate<IPipeTile<?, ?>> pipePredicate;
     private final List<IPipeTile<?, ?>> pipes;
+    private boolean returnAfterFirst = false;
 
     protected PipeGatherer(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, Predicate<IPipeTile<?, ?>> pipePredicate, List<IPipeTile<?, ?>> pipes) {
         super(net, world, sourcePipe, walkedBlocks);
@@ -52,6 +61,6 @@ public class PipeGatherer extends PipeNetWalker {
 
     @Override
     protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        return pipePredicate.test(neighbourPipe);
+        return (!returnAfterFirst || pipes.size() <= 0) && pipePredicate.test(neighbourPipe);
     }
 }
