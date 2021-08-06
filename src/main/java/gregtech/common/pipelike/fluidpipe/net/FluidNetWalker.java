@@ -1,8 +1,10 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
+import gregtech.api.cover.CoverBehavior;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.tileentity.TileEntity;
@@ -14,7 +16,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class FluidNetWalker extends PipeNetWalker {
@@ -26,37 +27,43 @@ public class FluidNetWalker extends PipeNetWalker {
     }
 
     private final List<FluidPipeNet.Inventory> inventories;
-    private final List<TileEntityFluidPipe> fluidPipes;
+    private final List<Object> pathObjects;
     private final List<TileEntityFluidPipeTickable> tickingPipes;
     private int rate;
 
-    protected FluidNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, List<FluidPipeNet.Inventory> inventories, List<TileEntityFluidPipe> fluidPipes, int rate, List<TileEntityFluidPipeTickable> tickingPipes) {
+    protected FluidNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, List<FluidPipeNet.Inventory> inventories, List<Object> pathObjects, int rate, List<TileEntityFluidPipeTickable> tickingPipes) {
         super(net, world, sourcePipe, walkedBlocks);
         this.inventories = inventories;
-        this.fluidPipes = fluidPipes;
+        this.pathObjects = pathObjects;
         this.rate = rate;
         this.tickingPipes = tickingPipes;
     }
 
     @Override
     protected PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks) {
-        return new FluidNetWalker(net, world, nextPos, walkedBlocks, inventories, fluidPipes, rate, tickingPipes);
+        return new FluidNetWalker(net, world, nextPos, walkedBlocks, inventories, new ArrayList<>(pathObjects), rate, new ArrayList<>(tickingPipes));
     }
 
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
-        fluidPipes.add((TileEntityFluidPipe) pipeTile);
+        pathObjects.add(pipeTile);
         this.rate = Math.min(this.rate, ((TileEntityFluidPipe)pipeTile).getNodeData().throughput);
         int validPipes = 0;
         for(EnumFacing facing : EnumFacing.values()) {
             TileEntity tile = pipeTile.getPipeWorld().getTileEntity(pos.offset(facing));
             if(tile instanceof IPipeTile && isValidPipe(pipeTile, (IPipeTile<?, ?>) tile, pos, facing)) {
-                if(++validPipes > 2) {
-                    tickingPipes.add((TileEntityFluidPipeTickable) pipeTile.setSupportsTicking());
-                    break;
-                }
+                checkCover(pipeTile.getCoverableImplementation().getCoverAtSide(facing));
+                validPipes++;
             }
         }
+        if(validPipes > 2) {
+            tickingPipes.add((TileEntityFluidPipeTickable) pipeTile.setSupportsTicking());
+        }
+    }
+
+    protected void checkCover(CoverBehavior coverBehavior) {
+        if(coverBehavior instanceof CoverFluidFilter)
+            pathObjects.add(coverBehavior);
     }
 
     @Override
@@ -64,7 +71,7 @@ public class FluidNetWalker extends PipeNetWalker {
         if (neighbourTile == null) return;
         IFluidHandler handler = neighbourTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, faceToNeighbour.getOpposite());
         if (handler != null) {
-            inventories.add(new FluidPipeNet.Inventory(pipePos, faceToNeighbour, getWalkedBlocks(), Collections.unmodifiableList(fluidPipes), rate, Collections.unmodifiableList(tickingPipes)));
+            inventories.add(new FluidPipeNet.Inventory(pipePos, faceToNeighbour, getWalkedBlocks(), new ArrayList<>(pathObjects), rate, new ArrayList<>(tickingPipes)));
             tickingPipes.add((TileEntityFluidPipeTickable) pipeTile.setSupportsTicking());
         }
     }

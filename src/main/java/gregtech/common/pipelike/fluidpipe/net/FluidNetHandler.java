@@ -175,13 +175,19 @@ public class FluidNetHandler implements IFluidHandler {
         if(!stack.isFluidEqual(handler.getLastTransferredFluid())) {
             boolean isGaseous = stack.getFluid().isGaseous(stack);
             int temp = stack.getFluid().getTemperature(stack);
-            for(TileEntityFluidPipe pipe : handler.getPipesInPath()) {
-                FluidPipeProperties properties = pipe.getNodeData();
-                boolean isLeakingPipe = isGaseous && !properties.gasProof;
-                boolean isBurningPipe = temp > properties.maxFluidTemperature;
-                if (isLeakingPipe || isBurningPipe) {
-                    net.destroyNetwork(pipe.getPos(), isLeakingPipe, isBurningPipe, temp);
-                    return 0;
+            for(Object o : handler.getObjectsInPath()) {
+                if(o instanceof TileEntityFluidPipe) {
+                    TileEntityFluidPipe pipe = (TileEntityFluidPipe) o;
+                    FluidPipeProperties properties = pipe.getNodeData();
+                    boolean isLeakingPipe = isGaseous && !properties.gasProof;
+                    boolean isBurningPipe = temp > properties.maxFluidTemperature;
+                    if (isLeakingPipe || isBurningPipe) {
+                        net.destroyNetwork(pipe.getPos(), isLeakingPipe, isBurningPipe, temp);
+                        return 0;
+                    }
+                } else if(o instanceof CoverFluidFilter) {
+                    if(!((CoverFluidFilter) o).testFluidStack(stack))
+                        return 0;
                 }
             }
             handler.setLastTransferredFluid(stack);
@@ -306,7 +312,7 @@ public class FluidNetHandler implements IFluidHandler {
         private final IFluidHandler handler;
 
         public Handler(IFluidHandler handler, FluidPipeNet.Inventory inv) {
-            super(inv.getPipePos(), inv.getFaceToHandler(), inv.getDistance(), inv.getPipesInPath(), inv.getMinThroughput(), inv.getTickingPipes());
+            super(inv.getPipePos(), inv.getFaceToHandler(), inv.getDistance(), inv.getObjectsInPath(), inv.getMinThroughput(), inv.getTickingPipes());
             setLastTransferredFluid(inv.getLastTransferredFluid());
             this.handler = handler;
         }

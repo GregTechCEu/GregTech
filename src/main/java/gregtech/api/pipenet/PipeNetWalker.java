@@ -1,6 +1,7 @@
 package gregtech.api.pipenet;
 
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.net.FluidNetWalker;
 import gregtech.common.pipelike.itempipe.net.ItemNetWalker;
 import net.minecraft.tileentity.TileEntity;
@@ -132,8 +133,15 @@ public abstract class PipeNetWalker {
         pipes.clear();
         TileEntity thisPipe = world.getTileEntity(pos);
         IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) thisPipe;
-        if (pipeTile == null)
-            throw new IllegalStateException("PipeTile was not null last walk, but now is");
+        if (pipeTile == null) {
+            if(walkedBlocks == 1) {
+                // if it is the first block, it wasn't already checked
+                GTLog.logger.warn("First PipeTile is null during walk");
+                return;
+            }
+            else
+                throw new IllegalStateException("PipeTile was not null last walk, but now is");
+        }
         checkPipe(pipeTile, pos);
         pipeTile.markWalked();
         walked.add(pipeTile);

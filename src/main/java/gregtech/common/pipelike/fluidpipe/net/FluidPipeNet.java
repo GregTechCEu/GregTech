@@ -88,6 +88,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         tagCompound.setInteger("max_temperature", nodeData.maxFluidTemperature);
         tagCompound.setInteger("throughput", nodeData.throughput);
         tagCompound.setBoolean("gas_proof", nodeData.gasProof);
+        tagCompound.setInteger("channels", nodeData.tanks);
     }
 
     @Override
@@ -95,23 +96,24 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         int maxTemperature = tagCompound.getInteger("max_temperature");
         int throughput = tagCompound.getInteger("throughput");
         boolean gasProof = tagCompound.getBoolean("gas_proof");
-        return new FluidPipeProperties(maxTemperature, throughput, gasProof);
+        int channels = tagCompound.getInteger("channels");
+        return new FluidPipeProperties(maxTemperature, throughput, gasProof, channels);
     }
 
     public static class Inventory {
         private final BlockPos pipePos;
         private final EnumFacing faceToHandler;
         private final int distance;
-        private final List<TileEntityFluidPipe> pipesInPath;
+        private final List<Object> objectsInPath;
         private final int minRate;
         private FluidStack lastTransferredFluid;
         private final List<TileEntityFluidPipeTickable> tickingPipes;
 
-        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, List<TileEntityFluidPipe> pipesInPath, int minRate, List<TileEntityFluidPipeTickable> tickingPipes) {
+        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, List<Object> objectsInPath, int minRate, List<TileEntityFluidPipeTickable> tickingPipes) {
             this.pipePos = pipePos;
             this.faceToHandler = facing;
             this.distance = distance;
-            this.pipesInPath = pipesInPath;
+            this.objectsInPath = objectsInPath;
             this.minRate = minRate;
             this.tickingPipes = tickingPipes;
         }
@@ -124,8 +126,8 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
             return lastTransferredFluid;
         }
 
-        public List<TileEntityFluidPipe> getPipesInPath() {
-            return pipesInPath;
+        public List<Object> getObjectsInPath() {
+            return objectsInPath;
         }
 
         public int getMinThroughput() {
