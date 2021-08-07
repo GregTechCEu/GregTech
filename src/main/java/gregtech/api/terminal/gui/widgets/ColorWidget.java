@@ -40,8 +40,9 @@ public class ColorWidget extends WidgetGroup {
                 .setTextResponder((t) -> {
                     setRed(t.isEmpty()?  0 : Integer.parseInt(t));
                     if (onColorChanged != null) {
-                        onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
+                        onColorChanged.accept(getColor());
                     }
+                    writeClientAction(2, buffer -> buffer.writeInt(getColor()));
                 }, true)
                 .setTextSupplier(() -> Integer.toString(red), true)
                 .setValidator(this::checkValid);
@@ -49,8 +50,9 @@ public class ColorWidget extends WidgetGroup {
                 .setTextResponder((t) -> {
                     setGreen(t.isEmpty()?  0 : Integer.parseInt(t));
                     if (onColorChanged != null) {
-                        onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
+                        onColorChanged.accept(getColor());
                     }
+                    writeClientAction(2, buffer -> buffer.writeInt(getColor()));
                 }, true)
                 .setTextSupplier(() -> Integer.toString(green), true)
                 .setValidator(this::checkValid);
@@ -58,8 +60,9 @@ public class ColorWidget extends WidgetGroup {
                 .setTextResponder((t) -> {
                     setBlue(t.isEmpty()?  0 : Integer.parseInt(t));
                     if (onColorChanged != null) {
-                        onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
+                        onColorChanged.accept(getColor());
                     }
+                    writeClientAction(2, buffer -> buffer.writeInt(getColor()));
                 }, true)
                 .setTextSupplier(() -> Integer.toString(blue), true)
                 .setValidator(this::checkValid);
@@ -67,8 +70,9 @@ public class ColorWidget extends WidgetGroup {
                 .setTextResponder((t) -> {
                     setAlpha(t.isEmpty()?  0 : Integer.parseInt(t));
                     if (onColorChanged != null) {
-                        onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
+                        onColorChanged.accept(getColor());
                     }
+                    writeClientAction(2, buffer -> buffer.writeInt(getColor()));
                 }, true)
                 .setTextSupplier(() -> Integer.toString(alpha), true)
                 .setValidator(this::checkValid);
@@ -95,6 +99,10 @@ public class ColorWidget extends WidgetGroup {
         this.colorSupplier = colorSupplier;
         this.isClient = isClient;
         return this;
+    }
+
+    public int getColor() {
+        return (alpha << 24) | (red << 16) | (green << 8) | (blue);
     }
 
     @Override
@@ -153,7 +161,7 @@ public class ColorWidget extends WidgetGroup {
                 setBlue(b);
                 setAlpha(a);
                 if (onColorChanged != null) {
-                    onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
+                    onColorChanged.accept(getColor());
                 }
             }
         }
@@ -260,8 +268,9 @@ public class ColorWidget extends WidgetGroup {
                 setAlpha(newX * 255 / barWidth);
             }
             if (onColorChanged != null) {
-                onColorChanged.accept((alpha << 24) | (red << 16) | (green << 8) | (blue));
+                onColorChanged.accept(getColor());
             }
+            writeClientAction(2, buffer -> buffer.writeInt(getColor()));
             dragged.setSelfPosition(new Position(newX - 4, dragged.getSelfPosition().y));
             return true;
         }

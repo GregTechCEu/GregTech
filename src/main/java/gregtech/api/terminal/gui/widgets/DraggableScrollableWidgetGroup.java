@@ -8,7 +8,12 @@ import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
+
+import static gregtech.api.gui.impl.ModularUIGui.bColorForOverlay;
+import static gregtech.api.gui.impl.ModularUIGui.gColorForOverlay;
+import static gregtech.api.gui.impl.ModularUIGui.rColorForOverlay;
 
 public class DraggableScrollableWidgetGroup extends WidgetGroup {
     protected int scrollXOffset;
@@ -84,6 +89,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         maxHeight = Math.max(maxHeight, widget.getSize().height + widget.getSelfPosition().y);
         maxWidth = Math.max(maxWidth, widget.getSize().width + widget.getSelfPosition().x);
         widget.addSelfPosition(- scrollXOffset, - scrollYOffset);
+        widget.applyScissor(getPosition().x, getPosition().y, getSize().width - yBarWidth, getSize().height - xBarHeight);
         super.addWidget(widget);
     }
 
@@ -106,6 +112,18 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
     public void setSize(Size size) {
         super.setSize(size);
         computeMax();
+    }
+
+    @Override
+    protected void onPositionUpdate() {
+        super.onPositionUpdate();
+        this.applyScissor(getPosition().x, getPosition().y, getSize().width - yBarWidth, getSize().height - xBarHeight);
+    }
+
+    @Override
+    protected void onSizeUpdate() {
+        super.onSizeUpdate();
+        this.applyScissor(getPosition().x, getPosition().y, getSize().width - yBarWidth, getSize().height - xBarHeight);
     }
 
     protected void computeMax() {
@@ -211,32 +229,34 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        Position position = getPosition();
-        Size size = getSize();
+        int x = getPosition().x;
+        int y = getPosition().y;
+        int width = getSize().width;
+        int height = getSize().height;
         if (background != null) {
-            background.draw(position.x, position.y, size.width, size.height);
+            background.draw(x, y, width, height);
         }
-        RenderUtil.useScissor(position.x, position.y, size.width - yBarWidth, size.height - xBarHeight, ()->{
+        RenderUtil.useScissor(x, y, width - yBarWidth, height - xBarHeight, ()->{
             if(!hookDrawInBackground(mouseX, mouseY, partialTicks, context)) {
                 super.drawInBackground(mouseX, mouseY, partialTicks, context);
             }
         });
         if (xBarHeight > 0) {
             if (xBarB != null) {
-                xBarB.draw(position.x, position.y - xBarHeight, size.width, xBarHeight);
+                xBarB.draw(x, y - xBarHeight, width, xBarHeight);
             }
             if (xBarF != null) {
-                int barWidth = size.width / getMaxWidth();
-                xBarF.draw(position.x + scrollXOffset, position.y - xBarHeight, barWidth, xBarHeight);
+                int barWidth = width / getMaxWidth();
+                xBarF.draw(x + scrollXOffset, y - xBarHeight, barWidth, xBarHeight);
             }
         }
         if (yBarWidth > 0) {
             if (yBarB != null) {
-                yBarB.draw(position.x + size.width  - yBarWidth, position.y, yBarWidth, size.height);
+                yBarB.draw(x + width  - yBarWidth, y, yBarWidth, height);
             }
             if (yBarF != null) {
-                int barHeight = (int) (size.height * 1.0f / getMaxHeight() * size.height);
-                yBarF.draw(position.x + size.width  - yBarWidth, position.y + scrollYOffset * size.height * 1.0f / getMaxHeight(), yBarWidth, barHeight);
+                int barHeight = (int) (height * 1.0f / getMaxHeight() * height);
+                yBarF.draw(x + width  - yBarWidth, y + scrollYOffset * height * 1.0f / getMaxHeight(), yBarWidth, barHeight);
             }
         }
     }

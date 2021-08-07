@@ -21,10 +21,12 @@ import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarget, IIngredientSlot {
 
-    public final List<Widget> widgets = new ArrayList<>();
-    private final WidgetGroupUIAccess groupUIAccess = new WidgetGroupUIAccess();
-    private final boolean isDynamicSized;
-    private boolean initialized = false;
+    public transient final List<Widget> widgets = new ArrayList<>();
+    private transient final WidgetGroupUIAccess groupUIAccess = new WidgetGroupUIAccess();
+    private transient final boolean isDynamicSized;
+    private transient boolean initialized = false;
+    protected transient List<Widget> waitToRemoved;
+
 
     public AbstractWidgetGroup(Position position) {
         super(position, Size.ZERO);
@@ -94,6 +96,9 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     }
 
     public void setVisible(boolean visible) {
+        if (this.isVisible() == visible) {
+            return;
+        }
         super.setVisible(visible);
         widgets.stream().flatMap(it -> it.getNativeWidgets().stream()).forEach(it -> it.setEnabled(visible));
     }
@@ -117,6 +122,13 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
         if (uiAccess != null) {
             uiAccess.notifyWidgetChange();
         }
+    }
+
+    protected void waitToRemoved(Widget widget) {
+        if (waitToRemoved == null) {
+            waitToRemoved = new ArrayList<>();
+        }
+        waitToRemoved.add(widget);
     }
 
     protected void removeWidget(Widget widget) {
@@ -210,6 +222,10 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
                 widget.detectAndSendChanges();
             }
         }
+        if (waitToRemoved != null) {
+            waitToRemoved.forEach(this::removeWidget);
+            waitToRemoved = null;
+        }
     }
 
     @Override
@@ -218,6 +234,10 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
             if (widget.isActive()) {
                 widget.updateScreen();
             }
+        }
+        if (waitToRemoved != null) {
+            waitToRemoved.forEach(this::removeWidget);
+            waitToRemoved = null;
         }
     }
 
@@ -244,7 +264,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
+            if(widget.isVisible() && widget.isActive() && widget.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
                 return true;
             }
         }
@@ -255,7 +275,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget.mouseClicked(mouseX, mouseY, button)) {
+            if(widget.isVisible() && widget.isActive() && widget.mouseClicked(mouseX, mouseY, button)) {
                 return true;
             }
         }
@@ -266,7 +286,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget.mouseDragged(mouseX, mouseY, button, timeDragged)) {
+            if(widget.isVisible() && widget.isActive() && widget.mouseDragged(mouseX, mouseY, button, timeDragged)) {
                 return true;
             }
         }
@@ -277,7 +297,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     public boolean mouseReleased(int mouseX, int mouseY, int button) {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget.mouseReleased(mouseX, mouseY, button)) {
+            if(widget.isVisible() && widget.isActive() && widget.mouseReleased(mouseX, mouseY, button)) {
                 return true;
             }
         }
@@ -288,7 +308,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
     public boolean keyTyped(char charTyped, int keyCode) {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
-            if(widget.isVisible() && widget.keyTyped(charTyped, keyCode)) {
+            if(widget.isVisible() && widget.isActive() && widget.keyTyped(charTyped, keyCode)) {
                 return true;
             }
         }

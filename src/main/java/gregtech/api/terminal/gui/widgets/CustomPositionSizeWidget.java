@@ -176,17 +176,17 @@ public class CustomPositionSizeWidget extends Widget implements IDraggable {
         if (!dragPos) {
             if (dragUp) {
                 addY = deltaY;
-                height -= deltaY;
+                height = Math.max(1, height - deltaY);
             }
             if (dragDown) {
-                height += deltaY;
+                height = Math.max(1, height + deltaY);
             }
             if (dragLeft) {
                 addX = deltaX;
-                width -= deltaX;
+                width = Math.max(1, width - deltaX);
             }
             if (dragRight) {
-                width += deltaX;
+                width = Math.max(1, width + deltaX);
             }
             controlled.addSelfPosition(addX, addY);
             controlled.setSize(new Size(width, height));

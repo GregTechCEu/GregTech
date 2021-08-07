@@ -7,25 +7,22 @@ import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SimpleTextWidget;
+import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 
 import java.awt.*;
 
-public class NumberConfigurator extends ConfiguratorWidget{
-    private int defaultValue;
+public class NumberConfigurator extends ConfiguratorWidget<Integer>{
 
-    public NumberConfigurator(int x, int y, JsonObject config, String name) {
-        super(x, y, config, name, false);
-        init(0);
+    public NumberConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, String name) {
+        super(group, config, name);
     }
 
-    public NumberConfigurator(int x, int y, JsonObject config, String name, int defaultValue) {
-        super(x, y, config, name, true);
-        init(defaultValue);
+    public NumberConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, String name, int defaultValue) {
+        super(group, config, name, defaultValue);
     }
 
-    private void init(int defaultValue){
-        this.defaultValue = defaultValue;
+    protected void init(){
         int y = 15;
         this.addWidget(new RectButtonWidget(0, y, 20, 20)
                 .setColors(new Color(0, 0, 0, 74).getRGB(),
@@ -63,11 +60,12 @@ public class NumberConfigurator extends ConfiguratorWidget{
 
     private void adjustTransferRate(int added) {
         JsonElement element = config.get(name);
-        int num = defaultValue;
+        int num = 0;
         if (!element.isJsonNull()) {
             num = element.getAsInt();
+        } else {
+            num = defaultValue;
         }
-        config.addProperty(name, num + added);
-        update();
+        updateValue(num + added);
     }
 }

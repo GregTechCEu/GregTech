@@ -23,6 +23,7 @@ public class CircleButtonWidget extends Widget {
     protected boolean isHover;
     protected String hoverText;
     protected IGuiTexture icon;
+    protected IGuiTexture hover;
     protected final int iconSize;
     protected Consumer<ClickData> onPressCallback;
     protected final int[] colors = {
@@ -78,6 +79,11 @@ public class CircleButtonWidget extends Widget {
         return this;
     }
 
+    public CircleButtonWidget setHoverIcon(IGuiTexture hover) {
+        this.hover = hover;
+        return this;
+    }
+
     @Override
     public void updateScreen() {
         if (isHover) {
@@ -104,6 +110,9 @@ public class CircleButtonWidget extends Widget {
             renderSector(x, y, r, colors[1], segments, 0, (int) (segments * ((hoverTick + partialTicks) / 8)));
         }
         renderCircle(x, y, r - border, colors[2], segments);
+        if (isHover && hover != null) {
+            hover.draw(x - iconSize / 2f, y - iconSize / 2f, iconSize, iconSize);
+        }
         if (icon != null) {
             icon.draw(x - iconSize / 2f, y - iconSize / 2f, iconSize, iconSize);
         }

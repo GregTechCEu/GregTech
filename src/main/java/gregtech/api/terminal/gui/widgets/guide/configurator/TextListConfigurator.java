@@ -2,39 +2,45 @@ package gregtech.api.terminal.gui.widgets.guide.configurator;
 
 import com.google.gson.*;
 import gregtech.api.gui.resources.ColorRectTexture;
+import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.TextEditorWidget;
 import net.minecraft.client.resources.I18n;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class TextListConfigurator extends ConfiguratorWidget{
+public class TextListConfigurator extends ConfiguratorWidget<List<String>>{
+    private TextEditorWidget editor;
 
-    public TextListConfigurator(int x, int y, int height, JsonObject config, String name, boolean canDefault) {
-        super(x, y, config, name, canDefault);
-        JsonElement element = config.get(name);
-        if (element.isJsonNull()) {
-            init(height, "");
-        } else {
-            List init = new Gson().fromJson(element, List.class);
-            StringBuilder s = new StringBuilder();
-            for (int i = 0; i < init.size(); i++) {
-                s.append(I18n.format(init.get(i).toString()));
-                if(i != init.size() - 1) {
-                    s.append('\n');
-                }
-            }
-            init(height, s.toString());
-        }
+    public TextListConfigurator(DraggableScrollableWidgetGroup group, int height, JsonObject config, String name) {
+        super(group, config, name);
+        init(height);
     }
 
-    private void init(int height, String init) {
-        this.addWidget(new TextEditorWidget(0, 15, 116, height, init, this::updateTextList, true).setBackground(new ColorRectTexture(0xA3FFFFFF)));
+    public TextListConfigurator(DraggableScrollableWidgetGroup group, int height, JsonObject config, String name, String defaultValue) {
+        super(group, config, name, Collections.singletonList(defaultValue));
+        init(height);
+    }
+
+    protected void init(int height) {
+        JsonElement element = config.get(name);
+        String initValue = "";
+        if (!element.isJsonNull()) {
+            List init = new Gson().fromJson(element, List.class);
+            initValue = String.join("\n", init);
+
+        }
+        editor = new TextEditorWidget(0, 15, 116, height, this::updateTextList, true).setContent(initValue).setBackground(new ColorRectTexture(0xA3FFFFFF));
+        this.addWidget(editor);
     }
 
     private void updateTextList(String saved) {
-        JsonArray array = new JsonArray();
-        array.add(saved);
-        config.add(name, array);
-        update();
+        updateValue(Collections.singletonList(saved));
+    }
+
+    @Override
+    protected void onDefault() {
+        editor.setContent(defaultValue.get(0));
     }
 }

@@ -14,6 +14,8 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
@@ -26,7 +28,6 @@ public class GuidePageEditorWidget extends GuidePageWidget {
     private final CustomPositionSizeWidget customPositionSizeWidget;
     private GuideConfigEditor configEditor;
     private String section = "default";
-//    private String translateKey = "";
 
     public GuidePageEditorWidget(int xPosition, int yPosition, int width, int height, int margin) {
         super(xPosition, yPosition, width, height, margin);
@@ -64,9 +65,9 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         this.section = section;
     }
 
-//    public void setTranslateKey(String translateKey) {
-//        this.translateKey = translateKey;
-//    }
+    public String getSection() {
+        return section;
+    }
 
     private void onPosSizeChanged(Position pos, Size size) {
         Widget widget = customPositionSizeWidget.getControlled();
@@ -153,7 +154,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             int width = widgetConfig.get("width").getAsInt();
             int height = widgetConfig.get("height").getAsInt();
 
-            guideWidget = widget.createFixedWidget(
+            guideWidget = widget.updateOrCreateFixedWidget(
                     (pageWidth - width) / 2 + 5,
                     this.scrollYOffset + (this.getSize().height - height) / 2,
                     width,
@@ -163,7 +164,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             this.addWidget(guideWidget);
         } else {
             int y = getStreamBottom();
-            guideWidget = widget.createStreamWidget(margin, y + 5, pageWidth - 2 * margin, widgetConfig);
+            guideWidget = widget.updateOrCreateStreamWidget(margin, y + 5, pageWidth - 2 * margin, widgetConfig);
             stream.add(guideWidget);
             this.addWidget(guideWidget);
         }
@@ -194,6 +195,13 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                     stream.add(index - 1, widget);
                 }).start();
             }
+        } else {
+            int index2 = fixed.indexOf(widget);
+            if (index2 >= 0 && index2 < fixed.size() - 1) {
+                Widget target = fixed.get(index2 + 1);
+                fixed.remove(widget);
+                fixed.add(index2 + 1, widget);
+            }
         }
     }
 
@@ -219,6 +227,13 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                     stream.remove(widget);
                     stream.add(index + 1, widget);
                 }).start();
+            }
+        } else {
+            int index2 = fixed.indexOf(widget);
+            if (index2 > 0) {
+                Widget target = fixed.get(index2 - 1);
+                fixed.remove(widget);
+                fixed.add(index2 - 1, widget);
             }
         }
     }
@@ -259,7 +274,8 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             return true;
         }
         boolean flag = false;
-        for (Widget widget : fixed) {
+        for (int i = fixed.size() - 1; i >= 0; i--) {
+            Widget widget = fixed.get(i);
             if (widget.isMouseOverElement(mouseX, mouseY)) {
                 if (widget instanceof IGuideWidget && widget != selected) {
                     configEditor.loadConfigurator((IGuideWidget) widget);
@@ -290,8 +306,10 @@ public class GuidePageEditorWidget extends GuidePageWidget {
 
     @Override
     protected boolean hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        Position position = getPosition();
-        Size size = getSize();
+        int x = getPosition().x;
+        int y = getPosition().y;
+        int width = getSize().width;
+        int height = getSize().height;
         if(title.isVisible()) {
             title.drawInBackground(mouseX, mouseY, partialTicks, context);
         }
@@ -310,7 +328,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                         Position pos = widget.getPosition();
                         Size s = widget.getSize();
                         if (stream.contains(widget)) {
-                            drawSolidRect(position.x, pos.y, size.width - yBarWidth, s.height, 0x6f000000);
+                            drawSolidRect(x, pos.y, width - yBarWidth, s.height, 0x6f000000);
 
                         } else {
                             drawSolidRect(pos.x, pos.y, s.width, s.height, 0x6f000000);
@@ -326,7 +344,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                     Position pos = widget.getPosition();
                     Size s = widget.getSize();
                     if (stream.contains(widget)) {
-                        drawSolidRect(position.x, pos.y, size.width - yBarWidth, s.height, 0x6f000000);
+                        drawSolidRect(x, pos.y, width - yBarWidth, s.height, 0x6f000000);
                     } else {
                         drawSolidRect(pos.x, pos.y, s.width, s.height, 0x6f000000);
                     }
@@ -335,13 +353,13 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         }
 
         if (selected != null) {
-//            Position pos = selected.getPosition();
-//            Size s = selected.getSize();
-//            if (stream.contains(selected)) {
-//                drawSolidRect(position.x, pos.y, size.width - yBarWidth, s.height, 0x6f0000ff);
-//            } else {
-//                drawSolidRect(pos.x, pos.y, s.width, s.height, 0x6f0000ff);
-//            }
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+            int index = fixed.indexOf(selected);
+            String layer = "L: " + (index >= 0 ? index : stream.indexOf(selected));
+            fontRenderer.drawString(layer,
+                    selected.getPosition().x + (selected.getSize().width - fontRenderer.getStringWidth(layer)) / 2,
+                    selected.getPosition().y - 20,
+                    0xffff0000, true);
         }
         if(toolButtons.isVisible()) {
             customPositionSizeWidget.drawInBackground(mouseX, mouseY, partialTicks, context);
@@ -358,5 +376,17 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void clearAllWidgets() {
+        super.clearAllWidgets();
+        selected = null;
+        configEditor.loadConfigurator(null);
+        toolButtons.setSelfPosition(new Position(-scrollYOffset, -scrollYOffset));
+        customPositionSizeWidget.setControlled(null);
+        toolButtons.setVisible(false);
+        addWidget(customPositionSizeWidget);
+        addWidget(toolButtons);
     }
 }

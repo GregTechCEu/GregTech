@@ -10,10 +10,11 @@ import java.util.List;
  * @param <K> leaf
  */
 public class TreeNode<T, K> {
-    public int dimension;
-    public List<TreeNode<T, K>> children;
-    public final T key;
-    public K content;
+    public final int dimension;
+    protected final T key;
+    protected K content;
+    protected List<TreeNode<T, K>> children;
+
 
     public TreeNode(int dimension, T key) {
         this.dimension = dimension;
@@ -42,6 +43,18 @@ public class TreeNode<T, K> {
 
     public void addContent (T key, K content) {
         getOrCreateChild(key).content = content;
+    }
+
+    public T getKey() {
+        return key;
+    }
+
+    public K getContent() {
+        return content;
+    }
+
+    public List<TreeNode<T, K>> getChildren() {
+        return children;
     }
 
     @Override

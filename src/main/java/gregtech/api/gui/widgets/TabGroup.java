@@ -51,6 +51,7 @@ public class TabGroup extends AbstractWidgetGroup {
         int tabIndex = tabInfos.size() - 1;
         this.tabWidgets.put(tabIndex, tabWidget);
         tabWidget.setVisible(tabIndex == selectedTabIndex);
+        tabWidget.setActive(tabIndex == selectedTabIndex);
         addWidget(tabWidget);
         return this;
     }
@@ -119,7 +120,9 @@ public class TabGroup extends AbstractWidgetGroup {
     private void setSelectedTab(int tabIndex) {
         int old = selectedTabIndex;
         this.tabWidgets.get(selectedTabIndex).setVisible(false);
+        this.tabWidgets.get(selectedTabIndex).setActive(false);
         this.tabWidgets.get(tabIndex).setVisible(true);
+        this.tabWidgets.get(tabIndex).setActive(true);
         this.selectedTabIndex = tabIndex;
         if (this.onTabChanged != null) {
             onTabChanged.accept(old, tabIndex);

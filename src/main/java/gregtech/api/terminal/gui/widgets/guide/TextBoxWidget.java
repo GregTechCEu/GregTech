@@ -70,12 +70,12 @@ public class TextBoxWidget extends GuideWidget {
     @Override
     public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
         super.loadConfigurator(group, config, isFixed, needUpdate);
-        group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "space", 1).setOnUpdated(needUpdate));
-        group.addWidget(new NumberConfigurator(5, group.getWidgetBottomHeight() + 5, config, "fontSize", 9).setOnUpdated(needUpdate));
-        group.addWidget(new ColorConfigurator(5, group.getWidgetBottomHeight() + 5, config, "fontColor", 0xff000000).setOnUpdated(needUpdate));
-        group.addWidget(new BooleanConfigurator(5, group.getWidgetBottomHeight() + 5, config, "isShadow", false).setOnUpdated(needUpdate));
-        group.addWidget(new BooleanConfigurator(5, group.getWidgetBottomHeight() + 5, config, "isCenter", false).setOnUpdated(needUpdate));
-        group.addWidget(new TextListConfigurator(5, group.getWidgetBottomHeight() + 5, 200, config, "content", false).setOnUpdated(needUpdate));
+        group.addWidget(new NumberConfigurator(group, config, "space", 1).setOnUpdated(needUpdate));
+        group.addWidget(new NumberConfigurator(group, config, "fontSize", 9).setOnUpdated(needUpdate));
+        group.addWidget(new ColorConfigurator(group, config, "fontColor", 0xff000000).setOnUpdated(needUpdate));
+        group.addWidget(new BooleanConfigurator(group, config, "isShadow", false).setOnUpdated(needUpdate));
+        group.addWidget(new BooleanConfigurator(group, config, "isCenter", false).setOnUpdated(needUpdate));
+        group.addWidget(new TextListConfigurator(group, 200, config, "content").setOnUpdated(needUpdate));
     }
 
     @Override

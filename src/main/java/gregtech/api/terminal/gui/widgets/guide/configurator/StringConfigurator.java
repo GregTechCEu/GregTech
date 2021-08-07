@@ -5,28 +5,23 @@ import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.TextFieldWidget;
+import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 
 import java.awt.*;
 
-public class StringConfigurator extends ConfiguratorWidget{
-    private String defaultValue = "";
+public class StringConfigurator extends ConfiguratorWidget<String>{
     private TextFieldWidget textFieldWidget;
 
-    public StringConfigurator(int x, int y, JsonObject config, String name) {
-        super(x, y, config, name, false);
-        init();
-        textFieldWidget.setCurrentString(config.get(name).isJsonNull() ? defaultValue : config.get(name).getAsString());
+    public StringConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, String name) {
+        super(group, config, name);
     }
 
-    public StringConfigurator(int x, int y, JsonObject config, String name, String defaultValue) {
-        super(x, y, config, name, true);
-        this.defaultValue = defaultValue;
-        init();
-        textFieldWidget.setCurrentString(config.get(name).isJsonNull() ? defaultValue : config.get(name).getAsString());
+    public StringConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, String name, String defaultValue) {
+        super(group, config, name, defaultValue);
     }
 
-    private void init() {
+    protected void init() {
         this.addWidget(new RectButtonWidget(76, 15, 40, 20)
                 .setColors(new Color(0, 0, 0, 74).getRGB(),
                         new Color(128, 255, 128).getRGB(),
@@ -40,8 +35,7 @@ public class StringConfigurator extends ConfiguratorWidget{
     }
 
     private void updateString() {
-        config.addProperty(name, textFieldWidget.getCurrentString());
-        update();
+        updateValue(textFieldWidget.getCurrentString());
     }
 
     @Override

@@ -12,6 +12,7 @@ import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
+import java.io.File;
 
 public class TerminalMenuWidget extends WidgetGroup {
     private Interpolator interpolator;
@@ -64,11 +65,14 @@ public class TerminalMenuWidget extends WidgetGroup {
     }
 
     public void maximize(ClickData clickData) {
-
+        TerminalDialogWidget.showColorDialog(os, "test", System.out::println).addPlayerInventory().open();
     }
 
     public void setting(ClickData clickData) {
-
+//        TerminalDialogWidget.showInfoDialog(os, "test");
+//        TerminalDialogWidget.showConfirmDialog(os, "test", null);
+//        TerminalDialogWidget.showTextFieldDialog(os, "test", s->true, System.out::println);
+//        TerminalDialogWidget.showFileDialog(os, "test", new File("./"), System.out::println).setClientSide().open();
     }
 
     public void hideMenu() {

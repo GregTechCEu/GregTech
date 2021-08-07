@@ -1,22 +1,28 @@
 package gregtech.api.terminal.gui.widgets.guide;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.TabGroup;
-import gregtech.api.gui.widgets.TextFieldWidget;
+import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.tab.IGuiTextureTabInfo;
+import gregtech.api.terminal.app.GuideEditorApp;
 import gregtech.api.terminal.gui.CustomTabListRenderer;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.TextEditorWidget;
+import gregtech.api.terminal.gui.widgets.os.TerminalDialogWidget;
+import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Map;
 
 public class GuideConfigEditor extends TabGroup {
@@ -26,8 +32,9 @@ public class GuideConfigEditor extends TabGroup {
     private final DraggableScrollableWidgetGroup widgetSelector;
     private final DraggableScrollableWidgetGroup widgetConfigurator;
     private final CircleButtonWidget[] addButton;
+    private final GuideEditorApp app;
 
-    public GuideConfigEditor(int x, int y, int width, int height) {
+    public GuideConfigEditor(int x, int y, int width, int height, GuideEditorApp app) {
         super(x, y + 10, new CustomTabListRenderer(
                 new ColorRectTexture(new Color(175, 0, 0, 131)),
                 new ColorRectTexture(new Color(246, 120, 120, 190)), 30, 10));
@@ -60,7 +67,7 @@ public class GuideConfigEditor extends TabGroup {
                         new Color(146, 253, 118).getRGB())
                 .setIcon(GuiTextures.TERMINAL_ADD)
                 .setHoverText("Export Config")
-                .setClickListener(this::getJson));
+                .setClickListener(this::saveJson));
         addButton[0] = new CircleButtonWidget(115, 15, 8, 1, 8)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         new Color(255, 255, 255).getRGB(),
@@ -77,6 +84,7 @@ public class GuideConfigEditor extends TabGroup {
                 .setClickListener(this::addFixed);
         addButton[0].setVisible(false);
         addButton[1].setVisible(false);
+        this.app = app;
         this.addWidget(addButton[0]);
         this.addWidget(addButton[1]);
     }
@@ -97,25 +105,16 @@ public class GuideConfigEditor extends TabGroup {
                         pageEditor.setSection(s);
                     }
                 }, true)
+                .setTextSupplier(pageEditor::getSection, true)
                 .setMaxStringLength(Integer.MAX_VALUE)
                 .setValidator(s->true));
         group.addWidget(new ImageWidget(5, 48,116, 1, new ColorRectTexture(-1)));
         group.addWidget(new LabelWidget(5, 55, "title", -1).setShadow(true));
-        group.addWidget(new TextEditorWidget(5, 65, 116, 70, "Template", s->{
+        group.addWidget(new TextEditorWidget(5, 65, 116, 70, s->{
             if (pageEditor != null) {
                 pageEditor.setTitle(s);
             }
-        }, true).setBackground(new ColorRectTexture(0xA3FFFFFF)));
-//        group.addWidget(new ImageWidget(5, 148,116, 1, new ColorRectTexture(-1)));
-//        group.addWidget(new LabelWidget(5, 155, "translate key", -1).setShadow(true));
-//        group.addWidget(new TextFieldWidget(5, 165, 116, 20, new ColorRectTexture(0x9f000000), null, null)
-//                .setTextResponder(s->{
-//                    if (pageEditor != null) {
-//                        pageEditor.setTranslateKey(s);
-//                    }
-//                }, true)
-//                .setMaxStringLength(Integer.MAX_VALUE)
-//                .setValidator(s->true));
+        }, true).setContent(pageEditor.getTitle()).setBackground(new ColorRectTexture(0xA3FFFFFF)));
         return group;
     }
 
@@ -128,11 +127,12 @@ public class GuideConfigEditor extends TabGroup {
         for (Map.Entry<String, IGuideWidget> entry : GuidePageWidget.REGISTER_WIDGETS.entrySet()) {
             IGuideWidget widgetTemplate = entry.getValue();
             JsonObject template = widgetTemplate.getTemplate(false);
-            Widget guideWidget = widgetTemplate.createStreamWidget(5, y + 10, getSize().width - 14, template);
+            Widget guideWidget = widgetTemplate.updateOrCreateStreamWidget(5, y + 10, getSize().width - 14, template);
             group.addWidget(new LabelWidget(getSize().width / 2 - 1, y - 3, entry.getKey(), -1).setXCentered(true).setShadow(true));
             y += guideWidget.getSize().height + 25;
             group.addWidget(guideWidget);
         }
+        group.addWidget(new WidgetGroup(new Position(5, group.getWidgetBottomHeight() + 5), Size.ZERO));
         return group;
     }
 
@@ -147,18 +147,41 @@ public class GuideConfigEditor extends TabGroup {
         widgetConfigurator.clearAllWidgets();
         if (widget != null) {
             widget.loadConfigurator(widgetConfigurator, widget.getConfig(), widget.isFixed(), widget::updateValue);
+            widgetConfigurator.addWidget(new WidgetGroup(new Position(5, widgetConfigurator.getWidgetBottomHeight() + 5), Size.ZERO));
         }
     }
 
     private void loadJson(ClickData data) {
         if(pageEditor != null) {
-            System.out.println(pageEditor.getJsonString());
+            File file = new File("terminal\\guide_editor");
+            TerminalDialogWidget.showFileDialog(app.getOs(), "Load Json", file, true, result->{
+               if (result != null && result.isFile()) {
+                   try {
+                       FileReader reader = new FileReader(result);
+                       pageEditor.loadJsonConfig(new JsonParser().parse(new JsonReader(reader)).getAsJsonObject());
+                       reader.close();
+                   } catch (Exception e) {
+                       TerminalDialogWidget.showInfoDialog(app.getOs(), "ERROR", "An error occurred while loading the file.").setClientSide().open();
+                   }
+               }
+            }).setClientSide().open();
         }
     }
 
-    private void getJson(ClickData data) {
+    private void saveJson(ClickData data) {
         if(pageEditor != null) {
-            System.out.println(pageEditor.getJsonString());
+            File file = new File("terminal\\guide_editor");
+            TerminalDialogWidget.showFileDialog(app.getOs(), "Save Json", file, false, result->{
+                if (result != null) {
+                    try {
+                        FileWriter writer = new FileWriter(result);
+                        writer.write(pageEditor.getJsonString());
+                        writer.close();
+                    } catch (Exception e) {
+                        TerminalDialogWidget.showInfoDialog(app.getOs(), "ERROR", "An error occurred while saving the file.").setClientSide().open();
+                    }
+                }
+            }).setClientSide().open();
         }
     }
 

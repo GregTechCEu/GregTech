@@ -9,6 +9,7 @@ import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -84,7 +85,10 @@ public class TextFieldWidget extends Widget {
     }
 
     public String getCurrentString() {
-        return this.textField.getText();
+        if (isRemote()) {
+            return this.textField.getText();
+        }
+        return this.currentString;
     }
 
     @Override
@@ -122,6 +126,8 @@ public class TextFieldWidget extends Widget {
             background.draw(position.x, position.y, size.width, size.height);
         }
         this.textField.drawTextBox();
+        GlStateManager.enableBlend();
+        GlStateManager.color(1,1,1,1);
     }
 
     @Override
@@ -145,7 +151,7 @@ public class TextFieldWidget extends Widget {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        if (!textSupplier.get().equals(currentString)) {
+        if (textSupplier != null && !textSupplier.get().equals(currentString)) {
             this.currentString = textSupplier.get();
             writeUpdateInfo(1, buffer -> buffer.writeString(currentString));
         }
@@ -178,7 +184,9 @@ public class TextFieldWidget extends Widget {
             clientText = clientText.substring(0, Math.min(clientText.length(), maxStringLength));
             if (textValidator.test(clientText)) {
                 this.currentString = clientText;
-                this.textResponder.accept(clientText);
+                if (textResponder != null) {
+                    this.textResponder.accept(clientText);
+                }
             }
         }
     }

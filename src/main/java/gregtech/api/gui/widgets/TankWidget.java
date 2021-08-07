@@ -4,8 +4,8 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.RenderUtil;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -44,8 +44,8 @@ public class TankWidget extends Widget implements IIngredientSlot {
     private boolean allowClickFilling;
     private boolean allowClickEmptying;
 
-    private TextureArea[] backgroundTexture;
-    private TextureArea overlayTexture;
+    private IGuiTexture[] backgroundTexture;
+    private IGuiTexture overlayTexture;
 
     private FluidStack lastFluidInTank;
     private int lastTankCapacity;
@@ -65,12 +65,12 @@ public class TankWidget extends Widget implements IIngredientSlot {
         return this;
     }
 
-    public TankWidget setBackgroundTexture(TextureArea... backgroundTexture) {
+    public TankWidget setBackgroundTexture(IGuiTexture... backgroundTexture) {
         this.backgroundTexture = backgroundTexture;
         return this;
     }
 
-    public TankWidget setOverlayTexture(TextureArea overlayTexture) {
+    public TankWidget setOverlayTexture(IGuiTexture overlayTexture) {
         this.overlayTexture = overlayTexture;
         return this;
     }
@@ -109,7 +109,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
         Position pos = getPosition();
         Size size = getSize();
         if (backgroundTexture != null) {
-            for (TextureArea textureArea : backgroundTexture) {
+            for (IGuiTexture textureArea : backgroundTexture) {
                 textureArea.draw(pos.x, pos.y, size.width, size.height);
             }
         }
