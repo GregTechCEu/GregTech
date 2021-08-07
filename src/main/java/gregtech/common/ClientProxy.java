@@ -21,7 +21,6 @@ import gregtech.common.render.CableRenderer;
 import gregtech.common.render.FluidPipeRenderer;
 import gregtech.common.render.ItemPipeRenderer;
 import gregtech.common.render.StoneRenderer;
-import gregtech.common.render.clipboard.TileEntityClipboardRenderer;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -108,7 +107,6 @@ public class ClientProxy extends CommonProxy {
         FluidPipeRenderer.preInit();
         ItemPipeRenderer.preInit();
         StoneRenderer.preInit();
-        TileEntityClipboardRenderer.preInit();
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
         MinecraftForge.EVENT_BUS.register(ToolRenderHandler.INSTANCE);
