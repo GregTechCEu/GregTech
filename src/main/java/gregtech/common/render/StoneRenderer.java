@@ -13,7 +13,7 @@ import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.TransformationList;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.surfacerock.BlockSurfaceRock;
 import gregtech.common.blocks.surfacerock.TileEntitySurfaceRock;
@@ -71,7 +71,7 @@ public class StoneRenderer implements ICCBlockRenderer {
         translation.translate(pos.getX(), pos.getY(), pos.getZ());
         TextureAtlasSprite stoneSprite = TextureUtils.getBlockTexture("stone");
         Material material = ((BlockSurfaceRock) state.getBlock()).getStoneMaterial(world, pos, state);
-        int renderingColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB);
+        int renderingColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB());
         IVertexOperation[] operations = new IVertexOperation[] {
             new IconTransformation(stoneSprite),
             new ColourMultiplier(renderingColor),

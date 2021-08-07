@@ -1,8 +1,10 @@
 package gregtech.common.blocks;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.*;
+import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -16,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public final class BlockCompressed extends DelayedStateBlock {
@@ -33,16 +36,16 @@ public final class BlockCompressed extends DelayedStateBlock {
     }
 
     @Override
-    public int damageDropped(IBlockState state) {
+    public int damageDropped(@Nonnull IBlockState state) {
         return getMetaFromState(state);
     }
 
     @Override
     public String getHarvestTool(IBlockState state) {
         Material material = state.getValue(variantProperty);
-        if (material instanceof SolidMaterial) {
+        if (material.isSolid()) {
             return "pickaxe";
-        } else if (material instanceof DustMaterial) {
+        } else if (material.hasProperty(PropertyKey.DUST)) {
             return "shovel";
         }
         return "pickaxe";
@@ -51,8 +54,9 @@ public final class BlockCompressed extends DelayedStateBlock {
     @Override
     public int getHarvestLevel(IBlockState state) {
         Material material = state.getValue(variantProperty);
-        if (material instanceof DustMaterial) {
-            return ((DustMaterial) material).harvestLevel;
+        DustProperty prop = material.getProperty(PropertyKey.DUST);
+        if (prop != null) {
+            return material.getHarvestLevel();
         }
         return 0;
     }
@@ -75,7 +79,6 @@ public final class BlockCompressed extends DelayedStateBlock {
         return new BlockStateContainer(this, variantProperty);
     }
 
-    @SuppressWarnings("deprecation")
     public ItemStack getItem(IBlockState blockState) {
         return new ItemStack(this, 1, getMetaFromState(blockState));
     }
@@ -85,21 +88,22 @@ public final class BlockCompressed extends DelayedStateBlock {
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
         blockState.getValidStates().stream()
             .filter(blockState -> blockState.getValue(variantProperty) != Materials._NULL)
             .forEach(blockState -> list.add(getItem(blockState)));
     }
 
     @Override
+    @Nonnull
     @SuppressWarnings("deprecation")
     public net.minecraft.block.material.Material getMaterial(IBlockState state) {
         Material material = state.getValue(variantProperty);
-        if (material instanceof GemMaterial) {
+        if (material.hasProperty(PropertyKey.GEM)) {
             return net.minecraft.block.material.Material.ROCK;
-        } else if (material instanceof IngotMaterial) {
+        } else if (material.hasProperty(PropertyKey.INGOT)) {
             return net.minecraft.block.material.Material.IRON;
-        } else if (material instanceof DustMaterial) {
+        } else if (material.hasProperty(PropertyKey.DUST)) {
             return net.minecraft.block.material.Material.SAND;
         }
         return net.minecraft.block.material.Material.ROCK;
@@ -107,18 +111,19 @@ public final class BlockCompressed extends DelayedStateBlock {
 
     @Override
     @SuppressWarnings("deprecation")
-    public MapColor getMapColor(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+    public MapColor getMapColor(@Nonnull IBlockState state, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
         return getMaterial(state).getMaterialMapColor();
     }
 
+    @Nonnull
     @Override
-    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
+    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
         Material material = state.getValue(variantProperty);
-        if (material instanceof GemMaterial) {
+        if (material.hasProperty(PropertyKey.GEM)) {
             return SoundType.STONE;
-        } else if (material instanceof IngotMaterial) {
+        } else if (material.hasProperty(PropertyKey.INGOT)) {
             return SoundType.METAL;
-        } else if (material instanceof DustMaterial) {
+        } else if (material.hasProperty(PropertyKey.DUST)) {
             return SoundType.SAND;
         }
         return SoundType.STONE;

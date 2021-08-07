@@ -7,8 +7,9 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
-import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.*;
@@ -181,6 +182,7 @@ public class CommonProxy {
         MachineRecipeLoader.init();
         CraftingRecipeLoader.init();
         MetaTileEntityLoader.init();
+        MetaTileEntityMachineRecipeLoader.init();
         RecipeHandlerList.register();
     }
 
@@ -234,11 +236,12 @@ public class CommonProxy {
         if (stack.getItem() instanceof CompressedItemBlock) {
             CompressedItemBlock itemBlock = (CompressedItemBlock) stack.getItem();
             Material material = itemBlock.getBlockState(stack).getValue(itemBlock.compressedBlock.variantProperty);
-            if (material instanceof DustMaterial &&
-                ((DustMaterial) material).burnTime > 0) {
+            DustProperty property = material.getProperty(PropertyKey.DUST);
+            if (property != null &&
+                property.getBurnTime() > 0) {
                 //compute burn value for block prefix, taking amount of material in block into account
                 double materialUnitsInBlock = OrePrefix.block.getMaterialAmount(material) / (GTValues.M * 1.0);
-                event.setBurnTime((int) (materialUnitsInBlock * ((DustMaterial) material).burnTime));
+                event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));
             }
         }
     }

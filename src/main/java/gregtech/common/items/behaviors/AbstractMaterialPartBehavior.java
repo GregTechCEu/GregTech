@@ -4,9 +4,10 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemColorProvider;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.metaitem.stats.IItemNameProvider;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.IngotMaterial;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,21 +28,23 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
         return itemStack.getOrCreateSubCompound("GT.PartStats");
     }
 
-    public IngotMaterial getPartMaterial(ItemStack itemStack) {
+    public Material getPartMaterial(ItemStack itemStack) {
         NBTTagCompound compound = getPartStatsTag(itemStack);
-        IngotMaterial defaultMaterial = Materials.Neutronium;
+        Material defaultMaterial = Materials.Neutronium;
         if (compound == null || !compound.hasKey("Material", NBT.TAG_STRING)) {
             return defaultMaterial;
         }
         String materialName = compound.getString("Material");
-        Material material = Material.MATERIAL_REGISTRY.getObject(materialName);
-        if (!(material instanceof IngotMaterial)) {
+        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(materialName);
+        if (material == null || !material.hasProperty(PropertyKey.INGOT)) {
             return defaultMaterial;
         }
-        return (IngotMaterial) material;
+        return material;
     }
 
-    public void setPartMaterial(ItemStack itemStack, IngotMaterial material) {
+    public void setPartMaterial(ItemStack itemStack, Material material) {
+        if (!material.hasProperty(PropertyKey.INGOT))
+            throw new IllegalArgumentException("Part material must have an Ingot!");
         NBTTagCompound compound = getOrCreatePartStatsTag(itemStack);
         compound.setString("Material", material.toString());
     }
@@ -64,23 +67,23 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
     @Override
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack itemStack, String unlocalizedName) {
-        IngotMaterial material = getPartMaterial(itemStack);
+        Material material = getPartMaterial(itemStack);
         return I18n.format(unlocalizedName, material.getLocalizedName());
     }
 
     @Override
     public void addInformation(ItemStack stack, List<String> lines) {
-        IngotMaterial material = getPartMaterial(stack);
+        Material material = getPartMaterial(stack);
         int maxRotorDurability = getPartMaxDurability(stack);
         int rotorDamage = getPartDamage(stack);
         lines.add(I18n.format("metaitem.tool.tooltip.durability", maxRotorDurability - rotorDamage, maxRotorDurability));
-        lines.add(I18n.format("metaitem.tool.tooltip.primary_material", material.getLocalizedName(), material.harvestLevel));
+        lines.add(I18n.format("metaitem.tool.tooltip.primary_material", material.getLocalizedName(), material.getHarvestLevel()));
     }
 
     @Override
     public int getItemStackColor(ItemStack itemStack, int tintIndex) {
-        IngotMaterial material = getPartMaterial(itemStack);
-        return material.materialRGB;
+        Material material = getPartMaterial(itemStack);
+        return material.getMaterialRGB();
     }
 
     @Override

@@ -25,7 +25,7 @@ import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -44,7 +44,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import static gregtech.api.util.InventoryUtils.simulateItemStackMerge;
@@ -406,7 +405,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends MultiblockControllerBas
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INGOT_OVERLAY))
             .widget(new SlotWidget(exportItems, 1, 103, 24, true, false)
                 .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUST_OVERLAY))
-            .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT)
+            .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 0)
             .build(getHolder(), entityPlayer);
     }
 }

@@ -1,13 +1,12 @@
 package gregtech.api.recipes;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.GTValues;
 import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.recipes.DummyRecipe;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -15,7 +14,6 @@ import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
-import gregtech.common.MetaFluids;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.InventoryCrafting;
@@ -24,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -50,21 +49,7 @@ public class ModHandler {
      */
     public static boolean isWater(FluidStack fluid) {
         return new FluidStack(FluidRegistry.WATER, 1).isFluidEqual(fluid)
-            || new FluidStack(MetaFluids.DISTILLED_WATER, 1).isFluidEqual(fluid);
-    }
-
-    /**
-     * Returns a Liquid Stack with given amount of Water.
-     */
-    public static FluidStack getWater(int amount) {
-        return new FluidStack(FluidRegistry.WATER, amount);
-    }
-
-    /**
-     * Returns a Liquid Stack with given amount of distilled Water.
-     */
-    public static FluidStack getDistilledWater(int amount) {
-        return new FluidStack(MetaFluids.DISTILLED_WATER, amount);
+            || Materials.DistilledWater.getFluid(1).isFluidEqual(fluid);
     }
 
     /**
@@ -342,6 +327,8 @@ public class ModHandler {
             ingredient = ((MetaItem<?>.MetaValueItem) ingredient).getStackForm();
         } else if (ingredient instanceof Enum) {
             ingredient = ((Enum<?>) ingredient).name();
+        } else if (ingredient instanceof OrePrefix) {
+            ingredient = ((OrePrefix) ingredient).name();
         } else if (ingredient instanceof UnificationEntry) {
             ingredient = ingredient.toString();
         } else if (!(ingredient instanceof ItemStack
@@ -349,7 +336,8 @@ public class ModHandler {
             || ingredient instanceof Block
             || ingredient instanceof String
             || ingredient instanceof Character
-            || ingredient instanceof Boolean)) {
+            || ingredient instanceof Boolean
+            || ingredient instanceof Ingredient)) {
             throw new IllegalArgumentException(ingredient.getClass().getSimpleName() + " type is not suitable for crafting input.");
         }
         return ingredient;
@@ -376,6 +364,8 @@ public class ModHandler {
                 recipe[i] = ((MetaItem<?>.MetaValueItem) recipe[i]).getStackForm();
             } else if (recipe[i] instanceof Enum) {
                 recipe[i] = ((Enum<?>) recipe[i]).name();
+            } else if (recipe[i] instanceof OrePrefix) {
+                recipe[i] = ((OrePrefix) recipe[i]).name();
             } else if (recipe[i] instanceof UnificationEntry) {
                 recipe[i] = recipe[i].toString();
             } else if (recipe[i] instanceof Character) {

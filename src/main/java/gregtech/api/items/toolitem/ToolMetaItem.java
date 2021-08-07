@@ -13,10 +13,13 @@ import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
-import gregtech.api.unification.material.MaterialIconSet;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconSet;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -414,7 +417,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             if (item == null) {
                 return "invalid item";
             }
-            SolidMaterial primaryMaterial = getToolMaterial(stack);
+            Material primaryMaterial = getToolMaterial(stack);
             String materialName = primaryMaterial == null ? "" : String.valueOf(primaryMaterial.getLocalizedName());
             return I18n.format("metaitem." + item.unlocalizedName + ".name", materialName);
         }
@@ -429,13 +432,13 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             return;
         }
         IToolStats toolStats = item.getToolStats();
-        SolidMaterial primaryMaterial = getToolMaterial(itemStack);
+        Material primaryMaterial = getToolMaterial(itemStack);
         int maxInternalDamage = getMaxItemDamage(itemStack);
         if (toolStats.isUsingDurability(itemStack) && maxInternalDamage > 0) {
             lines.add(I18n.format("metaitem.tool.tooltip.durability", maxInternalDamage - getItemDamage(itemStack), maxInternalDamage));
         }
         lines.add(I18n.format("metaitem.tool.tooltip.primary_material", primaryMaterial.getLocalizedName(), getHarvestLevel(itemStack)));
-        lines.add(I18n.format("metaitem.tool.tooltip.attack_damage", toolStats.getBaseDamage(itemStack) + primaryMaterial.harvestLevel));
+        lines.add(I18n.format("metaitem.tool.tooltip.attack_damage", toolStats.getBaseDamage(itemStack) + primaryMaterial.getHarvestLevel()));
         lines.add(I18n.format("metaitem.tool.tooltip.mining_speed", getToolDigSpeed(itemStack)));
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
         toolStats.addInformation(itemStack, lines, tooltipFlag.isAdvanced());
@@ -448,7 +451,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     @Override
     public int getItemEnchantability(ItemStack stack) {
-        SolidMaterial primaryMaterial = getToolMaterial(stack);
+        Material primaryMaterial = getToolMaterial(stack);
         return getMaterialEnchantability(primaryMaterial);
     }
 
@@ -461,22 +464,22 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         return false;
     }
 
-    public static int getMaterialEnchantability(SolidMaterial material) {
-        if (material.materialIconSet == MaterialIconSet.SHINY ||
-            material.materialIconSet == MaterialIconSet.RUBY) {
+    public static int getMaterialEnchantability(Material material) {
+        if (material.getMaterialIconSet() == MaterialIconSet.SHINY ||
+            material.getMaterialIconSet() == MaterialIconSet.RUBY) {
             return 33; //all shiny metals have gold enchantability
-        } else if (material.materialIconSet == MaterialIconSet.DULL ||
-            material.materialIconSet == MaterialIconSet.METALLIC) {
+        } else if (material.getMaterialIconSet() == MaterialIconSet.DULL ||
+            material.getMaterialIconSet() == MaterialIconSet.METALLIC) {
             return 21; //dull metals have iron enchantability
-        } else if (material.materialIconSet == MaterialIconSet.GEM_VERTICAL ||
-            material.materialIconSet == MaterialIconSet.GEM_HORIZONTAL ||
-            material.materialIconSet == MaterialIconSet.DIAMOND ||
-            material.materialIconSet == MaterialIconSet.OPAL ||
-            material.materialIconSet == MaterialIconSet.NETHERSTAR) {
+        } else if (material.getMaterialIconSet() == MaterialIconSet.GEM_VERTICAL ||
+            material.getMaterialIconSet() == MaterialIconSet.GEM_HORIZONTAL ||
+            material.getMaterialIconSet() == MaterialIconSet.DIAMOND ||
+            material.getMaterialIconSet() == MaterialIconSet.OPAL ||
+            material.getMaterialIconSet() == MaterialIconSet.NETHERSTAR) {
             return 15; //standard gems have diamond enchantability
-        } else if (material.materialIconSet == MaterialIconSet.WOOD ||
-            material.materialIconSet == MaterialIconSet.ROUGH ||
-            material.materialIconSet == MaterialIconSet.FINE) {
+        } else if (material.getMaterialIconSet() == MaterialIconSet.WOOD ||
+            material.getMaterialIconSet() == MaterialIconSet.ROUGH ||
+            material.getMaterialIconSet() == MaterialIconSet.FINE) {
             return 11; //wood and stone has their default enchantability
         }
         return 10; //otherwise return lowest enchantability
@@ -487,13 +490,15 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         T metaToolValueItem = getItem(itemStack);
         if (metaToolValueItem != null) {
             NBTTagCompound toolTag = getToolStatsTag(itemStack);
-            SolidMaterial toolMaterial = getToolMaterial(itemStack);
+            Material toolMaterial = getToolMaterial(itemStack);
             IToolStats toolStats = metaToolValueItem.getToolStats();
             int materialDurability = 0;
             if (toolTag != null && toolTag.hasKey("MaxDurability")) {
                 materialDurability = toolTag.getInteger("MaxDurability");
             } else if (toolMaterial != null) {
-                materialDurability = toolMaterial.toolDurability;
+                ToolProperty prop = toolMaterial.getProperty(PropertyKey.TOOL);
+                if (prop != null) materialDurability = prop.toolDurability;
+                else return 0;
             }
             float multiplier = toolStats.getMaxDurabilityMultiplier(itemStack);
             return (int) (materialDurability * multiplier);
@@ -505,13 +510,15 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         T metaToolValueItem = getItem(itemStack);
         if (metaToolValueItem != null) {
             NBTTagCompound toolTag = getToolStatsTag(itemStack);
-            SolidMaterial toolMaterial = getToolMaterial(itemStack);
+            Material toolMaterial = getToolMaterial(itemStack);
             IToolStats toolStats = metaToolValueItem.getToolStats();
             float toolSpeed = 0;
             if (toolTag != null && toolTag.hasKey("DigSpeed")) {
                 toolSpeed = toolTag.getFloat("DigSpeed");
             } else if (toolMaterial != null) {
-                toolSpeed = toolMaterial.toolSpeed;
+                ToolProperty prop = toolMaterial.getProperty(PropertyKey.TOOL);
+                if (prop != null) toolSpeed = prop.toolSpeed;
+                else return 0;
             }
             float multiplier = toolStats.getDigSpeedMultiplier(itemStack);
             return toolSpeed * multiplier;
@@ -523,13 +530,15 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         T metaToolValueItem = getItem(itemStack);
         if (metaToolValueItem != null) {
             NBTTagCompound toolTag = getToolStatsTag(itemStack);
-            SolidMaterial toolMaterial = getToolMaterial(itemStack);
+            Material toolMaterial = getToolMaterial(itemStack);
             IToolStats toolStats = metaToolValueItem.getToolStats();
             int harvestLevel = 0;
             if (toolTag != null && toolTag.hasKey("HarvestLevel")) {
                 harvestLevel = toolTag.getInteger("HarvestLevel");
             } else if (toolMaterial != null) {
-                harvestLevel = toolMaterial.harvestLevel;
+                DustProperty prop = toolMaterial.getProperty(PropertyKey.DUST);
+                if (prop != null) harvestLevel = prop.getHarvestLevel();
+                else return 0;
             }
             int baseHarvestLevel = toolStats.getBaseQuality(itemStack);
             return baseHarvestLevel + harvestLevel;
@@ -541,7 +550,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         T metaToolValueItem = getItem(itemStack);
         if (metaToolValueItem != null) {
             NBTTagCompound toolTag = getToolStatsTag(itemStack);
-            SolidMaterial toolMaterial = getToolMaterial(itemStack);
+            Material toolMaterial = getToolMaterial(itemStack);
             IToolStats toolStats = metaToolValueItem.getToolStats();
             float attackDamage = 0;
             if (toolTag != null && toolTag.hasKey("AttackDamage")) {
@@ -549,7 +558,9 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             } else if (toolTag != null && toolTag.hasKey("HarvestLevel")) {
                 attackDamage = toolTag.getInteger("HarvestLevel");
             } else if (toolMaterial != null) {
-                attackDamage = toolMaterial.toolAttackDamage;
+                ToolProperty prop = toolMaterial.getProperty(PropertyKey.TOOL);
+                if (prop != null) attackDamage = prop.toolAttackDamage;
+                else return 0;
             }
             float baseAttackDamage = toolStats.getBaseDamage(itemStack);
             return baseAttackDamage + attackDamage;
@@ -586,10 +597,10 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         return itemStack.getOrCreateSubCompound("GT.ToolStats");
     }
 
-    public static SolidMaterial getToolMaterial(ItemStack itemStack) {
+    public static Material getToolMaterial(ItemStack itemStack) {
         NBTTagCompound statsTag = getToolStatsTag(itemStack);
         if (statsTag == null) {
-            return Materials.Aluminium;
+            return Materials.Neutronium;
         }
         String toolMaterialName;
         if (statsTag.hasKey("Material")) {
@@ -597,13 +608,13 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         } else if (statsTag.hasKey("PrimaryMaterial")) {
             toolMaterialName = statsTag.getString("PrimaryMaterial");
         } else {
-            return Materials.Aluminium;
+            return Materials.Neutronium;
         }
-        Material material = Material.MATERIAL_REGISTRY.getObject(toolMaterialName);
-        if (material instanceof SolidMaterial) {
-            return (SolidMaterial) material;
+        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(toolMaterialName);
+        if (material != null && material.hasProperty(PropertyKey.TOOL)) {
+            return material;
         }
-        return Materials.Aluminium;
+        return Materials.Neutronium;
     }
 
     public class MetaToolValueItem extends MetaValueItem {
@@ -660,33 +671,33 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             return rawStack;
         }
 
-        public ItemStack getStackForm(SolidMaterial primaryMaterial) {
+        public ItemStack getStackForm(Material primaryMaterial) {
             ItemStack rawStack = super.getStackForm(1);
             setToolMaterial(rawStack, primaryMaterial);
             return rawStack;
         }
 
-        public ItemStack getChargedStack(SolidMaterial primaryMaterial, long chargeAmount) {
+        public ItemStack getChargedStack(Material primaryMaterial, long chargeAmount) {
             ItemStack rawStack = super.getChargedStack(chargeAmount);
             setToolMaterial(rawStack, primaryMaterial);
             return rawStack;
         }
 
-        public ItemStack getMaxChargeOverrideStack(SolidMaterial primaryMaterial, long maxCharge) {
+        public ItemStack getMaxChargeOverrideStack(Material primaryMaterial, long maxCharge) {
             ItemStack rawStack = super.getMaxChargeOverrideStack(maxCharge);
             setToolMaterial(rawStack, primaryMaterial);
             return rawStack;
         }
 
-        public final ItemStack getStackForm(SolidMaterial primaryMaterial, int amount) {
+        public final ItemStack getStackForm(Material primaryMaterial, int amount) {
             ItemStack stack = new ItemStack(ToolMetaItem.this, amount, metaItemOffset + metaValue);
             setToolMaterial(stack, primaryMaterial);
             return stack;
         }
 
-        public void setToolMaterial(ItemStack stack, SolidMaterial toolMaterial) {
+        public void setToolMaterial(ItemStack stack, Material toolMaterial) {
             NBTTagCompound toolNBT = new NBTTagCompound();
-            ArrayList<SolidMaterial> materials = new ArrayList<>();
+            ArrayList<Material> materials = new ArrayList<>();
             toolNBT.setString("Material", toolMaterial.toString());
             materials.add(toolMaterial);
 
@@ -701,9 +712,9 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             EnchantmentHelper.setEnchantments(enchantments, stack);
         }
 
-        public ItemStack setToolData(ItemStack stack, SolidMaterial toolMaterial, int maxDurability, int harvestLevel, float digSpeed, float attackDamage) {
+        public ItemStack setToolData(ItemStack stack, Material toolMaterial, int maxDurability, int harvestLevel, float digSpeed, float attackDamage) {
             NBTTagCompound toolNBT = new NBTTagCompound();
-            ArrayList<SolidMaterial> materials = new ArrayList<>();
+            ArrayList<Material> materials = new ArrayList<>();
             toolNBT.setString("Material", toolMaterial.toString());
             materials.add(toolMaterial);
             if (maxDurability > -1) {
@@ -730,10 +741,14 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             return stack;
         }
 
-        private Map<Enchantment, Integer> bakeEnchantmentsMap(ItemStack itemStack, Collection<SolidMaterial> materials) {
+        private Map<Enchantment, Integer> bakeEnchantmentsMap(ItemStack itemStack, Collection<Material> materials) {
             Map<Enchantment, Integer> enchantments = new HashMap<>();
-            for (SolidMaterial material : materials) {
-                for (EnchantmentData enchantmentData : material.toolEnchantments) {
+            for (Material material : materials) {
+                ToolProperty prop = material.getProperty(PropertyKey.TOOL);
+                if (prop == null)
+                    continue;
+
+                for (EnchantmentData enchantmentData : prop.toolEnchantments) {
                     if (enchantments.containsKey(enchantmentData.enchantment)) {
                         int level = Math.min(enchantments.get(enchantmentData.enchantment) + enchantmentData.level,
                             enchantmentData.enchantment.getMaxLevel());

@@ -1,7 +1,6 @@
 package gregtech.api.util;
 
 import gregtech.api.unification.material.IMaterialHandler;
-import gregtech.api.unification.material.type.Material;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 
@@ -70,7 +69,7 @@ public class AnnotatedMaterialHandlerLoader {
             }
             if (denyReason == null) {
                 GTLog.logger.info("Registered material handler {}", materialHandler.getClass().getName());
-                Material.registerMaterialHandler(materialHandler);
+                IMaterialHandler.registerMaterialHandler(materialHandler);
                 materialHandlersRegistered++;
             } else {
                 GTLog.logger.error("Failed to load material handler class {} from {}: {}",

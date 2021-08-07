@@ -2,7 +2,7 @@ package gregtech.api.worldgen.populator;
 
 import com.google.gson.JsonObject;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.OreConfigUtils;

@@ -180,7 +180,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
             int amountPerfectOC = amountEUDiscount / 2;
 
             //apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
-            EUt *= Math.max(1, Math.pow(0.95, amountEUDiscount));
+            EUt *= Math.min(1, Math.pow(0.95, amountEUDiscount));
 
             int tier = getOverclockingTier(voltage);
             if (GTValues.V[tier] <= EUt || tier == 0)

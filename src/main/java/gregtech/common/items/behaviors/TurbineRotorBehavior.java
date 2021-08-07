@@ -4,8 +4,9 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
 import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
-import gregtech.api.unification.material.type.IngotMaterial;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.ToolProperty;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
@@ -33,13 +34,15 @@ public class TurbineRotorBehavior extends AbstractMaterialPartBehavior implement
 
     @Override
     public int getPartMaxDurability(ItemStack itemStack) {
-        IngotMaterial material = getPartMaterial(itemStack);
-        return material.toolDurability * TOOL_DURABILITY_MULTIPLIER;
+        Material material = getPartMaterial(itemStack);
+        ToolProperty property = material.getProperty(PropertyKey.TOOL);
+        return property != null ? property.toolDurability * TOOL_DURABILITY_MULTIPLIER : 0;
     }
 
     public double getRotorEfficiency(ItemStack itemStack) {
-        SolidMaterial primaryMaterial = getPartMaterial(itemStack);
-        return primaryMaterial == null ? 0.1 : Math.min(primaryMaterial.toolSpeed / 14.0, 1.0);
+        Material primaryMaterial = getPartMaterial(itemStack);
+        ToolProperty property = primaryMaterial.getProperty(PropertyKey.TOOL);
+        return property == null ? 0.1 : Math.min(property.toolSpeed / 14.0, 1.0);
     }
 
     public void applyRotorDamage(ItemStack itemStack, int damageApplied) {

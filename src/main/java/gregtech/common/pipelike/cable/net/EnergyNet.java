@@ -4,7 +4,7 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.util.PerTickLongCounter;
-import gregtech.common.pipelike.cable.WireProperties;
+import gregtech.api.unification.material.properties.WireProperties;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;

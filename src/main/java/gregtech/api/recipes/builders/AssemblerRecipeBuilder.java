@@ -6,7 +6,7 @@ public class AssemblerRecipeBuilder extends IntCircuitRecipeBuilder {
 
     @Override
     public void buildAndRegister() {
-        if (fluidInputs.size() == 1 && fluidInputs.get(0).getFluid() == Materials.SolderingAlloy.getMaterialFluid()) {
+        if (fluidInputs.size() == 1 && fluidInputs.get(0).getFluid() == Materials.SolderingAlloy.getFluid()) {
             int amount = fluidInputs.get(0).amount;
             fluidInputs.clear();
             recipeMap.addRecipe(this.copy().fluidInputs(Materials.SolderingAlloy.getFluid(amount)).build());

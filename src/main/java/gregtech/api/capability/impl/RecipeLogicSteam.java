@@ -119,7 +119,7 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
         if (blockOnPos.getCollisionBoundingBox(metaTileEntity.getWorld(), ventingBlockPos) == Block.NULL_AABB) {
             metaTileEntity.getWorld()
                 .getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ventingBlockPos), EntitySelectors.CAN_AI_TARGET)
-                .forEach(entity -> entity.attackEntityFrom(DamageSources.getHeatDamage(), 6.0f));
+                .forEach(entity -> entity.attackEntityFrom(DamageSources.getHeatDamage(), this.isHighPressure ? 12.0f : 6.0f));
             WorldServer world = (WorldServer) metaTileEntity.getWorld();
             double posX = machinePos.getX() + 0.5 + ventingSide.getXOffset() * 0.6;
             double posY = machinePos.getY() + 0.5 + ventingSide.getYOffset() * 0.6;

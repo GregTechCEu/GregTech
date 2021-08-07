@@ -2,7 +2,7 @@ package gregtech.api.items.toolitem;
 
 import gregtech.api.enchants.EnchantmentData;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
@@ -158,7 +158,7 @@ public interface IToolStats {
     }
 
     default int getColor(ItemStack stack, int tintIndex) {
-        SolidMaterial primaryMaterial = ToolMetaItem.getToolMaterial(stack);
-        return tintIndex % 2 == 1 ? primaryMaterial.materialRGB : 0xFFFFFF;
+        Material primaryMaterial = ToolMetaItem.getToolMaterial(stack);
+        return tintIndex % 2 == 1 ? primaryMaterial.getMaterialRGB() : 0xFFFFFF;
     }
 }

@@ -4,11 +4,10 @@ import gregtech.api.items.toolitem.IToolStats;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.function.Task;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockLog;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -104,8 +103,8 @@ public class TreeChopTask implements Task {
             !(heldItem.getItem() instanceof ToolMetaItem<?>)) {
             return false;
         }
-        SolidMaterial heldToolMaterial = ToolMetaItem.getToolMaterial(heldItem);
-        SolidMaterial toolMaterial = ToolMetaItem.getToolMaterial(itemStack);
+        Material heldToolMaterial = ToolMetaItem.getToolMaterial(heldItem);
+        Material toolMaterial = ToolMetaItem.getToolMaterial(itemStack);
         return toolMaterial == heldToolMaterial;
     }
 
@@ -163,7 +162,7 @@ public class TreeChopTask implements Task {
     }
 
     public static int isLogBlock(IBlockState blockState) {
-        if(blockState.getMaterial() == Material.AIR) {
+        if(blockState.getMaterial() == net.minecraft.block.material.Material.AIR) {
             return 0;
         }
         if(blockState.getBlock() instanceof BlockLog) {

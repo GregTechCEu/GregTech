@@ -11,8 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.Textures;
-import gregtech.api.unification.material.type.Material;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.WatchedFluidTank;
@@ -43,12 +42,14 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
+import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
+
 public class MetaTileEntityDrum extends MetaTileEntity {
     private final int tankSize;
-    private final SolidMaterial material;
+    private final Material material;
     private SyncFluidTank fluidTank;
 
-    public MetaTileEntityDrum(ResourceLocation metaTileEntityId, SolidMaterial material, int tankSize) {
+    public MetaTileEntityDrum(ResourceLocation metaTileEntityId, Material material, int tankSize) {
         super(metaTileEntityId);
         this.tankSize = tankSize;
         this.material = material;
@@ -181,7 +182,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
             return Pair.of(Textures.WOODEN_DRUM.getParticleTexture(), getPaintingColor());
         } else {
             int color = ColourRGBA.multiply(
-                    GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB),
+                    GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
                     GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColor()));
             color = GTUtility.convertOpaqueRGBA_CLtoRGB(color);
             return Pair.of(Textures.DRUM.getParticleTexture(), color);
@@ -194,7 +195,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
             ColourMultiplier multiplier = new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             Textures.WOODEN_DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
         } else {
-            ColourMultiplier multiplier = new ColourMultiplier(ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB), GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
+            ColourMultiplier multiplier = new ColourMultiplier(ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()), GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
             Textures.DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
         }
     }
@@ -246,7 +247,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
         @Override
         public boolean canFillFluidType(FluidStack fluid) {
-            return !material.toString().contains("wood") && !material.hasFlag(Material.MatFlags.FLAMMABLE) || fluid.getFluid().getTemperature() <= 325;
+            return !material.toString().contains("wood") && !material.hasFlag(FLAMMABLE) || fluid.getFluid().getTemperature() <= 325;
         }
 
         @Override

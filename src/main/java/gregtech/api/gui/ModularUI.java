@@ -93,6 +93,10 @@ public final class ModularUI implements ISizeProvider {
         return new Builder(GuiTextures.BACKGROUND, 176, 166);
     }
 
+    public static Builder defaultBuilder(int yOffset) {
+        return new Builder(GuiTextures.BACKGROUND, 176, 166 + yOffset);
+    }
+
     public static Builder borderedBuilder() {
         return new Builder(GuiTextures.BORDERED_BACKGROUND, 195, 136);
     }
@@ -175,7 +179,7 @@ public final class ModularUI implements ISizeProvider {
         }
 
         public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer) {
-            bindPlayerInventory(inventoryPlayer, GuiTextures.SLOT);
+            bindPlayerInventory(inventoryPlayer, GuiTextures.SLOT, 0);
             return this;
         }
 
@@ -184,8 +188,8 @@ public final class ModularUI implements ISizeProvider {
             return this;
         }
 
-        public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer, TextureArea imageLocation) {
-            return bindPlayerInventory(inventoryPlayer, imageLocation, 7, 84);
+        public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer, TextureArea imageLocation, int yOffset) {
+            return bindPlayerInventory(inventoryPlayer, imageLocation, 7, 84 + yOffset);
         }
 
         public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer, TextureArea imageLocation, int x, int y) {

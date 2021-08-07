@@ -3,10 +3,9 @@ package gregtech.api.items.toolitem;
 import gregtech.api.GTValues;
 import gregtech.api.items.toolitem.ToolMetaItem.MetaToolValueItem;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.type.GemMaterial;
-import gregtech.api.unification.material.type.IngotMaterial;
-import gregtech.api.unification.material.type.RoughSolidMaterial;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -54,14 +53,14 @@ public class ToolMetaItemListener {
             if (toolValueItem == null) {
                 return;
             }
-            SolidMaterial toolMaterial = ToolMetaItem.getToolMaterial(firstStack);
+            Material toolMaterial = ToolMetaItem.getToolMaterial(firstStack);
             OrePrefix solidPrefix = getSolidPrefix(toolMaterial);
             UnificationEntry unificationEntry = OreDictUnifier.getUnificationEntry(secondStack);
             double toolDamage = toolMetaItem.getItemDamage(firstStack) / (toolMetaItem.getMaxItemDamage(firstStack) * 1.0);
             double materialForFullRepair = toolValueItem.getAmountOfMaterialToRepair(firstStack);
             int durabilityPerUnit = (int) Math.ceil(toolMetaItem.getMaxItemDamage(firstStack) / materialForFullRepair);
             int materialUnitsRequired = Math.min(secondStack.getCount(), (int) Math.ceil(toolDamage * materialForFullRepair));
-            int repairCost = (MathHelper.clamp(toolMaterial.harvestLevel, 2, 3) - 1) * materialUnitsRequired;
+            int repairCost = (MathHelper.clamp(toolMaterial.getHarvestLevel(), 2, 3) - 1) * materialUnitsRequired;
 
             if (toolDamage > 0.0 && materialUnitsRequired > 0 && unificationEntry != null &&
                 unificationEntry.material == toolMaterial && unificationEntry.orePrefix == solidPrefix) {
@@ -75,13 +74,13 @@ public class ToolMetaItemListener {
         }
     }
 
-    private static OrePrefix getSolidPrefix(SolidMaterial material) {
-        if (material instanceof IngotMaterial) {
+    private static OrePrefix getSolidPrefix(Material material) {
+        if (material == Materials.Wood) {
+            return OrePrefix.plank;
+        } else if (material.hasProperty(PropertyKey.INGOT)) {
             return OrePrefix.ingot;
-        } else if (material instanceof GemMaterial) {
+        } else if (material.hasProperty(PropertyKey.GEM)) {
             return OrePrefix.gem;
-        } else if (material instanceof RoughSolidMaterial) {
-            return ((RoughSolidMaterial) material).solidFormSupplier.get();
         } else return null;
     }
 

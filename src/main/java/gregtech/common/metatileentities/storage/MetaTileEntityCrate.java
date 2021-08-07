@@ -11,7 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.Textures;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
@@ -32,11 +32,11 @@ import java.util.List;
 
 public class MetaTileEntityCrate extends MetaTileEntity {
 
-    private final SolidMaterial material;
+    private final Material material;
     private final int inventorySize;
     private ItemStackHandler inventory;
 
-    public MetaTileEntityCrate(ResourceLocation metaTileEntityId, SolidMaterial material, int inventorySize) {
+    public MetaTileEntityCrate(ResourceLocation metaTileEntityId, Material material, int inventorySize) {
         super(metaTileEntityId);
         this.material = material;
         this.inventorySize = inventorySize;
@@ -92,7 +92,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
             return Pair.of(Textures.WOODEN_CRATE.getParticleTexture(), getPaintingColor());
         } else {
             int color = ColourRGBA.multiply(
-                    GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB),
+                    GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
                     GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColor()));
             color = GTUtility.convertOpaqueRGBA_CLtoRGB(color);
             return Pair.of(Textures.METAL_CRATE.getParticleTexture(), color);
@@ -104,7 +104,7 @@ public class MetaTileEntityCrate extends MetaTileEntity {
         if (material.toString().contains("wood")) {
             Textures.WOODEN_CRATE.render(renderState, translation, GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()), pipeline);
         } else {
-            int baseColor = ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB), GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
+            int baseColor = ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()), GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()));
             Textures.METAL_CRATE.render(renderState, translation, baseColor, pipeline);
         }
     }

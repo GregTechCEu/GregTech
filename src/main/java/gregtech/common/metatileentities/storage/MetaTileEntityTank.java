@@ -18,8 +18,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.TankRenderer;
 import gregtech.api.render.Textures;
-import gregtech.api.unification.material.type.Material.MatFlags;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.ByteBufUtils;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
@@ -62,6 +61,7 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
+import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
 import static gregtech.api.util.GTUtility.convertOpaqueRGBA_CLtoRGB;
 
 public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMetaTileEntity {
@@ -70,7 +70,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     private final int tankSize;
     private final int maxSizeVertical;
     private final int maxSizeHorizontal;
-    private final SolidMaterial material;
+    private final Material material;
     private boolean addedToMultiblock = false;
     private boolean needsCoversUpdate = false;
     private boolean isRemoved = false;
@@ -91,7 +91,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     private boolean needsShapeResync;
     private boolean needsFluidResync;
 
-    public MetaTileEntityTank(ResourceLocation metaTileEntityId, SolidMaterial material, int tankSize, int maxSizeVertical, int maxSizeHorizontal) {
+    public MetaTileEntityTank(ResourceLocation metaTileEntityId, Material material, int tankSize, int maxSizeVertical, int maxSizeHorizontal) {
         super(metaTileEntityId);
         this.tankSize = tankSize;
         this.material = material;
@@ -616,7 +616,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     @SideOnly(Side.CLIENT)
     private int getActualPaintingColor() {
         int color = ColourRGBA.multiply(
-            GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB),
+            GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
             GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())
         );
         color = convertOpaqueRGBA_CLtoRGB(color);
@@ -727,7 +727,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
 
     protected boolean canFillFluidType(FluidStack fluid) {
         return !ModHandler.isMaterialWood(material) &&
-            !material.hasFlag(MatFlags.FLAMMABLE) ||
+            !material.hasFlag(FLAMMABLE) ||
             fluid.getFluid().getTemperature(fluid) <= 325;
     }
 

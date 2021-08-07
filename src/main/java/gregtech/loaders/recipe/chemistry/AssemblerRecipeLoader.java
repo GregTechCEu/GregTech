@@ -196,5 +196,69 @@ public class AssemblerRecipeLoader {
                 .fluidInputs(Glue.getFluid(10))
                 .output(pipeLargeFluid, Wood)
                 .buildAndRegister();
+
+        // Voltage Coils
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(7)
+                .input(stick, IronMagnetic)
+                .input(wireFine, Lead, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_ULV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
+                .input(stick, IronMagnetic)
+                .input(wireFine, Steel, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_LV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(120)
+                .input(stick, SteelMagnetic)
+                .input(wireFine, Aluminium, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_MV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(480)
+                .input(stick, SteelMagnetic)
+                .input(wireFine, BlackSteel, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_HV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(1920)
+                .input(stick, NeodymiumMagnetic)
+                .input(wireFine, TungstenSteel, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_EV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(1920)
+                .input(stick, NeodymiumMagnetic)
+                .input(wireFine, Iridium, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_IV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30720)
+                .input(stick, SamariumMagnetic)
+                .input(wireFine, Osmiridium, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_LUV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(122880)
+                .input(stick, SamariumMagnetic)
+                .input(wireFine, Europium, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_ZPM.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(491520)
+                .input(stick, SamariumMagnetic)
+                .input(wireFine, FluxedElectrum, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_UV.getStackForm())
+                .buildAndRegister();
     }
 }

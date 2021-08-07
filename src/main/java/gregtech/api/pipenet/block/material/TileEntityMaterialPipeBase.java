@@ -4,8 +4,9 @@ import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
@@ -47,27 +48,27 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        this.pipeMaterial = Material.MATERIAL_REGISTRY.getObject(compound.getString("PipeMaterial"));
+        this.pipeMaterial = MaterialRegistry.MATERIAL_REGISTRY.getObject(compound.getString("PipeMaterial"));
     }
 
     private void writePipeMaterial(PacketBuffer buf) {
-        buf.writeVarInt(Material.MATERIAL_REGISTRY.getIDForObject(pipeMaterial));
+        buf.writeVarInt(MaterialRegistry.MATERIAL_REGISTRY.getIDForObject(pipeMaterial));
     }
 
     private void readPipeMaterial(PacketBuffer buf) {
-        this.pipeMaterial = Material.MATERIAL_REGISTRY.getObjectById(buf.readVarInt());
+        this.pipeMaterial = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(buf.readVarInt());
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeVarInt(Material.MATERIAL_REGISTRY.getIDForObject(pipeMaterial));
+        buf.writeVarInt(MaterialRegistry.MATERIAL_REGISTRY.getIDForObject(pipeMaterial));
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.pipeMaterial = Material.MATERIAL_REGISTRY.getObjectById(buf.readVarInt());
+        this.pipeMaterial = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(buf.readVarInt());
     }
 
     @Override

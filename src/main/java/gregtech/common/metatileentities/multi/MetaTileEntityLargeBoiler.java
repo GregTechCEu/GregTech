@@ -26,6 +26,7 @@ import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.SimpleCubeRenderer;
 import gregtech.api.render.Textures;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType;
 import gregtech.common.blocks.BlockFireboxCasing;
@@ -228,9 +229,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         this.lastTickSteamOutput = 0;
         if (currentTemperature >= BOILING_TEMPERATURE) {
             boolean doWaterDrain = getOffsetTimer() % 20 == 0;
-            FluidStack drainedWater = fluidImportInventory.drain(ModHandler.getWater(1), doWaterDrain);
+            FluidStack drainedWater = fluidImportInventory.drain(Materials.Water.getFluid(1), doWaterDrain);
             if (drainedWater == null || drainedWater.amount == 0) {
-                drainedWater = fluidImportInventory.drain(ModHandler.getDistilledWater(1), doWaterDrain);
+                drainedWater = fluidImportInventory.drain(Materials.DistilledWater.getFluid(1), doWaterDrain);
             }
             if (drainedWater != null && drainedWater.amount > 0) {
                 if (currentTemperature > BOILING_TEMPERATURE && hasNoWater) {

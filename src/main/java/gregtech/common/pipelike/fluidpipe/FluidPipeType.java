@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.fluidpipe;
 
 import gregtech.api.pipenet.block.material.IMaterialPipeType;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.ore.OrePrefix;
 
 public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {

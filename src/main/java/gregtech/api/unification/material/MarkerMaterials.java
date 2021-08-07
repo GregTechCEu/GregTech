@@ -1,11 +1,7 @@
 package gregtech.api.unification.material;
 
 import com.google.common.collect.HashBiMap;
-import gregtech.api.unification.material.type.MarkerMaterial;
-import gregtech.api.unification.material.type.Material;
 import net.minecraft.item.EnumDyeColor;
-
-import static com.google.common.collect.ImmutableList.of;
 
 public class MarkerMaterials {
 
@@ -33,28 +29,28 @@ public class MarkerMaterials {
          */
         public static MarkerMaterial Colorless = new MarkerMaterial("colorless");
 
-        public static MarkerMaterial Black = new MarkerMaterial("black");
-        public static MarkerMaterial Red = new MarkerMaterial("red");
-        public static MarkerMaterial Green = new MarkerMaterial("green");
-        public static MarkerMaterial Brown = new MarkerMaterial("brown");
-        public static MarkerMaterial Blue = new MarkerMaterial("blue");
-        public static MarkerMaterial Purple = new MarkerMaterial("purple");
-        public static MarkerMaterial Cyan = new MarkerMaterial("cyan");
-        public static MarkerMaterial Silver = new MarkerMaterial("silver");
-        public static MarkerMaterial Gray = new MarkerMaterial("gray");
-        public static MarkerMaterial Pink = new MarkerMaterial("pink");
-        public static MarkerMaterial Lime = new MarkerMaterial("lime");
-        public static MarkerMaterial Yellow = new MarkerMaterial("yellow");
-        public static MarkerMaterial LightBlue = new MarkerMaterial("light_blue");
-        public static MarkerMaterial Magenta = new MarkerMaterial("magenta");
-        public static MarkerMaterial Orange = new MarkerMaterial("orange");
         public static MarkerMaterial White = new MarkerMaterial("white");
+        public static MarkerMaterial Orange = new MarkerMaterial("orange");
+        public static MarkerMaterial Magenta = new MarkerMaterial("magenta");
+        public static MarkerMaterial LightBlue = new MarkerMaterial("light_blue");
+        public static MarkerMaterial Yellow = new MarkerMaterial("yellow");
+        public static MarkerMaterial Lime = new MarkerMaterial("lime");
+        public static MarkerMaterial Pink = new MarkerMaterial("pink");
+        public static MarkerMaterial Gray = new MarkerMaterial("gray");
+        public static MarkerMaterial Silver = new MarkerMaterial("silver");
+        public static MarkerMaterial Cyan = new MarkerMaterial("cyan");
+        public static MarkerMaterial Purple = new MarkerMaterial("purple");
+        public static MarkerMaterial Blue = new MarkerMaterial("blue");
+        public static MarkerMaterial Brown = new MarkerMaterial("brown");
+        public static MarkerMaterial Green = new MarkerMaterial("green");
+        public static MarkerMaterial Red = new MarkerMaterial("red");
+        public static MarkerMaterial Black = new MarkerMaterial("black");
 
         /**
          * Arrays containing all possible color values (without Colorless!)
          */
         public static final MarkerMaterial[] VALUES = new MarkerMaterial[]{
-            Black, Red, Green, Brown, Blue, Purple, Cyan, Silver, Gray, Pink, Lime, Yellow, LightBlue, Magenta, Orange, White
+            White, Orange, Magenta, LightBlue, Yellow, Lime, Pink, Gray, Silver, Cyan, Purple, Blue, Brown, Green, Red, Black
         };
 
         /**
@@ -95,15 +91,15 @@ public class MarkerMaterials {
         public static Material Elite = new MarkerMaterial("elite");
         public static Material Master = new MarkerMaterial("master");
         public static Material Ultimate = new MarkerMaterial("ultimate");
-        public static Material Superconductor = new Material(387, "superconductor", 0xFFFFFF, MaterialIconSet.NONE, of(), 0L, null) {
-        };
+        public static Material Superconductor = new MarkerMaterial("superconductor");
+        //new Material(387, "superconductor", 0xFFFFFF, MaterialIconSet.NONE, of(), 0L, null) {};
         public static Material Infinite = new MarkerMaterial("infinite");
 
-        public static Material UEVCircuit = new MarkerMaterial("uev");
-        public static Material UIVCircuit = new MarkerMaterial("uiv");
+        public static Material Ultra = new MarkerMaterial("ultra");
+        public static Material Insane = new MarkerMaterial("insane");
         public static Material UMVCircuit = new MarkerMaterial("umv");
         public static Material UXVCircuit = new MarkerMaterial("uxv");
-        public static Material MAXCircuit = new MarkerMaterial("max");
+        public static Material Maximum = new MarkerMaterial("maximum");
     }
 
     public static class Component {

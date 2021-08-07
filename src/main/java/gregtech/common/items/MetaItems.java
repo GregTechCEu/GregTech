@@ -66,7 +66,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROTOR;
 
-    public static MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[23];
+    public static MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[26];
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOLT;
@@ -90,6 +90,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_SAW;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_GEAR;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOTTLE;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_FOIL;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_GEAR_SMALL;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD_LONG;
 
     public static MetaItem<?>.MetaValueItem SPRAY_EMPTY;
 
@@ -467,6 +470,16 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem PETRI_DISH;
 
     public static MetaItem<?>.MetaValueItem BIO_CHAFF;
+
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_ULV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_LV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_MV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_HV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_EV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_IV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_LUV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_ZPM;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_UV;
 
     public static MetaItem<?>.MetaValueItem CLIPBOARD;
 

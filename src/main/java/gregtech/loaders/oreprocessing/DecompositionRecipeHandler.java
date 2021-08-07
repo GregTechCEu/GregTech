@@ -3,11 +3,10 @@ package gregtech.loaders.oreprocessing;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.FluidMaterial;
-import gregtech.api.unification.material.type.Material;
-import gregtech.api.unification.material.type.SimpleFluidMaterial;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.item.ItemStack;
@@ -17,27 +16,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gregtech.api.unification.material.type.Material.MatFlags.DECOMPOSITION_REQUIRES_HYDROGEN;
-import static gregtech.api.unification.material.type.Material.MatFlags.DISABLE_DECOMPOSITION;
+import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 public class DecompositionRecipeHandler {
 
     public static void runRecipeGeneration() {
-        for (Material material : Material.MATERIAL_REGISTRY) {
-            if (material instanceof FluidMaterial) {
-                OrePrefix prefix = material instanceof DustMaterial ? OrePrefix.dust : null;
-                processDecomposition(prefix, (FluidMaterial) material);
-            }
-        }
-        for (SimpleFluidMaterial material : SimpleFluidMaterial.MATERIAL_REGISTRY) {
-            processDecomposition(null, material);
+        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+            OrePrefix prefix = material.hasProperty(PropertyKey.DUST) ? OrePrefix.dust : null;
+            processDecomposition(prefix, material);
         }
     }
 
-    private static void processDecomposition(OrePrefix decomposePrefix, FluidMaterial material) {
+    private static void processDecomposition(OrePrefix decomposePrefix, Material material) {
         if (material.getMaterialComponents().isEmpty() ||
-            (!material.hasFlag(Material.MatFlags.DECOMPOSITION_BY_ELECTROLYZING) &&
-                !material.hasFlag(Material.MatFlags.DECOMPOSITION_BY_CENTRIFUGING)) ||
+            (!material.hasFlag(DECOMPOSITION_BY_ELECTROLYZING) &&
+                !material.hasFlag(DECOMPOSITION_BY_CENTRIFUGING)) ||
             //disable decomposition if explicitly disabled for this material or for one of it's components
             material.hasFlag(DISABLE_DECOMPOSITION)) return;
 
@@ -48,11 +41,10 @@ public class DecompositionRecipeHandler {
         //compute outputs
         for (MaterialStack component : material.getMaterialComponents()) {
             totalInputAmount += component.amount;
-            if (component.material instanceof DustMaterial) {
+            if (component.material.hasProperty(PropertyKey.DUST)) {
                 outputs.add(OreDictUnifier.get(OrePrefix.dust, component.material, (int) component.amount));
-            } else if (component.material instanceof FluidMaterial) {
-                FluidMaterial componentMaterial = (FluidMaterial) component.material;
-                fluidOutputs.add(componentMaterial.getFluid((int) (1000 * component.amount)));
+            } else if (component.material.hasProperty(PropertyKey.FLUID)) {
+                fluidOutputs.add(component.material.getFluid((int) (1000 * component.amount)));
             }
         }
 
@@ -99,7 +91,7 @@ public class DecompositionRecipeHandler {
 
         //generate builder
         RecipeBuilder<?> builder;
-        if (material.hasFlag(Material.MatFlags.DECOMPOSITION_BY_ELECTROLYZING)) {
+        if (material.hasFlag(DECOMPOSITION_BY_ELECTROLYZING)) {
             builder = RecipeMaps.ELECTROLYZER_RECIPES.recipeBuilder()
                 .duration(((int) material.getAverageProtons() * totalInputAmount * 2))
                 .EUt(getElectrolyzingVoltage(material.getMaterialComponents().stream()

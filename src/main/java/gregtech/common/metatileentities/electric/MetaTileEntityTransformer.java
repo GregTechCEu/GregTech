@@ -75,6 +75,7 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
         super.receiveCustomData(dataId, buf);
         if (dataId == 100) {
             this.isTransformUp = buf.readBoolean();
+            scheduleRenderUpdate();
         }
     }
 
@@ -97,12 +98,12 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
         long tierVoltage = GTValues.V[getTier()];
         if (isTransformUp) {
             //storage = 1 amp high; input = tier / 4; amperage = 4; output = tier; amperage = 1
-            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage / 4, 4, tierVoltage, 1);
+            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage, 4, tierVoltage * 4, 1);
             ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s != getFrontFacing());
             ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s == getFrontFacing());
         } else{
             //storage = 1 amp high; input = tier; amperage = 1; output = tier / 4; amperage = 4
-            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage, 1, tierVoltage / 4, 4);
+            this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 8L, tierVoltage * 4, 1, tierVoltage, 4);
             ((EnergyContainerHandler) this.energyContainer).setSideInputCondition(s -> s == getFrontFacing());
             ((EnergyContainerHandler) this.energyContainer).setSideOutputCondition(s -> s != getFrontFacing());
         }
@@ -112,13 +113,11 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
 
-            //these are swapped to temporarily "fix" the overlay being the opposite the transformer mode
-            SimpleOverlayRenderer otherFacetexture = isTransformUp ? Textures.ENERGY_OUT_MULTI : Textures.ENERGY_IN_MULTI;
-            SimpleOverlayRenderer frontFacetexture = isTransformUp ? Textures.ENERGY_IN_MULTI : Textures.ENERGY_OUT_MULTI;
-            frontFacetexture.renderSided(frontFacing,renderState,translation,PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+            SimpleOverlayRenderer otherFaceTexture = isTransformUp ? Textures.ENERGY_IN : Textures.ENERGY_OUT;
+            SimpleOverlayRenderer frontFaceTexture = isTransformUp ? Textures.ENERGY_OUT_MULTI : Textures.ENERGY_IN_MULTI;
+            frontFaceTexture.renderSided(frontFacing,renderState,translation,PipelineUtil.color(pipeline, GTValues.VC[getTier() + 1]));
         Arrays.stream(EnumFacing.values()).filter(f -> f != frontFacing)
-                .forEach((f -> otherFacetexture.renderSided(f,renderState,translation,PipelineUtil.color(pipeline, GTValues.VC[getTier() -1]))));
-
+                .forEach((f -> otherFaceTexture.renderSided(f,renderState,translation,PipelineUtil.color(pipeline, GTValues.VC[getTier()]))));
         }
 
 
@@ -145,13 +144,12 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
                 setTransformUp(false);
                 playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_down",
                     energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
-                return true;
             } else {
                 setTransformUp(true);
                 playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.transformer.message_transform_up",
                     energyContainer.getInputVoltage(), energyContainer.getInputAmperage(), energyContainer.getOutputVoltage(), energyContainer.getOutputAmperage()));
-                return true;
             }
+            return true;
         }
         return false;
     }
@@ -168,8 +166,8 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        String lowerTierName = GTValues.VN[getTier() - 1];
-        String higherTierName = GTValues.VN[getTier()];
+        String lowerTierName = GTValues.VN[getTier()];
+        String higherTierName = GTValues.VN[getTier() + 1];
         long lowerVoltage = energyContainer.getOutputVoltage();
         long higherVoltage = energyContainer.getInputVoltage();
         long lowerAmperage = energyContainer.getInputAmperage();

@@ -289,7 +289,7 @@ public abstract class SteamBoiler extends MetaTileEntity {
             .widget(new ImageWidget(43, 44, 18, 18)
                 .setImage(getGuiTexture("overlay_%s_fluid_container")))
 
-            .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE);
+            .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE, 0);
     }
 
     private int getBoilingCycleLength() {

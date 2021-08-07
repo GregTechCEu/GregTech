@@ -1,7 +1,8 @@
 package gregtech.loaders.oreprocessing;
 
-import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.IngotMaterial;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.loaders.recipe.RecyclingRecipes;
@@ -39,18 +40,19 @@ public class RecyclingRecipeHandler {
                 else if (object instanceof Predicate)
                     return ((Predicate<OrePrefix>) object).test(orePrefix);
                 else return false;
-            })) orePrefix.addProcessingHandler(DustMaterial.class, RecyclingRecipeHandler::processCrushing);
+            })) orePrefix.addProcessingHandler(PropertyKey.DUST, RecyclingRecipeHandler::processCrushing);
         }
     }
 
-    public static void processCrushing(OrePrefix thingPrefix, DustMaterial material) {
+    public static void processCrushing(OrePrefix thingPrefix, Material material, DustProperty property) {
         ArrayList<MaterialStack> materialStacks = new ArrayList<>();
         materialStacks.add(new MaterialStack(material, thingPrefix.getMaterialAmount(material)));
         materialStacks.addAll(thingPrefix.secondaryMaterials);
         //only ignore arc smelting for blacklisted prefixes if yielded material is the same as input material
         //if arc smelting gives different material, allow it
         boolean ignoreArcSmelting = IGNORE_ARC_SMELTING.contains(thingPrefix) && !(
-            material instanceof IngotMaterial && ((IngotMaterial) material).arcSmeltInto != material);
+            material.hasProperty(PropertyKey.INGOT)
+                    && material.getProperty(PropertyKey.INGOT).getArcSmeltInto() != material);
         RecyclingRecipes.registerArcRecyclingRecipe(builder -> builder.input(thingPrefix, material), materialStacks, ignoreArcSmelting);
     }
 

@@ -10,10 +10,10 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.model.ResourcePackHook;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.unification.Elements;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.IMaterialHandler;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
 import gregtech.api.util.AnnotatedMaterialHandlerLoader;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
@@ -69,18 +69,15 @@ public class GregTechMod {
     public void onPreInit(FMLPreInitializationEvent event) {
         GTLog.init(event.getModLog());
         NetworkHandler.init();
-        Elements.register();
         MetaTileEntityUIFactory.INSTANCE.init();
         PlayerInventoryUIFactory.INSTANCE.init();
         CoverBehaviorUIFactory.INSTANCE.init();
         SimpleCapabilityManager.init();
-        OreDictUnifier.init();
-        NBTUtil.registerSerializers();
 
         //first, register primary materials and run material handlers
         Materials.register();
         AnnotatedMaterialHandlerLoader.discoverAndLoadAnnotatedMaterialHandlers(event.getAsmData());
-        Material.runMaterialHandlers();
+        IMaterialHandler.runMaterialHandlers();
 
         //then, run CraftTweaker early material registration scripts
         if (GTValues.isModLoaded(GTValues.MODID_CT)) {
@@ -89,7 +86,10 @@ public class GregTechMod {
         }
 
         //freeze material registry before processing items, blocks and fluids
-        Material.freezeRegistry();
+        MaterialRegistry.freeze();
+
+        OreDictUnifier.init();
+        NBTUtil.registerSerializers();
 
         MetaBlocks.init();
         MetaItems.init();

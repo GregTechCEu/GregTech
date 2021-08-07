@@ -17,12 +17,12 @@ import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
-import gregtech.common.pipelike.itempipe.ItemPipeProperties;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.block.state.IBlockState;
@@ -152,7 +152,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
     private int getPipeColor(Material material, int insulationColor) {
         if (insulationColor == IPipeTile.DEFAULT_INSULATION_COLOR) {
-            return material.materialRGB;
+            return material.getMaterialRGB();
         } else return insulationColor;
     }
 

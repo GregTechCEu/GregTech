@@ -1,7 +1,7 @@
 package gregtech.api.pipenet.block.material;
 
 import gregtech.api.pipenet.block.ItemBlockPipe;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

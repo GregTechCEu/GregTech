@@ -29,8 +29,6 @@ public class Textures {
 
     private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
     public static List<IIconRegister> iconRegisters = new ArrayList<>();
-    public static ChestRenderer WOODEN_CHEST = new ChestRenderer("storage/wooden_chest");
-    public static ChestRenderer METAL_CHEST = new ChestRenderer("storage/metal_chest");
     public static SafeRenderer SAFE = new SafeRenderer("storage/safe");
     public static DrumRenderer WOODEN_DRUM = new DrumRenderer("storage/drums/wooden_drum");
     public static DrumRenderer DRUM = new DrumRenderer("storage/drums/drum");

@@ -562,7 +562,7 @@ public class ReactorRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder()
             .fluidInputs(Dimethylamine.getFluid(1000))
-            .fluidInputs(Chloramine.getFluid(1000))
+            .fluidInputs(Monochloramine.getFluid(1000))
             .fluidOutputs(Dimethylhydrazine.getFluid(1000))
             .fluidOutputs(HydrochloricAcid.getFluid(1000))
             .duration(960).EUt(480).buildAndRegister();
@@ -740,7 +740,7 @@ public class ReactorRecipes {
             .fluidInputs(HypochlorousAcid.getFluid(1000))
             .fluidInputs(Ammonia.getFluid(1000))
             .fluidOutputs(Water.getFluid(1000))
-            .fluidOutputs(Chloramine.getFluid(1000))
+            .fluidOutputs(Monochloramine.getFluid(1000))
             .duration(160).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()

@@ -1,10 +1,10 @@
 package gregtech.api.recipes;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.Recipe.ChanceEntry;
-import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
@@ -15,8 +15,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.*;
@@ -25,6 +25,7 @@ import java.util.*;
  * @see Recipe
  */
 
+@SuppressWarnings("unchecked")
 public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected RecipeMap<R> recipeMap;
@@ -132,8 +133,9 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(new ItemStack(item, count, meta));
     }
 
+    @SuppressWarnings("unused")
     public R input(Item item, int count, boolean wild) {
-        return inputs(new ItemStack(item, count, OreDictionary.WILDCARD_VALUE));
+        return inputs(new ItemStack(item, count, GTValues.W));
     }
 
     public R input(Block item) {
@@ -144,8 +146,9 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(new ItemStack(item, count));
     }
 
+    @SuppressWarnings("unused")
     public R input(Block item, int count, boolean wild) {
-        return inputs(new ItemStack(item, count, OreDictionary.WILDCARD_VALUE));
+        return inputs(new ItemStack(item, count, GTValues.W));
     }
 
     public R input(MetaItem<?>.MetaValueItem item, int count) {
@@ -191,8 +194,8 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(CountableIngredient.from(item.getStackForm(), 0));
     }
 
-    public R notConsumable(FluidMaterial fluidMat) {
-        return fluidInputs(new FluidStack(fluidMat.getFluid(1), 0));
+    public R notConsumable(Fluid fluid) {
+        return fluidInputs(new FluidStack(fluid, 0));
     }
 
     public R notConsumable(FluidStack fluidStack) {

@@ -1,12 +1,10 @@
 package gregtech.loaders.recipe;
 
-import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -23,67 +21,11 @@ import static gregtech.common.items.MetaItems.BIO_CHAFF;
 public class WoodMachineRecipes {
 
     public static void init() {
-        initializeWoodRecipes();
         registerPyrolyseOvenRecipes();
     }
 
     public static void postInit() {
         processLogOreDictionary();
-    }
-
-    private static void initializeWoodRecipes() {
-
-        MACERATOR_RECIPES.recipeBuilder()
-                .input(log, Wood)
-                .output(dust, Wood, 6)
-                .chancedOutput(dust, Wood, 8000, 680)
-                .buildAndRegister();
-
-        LATHE_RECIPES.recipeBuilder()
-                .input(plank, Wood)
-                .output(stick, Wood, 2)
-                .duration(10).EUt(8)
-                .buildAndRegister();
-
-        LATHE_RECIPES.recipeBuilder()
-                .input(log, Wood)
-                .output(stickLong, Wood, 4)
-                .output(dust, Wood, 2)
-                .duration(160).EUt(8)
-                .buildAndRegister();
-
-        LATHE_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.SAPLING, 1, GTValues.W))
-                .outputs(new ItemStack(Items.STICK))
-                .output(dustTiny, Wood)
-                .duration(16).EUt(8)
-                .buildAndRegister();
-
-        LATHE_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Blocks.WOODEN_SLAB, 1, GTValues.W))
-                .outputs(new ItemStack(Items.BOWL))
-                .output(dustSmall, Wood)
-                .duration(50).EUt(8)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(plank, Wood, 6)
-                .inputs(new ItemStack(Items.BOOK, 3))
-                .outputs(new ItemStack(Blocks.BOOKSHELF))
-                .duration(400).EUt(4)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(plank, Wood, 3).circuitMeta(3)
-                .outputs(new ItemStack(Blocks.TRAPDOOR, 2))
-                .duration(300).EUt(4)
-                .buildAndRegister();
-
-        ASSEMBLER_RECIPES.recipeBuilder()
-                .input(plank, Wood, 8)
-                .outputs(new ItemStack(Blocks.CHEST))
-                .duration(800).EUt(4).circuitMeta(8)
-                .buildAndRegister();
     }
 
     private static void processLogOreDictionary() {
@@ -99,20 +41,27 @@ public class WoodMachineRecipes {
                 continue;
             }
             IRecipe outputRecipe = outputPair.getKey();
-            if (ConfigHolder.vanillaRecipes.nerfWoodCrafting) {
-                if (originalOutput / 2 > 0) {
-                    //noinspection ConstantConditions
-                    ModHandler.addShapelessRecipe(outputRecipe.getRegistryName().toString(),
-                            GTUtility.copyAmount(originalOutput / 2, plankStack), stack);
-                } else {
-                    //if not enough planks are on output, just remove recipe
-                    ModHandler.removeRecipeByName(outputRecipe.getRegistryName());
-                }
-            }
-            //noinspection ConstantConditions
-            ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
-                    GTUtility.copyAmount(originalOutput, plankStack), "s", "L", 'L', stack);
 
+            //wood nerf
+            if (ConfigHolder.vanillaRecipes.nerfWoodCrafting) {
+                //remove the old recipe
+                ModHandler.removeRecipeByName(outputRecipe.getRegistryName());
+
+                // new wood recipes
+                //noinspection ConstantConditions
+                ModHandler.addShapelessRecipe(outputRecipe.getRegistryName().toString(),
+                        GTUtility.copyAmount(Math.max(1, originalOutput / 2), plankStack), stack);
+
+                ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
+                        GTUtility.copyAmount(originalOutput, plankStack), "s", "L", 'L', stack);
+            } else {
+                //noinspection ConstantConditions
+                ModHandler.addShapedRecipe(outputRecipe.getRegistryName().getPath() + "_saw",
+                        GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), "s", "L", 'L', stack);
+            }
+
+
+            //todo prevent rubber wood from making jungle slabs
             CUTTER_RECIPES.recipeBuilder().inputs(stack)
                     .fluidInputs(Lubricant.getFluid(1))
                     .outputs(GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), OreDictUnifier.get(dust, Wood, 2))
@@ -136,10 +85,12 @@ public class WoodMachineRecipes {
 
             if (!slabStack.isEmpty()) {
                 CUTTER_RECIPES.recipeBuilder()
-                        .inputs(GTUtility.copyAmount(3, plankStack))
-                        .outputs(slabStack)
+                        .inputs(GTUtility.copyAmount(1, plankStack))
+                        .outputs(GTUtility.copyAmount(2, slabStack))
                         .duration(200).EUt(8)
                         .buildAndRegister();
+
+                ModHandler.addShapedRecipe(slabStack.getDisplayName() + "_saw", GTUtility.copyAmount(2, slabStack), "sS", 'S', GTUtility.copyAmount(1, plankStack));
             }
         }
     }

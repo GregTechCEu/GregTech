@@ -6,10 +6,12 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.MaterialIconSet;
-import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.Material;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.info.MaterialIconSet;
+import gregtech.api.unification.material.MaterialRegistry;
+import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
@@ -50,8 +52,8 @@ public class MetaPrefixItem extends StandardMetaItem {
     public MetaPrefixItem(OrePrefix orePrefix) {
         super();
         this.prefix = orePrefix;
-        for (Material material : Material.MATERIAL_REGISTRY) {
-            short i = (short) Material.MATERIAL_REGISTRY.getIDForObject(material);
+        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+            short i = (short) MaterialRegistry.MATERIAL_REGISTRY.getIDForObject(material);
             if (orePrefix != null && canGenerate(orePrefix, material)) {
                 generatedItems.add(i);
             }
@@ -60,7 +62,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     public void registerOreDict() {
         for (short metaItem : generatedItems) {
-            Material material = Material.MATERIAL_REGISTRY.getObjectById(metaItem);
+            Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(metaItem);
             ItemStack item = new ItemStack(this, 1, metaItem);
             OreDictUnifier.registerOre(item, prefix, material);
             registerSpecialOreDict(item, material, prefix);
@@ -69,12 +71,16 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     private void registerSpecialOreDict(ItemStack item, Material material, OrePrefix prefix) {
-        switch (prefix) {
-            case dust: OreDictUnifier.registerOre(item, OrePrefix.DUST_REGULAR, material); break;
-            case oreChunk: OreDictUnifier.registerOre(item, OrePrefix.oreGravel.name(), material); break;
-            case oreEnderChunk: OreDictUnifier.registerOre(item, OrePrefix.oreEndstone.name(), material); break;
-            case oreNetherChunk: OreDictUnifier.registerOre(item, OrePrefix.oreNetherrack.name(), material); break;
-            case oreSandyChunk: OreDictUnifier.registerOre(item, OrePrefix.oreSand.name(), material); break;
+        if (prefix.equals(OrePrefix.dust)) OreDictUnifier.registerOre(item, OrePrefix.DUST_REGULAR, material);
+        else if (prefix.equals(OrePrefix.oreChunk)) OreDictUnifier.registerOre(item, OrePrefix.oreGravel.name(), material);
+        else if (prefix.equals(OrePrefix.oreEnderChunk)) OreDictUnifier.registerOre(item, OrePrefix.oreEndstone.name(), material);
+        else if (prefix.equals(OrePrefix.oreNetherChunk)) OreDictUnifier.registerOre(item, OrePrefix.oreNetherrack.name(), material);
+        else if (prefix.equals(OrePrefix.oreSandyChunk)) OreDictUnifier.registerOre(item, OrePrefix.oreSand.name(), material);
+
+        if (material == Materials.Plutonium239) {
+            OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "239");
+        } else if (material == Materials.Uranium238) {
+            OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "238");
         }
     }
 
@@ -89,7 +95,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     @Override
     @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack itemStack) {
-        Material material = Material.MATERIAL_REGISTRY.getObjectById(itemStack.getItemDamage());
+        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(itemStack.getItemDamage());
         if (material == null || prefix == null) return "";
         return prefix.getLocalNameForItem(material);
     }
@@ -98,10 +104,10 @@ public class MetaPrefixItem extends StandardMetaItem {
     @SideOnly(Side.CLIENT)
     protected int getColorForItemStack(ItemStack stack, int tintIndex) {
         if (tintIndex == 0) {
-            Material material = Material.MATERIAL_REGISTRY.getObjectById(stack.getMetadata());
+            Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(stack.getMetadata());
             if (material == null)
                 return 0xFFFFFF;
-            return material.materialRGB;
+            return material.getMaterialRGB();
         }
         return super.getColorForItemStack(stack, tintIndex);
     }
@@ -113,9 +119,9 @@ public class MetaPrefixItem extends StandardMetaItem {
         super.registerModels();
         TShortObjectHashMap<ModelResourceLocation> alreadyRegistered = new TShortObjectHashMap<>();
         for (short metaItem : generatedItems) {
-            MaterialIconSet materialIconSet = Material.MATERIAL_REGISTRY.getObjectById(metaItem).materialIconSet;
+            MaterialIconSet materialIconSet = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(metaItem).getMaterialIconSet();
 
-            short registrationKey = (short) (prefix.ordinal() + materialIconSet.ordinal());
+            short registrationKey = (short) (prefix.id + materialIconSet.ordinal());
             if (!alreadyRegistered.containsKey(registrationKey)) {
                 ResourceLocation resourceLocation = prefix.materialIconType.getItemModelPath(materialIconSet);
                 ModelBakery.registerItemVariants(this, resourceLocation);
@@ -171,14 +177,14 @@ public class MetaPrefixItem extends StandardMetaItem {
     public void addInformation(ItemStack itemStack, @Nullable World worldIn, List<String> lines, ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
         int damage = itemStack.getItemDamage();
-        Material material = Material.MATERIAL_REGISTRY.getObjectById(damage);
+        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(damage);
         if (prefix == null || material == null) return;
         addMaterialTooltip(lines);
     }
 
     public Material getMaterial(ItemStack itemStack) {
         int damage = itemStack.getItemDamage();
-        return Material.MATERIAL_REGISTRY.getObjectById(damage);
+        return MaterialRegistry.MATERIAL_REGISTRY.getObjectById(damage);
     }
 
     public OrePrefix getOrePrefix() {
@@ -188,11 +194,9 @@ public class MetaPrefixItem extends StandardMetaItem {
     @Override
     public int getItemBurnTime(ItemStack itemStack) {
         int damage = itemStack.getItemDamage();
-        Material material = Material.MATERIAL_REGISTRY.getObjectById(damage);
-        if (material instanceof DustMaterial) {
-            DustMaterial dustMaterial = (DustMaterial) material;
-            return (int) (dustMaterial.burnTime * prefix.materialAmount / GTValues.M);
-        }
+        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(damage);
+        DustProperty property = material == null ? null : material.getProperty(PropertyKey.DUST);
+        if (property != null) return (int) (property.getBurnTime() * prefix.materialAmount / GTValues.M);
         return super.getItemBurnTime(itemStack);
 
     }
@@ -201,10 +205,11 @@ public class MetaPrefixItem extends StandardMetaItem {
     public boolean isBeaconPayment(ItemStack stack) {
         int damage = stack.getMetadata();
 
-        Material material = Material.MATERIAL_REGISTRY.getObjectById(damage);
+        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(damage);
         if (this.prefix != null && material != null) {
             boolean isSolidState = this.prefix == OrePrefix.ingot || this.prefix == OrePrefix.gem;
-            boolean isMaterialTiered = material instanceof SolidMaterial && ((SolidMaterial) material).harvestLevel >= 2;
+            DustProperty property = material.getProperty(PropertyKey.DUST);
+            boolean isMaterialTiered = property != null && property.getHarvestLevel() >= 2;
             return isSolidState && isMaterialTiered;
         }
         return false;
@@ -216,7 +221,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         if (itemEntity.getEntityWorld().isRemote)
             return false;
 
-        Material material = Material.MATERIAL_REGISTRY.getObjectById(damage);
+        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(damage);
         if (!purifyMap.containsKey(this.prefix))
             return false;
 

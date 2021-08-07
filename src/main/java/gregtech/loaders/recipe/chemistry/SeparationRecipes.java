@@ -97,6 +97,12 @@ public class SeparationRecipes {
                 .fluidOutputs(Methane.getFluid(18))
                 .buildAndRegister();
 
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(500).EUt(5)
+                .inputs(new ItemStack(Items.MAGMA_CREAM))
+                .outputs(new ItemStack(Items.BLAZE_POWDER))
+                .outputs(new ItemStack(Items.SLIME_BALL))
+                .buildAndRegister();
+
 
         if (ConfigHolder.addFoodMethaneRecipes) {
             for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {
@@ -463,12 +469,6 @@ public class SeparationRecipes {
                 .input(dust, Wood)
                 .chancedOutput(PLANT_BALL, 200, 30)
                 .fluidOutputs(Creosote.getFluid(5))
-                .buildAndRegister();
-
-        EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(4)
-                .input(dust, HydratedCoal)
-                .output(dust, Coal)
-                .fluidOutputs(Water.getFluid(100))
                 .buildAndRegister();
 
         EXTRACTOR_RECIPES.recipeBuilder().duration(32).EUt(4)
