@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -24,8 +23,6 @@ public class SlotListWidget extends GuideWidgetGroup {
 
     // config
     public List<ItemStackInfo> item_list;
-
-    protected transient Rectangle scissor;
 
     @Override
     public Widget initFixed() {
@@ -49,9 +46,6 @@ public class SlotListWidget extends GuideWidgetGroup {
                     itemStackHandler.setStackInSlot(i, item_list.get(i).getInstance());
                     SlotWidget widget = new SlotWidget(itemStackHandler, i, xPos + x * 18, y * 18, false, false);
                     widget.setBackgroundTexture(background);
-                    if (scissor != null) {
-                        widget.applyScissor(scissor.x, scissor.y, scissor.width, scissor.height);
-                    }
                     this.addWidget(widget);
                 }
             }
@@ -76,12 +70,6 @@ public class SlotListWidget extends GuideWidgetGroup {
     public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
         super.loadConfigurator(group, config, isFixed, needUpdate);
         group.addWidget(new ItemStackConfigurator(group, config, "item_list").setOnUpdated(needUpdate));
-    }
-
-    @Override
-    public void applyScissor(int parentX, int parentY, int parentWidth, int parentHeight) {
-        super.applyScissor(parentX, parentY, parentWidth, parentHeight);
-        scissor = new Rectangle(parentX, parentY, parentWidth, parentHeight);
     }
 
     public static class ItemStackInfo {

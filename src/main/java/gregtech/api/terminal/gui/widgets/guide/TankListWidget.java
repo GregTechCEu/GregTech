@@ -7,6 +7,7 @@ import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+import gregtech.api.terminal.gui.widgets.guide.configurator.FluidStackConfigurator;
 import gregtech.api.terminal.gui.widgets.guide.configurator.ItemStackConfigurator;
 import gregtech.api.util.Size;
 import net.minecraft.item.Item;
@@ -51,7 +52,7 @@ public class TankListWidget extends GuideWidgetGroup {
                 if (i < size) {
                     FluidStack fluidStack = fluid_list.get(i).getInstance();
                     TankWidget widget = new TankWidget(new FluidTank(fluidStack, fluid_list.get(i).amount), xPos + x * 18, y * 18, 18, 18);
-                    widget.setBackgroundTexture(background);
+                    widget.setBackgroundTexture(background).setAlwaysShowFull(true);
                     this.addWidget(widget);
                 }
             }
@@ -75,13 +76,7 @@ public class TankListWidget extends GuideWidgetGroup {
     @Override
     public void loadConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, boolean isFixed, Consumer<String> needUpdate) {
         super.loadConfigurator(group, config, isFixed, needUpdate);
-//        group.addWidget(new ItemStackConfigurator(group, config, "fluid_list").setOnUpdated(needUpdate));
-    }
-
-    @Override
-    public void applyScissor(int parentX, int parentY, int parentWidth, int parentHeight) {
-        super.applyScissor(parentX, parentY, parentWidth, parentHeight);
-        scissor = new Rectangle(parentX, parentY, parentWidth, parentHeight);
+        group.addWidget(new FluidStackConfigurator(group, config, "fluid_list").setOnUpdated(needUpdate));
     }
 
     public static class FluidStackInfo {
@@ -96,8 +91,14 @@ public class TankListWidget extends GuideWidgetGroup {
         }
 
         public void update(FluidStack itemStack) {
-            id = FluidRegistry.getFluidName(itemStack.getFluid());
-            amount = itemStack.amount;
+            if (itemStack != null) {
+                id = FluidRegistry.getFluidName(itemStack.getFluid());
+                amount = itemStack.amount;
+            } else {
+                id = null;
+                fluidStack = null;
+                amount = 0;
+            }
         }
 
         public FluidStackInfo(String id, int amount) {
@@ -110,8 +111,9 @@ public class TankListWidget extends GuideWidgetGroup {
                 Fluid fluid = FluidRegistry.getFluid(id);
                 if (fluid != null) {
                     fluidStack = new FluidStack(fluid, amount);
+                } else {
+                    id = null;
                 }
-                id = null;
             }
             return fluidStack;
         }

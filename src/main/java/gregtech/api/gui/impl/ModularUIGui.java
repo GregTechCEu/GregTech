@@ -94,22 +94,9 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
 
         for (int i = 0; i < this.inventorySlots.inventorySlots.size(); ++i) {
             Slot slot = this.inventorySlots.inventorySlots.get(i);
-            Rectangle scissor = null;
-            if (slot instanceof IScissored) {
-                scissor = ((IScissored) slot).getScissor();
-                if (scissor != null) {
-                    RenderUtil.pushScissorFrame(scissor.x, scissor.y, scissor.width, scissor.height);
-                }
-            }
-            if (slot.isEnabled()) {
-                this.drawSlotContents(slot);
-            }
             if (isPointInRegion(slot.xPos, slot.yPos, 16, 16, mouseX, mouseY) && slot.isEnabled()) {
                 renderSlotOverlay(slot);
                 setHoveredSlot(slot);
-            }
-            if (scissor != null) {
-                RenderUtil.popScissorFrame();
             }
         }
 

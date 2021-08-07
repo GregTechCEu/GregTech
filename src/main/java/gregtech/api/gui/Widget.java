@@ -136,9 +136,6 @@ public abstract class Widget {
         onPositionUpdate();
     }
 
-    public void applyScissor(final int parentX, final int parentY, final int parentWidth, final int parentHeight) {
-    }
-
     protected void onPositionUpdate() {
     }
 

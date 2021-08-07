@@ -60,12 +60,6 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
         recomputeSize();
     }
 
-    public void applyScissor(final int parentX, final int parentY, final int parentWidth, final int parentHeight) {
-        for (Widget widget : getContainedWidgets(true)) {
-            widget.applyScissor(parentX, parentY, parentWidth, parentHeight);
-        }
-    }
-
     protected boolean recomputeSize() {
         if (isDynamicSized) {
             Size currentSize = getSize();

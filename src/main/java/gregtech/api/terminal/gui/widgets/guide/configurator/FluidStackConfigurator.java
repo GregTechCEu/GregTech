@@ -59,18 +59,20 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
                         new Color(128, 255, 128).getRGB(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> {
-                    fluidStackInfo.amount = Math.max(0, fluidStackInfo.amount - (data.isShiftClick ? 10 : 1));
+                    fluidStackInfo.amount = Math.max(0, fluidStackInfo.amount - (data.isShiftClick ? data.isCtrlClick ? 1000 : 10 : data.isCtrlClick? 100: 1));
                     updateValue();
                 })
+                .setHoverText("Shift -10|Ctrl -100|Shift+Ctrl -1000")
                 .setIcon(new TextTexture("-1", -1)));
         group.addWidget(new RectButtonWidget(76, 0, 20, 20)
                 .setColors(new Color(0, 0, 0, 74).getRGB(),
                         new Color(128, 255, 128).getRGB(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> {
-                    fluidStackInfo.amount = Math.max(0, fluidStackInfo.amount + (data.isShiftClick ? 10 : 1));
+                    fluidStackInfo.amount = Math.max(0, fluidStackInfo.amount + (data.isShiftClick ? data.isCtrlClick ? 1000 : 10 : data.isCtrlClick? 100: 1));
                     updateValue();
                 })
+                .setHoverText("Shift +10|Ctrl +100|Shift+Ctrl +1000")
                 .setIcon(new TextTexture("+1", -1)));
         group.addWidget(new ImageWidget(40, 0, 36, 20, new ColorRectTexture(0x9f000000)));
         group.addWidget(new SimpleTextWidget(58, 10, "", 0xFFFFFF, () -> Integer.toString(fluidStackInfo.amount), true));

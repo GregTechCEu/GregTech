@@ -29,6 +29,7 @@ public class GuideConfigEditor extends TabGroup {
     public String json;
     private IGuideWidget selected;
     private GuidePageEditorWidget pageEditor;
+    private TextEditorWidget titleEditor;
     private final DraggableScrollableWidgetGroup widgetSelector;
     private final DraggableScrollableWidgetGroup widgetConfigurator;
     private final CircleButtonWidget[] addButton;
@@ -93,6 +94,10 @@ public class GuideConfigEditor extends TabGroup {
         this.pageEditor = pageEditor;
     }
 
+    public GuidePageEditorWidget getPageEditor() {
+        return pageEditor;
+    }
+
     private DraggableScrollableWidgetGroup createPageConfig() {
         DraggableScrollableWidgetGroup group = new DraggableScrollableWidgetGroup(0, 0, getSize().width, getSize().height - 10)
                 .setBackground(new ColorRectTexture(new Color(246, 120, 120, 190)))
@@ -105,17 +110,22 @@ public class GuideConfigEditor extends TabGroup {
                         pageEditor.setSection(s);
                     }
                 }, true)
-                .setTextSupplier(pageEditor::getSection, true)
+                .setTextSupplier(()-> getPageEditor().getSection(), true)
                 .setMaxStringLength(Integer.MAX_VALUE)
                 .setValidator(s->true));
         group.addWidget(new ImageWidget(5, 48,116, 1, new ColorRectTexture(-1)));
         group.addWidget(new LabelWidget(5, 55, "title", -1).setShadow(true));
-        group.addWidget(new TextEditorWidget(5, 65, 116, 70, s->{
+        titleEditor = new TextEditorWidget(5, 65, 116, 70, s->{
             if (pageEditor != null) {
                 pageEditor.setTitle(s);
             }
-        }, true).setContent(pageEditor.getTitle()).setBackground(new ColorRectTexture(0xA3FFFFFF)));
+        }, true).setContent("Template").setBackground(new ColorRectTexture(0xA3FFFFFF));
+        group.addWidget(titleEditor);
         return group;
+    }
+
+    public void updateTitle(String title) {
+        titleEditor.setContent(title);
     }
 
     private DraggableScrollableWidgetGroup createWidgetSelector() {
@@ -158,8 +168,11 @@ public class GuideConfigEditor extends TabGroup {
                if (result != null && result.isFile()) {
                    try {
                        FileReader reader = new FileReader(result);
-                       pageEditor.loadJsonConfig(new JsonParser().parse(new JsonReader(reader)).getAsJsonObject());
+                       JsonObject config = new JsonParser().parse(new JsonReader(reader)).getAsJsonObject();
+                       pageEditor.loadJsonConfig(config);
                        reader.close();
+                       getPageEditor().setSection(config.get("section").getAsString());
+                       updateTitle(config.get("title").getAsString());
                    } catch (Exception e) {
                        TerminalDialogWidget.showInfoDialog(app.getOs(), "ERROR", "An error occurred while loading the file.").setClientSide().open();
                    }

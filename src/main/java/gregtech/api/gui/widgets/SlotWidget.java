@@ -6,9 +6,15 @@ import javax.annotation.Nonnull;
 
 import gregtech.api.gui.*;
 import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.IInventory;
@@ -31,8 +37,6 @@ public class SlotWidget extends Widget implements INativeWidget {
 
     protected IGuiTexture[] backgroundTexture;
     protected Runnable changeListener;
-
-    protected Rectangle scissor;
 
     public SlotWidget(IInventory inventory, int slotIndex, int xPosition, int yPosition, boolean canTakeItems, boolean canPutItems) {
         super(new Position(xPosition, yPosition), new Size(18, 18));
@@ -71,6 +75,15 @@ public class SlotWidget extends Widget implements INativeWidget {
             for (IGuiTexture backgroundTexture : this.backgroundTexture) {
                 backgroundTexture.draw(pos.x, pos.y, size.width, size.height);
             }
+
+            RenderHelper.enableGUIStandardItemLighting();
+            GlStateManager.pushMatrix();
+            RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
+            itemRender.renderItemAndEffectIntoGUI(slotReference.getStack(), pos.x + 1, pos.y + 1);
+            itemRender.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, slotReference.getStack(), pos.x + 1, pos.y + 1, null);
+            GlStateManager.enableAlpha();
+            GlStateManager.popMatrix();
+            RenderHelper.disableStandardItemLighting();
         }
     }
 
@@ -91,11 +104,6 @@ public class SlotWidget extends Widget implements INativeWidget {
     @Override
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
-    }
-
-    @Override
-    public void applyScissor(final int parentX, final int parentY, final int parentWidth, final int parentHeight) {
-        this.scissor = new Rectangle(parentX, parentY, parentWidth, parentHeight);
     }
 
     @Override
@@ -138,13 +146,7 @@ public class SlotWidget extends Widget implements INativeWidget {
     }
 
     public boolean isEnabled() {
-        if (!this.isEnabled) {
-            return false;
-        }
-        if (this.scissor == null) {
-            return true;
-        }
-        return scissor.intersects(toRectangleBox());
+        return this.isEnabled;
     }
 
     @Override
@@ -166,7 +168,7 @@ public class SlotWidget extends Widget implements INativeWidget {
         return slotReference;
     }
 
-    protected class WidgetSlot extends Slot implements IScissored {
+    protected class WidgetSlot extends Slot {
         public WidgetSlot(IInventory inventory, int index, int xPosition, int yPosition) {
             super(inventory, index, xPosition, yPosition);
         }
@@ -204,13 +206,9 @@ public class SlotWidget extends Widget implements INativeWidget {
             return SlotWidget.this.isEnabled();
         }
 
-        @Override
-        public Rectangle getScissor() {
-            return SlotWidget.this.scissor;
-        }
     }
 
-    protected class WidgetSlotItemHandler extends SlotItemHandler implements IScissored {
+    protected class WidgetSlotItemHandler extends SlotItemHandler {
 
         public WidgetSlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
             super(itemHandler, index, xPosition, yPosition);
@@ -249,9 +247,5 @@ public class SlotWidget extends Widget implements INativeWidget {
             return SlotWidget.this.isEnabled();
         }
 
-        @Override
-        public Rectangle getScissor() {
-            return SlotWidget.this.scissor;
-        }
     }
 }
