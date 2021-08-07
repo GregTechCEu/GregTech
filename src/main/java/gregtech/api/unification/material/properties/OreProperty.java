@@ -62,8 +62,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      * Default: none.
      */
     //@ZenProperty
-    @Nullable
-    private List<Material> separatedInto = new ArrayList<>();
+    private final List<Material> separatedInto = new ArrayList<>();
 
     public OreProperty(int oreMultiplier, int byProductMultiplier) {
         this.oreMultiplier = oreMultiplier;
