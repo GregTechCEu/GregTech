@@ -25,9 +25,9 @@ public class TextEditorWidget extends WidgetGroup {
     private static final TextureArea STYLE = TextureArea.fullImage("textures/gui/widget/formatting.png");
     private final TextPanelWidget textPanelWidget;
 
-    public TextEditorWidget(int x, int y, int width, int height, String initText,Consumer<String> stringUpdate, boolean allowToolBox) {
+    public TextEditorWidget(int x, int y, int width, int height,Consumer<String> stringUpdate, boolean allowToolBox) {
         super(new Position(x, y), new Size(Math.max(width, allowToolBox ? 80 : width), Math.max(height, allowToolBox ? 32 : height)));
-        textPanelWidget = new TextPanelWidget(0, 32, Math.max(width, allowToolBox ? 80 : width), Math.max(height, allowToolBox ? 32 : height) - 32, initText, stringUpdate);
+        textPanelWidget = new TextPanelWidget(0, 32, Math.max(width, allowToolBox ? 80 : width), Math.max(height, allowToolBox ? 32 : height) - 32, stringUpdate);
         this.addWidget(textPanelWidget);
         if (allowToolBox) {
             initToolBox();
@@ -36,6 +36,11 @@ public class TextEditorWidget extends WidgetGroup {
 
     public TextEditorWidget setBackground(IGuiTexture background) {
         textPanelWidget.setBackground(background);
+        return this;
+    }
+
+    public TextEditorWidget setContent(String content) {
+        textPanelWidget.pageSetCurrent(content);
         return this;
     }
 
@@ -103,10 +108,10 @@ public class TextEditorWidget extends WidgetGroup {
         private static final Pattern COLOR_CODE_PATTERN = Pattern.compile("(?i)§[0-9A-F]");
 
 
-        public TextPanelWidget(int x, int y, int width, int height, String text, Consumer<String> stringUpdate) {
+        public TextPanelWidget(int x, int y, int width, int height, Consumer<String> stringUpdate) {
             super(x, y, width, height);
             this.stringUpdate = stringUpdate;
-            this.content = text == null ? "" : text;
+            this.content = "";
             if (isClientSide()) {
                 fontRenderer = Minecraft.getMinecraft().fontRenderer;
                 textHeight = fontRenderer.getWordWrappedHeight(content, width - yBarWidth);

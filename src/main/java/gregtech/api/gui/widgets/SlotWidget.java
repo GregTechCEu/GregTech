@@ -4,10 +4,8 @@ import java.awt.Rectangle;
 
 import javax.annotation.Nonnull;
 
-import gregtech.api.gui.INativeWidget;
-import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.IScissored;
-import gregtech.api.gui.Widget;
+import gregtech.api.gui.*;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -31,7 +29,7 @@ public class SlotWidget extends Widget implements INativeWidget {
     protected boolean canPutItems;
     protected SlotLocationInfo locationInfo = new SlotLocationInfo(false, false);
 
-    protected TextureArea[] backgroundTexture;
+    protected IGuiTexture[] backgroundTexture;
     protected Runnable changeListener;
 
     protected Rectangle scissor;
@@ -50,6 +48,12 @@ public class SlotWidget extends Widget implements INativeWidget {
         this.slotReference = createSlot(itemHandler, slotIndex);
     }
 
+    @Override
+    public void setSizes(ISizeProvider sizes) {
+        super.setSizes(sizes);
+        onPositionUpdate();
+    }
+
     protected Slot createSlot(IInventory inventory, int index) {
         return new WidgetSlot(inventory, index, 0, 0);
     }
@@ -64,7 +68,7 @@ public class SlotWidget extends Widget implements INativeWidget {
         if (isEnabled() && backgroundTexture != null) {
             Position pos = getPosition();
             Size size = getSize();
-            for (TextureArea backgroundTexture : this.backgroundTexture) {
+            for (IGuiTexture backgroundTexture : this.backgroundTexture) {
                 backgroundTexture.draw(pos.x, pos.y, size.width, size.height);
             }
         }
@@ -110,7 +114,7 @@ public class SlotWidget extends Widget implements INativeWidget {
      * Sets array of background textures used by slot
      * they are drawn on top of each other
      */
-    public SlotWidget setBackgroundTexture(TextureArea... backgroundTexture) {
+    public SlotWidget setBackgroundTexture(IGuiTexture... backgroundTexture) {
         this.backgroundTexture = backgroundTexture;
         return this;
     }

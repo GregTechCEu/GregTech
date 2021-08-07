@@ -1,9 +1,11 @@
 package gregtech.api.terminal.gui.widgets.guide.configurator;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.util.Position;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -11,20 +13,30 @@ import net.minecraft.item.ItemStack;
 import java.util.Collections;
 import java.util.function.Consumer;
 
-public class ConfiguratorWidget extends WidgetGroup {
+public class ConfiguratorWidget<T> extends WidgetGroup {
+    protected T defaultValue;
     protected String name;
     protected boolean canDefault;
     protected boolean isDefault;
     protected JsonObject config;
-
+    protected DraggableScrollableWidgetGroup group;
     private int nameWidth;
     private Consumer<String> onUpdated;
 
-    public ConfiguratorWidget(int x, int y, JsonObject config, String name, boolean canDefault) {
-        super(new Position(x, y));
+    public ConfiguratorWidget(DraggableScrollableWidgetGroup group, JsonObject config, String name) {
+        this(group, config, name, null);
+    }
+
+    public ConfiguratorWidget(DraggableScrollableWidgetGroup group, JsonObject config, String name, T defaultValue) {
+        super(new Position(5, group.getWidgetBottomHeight() + 5));
+        this.group = group;
+        this.defaultValue = defaultValue;
         this.name = name;
-        this.canDefault = canDefault;
+        this.canDefault = defaultValue != null;
         this.config = config;
+        if (config.get(name) == null) {
+            config.addProperty(name, (String)null);
+        }
         if (canDefault && config.get(name).isJsonNull()) {
             isDefault = true;
         }
@@ -32,9 +44,20 @@ public class ConfiguratorWidget extends WidgetGroup {
         if (isClientSide()) {
             nameWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(name);
         }
+        init();
     }
 
-    public ConfiguratorWidget setOnUpdated(Consumer<String> onUpdated) {
+    protected void init() {
+
+    }
+
+    protected void updateValue(T value) {
+        if (canDefault && isDefault) return;
+        config.add(name, new Gson().toJsonTree(value));
+        update();
+    }
+
+    public ConfiguratorWidget<T> setOnUpdated(Consumer<String> onUpdated) {
         this.onUpdated = onUpdated;
         return this;
     }

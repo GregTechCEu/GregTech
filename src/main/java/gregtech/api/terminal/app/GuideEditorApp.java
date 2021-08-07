@@ -17,17 +17,16 @@ public class GuideEditorApp extends AbstractApplication{
 
     @Override
     public AbstractApplication createApp(boolean isClient, NBTTagCompound nbt) {
+        GuideEditorApp app = new GuideEditorApp();
         if (isClient) {
-            GuideEditorApp app = new GuideEditorApp();
-            GuideConfigEditor configEditor = new GuideConfigEditor(0, 0, 133, 232);
+            GuideConfigEditor configEditor = new GuideConfigEditor(0, 0, 133, 232, app);
             GuidePageEditorWidget pageEditor = new GuidePageEditorWidget(133, 0, 200, 232, 5);
             configEditor.setGuidePageEditorWidget(pageEditor);
             pageEditor.setGuideConfigEditor(configEditor);
             app.addWidget(pageEditor);
             app.addWidget(configEditor);
-            return app;
         }
-        return null;
+        return app;
     }
 
     @Override

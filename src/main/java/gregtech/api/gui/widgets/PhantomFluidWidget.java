@@ -6,6 +6,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
@@ -30,10 +31,11 @@ import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhostIngredientTarget {
 
-    protected TextureArea backgroundTexture = GuiTextures.FLUID_SLOT;
+    protected IGuiTexture backgroundTexture = GuiTextures.FLUID_SLOT;
 
     private Supplier<FluidStack> fluidStackSupplier;
     private Consumer<FluidStack> fluidStackUpdater;
+    private boolean isClient;
     protected FluidStack lastFluidStack;
 
     public PhantomFluidWidget(int xPosition, int yPosition, int width, int height, Supplier<FluidStack> fluidStackSupplier, Consumer<FluidStack> fluidStackUpdater) {
@@ -50,6 +52,18 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 return fluidHandler.drain(Integer.MAX_VALUE, false);
         }
         return null;
+    }
+
+    public PhantomFluidWidget setFluidStackSupplier(Supplier<FluidStack> fluidStackSupplier, boolean isClient) {
+        this.fluidStackSupplier = fluidStackSupplier;
+        this.isClient = isClient;
+        return this;
+    }
+
+    public PhantomFluidWidget setFluidStackUpdater(Consumer<FluidStack> fluidStackUpdater, boolean isClient) {
+        this.fluidStackUpdater = fluidStackUpdater;
+        this.isClient = isClient;
+        return this;
     }
 
     @Override
@@ -77,6 +91,10 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                     NBTTagCompound tagCompound = ingredientStack.writeToNBT(new NBTTagCompound());
                     writeClientAction(2, buffer -> buffer.writeCompoundTag(tagCompound));
                 }
+
+                if (isClient && fluidStackUpdater != null) {
+                    fluidStackUpdater.accept(ingredientStack);
+                }
             }
         });
     }
@@ -89,9 +107,17 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         return null;
     }
 
-    public PhantomFluidWidget setBackgroundTexture(TextureArea backgroundTexture) {
+    public PhantomFluidWidget setBackgroundTexture(IGuiTexture backgroundTexture) {
         this.backgroundTexture = backgroundTexture;
         return this;
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        if (isClient && fluidStackSupplier != null) {
+            this.lastFluidStack = fluidStackSupplier.get();
+        }
     }
 
     @Override
@@ -155,6 +181,9 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         if (isMouseOverElement(mouseX, mouseY)) {
             writeClientAction(1, buffer -> {
             });
+            if (isClient && fluidStackUpdater != null) {
+                fluidStackUpdater.accept(null);
+            }
             return true;
         }
         return false;

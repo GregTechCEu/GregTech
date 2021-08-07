@@ -118,6 +118,9 @@ public class RectButtonWidget extends CircleButtonWidget{
             drawSolidRect(x, (int) ((1 - per) * height) + y, border, (int) (height * per), colors[1]);
         }
         drawSolidRect(x + border, y + border, width - 2 * border, height - 2 * border, colors[2]);
+        if (isHover && hover != null) {
+            hover.draw(x + border, y + border, width - 2 * border, height - 2 * border);
+        }
         if (isPressed) {
             if (pressedIcon != null) {
                 pressedIcon.draw(x + border, y + border, width - 2 * border, height - 2 * border);

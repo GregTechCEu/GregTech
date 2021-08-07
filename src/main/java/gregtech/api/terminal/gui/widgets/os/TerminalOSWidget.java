@@ -2,28 +2,18 @@ package gregtech.api.terminal.gui.widgets.os;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
+import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
-import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
-import gregtech.api.util.interpolate.Eases;
-import gregtech.api.util.interpolate.Interpolator;
-import javafx.application.Application;
-import javafx.geometry.Pos;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class TerminalOSWidget extends AbstractWidgetGroup {
     private IGuiTexture background;
@@ -31,7 +21,6 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public AbstractApplication focusApp;
     public final TerminalMenuWidget menu;
     public final TerminalDesktopWidget desktop;
-    public List<AbstractApplication> waitToRemoved;
     private NBTTagCompound tabletNBT;
 
     public TerminalOSWidget(int xPosition, int yPosition, int width, int height, NBTTagCompound tabletNBT) {
@@ -41,8 +30,11 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, 232), this).setBackground(GuiTextures.TERMINAL_MENU);
         this.addWidget(desktop);
         this.addWidget(menu);
-        this.waitToRemoved = new ArrayList<>();
         this.tabletNBT = tabletNBT;
+    }
+
+    public ModularUI getModularUI(){
+        return this.gui;
     }
 
     public TerminalOSWidget setBackground(IGuiTexture background) {
@@ -69,7 +61,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         if (!tabletNBT.hasKey(name)) {
             tabletNBT.setTag(name, new NBTTagCompound());
         }
-        AbstractApplication app = application.createApp(isClient, tabletNBT.getCompoundTag(application.getName()));
+        AbstractApplication app = application.createApp(isClient, tabletNBT.getCompoundTag(application.getName())).setOs(this);
         if (app != null) {
             openedApps.add(app);
             desktop.addWidget(app);
@@ -81,7 +73,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public void maximizeApplication(AbstractApplication application, boolean isClient) {
         application.setActive(true);
         if (isClient) {
-            application.maximizeApp(app->desktop.hideDesktop());
+            application.maximizeWidget(app->desktop.hideDesktop());
             if (!menu.isHide) {
                 menu.hideMenu();
             }
@@ -95,7 +87,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 application.setActive(false);
             }
             if (isClient) {
-                application.minimizeApp(null);
+                application.minimizeWidget(null);
             }
             if(focusApp == application) {
                 focusApp = null;
@@ -112,9 +104,9 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             }
             application.closeApp(isClient, tabletNBT.getCompoundTag(name));
             if (isClient) {
-                application.minimizeApp(waitToRemoved::add);
+                application.minimizeWidget(desktop::waitToRemoved);
             } else {
-                waitToRemoved.add(application);
+                desktop.waitToRemoved(application);
             }
             openedApps.remove(application);
             if(focusApp == application) {
@@ -134,6 +126,25 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
     }
 
+    protected TerminalDialogWidget openDialog(TerminalDialogWidget widget) {
+        if (isRemote()) {
+            widget.maximizeWidget(null);
+        } else if(widget.isClient()) {
+            return widget;
+        }
+        desktop.addWidget(widget);
+        return widget;
+    }
+
+    protected TerminalDialogWidget closeDialog(TerminalDialogWidget widget) {
+        if (isRemote()) {
+            widget.minimizeWidget(desktop::waitToRemoved);
+        } else if(widget.isClient()) {
+            desktop.waitToRemoved(widget);
+        }
+        return widget;
+    }
+
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position position = getPosition();
@@ -148,21 +159,4 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         });
     }
 
-    @Override
-    public void updateScreen() {
-        if (waitToRemoved.size() > 0) {
-            waitToRemoved.forEach(desktop::removeWidget);
-        }
-        waitToRemoved.clear();
-        super.updateScreen();
-    }
-
-    @Override
-    public void detectAndSendChanges() {
-        if (waitToRemoved.size() > 0) {
-            waitToRemoved.forEach(desktop::removeWidget);
-        }
-        waitToRemoved.clear();
-        super.detectAndSendChanges();
-    }
 }

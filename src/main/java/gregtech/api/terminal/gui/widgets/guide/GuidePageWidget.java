@@ -21,6 +21,9 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
     static { //register guide widgets
         REGISTER_WIDGETS.put(TextBoxWidget.NAME, new TextBoxWidget());
         REGISTER_WIDGETS.put(ImageWidget.NAME, new ImageWidget());
+        REGISTER_WIDGETS.put(CardWidget.NAME, new CardWidget());
+        REGISTER_WIDGETS.put(SlotListWidget.NAME, new SlotListWidget());
+        REGISTER_WIDGETS.put(TankListWidget.NAME, new TankListWidget());
     }
     protected TextBoxWidget title;
     protected List<Widget> stream = new ArrayList<>();
@@ -72,6 +75,10 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
         }
     }
 
+    public String getTitle() {
+        return title == null ? "" : String.join("\n", title.content);
+    }
+
     public String loadJsonConfig(String config) {
         try {
             loadJsonConfig(new JsonParser().parse(config).getAsJsonObject());
@@ -83,6 +90,10 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
     }
 
     public void loadJsonConfig(JsonObject config) {
+        this.stream.clear();
+        this.fixed.clear();
+        this.title = null;
+        this.clearAllWidgets();
         int pageWidth = getPageWidth();
         int margin = getMargin();
         // add title
@@ -94,7 +105,7 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
             int y = title.getSize().height + 10;
             for (JsonElement element : config.getAsJsonArray("stream")) {
                 JsonObject widgetConfig = element.getAsJsonObject();
-                Widget widget = REGISTER_WIDGETS.get(widgetConfig.get("type").getAsString()).createStreamWidget(margin, y, pageWidth - 2 * margin, widgetConfig);
+                Widget widget = REGISTER_WIDGETS.get(widgetConfig.get("type").getAsString()).updateOrCreateStreamWidget(margin, y, pageWidth - 2 * margin, widgetConfig);
                 y += widget.getSize().height + 5;
                 stream.add(widget);
                 this.addWidget(widget);
@@ -105,7 +116,7 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
             fixed = new ArrayList<>();
             for (JsonElement element : config.getAsJsonArray("fixed")) {
                 JsonObject widgetConfig = element.getAsJsonObject();
-                Widget widget = REGISTER_WIDGETS.get(widgetConfig.get("type").getAsString()).createFixedWidget(
+                Widget widget = REGISTER_WIDGETS.get(widgetConfig.get("type").getAsString()).updateOrCreateFixedWidget(
                         widgetConfig.get("x").getAsInt(),
                         widgetConfig.get("y").getAsInt(),
                         widgetConfig.get("width").getAsInt(),

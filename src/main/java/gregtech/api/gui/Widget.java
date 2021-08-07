@@ -414,6 +414,7 @@ public abstract class Widget {
 
     @SideOnly(Side.CLIENT)
     public static void renderCircle(float x, float y, float r, int color, int segments) {
+        if (color == 0) return;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.enableBlend();
@@ -431,7 +432,7 @@ public abstract class Widget {
 
     @SideOnly(Side.CLIENT)
     public static void renderSector(float x, float y, float r, int color, int segments, int from, int to) {
-        if (from > to || from < 0) return;
+        if (from > to || from < 0 || color == 0) return;
         if(to > segments) to = segments;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -462,6 +463,10 @@ public abstract class Widget {
     @SideOnly(Side.CLIENT)
     protected boolean isCtrlDown() {
         return Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
+    }
+
+    protected boolean isRemote() {
+        return gui.holder.isRemote();
     }
 
     protected static boolean isClientSide() {
