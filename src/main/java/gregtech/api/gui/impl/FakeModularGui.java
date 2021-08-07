@@ -105,7 +105,7 @@ public class FakeModularGui implements IRenderContext {
         modularUI.backgroundPath.draw(0, 0, modularUI.getWidth(), modularUI.getHeight());
         for (Widget widget : modularUI.guiWidgets.values()) {
             GlStateManager.pushMatrix();
-            GlStateManager.color(0.0f, 1.0f, 0.5f);
+            GlStateManager.color(1.0f, 1.0f, 1.0f);
             GlStateManager.enableBlend();
             widget.drawInBackground(mouseX, mouseY, this);
             GlStateManager.popMatrix();
