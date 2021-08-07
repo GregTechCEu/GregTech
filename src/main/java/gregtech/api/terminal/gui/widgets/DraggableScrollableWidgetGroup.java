@@ -89,7 +89,6 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         maxHeight = Math.max(maxHeight, widget.getSize().height + widget.getSelfPosition().y);
         maxWidth = Math.max(maxWidth, widget.getSize().width + widget.getSelfPosition().x);
         widget.addSelfPosition(- scrollXOffset, - scrollYOffset);
-        widget.applyScissor(getPosition().x, getPosition().y, getSize().width - yBarWidth, getSize().height - xBarHeight);
         super.addWidget(widget);
     }
 
@@ -112,18 +111,6 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
     public void setSize(Size size) {
         super.setSize(size);
         computeMax();
-    }
-
-    @Override
-    protected void onPositionUpdate() {
-        super.onPositionUpdate();
-        this.applyScissor(getPosition().x, getPosition().y, getSize().width - yBarWidth, getSize().height - xBarHeight);
-    }
-
-    @Override
-    protected void onSizeUpdate() {
-        super.onSizeUpdate();
-        this.applyScissor(getPosition().x, getPosition().y, getSize().width - yBarWidth, getSize().height - xBarHeight);
     }
 
     protected void computeMax() {

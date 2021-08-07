@@ -17,6 +17,7 @@ import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.network.PacketBuffer;
 
+import java.awt.*;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -178,6 +179,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
             }
         }
         AtomicReference<File> selected = new AtomicReference<>();
+        selected.set(dir);
         dialog.addWidget(new TreeListWidget<>(0, 0, 130, size.height, new FileTree(dir), node -> {
             selected.set(node.getKey());
             System.out.println(node.toString());
@@ -213,7 +215,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 return "no file selected";
             }, true));
         } else {
-            dialog.addWidget(new TextFieldWidget(x + WIDTH / 2, y + HEIGHT / 2 - 5, 76, 20, new ColorRectTexture(0x4f000000), null, null)
+            dialog.addWidget(new TextFieldWidget(x + WIDTH / 2 - 38, y + HEIGHT / 2 - 10, 76, 20, new ColorRectTexture(0x4f000000), null, null)
                     .setTextResponder(res->{
                         File file = selected.get();
                         if (file == null) return;
