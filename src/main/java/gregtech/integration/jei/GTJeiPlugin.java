@@ -87,6 +87,8 @@ public class GTJeiPlugin implements IModPlugin {
     public void register(IModRegistry registry) {
         IJeiHelpers jeiHelpers = registry.getJeiHelpers();
 
+        ingredientRegistry = registry.getIngredientRegistry();
+
         registry.addRecipes(IntCircuitRecipeWrapper.create(), IntCircuitCategory.UID);
         MultiblockInfoCategory.registerRecipes(registry);
         registry.handleRecipes(CustomItemReturnShapedOreRecipeRecipe.class, recipe -> new CustomItemReturnRecipeWrapper(jeiHelpers, recipe), VanillaRecipeCategoryUid.CRAFTING);
@@ -218,7 +220,7 @@ public class GTJeiPlugin implements IModPlugin {
         //Ore Veins End
 
 
-        ingredientRegistry = registry.getIngredientRegistry();
+
         for (int i = 0; i <= IntCircuitIngredient.CIRCUIT_MAX; i++) {
             registry.addIngredientInfo(IntCircuitIngredient.getIntegratedCircuit(i), VanillaTypes.ITEM,
                 "metaitem.circuit.integrated.jei_description");
