@@ -164,6 +164,7 @@ public class GTJeiPlugin implements IModPlugin {
             .collect(Collectors.toList()), cokeOvenId);
         registry.addRecipeCatalyst(MetaTileEntities.COKE_OVEN.getStackForm(), cokeOvenId);
 
+        //TODO, add Electromagnetic Separator to the Ore Byproduct page
         List<OreByProduct> oreByproductList = new CopyOnWriteArrayList<>();
         for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
             if (material.hasProperty(PropertyKey.ORE)) {

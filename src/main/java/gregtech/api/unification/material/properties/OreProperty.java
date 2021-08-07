@@ -56,13 +56,14 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
     /**
      * During Electromagnetic Separation, this Ore will be separated
      * into this Material and the Material specified by this field.
+     * Limit 2 Materials
      *
      * Material will have a Dust Property.
      * Default: none.
      */
     //@ZenProperty
     @Nullable
-    private Material separatedInto;
+    private List<Material> separatedInto = new ArrayList<>();
 
     public OreProperty(int oreMultiplier, int byProductMultiplier) {
         this.oreMultiplier = oreMultiplier;
@@ -110,12 +111,12 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
         return this.washedIn;
     }
 
-    public void setSeparatedInto(@Nullable Material m) {
-        this.separatedInto = m;
+    public void setSeparatedInto(Material... materials) {
+        this.separatedInto.addAll(Arrays.asList(materials));
     }
 
     @Nullable
-    public Material getSeparatedInto() {
+    public List<Material> getSeparatedInto() {
         return this.separatedInto;
     }
 
@@ -133,6 +134,10 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
         if (directSmeltResult != null) directSmeltResult.getProperties().ensureSet(PropertyKey.DUST, true);
         if (washedIn != null) washedIn.getProperties().ensureSet(PropertyKey.FLUID, true);
-        if (separatedInto != null) separatedInto.getProperties().ensureSet(PropertyKey.DUST, true);
+        if (separatedInto != null) {
+            for(Material m : separatedInto) {
+                m.getProperties().ensureSet(PropertyKey.DUST, true);
+            }
+        }
     }
 }

@@ -702,19 +702,13 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder separatesInto(Material m) {
-            properties.ensureSet(PropertyKey.ORE);
-            properties.getProperty(PropertyKey.ORE).setSeparatedInto(m);
-            return this;
-        }
-
         public Builder washedIn(Material m) {
             properties.ensureSet(PropertyKey.ORE);
             properties.getProperty(PropertyKey.ORE).setWashedIn(m);
             return this;
         }
 
-        public Builder separatedInto(Material m) {
+        public Builder separatedInto(Material... m) {
             properties.ensureSet(PropertyKey.ORE);
             properties.getProperty(PropertyKey.ORE).setSeparatedInto(m);
             return this;

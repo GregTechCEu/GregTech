@@ -37,6 +37,7 @@ public class MaterialFlagAddition {
 
         prop = Iridium.getProperty(PropertyKey.ORE);
         prop.setOreByProducts(Platinum, Osmium, Platinum);
+        prop.setSeparatedInto(Osmium, Trinium);
         prop.setWashedIn(Mercury);
 
         prop = Iron.getProperty(PropertyKey.ORE);
@@ -109,6 +110,7 @@ public class MaterialFlagAddition {
 
         prop = Naquadah.getProperty(PropertyKey.ORE);
         prop.setOreByProducts(NaquadahEnriched);
+        prop.setSeparatedInto(NaquadahEnriched, Trinium);
 
         prop = NaquadahEnriched.getProperty(PropertyKey.ORE);
         prop.setOreByProducts(Naquadah, Naquadria);
@@ -452,5 +454,12 @@ public class MaterialFlagAddition {
         prop.setOreByProducts(Basalt, Magnetite);
         prop.setSeparatedInto(Gold);
         prop.setDirectSmeltResult(Iron);
+
+        prop = BandedIron.getProperty(PropertyKey.ORE);
+        prop.setSeparatedInto(Iron);
+        prop.setDirectSmeltResult(Iron);
+
+        prop = Wulfenite.getProperty(PropertyKey.ORE);
+        prop.setSeparatedInto(Trinium);
     }
 }
