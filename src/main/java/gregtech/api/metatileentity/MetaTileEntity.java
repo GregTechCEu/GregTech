@@ -1235,4 +1235,6 @@ public abstract class MetaTileEntity implements ICoverable {
     public boolean getWitherProof(){
         return false;
     }
+
+    public void preInit(Object... data) {};
 }

@@ -6,13 +6,20 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
+import gregtech.api.gui.impl.FakeModularGui;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.itemhandlers.InaccessibleItemStackHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.*;
+import gregtech.api.net.NetworkHandler;
+import gregtech.api.net.PacketClipboardUIWidgetUpdate;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.GregFakePlayer;
 import gregtech.common.blocks.models.ModelCache;
+import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import gregtech.common.items.behaviors.ClipboardBehaviour;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -20,6 +27,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -27,22 +38,29 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static gregtech.api.render.Textures.CLIPBOARD_RENDERER;
 import static gregtech.common.items.MetaItems.CLIPBOARD;
 
-public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMetaTileEntity {
+public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMetaTileEntity, IFastRenderMetaTileEntity {
     private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(2.75 / 16.0, 0.0, 0.0, 13.25 / 16.0, 1.0, 0.4 / 16.0);
     public static final ResourceLocation MODEL_RESOURCE_LOCATION = new ResourceLocation("gregtech", "block/clipboard");
-    public static ModelCache cache = new ModelCache();
+    public static ModelCache modelCache = new ModelCache();
     public static final float scale = 1;
+    public FakeModularGui guiCache;
+    public FakeModularUIContainerClipboard guiContainerCache;
+
+    private static final int RENDER_PASS_NORMAL = 0;
+    private static final NBTBase NO_CLIPBOARD_SIG = new NBTTagInt(0);
 
 
     public MetaTileEntityClipboard(ResourceLocation metaTileEntityId) {
@@ -50,14 +68,19 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     }
 
     @Override
-    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) {
-    }
+    public void update() {
+        super.update();
+        if (this.guiCache == null)
+            createFakeGui();
+        if (this.getWorld().isRemote) {
+            if (guiCache != null)
+                guiCache.updateScreen();
 
-
-    @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        // Just gonna ignore all of those parameters lul
-        //this.renderMetaTileEntityDynamic(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ(), Minecraft.getMinecraft().getRenderPartialTicks());
+        } else {
+            if (guiContainerCache != null) {
+                guiContainerCache.detectAndSendChanges();
+            }
+        }
     }
 
     @Override
@@ -65,19 +88,29 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         return 0;
     }
 
-
     @Override
     public void renderMetaTileEntityDynamic(double x, double y, double z, float partialTicks) {
-        Matrix4 translation = new Matrix4().translate(x, y, z);
-        CCRenderState renderState = CCRenderState.instance();
-        renderState.reset();
+        if (this.getClipboard() != null)
+            CLIPBOARD_RENDERER.renderGUI(x, y, z, this.getFrontFacing(), this, partialTicks);
+    }
+
+    @Override
+    public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
         CLIPBOARD_RENDERER.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
-        if(this.getClipboard() != null)
-            CLIPBOARD_RENDERER.renderGUI(translation, this, partialTicks);
     }
 
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(getPos().add(-1, 0, -1), getPos().add(2, 2, 2));
+    }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == RENDER_PASS_NORMAL;
+    }
+
+    @Override
+    public boolean isGlobalRenderer() {
+        return false;
     }
 
     @Override
@@ -103,6 +136,30 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         }
         return null;
     }
+
+    public void createFakeGui() {
+        // Basically just the original function from the PluginBehavior, but with a lot of now useless stuff stripped out.
+        try {
+            GregFakePlayer fakePlayer = new GregFakePlayer(this.getWorld());
+            ModularUI ui = this.createUI(fakePlayer);
+
+            ModularUI.Builder builder = new ModularUI.Builder(ui.backgroundPath, ui.getWidth(), ui.getHeight());
+
+            List<Widget> widgets = new ArrayList<>(ui.guiWidgets.values());
+
+            for (Widget widget : widgets) {
+                builder.widget(widget);
+            }
+            ui = builder.build(ui.holder, ui.entityPlayer);
+            FakeModularUIContainerClipboard fakeModularUIContainer = new FakeModularUIContainerClipboard(ui, this);
+            this.guiContainerCache = fakeModularUIContainer;
+            this.guiCache = new FakeModularGui(ui, fakeModularUIContainer);
+            this.writeCustomData(1, buffer -> {});
+        } catch (Exception e) {
+            GTLog.logger.error(e);
+        }
+    }
+
 
     @Override
     protected void initializeInventory() {
@@ -235,4 +292,87 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         return new double[]{x, y};
     }
 
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        if (this.getClipboard() != null && this.getClipboard().getTagCompound() != null)
+            data.setTag("clipboardNBT", this.getClipboard().getTagCompound());
+        else
+            data.setTag("clipboardNBT", NO_CLIPBOARD_SIG);
+        return data;
+    }
+
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        NBTBase clipboardNBT = data.getTag("clipboardNBT");
+        if (clipboardNBT != NO_CLIPBOARD_SIG && clipboardNBT instanceof NBTTagCompound) {
+            ItemStack clipboard = this.getClipboard();
+            clipboard.setTagCompound((NBTTagCompound) clipboardNBT);
+            this.setClipboard(clipboard);
+        }
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        if (this.getClipboard() != null && this.getClipboard().getTagCompound() != null)
+            buf.writeCompoundTag(this.getClipboard().getTagCompound());
+        else {
+            buf.writeCompoundTag(new NBTTagCompound());
+        }
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        try {
+            NBTTagCompound clipboardNBT = buf.readCompoundTag();
+            if (clipboardNBT != new NBTTagCompound() && clipboardNBT != null) {
+                ItemStack clipboard = this.getClipboard();
+                clipboard.setTagCompound(clipboardNBT);
+                this.setClipboard(clipboard);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void receiveCustomData(int dataId, PacketBuffer buf) {
+        super.receiveCustomData(dataId, buf);
+        if(dataId == 0) {
+            int windowID = buf.readVarInt();
+            int widgetID = buf.readVarInt();
+            if (guiCache != null)
+                guiCache.handleWidgetUpdate(windowID, widgetID, buf);
+        } else if (dataId == 1) {
+            createFakeGui();
+        }
+    }
+
+
+
+    @Override
+    public void preInit(Object... data) {
+        if (data.length != 0 && data[0] instanceof ItemStack)
+            this.setClipboard((ItemStack) data[0]);
+    }
+
+    @Override
+    public void getSubItems(CreativeTabs creativeTab, NonNullList<ItemStack> subItems) { // JEI shouldn't show this
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+    }
+
+    public void readUIAction(EntityPlayerMP player, int id, PacketBuffer buf) {
+        if (id == 1) {
+            if (this.guiContainerCache != null) {
+                guiContainerCache.handleClientAction(buf);
+            }
+        }
+    }
 }

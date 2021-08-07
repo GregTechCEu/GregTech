@@ -8,29 +8,21 @@ import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.impl.fakegui.FakeModularGui;
-import gregtech.api.gui.impl.fakegui.FakeModularUIContainer;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.gui.impl.FakeModularGui;
+import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,85 +61,42 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
 
     @SideOnly(Side.CLIENT)
     public void renderBoard(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.getBuffer();
-
-
-        renderState.bind(buffer);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.enableBlend();
-        GlStateManager.disableCull();
-
-        if (Minecraft.isAmbientOcclusionEnabled()) {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        }
-        else {
-            GlStateManager.shadeModel(GL11.GL_FLAT);
-        }
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-
         translation.translate(0.5, 0.5, 0.5);
         translation.rotate(Math.toRadians(90.0 * rotations.indexOf(rotation)), Rotation.axes[1]);
         translation.translate(-0.5, -0.5, -0.5);
-
-
 
         // Render Clipboard
         for (EnumFacing renderSide : EnumFacing.VALUES) {
             boxTextureMap.forEach((box, sprite) -> Textures.renderFace(renderState, translation, pipeline, renderSide, box, sprite));
         }
-
-        buffer.setTranslation(0, 0, 0);
-        tessellator.draw();
-        GlStateManager.enableCull();
-        RenderHelper.enableStandardItemLighting();
-
-
     }
 
 
     @SideOnly(Side.CLIENT)
-    public void renderGUI(Matrix4 translation, MetaTileEntityClipboard clipboard, float partialTicks) {
+    public void renderGUI(double x, double y, double z, EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
+        GlStateManager.pushMatrix();
 
-        translation.translate((1 - 1) * 0.5, (1 - 1) * 0.5, 0);
-        translation.scale(1, 1, 1);
+        // All of these are done in reverse order, by the way, if you're reviewing this :P
 
-        FakeModularGui fakeGui = createFakeGui(clipboard);
-        if (fakeGui != null) {
+        GlStateManager.translate(x, y, z);
+        GlStateManager.translate(0.5, 0.5, 0.5);
+        GlStateManager.rotate((float) (270.0 * rotations.indexOf(rotation)), 0, 1, 0);
+        GlStateManager.translate(0, 0, -0.2);
+        GlStateManager.rotate(180, 1, 0, 0);
+        GlStateManager.scale(0.7, 0.7, 0.7);
+
+        if (clipboard.guiCache != null) {
             Pair<Double, Double> result = clipboard.checkLookingAt(partialTicks);
-            if (result == null)
-                fakeGui.drawScreen(0, 0, partialTicks);
-            else
-                fakeGui.drawScreen(result.getKey(), result.getValue(), partialTicks);
-
+            if (result == null) {
+                clipboard.guiCache.drawScreen(0, 0, partialTicks);
+            }
+            else {
+                clipboard.guiCache.drawScreen(result.getKey(), result.getValue(), partialTicks);
+            }
         }
-
+        GlStateManager.popMatrix();
     }
 
-    public FakeModularGui createFakeGui(MetaTileEntityClipboard mte) {
-        try {
-            // Get a FakePlayer in the client's current dimension through this roundabout function
-            FakePlayer fakePlayer = GregFakePlayer.get(Minecraft.getMinecraft().getIntegratedServer().getWorld(Minecraft.getMinecraft().player.dimension));
-            ModularUI ui = mte.createUI(fakePlayer);
-            List<Widget> widgets = new ArrayList<>();
-            // Don't worry about SlotWidgets, since the clipboard literally can't have them
-            boolean hasPlayerInventory = false;
-
-            ModularUI.Builder builder = new ModularUI.Builder(ui.backgroundPath, ui.getWidth(), ui.getHeight() - (hasPlayerInventory ? 80 : 0));
-            for (Widget widget : widgets) {
-                builder.widget(widget);
-            }
-            ui = builder.build(ui.holder, ui.entityPlayer);
-            FakeModularUIContainer fakeModularUIContainer = new FakeModularUIContainer(ui);
-            if (mte.getWorld().isRemote) {
-                return new FakeModularGui(ui, fakeModularUIContainer);
-            }
-        } catch (Exception e) {
-            GTLog.logger.error(e);
-        }
-        return null;
-    }
 
 
     @SideOnly(Side.CLIENT)

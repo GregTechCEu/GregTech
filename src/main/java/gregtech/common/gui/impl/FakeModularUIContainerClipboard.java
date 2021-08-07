@@ -1,10 +1,13 @@
-package gregtech.api.gui.impl.fakegui;
+package gregtech.common.gui.impl;
 
 import com.google.common.collect.Lists;
 import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.WidgetUIAccess;
+import gregtech.api.net.NetworkHandler;
+import gregtech.api.net.PacketClipboardUIWidgetUpdate;
+import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -15,17 +18,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class FakeModularUIContainer implements WidgetUIAccess {
+
+// Note: when porting the central monitor, please make this more generic.
+public class FakeModularUIContainerClipboard implements WidgetUIAccess {
     private final NonNullList<ItemStack> inventoryItemStacks = NonNullList.create();
     public final List<Slot> inventorySlots = Lists.newArrayList();
     public final ModularUI modularUI;
-    protected int windowId;
-    //private final FakeGuiPluginBehavior behavior;
-    public int syncId;
+    public int windowId;
+    public MetaTileEntityClipboard clipboard;
 
-    public FakeModularUIContainer(ModularUI modularUI/*, FakeGuiPluginBehavior pluginBehavior*/) {
+    public FakeModularUIContainerClipboard(ModularUI modularUI, MetaTileEntityClipboard clipboard) {
         this.modularUI = modularUI;
-        //this.behavior = pluginBehavior;
+        this.clipboard = clipboard;
         modularUI.initWidgets();
         modularUI.guiWidgets.values().forEach(widget -> widget.setUiAccess(this));
         modularUI.guiWidgets.values().stream().flatMap(widget -> widget.getNativeWidgets().stream()).forEach(nativeWidget -> addSlotToContainer(nativeWidget.getHandle()));
@@ -50,15 +54,13 @@ public class FakeModularUIContainer implements WidgetUIAccess {
     }
 
     public void handleClientAction(PacketBuffer buffer) {
-        int syncId = buffer.readVarInt();
         int windowId = buffer.readVarInt();
-        if (syncId == this.syncId && windowId == this.windowId) {
+        if (windowId == this.windowId) {
             Widget widget = modularUI.guiWidgets.get(buffer.readVarInt());
             if (widget != null) {
                 widget.handleClientAction(buffer.readVarInt(), buffer);
             }
         }
-        this.syncId = 0;
     }
 
     public void detectAndSendChanges() {
@@ -116,30 +118,23 @@ public class FakeModularUIContainer implements WidgetUIAccess {
 
     @Override
     public void writeClientAction(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter) {
-        /*
-        if (behavior != null) {
-            behavior.writePluginAction(1, buffer -> {
-                buffer.writeVarInt(syncId);
+        NetworkHandler.channel.sendToServer(new PacketClipboardUIWidgetUpdate(this.clipboard, updateId, buffer -> {
                 buffer.writeVarInt(windowId);
                 buffer.writeVarInt(modularUI.guiWidgets.inverse().get(widget));
                 buffer.writeVarInt(updateId);
                 payloadWriter.accept(buffer);
-            });
-        }
-         */
+            }).toFMLPacket());
     }
 
     @Override
     public void writeUpdateInfo(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter) {
-        /*
-        if(behavior != null) {
-            behavior.writePluginData(0, buf -> {
+
+            this.clipboard.writeCustomData(0, buf -> {
                 buf.writeVarInt(windowId);
                 buf.writeVarInt(modularUI.guiWidgets.inverse().get(widget));
                 buf.writeVarInt(updateId);
                 payloadWriter.accept(buf);
             });
-        }
-         */
+
     }
 }

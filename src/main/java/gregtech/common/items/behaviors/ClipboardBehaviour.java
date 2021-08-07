@@ -189,34 +189,35 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
 
     @Override
     public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack heldItem = player.getHeldItem(hand).copy();
-        heldItem.setCount(1); // don't place multiple items at a time
-        EnumFacing playerFacing = player.getHorizontalFacing();
-        // Make sure it's the right block
-        Block testBlock = world.getBlockState(pos).getBlock();
-        if (!testBlock.isAir(world.getBlockState(pos), world, pos)) {
-            // Step away from the block so you don't replace it, and then give it our fun blockstate
-            BlockPos shiftedPos = pos.offset(playerFacing.getOpposite());
-            Block shiftedBlock = world.getBlockState(shiftedPos).getBlock();
-            if (shiftedBlock.isAir(world.getBlockState(shiftedPos), world, shiftedPos)) {
-                IBlockState state = MACHINE.getDefaultState();
-                world.setBlockState(shiftedPos, state);
-                // Get new TE
-                shiftedBlock.createTileEntity(world, state);
-                // And manipulate it to our liking
-                MetaTileEntityHolder holder = (MetaTileEntityHolder) world.getTileEntity(shiftedPos);
-                if (holder != null) {
-                    holder.setMetaTileEntity(CLIPBOARD_TILE);
-                    MetaTileEntityClipboard clipboard = (MetaTileEntityClipboard) holder.getMetaTileEntity();
-                    if (clipboard != null) {
-                        clipboard.setFrontFacing(playerFacing);
-                        clipboard.setClipboard(heldItem);
-                        ItemStack returnedStack = player.getHeldItem(hand);
-                        if(!player.isCreative())
-                        {
-                            returnedStack.setCount(player.getHeldItem(hand).getCount() - 1);
+        if(!world.isRemote) {
+            ItemStack heldItem = player.getHeldItem(hand).copy();
+            heldItem.setCount(1); // don't place multiple items at a time
+            EnumFacing playerFacing = player.getHorizontalFacing();
+            // Make sure it's the right block
+            Block testBlock = world.getBlockState(pos).getBlock();
+            if (!testBlock.isAir(world.getBlockState(pos), world, pos)) {
+                // Step away from the block so you don't replace it, and then give it our fun blockstate
+                BlockPos shiftedPos = pos.offset(playerFacing.getOpposite());
+                Block shiftedBlock = world.getBlockState(shiftedPos).getBlock();
+                if (shiftedBlock.isAir(world.getBlockState(shiftedPos), world, shiftedPos)) {
+                    IBlockState state = MACHINE.getDefaultState();
+                    world.setBlockState(shiftedPos, state);
+                    // Get new TE
+                    shiftedBlock.createTileEntity(world, state);
+                    // And manipulate it to our liking
+                    MetaTileEntityHolder holder = (MetaTileEntityHolder) world.getTileEntity(shiftedPos);
+                    if (holder != null) {
+                        holder.setMetaTileEntity(CLIPBOARD_TILE);
+                        MetaTileEntityClipboard clipboard = (MetaTileEntityClipboard) holder.setMetaTileEntity(CLIPBOARD_TILE, heldItem);
+                        if (clipboard != null) {
+                            clipboard.setFrontFacing(playerFacing);
+                            clipboard.setClipboard(heldItem);
+                            ItemStack returnedStack = player.getHeldItem(hand);
+                            if (!player.isCreative()) {
+                                returnedStack.setCount(player.getHeldItem(hand).getCount() - 1);
+                            }
+                            return ActionResult.newResult(EnumActionResult.SUCCESS, returnedStack);
                         }
-                        return ActionResult.newResult(EnumActionResult.SUCCESS, returnedStack);
                     }
                 }
             }

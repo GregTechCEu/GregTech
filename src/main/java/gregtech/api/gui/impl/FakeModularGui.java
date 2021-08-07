@@ -1,13 +1,13 @@
-package gregtech.api.gui.impl.fakegui;
+package gregtech.api.gui.impl;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.RenderUtil;
+import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -22,11 +22,11 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class FakeModularGui implements IRenderContext {
     public final ModularUI modularUI;
-    public FakeModularUIContainer container;
+    public FakeModularUIContainerClipboard container;
     protected Minecraft mc;
     protected FontRenderer fr;
 
-    public FakeModularGui(ModularUI modularUI, FakeModularUIContainer fakeModularUIContainer){
+    public FakeModularGui(ModularUI modularUI, FakeModularUIContainerClipboard fakeModularUIContainer){
         this.modularUI = modularUI;
         this.container = fakeModularUIContainer;
         this.modularUI.updateScreenSize(this.modularUI.getWidth(), this.modularUI.getHeight());
@@ -105,7 +105,7 @@ public class FakeModularGui implements IRenderContext {
         modularUI.backgroundPath.draw(0, 0, modularUI.getWidth(), modularUI.getHeight());
         for (Widget widget : modularUI.guiWidgets.values()) {
             GlStateManager.pushMatrix();
-            GlStateManager.color(1.0f, 1.0f, 1.0f);
+            GlStateManager.color(0.0f, 1.0f, 0.5f);
             GlStateManager.enableBlend();
             widget.drawInBackground(mouseX, mouseY, this);
             GlStateManager.popMatrix();
