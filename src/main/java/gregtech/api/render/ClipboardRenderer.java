@@ -79,11 +79,11 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
         // All of these are done in reverse order, by the way, if you're reviewing this :P
 
         GlStateManager.translate(x, y, z);
-        GlStateManager.translate(0.5, 0.4, 0.5);
+        GlStateManager.translate(0.5, 0.451, 0.5);
         GlStateManager.rotate((float) (270.0 * rotations.indexOf(rotation)), 0, 1, 0);
-        GlStateManager.translate(0, 0, -0.4);
+        GlStateManager.translate(0, 0, -0.468);
         GlStateManager.rotate(180, 1, 0, 0);
-        GlStateManager.scale(0.8, 0.8, 0.8);
+        GlStateManager.scale(0.875, 0.875, 0.875);
 
         if (clipboard.guiCache != null) {
             Pair<Double, Double> result = clipboard.checkLookingAt(partialTicks);
