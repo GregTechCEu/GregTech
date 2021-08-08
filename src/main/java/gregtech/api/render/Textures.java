@@ -140,6 +140,7 @@ public class Textures {
     public static SimpleOverlayRenderer DETECTOR_ENERGY = new SimpleOverlayRenderer("cover/overlay_energy_detector");
     public static SimpleOverlayRenderer DETECTOR_FLUID = new SimpleOverlayRenderer("cover/overlay_fluid_detector");
     public static SimpleOverlayRenderer DETECTOR_ITEM = new SimpleOverlayRenderer("cover/overlay_item_detector");
+    public static SimpleOverlayRenderer CRAFTING = new SimpleOverlayRenderer("cover/overlay_crafting");
     public static SimpleOverlayRenderer SOLAR_PANEL = new SimpleOverlayRenderer("cover/overlay_solar_panel");
     public static SimpleOverlayRenderer ROCK_CRUSHER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_rock_crusher");
     public static SimpleOverlayRenderer ROCK_CRUSHER_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_rock_crusher_active");

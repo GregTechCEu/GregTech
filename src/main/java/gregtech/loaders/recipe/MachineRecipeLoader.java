@@ -47,6 +47,7 @@ import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.api.util.DyeUtil.getOrdictColorName;
 import static gregtech.common.items.MetaItems.*;
+import static gregtech.common.metatileentities.MetaTileEntities.WORKBENCH;
 
 public class MachineRecipeLoader {
 
@@ -415,6 +416,13 @@ public class MachineRecipeLoader {
                     .inputs(new ItemStack(Items.IRON_DOOR))
                     .input(OrePrefix.plate, material, 2)
                     .outputs(MetaItems.COVER_SHUTTER.getStackForm(2))
+                    .EUt(16).duration(800)
+                    .buildAndRegister();
+
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .inputs(WORKBENCH.getStackForm())
+                    .input(plate, material)
+                    .outputs(COVER_CRAFTING.getStackForm())
                     .EUt(16).duration(800)
                     .buildAndRegister();
 
