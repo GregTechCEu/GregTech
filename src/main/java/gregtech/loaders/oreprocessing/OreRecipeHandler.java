@@ -301,19 +301,10 @@ public class OreRecipeHandler {
         if (property.getSeparatedInto() != null && !property.getSeparatedInto().isEmpty()) {
             List<Material> separatedMaterial = property.getSeparatedInto();
             ItemStack separatedStack1 = OreDictUnifier.get(OrePrefix.dustSmall, separatedMaterial.get(0));
-            ItemStack separatedStack2;
-            OrePrefix prefix;
-            if(separatedMaterial.size() == 2) {
-                prefix = (separatedMaterial.get(1).getBlastTemperature() == 0 && separatedMaterial.get(1).hasProperty(PropertyKey.INGOT))
-                        ? OrePrefix.nugget : OrePrefix.dustSmall;
-                separatedStack2 = OreDictUnifier.get(prefix, separatedMaterial.get(1), prefix == OrePrefix.nugget ? 2 : 1);
-            }
-            else {
-                prefix = (separatedMaterial.get(0).getBlastTemperature() == 0 && separatedMaterial.get(0).hasProperty(PropertyKey.INGOT))
-                        ? OrePrefix.nugget : OrePrefix.dustSmall;
-                separatedStack2 = OreDictUnifier.get(prefix, separatedMaterial.get(0), prefix == OrePrefix.nugget ? 2 : 1);
-            }
+            OrePrefix prefix = (separatedMaterial.get(separatedMaterial.size() - 1).getBlastTemperature() == 0 && separatedMaterial.get(separatedMaterial.size() - 1).hasProperty(PropertyKey.INGOT))
+                    ? OrePrefix.nugget : OrePrefix.dustSmall;
 
+            ItemStack separatedStack2 = OreDictUnifier.get(prefix, separatedMaterial.get(separatedMaterial.size() - 1), prefix == OrePrefix.nugget ? 2 : 1);
 
             RecipeMaps.ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder()
                     .input(purePrefix, material)

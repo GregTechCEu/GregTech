@@ -133,7 +133,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
         if (directSmeltResult != null) directSmeltResult.getProperties().ensureSet(PropertyKey.DUST, true);
         if (washedIn != null) washedIn.getProperties().ensureSet(PropertyKey.FLUID, true);
-        if (separatedInto != null) {
+        if (!separatedInto.isEmpty()) {
             for(Material m : separatedInto) {
                 m.getProperties().ensureSet(PropertyKey.DUST, true);
             }
