@@ -199,9 +199,9 @@ public class GTJeiPlugin implements IModPlugin {
 
         //Material Tree
 		List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
-		for (Material material : Material.MATERIAL_REGISTRY) {
-			if (material instanceof DustMaterial) {
-				materialTreeList.add(new MaterialTree((DustMaterial) material));
+		for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+			if (material.hasProperty(PropertyKey.DUST)) {
+				materialTreeList.add(new MaterialTree(material));
 			}
 		}
 		registry.addRecipes(materialTreeList, GTValues.MODID + ":" + "material_tree");

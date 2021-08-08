@@ -2,8 +2,8 @@ package gregtech.integration.jei.recipe.primitive;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.IngotMaterial;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
@@ -34,7 +34,7 @@ public class MaterialTree implements IRecipeWrapper {
             OrePrefix.gear,
             OrePrefix.frameGt,
             OrePrefix.nugget,
-            OrePrefix.pipeNormal,
+            OrePrefix.pipeNormalFluid,
             OrePrefix.plate,
             OrePrefix.plateDense,
             OrePrefix.gemChipped,
@@ -57,7 +57,7 @@ public class MaterialTree implements IRecipeWrapper {
 	private final long avgP;
 	private final long avgN;
 
-	public MaterialTree(DustMaterial material) {
+	public MaterialTree(Material material) {
 	    // adding an empty list to itemInputs/fluidInputs makes checking if a prefix exists much easier
 		List<ItemStack> inputDusts = new ArrayList<>();
 		for (OrePrefix prefix : PREFIXES) {
@@ -69,10 +69,9 @@ public class MaterialTree implements IRecipeWrapper {
 			this.itemInputs.add(matItemsStack);
 		}
 
-		FluidStack matFluid = material.getFluid(1000);
 		List<FluidStack> matFluidsStack = new ArrayList<>();
-		if (matFluid != null) {
-			matFluidsStack.add(matFluid);
+		if (material.hasProperty(PropertyKey.FLUID)) {
+			matFluidsStack.add(material.getFluid(1000));
 		}
 		this.fluidInputs.add(matFluidsStack);
 
@@ -81,8 +80,8 @@ public class MaterialTree implements IRecipeWrapper {
 		avgM = material.getAverageMass();
 		avgP = material.getAverageProtons();
 		avgN = material.getAverageNeutrons();
-		if (material instanceof IngotMaterial) {
-			blastTemp = ((IngotMaterial) material).blastFurnaceTemperature;
+		if (material.hasProperty(PropertyKey.BLAST)) {
+			blastTemp = material.getBlastTemperature();
 		}
 		else {
 			blastTemp = 0;

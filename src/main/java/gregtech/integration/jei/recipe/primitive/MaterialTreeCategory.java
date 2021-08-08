@@ -61,7 +61,7 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
             129, 85,  // gear 15
             129, 117, // frameGt
             54, 85,   // nugget
-            54, 117,  // pipeNormal
+            54, 117,  // pipeNormalFluid
             54, 147,  // plate
             79, 135,  // plateDense 20
             79, 135,  // gemChipped (override)
@@ -178,7 +178,7 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
         drawArrow(minecraft, "up_14", 160, 103, itemExists.get(27) && itemExists.get(28));
     	// wire -> fine wire
         drawArrow(minecraft, "down_12", 160, 135, itemExists.get(27) && itemExists.get(26));
-        // plate -> normal pipe
+        // plate -> normal fluid pipe
         drawArrow(minecraft, "up_12", 60, 135, itemExists.get(19) && itemExists.get(18));
         // hot ingot -> ingot
         drawArrow(minecraft, "down_16", 35, 85, itemExists.get(3) && itemExists.get(4));
