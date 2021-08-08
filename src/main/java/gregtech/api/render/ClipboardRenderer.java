@@ -80,13 +80,13 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
 
         GlStateManager.translate(x, y, z);
         GlStateManager.translate(0.5, 0.451, 0.5);
-        GlStateManager.rotate((float) (270.0 * rotations.indexOf(rotation)), 0, 1, 0);
+        GlStateManager.rotate((float) (90.0 * rotations.indexOf(rotation)), 0, 1, 0);
         GlStateManager.translate(0, 0, -0.468);
         GlStateManager.rotate(180, 1, 0, 0);
         GlStateManager.scale(0.875, 0.875, 0.875);
 
         if (clipboard.guiCache != null) {
-            Pair<Double, Double> result = clipboard.checkLookingAt(partialTicks);
+            Pair<Double, Double> result = clipboard.checkLookingAt();
             if (result == null) {
                 clipboard.guiCache.drawScreen(0, 0, partialTicks);
             }

@@ -4,7 +4,9 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import codechicken.lib.vec.Vector3;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGui;
@@ -13,8 +15,6 @@ import gregtech.api.items.itemhandlers.InaccessibleItemStackHandler;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.*;
-import gregtech.api.net.NetworkHandler;
-import gregtech.api.net.PacketClipboardUIWidgetUpdate;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
@@ -37,10 +37,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -48,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static codechicken.lib.raytracer.RayTracer.*;
 import static gregtech.api.render.Textures.CLIPBOARD_RENDERER;
 import static gregtech.common.items.MetaItems.CLIPBOARD;
 
@@ -58,6 +56,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     public static final float scale = 1;
     public FakeModularGui guiCache;
     public FakeModularUIContainerClipboard guiContainerCache;
+    private static final Cuboid6 pageBox = new Cuboid6(3 / 16.0, 0.25 / 16.0, 0.25 / 16.0, 13 / 16.0, 14.25 / 16.0, 0.3 / 16.0);
+
 
     private static final int RENDER_PASS_NORMAL = 0;
     private static final NBTBase NO_CLIPBOARD_SIG = new NBTTagInt(0);
@@ -75,7 +75,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         if (this.getWorld().isRemote) {
             if (guiCache != null)
                 guiCache.updateScreen();
-
         } else {
             if (guiContainerCache != null) {
                 guiContainerCache.detectAndSendChanges();
@@ -154,7 +153,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             FakeModularUIContainerClipboard fakeModularUIContainer = new FakeModularUIContainerClipboard(ui, this);
             this.guiContainerCache = fakeModularUIContainer;
             this.guiCache = new FakeModularGui(ui, fakeModularUIContainer);
-            this.writeCustomData(1, buffer -> {});
+            this.writeCustomData(1, buffer -> {
+            });
         } catch (Exception e) {
             GTLog.logger.error(e);
         }
@@ -217,24 +217,25 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         collisionList.add(new IndexedCuboid6(null, GTUtility.rotateAroundYAxis(CLIPBOARD_AABB, EnumFacing.NORTH, this.getFrontFacing())));
     }
 
+    public IndexedCuboid6 getPageCuboid() {
+        return new IndexedCuboid6(null, GTUtility.rotateAroundYAxis(pageBox.aabb(), EnumFacing.NORTH, this.getFrontFacing()));
+    }
+
     @Override
     public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
         return Pair.of(CLIPBOARD_RENDERER.getParticleTexture(), 0xFFFFFF);
     }
 
-    @SideOnly(Side.CLIENT)
-    public Pair<Double, Double> checkLookingAt(float partialTicks) {
+    public Pair<Double, Double> checkLookingAt() {
         EntityPlayer player = Minecraft.getMinecraft().player;
         if (this.getWorld() != null && player != null) {
-            RayTraceResult rayTraceResult = player.rayTrace(Minecraft.getMinecraft().playerController.getBlockReachDistance(), partialTicks);
-            if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit == this.getFrontFacing()) {
-                int i = -1, j = -1;
+            Vec3d startVec = getStartVec(player);
+            Vec3d endVec = getEndVec(player);
+            CuboidRayTraceResult rayTraceResult = rayTrace(this.getPos(), new Vector3(startVec), new Vector3(endVec), getPageCuboid());
+            if (rayTraceResult != null && rayTraceResult.sideHit == this.getFrontFacing().getOpposite()) {
                 TileEntity tileEntity = this.getWorld().getTileEntity(rayTraceResult.getBlockPos());
                 if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
-                    MetaTileEntityClipboard clipboardHit = (MetaTileEntityClipboard) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
-                    double[] pos = handleRayTraceResult(rayTraceResult, this.getFrontFacing());
-                    pos[0] /= this.scale;
-                    pos[1] /= this.scale;
+                    double[] pos = handleRayTraceResult(rayTraceResult, this.getFrontFacing().getOpposite());
                     if (pos[0] >= 0 && pos[0] <= 1 && pos[1] >= 0 && pos[1] <= 1)
                         return Pair.of(pos[0], pos[1]);
                 }
@@ -243,9 +244,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         return null;
     }
 
-    private double[] handleRayTraceResult(RayTraceResult rayTraceResult, EnumFacing spin) {
-        double x = 0;
-        double y = 0;
+    private double[] handleRayTraceResult(CuboidRayTraceResult rayTraceResult, EnumFacing spin) {
+        double x, y;
         double dX = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.X
                 ? rayTraceResult.hitVec.z - rayTraceResult.getBlockPos().getZ()
                 : rayTraceResult.hitVec.x - rayTraceResult.getBlockPos().getX();
@@ -255,22 +255,14 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         if (spin == EnumFacing.NORTH) {
             x = 1 - dX;
             y = 1 - dY;
-            if (rayTraceResult.sideHit.getYOffset() < 0) {
-                y = 1 - y;
-            }
         } else if (spin == EnumFacing.SOUTH) {
             x = dX;
             y = dY;
-            if (rayTraceResult.sideHit.getYOffset() < 0) {
-                y = 1 - y;
-            }
         } else if (spin == EnumFacing.EAST) {
             x = 1 - dY;
             y = dX;
             if (rayTraceResult.sideHit.getXOffset() < 0 || rayTraceResult.sideHit.getZOffset() > 0) {
                 x = 1 - x;
-                y = 1 - y;
-            } else if (rayTraceResult.sideHit.getYOffset() < 0) {
                 y = 1 - y;
             }
         } else {
@@ -279,16 +271,17 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             if (rayTraceResult.sideHit.getXOffset() < 0 || rayTraceResult.sideHit.getZOffset() > 0) {
                 x = 1 - x;
                 y = 1 - y;
-            } else if (rayTraceResult.sideHit.getYOffset() < 0) {
-                y = 1 - y;
             }
         }
-        if (rayTraceResult.sideHit == EnumFacing.WEST || rayTraceResult.sideHit == EnumFacing.SOUTH) {
-            x = 1 - x;
-        } else if (rayTraceResult.sideHit == EnumFacing.UP) {
-            x = 1 - x;
-            y = 1 - y;
-        }
+
+        y = 1 - y; // Since y values are quite weird here
+
+        // Scale these to be 0 - 1
+        x -= 3.0 / 16;
+        y -= 1.75 / 16;
+        x /= 14.0 / 16;
+        y /= 14.0 / 16;
+
         return new double[]{x, y};
     }
 
@@ -337,22 +330,33 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // Reset caches
+        this.guiCache = null;
+        this.guiContainerCache = null;
     }
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if(dataId == 0) {
+        if (dataId == 0) {
             int windowID = buf.readVarInt();
             int widgetID = buf.readVarInt();
             if (guiCache != null)
                 guiCache.handleWidgetUpdate(windowID, widgetID, buf);
+            this.scheduleRenderUpdate();
         } else if (dataId == 1) {
             createFakeGui();
+            this.scheduleRenderUpdate();
+        } else if (dataId == 2) {
+            int mouseX = buf.readVarInt();
+            int mouseY = buf.readVarInt();
+            if (guiCache != null && guiContainerCache != null) {
+                guiCache.mouseClicked(mouseX, mouseY, 0); // Left mouse button
+            }
+            this.scheduleRenderUpdate();
         }
     }
-
-
 
     @Override
     public void preInit(Object... data) {
@@ -374,5 +378,25 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
                 guiContainerCache.handleClientAction(buf);
             }
         }
+    }
+
+    @Override
+    public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (this.getWorld().isRemote) return;
+        Pair<Double, Double> clickCoords = this.checkLookingAt();
+        if (this.guiContainerCache != null) {
+            int width = guiContainerCache.modularUI.getWidth();
+            int height = guiContainerCache.modularUI.getHeight();
+            double scale = 1.0 / Math.max(width, height);
+            int mouseX = (int) ((clickCoords.getLeft() / scale));
+            int mouseY = (int) ((clickCoords.getRight() / scale));
+            if (0 <= mouseX && mouseX <= width && 0 <= mouseY && mouseY <= height) {
+                this.writeCustomData(2, buf -> {
+                    buf.writeVarInt(mouseX);
+                    buf.writeVarInt(mouseY);
+                });
+            }
+        }
+
     }
 }

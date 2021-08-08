@@ -520,7 +520,7 @@ public class MetaItem1 extends StandardMetaItem {
         VOLTAGE_COIL_UV = addItem(368, "voltage_coil.uv");
         /* IDs 368-373 (incl.) reserved for UHV-MAX tier voltage coils */
 
-        CLIPBOARD = addItem(380, "clipboard").addComponents(new ClipboardBehaviour());
+        CLIPBOARD = addItem(466, "clipboard").addComponents(new ClipboardBehaviour());
     }
 
     public void registerRecipes() {
