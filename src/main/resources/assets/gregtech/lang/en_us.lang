@@ -715,11 +715,11 @@ metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative outfit
 
 metaitem.cover.screen.name=Computer Monitor
-metaitem.cover.screen.tooltip=Displays Data
+metaitem.cover.screen.tooltip=Displays Data (as Cover)
 metaitem.cover.crafting.name=Crafting Table Cover
-metaitem.cover.crafting.tooltip=Advanced workbench on the machine's side
+metaitem.cover.crafting.tooltip=Advanced workbench on the machine's side (as Cover)
 metaitem.cover.shutter.name=Shutter Module
-metaitem.cover.shutter.tooltip=Blocks side of machine from any interactions
+metaitem.cover.shutter.tooltip=Blocks side of machine from any interactions (as Cover)
 
 metaitem.cover.solar.panel.name=Solar Panel
 metaitem.cover.solar.panel.tooltip=May the Sun be with you
@@ -3615,3 +3615,6 @@ info.infinite_energy.uxv=Voltage: UXV
 info.infinite_energy.max=Voltage: MAX
 
 gregtech.universal.clear_nbt_recipe.tooltip=§cThis will destroy all contents!
+
+gregtech.cover.energy_detector.message_electricity_storage_normal=Monitoring Normal Electricity Storage
+gregtech.cover.energy_detector.message_electricity_storage_inverted=Monitoring Inverted Electricity Storage
