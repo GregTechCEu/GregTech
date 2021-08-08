@@ -7,7 +7,7 @@ import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
-import gregtech.api.terminal.app.guide.widget.configurator.FluidStackConfigurator;
+import gregtech.api.terminal.app.guideeditor.widget.configurator.FluidStackConfigurator;
 import gregtech.api.util.Size;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;

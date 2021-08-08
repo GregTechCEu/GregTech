@@ -5,6 +5,7 @@ import gregtech.api.terminal.app.guide.ItemGuideApp;
 import gregtech.api.terminal.app.guide.MultiBlockGuideApp;
 import gregtech.api.terminal.app.guide.SimpleMachineGuideApp;
 import gregtech.api.terminal.app.guide.TutorialGuideApp;
+import gregtech.api.terminal.app.guideeditor.GuideEditorApp;
 
 import java.util.ArrayList;
 import java.util.List;
