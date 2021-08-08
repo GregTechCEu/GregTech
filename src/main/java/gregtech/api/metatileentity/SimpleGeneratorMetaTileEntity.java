@@ -49,13 +49,13 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
 
     protected FuelRecipeLogic createWorkableHandler() {
         return new FuelRecipeLogic(this, recipeMap,
-            () -> energyContainer, () -> importFluids, GTValues.V[getTier()]);
+                () -> energyContainer, () -> importFluids, GTValues.V[getTier()]);
     }
 
     @Override
     protected FluidTankList createImportFluidHandler() {
         return new FluidTankList(false, new FilteredFluidHandler(16000)
-            .setFillPredicate(this::canInputFluid));
+                .setFillPredicate(this::canInputFluid));
     }
 
     @Override
@@ -122,18 +122,18 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
         Builder builder = ModularUI.defaultBuilder();
         builder.image(7, 16, 81, 55, GuiTextures.DISPLAY);
         TankWidget tankWidget = new TankWidget(importFluids.getTankAt(0), 69, 52, 18, 18)
-            .setHideTooltip(true).setAlwaysShowFull(true);
+                .setHideTooltip(true).setAlwaysShowFull(true);
         builder.widget(tankWidget);
         builder.label(11, 20, "gregtech.gui.fluid_amount", 0xFFFFFF);
         builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
         builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
         return builder.label(6, 6, getMetaFullName())
-            .widget(new FluidContainerSlotWidget(containerInventory, 0, 90, 17, false)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
-            .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
-            .widget(new SlotWidget(containerInventory, 1, 90, 54, true, false)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
-            .bindPlayerInventory(player.inventory);
+                .widget(new FluidContainerSlotWidget(containerInventory, 0, 90, 17, false)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
+                .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
+                .widget(new SlotWidget(containerInventory, 1, 90, 54, true, false)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
+                .bindPlayerInventory(player.inventory);
     }
 
     @Override

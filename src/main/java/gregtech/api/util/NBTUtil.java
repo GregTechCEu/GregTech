@@ -40,9 +40,9 @@ public class NBTUtil {
 
     public static Vec3d readVec3d(NBTTagCompound tag) {
         return new Vec3d(
-            tag.getFloat("X"),
-            tag.getFloat("Y"),
-            tag.getFloat("Z")
+                tag.getFloat("X"),
+                tag.getFloat("Y"),
+                tag.getFloat("Z")
         );
     }
 

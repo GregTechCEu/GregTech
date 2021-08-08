@@ -18,7 +18,7 @@ import java.util.function.BiConsumer;
 
 public class ElectricItem implements IElectricItem, ICapabilityProvider {
 
-    protected ItemStack itemStack;
+    protected final ItemStack itemStack;
 
     protected final long maxCharge;
     protected final int tier;
@@ -26,7 +26,7 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
     protected final boolean chargeable;
     protected final boolean canProvideEnergyExternally;
 
-    protected List<BiConsumer<ItemStack, Long>> listeners = new ArrayList<>();
+    protected final List<BiConsumer<ItemStack, Long>> listeners = new ArrayList<>();
 
     public ElectricItem(ItemStack itemStack, long maxCharge, int tier, boolean chargeable, boolean canProvideEnergyExternally) {
         this.itemStack = itemStack;

@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -74,11 +75,11 @@ public class SmartItemFilter extends ItemFilter {
     @Override
     public void initUI(Consumer<Widget> widgetGroup) {
         widgetGroup.accept(new CycleButtonWidget(10, 0, 75, 20,
-            SmartFilteringMode.class, this::getFilteringMode, this::setFilteringMode)
-            .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
+                SmartFilteringMode.class, this::getFilteringMode, this::setFilteringMode)
+                .setTooltipHoverString("cover.smart_item_filter.filtering_mode.description"));
         widgetGroup.accept(new CycleButtonWidget(10, 20, 75, 20,
-            SmartMatchingMode.class, this::getMatchingMode, this::setMatchingMode)
-            .setTooltipHoverString("cover.smart_item_filter.matching_mode.description"));
+                SmartMatchingMode.class, this::getMatchingMode, this::setMatchingMode)
+                .setTooltipHoverString("cover.smart_item_filter.matching_mode.description"));
     }
 
     @Override
@@ -105,7 +106,7 @@ public class SmartItemFilter extends ItemFilter {
         }
     }
 
-    private class ItemAndMetadataAndStackSize {
+    private static class ItemAndMetadataAndStackSize {
         public final ItemAndMetadata itemAndMetadata;
         public final int transferStackSize;
 
@@ -142,6 +143,7 @@ public class SmartItemFilter extends ItemFilter {
             this.recipeMap = recipeMap;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return localeName;
@@ -161,6 +163,7 @@ public class SmartItemFilter extends ItemFilter {
             this.matchingMode = matchingMode;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return localeName;

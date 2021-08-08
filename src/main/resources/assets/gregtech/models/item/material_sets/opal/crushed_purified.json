@@ -1,6 +1,6 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "gregtech:items/material_sets/opal/crushed_purified"
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "gregtech:items/material_sets/opal/crushed_purified"
+  }
 }

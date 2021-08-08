@@ -38,8 +38,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class FacadeRenderer {
 
-    final static int[] sideOffsets = { 1, 1, 2, 2, 0, 0 };
-    final static float[] sideSoftBounds = { 0, 1, 0, 1, 0, 1 };
+    final static int[] sideOffsets = {1, 1, 2, 2, 0, 0};
+    final static float[] sideSoftBounds = {0, 1, 0, 1, 0, 1};
 
     private final static float FACADE_RENDER_OFFSET = 2.0f / 512.0f;
     private final static float FACADE_RENDER_OFFSET2 = 1 - FACADE_RENDER_OFFSET;
@@ -109,8 +109,8 @@ public class FacadeRenderer {
 
         AdvCCRSConsumer consumer = new AdvCCRSConsumer(ccrs);
         consumer.setTranslation(new Matrix4()
-            .translate(Vector3.center.copy().subtract(bounds.center()))
-            .scale(1.05, 1.05, 1.05));
+                .translate(Vector3.center.copy().subtract(bounds.center()))
+                .scale(1.05, 1.05, 1.05));
         for (CCQuad quad : renderQuads) {
             quad.pipe(consumer);
         }

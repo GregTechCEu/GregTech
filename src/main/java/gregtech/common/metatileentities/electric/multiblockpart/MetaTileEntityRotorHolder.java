@@ -261,16 +261,16 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         super.renderMetaTileEntity(renderState, translation, pipeline);
         Textures.ROTOR_HOLDER_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(renderState, translation, pipeline, getFrontFacing(),
-            getController() != null, isHasRotor(), isRotorLooping(), rotorColor);
+                getController() != null, isHasRotor(), isRotorLooping(), rotorColor);
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return ModularUI.defaultBuilder()
-            .label(6, 6, getMetaFullName())
-            .slot(rotorInventory, 0, 79, 36, GuiTextures.SLOT, GuiTextures.TURBINE_OVERLAY)
-            .bindPlayerInventory(entityPlayer.inventory)
-            .build(getHolder(), entityPlayer);
+                .label(6, 6, getMetaFullName())
+                .slot(rotorInventory, 0, 79, 36, GuiTextures.SLOT, GuiTextures.TURBINE_OVERLAY)
+                .bindPlayerInventory(entityPlayer.inventory)
+                .build(getHolder(), entityPlayer);
     }
 
     @Override
@@ -284,13 +284,13 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         return onRotorHolderInteract(playerIn) ||
-            super.onRightClick(playerIn, hand, facing, hitResult);
+                super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         return onRotorHolderInteract(playerIn) ||
-            super.onWrenchClick(playerIn, hand, facing, hitResult);
+                super.onWrenchClick(playerIn, hand, facing, hitResult);
     }
 
     @Override

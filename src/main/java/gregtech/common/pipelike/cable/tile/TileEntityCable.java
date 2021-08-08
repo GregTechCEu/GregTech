@@ -3,8 +3,8 @@ package gregtech.common.pipelike.cable.tile;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
-import gregtech.common.pipelike.cable.Insulation;
 import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.common.pipelike.cable.Insulation;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 

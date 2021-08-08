@@ -22,6 +22,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Stack;
 
@@ -33,8 +34,8 @@ public final class BlockFrame extends Block {
 
     public BlockFrame(Material material) {
         super(ModHandler.isMaterialWood(material) ?
-            net.minecraft.block.material.Material.WOOD :
-            net.minecraft.block.material.Material.IRON);
+                net.minecraft.block.material.Material.WOOD :
+                net.minecraft.block.material.Material.IRON);
         this.frameMaterial = material;
         setTranslationKey("frame");
         setHardness(3.0f);
@@ -45,12 +46,12 @@ public final class BlockFrame extends Block {
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
         return false;
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stackInHand = playerIn.getHeldItem(hand);
         if (stackInHand.isEmpty() || !(stackInHand.getItem() instanceof FrameItemBlock))
             return false;
@@ -131,12 +132,12 @@ public final class BlockFrame extends Block {
     }
 
     @Override
-    public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+    public boolean canPlaceBlockAt(@Nonnull World worldIn, @Nonnull BlockPos pos) {
         return super.canPlaceBlockAt(worldIn, pos) && canBlockStay(worldIn, pos);
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
         if (!canBlockStay(worldIn, pos)) {
             this.dropBlockAsItem(worldIn, pos, state, 0);
             worldIn.setBlockToAir(pos);
@@ -144,7 +145,7 @@ public final class BlockFrame extends Block {
     }
 
     @Override
-    public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+    public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, Entity entityIn) {
         entityIn.motionX = MathHelper.clamp(entityIn.motionX, -0.15, 0.15);
         entityIn.motionZ = MathHelper.clamp(entityIn.motionZ, -0.15, 0.15);
         entityIn.fallDistance = 0.0F;
@@ -159,38 +160,41 @@ public final class BlockFrame extends Block {
         }
     }
 
+    @Nonnull
     @Override
-    public EnumPushReaction getPushReaction(IBlockState state) {
+    public EnumPushReaction getPushReaction(@Nonnull IBlockState state) {
         return EnumPushReaction.DESTROY;
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
         return COLLISION_BOX;
     }
 
+    @Nonnull
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
+    public boolean isOpaqueCube(@Nonnull IBlockState state) {
         return false;
     }
 
     @Override
-    public boolean isFullBlock(IBlockState state) {
+    public boolean isFullBlock(@Nonnull IBlockState state) {
         return false;
     }
 
+    @Nonnull
     @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
         return face == EnumFacing.UP || face == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
     }
 
     @Override
-    public boolean isTopSolid(IBlockState state) {
+    public boolean isTopSolid(@Nonnull IBlockState state) {
         return true;
     }
 }

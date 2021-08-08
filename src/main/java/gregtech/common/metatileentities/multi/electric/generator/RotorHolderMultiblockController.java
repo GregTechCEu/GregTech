@@ -11,6 +11,7 @@ import java.util.List;
 
 public abstract class RotorHolderMultiblockController extends FueledMultiblockController {
 
+    @SuppressWarnings("InstantiationOfUtilityClass")
     public static final MultiblockAbility<MetaTileEntityRotorHolder> ABILITY_ROTOR_HOLDER = new MultiblockAbility<>();
 
     public RotorHolderMultiblockController(ResourceLocation metaTileEntityId, FuelRecipeMap recipeMap, long maxVoltage) {

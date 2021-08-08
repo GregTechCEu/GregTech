@@ -10,7 +10,7 @@ import net.minecraft.world.storage.loot.functions.LootFunction;
 
 public class LootEntryOreDict extends AbstractItemLootEntry {
 
-    private String oreDictName;
+    private final String oreDictName;
 
     protected LootEntryOreDict(String oreDictName, int weightIn, int qualityIn, LootFunction[] functionsIn, LootCondition[] conditionsIn, String entryName) {
         super(weightIn, qualityIn, functionsIn, conditionsIn, entryName);

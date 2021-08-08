@@ -24,8 +24,8 @@ import gregtech.api.recipes.recipes.PrimitiveBlastFurnaceRecipe;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -46,28 +46,28 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import static gregtech.api.util.InventoryUtils.simulateItemStackMerge;
-
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static gregtech.api.util.InventoryUtils.simulateItemStackMerge;
+
 public class MetaTileEntityPrimitiveBlastFurnace extends MultiblockControllerBase {
 
     private static final List<OrePrefix> FUEL_DISPLAY_PREFIXES = ImmutableList.of(
-        OrePrefix.gem, OrePrefix.dust, OrePrefix.block);
+            OrePrefix.gem, OrePrefix.dust, OrePrefix.block);
 
     private static final Map<String, MaterialStack> ALTERNATIVE_MATERIAL_NAMES = ImmutableMap.of(
-        "fuelCoke", new MaterialStack(Materials.Coke, GTValues.M),
-        "blockFuelCoke", new MaterialStack(Materials.Coke, GTValues.M * 9L));
+            "fuelCoke", new MaterialStack(Materials.Coke, GTValues.M),
+            "blockFuelCoke", new MaterialStack(Materials.Coke, GTValues.M * 9L));
 
     private static final Map<Material, Float> MATERIAL_FUEL_MAP = ImmutableMap.of(
-        Materials.Lignite, 0.7f,
-        Materials.Charcoal, 1.0f,
-        Materials.Coal, 1.0f,
-        Materials.Coke, 2.0f);
+            Materials.Lignite, 0.7f,
+            Materials.Charcoal, 1.0f,
+            Materials.Coal, 1.0f,
+            Materials.Coke, 2.0f);
 
     private int maxProgressDuration;
     private int currentProgress;
@@ -113,13 +113,13 @@ public class MetaTileEntityPrimitiveBlastFurnace extends MultiblockControllerBas
     private PrimitiveBlastFurnaceRecipe getOrRefreshRecipe(ItemStack inputStack) {
         PrimitiveBlastFurnaceRecipe currentRecipe = null;
         if (previousRecipe != null &&
-            previousRecipe.getInput().getIngredient().apply(inputStack)) {
+                previousRecipe.getInput().getIngredient().apply(inputStack)) {
             currentRecipe = previousRecipe;
         } else if (!areItemStacksEqual(inputStack, lastInputStack)) {
             this.lastInputStack = inputStack.isEmpty() ? ItemStack.EMPTY : inputStack.copy();
             currentRecipe = RecipeMaps.PRIMITIVE_BLAST_FURNACE_RECIPES.stream()
-                .filter(it -> it.getInput().getIngredient().test(inputStack))
-                .findFirst().orElse(null);
+                    .filter(it -> it.getInput().getIngredient().test(inputStack))
+                    .findFirst().orElse(null);
             if (currentRecipe != null) {
                 this.previousRecipe = currentRecipe;
             }
@@ -129,8 +129,8 @@ public class MetaTileEntityPrimitiveBlastFurnace extends MultiblockControllerBas
 
     private static boolean areItemStacksEqual(ItemStack stackA, ItemStack stackB) {
         return (stackA.isEmpty() && stackB.isEmpty()) ||
-            (ItemStack.areItemsEqual(stackA, stackB) &&
-                ItemStack.areItemStackTagsEqual(stackA, stackB));
+                (ItemStack.areItemsEqual(stackA, stackB) &&
+                        ItemStack.areItemStackTagsEqual(stackA, stackB));
     }
 
     private boolean setupRecipe(ItemStack inputStack, int fuelAmount, PrimitiveBlastFurnaceRecipe recipe) {
@@ -256,12 +256,12 @@ public class MetaTileEntityPrimitiveBlastFurnace extends MultiblockControllerBas
             return 0;
         }
         MaterialStack materialStack = OreDictUnifier.getMaterial(fuelType);
-        if(materialStack == null) {
+        if (materialStack == null) {
             //try alternative material names if we can't find valid standard one
             materialStack = OreDictUnifier.getOreDictionaryNames(fuelType).stream()
-                .map(ALTERNATIVE_MATERIAL_NAMES::get)
-                .filter(Objects::nonNull)
-                .findFirst().orElse(null);
+                    .map(ALTERNATIVE_MATERIAL_NAMES::get)
+                    .filter(Objects::nonNull)
+                    .findFirst().orElse(null);
         }
 
         if (materialStack != null && materialStack.amount >= GTValues.M) {
@@ -306,12 +306,13 @@ public class MetaTileEntityPrimitiveBlastFurnace extends MultiblockControllerBas
 
         //de-duplicate items in the result list
         int currentIndex = 0;
-        loop: while (currentIndex < resultStacks.size()) {
+        loop:
+        while (currentIndex < resultStacks.size()) {
             ItemStack itemStack = resultStacks.get(currentIndex);
 
             for (int i = 0; i < currentIndex; i++) {
                 ItemStack otherStack = resultStacks.get(i);
-                if(ItemStack.areItemsEqual(itemStack, otherStack)) {
+                if (ItemStack.areItemsEqual(itemStack, otherStack)) {
                     resultStacks.remove(currentIndex); //remove duplicate item
                     continue loop;
                 }
@@ -379,13 +380,13 @@ public class MetaTileEntityPrimitiveBlastFurnace extends MultiblockControllerBas
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-            .aisle("XXX", "XXX", "XXX", "XXX")
-            .aisle("XXX", "X#X", "X#X", "X#X")
-            .aisle("XXX", "XYX", "XXX", "XXX")
-            .where('X', statePredicate(getCasingState()))
-            .where('#', isAirPredicate())
-            .where('Y', selfPredicate())
-            .build();
+                .aisle("XXX", "XXX", "XXX", "XXX")
+                .aisle("XXX", "X#X", "X#X", "X#X")
+                .aisle("XXX", "XYX", "XXX", "XXX")
+                .where('X', statePredicate(getCasingState()))
+                .where('#', isAirPredicate())
+                .where('Y', selfPredicate())
+                .build();
     }
 
     @Override
@@ -396,16 +397,16 @@ public class MetaTileEntityPrimitiveBlastFurnace extends MultiblockControllerBas
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 166)
-            .widget(new SlotWidget(importItems, 0, 33, 15, true, true)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INGOT_OVERLAY))
-            .widget(new SlotWidget(importItems, 1, 33, 33, true, true)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FURNACE_OVERLAY))
-            .progressBar(this::getProgressScaled, 58, 24, 20, 15, GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR, MoveType.HORIZONTAL)
-            .widget(new SlotWidget(exportItems, 0, 85, 24, true, false)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INGOT_OVERLAY))
-            .widget(new SlotWidget(exportItems, 1, 103, 24, true, false)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUST_OVERLAY))
-            .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 0)
-            .build(getHolder(), entityPlayer);
+                .widget(new SlotWidget(importItems, 0, 33, 15, true, true)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INGOT_OVERLAY))
+                .widget(new SlotWidget(importItems, 1, 33, 33, true, true)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FURNACE_OVERLAY))
+                .progressBar(this::getProgressScaled, 58, 24, 20, 15, GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR, MoveType.HORIZONTAL)
+                .widget(new SlotWidget(exportItems, 0, 85, 24, true, false)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INGOT_OVERLAY))
+                .widget(new SlotWidget(exportItems, 1, 103, 24, true, false)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUST_OVERLAY))
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 0)
+                .build(getHolder(), entityPlayer);
     }
 }

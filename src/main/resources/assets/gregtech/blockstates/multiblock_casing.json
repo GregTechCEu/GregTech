@@ -23,7 +23,6 @@
           "all": "gregtech:blocks/casings/pipe/machine_casing_grate"
         }
       },
-
       "assembler": {
         "textures": {
           "all": "gregtech:blocks/casings/mechanic/machine_casing_assembler"
@@ -34,7 +33,6 @@
           "all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_line"
         }
       },
-
       "fusion": {
         "textures": {
           "all": "gregtech:blocks/casings/fusion/machine_casing_fusion"

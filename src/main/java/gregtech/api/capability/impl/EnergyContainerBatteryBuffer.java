@@ -21,7 +21,7 @@ import java.util.BitSet;
 
 public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyContainer {
 
-    private BitSet batterySlotsUsedThisTick = new BitSet();
+    private final BitSet batterySlotsUsedThisTick = new BitSet();
     private final int tier;
 
     public EnergyContainerBatteryBuffer(MetaTileEntity metaTileEntity, int tier) {
@@ -52,7 +52,7 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
             }
         }
         long amperageUsed = initialAmperage - amperage;
-        if(amperageUsed > 0L) {
+        if (amperageUsed > 0L) {
             notifyEnergyListener(false);
         }
         return amperageUsed;
@@ -155,7 +155,7 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
     public IElectricItem getBatteryContainer(ItemStack itemStack) {
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null && getTier() >= electricItem.getTier() &&
-            electricItem.canProvideChargeExternally())
+                electricItem.canProvideChargeExternally())
             return electricItem;
         return null;
     }
@@ -172,10 +172,10 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
             if (electricItem == null) continue;
             long charged = chargeItem(electricItem, energyToAdd, getTier(), isDischarge);
             energyToAdd -= charged;
-            if(energyToAdd == 0L) break;
+            if (energyToAdd == 0L) break;
         }
         long energyAdded = initialEnergyToAdd - energyToAdd;
-        if(energyAdded > 0L) {
+        if (energyAdded > 0L) {
             notifyEnergyListener(false);
         }
         return energyAdded;
@@ -230,7 +230,7 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
 
     @Override
     public <T> T getCapability(Capability<T> capability) {
-        if(capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
+        if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(this);
         }
         return null;

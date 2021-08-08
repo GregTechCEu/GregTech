@@ -32,8 +32,8 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
         if (!(o instanceof WireProperties)) return false;
         WireProperties that = (WireProperties) o;
         return voltage == that.voltage &&
-            amperage == that.amperage &&
-            lossPerBlock == that.lossPerBlock;
+                amperage == that.amperage &&
+                lossPerBlock == that.lossPerBlock;
     }
 
     @Override

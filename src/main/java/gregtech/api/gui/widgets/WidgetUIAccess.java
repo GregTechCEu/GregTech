@@ -25,6 +25,7 @@ public interface WidgetUIAccess {
     /**
      * Attempts to perform a slot merging (shift-click) for a given stack
      * with the slots either from player inventory, or a container
+     *
      * @return true if stack was merged
      */
     boolean attemptMergeStack(ItemStack itemStack, boolean fromContainer, boolean simulate);

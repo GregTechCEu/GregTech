@@ -21,7 +21,7 @@ public class FluidKey {
         if (!(o instanceof FluidKey)) return false;
         FluidKey fluidKey = (FluidKey) o;
         return Objects.equals(fluid, fluidKey.fluid) &&
-            Objects.equals(tag, fluidKey.tag);
+                Objects.equals(tag, fluidKey.tag);
     }
 
     @Override
@@ -32,8 +32,8 @@ public class FluidKey {
     @Override
     public String toString() {
         return "FluidKey{" +
-            "fluid=" + fluid +
-            ", tag=" + tag +
-            '}';
+                "fluid=" + fluid +
+                ", tag=" + tag +
+                '}';
     }
 }

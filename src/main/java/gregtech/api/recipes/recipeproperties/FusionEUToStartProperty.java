@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Validate;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class FusionEUToStartProperty extends RecipeProperty<Long>{
+public class FusionEUToStartProperty extends RecipeProperty<Long> {
 
     private static final String KEY = "eu_to_start";
 
@@ -38,7 +38,7 @@ public class FusionEUToStartProperty extends RecipeProperty<Long>{
 
         Map.Entry<Long, String> mapEntry = registeredFusionTiers.ceilingEntry(eu);
 
-        if(mapEntry == null) {
+        if (mapEntry == null) {
             throw new IllegalArgumentException("Value is above registered maximum EU values");
         }
 

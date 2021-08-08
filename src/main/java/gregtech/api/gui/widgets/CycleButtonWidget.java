@@ -29,10 +29,10 @@ import static gregtech.api.gui.impl.ModularUIGui.*;
 public class CycleButtonWidget extends Widget {
 
     protected TextureArea buttonTexture = GuiTextures.VANILLA_BUTTON.getSubArea(0.0, 0.0, 1.0, 0.5);
-    private String[] optionNames;
+    private final String[] optionNames;
     private int textColor = 0xFFFFFF;
-    private IntSupplier currentOptionSupplier;
-    private IntConsumer setOptionExecutor;
+    private final IntSupplier currentOptionSupplier;
+    private final IntConsumer setOptionExecutor;
     private final int RIGHT_MOUSE = 1;
     protected int currentOption;
     protected String tooltipHoverString;
@@ -89,8 +89,8 @@ public class CycleButtonWidget extends Widget {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         String text = I18n.format(optionNames[currentOption]);
         fontRenderer.drawStringWithShadow(text,
-            pos.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
-            pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2 + 1, textColor);
+                pos.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
+                pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2 + 1, textColor);
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
@@ -136,11 +136,10 @@ public class CycleButtonWidget extends Widget {
         super.mouseClicked(mouseX, mouseY, button);
         if (isMouseOverElement(mouseX, mouseY)) {
             //Allow only the RMB to reverse cycle
-            if(button == RIGHT_MOUSE) {
+            if (button == RIGHT_MOUSE) {
                 //Wrap from the first option to the last if needed
                 this.currentOption = currentOption == 0 ? optionNames.length - 1 : currentOption - 1;
-            }
-            else {
+            } else {
                 this.currentOption = (currentOption + 1) % optionNames.length;
             }
             writeClientAction(1, buf -> buf.writeVarInt(currentOption));

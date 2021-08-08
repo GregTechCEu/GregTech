@@ -8,9 +8,9 @@ import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.WireProperties;
-import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.cable.net.EnergyNet;
@@ -99,7 +99,7 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
             if (cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, true)) {
                 if (!entityPlayer.world.isRemote) {
                     boolean isOpen = pipeTile.isConnectionOpen(AttachmentType.PIPE, coverSide);
-                    if(isOpen || canConnect(pipeTile, coverSide))
+                    if (isOpen || canConnect(pipeTile, coverSide))
                         pipeTile.setConnectionBlocked(AttachmentType.PIPE, coverSide, isOpen, false);
                     cutterItem.damageItem(DamageValues.DAMAGE_FOR_CUTTER, false);
                 }

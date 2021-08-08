@@ -6,7 +6,6 @@
   "priority": -100,
   "count_as_vein": false,
   "generation_predicate": "any",
-
   "vein_populator": {
     "type": "fluid_spring",
     "chance": 0.40
@@ -17,7 +16,10 @@
   },
   "generator": {
     "type": "sphere",
-    "radius": [9, 13]
+    "radius": [
+      9,
+      13
+    ]
   },
   "filler": {
     "type": "ignore_bedrock",

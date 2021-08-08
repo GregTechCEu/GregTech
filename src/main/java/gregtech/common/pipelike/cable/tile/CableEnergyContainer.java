@@ -3,8 +3,8 @@ package gregtech.common.pipelike.cable.tile;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.common.pipelike.cable.Insulation;
 import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.RoutePath;
 import gregtech.common.pipelike.cable.net.WorldENet;
@@ -44,10 +44,10 @@ public class CableEnergyContainer implements IEnergyContainer {
             BlockPos destinationPos = routePath.destination;
             int openConnections = energyNet.getAllNodes().get(destinationPos).openConnections;
             amperesUsed += dispatchEnergyToNode(destinationPos, openConnections,
-                voltage - routePath.totalLoss, amperage - amperesUsed);
+                    voltage - routePath.totalLoss, amperage - amperesUsed);
 
             if (voltage > routePath.minVoltage ||
-                amperesUsed > routePath.maxAmperage) {
+                    amperesUsed > routePath.maxAmperage) {
                 burnAllPaths(paths, voltage, amperage, amperesUsed);
                 break; //break after burning all paths
             }
@@ -114,8 +114,8 @@ public class CableEnergyContainer implements IEnergyContainer {
     public long changeEnergy(long energyToAdd) {
         //just a fallback case if somebody will call this method
         return acceptEnergyFromNetwork(EnumFacing.UP,
-            energyToAdd / getInputVoltage(),
-            energyToAdd / getInputAmperage()) * getInputVoltage();
+                energyToAdd / getInputVoltage(),
+                energyToAdd / getInputAmperage()) * getInputVoltage();
     }
 
     @Override
@@ -152,7 +152,7 @@ public class CableEnergyContainer implements IEnergyContainer {
     private EnergyNet getEnergyNet() {
         EnergyNet currentEnergyNet = this.currentEnergyNet.get();
         if (currentEnergyNet != null && currentEnergyNet.isValid() &&
-            currentEnergyNet.containsNode(tileEntityCable.getPipePos()))
+                currentEnergyNet.containsNode(tileEntityCable.getPipePos()))
             return currentEnergyNet; //return current net if it is still valid
         WorldENet worldENet = (WorldENet) tileEntityCable.getPipeBlock().getWorldPipeNet(tileEntityCable.getPipeWorld());
         currentEnergyNet = worldENet.getNetFromPos(tileEntityCable.getPipePos());

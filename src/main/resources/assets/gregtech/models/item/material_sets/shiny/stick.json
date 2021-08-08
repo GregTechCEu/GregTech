@@ -1,7 +1,7 @@
 {
-    "parent": "item/handheld",
-    "textures": {
-        "layer0": "gregtech:items/material_sets/shiny/stick",
-        "layer1": "gregtech:items/material_sets/shiny/stick_overlay"
-    }
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "gregtech:items/material_sets/shiny/stick",
+    "layer1": "gregtech:items/material_sets/shiny/stick_overlay"
+  }
 }

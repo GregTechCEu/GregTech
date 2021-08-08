@@ -24,9 +24,9 @@ public class ToolSense extends ToolBase {
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         return block.getMaterial() == Material.PLANTS ||
-            block.getMaterial() == Material.LEAVES ||
-            block.getMaterial() == Material.VINE ||
-            block.getBlock() instanceof BlockCrops;
+                block.getMaterial() == Material.LEAVES ||
+                block.getMaterial() == Material.VINE ||
+                block.getBlock() instanceof BlockCrops;
     }
 
     @Override
@@ -36,20 +36,21 @@ public class ToolSense extends ToolBase {
         }
         ToolMetaItem<?> toolMetaItem = (ToolMetaItem<?>) stack.getItem();
         int damagePerBlockBreak = getToolDamagePerBlockBreak(stack);
-        for(int x = -5; x <= 5; x++) {
-            for(int z = -5; z <= 5; z++) {
-                for(int y = -5; y <= 5; y++) {BlockPos offsetPos = blockPos.add(x, y, z);
+        for (int x = -5; x <= 5; x++) {
+            for (int z = -5; z <= 5; z++) {
+                for (int y = -5; y <= 5; y++) {
+                    BlockPos offsetPos = blockPos.add(x, y, z);
                     IBlockState blockState = player.world.getBlockState(offsetPos);
-                    if(player.world.isBlockModifiable(player, offsetPos) && toolMetaItem.isUsable(stack, damagePerBlockBreak)) {
-                        if(blockState.getBlock() instanceof BlockCrops) {
+                    if (player.world.isBlockModifiable(player, offsetPos) && toolMetaItem.isUsable(stack, damagePerBlockBreak)) {
+                        if (blockState.getBlock() instanceof BlockCrops) {
 
                             player.world.playEvent(2001, offsetPos, Block.getStateId(blockState));
                             ToolUtility.applyHarvestBehavior(offsetPos, player);
                             toolMetaItem.damageItem(stack, damagePerBlockBreak, false);
 
-                        } else if(blockState.getMaterial() == Material.PLANTS ||
-                            blockState.getMaterial() == Material.LEAVES ||
-                            blockState.getMaterial() == Material.VINE) {
+                        } else if (blockState.getMaterial() == Material.PLANTS ||
+                                blockState.getMaterial() == Material.LEAVES ||
+                                blockState.getMaterial() == Material.VINE) {
 
                             player.world.playEvent(2001, offsetPos, Block.getStateId(blockState));
                             player.world.setBlockToAir(offsetPos);

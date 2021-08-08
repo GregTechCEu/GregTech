@@ -12,6 +12,7 @@ import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 
@@ -27,53 +28,58 @@ public class DummySaveHandler implements ISaveHandler, IPlayerFileData, IChunkLo
     public void checkSessionLock() {
     }
 
+    @Nonnull
     @Override
-    public IChunkLoader getChunkLoader(WorldProvider provider) {
+    public IChunkLoader getChunkLoader(@Nonnull WorldProvider provider) {
         return this;
     }
 
+    @Nonnull
     @Override
     public IPlayerFileData getPlayerNBTManager() {
         return this;
     }
 
 
+    @Nonnull
     @Override
     public TemplateManager getStructureTemplateManager() {
         return new TemplateManager("", new DataFixer(0));
     }
 
     @Override
-    public void saveWorldInfoWithPlayer(WorldInfo worldInformation, NBTTagCompound tagCompound) {
+    public void saveWorldInfoWithPlayer(@Nonnull WorldInfo worldInformation, @Nonnull NBTTagCompound tagCompound) {
     }
 
     @Override
-    public void saveWorldInfo(WorldInfo worldInformation) {
+    public void saveWorldInfo(@Nonnull WorldInfo worldInformation) {
     }
 
+    @Nonnull
     @Override
     public File getWorldDirectory() {
         return null;
     }
 
+    @Nonnull
     @Override
-    public File getMapFileFromName(String mapName) {
+    public File getMapFileFromName(@Nonnull String mapName) {
         return null;
     }
 
 
     @Nullable
     @Override
-    public Chunk loadChunk(World worldIn, int x, int z) {
+    public Chunk loadChunk(@Nonnull World worldIn, int x, int z) {
         return null;
     }
 
     @Override
-    public void saveChunk(World worldIn, Chunk chunkIn) {
+    public void saveChunk(@Nonnull World worldIn, @Nonnull Chunk chunkIn) {
     }
 
     @Override
-    public void saveExtraChunkData(World worldIn, Chunk chunkIn) {
+    public void saveExtraChunkData(@Nonnull World worldIn, @Nonnull Chunk chunkIn) {
     }
 
     @Override
@@ -90,15 +96,16 @@ public class DummySaveHandler implements ISaveHandler, IPlayerFileData, IChunkLo
     }
 
     @Override
-    public void writePlayerData(EntityPlayer player) {
+    public void writePlayerData(@Nonnull EntityPlayer player) {
     }
 
     @Nullable
     @Override
-    public NBTTagCompound readPlayerData(EntityPlayer player) {
+    public NBTTagCompound readPlayerData(@Nonnull EntityPlayer player) {
         return null;
     }
 
+    @Nonnull
     @Override
     public String[] getAvailablePlayerDat() {
         return new String[0];

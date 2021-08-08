@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 public class FluidCellIngredient extends Ingredient {
 
-    Fluid fluid;
+    final Fluid fluid;
 
     /**
      * @param fluid

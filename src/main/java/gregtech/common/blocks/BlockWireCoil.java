@@ -1,7 +1,7 @@
 package gregtech.common.blocks;
 
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class BlockWireCoil extends VariantBlock<BlockWireCoil.CoilType> {
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
         return false;
     }
 
@@ -80,6 +81,7 @@ public class BlockWireCoil extends VariantBlock<BlockWireCoil.CoilType> {
             this.material = material;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return this.name;

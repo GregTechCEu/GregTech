@@ -12,40 +12,40 @@ public class ChemicalBathRecipes {
     public static void init() {
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-            .input(dust, Wood)
-            .fluidInputs(Water.getFluid(100))
-            .output(Items.PAPER)
-            .duration(200).EUt(4).buildAndRegister();
+                .input(dust, Wood)
+                .fluidInputs(Water.getFluid(100))
+                .output(Items.PAPER)
+                .duration(200).EUt(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-            .input(dust, Paper)
-            .fluidInputs(Water.getFluid(100))
-            .output(Items.PAPER)
-            .duration(100).EUt(4).buildAndRegister();
+                .input(dust, Paper)
+                .fluidInputs(Water.getFluid(100))
+                .output(Items.PAPER)
+                .duration(100).EUt(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-            .input(Items.REEDS, 1, true)
-            .fluidInputs(Water.getFluid(100))
-            .output(Items.PAPER)
-            .duration(100).EUt(8).buildAndRegister();
+                .input(Items.REEDS, 1, true)
+                .fluidInputs(Water.getFluid(100))
+                .output(Items.PAPER)
+                .duration(100).EUt(8).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-            .input(dust, Wood)
-            .fluidInputs(DistilledWater.getFluid(100))
-            .output(Items.PAPER)
-            .duration(200).EUt(4).buildAndRegister();
+                .input(dust, Wood)
+                .fluidInputs(DistilledWater.getFluid(100))
+                .output(Items.PAPER)
+                .duration(200).EUt(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-            .input(dust, Paper)
-            .fluidInputs(DistilledWater.getFluid(100))
-            .output(Items.PAPER)
-            .duration(100).EUt(4).buildAndRegister();
+                .input(dust, Paper)
+                .fluidInputs(DistilledWater.getFluid(100))
+                .output(Items.PAPER)
+                .duration(100).EUt(4).buildAndRegister();
 
         CHEMICAL_BATH_RECIPES.recipeBuilder()
-            .input(Items.REEDS, 1, true)
-            .fluidInputs(DistilledWater.getFluid(100))
-            .output(Items.PAPER)
-            .duration(100).EUt(8).buildAndRegister();
+                .input(Items.REEDS, 1, true)
+                .fluidInputs(DistilledWater.getFluid(100))
+                .output(Items.PAPER)
+                .duration(100).EUt(8).buildAndRegister();
 
         //todo add these to ore byproducts
         CHEMICAL_BATH_RECIPES.recipeBuilder()

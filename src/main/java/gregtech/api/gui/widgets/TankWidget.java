@@ -246,7 +246,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
             FluidStack initialFluid = fluidTank.getFluid();
             for (int i = 0; i < maxAttempts; i++) {
                 FluidActionResult result = FluidUtil.tryFillContainer(currentStack,
-                    (IFluidHandler) fluidTank, Integer.MAX_VALUE, null, false);
+                        (IFluidHandler) fluidTank, Integer.MAX_VALUE, null, false);
                 if (!result.isSuccess()) break;
                 ItemStack remainingStack = result.getResult();
                 if (!remainingStack.isEmpty() && !player.inventory.addItemStackToInventory(remainingStack))
@@ -258,7 +258,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
             if (performedFill) {
                 SoundEvent soundevent = initialFluid.getFluid().getFillSound(initialFluid);
                 player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
-                    soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 gui.entityPlayer.inventory.setItemStack(currentStack);
                 return currentStack.getCount();
             }
@@ -268,7 +268,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
             boolean performedEmptying = false;
             for (int i = 0; i < maxAttempts; i++) {
                 FluidActionResult result = FluidUtil.tryEmptyContainer(currentStack,
-                    (IFluidHandler) fluidTank, Integer.MAX_VALUE, null, false);
+                        (IFluidHandler) fluidTank, Integer.MAX_VALUE, null, false);
                 if (!result.isSuccess()) break;
                 ItemStack remainingStack = result.getResult();
                 if (!remainingStack.isEmpty() && !player.inventory.addItemStackToInventory(remainingStack))
@@ -281,7 +281,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
             if (performedEmptying && filledFluid != null) {
                 SoundEvent soundevent = filledFluid.getFluid().getEmptySound(filledFluid);
                 player.world.playSound(null, player.posX, player.posY + 0.5, player.posZ,
-                    soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 gui.entityPlayer.inventory.setItemStack(currentStack);
                 return currentStack.getCount();
             }
@@ -296,7 +296,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
         if (isMouseOverElement(mouseX, mouseY)) {
             ItemStack currentStack = gui.entityPlayer.inventory.getItemStack();
             if (button == 0 && (allowClickEmptying || allowClickFilling) &&
-                currentStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
+                    currentStack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)) {
                 boolean isShiftKeyDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
                 writeClientAction(1, writer -> writer.writeBoolean(isShiftKeyDown));
                 playButtonClickSound();

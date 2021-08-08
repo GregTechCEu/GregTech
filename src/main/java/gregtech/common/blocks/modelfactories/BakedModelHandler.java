@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class BakedModelHandler {
         }
     };
     private static final ItemMeshDefinition SIMPLE_MESH_DEFINITION = (stack) ->
-        getSimpleModelLocation(Block.getBlockFromItem(stack.getItem()));
+            getSimpleModelLocation(Block.getBlockFromItem(stack.getItem()));
 
     private static ModelResourceLocation getSimpleModelLocation(Block block) {
         return new ModelResourceLocation(Block.REGISTRY.getNameForObject(block), "");
@@ -90,6 +91,7 @@ public class BakedModelHandler {
             this.particleTexture = particleTexture;
         }
 
+        @Nonnull
         @Override
         public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
             return Collections.emptyList();
@@ -110,18 +112,21 @@ public class BakedModelHandler {
             return true;
         }
 
+        @Nonnull
         @Override
         public TextureAtlasSprite getParticleTexture() {
             return TextureUtils.getBlockTexture(particleTexture);
         }
 
+        @Nonnull
         @Override
         public ItemOverrideList getOverrides() {
             return ItemOverrideList.NONE;
         }
 
+        @Nonnull
         @Override
-        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
+        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(@Nonnull TransformType cameraTransformType) {
             CCRenderItem.notifyTransform(cameraTransformType);
             return PerspectiveMapWrapper.handlePerspective(this, TransformUtils.DEFAULT_BLOCK, cameraTransformType);
         }

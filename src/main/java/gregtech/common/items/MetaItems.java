@@ -26,7 +26,7 @@ public final class MetaItems {
     private MetaItems() {
     }
 
-    public static List<MetaItem<?>> ITEMS = MetaItem.getMetaItems();
+    public static final List<MetaItem<?>> ITEMS = MetaItem.getMetaItems();
 
     public static MetaItem<?>.MetaValueItem CREDIT_COPPER;
     public static MetaItem<?>.MetaValueItem CREDIT_CUPRONICKEL;
@@ -35,7 +35,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CREDIT_PLATINUM;
     public static MetaItem<?>.MetaValueItem CREDIT_OSMIUM;
     public static MetaItem<?>.MetaValueItem CREDIT_NAQUADAH;
-    public static MetaItem<?>.MetaValueItem CREDIT_DARMSTADTIUM;
+    public static MetaItem<?>.MetaValueItem CREDIT_NEUTRONIUM;
 
     public static MetaItem<?>.MetaValueItem COIN_GOLD_ANCIENT;
     public static MetaItem<?>.MetaValueItem COIN_DOGE;
@@ -51,7 +51,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem SHAPE_EMPTY;
 
-    public static MetaItem<?>.MetaValueItem[] SHAPE_MOLDS = new MetaValueItem[13];
+    public static final MetaItem<?>.MetaValueItem[] SHAPE_MOLDS = new MetaValueItem[13];
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_CREDIT;
@@ -66,7 +66,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROTOR;
 
-    public static MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[26];
+    public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[26];
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOLT;
@@ -130,18 +130,12 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_HULL_HV;
 
     public static MetaItem<?>.MetaValueItem BATTERY_RE_ULV_TANTALUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_LV_SULFURIC_ACID;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_LV_MERCURY;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_LV_CADMIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_LV_LITHIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_LV_SODIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_MV_SULFURIC_ACID;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_MV_MERCURY;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_MV_CADMIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_MV_LITHIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_MV_SODIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_HV_SULFURIC_ACID;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_HV_MERCURY;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_HV_CADMIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_HV_LITHIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_HV_SODIUM;
@@ -150,8 +144,8 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB;
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB2;
-    public static MetaItem<?>.MetaValueItem ZPM;
-    public static MetaItem<?>.MetaValueItem ZPM2;
+    public static MetaItem<?>.MetaValueItem ZERO_POINT_MODULE;
+    public static MetaItem<?>.MetaValueItem ULTIMATE_BATTERY;
 
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_LV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_MV;
@@ -265,7 +259,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem NAND_MEMORY_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem NANO_CENTRAL_PROCESSING_UNIT_WAFER;
     public static MetaItem<?>.MetaValueItem NOR_MEMORY_CHIP_WAFER;
-    public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT_WAFER;
+    public static MetaItem<?>.MetaValueItem QUBIT_CENTRAL_PROCESSING_UNIT_WAFER;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY_WAFER;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP_WAFER;
@@ -284,7 +278,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem NAND_MEMORY_CHIP;
     public static MetaItem<?>.MetaValueItem NANO_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem NOR_MEMORY_CHIP;
-    public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT;
+    public static MetaItem<?>.MetaValueItem QUBIT_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP;
     public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP;
@@ -421,8 +415,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem ENERGY_FIELD_PROJECTOR;
     public static MetaItem<?>.MetaValueItem SCANNER;
 
-    public static MetaItem<?>.MetaValueItem[] DYE_ONLY_ITEMS = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
-    public static MetaItem<?>.MetaValueItem[] SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
+    public static final MetaItem<?>.MetaValueItem[] DYE_ONLY_ITEMS = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
+    public static final MetaItem<?>.MetaValueItem[] SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
 
     public static MetaItem<?>.MetaValueItem TURBINE_ROTOR;
 
@@ -462,9 +456,8 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem BUZZSAW;
     public static ToolMetaItem<?>.MetaToolValueItem SCREWDRIVER_LV;
 
-    public static MetaItem<?>.MetaValueItem ENERGY_MODULE;
-    public static MetaItem<?>.MetaValueItem ENERGY_CLUSTER;
-    public static MetaItem<?>.MetaValueItem MAX_BATTERY;
+    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_MODULE;
+    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_CLUSTER;
     public static MetaItem<?>.MetaValueItem NEURO_PROCESSOR;
     public static MetaItem<?>.MetaValueItem STEM_CELLS;
     public static MetaItem<?>.MetaValueItem PETRI_DISH;
@@ -558,8 +551,6 @@ public final class MetaItems {
 
     public static void registerRecipes() {
         for (MetaItem<?> item : ITEMS) {
-            if (item instanceof MetaItem1)
-                ((MetaItem1) item).registerRecipes();
             if (item instanceof MetaTool)
                 ((MetaTool) item).registerRecipes();
         }

@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The Stats for GT Tools. Not including any Material Modifiers.
@@ -160,5 +161,13 @@ public interface IToolStats {
     default int getColor(ItemStack stack, int tintIndex) {
         Material primaryMaterial = ToolMetaItem.getToolMaterial(stack);
         return tintIndex % 2 == 1 ? primaryMaterial.getMaterialRGB() : 0xFFFFFF;
+    }
+
+    /**
+     * @return The MC tool classes for cross-mod compatibility.
+     * Default: no tool classes.
+     */
+    default Set<String> getToolClasses(ItemStack stack) {
+        return Collections.emptySet();
     }
 }

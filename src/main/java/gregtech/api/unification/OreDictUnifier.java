@@ -2,9 +2,9 @@ package gregtech.api.unification;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Joiner;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.*;
@@ -169,8 +169,8 @@ public class OreDictUnifier {
 
     public static List<ItemStack> getAllWithOreDictionaryName(String oreDictionaryName) {
         return oreDictNameStacks.get(oreDictionaryName).stream()
-            .map(ItemStack::copy)
-            .collect(Collectors.toList());
+                .map(ItemStack::copy)
+                .collect(Collectors.toList());
     }
 
     @Nullable
@@ -238,8 +238,8 @@ public class OreDictUnifier {
 
     public static List<Entry<ItemStack, ItemMaterialInfo>> getAllItemInfos() {
         return materialUnificationInfo.entrySet().stream()
-            .map(entry -> new SimpleEntry<>(entry.getKey().toItemStack(), entry.getValue()))
-            .collect(Collectors.toList());
+                .map(entry -> new SimpleEntry<>(entry.getKey().toItemStack(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     public static List<ItemStack> getAll(UnificationEntry unificationEntry) {

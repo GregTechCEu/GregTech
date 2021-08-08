@@ -3,7 +3,6 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.CoverConveyor;
@@ -19,7 +18,10 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class ItemNetHandler implements IItemHandler {
 

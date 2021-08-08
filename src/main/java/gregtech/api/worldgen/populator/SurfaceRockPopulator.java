@@ -23,7 +23,10 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 
 public class SurfaceRockPopulator implements VeinChunkPopulator {
 
@@ -71,8 +74,7 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
             TileEntitySurfaceRock tileEntity = (TileEntitySurfaceRock) world.getTileEntity(blockPos);
             if (tileEntity != null)
                 tileEntity.setData(this.material, undergroundMaterials);
-        }
-        else {
+        } else {
             failedGenerationCounter++;
         }
     }
@@ -80,11 +82,12 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
     /**
      * Generates the Surface Rock for an underground vein. Replaces the applicable topmost block in the chunk with a
      * Surface Rock, at a random position in the chunk. Does not run on a Flat world type
-     * @param world - The Minecraft world. Used for finding the top most block and its state
-     * @param chunkX - The X chunk coordinate
-     * @param chunkZ - The Z chunk coordinate
-     * @param random - A Random parameter. Used for determining the number of spawned Surface Blocks and their position
-     * @param definition - The Ore Vein definition
+     *
+     * @param world         - The Minecraft world. Used for finding the top most block and its state
+     * @param chunkX        - The X chunk coordinate
+     * @param chunkZ        - The Z chunk coordinate
+     * @param random        - A Random parameter. Used for determining the number of spawned Surface Blocks and their position
+     * @param definition    - The Ore Vein definition
      * @param gridEntryInfo - Information about the ore generation grid for the current generation section
      */
     @Override
@@ -102,13 +105,13 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
 
                 //Checks if the block is a replaceable feature like grass, snow layers, or Air. Liquids are replaceable, so
                 // exclude one deep liquid blocks, for looks
-                if(!blockAtPos.isReplaceable(world, topBlockPos) || world.getBlockState(topBlockPos).getMaterial().isLiquid()) {
+                if (!blockAtPos.isReplaceable(world, topBlockPos) || world.getBlockState(topBlockPos).getMaterial().isLiquid()) {
                     continue;
                 }
 
                 //Checks if the block below has a solid top. This method is also used to check what blocks redstone can
                 //be placed on.
-                if(!world.isSideSolid(topBlockPos.down(), EnumFacing.UP)) {
+                if (!world.isSideSolid(topBlockPos.down(), EnumFacing.UP)) {
                     continue;
                 }
 
@@ -117,7 +120,7 @@ public class SurfaceRockPopulator implements VeinChunkPopulator {
         }
 
         //Log if all Surface Rock generation attempts were failed
-        if(failedGenerationCounter == stonesCount && stonesCount > 0 && world.getWorldType() != WorldType.FLAT) {
+        if (failedGenerationCounter == stonesCount && stonesCount > 0 && world.getWorldType() != WorldType.FLAT) {
             GTLog.logger.debug("Failed to generate surface rocks for vein {} at chunk with position: x: {}, z: {}", definition.getDepositName(), chunkX, chunkZ);
         }
     }

@@ -292,11 +292,10 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("battery_buffer_uv_4x4", MetaTileEntities.BATTERY_BUFFER[GTValues.UV][3].getStackForm(), "WTW", "WMW", 'M', MetaTileEntities.HULL[GTValues.UV].getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtHex, Materials.NaquadahAlloy), 'T', OreDictNames.chestWood);
         ModHandler.addShapedRecipe("battery_buffer_max_4x4", MetaTileEntities.BATTERY_BUFFER[GTValues.MAX][3].getStackForm(), "WTW", "WMW", 'M', MetaTileEntities.HULL[GTValues.MAX].getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtHex, MarkerMaterials.Tier.Superconductor), 'T', OreDictNames.chestWood);
 
-        ItemStack last_bat = (ConfigHolder.U.GT5u.replaceUVwithMAXBat ? MetaItems.MAX_BATTERY : MetaItems.ZPM2).getStackForm();
         List<ItemStack> batteries = new ArrayList<ItemStack>() {{
-            add(ConfigHolder.U.GT5u.enableZPMandUVBats ? MetaItems.ENERGY_MODULE.getStackForm() : MetaItems.ENERGY_LAPOTRONIC_ORB2.getStackForm());
-            add(ConfigHolder.U.GT5u.enableZPMandUVBats ? MetaItems.ENERGY_CLUSTER.getStackForm() : last_bat);
-            add(last_bat);
+            add(ConfigHolder.U.GT5u.enableZPMandUVBats ? MetaItems.ENERGY_LAPOTRONIC_MODULE.getStackForm() : MetaItems.ENERGY_LAPOTRONIC_ORB2.getStackForm());
+            add(ConfigHolder.U.GT5u.enableZPMandUVBats ? MetaItems.ENERGY_LAPOTRONIC_CLUSTER.getStackForm() : MetaItems.ULTIMATE_BATTERY.getStackForm());
+            add(MetaItems.ULTIMATE_BATTERY.getStackForm());
         }};
         ModHandler.addShapedRecipe("charger_ulv", MetaTileEntities.CHARGER[GTValues.ULV].getStackForm(), "WTW", "WMW", "BCB", 'M', MetaTileEntities.HULL[GTValues.ULV].getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtHex, Materials.Lead), 'T', OreDictNames.chestWood, 'B', MetaItems.BATTERY_RE_ULV_TANTALUM, 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Primitive));
         ModHandler.addShapedRecipe("charger_lv", MetaTileEntities.CHARGER[GTValues.LV].getStackForm(), "WTW", "WMW", "BCB", 'M', MetaTileEntities.HULL[GTValues.LV].getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtHex, Materials.Tin), 'T', OreDictNames.chestWood, 'B', MetaItems.BATTERY_RE_LV_LITHIUM, 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic));

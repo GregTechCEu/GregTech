@@ -16,6 +16,8 @@ import net.minecraft.item.ItemStack;
 import static gregtech.api.recipes.RecipeMaps.FORMING_PRESS_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
+import static gregtech.common.items.MetaItems.TOOL_MATCHBOX;
+import static gregtech.common.items.MetaItems.TOOL_MATCHES;
 
 public class MiscRecipeLoader {
 
@@ -84,22 +86,29 @@ public class MiscRecipeLoader {
         }
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(8)
-            .input(dust, Sugar)
-            .inputs(new ItemStack(Blocks.BROWN_MUSHROOM))
-            .inputs(new ItemStack(Items.SPIDER_EYE))
-            .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
-            .buildAndRegister();
+                .input(dust, Sugar)
+                .inputs(new ItemStack(Blocks.BROWN_MUSHROOM))
+                .inputs(new ItemStack(Items.SPIDER_EYE))
+                .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
+                .buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(8)
-            .input(dust, Sugar)
-            .inputs(new ItemStack(Blocks.RED_MUSHROOM))
-            .inputs(new ItemStack(Items.SPIDER_EYE))
-            .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
-            .buildAndRegister();
+                .input(dust, Sugar)
+                .inputs(new ItemStack(Blocks.RED_MUSHROOM))
+                .inputs(new ItemStack(Items.SPIDER_EYE))
+                .outputs(new ItemStack(Items.FERMENTED_SPIDER_EYE))
+                .buildAndRegister();
 
         RecipeMaps.SIFTER_RECIPES.recipeBuilder().duration(800).EUt(16)
-            .inputs(new ItemStack(Blocks.GRAVEL))
-            .outputs(new ItemStack(Items.FLINT))
-            .buildAndRegister();
+                .inputs(new ItemStack(Blocks.GRAVEL))
+                .outputs(new ItemStack(Items.FLINT))
+                .buildAndRegister();
+
+        RecipeMaps.PACKER_RECIPES.recipeBuilder()
+                .inputs(TOOL_MATCHES.getStackForm(16)).input(OrePrefix.plate, Materials.Paper)
+                .outputs(TOOL_MATCHBOX.getStackForm())
+                .duration(64)
+                .EUt(16)
+                .buildAndRegister();
     }
 }

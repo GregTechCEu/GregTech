@@ -71,8 +71,8 @@ public interface ICoverable {
     default void renderCovers(CCRenderState renderState, Matrix4 translation, BlockRenderLayer layer) {
         renderState.lightMatrix.locate(getWorld(), getPos());
         double coverPlateThickness = getCoverPlateThickness();
-        IVertexOperation[] platePipeline = new IVertexOperation[] {new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColor()))};
-        IVertexOperation[] coverPipeline = new IVertexOperation[] {renderState.lightMatrix};
+        IVertexOperation[] platePipeline = new IVertexOperation[]{new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColor()))};
+        IVertexOperation[] coverPipeline = new IVertexOperation[]{renderState.lightMatrix};
 
         for (EnumFacing sideFacing : EnumFacing.values()) {
             CoverBehavior coverBehavior = getCoverAtSide(sideFacing);
@@ -164,7 +164,7 @@ public interface ICoverable {
                 return ((CoverSideData) rayTraceResult.cuboid6.data).side;
             } else if (rayTraceResult.cuboid6.data instanceof BlockPipe.PipeConnectionData) {
                 return ((PipeConnectionData) rayTraceResult.cuboid6.data).side;
-            } else if(rayTraceResult.cuboid6.data instanceof PrimaryBoxData) {
+            } else if (rayTraceResult.cuboid6.data instanceof PrimaryBoxData) {
                 PrimaryBoxData primaryBoxData = (PrimaryBoxData) rayTraceResult.cuboid6.data;
                 return primaryBoxData.usePlacementGrid ? determineGridSideHit(result) : result.sideHit;
             } //unknown hit type, fall through
@@ -175,20 +175,27 @@ public interface ICoverable {
 
     static EnumFacing determineGridSideHit(RayTraceResult result) {
         return GTUtility.determineWrenchingSide(result.sideHit,
-            (float) (result.hitVec.x - result.getBlockPos().getX()),
-            (float) (result.hitVec.y - result.getBlockPos().getY()),
-            (float) (result.hitVec.z - result.getBlockPos().getZ()));
+                (float) (result.hitVec.x - result.getBlockPos().getX()),
+                (float) (result.hitVec.y - result.getBlockPos().getY()),
+                (float) (result.hitVec.z - result.getBlockPos().getZ()));
     }
 
     static Cuboid6 getCoverPlateBox(EnumFacing side, double plateThickness) {
         switch (side) {
-            case UP: return new Cuboid6(0.0, 1.0 - plateThickness, 0.0, 1.0, 1.0, 1.0);
-            case DOWN: return new Cuboid6(0.0, 0.0, 0.0, 1.0, plateThickness, 1.0);
-            case NORTH: return new Cuboid6(0.0, 0.0, 0.0, 1.0, 1.0, plateThickness);
-            case SOUTH: return new Cuboid6(0.0, 0.0, 1.0 - plateThickness, 1.0, 1.0, 1.0);
-            case WEST: return new Cuboid6(0.0, 0.0, 0.0, plateThickness, 1.0, 1.0);
-            case EAST: return new Cuboid6(1.0 - plateThickness, 0.0, 0.0, 1.0, 1.0, 1.0);
-            default: throw new UnsupportedOperationException();
+            case UP:
+                return new Cuboid6(0.0, 1.0 - plateThickness, 0.0, 1.0, 1.0, 1.0);
+            case DOWN:
+                return new Cuboid6(0.0, 0.0, 0.0, 1.0, plateThickness, 1.0);
+            case NORTH:
+                return new Cuboid6(0.0, 0.0, 0.0, 1.0, 1.0, plateThickness);
+            case SOUTH:
+                return new Cuboid6(0.0, 0.0, 1.0 - plateThickness, 1.0, 1.0, 1.0);
+            case WEST:
+                return new Cuboid6(0.0, 0.0, 0.0, plateThickness, 1.0, 1.0);
+            case EAST:
+                return new Cuboid6(1.0 - plateThickness, 0.0, 0.0, 1.0, 1.0, 1.0);
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 }

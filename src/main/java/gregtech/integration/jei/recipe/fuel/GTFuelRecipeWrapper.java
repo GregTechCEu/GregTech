@@ -6,7 +6,6 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fluids.FluidStack;
 
 public class GTFuelRecipeWrapper implements IRecipeWrapper {
 

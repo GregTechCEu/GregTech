@@ -5,9 +5,9 @@ import gregtech.api.damagesources.DamageSources;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
-import gregtech.api.unification.material.Material;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.FluidPipeFluidHandler;
@@ -33,6 +33,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedMap;
@@ -140,7 +141,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     public boolean canPushIntoFluidHandler(IPipeTile<FluidPipeType, FluidPipeProperties> selfTileEntity, TileEntity otherTileEntity, IFluidHandler sourceHandler, IFluidHandler destinationHandler) {
         boolean isSourcePipe = sourceHandler instanceof FluidPipeFluidHandler;
         boolean isDestPipe = destinationHandler instanceof FluidPipeFluidHandler;
-        if(isSourcePipe && isDestPipe) {
+        if (isSourcePipe && isDestPipe) {
             float sourceThickness = selfTileEntity.getPipeType().getThickness();
             IPipeTile<FluidPipeType, FluidPipeProperties> otherPipe = getPipeTileEntity(otherTileEntity);
             if (otherPipe == null) {
@@ -153,7 +154,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+    public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
         if (entityIn instanceof EntityLivingBase && entityIn.world.getWorldTime() % 20 == 0L) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
@@ -197,9 +198,11 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         }
     }
 
+    @Nonnull
+    @SuppressWarnings("deprecation")
     @Override
     @SideOnly(Side.CLIENT)
-    public EnumBlockRenderType getRenderType(IBlockState state) {
+    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
         return FluidPipeRenderer.BLOCK_RENDER_TYPE;
     }
 

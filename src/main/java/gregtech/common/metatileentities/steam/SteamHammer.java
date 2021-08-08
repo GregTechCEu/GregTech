@@ -38,16 +38,16 @@ public class SteamHammer extends SteamMetaTileEntity {
     @Override
     public ModularUI createUI(EntityPlayer player) {
         return createUITemplate(player)
-            .widget(new SlotWidget(this.importItems, 0, 53, 25)
-                .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getFullGuiTexture("slot_%s_hammer_background")))
-            .widget(new ProgressWidget(workableHandler::getProgressPercent, 79, 25, 20, 18)
-                .setProgressBar(getFullGuiTexture("progress_bar_%s_hammer"),
-                    getFullGuiTexture("progress_bar_%s_hammer_filled"),
-                    ProgressWidget.MoveType.VERTICAL))
-            .widget(new ImageWidget(79, 41, 20, 18)
-                .setImage(getFullGuiTexture("overlay_%s_hammer_base")))
-            .widget(new SlotWidget(this.exportItems, 0, 107, 25, true, false)
-                .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE))
-            .build(getHolder(), player);
+                .widget(new SlotWidget(this.importItems, 0, 53, 25)
+                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getFullGuiTexture("slot_%s_hammer_background")))
+                .widget(new ProgressWidget(workableHandler::getProgressPercent, 79, 25, 20, 18)
+                        .setProgressBar(getFullGuiTexture("progress_bar_%s_hammer"),
+                                getFullGuiTexture("progress_bar_%s_hammer_filled"),
+                                ProgressWidget.MoveType.VERTICAL))
+                .widget(new ImageWidget(79, 41, 20, 18)
+                        .setImage(getFullGuiTexture("overlay_%s_hammer_base")))
+                .widget(new SlotWidget(this.exportItems, 0, 107, 25, true, false)
+                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE))
+                .build(getHolder(), player);
     }
 }

@@ -3,8 +3,8 @@ package gregtech.api.unification.ore;
 import com.google.common.base.Preconditions;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.stack.MaterialStack;
@@ -22,7 +22,8 @@ import java.util.function.Predicate;
 import static gregtech.api.GTValues.M;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.Conditions.*;
-import static gregtech.api.unification.ore.OrePrefix.Flags.*;
+import static gregtech.api.unification.ore.OrePrefix.Flags.ENABLE_UNIFICATION;
+import static gregtech.api.unification.ore.OrePrefix.Flags.SELF_REFERENCING;
 
 public class OrePrefix {
 
@@ -422,7 +423,7 @@ public class OrePrefix {
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
     public float heatDamage = 0.0F; // Negative for Frost Damage
 
-    OrePrefix(String name, long materialAmount, Material material, MaterialIconType materialIconType, long flags, Predicate<Material> condition) {
+    OrePrefix(String name, long materialAmount, @Nullable Material material, @Nullable MaterialIconType materialIconType, long flags, @Nullable Predicate<Material> condition) {
         Preconditions.checkArgument(!PREFIXES.containsKey(name), "OrePrefix " + name + " already registered!");
         this.name = name;
         this.id = idCounter.getAndIncrement();
@@ -485,7 +486,7 @@ public class OrePrefix {
         return !isSelfReferencing && generationCondition != null && !isIgnored(material) && generationCondition.test(material);
     }
 
-    public void setGenerationCondition(Predicate<Material> in) {
+    public void setGenerationCondition(@Nullable Predicate<Material> in) {
         generationCondition = in;
     }
 
@@ -543,7 +544,7 @@ public class OrePrefix {
         currentProcessingPrefix.set(null);
     }
 
-    @SideOnly(Side.CLIENT)
+    @SideOnly(Side.CLIENT) // todo clean this up
     public String getLocalNameForItem(Material material) {
         String specifiedUnlocalized = "item." + material.toString() + "." + this.name;
         if (I18n.hasKey(specifiedUnlocalized)) return I18n.format(specifiedUnlocalized);

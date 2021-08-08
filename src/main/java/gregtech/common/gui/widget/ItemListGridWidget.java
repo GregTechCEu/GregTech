@@ -64,9 +64,7 @@ public class ItemListGridWidget extends ScrollableListWidget {
     private void dispatchOtherSlotShiftClick(INativeWidget clickedSlot) {
         ItemStack stackInSlot = clickedSlot.getHandle().getStack();
         if (!stackInSlot.isEmpty()) {
-            writeClientAction(4, buf -> {
-                buf.writeVarInt(clickedSlot.getHandle().slotNumber);
-            });
+            writeClientAction(4, buf -> buf.writeVarInt(clickedSlot.getHandle().slotNumber));
         }
     }
 
@@ -228,18 +226,18 @@ public class ItemListGridWidget extends ScrollableListWidget {
     @Nullable
     private INativeWidget findHoveredSlot(int mouseX, int mouseY) {
         return gui.guiWidgets.values().stream()
-            .flatMap(it -> it.getNativeWidgets().stream())
-            .filter(it -> it.getHandle().isEnabled())
-            .filter(it -> it.getHandle().canTakeStack(gui.entityPlayer))
-            .filter(it -> ((Widget) it).isMouseOverElement(mouseX, mouseY))
-            .findFirst().orElse(null);
+                .flatMap(it -> it.getNativeWidgets().stream())
+                .filter(it -> it.getHandle().isEnabled())
+                .filter(it -> it.getHandle().canTakeStack(gui.entityPlayer))
+                .filter(it -> ((Widget) it).isMouseOverElement(mouseX, mouseY))
+                .findFirst().orElse(null);
     }
 
     @Nullable
     private INativeWidget findSlotByNumber(int slotNumber) {
         return gui.guiWidgets.values().stream()
-            .flatMap(it -> it.getNativeWidgets().stream())
-            .filter(it -> it.getHandle().slotNumber == slotNumber)
-            .findFirst().orElse(null);
+                .flatMap(it -> it.getNativeWidgets().stream())
+                .filter(it -> it.getHandle().slotNumber == slotNumber)
+                .findFirst().orElse(null);
     }
 }

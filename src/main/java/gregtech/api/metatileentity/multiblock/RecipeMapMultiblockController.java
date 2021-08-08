@@ -145,13 +145,13 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         //basically check minimal requirements for inputs count
         //noinspection SuspiciousMethodCalls
         int itemInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_ITEMS, Collections.emptyList())
-            .stream().map(it -> (IItemHandler) it).mapToInt(IItemHandler::getSlots).sum();
+                .stream().map(it -> (IItemHandler) it).mapToInt(IItemHandler::getSlots).sum();
         //noinspection SuspiciousMethodCalls
         int fluidInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
         //noinspection SuspiciousMethodCalls
         return itemInputsCount >= recipeMap.getMinInputs() &&
-            fluidInputsCount >= recipeMap.getMinFluidInputs() &&
-            abilities.containsKey(MultiblockAbility.INPUT_ENERGY);
+                fluidInputsCount >= recipeMap.getMinFluidInputs() &&
+                abilities.containsKey(MultiblockAbility.INPUT_ENERGY);
     }
 
     @Override

@@ -6,7 +6,7 @@ public class DustProperty implements IMaterialProperty<DustProperty> {
 
     /**
      * Tool level needed to harvest block of this Material.
-     *
+     * <p>
      * Default: 2 (Iron).
      */
     //@ZenProperty
@@ -15,7 +15,7 @@ public class DustProperty implements IMaterialProperty<DustProperty> {
     /**
      * Burn time of this Material when used as fuel in Furnace smelting.
      * Zero or negative value indicates that this Material cannot be used as fuel.
-     *
+     * <p>
      * Default: 0.
      */
     //@ZenProperty

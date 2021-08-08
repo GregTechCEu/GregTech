@@ -13,7 +13,7 @@ public class FluidHandlerProxy implements IFluidHandler {
 
     public final IFluidHandler input;
     public final IFluidHandler output;
-    private IFluidTankProperties[] properties;
+    private final IFluidTankProperties[] properties;
 
     public FluidHandlerProxy(IFluidHandler input, IFluidHandler output) {
         this.input = input;

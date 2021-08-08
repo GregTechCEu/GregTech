@@ -8,7 +8,10 @@
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [19, 22]
+    "radius": [
+      19,
+      22
+    ]
   },
   "filler": {
     "type": "simple",
@@ -23,11 +26,11 @@
           "weight": 15,
           "value": "ore:iron"
         },
-		{
+        {
           "weight": 15,
           "value": "ore:vanadium_magnetite"
         },
-		{
+        {
           "weight": 10,
           "value": "ore:gold"
         }

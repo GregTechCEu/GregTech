@@ -22,8 +22,8 @@ import javax.annotation.Nonnull;
 public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-        MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.EXPORT_FLUIDS,
-        MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.EXPORT_FLUIDS,
+            MultiblockAbility.INPUT_ENERGY
     };
 
     public MetaTileEntityCrackingUnit(ResourceLocation metaTileEntityId) {
@@ -38,16 +38,16 @@ public class MetaTileEntityCrackingUnit extends RecipeMapMultiblockController {
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-            .aisle("HCHCH", "HCHCH", "HCHCH")
-            .aisle("HCHCH", "H###H", "HCHCH")
-            .aisle("HCHCH", "HCOCH", "HCHCH")
-            .setAmountAtLeast('L', 20)
-            .where('O', selfPredicate())
-            .where('L', statePredicate(getCasingState()))
-            .where('H', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-            .where('#', isAirPredicate())
-            .where('C', statePredicate(getCoilState()))
-            .build();
+                .aisle("HCHCH", "HCHCH", "HCHCH")
+                .aisle("HCHCH", "H###H", "HCHCH")
+                .aisle("HCHCH", "HCOCH", "HCHCH")
+                .setAmountAtLeast('L', 20)
+                .where('O', selfPredicate())
+                .where('L', statePredicate(getCasingState()))
+                .where('H', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('#', isAirPredicate())
+                .where('C', statePredicate(getCoilState()))
+                .build();
     }
 
     @Override

@@ -38,9 +38,15 @@ import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.LoaderException;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional.Method;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid = GTValues.MODID,

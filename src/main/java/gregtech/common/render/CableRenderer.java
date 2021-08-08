@@ -54,12 +54,12 @@ import org.lwjgl.opengl.GL11;
 
 public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
 
-    public static ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "cable"), "normal");
-    public static CableRenderer INSTANCE = new CableRenderer();
+    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "cable"), "normal");
+    public static final CableRenderer INSTANCE = new CableRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
-    private static ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
+    private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
 
-    private TextureAtlasSprite[] insulationTextures = new TextureAtlasSprite[6];
+    private final TextureAtlasSprite[] insulationTextures = new TextureAtlasSprite[6];
     private TextureAtlasSprite wireTexture;
 
     public static void preInit() {
@@ -100,8 +100,8 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         Material material = blockCable.getItemMaterial(stack);
         if (insulation != null && material != null) {
             renderCableBlock(material, insulation, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0],
-                1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
-                    1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
+                    1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
+                            1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
         }
         renderState.draw();
         GlStateManager.disableBlend();
@@ -265,7 +265,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         }
         TextureAtlasSprite atlasSprite;
         int particleColor;
-        if(insulation.insulationLevel == -1) {
+        if (insulation.insulationLevel == -1) {
             atlasSprite = wireTexture;
             particleColor = material.getMaterialRGB();
         } else {

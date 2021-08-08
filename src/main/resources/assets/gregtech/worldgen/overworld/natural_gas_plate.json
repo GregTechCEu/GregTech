@@ -6,16 +6,24 @@
   "priority": -100,
   "count_as_vein": false,
   "generation_predicate": "any",
-
   "biome_modifier": {
     "type": "biome_dictionary",
     "sandy": 5
   },
   "generator": {
     "type": "plate",
-    "length": [20, 36],
-    "depth": [20, 36],
-    "height": [5, 10]
+    "length": [
+      20,
+      36
+    ],
+    "depth": [
+      20,
+      36
+    ],
+    "height": [
+      5,
+      10
+    ]
   },
   "filler": {
     "type": "ignore_bedrock",

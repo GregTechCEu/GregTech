@@ -1,9 +1,9 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

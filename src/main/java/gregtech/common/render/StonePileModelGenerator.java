@@ -25,7 +25,7 @@ public class StonePileModelGenerator {
             int b = (int) cuboid6.data;
             int[] colours = ccModel.getOrAllocate(ColourAttribute.attributeKey);
             int color = (b & 0xFF) << 24 | (b & 0xFF) << 16 | (b & 0xFF) << 8 | (0xFF);
-            Arrays.fill(colours, i * 24, i* 24 + 24, color);
+            Arrays.fill(colours, i * 24, i * 24 + 24, color);
         }
         return ccModel.computeNormals();
     }

@@ -11,7 +11,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
     /**
      * List of Ore byproducts.
-     *
+     * <p>
      * Default: none, meaning only this property's Material.
      */
     //@ZenProperty
@@ -19,7 +19,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
     /**
      * Crushed Ore output amount multiplier during Maceration.
-     *
+     * <p>
      * Default: 1 (no multiplier).
      */
     //@ZenProperty
@@ -27,7 +27,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
     /**
      * Byproducts output amount multiplier during Maceration.
-     *
+     * <p>
      * Default: 1 (no multiplier).
      */
     //@ZenProperty
@@ -35,7 +35,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
     /**
      * Material to which smelting of this Ore will result.
-     *
+     * <p>
      * Material will have a Dust Property.
      * Default: none.
      */
@@ -45,7 +45,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
     /**
      * Material in which this Ore should be washed to give additional output.
-     *
+     * <p>
      * Material will have a Fluid Property.
      * Default: none.
      */
@@ -57,7 +57,7 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
      * During Electromagnetic Separation, this Ore will be separated
      * into this Material and the Material specified by this field.
      * Limit 2 Materials
-     *
+     * <p>
      * Material will have a Dust Property.
      * Default: none.
      */
@@ -133,8 +133,8 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
         if (directSmeltResult != null) directSmeltResult.getProperties().ensureSet(PropertyKey.DUST, true);
         if (washedIn != null) washedIn.getProperties().ensureSet(PropertyKey.FLUID, true);
-        if (separatedInto != null) {
-            for(Material m : separatedInto) {
+        if (!separatedInto.isEmpty()) {
+            for (Material m : separatedInto) {
                 m.getProperties().ensureSet(PropertyKey.DUST, true);
             }
         }

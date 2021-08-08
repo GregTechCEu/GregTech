@@ -4,6 +4,7 @@ import gregtech.api.capability.IEnergyContainer;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+@SuppressWarnings("InstantiationOfUtilityClass")
 public class MultiblockAbility<T> {
 
     public static final MultiblockAbility<IItemHandlerModifiable> EXPORT_ITEMS = new MultiblockAbility<>();

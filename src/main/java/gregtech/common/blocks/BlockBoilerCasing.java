@@ -8,6 +8,8 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import javax.annotation.Nonnull;
+
 public class BlockBoilerCasing extends VariantBlock<BlockBoilerCasing.BoilerCasingType> {
 
     public BlockBoilerCasing() {
@@ -21,7 +23,7 @@ public class BlockBoilerCasing extends VariantBlock<BlockBoilerCasing.BoilerCasi
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
         return false;
     }
 
@@ -39,6 +41,7 @@ public class BlockBoilerCasing extends VariantBlock<BlockBoilerCasing.BoilerCasi
             this.name = name;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return this.name;

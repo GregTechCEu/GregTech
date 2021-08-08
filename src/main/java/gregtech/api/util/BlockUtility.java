@@ -5,6 +5,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 
+import javax.annotation.Nonnull;
+
 public class BlockUtility {
 
     private static final BlockWrapper WRAPPER = new BlockWrapper();
@@ -15,6 +17,7 @@ public class BlockUtility {
             super(Material.AIR);
         }
 
+        @Nonnull
         @Override
         public NonNullList<ItemStack> captureDrops(boolean start) {
             return super.captureDrops(start);

@@ -55,8 +55,8 @@ import java.util.Map;
 
 public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
-    public static ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "item_pipe"), "normal");
-    public static ItemPipeRenderer INSTANCE = new ItemPipeRenderer();
+    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "item_pipe"), "normal");
+    public static final ItemPipeRenderer INSTANCE = new ItemPipeRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
     private static final ThreadLocal<BlockRenderer.BlockFace> blockFaces = ThreadLocal.withInitial(BlockRenderer.BlockFace::new);
     private final Map<ItemPipeType, PipeTextureInfo> pipeTextures = new HashMap<>();
@@ -170,20 +170,20 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         if (connectMask == 0) {
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
                 renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
-                if(restrictive)
+                if (restrictive)
                     renderPipeSide(state, pipeRestrictive, renderedSide, cuboid6);
             }
         } else {
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
                 //if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
-                    int oppositeIndex = renderedSide.getOpposite().getIndex();
-                    if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & ~(1 << oppositeIndex)) == 0) {
-                        renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
-                    } else {
-                        renderPipeSide(state, pipeSide, renderedSide, cuboid6);
-                        if(restrictive)
-                            renderPipeSide(state, pipeRestrictive, renderedSide, cuboid6);
-                    }
+                int oppositeIndex = renderedSide.getOpposite().getIndex();
+                if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & ~(1 << oppositeIndex)) == 0) {
+                    renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
+                } else {
+                    renderPipeSide(state, pipeSide, renderedSide, cuboid6);
+                    if (restrictive)
+                        renderPipeSide(state, pipeRestrictive, renderedSide, cuboid6);
+                }
                 //}
             }
             renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, EnumFacing.DOWN, thickness, restrictive);
@@ -206,7 +206,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
                     }
                 } else if (renderedSide != side.getOpposite()) {
                     renderPipeSide(renderState, pipeline, renderedSide, cuboid6);
-                    if(isRestrictive)
+                    if (isRestrictive)
                         renderPipeSide(renderState, pipeRestrictive, renderedSide, cuboid6);
                 }
             }

@@ -55,16 +55,16 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
         Predicate<BlockWorldState> fluidExportPredicate = countMatch("HatchesAmount", abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS));
         Predicate<PatternMatchContext> exactlyOneHatch = context -> context.getInt("HatchesAmount") == 1;
         return FactoryBlockPattern.start(RIGHT, FRONT, UP)
-            .aisle("YSY", "YYY", "YYY")
-            .aisle("XXX", "X#X", "XXX").setRepeatable(0, 11)
-            .aisle("XXX", "XXX", "XXX")
-            .where('S', selfPredicate())
-            .where('Y', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.INPUT_ENERGY, MultiblockAbility.IMPORT_FLUIDS)))
-            .where('X', fluidExportPredicate.or(statePredicate(getCasingState())))
-            .where('#', isAirPredicate())
-            .validateLayer(1, exactlyOneHatch)
-            .validateLayer(2, exactlyOneHatch)
-            .build();
+                .aisle("YSY", "YYY", "YYY")
+                .aisle("XXX", "X#X", "XXX").setRepeatable(0, 11)
+                .aisle("XXX", "XXX", "XXX")
+                .where('S', selfPredicate())
+                .where('Y', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.INPUT_ENERGY, MultiblockAbility.IMPORT_FLUIDS)))
+                .where('X', fluidExportPredicate.or(statePredicate(getCasingState())))
+                .where('#', isAirPredicate())
+                .validateLayer(1, exactlyOneHatch)
+                .validateLayer(2, exactlyOneHatch)
+                .build();
     }
 
     @Override

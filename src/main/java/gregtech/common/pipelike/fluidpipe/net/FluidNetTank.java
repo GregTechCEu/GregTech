@@ -1,8 +1,8 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.util.PerTickIntCounter;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.util.PerTickIntCounter;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 

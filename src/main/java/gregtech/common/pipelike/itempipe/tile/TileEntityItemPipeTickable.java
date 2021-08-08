@@ -19,7 +19,7 @@ public class TileEntityItemPipeTickable extends TileEntityItemPipe implements IT
 
     @Override
     public void update() {
-        if(++timer == 1000000000) timer = 0;
+        if (++timer == 1000000000) timer = 0;
         getCoverableImplementation().update();
         if (timer % 20 == 0) {
             transferredItems = 0;

@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gregtech.common.blocks.HermeticCasings.HermeticCasingsType.*;
-import static gregtech.common.blocks.HermeticCasings.HermeticCasingsType.HERMETIC_LV;
 
 public class CraftingComponent {
 
@@ -159,7 +158,7 @@ public class CraftingComponent {
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
         if (GTValues.HT) {
-            HULL.appendIngredients(Stream.of(new Object[][] {
+            HULL.appendIngredients(Stream.of(new Object[][]{
                     {9, MetaTileEntities.HULL[9].getStackForm()},
                     {10, MetaTileEntities.HULL[10].getStackForm()},
                     {11, MetaTileEntities.HULL[11].getStackForm()},
@@ -471,7 +470,6 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
     }
-
 
 
     public static class Component {

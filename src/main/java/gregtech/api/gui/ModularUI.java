@@ -134,11 +134,12 @@ public final class ModularUI implements ISizeProvider {
      */
     public static class Builder {
 
-        private ImmutableBiMap.Builder<Integer, Widget> widgets = ImmutableBiMap.builder();
-        private ImmutableList.Builder<Runnable> openListeners = ImmutableList.builder();
-        private ImmutableList.Builder<Runnable> closeListeners = ImmutableList.builder();
-        private TextureArea background;
-        private int width, height;
+        private final ImmutableBiMap.Builder<Integer, Widget> widgets = ImmutableBiMap.builder();
+        private final ImmutableList.Builder<Runnable> openListeners = ImmutableList.builder();
+        private final ImmutableList.Builder<Runnable> closeListeners = ImmutableList.builder();
+        private final TextureArea background;
+        private final int width;
+        private final int height;
         private int nextFreeWidgetId = 0;
 
         public Builder(TextureArea background, int width, int height) {
@@ -196,8 +197,8 @@ public final class ModularUI implements ISizeProvider {
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 9; col++) {
                     this.widget(new SlotWidget(inventoryPlayer, col + (row + 1) * 9, x + col * 18, y + row * 18)
-                        .setBackgroundTexture(imageLocation)
-                        .setLocationInfo(true, false));
+                            .setBackgroundTexture(imageLocation)
+                            .setLocationInfo(true, false));
                 }
             }
             return bindPlayerHotbar(inventoryPlayer, imageLocation, x, y + 58);
@@ -206,8 +207,8 @@ public final class ModularUI implements ISizeProvider {
         public Builder bindPlayerHotbar(InventoryPlayer inventoryPlayer, TextureArea imageLocation, int x, int y) {
             for (int slot = 0; slot < 9; slot++) {
                 this.widget(new SlotWidget(inventoryPlayer, slot, x + slot * 18, y)
-                    .setBackgroundTexture(imageLocation)
-                    .setLocationInfo(true, true));
+                        .setBackgroundTexture(imageLocation)
+                        .setLocationInfo(true, true));
             }
             return this;
         }

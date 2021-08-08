@@ -76,17 +76,17 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-            .aisle("XXX", "XDX", "XXX")
-            .aisle("XHX", "HGH", "XHX")
-            .aisle("XHX", "HGH", "XHX")
-            .aisle("AAA", "AYA", "AAA")
-            .where('X', statePredicate(getCasingState()))
-            .where('G', statePredicate(MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX)))
-            .where('H', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS)))
-            .where('D', abilityPartPredicate(MultiblockAbility.OUTPUT_ENERGY))
-            .where('A', intakeCasingPredicate())
-            .where('Y', selfPredicate())
-            .build();
+                .aisle("XXX", "XDX", "XXX")
+                .aisle("XHX", "HGH", "XHX")
+                .aisle("XHX", "HGH", "XHX")
+                .aisle("AAA", "AYA", "AAA")
+                .where('X', statePredicate(getCasingState()))
+                .where('G', statePredicate(MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX)))
+                .where('H', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS)))
+                .where('D', abilityPartPredicate(MultiblockAbility.OUTPUT_ENERGY))
+                .where('A', intakeCasingPredicate())
+                .where('Y', selfPredicate())
+                .build();
     }
 
     public IBlockState getCasingState() {

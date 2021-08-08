@@ -73,7 +73,7 @@ public class AnnotatedMaterialHandlerLoader {
                 materialHandlersRegistered++;
             } else {
                 GTLog.logger.error("Failed to load material handler class {} from {}: {}",
-                    materialHandlerClassName, annotationData.getCandidate().getModContainer().getName(), denyReason, loadingError);
+                        materialHandlerClassName, annotationData.getCandidate().getModContainer().getName(), denyReason, loadingError);
                 GTLog.logger.error("Consult the mod author for fix on his side.");
             }
         }

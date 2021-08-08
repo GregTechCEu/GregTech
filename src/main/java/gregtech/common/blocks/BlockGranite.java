@@ -4,6 +4,8 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nonnull;
+
 public class BlockGranite extends StoneBlock<BlockGranite.GraniteVariant> {
 
     public BlockGranite() {
@@ -14,8 +16,8 @@ public class BlockGranite extends StoneBlock<BlockGranite.GraniteVariant> {
         setSoundType(SoundType.STONE);
         setHarvestLevel("pickaxe", 3);
         setDefaultState(withVariant(
-            GraniteVariant.BLACK_GRANITE,
-            ChiselingVariant.NORMAL));
+                GraniteVariant.BLACK_GRANITE,
+                ChiselingVariant.NORMAL));
     }
 
     public enum GraniteVariant implements IStringSerializable {
@@ -31,6 +33,7 @@ public class BlockGranite extends StoneBlock<BlockGranite.GraniteVariant> {
             this.name = name;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return this.name;

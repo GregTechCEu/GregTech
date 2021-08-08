@@ -22,7 +22,7 @@ public class FluidProperty implements IMaterialProperty<FluidProperty> {
     private Fluid fluid;
 
     private boolean hasBlock;
-    private boolean isGas;
+    private final boolean isGas;
     private int fluidTemperature = BASE_TEMP;
 
     public FluidProperty(boolean isGas, boolean hasBlock) {

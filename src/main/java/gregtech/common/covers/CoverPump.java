@@ -37,6 +37,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
@@ -161,15 +162,15 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         primaryGroup.addWidget(new ImageWidget(10, 40, 120, 18, GuiTextures.DISPLAY));
         primaryGroup.addWidget(new SimpleTextWidget(70, 49, "cover.pump.transfer_rate", 0xFFFFFF, () -> bucketMode == BucketMode.BUCKET ? Integer.toString(transferRate / 1000) : Integer.toString(transferRate)));
         primaryGroup.addWidget(new CycleButtonWidget(132, 40, 30, 18,
-            BucketMode.class, this::getBucketMode, this::setBucketMode));
+                BucketMode.class, this::getBucketMode, this::setBucketMode));
 
         primaryGroup.addWidget(new CycleButtonWidget(10, 63, 75, 18,
-            PumpMode.class, this::getPumpMode, this::setPumpMode));
+                PumpMode.class, this::getPumpMode, this::setPumpMode));
 
         primaryGroup.addWidget(new CycleButtonWidget(7, 160, 116, 20,
-           ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-            .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
-              
+                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
+                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+
         this.fluidFilter.initUI(88, primaryGroup::addWidget);
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 184 + 82)
@@ -219,7 +220,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             }
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandlerWrapper);
         }
-        if(capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
         return defaultValue;
@@ -253,18 +254,18 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         //LEGACY SAVE FORMAT SUPPORT
         if (tagCompound.hasKey("AllowManualIO")) {
             this.manualImportExportMode = tagCompound.getBoolean("AllowManualIO")
-            ? ManualImportExportMode.FILTERED
-            : ManualImportExportMode.DISABLED;
+                    ? ManualImportExportMode.FILTERED
+                    : ManualImportExportMode.DISABLED;
         }
         if (tagCompound.hasKey("FluidFilter")) {
             this.fluidFilter.deserializeNBT(tagCompound);
         } else {
             this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         }
-        if(tagCompound.hasKey("WorkingAllowed")) {
+        if (tagCompound.hasKey("WorkingAllowed")) {
             this.isWorkingAllowed = tagCompound.getBoolean("WorkingAllowed");
         }
-        if(tagCompound.hasKey("ManualImportExportMode")) {
+        if (tagCompound.hasKey("ManualImportExportMode")) {
             this.manualImportExportMode = ManualImportExportMode.values()[tagCompound.getInteger("ManualImportExportMode")];
         }
 
@@ -285,7 +286,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         PumpMode(String localeName) {
             this.localeName = localeName;
         }
-        
+
+        @Nonnull
         @Override
         public String getName() {
             return localeName;
@@ -302,6 +304,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             this.localeName = localeName;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return localeName;

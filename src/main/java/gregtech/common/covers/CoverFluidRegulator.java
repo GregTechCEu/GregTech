@@ -55,9 +55,12 @@ public class CoverFluidRegulator extends CoverPump {
             return 0;
         }
         switch (transferMode) {
-            case TRANSFER_ANY: return GTFluidUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
-            case KEEP_EXACT: return doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.keepAmount);
-            case TRANSFER_EXACT: return doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.supplyAmount);
+            case TRANSFER_ANY:
+                return GTFluidUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
+            case KEEP_EXACT:
+                return doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.keepAmount);
+            case TRANSFER_EXACT:
+                return doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.supplyAmount);
         }
         return 0;
     }
@@ -89,12 +92,12 @@ public class CoverFluidRegulator extends CoverPump {
             //no fluid in destination
             if (destFluid == null) {
                 amountToDrainAndFill = Math.min(keepAmount, fluidLeftToTransfer);
-            //if the amount of fluid in the destination is sufficient or the destinations fluid isnt equal to the sources
-            //how to check if destHandler is full?
+                //if the amount of fluid in the destination is sufficient or the destinations fluid isnt equal to the sources
+                //how to check if destHandler is full?
             } else if (destFluid.amount >= keepAmount || !destFluid.isFluidEqual(sourceFluid)) {
                 continue;
             } else {
-            //if keepAmount is larger than the transferLimit we will have to stock it over several ticks (seconds?)
+                //if keepAmount is larger than the transferLimit we will have to stock it over several ticks (seconds?)
                 amountToDrainAndFill = Math.min(keepAmount - destFluid.amount, fluidLeftToTransfer);
             }
             sourceFluid.amount = amountToDrainAndFill;
@@ -128,7 +131,8 @@ public class CoverFluidRegulator extends CoverPump {
             case TRANSFER_EXACT:
                 val = supplyAmount;
                 break;
-            default: val = -1;
+            default:
+                val = -1;
         }
         if (this.bucketMode == BucketMode.BUCKET) {
             val /= 1000;
@@ -154,7 +158,7 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     @Override
-    public void setBucketMode(BucketMode bucketMode){
+    public void setBucketMode(BucketMode bucketMode) {
         super.setBucketMode(bucketMode);
         if (this.bucketMode == BucketMode.BUCKET) {
             setKeepAmount(keepAmount / 1000 * 1000);
@@ -164,7 +168,7 @@ public class CoverFluidRegulator extends CoverPump {
 
     private void adjustTransferSize(int amount) {
         amount *= this.bucketMode == BucketMode.BUCKET ? 1000 : 1;
-        switch(this.transferMode) {
+        switch (this.transferMode) {
             case TRANSFER_EXACT:
                 setSupplyAmount(MathHelper.clamp(this.supplyAmount + amount, 0, this.transferRate));
             case KEEP_EXACT:

@@ -76,14 +76,14 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
         WidgetGroup filterGroup = new WidgetGroup();
         filterGroup.addWidget(new LabelWidget(10, 5, titleLocale));
         filterGroup.addWidget(new CycleButtonWidget(10, 20, 110, 20,
-            GTUtility.mapToString(ItemFilterMode.values(), it -> it.localeName),
-            () -> filterMode.ordinal(), (newMode) -> setFilterMode(ItemFilterMode.values()[newMode])));
+                GTUtility.mapToString(ItemFilterMode.values(), it -> it.localeName),
+                () -> filterMode.ordinal(), (newMode) -> setFilterMode(ItemFilterMode.values()[newMode])));
         this.itemFilter.initUI(45, filterGroup::addWidget);
 
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 105 + 82)
-            .widget(filterGroup)
-            .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)
-            .build(this, player);
+                .widget(filterGroup)
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)
+                .build(this, player);
     }
 
     @Override
@@ -107,8 +107,8 @@ public class CoverItemFilter extends CoverBehavior implements CoverWithUI {
         this.filterMode = ItemFilterMode.values()[tagCompound.getInteger("FilterMode")];
         this.itemFilter.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
         //LEGACY SAVE FORMAT SUPPORT
-        if(tagCompound.hasKey("FilterInventory") || tagCompound.hasKey("OreDictionaryFilter")) {
-            if(tagCompound.hasKey("FilterInventory")) {
+        if (tagCompound.hasKey("FilterInventory") || tagCompound.hasKey("OreDictionaryFilter")) {
+            if (tagCompound.hasKey("FilterInventory")) {
                 tagCompound.setTag("ItemFilter", tagCompound.getCompoundTag("FilterInventory"));
                 tagCompound.removeTag("FilterInventory");
             }

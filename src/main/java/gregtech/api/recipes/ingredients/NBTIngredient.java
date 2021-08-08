@@ -19,8 +19,8 @@ public class NBTIngredient extends Ingredient {
         if (input == null)
             return false;
         return this.stack.getItem() == input.getItem() &&
-            this.stack.getItemDamage() == input.getItemDamage() &&
-            ItemStack.areItemStackShareTagsEqual(this.stack, input);
+                this.stack.getItemDamage() == input.getItemDamage() &&
+                ItemStack.areItemStackShareTagsEqual(this.stack, input);
     }
 
     @Override

@@ -37,7 +37,7 @@ public class RecipeLogicEnergy extends AbstractRecipeLogic {
     @Override
     protected long getMaxVoltage() {
         return Math.max(energyContainer.get().getInputVoltage(),
-            energyContainer.get().getOutputVoltage());
+                energyContainer.get().getOutputVoltage());
     }
 
 }

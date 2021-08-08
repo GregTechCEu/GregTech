@@ -7,7 +7,7 @@ import java.util.List;
 
 public class EnergyContainerList implements IEnergyContainer {
 
-    private List<IEnergyContainer> energyContainerList;
+    private final List<IEnergyContainer> energyContainerList;
 
     public EnergyContainerList(List<IEnergyContainer> energyContainerList) {
         this.energyContainerList = energyContainerList;
@@ -36,15 +36,15 @@ public class EnergyContainerList implements IEnergyContainer {
     @Override
     public long getEnergyStored() {
         return energyContainerList.stream()
-            .mapToLong(IEnergyContainer::getEnergyStored)
-            .sum();
+                .mapToLong(IEnergyContainer::getEnergyStored)
+                .sum();
     }
 
     @Override
     public long getEnergyCapacity() {
         return energyContainerList.stream()
-            .mapToLong(IEnergyContainer::getEnergyCapacity)
-            .sum();
+                .mapToLong(IEnergyContainer::getEnergyCapacity)
+                .sum();
     }
 
     @Override
@@ -60,15 +60,15 @@ public class EnergyContainerList implements IEnergyContainer {
     @Override
     public long getInputVoltage() {
         return energyContainerList.stream()
-            .mapToLong(v -> v.getInputVoltage() * v.getInputAmperage())
-            .sum();
+                .mapToLong(v -> v.getInputVoltage() * v.getInputAmperage())
+                .sum();
     }
 
     @Override
     public long getOutputVoltage() {
         return energyContainerList.stream()
-            .mapToLong(v -> v.getOutputVoltage() * v.getOutputAmperage())
-            .sum();
+                .mapToLong(v -> v.getOutputVoltage() * v.getOutputAmperage())
+                .sum();
     }
 
     @Override

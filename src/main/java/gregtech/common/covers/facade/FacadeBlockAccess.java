@@ -13,6 +13,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+
 import static net.minecraft.util.EnumFacing.*;
 
 /**
@@ -64,8 +66,9 @@ public class FacadeBlockAccess implements IBlockAccess {
         }
     }
 
+    @Nonnull
     @Override
-    public IBlockState getBlockState(BlockPos pos) {
+    public IBlockState getBlockState(@Nonnull BlockPos pos) {
         IBlockState ret;
         Result action = getAction(pos);
         if (action == Result.ORIGINAL) {
@@ -83,54 +86,56 @@ public class FacadeBlockAccess implements IBlockAccess {
     }
 
     @Override
-    public TileEntity getTileEntity(BlockPos pos) {
+    public TileEntity getTileEntity(@Nonnull BlockPos pos) {
         return getAction(pos) == Result.ORIGINAL ? world.getTileEntity(pos) : null;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public int getCombinedLight(BlockPos pos, int t) {
+    public int getCombinedLight(@Nonnull BlockPos pos, int t) {
         if (((side == DOWN && pos.getY() > this.pos.getY()) ||
-            (side == UP && pos.getY() < this.pos.getY()) ||
-            (side == NORTH && pos.getZ() > this.pos.getZ()) ||
-            (side == SOUTH && pos.getZ() < this.pos.getZ()) ||
-            (side == WEST && pos.getX() > this.pos.getX()) ||
-            (side == EAST && pos.getX() < this.pos.getX()))) {
+                (side == UP && pos.getY() < this.pos.getY()) ||
+                (side == NORTH && pos.getZ() > this.pos.getZ()) ||
+                (side == SOUTH && pos.getZ() < this.pos.getZ()) ||
+                (side == WEST && pos.getX() > this.pos.getX()) ||
+                (side == EAST && pos.getX() < this.pos.getX()))) {
             return world.getCombinedLight(this.pos, t);
         }
         return world.getCombinedLight(pos, t);
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, EnumFacing side) {
+    public int getStrongPower(@Nonnull BlockPos pos, @Nonnull EnumFacing side) {
         return world.getStrongPower(pos, side);
     }
 
+    @Nonnull
     @Override
     public WorldType getWorldType() {
         return world.getWorldType();
     }
 
     @Override
-    public boolean isAirBlock(BlockPos pos) {
+    public boolean isAirBlock(@Nonnull BlockPos pos) {
         Result action = getAction(pos);
         return action == Result.AIR ||
-            (action == Result.ORIGINAL && world.isAirBlock(pos)) ||
-            (action == Result.COVER && getBlockState(pos).getBlock().isAir(getBlockState(pos), this, pos));
+                (action == Result.ORIGINAL && world.isAirBlock(pos)) ||
+                (action == Result.COVER && getBlockState(pos).getBlock().isAir(getBlockState(pos), this, pos));
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
-    public Biome getBiome(BlockPos pos) {
+    public Biome getBiome(@Nonnull BlockPos pos) {
         return world.getBiome(pos);
     }
 
     @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default) {
+    public boolean isSideSolid(BlockPos pos, @Nonnull EnumFacing side, boolean _default) {
         if (pos.getX() < -30000000 ||
-            pos.getZ() < -30000000 ||
-            pos.getX() >= 30000000 ||
-            pos.getZ() >= 30000000) {
+                pos.getZ() < -30000000 ||
+                pos.getX() >= 30000000 ||
+                pos.getZ() >= 30000000) {
             return _default;
         } else {
             return getBlockState(pos).isSideSolid(this, pos, side);

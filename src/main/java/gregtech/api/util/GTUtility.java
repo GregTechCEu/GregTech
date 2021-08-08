@@ -3,6 +3,7 @@ package gregtech.api.util;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -82,7 +83,7 @@ public class GTUtility {
     }
 
     public static Stream<Object> flatten(Object[] array) {
-        return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o): Stream.of(o));
+        return Arrays.stream(array).flatMap(o -> o instanceof Object[] ? flatten((Object[]) o) : Stream.of(o));
     }
 
     public static void copyInventoryItems(IItemHandler src, IItemHandlerModifiable dest) {
@@ -158,8 +159,8 @@ public class GTUtility {
     public static void setItem(ItemStack itemStack, ItemStack newStack) {
         try {
             Field itemField = Arrays.stream(ItemStack.class.getDeclaredFields())
-                .filter(field -> field.getType() == Item.class)
-                .findFirst().orElseThrow(ReflectiveOperationException::new);
+                    .filter(field -> field.getType() == Item.class)
+                    .findFirst().orElseThrow(ReflectiveOperationException::new);
             itemField.setAccessible(true);
             //replace item field instance
             itemField.set(itemStack, newStack.getItem());
@@ -182,6 +183,7 @@ public class GTUtility {
      * field is used, and ItemStack.getItemDamage() can be overriden,
      * giving incorrect results for itemstack equality comparisons,
      * which still use raw ItemStack.itemDamage field
+     *
      * @return actual value of ItemStack.itemDamage field
      */
     public static int getActualItemDamageFromStack(ItemStack itemStack) {
@@ -193,7 +195,7 @@ public class GTUtility {
      * If it's not possible to merge it fully, it will attempt to insert it into first empty slots
      *
      * @param itemStack item stack to merge. It WILL be modified.
-     * @param simulate if true, stack won't actually modify items in other slots
+     * @param simulate  if true, stack won't actually modify items in other slots
      * @return if merging of at least one item succeed, false otherwise
      */
     public static boolean mergeItemStack(ItemStack itemStack, List<Slot> slots, boolean simulate) {
@@ -208,7 +210,7 @@ public class GTUtility {
                 continue; //if itemstack cannot be placed into that slot, continue
             ItemStack stackInSlot = slot.getStack();
             if (!ItemStack.areItemsEqual(itemStack, stackInSlot) ||
-                !ItemStack.areItemStackTagsEqual(itemStack, stackInSlot))
+                    !ItemStack.areItemStackTagsEqual(itemStack, stackInSlot))
                 continue; //if itemstacks don't match, continue
             int slotMaxStackSize = Math.min(stackInSlot.getMaxStackSize(), slot.getItemStackLimit(stackInSlot));
             int amountToInsert = Math.min(itemStack.getCount(), slotMaxStackSize - stackInSlot.getCount());
@@ -251,19 +253,19 @@ public class GTUtility {
         IBlockState blockState = world.getBlockState(pos);
         TileEntity tileEntity = world.getTileEntity(pos);
 
-        if(blockState.getBlock().isAir(blockState, world, pos)) {
+        if (blockState.getBlock().isAir(blockState, world, pos)) {
             return false;
         }
 
-        if(!blockState.getBlock().canHarvestBlock(world, pos, player)) {
+        if (!blockState.getBlock().canHarvestBlock(world, pos, player)) {
             return false;
         }
 
         int expToDrop = 0;
-        if(!world.isRemote) {
+        if (!world.isRemote) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
             expToDrop = ForgeHooks.onBlockBreakEvent(world, playerMP.interactionManager.getGameType(), playerMP, pos);
-            if(expToDrop == -1) {
+            if (expToDrop == -1) {
                 //notify client if block can't be removed because of BreakEvent cancelled on server side
                 playerMP.connection.sendPacket(new SPacketBlockChange(world, pos));
                 return false;
@@ -273,19 +275,19 @@ public class GTUtility {
         world.playEvent(player, 2001, pos, Block.getStateId(blockState));
 
         boolean wasRemovedByPlayer = blockState.getBlock().removedByPlayer(blockState, world, pos, player, !player.capabilities.isCreativeMode);
-        if(wasRemovedByPlayer) {
+        if (wasRemovedByPlayer) {
             blockState.getBlock().onPlayerDestroy(world, pos, blockState);
 
-            if(!world.isRemote && !player.capabilities.isCreativeMode) {
+            if (!world.isRemote && !player.capabilities.isCreativeMode) {
                 ItemStack stackInHand = player.getHeldItemMainhand();
                 blockState.getBlock().harvestBlock(world, player, pos, blockState, tileEntity, stackInHand);
-                if(expToDrop > 0) {
+                if (expToDrop > 0) {
                     blockState.getBlock().dropXpOnBlockBreak(world, pos, expToDrop);
                 }
             }
         }
 
-        if(!world.isRemote) {
+        if (!world.isRemote) {
             EntityPlayerMP playerMP = (EntityPlayerMP) player;
             playerMP.connection.sendPacket(new SPacketBlockChange(world, pos));
         } else {
@@ -397,7 +399,7 @@ public class GTUtility {
                 return (byte) Math.max(0, tier - 1);
             }
         }
-        return (byte) Math.min(V.length -1, tier);
+        return (byte) Math.min(V.length - 1, tier);
     }
 
     public static BiomeDictionary.Type getBiomeTypeTagByName(String name) {
@@ -445,6 +447,10 @@ public class GTUtility {
                 return i;
         }
         throw new IllegalArgumentException("Invalid weight");
+    }
+
+    public static <T> int getRandomItem(List<? extends Entry<Integer, T>> randomList, int size) {
+        return getRandomItem(GTValues.RNG, randomList, size);
     }
 
     @Nullable
@@ -557,14 +563,14 @@ public class GTUtility {
     public static List<EntityPlayerMP> findPlayersUsing(MetaTileEntity metaTileEntity, double radius) {
         ArrayList<EntityPlayerMP> result = new ArrayList<>();
         AxisAlignedBB box = new AxisAlignedBB(metaTileEntity.getPos())
-            .expand(radius, radius, radius)
-            .expand(-radius, -radius, -radius);
+                .expand(radius, radius, radius)
+                .expand(-radius, -radius, -radius);
         List<EntityPlayerMP> entities = metaTileEntity.getWorld().getEntitiesWithinAABB(EntityPlayerMP.class, box);
         for (EntityPlayerMP player : entities) {
             if (player.openContainer instanceof ModularUIContainer) {
                 ModularUI modularUI = ((ModularUIContainer) player.openContainer).getModularUI();
                 if (modularUI.holder instanceof MetaTileEntityHolder &&
-                    ((MetaTileEntityHolder) modularUI.holder).getMetaTileEntity() == metaTileEntity) {
+                        ((MetaTileEntityHolder) modularUI.holder).getMetaTileEntity() == metaTileEntity) {
                     result.add(player);
                 }
             }
@@ -650,8 +656,11 @@ public class GTUtility {
 
     public static <T> Collector<T, ?, ImmutableList<T>> toImmutableList() {
         return Collector.of(ImmutableList::builder, Builder::add,
-            (b1, b2) -> { b1.addAll(b2.build()); return b2; },
-            ImmutableList.Builder<T>::build);
+                (b1, b2) -> {
+                    b1.addAll(b2.build());
+                    return b2;
+                },
+                ImmutableList.Builder<T>::build);
     }
 
     public static <M> M selectItemInList(int index, M replacement, List<M> list, Class<M> minClass) {
@@ -683,7 +692,7 @@ public class GTUtility {
             double posY = pos.getY() + 0.5;
             double posZ = pos.getZ() + 0.5;
             ((WorldServer) metaTileEntity.getWorld()).spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ,
-                10, 0.2, 0.2, 0.2, 0.0);
+                    10, 0.2, 0.2, 0.2, 0.0);
             metaTileEntity.getWorld().createExplosion(null, posX, posY, posZ, getTierByVoltage(voltage), ConfigHolder.doExplosions);
         }
     }
@@ -695,7 +704,7 @@ public class GTUtility {
             return worldPower;
         } else {
             IBlockState offsetState = world.getBlockState(offsetPos);
-            if(offsetState.getBlock() instanceof BlockRedstoneWire) {
+            if (offsetState.getBlock() instanceof BlockRedstoneWire) {
                 int wirePower = offsetState.getValue(BlockRedstoneWire.POWER);
                 return Math.max(worldPower, wirePower);
             }
@@ -705,10 +714,10 @@ public class GTUtility {
 
     public static Comparator<ItemStack> createItemStackComparator() {
         return Comparator.<ItemStack, Integer>comparing(it -> Item.REGISTRY.getIDForObject(it.getItem()))
-            .thenComparing(ItemStack::getItemDamage)
-            .thenComparing(ItemStack::hasTagCompound)
-            .thenComparing(it -> -Objects.hashCode(it.getTagCompound()))
-            .thenComparing(it -> -it.getCount());
+                .thenComparing(ItemStack::getItemDamage)
+                .thenComparing(ItemStack::hasTagCompound)
+                .thenComparing(it -> -Objects.hashCode(it.getTagCompound()))
+                .thenComparing(it -> -it.getCount());
     }
 
     public static int getRandomIntXSTR(int bound) {
@@ -765,23 +774,23 @@ public class GTUtility {
                     double d2 = 999.0D;
 
                     if (i > l)
-                        d0 = (double)l + 1.0D;
+                        d0 = (double) l + 1.0D;
                     else if (i < l)
-                        d0 = (double)l + 0.0D;
+                        d0 = (double) l + 0.0D;
                     else
                         flag2 = false;
 
                     if (j > i1)
-                        d1 = (double)i1 + 1.0D;
+                        d1 = (double) i1 + 1.0D;
                     else if (j < i1)
-                        d1 = (double)i1 + 0.0D;
+                        d1 = (double) i1 + 0.0D;
                     else
                         flag = false;
 
                     if (k > j1)
-                        d2 = (double)j1 + 1.0D;
+                        d2 = (double) j1 + 1.0D;
                     else if (k < j1)
-                        d2 = (double)j1 + 0.0D;
+                        d2 = (double) j1 + 0.0D;
                     else
                         flag1 = false;
 

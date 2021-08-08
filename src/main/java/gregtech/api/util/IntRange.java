@@ -22,7 +22,7 @@ public class IntRange {
         if (!(o instanceof IntRange)) return false;
         IntRange intRange = (IntRange) o;
         return minValue == intRange.minValue &&
-            maxValue == intRange.maxValue;
+                maxValue == intRange.maxValue;
     }
 
     @Override
@@ -33,8 +33,8 @@ public class IntRange {
     @Override
     public String toString() {
         return "IntRange{" +
-            "minValue=" + minValue +
-            ", maxValue=" + maxValue +
-            '}';
+                "minValue=" + minValue +
+                ", maxValue=" + maxValue +
+                '}';
     }
 }

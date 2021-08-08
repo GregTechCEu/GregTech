@@ -9,7 +9,10 @@
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [17, 19]
+    "radius": [
+      17,
+      19
+    ]
   },
   "filler": {
     "type": "simple",
@@ -20,15 +23,15 @@
           "weight": 30,
           "value": "ore:bornite"
         },
-		{
+        {
           "weight": 30,
           "value": "ore:chalcocite"
         },
-		{
+        {
           "weight": 30,
           "value": "ore:enargite"
         },
-		{
+        {
           "weight": 10,
           "value": "ore:copper"
         }

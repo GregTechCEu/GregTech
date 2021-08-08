@@ -33,6 +33,7 @@ public class VanillaOverrideRecipes {
             miscRecipes();
         toolArmorRecipes();
     }
+
     private static void woodRecipes() {
         if (ConfigHolder.vanillaRecipes.nerfStickCrafting) {
             ModHandler.removeRecipeByName(new ResourceLocation("minecraft:stick"));

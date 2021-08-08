@@ -13,7 +13,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
     /**
      * Speed of tools made from this Material.
-     *
+     * <p>
      * Default:
      */
     //@ZenProperty
@@ -21,7 +21,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
     /**
      * Attack damage of tools made from this Material
-     *
+     * <p>
      * Default:
      */
     //@ZenProperty
@@ -29,7 +29,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
     /**
      * Durability of tools made from this Material.
-     *
+     * <p>
      * Default:
      */
     //@ZenProperty
@@ -37,7 +37,7 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
     /**
      * Enchantment to be applied to tools made from this Material.
-     *
+     * <p>
      * Default: none.
      */
     //@ZenProperty

@@ -10,12 +10,13 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.WorldInfo;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class DummyWorld extends World {
 
-    private static WorldSettings DEFAULT_SETTINGS = new WorldSettings(
-        1L, GameType.SURVIVAL, true, false, WorldType.DEFAULT);
+    private static final WorldSettings DEFAULT_SETTINGS = new WorldSettings(
+            1L, GameType.SURVIVAL, true, false, WorldType.DEFAULT);
 
     public static final DummyWorld INSTANCE = new DummyWorld();
 
@@ -33,31 +34,31 @@ public class DummyWorld extends World {
     }
 
     @Override
-    public void notifyNeighborsRespectDebug(BlockPos pos, Block blockType, boolean p_175722_3_) {
+    public void notifyNeighborsRespectDebug(@Nonnull BlockPos pos, @Nonnull Block blockType, boolean p_175722_3_) {
         //NOOP - do not trigger forge events
     }
 
     @Override
-    public void notifyNeighborsOfStateChange(BlockPos pos, Block blockType, boolean updateObservers) {
+    public void notifyNeighborsOfStateChange(@Nonnull BlockPos pos, @Nonnull Block blockType, boolean updateObservers) {
         //NOOP - do not trigger forge events
     }
 
     @Override
-    public void notifyNeighborsOfStateExcept(BlockPos pos, Block blockType, EnumFacing skipSide) {
+    public void notifyNeighborsOfStateExcept(@Nonnull BlockPos pos, @Nonnull Block blockType, @Nonnull EnumFacing skipSide) {
         //NOOP - do not trigger forge events
     }
 
     @Override
-    public void markAndNotifyBlock(BlockPos pos, @Nullable Chunk chunk, IBlockState iblockstate, IBlockState newState, int flags) {
+    public void markAndNotifyBlock(@Nonnull BlockPos pos, @Nullable Chunk chunk, @Nonnull IBlockState iblockstate, @Nonnull IBlockState newState, int flags) {
         //NOOP - do not trigger forge events
     }
 
     @Override
-    public void notifyBlockUpdate(BlockPos pos, IBlockState oldState, IBlockState newState, int flags) {
+    public void notifyBlockUpdate(@Nonnull BlockPos pos, @Nonnull IBlockState oldState, @Nonnull IBlockState newState, int flags) {
     }
 
     @Override
-    public void markBlockRangeForRenderUpdate(BlockPos rangeMin, BlockPos rangeMax) {
+    public void markBlockRangeForRenderUpdate(@Nonnull BlockPos rangeMin, @Nonnull BlockPos rangeMax) {
     }
 
     @Override
@@ -65,9 +66,10 @@ public class DummyWorld extends World {
     }
 
     @Override
-    public void updateObservingBlocksAt(BlockPos pos, Block blockType) {
+    public void updateObservingBlocksAt(@Nonnull BlockPos pos, @Nonnull Block blockType) {
     }
 
+    @Nonnull
     @Override
     protected IChunkProvider createChunkProvider() {
         return new DummyChunkProvider(this);

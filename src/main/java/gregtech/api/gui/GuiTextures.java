@@ -4,8 +4,6 @@ import gregtech.api.gui.resources.AdoptableTextureArea;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
 
-import javax.xml.soap.Text;
-
 public class GuiTextures {
 
     //GREGTECH

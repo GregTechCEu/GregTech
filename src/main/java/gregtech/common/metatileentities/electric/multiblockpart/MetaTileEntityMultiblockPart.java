@@ -41,7 +41,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         getBaseTexture().render(renderState, translation, ArrayUtils.add(pipeline,
-            new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
+                new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
     }
 
     @Override
@@ -74,7 +74,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
         if (controller != null) {
             this.hatchTexture = controller.getBaseTexture(this);
         }
-        if (controller == null && this.hatchTexture != null){
+        if (controller == null && this.hatchTexture != null) {
             return this.hatchTexture;
         }
         if (controller == null) {

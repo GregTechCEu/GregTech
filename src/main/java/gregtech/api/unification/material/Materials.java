@@ -11,20 +11,20 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
 
 /**
  * Material Registration.
- *
+ * <p>
  * All Material Builders should follow this general formatting:
- *
+ * <p>
  * material = new MaterialBuilder(id, name)
- *     .ingot().fluid().ore()                <--- types
- *     .color().iconSet()                    <--- appearance
- *     .flags()                              <--- special generation
- *     .element() / .components()            <--- composition
- *     .toolStats()                          <---
- *     .oreByProducts()                         | additional properties
- *     ...                                   <---
- *     .blastTemp()                          <--- blast temperature
- *     .build();
- *
+ * .ingot().fluid().ore()                <--- types
+ * .color().iconSet()                    <--- appearance
+ * .flags()                              <--- special generation
+ * .element() / .components()            <--- composition
+ * .toolStats()                          <---
+ * .oreByProducts()                         | additional properties
+ * ...                                   <---
+ * .blastTemp()                          <--- blast temperature
+ * .build();
+ * <p>
  * Use defaults to your advantage! Some defaults:
  * - iconSet: DULL
  * - color: 0xFFFFFF

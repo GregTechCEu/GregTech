@@ -40,8 +40,8 @@ public class ToolUtility {
             return false;
         }
         IBlockState blockState = world.getBlockState(blockPos);
-        if(TreeChopTask.isLogBlock(blockState) == 1) {
-            if(!world.isRemote) {
+        if (TreeChopTask.isLogBlock(blockState) == 1) {
+            if (!world.isRemote) {
                 EntityPlayerMP playerMP = (EntityPlayerMP) player;
                 TreeChopTask treeChopTask = new TreeChopTask(blockPos, world, playerMP, itemStack);
                 TaskScheduler.scheduleTask(world, treeChopTask);
@@ -59,7 +59,7 @@ public class ToolUtility {
                 int fortuneLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, itemStack);
                 List<ItemStack> drops = target.onSheared(itemStack, player.world, pos, fortuneLevel);
                 dropListOfItems(player.world, pos, drops);
-                         player.world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
+                player.world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
                 return true;
             }
         }
@@ -69,9 +69,9 @@ public class ToolUtility {
     public static boolean applyHarvestBehavior(BlockPos pos, EntityPlayer player) {
         IBlockState blockState = player.world.getBlockState(pos);
         Block block = blockState.getBlock();
-        if(block instanceof BlockCrops) {
+        if (block instanceof BlockCrops) {
             BlockCrops blockCrops = (BlockCrops) block;
-            if(blockCrops.isMaxAge(blockState)) {
+            if (blockCrops.isMaxAge(blockState)) {
                 @SuppressWarnings("deprecation")
                 List<ItemStack> drops = blockCrops.getDrops(player.world, pos, blockState, 0);
                 dropListOfItems(player.world, pos, drops);

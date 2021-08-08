@@ -30,7 +30,7 @@ public class FactoryBlockPattern {
     private final List<Predicate<PatternMatchContext>> contextValidators = new ArrayList<>();
     private int aisleHeight;
     private int rowWidth;
-    private RelativeDirection[] structureDir = new RelativeDirection[3];
+    private final RelativeDirection[] structureDir = new RelativeDirection[3];
 
     private FactoryBlockPattern(RelativeDirection charDir, RelativeDirection stringDir, RelativeDirection aisleDir) {
         structureDir[0] = charDir;
@@ -164,8 +164,8 @@ public class FactoryBlockPattern {
 
     public BlockPattern build() {
         return new BlockPattern(makePredicateArray(), makeCountLimitsList(),
-            layerValidators, contextValidators,
-            structureDir, aisleRepetitions.toArray(new int[aisleRepetitions.size()][]));
+                layerValidators, contextValidators,
+                structureDir, aisleRepetitions.toArray(new int[aisleRepetitions.size()][]));
     }
 
     @SuppressWarnings("unchecked")

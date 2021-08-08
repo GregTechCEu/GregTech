@@ -28,17 +28,17 @@ public class LargeBoilerInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
-            .aisle("FXX", "CCC", "CCC", "CCC")
-            .aisle("XXX", "SPC", "CPC", "CCC")
-            .aisle("IXX", "COC", "CCC", "CCC")
-            .where('S', boiler, EnumFacing.WEST)
-            .where('P', boiler.boilerType.pipeState)
-            .where('X', boiler.boilerType.fireboxState)
-            .where('C', boiler.boilerType.casingState)
-            .where('O', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.MV], EnumFacing.SOUTH)
-            .where('I', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.MV], EnumFacing.WEST)
-            .where('F', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.MV], EnumFacing.WEST)
-            .build();
+                .aisle("FXX", "CCC", "CCC", "CCC")
+                .aisle("XXX", "SPC", "CPC", "CCC")
+                .aisle("IXX", "COC", "CCC", "CCC")
+                .where('S', boiler, EnumFacing.WEST)
+                .where('P', boiler.boilerType.pipeState)
+                .where('X', boiler.boilerType.fireboxState)
+                .where('C', boiler.boilerType.casingState)
+                .where('O', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.MV], EnumFacing.SOUTH)
+                .where('I', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.MV], EnumFacing.WEST)
+                .where('F', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.MV], EnumFacing.WEST)
+                .build();
         return Lists.newArrayList(shapeInfo);
     }
 

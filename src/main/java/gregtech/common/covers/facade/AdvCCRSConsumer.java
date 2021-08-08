@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 
+import javax.annotation.Nonnull;
+
 public class AdvCCRSConsumer implements IVertexConsumer {
 
     private final CCRenderState ccrs;
@@ -18,18 +20,19 @@ public class AdvCCRSConsumer implements IVertexConsumer {
         this.ccrs = ccrs;
     }
 
+    @Nonnull
     @Override
     public VertexFormat getVertexFormat() {
         return ccrs.getVertexFormat();
     }
 
     @Override
-    public void setTexture(TextureAtlasSprite texture) {
+    public void setTexture(@Nonnull TextureAtlasSprite texture) {
         ccrs.sprite = texture;
     }
 
     @Override
-    public void put(int e, float... data) {
+    public void put(int e, @Nonnull float... data) {
         VertexFormat format = getVertexFormat();
 
         VertexFormatElement fmte = format.getElement(e);
@@ -69,7 +72,7 @@ public class AdvCCRSConsumer implements IVertexConsumer {
     }
 
     @Override
-    public void setQuadOrientation(EnumFacing orientation) {
+    public void setQuadOrientation(@Nonnull EnumFacing orientation) {
     }
 
     @Override

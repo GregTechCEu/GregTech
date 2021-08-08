@@ -54,8 +54,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
 
-    private static int inputTankCapacity = ConfigHolder.U.GT5u.useCustomMachineTankSizes ? ConfigHolder.U.GT5u.customMachineTankSizes[0] : 64000;
-    private static int outputTankCapacity = ConfigHolder.U.GT5u.useCustomMachineTankSizes ? ConfigHolder.U.GT5u.customMachineTankSizes[1] : 64000;
+    private static final int inputTankCapacity = ConfigHolder.U.GT5u.useCustomMachineTankSizes ? ConfigHolder.U.GT5u.customMachineTankSizes[0] : 64000;
+    private static final int outputTankCapacity = ConfigHolder.U.GT5u.useCustomMachineTankSizes ? ConfigHolder.U.GT5u.customMachineTankSizes[1] : 64000;
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
     public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier) {
@@ -133,7 +133,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         super.update();
         if (!getWorld().isRemote) {
             ((EnergyContainerHandler) this.energyContainer).dischargeOrRechargeEnergyContainers(chargerInventory, 0);
-          
+
             if (getOffsetTimer() % 5 == 0) {
                 EnumFacing currentOutputFacing = getOutputFacing();
                 if (isAutoOutputFluids()) {
@@ -324,25 +324,25 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         }
 
         ModularUI.Builder builder = workableRecipeMap.createUITemplate(workable::getProgressPercent, importItems, exportItems, importFluids, exportFluids, yOffset)
-            .widget(new LabelWidget(5, 5, getMetaFullName()))
-            .widget(new SlotWidget(chargerInventory, 0, 79, 62 + yOffset)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY))
-            .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY)
-                .setPredicate(workable::isHasNotEnoughEnergy))
-            .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
+                .widget(new LabelWidget(5, 5, getMetaFullName()))
+                .widget(new SlotWidget(chargerInventory, 0, 79, 62 + yOffset)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY))
+                .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY)
+                        .setPredicate(workable::isHasNotEnoughEnergy))
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
         int leftButtonStartX = 7;
 
         if (exportItems.getSlots() > 0) {
             builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
-                GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
-                .setTooltipText("gregtech.gui.item_auto_output.tooltip"));
+                    GuiTextures.BUTTON_ITEM_OUTPUT, this::isAutoOutputItems, this::setAutoOutputItems)
+                    .setTooltipText("gregtech.gui.item_auto_output.tooltip"));
             leftButtonStartX += 18;
         }
         if (exportFluids.getTanks() > 0) {
             builder.widget(new ToggleButtonWidget(leftButtonStartX, 62 + yOffset, 18, 18,
-                GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
-                .setTooltipText("gregtech.gui.fluid_auto_output.tooltip"));
+                    GuiTextures.BUTTON_FLUID_OUTPUT, this::isAutoOutputFluids, this::setAutoOutputFluids)
+                    .setTooltipText("gregtech.gui.fluid_auto_output.tooltip"));
             leftButtonStartX += 18;
         }
 

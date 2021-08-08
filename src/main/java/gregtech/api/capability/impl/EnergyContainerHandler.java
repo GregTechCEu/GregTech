@@ -66,7 +66,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
 
     @Override
     public <T> T getCapability(Capability<T> capability) {
-        if(capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
+        if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER) {
             return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(this);
         }
         return null;

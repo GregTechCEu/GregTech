@@ -14,6 +14,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -48,21 +49,22 @@ public class ResourcePackHook implements IResourceManagerReloadListener, IResour
 
     }
 
-    private static ArrayList<IResourcePackFileHook> hooks = new ArrayList<>();
+    private static final ArrayList<IResourcePackFileHook> hooks = new ArrayList<>();
 
     public static void addResourcePackFileHook(IResourcePackFileHook hook) {
         hooks.add(hook);
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
         for (IResourcePackFileHook hook : hooks) {
             hook.onResourceManagerReload((SimpleReloadableResourceManager) resourceManager);
         }
     }
 
+    @Nonnull
     @Override
-    public InputStream getInputStream(ResourceLocation location) throws IOException {
+    public InputStream getInputStream(@Nonnull ResourceLocation location) throws IOException {
         for (IResourcePackFileHook hook : hooks) {
             if (hook.resourceExists(location))
                 return hook.getInputStream(location);
@@ -71,7 +73,7 @@ public class ResourcePackHook implements IResourceManagerReloadListener, IResour
     }
 
     @Override
-    public boolean resourceExists(ResourceLocation location) {
+    public boolean resourceExists(@Nonnull ResourceLocation location) {
         for (IResourcePackFileHook hook : hooks) {
             if (hook.resourceExists(location))
                 return true;
@@ -79,24 +81,27 @@ public class ResourcePackHook implements IResourceManagerReloadListener, IResour
         return false;
     }
 
+    @Nonnull
     @Override
     public Set<String> getResourceDomains() {
         return ImmutableSet.of("gregtech");
     }
 
     @Override
-    public <T extends IMetadataSection> T getPackMetadata(MetadataSerializer metadataSerializer, String metadataSectionName) throws IOException {
+    public <T extends IMetadataSection> T getPackMetadata(@Nonnull MetadataSerializer metadataSerializer, String metadataSectionName) {
         if (metadataSectionName.equals("pack")) {
             return (T) new PackMetadataSection(new TextComponentString(getPackName()), 1);
         }
         return null;
     }
 
+    @Nonnull
     @Override
     public BufferedImage getPackImage() throws IOException {
         return ImageIO.read(Minecraft.class.getResource("/pack.png"));
     }
 
+    @Nonnull
     @Override
     public String getPackName() {
         return "Gregtech Internal Resource Pack";

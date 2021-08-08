@@ -1,7 +1,7 @@
 /**
  * Material Properties are a replacement for the old nested hierarchy of Material Types
  * (IngotMaterial, DustMaterial, etc.).<br><br>
- *
+ * <p>
  * To create your own Material Property, it should follow this general structure:
  * <pre>{@code
  *     public class MyProperty extends IMaterialProperty<MyProperty> {
@@ -39,7 +39,7 @@
  *         }
  *     }
  * }</pre><br><br>
- *
+ * <p>
  * You must also create a new {@link gregtech.api.unification.material.properties.PropertyKey} Object, like:
  * <pre>{@code
  *     public static final PropertyKey<MyProperty> MY_PROPERTY = new PropertyKey<>("my_property", MyProperty.class);

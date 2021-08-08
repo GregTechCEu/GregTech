@@ -9,7 +9,10 @@
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [13, 13]
+    "radius": [
+      13,
+      13
+    ]
   },
   "filler": {
     "type": "simple",
@@ -24,7 +27,7 @@
           "weight": 20,
           "value": "ore:diamond"
         },
-		{
+        {
           "weight": 20,
           "value": "ore:coal"
         }

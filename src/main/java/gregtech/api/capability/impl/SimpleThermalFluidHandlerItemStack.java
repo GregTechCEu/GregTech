@@ -43,7 +43,7 @@ public class SimpleThermalFluidHandlerItemStack extends FluidHandlerItemStackSim
     }
 
     private void removeTagWhenEmpty(Boolean doDrain) {
-        if(doDrain && this.getFluid() == null) {
+        if (doDrain && this.getFluid() == null) {
             this.container.setTagCompound(null);
         }
     }

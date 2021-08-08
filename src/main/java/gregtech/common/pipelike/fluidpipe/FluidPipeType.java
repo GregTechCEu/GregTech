@@ -4,6 +4,8 @@ import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.ore.OrePrefix;
 
+import javax.annotation.Nonnull;
+
 public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
 
     TINY_OPAQUE("tiny", 0.25f, 1, OrePrefix.pipeTinyFluid, true),
@@ -26,6 +28,7 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
         this.opaque = opaque;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return name;
@@ -44,9 +47,9 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
     @Override
     public FluidPipeProperties modifyProperties(FluidPipeProperties baseProperties) {
         return new FluidPipeProperties(
-            baseProperties.maxFluidTemperature,
-            baseProperties.throughput * capacityMultiplier,
-            baseProperties.gasProof);
+                baseProperties.maxFluidTemperature,
+                baseProperties.throughput * capacityMultiplier,
+                baseProperties.gasProof);
     }
 
     @Override

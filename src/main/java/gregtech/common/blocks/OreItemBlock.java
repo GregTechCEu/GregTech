@@ -9,9 +9,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+
 public class OreItemBlock extends ItemBlock {
 
-    private BlockOre oreBlock;
+    private final BlockOre oreBlock;
 
     public OreItemBlock(BlockOre oreBlock) {
         super(oreBlock);
@@ -24,9 +26,10 @@ public class OreItemBlock extends ItemBlock {
         return damage;
     }
 
+    @Nonnull
     @Override
     public CreativeTabs[] getCreativeTabs() {
-        return new CreativeTabs[] {CreativeTabs.SEARCH, GregTechAPI.TAB_GREGTECH_ORES};
+        return new CreativeTabs[]{CreativeTabs.SEARCH, GregTechAPI.TAB_GREGTECH_ORES};
     }
 
     @SuppressWarnings("deprecation")
@@ -34,9 +37,10 @@ public class OreItemBlock extends ItemBlock {
         return oreBlock.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
-    public String getItemStackDisplayName(ItemStack stack) {
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         IBlockState blockState = getBlockState(stack);
         StoneType stoneType = blockState.getValue(oreBlock.STONE_TYPE);
         return stoneType.processingPrefix.getLocalNameForItem(oreBlock.material);

@@ -101,7 +101,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
                 .label(10, 5, getMetaFullName());
 
         for (int y = 0; y < rowSize; y++) {
-            for (int x = 0; x < rowSize; x ++) {
+            for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
                 builder.widget(new SlotWidget(isExportHatch ? exportItems : importItems, index,
                         (88 - rowSize * 9 + x * 18) + xOffset, 18 + y * 18, true, !isExportHatch)

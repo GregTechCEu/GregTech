@@ -20,7 +20,7 @@ public class IngotProperty implements IMaterialProperty<IngotProperty> {
 
     /**
      * Specifies a Material into which this Material Macerates into.
-     *
+     * <p>
      * Default: this Material.
      */
     private Material macerateInto;

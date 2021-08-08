@@ -4,8 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.BlockOre;
@@ -56,8 +56,8 @@ public class OreConfigUtils {
 
     public static Map<StoneType, IBlockState> getOreForMaterial(Material material) {
         List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
-            .filter(ore -> ore.material == material)
-            .collect(Collectors.toList());
+                .filter(ore -> ore.material == material)
+                .collect(Collectors.toList());
         HashMap<StoneType, IBlockState> stoneTypeMap = new HashMap<>();
         for (BlockOre blockOre : oreBlocks) {
             for (StoneType stoneType : blockOre.STONE_TYPE.getAllowedValues()) {

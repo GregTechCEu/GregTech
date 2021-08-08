@@ -11,6 +11,8 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import javax.annotation.Nonnull;
+
 public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
 
     public static final PropertyBool ACTIVE = PropertyBool.create("active");
@@ -26,7 +28,7 @@ public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
     }
 
     @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public int getLightValue(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
         return state.getValue(ACTIVE) ? 15 : 0;
     }
 
@@ -52,7 +54,7 @@ public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
         return false;
     }
 
@@ -69,6 +71,7 @@ public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
             this.name = name;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return this.name;

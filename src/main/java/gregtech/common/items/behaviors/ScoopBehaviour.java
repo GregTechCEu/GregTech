@@ -39,7 +39,7 @@ public class ScoopBehaviour implements IItemBehaviour {
                 IAlleleButterflySpecies species = butterfly.getButterfly().getGenome().getPrimary();
                 species.getRoot().getBreedingTracker(entity.world, player.getGameProfile()).registerCatch(butterfly.getButterfly());
                 player.world.spawnEntity(new EntityItem(player.world, entity.posX, entity.posY, entity.posZ,
-                    species.getRoot().getMemberStack(butterfly.getButterfly().copy(), EnumFlutterType.BUTTERFLY)));
+                        species.getRoot().getMemberStack(butterfly.getButterfly().copy(), EnumFlutterType.BUTTERFLY)));
                 entity.setDead();
             }
             return true;

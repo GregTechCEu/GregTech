@@ -4,8 +4,8 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.Name;
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class GTCELoadingPlugin implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
-        return new String[] {"gregtech.common.asm.GTCETransformer"};
+        return new String[]{"gregtech.common.asm.GTCETransformer"};
     }
 
     @Override

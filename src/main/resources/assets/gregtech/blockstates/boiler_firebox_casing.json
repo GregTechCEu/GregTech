@@ -27,7 +27,6 @@
         }
       }
     ],
-
     "active=false,variant=steel_firebox": [
       {
         "textures": {
@@ -46,7 +45,6 @@
         }
       }
     ],
-
     "active=false,variant=titanium_firebox": [
       {
         "textures": {
@@ -65,7 +63,6 @@
         }
       }
     ],
-
     "active=false,variant=tungstensteel_firebox": [
       {
         "textures": {

@@ -33,8 +33,8 @@ public class FluidSpringPopulator implements VeinBufferPopulator {
     @Override
     public void initializeForVein(OreDepositDefinition definition) {
         List<IBlockState> possibleStates = definition.getBlockFiller().getAllPossibleStates().stream()
-            .flatMap(it -> it.getPossibleResults().stream())
-            .collect(Collectors.toList());
+                .flatMap(it -> it.getPossibleResults().stream())
+                .collect(Collectors.toList());
         this.fluidState = possibleStates.stream().filter(it -> it.getPropertyKeys().contains(BlockFluidBase.LEVEL)).findFirst().orElse(null);
         if (fluidState == null) {
             String message = "Can't find fluid block for spring in vein %s. Blocks in vein: %s";

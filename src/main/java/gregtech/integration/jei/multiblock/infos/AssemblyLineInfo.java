@@ -2,7 +2,10 @@ package gregtech.integration.jei.multiblock.infos;
 
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.common.blocks.*;
+import gregtech.common.blocks.BlockMetalCasing;
+import gregtech.common.blocks.BlockMultiblockCasing;
+import gregtech.common.blocks.BlockTransparentCasing;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.jei.multiblock.MultiblockInfoPage;
 import gregtech.integration.jei.multiblock.MultiblockShapeInfo;
@@ -75,11 +78,11 @@ public class AssemblyLineInfo extends MultiblockInfoPage {
                 new TextComponentTranslation("gregtech.machine.item_bus.export.ulv.name"))
                 .setStyle(new Style().setColor(TextFormatting.RED));
 
-        for(int i = 0; i < GTValues.UHV + 1; i++) {
+        for (int i = 0; i < GTValues.UHV + 1; i++) {
             addBlockTooltip(MetaTileEntities.ITEM_EXPORT_BUS[i].getStackForm(), defaultText);
             addBlockTooltip(MetaTileEntities.ITEM_EXPORT_BUS[i].getStackForm(), outputTooltip);
-            addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(),  defaultText);
-            addBlockTooltip(MetaTileEntities.FLUID_IMPORT_HATCH[i].getStackForm(),  defaultText);
+            addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(), defaultText);
+            addBlockTooltip(MetaTileEntities.FLUID_IMPORT_HATCH[i].getStackForm(), defaultText);
         }
         addBlockTooltip(MetaTileEntities.ITEM_IMPORT_BUS[0].getStackForm(), inputTooltip);
     }

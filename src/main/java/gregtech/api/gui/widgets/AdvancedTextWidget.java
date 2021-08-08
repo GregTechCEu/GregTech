@@ -9,7 +9,10 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.ClickEvent.Action;
 import net.minecraft.util.text.event.HoverEvent;
@@ -18,6 +21,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -34,10 +38,10 @@ public class AdvancedTextWidget extends Widget {
     @SideOnly(Side.CLIENT)
     private WrapScreen wrapScreen;
 
-    protected Consumer<List<ITextComponent>> textSupplier;
+    protected final Consumer<List<ITextComponent>> textSupplier;
     protected BiConsumer<String, ClickData> clickHandler;
     private List<ITextComponent> displayText = new ArrayList<>();
-    private int color;
+    private final int color;
 
     public AdvancedTextWidget(int xPosition, int yPosition, Consumer<List<ITextComponent>> text, int color) {
         super(new Position(xPosition, yPosition), Size.ZERO);
@@ -158,8 +162,8 @@ public class AdvancedTextWidget extends Widget {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         int maxTextWidthResult = maxWidthLimit == 0 ? Integer.MAX_VALUE : maxWidthLimit;
         this.displayText = displayText.stream()
-            .flatMap(c -> GuiUtilRenderComponents.splitText(c, maxTextWidthResult, fontRenderer, true, true).stream())
-            .collect(Collectors.toList());
+                .flatMap(c -> GuiUtilRenderComponents.splitText(c, maxTextWidthResult, fontRenderer, true, true).stream())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -213,7 +217,7 @@ public class AdvancedTextWidget extends Widget {
         ITextComponent textComponent = getTextUnderMouse(mouseX, mouseY);
         if (textComponent != null) {
             if (handleCustomComponentClick(textComponent) ||
-                getWrapScreen().handleComponentClick(textComponent)) {
+                    getWrapScreen().handleComponentClick(textComponent)) {
                 playButtonClickSound();
                 return true;
             }
@@ -249,17 +253,17 @@ public class AdvancedTextWidget extends Widget {
     @SideOnly(Side.CLIENT)
     private static class WrapScreen extends GuiScreen {
         @Override
-        public void handleComponentHover(ITextComponent component, int x, int y) {
+        public void handleComponentHover(@Nonnull ITextComponent component, int x, int y) {
             super.handleComponentHover(component, x, y);
         }
 
         @Override
-        public boolean handleComponentClick(ITextComponent component) {
+        public boolean handleComponentClick(@Nonnull ITextComponent component) {
             return super.handleComponentClick(component);
         }
 
         @Override
-        protected void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font) {
+        protected void drawHoveringText(@Nonnull List<String> textLines, int x, int y, @Nonnull FontRenderer font) {
             GuiUtils.drawHoveringText(textLines, x, y, width, height, 256, font);
         }
     }

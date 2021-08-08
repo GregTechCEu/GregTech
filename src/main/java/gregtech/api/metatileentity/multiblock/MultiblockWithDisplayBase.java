@@ -31,8 +31,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.invalid_structure.tooltip");
             tooltip.setStyle(new Style().setColor(TextFormatting.GRAY));
             textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
-                .setStyle(new Style().setColor(TextFormatting.RED)
-                    .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, tooltip))));
+                    .setStyle(new Style().setColor(TextFormatting.RED)
+                            .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, tooltip))));
         }
     }
 
@@ -49,8 +49,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         builder.image(7, 4, 162, 121, GuiTextures.DISPLAY);
         builder.label(11, 9, getMetaFullName(), 0xFFFFFF);
         builder.widget(new AdvancedTextWidget(11, 19, this::addDisplayText, 0xFFFFFF)
-            .setMaxWidthLimit(156)
-            .setClickHandler(this::handleDisplayClick));
+                .setMaxWidthLimit(156)
+                .setClickHandler(this::handleDisplayClick));
         builder.bindPlayerInventory(entityPlayer.inventory, 134);
         return builder;
     }

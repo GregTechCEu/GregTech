@@ -42,7 +42,7 @@ public class Position {
         if (!(o instanceof Position)) return false;
         Position position = (Position) o;
         return x == position.x &&
-            y == position.y;
+                y == position.y;
     }
 
     @Override
@@ -53,8 +53,8 @@ public class Position {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-            .add("x", x)
-            .add("y", y)
-            .toString();
+                .add("x", x)
+                .add("y", y)
+                .toString();
     }
 }

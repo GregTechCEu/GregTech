@@ -6,7 +6,7 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
      * Blast Furnace Temperature of this Material.
      * If below 1000K, Primitive Blast Furnace recipes will be also added.
      * If above 1750K, a Hot Ingot and its Vacuum Freezer recipe will be also added.
-     *
+     * <p>
      * If a Material with this Property has a Fluid, its temperature
      * will be set to this if it is the default Fluid temperature.
      */

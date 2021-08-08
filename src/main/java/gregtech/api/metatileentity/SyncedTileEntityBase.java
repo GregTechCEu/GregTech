@@ -63,7 +63,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+    public void onDataPacket(@Nonnull NetworkManager net, SPacketUpdateTileEntity pkt) {
         NBTTagCompound updateTag = pkt.getNbtCompound();
         NBTTagList tagList = updateTag.getTagList("d", NBT.TAG_COMPOUND);
         for (int i = 0; i < tagList.tagCount(); i++) {
@@ -75,6 +75,7 @@ public abstract class SyncedTileEntityBase extends BlockStateTileEntity {
         }
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound updateTag = super.getUpdateTag();

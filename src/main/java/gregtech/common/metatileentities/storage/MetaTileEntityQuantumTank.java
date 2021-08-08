@@ -49,7 +49,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     private final ItemStackHandler containerInventory;
     private boolean autoOutputFluids;
     private EnumFacing outputFacing;
-    private boolean allowInputFromOutputSide = true;
+    private final boolean allowInputFromOutputSide = true;
 
     public MetaTileEntityQuantumTank(ResourceLocation metaTileEntityId, int tier, int maxFluidCapacity) {
         super(metaTileEntityId);
@@ -211,6 +211,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
                 .bindPlayerInventory(entityPlayer.inventory)
                 .build(getHolder(), entityPlayer);
     }
+
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
@@ -260,6 +261,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.outputFacing = EnumFacing.VALUES[buf.readByte()];
         this.autoOutputFluids = buf.readBoolean();
     }
+
     public void setOutputFacing(EnumFacing outputFacing) {
         this.outputFacing = outputFacing;
         if (!getWorld().isRemote) {
@@ -284,7 +286,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     @Override
     public boolean canPlaceCoverOnSide(EnumFacing side) {
         //Done to prevent loops as output always acts as input
-        if (side == getOutputFacing()){
+        if (side == getOutputFacing()) {
             return false;
         }
         return true;
@@ -309,8 +311,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             markDirty();
         }
     }
-
-
 
 
 }

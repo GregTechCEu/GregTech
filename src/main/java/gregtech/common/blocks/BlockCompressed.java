@@ -90,8 +90,8 @@ public final class BlockCompressed extends DelayedStateBlock {
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
         blockState.getValidStates().stream()
-            .filter(blockState -> blockState.getValue(variantProperty) != Materials._NULL)
-            .forEach(blockState -> list.add(getItem(blockState)));
+                .filter(blockState -> blockState.getValue(variantProperty) != Materials._NULL)
+                .forEach(blockState -> list.add(getItem(blockState)));
     }
 
     @Override

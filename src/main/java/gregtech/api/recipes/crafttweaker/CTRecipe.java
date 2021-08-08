@@ -33,29 +33,29 @@ public class CTRecipe {
     @ZenGetter("inputs")
     public List<InputIngredient> getInputs() {
         return this.backingRecipe.getInputs().stream()
-            .map(InputIngredient::new)
-            .collect(Collectors.toList());
+                .map(InputIngredient::new)
+                .collect(Collectors.toList());
     }
 
     @ZenGetter("outputs")
     public List<IItemStack> getOutputs() {
         return this.backingRecipe.getOutputs().stream()
-            .map(MCItemStack::new)
-            .collect(Collectors.toList());
+                .map(MCItemStack::new)
+                .collect(Collectors.toList());
     }
 
     @ZenMethod
     public List<IItemStack> getResultItemOutputs(@Optional(valueLong = -1) long randomSeed, @Optional(valueLong = 1) int tier) {
         return this.backingRecipe.getResultItemOutputs(Integer.MAX_VALUE, randomSeed == -1L ? new Random() : new Random(randomSeed), tier).stream()
-            .map(MCItemStack::new)
-            .collect(Collectors.toList());
+                .map(MCItemStack::new)
+                .collect(Collectors.toList());
     }
 
     @ZenGetter("changedOutputs")
     public List<ChancedEntry> getChancedOutputs() {
         ArrayList<ChancedEntry> result = new ArrayList<>();
         this.backingRecipe.getChancedOutputs().forEach(chanceEntry ->
-            result.add(new ChancedEntry(new MCItemStack(chanceEntry.getItemStack()), chanceEntry.getChance(), chanceEntry.getBoostPerTier())));
+                result.add(new ChancedEntry(new MCItemStack(chanceEntry.getItemStack()), chanceEntry.getChance(), chanceEntry.getBoostPerTier())));
         return result;
     }
 
@@ -63,13 +63,13 @@ public class CTRecipe {
     @ZenGetter("chancedOutputs")
     public List<ChancedEntry> getChancedOutputsFix() {
         return getChancedOutputs();
-    }        
-    
+    }
+
     @ZenGetter("fluidInputs")
     public List<ILiquidStack> getFluidInputs() {
         return this.backingRecipe.getFluidInputs().stream()
-            .map(MCLiquidStack::new)
-            .collect(Collectors.toList());
+                .map(MCLiquidStack::new)
+                .collect(Collectors.toList());
     }
 
     @ZenMethod
@@ -80,8 +80,8 @@ public class CTRecipe {
     @ZenGetter("fluidOutputs")
     public List<ILiquidStack> getFluidOutputs() {
         return this.backingRecipe.getFluidOutputs().stream()
-            .map(MCLiquidStack::new)
-            .collect(Collectors.toList());
+                .map(MCLiquidStack::new)
+                .collect(Collectors.toList());
     }
 
     @ZenGetter("duration")

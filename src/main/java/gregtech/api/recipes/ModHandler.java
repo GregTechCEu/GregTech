@@ -49,7 +49,7 @@ public class ModHandler {
      */
     public static boolean isWater(FluidStack fluid) {
         return new FluidStack(FluidRegistry.WATER, 1).isFluidEqual(fluid)
-            || Materials.DistilledWater.getFluid(1).isFluidEqual(fluid);
+                || Materials.DistilledWater.getFluid(1).isFluidEqual(fluid);
     }
 
     /**
@@ -193,8 +193,8 @@ public class ModHandler {
         }
 
         IRecipe shapedOreRecipe = new ShapedOreRecipe(new ResourceLocation(GTValues.MODID, "general"), result.copy(), finalizeShapedRecipeInput(recipe))
-            .setMirrored(true)
-            .setRegistryName(regName);
+                .setMirrored(true)
+                .setRegistryName(regName);
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
     }
 
@@ -240,8 +240,8 @@ public class ModHandler {
         }
 
         IRecipe shapedOreRecipe = new ShapedOreRecipe(null, result.copy(), finalizeShapedRecipeInput(recipe))
-            .setMirrored(false) //make all recipes not mirrored by default
-            .setRegistryName(regName);
+                .setMirrored(false) //make all recipes not mirrored by default
+                .setRegistryName(regName);
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
     }
 
@@ -263,8 +263,8 @@ public class ModHandler {
         }
 
         IRecipe shapedOreRecipe = new ShapedOreEnergyTransferRecipe(null, result.copy(), chargePredicate, overrideCharge, transferMaxCharge, finalizeShapedRecipeInput(recipe))
-            .setMirrored(false) //make all recipes not mirrored by default
-            .setRegistryName(regName);
+                .setMirrored(false) //make all recipes not mirrored by default
+                .setRegistryName(regName);
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
     }
 
@@ -280,20 +280,20 @@ public class ModHandler {
             skip = true;
         } else if (Arrays.asList(recipe).contains(null) || Arrays.asList(recipe).contains(ItemStack.EMPTY)) {
             GTLog.logger.error("Recipe cannot contain null elements or Empty ItemStacks. Recipe: {}",
-                Arrays.stream(recipe)
-                    .map(o -> o == null ? "NULL" : o)
-                    .map(o -> o == ItemStack.EMPTY ? "EMPTY STACK" : o)
-                    .map(Object::toString)
-                    .map(s -> "\"" + s + "\"")
-                    .collect(Collectors.joining(", ")));
+                    Arrays.stream(recipe)
+                            .map(o -> o == null ? "NULL" : o)
+                            .map(o -> o == ItemStack.EMPTY ? "EMPTY STACK" : o)
+                            .map(Object::toString)
+                            .map(s -> "\"" + s + "\"")
+                            .collect(Collectors.joining(", ")));
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             skip = true;
         } else if (ForgeRegistries.RECIPES.containsKey(new ResourceLocation(GTValues.MODID, regName))) {
             GTLog.logger.error("Tried to register recipe, {}, with duplicate key. Recipe: {}", regName,
-                Arrays.stream(recipe)
-                    .map(Object::toString)
-                    .map(s -> "\"" + s + "\"")
-                    .collect(Collectors.joining(", ")));
+                    Arrays.stream(recipe)
+                            .map(Object::toString)
+                            .map(s -> "\"" + s + "\"")
+                            .collect(Collectors.joining(", ")));
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             skip = true;
         }
@@ -321,7 +321,7 @@ public class ModHandler {
         }
         return recipeList.toArray();
     }
-    
+
     public static Object finalizeIngredient(Object ingredient) {
         if (ingredient instanceof MetaItem.MetaValueItem) {
             ingredient = ((MetaItem<?>.MetaValueItem) ingredient).getStackForm();
@@ -332,12 +332,12 @@ public class ModHandler {
         } else if (ingredient instanceof UnificationEntry) {
             ingredient = ingredient.toString();
         } else if (!(ingredient instanceof ItemStack
-            || ingredient instanceof Item
-            || ingredient instanceof Block
-            || ingredient instanceof String
-            || ingredient instanceof Character
-            || ingredient instanceof Boolean
-            || ingredient instanceof Ingredient)) {
+                || ingredient instanceof Item
+                || ingredient instanceof Block
+                || ingredient instanceof String
+                || ingredient instanceof Character
+                || ingredient instanceof Boolean
+                || ingredient instanceof Ingredient)) {
             throw new IllegalArgumentException(ingredient.getClass().getSimpleName() + " type is not suitable for crafting input.");
         }
         return ingredient;
@@ -375,15 +375,15 @@ public class ModHandler {
                 }
                 recipe[i] = toolName;
             } else if (!(recipe[i] instanceof ItemStack
-                || recipe[i] instanceof Item
-                || recipe[i] instanceof Block
-                || recipe[i] instanceof String)) {
+                    || recipe[i] instanceof Item
+                    || recipe[i] instanceof Block
+                    || recipe[i] instanceof String)) {
                 throw new IllegalArgumentException(recipe.getClass().getSimpleName() + " type is not suitable for crafting input.");
             }
         }
 
         IRecipe shapelessRecipe = new ShapelessOreRecipe(null, result.copy(), recipe)
-            .setRegistryName(regName);
+                .setRegistryName(regName);
 
         try {
             //workaround for MC bug that makes all shaped recipe inputs that have enchanted items

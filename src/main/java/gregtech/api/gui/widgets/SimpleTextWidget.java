@@ -20,9 +20,9 @@ import static gregtech.api.gui.impl.ModularUIGui.*;
  */
 public class SimpleTextWidget extends Widget {
 
-    protected String formatLocale;
-    protected int color;
-    protected Supplier<String> textSupplier;
+    protected final String formatLocale;
+    protected final int color;
+    protected final Supplier<String> textSupplier;
     protected String lastText = "";
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
@@ -51,8 +51,8 @@ public class SimpleTextWidget extends Widget {
         String text = formatLocale.isEmpty() ? (I18n.hasKey(lastText) ? I18n.format(lastText) : lastText) : I18n.format(formatLocale, lastText);
         Position position = getPosition();
         fontRenderer.drawString(text,
-            position.x - fontRenderer.getStringWidth(text) / 2,
-            position.y - fontRenderer.FONT_HEIGHT / 2, color);
+                position.x - fontRenderer.getStringWidth(text) / 2,
+                position.y - fontRenderer.FONT_HEIGHT / 2, color);
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 

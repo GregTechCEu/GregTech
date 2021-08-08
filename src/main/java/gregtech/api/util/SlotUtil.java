@@ -75,6 +75,6 @@ public class SlotUtil {
 
     public static boolean areItemsEqual(ItemStack itemStack1, ItemStack itemStack2) {
         return !ItemStack.areItemsEqual(itemStack1, itemStack2) ||
-            !ItemStack.areItemStackTagsEqual(itemStack1, itemStack2);
+                !ItemStack.areItemStackTagsEqual(itemStack1, itemStack2);
     }
 }

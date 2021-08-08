@@ -62,8 +62,8 @@ public class SafeRenderer implements IIconRegister {
 
         for (EnumFacing renderSide : EnumFacing.VALUES) {
             TextureAtlasSprite baseSprite = renderSide.getAxis() == Axis.Y ?
-                textures[renderSide.getIndex()] :
-                renderSide == EnumFacing.NORTH ? textures[3] : textures[2];
+                    textures[renderSide.getIndex()] :
+                    renderSide == EnumFacing.NORTH ? textures[3] : textures[2];
             Textures.renderFace(renderState, translation, pipeline, renderSide, mainBoxOuter, baseSprite);
             if (renderSide == EnumFacing.NORTH) continue;
             Textures.renderFace(renderState, translation, pipeline, renderSide, mainBoxInner, baseSprite);
@@ -75,8 +75,8 @@ public class SafeRenderer implements IIconRegister {
 
         for (EnumFacing renderSide : EnumFacing.VALUES) {
             TextureAtlasSprite doorSprite =
-                renderSide == EnumFacing.NORTH ? textures[6] :
-                    renderSide == EnumFacing.SOUTH ? textures[5] : textures[4];
+                    renderSide == EnumFacing.NORTH ? textures[6] :
+                            renderSide == EnumFacing.SOUTH ? textures[5] : textures[4];
             Textures.renderFace(renderState, translation, pipeline, renderSide, doorBox, doorSprite);
         }
     }

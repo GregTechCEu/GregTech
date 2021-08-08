@@ -20,7 +20,7 @@ public class LCRCombined {
                 .fluidOutputs(SaltWater.getFluid(1000))
                 .fluidOutputs(DilutedHydrochloricAcid.getFluid(1000))
                 .EUt(30)
-                .duration(24*20)
+                .duration(24 * 20)
                 .buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()
@@ -33,7 +33,7 @@ public class LCRCombined {
                 .fluidOutputs(Epichlorohydrin.getFluid(1000))
                 .fluidOutputs(SaltWater.getFluid(1000))
                 .EUt(30)
-                .duration(24*20)
+                .duration(24 * 20)
                 .buildAndRegister();
 
         LARGE_CHEMICAL_RECIPES.recipeBuilder()

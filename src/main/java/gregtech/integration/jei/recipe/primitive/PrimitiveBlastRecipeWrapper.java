@@ -19,39 +19,39 @@ import java.util.stream.Collectors;
 
 public class PrimitiveBlastRecipeWrapper implements IRecipeWrapper {
 
-	private final PrimitiveBlastFurnaceRecipe recipe;
-	private final List<List<ItemStack>> matchingInputs = new ArrayList<>();
-	private final List<List<ItemStack>> outputs = new ArrayList<>();
+    private final PrimitiveBlastFurnaceRecipe recipe;
+    private final List<List<ItemStack>> matchingInputs = new ArrayList<>();
+    private final List<List<ItemStack>> outputs = new ArrayList<>();
 
-	public PrimitiveBlastRecipeWrapper(PrimitiveBlastFurnaceRecipe recipe) {
-		this.recipe = recipe;
-		CountableIngredient ingredient = recipe.getInput();
+    public PrimitiveBlastRecipeWrapper(PrimitiveBlastFurnaceRecipe recipe) {
+        this.recipe = recipe;
+        CountableIngredient ingredient = recipe.getInput();
 
-		List<ItemStack> ingredientValues = Arrays.stream(ingredient.getIngredient().getMatchingStacks())
-				.map(ItemStack::copy)
-				.sorted(OreDictUnifier.getItemStackComparator())
-				.collect(Collectors.toList());
-		ingredientValues.forEach(stack -> stack.setCount(ingredient.getCount()));
+        List<ItemStack> ingredientValues = Arrays.stream(ingredient.getIngredient().getMatchingStacks())
+                .map(ItemStack::copy)
+                .sorted(OreDictUnifier.getItemStackComparator())
+                .collect(Collectors.toList());
+        ingredientValues.forEach(stack -> stack.setCount(ingredient.getCount()));
 
-		this.matchingInputs.add(ingredientValues);
+        this.matchingInputs.add(ingredientValues);
 
         List<ItemStack> displayFuelStacks = MetaTileEntityPrimitiveBlastFurnace.getDisplayFuelsForRecipe(recipe.getFuelAmount());
-		this.matchingInputs.add(displayFuelStacks);
+        this.matchingInputs.add(displayFuelStacks);
 
-		ItemStack ashesItemStack = MetaTileEntityPrimitiveBlastFurnace.getAshForRecipeFuelConsumption(recipe.getFuelAmount());
-		this.outputs.add(ImmutableList.of(recipe.getOutput()));
-		this.outputs.add(ImmutableList.of(ashesItemStack));
-	}
+        ItemStack ashesItemStack = MetaTileEntityPrimitiveBlastFurnace.getAshForRecipeFuelConsumption(recipe.getFuelAmount());
+        this.outputs.add(ImmutableList.of(recipe.getOutput()));
+        this.outputs.add(ImmutableList.of(ashesItemStack));
+    }
 
-	@Override
-	public void getIngredients(IIngredients ingredients) {
-		ingredients.setInputLists(VanillaTypes.ITEM, this.matchingInputs);
-		ingredients.setOutputLists(VanillaTypes.ITEM, this.outputs);
-	}
+    @Override
+    public void getIngredients(IIngredients ingredients) {
+        ingredients.setInputLists(VanillaTypes.ITEM, this.matchingInputs);
+        ingredients.setOutputLists(VanillaTypes.ITEM, this.outputs);
+    }
 
-	@Override
-	public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-		minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", this.recipe.getDuration() / 20f), 0, 55, 0x111111);
-	}
+    @Override
+    public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+        minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.duration", this.recipe.getDuration() / 20f), 0, 55, 0x111111);
+    }
 
 }

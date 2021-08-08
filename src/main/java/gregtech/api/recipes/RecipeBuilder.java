@@ -30,12 +30,12 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected RecipeMap<R> recipeMap;
 
-    protected List<CountableIngredient> inputs;
-    protected NonNullList<ItemStack> outputs;
-    protected List<ChanceEntry> chancedOutputs;
+    protected final List<CountableIngredient> inputs;
+    protected final NonNullList<ItemStack> outputs;
+    protected final List<ChanceEntry> chancedOutputs;
 
-    protected List<FluidStack> fluidInputs;
-    protected List<FluidStack> fluidOutputs;
+    protected final List<FluidStack> fluidInputs;
+    protected final List<FluidStack> fluidOutputs;
 
     protected int duration, EUt;
     protected boolean hidden = false;
@@ -380,16 +380,16 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-            .append("recipeMap", recipeMap)
-            .append("inputs", inputs)
-            .append("outputs", outputs)
-            .append("chancedOutputs", chancedOutputs)
-            .append("fluidInputs", fluidInputs)
-            .append("fluidOutputs", fluidOutputs)
-            .append("duration", duration)
-            .append("EUt", EUt)
-            .append("hidden", hidden)
-            .append("recipeStatus", recipeStatus)
-            .toString();
+                .append("recipeMap", recipeMap)
+                .append("inputs", inputs)
+                .append("outputs", outputs)
+                .append("chancedOutputs", chancedOutputs)
+                .append("fluidInputs", fluidInputs)
+                .append("fluidOutputs", fluidOutputs)
+                .append("duration", duration)
+                .append("EUt", EUt)
+                .append("hidden", hidden)
+                .append("recipeStatus", recipeStatus)
+                .toString();
     }
 }

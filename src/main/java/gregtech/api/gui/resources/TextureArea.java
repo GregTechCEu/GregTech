@@ -46,18 +46,18 @@ public class TextureArea {
 
     public static TextureArea areaOfImage(String imageLocation, int imageSizeX, int imageSizeY, int u, int v, int width, int height) {
         return new TextureArea(new ResourceLocation(imageLocation),
-            u / (imageSizeX * 1.0),
-            v / (imageSizeY * 1.0),
-            (u + width) / (imageSizeX * 1.0),
-            (v + height) / (imageSizeY * 1.0));
+                u / (imageSizeX * 1.0),
+                v / (imageSizeY * 1.0),
+                (u + width) / (imageSizeX * 1.0),
+                (v + height) / (imageSizeY * 1.0));
     }
 
     public TextureArea getSubArea(double offsetX, double offsetY, double width, double height) {
         return new TextureArea(imageLocation,
-            this.offsetX + (imageWidth * offsetX),
-            this.offsetY + (imageHeight * offsetY),
-            this.imageWidth * width,
-            this.imageHeight * height);
+                this.offsetX + (imageWidth * offsetX),
+                this.offsetY + (imageHeight * offsetY),
+                this.imageWidth * width,
+                this.imageHeight * height);
     }
 
     @SideOnly(Side.CLIENT)
@@ -72,7 +72,7 @@ public class TextureArea {
 
     public static Transformation createOrientation(Size areaSize, int orientation) {
         Transformation transformation = new Rotation(Math.toRadians(orientation * 90.0), 0.0, 0.0, 1.0)
-            .at(new Vector3(areaSize.width / 2.0, areaSize.height / 2.0, 0.0));
+                .at(new Vector3(areaSize.width / 2.0, areaSize.height / 2.0, 0.0));
         Size orientedSize = transformSize(transformation, areaSize);
         double offsetX = (areaSize.width - orientedSize.width) / 2.0;
         double offsetY = (areaSize.height - orientedSize.height) / 2.0;

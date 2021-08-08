@@ -15,9 +15,9 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -69,7 +69,7 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipeCategories(new IntCircuitCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new MultiblockInfoCategory(registry.getJeiHelpers()));
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            if(!recipeMap.isHidden) {
+            if (!recipeMap.isHidden) {
                 registry.addRecipeCategories(new RecipeMapCategory(recipeMap, registry.getJeiHelpers().getGuiHelper()));
             }
         }
@@ -98,16 +98,16 @@ public class GTJeiPlugin implements IModPlugin {
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
             List<GTRecipeWrapper> recipesList = recipeMap.getRecipeList()
-                .stream().filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay())
-                .map(GTRecipeWrapper::new)
-                .collect(Collectors.toList());
+                    .stream().filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay())
+                    .map(GTRecipeWrapper::new)
+                    .collect(Collectors.toList());
             registry.addRecipes(recipesList, GTValues.MODID + ":" + recipeMap.unlocalizedName);
         }
 
         for (FuelRecipeMap fuelRecipeMap : FuelRecipeMap.getRecipeMaps()) {
             List<GTFuelRecipeWrapper> recipeList = fuelRecipeMap.getRecipeList().stream()
-                .map(GTFuelRecipeWrapper::new)
-                .collect(Collectors.toList());
+                    .map(GTFuelRecipeWrapper::new)
+                    .collect(Collectors.toList());
             registry.addRecipes(recipeList, GTValues.MODID + ":" + fuelRecipeMap.unlocalizedName);
         }
 
@@ -154,14 +154,14 @@ public class GTJeiPlugin implements IModPlugin {
 
         String primitiveBlastId = GTValues.MODID + ":" + "primitive_blast_furnace";
         registry.addRecipes(RecipeMaps.PRIMITIVE_BLAST_FURNACE_RECIPES.stream()
-            .map(PrimitiveBlastRecipeWrapper::new)
-            .collect(Collectors.toList()), primitiveBlastId);
+                .map(PrimitiveBlastRecipeWrapper::new)
+                .collect(Collectors.toList()), primitiveBlastId);
         registry.addRecipeCatalyst(MetaTileEntities.PRIMITIVE_BLAST_FURNACE.getStackForm(), primitiveBlastId);
 
         String cokeOvenId = GTValues.MODID + ":" + "coke_oven";
         registry.addRecipes(RecipeMaps.COKE_OVEN_RECIPES.stream()
-            .map(CokeOvenRecipeWrapper::new)
-            .collect(Collectors.toList()), cokeOvenId);
+                .map(CokeOvenRecipeWrapper::new)
+                .collect(Collectors.toList()), cokeOvenId);
         registry.addRecipeCatalyst(MetaTileEntities.COKE_OVEN.getStackForm(), cokeOvenId);
 
         //TODO, add Electromagnetic Separator to the Ore Byproduct page
@@ -199,7 +199,7 @@ public class GTJeiPlugin implements IModPlugin {
         //Ore Veins
         List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();
         List<GTOreInfo> oreInfoList = new CopyOnWriteArrayList<>();
-        for(OreDepositDefinition vein : oreVeins) {
+        for (OreDepositDefinition vein : oreVeins) {
             oreInfoList.add(new GTOreInfo(vein));
         }
 
@@ -212,7 +212,7 @@ public class GTJeiPlugin implements IModPlugin {
         ingredientRegistry = registry.getIngredientRegistry();
         for (int i = 0; i <= IntCircuitIngredient.CIRCUIT_MAX; i++) {
             registry.addIngredientInfo(IntCircuitIngredient.getIntegratedCircuit(i), VanillaTypes.ITEM,
-                "metaitem.circuit.integrated.jei_description");
+                    "metaitem.circuit.integrated.jei_description");
         }
 
         registry.addRecipeCatalyst(MetaTileEntities.WORKBENCH.getStackForm(), VanillaRecipeCategoryUid.CRAFTING);
@@ -220,7 +220,7 @@ public class GTJeiPlugin implements IModPlugin {
         for (MetaTileEntity machine : MetaTileEntities.CANNER) {
             if (machine == null) continue;
             registry.addIngredientInfo(machine.getStackForm(), VanillaTypes.ITEM,
-                "gregtech.machine.canner.jei_description");
+                    "gregtech.machine.canner.jei_description");
         }
 
         //Multiblock info page registration

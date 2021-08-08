@@ -21,9 +21,9 @@ import static gregtech.api.gui.impl.ModularUIGui.*;
 public class ClickButtonWidget extends Widget {
 
     protected TextureArea buttonTexture = GuiTextures.VANILLA_BUTTON.getSubArea(0.0, 0.0, 1.0, 0.5);
-    protected String displayText;
+    protected final String displayText;
     protected int textColor = 0xFFFFFF;
-    protected Consumer<ClickData> onPressCallback;
+    protected final Consumer<ClickData> onPressCallback;
 
     public ClickButtonWidget(int xPosition, int yPosition, int width, int height, String displayText, Consumer<ClickData> onPressed) {
         super(new Position(xPosition, yPosition), new Size(width, height));
@@ -54,8 +54,8 @@ public class ClickButtonWidget extends Widget {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         String text = I18n.format(displayText);
         fontRenderer.drawString(text,
-            position.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
-            position.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, textColor);
+                position.x + size.width / 2 - fontRenderer.getStringWidth(text) / 2,
+                position.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, textColor);
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 

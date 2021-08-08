@@ -11,7 +11,6 @@ import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.ore.StoneTypes;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.WorldBlockPredicate;
-import gregtech.api.util.XSTR;
 import gregtech.api.worldgen.filler.FillerEntry;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -188,7 +187,6 @@ public class FillerConfigUtils {
 
     private static class WeightRandomMatcherEntry implements FillerEntry {
 
-        private static final Random blockStateRandom = new XSTR();
         private final List<Pair<Integer, FillerEntry>> randomList;
         private final ImmutableList<FillerEntry> subEntries;
         private final ImmutableList<IBlockState> blockStates;
@@ -207,7 +205,7 @@ public class FillerConfigUtils {
 
         @Override
         public IBlockState apply(IBlockState source, IBlockAccess blockAccess, BlockPos blockPos) {
-            int functionIndex = GTUtility.getRandomItem(blockStateRandom, randomList, randomList.size());
+            int functionIndex = GTUtility.getRandomItem(randomList, randomList.size());
             FillerEntry randomFunction = randomList.get(functionIndex).getValue();
             return randomFunction.apply(source, blockAccess, blockPos);
         }

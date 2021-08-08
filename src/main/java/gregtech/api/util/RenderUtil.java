@@ -19,7 +19,7 @@ import java.util.Stack;
 
 public class RenderUtil {
 
-    private static Stack<int[]> scissorFrameStack = new Stack<>();
+    private static final Stack<int[]> scissorFrameStack = new Stack<>();
 
     public static void useScissor(int x, int y, int width, int height, Runnable codeBlock) {
         pushScissorFrame(x, y, width, height);
@@ -32,9 +32,9 @@ public class RenderUtil {
 
     private static int[] peekFirstScissorOrFullScreen() {
         int[] currentTopFrame = scissorFrameStack.isEmpty() ? null : scissorFrameStack.peek();
-        if(currentTopFrame == null) {
+        if (currentTopFrame == null) {
             Minecraft minecraft = Minecraft.getMinecraft();
-            return new int[] {0, 0, minecraft.displayWidth, minecraft.displayHeight};
+            return new int[]{0, 0, minecraft.displayWidth, minecraft.displayHeight};
         }
         return currentTopFrame;
     }
@@ -47,12 +47,12 @@ public class RenderUtil {
         int parentHeight = parentScissor[3];
 
         boolean pushedFrame = false;
-        if(x <= parentX + parentWidth && y <= parentY + parentHeight) {
+        if (x <= parentX + parentWidth && y <= parentY + parentHeight) {
             int newX = x >= parentX ? x : parentX;
             int newY = y >= parentY ? y : parentY;
             int newWidth = width - (newX - x);
             int newHeight = height - (newY - y);
-            if(newWidth > 0 && newHeight > 0) {
+            if (newWidth > 0 && newHeight > 0) {
                 int maxWidth = parentWidth - (x - parentX);
                 int maxHeight = parentHeight - (y - parentY);
                 newWidth = maxWidth > newWidth ? newWidth : maxWidth;
@@ -62,15 +62,15 @@ public class RenderUtil {
                 if (scissorFrameStack.isEmpty()) {
                     GL11.glEnable(GL11.GL_SCISSOR_TEST);
                 }
-                scissorFrameStack.push(new int[] {newX, newY, newWidth, newHeight});
+                scissorFrameStack.push(new int[]{newX, newY, newWidth, newHeight});
                 pushedFrame = true;
             }
         }
-        if(!pushedFrame) {
+        if (!pushedFrame) {
             if (scissorFrameStack.isEmpty()) {
                 GL11.glEnable(GL11.GL_SCISSOR_TEST);
             }
-            scissorFrameStack.push(new int[] {parentX, parentY, parentWidth, parentHeight});
+            scissorFrameStack.push(new int[]{parentX, parentY, parentWidth, parentHeight});
         }
     }
 
@@ -93,7 +93,7 @@ public class RenderUtil {
         ScaledResolution r = ((GuiIngameForge) Minecraft.getMinecraft().ingameGUI).getResolution();
         int s = r.getScaleFactor();
         int translatedY = r.getScaledHeight() - y - h;
-        GL11.glScissor(x*s, translatedY*s, w*s, h*s);
+        GL11.glScissor(x * s, translatedY * s, w * s, h * s);
     }
 
 

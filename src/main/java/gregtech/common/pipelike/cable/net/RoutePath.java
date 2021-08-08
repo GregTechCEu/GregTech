@@ -42,8 +42,8 @@ public class RoutePath {
 
                     if (!world.isRemote) {
                         ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_LARGE,
-                            blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5,
-                            5 + world.rand.nextInt(3), 0.0, 0.0, 0.0, 0.1);
+                                blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5,
+                                5 + world.rand.nextInt(3), 0.0, 0.0, 0.0, 0.1);
                     }
                 }
             }

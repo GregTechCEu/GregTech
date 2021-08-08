@@ -112,11 +112,11 @@ public class CommonProxy {
         ToolRecipeHandler.initializeMetaItems();
 
         registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
-      
+
         for (BlockCable cable : CABLES) registry.register(createItemBlock(cable, ItemBlockCable::new));
         for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
         for (BlockItemPipe pipe : ITEM_PIPES) registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
-      
+
         registry.register(createItemBlock(HERMETIC_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_FIREBOX_CASING, VariantItemBlock::new));
@@ -137,16 +137,16 @@ public class CommonProxy {
         registry.register(createMultiTexItemBlock(SAPLING, state -> state.getValue(BlockGregSapling.VARIANT).getName()));
 
         COMPRESSED.values()
-            .stream().distinct()
-            .map(block -> createItemBlock(block, CompressedItemBlock::new))
-            .forEach(registry::register);
+                .stream().distinct()
+                .map(block -> createItemBlock(block, CompressedItemBlock::new))
+                .forEach(registry::register);
         FRAMES.values()
-            .stream().distinct()
-            .map(block -> createItemBlock(block, FrameItemBlock::new))
-            .forEach(registry::register);
+                .stream().distinct()
+                .map(block -> createItemBlock(block, FrameItemBlock::new))
+                .forEach(registry::register);
         ORES.stream()
-            .map(block -> createItemBlock(block, OreItemBlock::new))
-            .forEach(registry::register);
+                .map(block -> createItemBlock(block, OreItemBlock::new))
+                .forEach(registry::register);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -204,8 +204,8 @@ public class CommonProxy {
         DecompositionRecipeHandler.runRecipeGeneration();
         RecyclingRecipes.init();
         WoodMachineRecipes.init();
-        
-        if (GTValues.isModLoaded(GTValues.MODID_CT)){
+
+        if (GTValues.isModLoaded(GTValues.MODID_CT)) {
             MetaItemBracketHandler.rebuildComponentRegistry();
         }
     }
@@ -238,7 +238,7 @@ public class CommonProxy {
             Material material = itemBlock.getBlockState(stack).getValue(itemBlock.compressedBlock.variantProperty);
             DustProperty property = material.getProperty(PropertyKey.DUST);
             if (property != null &&
-                property.getBurnTime() > 0) {
+                    property.getBurnTime() > 0) {
                 //compute burn value for block prefix, taking amount of material in block into account
                 double materialUnitsInBlock = OrePrefix.block.getMaterialAmount(material) / (GTValues.M * 1.0);
                 event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));

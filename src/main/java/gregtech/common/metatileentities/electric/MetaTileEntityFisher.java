@@ -36,12 +36,12 @@ import java.util.List;
 public class MetaTileEntityFisher extends TieredMetaTileEntity {
 
     private static final int WATER_CHECK_SIZE = 25;
-    
+
     private final int inventorySize;
     private final long fishingTicks;
     private final long energyAmountPerFish;
 
-    public MetaTileEntityFisher(ResourceLocation metaTileEntityId, int tier){
+    public MetaTileEntityFisher(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         this.inventorySize = (tier + 1) * (tier + 1);
         this.fishingTicks = 1000 - tier * 200;
@@ -59,16 +59,16 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
         int rowSize = (int) Math.sqrt(inventorySize);
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-            18 + 18 * rowSize + 94)
-            .label(10, 5, getMetaFullName())
-            .widget(new SlotWidget(importItems, 0, 18, 18, true, true)
-                .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.STRING_SLOT_OVERLAY));
+                18 + 18 * rowSize + 94)
+                .label(10, 5, getMetaFullName())
+                .widget(new SlotWidget(importItems, 0, 18, 18, true, true)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.STRING_SLOT_OVERLAY));
 
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
                 builder.widget(new SlotWidget(exportItems, index, 89 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
-                    .setBackgroundTexture(GuiTextures.SLOT));
+                        .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
 
@@ -84,11 +84,11 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
             WorldServer world = (WorldServer) this.getWorld();
             int waterCount = 0;
             int edgeSize = (int) Math.sqrt(WATER_CHECK_SIZE);
-            for (int x = 0; x < edgeSize; x++){
-                for (int z = 0; z < edgeSize; z++){
+            for (int x = 0; x < edgeSize; x++) {
+                for (int z = 0; z < edgeSize; z++) {
                     BlockPos waterCheckPos = getPos().down().add(x - edgeSize / 2, 0, z - edgeSize / 2);
                     if (world.getBlockState(waterCheckPos).getBlock() instanceof BlockLiquid &&
-                        world.getBlockState(waterCheckPos).getMaterial() == Material.WATER) {
+                            world.getBlockState(waterCheckPos).getMaterial() == Material.WATER) {
                         waterCount++;
                     }
                 }
@@ -97,14 +97,14 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
                 LootTable table = world.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING);
                 NonNullList<ItemStack> itemStacks = NonNullList.create();
                 itemStacks.addAll(table.generateLootForPools(world.rand, new LootContext.Builder(world).build()));
-                if(addItemsToItemHandler(exportItems, true, itemStacks)) {
+                if (addItemsToItemHandler(exportItems, true, itemStacks)) {
                     addItemsToItemHandler(exportItems, false, itemStacks);
                     energyContainer.removeEnergy(energyAmountPerFish);
                     baitStack.shrink(1);
                 }
             }
         }
-        if(!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
+        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
             pushItemsIntoNearbyHandlers(getFrontFacing());
         }
     }
@@ -115,7 +115,7 @@ public class MetaTileEntityFisher extends TieredMetaTileEntity {
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                if(OreDictUnifier.getOreDictionaryNames(stack).contains("string")) {
+                if (OreDictUnifier.getOreDictionaryNames(stack).contains("string")) {
                     return super.insertItem(slot, stack, simulate);
                 }
                 return stack;

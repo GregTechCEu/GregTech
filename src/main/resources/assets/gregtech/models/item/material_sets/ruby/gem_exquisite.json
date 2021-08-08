@@ -1,7 +1,7 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "gregtech:items/material_sets/ruby/gem_exquisite",
-        "layer1": "gregtech:items/material_sets/ruby/gem_exquisite_overlay"
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "gregtech:items/material_sets/ruby/gem_exquisite",
+    "layer1": "gregtech:items/material_sets/ruby/gem_exquisite_overlay"
+  }
 }

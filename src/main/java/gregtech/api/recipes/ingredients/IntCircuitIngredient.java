@@ -33,7 +33,7 @@ public class IntCircuitIngredient extends Ingredient {
 
     public static int getCircuitConfiguration(ItemStack itemStack) {
         if (!MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack) ||
-            !itemStack.hasTagCompound()) return 0;
+                !itemStack.hasTagCompound()) return 0;
         NBTTagCompound tagCompound = itemStack.getTagCompound();
         return tagCompound.getInteger("Configuration");
     }
@@ -56,7 +56,7 @@ public class IntCircuitIngredient extends Ingredient {
     @Override
     public boolean apply(@Nullable ItemStack itemStack) {
         return itemStack != null && MetaItems.INTEGRATED_CIRCUIT.isItemEqual(itemStack) &&
-            ArrayUtils.contains(matchingConfigurations, getCircuitConfiguration(itemStack));
+                ArrayUtils.contains(matchingConfigurations, getCircuitConfiguration(itemStack));
     }
 
     @Override

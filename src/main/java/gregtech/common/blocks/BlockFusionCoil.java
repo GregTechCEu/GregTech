@@ -7,6 +7,8 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import javax.annotation.Nonnull;
+
 public class BlockFusionCoil extends VariantBlock<BlockFusionCoil.CoilType> {
 
     public BlockFusionCoil() {
@@ -20,7 +22,7 @@ public class BlockFusionCoil extends VariantBlock<BlockFusionCoil.CoilType> {
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, EntityLiving.SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull EntityLiving.SpawnPlacementType type) {
         return false;
     }
 
@@ -35,6 +37,7 @@ public class BlockFusionCoil extends VariantBlock<BlockFusionCoil.CoilType> {
             this.name = name;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return this.name;

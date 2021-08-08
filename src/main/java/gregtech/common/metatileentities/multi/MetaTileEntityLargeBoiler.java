@@ -65,32 +65,32 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
 
     public enum BoilerType {
         BRONZE(900, 1.0f, 28, 500,
-            MetaBlocks.METAL_CASING.getState(MetalCasingType.BRONZE_BRICKS),
-            MetaBlocks.BOILER_FIREBOX_CASING.getState(FireboxCasingType.BRONZE_FIREBOX),
-            MetaBlocks.BOILER_CASING.getState(BoilerCasingType.BRONZE_PIPE),
-            Textures.BRONZE_PLATED_BRICKS,
-            Textures.BRONZE_FIREBOX, Textures.BRONZE_FIREBOX_ACTIVE, Textures.LARGE_BRONZE_BOILER),
+                MetaBlocks.METAL_CASING.getState(MetalCasingType.BRONZE_BRICKS),
+                MetaBlocks.BOILER_FIREBOX_CASING.getState(FireboxCasingType.BRONZE_FIREBOX),
+                MetaBlocks.BOILER_CASING.getState(BoilerCasingType.BRONZE_PIPE),
+                Textures.BRONZE_PLATED_BRICKS,
+                Textures.BRONZE_FIREBOX, Textures.BRONZE_FIREBOX_ACTIVE, Textures.LARGE_BRONZE_BOILER),
 
         STEEL(1600, 1.6f, 30, 800,
-            MetaBlocks.METAL_CASING.getState(MetalCasingType.STEEL_SOLID),
-            MetaBlocks.BOILER_FIREBOX_CASING.getState(FireboxCasingType.STEEL_FIREBOX),
-            MetaBlocks.BOILER_CASING.getState(BoilerCasingType.STEEL_PIPE),
-            Textures.SOLID_STEEL_CASING,
-            Textures.STEEL_FIREBOX, Textures.STEEL_FIREBOX_ACTIVE, Textures.LARGE_STEEL_BOILER),
+                MetaBlocks.METAL_CASING.getState(MetalCasingType.STEEL_SOLID),
+                MetaBlocks.BOILER_FIREBOX_CASING.getState(FireboxCasingType.STEEL_FIREBOX),
+                MetaBlocks.BOILER_CASING.getState(BoilerCasingType.STEEL_PIPE),
+                Textures.SOLID_STEEL_CASING,
+                Textures.STEEL_FIREBOX, Textures.STEEL_FIREBOX_ACTIVE, Textures.LARGE_STEEL_BOILER),
 
         TITANIUM(3700, 3.0f, 31, 2000,
-            MetaBlocks.METAL_CASING.getState(MetalCasingType.TITANIUM_STABLE),
-            MetaBlocks.BOILER_FIREBOX_CASING.getState(FireboxCasingType.TITANIUM_FIREBOX),
-            MetaBlocks.BOILER_CASING.getState(BoilerCasingType.TITANIUM_PIPE),
-            Textures.STABLE_TITANIUM_CASING,
-            Textures.TITANIUM_FIREBOX, Textures.TITANIUM_FIREBOX_ACTIVE, Textures.LARGE_TITANIUM_BOILER),
+                MetaBlocks.METAL_CASING.getState(MetalCasingType.TITANIUM_STABLE),
+                MetaBlocks.BOILER_FIREBOX_CASING.getState(FireboxCasingType.TITANIUM_FIREBOX),
+                MetaBlocks.BOILER_CASING.getState(BoilerCasingType.TITANIUM_PIPE),
+                Textures.STABLE_TITANIUM_CASING,
+                Textures.TITANIUM_FIREBOX, Textures.TITANIUM_FIREBOX_ACTIVE, Textures.LARGE_TITANIUM_BOILER),
 
         TUNGSTENSTEEL(7800, 5.4f, 32, 4000,
-            MetaBlocks.METAL_CASING.getState(MetalCasingType.TUNGSTENSTEEL_ROBUST),
-            MetaBlocks.BOILER_FIREBOX_CASING.getState(FireboxCasingType.TUNGSTENSTEEL_FIREBOX),
-            MetaBlocks.BOILER_CASING.getState(BoilerCasingType.TUNGSTENSTEEL_PIPE),
-            Textures.ROBUST_TUNGSTENSTEEL_CASING,
-            Textures.TUNGSTENSTEEL_FIREBOX, Textures.TUNGSTENSTEEL_FIREBOX_ACTIVE, Textures.LARGE_TUNGSTENSTEEL_BOILER);
+                MetaBlocks.METAL_CASING.getState(MetalCasingType.TUNGSTENSTEEL_ROBUST),
+                MetaBlocks.BOILER_FIREBOX_CASING.getState(FireboxCasingType.TUNGSTENSTEEL_FIREBOX),
+                MetaBlocks.BOILER_CASING.getState(BoilerCasingType.TUNGSTENSTEEL_PIPE),
+                Textures.ROBUST_TUNGSTENSTEEL_CASING,
+                Textures.TUNGSTENSTEEL_FIREBOX, Textures.TUNGSTENSTEEL_FIREBOX_ACTIVE, Textures.LARGE_TUNGSTENSTEEL_BOILER);
 
         public final int baseSteamOutput;
         public final float fuelConsumptionMultiplier;
@@ -186,7 +186,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             withHoverTextTranslate(heatEffText, "gregtech.multiblock.large_boiler.heat_efficiency.tooltip");
             textList.add(heatEffText);
 
-            ITextComponent throttleText = new TextComponentTranslation("gregtech.multiblock.large_boiler.throttle", throttlePercentage, (int)(getThrottleEfficiency() * 100));
+            ITextComponent throttleText = new TextComponentTranslation("gregtech.multiblock.large_boiler.throttle", throttlePercentage, (int) (getThrottleEfficiency() * 100));
             withHoverTextTranslate(throttleText, "gregtech.multiblock.large_boiler.throttle.tooltip");
             textList.add(throttleText);
 
@@ -235,10 +235,10 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             }
             if (drainedWater != null && drainedWater.amount > 0) {
                 if (currentTemperature > BOILING_TEMPERATURE && hasNoWater) {
-                    float explosionPower = currentTemperature / (float)BOILING_TEMPERATURE * 2.0f;
+                    float explosionPower = currentTemperature / (float) BOILING_TEMPERATURE * 2.0f;
                     getWorld().setBlockToAir(getPos());
                     getWorld().createExplosion(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                        explosionPower, true);
+                            explosionPower, true);
                 }
                 this.hasNoWater = false;
                 if (currentTemperature >= BOILING_TEMPERATURE) {
@@ -332,7 +332,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         this.currentTemperature = data.getInteger("CurrentTemperature");
         this.fuelBurnTicksLeft = data.getInteger("FuelBurnTicksLeft");
         this.hasNoWater = data.getBoolean("HasNoWater");
-        if(data.hasKey("ThrottlePercentage")) {
+        if (data.hasKey("ThrottlePercentage")) {
             this.throttlePercentage = data.getInteger("ThrottlePercentage");
         }
         this.isActive = fuelBurnTicksLeft > 0;
@@ -354,7 +354,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     private double getThrottleEfficiency() {
-        return MathHelper.clamp(1.0 + 0.3*Math.log(getThrottleMultiplier()), 0.4, 1.0);
+        return MathHelper.clamp(1.0 + 0.3 * Math.log(getThrottleMultiplier()), 0.4, 1.0);
     }
 
     private void replaceFireboxAsActive(boolean isActive) {
@@ -399,18 +399,18 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     protected BlockPattern createStructurePattern() {
         return boilerType == null ? null : FactoryBlockPattern.start()
-            .aisle("XXX", "CCC", "CCC", "CCC")
-            .aisle("XXX", "CPC", "CPC", "CCC")
-            .aisle("XXX", "CSC", "CCC", "CCC")
-            .setAmountAtLeast('X', 4)
-            .setAmountAtLeast('C', 20)
-            .where('S', selfPredicate())
-            .where('P', statePredicate(boilerType.pipeState))
-            .where('X', state -> statePredicate(GTUtility.getAllPropertyValues(boilerType.fireboxState, BlockFireboxCasing.ACTIVE))
-                .or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS)).test(state))
-            .where('C', statePredicate(boilerType.casingState).or(abilityPartPredicate(
-                MultiblockAbility.EXPORT_FLUIDS)))
-            .build();
+                .aisle("XXX", "CCC", "CCC", "CCC")
+                .aisle("XXX", "CPC", "CPC", "CCC")
+                .aisle("XXX", "CSC", "CCC", "CCC")
+                .setAmountAtLeast('X', 4)
+                .setAmountAtLeast('C', 20)
+                .where('S', selfPredicate())
+                .where('P', statePredicate(boilerType.pipeState))
+                .where('X', state -> statePredicate(GTUtility.getAllPropertyValues(boilerType.fireboxState, BlockFireboxCasing.ACTIVE))
+                        .or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS)).test(state))
+                .where('C', statePredicate(boilerType.casingState).or(abilityPartPredicate(
+                        MultiblockAbility.EXPORT_FLUIDS)))
+                .build();
     }
 
     @Override
@@ -431,8 +431,8 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         int importFluidsSize = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
         //noinspection SuspiciousMethodCalls
         return importFluidsSize >= 1 && (importFluidsSize >= 2 ||
-            abilities.containsKey(MultiblockAbility.IMPORT_ITEMS)) &&
-            abilities.containsKey(MultiblockAbility.EXPORT_FLUIDS);
+                abilities.containsKey(MultiblockAbility.IMPORT_ITEMS)) &&
+                abilities.containsKey(MultiblockAbility.EXPORT_FLUIDS);
     }
 
     private boolean isFireboxPart(IMultiblockPart sourcePart) {
@@ -455,13 +455,13 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         ItemStack itemStack = playerIn.getHeldItem(hand);
-        if(!itemStack.isEmpty() && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_MALLET, null)) {
+        if (!itemStack.isEmpty() && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_MALLET, null)) {
             ISoftHammerItem softHammerItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_MALLET, null);
 
             if (getWorld().isRemote) {
                 return true;
             }
-            if(!softHammerItem.damageItem(DamageValues.DAMAGE_FOR_SOFT_HAMMER, false)) {
+            if (!softHammerItem.damageItem(DamageValues.DAMAGE_FOR_SOFT_HAMMER, false)) {
                 return false;
             }
         }
@@ -482,7 +482,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     public Collection<IFuelInfo> getFuels() {
         if (!isStructureFormed())
             return Collections.emptySet();
-        final LinkedHashMap<Object, IFuelInfo> fuels = new LinkedHashMap<Object, IFuelInfo>();
+        final LinkedHashMap<Object, IFuelInfo> fuels = new LinkedHashMap<>();
         int fluidCapacity = 0; // fluid capacity is all non water tanks
         for (IFluidTank fluidTank : fluidImportInventory.getFluidTanks()) {
             FluidStack fuelStack = fluidTank.drain(Integer.MAX_VALUE, false);
@@ -492,7 +492,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         for (IFluidTank fluidTank : fluidImportInventory.getFluidTanks()) {
             FluidStack fuelStack = fluidTank.drain(Integer.MAX_VALUE, false);
             if (fuelStack == null || ModHandler.isWater(fuelStack))
-                continue; 
+                continue;
             FuelRecipe dieselRecipe = RecipeMaps.COMBUSTION_GENERATOR_FUELS.findRecipe(GTValues.V[9], fuelStack);
             if (dieselRecipe != null) {
                 long recipeVoltage = FuelRecipeLogic.getTieredVoltage(dieselRecipe.getMinVoltage());
@@ -504,8 +504,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 if (fluidFuelInfo == null) {
                     fluidFuelInfo = new FluidFuelInfo(fuelStack, fuelStack.amount, fluidCapacity, fuelAmountToConsume, fuelBurnTime);
                     fuels.put(fuelStack.getUnlocalizedName(), fluidFuelInfo);
-                }
-                else {
+                } else {
                     fluidFuelInfo.addFuelRemaining(fuelStack.amount);
                     fluidFuelInfo.addFuelBurnTime(fuelBurnTime);
                 }
@@ -521,8 +520,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 if (fluidFuelInfo == null) {
                     fluidFuelInfo = new FluidFuelInfo(fuelStack, fuelStack.amount, fluidCapacity, fuelAmountToConsume, fuelBurnTime);
                     fuels.put(fuelStack.getUnlocalizedName(), fluidFuelInfo);
-                }
-                else {
+                } else {
                     fluidFuelInfo.addFuelRemaining(fuelStack.amount);
                     fluidFuelInfo.addFuelBurnTime(fuelBurnTime);
                 }
@@ -540,8 +538,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 if (itemFuelInfo == null) {
                     itemFuelInfo = new ItemFuelInfo(itemStack, itemStack.getCount(), itemCapacity, 1, itemStack.getCount() * burnTime);
                     fuels.put(itemStack.getTranslationKey(), itemFuelInfo);
-                }
-                else {
+                } else {
                     itemFuelInfo.addFuelRemaining(itemStack.getCount());
                     itemFuelInfo.addFuelBurnTime(itemStack.getCount() * burnTime);
                 }

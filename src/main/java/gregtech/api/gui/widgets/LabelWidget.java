@@ -4,7 +4,6 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
-import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,9 +17,9 @@ public class LabelWidget extends Widget {
 
     protected boolean xCentered = false;
 
-    protected String text;
-    protected Object[] formatting;
-    private int color;
+    protected final String text;
+    protected final Object[] formatting;
+    private final int color;
 
     public LabelWidget(int xPosition, int yPosition, String text, Object... formatting) {
         this(xPosition, yPosition, text, 0x404040, formatting);
@@ -68,7 +67,7 @@ public class LabelWidget extends Widget {
             fontRenderer.drawString(resultText, pos.x, pos.y, color);
         } else {
             fontRenderer.drawString(resultText,
-                pos.x - fontRenderer.getStringWidth(resultText) / 2, pos.y, color);
+                    pos.x - fontRenderer.getStringWidth(resultText) / 2, pos.y, color);
         }
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }

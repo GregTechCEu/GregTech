@@ -21,7 +21,7 @@ public class CachedRecipeData {
     private final IRecipe recipe;
     private final ItemStack expectedOutput;
     public final InventoryCrafting inventory = new InventoryCrafting(new DummyContainer(), 3, 3);
-    private Map<ItemStackKey, Integer> requiredItems = new HashMap<>();
+    private final Map<ItemStackKey, Integer> requiredItems = new HashMap<>();
     private boolean ingredientsMatched = false;
     private long lastTickChecked = -1L;
     private boolean recipeValidCache = false;
@@ -113,7 +113,7 @@ public class CachedRecipeData {
             //update item in slot, and check that recipe matches and output item is equal to the expected one
             inventory.setInventorySlotContents(slot, itemStack);
             if (recipe.matches(inventory, itemSourceList.getWorld()) &&
-                ItemStack.areItemStacksEqual(expectedOutput, recipe.getCraftingResult(inventory))) {
+                    ItemStack.areItemStacksEqual(expectedOutput, recipe.getCraftingResult(inventory))) {
                 //ingredient matched, attempt to extract it and return if successful
                 if (simulateExtractItem(itemStackKey)) {
                     return true;

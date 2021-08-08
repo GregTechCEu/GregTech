@@ -38,7 +38,7 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
         if (!(o instanceof FluidPipeProperties)) return false;
         FluidPipeProperties that = (FluidPipeProperties) o;
         return maxFluidTemperature == that.maxFluidTemperature &&
-            throughput == that.throughput;
+                throughput == that.throughput;
     }
 
     @Override

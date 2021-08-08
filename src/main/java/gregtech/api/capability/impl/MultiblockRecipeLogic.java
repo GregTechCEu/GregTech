@@ -65,7 +65,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         if (controller.checkRecipe(recipe, false) &&
-            super.setupAndConsumeRecipeInputs(recipe)) {
+                super.setupAndConsumeRecipeInputs(recipe)) {
             controller.checkRecipe(recipe, true);
             return true;
         } else return false;

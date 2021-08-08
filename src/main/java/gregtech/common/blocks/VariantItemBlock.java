@@ -5,6 +5,8 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nonnull;
+
 public class VariantItemBlock<R extends Enum<R> & IStringSerializable, T extends VariantBlock<R>> extends ItemBlock {
 
     private final T genericBlock;
@@ -25,8 +27,9 @@ public class VariantItemBlock<R extends Enum<R> & IStringSerializable, T extends
         return block.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 
+    @Nonnull
     @Override
-    public String getTranslationKey(ItemStack stack) {
+    public String getTranslationKey(@Nonnull ItemStack stack) {
         return super.getTranslationKey(stack) + '.' + genericBlock.getState(getBlockState(stack)).getName();
     }
 

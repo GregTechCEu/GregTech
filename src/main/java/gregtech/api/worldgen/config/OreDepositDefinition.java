@@ -61,10 +61,10 @@ public class OreDepositDefinition {
     public void initializeFromConfig(JsonObject configRoot) {
         this.weight = configRoot.get("weight").getAsInt();
         this.density = configRoot.get("density").getAsFloat();
-        if(configRoot.has("name")) {
+        if (configRoot.has("name")) {
             this.assignedName = configRoot.get("name").getAsString();
         }
-        if(configRoot.has("description")) {
+        if (configRoot.has("description")) {
             this.description = configRoot.get("description").getAsString();
         }
         if (configRoot.has("priority")) {

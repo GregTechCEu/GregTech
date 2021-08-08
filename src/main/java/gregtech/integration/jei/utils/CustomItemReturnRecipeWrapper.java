@@ -25,8 +25,8 @@ public class CustomItemReturnRecipeWrapper extends ShapedOreRecipeWrapper implem
     private static final int craftOutputSlot = 0;
     private static final int craftInputSlot1 = 1;
 
-    private CraftingGridHelper craftingGridHelper;
-    private CustomItemReturnShapedOreRecipeRecipe customRecipe;
+    private final CraftingGridHelper craftingGridHelper;
+    private final CustomItemReturnShapedOreRecipeRecipe customRecipe;
 
     public CustomItemReturnRecipeWrapper(IJeiHelpers jeiHelpers, CustomItemReturnShapedOreRecipeRecipe recipe) {
         super(jeiHelpers, recipe);

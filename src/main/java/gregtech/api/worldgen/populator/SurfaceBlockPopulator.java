@@ -44,11 +44,12 @@ public class SurfaceBlockPopulator implements VeinChunkPopulator {
     /**
      * Generates the Surface Block for an underground vein. Spawns the Surface Block on top of the applicable topmost block in
      * the chunk, at a random position in the chunk. Does not run on a Flat world type
-     * @param world - The Minecraft world. Used for finding the top most block and its state
-     * @param chunkX - The X chunk coordinate
-     * @param chunkZ - The Z chunk coordinate
-     * @param random - A Random parameter. Used for determining the number of spawned Surface Blocks and their position
-     * @param definition - The Ore Vein definition
+     *
+     * @param world         - The Minecraft world. Used for finding the top most block and its state
+     * @param chunkX        - The X chunk coordinate
+     * @param chunkZ        - The Z chunk coordinate
+     * @param random        - A Random parameter. Used for determining the number of spawned Surface Blocks and their position
+     * @param definition    - The Ore Vein definition
      * @param gridEntryInfo - Information about the ore generation grid for the current generation section
      */
     @Override
@@ -70,27 +71,27 @@ public class SurfaceBlockPopulator implements VeinChunkPopulator {
                 }
 
                 //Check to see if the selected block has special rendering parameters (like glass) or a special model
-                if(!blockState.isOpaqueCube() || !blockState.isFullBlock()) {
+                if (!blockState.isOpaqueCube() || !blockState.isFullBlock()) {
                     continue;
                 }
 
                 //Checks if the block is a replaceable feature like grass or snow layers. Liquids are replaceable, so
                 // exclude one deep liquid blocks, for looks
-                if(!blockAtPos.isReplaceable(world, topBlockPos.up()) || blockState.getMaterial().isLiquid()) {
+                if (!blockAtPos.isReplaceable(world, topBlockPos.up()) || blockState.getMaterial().isLiquid()) {
                     continue;
                 }
 
                 BlockPos surfaceRockPos = topBlockPos.up();
                 boolean successful = world.setBlockState(surfaceRockPos, this.blockState, 16);
 
-                if(!successful) {
+                if (!successful) {
                     failedGenerationCounter++;
                 }
             }
         }
 
         //Log if all Surface Block generation attempts were failed
-        if(failedGenerationCounter == stonesCount && maxIndicatorAmount > 0 && world.getWorldType() != WorldType.FLAT) {
+        if (failedGenerationCounter == stonesCount && maxIndicatorAmount > 0 && world.getWorldType() != WorldType.FLAT) {
             GTLog.logger.debug("Failed all Surface Block generation attempts for vein {} at chunk with position: x: {}, z: {}", definition.getDepositName(), chunkX, chunkZ);
         }
     }

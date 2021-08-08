@@ -22,11 +22,11 @@ public class GregTechAPI {
     public static final Map<Material, Map<StoneType, IBlockOre>> oreBlockTable = new HashMap<>();
 
     public static final BaseCreativeTab TAB_GREGTECH =
-        new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.BATTERY_HULL_HV.getStackForm(), true);
+            new BaseCreativeTab(GTValues.MODID + ".main", () -> MetaItems.BATTERY_HULL_HV.getStackForm(), true);
     public static final BaseCreativeTab TAB_GREGTECH_MATERIALS =
-        new BaseCreativeTab(GTValues.MODID + ".materials", () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
+            new BaseCreativeTab(GTValues.MODID + ".materials", () -> OreDictUnifier.get(OrePrefix.ingot, Materials.Aluminium), true);
     public static final BaseCreativeTab TAB_GREGTECH_ORES =
-        new BaseCreativeTab(GTValues.MODID + ".ores", () -> MetaItems.DRILL_MV.getStackForm(), true);
+            new BaseCreativeTab(GTValues.MODID + ".ores", () -> MetaItems.DRILL_MV.getStackForm(), true);
 
     public static final GTControlledRegistry<ResourceLocation, MetaTileEntity> META_TILE_ENTITY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
 

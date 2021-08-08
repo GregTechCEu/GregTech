@@ -41,8 +41,8 @@ public class FuelRecipeMap {
     @ZenMethod
     public static FuelRecipeMap getByName(String unlocalizedName) {
         return RECIPE_MAPS.stream()
-            .filter(map -> map.unlocalizedName.equals(unlocalizedName))
-            .findFirst().orElse(null);
+                .filter(map -> map.unlocalizedName.equals(unlocalizedName))
+                .findFirst().orElse(null);
     }
 
     @ZenMethod

@@ -39,6 +39,6 @@ public class ItemTabInfo implements ITabInfo {
         Minecraft mc = Minecraft.getMinecraft();
         ScaledResolution resolution = new ScaledResolution(mc);
         GuiUtils.drawHoveringText(Lists.newArrayList(localizedText), mouseX, mouseY,
-            resolution.getScaledWidth(), resolution.getScaledHeight(), -1, mc.fontRenderer);
+                resolution.getScaledWidth(), resolution.getScaledHeight(), -1, mc.fontRenderer);
     }
 }

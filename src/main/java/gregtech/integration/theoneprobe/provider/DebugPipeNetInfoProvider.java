@@ -53,8 +53,8 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                     Map<BlockPos, ? extends Node<?>> nodeMap = pipeNet.getAllNodes();
                     Node<?> node = nodeMap.get(data.getPos());
                     builder.append("{").append("active: ").append(node.isActive)
-                        .append(", mark: ").append(node.mark)
-                        .append(", open: ").append(node.openConnections).append("}");
+                            .append(", mark: ").append(node.mark)
+                            .append(", open: ").append(node.openConnections).append("}");
                     probeInfo.text(builder.toString());
                 }
                 probeInfo.text("tile open: " + pipeTile.getOpenConnections());

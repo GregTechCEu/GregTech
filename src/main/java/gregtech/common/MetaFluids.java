@@ -243,7 +243,7 @@ public class MetaFluids {
      * Changes the texture of specified material's fluid.
      * The material color is overlayed on top of the texture, set the materialRGB to 0xFFFFFF to remove the overlay.
      *
-     * @param material the material whose texture to change
+     * @param material  the material whose texture to change
      * @param fluidType the type of the fluid
      */
     public static void setMaterialFluidTexture(Material material, FluidType fluidType) {
@@ -258,8 +258,8 @@ public class MetaFluids {
      * Changes the texture of specified material's fluid.
      * The material color is overlayed on top of the texture, set the materialRGB to 0xFFFFFF to remove the overlay.
      *
-     * @param material the material whose texture to change
-     * @param fluidType the type of the fluid
+     * @param material        the material whose texture to change
+     * @param fluidType       the type of the fluid
      * @param textureLocation the location of the texture to use
      */
     public static void setMaterialFluidTexture(Material material, FluidType fluidType, ResourceLocation textureLocation) {

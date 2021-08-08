@@ -4,8 +4,8 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.model.AbstractBlockModelFactory;
 import gregtech.api.model.ResourcePackHook;
-import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.common.blocks.BlockCompressed;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.relauncher.Side;
@@ -17,12 +17,12 @@ import java.util.ArrayList;
 public class BlockCompressedFactory extends AbstractBlockModelFactory {
 
     private static final String VARIANT_DEFINITION =
-        "\"$MATERIAL$\": {\n" +
-            "        \"textures\": {\n" +
-            "          \"all\": \"$TEXTURE$\",\n" +
-            "          \"particle\": \"$TEXTURE$\"\n" +
-            "        }\n" +
-            "      }";
+            "\"$MATERIAL$\": {\n" +
+                    "        \"textures\": {\n" +
+                    "          \"all\": \"$TEXTURE$\",\n" +
+                    "          \"particle\": \"$TEXTURE$\"\n" +
+                    "        }\n" +
+                    "      }";
 
     private static final Joiner COMMA_JOINER = Joiner.on(',');
 
@@ -41,8 +41,8 @@ public class BlockCompressedFactory extends AbstractBlockModelFactory {
         ArrayList<String> variants = new ArrayList<>();
         for (Material material : allowedValues) {
             variants.add(VARIANT_DEFINITION
-                .replace("$MATERIAL$", material.toString())
-                .replace("$TEXTURE$", MaterialIconType.block.getBlockPath(material.getMaterialIconSet()).toString())
+                    .replace("$MATERIAL$", material.toString())
+                    .replace("$TEXTURE$", MaterialIconType.block.getBlockPath(material.getMaterialIconSet()).toString())
             );
         }
         return blockStateSample.replace("$VARIANTS$", COMMA_JOINER.join(variants));

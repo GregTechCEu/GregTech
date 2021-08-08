@@ -32,7 +32,7 @@ public abstract class AbstractToolItemCapabilityProvider<T> implements ICapabili
     @Override
     @SuppressWarnings("unchecked")
     public <R> R getCapability(@Nonnull Capability<R> capability, @Nullable EnumFacing facing) {
-        if(capability == getCapability()) {
+        if (capability == getCapability()) {
             return getCapability().cast((T) this);
         }
         return null;

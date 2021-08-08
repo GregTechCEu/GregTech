@@ -43,13 +43,13 @@ public class IntCircuitBehaviour implements IItemBehaviour, ItemUIFactory, ISubI
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 60)
-            .label(9, 8, "metaitem.circuit.integrated.gui")
-            .widget(new DynamicLabelWidget(82, 30, () -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(holder.getCurrentItem())), 0x4D4040))
-            .widget(new ClickButtonWidget(15, 24, 20, 20, "-5", data -> adjustConfiguration(holder, -5)))
-            .widget(new ClickButtonWidget(50, 24, 20, 20, "-1", data -> adjustConfiguration(holder, -1)))
-            .widget(new ClickButtonWidget(104, 24, 20, 20, "+1", data -> adjustConfiguration(holder, +1)))
-            .widget(new ClickButtonWidget(141, 24, 20, 20, "+5", data -> adjustConfiguration(holder, +5)))
-            .build(holder, entityPlayer);
+                .label(9, 8, "metaitem.circuit.integrated.gui")
+                .widget(new DynamicLabelWidget(82, 30, () -> Integer.toString(IntCircuitIngredient.getCircuitConfiguration(holder.getCurrentItem())), 0x4D4040))
+                .widget(new ClickButtonWidget(15, 24, 20, 20, "-5", data -> adjustConfiguration(holder, -5)))
+                .widget(new ClickButtonWidget(50, 24, 20, 20, "-1", data -> adjustConfiguration(holder, -1)))
+                .widget(new ClickButtonWidget(104, 24, 20, 20, "+1", data -> adjustConfiguration(holder, +1)))
+                .widget(new ClickButtonWidget(141, 24, 20, 20, "+5", data -> adjustConfiguration(holder, +5)))
+                .build(holder, entityPlayer);
     }
 
     private static void adjustConfiguration(PlayerInventoryHolder holder, int amount) {

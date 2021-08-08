@@ -84,7 +84,7 @@ public class CrowbarBehaviour implements IItemBehaviour {
             rotation = 0;
         }
         return world.setBlockState(blockPos, blockState.withProperty(blockRailBase.getShapeProperty(),
-            BlockRailBase.EnumRailDirection.values()[rotation]));
+                BlockRailBase.EnumRailDirection.values()[rotation]));
     }
 
 

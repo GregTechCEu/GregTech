@@ -42,7 +42,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     public SteamMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, boolean isHighPressure) {
         super(metaTileEntityId);
         this.workableHandler = new RecipeLogicSteam(this,
-            recipeMap, isHighPressure, steamFluidTank, 1.0);
+                recipeMap, isHighPressure, steamFluidTank, 1.0);
         this.isHighPressure = isHighPressure;
         this.renderer = renderer;
         BRONZE_BACKGROUND_TEXTURE = getFullGuiTexture("%s_gui");
@@ -72,7 +72,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
         if (!playerIn.isSneaking()) {
             EnumFacing currentVentingSide = workableHandler.getVentingSide();
             if (currentVentingSide == facing ||
-                getFrontFacing() == facing) return false;
+                    getFrontFacing() == facing) return false;
             workableHandler.setVentingSide(facing);
             return true;
         }
@@ -100,7 +100,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     @Override
     public FluidTankList createImportFluidHandler() {
         this.steamFluidTank = new FilteredFluidHandler(getSteamCapacity())
-            .setFillPredicate(ModHandler::isSteam);
+                .setFillPredicate(ModHandler::isSteam);
         return new FluidTankList(false, steamFluidTank);
     }
 
@@ -111,14 +111,14 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
     protected TextureArea getFullGuiTexture(String pathTemplate) {
         String type = isHighPressure ? "steel" : "bronze";
         return TextureArea.fullImage(String.format("textures/gui/steam/%s/%s.png",
-            type, pathTemplate.replace("%s", type)));
+                type, pathTemplate.replace("%s", type)));
     }
 
     public ModularUI.Builder createUITemplate(EntityPlayer player) {
         return ModularUI.builder(BRONZE_BACKGROUND_TEXTURE, 176, 166)
-            .widget(new LabelWidget(6, 6, getMetaFullName()))
-            .widget(new ImageWidget(79, 42, 18, 18, getFullGuiTexture("not_enough_steam_%s"))
-                .setPredicate(() -> workableHandler.isHasNotEnoughEnergy()))
-            .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE, 0);
+                .widget(new LabelWidget(6, 6, getMetaFullName()))
+                .widget(new ImageWidget(79, 42, 18, 18, getFullGuiTexture("not_enough_steam_%s"))
+                        .setPredicate(() -> workableHandler.isHasNotEnoughEnergy()))
+                .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE, 0);
     }
 }

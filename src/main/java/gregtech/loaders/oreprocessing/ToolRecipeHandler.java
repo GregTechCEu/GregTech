@@ -10,7 +10,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.properties.BlastProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
 import gregtech.api.unification.ore.OrePrefix;

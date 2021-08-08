@@ -58,7 +58,7 @@ public class CountableIngredient {
         if (o == null || getClass() != o.getClass()) return false;
         CountableIngredient that = (CountableIngredient) o;
         return count == that.count &&
-            Objects.equals(ingredient, that.ingredient);
+                Objects.equals(ingredient, that.ingredient);
     }
 
     @Override
@@ -69,8 +69,8 @@ public class CountableIngredient {
     @Override
     public String toString() {
         return "CountableIngredient{" +
-            "ingredient=" + Arrays.toString(ingredient.getMatchingStacks()) +
-            ", count=" + count +
-            '}';
+                "ingredient=" + Arrays.toString(ingredient.getMatchingStacks()) +
+                ", count=" + count +
+                '}';
     }
 }

@@ -86,7 +86,7 @@ public class PBFRecipeBuilder {
 
     public ValidationResult<PrimitiveBlastFurnaceRecipe> build() {
         return ValidationResult.newResult(validate(),
-            new PrimitiveBlastFurnaceRecipe(input, output, duration, fuelAmount));
+                new PrimitiveBlastFurnaceRecipe(input, output, duration, fuelAmount));
     }
 
     protected EnumValidationResult validate() {

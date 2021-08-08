@@ -72,8 +72,8 @@ public class VerticalTabListRenderer extends TabListRenderer {
 
         private static TextureArea getTabTexture(boolean isTabFirst, boolean startTop, boolean isTabSelected) {
             return isTabFirst ? (startTop ? (isTabSelected ? startTabActiveTexture : startTabInactiveTexture) :
-                (isTabSelected ? endTabActiveTexture : endTabInactiveTexture)) :
-                (isTabSelected ? middleTabActiveTexture : middleTabInactiveTexture);
+                    (isTabSelected ? endTabActiveTexture : endTabInactiveTexture)) :
+                    (isTabSelected ? middleTabActiveTexture : middleTabInactiveTexture);
         }
     }
 
@@ -90,8 +90,8 @@ public class VerticalTabListRenderer extends TabListRenderer {
 
         private static TextureArea getTabTexture(boolean isTabFirst, boolean startTop, boolean isTabSelected) {
             return isTabFirst ? (startTop ? (isTabSelected ? startTabActiveTexture : startTabInactiveTexture) :
-                (isTabSelected ? endTabActiveTexture : endTabInactiveTexture)) :
-                (isTabSelected ? middleTabActiveTexture : middleTabInactiveTexture);
+                    (isTabSelected ? endTabActiveTexture : endTabInactiveTexture)) :
+                    (isTabSelected ? middleTabActiveTexture : middleTabInactiveTexture);
         }
     }
 

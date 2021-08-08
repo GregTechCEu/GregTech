@@ -14,6 +14,7 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
@@ -27,11 +28,13 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
         this.transferHelper = transferHelper;
     }
 
+    @Nonnull
     @Override
     public Class<ModularUIGui> getGuiContainerClass() {
         return ModularUIGui.class;
     }
 
+    @Nonnull
     @Override
     public Class<ModularUIContainer> getContainerClass() {
         return ModularUIContainer.class;
@@ -39,12 +42,12 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
 
     @Nullable
     @Override
-    public IRecipeTransferError transferRecipe(ModularUIContainer container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
+    public IRecipeTransferError transferRecipe(ModularUIContainer container, @Nonnull IRecipeLayout recipeLayout, @Nonnull EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
         Optional<IRecipeTransferHandlerWidget> transferHandler = container.getModularUI()
-            .getFlatVisibleWidgetCollection().stream()
-            .filter(it -> it instanceof IRecipeTransferHandlerWidget)
-            .map(it -> (IRecipeTransferHandlerWidget) it)
-            .findFirst();
+                .getFlatVisibleWidgetCollection().stream()
+                .filter(it -> it instanceof IRecipeTransferHandlerWidget)
+                .map(it -> (IRecipeTransferHandlerWidget) it)
+                .findFirst();
         if (!transferHandler.isPresent()) {
             return transferHelper.createInternalError();
         }
@@ -72,8 +75,9 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
         return null;
     }
 
+    @Nonnull
     @Override
-    public <I> List<Target<I>> getTargets(ModularUIGui gui, I ingredient, boolean doStart) {
+    public <I> List<Target<I>> getTargets(ModularUIGui gui, @Nonnull I ingredient, boolean doStart) {
         Collection<Widget> widgets = gui.getModularUI().guiWidgets.values();
         List<Target<I>> targets = new ArrayList<>();
         for (Widget widget : widgets) {
@@ -89,7 +93,7 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
 
     @Nullable
     @Override
-    public List<Rectangle> getGuiExtraAreas(ModularUIGui guiContainer) {
+    public List<Rectangle> getGuiExtraAreas(@Nonnull ModularUIGui guiContainer) {
         return Collections.emptyList();
     }
 

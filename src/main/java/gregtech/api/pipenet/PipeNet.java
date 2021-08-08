@@ -54,11 +54,11 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     public Map<BlockPos, Node<NodeDataType>> getAllNodes() {
         return unmodifiableNodeByBlockPos;
     }
-    
+
     public Node<NodeDataType> getNodeAt(BlockPos blockPos) {
         return nodeByBlockPos.get(blockPos);
     }
-    
+
     public boolean containsNode(BlockPos blockPos) {
         return nodeByBlockPos.containsKey(blockPos);
     }
@@ -131,7 +131,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             if (isBlocked) {
                 //need to unblock node before doing canNodesConnectCheck
                 setBlocked(selfNode, facing, false);
-                if(canNodesConnect(selfNode, facing, getNodeAt(offsetPos), this)) {
+                if (canNodesConnect(selfNode, facing, getNodeAt(offsetPos), this)) {
                     //now block again to call findAllConnectedBlocks
                     setBlocked(selfNode, facing, true);
                     HashMap<BlockPos, Node<NodeDataType>> thisENet = findAllConnectedBlocks(nodePos);
@@ -152,7 +152,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             Node<NodeDataType> neighbourNode = pipeNetAtOffset.getNodeAt(offsetPos);
             //check connection availability from both networks
             if (canNodesConnect(selfNode, facing, neighbourNode, pipeNetAtOffset) &&
-                pipeNetAtOffset.canNodesConnect(neighbourNode, facing.getOpposite(), selfNode, this)) {
+                    pipeNetAtOffset.canNodesConnect(neighbourNode, facing.getOpposite(), selfNode, this)) {
                 //so, side is unblocked now, and nodes can connect, merge two networks
                 //our network consumes other one
                 uniteNetworks(pipeNetAtOffset);
@@ -177,7 +177,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             if (secondNode == null)
                 continue; //there is noting here
             if (!areNodeBlockedConnectionsCompatible(selfNode, facing, secondNode) ||
-                !areNodesCustomContactable(selfNode.data, secondNode.data, otherPipeNet))
+                    !areNodesCustomContactable(selfNode.data, secondNode.data, otherPipeNet))
                 continue; //if connections aren't compatible, skip them
             if (areMarksCompatible(oldMark, secondNode.mark) == areMarksCompatible(newMark, secondNode.mark))
                 continue; //if compatibility didn't change, skip it
@@ -253,8 +253,8 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
      */
     protected final boolean canNodesConnect(Node<NodeDataType> first, EnumFacing firstFacing, Node<NodeDataType> second, PipeNet<NodeDataType> secondPipeNet) {
         return areNodeBlockedConnectionsCompatible(first, firstFacing, second) &&
-            areMarksCompatible(first.mark, second.mark) &&
-            areNodesCustomContactable(first.data, second.data, secondPipeNet);
+                areMarksCompatible(first.mark, second.mark) &&
+                areNodesCustomContactable(first.data, second.data, secondPipeNet);
     }
 
     //we need to search only this network

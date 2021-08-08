@@ -20,13 +20,13 @@ public class FluidFilterWrapper {
 
     public void initUI(int y, Consumer<Widget> widgetGroup) {
         widgetGroup.accept(new ToggleButtonWidget(144, y, 18, 18, GuiTextures.BUTTON_BLACKLIST,
-            this::isBlacklistFilter, this::setBlacklistFilter).setTooltipText("cover.filter.blacklist"));
+                this::isBlacklistFilter, this::setBlacklistFilter).setTooltipText("cover.filter.blacklist"));
         widgetGroup.accept(new WidgetGroupFluidFilter(y, this::getFluidFilter));
     }
 
     public void setFluidFilter(FluidFilter fluidFilter) {
         this.currentFluidFilter = fluidFilter;
-        if(currentFluidFilter != null) {
+        if (currentFluidFilter != null) {
             currentFluidFilter.setDirtyNotifiable(dirtyNotifiable);
         }
     }
@@ -50,10 +50,10 @@ public class FluidFilterWrapper {
 
     public boolean testFluidStack(FluidStack fluidStack) {
         boolean result = true;
-        if(currentFluidFilter != null) {
+        if (currentFluidFilter != null) {
             result = currentFluidFilter.testFluid(fluidStack);
         }
-        if(isBlacklistFilter) {
+        if (isBlacklistFilter) {
             result = !result;
         }
         return result;

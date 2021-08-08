@@ -31,17 +31,17 @@ public class MultiSmelterInfo extends MultiblockInfoPage {
         ArrayList<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
         for (CoilType coilType : CoilType.values()) {
             shapeInfo.add(MultiblockShapeInfo.builder()
-                .aisle("IXX", "CCC", "XXX")
-                .aisle("SXE", "C#C", "XXX")
-                .aisle("OXX", "CCC", "XXX")
-                .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF))
-                .where('C', MetaBlocks.WIRE_COIL.getState(coilType))
-                .where('S', MetaTileEntities.MULTI_FURNACE, EnumFacing.WEST)
-                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.MV], EnumFacing.EAST)
-                .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.LV], EnumFacing.WEST)
-                .where('O', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.LV], EnumFacing.WEST)
-                .where('#', Blocks.AIR.getDefaultState())
-                .build());
+                    .aisle("IXX", "CCC", "XXX")
+                    .aisle("SXE", "C#C", "XXX")
+                    .aisle("OXX", "CCC", "XXX")
+                    .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF))
+                    .where('C', MetaBlocks.WIRE_COIL.getState(coilType))
+                    .where('S', MetaTileEntities.MULTI_FURNACE, EnumFacing.WEST)
+                    .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.MV], EnumFacing.EAST)
+                    .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.LV], EnumFacing.WEST)
+                    .where('O', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.LV], EnumFacing.WEST)
+                    .where('#', Blocks.AIR.getDefaultState())
+                    .build());
         }
         return shapeInfo;
     }

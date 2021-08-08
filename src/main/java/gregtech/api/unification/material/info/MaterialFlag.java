@@ -1,7 +1,6 @@
 package gregtech.api.unification.material.info;
 
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.IMaterialProperty;
 
 import java.util.Arrays;
 import java.util.Collection;

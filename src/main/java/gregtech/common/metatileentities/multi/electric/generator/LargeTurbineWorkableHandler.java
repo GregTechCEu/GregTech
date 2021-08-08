@@ -21,9 +21,9 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
 
     private static final int CYCLE_LENGTH = 230;
     private static final int BASE_ROTOR_DAMAGE = 11;
-    private static final int BASE_EU_OUTPUT = 2048;  
+    private static final int BASE_EU_OUTPUT = 2048;
 
-    private MetaTileEntityLargeTurbine largeTurbine;
+    private final MetaTileEntityLargeTurbine largeTurbine;
     private int rotorCycleLength = CYCLE_LENGTH;
 
     public LargeTurbineWorkableHandler(MetaTileEntityLargeTurbine metaTileEntity, FuelRecipeMap recipeMap, Supplier<IEnergyContainer> energyContainer, Supplier<IMultipleTankHandler> fluidTank) {
@@ -103,14 +103,18 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
     }
 
     private int getBonusForTurbineType(MetaTileEntityLargeTurbine turbine) {
-    	switch (turbine.turbineType) {
-		    case GAS: return ConfigHolder.gasTurbineBonusOutput;
-		    case PLASMA: return ConfigHolder.plasmaTurbineBonusOutput;
-		    case STEAM: return ConfigHolder.steamTurbineBonusOutput;
-		    default: return 1;
-    	}
+        switch (turbine.turbineType) {
+            case GAS:
+                return ConfigHolder.gasTurbineBonusOutput;
+            case PLASMA:
+                return ConfigHolder.plasmaTurbineBonusOutput;
+            case STEAM:
+                return ConfigHolder.steamTurbineBonusOutput;
+            default:
+                return 1;
+        }
     }
-    
+
     @Override
     public long getRecipeOutputVoltage() {
         MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MetaTileEntityLargeTurbine.ABILITY_ROTOR_HOLDER).get(0);

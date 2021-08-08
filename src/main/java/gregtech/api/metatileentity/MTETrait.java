@@ -9,7 +9,7 @@ import java.util.function.Consumer;
 
 public abstract class MTETrait {
 
-    protected MetaTileEntity metaTileEntity;
+    protected final MetaTileEntity metaTileEntity;
 
     public MTETrait(MetaTileEntity metaTileEntity) {
         this.metaTileEntity = metaTileEntity;

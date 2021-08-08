@@ -25,12 +25,12 @@ public interface IToolItem {
      * DO NOT USE METHODS BELOW TO CHECK IF TOOL CAN RECEIVE SPECIFIED AMOUNT OF DAMAGE,
      * Use this method with simulate = true to check so, because it can be different for electric items!
      *
-     * @param stack the item to damage
-     * @param damage the damage to apply
+     * @param stack        the item to damage
+     * @param damage       the damage to apply
      * @param allowPartial normally you should pass false, when true an electric item
-                           will discharge all its remaining charge if it cannot do the
-                           full operation and tell you the equivalent damage
-     * @param simulate pass true to do a dry run of the process
+     *                     will discharge all its remaining charge if it cannot do the
+     *                     full operation and tell you the equivalent damage
+     * @param simulate     pass true to do a dry run of the process
      * @return the actual damage applied
      */
     int damageItem(ItemStack stack, int damage, boolean allowPartial, boolean simulate);

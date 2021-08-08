@@ -63,7 +63,7 @@ public class ToolMetaItemListener {
             int repairCost = (MathHelper.clamp(toolMaterial.getHarvestLevel(), 2, 3) - 1) * materialUnitsRequired;
 
             if (toolDamage > 0.0 && materialUnitsRequired > 0 && unificationEntry != null &&
-                unificationEntry.material == toolMaterial && unificationEntry.orePrefix == solidPrefix) {
+                    unificationEntry.material == toolMaterial && unificationEntry.orePrefix == solidPrefix) {
                 int durabilityToRegain = durabilityPerUnit * materialUnitsRequired;
                 ItemStack resultStack = firstStack.copy();
                 toolMetaItem.regainItemDurability(resultStack, durabilityToRegain);

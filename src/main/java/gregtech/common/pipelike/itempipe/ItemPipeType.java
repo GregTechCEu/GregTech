@@ -4,6 +4,8 @@ import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.ore.OrePrefix;
 
+import javax.annotation.Nonnull;
+
 public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
     //TINY_OPAQUE("tiny", 0.25f, OrePrefix.pipeTinyItem, 0.25f, 2f),
     SMALL("small", 0.375f, OrePrefix.pipeSmallItem, 0.5f, 1.5f),
@@ -33,7 +35,7 @@ public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
     }
 
     public String getSizeForTexture() {
-        if(!isRestrictive())
+        if (!isRestrictive())
             return name;
         else
             return name.substring(0, name.length() - 12);
@@ -58,6 +60,7 @@ public enum ItemPipeType implements IMaterialPipeType<ItemPipeProperties> {
         return true;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return name;

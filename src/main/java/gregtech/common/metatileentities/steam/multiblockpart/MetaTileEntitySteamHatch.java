@@ -48,8 +48,8 @@ import java.util.List;
 public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INVENTORY_SIZE = 64000;
-    private ItemStackHandler containerInventory;
-    private FluidTank steamFluidTank;
+    private final ItemStackHandler containerInventory;
+    private final FluidTank steamFluidTank;
 
     public MetaTileEntitySteamHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 0);
@@ -86,7 +86,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     @Override
     public void update() {
         super.update();
-        if(!getWorld().isRemote) {
+        if (!getWorld().isRemote) {
             fillContainerFromInternalTank(containerInventory, containerInventory, 0, 1);
             fillInternalTankFromFluidContainer(containerInventory, containerInventory, 0, 1);
             pullFluidsFromNearbyHandlers(getFrontFacing());
@@ -108,13 +108,13 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
         EnumFacing[] AllowedFaces = allowedFaces;
         int length = allowedFaces.length;
 
-        for(int i = 0; i < length; ++i) {
+        for (int i = 0; i < length; ++i) {
             EnumFacing nearbyFacing = AllowedFaces[i];
             blockPos.setPos(this.getPos()).move(nearbyFacing);
             TileEntity tileEntity = this.getWorld().getTileEntity(blockPos);
             if (tileEntity != null) {
-                IFluidHandler fluidHandler = (IFluidHandler)tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
-                IFluidHandler myFluidHandler = (IFluidHandler)this.getCoverCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing);
+                IFluidHandler fluidHandler = (IFluidHandler) tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
+                IFluidHandler myFluidHandler = (IFluidHandler) this.getCoverCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing);
                 if (fluidHandler != null && myFluidHandler != null && ModHandler.isSteam(fluidHandler.drain(1, false))) {
                     GTFluidUtils.transferFluids(fluidHandler, myFluidHandler, 2147483647);
                 }

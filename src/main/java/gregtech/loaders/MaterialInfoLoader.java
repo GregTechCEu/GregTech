@@ -19,7 +19,7 @@ import static gregtech.api.GTValues.W;
 public class MaterialInfoLoader {
 
     public static void init() {
-        if (ConfigHolder.U.GT5u.harderHeatingCoils){
+        if (ConfigHolder.U.GT5u.harderHeatingCoils) {
             OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.CUPRONICKEL),
                     new ItemMaterialInfo(new MaterialStack(Materials.Cupronickel, OrePrefix.wireGtDouble.materialAmount * 8),
                             new MaterialStack(Materials.Bronze, OrePrefix.foil.materialAmount * 8),

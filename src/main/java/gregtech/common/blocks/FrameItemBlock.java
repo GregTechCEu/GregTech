@@ -8,9 +8,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+
 public class FrameItemBlock extends ItemBlock {
 
-    private BlockFrame frameBlock;
+    private final BlockFrame frameBlock;
 
     public FrameItemBlock(BlockFrame block) {
         super(block);
@@ -27,9 +29,10 @@ public class FrameItemBlock extends ItemBlock {
         return frameBlock.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
-    public String getItemStackDisplayName(ItemStack stack) {
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         Material material = frameBlock.frameMaterial;
         return OrePrefix.frameGt.getLocalNameForItem(material);
     }

@@ -8,6 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+
 public class CompressedItemBlock extends ItemBlock {
 
     public final BlockCompressed compressedBlock;
@@ -28,9 +30,10 @@ public class CompressedItemBlock extends ItemBlock {
         return compressedBlock.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
-    public String getItemStackDisplayName(ItemStack stack) {
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         Material material = getBlockState(stack).getValue(compressedBlock.variantProperty);
         return OrePrefix.block.getLocalNameForItem(material);
     }

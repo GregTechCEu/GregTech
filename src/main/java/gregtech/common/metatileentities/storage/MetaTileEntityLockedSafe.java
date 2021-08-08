@@ -52,7 +52,7 @@ import java.util.Random;
 import java.util.function.DoubleSupplier;
 
 public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRenderMetaTileEntity {
-    
+
     private static final int MAX_UNLOCK_PROGRESS = 100;
     private static Component[] ALLOWED_COMPONENTS;
     private static final IndexedCuboid6 COLLISION_BOX = new IndexedCuboid6(null, new Cuboid6(3 / 16.0, 0 / 16.0, 3 / 16.0, 13 / 16.0, 14 / 16.0, 13 / 16.0));
@@ -87,7 +87,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     private final ItemStackHandler safeLootInventory = new ItemStackHandler(27);
     private float doorAngle = 0.0f;
     private float prevDoorAngle = 0.0f;
-        
+
     public MetaTileEntityLockedSafe(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId);
     }
@@ -155,9 +155,9 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
             ALLOWED_COMPONENTS = new Component[]{CraftingComponent.PUMP, CraftingComponent.CONVEYOR, CraftingComponent.EMITTER, CraftingComponent.SENSOR};
 
         Random random = new Random(unlockComponentsSeed);
-        return new CountableIngredient[] {
-            new CountableIngredient(createIngredient(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier)), 1),
-            new CountableIngredient(createIngredient(ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier)), 1)
+        return new CountableIngredient[]{
+                new CountableIngredient(createIngredient(CraftingComponent.CIRCUIT.getIngredient(unlockComponentTier)), 1),
+                new CountableIngredient(createIngredient(ALLOWED_COMPONENTS[random.nextInt(ALLOWED_COMPONENTS.length)].getIngredient(unlockComponentTier)), 1)
         };
     }
 
@@ -176,7 +176,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
 
     private void recheckUnlockItemsAndUnlock() {
         if (getWorld() != null && !getWorld().isRemote && !isSafeUnlocked() &&
-            checkUnlockedItems() && unlockProgress == -1) {
+                checkUnlockedItems() && unlockProgress == -1) {
             this.unlockProgress++;
             markDirty();
         }
@@ -247,7 +247,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     private void updateOpenVisualAnimation() {
         this.prevDoorAngle = doorAngle;
         if ((!isSafeUnlocked && this.doorAngle > 0.0F) ||
-            (isSafeUnlocked && this.doorAngle < 1.0F)) {
+                (isSafeUnlocked && this.doorAngle < 1.0F)) {
             if (isSafeUnlocked) {
                 this.doorAngle += 0.1F;
             } else {
@@ -356,7 +356,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         float angle = prevDoorAngle + (doorAngle - prevDoorAngle) * partialTicks;
         angle = 1.0f - (1.0f - angle) * (1.0f - angle) * (1.0f - angle);
         float resultDoorAngle = angle * 120.0f;
-        Textures.SAFE.render(renderState, translation, new IVertexOperation[] { colourMultiplier }, getFrontFacing(), resultDoorAngle);
+        Textures.SAFE.render(renderState, translation, new IVertexOperation[]{colourMultiplier}, getFrontFacing(), resultDoorAngle);
     }
 
     @Override
@@ -383,10 +383,10 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         DoubleSupplier supplier = () -> 0.2 + (unlockProgress / (MAX_UNLOCK_PROGRESS * 1.0)) * 0.8;
         ModularUI.Builder builder = ModularUI.defaultBuilder()
-            .widget(new ProgressWidget(supplier, 5, 5, 166, 74,
-                GuiTextures.PROGRESS_BAR_UNLOCK,
-                MoveType.VERTICAL_INVERTED))
-            .bindPlayerInventory(entityPlayer.inventory);
+                .widget(new ProgressWidget(supplier, 5, 5, 166, 74,
+                        GuiTextures.PROGRESS_BAR_UNLOCK,
+                        MoveType.VERTICAL_INVERTED))
+                .bindPlayerInventory(entityPlayer.inventory);
 
         ServerWidgetGroup lockedGroup = new ServerWidgetGroup(() -> !isSafeUnlocked && unlockProgress < 0);
         lockedGroup.addWidget(new LabelWidget(5, 20, "gregtech.machine.locked_safe.malfunctioning"));
@@ -402,12 +402,12 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 unlockedGroup.addWidget(new SlotWidget(safeLootInventory, col + row * 9,
-                    8 + col * 18, 15 + row * 18, true, false));
+                        8 + col * 18, 15 + row * 18, true, false));
             }
         }
 
         return builder.widget(unlockedGroup)
-            .widget(lockedGroup)
-            .build(getHolder(), entityPlayer);
+                .widget(lockedGroup)
+                .build(getHolder(), entityPlayer);
     }
 }

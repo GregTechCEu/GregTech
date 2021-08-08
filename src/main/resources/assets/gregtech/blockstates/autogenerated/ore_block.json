@@ -11,7 +11,7 @@
   },
   "variants": {
     "stone_type": {
-$STONE_TYPES$
+      $STONE_TYPES$
     }
   }
 }

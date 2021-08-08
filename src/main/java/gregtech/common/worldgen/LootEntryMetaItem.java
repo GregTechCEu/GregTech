@@ -11,7 +11,7 @@ import net.minecraft.world.storage.loot.functions.LootFunction;
 
 public class LootEntryMetaItem extends AbstractItemLootEntry {
 
-    private MetaValueItem metaValueItem;
+    private final MetaValueItem metaValueItem;
 
     protected LootEntryMetaItem(MetaValueItem metaValueItem, int weightIn, int qualityIn, LootFunction[] functionsIn, LootCondition[] conditionsIn, String entryName) {
         super(weightIn, qualityIn, functionsIn, conditionsIn, entryName);
@@ -25,10 +25,10 @@ public class LootEntryMetaItem extends AbstractItemLootEntry {
 
     public static MetaValueItem getMetaItem(String name) {
         return MetaItem.getMetaItems().stream()
-            .flatMap(item -> item.getAllItems().stream())
-            .map(item -> (MetaValueItem) item)
-            .filter(item -> item.unlocalizedName.equals(name))
-            .findFirst().orElse(null);
+                .flatMap(item -> item.getAllItems().stream())
+                .map(item -> (MetaValueItem) item)
+                .filter(item -> item.unlocalizedName.equals(name))
+                .findFirst().orElse(null);
     }
 
     public static LootEntryMetaItem deserialize(JsonObject object, JsonDeserializationContext context, int weight, int quality, LootCondition[] conditions) {

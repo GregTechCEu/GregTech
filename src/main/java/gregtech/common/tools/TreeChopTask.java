@@ -64,15 +64,15 @@ public class TreeChopTask implements Task {
         IToolStats toolStats = toolValueItem.getToolStats();
         int damagePerBlockBreak = toolStats.getToolDamagePerBlockBreak(itemStack);
 
-        if(!finishedSearchingBlocks) {
+        if (!finishedSearchingBlocks) {
             this.finishedSearchingBlocks = !attemptSearchWoodBlocks() ||
-                this.visitedBlockPos.size() >= MAX_BLOCKS_TO_SEARCH;
-            if(finishedSearchingBlocks) {
+                    this.visitedBlockPos.size() >= MAX_BLOCKS_TO_SEARCH;
+            if (finishedSearchingBlocks) {
                 this.woodBlockPos.sort(new WoodBlockComparator());
             }
             return true;
         }
-        if(toolMetaItem.isUsable(itemInMainHand, damagePerBlockBreak) && tryBreakAny()) {
+        if (toolMetaItem.isUsable(itemInMainHand, damagePerBlockBreak) && tryBreakAny()) {
             toolMetaItem.damageItem(itemInMainHand, damagePerBlockBreak, false);
             return true;
         }
@@ -84,7 +84,7 @@ public class TreeChopTask implements Task {
         @Override
         public int compare(BlockPos o1, BlockPos o2) {
             int a = -Integer.compare(o1.getY(), o2.getY());
-            if(a != 0) {
+            if (a != 0) {
                 return a;
             }
             return Integer.compare(distance(o1), distance(o2));
@@ -99,8 +99,8 @@ public class TreeChopTask implements Task {
 
     private boolean isItemEqual(ItemStack heldItem) {
         if (heldItem.getItem() != itemStack.getItem() ||
-            heldItem.getItemDamage() != itemStack.getItemDamage() ||
-            !(heldItem.getItem() instanceof ToolMetaItem<?>)) {
+                heldItem.getItemDamage() != itemStack.getItemDamage() ||
+                !(heldItem.getItem() instanceof ToolMetaItem<?>)) {
             return false;
         }
         Material heldToolMaterial = ToolMetaItem.getToolMaterial(heldItem);
@@ -109,10 +109,10 @@ public class TreeChopTask implements Task {
     }
 
     private boolean tryBreakAny() {
-        if(woodBlockPos.size() > currentWoodBlockIndex) {
+        if (woodBlockPos.size() > currentWoodBlockIndex) {
             BlockPos woodPos = woodBlockPos.get(currentWoodBlockIndex++);
             IBlockState blockState = this.world.getBlockState(woodPos);
-            if(isLogBlock(blockState) == 1) {
+            if (isLogBlock(blockState) == 1) {
                 this.world.destroyBlock(woodPos, true);
                 return true;
             }
@@ -124,14 +124,15 @@ public class TreeChopTask implements Task {
     private boolean attemptSearchWoodBlocks() {
         int blocksSearchedNow = 0;
         int validWoodBlocksFound = 0;
-        main: while (blocksSearchedNow <= MAX_BLOCKS_SEARCH_PER_TICK) {
+        main:
+        while (blocksSearchedNow <= MAX_BLOCKS_SEARCH_PER_TICK) {
             //try to iterate neighbour blocks
             blocksSearchedNow++;
             for (MultiFacing facing : MultiFacing.VALUES) {
                 //move at facing
                 facing.move(currentPos);
 
-                if(!visitedBlockPos.contains(currentPos)) {
+                if (!visitedBlockPos.contains(currentPos)) {
                     IBlockState blockState = this.world.getBlockState(currentPos);
                     int blockType = isLogBlock(blockState);
                     boolean currentIsLeavesBlock = isLastBlockLeaves;
@@ -139,7 +140,7 @@ public class TreeChopTask implements Task {
                         this.isLastBlockLeaves = blockType == 2;
                         BlockPos immutablePos = currentPos.toImmutable();
                         this.visitedBlockPos.add(immutablePos);
-                        if(blockType == 1) {
+                        if (blockType == 1) {
                             this.woodBlockPos.add(immutablePos);
                         }
                         validWoodBlocksFound++;
@@ -162,20 +163,20 @@ public class TreeChopTask implements Task {
     }
 
     public static int isLogBlock(IBlockState blockState) {
-        if(blockState.getMaterial() == net.minecraft.block.material.Material.AIR) {
+        if (blockState.getMaterial() == net.minecraft.block.material.Material.AIR) {
             return 0;
         }
-        if(blockState.getBlock() instanceof BlockLog) {
+        if (blockState.getBlock() instanceof BlockLog) {
             return 1;
-        } else if(blockState.getBlock() instanceof BlockLeaves) {
+        } else if (blockState.getBlock() instanceof BlockLeaves) {
             return 2;
         }
         Item itemBlock = Item.getItemFromBlock(blockState.getBlock());
         ItemStack blockStack = new ItemStack(itemBlock, 1, blockState.getBlock().damageDropped(blockState));
         Set<String> blocks = OreDictUnifier.getOreDictionaryNames(blockStack);
-        if(blocks.contains("logWood")) {
+        if (blocks.contains("logWood")) {
             return 1;
-        } else if(blocks.contains("treeLeaves")) {
+        } else if (blocks.contains("treeLeaves")) {
             return 2;
         } else return 0;
     }
@@ -219,8 +220,8 @@ public class TreeChopTask implements Task {
 
         public void move(MutableBlockPos blockPos) {
             blockPos.setPos(blockPos.getX() + direction.getX(),
-                blockPos.getY() + direction.getY(),
-                blockPos.getZ() + direction.getZ());
+                    blockPos.getY() + direction.getY(),
+                    blockPos.getZ() + direction.getZ());
         }
 
         public MultiFacing getOpposite() {

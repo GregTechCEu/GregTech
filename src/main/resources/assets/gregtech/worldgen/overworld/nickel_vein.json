@@ -9,7 +9,10 @@
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [13, 14]
+    "radius": [
+      13,
+      14
+    ]
   },
   "filler": {
     "type": "simple",
@@ -24,11 +27,11 @@
           "weight": 30,
           "value": "ore:nickel"
         },
-		{
+        {
           "weight": 30,
           "value": "ore:cobaltite"
         },
-		{
+        {
           "weight": 10,
           "value": "ore:pentlandite"
         }

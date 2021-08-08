@@ -27,13 +27,16 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class ToolRenderHandler implements IResourceManagerReloadListener {
 
     public static final ToolRenderHandler INSTANCE = new ToolRenderHandler();
-    private ToolRenderHandler() {}
+
+    private ToolRenderHandler() {
+    }
 
     private final TextureAtlasSprite[] destroyBlockIcons = new TextureAtlasSprite[10];
 
@@ -41,7 +44,7 @@ public class ToolRenderHandler implements IResourceManagerReloadListener {
     public void onRenderWorldLast(RenderWorldLastEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
         //render block damage progress for all breakers
-        for(int breakerEntityId : event.getContext().damagedBlocks.keySet()) {
+        for (int breakerEntityId : event.getContext().damagedBlocks.keySet()) {
             Entity breakerEntity = mc.world.getEntityByID(breakerEntityId);
             if (!(breakerEntity instanceof EntityPlayer)) {
                 continue;
@@ -65,7 +68,7 @@ public class ToolRenderHandler implements IResourceManagerReloadListener {
 
         //render block selection only for current player
         PlayerControllerMP playerController = mc.playerController;
-        if(!playerController.getIsHittingBlock()) {
+        if (!playerController.getIsHittingBlock()) {
             ItemStack itemStack = mc.player.getHeldItem(EnumHand.MAIN_HAND);
             if (itemStack.getItem() instanceof IAOEItem) {
                 RayTraceResult rayTraceResult = RayTracer.retrace(mc.player);
@@ -86,7 +89,7 @@ public class ToolRenderHandler implements IResourceManagerReloadListener {
         GlStateManager.disableTexture2D();
         GlStateManager.depthMask(false);
     }
-    
+
     private void postRenderSelectionOutline() {
         GlStateManager.depthMask(true);
         GlStateManager.enableTexture2D();
@@ -113,13 +116,13 @@ public class ToolRenderHandler implements IResourceManagerReloadListener {
         GlStateManager.depthMask(true);
         GlStateManager.popMatrix();
     }
-    
+
     public void drawSelectionOutlines(Minecraft mc, List<BlockPos> blocksToRender, Entity entityIn, float partialTicks) {
         double d3 = entityIn.lastTickPosX + (entityIn.posX - entityIn.lastTickPosX) * partialTicks;
         double d4 = entityIn.lastTickPosY + (entityIn.posY - entityIn.lastTickPosY) * partialTicks;
         double d5 = entityIn.lastTickPosZ + (entityIn.posZ - entityIn.lastTickPosZ) * partialTicks;
 
-        for(BlockPos blockPos : blocksToRender) {
+        for (BlockPos blockPos : blocksToRender) {
             IBlockState blockState = mc.world.getBlockState(blockPos);
             AxisAlignedBB box = blockState.getSelectedBoundingBox(mc.world, blockPos).grow(0.002D).offset(-d3, -d4, -d5);
             RenderGlobal.drawSelectionBoundingBox(box, 0.0F, 0.0F, 0.0F, 0.4F);
@@ -155,7 +158,7 @@ public class ToolRenderHandler implements IResourceManagerReloadListener {
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
         this.updateDestroyBlockIcons();
     }
 

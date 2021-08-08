@@ -4,8 +4,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
-import gregtech.api.util.LargeStackSizeItemStackHandler;
 import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.LargeStackSizeItemStackHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.IItemHandler;
@@ -18,7 +18,7 @@ public class SimpleItemFilter extends ItemFilter {
 
     private static final int MAX_MATCH_SLOTS = 9;
 
-    protected ItemStackHandler itemFilterSlots;
+    protected final ItemStackHandler itemFilterSlots;
     protected boolean ignoreDamage = true;
     protected boolean ignoreNBT = true;
 
@@ -92,9 +92,9 @@ public class SimpleItemFilter extends ItemFilter {
             widgetGroup.accept(new PhantomSlotWidget(itemFilterSlots, i, 10 + 18 * (i % 3), 0 + 18 * (i / 3)).setBackgroundTexture(GuiTextures.SLOT));
         }
         widgetGroup.accept(new ToggleButtonWidget(74, 0, 20, 20, GuiTextures.BUTTON_FILTER_DAMAGE,
-            () -> ignoreDamage, this::setIgnoreDamage).setTooltipText("cover.item_filter.ignore_damage"));
+                () -> ignoreDamage, this::setIgnoreDamage).setTooltipText("cover.item_filter.ignore_damage"));
         widgetGroup.accept(new ToggleButtonWidget(99, 0, 20, 20, GuiTextures.BUTTON_FILTER_NBT,
-            () -> ignoreNBT, this::setIgnoreNBT).setTooltipText("cover.item_filter.ignore_nbt"));
+                () -> ignoreNBT, this::setIgnoreNBT).setTooltipText("cover.item_filter.ignore_nbt"));
     }
 
     @Override

@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import javax.annotation.Nonnull;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -62,7 +63,7 @@ public class StoneType implements Comparable<StoneType> {
     }
 
     @Override
-    public int compareTo(StoneType stoneType) {
+    public int compareTo(@Nonnull StoneType stoneType) {
         return STONE_TYPE_REGISTRY.getIDForObject(this) - STONE_TYPE_REGISTRY.getIDForObject(stoneType);
     }
 

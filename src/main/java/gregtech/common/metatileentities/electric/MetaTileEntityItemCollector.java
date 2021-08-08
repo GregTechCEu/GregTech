@@ -50,7 +50,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     private AxisAlignedBB areaBoundingBox;
     private BlockPos areaCenterPos;
     private boolean isWorking;
-    private ItemFilterContainer itemFilter;
+    private final ItemFilterContainer itemFilter;
 
     public MetaTileEntityItemCollector(ResourceLocation metaTileEntityId, int tier, int maxItemSuckingRange) {
         super(metaTileEntityId, tier);
@@ -108,7 +108,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     public void update() {
         super.update();
 
-        if(getWorld().isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
 
@@ -118,14 +118,14 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
             energyContainer.removeEnergy(getEnergyConsumedPerTick());
             BlockPos selfPos = getPos();
             if (areaCenterPos == null || areaBoundingBox == null || areaCenterPos.getX() != selfPos.getX() ||
-                areaCenterPos.getZ() != selfPos.getZ() || areaCenterPos.getY() != selfPos.getY() + 1) {
+                    areaCenterPos.getZ() != selfPos.getZ() || areaCenterPos.getY() != selfPos.getY() + 1) {
                 this.areaCenterPos = selfPos.up();
                 this.areaBoundingBox = new AxisAlignedBB(areaCenterPos).grow(itemSuckingRange, 1.0, itemSuckingRange);
             }
             moveItemsInEffectRange();
         }
 
-        if(isWorkingNow != isWorking) {
+        if (isWorkingNow != isWorking) {
             this.isWorking = isWorkingNow;
             writeCustomData(100, buffer -> buffer.writeBoolean(isWorkingNow));
         }
@@ -134,15 +134,15 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     protected void moveItemsInEffectRange() {
         List<EntityItem> itemsInRange = getWorld().getEntitiesWithinAABB(EntityItem.class, areaBoundingBox);
         for (EntityItem entityItem : itemsInRange) {
-            if(entityItem.isDead) continue;
+            if (entityItem.isDead) continue;
             double distanceX = (areaCenterPos.getX() + 0.5) - entityItem.posX;
             double distanceZ = (areaCenterPos.getZ() + 0.5) - entityItem.posZ;
             double distance = MathHelper.sqrt(distanceX * distanceX + distanceZ * distanceZ);
-            if(!itemFilter.testItemStack(entityItem.getItem())) {
+            if (!itemFilter.testItemStack(entityItem.getItem())) {
                 continue;
             }
             if (distance >= 0.7) {
-                if(!entityItem.cannotPickup()) {
+                if (!entityItem.cannotPickup()) {
                     double directionX = distanceX / distance;
                     double directionZ = distanceZ / distance;
                     entityItem.motionX = directionX * MOTION_MULTIPLIER * getTier();
@@ -219,8 +219,8 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(exportItems.getSlots());
         Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176,
-            45 + rowSize * 18 + 105 + 82)
-            .label(10, 5, getMetaFullName());
+                45 + rowSize * 18 + 105 + 82)
+                .label(10, 5, getMetaFullName());
 
         builder.widget(new ClickButtonWidget(10, 20, 20, 20, "-1", data -> adjustSuckingRange(-1)));
         builder.widget(new ClickButtonWidget(146, 20, 20, 20, "+1", data -> adjustSuckingRange(+1)));
@@ -231,7 +231,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
                 builder.widget(new SlotWidget(exportItems, index, 89 - rowSize * 9 + x * 18, 45 + y * 18, true, false)
-                    .setBackgroundTexture(GuiTextures.SLOT));
+                        .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
 

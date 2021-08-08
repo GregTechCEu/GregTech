@@ -21,8 +21,8 @@ public class DyeUtil {
             Color c2 = new Color(dyeColor.colorValue);
 
             double distance = (c.getRed() - c2.getRed()) * (c.getRed() - c2.getRed())
-                + (c.getGreen() - c2.getGreen()) * (c.getGreen() - c2.getGreen())
-                + (c.getBlue() - c2.getBlue()) * (c.getBlue() - c2.getBlue());
+                    + (c.getGreen() - c2.getGreen()) * (c.getGreen() - c2.getGreen())
+                    + (c.getBlue() - c2.getBlue()) * (c.getBlue() - c2.getBlue());
 
             distances.put(distance, dyeColor);
         }

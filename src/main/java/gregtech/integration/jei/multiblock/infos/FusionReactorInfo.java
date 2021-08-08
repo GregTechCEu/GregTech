@@ -66,7 +66,7 @@ public class FusionReactorInfo extends MultiblockInfoPage {
     }
 
     private static IBlockState getCasing(int tier) {
-        switch(tier) {
+        switch (tier) {
             case 0:
                 return MetaBlocks.MACHINE_CASING.getState(BlockMachineCasing.MachineCasingType.LuV);
             case 1:
@@ -84,7 +84,7 @@ public class FusionReactorInfo extends MultiblockInfoPage {
 
     @Override
     public String[] getDescription() {
-        return new String[] {
+        return new String[]{
                 I18n.format(String.format("gregtech.multiblock.fusion_reactor_mk%d.description", tier + 1))
         };
     }

@@ -45,8 +45,8 @@ public class PlungerBehaviour implements IItemBehaviour, IItemCapabilityProvider
         ItemStack toolStack = player.getHeldItem(hand);
         boolean isShiftClick = player.isSneaking();
         IFluidHandler handlerToRemoveFrom = isShiftClick ?
-            (fluidHandler instanceof FluidHandlerProxy ? ((FluidHandlerProxy) fluidHandler).input : null) :
-            (fluidHandler instanceof FluidHandlerProxy ? ((FluidHandlerProxy) fluidHandler).output : fluidHandler);
+                (fluidHandler instanceof FluidHandlerProxy ? ((FluidHandlerProxy) fluidHandler).input : null) :
+                (fluidHandler instanceof FluidHandlerProxy ? ((FluidHandlerProxy) fluidHandler).output : fluidHandler);
 
         if (handlerToRemoveFrom != null && GTUtility.doDamageItem(toolStack, cost, false)) {
             if (!world.isRemote) {

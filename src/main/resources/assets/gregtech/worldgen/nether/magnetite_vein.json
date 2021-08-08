@@ -3,14 +3,19 @@
   "density": 0.3,
   "max_height": 120,
   "min_height": 50,
-  "dimension_filter": ["is_nether"],
+  "dimension_filter": [
+    "is_nether"
+  ],
   "vein_populator": {
     "type": "surface_rock",
     "material": "magnetite"
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [14, 17]
+    "radius": [
+      14,
+      17
+    ]
   },
   "filler": {
     "type": "simple",
@@ -25,11 +30,11 @@
           "weight": 15,
           "value": "ore:iron"
         },
-		{
+        {
           "weight": 15,
           "value": "ore:vanadium_magnetite"
         },
-		{
+        {
           "weight": 10,
           "value": "ore:gold"
         }

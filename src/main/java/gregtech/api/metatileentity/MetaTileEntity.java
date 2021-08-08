@@ -61,7 +61,7 @@ import static gregtech.api.util.InventoryUtils.simulateItemStackMerge;
 
 public abstract class MetaTileEntity implements ICoverable {
 
-    public static int DEFAULT_PAINTING_COLOR = ConfigHolder.U.GT5u.defaultPaintingColor;
+    public static final int DEFAULT_PAINTING_COLOR = ConfigHolder.U.GT5u.defaultPaintingColor;
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
     public static final String TAG_KEY_FRAGILE = "Fragile";
@@ -79,7 +79,7 @@ public abstract class MetaTileEntity implements ICoverable {
 
     protected IFluidHandler fluidInventory;
 
-    protected List<MTETrait> mteTraits = new ArrayList<>();
+    protected final List<MTETrait> mteTraits = new ArrayList<>();
 
     protected EnumFacing frontFacing = EnumFacing.NORTH;
     protected int paintingColor = DEFAULT_PAINTING_COLOR;
@@ -133,6 +133,7 @@ public abstract class MetaTileEntity implements ICoverable {
 
     /**
      * Replacement for former getTimer() call.
+     *
      * @return Timer value, starting at zero, with a random offset [0, 20).
      */
     public long getOffsetTimer() {
@@ -309,7 +310,7 @@ public abstract class MetaTileEntity implements ICoverable {
     public final boolean onCoverRightClick(EntityPlayer playerIn, EnumHand hand, CuboidRayTraceResult result) {
         CoverBehavior coverBehavior = getCoverAtSide(result.sideHit);
         EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
-            coverBehavior.onRightClick(playerIn, hand, result);
+                coverBehavior.onRightClick(playerIn, hand, result);
         if (coverResult != EnumActionResult.PASS) {
             return coverResult == EnumActionResult.SUCCESS;
         }
@@ -325,7 +326,7 @@ public abstract class MetaTileEntity implements ICoverable {
         EnumFacing coverSide = ICoverable.traceCoverSide(result);
         CoverBehavior coverBehavior = coverSide == null ? null : getCoverAtSide(coverSide);
         EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
-            accessingActiveOutputSide ? EnumActionResult.PASS : coverBehavior.onScrewdriverClick(playerIn, hand, result);
+                accessingActiveOutputSide ? EnumActionResult.PASS : coverBehavior.onScrewdriverClick(playerIn, hand, result);
         if (coverResult != EnumActionResult.PASS) {
             return coverResult == EnumActionResult.SUCCESS;
         }
@@ -490,7 +491,7 @@ public abstract class MetaTileEntity implements ICoverable {
         //so check both top cover and bottom cover
         if (side == null) {
             return canConnectRedstone(EnumFacing.UP) ||
-                canConnectRedstone(EnumFacing.DOWN);
+                    canConnectRedstone(EnumFacing.DOWN);
         }
         CoverBehavior coverBehavior = getCoverAtSide(side);
         if (coverBehavior == null) {
@@ -801,10 +802,10 @@ public abstract class MetaTileEntity implements ICoverable {
             return GregtechTileCapabilities.CAPABILITY_COVERABLE.cast(this);
         }
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY &&
-            getFluidInventory().getTankProperties().length > 0) {
+                getFluidInventory().getTankProperties().length > 0) {
             return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(getFluidInventory());
         } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY &&
-            getItemInventory().getSlots() > 0) {
+                getItemInventory().getSlots() > 0) {
             return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(getItemInventory());
         }
         T capabilityResult = null;
@@ -973,7 +974,7 @@ public abstract class MetaTileEntity implements ICoverable {
                 ItemStack rest = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
                 if (!rest.isEmpty())
                     throw new IllegalStateException(
-                        String.format("Insertion failed, remaining stack contained %d items.", rest.getCount()));
+                            String.format("Insertion failed, remaining stack contained %d items.", rest.getCount()));
             });
 
         return canMerge;
@@ -1232,7 +1233,7 @@ public abstract class MetaTileEntity implements ICoverable {
         return false;
     }
 
-    public boolean getWitherProof(){
+    public boolean getWitherProof() {
         return false;
     }
 

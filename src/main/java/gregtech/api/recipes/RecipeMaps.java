@@ -21,57 +21,57 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> COMPRESSOR_RECIPES = new RecipeMap<>("compressor", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(2), false)
-        .setSlotOverlay(false, false, GuiTextures.COMPRESSOR_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_COMPRESS, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.COMPRESSOR_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_COMPRESS, MoveType.HORIZONTAL);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> EXTRACTOR_RECIPES = new RecipeMap<>("extractor", 0, 1, 0, 1, 0, 0, 0, 1, new SimpleRecipeBuilder().duration(400).EUt(2), false)
-        .setSlotOverlay(false, false, GuiTextures.EXTRACTOR_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.EXTRACTOR_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> MACERATOR_RECIPES = new RecipeMap<>("macerator", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(150).EUt(8), false)
-        .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
-        .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_MACERATE, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
+            .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MACERATE, MoveType.HORIZONTAL);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ORE_WASHER_RECIPES = new RecipeMap<>("ore_washer", 1, 1, 1, 3, 0, 1, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(16), false)
-        .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
-        .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
+            .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> THERMAL_CENTRIFUGE_RECIPES = new RecipeMap<>("thermal_centrifuge", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder().duration(400).EUt(60), false)
-        .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
-        .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
+            .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FURNACE_RECIPES = new RecipeMapFurnace("electric_furnace", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-        .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
 
 
     @ZenProperty
     public static final RecipeMap<IntCircuitRecipeBuilder> ASSEMBLER_RECIPES = new RecipeMap<>("assembler", 1, 9, 1, 1, 0, 1, 0, 0, new AssemblerRecipeBuilder(), false)
-        .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT, MoveType.HORIZONTAL);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FORMING_PRESS_RECIPES = new RecipeMapFormingPress("forming_press", 2, 6, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_COMPRESS, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_COMPRESS, MoveType.HORIZONTAL);
 
 
     @ZenProperty
     public static final RecipeMap<ArcFurnaceRecipeBuilder> ARC_FURNACE_RECIPES = new RecipeMap<>("arc_furnace", 1, 1, 1, 4, 1, 1, 0, 1, new ArcFurnaceRecipeBuilder(), false)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -91,7 +91,7 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> SIFTER_RECIPES = new RecipeMap<>("sifter", 1, 1, 0, 6, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, MoveType.VERTICAL_INVERTED);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, MoveType.VERTICAL_INVERTED);
 
     /**
      * Example:
@@ -107,8 +107,8 @@ public class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> LASER_ENGRAVER_RECIPES = new RecipeMap<>("laser_engraver", 2, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-        .setSlotOverlay(false, false, true, GuiTextures.LENS_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, true, GuiTextures.LENS_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -125,9 +125,9 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> MIXER_RECIPES = new RecipeMap<>("mixer", 0, 6, 0, 1, 0, 2, 0, 1, new SimpleRecipeBuilder(), false)
-        .setSlotOverlay(false, false, GuiTextures.DUST_OVERLAY)
-        .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.DUST_OVERLAY)
+            .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -144,9 +144,9 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> AUTOCLAVE_RECIPES = new RecipeMap<>("autoclave", 1, 1, 1, 1, 1, 1, 0, 0, new SimpleRecipeBuilder(), false)
-        .setSlotOverlay(false, false, GuiTextures.DUST_OVERLAY)
-        .setSlotOverlay(true, false, GuiTextures.CRYSTAL_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_CRYSTALLIZATION, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.DUST_OVERLAY)
+            .setSlotOverlay(true, false, GuiTextures.CRYSTAL_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_CRYSTALLIZATION, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -163,9 +163,9 @@ public class RecipeMaps {
      */
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ELECTROMAGNETIC_SEPARATOR_RECIPES = new RecipeMap<>("electromagnetic_separator", 1, 1, 1, 3, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-        .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
-        .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_MAGNET, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
+            .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MAGNET, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -181,7 +181,7 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> POLARIZER_RECIPES = new RecipeMap<>("polarizer", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_MAGNET, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MAGNET, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -198,7 +198,7 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_BATH_RECIPES = new RecipeMap<>("chemical_bath", 1, 1, 1, 3, 1, 1, 0, 0, new SimpleRecipeBuilder(), false)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_MIXER, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -213,8 +213,8 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> BREWING_RECIPES = new RecipeMap<>("brewery", 1, 1, 0, 0, 1, 1, 1, 1, new SimpleRecipeBuilder().duration(128).EUt(4), false)
-        .setSlotOverlay(false, false, GuiTextures.BREWER_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.BREWER_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -268,7 +268,7 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FERMENTING_RECIPES = new RecipeMap<>("fermenter", 0, 0, 0, 0, 1, 1, 1, 1, new SimpleRecipeBuilder().EUt(2), false)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -285,8 +285,8 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FLUID_SOLIDFICATION_RECIPES = new RecipeMap<>("fluid_solidifier", 1, 1, 1, 1, 1, 1, 0, 0, new SimpleRecipeBuilder(), false)
-        .setSlotOverlay(false, false, GuiTextures.SOLIDIFIER_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.SOLIDIFIER_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -328,7 +328,7 @@ public class RecipeMaps {
             .setSlotOverlay(false, false, false, GuiTextures.EXTRACTOR_OVERLAY)
             .setSlotOverlay(false, false, true, GuiTextures.CANISTER_OVERLAY)
             .setSlotOverlay(false, true, true, GuiTextures.CENTRIFUGE_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRACT, MoveType.HORIZONTAL);
 
     /**
      * Examples:
@@ -522,8 +522,8 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> WIREMILL_RECIPES = new RecipeMap<>("wiremill", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-        .setSlotOverlay(false, false, GuiTextures.WIREMILL_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_WIREMILL, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.WIREMILL_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_WIREMILL, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -545,8 +545,8 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> ALLOY_SMELTER_RECIPES = new RecipeMap<>("alloy_smelter", 1, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-        .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -583,11 +583,11 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> LATHE_RECIPES = new RecipeMap<>("lathe", 1, 1, 1, 2, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-        .setSlotOverlay(false, false, GuiTextures.PIPE_OVERLAY_1)
-        .setSlotOverlay(true, false, false, GuiTextures.PIPE_OVERLAY_2)
-        .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
-        .setSpecialTexture(98, 24, 5, 18, GuiTextures.PROGRESS_BAR_LATHE_BASE)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_LATHE, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.PIPE_OVERLAY_1)
+            .setSlotOverlay(true, false, false, GuiTextures.PIPE_OVERLAY_2)
+            .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
+            .setSpecialTexture(98, 24, 5, 18, GuiTextures.PROGRESS_BAR_LATHE_BASE)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_LATHE, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -604,10 +604,10 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<CutterRecipeBuilder> CUTTER_RECIPES = new RecipeMap<>("cutter", 1, 1, 1, 2, 0, 1, 0, 0, new CutterRecipeBuilder(), false)
-        .setSlotOverlay(false, false, GuiTextures.SAWBLADE_OVERLAY)
-        .setSlotOverlay(true, false, false, GuiTextures.CUTTER_OVERLAY)
-        .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_SLICE, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.SAWBLADE_OVERLAY)
+            .setSlotOverlay(true, false, false, GuiTextures.CUTTER_OVERLAY)
+            .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_SLICE, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -624,8 +624,8 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> EXTRUDER_RECIPES = new RecipeMap<>("extruder", 2, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
-        .setSlotOverlay(false, false, true, GuiTextures.MOLD_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRUDER, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, true, GuiTextures.MOLD_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRUDER, MoveType.HORIZONTAL);
 
     /**
      * Example:
@@ -648,15 +648,15 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> PACKER_RECIPES = new RecipeMap<>("packer", 2, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder().EUt(12).duration(10), false)
-        .setSlotOverlay(false, false, true, GuiTextures.BOX_OVERLAY)
-        .setSlotOverlay(true, false, GuiTextures.BOXED_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_PACKER, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, true, GuiTextures.BOX_OVERLAY)
+            .setSlotOverlay(true, false, GuiTextures.BOXED_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_PACKER, MoveType.HORIZONTAL);
 
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> UNPACKER_RECIPES = new RecipeMap<>("unpacker", 2, 2, 1, 2, 0, 0, 0, 0, new SimpleRecipeBuilder().EUt(12).duration(10), false)
-        .setSlotOverlay(false, false, GuiTextures.BOXED_OVERLAY)
-        .setProgressBar(GuiTextures.PROGRESS_BAR_UNPACKER, MoveType.HORIZONTAL);
+            .setSlotOverlay(false, false, GuiTextures.BOXED_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_UNPACKER, MoveType.HORIZONTAL);
 
     @ZenProperty
     public static final RecipeMapAssemblyLine<SimpleRecipeBuilder> ASSEMBLY_LINE_RECIPES = new RecipeMapAssemblyLine<>("assembly_line", 4, 16, 1, 1, 0, 4, 0, 0, new SimpleRecipeBuilder(), false)

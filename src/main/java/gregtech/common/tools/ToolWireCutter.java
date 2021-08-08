@@ -3,7 +3,12 @@ package gregtech.common.tools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class ToolWireCutter extends ToolBase {
+
+    private static final Set<String> CUTTER_TOOL_CLASSES = Collections.singleton("cutter");
 
     @Override
     public int getToolDamagePerBlockBreak(ItemStack stack) {
@@ -26,4 +31,8 @@ public class ToolWireCutter extends ToolBase {
         return tool != null && tool.equals("cutter");
     }
 
+    @Override
+    public Set<String> getToolClasses(ItemStack stack) {
+        return CUTTER_TOOL_CLASSES;
+    }
 }

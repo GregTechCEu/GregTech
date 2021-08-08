@@ -62,6 +62,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
@@ -109,10 +110,10 @@ public class MetaBlocks {
 
     public static BlockSurfaceRock SURFACE_ROCK;
 
-    public static Map<Material, BlockCompressed> COMPRESSED = new HashMap<>();
-    public static Map<Material, BlockFrame> FRAMES = new HashMap<>();
-    public static Collection<BlockOre> ORES = new HashSet<>();
-    public static Collection<BlockFluidBase> FLUID_BLOCKS = new HashSet<>();
+    public static final Map<Material, BlockCompressed> COMPRESSED = new HashMap<>();
+    public static final Map<Material, BlockFrame> FRAMES = new HashMap<>();
+    public static final Collection<BlockOre> ORES = new HashSet<>();
+    public static final Collection<BlockFluidBase> FLUID_BLOCKS = new HashSet<>();
 
     public static void init() {
         GregTechAPI.MACHINE = MACHINE = new BlockMachine();
@@ -185,8 +186,8 @@ public class MetaBlocks {
         StoneType.init();
 
         createGeneratedBlock(
-            material -> material.hasProperty(PropertyKey.DUST) && !OrePrefix.block.isIgnored(material),
-            MetaBlocks::createCompressedBlock);
+                material -> material.hasProperty(PropertyKey.DUST) && !OrePrefix.block.isIgnored(material),
+                MetaBlocks::createCompressedBlock);
 
         for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
 
@@ -238,8 +239,8 @@ public class MetaBlocks {
 
         Map<Integer, Material[]> blocksToGenerate = new TreeMap<>();
 
-        for(Material material : MaterialRegistry.MATERIAL_REGISTRY)
-            if(materialPredicate.test(material)) {
+        for (Material material : MaterialRegistry.MATERIAL_REGISTRY)
+            if (materialPredicate.test(material)) {
                 int id = material.getId();
                 int metaBlockID = id / 16;
                 int subBlockID = id % 16;
@@ -309,9 +310,12 @@ public class MetaBlocks {
     @SideOnly(Side.CLIENT)
     public static void registerItemModels() {
         ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(MACHINE), stack -> MetaTileEntityRenderer.MODEL_LOCATION);
-        for (BlockCable cable : CABLES) ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(cable), stack -> CableRenderer.MODEL_LOCATION);
-        for (BlockFluidPipe pipe : FLUID_PIPES) ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> FluidPipeRenderer.MODEL_LOCATION);
-        for (BlockItemPipe pipe : ITEM_PIPES) ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> ItemPipeRenderer.MODEL_LOCATION);
+        for (BlockCable cable : CABLES)
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(cable), stack -> CableRenderer.MODEL_LOCATION);
+        for (BlockFluidPipe pipe : FLUID_PIPES)
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> FluidPipeRenderer.MODEL_LOCATION);
+        for (BlockItemPipe pipe : ITEM_PIPES)
+            ModelLoader.setCustomMeshDefinition(Item.getItemFromBlock(pipe), stack -> ItemPipeRenderer.MODEL_LOCATION);
         registerItemModel(BOILER_CASING);
         registerItemModel(BOILER_FIREBOX_CASING);
         registerItemModel(METAL_CASING);
@@ -341,9 +345,9 @@ public class MetaBlocks {
         for (IBlockState state : block.getBlockState().getValidStates()) {
             //noinspection ConstantConditions
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block),
-                block.getMetaFromState(state),
-                new ModelResourceLocation(block.getRegistryName(),
-                    statePropertiesToString(state.getProperties())));
+                    block.getMetaFromState(state),
+                    new ModelResourceLocation(block.getRegistryName(),
+                            statePropertiesToString(state.getProperties())));
         }
     }
 
@@ -356,9 +360,9 @@ public class MetaBlocks {
             }
             //noinspection ConstantConditions
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block),
-                block.getMetaFromState(state),
-                new ModelResourceLocation(block.getRegistryName(),
-                    statePropertiesToString(stringProperties)));
+                    block.getMetaFromState(state),
+                    new ModelResourceLocation(block.getRegistryName(),
+                            statePropertiesToString(stringProperties)));
         }
     }
 
@@ -370,41 +374,45 @@ public class MetaBlocks {
             stringProperties.putAll(stateOverrides);
             //noinspection ConstantConditions
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block),
-                block.getMetaFromState(state),
-                new ModelResourceLocation(block.getRegistryName(),
-                    statePropertiesToString(stringProperties)));
+                    block.getMetaFromState(state),
+                    new ModelResourceLocation(block.getRegistryName(),
+                            statePropertiesToString(stringProperties)));
         }
     }
 
     @SideOnly(Side.CLIENT)
     public static void registerStateMappers() {
         ModelLoader.setCustomStateMapper(MACHINE, new DefaultStateMapper() {
+            @Nonnull
             @Override
-            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+            protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
                 return MetaTileEntityRenderer.MODEL_LOCATION;
             }
         });
 
         for (BlockCable cable : CABLES) {
             ModelLoader.setCustomStateMapper(cable, new DefaultStateMapper() {
+                @Nonnull
                 @Override
-                protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
                     return CableRenderer.MODEL_LOCATION;
                 }
             });
         }
         for (BlockFluidPipe pipe : FLUID_PIPES) {
             ModelLoader.setCustomStateMapper(pipe, new DefaultStateMapper() {
+                @Nonnull
                 @Override
-                protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
                     return FluidPipeRenderer.MODEL_LOCATION;
                 }
             });
         }
         for (BlockItemPipe pipe : ITEM_PIPES) {
             ModelLoader.setCustomStateMapper(pipe, new DefaultStateMapper() {
+                @Nonnull
                 @Override
-                protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
                     return ItemPipeRenderer.MODEL_LOCATION;
                 }
             });
@@ -435,7 +443,7 @@ public class MetaBlocks {
     @SideOnly(Side.CLIENT)
     public static void registerColors() {
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(
-            FOAM_BLOCK_COLOR, FOAM, REINFORCED_FOAM, PETRIFIED_FOAM, REINFORCED_PETRIFIED_FOAM);
+                FOAM_BLOCK_COLOR, FOAM, REINFORCED_FOAM, PETRIFIED_FOAM, REINFORCED_PETRIFIED_FOAM);
 
         MetaBlocks.COMPRESSED.values().stream().distinct().forEach(block -> {
             Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(COMPRESSED_BLOCK_COLOR, block);
@@ -478,7 +486,7 @@ public class MetaBlocks {
             for (StoneType stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
                 if (stoneType == null) continue;
                 ItemStack normalStack = blockOre.getItem(blockOre.getDefaultState()
-                    .withProperty(blockOre.STONE_TYPE, stoneType));
+                        .withProperty(blockOre.STONE_TYPE, stoneType));
                 OreDictUnifier.registerOre(normalStack, stoneType.processingPrefix, material);
             }
         }
@@ -506,8 +514,8 @@ public class MetaBlocks {
         StringBuilder stringbuilder = new StringBuilder();
 
         List<Entry<IProperty<?>, Comparable<?>>> entries = properties.entrySet().stream()
-            .sorted(Comparator.comparing(c -> c.getKey().getName()))
-            .collect(Collectors.toList());
+                .sorted(Comparator.comparing(c -> c.getKey().getName()))
+                .collect(Collectors.toList());
 
         for (Map.Entry<IProperty<?>, Comparable<?>> entry : entries) {
             if (stringbuilder.length() != 0) {

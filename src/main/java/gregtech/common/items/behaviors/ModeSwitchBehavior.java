@@ -27,7 +27,7 @@ public class ModeSwitchBehavior<T extends Enum<T> & ILocalizationKey> implements
     }
 
     public T getModeFromItemStack(ItemStack itemStack) {
-        if(!itemStack.hasTagCompound()) {
+        if (!itemStack.hasTagCompound()) {
             return enumConstants[0];
         }
         NBTTagCompound tagCompound = itemStack.getTagCompound();
@@ -45,7 +45,7 @@ public class ModeSwitchBehavior<T extends Enum<T> & ILocalizationKey> implements
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack itemStack = player.getHeldItem(hand);
-        if(player.isSneaking()) {
+        if (player.isSneaking()) {
             T currentMode = getModeFromItemStack(itemStack);
             int currentModeIndex = ArrayUtils.indexOf(enumConstants, currentMode);
             T nextMode = enumConstants[(currentModeIndex + 1) % enumConstants.length];

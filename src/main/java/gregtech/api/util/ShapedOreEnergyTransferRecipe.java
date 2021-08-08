@@ -37,7 +37,7 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
         super(group, result, primer);
         this.chargePredicate = chargePredicate;
         this.transferMaxCharge = transferMaxCharge;
-        if(overrideCharge) {
+        if (overrideCharge) {
             fixOutputItemMaxCharge();
         }
     }
@@ -45,11 +45,11 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
     //transfer initial max charge for correct display in JEI
     private void fixOutputItemMaxCharge() {
         long totalMaxCharge = getIngredients().stream()
-            .mapToLong(it -> Arrays.stream(it.getMatchingStacks())
-                .map(stack -> stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null))
-                .filter(Objects::nonNull)
-                .mapToLong(IElectricItem::getMaxCharge)
-                .max().orElse(0L)).sum();
+                .mapToLong(it -> Arrays.stream(it.getMatchingStacks())
+                        .map(stack -> stack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null))
+                        .filter(Objects::nonNull)
+                        .mapToLong(IElectricItem::getMaxCharge)
+                        .max().orElse(0L)).sum();
         IElectricItem electricItem = output.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (totalMaxCharge > 0L && electricItem instanceof ElectricItem) {
             ((ElectricItem) electricItem).setMaxChargeOverride(totalMaxCharge);
@@ -70,7 +70,7 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
         if (electricItem != null && electricItem.getMaxCharge() > 0L) {
             for (int slotIndex = 0; slotIndex < ingredients.getSizeInventory(); slotIndex++) {
                 ItemStack stackInSlot = ingredients.getStackInSlot(slotIndex);
-                if(!chargePredicate.test(stackInSlot)) {
+                if (!chargePredicate.test(stackInSlot)) {
                     continue;
                 }
                 IElectricItem batteryItem = stackInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
@@ -85,7 +85,7 @@ public class ShapedOreEnergyTransferRecipe extends ShapedOreRecipe {
                 }
             }
         }
-        if(electricItem instanceof ElectricItem && transferMaxCharge) {
+        if (electricItem instanceof ElectricItem && transferMaxCharge) {
             ((ElectricItem) electricItem).setMaxChargeOverride(totalMaxCharge);
         }
     }

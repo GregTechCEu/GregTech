@@ -37,7 +37,7 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
     public enum TurbineType {
 
         STEAM(RecipeMaps.STEAM_TURBINE_FUELS, MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STEEL_TURBINE_CASING), MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STEEL_GEARBOX), Textures.SOLID_STEEL_CASING, true, Textures.LARGE_STEAM_TURBINE_OVERLAY),
-        GAS(RecipeMaps.GAS_TURBINE_FUELS, MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STAINLESS_TURBINE_CASING), MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STEEL_GEARBOX), Textures.CLEAN_STAINLESS_STEEL_CASING,false, Textures.LARGE_GAS_TURBINE_OVERLAY),
+        GAS(RecipeMaps.GAS_TURBINE_FUELS, MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STAINLESS_TURBINE_CASING), MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STEEL_GEARBOX), Textures.CLEAN_STAINLESS_STEEL_CASING, false, Textures.LARGE_GAS_TURBINE_OVERLAY),
         PLASMA(RecipeMaps.PLASMA_GENERATOR_FUELS, MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TUNGSTENSTEEL_TURBINE_CASING), MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.STEEL_GEARBOX), Textures.ROBUST_TUNGSTENSTEEL_CASING, true, Textures.LARGE_PLASMA_TURBINE_OVERLAY);
 
         public final FuelRecipeMap recipeMap;
@@ -144,8 +144,9 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
                 new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.EXPORT_FLUIDS} :
                 new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS};
     }
+
     @Override
-    public boolean canShare(){
+    public boolean canShare() {
         return false;
 
     }

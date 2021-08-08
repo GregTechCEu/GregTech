@@ -2,6 +2,7 @@ package gregtech.api.util;
 
 import net.minecraft.client.gui.GuiPageButtonList.GuiResponder;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 public class MCGuiUtil {
@@ -17,7 +18,7 @@ public class MCGuiUtil {
             }
 
             @Override
-            public void setEntryValue(int id, String value) {
+            public void setEntryValue(int id, @Nonnull String value) {
                 onChanged.accept(value);
             }
         };

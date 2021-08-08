@@ -36,7 +36,7 @@ public class StoneRenderer implements ICCBlockRenderer {
 
     private static final StoneRenderer INSTANCE = new StoneRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
-    private static CCModel[] placeholderModels = new CCModel[1];
+    private static final CCModel[] placeholderModels = new CCModel[1];
 
     public static void preInit() {
         BLOCK_RENDER_TYPE = BlockRenderingRegistry.createRenderType("gt_stone");
@@ -72,10 +72,10 @@ public class StoneRenderer implements ICCBlockRenderer {
         TextureAtlasSprite stoneSprite = TextureUtils.getBlockTexture("stone");
         Material material = ((BlockSurfaceRock) state.getBlock()).getStoneMaterial(world, pos, state);
         int renderingColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB());
-        IVertexOperation[] operations = new IVertexOperation[] {
-            new IconTransformation(stoneSprite),
-            new ColourMultiplier(renderingColor),
-            new TransformationList(translation)};
+        IVertexOperation[] operations = new IVertexOperation[]{
+                new IconTransformation(stoneSprite),
+                new ColourMultiplier(renderingColor),
+                new TransformationList(translation)};
         if (world != null) {
             renderState.setBrightness(world, pos);
         }

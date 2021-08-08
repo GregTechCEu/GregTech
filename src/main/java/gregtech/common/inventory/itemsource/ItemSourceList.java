@@ -111,7 +111,7 @@ public class ItemSourceList implements IItemList, ITickable {
     }
 
     public void removeItemHandler(ItemSource handlerInfo) {
-        if(this.handlerInfoList.remove(handlerInfo)) {
+        if (this.handlerInfoList.remove(handlerInfo)) {
             handlerInfo.setStoredItemsChangeCallback(null);
             handlerInfo.setInvalidationCallback(null);
             for (ItemStackKey itemStackKey : itemInfoMap.keySet()) {

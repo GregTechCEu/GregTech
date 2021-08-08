@@ -24,16 +24,16 @@ public class IntCircuitRecipeWrapper implements IRecipeWrapper {
 
     public static Collection<IntCircuitRecipeWrapper> create() {
         return ImmutableList.of(
-            new IntCircuitRecipeWrapper(true),
-            new IntCircuitRecipeWrapper(false)
+                new IntCircuitRecipeWrapper(true),
+                new IntCircuitRecipeWrapper(false)
         );
     }
 
     @Override
     public void getIngredients(IIngredients ingredients) {
         List<ItemStack> stacks = IntStream.range(0, IntCircuitIngredient.CIRCUIT_MAX + 1)
-            .mapToObj(IntCircuitIngredient::getIntegratedCircuit)
-            .collect(Collectors.toList());
+                .mapToObj(IntCircuitIngredient::getIntegratedCircuit)
+                .collect(Collectors.toList());
         if (input)
             ingredients.setInputs(VanillaTypes.ITEM, stacks);
         else

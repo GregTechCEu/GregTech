@@ -32,7 +32,7 @@ public class BlockInfo {
         this.blockState = blockState;
         this.tileEntity = tileEntity;
         Preconditions.checkArgument(tileEntity == null || blockState.getBlock().hasTileEntity(blockState),
-            "Cannot create block info with tile entity for block not having it");
+                "Cannot create block info with tile entity for block not having it");
     }
 
     public IBlockState getBlockState() {

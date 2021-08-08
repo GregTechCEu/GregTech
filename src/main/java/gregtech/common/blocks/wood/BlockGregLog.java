@@ -18,6 +18,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 public class BlockGregLog extends BlockLog {
@@ -27,20 +28,21 @@ public class BlockGregLog extends BlockLog {
 
     public BlockGregLog() {
         this.setDefaultState(this.blockState.getBaseState()
-            .withProperty(VARIANT, LogVariant.RUBBER_WOOD)
-            .withProperty(LOG_AXIS, BlockLog.EnumAxis.Y)
-            .withProperty(NATURAL, false));
+                .withProperty(VARIANT, LogVariant.RUBBER_WOOD)
+                .withProperty(LOG_AXIS, BlockLog.EnumAxis.Y)
+                .withProperty(NATURAL, false));
         setTranslationKey("gt.log");
         this.setCreativeTab(GregTechAPI.TAB_GREGTECH);
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
+    public void getSubBlocks(@Nonnull CreativeTabs itemIn, @Nonnull NonNullList<ItemStack> items) {
         for (LogVariant logVariant : LogVariant.values()) {
             items.add(getItem(logVariant));
         }
     }
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, VARIANT, LOG_AXIS, NATURAL);
@@ -54,35 +56,38 @@ public class BlockGregLog extends BlockLog {
         return new ItemStack(this, amount, variant.ordinal() * 2);
     }
 
+    @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return getDefaultState()
-            .withProperty(LOG_AXIS, EnumAxis.values()[meta / 4 % 4])
-            .withProperty(VARIANT, LogVariant.values()[meta % 4 / 2 % LogVariant.values().length])
-            .withProperty(NATURAL, meta % 4 % 2 == 1);
+                .withProperty(LOG_AXIS, EnumAxis.values()[meta / 4 % 4])
+                .withProperty(VARIANT, LogVariant.values()[meta % 4 / 2 % LogVariant.values().length])
+                .withProperty(NATURAL, meta % 4 % 2 == 1);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
         return state.getValue(LOG_AXIS).ordinal() * 4 +
-            state.getValue(VARIANT).ordinal() * 2 +
-            (state.getValue(NATURAL) ? 1 : 0);
+                state.getValue(VARIANT).ordinal() * 2 +
+                (state.getValue(NATURAL) ? 1 : 0);
     }
 
+    @Nonnull
     @Override
     protected ItemStack getSilkTouchDrop(IBlockState state) {
         return new ItemStack(Item.getItemFromBlock(this), 1,
-            state.getValue(VARIANT).ordinal());
+                state.getValue(VARIANT).ordinal());
     }
 
+    @Nonnull
     @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+    public ItemStack getPickBlock(IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
         return new ItemStack(Item.getItemFromBlock(this), 1,
-            state.getValue(VARIANT).ordinal());
+                state.getValue(VARIANT).ordinal());
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+    public void getDrops(@Nonnull NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, IBlockState state, int fortune) {
         Random rand = world instanceof World ? ((World) world).rand : RANDOM;
         if (state.getValue(NATURAL)) {
             drops.add(MetaItems.RUBBER_DROP.getStackForm(1 + rand.nextInt(2)));
@@ -100,6 +105,7 @@ public class BlockGregLog extends BlockLog {
             this.name = name;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return name;

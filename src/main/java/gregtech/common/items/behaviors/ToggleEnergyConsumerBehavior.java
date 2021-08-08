@@ -26,12 +26,12 @@ public class ToggleEnergyConsumerBehavior implements IItemBehaviour {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack itemStack = player.getHeldItem(hand);
-        if(player.isSneaking()) {
+        if (player.isSneaking()) {
             IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
             boolean isItemActive = isItemActive(itemStack);
-            if(isItemActive) {
+            if (isItemActive) {
                 setItemActive(itemStack, false);
-            } else if(electricItem != null && drainActivationEnergy(electricItem, true)) {
+            } else if (electricItem != null && drainActivationEnergy(electricItem, true)) {
                 setItemActive(itemStack, true);
             }
         }
@@ -45,9 +45,9 @@ public class ToggleEnergyConsumerBehavior implements IItemBehaviour {
     @Override
     public void onUpdate(ItemStack itemStack, Entity entity) {
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if(isItemActive(itemStack) && electricItem != null) {
+        if (isItemActive(itemStack) && electricItem != null) {
             boolean shouldRemainActive = drainActivationEnergy(electricItem, false);
-            if(!shouldRemainActive) {
+            if (!shouldRemainActive) {
                 setItemActive(itemStack, false);
             }
         }
@@ -65,7 +65,7 @@ public class ToggleEnergyConsumerBehavior implements IItemBehaviour {
 
     public static void setItemActive(ItemStack itemStack, boolean isActive) {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
-        if(tagCompound == null) {
+        if (tagCompound == null) {
             tagCompound = new NBTTagCompound();
             itemStack.setTagCompound(tagCompound);
         }

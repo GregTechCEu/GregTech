@@ -1,6 +1,6 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "gregtech:items/material_sets/dull/tool_head_universal_spade"
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "gregtech:items/material_sets/dull/tool_head_universal_spade"
+  }
 }

@@ -66,20 +66,20 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     @Override
     public void update() {
         super.update();
-        if(!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
+        if (!getWorld().isRemote && getOffsetTimer() % 5 == 0) {
             pushItemsIntoNearbyHandlers(getOutputFacing());
         }
-        if(!getWorld().isRemote) {
-            if(breakProgressTicksLeft > 0) {
+        if (!getWorld().isRemote) {
+            if (breakProgressTicksLeft > 0) {
                 --this.breakProgressTicksLeft;
-                if(breakProgressTicksLeft == 0 && energyContainer.getEnergyStored() >= getEnergyPerBlockBreak()) {
+                if (breakProgressTicksLeft == 0 && energyContainer.getEnergyStored() >= getEnergyPerBlockBreak()) {
                     BlockPos blockPos = getPos().offset(getFrontFacing());
                     IBlockState blockState = getWorld().getBlockState(blockPos);
                     EntityPlayer entityPlayer = GregFakePlayer.get((WorldServer) getWorld());
                     float hardness = blockState.getBlockHardness(getWorld(), blockPos);
 
-                    if(hardness >= 0.0f && getWorld().isBlockModifiable(entityPlayer, blockPos) &&
-                        Math.abs(hardness - currentBlockHardness) < 0.5f) {
+                    if (hardness >= 0.0f && getWorld().isBlockModifiable(entityPlayer, blockPos) &&
+                            Math.abs(hardness - currentBlockHardness) < 0.5f) {
                         List<ItemStack> drops = attemptBreakBlockAndObtainDrops(blockPos, blockState, entityPlayer);
                         addToInventoryOrDropItems(drops);
                     }
@@ -89,14 +89,14 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
                 }
             }
 
-            if(breakProgressTicksLeft == 0 && isBlockRedstonePowered()) {
+            if (breakProgressTicksLeft == 0 && isBlockRedstonePowered()) {
                 BlockPos blockPos = getPos().offset(getFrontFacing());
                 IBlockState blockState = getWorld().getBlockState(blockPos);
                 EntityPlayer entityPlayer = GregFakePlayer.get((WorldServer) getWorld());
                 float hardness = blockState.getBlockHardness(getWorld(), blockPos);
                 boolean skipBlock = blockState.getMaterial() == Material.AIR ||
-                    blockState.getBlock().isAir(blockState, getWorld(), getPos());
-                if(hardness >= 0.0f && !skipBlock && getWorld().isBlockModifiable(entityPlayer, blockPos)) {
+                        blockState.getBlock().isAir(blockState, getWorld(), getPos());
+                if (hardness >= 0.0f && !skipBlock && getWorld().isBlockModifiable(entityPlayer, blockPos)) {
                     this.breakProgressTicksLeft = getTicksPerBlockBreak(hardness);
                     this.currentBlockHardness = hardness;
                 }
@@ -109,9 +109,9 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
         double itemSpawnX = getPos().getX() + 0.5 + outputFacing.getXOffset();
         double itemSpawnY = getPos().getX() + 0.5 + outputFacing.getYOffset();
         double itemSpawnZ = getPos().getX() + 0.5 + outputFacing.getZOffset();
-        for(ItemStack itemStack : drops) {
+        for (ItemStack itemStack : drops) {
             ItemStack remainStack = ItemHandlerHelper.insertItemStacked(exportItems, itemStack, false);
-            if(!remainStack.isEmpty()) {
+            if (!remainStack.isEmpty()) {
                 EntityItem entityitem = new EntityItem(getWorld(), itemSpawnX, itemSpawnY, itemSpawnZ, remainStack);
                 entityitem.setDefaultPickupDelay();
                 getWorld().spawnEntity(entityitem);
@@ -122,7 +122,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     private List<ItemStack> attemptBreakBlockAndObtainDrops(BlockPos blockPos, IBlockState blockState, EntityPlayer entityPlayer) {
         TileEntity tileEntity = getWorld().getTileEntity(blockPos);
         boolean result = blockState.getBlock().removedByPlayer(blockState, getWorld(), blockPos, entityPlayer, true);
-        if(result) {
+        if (result) {
             getWorld().playEvent(null, 2001, blockPos, Block.getStateId(blockState));
             blockState.getBlock().onPlayerDestroy(getWorld(), blockPos, blockState);
 
@@ -138,7 +138,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
         if (!playerIn.isSneaking()) {
             EnumFacing currentOutputSide = getOutputFacing();
             if (currentOutputSide == facing ||
-                getFrontFacing() == facing) return false;
+                    getFrontFacing() == facing) return false;
             setOutputFacing(facing);
             return true;
         }
@@ -241,13 +241,13 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(getInventorySize());
         Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 + 18 * rowSize + 94)
-            .label(10, 5, getMetaFullName());
+                .label(10, 5, getMetaFullName());
 
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
                 builder.widget(new SlotWidget(exportItems, index, 89 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
-                    .setBackgroundTexture(GuiTextures.SLOT));
+                        .setBackgroundTexture(GuiTextures.SLOT));
             }
         }
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);

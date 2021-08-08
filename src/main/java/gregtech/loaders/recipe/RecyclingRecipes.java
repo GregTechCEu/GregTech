@@ -39,9 +39,9 @@ public class RecyclingRecipes {
 
     public static void registerArcRecyclingRecipe(Consumer<RecipeBuilder<?>> inputSupplier, List<MaterialStack> components, boolean ignoreArcSmelting) {
         List<MaterialStack> materials = components.stream()
-            .filter(stack -> stack.material.hasProperty(PropertyKey.DUST))
-            .filter(stack -> stack.amount >= M / 9) //do only materials which have at least one nugget
-            .collect(Collectors.toList());
+                .filter(stack -> stack.material.hasProperty(PropertyKey.DUST))
+                .filter(stack -> stack.amount >= M / 9) //do only materials which have at least one nugget
+                .collect(Collectors.toList());
         if (materials.isEmpty()) return;
         MaterialStack firstStack = materials.get(0);
         Material material = firstStack.material;
@@ -49,24 +49,24 @@ public class RecyclingRecipes {
         if (material.hasProperty(PropertyKey.BLAST)) {
             int blastFurnaceTemperature = material.getProperty(PropertyKey.BLAST).getBlastTemperature();
             voltageMultiplier = blastFurnaceTemperature == 0 ? 1 : blastFurnaceTemperature > 2000 ? 16 : 4;
-        } else if (!material.hasProperty(PropertyKey.INGOT)){
+        } else if (!material.hasProperty(PropertyKey.INGOT)) {
             //do not apply arc smelting for gems, solid materials and dust materials
             //only generate recipes for ingot materials
             ignoreArcSmelting = true;
         }
 
         RecipeBuilder<?> maceratorRecipeBuilder = RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
-            .outputs(materials.stream().map(OreDictUnifier::getDust).collect(Collectors.toList()))
-            .duration((int) Math.max(1L, firstStack.amount * 30 / M))
-            .EUt(8 * voltageMultiplier);
+                .outputs(materials.stream().map(OreDictUnifier::getDust).collect(Collectors.toList()))
+                .duration((int) Math.max(1L, firstStack.amount * 30 / M))
+                .EUt(8 * voltageMultiplier);
         inputSupplier.accept(maceratorRecipeBuilder);
         maceratorRecipeBuilder.buildAndRegister();
 
         if (material.hasFluid()) {
             RecipeBuilder<?> fluidExtractorRecipeBuilder = RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
-                .fluidOutputs(material.getFluid((int) (firstStack.amount * L / M)))
-                .duration((int) Math.max(1L, firstStack.amount * 80 / M))
-                .EUt(32 * voltageMultiplier);
+                    .fluidOutputs(material.getFluid((int) (firstStack.amount * L / M)))
+                    .duration((int) Math.max(1L, firstStack.amount * 80 / M))
+                    .EUt(32 * voltageMultiplier);
             inputSupplier.accept(fluidExtractorRecipeBuilder);
             fluidExtractorRecipeBuilder.buildAndRegister();
         }
@@ -76,9 +76,9 @@ public class RecyclingRecipes {
             resultList.removeIf(ItemStack::isEmpty);
             if (resultList.isEmpty()) return;
             RecipeBuilder<?> arcFurnaceRecipeBuilder = RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
-                .outputs(resultList)
-                .duration((int) Math.max(1L, firstStack.amount * 60 / M))
-                .EUt(30 * voltageMultiplier);
+                    .outputs(resultList)
+                    .duration((int) Math.max(1L, firstStack.amount * 60 / M))
+                    .EUt(30 * voltageMultiplier);
             inputSupplier.accept(arcFurnaceRecipeBuilder);
             arcFurnaceRecipeBuilder.buildAndRegister();
         }
@@ -91,11 +91,11 @@ public class RecyclingRecipes {
             return OreDictUnifier.getDust(Materials.Ash, materialAmount);
         } else if (material.hasProperty(PropertyKey.GEM)) {
             if (materialStack.material.getMaterialComponents().stream()
-                .anyMatch(stack -> stack.material == Materials.Oxygen)) {
+                    .anyMatch(stack -> stack.material == Materials.Oxygen)) {
                 return OreDictUnifier.getDust(Materials.Ash, materialAmount);
             }
             if (materialStack.material.getMaterialComponents().stream()
-                .anyMatch(stack -> stack.material == Materials.Carbon)) {
+                    .anyMatch(stack -> stack.material == Materials.Carbon)) {
                 return OreDictUnifier.getDust(Materials.Carbon, materialAmount);
             }
             return OreDictUnifier.getDust(Materials.DarkAsh, materialAmount);

@@ -15,7 +15,7 @@ public class MarkerMaterials {
     /**
      * Marker materials without category
      */
-    public static MarkerMaterial Empty = new MarkerMaterial("empty");
+    public static final MarkerMaterial Empty = new MarkerMaterial("empty");
 
     /**
      * Color materials
@@ -27,30 +27,30 @@ public class MarkerMaterials {
          * Means absence of color on OrePrefix
          * Often a default value for color prefixes
          */
-        public static MarkerMaterial Colorless = new MarkerMaterial("colorless");
+        public static final MarkerMaterial Colorless = new MarkerMaterial("colorless");
 
-        public static MarkerMaterial White = new MarkerMaterial("white");
-        public static MarkerMaterial Orange = new MarkerMaterial("orange");
-        public static MarkerMaterial Magenta = new MarkerMaterial("magenta");
-        public static MarkerMaterial LightBlue = new MarkerMaterial("light_blue");
-        public static MarkerMaterial Yellow = new MarkerMaterial("yellow");
-        public static MarkerMaterial Lime = new MarkerMaterial("lime");
-        public static MarkerMaterial Pink = new MarkerMaterial("pink");
-        public static MarkerMaterial Gray = new MarkerMaterial("gray");
-        public static MarkerMaterial Silver = new MarkerMaterial("silver");
-        public static MarkerMaterial Cyan = new MarkerMaterial("cyan");
-        public static MarkerMaterial Purple = new MarkerMaterial("purple");
-        public static MarkerMaterial Blue = new MarkerMaterial("blue");
-        public static MarkerMaterial Brown = new MarkerMaterial("brown");
-        public static MarkerMaterial Green = new MarkerMaterial("green");
-        public static MarkerMaterial Red = new MarkerMaterial("red");
-        public static MarkerMaterial Black = new MarkerMaterial("black");
+        public static final MarkerMaterial White = new MarkerMaterial("white");
+        public static final MarkerMaterial Orange = new MarkerMaterial("orange");
+        public static final MarkerMaterial Magenta = new MarkerMaterial("magenta");
+        public static final MarkerMaterial LightBlue = new MarkerMaterial("light_blue");
+        public static final MarkerMaterial Yellow = new MarkerMaterial("yellow");
+        public static final MarkerMaterial Lime = new MarkerMaterial("lime");
+        public static final MarkerMaterial Pink = new MarkerMaterial("pink");
+        public static final MarkerMaterial Gray = new MarkerMaterial("gray");
+        public static final MarkerMaterial Silver = new MarkerMaterial("silver");
+        public static final MarkerMaterial Cyan = new MarkerMaterial("cyan");
+        public static final MarkerMaterial Purple = new MarkerMaterial("purple");
+        public static final MarkerMaterial Blue = new MarkerMaterial("blue");
+        public static final MarkerMaterial Brown = new MarkerMaterial("brown");
+        public static final MarkerMaterial Green = new MarkerMaterial("green");
+        public static final MarkerMaterial Red = new MarkerMaterial("red");
+        public static final MarkerMaterial Black = new MarkerMaterial("black");
 
         /**
          * Arrays containing all possible color values (without Colorless!)
          */
         public static final MarkerMaterial[] VALUES = new MarkerMaterial[]{
-            White, Orange, Magenta, LightBlue, Yellow, Lime, Pink, Gray, Silver, Cyan, Purple, Blue, Brown, Green, Red, Black
+                White, Orange, Magenta, LightBlue, Yellow, Lime, Pink, Gray, Silver, Cyan, Purple, Blue, Brown, Green, Red, Black
         };
 
         /**
@@ -83,17 +83,17 @@ public class MarkerMaterials {
      * Circuitry, batteries and other technical things
      */
     public static class Tier {
-        public static Material Primitive = new MarkerMaterial("primitive");
-        public static Material Basic = new MarkerMaterial("basic");
-        public static Material Good = new MarkerMaterial("good");
-        public static Material Advanced = new MarkerMaterial("advanced");
-        public static Material Extreme = new MarkerMaterial("extreme");
-        public static Material Elite = new MarkerMaterial("elite");
-        public static Material Master = new MarkerMaterial("master");
-        public static Material Ultimate = new MarkerMaterial("ultimate");
-        public static Material Superconductor = new MarkerMaterial("superconductor");
+        public static final Material Primitive = new MarkerMaterial("primitive");
+        public static final Material Basic = new MarkerMaterial("basic");
+        public static final Material Good = new MarkerMaterial("good");
+        public static final Material Advanced = new MarkerMaterial("advanced");
+        public static final Material Extreme = new MarkerMaterial("extreme");
+        public static final Material Elite = new MarkerMaterial("elite");
+        public static final Material Master = new MarkerMaterial("master");
+        public static final Material Ultimate = new MarkerMaterial("ultimate");
+        public static final Material Superconductor = new MarkerMaterial("superconductor");
         //new Material(387, "superconductor", 0xFFFFFF, MaterialIconSet.NONE, of(), 0L, null) {};
-        public static Material Infinite = new MarkerMaterial("infinite");
+        public static final Material Infinite = new MarkerMaterial("infinite");
 
         public static Material Ultra = new MarkerMaterial("ultra");
         public static Material Insane = new MarkerMaterial("insane");
@@ -103,10 +103,10 @@ public class MarkerMaterials {
     }
 
     public static class Component {
-        public static Material Resistor = new MarkerMaterial("resistor");
-        public static Material Transistor = new MarkerMaterial("transistor");
-        public static Material Capacitor = new MarkerMaterial("capacitor");
-        public static Material Diode = new MarkerMaterial("diode");
+        public static final Material Resistor = new MarkerMaterial("resistor");
+        public static final Material Transistor = new MarkerMaterial("transistor");
+        public static final Material Capacitor = new MarkerMaterial("capacitor");
+        public static final Material Diode = new MarkerMaterial("diode");
     }
 
 }

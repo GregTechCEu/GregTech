@@ -4,9 +4,9 @@ import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 

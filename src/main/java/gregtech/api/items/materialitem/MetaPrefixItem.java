@@ -6,11 +6,11 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconSet;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.DustProperty;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.block.BlockCauldron;
@@ -72,10 +72,14 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     private void registerSpecialOreDict(ItemStack item, Material material, OrePrefix prefix) {
         if (prefix.equals(OrePrefix.dust)) OreDictUnifier.registerOre(item, OrePrefix.DUST_REGULAR, material);
-        else if (prefix.equals(OrePrefix.oreChunk)) OreDictUnifier.registerOre(item, OrePrefix.oreGravel.name(), material);
-        else if (prefix.equals(OrePrefix.oreEnderChunk)) OreDictUnifier.registerOre(item, OrePrefix.oreEndstone.name(), material);
-        else if (prefix.equals(OrePrefix.oreNetherChunk)) OreDictUnifier.registerOre(item, OrePrefix.oreNetherrack.name(), material);
-        else if (prefix.equals(OrePrefix.oreSandyChunk)) OreDictUnifier.registerOre(item, OrePrefix.oreSand.name(), material);
+        else if (prefix.equals(OrePrefix.oreChunk))
+            OreDictUnifier.registerOre(item, OrePrefix.oreGravel.name(), material);
+        else if (prefix.equals(OrePrefix.oreEnderChunk))
+            OreDictUnifier.registerOre(item, OrePrefix.oreEndstone.name(), material);
+        else if (prefix.equals(OrePrefix.oreNetherChunk))
+            OreDictUnifier.registerOre(item, OrePrefix.oreNetherrack.name(), material);
+        else if (prefix.equals(OrePrefix.oreSandyChunk))
+            OreDictUnifier.registerOre(item, OrePrefix.oreSand.name(), material);
 
         if (material == Materials.Plutonium239) {
             OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "239");

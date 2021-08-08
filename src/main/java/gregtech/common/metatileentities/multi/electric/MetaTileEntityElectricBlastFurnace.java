@@ -41,9 +41,9 @@ import java.util.function.Predicate;
 public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockController {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-        MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
-        MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.EXPORT_FLUIDS,
-        MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
+            MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.EXPORT_FLUIDS,
+            MultiblockAbility.INPUT_ENERGY
     };
 
     private int blastFurnaceTemperature;
@@ -63,7 +63,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     protected void addDisplayText(List<ITextComponent> textList) {
         if (isStructureFormed()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.blast_furnace.max_temperature", blastFurnaceTemperature)
-                .setStyle(new Style().setColor(TextFormatting.RED)));
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
         }
         super.addDisplayText(textList);
     }
@@ -104,16 +104,16 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-            .aisle("XXX", "CCC", "CCC", "XXX")
-            .aisle("XXX", "C#C", "C#C", "XXX")
-            .aisle("XSX", "CCC", "CCC", "XXX")
-            .setAmountAtLeast('L', 10)
-            .where('S', selfPredicate())
-            .where('L', statePredicate(getCasingState()))
-            .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-            .where('C', heatingCoilPredicate())
-            .where('#', isAirPredicate())
-            .build();
+                .aisle("XXX", "CCC", "CCC", "XXX")
+                .aisle("XXX", "C#C", "C#C", "XXX")
+                .aisle("XSX", "CCC", "CCC", "XXX")
+                .setAmountAtLeast('L', 10)
+                .where('S', selfPredicate())
+                .where('L', statePredicate(getCasingState()))
+                .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('C', heatingCoilPredicate())
+                .where('#', isAirPredicate())
+                .build();
     }
 
     protected IBlockState getCasingState() {
@@ -171,7 +171,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
 
         protected int[] calculateOverclock(int EUt, long voltage, int duration, int recipeRequiredTemp) {
             if (!allowOverclocking) {
-                return new int[] {EUt, duration};
+                return new int[]{EUt, duration};
             }
             boolean negativeEU = EUt < 0;
 

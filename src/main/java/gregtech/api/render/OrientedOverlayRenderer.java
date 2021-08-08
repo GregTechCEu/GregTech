@@ -35,7 +35,7 @@ public class OrientedOverlayRenderer implements IIconRegister {
     }
 
     private final String basePath;
-    private OverlayFace[] faces;
+    private final OverlayFace[] faces;
 
     @SideOnly(Side.CLIENT)
     private Map<OverlayFace, ActivePredicate> sprites;
@@ -43,8 +43,8 @@ public class OrientedOverlayRenderer implements IIconRegister {
     @SideOnly(Side.CLIENT)
     private static class ActivePredicate {
 
-        private TextureAtlasSprite normalSprite;
-        private TextureAtlasSprite activeSprite;
+        private final TextureAtlasSprite normalSprite;
+        private final TextureAtlasSprite activeSprite;
 
         public ActivePredicate(TextureAtlasSprite normalSprite, TextureAtlasSprite activeSprite) {
             this.normalSprite = normalSprite;

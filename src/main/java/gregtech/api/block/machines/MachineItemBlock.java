@@ -19,6 +19,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
@@ -34,24 +35,25 @@ public class MachineItemBlock extends ItemBlock {
         return GregTechAPI.META_TILE_ENTITY_REGISTRY.getObjectById(itemStack.getItemDamage());
     }
 
+    @Nonnull
     @Override
-    public String getTranslationKey(ItemStack stack) {
+    public String getTranslationKey(@Nonnull ItemStack stack) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(stack);
         return metaTileEntity == null ? "unnamed" : metaTileEntity.getMetaName();
     }
 
     @Override
-    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
+    public boolean placeBlockAt(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(stack);
         //prevent rendering glitch before meta tile entity sync to client, but after block placement
         //set opaque property on the placing on block, instead during set of meta tile entity
         return super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ,
-            newState.withProperty(BlockMachine.OPAQUE, metaTileEntity != null && metaTileEntity.isOpaqueCube()));
+                newState.withProperty(BlockMachine.OPAQUE, metaTileEntity != null && metaTileEntity.isOpaqueCube()));
     }
 
     @Nullable
     @Override
-    public String getCreatorModId(ItemStack itemStack) {
+    public String getCreatorModId(@Nonnull ItemStack itemStack) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(itemStack);
         if (metaTileEntity == null) {
             return GTValues.MODID;
@@ -62,14 +64,14 @@ public class MachineItemBlock extends ItemBlock {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(stack);
         return metaTileEntity == null ? null : metaTileEntity.initItemStackCapabilities(stack);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         MetaTileEntity metaTileEntity = getMetaTileEntity(stack);
         if (metaTileEntity == null) return;
 

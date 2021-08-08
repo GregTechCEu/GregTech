@@ -41,17 +41,21 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     protected int doTransferItems(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
-        if(conveyorMode == ConveyorMode.EXPORT && itemHandler instanceof ItemNetHandler) {
+        if (conveyorMode == ConveyorMode.EXPORT && itemHandler instanceof ItemNetHandler) {
             return 0;
         }
-        if(conveyorMode == ConveyorMode.IMPORT && myItemHandler instanceof ItemNetHandler) {
+        if (conveyorMode == ConveyorMode.IMPORT && myItemHandler instanceof ItemNetHandler) {
             return 0;
         }
         switch (transferMode) {
-            case TRANSFER_ANY: return doTransferItemsAny(itemHandler, myItemHandler, maxTransferAmount);
-            case TRANSFER_EXACT: return doTransferExact(itemHandler, myItemHandler, maxTransferAmount);
-            case KEEP_EXACT: return doKeepExact(itemHandler, myItemHandler, maxTransferAmount);
-            default: return 0;
+            case TRANSFER_ANY:
+                return doTransferItemsAny(itemHandler, myItemHandler, maxTransferAmount);
+            case TRANSFER_EXACT:
+                return doTransferExact(itemHandler, myItemHandler, maxTransferAmount);
+            case KEEP_EXACT:
+                return doKeepExact(itemHandler, myItemHandler, maxTransferAmount);
+            default:
+                return 0;
         }
     }
 
@@ -75,7 +79,7 @@ public class CoverRoboticArm extends CoverConveyor {
         int maxTotalTransferAmount = maxTransferAmount + itemsTransferBuffered;
         boolean notEnoughTransferRate = false;
         for (TypeItemInfo itemInfo : sourceItemAmount.values()) {
-            if(maxTotalTransferAmount >= itemInfo.totalCount) {
+            if (maxTotalTransferAmount >= itemInfo.totalCount) {
                 boolean result = doTransferItemsExact(itemHandler, myItemHandler, itemInfo);
                 itemsTransferred += result ? itemInfo.totalCount : 0;
                 maxTotalTransferAmount -= result ? itemInfo.totalCount : 0;
@@ -146,8 +150,8 @@ public class CoverRoboticArm extends CoverConveyor {
     protected ModularUI buildUI(Builder builder, EntityPlayer player) {
         WidgetGroup filterGroup = new WidgetGroup();
         filterGroup.addWidget(new CycleButtonWidget(91, 45, 75, 20,
-            TransferMode.class, this::getTransferMode, this::setTransferMode)
-            .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
+                TransferMode.class, this::getTransferMode, this::setTransferMode)
+                .setTooltipHoverString("cover.robotic_arm.transfer_mode.description"));
 
         return super.buildUI(builder.widget(filterGroup), player);
     }

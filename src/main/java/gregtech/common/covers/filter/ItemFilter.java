@@ -45,7 +45,7 @@ public abstract class ItemFilter {
     }
 
     public final void markDirty() {
-        if(dirtyNotifiable != null) {
+        if (dirtyNotifiable != null) {
             dirtyNotifiable.markAsDirty();
         }
     }

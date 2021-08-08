@@ -4,8 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.material.MarkerMaterials;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.items.MetaItems;
@@ -20,7 +20,7 @@ import static gregtech.common.items.MetaItems.PUMPS;
 
 public class ComponentRecipes {
 
-    private static final FluidStack[] pumpFluids = {Materials.Rubber.getFluid(L), Materials.StyreneButadieneRubber.getFluid((L * 3)/4), Materials.SiliconeRubber.getFluid(L/2) };
+    private static final FluidStack[] pumpFluids = {Materials.Rubber.getFluid(L), Materials.StyreneButadieneRubber.getFluid((L * 3) / 4), Materials.SiliconeRubber.getFluid(L / 2)};
 
     public static void register() {
 
@@ -388,7 +388,7 @@ public class ComponentRecipes {
                         .duration(100).EUt(30).buildAndRegister();
 
 
-        //Pumps Start---------------------------------------------------------------------------------------------------
+            //Pumps Start---------------------------------------------------------------------------------------------------
             ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_lv", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_LV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.Tin), 'X', new UnificationEntry(OrePrefix.rotor, Materials.Tin), 'P', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Bronze), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin), 'M', MetaItems.ELECTRIC_MOTOR_LV.getStackForm());
             ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_mv", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_MV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.Bronze), 'X', new UnificationEntry(OrePrefix.rotor, Materials.Bronze), 'P', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Steel), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper), 'M', MetaItems.ELECTRIC_MOTOR_MV.getStackForm());
             ModHandler.addShapedRecipe(String.format("electric_pump/%s/electric_pump_hv", materialEntry.getKey()), MetaItems.ELECTRIC_PUMP_HV.getStackForm(), "SXR", "dPw", "RMC", 'S', new UnificationEntry(OrePrefix.screw, Materials.Steel), 'X', new UnificationEntry(OrePrefix.rotor, Materials.Steel), 'P', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.StainlessSteel), 'R', new UnificationEntry(OrePrefix.ring, materialEntry.getValue()), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold), 'M', MetaItems.ELECTRIC_MOTOR_HV.getStackForm());
@@ -437,18 +437,18 @@ public class ComponentRecipes {
                     .duration(100).EUt(30).buildAndRegister();
 
             if (!materialEntry.getValue().equals(Materials.Rubber))
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .input(OrePrefix.cableGtSingle, Materials.Tungsten)
-                    .input(OrePrefix.pipeNormalFluid, Materials.TungstenSteel)
-                    .input(OrePrefix.screw, Materials.TungstenSteel)
-                    .input(OrePrefix.rotor, Materials.TungstenSteel)
-                    .input(OrePrefix.ring, materialEntry.getValue(), 2)
-                    .inputs(MetaItems.ELECTRIC_MOTOR_IV.getStackForm())
-                    .outputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
-                    .duration(100).EUt(30).buildAndRegister();
+                RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                        .input(OrePrefix.cableGtSingle, Materials.Tungsten)
+                        .input(OrePrefix.pipeNormalFluid, Materials.TungstenSteel)
+                        .input(OrePrefix.screw, Materials.TungstenSteel)
+                        .input(OrePrefix.rotor, Materials.TungstenSteel)
+                        .input(OrePrefix.ring, materialEntry.getValue(), 2)
+                        .inputs(MetaItems.ELECTRIC_MOTOR_IV.getStackForm())
+                        .outputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm())
+                        .duration(100).EUt(30).buildAndRegister();
         }
 
-        Material[] circuitTiers = new Material[] {MarkerMaterials.Tier.Basic, MarkerMaterials.Tier.Good, MarkerMaterials.Tier.Advanced, MarkerMaterials.Tier.Extreme,
+        Material[] circuitTiers = new Material[]{MarkerMaterials.Tier.Basic, MarkerMaterials.Tier.Good, MarkerMaterials.Tier.Advanced, MarkerMaterials.Tier.Extreme,
                 MarkerMaterials.Tier.Elite, MarkerMaterials.Tier.Master, MarkerMaterials.Tier.Ultimate, MarkerMaterials.Tier.Superconductor};
 
         for (int i = 0; i < FLUID_REGULATORS.length; i++) {

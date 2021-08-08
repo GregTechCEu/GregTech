@@ -39,6 +39,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.api.GTValues.L;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -46,6 +47,7 @@ import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 import static gregtech.api.util.DyeUtil.getOrdictColorName;
 import static gregtech.common.items.MetaItems.*;
+import static gregtech.common.metatileentities.MetaTileEntities.WORKBENCH;
 
 public class MachineRecipeLoader {
 
@@ -59,6 +61,7 @@ public class MachineRecipeLoader {
         AssemblerRecipeLoader.init();
         ComponentRecipes.register();
         MiscRecipeLoader.init();
+        BatteryRecipes.init();
 
         CircuitRecipes.init();
         registerCutterRecipes();
@@ -80,110 +83,110 @@ public class MachineRecipeLoader {
     private static void registerBendingCompressingRecipes() {
 
         COMPRESSOR_RECIPES.recipeBuilder()
-            .input(OrePrefix.dust, Materials.Fireclay)
-            .outputs(MetaItems.COMPRESSED_FIRECLAY.getStackForm())
-            .duration(100).EUt(2)
-            .buildAndRegister();
+                .input(OrePrefix.dust, Materials.Fireclay)
+                .outputs(MetaItems.COMPRESSED_FIRECLAY.getStackForm())
+                .duration(100).EUt(2)
+                .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder()
-            .duration(100).EUt(16)
-            .notConsumable(MetaItems.SHAPE_MOLD_CREDIT.getStackForm())
-            .input(OrePrefix.plate, Materials.Cupronickel, 1)
-            .outputs(MetaItems.CREDIT_CUPRONICKEL.getStackForm(4))
-            .buildAndRegister();
+                .duration(100).EUt(16)
+                .notConsumable(MetaItems.SHAPE_MOLD_CREDIT.getStackForm())
+                .input(OrePrefix.plate, Materials.Cupronickel, 1)
+                .outputs(MetaItems.CREDIT_CUPRONICKEL.getStackForm(4))
+                .buildAndRegister();
 
         FORMING_PRESS_RECIPES.recipeBuilder()
-            .duration(100).EUt(16)
-            .notConsumable(MetaItems.SHAPE_MOLD_CREDIT.getStackForm())
-            .input(OrePrefix.plate, Materials.Brass, 1)
-            .outputs(MetaItems.COIN_DOGE.getStackForm(4))
-            .buildAndRegister();
+                .duration(100).EUt(16)
+                .notConsumable(MetaItems.SHAPE_MOLD_CREDIT.getStackForm())
+                .input(OrePrefix.plate, Materials.Brass, 1)
+                .outputs(MetaItems.COIN_DOGE.getStackForm(4))
+                .buildAndRegister();
 
         for (MetaItem<?>.MetaValueItem shapeMold : SHAPE_MOLDS) {
             FORMING_PRESS_RECIPES.recipeBuilder()
-                .duration(120).EUt(22)
-                .notConsumable(shapeMold.getStackForm())
-                .inputs(MetaItems.SHAPE_EMPTY.getStackForm())
-                .outputs(shapeMold.getStackForm())
-                .buildAndRegister();
+                    .duration(120).EUt(22)
+                    .notConsumable(shapeMold.getStackForm())
+                    .inputs(MetaItems.SHAPE_EMPTY.getStackForm())
+                    .outputs(shapeMold.getStackForm())
+                    .buildAndRegister();
         }
 
         for (MetaItem<?>.MetaValueItem shapeExtruder : SHAPE_EXTRUDERS) {
             FORMING_PRESS_RECIPES.recipeBuilder()
-                .duration(120).EUt(22)
-                .notConsumable(shapeExtruder.getStackForm())
-                .inputs(MetaItems.SHAPE_EMPTY.getStackForm())
-                .outputs(shapeExtruder.getStackForm())
-                .buildAndRegister();
+                    .duration(120).EUt(22)
+                    .notConsumable(shapeExtruder.getStackForm())
+                    .inputs(MetaItems.SHAPE_EMPTY.getStackForm())
+                    .outputs(shapeExtruder.getStackForm())
+                    .buildAndRegister();
         }
 
         BENDER_RECIPES.recipeBuilder()
-            .circuitMeta(4)
-            .input(OrePrefix.plate, Materials.Steel, 4)
-            .outputs(MetaItems.SHAPE_EMPTY.getStackForm())
-            .duration(180).EUt(12)
-            .buildAndRegister();
+                .circuitMeta(4)
+                .input(OrePrefix.plate, Materials.Steel, 4)
+                .outputs(MetaItems.SHAPE_EMPTY.getStackForm())
+                .duration(180).EUt(12)
+                .buildAndRegister();
 
         BENDER_RECIPES.recipeBuilder()
-            .circuitMeta(12)
-            .input(OrePrefix.plate, Materials.Tin, 2)
-            .outputs(MetaItems.FLUID_CELL.getStackForm())
-            .duration(200).EUt(8)
-            .buildAndRegister();
+                .circuitMeta(12)
+                .input(OrePrefix.plate, Materials.Tin, 2)
+                .outputs(MetaItems.FLUID_CELL.getStackForm())
+                .duration(200).EUt(8)
+                .buildAndRegister();
 
         BENDER_RECIPES.recipeBuilder()
-            .circuitMeta(12)
-            .input(OrePrefix.plate, Materials.Steel)
-            .outputs(MetaItems.FLUID_CELL.getStackForm())
-            .duration(100).EUt(8)
-            .buildAndRegister();
+                .circuitMeta(12)
+                .input(OrePrefix.plate, Materials.Steel)
+                .outputs(MetaItems.FLUID_CELL.getStackForm())
+                .duration(100).EUt(8)
+                .buildAndRegister();
 
         BENDER_RECIPES.recipeBuilder()
-            .circuitMeta(12)
-            .input(OrePrefix.plate, Polytetrafluoroethylene)
-            .outputs(MetaItems.FLUID_CELL.getStackForm(4))
-            .duration(100).EUt(8)
-            .buildAndRegister();
+                .circuitMeta(12)
+                .input(OrePrefix.plate, Polytetrafluoroethylene)
+                .outputs(MetaItems.FLUID_CELL.getStackForm(4))
+                .duration(100).EUt(8)
+                .buildAndRegister();
 
         BENDER_RECIPES.recipeBuilder()
-            .circuitMeta(12)
-            .input(OrePrefix.plate, Polybenzimidazole)
-            .outputs(MetaItems.FLUID_CELL.getStackForm(16))
-            .duration(100).EUt(8)
-            .buildAndRegister();
+                .circuitMeta(12)
+                .input(OrePrefix.plate, Polybenzimidazole)
+                .outputs(MetaItems.FLUID_CELL.getStackForm(16))
+                .duration(100).EUt(8)
+                .buildAndRegister();
 
         EXTRUDER_RECIPES.recipeBuilder()
-            .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-            .input(OrePrefix.ingot, Materials.Tin, 2)
-            .outputs(MetaItems.FLUID_CELL.getStackForm())
-            .duration(128).EUt(30)
-            .buildAndRegister();
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
+                .input(OrePrefix.ingot, Materials.Tin, 2)
+                .outputs(MetaItems.FLUID_CELL.getStackForm())
+                .duration(128).EUt(30)
+                .buildAndRegister();
 
         EXTRUDER_RECIPES.recipeBuilder()
-            .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-            .input(OrePrefix.ingot, Materials.Steel)
-            .outputs(MetaItems.FLUID_CELL.getStackForm())
-            .duration(128).EUt(30)
-            .buildAndRegister();
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
+                .input(OrePrefix.ingot, Materials.Steel)
+                .outputs(MetaItems.FLUID_CELL.getStackForm())
+                .duration(128).EUt(30)
+                .buildAndRegister();
 
         EXTRUDER_RECIPES.recipeBuilder()
-            .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-            .input(OrePrefix.ingot, Polytetrafluoroethylene)
-            .outputs(MetaItems.FLUID_CELL.getStackForm(4))
-            .duration(128).EUt(30)
-            .buildAndRegister();
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
+                .input(OrePrefix.ingot, Polytetrafluoroethylene)
+                .outputs(MetaItems.FLUID_CELL.getStackForm(4))
+                .duration(128).EUt(30)
+                .buildAndRegister();
 
         EXTRUDER_RECIPES.recipeBuilder()
-            .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
-            .input(OrePrefix.ingot, Polybenzimidazole)
-            .outputs(MetaItems.FLUID_CELL.getStackForm(16))
-            .duration(128).EUt(30)
-            .buildAndRegister();
+                .notConsumable(MetaItems.SHAPE_EXTRUDER_CELL)
+                .input(OrePrefix.ingot, Polybenzimidazole)
+                .outputs(MetaItems.FLUID_CELL.getStackForm(16))
+                .duration(128).EUt(30)
+                .buildAndRegister();
 
         COMPRESSOR_RECIPES.recipeBuilder()
-            .input(OrePrefix.dust, Materials.NetherQuartz)
-            .output(OrePrefix.plate, Materials.NetherQuartz)
-            .duration(400).EUt(2).buildAndRegister();
+                .input(OrePrefix.dust, Materials.NetherQuartz)
+                .output(OrePrefix.plate, Materials.NetherQuartz)
+                .duration(400).EUt(2).buildAndRegister();
 
         COMPRESSOR_RECIPES.recipeBuilder()
                 .input(OrePrefix.dust, Materials.CertusQuartz)
@@ -235,61 +238,61 @@ public class MachineRecipeLoader {
                 .buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-            .input(OrePrefix.dust, Materials.Stone, 1)
-            .fluidInputs(Materials.Lubricant.getFluid(20), Materials.Water.getFluid(4980))
-            .fluidOutputs(Materials.DrillingFluid.getFluid(5000))
-            .duration(64).EUt(16)
-            .buildAndRegister();
+                .input(OrePrefix.dust, Materials.Stone, 1)
+                .fluidInputs(Materials.Lubricant.getFluid(20), Materials.Water.getFluid(4980))
+                .fluidOutputs(Materials.DrillingFluid.getFluid(5000))
+                .duration(64).EUt(16)
+                .buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-            .input(OrePrefix.dust, Materials.Clay, 1)
-            .input(OrePrefix.dust, Materials.Stone, 3)
-            .fluidInputs(Materials.Water.getFluid(500))
-            .fluidOutputs(Materials.Concrete.getFluid(576))
-            .duration(20).EUt(16)
-            .buildAndRegister();
+                .input(OrePrefix.dust, Materials.Clay, 1)
+                .input(OrePrefix.dust, Materials.Stone, 3)
+                .fluidInputs(Materials.Water.getFluid(500))
+                .fluidOutputs(Materials.Concrete.getFluid(576))
+                .duration(20).EUt(16)
+                .buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-            .inputs(MetaBlocks.CONCRETE.getItemVariant(ConcreteVariant.LIGHT_CONCRETE, ChiselingVariant.NORMAL))
-            .fluidInputs(Materials.Water.getFluid(144))
-            .outputs(MetaBlocks.CONCRETE.getItemVariant(ConcreteVariant.DARK_CONCRETE, ChiselingVariant.NORMAL))
-            .duration(12).EUt(4)
-            .buildAndRegister();
+                .inputs(MetaBlocks.CONCRETE.getItemVariant(ConcreteVariant.LIGHT_CONCRETE, ChiselingVariant.NORMAL))
+                .fluidInputs(Materials.Water.getFluid(144))
+                .outputs(MetaBlocks.CONCRETE.getItemVariant(ConcreteVariant.DARK_CONCRETE, ChiselingVariant.NORMAL))
+                .duration(12).EUt(4)
+                .buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-            .duration(64).EUt(16)
-            .fluidInputs(Materials.Water.getFluid(1000))
-            .input("sand", 2)
-            .input(OrePrefix.dust, Materials.Stone, 6)
-            .input(OrePrefix.dust, Materials.Flint)
-            .fluidOutputs(Materials.ConstructionFoam.getFluid(1000))
-            .buildAndRegister();
+                .duration(64).EUt(16)
+                .fluidInputs(Materials.Water.getFluid(1000))
+                .input("sand", 2)
+                .input(OrePrefix.dust, Materials.Stone, 6)
+                .input(OrePrefix.dust, Materials.Flint)
+                .fluidOutputs(Materials.ConstructionFoam.getFluid(1000))
+                .buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-            .duration(1200).EUt(16)
-            .input(OrePrefix.dust, Materials.Ruby, 9)
-            .input(OrePrefix.dust, Materials.Redstone, 9)
-            .outputs(MetaItems.ENERGIUM_DUST.getStackForm(9))
-            .buildAndRegister();
+                .duration(1200).EUt(16)
+                .input(OrePrefix.dust, Materials.Ruby, 9)
+                .input(OrePrefix.dust, Materials.Redstone, 9)
+                .outputs(MetaItems.ENERGIUM_DUST.getStackForm(9))
+                .buildAndRegister();
 
         RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder().inputs(MetaItems.ENERGIUM_DUST.getStackForm(9))
-            .fluidInputs(Materials.Water.getFluid(1800))
-            .outputs(MetaItems.ENERGY_CRYSTAL.getStackForm())
-            .duration(2000).EUt(120)
-            .buildAndRegister();
+                .fluidInputs(Materials.Water.getFluid(1800))
+                .outputs(MetaItems.ENERGY_CRYSTAL.getStackForm())
+                .duration(2000).EUt(120)
+                .buildAndRegister();
 
         RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
-            .inputs(MetaItems.ENERGIUM_DUST.getStackForm(9))
-            .fluidInputs(Materials.DistilledWater.getFluid(1800))
-            .outputs(MetaItems.ENERGY_CRYSTAL.getStackForm())
-            .duration(1500).EUt(120)
-            .buildAndRegister();
+                .inputs(MetaItems.ENERGIUM_DUST.getStackForm(9))
+                .fluidInputs(Materials.DistilledWater.getFluid(1800))
+                .outputs(MetaItems.ENERGY_CRYSTAL.getStackForm())
+                .duration(1500).EUt(120)
+                .buildAndRegister();
 
         RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
-            .input(OrePrefix.dust, Materials.SiliconDioxide)
-            .fluidInputs(Materials.DistilledWater.getFluid(200))
-            .chancedOutput(OreDictUnifier.get(OrePrefix.gem, Materials.Quartzite), 1000, 1000)
-            .duration(1500).EUt(24).buildAndRegister();
+                .input(OrePrefix.dust, Materials.SiliconDioxide)
+                .fluidInputs(Materials.DistilledWater.getFluid(200))
+                .chancedOutput(OreDictUnifier.get(OrePrefix.gem, Materials.Quartzite), 1000, 1000)
+                .duration(1500).EUt(24).buildAndRegister();
 
         //todo find UU-Matter replacement
 //        RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
@@ -299,17 +302,17 @@ public class MachineRecipeLoader {
 //            .duration(72000).EUt(480).buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-            .input(OrePrefix.crushedPurified, Materials.Sphalerite)
-            .input(OrePrefix.crushedPurified, Materials.Galena)
-            .fluidInputs(Materials.SulfuricAcid.getFluid(4000))
-            .fluidOutputs(Materials.IndiumConcentrate.getFluid(1000))
-            .duration(60).EUt(150).buildAndRegister();
+                .input(OrePrefix.crushedPurified, Materials.Sphalerite)
+                .input(OrePrefix.crushedPurified, Materials.Galena)
+                .fluidInputs(Materials.SulfuricAcid.getFluid(4000))
+                .fluidOutputs(Materials.IndiumConcentrate.getFluid(1000))
+                .duration(60).EUt(150).buildAndRegister();
 
         RecipeMaps.MIXER_RECIPES.recipeBuilder()
-            .input(OrePrefix.dust, Materials.Sodium)
-            .input(OrePrefix.dust, Materials.Potassium)
-            .fluidOutputs(Materials.SodiumPotassium.getFluid(1000))
-            .duration(400).EUt(30).buildAndRegister();
+                .input(OrePrefix.dust, Materials.Sodium)
+                .input(OrePrefix.dust, Materials.Potassium)
+                .fluidOutputs(Materials.SodiumPotassium.getFluid(1000))
+                .duration(400).EUt(30).buildAndRegister();
 
     }
 
@@ -319,56 +322,56 @@ public class MachineRecipeLoader {
     }
 
     private static final MaterialStack[][] alloySmelterList = {
-        {new MaterialStack(Materials.Copper, 3L), new MaterialStack(Materials.Tin, 1), new MaterialStack(Materials.Bronze, 4L)},
-        {new MaterialStack(Materials.Copper, 3L), new MaterialStack(Materials.Zinc, 1), new MaterialStack(Materials.Brass, 4L)},
-        {new MaterialStack(Materials.Copper, 1), new MaterialStack(Materials.Nickel, 1), new MaterialStack(Materials.Cupronickel, 2L)},
-        {new MaterialStack(Materials.Copper, 1), new MaterialStack(Materials.Redstone, 4L), new MaterialStack(Materials.RedAlloy, 1)},
-        {new MaterialStack(Materials.AnnealedCopper, 3L), new MaterialStack(Materials.Tin, 1), new MaterialStack(Materials.Bronze, 4L)},
-        {new MaterialStack(Materials.AnnealedCopper, 3L), new MaterialStack(Materials.Zinc, 1), new MaterialStack(Materials.Brass, 4L)},
-        {new MaterialStack(Materials.AnnealedCopper, 1), new MaterialStack(Materials.Nickel, 1), new MaterialStack(Materials.Cupronickel, 2L)},
-        {new MaterialStack(Materials.AnnealedCopper, 1), new MaterialStack(Materials.Redstone, 4L), new MaterialStack(Materials.RedAlloy, 1)},
-        {new MaterialStack(Materials.Iron, 1), new MaterialStack(Materials.Tin, 1), new MaterialStack(Materials.TinAlloy, 2L)},
-        {new MaterialStack(Materials.WroughtIron, 1), new MaterialStack(Materials.Tin, 1), new MaterialStack(Materials.TinAlloy, 2L)},
-        {new MaterialStack(Materials.Iron, 2L), new MaterialStack(Materials.Nickel, 1), new MaterialStack(Materials.Invar, 3L)},
-        {new MaterialStack(Materials.WroughtIron, 2L), new MaterialStack(Materials.Nickel, 1), new MaterialStack(Materials.Invar, 3L)},
-        {new MaterialStack(Materials.Tin, 9L), new MaterialStack(Materials.Antimony, 1), new MaterialStack(Materials.SolderingAlloy, 10L)},
-        {new MaterialStack(Materials.Lead, 4L), new MaterialStack(Materials.Antimony, 1), new MaterialStack(Materials.BatteryAlloy, 5L)},
-        {new MaterialStack(Materials.Gold, 1), new MaterialStack(Materials.Silver, 1), new MaterialStack(Materials.Electrum, 2L)},
-        {new MaterialStack(Materials.Magnesium, 1), new MaterialStack(Materials.Aluminium, 2L), new MaterialStack(Materials.Magnalium, 3L)}};
+            {new MaterialStack(Materials.Copper, 3L), new MaterialStack(Materials.Tin, 1), new MaterialStack(Materials.Bronze, 4L)},
+            {new MaterialStack(Materials.Copper, 3L), new MaterialStack(Materials.Zinc, 1), new MaterialStack(Materials.Brass, 4L)},
+            {new MaterialStack(Materials.Copper, 1), new MaterialStack(Materials.Nickel, 1), new MaterialStack(Materials.Cupronickel, 2L)},
+            {new MaterialStack(Materials.Copper, 1), new MaterialStack(Materials.Redstone, 4L), new MaterialStack(Materials.RedAlloy, 1)},
+            {new MaterialStack(Materials.AnnealedCopper, 3L), new MaterialStack(Materials.Tin, 1), new MaterialStack(Materials.Bronze, 4L)},
+            {new MaterialStack(Materials.AnnealedCopper, 3L), new MaterialStack(Materials.Zinc, 1), new MaterialStack(Materials.Brass, 4L)},
+            {new MaterialStack(Materials.AnnealedCopper, 1), new MaterialStack(Materials.Nickel, 1), new MaterialStack(Materials.Cupronickel, 2L)},
+            {new MaterialStack(Materials.AnnealedCopper, 1), new MaterialStack(Materials.Redstone, 4L), new MaterialStack(Materials.RedAlloy, 1)},
+            {new MaterialStack(Materials.Iron, 1), new MaterialStack(Materials.Tin, 1), new MaterialStack(Materials.TinAlloy, 2L)},
+            {new MaterialStack(Materials.WroughtIron, 1), new MaterialStack(Materials.Tin, 1), new MaterialStack(Materials.TinAlloy, 2L)},
+            {new MaterialStack(Materials.Iron, 2L), new MaterialStack(Materials.Nickel, 1), new MaterialStack(Materials.Invar, 3L)},
+            {new MaterialStack(Materials.WroughtIron, 2L), new MaterialStack(Materials.Nickel, 1), new MaterialStack(Materials.Invar, 3L)},
+            {new MaterialStack(Materials.Tin, 9L), new MaterialStack(Materials.Antimony, 1), new MaterialStack(Materials.SolderingAlloy, 10L)},
+            {new MaterialStack(Materials.Lead, 4L), new MaterialStack(Materials.Antimony, 1), new MaterialStack(Materials.BatteryAlloy, 5L)},
+            {new MaterialStack(Materials.Gold, 1), new MaterialStack(Materials.Silver, 1), new MaterialStack(Materials.Electrum, 2L)},
+            {new MaterialStack(Materials.Magnesium, 1), new MaterialStack(Materials.Aluminium, 2L), new MaterialStack(Materials.Magnalium, 3L)}};
 
     private static void registerAlloyRecipes() {
         for (MaterialStack[] stack : alloySmelterList) {
             if (stack[0].material.hasProperty(PropertyKey.INGOT)) {
                 RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
-                    .duration((int) stack[2].amount * 50).EUt(16)
-                    .input(OrePrefix.ingot, stack[0].material, (int) stack[0].amount)
-                    .input(OrePrefix.dust, stack[1].material, (int) stack[1].amount)
-                    .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
-                    .buildAndRegister();
+                        .duration((int) stack[2].amount * 50).EUt(16)
+                        .input(OrePrefix.ingot, stack[0].material, (int) stack[0].amount)
+                        .input(OrePrefix.dust, stack[1].material, (int) stack[1].amount)
+                        .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
+                        .buildAndRegister();
             }
             if (stack[1].material.hasProperty(PropertyKey.INGOT)) {
                 RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
-                    .duration((int) stack[2].amount * 50).EUt(16)
-                    .input(OrePrefix.dust, stack[0].material, (int) stack[0].amount)
-                    .input(OrePrefix.ingot, stack[1].material, (int) stack[1].amount)
-                    .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
-                    .buildAndRegister();
+                        .duration((int) stack[2].amount * 50).EUt(16)
+                        .input(OrePrefix.dust, stack[0].material, (int) stack[0].amount)
+                        .input(OrePrefix.ingot, stack[1].material, (int) stack[1].amount)
+                        .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
+                        .buildAndRegister();
             }
             if (stack[0].material.hasProperty(PropertyKey.INGOT)
                     && stack[1].material.hasProperty(PropertyKey.INGOT)) {
                 RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
-                    .duration((int) stack[2].amount * 50).EUt(16)
-                    .input(OrePrefix.ingot, stack[0].material, (int) stack[0].amount)
-                    .input(OrePrefix.ingot, stack[1].material, (int) stack[1].amount)
-                    .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
-                    .buildAndRegister();
+                        .duration((int) stack[2].amount * 50).EUt(16)
+                        .input(OrePrefix.ingot, stack[0].material, (int) stack[0].amount)
+                        .input(OrePrefix.ingot, stack[1].material, (int) stack[1].amount)
+                        .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
+                        .buildAndRegister();
             }
             RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder()
-                .duration((int) stack[2].amount * 50).EUt(16)
-                .input(OrePrefix.dust, stack[0].material, (int) stack[0].amount)
-                .input(OrePrefix.dust, stack[1].material, (int) stack[1].amount)
-                .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
-                .buildAndRegister();
+                    .duration((int) stack[2].amount * 50).EUt(16)
+                    .input(OrePrefix.dust, stack[0].material, (int) stack[0].amount)
+                    .input(OrePrefix.dust, stack[1].material, (int) stack[1].amount)
+                    .outputs(OreDictUnifier.get(OrePrefix.ingot, stack[2].material, (int) stack[2].amount))
+                    .buildAndRegister();
         }
 
         COMPRESSOR_RECIPES.recipeBuilder().inputs(MetaItems.INGOT_MIXED_METAL.getStackForm()).outputs(MetaItems.ADVANCED_ALLOY_PLATE.getStackForm()).duration(300).EUt(2).buildAndRegister();
@@ -387,11 +390,11 @@ public class MachineRecipeLoader {
     private static void registerAssemblerRecipes() {
         for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
             CANNER_RECIPES.recipeBuilder()
-                .inputs(MetaItems.SPRAY_EMPTY.getStackForm())
-                .input(getOrdictColorName(dyeColor), 1)
-                .outputs(MetaItems.SPRAY_CAN_DYES[dyeColor.getMetadata()].getStackForm())
-                .EUt(8).duration(200)
-                .buildAndRegister();
+                    .inputs(MetaItems.SPRAY_EMPTY.getStackForm())
+                    .input(getOrdictColorName(dyeColor), 1)
+                    .outputs(MetaItems.SPRAY_CAN_DYES[dyeColor.getMetadata()].getStackForm())
+                    .EUt(8).duration(200)
+                    .buildAndRegister();
         }
 
         //todo fix
@@ -406,13 +409,6 @@ public class MachineRecipeLoader {
 //                .buildAndRegister();
 //        }
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-            .duration(4096).EUt(4096)
-            .inputs(MetaItems.ENERGY_LAPOTRONIC_ORB2.getStackForm(8))
-            .input(OrePrefix.plate, Materials.Neutronium, 16)
-            .outputs(MetaItems.ZPM2.getStackForm())
-            .buildAndRegister();
-
         Material[] coverMaterials = new Material[]{Materials.Iron, Materials.WroughtIron, Materials.Aluminium};
 
         for (Material material : coverMaterials) {
@@ -423,22 +419,57 @@ public class MachineRecipeLoader {
                     .EUt(16).duration(800)
                     .buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LEVER))
-                    .input(OrePrefix.plate, material)
-                    .fluidInputs(Materials.Tin.getFluid(L))
-                    .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
-                    .EUt(16).duration(200)
+            ASSEMBLER_RECIPES.recipeBuilder()
+                    .inputs(WORKBENCH.getStackForm())
+                    .input(plate, material)
+                    .outputs(COVER_CRAFTING.getStackForm())
+                    .EUt(16).duration(800)
                     .buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LEVER))
-                    .input(OrePrefix.plate, material)
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(L / 2))
-                    .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
-                    .EUt(16).duration(200)
-                    .buildAndRegister();
+            for (FluidStack solder : new FluidStack[]{Tin.getFluid(L), SolderingAlloy.getFluid(L / 2)}) {
+                RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                        .inputs(new ItemStack(Blocks.LEVER))
+                        .input(OrePrefix.plate, material)
+                        .fluidInputs(solder)
+                        .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
+                        .EUt(16).duration(200)
+                        .buildAndRegister();
+
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .input(cableGtSingle, Copper, 4)
+                        .input(circuit, MarkerMaterials.Tier.Basic)
+                        .input(plate, material)
+                        .fluidInputs(solder)
+                        .outputs(COVER_ENERGY_DETECTOR.getStackForm())
+                        .EUt(16).duration(800)
+                        .buildAndRegister();
+
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .inputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE))
+                        .input(plate, material)
+                        .fluidInputs(solder)
+                        .outputs(COVER_FLUID_DETECTOR.getStackForm())
+                        .EUt(16).duration(800)
+                        .buildAndRegister();
+
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .inputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE))
+                        .input(plate, material)
+                        .fluidInputs(solder)
+                        .outputs(COVER_ITEM_DETECTOR.getStackForm())
+                        .EUt(16).duration(800)
+                        .buildAndRegister();
+            }
         }
+
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plate, Glass)
+                .input(foil, Aluminium, 4)
+                .input(circuit, MarkerMaterials.Tier.Basic)
+                .input(wireFine, Copper, 4)
+                .outputs(COVER_SCREEN.getStackForm())
+                .EUt(16).duration(50)
+                .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.WroughtIron, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ULV)).circuitMeta(8).duration(25).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Steel, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.LV)).circuitMeta(8).duration(50).buildAndRegister();
@@ -716,106 +747,106 @@ public class MachineRecipeLoader {
     private static void registerRecyclingRecipes() {
 
         MACERATOR_RECIPES.recipeBuilder()
-            .input(stone, Endstone)
-            .output(dust, Endstone)
-            .chancedOutput(dustTiny, Tungstate, 1200, 280)
-            .buildAndRegister();
+                .input(stone, Endstone)
+                .output(dust, Endstone)
+                .chancedOutput(dustTiny, Tungstate, 1200, 280)
+                .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .input(stone, Netherrack)
-            .output(dust, Netherrack)
-            .chancedOutput(nugget, Gold, 500, 120)
-            .buildAndRegister();
+                .input(stone, Netherrack)
+                .output(dust, Netherrack)
+                .chancedOutput(nugget, Gold, 500, 120)
+                .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .input(stone, Soapstone)
-            .output(dustImpure, Talc)
-            .chancedOutput(dustTiny, Chromite, 1000, 280)
-            .buildAndRegister();
+                .input(stone, Soapstone)
+                .output(dustImpure, Talc)
+                .chancedOutput(dustTiny, Chromite, 1000, 280)
+                .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .input(stone, Redrock)
-            .output(dust, Redrock)
-            .chancedOutput(dust, Redrock, 1000, 380)
-            .buildAndRegister();
+                .input(stone, Redrock)
+                .output(dust, Redrock)
+                .chancedOutput(dust, Redrock, 1000, 380)
+                .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .input(stone, Marble)
-            .output(dust, Marble)
-            .chancedOutput(dust, Marble, 1000, 380)
-            .buildAndRegister();
+                .input(stone, Marble)
+                .output(dust, Marble)
+                .chancedOutput(dust, Marble, 1000, 380)
+                .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .input(stone, Basalt)
-            .output(dust, Basalt)
-            .chancedOutput(dust, Basalt, 1000, 380)
-            .buildAndRegister();
+                .input(stone, Basalt)
+                .output(dust, Basalt)
+                .chancedOutput(dust, Basalt, 1000, 380)
+                .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .input(stone, GraniteBlack)
-            .output(dust, GraniteBlack)
-            .chancedOutput(dust, Thorium, 100, 40)
-            .buildAndRegister();
+                .input(stone, GraniteBlack)
+                .output(dust, GraniteBlack)
+                .chancedOutput(dust, Thorium, 100, 40)
+                .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .input(stone, GraniteRed)
-            .output(dust, GraniteRed)
-            .chancedOutput(dustSmall, Uranium238, 100, 40)
-            .buildAndRegister();
+                .input(stone, GraniteRed)
+                .output(dust, GraniteRed)
+                .chancedOutput(dustSmall, Uranium238, 100, 40)
+                .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .input(stone, Andesite)
-            .output(dust, Andesite)
-            .chancedOutput(dustSmall, Stone, 100, 40)
-            .buildAndRegister();
+                .input(stone, Andesite)
+                .output(dust, Andesite)
+                .chancedOutput(dustSmall, Stone, 100, 40)
+                .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .input(stone, Diorite)
-            .output(dust, Diorite)
-            .chancedOutput(dustSmall, Stone, 100, 40)
-            .buildAndRegister();
+                .input(stone, Diorite)
+                .output(dust, Diorite)
+                .chancedOutput(dustSmall, Stone, 100, 40)
+                .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .input(stone, Granite)
-            .output(dust, Granite)
-            .chancedOutput(dustSmall, Stone, 100, 40)
-            .buildAndRegister();
+                .input(stone, Granite)
+                .output(dust, Granite)
+                .chancedOutput(dustSmall, Stone, 100, 40)
+                .buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Items.PORKCHOP))
-            .output(dustSmall, Meat, 6)
-            .output(dustTiny, Bone)
-            .duration(102).EUt(4).buildAndRegister();
+                .inputs(new ItemStack(Items.PORKCHOP))
+                .output(dustSmall, Meat, 6)
+                .output(dustTiny, Bone)
+                .duration(102).EUt(4).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
-            .output(dustSmall, Meat, 6)
-            .output(dustTiny, Bone)
-            .duration(102).EUt(4).buildAndRegister();
+                .inputs(new ItemStack(Items.FISH, 1, GTValues.W))
+                .output(dustSmall, Meat, 6)
+                .output(dustTiny, Bone)
+                .duration(102).EUt(4).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Items.CHICKEN))
-            .output(dust, Meat)
-            .output(dustTiny, Bone)
-            .duration(102).EUt(4).buildAndRegister();
+                .inputs(new ItemStack(Items.CHICKEN))
+                .output(dust, Meat)
+                .output(dustTiny, Bone)
+                .duration(102).EUt(4).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Items.BEEF))
-            .output(dustSmall, Meat, 6)
-            .output(dustTiny, Bone)
-            .duration(102).EUt(4).buildAndRegister();
+                .inputs(new ItemStack(Items.BEEF))
+                .output(dustSmall, Meat, 6)
+                .output(dustTiny, Bone)
+                .duration(102).EUt(4).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Items.RABBIT))
-            .output(dustSmall, Meat, 6)
-            .output(dustTiny, Bone)
-            .duration(102).EUt(4).buildAndRegister();
+                .inputs(new ItemStack(Items.RABBIT))
+                .output(dustSmall, Meat, 6)
+                .output(dustTiny, Bone)
+                .duration(102).EUt(4).buildAndRegister();
 
         MACERATOR_RECIPES.recipeBuilder()
-            .inputs(new ItemStack(Items.MUTTON))
-            .output(dust, Meat)
-            .output(dustTiny, Bone)
-            .duration(102).EUt(4).buildAndRegister();
+                .inputs(new ItemStack(Items.MUTTON))
+                .output(dust, Meat)
+                .output(dustTiny, Bone)
+                .duration(102).EUt(4).buildAndRegister();
 
 
     }
@@ -828,15 +859,6 @@ public class MachineRecipeLoader {
                 .circuitMeta(1)
                 .fluidOutputs(Water.getFluid(L)).buildAndRegister();
 
-
-
-        CANNER_RECIPES.recipeBuilder().duration(100).EUt(30).input(BATTERY_HULL_LV).fluidInputs(Mercury.getFluid(1000)).outputs(BATTERY_SU_LV_MERCURY.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
-        CANNER_RECIPES.recipeBuilder().duration(200).EUt(30).input(BATTERY_HULL_MV).fluidInputs(Mercury.getFluid(4000)).outputs(BATTERY_SU_MV_MERCURY.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
-        CANNER_RECIPES.recipeBuilder().duration(400).EUt(30).input(BATTERY_HULL_HV).fluidInputs(Mercury.getFluid(16000)).outputs(BATTERY_SU_HV_MERCURY.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
-        CANNER_RECIPES.recipeBuilder().duration(100).EUt(30).input(BATTERY_HULL_LV).fluidInputs(SulfuricAcid.getFluid(1000)).outputs(BATTERY_SU_LV_SULFURIC_ACID.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
-        CANNER_RECIPES.recipeBuilder().duration(200).EUt(30).input(BATTERY_HULL_MV).fluidInputs(SulfuricAcid.getFluid(4000)).outputs(BATTERY_SU_MV_SULFURIC_ACID.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
-        CANNER_RECIPES.recipeBuilder().duration(400).EUt(30).input(BATTERY_HULL_HV).fluidInputs(SulfuricAcid.getFluid(16000)).outputs(BATTERY_SU_HV_SULFURIC_ACID.getChargedStack(Long.MAX_VALUE)).buildAndRegister();
-
         FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(100).EUt(16).notConsumable(SHAPE_MOLD_BALL).fluidInputs(Toluene.getFluid(100)).output(GELLED_TOLUENE).buildAndRegister();
 
         FLUID_HEATER_RECIPES.recipeBuilder().duration(30).EUt(32).fluidInputs(Water.getFluid(6)).circuitMeta(1).fluidOutputs(Steam.getFluid(960)).buildAndRegister();
@@ -845,9 +867,9 @@ public class MachineRecipeLoader {
 
     private static <T extends Enum<T> & IStringSerializable> void registerBrickRecipe(StoneBlock<T> stoneBlock, T normalVariant, T brickVariant) {
         ModHandler.addShapedRecipe(stoneBlock.getRegistryName().getNamespace() + "_" + normalVariant + "_bricks",
-            stoneBlock.getItemVariant(brickVariant, ChiselingVariant.NORMAL, 4),
-            "XX", "XX", 'X',
-            stoneBlock.getItemVariant(normalVariant, ChiselingVariant.NORMAL));
+                stoneBlock.getItemVariant(brickVariant, ChiselingVariant.NORMAL, 4),
+                "XX", "XX", 'X',
+                stoneBlock.getItemVariant(normalVariant, ChiselingVariant.NORMAL));
     }
 
     private static <T extends Enum<T> & IStringSerializable> void registerChiselingRecipes(StoneBlock<T> stoneBlock) {
@@ -856,49 +878,49 @@ public class MachineRecipeLoader {
             if (!isBricksVariant) {
                 ModHandler.addSmeltingRecipe(stoneBlock.getItemVariant(variant, ChiselingVariant.CRACKED), stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL));
                 FORGE_HAMMER_RECIPES.recipeBuilder().duration(12).EUt(4)
-                    .inputs(stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL))
-                    .outputs(stoneBlock.getItemVariant(variant, ChiselingVariant.CRACKED))
-                    .buildAndRegister();
+                        .inputs(stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL))
+                        .outputs(stoneBlock.getItemVariant(variant, ChiselingVariant.CRACKED))
+                        .buildAndRegister();
             } else {
                 ModHandler.addSmeltingRecipe(stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL), stoneBlock.getItemVariant(variant, ChiselingVariant.CRACKED));
             }
             CHEMICAL_BATH_RECIPES.recipeBuilder().duration(12).EUt(4)
-                .inputs(stoneBlock.getItemVariant(variant, !isBricksVariant ? ChiselingVariant.CRACKED : ChiselingVariant.NORMAL))
-                .fluidInputs(Materials.Water.getFluid(144))
-                .outputs(stoneBlock.getItemVariant(variant, ChiselingVariant.MOSSY))
-                .buildAndRegister();
+                    .inputs(stoneBlock.getItemVariant(variant, !isBricksVariant ? ChiselingVariant.CRACKED : ChiselingVariant.NORMAL))
+                    .fluidInputs(Materials.Water.getFluid(144))
+                    .outputs(stoneBlock.getItemVariant(variant, ChiselingVariant.MOSSY))
+                    .buildAndRegister();
             ModHandler.addShapelessRecipe(stoneBlock.getRegistryName().getPath() + "_chiseling_" + variant,
-                stoneBlock.getItemVariant(variant, ChiselingVariant.CHISELED),
-                stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL));
+                    stoneBlock.getItemVariant(variant, ChiselingVariant.CHISELED),
+                    stoneBlock.getItemVariant(variant, ChiselingVariant.NORMAL));
         }
     }
+
     private static void registerNBTRemoval() {
         for (MetaTileEntityQuantumChest chest : MetaTileEntities.QUANTUM_CHEST)
             if (chest != null) {
-                ModHandler.addShapelessRecipe("quantum_chest_nbt_" + chest.getTier() + chest.metaTileEntityId, chest.getStackForm(), chest.getStackForm());
+                ModHandler.addShapelessRecipe("quantum_chest_nbt_" + chest.getTier() + chest.getMetaName(), chest.getStackForm(), chest.getStackForm());
             }
 
         for (MetaTileEntityQuantumTank tank : MetaTileEntities.QUANTUM_TANK)
             if (tank != null) {
-                ModHandler.addShapelessRecipe("quantum_tank_nbt_" + tank.getTier() + tank.metaTileEntityId, tank.getStackForm(), tank.getStackForm());
+                ModHandler.addShapelessRecipe("quantum_tank_nbt_" + tank.getTier() + tank.getMetaName(), tank.getStackForm(), tank.getStackForm());
             }
-        
-        //Drums
-        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.WOODEN_DRUM.metaTileEntityId, MetaTileEntities.WOODEN_DRUM.getStackForm(), MetaTileEntities.WOODEN_DRUM.getStackForm());
-        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.BRONZE_DRUM.metaTileEntityId, MetaTileEntities.BRONZE_DRUM.getStackForm(), MetaTileEntities.BRONZE_DRUM.getStackForm());
-        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.STEEL_DRUM.metaTileEntityId, MetaTileEntities.STEEL_DRUM.getStackForm(), MetaTileEntities.STEEL_DRUM.getStackForm());
-        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.ALUMINIUM_DRUM.metaTileEntityId, MetaTileEntities.ALUMINIUM_DRUM.getStackForm(), MetaTileEntities.ALUMINIUM_DRUM.getStackForm());
-        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.STAINLESS_STEEL_DRUM.metaTileEntityId, MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm(), MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm());
-        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.TITANIUM_DRUM.metaTileEntityId, MetaTileEntities.TITANIUM_DRUM.getStackForm(), MetaTileEntities.TITANIUM_DRUM.getStackForm());
-        ModHandler.addShapelessRecipe("drum_nbt_"  + MetaTileEntities.TUNGSTENSTEEL_DRUM.metaTileEntityId, MetaTileEntities.TUNGSTENSTEEL_DRUM.getStackForm(), MetaTileEntities.TUNGSTENSTEEL_DRUM.getStackForm());
-        //Tanks
-        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.WOODEN_TANK.metaTileEntityId, MetaTileEntities.WOODEN_TANK.getStackForm(), MetaTileEntities.WOODEN_TANK.getStackForm());
-        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.BRONZE_TANK.metaTileEntityId, MetaTileEntities.BRONZE_TANK.getStackForm(), MetaTileEntities.BRONZE_TANK.getStackForm());
-        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.STEEL_TANK.metaTileEntityId, MetaTileEntities.STEEL_TANK.getStackForm(), MetaTileEntities.STEEL_TANK.getStackForm());
-        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.ALUMINIUM_TANK.metaTileEntityId, MetaTileEntities.ALUMINIUM_TANK.getStackForm(), MetaTileEntities.ALUMINIUM_TANK.getStackForm());
-        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.STAINLESS_STEEL_TANK.metaTileEntityId, MetaTileEntities.STAINLESS_STEEL_TANK.getStackForm(), MetaTileEntities.STAINLESS_STEEL_TANK.getStackForm());
-        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.TITANIUM_TANK.metaTileEntityId, MetaTileEntities.TITANIUM_TANK.getStackForm(), MetaTileEntities.TITANIUM_TANK.getStackForm());
-        ModHandler.addShapelessRecipe("tank_nbt_"  + MetaTileEntities.TUNGSTENSTEEL_TANK.metaTileEntityId, MetaTileEntities.TUNGSTENSTEEL_TANK.getStackForm(), MetaTileEntities.TUNGSTENSTEEL_TANK.getStackForm());
 
+        //Drums
+        ModHandler.addShapelessRecipe("drum_nbt_wood", MetaTileEntities.WOODEN_DRUM.getStackForm(), MetaTileEntities.WOODEN_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_bronze", MetaTileEntities.BRONZE_DRUM.getStackForm(), MetaTileEntities.BRONZE_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_steel", MetaTileEntities.STEEL_DRUM.getStackForm(), MetaTileEntities.STEEL_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_aluminium", MetaTileEntities.ALUMINIUM_DRUM.getStackForm(), MetaTileEntities.ALUMINIUM_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_stainless_steel", MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm(), MetaTileEntities.STAINLESS_STEEL_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_titanium", MetaTileEntities.TITANIUM_DRUM.getStackForm(), MetaTileEntities.TITANIUM_DRUM.getStackForm());
+        ModHandler.addShapelessRecipe("drum_nbt_tungstensteel", MetaTileEntities.TUNGSTENSTEEL_DRUM.getStackForm(), MetaTileEntities.TUNGSTENSTEEL_DRUM.getStackForm());
+        //Tanks
+        ModHandler.addShapelessRecipe("tank_nbt_wood", MetaTileEntities.WOODEN_TANK.getStackForm(), MetaTileEntities.WOODEN_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_bronze", MetaTileEntities.BRONZE_TANK.getStackForm(), MetaTileEntities.BRONZE_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_steel", MetaTileEntities.STEEL_TANK.getStackForm(), MetaTileEntities.STEEL_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_aluminium", MetaTileEntities.ALUMINIUM_TANK.getStackForm(), MetaTileEntities.ALUMINIUM_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_stainless_steel", MetaTileEntities.STAINLESS_STEEL_TANK.getStackForm(), MetaTileEntities.STAINLESS_STEEL_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_titanium", MetaTileEntities.TITANIUM_TANK.getStackForm(), MetaTileEntities.TITANIUM_TANK.getStackForm());
+        ModHandler.addShapelessRecipe("tank_nbt_tungstensteel", MetaTileEntities.TUNGSTENSTEEL_TANK.getStackForm(), MetaTileEntities.TUNGSTENSTEEL_TANK.getStackForm());
     }
 }

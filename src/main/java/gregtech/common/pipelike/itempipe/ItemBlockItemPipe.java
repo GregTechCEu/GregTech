@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class ItemBlockItemPipe extends ItemBlockMaterialPipe<ItemPipeType, ItemP
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<String> tooltip, @Nonnull ITooltipFlag flagIn) {
         ItemPipeProperties pipeProperties = blockPipe.createItemProperties(stack);
         if (pipeProperties.transferRate % 1 != 0)
             tooltip.add(I18n.format("gregtech.item_pipe.rate_items", (int) ((pipeProperties.transferRate * 64) + 0.5)));

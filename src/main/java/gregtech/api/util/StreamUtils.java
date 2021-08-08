@@ -1,10 +1,14 @@
 package gregtech.api.util;
 
-import net.minecraft.item.*;
-import net.minecraftforge.items.*;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 
-import java.util.*;
-import java.util.stream.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Various Quality-of-Life methods for working with Java 8 Streams.
@@ -20,7 +24,7 @@ public final class StreamUtils {
      */
     public static Stream<ItemStack> streamFrom(IItemHandler inventory) {
         return StreamSupport.stream(iterableFrom(inventory).spliterator(),
-                                    false);
+                false);
     }
 
     /**
@@ -47,7 +51,7 @@ public final class StreamUtils {
 
                     @Override
                     public ItemStack next() {
-                        if(!hasNext())
+                        if (!hasNext())
                             throw new NoSuchElementException();
 
                         ItemStack next = inventory.getStackInSlot(cursor);

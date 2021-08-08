@@ -3,9 +3,9 @@ package gregtech.loaders.oreprocessing;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
@@ -29,10 +29,10 @@ public class DecompositionRecipeHandler {
 
     private static void processDecomposition(OrePrefix decomposePrefix, Material material) {
         if (material.getMaterialComponents().isEmpty() ||
-            (!material.hasFlag(DECOMPOSITION_BY_ELECTROLYZING) &&
-                !material.hasFlag(DECOMPOSITION_BY_CENTRIFUGING)) ||
-            //disable decomposition if explicitly disabled for this material or for one of it's components
-            material.hasFlag(DISABLE_DECOMPOSITION)) return;
+                (!material.hasFlag(DECOMPOSITION_BY_ELECTROLYZING) &&
+                        !material.hasFlag(DECOMPOSITION_BY_CENTRIFUGING)) ||
+                //disable decomposition if explicitly disabled for this material or for one of it's components
+                material.hasFlag(DISABLE_DECOMPOSITION)) return;
 
         ArrayList<ItemStack> outputs = new ArrayList<>();
         ArrayList<FluidStack> fluidOutputs = new ArrayList<>();
@@ -93,13 +93,13 @@ public class DecompositionRecipeHandler {
         RecipeBuilder<?> builder;
         if (material.hasFlag(DECOMPOSITION_BY_ELECTROLYZING)) {
             builder = RecipeMaps.ELECTROLYZER_RECIPES.recipeBuilder()
-                .duration(((int) material.getAverageProtons() * totalInputAmount * 2))
-                .EUt(getElectrolyzingVoltage(material.getMaterialComponents().stream()
-                    .map(s -> s.material).collect(Collectors.toList())));
+                    .duration(((int) material.getAverageProtons() * totalInputAmount * 2))
+                    .EUt(getElectrolyzingVoltage(material.getMaterialComponents().stream()
+                            .map(s -> s.material).collect(Collectors.toList())));
         } else {
             builder = RecipeMaps.CENTRIFUGE_RECIPES.recipeBuilder()
-                .duration((int) Math.ceil(material.getAverageMass() * totalInputAmount * 1.5))
-                .EUt(30);
+                    .duration((int) Math.ceil(material.getAverageMass() * totalInputAmount * 1.5))
+                    .EUt(30);
         }
         builder.outputs(outputs);
         builder.fluidOutputs(fluidOutputs);

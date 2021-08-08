@@ -16,6 +16,7 @@ public abstract class TickableTileEntityBase extends SyncedTileEntityBase implem
 
     /**
      * Replacement for former getTimer().
+     *
      * @return Timer value with a random offset of [0,20].
      */
     public long getOffsetTimer() {

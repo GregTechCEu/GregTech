@@ -45,7 +45,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITieredMetaTileEntity,IActiveOutputSide {
+public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide {
 
 
     private final int tier;
@@ -251,6 +251,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         this.itemsStoredInside = 0;
         exportItems.setStackInSlot(0, ItemStack.EMPTY);
     }
+
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         Builder builder = ModularUI.defaultBuilder();
@@ -271,6 +272,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     public EnumFacing getOutputFacing() {
         return outputFacing == null ? EnumFacing.SOUTH : outputFacing;
     }
+
     public void setOutputFacing(EnumFacing outputFacing) {
         this.outputFacing = outputFacing;
         if (!getWorld().isRemote) {
@@ -347,7 +349,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     @Override
     public boolean canPlaceCoverOnSide(EnumFacing side) {
         //Done to prevent loops as output always acts as input
-        if (side == getOutputFacing()){
+        if (side == getOutputFacing()) {
             return false;
         }
         return true;
@@ -427,7 +429,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         @Nonnull
         @Override
         public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            if(stack.isEmpty()) {
+            if (stack.isEmpty()) {
                 return ItemStack.EMPTY;
             }
             if (itemsStoredInside > 0L &&
@@ -442,7 +444,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
                 return stack;
             }
             ItemStack remainingStack = ItemStack.EMPTY;
-            if(stack.getCount() > insertedAmount) {
+            if (stack.getCount() > insertedAmount) {
                 remainingStack = stack.copy();
                 remainingStack.setCount(stack.getCount() - insertedAmount);
                 return ItemStack.EMPTY;

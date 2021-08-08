@@ -6,6 +6,7 @@ import gregtech.common.command.worldgen.CommandWorldgen;
 import net.minecraft.command.ICommandSender;
 import net.minecraftforge.server.command.CommandTreeBase;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class GregTechCommand extends CommandTreeBase {
@@ -15,18 +16,21 @@ public class GregTechCommand extends CommandTreeBase {
         addSubcommand(new CommandUtil());
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return "gregtech";
     }
 
+    @Nonnull
     @Override
     public List<String> getAliases() {
         return Lists.newArrayList("gt");
     }
 
+    @Nonnull
     @Override
-    public String getUsage(ICommandSender sender) {
+    public String getUsage(@Nonnull ICommandSender sender) {
         return "gregtech.command.usage";
     }
 }

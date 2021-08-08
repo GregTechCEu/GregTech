@@ -22,8 +22,8 @@ import java.util.function.BooleanSupplier;
 public class ToggleButtonWidget extends Widget {
 
     protected TextureArea buttonTexture;
-    private BooleanSupplier isPressedCondition;
-    private BooleanConsumer setPressedExecutor;
+    private final BooleanSupplier isPressedCondition;
+    private final BooleanConsumer setPressedExecutor;
     private String tooltipText;
     protected boolean isPressed;
 
@@ -66,7 +66,7 @@ public class ToggleButtonWidget extends Widget {
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
-        if(isMouseOverElement(mouseX, mouseY) && tooltipText != null) {
+        if (isMouseOverElement(mouseX, mouseY) && tooltipText != null) {
             String postfix = isPressed ? ".enabled" : ".disabled";
             String tooltipHoverString = tooltipText + postfix;
             List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString).split("/n"));

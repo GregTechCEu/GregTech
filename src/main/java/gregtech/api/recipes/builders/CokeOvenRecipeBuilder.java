@@ -77,7 +77,7 @@ public class CokeOvenRecipeBuilder {
 
     public ValidationResult<CokeOvenRecipe> build() {
         return ValidationResult.newResult(validate(),
-            new CokeOvenRecipe(input, output, fluidOutput, duration));
+                new CokeOvenRecipe(input, output, fluidOutput, duration));
     }
 
     protected EnumValidationResult validate() {

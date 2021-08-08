@@ -77,12 +77,12 @@ public class WrenchOverlayRenderer {
     }
 
     public static boolean useGridForRayTraceResult(RayTraceResult result) {
-        if(result instanceof CuboidRayTraceResult) {
+        if (result instanceof CuboidRayTraceResult) {
             CuboidRayTraceResult traceResult = (CuboidRayTraceResult) result;
             //use grid only for center hit or for primary box with placement grid enabled
-            if(traceResult.cuboid6.data == null) {
+            if (traceResult.cuboid6.data == null) {
                 return true; //default is true
-            } else if(traceResult.cuboid6.data instanceof PrimaryBoxData) {
+            } else if (traceResult.cuboid6.data instanceof PrimaryBoxData) {
                 PrimaryBoxData primaryBoxData = (PrimaryBoxData) traceResult.cuboid6.data;
                 return primaryBoxData.usePlacementGrid;
             } else return false; //otherwise, do not use grid
@@ -110,12 +110,12 @@ public class WrenchOverlayRenderer {
         }
 
         // MetaTileEntities
-        if(tileEntity instanceof MetaTileEntityHolder &&
-            itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
+        if (tileEntity instanceof MetaTileEntityHolder &&
+                itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
             return true;
 
         // ICoverable
-        if(tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null))
+        if (tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null))
             return itemStack.hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, null) || GTUtility.isCoverBehaviorItem(itemStack);
 
         return false;

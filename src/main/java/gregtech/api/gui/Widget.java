@@ -236,8 +236,8 @@ public abstract class Widget {
     protected void drawHoveringText(ItemStack itemStack, List<String> tooltip, int maxTextWidth, int mouseX, int mouseY) {
         Minecraft mc = Minecraft.getMinecraft();
         GuiUtils.drawHoveringText(itemStack, tooltip, mouseX, mouseY,
-            sizes.getScreenWidth(),
-            sizes.getScreenHeight(), maxTextWidth, mc.fontRenderer);
+                sizes.getScreenWidth(),
+                sizes.getScreenHeight(), maxTextWidth, mc.fontRenderer);
     }
 
     @SideOnly(Side.CLIENT)

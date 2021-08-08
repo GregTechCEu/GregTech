@@ -9,7 +9,7 @@ import java.util.function.BooleanSupplier;
 
 public class ServerWidgetGroup extends AbstractWidgetGroup {
 
-    private BooleanSupplier isVisibleGetter;
+    private final BooleanSupplier isVisibleGetter;
     private Boolean lastIsVisible;
 
     public ServerWidgetGroup(BooleanSupplier isVisibleGetter, Position position, Size size) {

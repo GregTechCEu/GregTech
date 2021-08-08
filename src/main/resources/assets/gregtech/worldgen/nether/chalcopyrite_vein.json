@@ -3,14 +3,19 @@
   "density": 0.4,
   "max_height": 30,
   "min_height": 10,
-  "dimension_filter": ["is_nether"],
+  "dimension_filter": [
+    "is_nether"
+  ],
   "vein_populator": {
     "type": "surface_rock",
     "material": "chalcopyrite"
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [12, 12]
+    "radius": [
+      12,
+      12
+    ]
   },
   "filler": {
     "type": "simple",
@@ -21,15 +26,15 @@
           "weight": 30,
           "value": "ore:chalcopyrite"
         },
-		{
+        {
           "weight": 30,
           "value": "ore:iron"
         },
-		{
+        {
           "weight": 30,
           "value": "ore:pyrite"
         },
-		{
+        {
           "weight": 10,
           "value": "ore:copper"
         }

@@ -14,6 +14,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.GTValues.L;
@@ -36,6 +37,7 @@ public class VanillaStandardRecipes {
         metalRecipes();
         miscRecipes();
         mixingRecipes();
+        dyeRecipes();
     }
 
     /**
@@ -235,6 +237,50 @@ public class VanillaStandardRecipes {
         ModHandler.addShapelessRecipe("gravel_to_flint", new ItemStack(Items.FLINT, 1), 'm', Blocks.GRAVEL);
         ModHandler.addShapelessRecipe("bone_to_bone_meal", new ItemStack(Items.DYE, 4, 15), 'm', Items.BONE);
         ModHandler.addShapelessRecipe("blaze_rod_to_powder", new ItemStack(Items.BLAZE_POWDER, 3), 'm', Items.BLAZE_ROD);
+
+        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.DYE, 1, EnumDyeColor.BROWN.getDyeDamage()))
+                .outputs(OreDictUnifier.get(OrePrefix.dust, Materials.Cocoa, 1))
+                .duration(400)
+                .EUt(2)
+                .buildAndRegister();
+
+        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.REEDS, 1))
+                .outputs(new ItemStack(Items.SUGAR, 1))
+                .duration(400)
+                .EUt(2)
+                .buildAndRegister();
+
+        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.MELON_BLOCK, 1, 0))
+                .outputs(new ItemStack(Items.MELON, 8, 0))
+                .chancedOutput(new ItemStack(Items.MELON_SEEDS, 1), 8000, 500)
+                .duration(400)
+                .EUt(2)
+                .buildAndRegister();
+
+        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.PUMPKIN, 1, 0))
+                .outputs(new ItemStack(Items.PUMPKIN_SEEDS, 4, 0))
+                .duration(400)
+                .EUt(2)
+                .buildAndRegister();
+
+        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.MELON, 1, 0))
+                .outputs(new ItemStack(Items.MELON_SEEDS, 1, 0))
+                .duration(400)
+                .EUt(2)
+                .buildAndRegister();
+
+        RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
+                .inputs(CountableIngredient.from("blockWool", 1))
+                .outputs(new ItemStack(Items.STRING, 3))
+                .chancedOutput(new ItemStack(Items.STRING, 1), 2000, 800)
+                .duration(400)
+                .EUt(2)
+                .buildAndRegister();
     }
 
     /**
@@ -924,5 +970,83 @@ public class VanillaStandardRecipes {
                 .inputs(new ItemStack(Blocks.DIRT))
                 .outputs(new ItemStack(Blocks.DIRT, 2, 1))
                 .duration(100).EUt(4).buildAndRegister();
+    }
+
+    private static void dyeRecipes() {
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 0))
+                .outputs(new ItemStack(Items.DYE, 2, 1))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 1))
+                .outputs(new ItemStack(Items.DYE, 2, 12))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 2))
+                .outputs(new ItemStack(Items.DYE, 2, 13))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 3))
+                .outputs(new ItemStack(Items.DYE, 2, 7))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 4))
+                .outputs(new ItemStack(Items.DYE, 2, 1))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 5))
+                .outputs(new ItemStack(Items.DYE, 2, 14))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 6))
+                .outputs(new ItemStack(Items.DYE, 2, 7))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 7))
+                .outputs(new ItemStack(Items.DYE, 2, 9))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.RED_FLOWER, 1, 8))
+                .outputs(new ItemStack(Items.DYE, 2, 7))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.YELLOW_FLOWER, 1, 0))
+                .outputs(new ItemStack(Items.DYE, 2, 11))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.DOUBLE_PLANT, 1, 0))
+                .outputs(new ItemStack(Items.DYE, 3, 11))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.DOUBLE_PLANT, 1, 1))
+                .outputs(new ItemStack(Items.DYE, 3, 13))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.DOUBLE_PLANT, 1, 4))
+                .outputs(new ItemStack(Items.DYE, 3, 1))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Blocks.DOUBLE_PLANT, 1, 5))
+                .outputs(new ItemStack(Items.DYE, 3, 9))
+                .buildAndRegister();
+
+        RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.BEETROOT, 1))
+                .outputs(new ItemStack(Items.DYE, 2, 1))
+                .buildAndRegister();
     }
 }

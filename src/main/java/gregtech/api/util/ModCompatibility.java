@@ -60,7 +60,7 @@ public class ModCompatibility {
         public boolean canHandleItemStack(ItemStack itemStack) {
             ResourceLocation registryName = Objects.requireNonNull(itemStack.getItem().getRegistryName());
             return registryName.getNamespace().equals("refinedstorage") &&
-                registryName.getPath().equals("pattern");
+                    registryName.getPath().equals("pattern");
         }
 
         public ItemStack getRealItemStack(ItemStack itemStack) {
@@ -84,7 +84,7 @@ public class ModCompatibility {
         public boolean canHandleItemStack(ItemStack itemStack) {
             ResourceLocation registryName = Objects.requireNonNull(itemStack.getItem().getRegistryName());
             return registryName.getNamespace().equals("appliedenergistics2") &&
-                registryName.getPath().equals("encoded_pattern");
+                    registryName.getPath().equals("encoded_pattern");
         }
 
         public ItemStack getRealItemStack(ItemStack itemStack) {

@@ -1,10 +1,10 @@
 package gregtech.api.util;
 
-import it.unimi.dsi.fastutil.*;
-import net.minecraft.item.*;
+import it.unimi.dsi.fastutil.Hash;
+import net.minecraft.item.ItemStack;
 
-import javax.annotation.*;
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * A configurable generator of hashing strategies, allowing for consideration of select properties of ItemStacks when
@@ -26,9 +26,9 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
      */
     static ItemStackHashStrategy comparingAllButCount() {
         return builder().compareItem(true)
-                        .compareDamage(true)
-                        .compareTag(true)
-                        .build();
+                .compareDamage(true)
+                .compareTag(true)
+                .build();
     }
 
     /**
@@ -89,22 +89,22 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
                 @Override
                 public int hashCode(@Nullable ItemStack o) {
                     return o == null || o.isEmpty() ? 0 : Objects.hash(
-                        item ? o.getItem() : null,
-                        count ? o.getCount() : null,
-                        damage ? o.getItemDamage() : null,
-                        tag ? o.getTagCompound() : null
+                            item ? o.getItem() : null,
+                            count ? o.getCount() : null,
+                            damage ? o.getItemDamage() : null,
+                            tag ? o.getTagCompound() : null
                     );
                 }
 
                 @Override
                 public boolean equals(@Nullable ItemStack a, @Nullable ItemStack b) {
-                    if(a == null || a.isEmpty()) return b == null || b.isEmpty();
-                    if(b == null || b.isEmpty()) return false;
+                    if (a == null || a.isEmpty()) return b == null || b.isEmpty();
+                    if (b == null || b.isEmpty()) return false;
 
                     return (!item || a.getItem() == b.getItem()) &&
-                           (!count || a.getCount() == b.getCount()) &&
-                           (!damage || a.getItemDamage() == b.getItemDamage()) &&
-                           (!tag || Objects.equals(a.getTagCompound(), b.getTagCompound()));
+                            (!count || a.getCount() == b.getCount()) &&
+                            (!damage || a.getItemDamage() == b.getItemDamage()) &&
+                            (!tag || Objects.equals(a.getTagCompound(), b.getTagCompound()));
                 }
             };
         }

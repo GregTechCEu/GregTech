@@ -24,6 +24,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
@@ -44,7 +45,7 @@ public class BlockFoam extends BlockColored {
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stackInHand = playerIn.getHeldItem(hand);
         if (!stackInHand.isEmpty() && OreDictUnifier.getOreDictionaryNames(stackInHand).contains("sand")) {
             worldIn.setBlockState(pos, getPetrifiedBlock(state));
@@ -57,7 +58,7 @@ public class BlockFoam extends BlockColored {
     }
 
     @Override
-    public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random) {
+    public void randomTick(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, Random random) {
         int lightLevel = (worldIn.canSeeSky(pos) && worldIn.isDaytime()) ? 16 : worldIn.getLight(pos);
         if (random.nextInt(20 - lightLevel) == 0) {
             worldIn.setBlockState(pos, getPetrifiedBlock(state));
@@ -69,40 +70,44 @@ public class BlockFoam extends BlockColored {
         return block.getDefaultState().withProperty(COLOR, state.getValue(COLOR));
     }
 
+    @Nonnull
     @Override
-    public EnumPushReaction getPushReaction(IBlockState state) {
+    public EnumPushReaction getPushReaction(@Nonnull IBlockState state) {
         return EnumPushReaction.DESTROY;
     }
 
     @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(@Nonnull IBlockState blockState, @Nonnull IBlockAccess worldIn, @Nonnull BlockPos pos) {
         return null;
     }
 
+    @Nonnull
     @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+    public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune) {
         return Items.AIR;
     }
 
+    @Nonnull
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
+    public boolean isOpaqueCube(@Nonnull IBlockState state) {
         return false;
     }
 
 
     @Override
-    public boolean isFullCube(IBlockState state) {
+    public boolean isFullCube(@Nonnull IBlockState state) {
         return false;
     }
 
+    @Nonnull
     @Override
-    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }
 }

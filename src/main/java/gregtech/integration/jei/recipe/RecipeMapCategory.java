@@ -46,12 +46,12 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         for (int i = 0; i < exportFluidTanks.length; i++)
             exportFluidTanks[i] = new FluidTank(16000);
         this.modularUI = recipeMap.createJeiUITemplate(
-            (importItems = new ItemStackHandler(recipeMap.getMaxInputs())),
-            (exportItems = new ItemStackHandler(recipeMap.getMaxOutputs())),
-            (importFluids = new FluidTankList(false, importFluidTanks)),
-            (exportFluids = new FluidTankList(false, exportFluidTanks)),
-            (recipeMap.getMaxOutputs() >= 6 || recipeMap.getMaxInputs() >= 6 ||
-                    recipeMap.getMaxFluidOutputs() >= 6 || recipeMap.getMaxFluidInputs() >= 6) ? FONT_HEIGHT : 0
+                (importItems = new ItemStackHandler(recipeMap.getMaxInputs())),
+                (exportItems = new ItemStackHandler(recipeMap.getMaxOutputs())),
+                (importFluids = new FluidTankList(false, importFluidTanks)),
+                (exportFluids = new FluidTankList(false, exportFluidTanks)),
+                (recipeMap.getMaxOutputs() >= 6 || recipeMap.getMaxInputs() >= 6 ||
+                        recipeMap.getMaxFluidOutputs() >= 6 || recipeMap.getMaxFluidInputs() >= 6) ? FONT_HEIGHT : 0
         ).build(new BlankUIHolder(), Minecraft.getMinecraft().player);
         this.modularUI.initWidgets();
         this.backgroundDrawable = guiHelper.createBlankDrawable(modularUI.getWidth(), modularUI.getHeight() * 2 / 3);
@@ -96,13 +96,13 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 if (handle.getItemHandler() == importItems) {
                     //this is input item stack slot widget, so add it to item group
                     itemStackGroup.init(handle.getSlotIndex(), true,
-                        slotWidget.getPosition().x,
-                        slotWidget.getPosition().y);
+                            slotWidget.getPosition().x,
+                            slotWidget.getPosition().y);
                 } else if (handle.getItemHandler() == exportItems) {
                     //this is output item stack slot widget, so add it to item group
                     itemStackGroup.init(importItems.getSlots() + handle.getSlotIndex(), false,
-                        slotWidget.getPosition().x,
-                        slotWidget.getPosition().y);
+                            slotWidget.getPosition().x,
+                            slotWidget.getPosition().y);
                 }
             } else if (uiWidget instanceof TankWidget) {
                 TankWidget tankWidget = (TankWidget) uiWidget;
@@ -114,11 +114,11 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                         fluidAmount = inputsList.get(importIndex).get(0).amount;
                     //this is input tank widget, so add it to fluid group
                     fluidStackGroup.init(importIndex, true,
-                        tankWidget.getPosition().x + tankWidget.fluidRenderOffset,
-                        tankWidget.getPosition().y + tankWidget.fluidRenderOffset,
-                        tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),
-                        tankWidget.getSize().height - (2 * tankWidget.fluidRenderOffset),
-                        fluidAmount, false, null);
+                            tankWidget.getPosition().x + tankWidget.fluidRenderOffset,
+                            tankWidget.getPosition().y + tankWidget.fluidRenderOffset,
+                            tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),
+                            tankWidget.getSize().height - (2 * tankWidget.fluidRenderOffset),
+                            fluidAmount, false, null);
 
                 } else if (exportFluids.getFluidTanks().contains(tankWidget.fluidTank)) {
                     int exportIndex = exportFluids.getFluidTanks().indexOf(tankWidget.fluidTank);
@@ -128,11 +128,11 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                         fluidAmount = inputsList.get(exportIndex).get(0).amount;
                     //this is output tank widget, so add it to fluid group
                     fluidStackGroup.init(importFluids.getFluidTanks().size() + exportIndex, false,
-                        tankWidget.getPosition().x + tankWidget.fluidRenderOffset,
-                        tankWidget.getPosition().y + tankWidget.fluidRenderOffset,
-                        tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),
-                        tankWidget.getSize().height - (2 * tankWidget.fluidRenderOffset),
-                        fluidAmount, false, null);
+                            tankWidget.getPosition().x + tankWidget.fluidRenderOffset,
+                            tankWidget.getPosition().y + tankWidget.fluidRenderOffset,
+                            tankWidget.getSize().width - (2 * tankWidget.fluidRenderOffset),
+                            tankWidget.getSize().height - (2 * tankWidget.fluidRenderOffset),
+                            fluidAmount, false, null);
 
                 }
             }

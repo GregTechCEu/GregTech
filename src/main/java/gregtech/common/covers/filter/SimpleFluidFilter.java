@@ -15,7 +15,7 @@ public class SimpleFluidFilter extends FluidFilter {
 
     private static final int MAX_FLUID_SLOTS = 9;
 
-    protected FluidStack[] fluidFilterSlots;
+    protected final FluidStack[] fluidFilterSlots;
 
     public SimpleFluidFilter() {
         this.fluidFilterSlots = new FluidStack[MAX_FLUID_SLOTS];
@@ -45,9 +45,9 @@ public class SimpleFluidFilter extends FluidFilter {
         for (int i = 0; i < 9; ++i) {
             int index = i;
             widgetGroup.accept((new PhantomFluidWidget(10 + 18 * (i % 3), 18 * (i / 3), 18, 18,
-                () -> getFluidInSlot(index),
-                (newFluid) -> setFluidInSlot(index, newFluid)))
-                .setBackgroundTexture(GuiTextures.SLOT));
+                    () -> getFluidInSlot(index),
+                    (newFluid) -> setFluidInSlot(index, newFluid)))
+                    .setBackgroundTexture(GuiTextures.SLOT));
         }
     }
 

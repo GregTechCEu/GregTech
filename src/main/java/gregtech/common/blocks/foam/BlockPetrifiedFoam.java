@@ -9,6 +9,8 @@ import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
+import javax.annotation.Nonnull;
+
 public class BlockPetrifiedFoam extends BlockColored {
 
     public BlockPetrifiedFoam(boolean isReinforced) {
@@ -22,7 +24,7 @@ public class BlockPetrifiedFoam extends BlockColored {
     }
 
     @Override
-    public boolean canCreatureSpawn(IBlockState state, IBlockAccess world, BlockPos pos, SpawnPlacementType type) {
+    public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
         return false;
     }
 }

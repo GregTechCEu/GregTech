@@ -2,8 +2,8 @@ package gregtech.common.blocks.surfacerock;
 
 import gregtech.api.items.toolitem.IScannableBlock;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.render.StoneRenderer;
 import net.minecraft.block.Block;
@@ -40,7 +40,7 @@ import java.util.Random;
 public class BlockSurfaceRock extends Block implements ITileEntityProvider, IScannableBlock {
 
     private static final AxisAlignedBB STONE_AABB = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 8.0 / 16.0, 1.0);
-    protected ThreadLocal<TileEntitySurfaceRock> tileEntities = new ThreadLocal<>();
+    protected final ThreadLocal<TileEntitySurfaceRock> tileEntities = new ThreadLocal<>();
 
     public BlockSurfaceRock() {
         super(net.minecraft.block.material.Material.ROCK);
@@ -66,7 +66,7 @@ public class BlockSurfaceRock extends Block implements ITileEntityProvider, ISca
 
     @Override
     @Nonnull
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+    public AxisAlignedBB getBoundingBox(@Nonnull IBlockState state, @Nonnull IBlockAccess source, @Nonnull BlockPos pos) {
         return STONE_AABB;
     }
 
@@ -77,36 +77,36 @@ public class BlockSurfaceRock extends Block implements ITileEntityProvider, ISca
 
     @Override
     @Nonnull
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+    public ItemStack getPickBlock(@Nonnull IBlockState state, @Nonnull RayTraceResult target, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayer player) {
         return getDropStack(world, pos, state, 1);
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+    public void getDrops(NonNullList<ItemStack> drops, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
         Random rand = new Random();
         int amount = 3 + rand.nextInt((int) (2 + fortune * 1.5));
         drops.add(getDropStack(world, pos, state, amount));
     }
 
     @Override
-    public boolean isFullCube(IBlockState state) {
+    public boolean isFullCube(@Nonnull IBlockState state) {
         return false;
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
+    public boolean isOpaqueCube(@Nonnull IBlockState state) {
         return false;
     }
 
     @Override
     @Nonnull
     @SideOnly(Side.CLIENT)
-    public EnumBlockRenderType getRenderType(IBlockState state) {
+    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
         return StoneRenderer.BLOCK_RENDER_TYPE;
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, BlockPos fromPos) {
         if (fromPos.up().equals(pos)) {
             if (worldIn.getBlockState(fromPos).getBlockFaceShape(worldIn, fromPos, EnumFacing.UP) != BlockFaceShape.SOLID) {
                 worldIn.destroyBlock(pos, true);
@@ -116,7 +116,7 @@ public class BlockSurfaceRock extends Block implements ITileEntityProvider, ISca
 
     @Override
     @Nonnull
-    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+    public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
         return BlockFaceShape.UNDEFINED;
     }
 
@@ -145,7 +145,7 @@ public class BlockSurfaceRock extends Block implements ITileEntityProvider, ISca
     }
 
     @Override
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntitySurfaceRock surfaceRockTileEntity = getTileEntity(worldIn, pos);
         if (surfaceRockTileEntity != null) {
             tileEntities.set(surfaceRockTileEntity);
@@ -155,7 +155,7 @@ public class BlockSurfaceRock extends Block implements ITileEntityProvider, ISca
     }
 
     @Override
-    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
+    public void harvestBlock(@Nonnull World worldIn, @Nonnull EntityPlayer player, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nullable TileEntity te, @Nonnull ItemStack stack) {
         tileEntities.set(te == null ? tileEntities.get() : (TileEntitySurfaceRock) te);
         super.harvestBlock(worldIn, player, pos, state, te, stack);
         tileEntities.set(null);
@@ -170,7 +170,7 @@ public class BlockSurfaceRock extends Block implements ITileEntityProvider, ISca
 
     @Nullable
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
+    public TileEntity createNewTileEntity(@Nonnull World worldIn, int meta) {
         return new TileEntitySurfaceRock();
     }
 }

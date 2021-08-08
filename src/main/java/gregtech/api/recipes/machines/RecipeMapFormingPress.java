@@ -46,11 +46,11 @@ public class RecipeMapFormingPress extends RecipeMap<SimpleRecipeBuilder> {
                 ItemStack output = GTUtility.copyAmount(1, itemStack);
                 output.setStackDisplayName(inputs.get(0).getDisplayName());
                 return this.recipeBuilder()
-                    .notConsumable(new NBTIngredient(moldStack)) //recipe is reusable as long as mold stack matches
-                    .inputs(GTUtility.copyAmount(1, itemStack))
-                    .outputs(output)
-                    .duration(40).EUt(4)
-                    .build().getResult();
+                        .notConsumable(new NBTIngredient(moldStack)) //recipe is reusable as long as mold stack matches
+                        .inputs(GTUtility.copyAmount(1, itemStack))
+                        .outputs(output)
+                        .duration(40).EUt(4)
+                        .build().getResult();
             }
             return null;
         }

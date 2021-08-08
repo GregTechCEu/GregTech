@@ -12,11 +12,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 
 public class StoneBlock<T extends Enum<T> & IStringSerializable> extends Block {
 
-    private static PropertyEnum<ChiselingVariant> CHISELING_VARIANT = PropertyEnum.create("chiseling", ChiselingVariant.class);
+    private static final PropertyEnum<ChiselingVariant> CHISELING_VARIANT = PropertyEnum.create("chiseling", ChiselingVariant.class);
 
     private PropertyEnum<T> VARIANT;
     private T[] VALUES;
@@ -27,7 +28,7 @@ public class StoneBlock<T extends Enum<T> & IStringSerializable> extends Block {
     }
 
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
         for (T variant : VALUES) {
             for (ChiselingVariant chiselingVariant : ChiselingVariant.values()) {
                 list.add(getItemVariant(variant, chiselingVariant));
@@ -36,7 +37,7 @@ public class StoneBlock<T extends Enum<T> & IStringSerializable> extends Block {
     }
 
     @Override
-    public int damageDropped(IBlockState state) {
+    public int damageDropped(@Nonnull IBlockState state) {
         return getMetaFromState(state);
     }
 
@@ -64,6 +65,7 @@ public class StoneBlock<T extends Enum<T> & IStringSerializable> extends Block {
         return new ItemStack(this, amount, chiselingVariant.ordinal() * 4 + variant.ordinal());
     }
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         Class<T> enumClass = GTUtility.getActualTypeParameter(getClass(), StoneBlock.class, 0);
@@ -72,6 +74,7 @@ public class StoneBlock<T extends Enum<T> & IStringSerializable> extends Block {
         return new BlockStateContainer(this, VARIANT, CHISELING_VARIANT);
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
@@ -96,6 +99,7 @@ public class StoneBlock<T extends Enum<T> & IStringSerializable> extends Block {
             this.name = name;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return name;

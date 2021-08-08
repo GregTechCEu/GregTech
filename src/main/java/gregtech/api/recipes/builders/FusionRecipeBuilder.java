@@ -61,8 +61,8 @@ public class FusionRecipeBuilder extends RecipeBuilder<FusionRecipeBuilder> {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-            .appendSuper(super.toString())
-            .append(FusionEUToStartProperty.getInstance().getKey(), EUToStart)
-            .toString();
+                .appendSuper(super.toString())
+                .append(FusionEUToStartProperty.getInstance().getKey(), EUToStart)
+                .toString();
     }
 }

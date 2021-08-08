@@ -8,7 +8,12 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class ToolAxe extends ToolBase {
+
+    private static final Set<String> AXE_TOOL_CLASSES = Collections.singleton("axe");
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
@@ -49,14 +54,19 @@ public class ToolAxe extends ToolBase {
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
         return (tool != null && tool.equals("axe")) ||
-            block.getMaterial() == Material.WOOD;
+                block.getMaterial() == Material.WOOD;
     }
 
     @Override
     public boolean onBlockPreBreak(ItemStack stack, BlockPos blockPos, EntityPlayer player) {
-        if(!player.isSneaking()) {
+        if (!player.isSneaking()) {
             return ToolUtility.applyTimberAxe(stack, player.world, blockPos, player);
         }
         return false;
+    }
+
+    @Override
+    public Set<String> getToolClasses(ItemStack stack) {
+        return AXE_TOOL_CLASSES;
     }
 }

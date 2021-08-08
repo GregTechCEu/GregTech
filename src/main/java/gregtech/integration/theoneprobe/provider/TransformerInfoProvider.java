@@ -9,7 +9,6 @@ import gregtech.common.metatileentities.electric.MetaTileEntityTransformer;
 import mcjty.theoneprobe.api.ElementAlignment;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.TextStyleClass;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -25,7 +24,7 @@ public class TransformerInfoProvider extends ElectricContainerInfoProvider {
         if (tileEntity instanceof MetaTileEntityHolder) {
             MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
             if (metaTileEntity instanceof MetaTileEntityTransformer) {
-                MetaTileEntityTransformer mteTransformer = (MetaTileEntityTransformer)metaTileEntity;
+                MetaTileEntityTransformer mteTransformer = (MetaTileEntityTransformer) metaTileEntity;
                 String inputVoltageN = GTValues.VN[GTUtility.getTierByVoltage(capability.getInputVoltage())];
                 String outputVoltageN = GTValues.VN[GTUtility.getTierByVoltage(capability.getOutputVoltage())];
                 long inputAmperage = capability.getInputAmperage();
@@ -40,7 +39,7 @@ public class TransformerInfoProvider extends ElectricContainerInfoProvider {
                     transformInfo = "{*gregtech.top.transform_down*} ";
                 }
                 transformInfo += inputVoltageN + " (" + inputAmperage + "A) -> "
-                               + outputVoltageN + " (" + outputAmperage + "A)";
+                        + outputVoltageN + " (" + outputAmperage + "A)";
                 horizontalPane.text(TextStyleClass.INFO + transformInfo);
 
                 // Input/Output side line
@@ -50,7 +49,7 @@ public class TransformerInfoProvider extends ElectricContainerInfoProvider {
                             + inputVoltageN + " (" + inputAmperage + "A)";
                     horizontalPane.text(TextStyleClass.INFO + transformInfo);
 
-                } else if(capability.outputsEnergy(sideHit)) {
+                } else if (capability.outputsEnergy(sideHit)) {
                     transformInfo = "{*gregtech.top.transform_output*} "
                             + outputVoltageN + " (" + outputAmperage + "A)";
                     horizontalPane.text(TextStyleClass.INFO + transformInfo);

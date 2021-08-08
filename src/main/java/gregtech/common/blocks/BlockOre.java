@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
@@ -43,9 +44,10 @@ public class BlockOre extends BlockFalling implements IBlockOre {
         initBlockState();
     }
 
+    @Nonnull
     @SuppressWarnings("deprecation")
     @Override
-    public net.minecraft.block.material.Material getMaterial(IBlockState state) {
+    public net.minecraft.block.material.Material getMaterial(@Nonnull IBlockState state) {
         String harvestTool = getHarvestTool(state);
         if (harvestTool != null && harvestTool.equals("shovel")) {
             return net.minecraft.block.material.Material.GROUND;
@@ -65,12 +67,13 @@ public class BlockOre extends BlockFalling implements IBlockOre {
     }
 
     @Override
-    public int damageDropped(IBlockState state) {
+    public int damageDropped(@Nonnull IBlockState state) {
         return getMetaFromState(state);
     }
 
+    @Nonnull
     @Override
-    public SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity) {
+    public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
         StoneType stoneType = state.getValue(STONE_TYPE);
         return stoneType.soundType;
     }
@@ -97,6 +100,7 @@ public class BlockOre extends BlockFalling implements IBlockOre {
         return 1;
     }
 
+    @Nonnull
     @Override
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta) {
@@ -110,13 +114,13 @@ public class BlockOre extends BlockFalling implements IBlockOre {
 
     @Override
     @SuppressWarnings("deprecation")
-    public float getBlockHardness(IBlockState blockState, World worldIn, BlockPos pos) {
+    public float getBlockHardness(IBlockState blockState, @Nonnull World worldIn, @Nonnull BlockPos pos) {
         return blockState.getValue(STONE_TYPE).unbreakable ? -1.0f : this.blockHardness;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public float getExplosionResistance(World world, BlockPos pos, @Nullable Entity exploder, Explosion explosion) {
+    public float getExplosionResistance(World world, @Nonnull BlockPos pos, @Nullable Entity exploder, @Nonnull Explosion explosion) {
         return world.getBlockState(pos).getValue(STONE_TYPE).unbreakable ? 1200000.0F : getExplosionResistance(exploder);
     }
 
@@ -126,16 +130,16 @@ public class BlockOre extends BlockFalling implements IBlockOre {
     }
 
 
-
     @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
-        if(tab == CreativeTabs.SEARCH) {
+    public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> list) {
+        if (tab == CreativeTabs.SEARCH) {
             blockState.getValidStates().forEach(blockState -> list.add(getItem(blockState)));
-        } else if(tab == GregTechAPI.TAB_GREGTECH_ORES) {
+        } else if (tab == GregTechAPI.TAB_GREGTECH_ORES) {
             list.add(getItem(getDefaultState()));
         }
     }
 
+    @Nonnull
     @Override
     public BlockRenderLayer getRenderLayer() {
         return BlockRenderLayer.CUTOUT_MIPPED;
@@ -146,33 +150,33 @@ public class BlockOre extends BlockFalling implements IBlockOre {
     }
 
     @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+    public void onBlockAdded(@Nonnull World worldIn, @Nonnull BlockPos pos, IBlockState state) {
         if (state.getValue(STONE_TYPE).affectedByGravity)
             worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+    public void neighborChanged(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
         if (state.getValue(STONE_TYPE).affectedByGravity)
             worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
     }
 
     @Override
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
+    public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, IBlockState state, @Nonnull Random rand) {
         if (state.getValue(STONE_TYPE).affectedByGravity)
             super.updateTick(worldIn, pos, state, rand);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+    public void randomDisplayTick(IBlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Random rand) {
         if (stateIn.getValue(STONE_TYPE).affectedByGravity)
             super.randomDisplayTick(stateIn, worldIn, pos, rand);
     }
 
     @SideOnly(Side.CLIENT)
     @Override
-    public int getDustColor(IBlockState state) {
+    public int getDustColor(@Nonnull IBlockState state) {
         return this.material.getMaterialRGB();
     }
 

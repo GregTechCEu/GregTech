@@ -18,9 +18,9 @@ import java.util.function.Supplier;
  */
 public class DynamicLabelWidget extends Widget {
 
-    protected Supplier<String> textSupplier;
+    protected final Supplier<String> textSupplier;
     private String lastTextValue = "";
-    private int color;
+    private final int color;
 
     public DynamicLabelWidget(int xPosition, int yPosition, Supplier<String> text) {
         this(xPosition, yPosition, text, 0x404040);

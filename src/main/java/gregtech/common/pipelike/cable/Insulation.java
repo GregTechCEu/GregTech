@@ -5,6 +5,8 @@ import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 
+import javax.annotation.Nonnull;
+
 public enum Insulation implements IMaterialPipeType<WireProperties> {
 
     WIRE_SINGLE("wire_single", 0.1f, 1, 2, OrePrefix.wireGtSingle, -1),
@@ -35,6 +37,7 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
         this.lossMultiplier = lossMultiplier;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return name;
@@ -56,7 +59,7 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
 
         int lossPerBlock;
         if (ConfigHolder.doLosslessWiresMakeLossyCables && baseProperties.lossPerBlock == 0)
-            lossPerBlock = (int)(0.75 * lossMultiplier);
+            lossPerBlock = (int) (0.75 * lossMultiplier);
         else lossPerBlock = baseProperties.lossPerBlock * lossMultiplier;
 
         return new WireProperties(baseProperties.voltage, baseProperties.amperage * amperage, lossPerBlock);

@@ -33,7 +33,7 @@ public class CompositeRenderer<T> implements IIngredientRenderer<T> {
 
     public static <T> Builder<T> startBuilder(IIngredientRenderer<T> ingredientRenderer) {
         return startBuilder(ingredientRenderer::getTooltip,
-            ingredientRenderer::getFontRenderer);
+                ingredientRenderer::getFontRenderer);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CompositeRenderer<T> implements IIngredientRenderer<T> {
     public static class Builder<T> {
         private final TooltipSupplier<T> tooltipSupplier;
         private final FontRendererSupplier<T> fontRendererSupplier;
-        private List<RenderNode<T>> steps = new LinkedList<>();
+        private final List<RenderNode<T>> steps = new LinkedList<>();
 
         public Builder(TooltipSupplier<T> tooltipSupplier,
                        FontRendererSupplier<T> fontRendererSupplier) {

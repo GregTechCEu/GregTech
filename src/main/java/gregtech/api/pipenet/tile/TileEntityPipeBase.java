@@ -8,6 +8,8 @@ import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.util.FirstTickScheduler;
+import gregtech.api.util.IFirstTickTask;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -21,10 +23,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
-public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> extends SyncedTileEntityBase implements IPipeTile<PipeType, NodeDataType> {
+public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> extends SyncedTileEntityBase implements IPipeTile<PipeType, NodeDataType>, IFirstTickTask {
 
     private TIntIntMap openConnectionsMap = new TIntIntHashMap();
     private int openConnections = 0;
@@ -56,7 +59,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void setPipeData(BlockPipe<PipeType, NodeDataType, ?> pipeBlock, PipeType pipeType) {
         this.pipeBlock = pipeBlock;
         this.pipeType = pipeType;
-        if(!getWorld().isRemote) {
+        if (!getWorld().isRemote) {
             writeCustomData(-4, this::writePipeProperties);
         }
     }
@@ -204,7 +207,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     private void recomputeBlockedConnections() {
         int resultOpenConnections = 0;
-        for(int openConnections : openConnectionsMap.values()) {
+        for (int openConnections : openConnectionsMap.values()) {
             resultOpenConnections |= openConnections;
         }
         this.openConnections = resultOpenConnections;
@@ -215,7 +218,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
             boolean isSideOpen = false;
             int sideIndex = 1 << side.getIndex();
-            for(int blockedConnections : openConnectionsMap.values()) {
+            for (int blockedConnections : openConnectionsMap.values()) {
                 isSideOpen |= (blockedConnections & sideIndex) > 0;
             }
             worldPipeNet.updateBlockedConnections(getPos(), side, !isSideOpen);
@@ -224,7 +227,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     private int withSideConnectionBlocked(int blockedConnections, EnumFacing side, boolean blocked) {
         int index = 1 << side.getIndex();
-        if(!blocked) {
+        if (!blocked) {
             return blockedConnections | index;
         } else {
             return blockedConnections & ~index;
@@ -257,14 +260,14 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Nullable
     @Override
-    public final <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+    public final <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         boolean isCoverable = capability == GregtechTileCapabilities.CAPABILITY_COVERABLE;
         CoverBehavior coverBehavior = facing == null ? null : coverableImplementation.getCoverAtSide(facing);
         T defaultValue = getCapabilityInternal(capability, facing);
-        if(isCoverable) {
+        if (isCoverable) {
             return defaultValue;
         }
-        if(coverBehavior == null && facing != null) {
+        if (coverBehavior == null && facing != null) {
             //boolean isBlocked = (getBlockedConnections() & 1 << facing.getIndex()) > 0;
             return isConnectionOpenVisual(facing) ? defaultValue : null;
         }
@@ -275,12 +278,13 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    public final boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+    public final boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         return getCapability(capability, facing) != null;
     }
 
+    @Nonnull
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
         super.writeToNBT(compound);
         BlockPipe<PipeType, NodeDataType, ?> pipeBlock = getPipeBlock();
         if (pipeBlock != null) {
@@ -289,7 +293,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
         compound.setInteger("PipeType", pipeType.ordinal());
         NBTTagCompound blockedConnectionsTag = new NBTTagCompound();
-        for(int attachmentType : openConnectionsMap.keys()) {
+        for (int attachmentType : openConnectionsMap.keys()) {
             int blockedConnections = openConnectionsMap.get(attachmentType);
             blockedConnectionsTag.setInteger(Integer.toString(attachmentType), blockedConnections);
         }
@@ -300,7 +304,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
+    public void readFromNBT(@Nonnull NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey("PipeBlock", NBT.TAG_STRING)) {
             Block block = Block.REGISTRY.getObject(new ResourceLocation(compound.getString("PipeBlock")));
@@ -310,7 +314,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.pipeType = getPipeTypeClass().getEnumConstants()[compound.getInteger("PipeType")];
         NBTTagCompound blockedConnectionsTag = compound.getCompoundTag("BlockedConnectionsMap");
         this.openConnectionsMap.clear();
-        for(String attachmentTypeKey : blockedConnectionsTag.getKeySet()) {
+        for (String attachmentTypeKey : blockedConnectionsTag.getKeySet()) {
             int attachmentType = Integer.parseInt(attachmentTypeKey);
             int blockedConnections = blockedConnectionsTag.getInteger(attachmentTypeKey);
             this.openConnectionsMap.put(attachmentType, blockedConnections);
@@ -323,6 +327,11 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void onLoad() {
         super.onLoad();
+        FirstTickScheduler.addTask(this);
+    }
+
+    @Override
+    public void handleFirstTick() {
         this.coverableImplementation.onLoad();
     }
 
@@ -360,7 +369,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             scheduleChunkForRenderUpdate();
         } else if (discriminator == -3) {
             this.coverableImplementation.readCustomData(buf.readVarInt(), buf);
-        } else if(discriminator == -4) {
+        } else if (discriminator == -4) {
             readPipeProperties(buf);
             scheduleChunkForRenderUpdate();
         }
@@ -378,8 +387,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void scheduleChunkForRenderUpdate() {
         BlockPos pos = getPos();
         getWorld().markBlockRangeForRenderUpdate(
-            pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1,
-            pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+                pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1,
+                pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
     }
 
     @Override
@@ -399,7 +408,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     @Override
-    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
+    public boolean shouldRefresh(@Nonnull World world, @Nonnull BlockPos pos, IBlockState oldState, IBlockState newSate) {
         return oldState.getBlock() != newSate.getBlock();
     }
 }

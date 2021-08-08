@@ -28,7 +28,7 @@ public class SliderWidget extends Widget {
     private int sliderWidth = 8;
     private TextureArea backgroundArea = GuiTextures.SLIDER_BACKGROUND;
     private TextureArea sliderIcon = GuiTextures.SLIDER_ICON;
-    private BiFunction<String, Float, String> textSupplier = DEFAULT_TEXT_SUPPLIER;
+    private final BiFunction<String, Float, String> textSupplier = DEFAULT_TEXT_SUPPLIER;
     private int textColor = 0xFFFFFF;
 
     private final float min;
@@ -97,14 +97,14 @@ public class SliderWidget extends Widget {
         if (backgroundArea != null) {
             backgroundArea.draw(pos.x, pos.y, size.width, size.height);
         }
-        if(displayString == null) {
+        if (displayString == null) {
             this.displayString = getDisplayString();
         }
         sliderIcon.draw(pos.x + (int) (this.sliderPosition * (float) (size.width - 8)), pos.y, sliderWidth, size.height);
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         fontRenderer.drawString(displayString,
-            pos.x + size.width / 2 - fontRenderer.getStringWidth(displayString) / 2,
-            pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, textColor);
+                pos.x + size.width / 2 - fontRenderer.getStringWidth(displayString) / 2,
+                pos.y + size.height / 2 - fontRenderer.FONT_HEIGHT / 2, textColor);
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
