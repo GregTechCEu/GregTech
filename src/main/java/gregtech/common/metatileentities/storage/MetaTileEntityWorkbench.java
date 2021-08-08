@@ -14,7 +14,6 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.TabGroup.TabLocation;
 import gregtech.api.gui.widgets.tab.ItemTabInfo;
-import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
@@ -25,13 +24,14 @@ import gregtech.common.gui.widget.CraftingSlotWidget;
 import gregtech.common.gui.widget.ItemListGridWidget;
 import gregtech.common.gui.widget.MemorizedRecipeWidget;
 import gregtech.common.inventory.IItemList;
+import gregtech.common.inventory.handlers.SingleItemStackHandler;
+import gregtech.common.inventory.handlers.ToolItemStackHandler;
 import gregtech.common.inventory.itemsource.ItemSourceList;
 import gregtech.common.inventory.itemsource.sources.InventoryItemSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -41,38 +41,14 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity {
 
     private final ItemStackHandler internalInventory = new ItemStackHandler(18);
-
-    private final ItemStackHandler craftingGrid = new ItemStackHandler(9) {
-        @Override
-        public int getSlotLimit(int slot) {
-            return 1;
-        }
-    };
-
-    private final ItemStackHandler toolInventory = new ItemStackHandler(9) {
-        @Override
-        public int getSlotLimit(int slot) {
-            return 1;
-        }
-
-        @Nonnull
-        @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            if (!(stack.getItem() instanceof ToolMetaItem) &&
-                !(stack.getItem() instanceof ItemTool) &&
-                !(stack.isItemStackDamageable())) {
-                return stack;
-            }
-            return super.insertItem(slot, stack, simulate);
-        }
-    };
+    private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
+    private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
 
     private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9);
     private CraftingRecipeResolver recipeResolver = null;

@@ -11,8 +11,9 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.render.Textures;
+import gregtech.common.inventory.handlers.SingleItemStackHandler;
+import gregtech.common.inventory.handlers.ToolItemStackHandler;
 import gregtech.common.inventory.itemsource.ItemSourceList;
 import gregtech.common.inventory.itemsource.sources.InventoryItemSource;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
@@ -22,12 +23,10 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,31 +38,8 @@ import static gregtech.api.metatileentity.MetaTileEntity.clearInventory;
 public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, ITickable {
 
     private final ItemStackHandler internalInventory = new ItemStackHandler(18);
-
-    private final ItemStackHandler craftingGrid = new ItemStackHandler(9) {
-        @Override
-        public int getSlotLimit(int slot) {
-            return 1;
-        }
-    };
-
-    private final ItemStackHandler toolInventory = new ItemStackHandler(9) {
-        @Override
-        public int getSlotLimit(int slot) {
-            return 1;
-        }
-
-        @Nonnull
-        @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-            if (!(stack.getItem() instanceof ToolMetaItem) &&
-                    !(stack.getItem() instanceof ItemTool) &&
-                    !(stack.isItemStackDamageable())) {
-                return stack;
-            }
-            return super.insertItem(slot, stack, simulate);
-        }
-    };
+    private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
+    private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
 
     private final CraftingRecipeMemory recipeMemory = new CraftingRecipeMemory(9);
     private CraftingRecipeResolver recipeResolver = null;
