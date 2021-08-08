@@ -170,10 +170,9 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         clearInventory(itemBuffer, toolInventory);
     }
 
-    private AbstractWidgetGroup createWorkbenchTab() {
+    public static AbstractWidgetGroup createWorkbenchTab(CraftingRecipeResolver recipeResolver, ItemStackHandler craftingGrid, CraftingRecipeMemory recipeMemory,
+                                                         ItemStackHandler toolInventory, ItemStackHandler internalInventory) {
         WidgetGroup widgetGroup = new WidgetGroup();
-        CraftingRecipeResolver recipeResolver = getRecipeResolver();
-
         widgetGroup.addWidget(new ImageWidget(88 - 13, 44 - 13, 26, 26, GuiTextures.SLOT));
         widgetGroup.addWidget(new CraftingSlotWidget(recipeResolver, 0, 88 - 9, 44 - 9));
 
@@ -225,7 +224,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         builder.label(5, 5, getMetaFullName());
 
         TabGroup tabGroup = new TabGroup(TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
-        tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.workbench", new ItemStack(Blocks.CRAFTING_TABLE)), createWorkbenchTab());
+        tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.workbench", new ItemStack(Blocks.CRAFTING_TABLE)), createWorkbenchTab(getRecipeResolver(), craftingGrid, recipeMemory, toolInventory, internalInventory));
         tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.item_list", new ItemStack(Blocks.CHEST)), createItemListTab());
         builder.widget(tabGroup);
 

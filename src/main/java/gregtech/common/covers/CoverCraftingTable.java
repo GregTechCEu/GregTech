@@ -11,13 +11,8 @@ import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.*;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.render.Textures;
-import gregtech.common.gui.widget.CraftingSlotWidget;
-import gregtech.common.gui.widget.MemorizedRecipeWidget;
 import gregtech.common.inventory.itemsource.ItemSourceList;
 import gregtech.common.inventory.itemsource.sources.InventoryItemSource;
 import gregtech.common.metatileentities.storage.CraftingRecipeMemory;
@@ -33,8 +28,6 @@ import net.minecraft.util.*;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static gregtech.api.metatileentity.MetaTileEntity.clearInventory;
 
@@ -130,51 +123,13 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
         return recipeResolver;
     }
 
-    public AbstractWidgetGroup createCraftingUI() {
-        WidgetGroup widgetGroup = new WidgetGroup();
-        CraftingRecipeResolver recipeResolver = getRecipeResolver();
-
-        widgetGroup.addWidget(new ImageWidget(88 - 13, 44 - 13, 26, 26, GuiTextures.SLOT));
-        widgetGroup.addWidget(new CraftingSlotWidget(recipeResolver, 0, 88 - 9, 44 - 9));
-
-        //crafting grid
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                widgetGroup.addWidget(new PhantomSlotWidget(craftingGrid, j + i * 3, 8 + j * 18, 17 + i * 18).setBackgroundTexture(GuiTextures.SLOT));
-            }
-        }
-        Supplier<String> textSupplier = () -> Integer.toString(recipeResolver.getItemsCrafted());
-        widgetGroup.addWidget(new SimpleTextWidget(88, 44 + 20, "", textSupplier));
-
-        Consumer<Widget.ClickData> clearAction = (clickData) -> recipeResolver.clearCraftingGrid();
-        widgetGroup.addWidget(new ClickButtonWidget(8 + 18 * 3 + 1, 17, 8, 8, "", clearAction).setButtonTexture(GuiTextures.BUTTON_CLEAR_GRID));
-
-        widgetGroup.addWidget(new ImageWidget(168 - 18 * 3, 44 - 18 * 3 / 2, 18 * 3, 18 * 3, TextureArea.fullImage("textures/gui/base/darkened_slot.png")));
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                widgetGroup.addWidget(new MemorizedRecipeWidget(recipeMemory, j + i * 3, craftingGrid, 168 - 18 * 3 / 2 - 27 + j * 18, 44 - 27 + i * 18));
-            }
-        }
-        //tool inventory
-        for (int i = 0; i < 9; i++) {
-            widgetGroup.addWidget(new SlotWidget(toolInventory, i, 8 + i * 18, 76).setBackgroundTexture(GuiTextures.SLOT, GuiTextures.TOOL_SLOT_OVERLAY));
-        }
-        //internal inventory
-        for (int i = 0; i < 2; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                widgetGroup.addWidget(new SlotWidget(internalInventory, j + i * 9, 8 + j * 18, 99 + i * 18).setBackgroundTexture(GuiTextures.SLOT));
-            }
-        }
-        return widgetGroup;
-    }
-
     @Override
     public ModularUI createUI(EntityPlayer player) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
                 .bindPlayerInventory(player.inventory, 140);
         builder.label(5, 5, I18n.format("metaitem.cover.crafting.name"));
 
-        builder.widget(createCraftingUI());
+        builder.widget(MetaTileEntityWorkbench.createWorkbenchTab(getRecipeResolver(), craftingGrid, recipeMemory, toolInventory, internalInventory));
 
         return builder.build(this, player);
     }
