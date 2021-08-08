@@ -699,7 +699,7 @@ metaitem.smart_item_filter.name=Smart Item Filter
 metaitem.smart_item_filter.tooltip=Filters items basing on specific machine's recipes (as Cover)/nCan be used as a Conveyor upgrade
 
 metaitem.cover.controller.name=Machine Controller
-metaitem.cover.controller.tooltip=Turns Machines ON/OFF
+metaitem.cover.controller.tooltip=Turns Machines ON/OFF (as Cover)
 metaitem.cover.activity.detector.name=Activity Detector
 metaitem.cover.activity.detector.tooltip=Gives out Activity as Redstone (as Cover)
 metaitem.cover.fluid.detector.name=Fluid Detector
