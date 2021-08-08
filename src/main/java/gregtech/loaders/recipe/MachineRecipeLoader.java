@@ -39,6 +39,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.api.GTValues.L;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -417,21 +418,40 @@ public class MachineRecipeLoader {
                     .EUt(16).duration(800)
                     .buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LEVER))
-                    .input(OrePrefix.plate, material)
-                    .fluidInputs(Materials.Tin.getFluid(L))
-                    .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
-                    .EUt(16).duration(200)
-                    .buildAndRegister();
+            for (FluidStack solder : new FluidStack[]{Tin.getFluid(L), SolderingAlloy.getFluid(L/2)}) {
+                RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                        .inputs(new ItemStack(Blocks.LEVER))
+                        .input(OrePrefix.plate, material)
+                        .fluidInputs(solder)
+                        .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
+                        .EUt(16).duration(200)
+                        .buildAndRegister();
 
-            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                    .inputs(new ItemStack(Blocks.LEVER))
-                    .input(OrePrefix.plate, material)
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(L / 2))
-                    .outputs(MetaItems.COVER_MACHINE_CONTROLLER.getStackForm(1))
-                    .EUt(16).duration(200)
-                    .buildAndRegister();
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .input(cableGtSingle, Copper, 4)
+                        .input(circuit, MarkerMaterials.Tier.Basic)
+                        .input(plate, material)
+                        .fluidInputs(solder)
+                        .outputs(COVER_ENERGY_DETECTOR.getStackForm())
+                        .EUt(16).duration(800)
+                        .buildAndRegister();
+
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .inputs(new ItemStack(Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE))
+                        .input(plate, material)
+                        .fluidInputs(solder)
+                        .outputs(COVER_FLUID_DETECTOR.getStackForm())
+                        .EUt(16).duration(800)
+                        .buildAndRegister();
+
+                ASSEMBLER_RECIPES.recipeBuilder()
+                        .inputs(new ItemStack(Blocks.LIGHT_WEIGHTED_PRESSURE_PLATE))
+                        .input(plate, material)
+                        .fluidInputs(solder)
+                        .outputs(COVER_ITEM_DETECTOR.getStackForm())
+                        .EUt(16).duration(800)
+                        .buildAndRegister();
+            }
         }
 
         ASSEMBLER_RECIPES.recipeBuilder()

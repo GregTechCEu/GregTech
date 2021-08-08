@@ -1,4 +1,4 @@
-package gregtech.common.covers;
+package gregtech.common.covers.detector;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
@@ -12,6 +12,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.render.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
 
@@ -96,5 +97,15 @@ public class CoverDetectorEnergy extends CoverBehavior implements ITickable {
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.isInverted = tagCompound.getBoolean("isInverted");
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+        packetBuffer.writeBoolean(this.isInverted);
+    }
+
+    @Override
+    public void readInitialSyncData(PacketBuffer packetBuffer) {
+        this.isInverted = packetBuffer.readBoolean();
     }
 }

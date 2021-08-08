@@ -7,6 +7,8 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTLog;
+import gregtech.common.covers.detector.CoverDetectorEnergy;
+import gregtech.common.covers.detector.CoverDetectorFluid;
 import gregtech.common.covers.filter.OreDictionaryItemFilter;
 import gregtech.common.covers.filter.SimpleFluidFilter;
 import gregtech.common.covers.filter.SimpleItemFilter;
@@ -58,6 +60,7 @@ public class CoverBehaviors {
 
         registerBehavior(49, new ResourceLocation(GTValues.MODID, "screen"), MetaItems.COVER_SCREEN, CoverScreen::new);
         registerBehavior(50, new ResourceLocation(GTValues.MODID, "energy_detector"), MetaItems.COVER_ENERGY_DETECTOR, CoverDetectorEnergy::new);
+        registerBehavior(51, new ResourceLocation(GTValues.MODID, "fluid_detector"), MetaItems.COVER_FLUID_DETECTOR, CoverDetectorFluid::new);
 
         for (int i = 0; i < COVERS_PER_ITEM; i++) {
             int throughput = (int) (Math.pow(4, i) * 1280);
