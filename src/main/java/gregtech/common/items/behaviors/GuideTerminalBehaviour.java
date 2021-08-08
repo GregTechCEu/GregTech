@@ -8,7 +8,7 @@ import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.terminal.TerminalBuilder;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
-import gregtech.api.terminal.gui.widgets.os.TerminalOSWidget;
+import gregtech.api.terminal.os.TerminalOSWidget;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;

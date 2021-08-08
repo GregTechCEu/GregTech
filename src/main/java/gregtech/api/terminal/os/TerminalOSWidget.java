@@ -1,9 +1,8 @@
-package gregtech.api.terminal.gui.widgets.os;
+package gregtech.api.terminal.os;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;

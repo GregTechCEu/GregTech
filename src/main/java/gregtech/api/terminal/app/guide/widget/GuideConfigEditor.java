@@ -1,4 +1,4 @@
-package gregtech.api.terminal.gui.widgets.guide;
+package gregtech.api.terminal.app.guide.widget;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,7 +15,7 @@ import gregtech.api.terminal.gui.CustomTabListRenderer;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.TextEditorWidget;
-import gregtech.api.terminal.gui.widgets.os.TerminalDialogWidget;
+import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 
@@ -55,19 +55,26 @@ public class GuideConfigEditor extends TabGroup {
                addButton[1].setVisible(false);
            }
         });
-        this.addWidget(new CircleButtonWidget(100, -5, 5, 1, 3)
+        this.addWidget(new CircleButtonWidget(97, -5, 5, 1, 3)
+                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                        new Color(255, 255, 255).getRGB(),
+                        new Color(144, 243, 116).getRGB())
+                .setIcon(GuiTextures.TERMINAL_ADD)
+                .setHoverText("New Page")
+                .setClickListener(this::newPage));
+        this.addWidget(new CircleButtonWidget(112, -5, 5, 1, 3)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         new Color(255, 255, 255).getRGB(),
                         new Color(243, 208, 116).getRGB())
                 .setIcon(GuiTextures.TERMINAL_ADD)
-                .setHoverText("Import Guide")
+                .setHoverText("Import Page")
                 .setClickListener(this::loadJson));
-        this.addWidget(new CircleButtonWidget(120, -5, 5, 1, 3)
+        this.addWidget(new CircleButtonWidget(127, -5, 5, 1, 3)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         new Color(255, 255, 255).getRGB(),
-                        new Color(146, 253, 118).getRGB())
+                        new Color(231, 95, 95).getRGB())
                 .setIcon(GuiTextures.TERMINAL_ADD)
-                .setHoverText("Export Config")
+                .setHoverText("Export Page")
                 .setClickListener(this::saveJson));
         addButton[0] = new CircleButtonWidget(115, 15, 8, 1, 8)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
@@ -161,8 +168,18 @@ public class GuideConfigEditor extends TabGroup {
         }
     }
 
+    private void newPage(ClickData data) {
+        TerminalDialogWidget.showConfirmDialog(app.getOs(), "New Page", "New page", res->{
+            if (res) {
+                pageEditor.loadJsonConfig("{\"section\":\"default\",\"title\":\"Template\",\"stream\":[],\"fixed\":[]}");
+                getPageEditor().setSection("default");
+                updateTitle("Template");
+            }
+        }).setClientSide().open();
+    }
+
     private void loadJson(ClickData data) {
-        if(pageEditor != null) {
+        if (pageEditor != null) {
             File file = new File("terminal\\guide_editor");
             TerminalDialogWidget.showFileDialog(app.getOs(), "Load Json", file, true, result->{
                if (result != null && result.isFile()) {

@@ -1,15 +1,14 @@
-package gregtech.api.terminal.gui.widgets.guide;
+package gregtech.api.terminal.app.guide.widget;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
-import gregtech.api.terminal.gui.widgets.guide.configurator.BooleanConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.configurator.ColorConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.configurator.NumberConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.configurator.TextListConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.BooleanConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.ColorConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.NumberConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.TextListConfigurator;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;

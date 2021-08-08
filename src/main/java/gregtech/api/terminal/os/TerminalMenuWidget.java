@@ -1,4 +1,4 @@
-package gregtech.api.terminal.gui.widgets.os;
+package gregtech.api.terminal.os;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
@@ -12,7 +12,6 @@ import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
-import java.io.File;
 
 public class TerminalMenuWidget extends WidgetGroup {
     private Interpolator interpolator;

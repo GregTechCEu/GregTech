@@ -1,4 +1,4 @@
-package gregtech.api.terminal.gui.widgets.guide.configurator;
+package gregtech.api.terminal.app.guide.widget.configurator;
 
 import com.google.gson.JsonObject;
 import gregtech.api.terminal.gui.widgets.ColorWidget;
