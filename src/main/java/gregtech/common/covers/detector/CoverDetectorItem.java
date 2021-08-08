@@ -79,10 +79,10 @@ public class CoverDetectorItem extends CoverBehavior implements ITickable {
             storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
-        int outputAmount = (int) (16.0 * storedItems / itemCapacity);
+        int outputAmount = (int) (15.0 * storedItems / itemCapacity);
 
         if (this.isInverted)
-            outputAmount = 16 - outputAmount;
+            outputAmount = 15 - outputAmount;
 
         setRedstoneSignalOutput(outputAmount);
     }

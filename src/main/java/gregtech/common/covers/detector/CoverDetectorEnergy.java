@@ -73,10 +73,10 @@ public class CoverDetectorEnergy extends CoverBehavior implements ITickable {
             if (energyCapacity == 0)
                 return;
 
-            int outputAmount = (int) (16.0 * storedEnergy / energyCapacity);
+            int outputAmount = (int) (15.0 * storedEnergy / energyCapacity);
 
             if (this.isInverted)
-                outputAmount = 16 - outputAmount;
+                outputAmount = 15 - outputAmount;
 
             setRedstoneSignalOutput(outputAmount);
         }

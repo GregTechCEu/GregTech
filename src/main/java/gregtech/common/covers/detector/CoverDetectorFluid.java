@@ -85,10 +85,10 @@ public class CoverDetectorFluid extends CoverBehavior implements ITickable {
         if (fluidCapacity == 0)
             return;
 
-        int outputAmount = (int) (16.0 * storedFluid / fluidCapacity);
+        int outputAmount = (int) (15.0 * storedFluid / fluidCapacity);
 
         if (this.isInverted)
-            outputAmount = 16 - outputAmount;
+            outputAmount = 15 - outputAmount;
 
         setRedstoneSignalOutput(outputAmount);
     }
