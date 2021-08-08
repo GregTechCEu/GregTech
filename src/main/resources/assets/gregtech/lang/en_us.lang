@@ -3621,3 +3621,6 @@ gregtech.cover.energy_detector.message_electricity_storage_inverted=Monitoring I
 
 gregtech.cover.fluid_detector.message_fluid_storage_normal=Monitoring Normal Fluid Storage
 gregtech.cover.fluid_detector.message_fluid_storage_inverted=Monitoring Inverted Fluid Storage
+
+gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item Storage
+gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage

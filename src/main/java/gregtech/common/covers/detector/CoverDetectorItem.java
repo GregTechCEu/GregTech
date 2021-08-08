@@ -13,28 +13,26 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
-public class CoverDetectorFluid extends CoverBehavior implements ITickable {
+public class CoverDetectorItem extends CoverBehavior implements ITickable {
 
     private boolean isInverted;
 
-    public CoverDetectorFluid(ICoverable coverHolder, EnumFacing attachedSide) {
+    public CoverDetectorItem(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         this.isInverted = false;
     }
 
     @Override
     public boolean canAttach() {
-        return coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null) != null;
+        return coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null) != null;
     }
 
     @Override
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        Textures.DETECTOR_FLUID.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
+        Textures.DETECTOR_ITEM.renderSided(attachedSide, plateBox, renderState, pipeline, translation);
     }
 
     @Override
@@ -45,10 +43,10 @@ public class CoverDetectorFluid extends CoverBehavior implements ITickable {
 
         if (this.isInverted) {
             this.setInverted();
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.cover.fluid_detector.message_fluid_storage_normal"));
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.cover.item_detector.message_item_storage_normal"));
         } else {
             this.setInverted();
-            playerIn.sendMessage(new TextComponentTranslation("gregtech.cover.fluid_detector.message_fluid_storage_inverted"));
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.cover.item_detector.message_item_storage_inverted"));
         }
         return EnumActionResult.SUCCESS;
     }
@@ -67,25 +65,21 @@ public class CoverDetectorFluid extends CoverBehavior implements ITickable {
         if (this.coverHolder.getOffsetTimer() % 20 != 0)
             return;
 
-        IFluidHandler fluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-        if (fluidHandler == null)
+        IItemHandler itemHandler = coverHolder.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        if (itemHandler == null)
             return;
 
-        IFluidTankProperties[] tankProperties = fluidHandler.getTankProperties();
-        int storedFluid = 0;
-        int fluidCapacity = 0;
+        int storedItems = 0;
+        int itemCapacity = itemHandler.getSlots() * itemHandler.getSlotLimit(0);
 
-        for (IFluidTankProperties properties : tankProperties) {
-            FluidStack contents = properties.getContents();
-            if (contents != null)
-                storedFluid += contents.amount;
-            fluidCapacity += properties.getCapacity();
+        if (itemCapacity == 0)
+            return;
+
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            storedItems += itemHandler.getStackInSlot(i).getCount();
         }
 
-        if (fluidCapacity == 0)
-            return;
-
-        int outputAmount = (int) (16.0 * storedFluid / fluidCapacity);
+        int outputAmount = (int) (16.0 * storedItems / itemCapacity);
 
         if (this.isInverted)
             outputAmount = 16 - outputAmount;
