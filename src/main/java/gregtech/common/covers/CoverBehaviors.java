@@ -56,6 +56,8 @@ public class CoverBehaviors {
         registerBehavior(38, new ResourceLocation(GTValues.MODID, "smart_filter"), MetaItems.SMART_FILTER, (tile, side) -> new CoverItemFilter(tile, side, "cover.smart_item_filter.title", Textures.SMART_FILTER_FILTER_OVERLAY, new SmartItemFilter()));
         registerBehavior(39, new ResourceLocation(GTValues.MODID, "facade"), MetaItems.COVER_FACADE, CoverFacade::new);
 
+        registerBehavior(49, new ResourceLocation(GTValues.MODID, "screen"), MetaItems.COVER_SCREEN, CoverScreen::new);
+
         for (int i = 0; i < COVERS_PER_ITEM; i++) {
             int throughput = (int) (Math.pow(4, i) * 1280);
             final int coverTier = i + 1;

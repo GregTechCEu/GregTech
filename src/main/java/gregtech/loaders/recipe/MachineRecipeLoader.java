@@ -434,6 +434,15 @@ public class MachineRecipeLoader {
                     .buildAndRegister();
         }
 
+        ASSEMBLER_RECIPES.recipeBuilder()
+                .input(plate, Glass)
+                .input(foil, Aluminium, 4)
+                .input(circuit, MarkerMaterials.Tier.Basic)
+                .input(wireFine, Copper, 4)
+                .outputs(COVER_SCREEN.getStackForm())
+                .EUt(16).duration(50)
+                .buildAndRegister();
+
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.WroughtIron, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ULV)).circuitMeta(8).duration(25).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Steel, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.LV)).circuitMeta(8).duration(50).buildAndRegister();
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.Aluminium, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.MV)).circuitMeta(8).duration(50).buildAndRegister();
