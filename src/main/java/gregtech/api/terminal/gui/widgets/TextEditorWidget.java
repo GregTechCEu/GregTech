@@ -100,12 +100,14 @@ public class TextEditorWidget extends WidgetGroup {
         public TextFormatting frontColor;
         public List<TextFormatting> frontStyle;
 
+        private static final char SECTION_SIGN = '\u00A7';
+
         @SideOnly(Side.CLIENT)
         public FontRenderer fontRenderer;
         @SideOnly(Side.CLIENT)
-        private static final Pattern R_CODE_PATTERN = Pattern.compile("(?i)§[R]");
+        private static final Pattern R_CODE_PATTERN = Pattern.compile("(?i)" + SECTION_SIGN + "[R]");
         @SideOnly(Side.CLIENT)
-        private static final Pattern COLOR_CODE_PATTERN = Pattern.compile("(?i)§[0-9A-F]");
+        private static final Pattern COLOR_CODE_PATTERN = Pattern.compile("(?i)" + SECTION_SIGN + "[0-9A-F]");
 
 
         public TextPanelWidget(int x, int y, int width, int height, Consumer<String> stringUpdate) {
@@ -162,7 +164,7 @@ public class TextEditorWidget extends WidgetGroup {
         }
 
         private static TextFormatting lookAheadChars(final String content, int index) {
-            if (index > 1 && content.charAt(index - 2) == '§') {
+            if (index > 1 && content.charAt(index - 2) == SECTION_SIGN) {
                 int t = content.charAt(index - 1);
                 if ('0' <= t && t <= '9'){
                     return TextFormatting.values()[t - '0'];
@@ -220,7 +222,7 @@ public class TextEditorWidget extends WidgetGroup {
         }
 
         private void findFrontFormatting() {
-            int lastReset = content.lastIndexOf("§r");
+            int lastReset = content.lastIndexOf(SECTION_SIGN + "r");
             int lastColor = -1;
             frontColor = null;
             frontStyle.clear();
