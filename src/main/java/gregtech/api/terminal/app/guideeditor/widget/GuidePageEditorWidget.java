@@ -1,4 +1,4 @@
-package gregtech.api.terminal.app.guide.widget;
+package gregtech.api.terminal.app.guideeditor.widget;
 
 
 import com.google.gson.Gson;
@@ -8,6 +8,8 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.terminal.app.guide.widget.GuidePageWidget;
+import gregtech.api.terminal.app.guide.widget.IGuideWidget;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.CustomPositionSizeWidget;
 import gregtech.api.util.Position;

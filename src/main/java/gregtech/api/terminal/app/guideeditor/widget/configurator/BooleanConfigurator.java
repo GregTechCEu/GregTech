@@ -1,4 +1,4 @@
-package gregtech.api.terminal.app.guide.widget.configurator;
+package gregtech.api.terminal.app.guideeditor.widget.configurator;
 
 import com.google.gson.JsonObject;
 import gregtech.api.gui.resources.ColorRectTexture;

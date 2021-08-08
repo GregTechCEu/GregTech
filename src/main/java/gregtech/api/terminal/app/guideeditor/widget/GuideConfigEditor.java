@@ -1,4 +1,4 @@
-package gregtech.api.terminal.app.guide.widget;
+package gregtech.api.terminal.app.guideeditor.widget;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -10,7 +10,9 @@ import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.tab.IGuiTextureTabInfo;
-import gregtech.api.terminal.app.GuideEditorApp;
+import gregtech.api.terminal.app.guide.widget.GuidePageWidget;
+import gregtech.api.terminal.app.guide.widget.IGuideWidget;
+import gregtech.api.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.api.terminal.gui.CustomTabListRenderer;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
