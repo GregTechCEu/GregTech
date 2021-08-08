@@ -1,4 +1,4 @@
-package gregtech.api.terminal.gui.widgets.os;
+package gregtech.api.terminal.os;
 
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;

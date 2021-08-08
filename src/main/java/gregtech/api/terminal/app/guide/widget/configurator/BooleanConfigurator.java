@@ -1,7 +1,6 @@
-package gregtech.api.terminal.gui.widgets.guide.configurator;
+package gregtech.api.terminal.app.guide.widget.configurator;
 
 import com.google.gson.JsonObject;
-import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;

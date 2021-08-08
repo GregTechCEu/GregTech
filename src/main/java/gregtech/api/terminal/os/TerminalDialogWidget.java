@@ -1,4 +1,4 @@
-package gregtech.api.terminal.gui.widgets.os;
+package gregtech.api.terminal.os;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
@@ -17,7 +17,6 @@ import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.network.PacketBuffer;
 
-import java.awt.*;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -132,10 +131,8 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return createEmptyTemplate(os).addTitle(title).addInfo(info).addOkButton();
     }
 
-    public static TerminalDialogWidget showConfirmDialog(TerminalOSWidget os, String info, Consumer<Boolean> result) {
-        TerminalDialogWidget dialog = createEmptyTemplate(os).addConfirmButton(result);
-        dialog.addWidget(new LabelWidget(WIDTH / 2, HEIGHT / 2 - 10, info, -1).setXCentered(true));
-        return dialog;
+    public static TerminalDialogWidget showConfirmDialog(TerminalOSWidget os, String title, String info, Consumer<Boolean> result) {
+        return createEmptyTemplate(os).addConfirmButton(result).addTitle(title).addInfo(info);
     }
 
     public static TerminalDialogWidget showTextFieldDialog(TerminalOSWidget os, String title, Predicate<String> validator, Consumer<String> result) {

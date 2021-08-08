@@ -1,12 +1,10 @@
-package gregtech.api.terminal.gui.widgets.guide.configurator;
+package gregtech.api.terminal.app.guide.widget.configurator;
 
 import com.google.gson.*;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.TextEditorWidget;
-import net.minecraft.client.resources.I18n;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

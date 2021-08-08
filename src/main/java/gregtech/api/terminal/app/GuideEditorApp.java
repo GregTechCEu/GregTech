@@ -1,8 +1,8 @@
 package gregtech.api.terminal.app;
 
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.terminal.gui.widgets.guide.GuideConfigEditor;
-import gregtech.api.terminal.gui.widgets.guide.GuidePageEditorWidget;
+import gregtech.api.terminal.app.guide.widget.GuideConfigEditor;
+import gregtech.api.terminal.app.guide.widget.GuidePageEditorWidget;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 

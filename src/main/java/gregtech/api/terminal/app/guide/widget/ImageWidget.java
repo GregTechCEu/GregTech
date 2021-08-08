@@ -1,4 +1,4 @@
-package gregtech.api.terminal.gui.widgets.guide;
+package gregtech.api.terminal.app.guide.widget;
 
 import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
@@ -8,13 +8,12 @@ import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.resources.URLTexture;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
-import gregtech.api.terminal.gui.widgets.guide.configurator.NumberConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.configurator.SelectorConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.configurator.StringConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.NumberConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.SelectorConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.StringConfigurator;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 

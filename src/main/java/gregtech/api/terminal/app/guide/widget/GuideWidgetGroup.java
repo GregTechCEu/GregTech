@@ -1,14 +1,15 @@
-package gregtech.api.terminal.gui.widgets.guide;
+package gregtech.api.terminal.app.guide.widget;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
-import gregtech.api.terminal.gui.widgets.guide.configurator.ColorConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.configurator.NumberConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.configurator.StringConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.configurator.TextListConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.ColorConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.NumberConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.StringConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.TextListConfigurator;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.item.ItemStack;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class GuideWidget extends Widget implements IGuideWidget {
+public abstract class GuideWidgetGroup extends WidgetGroup implements IGuideWidget {
     //config
     public String ref;
     public int fill;
@@ -30,11 +31,11 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
     protected transient GuidePageWidget page;
     protected transient JsonObject config;
 
-    public GuideWidget(int x, int y, int width, int height) {
+    public GuideWidgetGroup(int x, int y, int width, int height) {
         super(x, y, width, height);
     }
 
-    public GuideWidget(){
+    public GuideWidgetGroup(){
         super(Position.ORIGIN, Size.ZERO);
     }
 
@@ -48,12 +49,6 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
     @Override
     public boolean isFixed() {
         return isFixed;
-    }
-
-    protected abstract Widget initFixed();
-
-    protected Widget initStream(){
-        return initFixed();
     }
 
     @Override
@@ -113,12 +108,18 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
         return ref;
     }
 
+    protected Widget initStream() {
+        return initFixed();
+    }
+
+    protected abstract Widget initFixed();
+
     @Override
     public Widget updateOrCreateStreamWidget(int x, int y, int pageWidth, JsonObject config) {
         if (config == null) {
             return initStream();
         }
-        GuideWidget widget = new Gson().fromJson(config, this.getClass());
+        GuideWidgetGroup widget = new Gson().fromJson(config, this.getClass());
         widget.isFixed = false;
         widget.setSelfPosition(new Position(x, y));
         widget.setSize(new Size(pageWidth, 0));
@@ -131,7 +132,7 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
         if (config == null) {
             return initFixed();
         }
-        GuideWidget widget = new Gson().fromJson(config, this.getClass());
+        GuideWidgetGroup widget = new Gson().fromJson(config, this.getClass());
         widget.isFixed = true;
         widget.setSelfPosition(new Position(x, y));
         widget.setSize(new Size(width, height));
@@ -142,6 +143,14 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
     @Override
     public void setPage(GuidePageWidget page) {
         this.page = page;
+    }
+
+    @Override
+    public void addWidget(Widget widget) {
+        super.addWidget(widget);
+        if (widget instanceof IGuideWidget) {
+            ((IGuideWidget) widget).setPage(page);
+        }
     }
 
     @Override
@@ -158,6 +167,7 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
             }
             drawHoveringText(ItemStack.EMPTY, tooltip, 100, mouseX, mouseY);
         }
+        super.drawInForeground(mouseX, mouseY);
     }
 
     @Override
@@ -170,14 +180,16 @@ public abstract class GuideWidget extends Widget implements IGuideWidget {
         if (fill != 0) {
             drawSolidRect(position.x, position.y, size.width, size.height, fill);
         }
+        super.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (link != null && isMouseOverElement(mouseX, mouseY) && isCtrlDown()) {
-           page.jumpToRef(link);
-           return true;
+            page.jumpToRef(link);
+            return true;
         }
-        return false;
+        return super.mouseClicked(mouseX, mouseY, button);
     }
+
 }

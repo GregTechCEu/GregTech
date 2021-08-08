@@ -1,4 +1,4 @@
-package gregtech.api.terminal.gui.widgets.guide;
+package gregtech.api.terminal.app.guide.widget;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -7,17 +7,12 @@ import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
-import gregtech.api.terminal.gui.widgets.guide.configurator.FluidStackConfigurator;
-import gregtech.api.terminal.gui.widgets.guide.configurator.ItemStackConfigurator;
+import gregtech.api.terminal.app.guide.widget.configurator.FluidStackConfigurator;
 import gregtech.api.util.Size;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.items.ItemStackHandler;
 
 import java.awt.*;
 import java.util.Collections;

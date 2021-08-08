@@ -1,8 +1,7 @@
-package gregtech.api.terminal.gui.widgets.guide.configurator;
+package gregtech.api.terminal.app.guide.widget.configurator;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.ImageWidget;

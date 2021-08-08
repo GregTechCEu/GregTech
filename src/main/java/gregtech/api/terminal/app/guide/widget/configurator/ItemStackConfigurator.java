@@ -1,4 +1,4 @@
-package gregtech.api.terminal.gui.widgets.guide.configurator;
+package gregtech.api.terminal.app.guide.widget.configurator;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -6,20 +6,25 @@ import com.google.gson.JsonObject;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.widgets.*;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.PhantomSlotWidget;
+import gregtech.api.gui.widgets.SimpleTextWidget;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
-import gregtech.api.terminal.gui.widgets.guide.TankListWidget;
+import gregtech.api.terminal.app.guide.widget.SlotListWidget;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidget.FluidStackInfo>>{
+public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidget.ItemStackInfo>>{
     DraggableScrollableWidgetGroup container;
-    List<TankListWidget.FluidStackInfo> tanks;
+    List<SlotListWidget.ItemStackInfo> slots;
 
-    public FluidStackConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, String name) {
+    public ItemStackConfigurator(DraggableScrollableWidgetGroup group, JsonObject config, String name) {
         super(group, config, name);
     }
 
@@ -29,60 +34,57 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
         this.addWidget(new RectButtonWidget(0, 15, 116, 10, 1)
                 .setIcon(new TextTexture("Add Slot", -1))
                 .setClickListener(cd->{
-                    addSlot(container, new TankListWidget.FluidStackInfo(null, 0));
+                    addSlot(container, new SlotListWidget.ItemStackInfo("minecraft:air", 0, 0));
                     updateValue();
                 })
                 .setColors(new Color(0, 0, 0, 74).getRGB(),
                 new Color(128, 255, 128).getRGB(),
                 new Color(255, 255, 255, 0).getRGB()));
-        tanks = new ArrayList<>();
+        slots = new ArrayList<>();
         if (!config.get(name).isJsonNull()) {
             Gson gson = new Gson();
             for (JsonElement o : config.get(name).getAsJsonArray()) {
-                addSlot(container, gson.fromJson(o, TankListWidget.FluidStackInfo.class));
+                addSlot(container, gson.fromJson(o, SlotListWidget.ItemStackInfo.class));
             }
         }
     }
 
-    private void addSlot(DraggableScrollableWidgetGroup container, TankListWidget.FluidStackInfo fluidStackInfo) {
-        WidgetGroup group = new WidgetGroup(0, tanks.size() * 20, 116, 20);
-        tanks.add(fluidStackInfo);
-        group.addWidget(new PhantomFluidWidget(1, 1, 18, 18, null, null)
-                .setBackgroundTexture(new ColorRectTexture(0x9f000000))
-                .setFluidStackSupplier(fluidStackInfo::getInstance, true)
-                .setFluidStackUpdater(fluidStack->{
-                    fluidStackInfo.update(fluidStack);
-                    updateValue();
-                    }, true));
+    private void addSlot(DraggableScrollableWidgetGroup container, SlotListWidget.ItemStackInfo itemStackInfo) {
+        WidgetGroup group = new WidgetGroup(0,slots.size() * 20, 116, 20);
+        slots.add(itemStackInfo);
+        IItemHandlerModifiable handler = new ItemStackHandler();
+        handler.setStackInSlot(0, itemStackInfo.getInstance());
+        group.addWidget(new PhantomSlotWidget(handler, 0, 1, 1).setBackgroundTexture(new ColorRectTexture(0x9f000000)).setChangeListener(()->{
+            itemStackInfo.update(handler.getStackInSlot(0));
+            updateValue();
+        }));
         group.addWidget(new RectButtonWidget(20, 0, 20, 20)
                 .setColors(new Color(0, 0, 0, 74).getRGB(),
                         new Color(128, 255, 128).getRGB(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> {
-                    fluidStackInfo.amount = Math.max(0, fluidStackInfo.amount - (data.isShiftClick ? data.isCtrlClick ? 1000 : 10 : data.isCtrlClick? 100: 1));
+                    itemStackInfo.count = Math.max(0, itemStackInfo.count - (data.isShiftClick ? 10 : 1));
                     updateValue();
                 })
-                .setHoverText("Shift -10|Ctrl -100|Shift+Ctrl -1000")
                 .setIcon(new TextTexture("-1", -1)));
         group.addWidget(new RectButtonWidget(76, 0, 20, 20)
                 .setColors(new Color(0, 0, 0, 74).getRGB(),
                         new Color(128, 255, 128).getRGB(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> {
-                    fluidStackInfo.amount = Math.max(0, fluidStackInfo.amount + (data.isShiftClick ? data.isCtrlClick ? 1000 : 10 : data.isCtrlClick? 100: 1));
+                    itemStackInfo.count = Math.max(0, itemStackInfo.count + (data.isShiftClick ? 10 : 1));
                     updateValue();
                 })
-                .setHoverText("Shift +10|Ctrl +100|Shift+Ctrl +1000")
                 .setIcon(new TextTexture("+1", -1)));
         group.addWidget(new ImageWidget(40, 0, 36, 20, new ColorRectTexture(0x9f000000)));
-        group.addWidget(new SimpleTextWidget(58, 10, "", 0xFFFFFF, () -> Integer.toString(fluidStackInfo.amount), true));
+        group.addWidget(new SimpleTextWidget(58, 10, "", 0xFFFFFF, () -> Integer.toString(itemStackInfo.count), true));
         group.addWidget(new RectButtonWidget(96, 0, 20, 20)
                 .setColors(new Color(0, 0, 0, 74).getRGB(),
                         new Color(128, 255, 128).getRGB(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> {
                     container.waitToRemoved(group);
-                    tanks.remove(fluidStackInfo);
+                    slots.remove(itemStackInfo);
                     int index = container.widgets.indexOf(group);
                     for (int i = container.widgets.size() - 1; i > index; i--) {
                         container.widgets.get(i).addSelfPosition(0, -20);
@@ -94,6 +96,6 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
     }
 
     private void updateValue() {
-        updateValue(tanks);
+        updateValue(slots);
     }
 }

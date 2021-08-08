@@ -1,4 +1,4 @@
-package gregtech.api.terminal.gui.widgets.guide;
+package gregtech.api.terminal.app.guide.widget;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;

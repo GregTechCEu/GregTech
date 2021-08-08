@@ -8,7 +8,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.TreeListWidget;
-import gregtech.api.terminal.gui.widgets.guide.*;
+import gregtech.api.terminal.app.guide.widget.*;
 import gregtech.api.terminal.util.TreeNode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;

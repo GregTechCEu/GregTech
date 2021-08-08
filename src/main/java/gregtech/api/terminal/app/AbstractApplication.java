@@ -2,7 +2,7 @@ package gregtech.api.terminal.app;
 
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
-import gregtech.api.terminal.gui.widgets.os.TerminalOSWidget;
+import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.nbt.NBTTagCompound;
