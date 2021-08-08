@@ -166,17 +166,17 @@ public class FluidNetHandler implements IFluidHandler {
     }
 
     private int insert(Handler handler, FluidStack stack, boolean doFill, int max) {
-        for(TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
-            if(!tickingPipe.findAndSetChannel(stack))
+        for (TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
+            if (!tickingPipe.findAndSetChannel(stack))
                 return 0;
 
         IFluidHandler fluidHandler = handler.handler;
         // check every pipe in path, but only if the last transferred fluid is not the same as the current
-        if(!stack.isFluidEqual(handler.getLastTransferredFluid())) {
+        if (!stack.isFluidEqual(handler.getLastTransferredFluid())) {
             boolean isGaseous = stack.getFluid().isGaseous(stack);
             int temp = stack.getFluid().getTemperature(stack);
-            for(Object o : handler.getObjectsInPath()) {
-                if(o instanceof TileEntityFluidPipe) {
+            for (Object o : handler.getObjectsInPath()) {
+                if (o instanceof TileEntityFluidPipe) {
                     TileEntityFluidPipe pipe = (TileEntityFluidPipe) o;
                     FluidPipeProperties properties = pipe.getNodeData();
                     boolean isLeakingPipe = isGaseous && !properties.gasProof;
@@ -185,8 +185,8 @@ public class FluidNetHandler implements IFluidHandler {
                         net.destroyNetwork(pipe.getPos(), isLeakingPipe, isBurningPipe, temp);
                         return 0;
                     }
-                } else if(o instanceof CoverFluidFilter) {
-                    if(!((CoverFluidFilter) o).testFluidStack(stack))
+                } else if (o instanceof CoverFluidFilter) {
+                    if (!((CoverFluidFilter) o).testFluidStack(stack))
                         return 0;
                 }
             }
@@ -197,7 +197,7 @@ public class FluidNetHandler implements IFluidHandler {
             int inserted = fluidHandler.fill(stack, doFill);
             if (inserted > 0) {
                 if (doFill)
-                    for(TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
+                    for (TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
                         tickingPipe.setContainingFluid(stack, tickingPipe.getCurrentChannel());
                 transfer(pipe, doFill, inserted);
             }
@@ -208,7 +208,7 @@ public class FluidNetHandler implements IFluidHandler {
         int inserted = fluidHandler.fill(toInsert, doFill);
         if (inserted > 0) {
             if (doFill)
-                for(TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
+                for (TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
                     tickingPipe.setContainingFluid(toInsert, tickingPipe.getCurrentChannel());
             transfer(pipe, doFill, inserted);
         }

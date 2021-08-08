@@ -48,7 +48,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        if(nbt.getBoolean("Ticking") && !(this instanceof TileEntityFluidPipeTickable)) {
+        if (nbt.getBoolean("Ticking") && !(this instanceof TileEntityFluidPipeTickable)) {
             TileEntityFluidPipeTickable tickable = (TileEntityFluidPipeTickable) setSupportsTicking();
             tickable.readFromNBT(nbt);
         }

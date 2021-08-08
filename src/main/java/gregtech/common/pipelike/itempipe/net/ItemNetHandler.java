@@ -156,7 +156,7 @@ public class ItemNetHandler implements IItemHandler {
         if (allowed == 0) return stack;
         CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
         CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
-        if(pipeCover instanceof CoverRoboticArm && tileCover instanceof CoverRoboticArm)
+        if (pipeCover instanceof CoverRoboticArm && tileCover instanceof CoverRoboticArm)
             return stack;
         if (pipeCover != null && !checkExportCover(pipeCover, true, stack))
             return stack;

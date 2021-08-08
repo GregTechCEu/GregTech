@@ -1,11 +1,11 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.pipenet.Node;
+import gregtech.api.pipenet.PipeGatherer;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.api.unification.material.properties.FluidPipeProperties;
-import gregtech.api.pipenet.*;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.init.Blocks;
@@ -50,7 +50,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
     public void destroyNetwork(BlockPos source, boolean isLeaking, boolean isBurning, int temp) {
         World world = getWorldData();
         List<IPipeTile<?, ?>> pipes = PipeGatherer.gatherPipesInDistance(this, world, source, pipe -> {
-            if(pipe instanceof TileEntityFluidPipe) {
+            if (pipe instanceof TileEntityFluidPipe) {
                 TileEntityFluidPipe fluidPipe = (TileEntityFluidPipe) pipe;
                 return (isBurning && fluidPipe.getNodeData().maxFluidTemperature < temp) || (isLeaking && !fluidPipe.getNodeData().gasProof);
             }

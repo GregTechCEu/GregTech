@@ -134,12 +134,11 @@ public abstract class PipeNetWalker {
         TileEntity thisPipe = world.getTileEntity(pos);
         IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) thisPipe;
         if (pipeTile == null) {
-            if(walkedBlocks == 1) {
+            if (walkedBlocks == 1) {
                 // if it is the first block, it wasn't already checked
                 GTLog.logger.warn("First PipeTile is null during walk");
                 return;
-            }
-            else
+            } else
                 throw new IllegalStateException("PipeTile was not null last walk, but now is");
         }
         checkPipe(pipeTile, pos);

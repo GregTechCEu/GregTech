@@ -50,7 +50,7 @@ public class PipeGatherer extends PipeNetWalker {
 
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
-        if(pipePredicate.test(pipeTile)) {
+        if (pipePredicate.test(pipeTile)) {
             pipes.add(pipeTile);
         }
     }

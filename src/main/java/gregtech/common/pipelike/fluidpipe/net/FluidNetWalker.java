@@ -47,22 +47,22 @@ public class FluidNetWalker extends PipeNetWalker {
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
         pathObjects.add(pipeTile);
-        this.rate = Math.min(this.rate, ((TileEntityFluidPipe)pipeTile).getNodeData().throughput);
+        this.rate = Math.min(this.rate, ((TileEntityFluidPipe) pipeTile).getNodeData().throughput);
         int validPipes = 0;
-        for(EnumFacing facing : EnumFacing.values()) {
+        for (EnumFacing facing : EnumFacing.values()) {
             TileEntity tile = pipeTile.getPipeWorld().getTileEntity(pos.offset(facing));
-            if(tile instanceof IPipeTile && isValidPipe(pipeTile, (IPipeTile<?, ?>) tile, pos, facing)) {
+            if (tile instanceof IPipeTile && isValidPipe(pipeTile, (IPipeTile<?, ?>) tile, pos, facing)) {
                 checkCover(pipeTile.getCoverableImplementation().getCoverAtSide(facing));
                 validPipes++;
             }
         }
-        if(validPipes > 2) {
+        if (validPipes > 2) {
             tickingPipes.add((TileEntityFluidPipeTickable) pipeTile.setSupportsTicking());
         }
     }
 
     protected void checkCover(CoverBehavior coverBehavior) {
-        if(coverBehavior instanceof CoverFluidFilter)
+        if (coverBehavior instanceof CoverFluidFilter)
             pathObjects.add(coverBehavior);
     }
 
