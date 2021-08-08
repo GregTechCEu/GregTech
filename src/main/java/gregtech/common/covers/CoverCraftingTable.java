@@ -28,6 +28,8 @@ import net.minecraft.util.*;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 import static gregtech.api.metatileentity.MetaTileEntity.clearInventory;
 
@@ -121,6 +123,20 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     private CraftingRecipeResolver getRecipeResolver() {
         Preconditions.checkState(coverHolder.getWorld() != null, "getRecipeResolver called too early");
         return recipeResolver;
+    }
+
+    @Override
+    public List<ItemStack> getDrops() {
+        List<ItemStack> itemStacks = new ArrayList<>();
+        for (int i = 0; i < internalInventory.getSlots(); i++) {
+            itemStacks.add(internalInventory.getStackInSlot(i));
+        }
+        for (int i = 0; i < toolInventory.getSlots(); i++) {
+            itemStacks.add(toolInventory.getStackInSlot(i));
+        }
+        itemStacks.add(getPickItem());
+
+        return itemStacks;
     }
 
     @Override
