@@ -43,6 +43,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import javax.annotation.Nonnull;
 import javax.vecmath.Vector3f;
 import java.util.*;
 import java.util.Map.Entry;
@@ -66,11 +67,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     }
 
     private final MultiblockInfoPage infoPage;
-    private MBPattern[] patterns;
-    private Map<GuiButton, Runnable> buttons = new HashMap<>();
+    private final MBPattern[] patterns;
+    private final Map<GuiButton, Runnable> buttons = new HashMap<>();
     private RecipeLayout recipeLayout;
-    private List<ItemStack> allItemStackInputs = new ArrayList<>();
-    private ItemStack controllerStack;
+    private final List<ItemStack> allItemStackInputs = new ArrayList<>();
+    private final ItemStack controllerStack;
 
     private int layerIndex = -1;
     private int currentRendererPage = 0;
@@ -233,7 +234,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     }
 
     @Override
-    public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+    public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         WorldSceneRenderer renderer = getCurrentRenderer();
         int sceneHeight = recipeHeight - PARTS_HEIGHT;
 
@@ -322,7 +323,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     }
 
     @Override
-    public boolean handleClick(Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
+    public boolean handleClick(@Nonnull Minecraft minecraft, int mouseX, int mouseY, int mouseButton) {
         for (Entry<GuiButton, Runnable> button : buttons.entrySet()) {
             if (button.getKey().mousePressed(minecraft, mouseX, mouseY)) {
                 button.getValue().run();
@@ -332,6 +333,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
         return false;
     }
 
+    @Nonnull
     @Override
     public List<String> getTooltipStrings(int mouseX, int mouseY) {
         if (tooltipBlockStack != null && !tooltipBlockStack.isEmpty() && !Mouse.isButtonDown(0)) {
@@ -347,9 +349,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
                 }
             }
             Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
-            if(blockTooltipMap.containsKey(tooltipBlockStack)) {
+            if (blockTooltipMap.containsKey(tooltipBlockStack)) {
                 List<ITextComponent> tooltips = blockTooltipMap.get(tooltipBlockStack);
-                for(int i = 0; i < tooltips.size(); i++) {
+                for (int i = 0; i < tooltips.size(); i++) {
                     //Start at i+1 due to ItemStack name
                     tooltip.add(i + 1, tooltips.get(i).getFormattedText());
                 }
@@ -361,9 +363,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
 
     public void addBlockTooltips(int slotIndex, boolean input, ItemStack itemStack, List<String> tooltip) {
         Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
-        if(blockTooltipMap.containsKey(itemStack)) {
+        if (blockTooltipMap.containsKey(itemStack)) {
             List<ITextComponent> tooltips = blockTooltipMap.get(itemStack);
-            for(int i = 0; i < tooltips.size(); i++) {
+            for (int i = 0; i < tooltips.size(); i++) {
                 tooltip.add(i + 1, tooltips.get(i).getFormattedText());
             }
         }

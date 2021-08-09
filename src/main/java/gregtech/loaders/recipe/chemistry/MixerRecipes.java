@@ -1,101 +1,373 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import net.minecraft.init.Items;
 
 import static gregtech.api.recipes.RecipeMaps.MIXER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.dust;
-import static gregtech.api.unification.ore.OrePrefix.dustTiny;
 
 public class MixerRecipes {
 
     public static void init() {
         MIXER_RECIPES.recipeBuilder()
-            .fluidInputs(NitricAcid.getFluid(1000))
-            .fluidInputs(SulfuricAcid.getFluid(1000))
-            .fluidOutputs(NitrationMixture.getFluid(2000))
-            .duration(500).EUt(2).buildAndRegister();
+                .fluidInputs(NitricAcid.getFluid(1000))
+                .fluidInputs(SulfuricAcid.getFluid(1000))
+                .fluidOutputs(NitrationMixture.getFluid(2000))
+                .duration(500).EUt(2).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .input(dust, Sodium, 2)
-            .input(dust, Sulfur)
-            .output(dust, SodiumSulfide, 3)
-            .duration(60).EUt(30).buildAndRegister();
+                .input(dust, Sodium, 2)
+                .input(dust, Sulfur)
+                .output(dust, SodiumSulfide, 3)
+                .duration(60).EUt(30).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .fluidInputs(PolyvinylAcetate.getFluid(1000))
-            .fluidInputs(Acetone.getFluid(1500))
-            .fluidOutputs(Glue.getFluid(2500))
-            .duration(50).EUt(8).buildAndRegister();
+                .fluidInputs(PolyvinylAcetate.getFluid(1000))
+                .fluidInputs(Acetone.getFluid(1500))
+                .fluidOutputs(Glue.getFluid(2500))
+                .duration(50).EUt(8).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .fluidInputs(PolyvinylAcetate.getFluid(1000))
-            .fluidInputs(MethylAcetate.getFluid(1500))
-            .fluidOutputs(Glue.getFluid(2500))
-            .duration(50).EUt(8).buildAndRegister();
+                .fluidInputs(PolyvinylAcetate.getFluid(1000))
+                .fluidInputs(MethylAcetate.getFluid(1500))
+                .fluidOutputs(Glue.getFluid(2500))
+                .duration(50).EUt(8).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .input(dust, Wood, 4)
-            .fluidInputs(SulfuricAcid.getFluid(1000))
-            .output(Items.COAL, 1, 1)
-            .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
-            .duration(1200).EUt(2).buildAndRegister();
+                .input(dust, Wood, 4)
+                .fluidInputs(SulfuricAcid.getFluid(1000))
+                .output(Items.COAL, 1, 1)
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .duration(1200).EUt(2).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .input(Items.SUGAR, 4)
-            .fluidInputs(SulfuricAcid.getFluid(1000))
-            .output(Items.COAL, 1, 1)
-            .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
-            .duration(1200).EUt(2).buildAndRegister();
+                .input(Items.SUGAR, 4)
+                .fluidInputs(SulfuricAcid.getFluid(1000))
+                .output(Items.COAL, 1, 1)
+                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
+                .duration(1200).EUt(2).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .input(dust, Gallium)
-            .input(dust, Arsenic)
-            .output(dust, GalliumArsenide, 2)
-            .duration(300).EUt(30).buildAndRegister();
+                .input(dust, Gallium)
+                .input(dust, Arsenic)
+                .output(dust, GalliumArsenide, 2)
+                .duration(300).EUt(30).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .input(dust, Salt, 2)
-            .fluidInputs(Water.getFluid(1000))
-            .fluidOutputs(SaltWater.getFluid(1000))
-            .duration(40).EUt(8).buildAndRegister();
+                .input(dust, Salt, 2)
+                .fluidInputs(Water.getFluid(1000))
+                .fluidOutputs(SaltWater.getFluid(1000))
+                .duration(40).EUt(8).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .fluidInputs(BioDiesel.getFluid(1000))
-            .fluidInputs(Tetranitromethane.getFluid(40))
-            .fluidOutputs(NitroDiesel.getFluid(750))
-            .duration(20).EUt(480).buildAndRegister();
+                .fluidInputs(BioDiesel.getFluid(1000))
+                .fluidInputs(Tetranitromethane.getFluid(40))
+                .fluidOutputs(NitroDiesel.getFluid(750))
+                .duration(20).EUt(480).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .fluidInputs(Diesel.getFluid(1000))
-            .fluidInputs(Tetranitromethane.getFluid(20))
-            .fluidOutputs(NitroDiesel.getFluid(1000))
-            .duration(20).EUt(480).buildAndRegister();
+                .fluidInputs(Diesel.getFluid(1000))
+                .fluidInputs(Tetranitromethane.getFluid(20))
+                .fluidOutputs(NitroDiesel.getFluid(1000))
+                .duration(20).EUt(480).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .fluidInputs(Oxygen.getFluid(1000))
-            .fluidInputs(Dimethylhydrazine.getFluid(1000))
-            .fluidOutputs(RocketFuel.getFluid(3000))
-            .duration(60).EUt(16).buildAndRegister();
+                .fluidInputs(Oxygen.getFluid(1000))
+                .fluidInputs(Dimethylhydrazine.getFluid(1000))
+                .fluidOutputs(RocketFuel.getFluid(3000))
+                .duration(60).EUt(16).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .fluidInputs(DinitrogenTetroxide.getFluid(1000))
-            .fluidInputs(Dimethylhydrazine.getFluid(1000))
-            .fluidOutputs(RocketFuel.getFluid(6000))
-            .duration(60).EUt(16).buildAndRegister();
+                .fluidInputs(DinitrogenTetroxide.getFluid(1000))
+                .fluidInputs(Dimethylhydrazine.getFluid(1000))
+                .fluidOutputs(RocketFuel.getFluid(6000))
+                .duration(60).EUt(16).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
-            .fluidInputs(LightFuel.getFluid(5000))
-            .fluidInputs(HeavyFuel.getFluid(1000))
-            .fluidOutputs(Diesel.getFluid(6000))
-            .duration(16).EUt(120).buildAndRegister();
+                .fluidInputs(LightFuel.getFluid(5000))
+                .fluidInputs(HeavyFuel.getFluid(1000))
+                .fluidOutputs(Diesel.getFluid(6000))
+                .duration(16).EUt(120).buildAndRegister();
 
-        MIXER_RECIPES.recipeBuilder()
-            .input(dust, Yttrium)
-            .input(dust, Barium, 2)
-            .input(dust, Copper, 3)
-            .fluidInputs(Oxygen.getFluid(7000))
-            .output(dust, YttriumBariumCuprate, 13)
-            .EUt(8).duration(800).buildAndRegister();
+        // Alloys
+        MIXER_RECIPES.recipeBuilder().duration(600).EUt(1920)
+                .input(dust, Yttrium)
+                .input(dust, Barium, 2)
+                .input(dust, Copper, 3)
+                .notConsumable(new IntCircuitIngredient(2))
+                .fluidInputs(Oxygen.getFluid(7000))
+                .output(dust, YttriumBariumCuprate, 13)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(7)
+                .input(dust, Boron)
+                .input(dust, Glass, 7)
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, BorosilicateGlass, 8)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(8)
+                .input(dust, Indium)
+                .input(dust, Gallium)
+                .input(dust, Phosphorus)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, IndiumGalliumPhosphide, 3)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(8)
+                .input(dust, Nickel)
+                .input(dust, Zinc)
+                .input(dust, Iron, 4)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, FerriteMixture, 6)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(100).EUt(48)
+                .input(dust, EnderPearl)
+                .input(dust, Blaze)
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, EnderEye)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(7)
+                .input(dust, Gold)
+                .input(dust, Silver)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Electrum, 2)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(300).EUt(7)
+                .input(dust, Iron, 2)
+                .input(dust, Nickel)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Invar, 3)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(600).EUt(120)
+                .input(dust, Iron, 4)
+                .input(dust, Invar, 3)
+                .input(dust, Manganese)
+                .input(dust, Chrome)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, StainlessSteel, 9)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(600).EUt(120)
+                .input(dust, Iron, 6)
+                .input(dust, Nickel)
+                .input(dust, Manganese)
+                .input(dust, Chrome)
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, StainlessSteel, 9)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(300).EUt(120)
+                .input(dust, Iron)
+                .input(dust, Aluminium)
+                .input(dust, Chrome)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Kanthal, 3)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(7)
+                .input(dust, Copper, 3)
+                .input(dust, Zinc)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Brass, 4)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(7)
+                .input(dust, Copper, 3)
+                .input(dust, Tin)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Bronze, 4)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(24)
+                .input(dust, Copper)
+                .input(dust, Nickel)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Cupronickel, 2)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(120)
+                .input(dust, Copper)
+                .input(dust, Gold, 4)
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, RoseGold, 5)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(500).EUt(120)
+                .input(dust, Copper)
+                .input(dust, Silver, 4)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, SterlingSilver, 5)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(500).EUt(7)
+                .input(dust, Copper, 3)
+                .input(dust, Electrum, 2)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, BlackBronze, 5)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(500).EUt(7)
+                .input(dust, Bismuth)
+                .input(dust, Brass, 4)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, BismuthBronze, 5)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(500).EUt(7)
+                .input(dust, BlackBronze)
+                .input(dust, Nickel)
+                .input(dust, Steel, 3)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, BlackSteel, 5)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(800).EUt(7)
+                .input(dust, SterlingSilver)
+                .input(dust, BismuthBronze)
+                .input(dust, BlackSteel, 4)
+                .input(dust, Steel, 2)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, RedSteel, 8)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(800).EUt(7)
+                .input(dust, RoseGold)
+                .input(dust, Brass)
+                .input(dust, BlackSteel, 4)
+                .input(dust, Steel, 2)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, BlueSteel, 8)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(900).EUt(480)
+                .input(dust, Cobalt, 5)
+                .input(dust, Chrome, 2)
+                .input(dust, Nickel)
+                .input(dust, Molybdenum)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Ultimet, 9)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(900).EUt(7)
+                .input(dust, Brass, 7)
+                .input(dust, Aluminium)
+                .input(dust, Cobalt)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, CobaltBrass, 9)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(7)
+                .input(dust, Saltpeter, 2)
+                .input(dust, Sulfur)
+                .input(dust, Coal, 3)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Gunpowder, 6)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(7)
+                .input(dust, Saltpeter, 2)
+                .input(dust, Sulfur)
+                .input(dust, Charcoal, 3)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Gunpowder, 6)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(300).EUt(7)
+                .input(dust, Saltpeter, 2)
+                .input(dust, Sulfur)
+                .input(dust, Carbon, 3)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Gunpowder, 6)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(900)
+                .input(dust, Electrum)
+                .input(dust, NaquadahAlloy)
+                .input(dust, BlueSteel)
+                .input(dust, RedSteel)
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, FluxedElectrum, 4)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(900)
+                .input(dust, Americium, 2)
+                .input(dust, Titanium)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, DiamericiumTitanium, 3)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(100).EUt(7)
+                .input(dust, Tin)
+                .input(dust, Iron)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, TinAlloy, 2)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(100).EUt(7)
+                .input(dust, Tin, 9)
+                .input(dust, Antimony)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, SolderingAlloy, 10)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(100).EUt(7)
+                .input(dust, Lead, 4)
+                .input(dust, Antimony)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, BatteryAlloy, 5)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(100).EUt(4)
+                .input(dust, Aluminium, 2)
+                .input(dust, Magnesium)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Magnalium, 3)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(200).EUt(3500)
+                .input(dust, TungstenSteel, 5)
+                .input(dust, Chrome)
+                .input(dust, Molybdenum, 2)
+                .input(dust, Vanadium)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, HSSG, 9)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(250).EUt(4000)
+                .input(dust, HSSG, 6)
+                .input(dust, Cobalt)
+                .input(dust, Manganese)
+                .input(dust, Silicon)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, HSSE, 9)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(300).EUt(4500)
+                .input(dust, HSSG, 6)
+                .input(dust, Iridium, 2)
+                .input(dust, Osmium)
+                .notConsumable(new IntCircuitIngredient(2))
+                .output(dust, HSSS, 9)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(300).EUt(1920)
+                .input(dust, Osmium)
+                .input(dust, Iridium, 3)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Osmiridium, 4)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(100).EUt(480)
+                .input(dust, Graphite)
+                .input(dust, Silicon)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, Graphene)
+                .buildAndRegister();
     }
 }

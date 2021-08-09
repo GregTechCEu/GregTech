@@ -1,7 +1,7 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "gregtech:items/material_sets/lignite/dust",
-        "layer1": "gregtech:items/material_sets/lignite/dust_overlay"
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "gregtech:items/material_sets/lignite/dust",
+    "layer1": "gregtech:items/material_sets/lignite/dust_overlay"
+  }
 }

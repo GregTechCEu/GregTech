@@ -5,8 +5,8 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemCapabilityProvider;
-import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
 import gregtech.api.items.metaitem.stats.IItemComponent;
+import gregtech.api.items.metaitem.stats.IItemMaxStackSizeProvider;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,8 +43,8 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack itemStack = player.getHeldItem(hand);
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if(electricItem != null && electricItem.canProvideChargeExternally() && player.isSneaking()) {
-            if(!world.isRemote) {
+        if (electricItem != null && electricItem.canProvideChargeExternally() && player.isSneaking()) {
+            if (!world.isRemote) {
                 boolean isInDischargeMode = isInDischargeMode(itemStack);
                 String locale = "metaitem.electric.discharge_mode." + (isInDischargeMode ? "disabled" : "enabled");
                 player.sendStatusMessage(new TextComponentTranslation(locale), true);
@@ -58,23 +58,23 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
     @Override
     public void onUpdate(ItemStack itemStack, Entity entity) {
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if(!entity.world.isRemote && entity instanceof EntityPlayer && electricItem != null &&
-            electricItem.canProvideChargeExternally() &&
-            isInDischargeMode(itemStack) && electricItem.getCharge() > 0L) {
+        if (!entity.world.isRemote && entity instanceof EntityPlayer && electricItem != null &&
+                electricItem.canProvideChargeExternally() &&
+                isInDischargeMode(itemStack) && electricItem.getCharge() > 0L) {
 
             EntityPlayer entityPlayer = (EntityPlayer) entity;
             InventoryPlayer inventoryPlayer = entityPlayer.inventory;
             long transferLimit = electricItem.getTransferLimit();
 
-            for(int i = 0; i < inventoryPlayer.getSizeInventory(); i++) {
+            for (int i = 0; i < inventoryPlayer.getSizeInventory(); i++) {
                 ItemStack itemInSlot = inventoryPlayer.getStackInSlot(i);
                 IElectricItem slotElectricItem = itemInSlot.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if(slotElectricItem != null && !slotElectricItem.canProvideChargeExternally()) {
+                if (slotElectricItem != null && !slotElectricItem.canProvideChargeExternally()) {
 
                     long chargedAmount = chargeElectricItem(transferLimit, electricItem, slotElectricItem);
-                    if(chargedAmount > 0L) {
+                    if (chargedAmount > 0L) {
                         transferLimit -= chargedAmount;
-                        if(transferLimit == 0L) break;
+                        if (transferLimit == 0L) break;
                     }
                 }
             }
@@ -84,7 +84,7 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
     private static long chargeElectricItem(long maxDischargeAmount, IElectricItem source, IElectricItem target) {
         long maxDischarged = source.discharge(maxDischargeAmount, source.getTier(), false, false, true);
         long maxReceived = target.charge(maxDischarged, source.getTier(), false, true);
-        if(maxReceived > 0L) {
+        if (maxReceived > 0L) {
             long resultDischarged = source.discharge(maxReceived, source.getTier(), false, true, false);
             target.charge(resultDischarged, source.getTier(), false, false);
             return resultDischarged;
@@ -94,16 +94,16 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
 
     private static void setInDischargeMode(ItemStack itemStack, boolean isDischargeMode) {
         NBTTagCompound tagCompound = itemStack.getTagCompound();
-        if(isDischargeMode) {
-            if(tagCompound == null) {
+        if (isDischargeMode) {
+            if (tagCompound == null) {
                 tagCompound = new NBTTagCompound();
                 itemStack.setTagCompound(tagCompound);
             }
             tagCompound.setBoolean("DischargeMode", true);
         } else {
-            if(tagCompound != null) {
+            if (tagCompound != null) {
                 tagCompound.removeTag("DischargeMode");
-                if(tagCompound.isEmpty()) {
+                if (tagCompound.isEmpty()) {
                     itemStack.setTagCompound(null);
                 }
             }
@@ -113,7 +113,7 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
     @Override
     public void addInformation(ItemStack itemStack, List<String> lines) {
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if(electricItem != null && electricItem.canProvideChargeExternally()) {
+        if (electricItem != null && electricItem.canProvideChargeExternally()) {
             lines.add(I18n.format("metaitem.electric.discharge_mode.tooltip"));
         }
     }

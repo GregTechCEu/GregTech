@@ -9,7 +9,10 @@
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [14, 16]
+    "radius": [
+      14,
+      16
+    ]
   },
   "filler": {
     "type": "simple",
@@ -24,11 +27,11 @@
           "weight": 25,
           "value": "ore:talc"
         },
-		{
+        {
           "weight": 25,
           "value": "ore:glauconite"
         },
-		{
+        {
           "weight": 25,
           "value": "ore:pentlandite"
         }

@@ -5,6 +5,8 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nonnull;
+
 public class StoneItemBlock<R extends Enum<R> & IStringSerializable, T extends StoneBlock<R>> extends ItemBlock {
 
     private final T genericBlock;
@@ -25,12 +27,13 @@ public class StoneItemBlock<R extends Enum<R> & IStringSerializable, T extends S
         return block.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 
+    @Nonnull
     @Override
-    public String getTranslationKey(ItemStack stack) {
+    public String getTranslationKey(@Nonnull ItemStack stack) {
         IBlockState blockState = getBlockState(stack);
         return super.getTranslationKey(stack) + '.' +
-            genericBlock.getVariant(blockState).getName() + "." +
-            genericBlock.getChiselingVariant(blockState).getName();
+                genericBlock.getVariant(blockState).getName() + "." +
+                genericBlock.getChiselingVariant(blockState).getName();
     }
 
 }

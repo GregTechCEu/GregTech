@@ -4,7 +4,6 @@ import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.inventory.IItemInfo;
 import gregtech.common.inventory.IItemList;
-import gregtech.common.pipelike.inventory.network.UpdateResult;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 
@@ -112,7 +111,7 @@ public class ItemSourceList implements IItemList, ITickable {
     }
 
     public void removeItemHandler(ItemSource handlerInfo) {
-        if(this.handlerInfoList.remove(handlerInfo)) {
+        if (this.handlerInfoList.remove(handlerInfo)) {
             handlerInfo.setStoredItemsChangeCallback(null);
             handlerInfo.setInvalidationCallback(null);
             for (ItemStackKey itemStackKey : itemInfoMap.keySet()) {

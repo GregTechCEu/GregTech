@@ -42,8 +42,8 @@ public abstract class AbstractBlockModelFactory implements ResourcePackHook.IRes
     @Override
     public boolean resourceExists(ResourceLocation location) {
         return location.getNamespace().equals(GTValues.MODID)
-            && location.getPath().startsWith("blockstates/" + blockNamePrefix)
-            && !location.getPath().contains(".mcmeta");
+                && location.getPath().startsWith("blockstates/" + blockNamePrefix)
+                && !location.getPath().contains(".mcmeta");
     }
 
     @Override

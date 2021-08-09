@@ -1,6 +1,6 @@
 package gregtech.api.gui;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 public interface IScissored {
 

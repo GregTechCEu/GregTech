@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
-public class ImplosionExplosiveProperty extends RecipeProperty<ItemStack>{
+public class ImplosionExplosiveProperty extends RecipeProperty<ItemStack> {
 
     private static final String KEY = "explosives";
 

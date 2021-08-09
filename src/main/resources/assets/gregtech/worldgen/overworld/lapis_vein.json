@@ -9,7 +9,10 @@
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [13, 15]
+    "radius": [
+      13,
+      15
+    ]
   },
   "filler": {
     "type": "simple",
@@ -24,11 +27,11 @@
           "weight": 20,
           "value": "ore:sodalite"
         },
-		{
+        {
           "weight": 35,
           "value": "ore:lapis"
         },
-		{
+        {
           "weight": 15,
           "value": "ore:calcite"
         }

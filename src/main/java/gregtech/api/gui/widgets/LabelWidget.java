@@ -17,9 +17,9 @@ public class LabelWidget extends Widget {
 
     protected boolean xCentered = false;
 
-    protected String text;
-    protected Object[] formatting;
-    private int color;
+    protected final String text;
+    protected final Object[] formatting;
+    private final int color;
     private boolean dropShadow;
 
     public LabelWidget(int xPosition, int yPosition, String text, Object... formatting) {

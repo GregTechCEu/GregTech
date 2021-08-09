@@ -63,7 +63,7 @@ public abstract class SteamBoiler extends MetaTileEntity {
 
     private boolean isBurning;
     private boolean wasBurningAndNeedsUpdate;
-    private ItemStackHandler containerInventory;
+    private final ItemStackHandler containerInventory;
 
     public SteamBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure, OrientedOverlayRenderer renderer, int baseSteamOutput) {
         super(metaTileEntityId);
@@ -158,7 +158,7 @@ public abstract class SteamBoiler extends MetaTileEntity {
             generateSteam();
 
             fillInternalTankFromFluidContainer(containerInventory, containerInventory, 0, 1);
-            
+
             if (getOffsetTimer() % 5 == 0) {
                 pushFluidsIntoNearbyHandlers(STEAM_PUSH_DIRECTIONS);
             }
@@ -199,7 +199,7 @@ public abstract class SteamBoiler extends MetaTileEntity {
     }
 
     private void generateSteam() {
-        if(currentTemperature >= 100) {
+        if (currentTemperature >= 100) {
             if (getOffsetTimer() % getBoilingCycleLength() == 0) {
                 int fillAmount = (int) (baseSteamOutput * (currentTemperature / (getMaxTemperate() * 1.0)));
                 boolean hasDrainedWater = waterFluidTank.drain(1, true) != null;
@@ -210,12 +210,12 @@ public abstract class SteamBoiler extends MetaTileEntity {
                 if (this.hasNoWater && hasDrainedWater) {
                     getWorld().setBlockToAir(getPos());
                     getWorld().createExplosion(null,
-                        getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                        2.0f, true);
+                            getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
+                            2.0f, true);
                 } else this.hasNoWater = !hasDrainedWater;
                 if (filledSteam == 0 && hasDrainedWater) {
                     getWorld().playSound(null, getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5,
-                        SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                            SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0f, 1.0f);
                     steamFluidTank.drain(4000, true);
                 }
             }
@@ -265,31 +265,31 @@ public abstract class SteamBoiler extends MetaTileEntity {
     protected TextureArea getGuiTexture(String pathTemplate) {
         String type = isHighPressure ? "steel" : "bronze";
         return TextureArea.fullImage(String.format("textures/gui/steam/%s/%s.png",
-            type, pathTemplate.replace("%s", type)));
+                type, pathTemplate.replace("%s", type)));
     }
 
     public ModularUI.Builder createUITemplate(EntityPlayer player) {
         return ModularUI.builder(BRONZE_BACKGROUND_TEXTURE, 176, 166)
-            .widget(new LabelWidget(6, 6, getMetaFullName()))
+                .widget(new LabelWidget(6, 6, getMetaFullName()))
 
-            .widget(new ProgressWidget(this::getTemperaturePercent, 96, 26, 10, 54)
-                .setProgressBar(getGuiTexture("bar_%s_empty"),
-                    getGuiTexture("bar_heat"),
-                    MoveType.VERTICAL))
+                .widget(new ProgressWidget(this::getTemperaturePercent, 96, 26, 10, 54)
+                        .setProgressBar(getGuiTexture("bar_%s_empty"),
+                                getGuiTexture("bar_heat"),
+                                MoveType.VERTICAL))
 
-            .widget(new TankWidget(waterFluidTank, 83, 26, 10, 54)
-                .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
-            .widget(new TankWidget(steamFluidTank, 70, 26, 10, 54)
-                .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
+                .widget(new TankWidget(waterFluidTank, 83, 26, 10, 54)
+                        .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
+                .widget(new TankWidget(steamFluidTank, 70, 26, 10, 54)
+                        .setBackgroundTexture(getGuiTexture("bar_%s_empty")))
 
-            .widget(new FluidContainerSlotWidget(containerInventory, 0, 43, 26, true)
-                .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_in")))
-            .widget(new SlotWidget(containerInventory, 1, 43, 62, true, false)
-                .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_out")))
-            .widget(new ImageWidget(43, 44, 18, 18)
-                .setImage(getGuiTexture("overlay_%s_fluid_container")))
+                .widget(new FluidContainerSlotWidget(containerInventory, 0, 43, 26, true)
+                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_in")))
+                .widget(new SlotWidget(containerInventory, 1, 43, 62, true, false)
+                        .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getGuiTexture("overlay_%s_out")))
+                .widget(new ImageWidget(43, 44, 18, 18)
+                        .setImage(getGuiTexture("overlay_%s_fluid_container")))
 
-            .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE);
+                .bindPlayerInventory(player.inventory, BRONZE_SLOT_BACKGROUND_TEXTURE, 0);
     }
 
     private int getBoilingCycleLength() {

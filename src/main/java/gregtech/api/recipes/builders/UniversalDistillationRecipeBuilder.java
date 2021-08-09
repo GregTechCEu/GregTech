@@ -41,7 +41,7 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
             boolean fluidsDivisible = isFluidStackDivisibleForDistillery(this.fluidInputs.get(0), ratio) &&
                     isFluidStackDivisibleForDistillery(this.fluidOutputs.get(i), ratio);
 
-            FluidStack dividedInputFluid = new FluidStack(this.fluidInputs.get(0),  Math.max(1, this.fluidInputs.get(0).amount / ratio));
+            FluidStack dividedInputFluid = new FluidStack(this.fluidInputs.get(0), Math.max(1, this.fluidInputs.get(0).amount / ratio));
             FluidStack dividedOutputFluid = new FluidStack(this.fluidOutputs.get(i), Math.max(1, this.fluidOutputs.get(i).amount / ratio));
 
             if (shouldDivide && fluidsDivisible)

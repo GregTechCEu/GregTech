@@ -34,9 +34,9 @@ public abstract class TieredMetaTileEntity extends MetaTileEntity implements IEn
         long tierVoltage = GTValues.V[tier];
         if (isEnergyEmitter()) {
             this.energyContainer = EnergyContainerHandler.emitterContainer(this,
-                tierVoltage * 64L, tierVoltage, getMaxInputOutputAmperage());
+                    tierVoltage * 64L, tierVoltage, getMaxInputOutputAmperage());
         } else this.energyContainer = EnergyContainerHandler.receiverContainer(this,
-            tierVoltage * 64L, tierVoltage, getMaxInputOutputAmperage());
+                tierVoltage * 64L, tierVoltage, getMaxInputOutputAmperage());
     }
 
     @Override

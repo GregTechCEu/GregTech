@@ -4,8 +4,7 @@ import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.PacketClipboard;
 import net.minecraft.entity.player.EntityPlayerMP;
 
-import java.awt.Desktop;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 

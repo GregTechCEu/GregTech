@@ -3,6 +3,7 @@ package gregtech.common.tools.largedrills;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.ModeSwitchBehavior;
+
 import static gregtech.common.tools.largedrills.DrillModes.*;
 
 
@@ -10,7 +11,7 @@ import static gregtech.common.tools.largedrills.DrillModes.*;
 public class ToolDrills {
     public static class ToolDrillLV extends ToolDrillLarge<DrillMode> {
         public final ModeSwitchBehavior<DrillMode> MODE_SWITCH_BEHAVIOR = new ModeSwitchBehavior<>(DrillMode.class);
-        
+
         @Override
         ModeSwitchBehavior<DrillMode> getModeSwitchBehavior() {
             return MODE_SWITCH_BEHAVIOR;

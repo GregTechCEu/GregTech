@@ -1,9 +1,9 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
-import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -53,10 +53,9 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
 
     public static void pushFluidsFromTank(IPipeTile<FluidPipeType, FluidPipeProperties> pipeTile) {
         PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
-        int blockedConnections = pipeTile.getBlockedConnections();
         BlockFluidPipe blockFluidPipe = (BlockFluidPipe) pipeTile.getPipeBlock();
         for (EnumFacing side : EnumFacing.VALUES) {
-            if ((blockedConnections & 1 << side.getIndex()) > 0) {
+            if (!pipeTile.isConnectionOpenVisual(side)) {
                 continue; //do not dispatch energy to blocked sides
             }
             blockPos.setPos(pipeTile.getPipePos()).move(side);

@@ -23,14 +23,14 @@ public class CokeOvenInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
-            .aisle("XXX", "XXX", "XXX")
-            .aisle("XXX", "C#X", "XXX")
-            .aisle("XXX", "XSX", "XXX")
-            .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.COKE_BRICKS))
-            .where('C', MetaTileEntities.COKE_OVEN, EnumFacing.WEST)
-            .where('S', MetaTileEntities.COKE_OVEN_HATCH, EnumFacing.SOUTH)
-            .where('#', Blocks.AIR.getDefaultState())
-            .build();
+                .aisle("XXX", "XXX", "XXX")
+                .aisle("XXX", "C#X", "XXX")
+                .aisle("XXX", "XSX", "XXX")
+                .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.COKE_BRICKS))
+                .where('C', MetaTileEntities.COKE_OVEN, EnumFacing.WEST)
+                .where('S', MetaTileEntities.COKE_OVEN_HATCH, EnumFacing.SOUTH)
+                .where('#', Blocks.AIR.getDefaultState())
+                .build();
         return Lists.newArrayList(shapeInfo);
     }
 

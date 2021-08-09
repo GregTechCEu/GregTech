@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class BlacklistedBlockFiller extends BlockFiller {
 
     private FillerEntry blockStateFiller;
-    private List<IBlockState> blacklist;
+    private final List<IBlockState> blacklist;
 
     public BlacklistedBlockFiller(List<IBlockState> blacklist) {
         this.blacklist = blacklist;
@@ -40,8 +40,8 @@ public class BlacklistedBlockFiller extends BlockFiller {
     @Method(modid = GTValues.MODID_CT)
     public List<crafttweaker.api.block.IBlockState> ctGetBlacklist() {
         return blacklist.stream()
-            .map(CraftTweakerMC::getBlockState)
-            .collect(Collectors.toList());
+                .map(CraftTweakerMC::getBlockState)
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package gregtech.loaders.dungeon;
 
 import com.google.common.collect.Lists;
+import gregtech.api.util.GTLog;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.LootContext;
@@ -13,6 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -25,7 +27,7 @@ public class ChestGenHooks {
 
     private static final LootCondition[] NO_CONDITIONS = new LootCondition[0];
 
-    private static ChestGenHooks instance = new ChestGenHooks();
+    private static final ChestGenHooks instance = new ChestGenHooks();
 
     private ChestGenHooks() {
     }
@@ -40,7 +42,12 @@ public class ChestGenHooks {
         if (mainPool != null && lootEntryItems.containsKey(event.getName())) {
             ArrayList<LootEntryItem> entryItems = lootEntryItems.get(event.getName());
             for (LootEntryItem entry : entryItems) {
-                mainPool.addEntry(entry);
+                try {
+                    GTLog.logger.info("adding " + entry.getEntryName() + " to lootTable");
+                    mainPool.addEntry(entry);
+                } catch (java.lang.RuntimeException e) {
+                    GTLog.logger.error("Couldn't add " + entry.getEntryName() + " to lootTable");
+                }
             }
         }
         if (mainPool != null && rollVals.containsKey(event.getName())) {
@@ -52,15 +59,16 @@ public class ChestGenHooks {
 
     public static void addItem(ResourceLocation lootTable, ItemStack item, int minAmount, int additionalAmount, int weight) {
         LootEntryItem itemEntry = new LootEntryItem(item.getItem(), weight, 1, new LootFunction[]{
-            new LootFunction(NO_CONDITIONS) {
-                @Override
-                public ItemStack apply(ItemStack stack, Random rand, LootContext context) {
-                    stack.setItemDamage(item.getItemDamage());
-                    stack.setTagCompound(item.getTagCompound());
-                    stack.setCount(minAmount + rand.nextInt(additionalAmount));
-                    return stack;
+                new LootFunction(NO_CONDITIONS) {
+                    @Nonnull
+                    @Override
+                    public ItemStack apply(@Nonnull ItemStack stack, @Nonnull Random rand, @Nonnull LootContext context) {
+                        stack.setItemDamage(item.getItemDamage());
+                        stack.setTagCompound(item.getTagCompound());
+                        stack.setCount(minAmount + rand.nextInt(additionalAmount));
+                        return stack;
+                    }
                 }
-            }
         }, NO_CONDITIONS, "#gregtech:loot_" + item.toString());
         if (lootEntryItems.containsKey(lootTable)) {
             lootEntryItems.get(lootTable).add(itemEntry);

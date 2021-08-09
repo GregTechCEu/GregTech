@@ -50,13 +50,13 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
     private boolean tryPaintSpecialBlock(World world, BlockPos pos, Block block) {
         if (block == Blocks.GLASS) {
             IBlockState newBlockState = Blocks.STAINED_GLASS.getDefaultState()
-                .withProperty(BlockStainedGlass.COLOR, this.color);
+                    .withProperty(BlockStainedGlass.COLOR, this.color);
             world.setBlockState(pos, newBlockState);
             return true;
         }
         if (block == Blocks.GLASS_PANE) {
             IBlockState newBlockState = Blocks.STAINED_GLASS_PANE.getDefaultState()
-                .withProperty(BlockStainedGlassPane.COLOR, this.color);
+                    .withProperty(BlockStainedGlassPane.COLOR, this.color);
             world.setBlockState(pos, newBlockState);
             return true;
         }

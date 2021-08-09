@@ -26,7 +26,7 @@ public class InventoryUtilsTest
      * Used by tests where exception properties need to be verified.
      */
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    public final ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void simulateItemStackMerge_succeeds_for_inserting_single_stack_into_empty_one_slot_inventory()

@@ -7,7 +7,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class FluidContainerSlotWidget extends SlotWidget {
 
-    private boolean requireFilledContainer;
+    private final boolean requireFilledContainer;
 
     public FluidContainerSlotWidget(IItemHandlerModifiable itemHandler, int slotIndex, int xPosition, int yPosition, boolean requireFilledContainer) {
         super(itemHandler, slotIndex, xPosition, yPosition, true, true);

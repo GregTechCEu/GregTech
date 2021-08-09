@@ -42,7 +42,7 @@ public class CraftingRecipeMemory {
 
     private boolean isNullOrUnlockedRecipe(int index) {
         return memorizedRecipes[index] == null ||
-            !memorizedRecipes[index].recipeLocked;
+                !memorizedRecipes[index].recipeLocked;
     }
 
     private void insertRecipe(MemorizedRecipe insertedRecipe, int startIndex) {
@@ -58,15 +58,15 @@ public class CraftingRecipeMemory {
 
     private MemorizedRecipe findOrCreateRecipe(ItemStack itemStack) {
         Optional<MemorizedRecipe> result = Arrays.stream(memorizedRecipes)
-            .filter(Objects::nonNull)
-            .filter(recipe -> ItemStack.areItemStacksEqual(recipe.recipeResult, itemStack))
-            .findFirst();
+                .filter(Objects::nonNull)
+                .filter(recipe -> ItemStack.areItemStacksEqual(recipe.recipeResult, itemStack))
+                .findFirst();
         return result.orElseGet(() -> {
             MemorizedRecipe recipe = new MemorizedRecipe();
             recipe.recipeResult = itemStack.copy();
             int firstFreeIndex = GTUtility.indices(memorizedRecipes)
-                .filter(this::isNullOrUnlockedRecipe)
-                .findFirst().orElse(-1);
+                    .filter(this::isNullOrUnlockedRecipe)
+                    .findFirst().orElse(-1);
             if (firstFreeIndex == -1) {
                 return null;
             }
@@ -109,7 +109,7 @@ public class CraftingRecipeMemory {
     }
 
     public static class MemorizedRecipe {
-        private ItemStackHandler craftingMatrix = new ItemStackHandler(9);
+        private final ItemStackHandler craftingMatrix = new ItemStackHandler(9);
         private ItemStack recipeResult;
         private boolean recipeLocked = false;
         private int timesUsed = 0;

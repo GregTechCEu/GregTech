@@ -9,7 +9,10 @@
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [16, 17]
+    "radius": [
+      16,
+      17
+    ]
   },
   "filler": {
     "type": "simple",
@@ -24,11 +27,11 @@
           "weight": 30,
           "value": "ore:pyrope"
         },
-		{
+        {
           "weight": 30,
           "value": "ore:sapphire"
         },
-		{
+        {
           "weight": 10,
           "value": "ore:green_sapphire"
         }

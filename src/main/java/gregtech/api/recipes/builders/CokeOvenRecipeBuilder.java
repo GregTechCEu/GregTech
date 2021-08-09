@@ -10,7 +10,7 @@ import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder.CraftTweakerIngredientWrapper;
 import gregtech.api.recipes.recipes.CokeOvenRecipe;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
@@ -77,7 +77,7 @@ public class CokeOvenRecipeBuilder {
 
     public ValidationResult<CokeOvenRecipe> build() {
         return ValidationResult.newResult(validate(),
-            new CokeOvenRecipe(input, output, fluidOutput, duration));
+                new CokeOvenRecipe(input, output, fluidOutput, duration));
     }
 
     protected EnumValidationResult validate() {

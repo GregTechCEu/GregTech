@@ -5,7 +5,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class ToolScrewdriver extends ToolBase {
+
+    private static final Set<String> DRIVER_TOOL_CLASSES = Collections.singleton("screwdriver");
 
     @Override
     public float getNormalDamageBonus(EntityLivingBase entity, ItemStack stack, EntityLivingBase attacker) {
@@ -33,6 +38,11 @@ public class ToolScrewdriver extends ToolBase {
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
         return (tool != null && tool.equals("screwdriver")) ||
-            block.getMaterial() == Material.CIRCUITS;
+                block.getMaterial() == Material.CIRCUITS;
+    }
+
+    @Override
+    public Set<String> getToolClasses(ItemStack stack) {
+        return DRIVER_TOOL_CLASSES;
     }
 }

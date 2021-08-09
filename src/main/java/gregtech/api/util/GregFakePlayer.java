@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class GregFakePlayer {
 
-    private static GameProfile GREGTECH = new GameProfile(UUID.fromString("518FDF18-EC2A-4322-832A-58ED1721309B"), "[GregTech]");
+    private static final GameProfile GREGTECH = new GameProfile(UUID.fromString("518FDF18-EC2A-4322-832A-58ED1721309B"), "[GregTech]");
     private static WeakReference<FakePlayer> GREGTECH_PLAYER = null;
 
     public static FakePlayer get(WorldServer world) {

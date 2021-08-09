@@ -18,11 +18,11 @@ import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
 import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
-import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
@@ -56,8 +56,8 @@ import java.util.Map;
 
 public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
-    public static ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "fluid_pipe"), "normal");
-    public static FluidPipeRenderer INSTANCE = new FluidPipeRenderer();
+    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "fluid_pipe"), "normal");
+    public static final FluidPipeRenderer INSTANCE = new FluidPipeRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
     private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
     private final Map<FluidPipeType, PipeTextureInfo> pipeTextures = new HashMap<>();
@@ -135,7 +135,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         FluidPipeType fluidPipeType = tileEntityPipe.getPipeType();
         Material pipeMaterial = tileEntityPipe.getPipeMaterial();
         int paintingColor = tileEntityPipe.getInsulationColor();
-        int connectedSidesMap = blockFluidPipe.getActualConnections(tileEntityPipe, world);
+        int connectedSidesMap = blockFluidPipe.getVisualConnections(tileEntityPipe);
 
         if (fluidPipeType != null && pipeMaterial != null) {
             BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
@@ -150,8 +150,8 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     private int getPipeColor(Material material, int insulationColor) {
-        if(insulationColor == IPipeTile.DEFAULT_INSULATION_COLOR) {
-            return material.materialRGB;
+        if (insulationColor == IPipeTile.DEFAULT_INSULATION_COLOR) {
+            return material.getMaterialRGB();
         } else return insulationColor;
     }
 
@@ -231,7 +231,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             return;
         }
         float thickness = fluidPipeType.getThickness();
-        int connectedSidesMask = blockFluidPipe.getActualConnections(tileEntityPipe, world);
+        int connectedSidesMask = blockFluidPipe.getVisualConnections(tileEntityPipe);
         Cuboid6 baseBox = BlockFluidPipe.getSideBox(null, thickness);
         BlockRenderer.renderCuboid(renderState, baseBox, 0);
         for (EnumFacing renderSide : EnumFacing.VALUES) {

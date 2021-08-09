@@ -3,8 +3,8 @@ package gregtech.common.pipelike.cable.tile;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.common.pipelike.cable.Insulation;
-import gregtech.common.pipelike.cable.WireProperties;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.RoutePath;
 import gregtech.common.pipelike.cable.net.WorldENet;
@@ -42,12 +42,12 @@ public class CableEnergyContainer implements IEnergyContainer {
                 continue; //do not emit if loss is too high
             }
             BlockPos destinationPos = routePath.destination;
-            int blockedConnections = energyNet.getAllNodes().get(destinationPos).blockedConnections;
-            amperesUsed += dispatchEnergyToNode(destinationPos, blockedConnections,
-                voltage - routePath.totalLoss, amperage - amperesUsed);
+            int openConnections = energyNet.getAllNodes().get(destinationPos).openConnections;
+            amperesUsed += dispatchEnergyToNode(destinationPos, openConnections,
+                    voltage - routePath.totalLoss, amperage - amperesUsed);
 
             if (voltage > routePath.minVoltage ||
-                amperesUsed > routePath.maxAmperage) {
+                    amperesUsed > routePath.maxAmperage) {
                 burnAllPaths(paths, voltage, amperage, amperesUsed);
                 break; //break after burning all paths
             }
@@ -68,13 +68,13 @@ public class CableEnergyContainer implements IEnergyContainer {
         }
     }
 
-    private long dispatchEnergyToNode(BlockPos nodePos, int nodeBlockedConnections, long voltage, long amperage) {
+    private long dispatchEnergyToNode(BlockPos nodePos, int nodeOpenConnections, long voltage, long amperage) {
         long amperesUsed = 0L;
         //use pooled mutable to avoid creating new objects every tick
         World world = tileEntityCable.getPipeWorld();
         PooledMutableBlockPos blockPos = PooledMutableBlockPos.retain();
         for (EnumFacing facing : EnumFacing.VALUES) {
-            if ((nodeBlockedConnections & 1 << facing.getIndex()) > 0) {
+            if ((nodeOpenConnections & 1 << facing.getIndex()) == 0) {
                 continue; //do not dispatch energy to blocked sides
             }
             blockPos.setPos(nodePos).move(facing);
@@ -114,8 +114,8 @@ public class CableEnergyContainer implements IEnergyContainer {
     public long changeEnergy(long energyToAdd) {
         //just a fallback case if somebody will call this method
         return acceptEnergyFromNetwork(EnumFacing.UP,
-            energyToAdd / getInputVoltage(),
-            energyToAdd / getInputAmperage()) * getInputVoltage();
+                energyToAdd / getInputVoltage(),
+                energyToAdd / getInputAmperage()) * getInputVoltage();
     }
 
     @Override
@@ -152,7 +152,7 @@ public class CableEnergyContainer implements IEnergyContainer {
     private EnergyNet getEnergyNet() {
         EnergyNet currentEnergyNet = this.currentEnergyNet.get();
         if (currentEnergyNet != null && currentEnergyNet.isValid() &&
-            currentEnergyNet.containsNode(tileEntityCable.getPipePos()))
+                currentEnergyNet.containsNode(tileEntityCable.getPipePos()))
             return currentEnergyNet; //return current net if it is still valid
         WorldENet worldENet = (WorldENet) tileEntityCable.getPipeBlock().getWorldPipeNet(tileEntityCable.getPipeWorld());
         currentEnergyNet = worldENet.getNetFromPos(tileEntityCable.getPipePos());

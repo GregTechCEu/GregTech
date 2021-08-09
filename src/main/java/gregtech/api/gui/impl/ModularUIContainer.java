@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SPacketSetSlot;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -28,18 +29,18 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
     private final ModularUI modularUI;
 
     public boolean accumulateWidgetUpdateData = false;
-    public List<PacketUIWidgetUpdate> accumulatedUpdates = new ArrayList<>();
+    public final List<PacketUIWidgetUpdate> accumulatedUpdates = new ArrayList<>();
 
     public ModularUIContainer(ModularUI modularUI) {
         this.modularUI = modularUI;
         modularUI.guiWidgets.values().forEach(widget -> widget.setUiAccess(this));
         modularUI.guiWidgets.values().stream()
-            .flatMap(widget -> widget.getNativeWidgets().stream())
-            .forEach(nativeWidget -> {
-                Slot slot = nativeWidget.getHandle();
-                slotMap.put(slot, nativeWidget);
-                addSlotToContainer(slot);
-            });
+                .flatMap(widget -> widget.getNativeWidgets().stream())
+                .forEach(nativeWidget -> {
+                    Slot slot = nativeWidget.getHandle();
+                    slotMap.put(slot, nativeWidget);
+                    addSlotToContainer(slot);
+                });
         modularUI.triggerOpenListeners();
     }
 
@@ -52,13 +53,13 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
     @Override
     public void notifyWidgetChange() {
         List<INativeWidget> nativeWidgets = modularUI.guiWidgets.values().stream()
-            .flatMap(widget -> widget.getNativeWidgets().stream())
-            .collect(Collectors.toList());
+                .flatMap(widget -> widget.getNativeWidgets().stream())
+                .collect(Collectors.toList());
 
         Set<INativeWidget> removedWidgets = new HashSet<>(slotMap.values());
         removedWidgets.removeAll(nativeWidgets);
-        if(!removedWidgets.isEmpty()) {
-            for(INativeWidget removedWidget : removedWidgets) {
+        if (!removedWidgets.isEmpty()) {
+            for (INativeWidget removedWidget : removedWidgets) {
                 Slot slotHandle = removedWidget.getHandle();
                 this.slotMap.remove(slotHandle);
                 //replace removed slot with empty placeholder to avoid list index shift
@@ -71,16 +72,16 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
 
         Set<INativeWidget> addedWidgets = new HashSet<>(nativeWidgets);
         addedWidgets.removeAll(slotMap.values());
-        if(!addedWidgets.isEmpty()) {
+        if (!addedWidgets.isEmpty()) {
             int[] emptySlotIndexes = inventorySlots.stream()
-                .filter(it -> it instanceof EmptySlotPlaceholder)
-                .mapToInt(slot -> slot.slotNumber).toArray();
+                    .filter(it -> it instanceof EmptySlotPlaceholder)
+                    .mapToInt(slot -> slot.slotNumber).toArray();
             int currentIndex = 0;
-            for(INativeWidget addedWidget : addedWidgets) {
+            for (INativeWidget addedWidget : addedWidgets) {
                 Slot slotHandle = addedWidget.getHandle();
                 //add or replace empty slot in inventory
                 this.slotMap.put(slotHandle, addedWidget);
-                if(currentIndex < emptySlotIndexes.length) {
+                if (currentIndex < emptySlotIndexes.length) {
                     int slotIndex = emptySlotIndexes[currentIndex++];
                     slotHandle.slotNumber = slotIndex;
                     this.inventorySlots.set(slotIndex, slotHandle);
@@ -99,13 +100,13 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
     }
 
     @Override
-    public void onContainerClosed(EntityPlayer playerIn) {
+    public void onContainerClosed(@Nonnull EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
         modularUI.triggerCloseListeners();
     }
 
     @Override
-    public void addListener(IContainerListener listener) {
+    public void addListener(@Nonnull IContainerListener listener) {
         super.addListener(listener);
         modularUI.guiWidgets.values().forEach(Widget::detectAndSendChanges);
     }
@@ -136,8 +137,9 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         }
     }
 
+    @Nonnull
     @Override
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+    public ItemStack slotClick(int slotId, int dragType, @Nonnull ClickType clickTypeIn, @Nonnull EntityPlayer player) {
         if (slotId >= 0 && slotId < inventorySlots.size()) {
             Slot slot = getSlot(slotId);
             ItemStack result = slotMap.get(slot).slotClick(dragType, clickTypeIn, player);
@@ -149,26 +151,27 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
         return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 
-    private PerTickIntCounter transferredPerTick = new PerTickIntCounter(0);
+    private final PerTickIntCounter transferredPerTick = new PerTickIntCounter(0);
 
     private List<INativeWidget> getShiftClickSlots(ItemStack itemStack, boolean fromContainer) {
         return slotMap.values().stream()
-            .filter(it -> it.canMergeSlot(itemStack))
-            .filter(it -> it.getSlotLocationInfo().isPlayerInventory == fromContainer)
-            .sorted(Comparator.comparing(s -> (fromContainer ? -1 : 1) * s.getHandle().slotNumber))
-            .collect(Collectors.toList());
+                .filter(it -> it.canMergeSlot(itemStack))
+                .filter(it -> it.getSlotLocationInfo().isPlayerInventory == fromContainer)
+                .sorted(Comparator.comparing(s -> (fromContainer ? -1 : 1) * s.getHandle().slotNumber))
+                .collect(Collectors.toList());
     }
 
     @Override
     public boolean attemptMergeStack(ItemStack itemStack, boolean fromContainer, boolean simulate) {
         List<Slot> inventorySlots = getShiftClickSlots(itemStack, fromContainer).stream()
-            .map(INativeWidget::getHandle)
-            .collect(Collectors.toList());
+                .map(INativeWidget::getHandle)
+                .collect(Collectors.toList());
         return GTUtility.mergeItemStack(itemStack, inventorySlots, simulate);
     }
 
+    @Nonnull
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+    public ItemStack transferStackInSlot(@Nonnull EntityPlayer player, int index) {
         Slot slot = inventorySlots.get(index);
         if (!slot.canTakeStack(player)) {
             return ItemStack.EMPTY;
@@ -217,12 +220,12 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
     }
 
     @Override
-    public boolean canMergeSlot(ItemStack stack, Slot slotIn) {
+    public boolean canMergeSlot(@Nonnull ItemStack stack, @Nonnull Slot slotIn) {
         return slotMap.get(slotIn).canMergeSlot(stack);
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer playerIn) {
+    public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
         return true;
     }
 
@@ -262,22 +265,23 @@ public class ModularUIContainer extends Container implements WidgetUIAccess {
             super(EMPTY_INVENTORY, 0, -100000, -100000);
         }
 
+        @Nonnull
         @Override
         public ItemStack getStack() {
             return ItemStack.EMPTY;
         }
 
         @Override
-        public void putStack(ItemStack stack) {
+        public void putStack(@Nonnull ItemStack stack) {
         }
 
         @Override
-        public boolean isItemValid(ItemStack stack) {
+        public boolean isItemValid(@Nonnull ItemStack stack) {
             return false;
         }
 
         @Override
-        public boolean canTakeStack(EntityPlayer playerIn) {
+        public boolean canTakeStack(@Nonnull EntityPlayer playerIn) {
             return false;
         }
 

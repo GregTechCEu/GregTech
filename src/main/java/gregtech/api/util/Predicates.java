@@ -1,7 +1,7 @@
 package gregtech.api.util;
 
-import java.util.*;
-import java.util.function.*;
+import java.util.Arrays;
+import java.util.function.Predicate;
 
 /**
  * Various Quality-of-Life methods for working with Java 8 Predicates.
@@ -20,7 +20,7 @@ public final class Predicates {
     @SafeVarargs
     public static <T> Predicate<T> or(Predicate<T>... predicates) {
         return Arrays.stream(predicates)
-                     .reduce(x -> false, Predicate::or);
+                .reduce(x -> false, Predicate::or);
     }
 
     /**
@@ -29,6 +29,6 @@ public final class Predicates {
     @SafeVarargs
     public static <T> Predicate<T> and(Predicate<T>... predicates) {
         return Arrays.stream(predicates)
-                     .reduce(x -> true, Predicate::and);
+                .reduce(x -> true, Predicate::and);
     }
 }

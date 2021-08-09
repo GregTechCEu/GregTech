@@ -42,7 +42,7 @@ public class NanoSaberBehavior extends ToggleEnergyConsumerBehavior implements I
     @Override
     public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
         HashMultimap<String, AttributeModifier> modifiers = HashMultimap.create();
-        if(slot == EntityEquipmentSlot.MAINHAND) {
+        if (slot == EntityEquipmentSlot.MAINHAND) {
             double attackDamage = baseAttackDamage + (isItemActive(stack) ? additionalAttackDamage : 0.0D);
             modifiers.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -2.0, 0));
             modifiers.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon Modifier", attackDamage, 0));
@@ -63,7 +63,7 @@ public class NanoSaberBehavior extends ToggleEnergyConsumerBehavior implements I
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         return enchantment != Enchantments.UNBREAKING &&
-            enchantment != Enchantments.MENDING &&
-            enchantment.type.canEnchantItem(Items.IRON_SWORD);
+                enchantment != Enchantments.MENDING &&
+                enchantment.type.canEnchantItem(Items.IRON_SWORD);
     }
 }

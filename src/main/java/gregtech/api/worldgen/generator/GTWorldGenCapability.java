@@ -78,7 +78,7 @@ public class GTWorldGenCapability {
 
     private static class WorldGenCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
 
-        private GTWorldGenCapability capabilityInstance = new GTWorldGenCapability();
+        private final GTWorldGenCapability capabilityInstance = new GTWorldGenCapability();
 
         @Override
         public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {

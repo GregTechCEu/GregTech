@@ -209,7 +209,7 @@ public class BlockPattern {
         FRONT(Function.identity()),
         BACK(EnumFacing::getOpposite);
 
-        Function<EnumFacing, EnumFacing> actualFacing;
+        final Function<EnumFacing, EnumFacing> actualFacing;
 
         RelativeDirection(Function<EnumFacing, EnumFacing> actualFacing) {
             this.actualFacing = actualFacing;

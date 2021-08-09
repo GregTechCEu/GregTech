@@ -48,8 +48,8 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder inputs(IIngredient... ingredients) {
         this.backingBuilder.inputsIngredients(Arrays.stream(ingredients)
-            .map(s -> new CountableIngredient(new CraftTweakerIngredientWrapper(s), s.getAmount()))
-            .collect(Collectors.toList()));
+                .map(s -> new CountableIngredient(new CraftTweakerIngredientWrapper(s), s.getAmount()))
+                .collect(Collectors.toList()));
         return this;
     }
 
@@ -77,16 +77,16 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder fluidInputs(ILiquidStack... ingredients) {
         this.backingBuilder.fluidInputs(Arrays.stream(ingredients)
-            .map(CraftTweakerMC::getLiquidStack)
-            .collect(Collectors.toList()));
+                .map(CraftTweakerMC::getLiquidStack)
+                .collect(Collectors.toList()));
         return this;
     }
 
     @ZenMethod
     public CTRecipeBuilder outputs(IItemStack... ingredients) {
         this.backingBuilder.outputs(Arrays.stream(ingredients)
-            .map(CraftTweakerMC::getItemStack)
-            .collect(Collectors.toList()));
+                .map(CraftTweakerMC::getItemStack)
+                .collect(Collectors.toList()));
         return this;
     }
 
@@ -99,8 +99,8 @@ public class CTRecipeBuilder {
     @ZenMethod
     public CTRecipeBuilder fluidOutputs(ILiquidStack... ingredients) {
         this.backingBuilder.fluidOutputs(Arrays.stream(ingredients)
-            .map(CraftTweakerMC::getLiquidStack)
-            .collect(Collectors.toList()));
+                .map(CraftTweakerMC::getLiquidStack)
+                .collect(Collectors.toList()));
         return this;
     }
 
@@ -109,8 +109,8 @@ public class CTRecipeBuilder {
         boolean applied = this.backingBuilder.applyProperty(key, value);
         if (!applied) {
             throw new IllegalArgumentException("Property " +
-                key + " cannot be applied to recipe type " +
-                backingBuilder.getClass().getSimpleName());
+                    key + " cannot be applied to recipe type " +
+                    backingBuilder.getClass().getSimpleName());
         }
         return this;
     }
@@ -120,8 +120,8 @@ public class CTRecipeBuilder {
         boolean applied = this.backingBuilder.applyProperty(key, CraftTweakerMC.getItemStack(item));
         if (!applied) {
             throw new IllegalArgumentException("Property " +
-                key + " cannot be applied to recipe type " +
-                backingBuilder.getClass().getSimpleName() + " for Item " + CraftTweakerMC.getItemStack(item).getDisplayName());
+                    key + " cannot be applied to recipe type " +
+                    backingBuilder.getClass().getSimpleName() + " for Item " + CraftTweakerMC.getItemStack(item).getDisplayName());
         }
         return this;
     }
@@ -143,8 +143,8 @@ public class CTRecipeBuilder {
 
         public CraftTweakerIngredientWrapper(IIngredient ingredient) {
             super(ingredient.getItems().stream()
-                .map(CraftTweakerMC::getItemStack)
-                .toArray(ItemStack[]::new));
+                    .map(CraftTweakerMC::getItemStack)
+                    .toArray(ItemStack[]::new));
             this.ingredient = ingredient;
         }
 

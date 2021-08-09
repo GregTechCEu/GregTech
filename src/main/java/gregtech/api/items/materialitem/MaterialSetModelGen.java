@@ -10,21 +10,21 @@ import java.util.Arrays;
 public class MaterialSetModelGen {
 
     private static final String PATTERN_NO_OVERLAY =
-        "{\n" +
-            "    \"parent\": \"item/generated\",\n" +
-            "    \"textures\": {\n" +
-            "        \"layer0\": \"$MAIN$\"\n" +
-            "    }\n" +
-            "}";
+            "{\n" +
+                    "    \"parent\": \"item/generated\",\n" +
+                    "    \"textures\": {\n" +
+                    "        \"layer0\": \"$MAIN$\"\n" +
+                    "    }\n" +
+                    "}";
 
     private static final String PATTERN_WITH_OVERLAY =
-        "{\n" +
-            "    \"parent\": \"item/generated\",\n" +
-            "    \"textures\": {\n" +
-            "        \"layer0\": \"$MAIN$\",\n" +
-            "        \"layer1\": \"$OVERLAY$\"\n" +
-            "    }\n" +
-            "}";
+            "{\n" +
+                    "    \"parent\": \"item/generated\",\n" +
+                    "    \"textures\": {\n" +
+                    "        \"layer0\": \"$MAIN$\",\n" +
+                    "        \"layer1\": \"$OVERLAY$\"\n" +
+                    "    }\n" +
+                    "}";
 
     public static void main(String[] args) throws Exception {
         File gregtechRoot = new File("src/main/resources/assets/gregtech");

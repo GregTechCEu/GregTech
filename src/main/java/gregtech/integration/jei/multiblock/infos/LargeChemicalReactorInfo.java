@@ -42,39 +42,39 @@ public class LargeChemicalReactorInfo extends MultiblockInfoPage {
                 .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[3], EnumFacing.WEST);
 
         shapeInfo.add(
-            baseBuilder.shallowCopy()
-                .aisle("IXX", "FXX", "XXX")
-                .aisle("EXX", "SPC", "XXX")
-                .aisle("OXX", "HXX", "XXX")
-                .build()
+                baseBuilder.shallowCopy()
+                        .aisle("IXX", "FXX", "XXX")
+                        .aisle("EXX", "SPC", "XXX")
+                        .aisle("OXX", "HXX", "XXX")
+                        .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
-                .aisle("IXX", "FXX", "XXX")
-                .aisle("EXX", "SPX", "XCX")
-                .aisle("OXX", "HXX", "XXX")
-                .build()
+                        .aisle("IXX", "FXX", "XXX")
+                        .aisle("EXX", "SPX", "XCX")
+                        .aisle("OXX", "HXX", "XXX")
+                        .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
-                .aisle("IXX", "FXX", "XXX")
-                .aisle("ECX", "SPX", "XXX")
-                .aisle("OXX", "HXX", "XXX")
-                .build()
+                        .aisle("IXX", "FXX", "XXX")
+                        .aisle("ECX", "SPX", "XXX")
+                        .aisle("OXX", "HXX", "XXX")
+                        .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
-                .aisle("IXX", "FCX", "XXX")
-                .aisle("EXX", "SPX", "XXX")
-                .aisle("OXX", "HXX", "XXX")
-                .build()
+                        .aisle("IXX", "FCX", "XXX")
+                        .aisle("EXX", "SPX", "XXX")
+                        .aisle("OXX", "HXX", "XXX")
+                        .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
-                .aisle("IXX", "FXX", "XXX")
-                .aisle("EXX", "SPX", "XXX")
-                .aisle("OXX", "HCX", "XXX")
-                .build()
+                        .aisle("IXX", "FXX", "XXX")
+                        .aisle("EXX", "SPX", "XXX")
+                        .aisle("OXX", "HCX", "XXX")
+                        .build()
         );
 
         return shapeInfo;

@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 
 public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
 
-    private TIntList connectedCrystalsIds = new TIntArrayList();
+    private final TIntList connectedCrystalsIds = new TIntArrayList();
     private boolean hasDragonEggAmplifier = false;
     private boolean isActive = false;
 
@@ -81,10 +81,10 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
         if (!(getWorld().provider instanceof WorldProviderEnd)) {
             return; //don't try to do anything outside end dimension
         }
-        if (getOffsetTimer() % 20 == 0 || getTimer() == 0) {
+        if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
             updateDragonEggStatus();
         }
-        if (getOffsetTimer() % 200 == 0 || getTimer() == 0) {
+        if (getOffsetTimer() % 200 == 0 || isFirstTick()) {
             updateConnectedCrystals();
         }
         int totalEnergyGeneration = 0;
@@ -146,9 +146,9 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
         this.connectedCrystalsIds.clear();
         final double maxDistance = 64 * 64;
         List<EntityEnderCrystal> enderCrystals = Arrays.stream(BiomeEndDecorator.getSpikesForWorld(getWorld()))
-            .flatMap(endSpike -> getWorld().getEntitiesWithinAABB(EntityEnderCrystal.class, endSpike.getTopBoundingBox()).stream())
-            .filter(crystal -> crystal.getDistanceSq(getPos()) < maxDistance)
-            .collect(Collectors.toList());
+                .flatMap(endSpike -> getWorld().getEntitiesWithinAABB(EntityEnderCrystal.class, endSpike.getTopBoundingBox()).stream())
+                .filter(crystal -> crystal.getDistanceSq(getPos()) < maxDistance)
+                .collect(Collectors.toList());
 
         for (EntityEnderCrystal entityEnderCrystal : enderCrystals) {
             BlockPos beamTarget = entityEnderCrystal.getBeamTarget();

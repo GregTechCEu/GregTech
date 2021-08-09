@@ -10,6 +10,14 @@ public class ConfigHolder {
     @Config.Name("Unofficial Options")
     public static UnofficialOptions U = new UnofficialOptions();
 
+    @Config.Comment("Whether to enable that Steam Multiblocks use Steel instead of Bronze. Default: false")
+    @Config.RequiresMcRestart
+    public static boolean steelSteamMultiblocks = false;
+
+    @Config.Comment("Steam to EU multiplier for Steam Multiblocks. 1.0 means 1 Steam -> 1 EU. 0.5 means 2 Steam -> 1 EU")
+    @Config.RequiresMcRestart
+    public static double multiblockSteamtoEU = 0.5;
+
     @Config.Comment("Whether to enable more verbose logging. Default: false")
     public static boolean debug = false;
 
@@ -117,11 +125,8 @@ public class ConfigHolder {
 
     public static class VanillaRecipes {
 
-        @Config.Comment("Whether to nerf the paper crafting recipe. Default: true")
-        public boolean nerfPaperCrafting = true;
-
-        @Config.Comment("Whether to make flint and steel recipe require a steel nugget instead of an iron ingot. Default: true.")
-        public boolean flintAndSteelRequireSteel = true;
+        @Config.Comment("Whether to make glass related recipes harder. Default: true")
+        public boolean hardGlassRecipes = true;
 
         @Config.Comment("Whether to nerf wood crafting to 2 planks from 1 log. Default: false")
         public boolean nerfWoodCrafting = false;
@@ -129,14 +134,29 @@ public class ConfigHolder {
         @Config.Comment("Whether to nerf wood crafting to 2 sticks from 2 planks. Default: false")
         public boolean nerfStickCrafting = false;
 
+        @Config.Comment("Whether to nerf the paper crafting recipe. Default: true")
+        public boolean nerfPaperCrafting = true;
+
+        @Config.Comment("Whether to make wood related recipes harder. Excludes sticks and planks. Default: false")
+        public boolean hardWoodRecipes = false;
+
+        @Config.Comment("Whether to make redstone related recipes harder. Default: false")
+        public boolean hardRedstoneRecipes = false;
+
+        @Config.Comment("Recipes for items like iron doors, trapdoors, pressure plates, cauldrons, hoppers, and iron bars require iron plates, sticks, and more. Default: true")
+        public boolean hardIronRecipes = true;
+
+        @Config.Comment("Whether to make miscellaneous recipes harder. Default: false")
+        public boolean hardMiscRecipes = false;
+
+        @Config.Comment("Whether to make flint and steel recipe require a steel of iron. Default: true.")
+        public boolean flintAndSteelRequireSteel = true;
+
         @Config.Comment("Whether to make the iron bucket recipe harder by requiring a hammer and plates. Default: true")
         public boolean bucketRequirePlatesAndHammer = true;
 
-        @Config.Comment("Recipes for items like iron doors, trapdoors, pressure plates, cauldrons, hoppers, and iron bars require iron plates and a hammer. Default: true")
-        public boolean ironConsumingCraftingRecipesRequirePlates = true;
-
-        @Config.Comment("Whether crafting a bowl requires a knife instead of only planks. Default: true")
-        public boolean bowlRequireKnife = true;
+        @Config.Comment("Whether to make vanilla tools and armor recipes harder. Excludes flint and steel, and buckets. Default: false")
+        public boolean hardToolArmorRecipes = false;
     }
 
     public static class NanoSaberConfiguration {
@@ -225,12 +245,12 @@ public class ConfigHolder {
             @Config.Comment("Whether or not to use polymers instead of rare metals for Carbon Fibers. REMOVES THE CHANCED OUTPUT! Default: false")
             public boolean polymerCarbonFiber = false;
 
-            @Config.Comment("The default color to overlay onto machines. \n16777215 (0xFFFFFF in decimal) is no coloring (default), and 13819135 (0xD2DCFF in decimal) is the classic blue from GT5.")
+            @Config.Comment("The default color to overlay onto machines. \n16777215 (0xFFFFFF in decimal) is no coloring (default), and 13819135 (0xD2DCFF in decimal) is the classic blue from GT5. THIS IS SERVER SIDE!!!")
             @Config.Name("Default Machine Color")
             @Config.RequiresMcRestart
             public int defaultPaintingColor = 0xFFFFFF;
 
-            @Config.Comment("The default color to overlay onto machines. \n7829367 (0x777777 in decimal) is no coloring (default), and 4210752 (0x404040 in decimal) is the classic black from GT5.")
+            @Config.Comment("The default color to overlay onto cable insulation. \n7829367 (0x777777 in decimal) is no coloring (default), and 4210752 (0x404040 in decimal) is the classic black from GT5. THIS IS SERVER SIDE!!!")
             @Config.Name("Default Cable Color")
             @Config.RequiresMcRestart
             public int defaultInsulationColor = 0x777777;
@@ -239,6 +259,14 @@ public class ConfigHolder {
             @Config.Name("Use electric blast furnace temperature bonuses")
             @Config.RequiresMcRestart
             public boolean ebfTemperatureBonuses = true;
+
+            @Config.Comment("Enable more challenging recipes for Electric Blast Furnace Coils. Default: true")
+            @Config.Name("Enable harder heating coil recipes")
+            public boolean harderHeatingCoils = true;
+
+            @Config.Comment("Enable more challenging recipes for Energy Input and Output hatches. Default: false")
+            @Config.Name("Enable harder energy hatch recipes")
+            public boolean harderEnergyHatches = true;
         }
 
         public static class GT6 {

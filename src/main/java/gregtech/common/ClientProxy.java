@@ -9,7 +9,7 @@ import gregtech.api.GTValues;
 import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.ToolRenderHandler;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTLog;
@@ -19,6 +19,7 @@ import gregtech.common.covers.facade.FacadeRenderer;
 import gregtech.common.items.MetaItems;
 import gregtech.common.render.CableRenderer;
 import gregtech.common.render.FluidPipeRenderer;
+import gregtech.common.render.ItemPipeRenderer;
 import gregtech.common.render.StoneRenderer;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
@@ -71,39 +72,40 @@ public class ClientProxy extends CommonProxy {
     private static final ResourceLocation GREGTECH_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/gregtechcape.png");
 
     public static final IBlockColor COMPRESSED_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-        state.getValue(((BlockCompressed) state.getBlock()).variantProperty).materialRGB;
+            state.getValue(((BlockCompressed) state.getBlock()).variantProperty).getMaterialRGB();
 
     public static final IItemColor COMPRESSED_ITEM_COLOR = (stack, tintIndex) -> {
         BlockCompressed block = (BlockCompressed) ((ItemBlock) stack.getItem()).getBlock();
         IBlockState state = block.getStateFromMeta(stack.getItemDamage());
-        return state.getValue(block.variantProperty).materialRGB;
+        return state.getValue(block.variantProperty).getMaterialRGB();
     };
 
     public static final IBlockColor FRAME_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) -> {
         Material material = ((BlockFrame) state.getBlock()).frameMaterial;
-        return material.materialRGB;
+        return material.getMaterialRGB();
     };
 
     public static final IItemColor FRAME_ITEM_COLOR = (stack, tintIndex) -> {
         IBlockState frameState = ((FrameItemBlock) stack.getItem()).getBlockState(stack);
         BlockFrame block = (BlockFrame) frameState.getBlock();
-        return block.frameMaterial.materialRGB;
+        return block.frameMaterial.getMaterialRGB();
     };
 
     public static final IBlockColor ORE_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-        tintIndex == 1 ? ((BlockOre) state.getBlock()).material.materialRGB : 0xFFFFFF;
+            tintIndex == 1 ? ((BlockOre) state.getBlock()).material.getMaterialRGB() : 0xFFFFFF;
 
     public static final IItemColor ORE_ITEM_COLOR = (stack, tintIndex) ->
-        tintIndex == 1 ? ((BlockOre) ((ItemBlock) stack.getItem()).getBlock()).material.materialRGB : 0xFFFFFF;
+            tintIndex == 1 ? ((BlockOre) ((ItemBlock) stack.getItem()).getBlock()).material.getMaterialRGB() : 0xFFFFFF;
 
     public static final IBlockColor FOAM_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
-        state.getValue(BlockColored.COLOR).colorValue;
+            state.getValue(BlockColored.COLOR).colorValue;
 
     public void onPreLoad() {
         super.onPreLoad();
         MetaTileEntityRenderer.preInit();
         CableRenderer.preInit();
         FluidPipeRenderer.preInit();
+        ItemPipeRenderer.preInit();
         StoneRenderer.preInit();
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
@@ -149,7 +151,7 @@ public class ClientProxy extends CommonProxy {
         if (unificationEntry != null && unificationEntry.material != null) {
             chemicalFormula = unificationEntry.material.getChemicalFormula();
 
-        // Test for Fluids
+            // Test for Fluids
         } else if (ItemNBTUtils.hasTag(itemStack)) {
 
             // Vanilla bucket
@@ -163,17 +165,22 @@ public class ClientProxy extends CommonProxy {
                 }
             }
 
-        // Water buckets have a separate registry name from other buckets
-        } else if(itemStack.getItem().equals(Items.WATER_BUCKET)) {
+            // Water buckets have a separate registry name from other buckets
+        } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) {
             chemicalFormula = FluidTooltipUtil.getWaterTooltip();
         }
         if (chemicalFormula != null && !chemicalFormula.isEmpty()) {
             event.getToolTip().add(1, ChatFormatting.YELLOW.toString() + chemicalFormula);
         }
     }
+
     private static final String[] clearRecipes = new String[]{
             "quantum_tank",
-            "quantum_chest"
+            "quantum_chest",
+            "super_chest",
+            "super_tank",
+            "drum.",
+            "_tank",
     };
 
     @SubscribeEvent
@@ -246,8 +253,8 @@ public class ClientProxy extends CommonProxy {
                 connection.disconnect();
             }
         } catch (UnknownHostException |
-            SocketTimeoutException |
-            MalformedURLException ignored) {
+                SocketTimeoutException |
+                MalformedURLException ignored) {
         } catch (IOException exception) {
             GTLog.logger.warn("Failed to fetch cape list", exception);
         }

@@ -19,8 +19,8 @@ public class InputIngredient implements IIngredient {
 
     public InputIngredient(CountableIngredient backingIngredient) {
         iingredient = CraftTweakerMC
-            .getIIngredient(backingIngredient.getIngredient())
-            .amount(backingIngredient.getCount());
+                .getIIngredient(backingIngredient.getIngredient())
+                .amount(backingIngredient.getCount());
     }
 
     @Override

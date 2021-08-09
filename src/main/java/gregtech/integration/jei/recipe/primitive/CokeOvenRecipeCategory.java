@@ -11,46 +11,49 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 
+import javax.annotation.Nonnull;
+
 public class CokeOvenRecipeCategory extends PrimitiveRecipeCategory<CokeOvenRecipe, CokeOvenRecipeWrapper> {
 
     protected final IDrawable slot;
     protected final IDrawable progressBar;
-	protected final IDrawable fluidTank;
-	protected final IDrawable fluidTankOverlay;
+    protected final IDrawable fluidTank;
+    protected final IDrawable fluidTankOverlay;
 
-	
-	public CokeOvenRecipeCategory(IGuiHelper guiHelper) {
-		super("coke_oven",
-            "gregtech.machine.coke_oven.name",
-            guiHelper.createBlankDrawable(176, 166), guiHelper);
 
-        this.slot = guiHelper.createDrawable(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18, 18, 18);
-        this.progressBar = guiHelper.createDrawable(GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR.imageLocation, 0, 0, 20, 15, 20, 30);
-		this.fluidTank = guiHelper.createDrawable(GuiTextures.FLUID_TANK_BACKGROUND.imageLocation, 0, 0, 20, 58, 20, 58);
-		this.fluidTankOverlay = guiHelper.createDrawable(GuiTextures.FLUID_TANK_OVERLAY.imageLocation, 0, 0, 20, 58, 20, 58);
-	}
+    public CokeOvenRecipeCategory(IGuiHelper guiHelper) {
+        super("coke_oven",
+                "gregtech.machine.coke_oven.name",
+                guiHelper.createBlankDrawable(176, 166), guiHelper);
 
-	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, CokeOvenRecipeWrapper recipeWrapper, IIngredients ingredients) {
-		IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-		IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
-		itemStackGroup.init(0, true, 32, 19);
-		itemStackGroup.init(1, false, 84, 19);
-		itemStackGroup.set(ingredients);
-		fluidStackGroup.init(0, false, 133, 3, 20, 58, 32000, true, this.fluidTankOverlay);
-		fluidStackGroup.set(ingredients);
-	}
+        this.slot = guiHelper.drawableBuilder(GuiTextures.SLOT.imageLocation, 0, 0, 18, 18).setTextureSize(18, 18).build();
+        this.progressBar = guiHelper.drawableBuilder(GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR.imageLocation, 0, 0, 20, 15).setTextureSize(20, 30).build();
+        this.fluidTank = guiHelper.drawableBuilder(GuiTextures.FLUID_TANK_BACKGROUND.imageLocation, 0, 0, 20, 58).setTextureSize(20, 58).build();
+        this.fluidTankOverlay = guiHelper.drawableBuilder(GuiTextures.FLUID_TANK_OVERLAY.imageLocation, 0, 0, 20, 58).setTextureSize(20, 58).build();
+    }
 
-	@Override
-	public IRecipeWrapper getRecipeWrapper(CokeOvenRecipe recipe) {
-		return new CokeOvenRecipeWrapper(recipe);
-	}
+    @Override
+    public void setRecipe(IRecipeLayout recipeLayout, @Nonnull CokeOvenRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+        IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
+        IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
+        itemStackGroup.init(0, true, 32, 19);
+        itemStackGroup.init(1, false, 84, 19);
+        itemStackGroup.set(ingredients);
+        fluidStackGroup.init(0, false, 133, 3, 20, 58, 32000, true, this.fluidTankOverlay);
+        fluidStackGroup.set(ingredients);
+    }
 
-	@Override
-	public void drawExtras(Minecraft minecraft) {
-		this.slot.draw(minecraft, 32, 19);
-		this.slot.draw(minecraft, 84, 19);
-		this.progressBar.draw(minecraft, 57, 20);
-		this.fluidTank.draw(minecraft, 133, 3);
-	}
+    @Nonnull
+    @Override
+    public IRecipeWrapper getRecipeWrapper(@Nonnull CokeOvenRecipe recipe) {
+        return new CokeOvenRecipeWrapper(recipe);
+    }
+
+    @Override
+    public void drawExtras(Minecraft minecraft) {
+        this.slot.draw(minecraft, 32, 19);
+        this.slot.draw(minecraft, 84, 19);
+        this.progressBar.draw(minecraft, 57, 20);
+        this.fluidTank.draw(minecraft, 133, 3);
+    }
 }

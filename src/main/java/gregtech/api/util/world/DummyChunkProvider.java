@@ -7,6 +7,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class DummyChunkProvider implements IChunkProvider {
@@ -24,6 +25,7 @@ public class DummyChunkProvider implements IChunkProvider {
         return loadedChunks.get(ChunkPos.asLong(x, z));
     }
 
+    @Nonnull
     @Override
     public Chunk provideChunk(int x, int z) {
         long chunkKey = ChunkPos.asLong(x, z);
@@ -42,6 +44,7 @@ public class DummyChunkProvider implements IChunkProvider {
         return loadedChunks.size() > 0;
     }
 
+    @Nonnull
     @Override
     public String makeString() {
         return "Dummy";

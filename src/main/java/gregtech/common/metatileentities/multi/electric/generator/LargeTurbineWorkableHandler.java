@@ -5,10 +5,8 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FuelRecipeLogic;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.recipes.FuelRecipe;
-import gregtech.api.unification.material.IMaterial;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.FluidMaterial;
-import gregtech.api.unification.material.type.SimpleFluidMaterial;
 import gregtech.common.ConfigHolder;
 import gregtech.common.MetaFluids;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
@@ -16,7 +14,6 @@ import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityL
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 
 import java.util.function.Supplier;
 
@@ -24,9 +21,9 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
 
     private static final int CYCLE_LENGTH = 230;
     private static final int BASE_ROTOR_DAMAGE = 11;
-    private static final int BASE_EU_OUTPUT = 2048;  
+    private static final int BASE_EU_OUTPUT = 2048;
 
-    private MetaTileEntityLargeTurbine largeTurbine;
+    private final MetaTileEntityLargeTurbine largeTurbine;
     private int rotorCycleLength = CYCLE_LENGTH;
 
     public LargeTurbineWorkableHandler(MetaTileEntityLargeTurbine metaTileEntity, FuelRecipeMap recipeMap, Supplier<IEnergyContainer> energyContainer, Supplier<IMultipleTankHandler> fluidTank) {
@@ -98,7 +95,7 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
                 largeTurbine.exportFluidHandler.fill(waterStack, true);
             }
         } else if (largeTurbine.turbineType == TurbineType.PLASMA) {
-            IMaterial<?> material = MetaFluids.getIMaterialFromFluid(currentRecipe.getRecipeFluid().getFluid());
+            Material material = MetaFluids.getMaterialFromFluid(currentRecipe.getRecipeFluid().getFluid());
             if (material != null) {
                 largeTurbine.exportFluidHandler.fill(material.getFluid(fuelAmountUsed), true);
             }
@@ -106,14 +103,18 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
     }
 
     private int getBonusForTurbineType(MetaTileEntityLargeTurbine turbine) {
-    	switch (turbine.turbineType) {
-		    case GAS: return ConfigHolder.gasTurbineBonusOutput;
-		    case PLASMA: return ConfigHolder.plasmaTurbineBonusOutput;
-		    case STEAM: return ConfigHolder.steamTurbineBonusOutput;
-		    default: return 1;
-    	}
+        switch (turbine.turbineType) {
+            case GAS:
+                return ConfigHolder.gasTurbineBonusOutput;
+            case PLASMA:
+                return ConfigHolder.plasmaTurbineBonusOutput;
+            case STEAM:
+                return ConfigHolder.steamTurbineBonusOutput;
+            default:
+                return 1;
+        }
     }
-    
+
     @Override
     public long getRecipeOutputVoltage() {
         MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MetaTileEntityLargeTurbine.ABILITY_ROTOR_HOLDER).get(0);

@@ -143,7 +143,7 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
                 IBlockState blockStateHere = worldIn.getBlockState(currentPos);
                 //if there is node, and it can connect with previous node, add it to list, and set previous node as current
                 if (blockStateHere.getBlock().isReplaceable(worldIn, currentPos) &&
-                    currentPos.distanceSq(centerPos) <= maxRadiusSq && !observedSet.contains(currentPos)) {
+                        currentPos.distanceSq(centerPos) <= maxRadiusSq && !observedSet.contains(currentPos)) {
                     BlockPos immutablePos = currentPos.toImmutable();
                     observedSet.add(immutablePos);
                     resultAirBlocks.add(immutablePos);
@@ -174,8 +174,8 @@ public class FoamSprayerBehavior implements IItemCapabilityProvider, IItemDurabi
                 IBlockState blockStateHere = worldIn.getBlockState(currentPos);
                 //if there is node, and it can connect with previous node, add it to list, and set previous node as current
                 if (blockStateHere.getBlock() instanceof BlockFrame &&
-                    currentPos.distanceSq(centerPos) <= maxRadiusSq &&
-                    (frameState == null || frameState == blockStateHere) && !observedSet.contains(currentPos)) {
+                        currentPos.distanceSq(centerPos) <= maxRadiusSq &&
+                        (frameState == null || frameState == blockStateHere) && !observedSet.contains(currentPos)) {
                     BlockPos immutablePos = currentPos.toImmutable();
                     observedSet.add(immutablePos);
                     resultFrameBlocks.add(immutablePos);

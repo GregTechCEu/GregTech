@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  */
 public class PatternMatchContext {
 
-    private Map<String, Object> data = new HashMap<>();
+    private final Map<String, Object> data = new HashMap<>();
 
     public void reset() {
         this.data.clear();

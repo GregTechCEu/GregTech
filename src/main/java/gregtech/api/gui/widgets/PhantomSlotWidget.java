@@ -12,6 +12,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Collections;
@@ -41,13 +42,14 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
         }
         Rectangle rectangle = toRectangleBox();
         return Lists.newArrayList(new Target<Object>() {
+            @Nonnull
             @Override
             public Rectangle getArea() {
                 return rectangle;
             }
 
             @Override
-            public void accept(Object ingredient) {
+            public void accept(@Nonnull Object ingredient) {
                 if (ingredient instanceof ItemStack) {
                     int mouseButton = Mouse.getEventButton();
                     boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);

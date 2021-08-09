@@ -15,6 +15,7 @@ import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.gui.recipes.RecipeLayout;
 import net.minecraft.client.resources.I18n;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,27 +55,33 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("fusion_reactor_mk2", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(1)));
         put("fusion_reactor_mk3", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(2)));
         put("primitive_water_pump", new MultiblockInfoRecipeWrapper(new PrimitivePumpInfo()));
+        put("steam_grinder", new MultiblockInfoRecipeWrapper(new SteamGrinderInfo()));
+        put("steam_oven", new MultiblockInfoRecipeWrapper(new SteamOvenInfo()));
     }};
 
     public static void registerRecipes(IModRegistry registry) {
         registry.addRecipes(multiblockRecipes.values(), "gregtech:multiblock_info");
     }
 
+    @Nonnull
     @Override
     public String getUid() {
         return "gregtech:multiblock_info";
     }
 
+    @Nonnull
     @Override
     public String getTitle() {
         return I18n.format("gregtech.multiblock.title");
     }
 
+    @Nonnull
     @Override
     public String getModName() {
         return GTValues.MODID;
     }
 
+    @Nonnull
     @Override
     public IDrawable getBackground() {
         return background;
@@ -86,7 +93,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, MultiblockInfoRecipeWrapper recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, MultiblockInfoRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
         recipeWrapper.setRecipeLayout((RecipeLayout) recipeLayout, this.guiHelper);
 
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();

@@ -79,20 +79,6 @@ public class Recipe {
         this.inputs.sort((ing1, ing2) -> ing1.getCount() == 0 ? 1 : 0);
     }
 
-    /**
-     * @deprecated use {@link #Recipe(List inputs, List outputs, List chancedOutputs, List fluidInputs,
-     * List fluidOutputs, int duration, int EUt, boolean hidden)} instead
-     * Recipe properties are added by {@link RecipePropertyStorage#store(Map recipeProperties)}
-     * on {@link #getRecipePropertyStorage()}
-     */
-    @Deprecated
-    public Recipe(List<CountableIngredient> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
-                  List<FluidStack> fluidInputs, List<FluidStack> fluidOutputs,
-                  Map<String, Object> recipeProperties, int duration, int EUt, boolean hidden) {
-        this(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden);
-        recipePropertyStorage.storeOldFormat(recipeProperties);
-    }
-
     public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode matchingMode) {
         return matches(consumeIfSuccessful, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), matchingMode);
     }
@@ -305,61 +291,36 @@ public class Recipe {
         return hasValidInputs;
     }
 
-    //region RecipeProperties
-
-    /**
-     * Provides full access to {@link RecipePropertyStorage} for this Recipe
-     * @return RecipePropertyStorage
-     */
-    public RecipePropertyStorage getRecipePropertyStorage(){
-        return recipePropertyStorage;
+    ///////////////////////////////////////////////////////////
+    //               Property Helper Methods                 //
+    ///////////////////////////////////////////////////////////
+    public <T> T getProperty(RecipeProperty<T> property, T defaultValue) {
+        return recipePropertyStorage.getRecipePropertyValue(property, defaultValue);
     }
 
-    /**
-     * @deprecated use {@link RecipePropertyStorage#getRecipePropertyValue(RecipeProperty recipeProperty, Object defaultValue)}
-     * on {@link #getRecipePropertyStorage()}
-     */
-    @Deprecated
-    public boolean getBooleanProperty(String key) {
-        return getProperty(key);
+    public Object getPropertyRaw(String key) {
+        return recipePropertyStorage.getRawRecipePropertyValue(key);
     }
 
-    /**
-     * @deprecated use {@link RecipePropertyStorage#getRecipePropertyValue(RecipeProperty recipeProperty, Object defaultValue)}
-     * on {@link #getRecipePropertyStorage()}
-     */
-    @Deprecated
-    public int getIntegerProperty(String key) {
-        return getProperty(key);
+    public boolean setProperty(RecipeProperty<?> property, Object value) {
+        return recipePropertyStorage.store(property, value);
     }
 
-    /**
-     * @deprecated use {@link RecipePropertyStorage#getRecipePropertyValue(RecipeProperty recipeProperty, Object defaultValue)}
-     * on {@link #getRecipePropertyStorage()}
-     */
-    @Deprecated
-    public String getStringProperty(String key) {
-        return getProperty(key);
+    public Set<Map.Entry<RecipeProperty<?>, Object>> getPropertyValues() {
+        return recipePropertyStorage.getRecipeProperties();
     }
 
-    /**
-     * @deprecated use {@link RecipePropertyStorage#getRecipePropertyValue(RecipeProperty recipeProperty, Object defaultValue)}
-     * on {@link #getRecipePropertyStorage()}
-     */
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public <T> T getProperty(String key) {
-        AbstractMap.SimpleEntry<RecipeProperty<?>, Object> recipePropertySet = getRecipePropertyStorage().getRecipeProperty(key);
-
-        if (recipePropertySet == null) {
-            throw new IllegalArgumentException();
-        }
-
-        return (T) recipePropertySet.getKey().castValue(recipePropertySet.getValue());
+    public Set<String> getPropertyKeys() {
+        return recipePropertyStorage.getRecipePropertyKeys();
     }
 
-    //endregion RecipeProperties
+    public int getPropertyCount() {
+        return recipePropertyStorage.getSize();
+    }
 
+    ///////////////////////////////////////////////////////////
+    //                   Chanced Output                      //
+    ///////////////////////////////////////////////////////////
     public static class ChanceEntry {
         private final ItemStack itemStack;
         private final int chance;

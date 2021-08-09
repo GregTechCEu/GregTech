@@ -30,6 +30,7 @@ public class FileUtility {
 
     /**
      * Tries to extract <code>JsonObject</code> from file on given path
+     *
      * @param filePath path to file
      * @return <code>JsonObject</code> if extraction succeeds; otherwise <code>null</code>
      */
@@ -39,9 +40,9 @@ public class FileUtility {
             return jsonParser.parse(streamReader).getAsJsonObject();
         } catch (IOException exception) {
             GTLog.logger.error("Failed to read file on path {}", filePath, exception);
-        } catch (JsonParseException exception){
+        } catch (JsonParseException exception) {
             GTLog.logger.error("Failed to extract json from file", exception);
-        } catch (Exception exception){
+        } catch (Exception exception) {
             GTLog.logger.error("Failed to extract json from file on path {}", filePath, exception);
         }
 

@@ -53,11 +53,11 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                     Map<BlockPos, ? extends Node<?>> nodeMap = pipeNet.getAllNodes();
                     Node<?> node = nodeMap.get(data.getPos());
                     builder.append("{").append("active: ").append(node.isActive)
-                        .append(", mark: ").append(node.mark)
-                        .append(", blocked: ").append(node.blockedConnections).append("}");
+                            .append(", mark: ").append(node.mark)
+                            .append(", open: ").append(node.openConnections).append("}");
                     probeInfo.text(builder.toString());
                 }
-                probeInfo.text("tile blocked: " + pipeTile.getBlockedConnections());
+                probeInfo.text("tile open: " + pipeTile.getOpenConnections());
                 if (blockPipe instanceof BlockFluidPipe) {
                     if (pipeTile instanceof TileEntityFluidPipeTickable) {
                         probeInfo.text("tile active: " + ((TileEntityFluidPipeTickable) pipeTile).isActive());

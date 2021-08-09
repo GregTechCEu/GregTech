@@ -7,6 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistrySimple;
 import net.minecraftforge.registries.GameData;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.Map;
@@ -48,13 +49,13 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
         V objectWithId = getObjectById(id);
         if (objectWithId != null) {
             throw new IllegalArgumentException(String.format("Tried to reassign id %d to %s (%s), but it is already assigned to %s (%s)!",
-                id, value, key, objectWithId, getNameForObject(objectWithId)));
+                    id, value, key, objectWithId, getNameForObject(objectWithId)));
         }
         underlyingIntegerMap.put(value, id);
     }
 
     @Override
-    public void putObject(K key, V value) {
+    public void putObject(@Nonnull K key, @Nonnull V value) {
         throw new UnsupportedOperationException("Use #register(int, String, T)");
     }
 
@@ -68,6 +69,7 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
     protected final IntIdentityHashBiMap<V> underlyingIntegerMap = new IntIdentityHashBiMap<>(256);
     protected final Map<V, K> inverseObjectRegistry;
 
+    @Nonnull
     @Override
     protected Map<K, V> createUnderlyingMap() {
         return HashBiMap.create();
@@ -87,6 +89,7 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
         return this.underlyingIntegerMap.get(id);
     }
 
+    @Nonnull
     @Override
     public Iterator<V> iterator() {
         return this.underlyingIntegerMap.iterator();

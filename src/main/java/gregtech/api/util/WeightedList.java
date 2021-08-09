@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 public class WeightedList<T extends IWeighted> {
 
-    protected ArrayList<T> list = new ArrayList<>();
+    protected final ArrayList<T> list = new ArrayList<>();
     private int totalWeight = 0;
 
     public WeightedList() {

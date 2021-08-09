@@ -7,6 +7,9 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTLog;
+import gregtech.common.covers.detector.CoverDetectorEnergy;
+import gregtech.common.covers.detector.CoverDetectorFluid;
+import gregtech.common.covers.detector.CoverDetectorItem;
 import gregtech.common.covers.filter.OreDictionaryItemFilter;
 import gregtech.common.covers.filter.SimpleFluidFilter;
 import gregtech.common.covers.filter.SimpleItemFilter;
@@ -55,6 +58,12 @@ public class CoverBehaviors {
         registerBehavior(37, new ResourceLocation(GTValues.MODID, "machine_controller"), MetaItems.COVER_MACHINE_CONTROLLER, CoverMachineController::new);
         registerBehavior(38, new ResourceLocation(GTValues.MODID, "smart_filter"), MetaItems.SMART_FILTER, (tile, side) -> new CoverItemFilter(tile, side, "cover.smart_item_filter.title", Textures.SMART_FILTER_FILTER_OVERLAY, new SmartItemFilter()));
         registerBehavior(39, new ResourceLocation(GTValues.MODID, "facade"), MetaItems.COVER_FACADE, CoverFacade::new);
+
+        registerBehavior(49, new ResourceLocation(GTValues.MODID, "screen"), MetaItems.COVER_SCREEN, CoverScreen::new);
+        registerBehavior(50, new ResourceLocation(GTValues.MODID, "energy_detector"), MetaItems.COVER_ENERGY_DETECTOR, CoverDetectorEnergy::new);
+        registerBehavior(51, new ResourceLocation(GTValues.MODID, "fluid_detector"), MetaItems.COVER_FLUID_DETECTOR, CoverDetectorFluid::new);
+        registerBehavior(52, new ResourceLocation(GTValues.MODID, "item_detector"), MetaItems.COVER_ITEM_DETECTOR, CoverDetectorItem::new);
+        registerBehavior(53, new ResourceLocation(GTValues.MODID, "crafting_table"), MetaItems.COVER_CRAFTING, CoverCraftingTable::new);
 
         for (int i = 0; i < COVERS_PER_ITEM; i++) {
             int throughput = (int) (Math.pow(4, i) * 1280);

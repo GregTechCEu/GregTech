@@ -1,6 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
-import gregtech.api.unification.material.type.DustMaterial;
+import gregtech.api.unification.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -121,21 +121,21 @@ public class BrewingRecipes {
                 .fluidOutputs(Biomass.getFluid(30))
                 .duration(160).EUt(3).buildAndRegister();
 
-        for (DustMaterial dustMaterial : new DustMaterial[]{Talc, Soapstone, Redstone}) {
+        for (Material material : new Material[]{Talc, Soapstone, Redstone}) {
             BREWING_RECIPES.recipeBuilder()
-                    .input(dust, dustMaterial)
+                    .input(dust, material)
                     .fluidInputs(Oil.getFluid(750))
                     .fluidOutputs(Lubricant.getFluid(750))
                     .duration(128).EUt(4).buildAndRegister();
 
             BREWING_RECIPES.recipeBuilder()
-                    .input(dust, dustMaterial)
+                    .input(dust, material)
                     .fluidInputs(Creosote.getFluid(750))
                     .fluidOutputs(Lubricant.getFluid(750))
                     .duration(128).EUt(4).buildAndRegister();
 
             BREWING_RECIPES.recipeBuilder()
-                    .input(dust, dustMaterial)
+                    .input(dust, material)
                     .fluidInputs(SeedOil.getFluid(750))
                     .fluidOutputs(Lubricant.getFluid(750))
                     .duration(128).EUt(4).buildAndRegister();

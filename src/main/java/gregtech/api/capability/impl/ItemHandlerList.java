@@ -16,8 +16,8 @@ import java.util.Map;
  */
 public class ItemHandlerList implements IItemHandlerModifiable {
 
-    private TIntObjectMap<IItemHandler> handlerBySlotIndex = new TIntObjectHashMap<>();
-    private Map<IItemHandler, Integer> baseIndexOffset = new IdentityHashMap<>();
+    private final TIntObjectMap<IItemHandler> handlerBySlotIndex = new TIntObjectHashMap<>();
+    private final Map<IItemHandler, Integer> baseIndexOffset = new IdentityHashMap<>();
 
     public ItemHandlerList(List<? extends IItemHandler> itemHandlerList) {
         int currentSlotIndex = 0;

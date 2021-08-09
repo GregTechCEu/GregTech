@@ -1,5 +1,6 @@
 package gregtech.api.recipes;
 
+import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.liquid.ILiquidStack;
@@ -19,7 +20,7 @@ import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
-import gregtech.api.unification.material.IMaterial;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
@@ -45,9 +46,9 @@ import java.util.stream.Collectors;
 @ZenRegister
 public class RecipeMap<R extends RecipeBuilder<R>> {
 
-    private static final List<RecipeMap<?>> RECIPE_MAPS = new ArrayList<>();
+    private static final Map<String, RecipeMap<?>> RECIPE_MAP_REGISTRY = new HashMap<>();
     @ZenProperty
-    public static IChanceFunction chanceFunction = (chance, boostPerTier, tier) -> chance + (boostPerTier * tier);
+    public static final IChanceFunction chanceFunction = (chance, boostPerTier, tier) -> chance + (boostPerTier * tier);
 
     public final String unlocalizedName;
 
@@ -88,15 +89,16 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         this.isHidden = isHidden;
         defaultRecipe.setRecipeMap(this);
         this.recipeBuilderSample = defaultRecipe;
-        RECIPE_MAPS.add(this);
+        RECIPE_MAP_REGISTRY.put(unlocalizedName, this);
     }
+
     @ZenMethod
     public static List<RecipeMap<?>> getRecipeMaps() {
-        return Collections.unmodifiableList(RECIPE_MAPS);
+        return ImmutableList.copyOf(RECIPE_MAP_REGISTRY.values());
     }
 
     public static void sortMaps() {
-        for (RecipeMap<?> rmap : RECIPE_MAPS) {
+        for (RecipeMap<?> rmap : RECIPE_MAP_REGISTRY.values()) {
             rmap.recipeList.sort(Comparator.comparingInt(Recipe::getDuration)
                     .thenComparingInt(Recipe::getEUt));
         }
@@ -104,9 +106,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     @ZenMethod
     public static RecipeMap<?> getByName(String unlocalizedName) {
-        return RECIPE_MAPS.stream()
-            .filter(map -> map.unlocalizedName.equals(unlocalizedName))
-            .findFirst().orElse(null);
+        return RECIPE_MAP_REGISTRY.get(unlocalizedName);
     }
 
     public static IChanceFunction getChanceFunction() {
@@ -121,10 +121,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         RecipeMap.foundInvalidRecipe |= foundInvalidRecipe;
         OrePrefix currentOrePrefix = OrePrefix.getCurrentProcessingPrefix();
         if (currentOrePrefix != null) {
-            IMaterial<?> currentMaterial = OrePrefix.getCurrentMaterial();
+            Material currentMaterial = OrePrefix.getCurrentMaterial();
             GTLog.logger.error("Error happened during processing ore registration of prefix {} and material {}. " +
-                    "Seems like cross-mod compatibility issue. Report to GTCE github.",
-                currentOrePrefix, currentMaterial);
+                            "Seems like cross-mod compatibility issue. Report to GTCE github.",
+                    currentOrePrefix, currentMaterial);
         }
     }
 
@@ -136,8 +136,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, TextureArea slotOverlay) {
         return this
-            .setSlotOverlay(isOutput, isFluid, false, slotOverlay)
-            .setSlotOverlay(isOutput, isFluid, true, slotOverlay);
+                .setSlotOverlay(isOutput, isFluid, false, slotOverlay)
+                .setSlotOverlay(isOutput, isFluid, true, slotOverlay);
     }
 
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, boolean isLast, TextureArea slotOverlay) {
@@ -183,7 +183,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (recipeList.remove(recipe)) {
             //also iterate trough fluid mappings and remove recipe from them
             recipeFluidMap.values().forEach(fluidMap ->
-                fluidMap.removeIf(fluidRecipe -> fluidRecipe == recipe));
+                    fluidMap.removeIf(fluidRecipe -> fluidRecipe == recipe));
             return true;
         }
         return false;
@@ -213,16 +213,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             recipeStatus = EnumValidationResult.INVALID;
         }
         return ValidationResult.newResult(recipeStatus, recipe);
-    }
-
-    @Nullable
-    public Recipe findRecipe(long voltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int outputFluidTankCapacity) {
-        return this.findRecipe(voltage, GTUtility.itemHandlerToList(inputs), GTUtility.fluidHandlerToList(fluidInputs), outputFluidTankCapacity, MatchingMode.DEFAULT);
-    }
-
-    @Nullable
-    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity) {
-        return this.findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, MatchingMode.DEFAULT);
     }
 
     @Nullable
@@ -282,11 +272,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids) {
-        return createUITemplate(this::jeiProgressBar, importItems, exportItems, importFluids, exportFluids);
+    public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+        return createUITemplate(this::jeiProgressBar, importItems, exportItems, importFluids, exportFluids, yOffset);
     }
 
     private double timer = 0;
+
     private double jeiProgressBar() {
         timer += 0.0005;
         if (timer > 1.0) timer = 0.0;
@@ -294,17 +285,17 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     //this DOES NOT include machine control widgets or binds player inventory
-    public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids) {
-        ModularUI.Builder builder = ModularUI.defaultBuilder();
-        builder.widget(new ProgressWidget(progressSupplier, 78, 23, 20, 20, progressBarTexture, moveType));
-        addInventorySlotGroup(builder, importItems, importFluids, false);
-        addInventorySlotGroup(builder, exportItems, exportFluids, true);
+    public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+        ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
+        builder.widget(new ProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType));
+        addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
+        addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
         if (this.specialTexture != null && this.specialTexturePosition != null)
             addSpecialTexture(builder);
         return builder;
     }
 
-    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isOutputs) {
+    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
         int itemInputsCount = itemHandler.getSlots();
         int fluidInputsCount = fluidHandler.getTanks();
         boolean invertFluids = false;
@@ -318,9 +309,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         int itemSlotsToLeft = inputSlotGrid[0];
         int itemSlotsToDown = inputSlotGrid[1];
         int startInputsX = isOutputs ? 106 : 70 - itemSlotsToLeft * 18;
-        int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18);
+        int startInputsY = 33 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
         boolean wasGroupOutput = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
-        if (wasGroupOutput) startInputsY -= 9;
+        if (wasGroupOutput && isOutputs) startInputsY -= 9;
+        if (itemHandler.getSlots() == 6 && fluidHandler.getTanks() == 2 && !isOutputs) startInputsY -= 9;
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
                 int slotIndex = i * itemSlotsToLeft + j;
@@ -329,7 +321,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 addSlot(builder, x, y, slotIndex, itemHandler, fluidHandler, invertFluids, isOutputs);
             }
         }
-        if (wasGroupOutput) startInputsY += 3;
+        if (wasGroupOutput) startInputsY += 2;
         if (fluidInputsCount > 0 || invertFluids) {
             if (itemSlotsToDown >= fluidInputsCount && itemSlotsToLeft < 3) {
                 int startSpecX = isOutputs ? startInputsX + itemSlotsToLeft * 18 : startInputsX - 18;
@@ -342,10 +334,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 for (int i = 0; i < fluidInputsCount; i++) {
                     int x = isOutputs ? startInputsX + 18 * (i % 3) : startInputsX + itemSlotsToLeft * 18 - 18 - 18 * (i % 3);
                     int y = startSpecY + (i / 3) * 18;
-                    if (itemHandler.getSlots() >= 9)
-                        addSlot(builder, x, y + 2, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
-                    else
-                        addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
+                    addSlot(builder, x, y, i, itemHandler, fluidHandler, !invertFluids, isOutputs);
                 }
             }
         }
@@ -354,12 +343,12 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected void addSlot(ModularUI.Builder builder, int x, int y, int slotIndex, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isFluid, boolean isOutputs) {
         if (!isFluid) {
             builder.widget(new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs)
-                .setBackgroundTexture(getOverlaysForSlot(isOutputs, false, slotIndex == itemHandler.getSlots() - 1)));
+                    .setBackgroundTexture(getOverlaysForSlot(isOutputs, false, slotIndex == itemHandler.getSlots() - 1)));
         } else {
             builder.widget(new TankWidget(fluidHandler.getTankAt(slotIndex), x, y, 18, 18)
-                .setAlwaysShowFull(true)
-                .setBackgroundTexture(getOverlaysForSlot(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1))
-                .setContainerClicking(true, !isOutputs));
+                    .setAlwaysShowFull(true)
+                    .setBackgroundTexture(getOverlaysForSlot(isOutputs, true, slotIndex == fluidHandler.getTanks() - 1))
+                    .setContainerClicking(true, !isOutputs));
         }
     }
 
@@ -416,14 +405,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @Nullable
     public CTRecipe ctFindRecipe(long maxVoltage, IItemStack[] itemInputs, ILiquidStack[] fluidInputs, @Optional(valueLong = Integer.MAX_VALUE) int outputFluidTankCapacity) {
         List<ItemStack> mcItemInputs = itemInputs == null ? Collections.emptyList() :
-            Arrays.stream(itemInputs)
-                .map(CraftTweakerMC::getItemStack)
-                .collect(Collectors.toList());
+                Arrays.stream(itemInputs)
+                        .map(CraftTweakerMC::getItemStack)
+                        .collect(Collectors.toList());
         List<FluidStack> mcFluidInputs = fluidInputs == null ? Collections.emptyList() :
-            Arrays.stream(fluidInputs)
-                .map(CraftTweakerMC::getLiquidStack)
-                .collect(Collectors.toList());
-        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, outputFluidTankCapacity);
+                Arrays.stream(fluidInputs)
+                        .map(CraftTweakerMC::getLiquidStack)
+                        .collect(Collectors.toList());
+        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, outputFluidTankCapacity, MatchingMode.DEFAULT);
         return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
     }
 
@@ -431,8 +420,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @Method(modid = GTValues.MODID_CT)
     public List<CTRecipe> ccGetRecipeList() {
         return getRecipeList().stream()
-            .map(recipe -> new CTRecipe(this, recipe))
-            .collect(Collectors.toList());
+                .map(recipe -> new CTRecipe(this, recipe))
+                .collect(Collectors.toList());
     }
 
     @SideOnly(Side.CLIENT)
@@ -500,8 +489,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     @ZenMethod
     public String toString() {
         return "RecipeMap{" +
-            "unlocalizedName='" + unlocalizedName + '\'' +
-            '}';
+                "unlocalizedName='" + unlocalizedName + '\'' +
+                '}';
     }
 
     @FunctionalInterface

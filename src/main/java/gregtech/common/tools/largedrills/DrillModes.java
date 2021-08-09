@@ -2,7 +2,7 @@ package gregtech.common.tools.largedrills;
 
 public class DrillModes {
     public enum DrillMode implements IDrillMode {
-        SINGLE_BLOCK("metaitem.drill.mode.single_block", 1,  2.0f);
+        SINGLE_BLOCK("metaitem.drill.mode.single_block", 1, 2.0f);
 
         private final String localizationKey;
         private final int cubeSize;
@@ -32,8 +32,8 @@ public class DrillModes {
     }
 
     public enum DrillMVMode implements IDrillMode {
-        SINGLE_BLOCK("metaitem.drill.mode.single_block", 1,  4.0f),
-        THREE_CUBE("metaitem.drill.mode.three_cube", 3,  1.0f);
+        SINGLE_BLOCK("metaitem.drill.mode.single_block", 1, 4.0f),
+        THREE_CUBE("metaitem.drill.mode.three_cube", 3, 1.0f);
 
         private final String localizationKey;
         private final int cubeSize;
@@ -59,9 +59,9 @@ public class DrillModes {
     }
 
     public enum DrillHVMode implements IDrillMode {
-        SINGLE_BLOCK("metaitem.drill.mode.single_block", 1,  8.0f),
-        THREE_CUBE("metaitem.drill.mode.three_cube", 3,  2.0f),
-        FIVE_CUBE("metaitem.drill.mode.five_cube", 5,  1.0f);
+        SINGLE_BLOCK("metaitem.drill.mode.single_block", 1, 8.0f),
+        THREE_CUBE("metaitem.drill.mode.three_cube", 3, 2.0f),
+        FIVE_CUBE("metaitem.drill.mode.five_cube", 5, 1.0f);
 
         private final String localizationKey;
         private final int cubeSize;
@@ -87,10 +87,10 @@ public class DrillModes {
     }
 
     public enum DrillEVMode implements IDrillMode {
-        SINGLE_BLOCK("metaitem.drill.mode.single_block", 1,  16.0f),
-        THREE_CUBE("metaitem.drill.mode.three_cube", 3,  4.0f),
-        FIVE_CUBE("metaitem.drill.mode.five_cube", 5,  2.0f),
-        SEVEN_CUBE("metaitem.drill.mode.seven_cube", 7,  1.0f);
+        SINGLE_BLOCK("metaitem.drill.mode.single_block", 1, 16.0f),
+        THREE_CUBE("metaitem.drill.mode.three_cube", 3, 4.0f),
+        FIVE_CUBE("metaitem.drill.mode.five_cube", 5, 2.0f),
+        SEVEN_CUBE("metaitem.drill.mode.seven_cube", 7, 1.0f);
 
         private final String localizationKey;
         private final int cubeSize;
@@ -116,10 +116,10 @@ public class DrillModes {
     }
 
     public enum DrillIVMode implements IDrillMode {
-        SINGLE_BLOCK("metaitem.drill.mode.single_block", 1,  32.0f),
-        THREE_CUBE("metaitem.drill.mode.three_cube", 3,  8.0f),
-        FIVE_CUBE("metaitem.drill.mode.five_cube", 5,  4.0f),
-        SEVEN_CUBE("metaitem.drill.mode.seven_cube", 7,  2.0f),
+        SINGLE_BLOCK("metaitem.drill.mode.single_block", 1, 32.0f),
+        THREE_CUBE("metaitem.drill.mode.three_cube", 3, 8.0f),
+        FIVE_CUBE("metaitem.drill.mode.five_cube", 5, 4.0f),
+        SEVEN_CUBE("metaitem.drill.mode.seven_cube", 7, 2.0f),
         NINE_CUBE("metaitem.drill.mode.nine_cube", 9, 1.0f);
 
         private final String localizationKey;

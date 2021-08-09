@@ -36,24 +36,24 @@ public class FieldProjectorEventHandler {
     @SubscribeEvent
     public static void onProjectileImpact(ProjectileImpactEvent event) {
         Entity hitEntity = event.getRayTraceResult().entityHit;
-        if(hitEntity instanceof EntityLivingBase && canReflectProjectile((EntityLivingBase) hitEntity, true)) {
+        if (hitEntity instanceof EntityLivingBase && canReflectProjectile((EntityLivingBase) hitEntity, true)) {
             Pair<Boolean, Entity> projectileData = isHostileProjectile(event.getEntity(), hitEntity);
-            if(projectileData.getLeft()) {
+            if (projectileData.getLeft()) {
                 Entity shooterEntity = projectileData.getRight();
                 Vec3d resultHitPosition;
-                if(shooterEntity != null) {
+                if (shooterEntity != null) {
                     double posY = shooterEntity.posY + shooterEntity.height / 3.0;
                     resultHitPosition = new Vec3d(shooterEntity.posX, posY, shooterEntity.posZ);
                 } else {
                     Vec3d lookVector = hitEntity.getLookVec();
                     resultHitPosition = hitEntity.getPositionVector().add(lookVector.scale(5.0));
                 }
-                if(canReflectProjectile((EntityLivingBase) hitEntity, false)) {
+                if (canReflectProjectile((EntityLivingBase) hitEntity, false)) {
                     redirectProjectile(event.getEntity(), resultHitPosition);
-                    if(!hitEntity.world.isRemote) {
+                    if (!hitEntity.world.isRemote) {
                         Vec3d arrowPos = event.getEntity().getPositionVector();
                         ((WorldServer) hitEntity.world).spawnParticle(EnumParticleTypes.SPELL_WITCH, false,
-                            arrowPos.x, arrowPos.y, arrowPos.z, 4, 0.0, 0.0, 0.0, 0.1);
+                                arrowPos.x, arrowPos.y, arrowPos.z, 4, 0.0, 0.0, 0.0, 0.1);
                     }
                     event.setCanceled(true);
                 }
@@ -64,26 +64,26 @@ public class FieldProjectorEventHandler {
     private static boolean canReflectProjectile(EntityLivingBase entity, boolean simulate) {
         if (entity instanceof EntityPlayer) {
             IInventory inventory = ((EntityPlayer) entity).inventory;
-            for(int i = 0; i < inventory.getSizeInventory(); i++) {
+            for (int i = 0; i < inventory.getSizeInventory(); i++) {
                 ItemStack itemStack = inventory.getStackInSlot(i);
-                if(tryDrainProjector(itemStack, simulate)) return true;
+                if (tryDrainProjector(itemStack, simulate)) return true;
             }
         } else {
-            for(EntityEquipmentSlot equipmentSlot : EntityEquipmentSlot.values()) {
+            for (EntityEquipmentSlot equipmentSlot : EntityEquipmentSlot.values()) {
                 ItemStack itemStack = entity.getItemStackFromSlot(equipmentSlot);
-                if(tryDrainProjector(itemStack, simulate)) return true;
+                if (tryDrainProjector(itemStack, simulate)) return true;
             }
         }
         return false;
     }
 
     private static boolean tryDrainProjector(ItemStack itemStack, boolean simulate) {
-        if(!MetaItems.ENERGY_FIELD_PROJECTOR.isItemEqual(itemStack)) {
+        if (!MetaItems.ENERGY_FIELD_PROJECTOR.isItemEqual(itemStack)) {
             return false;
         }
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         return electricItem != null && electricItem.discharge(EU_PER_PROJECTILE_DEFLECT,
-            electricItem.getTier(), true, false, simulate) >= EU_PER_PROJECTILE_DEFLECT;
+                electricItem.getTier(), true, false, simulate) >= EU_PER_PROJECTILE_DEFLECT;
     }
 
     private static Pair<Boolean, Entity> isHostileProjectile(Entity entity, Entity owner) {

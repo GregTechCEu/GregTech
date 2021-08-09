@@ -13,7 +13,7 @@ import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.TransformationList;
 import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.surfacerock.BlockSurfaceRock;
 import gregtech.common.blocks.surfacerock.TileEntitySurfaceRock;
@@ -36,7 +36,7 @@ public class StoneRenderer implements ICCBlockRenderer {
 
     private static final StoneRenderer INSTANCE = new StoneRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
-    private static CCModel[] placeholderModels = new CCModel[1];
+    private static final CCModel[] placeholderModels = new CCModel[1];
 
     public static void preInit() {
         BLOCK_RENDER_TYPE = BlockRenderingRegistry.createRenderType("gt_stone");
@@ -71,11 +71,11 @@ public class StoneRenderer implements ICCBlockRenderer {
         translation.translate(pos.getX(), pos.getY(), pos.getZ());
         TextureAtlasSprite stoneSprite = TextureUtils.getBlockTexture("stone");
         Material material = ((BlockSurfaceRock) state.getBlock()).getStoneMaterial(world, pos, state);
-        int renderingColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB);
-        IVertexOperation[] operations = new IVertexOperation[] {
-            new IconTransformation(stoneSprite),
-            new ColourMultiplier(renderingColor),
-            new TransformationList(translation)};
+        int renderingColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB());
+        IVertexOperation[] operations = new IVertexOperation[]{
+                new IconTransformation(stoneSprite),
+                new ColourMultiplier(renderingColor),
+                new TransformationList(translation)};
         if (world != null) {
             renderState.setBrightness(world, pos);
         }

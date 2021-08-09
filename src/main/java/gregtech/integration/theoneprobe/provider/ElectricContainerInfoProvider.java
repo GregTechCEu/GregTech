@@ -36,11 +36,11 @@ public class ElectricContainerInfoProvider extends CapabilityInfoProvider<IEnerg
         String additionalSpacing = tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_WORKABLE, sideHit) ? "   " : "";
         horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.energy_stored*} " + additionalSpacing);
         horizontalPane.progress(energyStored, maxStorage, probeInfo.defaultProgressStyle()
-            .suffix("/" + maxStorage + " EU")
-            .borderColor(0x00000000)
-            .backgroundColor(0x00000000)
-            .filledColor(0xFFFFE000)
-            .alternateFilledColor(0xFFEED000));
+                .suffix("/" + maxStorage + " EU")
+                .borderColor(0x00000000)
+                .backgroundColor(0x00000000)
+                .filledColor(0xFFFFE000)
+                .alternateFilledColor(0xFFEED000));
     }
 
 }

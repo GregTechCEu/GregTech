@@ -21,9 +21,9 @@ public class WorldGenAbandonedBase implements IWorldGenerator {
     @Override
     public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
         if (ConfigHolder.abandonedBaseRarity == 0 ||
-            world.getWorldType() == WorldType.FLAT ||
-            world.provider.getDimensionType() != DimensionType.OVERWORLD ||
-            !world.getWorldInfo().isMapFeaturesEnabled()) {
+                world.getWorldType() == WorldType.FLAT ||
+                world.provider.getDimensionType() != DimensionType.OVERWORLD ||
+                !world.getWorldInfo().isMapFeaturesEnabled()) {
             return; //do not generate in flat worlds, or in non-surface worlds
         }
         BlockPos randomPos = new BlockPos(chunkX * 16 + 8, 0, chunkZ * 16 + 8);

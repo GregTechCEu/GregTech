@@ -1,7 +1,7 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "gregtech:items/material_sets/ruby/crushed",
-        "layer1": "gregtech:items/material_sets/ruby/crushed_overlay"
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "gregtech:items/material_sets/ruby/crushed",
+    "layer1": "gregtech:items/material_sets/ruby/crushed_overlay"
+  }
 }

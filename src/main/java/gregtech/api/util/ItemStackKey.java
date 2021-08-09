@@ -21,7 +21,7 @@ public final class ItemStackKey {
 
     public boolean isItemStackEqual(ItemStack itemStack) {
         return ItemStack.areItemsEqual(this.itemStack, itemStack) &&
-            ItemStack.areItemStackTagsEqual(this.itemStack, itemStack);
+                ItemStack.areItemStackTagsEqual(this.itemStack, itemStack);
     }
 
     public ItemStack getItemStack() {
@@ -38,14 +38,14 @@ public final class ItemStackKey {
         if (!(o instanceof ItemStackKey)) return false;
         ItemStackKey that = (ItemStackKey) o;
         return ItemStack.areItemsEqual(itemStack, that.itemStack) &&
-            ItemStack.areItemStackTagsEqual(itemStack, that.itemStack);
+                ItemStack.areItemStackTagsEqual(itemStack, that.itemStack);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(itemStack.getItem(),
-            GTUtility.getActualItemDamageFromStack(itemStack),
-            itemStack.getTagCompound());
+                GTUtility.getActualItemDamageFromStack(itemStack),
+                itemStack.getTagCompound());
     }
 
     @Override

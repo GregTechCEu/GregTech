@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,17 +115,17 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     public ModularUI createUI(EntityPlayer player) {
         updateDisplayInventory();
         return ModularUI.defaultBuilder()
-            .label(10, 5, "cover.machine_controller.name")
-            .widget(new SliderWidget("cover.machine_controller.redstone", 10, 20, 156, 20, 1.0f, 15.0f,
-                minRedstoneStrength, it -> setMinRedstoneStrength((int) it)))
-            .widget(new ClickButtonWidget(10, 45, 126, 20, "", data -> cycleNextControllerMode()))
-            .widget(new SimpleTextWidget(68, 55, "", 0xFFFFFF, () -> getControllerMode().getName()))
-            .widget(new SlotWidget(displayInventory, 0, 141, 47, false, false)
-                .setBackgroundTexture(GuiTextures.SLOT))
-            .widget(new CycleButtonWidget(10, 70, 75, 20, this::isInverted, this::setInverted,
-                "cover.machine_controller.normal", "cover.machine_controller.inverted")
-                .setTooltipHoverString("cover.machine_controller.inverted.description"))
-            .build(this, player);
+                .label(10, 5, "cover.machine_controller.name")
+                .widget(new SliderWidget("cover.machine_controller.redstone", 10, 20, 156, 20, 1.0f, 15.0f,
+                        minRedstoneStrength, it -> setMinRedstoneStrength((int) it)))
+                .widget(new ClickButtonWidget(10, 45, 126, 20, "", data -> cycleNextControllerMode()))
+                .widget(new SimpleTextWidget(68, 55, "", 0xFFFFFF, () -> getControllerMode().getName()))
+                .widget(new SlotWidget(displayInventory, 0, 141, 47, false, false)
+                        .setBackgroundTexture(GuiTextures.SLOT))
+                .widget(new CycleButtonWidget(10, 70, 75, 20, this::isInverted, this::setInverted,
+                        "cover.machine_controller.normal", "cover.machine_controller.inverted")
+                        .setTooltipHoverString("cover.machine_controller.inverted.description"))
+                .build(this, player);
     }
 
     @Override
@@ -247,6 +248,7 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
         }
 
 
+        @Nonnull
         @Override
         public String getName() {
             return localeName;

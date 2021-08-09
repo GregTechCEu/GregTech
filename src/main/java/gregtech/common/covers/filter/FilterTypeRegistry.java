@@ -25,7 +25,7 @@ public class FilterTypeRegistry {
     }
 
     public static void registerFluidFilter(int id, Class<? extends FluidFilter> fluidFilterClass, ItemStack itemStack) {
-        if(fluidFilterById.containsKey(id)) {
+        if (fluidFilterById.containsKey(id)) {
             throw new IllegalArgumentException("Id is already occupied: " + id);
         }
         fluidFilterIdByStack.put(new ItemAndMetadata(itemStack), id);
@@ -33,7 +33,7 @@ public class FilterTypeRegistry {
     }
 
     public static void registerItemFilter(int id, Class<? extends ItemFilter> itemFilterClass, ItemStack itemStack) {
-        if(itemFilterById.containsKey(id)) {
+        if (itemFilterById.containsKey(id)) {
             throw new IllegalArgumentException("Id is already occupied: " + id);
         }
         itemFilterIdByStack.put(new ItemAndMetadata(itemStack), id);
@@ -42,7 +42,7 @@ public class FilterTypeRegistry {
 
     public static int getIdForItemFilter(ItemFilter itemFilter) {
         Integer filterId = itemFilterById.inverse().get(itemFilter.getClass());
-        if(filterId == null) {
+        if (filterId == null) {
             throw new IllegalArgumentException("Unknown filter type " + itemFilter.getClass());
         }
         return filterId;
@@ -50,7 +50,7 @@ public class FilterTypeRegistry {
 
     public static int getIdForFluidFilter(FluidFilter fluidFilter) {
         Integer filterId = fluidFilterById.inverse().get(fluidFilter.getClass());
-        if(filterId == null) {
+        if (filterId == null) {
             throw new IllegalArgumentException("Unknown filter type " + fluidFilter.getClass());
         }
         return filterId;
@@ -58,7 +58,7 @@ public class FilterTypeRegistry {
 
     public static ItemFilter createItemFilterById(int filterId) {
         Class<? extends ItemFilter> filterClass = itemFilterById.get(filterId);
-        if(filterClass == null) {
+        if (filterClass == null) {
             throw new IllegalArgumentException("Unknown filter id: " + filterId);
         }
         return createNewFilterInstance(filterClass);
@@ -66,7 +66,7 @@ public class FilterTypeRegistry {
 
     public static FluidFilter createFluidFilterById(int filterId) {
         Class<? extends FluidFilter> filterClass = fluidFilterById.get(filterId);
-        if(filterClass == null) {
+        if (filterClass == null) {
             throw new IllegalArgumentException("Unknown filter id: " + filterId);
         }
         return createNewFilterInstance(filterClass);
@@ -74,7 +74,7 @@ public class FilterTypeRegistry {
 
     public static ItemFilter getItemFilterForStack(ItemStack itemStack) {
         Integer filterId = itemFilterIdByStack.get(new ItemAndMetadata(itemStack));
-        if(filterId == null) {
+        if (filterId == null) {
             return null;
         }
         Class<? extends ItemFilter> filterClass = itemFilterById.get(filterId);
@@ -83,7 +83,7 @@ public class FilterTypeRegistry {
 
     public static FluidFilter getFluidFilterForStack(ItemStack itemStack) {
         Integer filterId = fluidFilterIdByStack.get(new ItemAndMetadata(itemStack));
-        if(filterId == null) {
+        if (filterId == null) {
             return null;
         }
         Class<? extends FluidFilter> filterClass = fluidFilterById.get(filterId);

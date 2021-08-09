@@ -21,9 +21,9 @@ import javax.annotation.Nonnull;
 public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-        MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
-        MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.EXPORT_FLUIDS,
-        MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
+            MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.EXPORT_FLUIDS,
+            MultiblockAbility.INPUT_ENERGY
     };
 
     public MetaTileEntityVacuumFreezer(ResourceLocation metaTileEntityId) {
@@ -38,15 +38,15 @@ public class MetaTileEntityVacuumFreezer extends RecipeMapMultiblockController {
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-            .aisle("XXX", "XXX", "XXX")
-            .aisle("XXX", "X#X", "XXX")
-            .aisle("XXX", "XSX", "XXX")
-            .setAmountAtLeast('L', 14)
-            .where('S', selfPredicate())
-            .where('L', statePredicate(getCasingState()))
-            .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-            .where('#', isAirPredicate())
-            .build();
+                .aisle("XXX", "XXX", "XXX")
+                .aisle("XXX", "X#X", "XXX")
+                .aisle("XXX", "XSX", "XXX")
+                .setAmountAtLeast('L', 14)
+                .where('S', selfPredicate())
+                .where('L', statePredicate(getCasingState()))
+                .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('#', isAirPredicate())
+                .build();
     }
 
     @Override

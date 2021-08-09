@@ -1,10 +1,11 @@
 package gregtech.common.items;
 
-import gregtech.api.items.materialitem.DustMetaItem;
-import gregtech.api.items.materialitem.MaterialMetaItem;
+import com.google.common.base.CaseFormat;
+import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.common.render.FacadeItemModel;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -17,15 +18,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("WeakerAccess")
 public final class MetaItems {
 
     private MetaItems() {
     }
 
-    public static List<MetaItem<?>> ITEMS = MetaItem.getMetaItems();
+    public static final List<MetaItem<?>> ITEMS = MetaItem.getMetaItems();
 
     public static MetaItem<?>.MetaValueItem CREDIT_COPPER;
     public static MetaItem<?>.MetaValueItem CREDIT_CUPRONICKEL;
@@ -34,7 +35,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CREDIT_PLATINUM;
     public static MetaItem<?>.MetaValueItem CREDIT_OSMIUM;
     public static MetaItem<?>.MetaValueItem CREDIT_NAQUADAH;
-    public static MetaItem<?>.MetaValueItem CREDIT_DARMSTADTIUM;
+    public static MetaItem<?>.MetaValueItem CREDIT_NEUTRONIUM;
 
     public static MetaItem<?>.MetaValueItem COIN_GOLD_ANCIENT;
     public static MetaItem<?>.MetaValueItem COIN_DOGE;
@@ -50,7 +51,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem SHAPE_EMPTY;
 
-    public static MetaItem<?>.MetaValueItem[] SHAPE_MOLDS = new MetaValueItem[13];
+    public static final MetaItem<?>.MetaValueItem[] SHAPE_MOLDS = new MetaValueItem[13];
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_CREDIT;
@@ -65,7 +66,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROTOR;
 
-    public static MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[23];
+    public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[26];
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOLT;
@@ -89,6 +90,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_SAW;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_GEAR;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOTTLE;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_FOIL;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_GEAR_SMALL;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD_LONG;
 
     public static MetaItem<?>.MetaValueItem SPRAY_EMPTY;
 
@@ -126,18 +130,12 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_HULL_HV;
 
     public static MetaItem<?>.MetaValueItem BATTERY_RE_ULV_TANTALUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_LV_SULFURIC_ACID;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_LV_MERCURY;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_LV_CADMIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_LV_LITHIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_LV_SODIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_MV_SULFURIC_ACID;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_MV_MERCURY;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_MV_CADMIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_MV_LITHIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_MV_SODIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_HV_SULFURIC_ACID;
-    public static MetaItem<?>.MetaValueItem BATTERY_SU_HV_MERCURY;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_HV_CADMIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_HV_LITHIUM;
     public static MetaItem<?>.MetaValueItem BATTERY_RE_HV_SODIUM;
@@ -146,8 +144,8 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB;
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB2;
-    public static MetaItem<?>.MetaValueItem ZPM;
-    public static MetaItem<?>.MetaValueItem ZPM2;
+    public static MetaItem<?>.MetaValueItem ZERO_POINT_MODULE;
+    public static MetaItem<?>.MetaValueItem ULTIMATE_BATTERY;
 
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_LV;
     public static MetaItem<?>.MetaValueItem ELECTRIC_MOTOR_MV;
@@ -261,7 +259,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem NAND_MEMORY_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem NANO_CENTRAL_PROCESSING_UNIT_WAFER;
     public static MetaItem<?>.MetaValueItem NOR_MEMORY_CHIP_WAFER;
-    public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT_WAFER;
+    public static MetaItem<?>.MetaValueItem QUBIT_CENTRAL_PROCESSING_UNIT_WAFER;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY_WAFER;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP_WAFER;
     public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP_WAFER;
@@ -280,7 +278,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem NAND_MEMORY_CHIP;
     public static MetaItem<?>.MetaValueItem NANO_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem NOR_MEMORY_CHIP;
-    public static MetaItem<?>.MetaValueItem QBIT_CENTRAL_PROCESSING_UNIT;
+    public static MetaItem<?>.MetaValueItem QUBIT_CENTRAL_PROCESSING_UNIT;
     public static MetaItem<?>.MetaValueItem RANDOM_ACCESS_MEMORY;
     public static MetaItem<?>.MetaValueItem SYSTEM_ON_CHIP;
     public static MetaItem<?>.MetaValueItem SIMPLE_SYSTEM_ON_CHIP;
@@ -418,8 +416,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SCANNER;
     public static MetaItem<?>.MetaValueItem GUIDE_TERMINAL;
 
-    public static MetaItem<?>.MetaValueItem[] DYE_ONLY_ITEMS = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
-    public static MetaItem<?>.MetaValueItem[] SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
+    public static final MetaItem<?>.MetaValueItem[] DYE_ONLY_ITEMS = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
+    public static final MetaItem<?>.MetaValueItem[] SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
 
     public static MetaItem<?>.MetaValueItem TURBINE_ROTOR;
 
@@ -459,42 +457,99 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem BUZZSAW;
     public static ToolMetaItem<?>.MetaToolValueItem SCREWDRIVER_LV;
 
-    public static MetaItem<?>.MetaValueItem ENERGY_MODULE;
-    public static MetaItem<?>.MetaValueItem ENERGY_CLUSTER;
-    public static MetaItem<?>.MetaValueItem MAX_BATTERY;
+    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_MODULE;
+    public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_CLUSTER;
     public static MetaItem<?>.MetaValueItem NEURO_PROCESSOR;
     public static MetaItem<?>.MetaValueItem STEM_CELLS;
     public static MetaItem<?>.MetaValueItem PETRI_DISH;
 
     public static MetaItem<?>.MetaValueItem BIO_CHAFF;
 
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_ULV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_LV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_MV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_HV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_EV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_IV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_LUV;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_ZPM;
+    public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_UV;
+
+    private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
+        add(OrePrefix.dust);
+        add(OrePrefix.dustSmall);
+        add(OrePrefix.dustTiny);
+        add(OrePrefix.dustImpure);
+        add(OrePrefix.dustPure);
+        add(OrePrefix.crushed);
+        add(OrePrefix.crushedPurified);
+        add(OrePrefix.crushedCentrifuged);
+        add(OrePrefix.gem);
+        add(OrePrefix.gemChipped);
+        add(OrePrefix.gemFlawed);
+        add(OrePrefix.gemFlawless);
+        add(OrePrefix.gemExquisite);
+        add(OrePrefix.ingot);
+        add(OrePrefix.ingotHot);
+        add(OrePrefix.plate);
+        add(OrePrefix.plateCurved);
+        add(OrePrefix.plateDouble);
+        add(OrePrefix.plateDense);
+        add(OrePrefix.foil);
+        add(OrePrefix.stick);
+        add(OrePrefix.stickLong);
+        add(OrePrefix.bolt);
+        add(OrePrefix.screw);
+        add(OrePrefix.ring);
+        add(OrePrefix.nugget);
+        add(OrePrefix.round);
+        add(OrePrefix.spring);
+        add(OrePrefix.springSmall);
+        add(OrePrefix.gear);
+        add(OrePrefix.gearSmall);
+        add(OrePrefix.wireFine);
+        add(OrePrefix.rotor);
+        add(OrePrefix.lens);
+        add(OrePrefix.oreChunk);
+        add(OrePrefix.turbineBlade);
+        add(OrePrefix.toolHeadSword);
+        add(OrePrefix.toolHeadPickaxe);
+        add(OrePrefix.toolHeadShovel);
+        add(OrePrefix.toolHeadAxe);
+        add(OrePrefix.toolHeadHoe);
+        add(OrePrefix.toolHeadHammer);
+        add(OrePrefix.toolHeadFile);
+        add(OrePrefix.toolHeadSaw);
+        add(OrePrefix.toolHeadDrill);
+        add(OrePrefix.toolHeadChainsaw);
+        add(OrePrefix.toolHeadWrench);
+        add(OrePrefix.toolHeadUniversalSpade);
+        add(OrePrefix.toolHeadSense);
+        add(OrePrefix.toolHeadBuzzSaw);
+    }};
+
     public static void init() {
         MetaItem1 first = new MetaItem1();
         first.setRegistryName("meta_item_1");
-        MetaItem2 second = new MetaItem2();
-        second.setRegistryName("meta_item_2");
-        DustMetaItem dustItem = new DustMetaItem();
-        dustItem.setRegistryName("meta_item_3");
         MetaTool tool = new MetaTool();
         tool.setRegistryName("meta_tool");
+        for (OrePrefix prefix : orePrefixes) {
+            String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());
+            MetaPrefixItem metaOrePrefix = new MetaPrefixItem(prefix);
+            metaOrePrefix.setRegistryName(String.format("meta_%s", regName));
+        }
     }
 
     public static void registerOreDict() {
         for (MetaItem<?> item : ITEMS) {
-            if (item instanceof MaterialMetaItem) {
-                ((MaterialMetaItem) item).registerOreDict();
-            } else if (item instanceof DustMetaItem) {
-                ((DustMetaItem) item).registerOreDict();
+            if (item instanceof MetaPrefixItem) {
+                ((MetaPrefixItem) item).registerOreDict();
             }
         }
     }
 
     public static void registerRecipes() {
         for (MetaItem<?> item : ITEMS) {
-            if (item instanceof MetaItem1)
-                ((MetaItem1) item).registerRecipes();
-            if (item instanceof MetaItem2)
-                ((MetaItem2) item).registerRecipes();
             if (item instanceof MetaTool)
                 ((MetaTool) item).registerRecipes();
         }
@@ -523,12 +578,16 @@ public final class MetaItems {
     }
 
     @SideOnly(Side.CLIENT)
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static void registerSpecialItemModel(ModelBakeEvent event, MetaValueItem metaValueItem, IBakedModel bakedModel) {
         //god these casts when intellij says you're fine but compiler complains about shit boundaries
         //noinspection RedundantCast
         ResourceLocation modelPath = ((MetaItem) metaValueItem.getMetaItem()).createItemModelPath(metaValueItem, "");
         ModelResourceLocation modelResourceLocation = new ModelResourceLocation(modelPath, "inventory");
         event.getModelRegistry().putObject(modelResourceLocation, bakedModel);
+    }
+
+    private static void addOrePrefix(OrePrefix orePrefix) {
+        orePrefixes.add(orePrefix);
     }
 }

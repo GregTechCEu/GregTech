@@ -76,7 +76,7 @@ public abstract class CoverBehavior implements IUIHolder {
     }
 
     public void writeToNBT(NBTTagCompound tagCompound) {
-        if(redstoneSignalOutput > 0) {
+        if (redstoneSignalOutput > 0) {
             tagCompound.setInteger("RedstoneSignal", redstoneSignalOutput);
         }
     }
@@ -132,7 +132,7 @@ public abstract class CoverBehavior implements IUIHolder {
      */
     public void onRemoved() {
     }
-    
+
     public boolean shouldRenderConnected() {
         return true;
     }

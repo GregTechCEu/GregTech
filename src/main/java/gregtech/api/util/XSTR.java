@@ -54,7 +54,7 @@ public class XSTR extends Random {
     }
 
     private static final AtomicLong seedUniquifier
-        = new AtomicLong(8682522807148012L);
+            = new AtomicLong(8682522807148012L);
 
     private static long seedUniquifier() {
         // L'Ecuyer, "Tables of Linear Congruential Generators of

@@ -1,6 +1,5 @@
 package gregtech.api.recipes.builders;
 
-import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
@@ -38,7 +37,7 @@ public class CutterRecipeBuilder extends RecipeBuilder<CutterRecipeBuilder> {
                     .fluidInputs(Materials.Water.getFluid(Math.max(4, Math.min(1000, duration * EUt / 320))))
                     .duration(duration * 2).build());
             recipeMap.addRecipe(this.copy()
-                    .fluidInputs(ModHandler.getDistilledWater(Math.max(3, Math.min(750, duration * EUt / 426))))
+                    .fluidInputs(Materials.DistilledWater.getFluid(Math.max(3, Math.min(750, duration * EUt / 426))))
                     .duration((int) (duration * 1.5)).build());
             recipeMap.addRecipe(this.copy()
                     .fluidInputs(Materials.Lubricant.getFluid(Math.max(1, Math.min(250, duration * EUt / 1280))))

@@ -3,14 +3,19 @@
   "density": 0.3,
   "max_height": 30,
   "min_height": 20,
-  "dimension_filter": ["name:the_end"],
+  "dimension_filter": [
+    "name:the_end"
+  ],
   "vein_populator": {
     "type": "surface_rock",
     "material": "pyrolusite"
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [8, 8]
+    "radius": [
+      8,
+      8
+    ]
   },
   "filler": {
     "type": "simple",
@@ -25,11 +30,11 @@
           "weight": 30,
           "value": "ore:spessartine"
         },
-		{
+        {
           "weight": 30,
           "value": "ore:pyrolusite"
         },
-		{
+        {
           "weight": 10,
           "value": "ore:tantalite"
         }

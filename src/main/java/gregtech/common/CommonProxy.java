@@ -11,9 +11,10 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.DustProperty;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.terminal.TerminalBuilder;
-import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
 import gregtech.common.blocks.*;
@@ -21,8 +22,12 @@ import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.blocks.wood.BlockGregSapling;
 import gregtech.common.items.MetaItems;
+import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.ItemBlockCable;
+import gregtech.common.pipelike.fluidpipe.BlockFluidPipe;
 import gregtech.common.pipelike.fluidpipe.ItemBlockFluidPipe;
+import gregtech.common.pipelike.itempipe.BlockItemPipe;
+import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
 import gregtech.loaders.MaterialInfoLoader;
 import gregtech.loaders.OreDictionaryLoader;
 import gregtech.loaders.oreprocessing.DecompositionRecipeHandler;
@@ -69,10 +74,12 @@ public class CommonProxy {
         IForgeRegistry<Block> registry = event.getRegistry();
 
         registry.register(MACHINE);
-        registry.register(CABLE);
-        registry.register(FLUID_PIPE);
-        registry.register(HERMETIC_CASING);
 
+        for (BlockCable cable : CABLES) registry.register(cable);
+        for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(pipe);
+        for (BlockItemPipe pipe : ITEM_PIPES) registry.register(pipe);
+
+        registry.register(HERMETIC_CASING);
         registry.register(FOAM);
         registry.register(REINFORCED_FOAM);
         registry.register(PETRIFIED_FOAM);
@@ -119,10 +126,12 @@ public class CommonProxy {
         ToolRecipeHandler.initializeMetaItems();
 
         registry.register(createItemBlock(MACHINE, MachineItemBlock::new));
-        registry.register(createItemBlock(CABLE, ItemBlockCable::new));
-        registry.register(createItemBlock(FLUID_PIPE, ItemBlockFluidPipe::new));
-        registry.register(createItemBlock(HERMETIC_CASING, VariantItemBlock::new));
 
+        for (BlockCable cable : CABLES) registry.register(createItemBlock(cable, ItemBlockCable::new));
+        for (BlockFluidPipe pipe : FLUID_PIPES) registry.register(createItemBlock(pipe, ItemBlockFluidPipe::new));
+        for (BlockItemPipe pipe : ITEM_PIPES) registry.register(createItemBlock(pipe, ItemBlockItemPipe::new));
+
+        registry.register(createItemBlock(HERMETIC_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(BOILER_FIREBOX_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(METAL_CASING, VariantItemBlock::new));
@@ -142,16 +151,16 @@ public class CommonProxy {
         registry.register(createMultiTexItemBlock(SAPLING, state -> state.getValue(BlockGregSapling.VARIANT).getName()));
 
         COMPRESSED.values()
-            .stream().distinct()
-            .map(block -> createItemBlock(block, CompressedItemBlock::new))
-            .forEach(registry::register);
+                .stream().distinct()
+                .map(block -> createItemBlock(block, CompressedItemBlock::new))
+                .forEach(registry::register);
         FRAMES.values()
-            .stream().distinct()
-            .map(block -> createItemBlock(block, FrameItemBlock::new))
-            .forEach(registry::register);
+                .stream().distinct()
+                .map(block -> createItemBlock(block, FrameItemBlock::new))
+                .forEach(registry::register);
         ORES.stream()
-            .map(block -> createItemBlock(block, OreItemBlock::new))
-            .forEach(registry::register);
+                .map(block -> createItemBlock(block, OreItemBlock::new))
+                .forEach(registry::register);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -187,6 +196,7 @@ public class CommonProxy {
         MachineRecipeLoader.init();
         CraftingRecipeLoader.init();
         MetaTileEntityLoader.init();
+        MetaTileEntityMachineRecipeLoader.init();
         RecipeHandlerList.register();
     }
 
@@ -209,7 +219,7 @@ public class CommonProxy {
         RecyclingRecipes.init();
         WoodMachineRecipes.init();
 
-        if (GTValues.isModLoaded(GTValues.MODID_CT)){
+        if (GTValues.isModLoaded(GTValues.MODID_CT)) {
             MetaItemBracketHandler.rebuildComponentRegistry();
         }
     }
@@ -240,11 +250,12 @@ public class CommonProxy {
         if (stack.getItem() instanceof CompressedItemBlock) {
             CompressedItemBlock itemBlock = (CompressedItemBlock) stack.getItem();
             Material material = itemBlock.getBlockState(stack).getValue(itemBlock.compressedBlock.variantProperty);
-            if (material instanceof DustMaterial &&
-                ((DustMaterial) material).burnTime > 0) {
+            DustProperty property = material.getProperty(PropertyKey.DUST);
+            if (property != null &&
+                    property.getBurnTime() > 0) {
                 //compute burn value for block prefix, taking amount of material in block into account
                 double materialUnitsInBlock = OrePrefix.block.getMaterialAmount(material) / (GTValues.M * 1.0);
-                event.setBurnTime((int) (materialUnitsInBlock * ((DustMaterial) material).burnTime));
+                event.setBurnTime((int) (materialUnitsInBlock * property.getBurnTime()));
             }
         }
     }

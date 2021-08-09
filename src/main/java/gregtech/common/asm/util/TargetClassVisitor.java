@@ -28,7 +28,7 @@ public class TargetClassVisitor extends ClassVisitor {
     }
 
     @SuppressWarnings("deprecation")
-	@Override
+    @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor visitor = super.visitMethod(access, name, desc, signature, exceptions);
         String methodKey = name + desc;
@@ -41,11 +41,11 @@ public class TargetClassVisitor extends ClassVisitor {
     }
 
     @SuppressWarnings("deprecation")
-	@Override
+    @Override
     public void visitEnd() {
         super.visitEnd();
         if (!foundMethod) {
-        	FMLLog.log("ArmorRenderTransformer", Level.FATAL, "Failed to find method %s in %s.", methodKey, className);
+            FMLLog.log("ArmorRenderTransformer", Level.FATAL, "Failed to find method %s in %s.", methodKey, className);
             throw new RuntimeException("Failed to patch method " + methodKey + ", loading cannot continue. Check your environment is correct.");
         }
     }

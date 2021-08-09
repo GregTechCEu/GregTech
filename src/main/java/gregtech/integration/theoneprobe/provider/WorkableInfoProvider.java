@@ -41,11 +41,11 @@ public class WorkableInfoProvider extends CapabilityInfoProvider<IWorkable> {
             IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
             horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.progress*} ");
             horizontalPane.progress(currentProgress, maxProgress, probeInfo.defaultProgressStyle()
-                .suffix(suffix)
-                .borderColor(0x00000000)
-                .backgroundColor(0x00000000)
-                .filledColor(0xFF000099)
-                .alternateFilledColor(0xFF000077));
+                    .suffix(suffix)
+                    .borderColor(0x00000000)
+                    .backgroundColor(0x00000000)
+                    .filledColor(0xFF000099)
+                    .alternateFilledColor(0xFF000077));
         }
     }
 }

@@ -9,14 +9,17 @@
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [13, 13]
+    "radius": [
+      13,
+      13
+    ]
   },
   "filler": {
     "type": "simple",
     "value": {
       "type": "weight_random",
       "values": [
-		{
+        {
           "weight": 30,
           "value": "ore:brown_limonite"
         },
@@ -24,11 +27,11 @@
           "weight": 30,
           "value": "ore:yellow_limonite"
         },
-		{
+        {
           "weight": 30,
           "value": "ore:banded_iron"
         },
-		{
+        {
           "weight": 10,
           "value": "ore:malachite"
         }

@@ -28,17 +28,17 @@ public class DistillationTowerInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
-            .aisle("EXX", "XXX", "XXX", "XXX", "XXX", "XXX")
-            .aisle("SFX", "X#X", "X#X", "X#X", "X#X", "XXX")
-            .aisle("IXX", "HXX", "HXX", "HXX", "HXX", "HXX")
-            .where('#', Blocks.AIR.getDefaultState())
-            .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.STAINLESS_CLEAN))
-            .where('S', MetaTileEntities.DISTILLATION_TOWER, EnumFacing.WEST)
-            .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.EV], EnumFacing.WEST)
-            .where('I', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.EV], EnumFacing.WEST)
-            .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.EV], EnumFacing.DOWN)
-            .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.EV], EnumFacing.WEST)
-            .build();
+                .aisle("EXX", "XXX", "XXX", "XXX", "XXX", "XXX")
+                .aisle("SFX", "X#X", "X#X", "X#X", "X#X", "XXX")
+                .aisle("IXX", "HXX", "HXX", "HXX", "HXX", "HXX")
+                .where('#', Blocks.AIR.getDefaultState())
+                .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.STAINLESS_CLEAN))
+                .where('S', MetaTileEntities.DISTILLATION_TOWER, EnumFacing.WEST)
+                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.EV], EnumFacing.WEST)
+                .where('I', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.EV], EnumFacing.WEST)
+                .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.EV], EnumFacing.DOWN)
+                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.EV], EnumFacing.WEST)
+                .build();
         return Lists.newArrayList(shapeInfo);
     }
 
@@ -58,7 +58,7 @@ public class DistillationTowerInfo extends MultiblockInfoPage {
         ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.preview.limit_per_layer", 1).setStyle(new Style().setColor(TextFormatting.DARK_RED));
         ITextComponent inputTooltip = new TextComponentTranslation("gregtech.multiblock.preview.only_location", I18n.format("gregtech.multiblock.preview.location.b_c")).setStyle(new Style().setColor(TextFormatting.DARK_RED));
 
-        for(int i = 0; i < GTValues.UHV + 1; i++) {
+        for (int i = 0; i < GTValues.UHV + 1; i++) {
             addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(), tooltip);
             addBlockTooltip(MetaTileEntities.FLUID_IMPORT_HATCH[i].getStackForm(), inputTooltip);
         }

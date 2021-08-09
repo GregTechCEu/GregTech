@@ -41,9 +41,9 @@ import java.util.function.Predicate;
 public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockController {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-        MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
-        MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.EXPORT_FLUIDS,
-        MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
+            MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.EXPORT_FLUIDS,
+            MultiblockAbility.INPUT_ENERGY
     };
 
     private int blastFurnaceTemperature;
@@ -63,7 +63,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     protected void addDisplayText(List<ITextComponent> textList) {
         if (isStructureFormed()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.blast_furnace.max_temperature", blastFurnaceTemperature)
-                .setStyle(new Style().setColor(TextFormatting.RED)));
+                    .setStyle(new Style().setColor(TextFormatting.RED)));
         }
         super.addDisplayText(textList);
     }
@@ -85,7 +85,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
 
     @Override
     public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
-        int recipeRequiredTemp = recipe.getRecipePropertyStorage().getRecipePropertyValue(BlastTemperatureProperty.getInstance(), 0);
+        int recipeRequiredTemp = recipe.getProperty(BlastTemperatureProperty.getInstance(), 0);
         return this.blastFurnaceTemperature >= recipeRequiredTemp;
     }
 
@@ -104,16 +104,16 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-            .aisle("XXX", "CCC", "CCC", "XXX")
-            .aisle("XXX", "C#C", "C#C", "XXX")
-            .aisle("XSX", "CCC", "CCC", "XXX")
-            .setAmountAtLeast('L', 10)
-            .where('S', selfPredicate())
-            .where('L', statePredicate(getCasingState()))
-            .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-            .where('C', heatingCoilPredicate())
-            .where('#', isAirPredicate())
-            .build();
+                .aisle("XXX", "CCC", "CCC", "XXX")
+                .aisle("XXX", "C#C", "C#C", "XXX")
+                .aisle("XSX", "CCC", "CCC", "XXX")
+                .setAmountAtLeast('L', 10)
+                .where('S', selfPredicate())
+                .where('L', statePredicate(getCasingState()))
+                .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('C', heatingCoilPredicate())
+                .where('#', isAirPredicate())
+                .build();
     }
 
     protected IBlockState getCasingState() {
@@ -154,7 +154,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         @Override
         protected void setupRecipe(Recipe recipe) {
             int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.getMaxVoltage(), recipe.getDuration(),
-                    recipe.getRecipePropertyStorage().getRecipePropertyValue(BlastTemperatureProperty.getInstance(), 0));
+                    recipe.getProperty(BlastTemperatureProperty.getInstance(), 0));
 
             this.progressTime = 1;
             setMaxProgress(resultOverclock[1]);
@@ -171,7 +171,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
 
         protected int[] calculateOverclock(int EUt, long voltage, int duration, int recipeRequiredTemp) {
             if (!allowOverclocking) {
-                return new int[] {EUt, duration};
+                return new int[]{EUt, duration};
             }
             boolean negativeEU = EUt < 0;
 
@@ -180,7 +180,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
             int amountPerfectOC = amountEUDiscount / 2;
 
             //apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
-            EUt *= Math.max(1, Math.pow(0.95, amountEUDiscount));
+            EUt *= Math.min(1, Math.pow(0.95, amountEUDiscount));
 
             int tier = getOverclockingTier(voltage);
             if (GTValues.V[tier] <= EUt || tier == 0)

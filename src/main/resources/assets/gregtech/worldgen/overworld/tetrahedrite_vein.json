@@ -10,10 +10,12 @@
     "type": "biome_dictionary",
     "mountain": 20
   },
-
   "generator": {
     "type": "ellipsoid",
-    "radius": [17, 18]
+    "radius": [
+      17,
+      18
+    ]
   },
   "filler": {
     "type": "simple",
@@ -28,7 +30,7 @@
           "weight": 20,
           "value": "ore:copper"
         },
-		    {
+        {
           "weight": 20,
           "value": "ore:stibnite"
         }

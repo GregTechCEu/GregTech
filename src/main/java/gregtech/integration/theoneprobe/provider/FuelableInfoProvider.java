@@ -53,11 +53,11 @@ public class FuelableInfoProvider extends CapabilityInfoProvider<IFuelable> {
 
             horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
             horizontalPane.progress(fuelRemaining, fuelCapacity, probeInfo.defaultProgressStyle()
-                .suffix("/" + fuelCapacity + " ")
-                .borderColor(0x00000000)
-                .backgroundColor(0x00000000)
-                .filledColor(0xFFFFE000)
-                .alternateFilledColor(0xFFEED000));
+                    .suffix("/" + fuelCapacity + " ")
+                    .borderColor(0x00000000)
+                    .backgroundColor(0x00000000)
+                    .filledColor(0xFFFFE000)
+                    .alternateFilledColor(0xFFEED000));
             if (fuelRemaining < fuelMinConsumed)
                 horizontalPane.text("{*gregtech.top.fuel_min_consume*} " + fuelMinConsumed);
             else

@@ -6,15 +6,18 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
+import javax.annotation.Nonnull;
+
 public class DummyRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
     @Override
-    public boolean matches(final InventoryCrafting inv, final World worldIn) {
+    public boolean matches(@Nonnull final InventoryCrafting inv, @Nonnull final World worldIn) {
         return false;
     }
 
+    @Nonnull
     @Override
-    public ItemStack getCraftingResult(final InventoryCrafting inv) {
+    public ItemStack getCraftingResult(@Nonnull final InventoryCrafting inv) {
         return ItemStack.EMPTY;
     }
 
@@ -23,6 +26,7 @@ public class DummyRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IR
         return false;
     }
 
+    @Nonnull
     @Override
     public ItemStack getRecipeOutput() {
         return ItemStack.EMPTY;

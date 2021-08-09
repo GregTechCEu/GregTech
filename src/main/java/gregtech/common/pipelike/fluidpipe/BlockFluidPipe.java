@@ -5,7 +5,9 @@ import gregtech.api.damagesources.DamageSources;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialRegistry;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.FluidPipeFluidHandler;
@@ -23,7 +25,6 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -32,6 +33,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedMap;
@@ -41,14 +43,15 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
 
     private final SortedMap<Material, FluidPipeProperties> enabledMaterials = new TreeMap<>();
 
-    public BlockFluidPipe() {
-        setHarvestLevel("pickaxe", 1);
+    public BlockFluidPipe(FluidPipeType pipeType) {
+        super(pipeType);
+        setHarvestLevel("wrench", 1);
     }
 
     public void addPipeMaterial(Material material, FluidPipeProperties fluidPipeProperties) {
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(fluidPipeProperties, "fluidPipeProperties");
-        Preconditions.checkArgument(Material.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
+        Preconditions.checkArgument(MaterialRegistry.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
         this.enabledMaterials.put(material, fluidPipeProperties);
     }
 
@@ -81,19 +84,25 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         for (Material material : enabledMaterials.keySet()) {
             for (FluidPipeType fluidPipeType : FluidPipeType.values()) {
                 if (!fluidPipeType.getOrePrefix().isIgnored(material)) {
-                    items.add(getItem(fluidPipeType, material));
+                    items.add(getItem(material));
                 }
             }
         }
     }
 
     @Override
-    protected boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
+    public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
         return selfTile.getNodeData().equals(sideTile.getNodeData());
     }
 
     @Override
-    protected int getActiveVisualConnections(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile) {
+    public boolean canPipeConnectToBlock(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, TileEntity tile) {
+        return tile != null && tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()) != null;
+    }
+
+    /*@Override
+    public int getActiveVisualConnections(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile) {
+        return selfTile.getBlockedConnections();
         int activeNodeConnections = 0;
         for (EnumFacing side : EnumFacing.VALUES) {
             BlockPos offsetPos = selfTile.getPipePos().offset(side);
@@ -108,11 +117,12 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             }
         }
         return activeNodeConnections;
-    }
+    }*/
 
-    @Override
+    /*@Override
     public int getActiveNodeConnections(IBlockAccess world, BlockPos nodePos, IPipeTile<FluidPipeType, FluidPipeProperties> selfTileEntity) {
-        int activeNodeConnections = 0;
+        return getPipeTileEntity(world, nodePos).getBlockedConnections();
+        /*int activeNodeConnections = 0;
         for (EnumFacing side : EnumFacing.VALUES) {
             BlockPos offsetPos = nodePos.offset(side);
             TileEntity tileEntity = world.getTileEntity(offsetPos);
@@ -126,12 +136,12 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             }
         }
         return activeNodeConnections;
-    }
+    }*/
 
     public boolean canPushIntoFluidHandler(IPipeTile<FluidPipeType, FluidPipeProperties> selfTileEntity, TileEntity otherTileEntity, IFluidHandler sourceHandler, IFluidHandler destinationHandler) {
         boolean isSourcePipe = sourceHandler instanceof FluidPipeFluidHandler;
         boolean isDestPipe = destinationHandler instanceof FluidPipeFluidHandler;
-        if(isSourcePipe && isDestPipe) {
+        if (isSourcePipe && isDestPipe) {
             float sourceThickness = selfTileEntity.getPipeType().getThickness();
             IPipeTile<FluidPipeType, FluidPipeProperties> otherPipe = getPipeTileEntity(otherTileEntity);
             if (otherPipe == null) {
@@ -144,7 +154,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+    public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
         if (entityIn instanceof EntityLivingBase && entityIn.world.getWorldTime() % 20 == 0L) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
@@ -188,9 +198,11 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         }
     }
 
+    @Nonnull
+    @SuppressWarnings("deprecation")
     @Override
     @SideOnly(Side.CLIENT)
-    public EnumBlockRenderType getRenderType(IBlockState state) {
+    public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
         return FluidPipeRenderer.BLOCK_RENDER_TYPE;
     }
 

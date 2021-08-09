@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockController {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-        MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.INPUT_ENERGY
     };
 
     public MetaTileEntityImplosionCompressor(ResourceLocation metaTileEntityId) {
@@ -36,16 +36,16 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-            .aisle("XXX", "XXX", "XXX")
-            .aisle("XXX", "X#X", "XXX")
-            .aisle("XXX", "XSX", "XXX")
-            .setAmountAtLeast('L', 14)
-            .where('S', selfPredicate())
-            .where('L', statePredicate(getCasingState()))
-            .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-            .where('#', isAirPredicate())
-            .where('C', statePredicate(getCasingState()))
-            .build();
+                .aisle("XXX", "XXX", "XXX")
+                .aisle("XXX", "X#X", "XXX")
+                .aisle("XXX", "XSX", "XXX")
+                .setAmountAtLeast('L', 14)
+                .where('S', selfPredicate())
+                .where('L', statePredicate(getCasingState()))
+                .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('#', isAirPredicate())
+                .where('C', statePredicate(getCasingState()))
+                .build();
     }
 
     @Override

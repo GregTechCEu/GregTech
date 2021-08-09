@@ -57,7 +57,7 @@ public class MetaTileEntityBracketHandler implements IBracketHandler {
             nameBuilder.append(tokens.get(i).getValue());
         }
         return position -> new ExpressionCallStatic(position, environment, method,
-            new ExpressionString(position, nameBuilder.toString()));
+                new ExpressionString(position, nameBuilder.toString()));
     }
 
 }

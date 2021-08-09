@@ -10,7 +10,7 @@ public class NetworkItemInfo implements IItemInfo {
 
     private final ItemStackKey itemStackKey;
     private int totalItemAmount = 0;
-    private Map<ItemSource, Integer> inventories = new ConcurrentHashMap<>();
+    private final Map<ItemSource, Integer> inventories = new ConcurrentHashMap<>();
 
     public NetworkItemInfo(ItemStackKey itemStackKey) {
         this.itemStackKey = itemStackKey;
@@ -58,7 +58,7 @@ public class NetworkItemInfo implements IItemInfo {
     private boolean recomputeItemAmount() {
         int oldTotalItemAmount = totalItemAmount;
         this.totalItemAmount = inventories.values().stream()
-            .mapToInt(Integer::intValue).sum();
+                .mapToInt(Integer::intValue).sum();
         return totalItemAmount != oldTotalItemAmount;
     }
 }

@@ -10,7 +10,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder.CraftTweakerIngredientWrapper;
 import gregtech.api.recipes.recipes.PrimitiveBlastFurnaceRecipe;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
@@ -86,7 +86,7 @@ public class PBFRecipeBuilder {
 
     public ValidationResult<PrimitiveBlastFurnaceRecipe> build() {
         return ValidationResult.newResult(validate(),
-            new PrimitiveBlastFurnaceRecipe(input, output, duration, fuelAmount));
+                new PrimitiveBlastFurnaceRecipe(input, output, duration, fuelAmount));
     }
 
     protected EnumValidationResult validate() {

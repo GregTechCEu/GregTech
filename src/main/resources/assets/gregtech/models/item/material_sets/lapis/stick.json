@@ -1,6 +1,6 @@
 {
-    "parent": "item/handheld",
-    "textures": {
-        "layer0": "gregtech:items/material_sets/lapis/stick"
-    }
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "gregtech:items/material_sets/lapis/stick"
+  }
 }

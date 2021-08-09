@@ -6,7 +6,12 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class ToolShovel extends ToolBase {
+
+    private static final Set<String> SHOVEL_TOOL_CLASSES = Collections.singleton("shovel");
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
@@ -37,11 +42,15 @@ public class ToolShovel extends ToolBase {
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
         return (tool != null && tool.equals("shovel")) ||
-            block.getMaterial() == Material.SAND ||
-            block.getMaterial() == Material.GRASS ||
-            block.getMaterial() == Material.GROUND ||
-            block.getMaterial() == Material.SNOW ||
-            block.getMaterial() == Material.CLAY;
+                block.getMaterial() == Material.SAND ||
+                block.getMaterial() == Material.GRASS ||
+                block.getMaterial() == Material.GROUND ||
+                block.getMaterial() == Material.SNOW ||
+                block.getMaterial() == Material.CLAY;
     }
 
+    @Override
+    public Set<String> getToolClasses(ItemStack stack) {
+        return SHOVEL_TOOL_CLASSES;
+    }
 }

@@ -1,11 +1,10 @@
 package gregtech.api.recipes;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.Recipe.ChanceEntry;
-import gregtech.api.unification.material.IMaterial;
-import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
@@ -16,8 +15,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.*;
@@ -26,16 +25,17 @@ import java.util.*;
  * @see Recipe
  */
 
+@SuppressWarnings("unchecked")
 public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected RecipeMap<R> recipeMap;
 
-    protected List<CountableIngredient> inputs;
-    protected NonNullList<ItemStack> outputs;
-    protected List<ChanceEntry> chancedOutputs;
+    protected final List<CountableIngredient> inputs;
+    protected final NonNullList<ItemStack> outputs;
+    protected final List<ChanceEntry> chancedOutputs;
 
-    protected List<FluidStack> fluidInputs;
-    protected List<FluidStack> fluidOutputs;
+    protected final List<FluidStack> fluidInputs;
+    protected final List<FluidStack> fluidOutputs;
 
     protected int duration, EUt;
     protected boolean hidden = false;
@@ -113,11 +113,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(CountableIngredient.from(oredict, count));
     }
 
-    public R input(OrePrefix orePrefix, IMaterial<?> material) {
+    public R input(OrePrefix orePrefix, Material material) {
         return inputs(CountableIngredient.from(orePrefix, material, 1));
     }
 
-    public R input(OrePrefix orePrefix, IMaterial<?> material, int count) {
+    public R input(OrePrefix orePrefix, Material material, int count) {
         return inputs(CountableIngredient.from(orePrefix, material, count));
     }
 
@@ -133,8 +133,9 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(new ItemStack(item, count, meta));
     }
 
+    @SuppressWarnings("unused")
     public R input(Item item, int count, boolean wild) {
-        return inputs(new ItemStack(item, count, OreDictionary.WILDCARD_VALUE));
+        return inputs(new ItemStack(item, count, GTValues.W));
     }
 
     public R input(Block item) {
@@ -145,8 +146,9 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(new ItemStack(item, count));
     }
 
+    @SuppressWarnings("unused")
     public R input(Block item, int count, boolean wild) {
-        return inputs(new ItemStack(item, count, OreDictionary.WILDCARD_VALUE));
+        return inputs(new ItemStack(item, count, GTValues.W));
     }
 
     public R input(MetaItem<?>.MetaValueItem item, int count) {
@@ -180,7 +182,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(CountableIngredient.from(itemStack, 0));
     }
 
-    public R notConsumable(OrePrefix prefix, IMaterial<?> material) {
+    public R notConsumable(OrePrefix prefix, Material material) {
         return input(prefix, material, 0);
     }
 
@@ -192,19 +194,19 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return inputs(CountableIngredient.from(item.getStackForm(), 0));
     }
 
-    public R notConsumable(FluidMaterial fluidMat) {
-        return fluidInputs(new FluidStack(fluidMat.getFluid(1), 0));
+    public R notConsumable(Fluid fluid) {
+        return fluidInputs(new FluidStack(fluid, 0));
     }
 
     public R notConsumable(FluidStack fluidStack) {
         return fluidInputs(new FluidStack(fluidStack, 0));
     }
 
-    public R output(OrePrefix orePrefix, IMaterial<?> material) {
+    public R output(OrePrefix orePrefix, Material material) {
         return outputs(OreDictUnifier.get(orePrefix, material, 1));
     }
 
-    public R output(OrePrefix orePrefix, IMaterial<?> material, int count) {
+    public R output(OrePrefix orePrefix, Material material, int count) {
         return outputs(OreDictUnifier.get(orePrefix, material, count));
     }
 
@@ -287,11 +289,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
-    public R chancedOutput(OrePrefix prefix, IMaterial<?> material, int count, int chance, int tierChanceBoost) {
+    public R chancedOutput(OrePrefix prefix, Material material, int count, int chance, int tierChanceBoost) {
         return chancedOutput(OreDictUnifier.get(prefix, material, count), chance, tierChanceBoost);
     }
 
-    public R chancedOutput(OrePrefix prefix, IMaterial<?> material, int chance, int tierChanceBoost) {
+    public R chancedOutput(OrePrefix prefix, Material material, int chance, int tierChanceBoost) {
         return chancedOutput(prefix, material, 1, chance, tierChanceBoost);
     }
 
@@ -378,16 +380,16 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-            .append("recipeMap", recipeMap)
-            .append("inputs", inputs)
-            .append("outputs", outputs)
-            .append("chancedOutputs", chancedOutputs)
-            .append("fluidInputs", fluidInputs)
-            .append("fluidOutputs", fluidOutputs)
-            .append("duration", duration)
-            .append("EUt", EUt)
-            .append("hidden", hidden)
-            .append("recipeStatus", recipeStatus)
-            .toString();
+                .append("recipeMap", recipeMap)
+                .append("inputs", inputs)
+                .append("outputs", outputs)
+                .append("chancedOutputs", chancedOutputs)
+                .append("fluidInputs", fluidInputs)
+                .append("fluidOutputs", fluidOutputs)
+                .append("duration", duration)
+                .append("EUt", EUt)
+                .append("hidden", hidden)
+                .append("recipeStatus", recipeStatus)
+                .toString();
     }
 }

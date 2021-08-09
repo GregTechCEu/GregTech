@@ -1,5 +1,6 @@
 package gregtech.common.tools;
 
+import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.RecipeMaps;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -15,9 +16,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ToolHardHammer extends ToolBase {
+
+    private static final Set<String> HAMMER_TOOL_CLASSES = new HashSet<String>() {{
+        add("hammer");
+        add("pickaxe");
+    }};
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
@@ -71,11 +79,11 @@ public class ToolHardHammer extends ToolBase {
         String tool = block.getBlock().getHarvestTool(block);
         ItemStack itemStack = new ItemStack(block.getBlock(), 1, block.getBlock().getMetaFromState(block));
         return (tool != null && (tool.equals("hammer") || tool.equals("pickaxe"))) ||
-            block.getMaterial() == Material.ROCK ||
-            block.getMaterial() == Material.GLASS ||
-            block.getMaterial() == Material.ICE ||
-            block.getMaterial() == Material.PACKED_ICE ||
-            RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0) != null;
+                block.getMaterial() == Material.ROCK ||
+                block.getMaterial() == Material.GLASS ||
+                block.getMaterial() == Material.ICE ||
+                block.getMaterial() == Material.PACKED_ICE ||
+                RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.DEFAULT) != null;
     }
 
     @Override
@@ -86,5 +94,10 @@ public class ToolHardHammer extends ToolBase {
     @Override
     public void addInformation(ItemStack stack, List<String> lines, boolean isAdvanced) {
         lines.add(I18n.format("metaitem.tool.tooltip.hammer.extra_drop"));
+    }
+
+    @Override
+    public Set<String> getToolClasses(ItemStack stack) {
+        return HAMMER_TOOL_CLASSES;
     }
 }

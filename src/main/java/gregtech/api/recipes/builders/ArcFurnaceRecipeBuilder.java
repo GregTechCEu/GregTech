@@ -4,8 +4,8 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.FluidMaterial;
 import gregtech.api.util.ValidationResult;
 
 public class ArcFurnaceRecipeBuilder extends RecipeBuilder<ArcFurnaceRecipeBuilder> {
@@ -30,7 +30,7 @@ public class ArcFurnaceRecipeBuilder extends RecipeBuilder<ArcFurnaceRecipeBuild
     public void buildAndRegister() {
         if (fluidInputs.isEmpty()) {
             fluidInputs(Materials.Oxygen.getFluid(this.duration));
-            for (FluidMaterial material : new FluidMaterial[]{Materials.Argon, Materials.Nitrogen}) {
+            for (Material material : new Material[]{Materials.Argon, Materials.Nitrogen}) {
                 int plasmaAmount = (int) Math.max(1L, this.duration / (material.getAverageMass() * 16L));
                 RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
                         .inputsIngredients(this.inputs)

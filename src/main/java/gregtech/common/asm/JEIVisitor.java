@@ -33,7 +33,7 @@ public class JEIVisitor extends MethodVisitor implements Opcodes {
     // public <E> List<String> addModNameToIngredientTooltip(List<String> tooltip, E ingredient, IIngredientHelper<E> ingredientHelper)
     private static String targetSignature() {
 
-        return  "(" +
+        return "(" +
                 "Ljava/util/List;" + // List<String>
                 "Ljava/lang/Object;" + // E
                 "Lmezz/jei/api/ingredients/IIngredientHelper;" + // IIngredientHelper<E>
@@ -43,7 +43,7 @@ public class JEIVisitor extends MethodVisitor implements Opcodes {
     // public void addFluidTooltip(List<String> tooltip, Object ingredient)
     private static String tooltipSignature() {
 
-        return  "(" +
+        return "(" +
                 "Ljava/util/List;" + // List<String>
                 "Ljava/lang/Object;" + // Object
                 ")V"; // return void

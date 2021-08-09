@@ -22,20 +22,24 @@ import gregtech.common.metatileentities.multi.electric.*;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine.TurbineType;
+import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
+import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
 import gregtech.common.metatileentities.steam.*;
 import gregtech.common.metatileentities.steam.boiler.SteamCoalBoiler;
 import gregtech.common.metatileentities.steam.boiler.SteamLavaBoiler;
 import gregtech.common.metatileentities.steam.boiler.SteamSolarBoiler;
+import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamHatch;
+import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamItemBus;
 import gregtech.common.metatileentities.storage.*;
 import net.minecraft.util.ResourceLocation;
 
 public class MetaTileEntities {
 
     //HULLS
-    public static MetaTileEntityHull[] HULL = new MetaTileEntityHull[GTValues.V.length];
-    public static MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 2]; // no ULV, no MAX
-    public static MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[GTValues.V.length][];
-    public static MetaTileEntityCharger[] CHARGER = new MetaTileEntityCharger[GTValues.V.length];
+    public static final MetaTileEntityHull[] HULL = new MetaTileEntityHull[GTValues.V.length];
+    public static final MetaTileEntityTransformer[] TRANSFORMER = new MetaTileEntityTransformer[GTValues.V.length - 1]; // no ULV, no MAX
+    public static final MetaTileEntityBatteryBuffer[][] BATTERY_BUFFER = new MetaTileEntityBatteryBuffer[GTValues.V.length][];
+    public static final MetaTileEntityCharger[] CHARGER = new MetaTileEntityCharger[GTValues.V.length];
 
     //STEAM AGE SECTION
     public static SteamCoalBoiler STEAM_BOILER_COAL_BRONZE;
@@ -60,60 +64,63 @@ public class MetaTileEntities {
     public static MetaTileEntityPrimitiveWaterPump PRIMITIVE_WATER_PUMP;
 
     //SIMPLE MACHINES SECTION
-    public static SimpleMachineMetaTileEntity[] ELECTRIC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static MetaTileEntityMacerator[] MACERATOR = new MetaTileEntityMacerator[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] ALLOY_SMELTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] ARC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] AUTOCLAVE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] BENDER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] BREWERY = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] CANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] CENTRIFUGE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] CHEMICAL_BATH = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] CHEMICAL_REACTOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] COMPRESSOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] CUTTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] DISTILLERY = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] ELECTROLYZER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] ELECTROMAGNETIC_SEPARATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] EXTRACTOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] EXTRUDER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] FERMENTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] FLUID_HEATER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] FLUID_SOLIDIFIER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] FORGE_HAMMER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] FORMING_PRESS = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] LATHE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] MIXER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] ORE_WASHER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] PACKER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] UNPACKER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] POLARIZER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] LASER_ENGRAVER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] SIFTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] THERMAL_CENTRIFUGE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] WIREMILL = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] CIRCUIT_ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.UV];
-    public static SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ELECTRIC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final MetaTileEntityMacerator[] MACERATOR = new MetaTileEntityMacerator[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ALLOY_SMELTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ARC_FURNACE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] AUTOCLAVE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] BENDER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] BREWERY = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] CANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] CENTRIFUGE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] CHEMICAL_BATH = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] CHEMICAL_REACTOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] COMPRESSOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] CUTTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] DISTILLERY = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ELECTROLYZER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ELECTROMAGNETIC_SEPARATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] EXTRACTOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] EXTRUDER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] FERMENTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] FLUID_HEATER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] FLUID_SOLIDIFIER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] FORGE_HAMMER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] FORMING_PRESS = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] LATHE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] MIXER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] ORE_WASHER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] PACKER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] UNPACKER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] POLARIZER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] LASER_ENGRAVER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] SIFTER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] THERMAL_CENTRIFUGE = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] WIREMILL = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] CIRCUIT_ASSEMBLER = new SimpleMachineMetaTileEntity[GTValues.UV];
+    public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
 
     //GENERATORS SECTION
-    public static SimpleGeneratorMetaTileEntity[] COMBUSTION_GENERATOR = new SimpleGeneratorMetaTileEntity[4];
-    public static SimpleGeneratorMetaTileEntity[] STEAM_TURBINE = new SimpleGeneratorMetaTileEntity[4];
-    public static SimpleGeneratorMetaTileEntity[] GAS_TURBINE = new SimpleGeneratorMetaTileEntity[4];
+    public static final SimpleGeneratorMetaTileEntity[] COMBUSTION_GENERATOR = new SimpleGeneratorMetaTileEntity[4];
+    public static final SimpleGeneratorMetaTileEntity[] STEAM_TURBINE = new SimpleGeneratorMetaTileEntity[4];
+    public static final SimpleGeneratorMetaTileEntity[] GAS_TURBINE = new SimpleGeneratorMetaTileEntity[4];
     public static MetaTileEntityMagicEnergyAbsorber MAGIC_ENERGY_ABSORBER;
 
     //MULTIBLOCK PARTS SECTION
-    public static MetaTileEntityItemBus[] ITEM_IMPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1]; // ULV-UHV
-    public static MetaTileEntityItemBus[] ITEM_EXPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1];
-    public static MetaTileEntityFluidHatch[] FLUID_IMPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
-    public static MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
-    public static MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
-    public static MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
-    public static MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[3]; //HV, LuV, MAX
+    public static final MetaTileEntityItemBus[] ITEM_IMPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1]; // ULV-UHV
+    public static final MetaTileEntityItemBus[] ITEM_EXPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1];
+    public static final MetaTileEntityFluidHatch[] FLUID_IMPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
+    public static final MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
+    public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
+    public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
+    public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[3]; //HV, LuV, MAX
     public static MetaTileEntityCokeOvenHatch COKE_OVEN_HATCH;
+    public static MetaTileEntitySteamItemBus STEAM_EXPORT_BUS;
+    public static MetaTileEntitySteamItemBus STEAM_IMPORT_BUS;
+    public static MetaTileEntitySteamHatch STEAM_HATCH;
 
     //MULTIBLOCKS SECTION
     public static MetaTileEntityPrimitiveBlastFurnace PRIMITIVE_BLAST_FURNACE;
@@ -137,19 +144,14 @@ public class MetaTileEntities {
     public static MetaTileEntityLargeBoiler LARGE_TUNGSTENSTEEL_BOILER;
 
     public static MetaTileEntityAssemblyLine ASSEMBLY_LINE;
-    public static MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
+    public static final MetaTileEntityFusionReactor[] FUSION_REACTOR = new MetaTileEntityFusionReactor[3];
 
     public static MetaTileEntityLargeChemicalReactor LARGE_CHEMICAL_REACTOR;
 
+    public static MetaTileEntitySteamOven STEAM_OVEN;
+    public static MetaTileEntitySteamGrinder STEAM_GRINDER;
+
     //STORAGE SECTION
-    public static MetaTileEntityChest SMALL_WOODEN_CHEST;
-    public static MetaTileEntityChest WOODEN_CHEST;
-    public static MetaTileEntityChest BRONZE_CHEST;
-    public static MetaTileEntityChest STEEL_CHEST;
-    public static MetaTileEntityChest ALUMINIUM_CHEST;
-    public static MetaTileEntityChest STAINLESS_STEEL_CHEST;
-    public static MetaTileEntityChest TITANIUM_CHEST;
-    public static MetaTileEntityChest TUNGSTENSTEEL_CHEST;
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
 
     public static MetaTileEntityTank WOODEN_TANK;
@@ -176,16 +178,16 @@ public class MetaTileEntities {
     public static MetaTileEntityCrate TITANIUM_CRATE;
     public static MetaTileEntityCrate TUNGSTENSTEEL_CRATE;
 
-    public static MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[10];
-    public static MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[10];
+    public static final MetaTileEntityQuantumChest[] QUANTUM_CHEST = new MetaTileEntityQuantumChest[10];
+    public static final MetaTileEntityQuantumTank[] QUANTUM_TANK = new MetaTileEntityQuantumTank[10];
 
     //MISC MACHINES SECTION
     public static MetaTileEntityWorkbench WORKBENCH;
-    public static MetaTileEntityPump[] PUMP = new MetaTileEntityPump[8];
-    public static MetaTileEntityBlockBreaker[] BLOCK_BREAKER = new MetaTileEntityBlockBreaker[4];
-    public static MetaTileEntityAirCollector[] AIR_COLLECTOR = new MetaTileEntityAirCollector[6];
-    public static MetaTileEntityItemCollector[] ITEM_COLLECTOR = new MetaTileEntityItemCollector[4];
-    public static MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
+    public static final MetaTileEntityPump[] PUMP = new MetaTileEntityPump[8];
+    public static final MetaTileEntityBlockBreaker[] BLOCK_BREAKER = new MetaTileEntityBlockBreaker[4];
+    public static final MetaTileEntityAirCollector[] AIR_COLLECTOR = new MetaTileEntityAirCollector[6];
+    public static final MetaTileEntityItemCollector[] ITEM_COLLECTOR = new MetaTileEntityItemCollector[4];
+    public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
 
     public static MetaTileEntityInfiniteEmitter INFINITE_EMITTER;
 
@@ -458,13 +460,16 @@ public class MetaTileEntities {
 
         LARGE_CHEMICAL_REACTOR = GregTechAPI.registerMetaTileEntity(1022, new MetaTileEntityLargeChemicalReactor(gregtechId("large_chemical_reactor")));
 
+        STEAM_OVEN = GregTechAPI.registerMetaTileEntity(1023, new MetaTileEntitySteamOven(gregtechId("steam_oven")));
+        STEAM_GRINDER = GregTechAPI.registerMetaTileEntity(1024, new MetaTileEntitySteamGrinder(gregtechId("steam_grinder")));
+
         // MISC MTE's START: IDs 1300-2000
 
         // Transformer, IDs 1300-1314
         endPos = GTValues.HT ? TRANSFORMER.length : Math.min(TRANSFORMER.length, GTValues.UV);
-        for (int i = 1; i <= endPos; i++) {
+        for (int i = 0; i <= endPos; i++) {
             MetaTileEntityTransformer transformer = new MetaTileEntityTransformer(gregtechId("transformer." + GTValues.VN[i].toLowerCase()), i);
-            TRANSFORMER[i - 1] = GregTechAPI.registerMetaTileEntity(1300 + (i - 1), transformer);
+            TRANSFORMER[i] = GregTechAPI.registerMetaTileEntity(1300 + (i), transformer);
         }
 
         // Battery Buffer, IDs 1315-1374
@@ -509,6 +514,7 @@ public class MetaTileEntities {
             GregTechAPI.registerMetaTileEntity(1420 + i, FLUID_IMPORT_HATCH[i]);
             GregTechAPI.registerMetaTileEntity(1435 + i, FLUID_EXPORT_HATCH[i]);
         }
+
         // Max Hatches/Buses
         ITEM_IMPORT_BUS[9] = new MetaTileEntityItemBus(gregtechId("item_bus.import.max"), 14, false);
         ITEM_EXPORT_BUS[9] = new MetaTileEntityItemBus(gregtechId("item_bus.export.max"), 14, true);
@@ -542,21 +548,13 @@ public class MetaTileEntities {
         ROTOR_HOLDER[1] = GregTechAPI.registerMetaTileEntity(1481, new MetaTileEntityRotorHolder(gregtechId("rotor_holder.luv"), GTValues.LuV, 1.15f));
         ROTOR_HOLDER[2] = GregTechAPI.registerMetaTileEntity(1482, new MetaTileEntityRotorHolder(gregtechId("rotor_holder.uhv"), GTValues.UHV, 1.25f));
 
-        // Chests, IDs 1485-1499
-        SMALL_WOODEN_CHEST = GregTechAPI.registerMetaTileEntity(1485, new MetaTileEntityChest(gregtechId("small_wooden_chest"), Materials.Wood, 1, 1));
-        WOODEN_CHEST = GregTechAPI.registerMetaTileEntity(1486, new MetaTileEntityChest(gregtechId("wooden_chest"), Materials.Wood, 9, 3));
-        BRONZE_CHEST = GregTechAPI.registerMetaTileEntity(1487, new MetaTileEntityChest(gregtechId("bronze_chest"), Materials.Bronze, 9, 6));
-        STEEL_CHEST = GregTechAPI.registerMetaTileEntity(1488, new MetaTileEntityChest(gregtechId("steel_chest"), Materials.Steel, 9, 8));
-        ALUMINIUM_CHEST = GregTechAPI.registerMetaTileEntity(1489, new MetaTileEntityChest(gregtechId("aluminium_chest"), Materials.Aluminium, 9, 10));
-        STAINLESS_STEEL_CHEST = GregTechAPI.registerMetaTileEntity(1490, new MetaTileEntityChest(gregtechId("stainless_steel_chest"), Materials.StainlessSteel, 9, 12));
-        TITANIUM_CHEST = GregTechAPI.registerMetaTileEntity(1491, new MetaTileEntityChest(gregtechId("titanium_chest"), Materials.Titanium, 12, 12));
-        TUNGSTENSTEEL_CHEST = GregTechAPI.registerMetaTileEntity(1492, new MetaTileEntityChest(gregtechId("tungstensteel_chest"), Materials.TungstenSteel, 12, 14));
+        // Free Range, IDs 1485-1499
 
         // Tanks, IDs 1500-1514
         WOODEN_TANK = GregTechAPI.registerMetaTileEntity(1500, new MetaTileEntityTank(gregtechId("wooden_tank"), Materials.Wood, 4000, 1, 3));
         BRONZE_TANK = GregTechAPI.registerMetaTileEntity(1501, new MetaTileEntityTank(gregtechId("bronze_tank"), Materials.Bronze, 8000, 4, 3));
         STEEL_TANK = GregTechAPI.registerMetaTileEntity(1502, new MetaTileEntityTank(gregtechId("steel_tank"), Materials.Steel, 16000, 7, 5));
-        ALUMINIUM_TANK = GregTechAPI.registerMetaTileEntity(1503, new MetaTileEntityTank(gregtechId("aluminium_tank"), Materials.Aluminium , 32000, 8, 5));
+        ALUMINIUM_TANK = GregTechAPI.registerMetaTileEntity(1503, new MetaTileEntityTank(gregtechId("aluminium_tank"), Materials.Aluminium, 32000, 8, 5));
         STAINLESS_STEEL_TANK = GregTechAPI.registerMetaTileEntity(1504, new MetaTileEntityTank(gregtechId("stainless_steel_tank"), Materials.StainlessSteel, 64000, 9, 7));
         TITANIUM_TANK = GregTechAPI.registerMetaTileEntity(1505, new MetaTileEntityTank(gregtechId("titanium_tank"), Materials.Titanium, 128000, 12, 9));
         TUNGSTENSTEEL_TANK = GregTechAPI.registerMetaTileEntity(1506, new MetaTileEntityTank(gregtechId("tungstensteel_tank"), Materials.TungstenSteel, 512000, 16, 9));
@@ -653,6 +651,10 @@ public class MetaTileEntities {
         PUMP_OUTPUT_HATCH = GregTechAPI.registerMetaTileEntity(1629, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
 
         INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1630, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));
+        // Steam Hatches/Buses
+        STEAM_EXPORT_BUS = GregTechAPI.registerMetaTileEntity(1631, new MetaTileEntitySteamItemBus(gregtechId("steam_export_bus"), true));
+        STEAM_IMPORT_BUS = GregTechAPI.registerMetaTileEntity(1632, new MetaTileEntitySteamItemBus(gregtechId("steam_import_bus"), false));
+        STEAM_HATCH = GregTechAPI.registerMetaTileEntity(1633, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
 
         /*
          * FOR ADDON DEVELOPERS:

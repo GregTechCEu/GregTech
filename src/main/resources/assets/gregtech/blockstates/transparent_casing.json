@@ -7,7 +7,7 @@
     }
   },
   "variants": {
-      "variant": {
+    "variant": {
       "reinforced_glass": {
         "textures": {
           "all": "gregtech:blocks/casings/transparent/reinforced_glass"

@@ -6,6 +6,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class SlotDelegate extends Slot {
@@ -18,20 +19,22 @@ public class SlotDelegate extends Slot {
     }
 
     @Override
-    public void onSlotChange(ItemStack p_75220_1_, ItemStack p_75220_2_) {
+    public void onSlotChange(@Nonnull ItemStack p_75220_1_, @Nonnull ItemStack p_75220_2_) {
         this.delegate.onSlotChange(p_75220_1_, p_75220_2_);
     }
 
+    @Nonnull
     @Override
-    public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
+    public ItemStack onTake(@Nonnull EntityPlayer thePlayer, @Nonnull ItemStack stack) {
         return this.delegate.onTake(thePlayer, stack);
     }
 
     @Override
-    public boolean isItemValid(ItemStack stack) {
+    public boolean isItemValid(@Nonnull ItemStack stack) {
         return this.delegate.isItemValid(stack);
     }
 
+    @Nonnull
     @Override
     public ItemStack getStack() {
         return this.delegate.getStack();
@@ -43,7 +46,7 @@ public class SlotDelegate extends Slot {
     }
 
     @Override
-    public void putStack(ItemStack stack) {
+    public void putStack(@Nonnull ItemStack stack) {
         this.delegate.putStack(stack);
     }
 
@@ -58,17 +61,18 @@ public class SlotDelegate extends Slot {
     }
 
     @Override
-    public int getItemStackLimit(ItemStack stack) {
+    public int getItemStackLimit(@Nonnull ItemStack stack) {
         return this.delegate.getItemStackLimit(stack);
     }
 
+    @Nonnull
     @Override
     public ItemStack decrStackSize(int amount) {
         return this.delegate.decrStackSize(amount);
     }
 
     @Override
-    public boolean canTakeStack(EntityPlayer playerIn) {
+    public boolean canTakeStack(@Nonnull EntityPlayer playerIn) {
         return this.delegate.canTakeStack(playerIn);
     }
 
@@ -83,6 +87,7 @@ public class SlotDelegate extends Slot {
         return this.delegate.getBackgroundSprite();
     }
 
+    @Nonnull
     @Override
     public ResourceLocation getBackgroundLocation() {
         return this.delegate.getBackgroundLocation();
@@ -95,7 +100,7 @@ public class SlotDelegate extends Slot {
     }
 
     @Override
-    public void setBackgroundLocation(ResourceLocation texture) {
+    public void setBackgroundLocation(@Nonnull ResourceLocation texture) {
         this.delegate.setBackgroundLocation(texture);
     }
 

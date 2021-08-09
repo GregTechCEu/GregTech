@@ -1,7 +1,7 @@
 {
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "gregtech:items/material_sets/gem_vertical/dust_impure",
-        "layer1": "gregtech:items/material_sets/gem_vertical/dust_impure_overlay"
-    }
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "gregtech:items/material_sets/gem_vertical/dust_impure",
+    "layer1": "gregtech:items/material_sets/gem_vertical/dust_impure_overlay"
+  }
 }

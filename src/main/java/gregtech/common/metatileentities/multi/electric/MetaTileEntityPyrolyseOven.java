@@ -22,9 +22,9 @@ import javax.annotation.Nonnull;
 public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-        MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
-        MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.EXPORT_FLUIDS,
-        MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
+            MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.EXPORT_FLUIDS,
+            MultiblockAbility.INPUT_ENERGY
     };
 
     public MetaTileEntityPyrolyseOven(ResourceLocation metaTileEntityId) {
@@ -39,15 +39,15 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
     @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
-            .aisle("XXX", "XXX", "XXX")
-            .aisle("CCC", "C#C", "CCC")
-            .aisle("CCC", "C#C", "CCC")
-            .aisle("XXX", "XSX", "XXX")
-            .where('S', selfPredicate())
-            .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-            .where('C', statePredicate(MetaBlocks.WIRE_COIL.getState(CoilType.CUPRONICKEL)))
-            .where('#', isAirPredicate())
-            .build();
+                .aisle("XXX", "XXX", "XXX")
+                .aisle("CCC", "C#C", "CCC")
+                .aisle("CCC", "C#C", "CCC")
+                .aisle("XXX", "XSX", "XXX")
+                .where('S', selfPredicate())
+                .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('C', statePredicate(MetaBlocks.WIRE_COIL.getState(CoilType.CUPRONICKEL)))
+                .where('#', isAirPredicate())
+                .build();
     }
 
     @Override

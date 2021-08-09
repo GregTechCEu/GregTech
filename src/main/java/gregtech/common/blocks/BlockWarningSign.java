@@ -4,6 +4,8 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nonnull;
+
 public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
 
     public BlockWarningSign() {
@@ -35,6 +37,7 @@ public class BlockWarningSign extends VariantBlock<BlockWarningSign.SignType> {
             this.name = name;
         }
 
+        @Nonnull
         @Override
         public String getName() {
             return this.name;

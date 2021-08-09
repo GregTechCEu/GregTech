@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants.NBT;
 
+import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
@@ -16,7 +17,7 @@ public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
 
     private WeakReference<World> worldRef = new WeakReference<>(null);
     protected List<T> pipeNets = new ArrayList<>();
-    protected Map<ChunkPos, List<T>> pipeNetsByChunk = new HashMap<>();
+    protected final Map<ChunkPos, List<T>> pipeNetsByChunk = new HashMap<>();
 
     public WorldPipeNet(String name) {
         super(name);
@@ -44,15 +45,15 @@ public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
         this.pipeNets.forEach(PipeNet::onConnectionsUpdate);
     }
 
-    public void addNode(BlockPos nodePos, NodeDataType nodeData, int mark, int blockedConnections, boolean isActive) {
+    public void addNode(BlockPos nodePos, NodeDataType nodeData, int mark, int openConnections, boolean isActive) {
         T myPipeNet = null;
-        Node<NodeDataType> node = new Node<>(nodeData, blockedConnections, mark, isActive);
+        Node<NodeDataType> node = new Node<>(nodeData, openConnections, mark, isActive);
         for (EnumFacing facing : EnumFacing.VALUES) {
             BlockPos offsetPos = nodePos.offset(facing);
             T pipeNet = getNetFromPos(offsetPos);
             Node<NodeDataType> secondNode = pipeNet == null ? null : pipeNet.getAllNodes().get(offsetPos);
             if (pipeNet != null && pipeNet.canAttachNode(nodeData) &&
-                pipeNet.canNodesConnect(secondNode, facing.getOpposite(), node, null)) {
+                    pipeNet.canNodesConnect(secondNode, facing.getOpposite(), node, null)) {
                 if (myPipeNet == null) {
                     myPipeNet = pipeNet;
                     myPipeNet.addNode(nodePos, node);
@@ -140,8 +141,9 @@ public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
         }
     }
 
+    @Nonnull
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
         NBTTagList allPipeNets = new NBTTagList();
         for (T pipeNet : pipeNets) {
             NBTTagCompound pNetTag = pipeNet.serializeNBT();

@@ -1,6 +1,9 @@
 package gregtech.api.recipes.builders;
 
-import gregtech.api.recipes.*;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.util.ValidationResult;
 
 public class ChemicalReactorRecipeBuilder extends RecipeBuilder<ChemicalReactorRecipeBuilder> {
@@ -34,13 +37,13 @@ public class ChemicalReactorRecipeBuilder extends RecipeBuilder<ChemicalReactorR
     public void buildAndRegister() {
         if (!disableLargeRecipe) {
             RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder().copy()
-                .inputsIngredients(this.inputs)
-                .outputs(this.outputs)
-                .fluidInputs(this.fluidInputs)
-                .fluidOutputs(this.fluidOutputs)
-                .duration(this.duration)
-                .EUt(this.EUt)
-                .buildAndRegister();
+                    .inputsIngredients(this.inputs)
+                    .outputs(this.outputs)
+                    .fluidInputs(this.fluidInputs)
+                    .fluidOutputs(this.fluidOutputs)
+                    .duration(this.duration)
+                    .EUt(this.EUt)
+                    .buildAndRegister();
         }
 
         super.buildAndRegister();

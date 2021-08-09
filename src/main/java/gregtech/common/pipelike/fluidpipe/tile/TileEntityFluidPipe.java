@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
-import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -56,7 +56,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
             BlockPos blockPos = selfPos.offset(side);
             IBlockState blockState = world.getBlockState(blockPos);
             if (blockState.getBlock().isAir(blockState, world, blockPos) ||
-                blockState.getBlock().isFlammable(world, blockPos, side.getOpposite())) {
+                    blockState.getBlock().isFlammable(world, blockPos, side.getOpposite())) {
                 world.setBlockState(blockPos, Blocks.FIRE.getDefaultState());
             }
         }
@@ -65,12 +65,12 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public static void spawnParticles(World worldIn, BlockPos pos, EnumFacing direction, EnumParticleTypes particleType, int particleCount, Random rand) {
         for (int i = 0; i < particleCount; i++) {
             worldIn.spawnParticle(particleType,
-                pos.getX() + 0.5 - direction.getXOffset() / 1.8,
-                pos.getY() + 0.5 - direction.getYOffset() / 1.8,
-                pos.getZ() + 0.5 - direction.getZOffset() / 1.8,
-                direction.getXOffset() * 0.2 + rand.nextDouble() * 0.1,
-                direction.getYOffset() * 0.2 + rand.nextDouble() * 0.1,
-                direction.getZOffset() * 0.2 + rand.nextDouble() * 0.1);
+                    pos.getX() + 0.5 - direction.getXOffset() / 1.8,
+                    pos.getY() + 0.5 - direction.getYOffset() / 1.8,
+                    pos.getZ() + 0.5 - direction.getZOffset() / 1.8,
+                    direction.getXOffset() * 0.2 + rand.nextDouble() * 0.1,
+                    direction.getYOffset() * 0.2 + rand.nextDouble() * 0.1,
+                    direction.getZOffset() * 0.2 + rand.nextDouble() * 0.1);
         }
     }
 }

@@ -76,7 +76,7 @@ public class CraftingRecipeResolver {
             ItemStack craftingGridStack = craftingGrid.getStackInSlot(i);
             ItemStack inventoryCraftingStack = inventoryCrafting.getStackInSlot(i);
             if (!ItemStack.areItemsEqual(craftingGridStack, inventoryCraftingStack) ||
-                !ItemStack.areItemStackTagsEqual(craftingGridStack, inventoryCraftingStack)) {
+                    !ItemStack.areItemStackTagsEqual(craftingGridStack, inventoryCraftingStack)) {
                 inventoryCrafting.setInventorySlotContents(i, craftingGridStack.copy());
                 craftingGridChanged = true;
             }

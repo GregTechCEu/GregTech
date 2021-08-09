@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
 
-    private Supplier<FluidFilter> itemFilterSupplier;
+    private final Supplier<FluidFilter> itemFilterSupplier;
     private FluidFilter itemFilter;
 
     public WidgetGroupFluidFilter(int yPosition, Supplier<FluidFilter> itemFilterSupplier) {
@@ -20,14 +20,14 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         FluidFilter newItemFilter = itemFilterSupplier.get();
-        if(itemFilter != newItemFilter) {
+        if (itemFilter != newItemFilter) {
             clearAllWidgets();
             this.itemFilter = newItemFilter;
-            if(itemFilter != null) {
+            if (itemFilter != null) {
                 this.itemFilter.initUI(this::addWidget);
             }
             writeUpdateInfo(2, buffer -> {
-                if(itemFilter != null) {
+                if (itemFilter != null) {
                     buffer.writeBoolean(true);
                     int filterId = FilterTypeRegistry.getIdForFluidFilter(itemFilter);
                     buffer.writeVarInt(filterId);
@@ -41,9 +41,9 @@ public class WidgetGroupFluidFilter extends AbstractWidgetGroup {
     @Override
     public void readUpdateInfo(int id, PacketBuffer buffer) {
         super.readUpdateInfo(id, buffer);
-        if(id == 2) {
+        if (id == 2) {
             clearAllWidgets();
-            if(buffer.readBoolean()) {
+            if (buffer.readBoolean()) {
                 int filterId = buffer.readVarInt();
                 this.itemFilter = FilterTypeRegistry.createFluidFilterById(filterId);
                 this.itemFilter.initUI(this::addWidget);

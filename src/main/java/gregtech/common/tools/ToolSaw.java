@@ -1,5 +1,6 @@
 package gregtech.common.tools;
 
+import gregtech.api.items.toolitem.ToolMetaItem;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -17,12 +18,16 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-
-import gregtech.api.items.toolitem.ToolMetaItem;
-
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ToolSaw extends ToolBase {
+
+    private static final Set<String> SAW_TOOL_CLASSES = new HashSet<String>() {{
+        add("axe");
+        add("saw");
+    }};
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
@@ -48,12 +53,12 @@ public class ToolSaw extends ToolBase {
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
         return (tool != null && (tool.equals("axe") || tool.equals("saw"))) ||
-            block.getMaterial() == Material.LEAVES ||
-            block.getMaterial() == Material.VINE ||
-            block.getMaterial() == Material.WOOD ||
-            block.getMaterial() == Material.CACTUS ||
-            block.getMaterial() == Material.ICE ||
-            block.getMaterial() == Material.PACKED_ICE;
+                block.getMaterial() == Material.LEAVES ||
+                block.getMaterial() == Material.VINE ||
+                block.getMaterial() == Material.WOOD ||
+                block.getMaterial() == Material.CACTUS ||
+                block.getMaterial() == Material.ICE ||
+                block.getMaterial() == Material.PACKED_ICE;
     }
 
     @Override
@@ -82,9 +87,14 @@ public class ToolSaw extends ToolBase {
         }
     }
 
+    @Override
+    public Set<String> getToolClasses(ItemStack stack) {
+        return SAW_TOOL_CLASSES;
+    }
+
     /**
      * Added to the world event listeners to hopefully catch and revert the ice-to-water conversion.
-     *
+     * <p>
      * The conversion may never happen, for example when there is air under the ice block,
      * so this invalidates itself on the first block update after the tick it was added.
      */

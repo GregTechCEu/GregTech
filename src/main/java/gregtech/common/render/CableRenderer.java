@@ -18,14 +18,14 @@ import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.ItemBlockCable;
-import gregtech.common.pipelike.cable.WireProperties;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -54,12 +54,12 @@ import org.lwjgl.opengl.GL11;
 
 public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
 
-    public static ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "cable"), "normal");
-    public static CableRenderer INSTANCE = new CableRenderer();
+    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "cable"), "normal");
+    public static final CableRenderer INSTANCE = new CableRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
-    private static ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
+    private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
 
-    private TextureAtlasSprite[] insulationTextures = new TextureAtlasSprite[6];
+    private final TextureAtlasSprite[] insulationTextures = new TextureAtlasSprite[6];
     private TextureAtlasSprite wireTexture;
 
     public static void preInit() {
@@ -100,8 +100,8 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         Material material = blockCable.getItemMaterial(stack);
         if (insulation != null && material != null) {
             renderCableBlock(material, insulation, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0],
-                1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
-                    1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
+                    1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
+                            1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
         }
         renderState.draw();
         GlStateManager.disableBlend();
@@ -119,7 +119,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         TileEntityCable tileEntityCable = (TileEntityCable) blockCable.getPipeTileEntity(world, pos);
         if (tileEntityCable == null) return false;
         int paintingColor = tileEntityCable.getInsulationColor();
-        int connectedSidesMask = blockCable.getActualConnections(tileEntityCable, world);
+        int connectedSidesMask = blockCable.getVisualConnections(tileEntityCable);
         Insulation insulation = tileEntityCable.getPipeType();
         Material material = tileEntityCable.getPipeMaterial();
         if (insulation != null && material != null) {
@@ -134,7 +134,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     public void renderCableBlock(Material material, Insulation insulation1, int insulationColor1, CCRenderState state, IVertexOperation[] pipeline, int connectMask) {
-        int wireColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB);
+        int wireColor = GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB());
         float thickness = insulation1.thickness;
 
         IVertexOperation[] wire = ArrayUtils.addAll(pipeline, new IconTransformation(wireTexture), new ColourMultiplier(wireColor));
@@ -214,7 +214,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
             return;
         }
         float thickness = insulation.getThickness();
-        int connectedSidesMask = blockCable.getActualConnections(tileEntityCable, world);
+        int connectedSidesMask = blockCable.getVisualConnections(tileEntityCable);
         Cuboid6 baseBox = BlockCable.getSideBox(null, thickness);
         BlockRenderer.renderCuboid(renderState, baseBox, 0);
         for (EnumFacing renderSide : EnumFacing.VALUES) {
@@ -265,9 +265,9 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         }
         TextureAtlasSprite atlasSprite;
         int particleColor;
-        if(insulation.insulationLevel == -1) {
+        if (insulation.insulationLevel == -1) {
             atlasSprite = wireTexture;
-            particleColor = material.materialRGB;
+            particleColor = material.getMaterialRGB();
         } else {
             atlasSprite = insulationTextures[5];
             particleColor = tileEntity.getInsulationColor();

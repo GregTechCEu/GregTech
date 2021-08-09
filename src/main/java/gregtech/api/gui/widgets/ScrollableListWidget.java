@@ -20,7 +20,7 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
     protected int totalListHeight;
     protected int slotHeight;
     protected int scrollOffset;
-    protected int scrollPaneWidth = 10;
+    protected final int scrollPaneWidth = 10;
     protected int lastMouseX;
     protected int lastMouseY;
     protected boolean draggedOnScrollBar;
@@ -130,14 +130,14 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
         final int x1 = position.x + size.width - 1;
         final int y1 = position.y + size.height - 1;
         return isPositionInsideScissor(x0, y0) ||
-               isPositionInsideScissor(x0, y1) ||
-               isPositionInsideScissor(x1, y0) ||
-               isPositionInsideScissor(x1, y1);
+                isPositionInsideScissor(x0, y1) ||
+                isPositionInsideScissor(x1, y0) ||
+                isPositionInsideScissor(x1, y1);
     }
 
     private boolean isBoxInsideScissor(Rectangle rectangle) {
         return isPositionInsideScissor(rectangle.x, rectangle.y) &&
-            isPositionInsideScissor(rectangle.x + rectangle.width - 1, rectangle.y + rectangle.height - 1);
+                isPositionInsideScissor(rectangle.x + rectangle.width - 1, rectangle.y + rectangle.height - 1);
     }
 
     @Override
@@ -200,7 +200,7 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
     public List<Target<?>> getPhantomTargets(Object ingredient) {
         //for phantom targets, show only ones who are fully inside scissor box to avoid visual glitches
         return super.getPhantomTargets(ingredient).stream()
-            .filter(it -> isBoxInsideScissor(it.getArea()))
-            .collect(Collectors.toList());
+                .filter(it -> isBoxInsideScissor(it.getArea()))
+                .collect(Collectors.toList());
     }
 }

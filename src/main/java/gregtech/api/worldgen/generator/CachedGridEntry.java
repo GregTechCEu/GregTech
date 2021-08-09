@@ -52,18 +52,18 @@ public class CachedGridEntry implements GridEntryInfo, IBlockGeneratorAccess, IB
 
     private static Cache<Long, CachedGridEntry> createGridCache() {
         return CacheBuilder.newBuilder()
-            .maximumSize(300)
-            .expireAfterAccess(5L, TimeUnit.MINUTES)
-            .build();
+                .maximumSize(300)
+                .expireAfterAccess(5L, TimeUnit.MINUTES)
+                .build();
     }
 
     private final TLongObjectMap<ChunkDataEntry> dataByChunkPos = new TLongObjectHashMap<>();
     private static final Comparator<OreDepositDefinition> COMPARATOR = Comparator.comparing(OreDepositDefinition::getPriority).reversed();
     private static final BlockPos[] CHUNK_CORNER_SPOTS = new BlockPos[]{
-        new BlockPos(0, 0, 0),
-        new BlockPos(15, 0, 0),
-        new BlockPos(0, 0, 15),
-        new BlockPos(15, 0, 15)
+            new BlockPos(0, 0, 0),
+            new BlockPos(15, 0, 0),
+            new BlockPos(0, 0, 15),
+            new BlockPos(15, 0, 15)
     };
 
     private final Random gridRandom;

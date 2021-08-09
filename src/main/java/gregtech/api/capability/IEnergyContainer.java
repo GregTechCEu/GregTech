@@ -23,6 +23,7 @@ public interface IEnergyContainer {
 
     /**
      * Adds specified amount of energy to this energy container
+     *
      * @param energyToAdd amount of energy to add
      * @return amount of energy added
      */
@@ -32,6 +33,7 @@ public interface IEnergyContainer {
 
     /**
      * Removes specified amount of energy from this energy container
+     *
      * @param energyToRemove amount of energy to remove
      * @return amount of energy removed
      */

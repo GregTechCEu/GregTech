@@ -27,7 +27,7 @@ public class PipeCoverableImplementation implements ICoverable {
 
     private final IPipeTile<?, ?> holder;
     private final CoverBehavior[] coverBehaviors = new CoverBehavior[6];
-    private int[] sidedRedstoneInput = new int[6];
+    private final int[] sidedRedstoneInput = new int[6];
 
     public PipeCoverableImplementation(IPipeTile<?, ?> holder) {
         this.holder = holder;
@@ -77,6 +77,7 @@ public class PipeCoverableImplementation implements ICoverable {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     public final boolean removeCover(EnumFacing side) {
         Preconditions.checkNotNull(side, "side");
         CoverBehavior coverBehavior = getCoverAtSide(side);
@@ -90,7 +91,8 @@ public class PipeCoverableImplementation implements ICoverable {
             Block.spawnAsEntity(getWorld(), getPos(), dropStack);
         }
         writeCustomData(2, buffer -> buffer.writeByte(side.getIndex()));
-        holder.setConnectionBlocked(AttachmentType.COVER, side, false, false);
+        BlockPipe pipeBlock = (BlockPipe<?, ?, ?>) getWorld().getBlockState(getPos()).getBlock();
+        holder.setConnectionBlocked(AttachmentType.COVER, side, !pipeBlock.canConnect(holder, side), false);
         holder.notifyBlockUpdate();
         holder.markAsDirty();
         return true;
@@ -123,7 +125,7 @@ public class PipeCoverableImplementation implements ICoverable {
 
     @Override
     public final int getInputRedstoneSignal(EnumFacing side, boolean ignoreCover) {
-        if(!ignoreCover && getCoverAtSide(side) != null) {
+        if (!ignoreCover && getCoverAtSide(side) != null) {
             return 0; //covers block input redstone signal for machine
         }
         return sidedRedstoneInput[side.getIndex()];
@@ -133,10 +135,10 @@ public class PipeCoverableImplementation implements ICoverable {
         for (EnumFacing side : EnumFacing.VALUES) {
             int redstoneValue = GTUtility.getRedstonePower(getWorld(), getPos(), side);
             int currentValue = sidedRedstoneInput[side.getIndex()];
-            if(redstoneValue != currentValue) {
+            if (redstoneValue != currentValue) {
                 this.sidedRedstoneInput[side.getIndex()] = redstoneValue;
                 CoverBehavior coverBehavior = getCoverAtSide(side);
-                if(coverBehavior != null) {
+                if (coverBehavior != null) {
                     coverBehavior.onRedstoneInputSignalChange(redstoneValue);
                 }
             }
@@ -182,16 +184,16 @@ public class PipeCoverableImplementation implements ICoverable {
     public boolean canConnectRedstone(@Nullable EnumFacing side) {
         //so far null side means either upwards or downwards redstone wire connection
         //so check both top cover and bottom cover
-        if(side == null) {
+        if (side == null) {
             return canConnectRedstone(EnumFacing.UP) ||
-                canConnectRedstone(EnumFacing.DOWN);
+                    canConnectRedstone(EnumFacing.DOWN);
         }
         CoverBehavior behavior = getCoverAtSide(side);
         return behavior != null && behavior.canConnectRedstone();
     }
 
     public int getOutputRedstoneSignal(@Nullable EnumFacing side) {
-        if(side == null) {
+        if (side == null) {
             return getHighestOutputRedstoneSignal();
         }
         CoverBehavior behavior = getCoverAtSide(side);
@@ -200,7 +202,7 @@ public class PipeCoverableImplementation implements ICoverable {
 
     public int getHighestOutputRedstoneSignal() {
         int highestSignal = 0;
-        for(EnumFacing side : EnumFacing.VALUES) {
+        for (EnumFacing side : EnumFacing.VALUES) {
             CoverBehavior behavior = getCoverAtSide(side);
             highestSignal = Math.max(highestSignal, behavior.getRedstoneSignalOutput());
         }
@@ -323,13 +325,8 @@ public class PipeCoverableImplementation implements ICoverable {
     }
 
     @Override
-    public long getTimer() {
-        return holder.getTickTimer();
-    }
-
-    @Override
     public long getOffsetTimer() {
-        return getTimer();
+        return holder.getTickTimer();
     }
 
     @Override

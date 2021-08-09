@@ -17,12 +17,12 @@ public class SizedTextureArea extends TextureArea {
     @Override
     public SizedTextureArea getSubArea(double offsetX, double offsetY, double width, double height) {
         return new SizedTextureArea(imageLocation,
-            this.offsetX + (imageWidth * offsetX),
-            this.offsetY + (imageHeight * offsetY),
-            this.imageWidth * width,
-            this.imageHeight * height,
-            this.pixelImageWidth * width,
-            this.pixelImageHeight * height);
+                this.offsetX + (imageWidth * offsetX),
+                this.offsetY + (imageHeight * offsetY),
+                this.imageWidth * width,
+                this.imageHeight * height,
+                this.pixelImageWidth * width,
+                this.pixelImageHeight * height);
     }
 
     public static SizedTextureArea fullImage(String imageLocation, int imageWidth, int imageHeight) {

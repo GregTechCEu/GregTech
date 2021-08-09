@@ -48,6 +48,7 @@ public abstract class MultiblockInfoPage {
     /**
      * Gets the Map containing all tooltips for Blocks that have had tooltips applied.
      * Will generate the map if it does not exist
+     *
      * @return - The Map containing Tooltips and Formatting for specific Blocks
      */
     public Map<ItemStack, List<ITextComponent>> getBlockTooltipMap() {
@@ -63,11 +64,11 @@ public abstract class MultiblockInfoPage {
      */
     protected void generateBlockTooltips() {
 
-        for(int i  = 0; i < GTValues.UHV + 1; i++) {
+        for (int i = 0; i < GTValues.UHV + 1; i++) {
             addBlockTooltip(MetaTileEntities.ITEM_EXPORT_BUS[i].getStackForm(), defaultText);
-            addBlockTooltip(MetaTileEntities.ITEM_IMPORT_BUS[i].getStackForm(),  defaultText);
-            addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(),  defaultText);
-            addBlockTooltip(MetaTileEntities.FLUID_IMPORT_HATCH[i].getStackForm(),  defaultText);
+            addBlockTooltip(MetaTileEntities.ITEM_IMPORT_BUS[i].getStackForm(), defaultText);
+            addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(), defaultText);
+            addBlockTooltip(MetaTileEntities.FLUID_IMPORT_HATCH[i].getStackForm(), defaultText);
         }
     }
 
@@ -75,19 +76,19 @@ public abstract class MultiblockInfoPage {
      * A Helper method for adding tooltips to Blocks in the multiblock preview screen.
      * Can be called if {@link MultiblockInfoPage#generateBlockTooltips()} is not overridden
      * Will add tooltips to MultiblockAbilities with existing tooltips
+     *
      * @param itemStack - The ItemStack form of the Block to add a Tooltip too
-     * @param tooltip - An ITextComponent object consisting of the tooltip and format to add to the block
+     * @param tooltip   - An ITextComponent object consisting of the tooltip and format to add to the block
      */
     protected void addBlockTooltip(ItemStack itemStack, ITextComponent tooltip) {
 
         List<ITextComponent> tooltipList = this.blockTooltips.getOrDefault(itemStack, null);
 
-        if(tooltipList == null) {
+        if (tooltipList == null) {
             List<ITextComponent> tooltipToAdd = new ArrayList<>();
             tooltipToAdd.add(tooltip);
             this.blockTooltips.put(itemStack, tooltipToAdd);
-        }
-        else {
+        } else {
             tooltipList.add(tooltip);
             this.blockTooltips.put(itemStack, tooltipList);
 

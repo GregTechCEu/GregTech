@@ -10,16 +10,27 @@
   },
   "variants": {
     "axis": {
-      "none": { "textures": { "end": "#side" } },
-      "x": { "x": 90, "y": 90 },
+      "none": {
+        "textures": {
+          "end": "#side"
+        }
+      },
+      "x": {
+        "x": 90,
+        "y": 90
+      },
       "y": {},
-      "z": { "x": 90 }
+      "z": {
+        "x": 90
+      }
     },
     "natural": {
       "true": {},
       "false": {}
     },
-    "inventory": [{}],
+    "inventory": [
+      {}
+    ],
     "variant": {
       "rubber_wood": {
         "textures": {

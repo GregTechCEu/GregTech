@@ -54,11 +54,11 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     public Map<BlockPos, Node<NodeDataType>> getAllNodes() {
         return unmodifiableNodeByBlockPos;
     }
-    
+
     public Node<NodeDataType> getNodeAt(BlockPos blockPos) {
         return nodeByBlockPos.get(blockPos);
     }
-    
+
     public boolean containsNode(BlockPos blockPos) {
         return nodeByBlockPos.containsKey(blockPos);
     }
@@ -112,10 +112,9 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             return;
         }
         Node<NodeDataType> selfNode = getNodeAt(nodePos);
-        boolean wasBlocked = (selfNode.blockedConnections & 1 << facing.getIndex()) > 0;
-        if (wasBlocked == isBlocked) {
+        if (selfNode.isBlocked(facing) == isBlocked)
             return;
-        }
+
         setBlocked(selfNode, facing, isBlocked);
         BlockPos offsetPos = nodePos.offset(facing);
         PipeNet<NodeDataType> pipeNetAtOffset = worldData.getNetFromPos(offsetPos);
@@ -132,7 +131,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             if (isBlocked) {
                 //need to unblock node before doing canNodesConnectCheck
                 setBlocked(selfNode, facing, false);
-                if(canNodesConnect(selfNode, facing, getNodeAt(offsetPos), this)) {
+                if (canNodesConnect(selfNode, facing, getNodeAt(offsetPos), this)) {
                     //now block again to call findAllConnectedBlocks
                     setBlocked(selfNode, facing, true);
                     HashMap<BlockPos, Node<NodeDataType>> thisENet = findAllConnectedBlocks(nodePos);
@@ -153,7 +152,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             Node<NodeDataType> neighbourNode = pipeNetAtOffset.getNodeAt(offsetPos);
             //check connection availability from both networks
             if (canNodesConnect(selfNode, facing, neighbourNode, pipeNetAtOffset) &&
-                pipeNetAtOffset.canNodesConnect(neighbourNode, facing.getOpposite(), selfNode, this)) {
+                    pipeNetAtOffset.canNodesConnect(neighbourNode, facing.getOpposite(), selfNode, this)) {
                 //so, side is unblocked now, and nodes can connect, merge two networks
                 //our network consumes other one
                 uniteNetworks(pipeNetAtOffset);
@@ -178,7 +177,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             if (secondNode == null)
                 continue; //there is noting here
             if (!areNodeBlockedConnectionsCompatible(selfNode, facing, secondNode) ||
-                !areNodesCustomContactable(selfNode.data, secondNode.data, otherPipeNet))
+                    !areNodesCustomContactable(selfNode.data, secondNode.data, otherPipeNet))
                 continue; //if connections aren't compatible, skip them
             if (areMarksCompatible(oldMark, secondNode.mark) == areMarksCompatible(newMark, secondNode.mark))
                 continue; //if compatibility didn't change, skip it
@@ -215,10 +214,10 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     }
 
     private void setBlocked(Node<NodeDataType> selfNode, EnumFacing facing, boolean isBlocked) {
-        if (isBlocked) {
-            selfNode.blockedConnections |= 1 << facing.getIndex();
+        if (!isBlocked) {
+            selfNode.openConnections |= 1 << facing.getIndex();
         } else {
-            selfNode.blockedConnections &= ~(1 << facing.getIndex());
+            selfNode.openConnections &= ~(1 << facing.getIndex());
         }
     }
 
@@ -240,8 +239,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     }
 
     private boolean areNodeBlockedConnectionsCompatible(Node<NodeDataType> first, EnumFacing firstFacing, Node<NodeDataType> second) {
-        return (first.blockedConnections & 1 << firstFacing.getIndex()) == 0 &&
-            (second.blockedConnections & 1 << firstFacing.getOpposite().getIndex()) == 0;
+        return !first.isBlocked(firstFacing) && !second.isBlocked(firstFacing.getOpposite());
     }
 
     private boolean areMarksCompatible(int mark1, int mark2) {
@@ -255,8 +253,8 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
      */
     protected final boolean canNodesConnect(Node<NodeDataType> first, EnumFacing firstFacing, Node<NodeDataType> second, PipeNet<NodeDataType> secondPipeNet) {
         return areNodeBlockedConnectionsCompatible(first, firstFacing, second) &&
-            areMarksCompatible(first.mark, second.mark) &&
-            areNodesCustomContactable(first.data, second.data, secondPipeNet);
+                areMarksCompatible(first.mark, second.mark) &&
+                areNodesCustomContactable(first.data, second.data, secondPipeNet);
     }
 
     //we need to search only this network
@@ -396,10 +394,10 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             int wirePropertiesIndex = nodeTag.getInteger("index");
             BlockPos blockPos = new BlockPos(x, y, z);
             NodeDataType nodeData = readProperties.get(wirePropertiesIndex);
-            int blockedConnections = nodeTag.getInteger("blocked");
+            int openConnections = nodeTag.getInteger("open");
             int mark = nodeTag.getInteger("mark");
             boolean isNodeActive = nodeTag.getBoolean("active");
-            addNodeSilently(blockPos, new Node<>(nodeData, blockedConnections, mark, isNodeActive));
+            addNodeSilently(blockPos, new Node<>(nodeData, openConnections, mark, isNodeActive));
         }
     }
 
@@ -427,8 +425,8 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             if (node.mark != Node.DEFAULT_MARK) {
                 nodeTag.setInteger("mark", node.mark);
             }
-            if (node.blockedConnections > 0) {
-                nodeTag.setInteger("blocked", node.blockedConnections);
+            if (node.openConnections > 0) {
+                nodeTag.setInteger("open", node.openConnections);
             }
             if (node.isActive) {
                 nodeTag.setBoolean("active", true);

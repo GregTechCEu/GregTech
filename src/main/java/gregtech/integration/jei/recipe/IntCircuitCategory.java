@@ -52,55 +52,55 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
     private final IDrawable backgroundDrawable;
 
     private final Supplier<IIngredientRenderer<ItemStack>> otherItemRenderer =
-        Suppliers.memoize(() -> {
-            IIngredientRenderer<ItemStack> defaultRenderer = GTJeiPlugin.ingredientRegistry.getIngredientRenderer(VanillaTypes.ITEM);
-            return CompositeRenderer.startBuilder(defaultRenderer)
-                .then(this::slice)
-                .then(defaultRenderer::render)
-                .then(() -> GL11.glDisable(GL11.GL_STENCIL_TEST))
-                .build();
-        });
+            Suppliers.memoize(() -> {
+                IIngredientRenderer<ItemStack> defaultRenderer = GTJeiPlugin.ingredientRegistry.getIngredientRenderer(VanillaTypes.ITEM);
+                return CompositeRenderer.startBuilder(defaultRenderer)
+                        .then(this::slice)
+                        .then(defaultRenderer::render)
+                        .then(() -> GL11.glDisable(GL11.GL_STENCIL_TEST))
+                        .build();
+            });
 
     private final Supplier<IIngredientRenderer<ItemStack>> firstItemRenderer =
-        Suppliers.memoize(() -> CompositeRenderer.startBuilder(otherItemRenderer.get())
-            .then(GlStateManager::pushMatrix)
-            .then((minecraft, xPosition, yPosition, ingredient) -> {
-                if (xPosition * yPosition != 0)
-                    GlStateManager.translate(xPosition, yPosition, 0);
-                GlStateManager.scale(FIRST_SLOT_SCALE, FIRST_SLOT_SCALE, 0);
-            })
-            .then((minecraft, xPosition, yPosition, ingredient) -> otherItemRenderer.get()
-                .render(minecraft, 0, 0, ingredient))
-            .then(GlStateManager::popMatrix)
-            .build());
+            Suppliers.memoize(() -> CompositeRenderer.startBuilder(otherItemRenderer.get())
+                    .then(GlStateManager::pushMatrix)
+                    .then((minecraft, xPosition, yPosition, ingredient) -> {
+                        if (xPosition * yPosition != 0)
+                            GlStateManager.translate(xPosition, yPosition, 0);
+                        GlStateManager.scale(FIRST_SLOT_SCALE, FIRST_SLOT_SCALE, 0);
+                    })
+                    .then((minecraft, xPosition, yPosition, ingredient) -> otherItemRenderer.get()
+                            .render(minecraft, 0, 0, ingredient))
+                    .then(GlStateManager::popMatrix)
+                    .build());
 
     public IntCircuitCategory(IGuiHelper guiHelper) {
         iconDrawable = guiHelper.createDrawableIngredient(MetaItems.INTEGRATED_CIRCUIT.getStackForm());
         backgroundDrawable = guiHelper.createBlankDrawable(108, 108);
 
         Iterator<Integer> counter = Iterators.cycle(IntStream.range(0, IntCircuitIngredient.CIRCUIT_MAX + 1)
-            .boxed()
-            .collect(Collectors.toList()));
+                .boxed()
+                .collect(Collectors.toList()));
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         slotBase = CompositeDrawable.startBuilder(SLOT_SIZE, SLOT_SIZE)
-            .then(guiHelper.drawableBuilder(new ResourceLocation(GTValues.MODID, "textures/gui/base/slot.png"), 0, 0, SLOT_SIZE, SLOT_SIZE)
-                .setTextureSize(SLOT_SIZE, SLOT_SIZE)
-                .build()::draw)
-            .then((minecraft, xOffset, yOffset) ->
-                fontRenderer.drawString(counter.next().toString(), xOffset + 1, yOffset + 1, 0x555555))
-            .build();
+                .then(guiHelper.drawableBuilder(new ResourceLocation(GTValues.MODID, "textures/gui/base/slot.png"), 0, 0, SLOT_SIZE, SLOT_SIZE)
+                        .setTextureSize(SLOT_SIZE, SLOT_SIZE)
+                        .build()::draw)
+                .then((minecraft, xOffset, yOffset) ->
+                        fontRenderer.drawString(counter.next().toString(), xOffset + 1, yOffset + 1, 0x555555))
+                .build();
 
         scaledSlot = CompositeDrawable.startBuilder(SLOT_SIZE * FIRST_SLOT_SCALE, SLOT_SIZE * FIRST_SLOT_SCALE)
-            .then(GlStateManager::pushMatrix)
-            .then((minecraft, xOffset, yOffset) -> {
-                if (xOffset * yOffset != 0)
-                    GlStateManager.translate(xOffset, yOffset, 0);
-                GlStateManager.scale(FIRST_SLOT_SCALE, FIRST_SLOT_SCALE, 0);
-            })
-            .then((minecraft, xOffset, yOffset) -> slotBase.draw(minecraft, 0, 0))
-            .then(GlStateManager::popMatrix)
-            .build();
+                .then(GlStateManager::pushMatrix)
+                .then((minecraft, xOffset, yOffset) -> {
+                    if (xOffset * yOffset != 0)
+                        GlStateManager.translate(xOffset, yOffset, 0);
+                    GlStateManager.scale(FIRST_SLOT_SCALE, FIRST_SLOT_SCALE, 0);
+                })
+                .then((minecraft, xOffset, yOffset) -> slotBase.draw(minecraft, 0, 0))
+                .then(GlStateManager::popMatrix)
+                .build();
     }
 
     @Override
@@ -131,19 +131,19 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
 
     private static final int shortenedRowLength = ROW_LENGTH - FIRST_SLOT_SCALE;
     private static final int[][] positions =
-        Stream.concat(
-            IntStream.range(0, shortenedRowLength * FIRST_SLOT_SCALE)
-                .mapToObj(i -> new int[]{
-                    SLOT_SIZE * FIRST_SLOT_SCALE + SLOT_SIZE * (i % shortenedRowLength),
-                    SLOT_SIZE * (i / shortenedRowLength)
-                }),
-            IntStream.range(0, IntCircuitIngredient.CIRCUIT_MAX - (shortenedRowLength * FIRST_SLOT_SCALE))
-                .mapToObj(i -> new int[]{
-                    SLOT_SIZE * (i % ROW_LENGTH),
-                    SLOT_SIZE * FIRST_SLOT_SCALE + SLOT_SIZE * (i / ROW_LENGTH)
-                })
-        )
-            .toArray(int[][]::new);
+            Stream.concat(
+                    IntStream.range(0, shortenedRowLength * FIRST_SLOT_SCALE)
+                            .mapToObj(i -> new int[]{
+                                    SLOT_SIZE * FIRST_SLOT_SCALE + SLOT_SIZE * (i % shortenedRowLength),
+                                    SLOT_SIZE * (i / shortenedRowLength)
+                            }),
+                    IntStream.range(0, IntCircuitIngredient.CIRCUIT_MAX - (shortenedRowLength * FIRST_SLOT_SCALE))
+                            .mapToObj(i -> new int[]{
+                                    SLOT_SIZE * (i % ROW_LENGTH),
+                                    SLOT_SIZE * FIRST_SLOT_SCALE + SLOT_SIZE * (i / ROW_LENGTH)
+                            })
+            )
+                    .toArray(int[][]::new);
 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, IntCircuitRecipeWrapper recipeWrapper, IIngredients ingredients) {
@@ -152,14 +152,14 @@ public class IntCircuitCategory implements IRecipeCategory<IntCircuitRecipeWrapp
         stacks.setBackground(0, scaledSlot);
         for (int i = 0; i < positions.length; i++) {
             stacks.init(i + 1,
-                recipeWrapper.input,
-                otherItemRenderer.get(),
-                positions[i][0],
-                positions[i][1],
-                SLOT_SIZE,
-                SLOT_SIZE,
-                1,
-                1
+                    recipeWrapper.input,
+                    otherItemRenderer.get(),
+                    positions[i][0],
+                    positions[i][1],
+                    SLOT_SIZE,
+                    SLOT_SIZE,
+                    1,
+                    1
             );
             stacks.setBackground(i + 1, slotBase);
         }

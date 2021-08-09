@@ -1,0 +1,7 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "gregtech:items/material_sets/bright/stick",
+    "layer1": "gregtech:items/material_sets/bright/stick_overlay"
+  }
+}

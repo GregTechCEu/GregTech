@@ -1,7 +1,8 @@
 package gregtech.common.blocks.surfacerock;
 
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -13,6 +14,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,33 +51,35 @@ public class TileEntitySurfaceRock extends TileEntity {
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+    public void onDataPacket(@Nonnull NetworkManager net, SPacketUpdateTileEntity pkt) {
         readFromNBT(pkt.getNbtCompound());
     }
 
+    @Nonnull
     @Override
     public NBTTagCompound getUpdateTag() {
         return writeToNBT(new NBTTagCompound());
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
+    public void readFromNBT(@Nonnull NBTTagCompound compound) {
         super.readFromNBT(compound);
-        Material material = Material.MATERIAL_REGISTRY.getObject(compound.getString("Material"));
+        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(compound.getString("Material"));
         this.material = material == null ? Materials.Aluminium : material;
 
         for (NBTBase undergroundMaterialNBTBase : compound.getTagList("UndergroundMaterials", NBT.TAG_STRING)) {
-            undergroundMaterials.add(Material.MATERIAL_REGISTRY.getObject(((NBTTagString) undergroundMaterialNBTBase).getString()));
+            undergroundMaterials.add(MaterialRegistry.MATERIAL_REGISTRY.getObject(((NBTTagString) undergroundMaterialNBTBase).getString()));
         }
     }
 
+    @Nonnull
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setString("Material", Material.MATERIAL_REGISTRY.getNameForObject(material));
+        compound.setString("Material", MaterialRegistry.MATERIAL_REGISTRY.getNameForObject(material));
         NBTTagList tagList = new NBTTagList();
         this.undergroundMaterials.forEach(it ->
-            tagList.appendTag(new NBTTagString(Material.MATERIAL_REGISTRY.getNameForObject(it))));
+                tagList.appendTag(new NBTTagString(MaterialRegistry.MATERIAL_REGISTRY.getNameForObject(it))));
         compound.setTag("UndergroundMaterials", tagList);
         return compound;
     }

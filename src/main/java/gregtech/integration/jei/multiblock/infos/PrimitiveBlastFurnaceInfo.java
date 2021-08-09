@@ -23,13 +23,13 @@ public class PrimitiveBlastFurnaceInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
-            .aisle("XXX", "XXX", "XXX", "XXX")
-            .aisle("XXX", "C#X", "X#X", "X#X")
-            .aisle("XXX", "XXX", "XXX", "XXX")
-            .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.PRIMITIVE_BRICKS))
-            .where('C', MetaTileEntities.PRIMITIVE_BLAST_FURNACE, EnumFacing.WEST)
-            .where('#', Blocks.AIR.getDefaultState())
-            .build();
+                .aisle("XXX", "XXX", "XXX", "XXX")
+                .aisle("XXX", "C#X", "X#X", "X#X")
+                .aisle("XXX", "XXX", "XXX", "XXX")
+                .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.PRIMITIVE_BRICKS))
+                .where('C', MetaTileEntities.PRIMITIVE_BLAST_FURNACE, EnumFacing.WEST)
+                .where('#', Blocks.AIR.getDefaultState())
+                .build();
         return Lists.newArrayList(shapeInfo);
     }
 

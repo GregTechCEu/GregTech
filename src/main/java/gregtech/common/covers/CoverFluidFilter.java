@@ -74,13 +74,13 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         WidgetGroup fluidFilterGroup = new WidgetGroup();
         fluidFilterGroup.addWidget(new LabelWidget(10, 5, "cover.fluid_filter.title"));
         fluidFilterGroup.addWidget(new CycleButtonWidget(10, 20, 110, 20,
-            GTUtility.mapToString(FluidFilterMode.values(), (it) -> it.localeName), () -> this.filterMode.ordinal(),
-            (newMode) -> this.setFilterMode(FluidFilterMode.values()[newMode])));
+                GTUtility.mapToString(FluidFilterMode.values(), (it) -> it.localeName), () -> this.filterMode.ordinal(),
+                (newMode) -> this.setFilterMode(FluidFilterMode.values()[newMode])));
         this.fluidFilter.initUI(45, fluidFilterGroup::addWidget);
         return ModularUI.builder(GuiTextures.BACKGROUND, 176, 105 + 82)
-            .widget(fluidFilterGroup)
-            .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)
-            .build(this, player);
+                .widget(fluidFilterGroup)
+                .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 105)
+                .build(this, player);
     }
 
     public void renderCover(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
@@ -112,7 +112,7 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         this.filterMode = FluidFilterMode.values()[tagCompound.getInteger("FilterMode")];
         this.fluidFilter.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
         //LEGACY SAVE FORMAT SUPPORT
-        if(tagCompound.hasKey("FluidFilter")) {
+        if (tagCompound.hasKey("FluidFilter")) {
             this.fluidFilter.getFluidFilter().readFromNBT(tagCompound);
         } else {
             NBTTagCompound filterComponent = tagCompound.getCompoundTag("Filter");

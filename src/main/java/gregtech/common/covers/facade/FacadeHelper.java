@@ -21,10 +21,10 @@ public class FacadeHelper {
 
     private static ImmutableList<ItemStack> retrieveValidItemsList() {
         return StreamSupport.stream(Item.REGISTRY.spliterator(), false)
-            .filter(item -> item instanceof ItemBlock)
-            .flatMap(item -> getSubItems(item).stream())
-            .filter(FacadeHelper::isValidFacade)
-            .collect(GTUtility.toImmutableList());
+                .filter(item -> item instanceof ItemBlock)
+                .flatMap(item -> getSubItems(item).stream())
+                .filter(FacadeHelper::isValidFacade)
+                .collect(GTUtility.toImmutableList());
     }
 
     public static ImmutableList<ItemStack> getValidFacadeItems() {
@@ -43,10 +43,10 @@ public class FacadeHelper {
     public static boolean isValidFacade(ItemStack itemStack) {
         IBlockState rawBlockState = lookupBlockForItemUnsafe(itemStack);
         return rawBlockState != null &&
-            !rawBlockState.getBlock().hasTileEntity(rawBlockState) &&
-            !rawBlockState.getBlock().hasTileEntity() &&
-            rawBlockState.getRenderType() == EnumBlockRenderType.MODEL &&
-            rawBlockState.isFullCube();
+                !rawBlockState.getBlock().hasTileEntity(rawBlockState) &&
+                !rawBlockState.getBlock().hasTileEntity() &&
+                rawBlockState.getRenderType() == EnumBlockRenderType.MODEL &&
+                rawBlockState.isFullCube();
     }
 
     public static IBlockState lookupBlockForItem(ItemStack itemStack) {

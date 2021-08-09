@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType> & ITickable> extends WorldPipeNet<NodeDataType, T> {
 
-    private Map<T, List<ChunkPos>> loadedChunksByPipeNet = new HashMap<>();
-    private List<T> tickingPipeNets = new ArrayList<>();
+    private final Map<T, List<ChunkPos>> loadedChunksByPipeNet = new HashMap<>();
+    private final List<T> tickingPipeNets = new ArrayList<>();
 
     public TickableWorldPipeNet(String name) {
         super(name);
@@ -66,9 +66,9 @@ public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeD
     protected void onWorldSet() {
         super.onWorldSet();
         Map<T, List<ChunkPos>> pipeNetByLoadedChunks = pipeNets.stream()
-            .map(pipeNet -> Pair.of(pipeNet, getPipeNetLoadedChunks(pipeNet)))
-            .filter(pair -> !pair.getRight().isEmpty())
-            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+                .map(pipeNet -> Pair.of(pipeNet, getPipeNetLoadedChunks(pipeNet)))
+                .filter(pair -> !pair.getRight().isEmpty())
+                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         if (!pipeNetByLoadedChunks.isEmpty()) {
             this.tickingPipeNets.addAll(pipeNetByLoadedChunks.keySet());
             this.loadedChunksByPipeNet.putAll(pipeNetByLoadedChunks);
@@ -87,8 +87,8 @@ public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeD
 
     private List<ChunkPos> getPipeNetLoadedChunks(T pipeNet) {
         return pipeNet.getContainedChunks().stream()
-            .filter(this::isChunkLoaded)
-            .collect(Collectors.toList());
+                .filter(this::isChunkLoaded)
+                .collect(Collectors.toList());
     }
 
     @Override

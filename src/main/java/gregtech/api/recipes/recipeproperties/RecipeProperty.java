@@ -29,6 +29,7 @@ public abstract class RecipeProperty<T> {
 
     /**
      * Controls if the property should display any information in JEI
+     *
      * @return true to hide information from JEI
      */
     public boolean isHidden() {

@@ -45,8 +45,8 @@ public class LootTableHelper {
     public static void initialize() {
         try {
             Field gsonField = Arrays.stream(LootTableManager.class.getDeclaredFields())
-                .filter(it -> Gson.class.isAssignableFrom(it.getType()))
-                .findFirst().orElseThrow(() -> new RuntimeException("Failed to find Gson field!"));
+                    .filter(it -> Gson.class.isAssignableFrom(it.getType()))
+                    .findFirst().orElseThrow(() -> new RuntimeException("Failed to find Gson field!"));
             gsonField.setAccessible(true);
             Gson gsonInstance = (Gson) gsonField.get(null);
             replaceGsonTypeHierarchySerializer(gsonInstance, LootEntry.class, LootTableEntrySerializerDelegate::new);
@@ -119,14 +119,14 @@ public class LootTableHelper {
             hierarchyTypeField.setAccessible(true);
             List<TypeAdapterFactory> factories = (List<TypeAdapterFactory>) field.get(gson);
             Object factoryObject = factories.stream()
-                .filter(factory -> singleTypeFactoryClass.isAssignableFrom(factory.getClass()))
-                .filter(factory -> {
-                    try {
-                        return hierarchyTypeField.get(factory) == type;
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).findFirst().orElseThrow(() -> new IllegalArgumentException("Serializer not found for " + type));
+                    .filter(factory -> singleTypeFactoryClass.isAssignableFrom(factory.getClass()))
+                    .filter(factory -> {
+                        try {
+                            return hierarchyTypeField.get(factory) == type;
+                        } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).findFirst().orElseThrow(() -> new IllegalArgumentException("Serializer not found for " + type));
 
             Field serializerField = singleTypeFactoryClass.getDeclaredField("serializer");
             Field deserializerField = singleTypeFactoryClass.getDeclaredField("deserializer");

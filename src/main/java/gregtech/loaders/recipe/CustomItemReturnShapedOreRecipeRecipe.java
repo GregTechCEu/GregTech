@@ -30,8 +30,9 @@ public class CustomItemReturnShapedOreRecipeRecipe extends ShapedOreRecipe imple
         return itemsToReturn.test(itemStack);
     }
 
+    @Nonnull
     @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+    public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
         NonNullList<ItemStack> remainingItems = super.getRemainingItems(inv);
         for (int i = 0; i < remainingItems.size(); i++) {
             if (!remainingItems.get(i).isEmpty()) continue;

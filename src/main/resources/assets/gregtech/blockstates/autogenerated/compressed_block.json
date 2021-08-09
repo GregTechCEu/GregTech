@@ -8,8 +8,8 @@
     }
   },
   "variants": {
-      "variant": {
-        $VARIANTS$
-      }
+    "variant": {
+      $VARIANTS$
+    }
   }
 }

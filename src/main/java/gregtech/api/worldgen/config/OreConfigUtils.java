@@ -4,8 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.type.DustMaterial;
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialRegistry;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.BlockOre;
 import gregtech.common.blocks.MetaBlocks;
@@ -49,14 +50,14 @@ public class OreConfigUtils {
         } else {
             throw new IllegalArgumentException("Invalid string ore declaration: " + stringDeclaration);
         }
-        DustMaterial material = getMaterialByName(materialName);
+        Material material = getMaterialByName(materialName);
         return getOreForMaterial(material);
     }
 
-    public static Map<StoneType, IBlockState> getOreForMaterial(DustMaterial material) {
+    public static Map<StoneType, IBlockState> getOreForMaterial(Material material) {
         List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
-            .filter(ore -> ore.material == material)
-            .collect(Collectors.toList());
+                .filter(ore -> ore.material == material)
+                .collect(Collectors.toList());
         HashMap<StoneType, IBlockState> stoneTypeMap = new HashMap<>();
         for (BlockOre blockOre : oreBlocks) {
             for (StoneType stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
@@ -70,11 +71,11 @@ public class OreConfigUtils {
         return stoneTypeMap;
     }
 
-    public static DustMaterial getMaterialByName(String name) {
-        Material material = Material.MATERIAL_REGISTRY.getObject(name);
-        if (!(material instanceof DustMaterial))
+    public static Material getMaterialByName(String name) {
+        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(name);
+        if (material == null || !material.hasProperty(PropertyKey.ORE))
             throw new IllegalArgumentException("Material with name " + name + " not found!");
-        return (DustMaterial) material;
+        return material;
     }
 
     public static Block getBlockByName(String name) {

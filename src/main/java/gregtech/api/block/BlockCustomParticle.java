@@ -20,6 +20,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.annotation.Nonnull;
+
 public abstract class BlockCustomParticle extends Block implements ICustomParticleBlock {
 
     public BlockCustomParticle(Material blockMaterialIn, MapColor blockMapColorIn) {
@@ -35,7 +37,7 @@ public abstract class BlockCustomParticle extends Block implements ICustomPartic
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, ParticleManager manager) {
+    public boolean addHitEffects(@Nonnull IBlockState state, @Nonnull World worldObj, RayTraceResult target, @Nonnull ParticleManager manager) {
         Pair<TextureAtlasSprite, Integer> atlasSprite = getParticleTexture(worldObj, target.getBlockPos());
         ParticleHandlerUtil.addHitEffects(state, worldObj, target, atlasSprite.getLeft(), atlasSprite.getRight(), manager);
         return true;
@@ -43,7 +45,7 @@ public abstract class BlockCustomParticle extends Block implements ICustomPartic
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager) {
+    public boolean addDestroyEffects(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull ParticleManager manager) {
         Pair<TextureAtlasSprite, Integer> atlasSprite = getParticleTexture(world, pos);
         ParticleHandlerUtil.addBlockDestroyEffects(world.getBlockState(pos), world, pos, atlasSprite.getLeft(), atlasSprite.getRight(), manager);
         return true;
@@ -58,7 +60,7 @@ public abstract class BlockCustomParticle extends Block implements ICustomPartic
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean addRunningEffects(IBlockState state, World world, BlockPos pos, Entity entity) {
+    public boolean addRunningEffects(@Nonnull IBlockState state, World world, @Nonnull BlockPos pos, @Nonnull Entity entity) {
         if (world.isRemote) {
             Pair<TextureAtlasSprite, Integer> atlasSprite = getParticleTexture(world, pos);
             ParticleHandlerUtil.addBlockRunningEffects(world, entity, atlasSprite.getLeft(), atlasSprite.getRight());
@@ -67,7 +69,7 @@ public abstract class BlockCustomParticle extends Block implements ICustomPartic
     }
 
     @Override
-    public boolean addLandingEffects(IBlockState state, WorldServer worldObj, BlockPos blockPosition, IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
+    public boolean addLandingEffects(@Nonnull IBlockState state, @Nonnull WorldServer worldObj, @Nonnull BlockPos blockPosition, @Nonnull IBlockState iblockstate, EntityLivingBase entity, int numberOfParticles) {
         PacketBlockParticle packet = new PacketBlockParticle(blockPosition, new Vector3(entity.posX, entity.posY, entity.posZ), numberOfParticles);
         NetworkHandler.channel.sendToAllTracking(packet.toFMLPacket(), NetworkHandler.blockPoint(worldObj, blockPosition));
         return true;

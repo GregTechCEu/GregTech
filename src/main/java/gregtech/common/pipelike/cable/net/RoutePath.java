@@ -1,6 +1,6 @@
 package gregtech.common.pipelike.cable.net;
 
-import gregtech.common.pipelike.cable.WireProperties;
+import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -42,8 +42,8 @@ public class RoutePath {
 
                     if (!world.isRemote) {
                         ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_LARGE,
-                            blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5,
-                            5 + world.rand.nextInt(3), 0.0, 0.0, 0.0, 0.1);
+                                blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5,
+                                5 + world.rand.nextInt(3), 0.0, 0.0, 0.0, 0.1);
                     }
                 }
             }

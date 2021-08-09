@@ -30,20 +30,20 @@ public class PyrolyseOvenInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
-            .aisle("XXX", "ISF", "XXX")
-            .aisle("CCC", "C#C", "CCC")
-            .aisle("CCC", "C#C", "CCC")
-            .aisle("XXX", "BEH", "XXX")
-            .where('S', MetaTileEntities.PYROLYSE_OVEN, EnumFacing.NORTH)
-            .where('X', MetaBlocks.MACHINE_CASING.getState(BlockMachineCasing.MachineCasingType.ULV))
-            .where('C', MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL))
-            .where('#', Blocks.AIR.getDefaultState())
-            .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.HV], EnumFacing.NORTH)
-            .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.HV], EnumFacing.NORTH)
-            .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
-            .where('B', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.HV], EnumFacing.SOUTH)
-            .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.HV], EnumFacing.SOUTH)
-            .build();
+                .aisle("XXX", "ISF", "XXX")
+                .aisle("CCC", "C#C", "CCC")
+                .aisle("CCC", "C#C", "CCC")
+                .aisle("XXX", "BEH", "XXX")
+                .where('S', MetaTileEntities.PYROLYSE_OVEN, EnumFacing.NORTH)
+                .where('X', MetaBlocks.MACHINE_CASING.getState(BlockMachineCasing.MachineCasingType.ULV))
+                .where('C', MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL))
+                .where('#', Blocks.AIR.getDefaultState())
+                .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.HV], EnumFacing.NORTH)
+                .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.HV], EnumFacing.NORTH)
+                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
+                .where('B', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.HV], EnumFacing.SOUTH)
+                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.HV], EnumFacing.SOUTH)
+                .build();
         return Lists.newArrayList(shapeInfo);
     }
 

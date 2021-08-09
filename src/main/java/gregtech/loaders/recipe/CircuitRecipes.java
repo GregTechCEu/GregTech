@@ -62,55 +62,55 @@ public class CircuitRecipes {
                 .buildAndRegister();
 
         // Boule cutting
-        CUTTER_RECIPES.recipeBuilder().duration(400).EUt(16)   .input(SILICON_BOULE)   .output(SILICON_WAFER, 16).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(800).EUt(120)  .input(GLOWSTONE_BOULE) .output(GLOWSTONE_WAFER, 32).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(1600).EUt(480) .input(NAQUADAH_BOULE)  .output(NAQUADAH_WAFER, 64).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(400).EUt(16).input(SILICON_BOULE).output(SILICON_WAFER, 16).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(800).EUt(120).input(GLOWSTONE_BOULE).output(GLOWSTONE_WAFER, 32).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(1600).EUt(480).input(NAQUADAH_BOULE).output(NAQUADAH_WAFER, 64).buildAndRegister();
         CUTTER_RECIPES.recipeBuilder().duration(2400).EUt(1920).input(NEUTRONIUM_BOULE).output(NEUTRONIUM_WAFER, 64).output(NEUTRONIUM_WAFER, 32).buildAndRegister();
 
         // Wafer engraving
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(SILICON_WAFER)   .notConsumable(craftingLens, Color.Red)      .output(INTEGRATED_LOGIC_CIRCUIT_WAFER)          .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(480) .input(GLOWSTONE_WAFER) .notConsumable(craftingLens, Color.Red)      .output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 4) .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(1920).input(NAQUADAH_WAFER)  .notConsumable(craftingLens, Color.Red)      .output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 8) .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(7680).input(NEUTRONIUM_WAFER) .notConsumable(craftingLens, Color.Red)      .output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 16).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120).input(SILICON_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(480).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 8).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 16).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(SILICON_WAFER)   .notConsumable(craftingLens, Color.Silver)   .output(RANDOM_ACCESS_MEMORY_WAFER)              .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(480) .input(GLOWSTONE_WAFER) .notConsumable(craftingLens, Color.Silver)   .output(RANDOM_ACCESS_MEMORY_WAFER, 4)     .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(1920).input(NAQUADAH_WAFER)  .notConsumable(craftingLens, Color.Silver)   .output(RANDOM_ACCESS_MEMORY_WAFER, 8)     .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50) .EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Silver)   .output(RANDOM_ACCESS_MEMORY_WAFER, 16)    .buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120).input(SILICON_WAFER).notConsumable(craftingLens, Color.Silver).output(RANDOM_ACCESS_MEMORY_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(480).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Silver).output(RANDOM_ACCESS_MEMORY_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Silver).output(RANDOM_ACCESS_MEMORY_WAFER, 8).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Silver).output(RANDOM_ACCESS_MEMORY_WAFER, 16).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(480) .input(GLOWSTONE_WAFER) .notConsumable(craftingLens, Color.LightBlue).output(NAND_MEMORY_CHIP_WAFER)                  .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(1920).input(NAQUADAH_WAFER)  .notConsumable(craftingLens, Color.LightBlue).output(NAND_MEMORY_CHIP_WAFER, 4)         .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.LightBlue).output(NAND_MEMORY_CHIP_WAFER, 8)         .buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(480).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.LightBlue).output(NAND_MEMORY_CHIP_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.LightBlue).output(NAND_MEMORY_CHIP_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.LightBlue).output(NAND_MEMORY_CHIP_WAFER, 8).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(480) .input(GLOWSTONE_WAFER) .notConsumable(craftingLens, Color.Lime)     .output(NOR_MEMORY_CHIP_WAFER)                   .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(1920).input(NAQUADAH_WAFER)  .notConsumable(craftingLens, Color.Lime)     .output(NOR_MEMORY_CHIP_WAFER, 4)          .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Lime)     .output(NOR_MEMORY_CHIP_WAFER, 8)          .buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(480).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Lime).output(NOR_MEMORY_CHIP_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Lime).output(NOR_MEMORY_CHIP_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Lime).output(NOR_MEMORY_CHIP_WAFER, 8).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(SILICON_WAFER)   .notConsumable(craftingLens, Color.White)    .output(CENTRAL_PROCESSING_UNIT_WAFER)           .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(480) .input(GLOWSTONE_WAFER) .notConsumable(craftingLens, Color.White)    .output(CENTRAL_PROCESSING_UNIT_WAFER, 4)  .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(1920).input(NAQUADAH_WAFER)  .notConsumable(craftingLens, Color.White)    .output(CENTRAL_PROCESSING_UNIT_WAFER, 8)  .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50) .EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.White)    .output(CENTRAL_PROCESSING_UNIT_WAFER, 16) .buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120).input(SILICON_WAFER).notConsumable(craftingLens, Color.White).output(CENTRAL_PROCESSING_UNIT_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(480).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.White).output(CENTRAL_PROCESSING_UNIT_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.White).output(CENTRAL_PROCESSING_UNIT_WAFER, 8).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.White).output(CENTRAL_PROCESSING_UNIT_WAFER, 16).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(480) .input(GLOWSTONE_WAFER) .notConsumable(craftingLens, Color.Blue)     .output(POWER_INTEGRATED_CIRCUIT_WAFER)          .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(1920).input(NAQUADAH_WAFER)  .notConsumable(craftingLens, Color.Blue)     .output(POWER_INTEGRATED_CIRCUIT_WAFER, 4) .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Blue)     .output(POWER_INTEGRATED_CIRCUIT_WAFER, 8) .buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(480).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Blue).output(POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Blue).output(POWER_INTEGRATED_CIRCUIT_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Blue).output(POWER_INTEGRATED_CIRCUIT_WAFER, 8).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(SILICON_WAFER)   .notConsumable(craftingLens, Color.Magenta)  .output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(GLOWSTONE_WAFER) .notConsumable(craftingLens, Color.Magenta)  .output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120).input(SILICON_WAFER).notConsumable(craftingLens, Color.Magenta).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Magenta).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(SILICON_WAFER)   .notConsumable(craftingLens, Color.Orange)  .output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER)       .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(GLOWSTONE_WAFER) .notConsumable(craftingLens, Color.Orange)  .output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120).input(SILICON_WAFER).notConsumable(craftingLens, Color.Orange).output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Orange).output(LOW_POWER_INTEGRATED_CIRCUIT_WAFER, 4).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(300).EUt(120) .input(SILICON_WAFER)   .notConsumable(craftingLens, Color.Orange)   .output(SIMPLE_SYSTEM_ON_CHIP_WAFER)             .buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(300).EUt(120).input(SILICON_WAFER).notConsumable(craftingLens, Color.Orange).output(SIMPLE_SYSTEM_ON_CHIP_WAFER).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(480) .input(GLOWSTONE_WAFER) .notConsumable(craftingLens, Color.Yellow)   .output(SYSTEM_ON_CHIP_WAFER)                    .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(1920).input(NAQUADAH_WAFER)  .notConsumable(craftingLens, Color.Yellow)   .output(SYSTEM_ON_CHIP_WAFER, 4)           .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Yellow)   .output(SYSTEM_ON_CHIP_WAFER, 8)           .buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(480).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Yellow).output(SYSTEM_ON_CHIP_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Yellow).output(SYSTEM_ON_CHIP_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Yellow).output(SYSTEM_ON_CHIP_WAFER, 8).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(NAQUADAH_WAFER)  .notConsumable(craftingLens, Color.Orange)   .output(ADVANCED_SYSTEM_ON_CHIP_WAFER)           .buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Orange)   .output(ADVANCED_SYSTEM_ON_CHIP_WAFER, 2)  .buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Orange).output(ADVANCED_SYSTEM_ON_CHIP_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Orange).output(ADVANCED_SYSTEM_ON_CHIP_WAFER, 2).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Magenta)  .output(HIGHLY_ADVANCED_SOC_WAFER)               .buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Magenta).output(HIGHLY_ADVANCED_SOC_WAFER).buildAndRegister();
 
         // Wafer chemical refining recipes
         CHEMICAL_RECIPES.recipeBuilder().duration(1200).EUt(7680)
@@ -131,32 +131,32 @@ public class CircuitRecipes {
                 .input(NANO_CENTRAL_PROCESSING_UNIT_WAFER)
                 .input(QUANTUM_EYE, 2)
                 .fluidInputs(GalliumArsenide.getFluid(L * 2))
-                .output(QBIT_CENTRAL_PROCESSING_UNIT_WAFER)
+                .output(QUBIT_CENTRAL_PROCESSING_UNIT_WAFER)
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder().duration(1200).EUt(1920)
                 .input(NANO_CENTRAL_PROCESSING_UNIT_WAFER)
                 .input(dust, IndiumGalliumPhosphide)
                 .fluidInputs(Radon.getFluid(50))
-                .output(QBIT_CENTRAL_PROCESSING_UNIT_WAFER)
+                .output(QUBIT_CENTRAL_PROCESSING_UNIT_WAFER)
                 .buildAndRegister();
 
         // Wafer cutting
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(HIGHLY_ADVANCED_SOC_WAFER)               .output(HIGHLY_ADVANCED_SOC, 6)               .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(ADVANCED_SYSTEM_ON_CHIP_WAFER)           .output(ADVANCED_SYSTEM_ON_CHIP, 6)           .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(480) .input(SYSTEM_ON_CHIP_WAFER)                    .output(SYSTEM_ON_CHIP, 6)                    .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(64)  .input(SIMPLE_SYSTEM_ON_CHIP_WAFER)             .output(SIMPLE_SYSTEM_ON_CHIP, 6)             .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(96)  .input(RANDOM_ACCESS_MEMORY_WAFER)              .output(RANDOM_ACCESS_MEMORY, 32)             .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(QBIT_CENTRAL_PROCESSING_UNIT_WAFER)      .output(QBIT_CENTRAL_PROCESSING_UNIT, 4)      .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 6).buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(480) .input(LOW_POWER_INTEGRATED_CIRCUIT_WAFER)      .output(LOW_POWER_INTEGRATED_CIRCUIT, 4)      .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(POWER_INTEGRATED_CIRCUIT_WAFER)          .output(POWER_INTEGRATED_CIRCUIT, 4)          .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(HIGH_POWER_INTEGRATED_CIRCUIT_WAFER)     .output(HIGH_POWER_INTEGRATED_CIRCUIT, 2)     .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192) .input(NOR_MEMORY_CHIP_WAFER)                   .output(NOR_MEMORY_CHIP, 16)                  .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192) .input(NAND_MEMORY_CHIP_WAFER)                  .output(NAND_MEMORY_CHIP, 32)                 .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(120) .input(CENTRAL_PROCESSING_UNIT_WAFER)           .output(CENTRAL_PROCESSING_UNIT, 8)           .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(64)  .input(INTEGRATED_LOGIC_CIRCUIT_WAFER)          .output(INTEGRATED_LOGIC_CIRCUIT, 8)          .buildAndRegister();
-        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(480). input(NANO_CENTRAL_PROCESSING_UNIT_WAFER)      .output(NANO_CENTRAL_PROCESSING_UNIT, 8)      .buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(HIGHLY_ADVANCED_SOC_WAFER).output(HIGHLY_ADVANCED_SOC, 6).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(ADVANCED_SYSTEM_ON_CHIP_WAFER).output(ADVANCED_SYSTEM_ON_CHIP, 6).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(480).input(SYSTEM_ON_CHIP_WAFER).output(SYSTEM_ON_CHIP, 6).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(64).input(SIMPLE_SYSTEM_ON_CHIP_WAFER).output(SIMPLE_SYSTEM_ON_CHIP, 6).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(96).input(RANDOM_ACCESS_MEMORY_WAFER).output(RANDOM_ACCESS_MEMORY, 32).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(QUBIT_CENTRAL_PROCESSING_UNIT_WAFER).output(QUBIT_CENTRAL_PROCESSING_UNIT, 4).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(120).input(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT_WAFER).output(ULTRA_LOW_POWER_INTEGRATED_CIRCUIT, 6).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(480).input(LOW_POWER_INTEGRATED_CIRCUIT_WAFER).output(LOW_POWER_INTEGRATED_CIRCUIT, 4).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(1920).input(POWER_INTEGRATED_CIRCUIT_WAFER).output(POWER_INTEGRATED_CIRCUIT, 4).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(7680).input(HIGH_POWER_INTEGRATED_CIRCUIT_WAFER).output(HIGH_POWER_INTEGRATED_CIRCUIT, 2).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192).input(NOR_MEMORY_CHIP_WAFER).output(NOR_MEMORY_CHIP, 16).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(192).input(NAND_MEMORY_CHIP_WAFER).output(NAND_MEMORY_CHIP, 32).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(120).input(CENTRAL_PROCESSING_UNIT_WAFER).output(CENTRAL_PROCESSING_UNIT, 8).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(64).input(INTEGRATED_LOGIC_CIRCUIT_WAFER).output(INTEGRATED_LOGIC_CIRCUIT, 8).buildAndRegister();
+        CUTTER_RECIPES.recipeBuilder().duration(900).EUt(480).input(NANO_CENTRAL_PROCESSING_UNIT_WAFER).output(NANO_CENTRAL_PROCESSING_UNIT, 8).buildAndRegister();
     }
 
     private static void componentRecipes() {
@@ -1134,7 +1134,7 @@ public class CircuitRecipes {
         // EV
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(2400).duration(200)
                 .input(EXTREME_CIRCUIT_BOARD)
-                .input(QBIT_CENTRAL_PROCESSING_UNIT)
+                .input(QUBIT_CENTRAL_PROCESSING_UNIT)
                 .input(NANO_CENTRAL_PROCESSING_UNIT)
                 .input(SMD_CAPACITOR, 12)
                 .input(SMD_TRANSISTOR, 12)
@@ -1144,7 +1144,7 @@ public class CircuitRecipes {
 
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(2400).duration(100)
                 .input(EXTREME_CIRCUIT_BOARD)
-                .input(QBIT_CENTRAL_PROCESSING_UNIT)
+                .input(QUBIT_CENTRAL_PROCESSING_UNIT)
                 .input(NANO_CENTRAL_PROCESSING_UNIT)
                 .input(ADVANCED_SMD_CAPACITOR, 3)
                 .input(ADVANCED_SMD_TRANSISTOR, 3)
@@ -1296,7 +1296,7 @@ public class CircuitRecipes {
         CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().EUt(80000).duration(600)
                 .input(WETWARE_CIRCUIT_BOARD)
                 .input(STEM_CELLS, 16)
-                .input(pipeSmall, Polybenzimidazole, 8)
+                .input(pipeSmallFluid, Polybenzimidazole, 8)
                 .input(plate, Electrum, 8)
                 .input(foil, SiliconeRubber, 16)
                 .input(bolt, HSSE, 8)

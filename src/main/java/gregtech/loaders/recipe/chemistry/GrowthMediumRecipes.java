@@ -41,20 +41,6 @@ public class GrowthMediumRecipes {
                 .fluidOutputs(Biomass.getFluid(750))
                 .buildAndRegister();
 
-        PYROLYSE_RECIPES.recipeBuilder().EUt(10).duration(200)
-                .input(BIO_CHAFF)
-                .circuitMeta(2)
-                .fluidInputs(Water.getFluid(1500))
-                .fluidOutputs(FermentedBiomass.getFluid(1500))
-                .buildAndRegister();
-
-        PYROLYSE_RECIPES.recipeBuilder().EUt(10).duration(900)
-                .input(BIO_CHAFF, 4)
-                .circuitMeta(1)
-                .fluidInputs(Water.getFluid(4000))
-                .fluidOutputs(Biomass.getFluid(5000))
-                .buildAndRegister();
-
         // Bacteria
         MIXER_RECIPES.recipeBuilder().EUt(480).duration(300)
                 .input(BIO_CHAFF, 4)

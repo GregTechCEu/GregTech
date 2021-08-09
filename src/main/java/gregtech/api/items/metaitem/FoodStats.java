@@ -82,8 +82,7 @@ public class FoodStats implements IFoodBehavior {
                         return containerItemCopy;
                     }
 
-                    if (player != null)
-                    {
+                    if (player != null) {
                         if (!player.inventory.addItemStackToInventory(containerItemCopy))
                             player.dropItem(containerItemCopy, false, false);
                     }

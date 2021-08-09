@@ -9,7 +9,10 @@
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [17, 19]
+    "radius": [
+      17,
+      19
+    ]
   },
   "filler": {
     "type": "simple",

@@ -9,7 +9,10 @@
   },
   "generator": {
     "type": "ellipsoid",
-    "radius": [13, 13]
+    "radius": [
+      13,
+      13
+    ]
   },
   "filler": {
     "type": "simple",
@@ -24,11 +27,11 @@
           "weight": 30,
           "value": "ore:spessartine"
         },
-		{
+        {
           "weight": 30,
           "value": "ore:pyrolusite"
         },
-		{
+        {
           "weight": 10,
           "value": "ore:tantalite"
         }

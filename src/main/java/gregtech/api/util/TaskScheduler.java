@@ -13,11 +13,11 @@ import java.util.*;
 @EventBusSubscriber(modid = GTValues.MODID)
 public class TaskScheduler {
 
-    private static Map<World, List<Task>> tasksPerWorld = new HashMap<>();
+    private static final Map<World, List<Task>> tasksPerWorld = new HashMap<>();
 
     public static void scheduleTask(World world, Task task) {
-        if(world.isRemote) {
-           throw new IllegalArgumentException("Attempt to schedule task on client world!");
+        if (world.isRemote) {
+            throw new IllegalArgumentException("Attempt to schedule task on client world!");
         }
         List<Task> taskList = tasksPerWorld.computeIfAbsent(world, k -> new ArrayList<>());
         taskList.add(task);
@@ -25,14 +25,14 @@ public class TaskScheduler {
 
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload event) {
-        if(!event.getWorld().isRemote) {
+        if (!event.getWorld().isRemote) {
             tasksPerWorld.remove(event.getWorld());
         }
     }
 
     @SubscribeEvent
     public static void onWorldTick(TickEvent.WorldTickEvent event) {
-        if(!event.world.isRemote) {
+        if (!event.world.isRemote) {
             List<Task> taskList = tasksPerWorld.getOrDefault(event.world, Collections.emptyList());
             taskList.removeIf(task -> !task.run());
         }

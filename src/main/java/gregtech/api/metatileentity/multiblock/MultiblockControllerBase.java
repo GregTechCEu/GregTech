@@ -16,6 +16,7 @@ import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -58,7 +59,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            if (getOffsetTimer() % 20 == 0 || getTimer() == 0) {
+            if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
                 checkStructurePattern();
             }
             if (isStructureFormed()) {
@@ -85,6 +86,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     /**
      * Override this method to change the Controller overlay
+     *
      * @return The overlay to render on the Multiblock Controller
      */
     @Nonnull
@@ -124,7 +126,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
 
     public static Predicate<BlockWorldState> abilityPartPredicate(MultiblockAbility<?>... allowedAbilities) {
         return tilePredicate((state, tile) -> tile instanceof IMultiblockAbilityPart<?> &&
-            ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()));
+                ArrayUtils.contains(allowedAbilities, ((IMultiblockAbilityPart<?>) tile).getAbility()));
     }
 
     public static Predicate<BlockWorldState> partPredicate(Class<? extends IMultiblockPart> baseClass) {
@@ -167,6 +169,17 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return Pair.of(getBaseTexture(null).getParticleSprite(), getPaintingColor());
     }
 
+    /**
+     * if true allows all hatches to share but energy hatches and rotor holders
+     * defualt true
+     *
+     * @return
+     */
+    public boolean canShare() {
+        return true;
+
+    }
+
     protected void checkStructurePattern() {
         EnumFacing facing = getFrontFacing().getOpposite();
         PatternMatchContext context = structurePattern.checkPatternAt(getWorld(), getPos(), facing);
@@ -176,10 +189,9 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             parts.sort(Comparator.comparing(it -> ((MetaTileEntity) it).getPos().hashCode()));
             for (IMultiblockPart part : parts) {
                 if (part.isAttachedToMultiBlock()) {
-                    //disallow sharing of multiblock parts
-                    //if part is already attached to another multiblock,
-                    //stop here without attempting to register abilities
-                    return;
+                    if (!canShare() || part instanceof MetaTileEntityRotorHolder) {
+                        return;
+                    }
                 }
             }
             Map<MultiblockAbility<Object>, List<Object>> abilities = new HashMap<>();

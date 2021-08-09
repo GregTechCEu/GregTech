@@ -1,5 +1,6 @@
 package gregtech.api;
 
+import gregtech.api.util.XSTR;
 import gregtech.common.ConfigHolder;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
@@ -37,6 +38,8 @@ public class GTValues {
      */
     public static final short W = OreDictionary.WILDCARD_VALUE;
 
+    public static final XSTR RNG = new XSTR();
+
     /**
      * The Voltage Tiers. Use this Array instead of the old named Voltage Variables
      */
@@ -62,29 +65,33 @@ public class GTValues {
     /**
      * The short names for the voltages
      */
-    public static final String[] VN = new String[] {"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UMV", "UXV", "MAX"};
+    public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UMV", "UXV", "MAX"};
 
     /**
      * Color values for the voltages
      */
-    public static final int[] VC = new int[] {0xB4B4B4, 0xDCDCDC, 0xFF6400, 0xFFFF1E, 0x808080, 0xF0F0F5, 0xDCDCF5, 0xC8C8F5, 0xB4B4F5, 0xA0A0F5, 0x8C8CF5, 0x7878F5, 0x6464F5, 0x5050F5, 0x2828F5};
+    public static final int[] VC = new int[]{0xB4B4B4, 0xDCDCDC, 0xFF6400, 0xFFFF1E, 0x808080, 0xF0F0F5, 0xDCDCF5, 0xC8C8F5, 0xB4B4F5, 0xA0A0F5, 0x8C8CF5, 0x7878F5, 0x6464F5, 0x5050F5, 0x2828F5};
 
     /**
      * The long names for the voltages
      */
-    public static final String[] VOLTAGE_NAMES = new String[] {"Ultra Low Voltage", "Low Voltage", "Medium Voltage", "High Voltage", "Extreme Voltage", "Insane Voltage", "Ludicrous Voltage", "ZPM Voltage", "Ultimate Voltage",
+    public static final String[] VOLTAGE_NAMES = new String[]{"Ultra Low Voltage", "Low Voltage", "Medium Voltage", "High Voltage", "Extreme Voltage", "Insane Voltage", "Ludicrous Voltage", "ZPM Voltage", "Ultimate Voltage",
             "Highly Ultimate Voltage", "Extremely Ultimate Voltage", "Insanely Ultimate Voltage", "Mega Ultimate Voltage", "Extended Mega Ultimate Voltage", "Maximum Voltage"};
 
     /**
      * ModID strings, since they are quite common parameters
      */
     public static final String MODID = "gregtech",
-        MODID_FR = "forestry",
-        MODID_CT = "crafttweaker",
-        MODID_TOP = "theoneprobe",
-        MODID_CTM = "ctm",
-        MODID_CC = "cubicchunks",
-        MODID_AR = "advancedrocketry";
+            MODID_FR = "forestry",
+            MODID_CT = "crafttweaker",
+            MODID_TOP = "theoneprobe",
+            MODID_CTM = "ctm",
+            MODID_CC = "cubicchunks",
+            MODID_AR = "advancedrocketry",
+            MODID_EIO = "enderio",
+            MODID_BC = "buildcraftcore",
+            MODID_COFH = "cofhcore",
+            MODID_APPENG = "appliedenergistics2";
 
     //because forge is too fucking retarded to cache results or at least do not create fucking
     //immutable collections every time you retrieve indexed mod list
@@ -110,41 +117,41 @@ public class GTValues {
      */
     public static final boolean HT =
             ConfigHolder.U.machines.highTierMachines ||
-            ConfigHolder.U.machines.highTierAlloySmelter ||
-            ConfigHolder.U.machines.highTierArcFurnaces ||
-            ConfigHolder.U.machines.highTierAssemblers ||
-            ConfigHolder.U.machines.highTierAutoclaves ||
-            ConfigHolder.U.machines.highTierBenders ||
-            ConfigHolder.U.machines.highTierBreweries ||
-            ConfigHolder.U.machines.highTierCanners ||
-            ConfigHolder.U.machines.highTierCentrifuges ||
-            ConfigHolder.U.machines.highTierChemicalBaths ||
-            ConfigHolder.U.machines.highTierChemicalReactors ||
-            ConfigHolder.U.machines.highTierCompressors ||
-            ConfigHolder.U.machines.highTierCutters ||
-            ConfigHolder.U.machines.highTierDistilleries ||
-            ConfigHolder.U.machines.highTierElectricFurnace ||
-            ConfigHolder.U.machines.highTierElectrolyzers ||
-            ConfigHolder.U.machines.highTierElectromagneticSeparators ||
-            ConfigHolder.U.machines.highTierExtractors ||
-            ConfigHolder.U.machines.highTierExtruders ||
-            ConfigHolder.U.machines.highTierFermenters ||
-            ConfigHolder.U.machines.highTierFluidHeaters ||
-            ConfigHolder.U.machines.highTierFluidSolidifiers ||
-            ConfigHolder.U.machines.highTierForgeHammers ||
-            ConfigHolder.U.machines.highTierFormingPresses ||
-            ConfigHolder.U.machines.highTierLathes ||
-            ConfigHolder.U.machines.highTierMixers ||
-            ConfigHolder.U.machines.highTierOreWashers ||
-            ConfigHolder.U.machines.highTierPackers ||
-            ConfigHolder.U.machines.highTierPolarizers ||
-            ConfigHolder.U.machines.highTierLaserEngravers ||
-            ConfigHolder.U.machines.highTierSifters ||
-            ConfigHolder.U.machines.highTierThermalCentrifuges ||
-            ConfigHolder.U.machines.highTierMacerators ||
-            ConfigHolder.U.machines.highTierUnpackers ||
-            ConfigHolder.U.machines.highTierWiremills ||
-            ConfigHolder.U.machines.highTierMassFabricators ||
-            ConfigHolder.U.machines.highTierReplicators ||
-            ConfigHolder.U.machines.highTierScanners;
+                    ConfigHolder.U.machines.highTierAlloySmelter ||
+                    ConfigHolder.U.machines.highTierArcFurnaces ||
+                    ConfigHolder.U.machines.highTierAssemblers ||
+                    ConfigHolder.U.machines.highTierAutoclaves ||
+                    ConfigHolder.U.machines.highTierBenders ||
+                    ConfigHolder.U.machines.highTierBreweries ||
+                    ConfigHolder.U.machines.highTierCanners ||
+                    ConfigHolder.U.machines.highTierCentrifuges ||
+                    ConfigHolder.U.machines.highTierChemicalBaths ||
+                    ConfigHolder.U.machines.highTierChemicalReactors ||
+                    ConfigHolder.U.machines.highTierCompressors ||
+                    ConfigHolder.U.machines.highTierCutters ||
+                    ConfigHolder.U.machines.highTierDistilleries ||
+                    ConfigHolder.U.machines.highTierElectricFurnace ||
+                    ConfigHolder.U.machines.highTierElectrolyzers ||
+                    ConfigHolder.U.machines.highTierElectromagneticSeparators ||
+                    ConfigHolder.U.machines.highTierExtractors ||
+                    ConfigHolder.U.machines.highTierExtruders ||
+                    ConfigHolder.U.machines.highTierFermenters ||
+                    ConfigHolder.U.machines.highTierFluidHeaters ||
+                    ConfigHolder.U.machines.highTierFluidSolidifiers ||
+                    ConfigHolder.U.machines.highTierForgeHammers ||
+                    ConfigHolder.U.machines.highTierFormingPresses ||
+                    ConfigHolder.U.machines.highTierLathes ||
+                    ConfigHolder.U.machines.highTierMixers ||
+                    ConfigHolder.U.machines.highTierOreWashers ||
+                    ConfigHolder.U.machines.highTierPackers ||
+                    ConfigHolder.U.machines.highTierPolarizers ||
+                    ConfigHolder.U.machines.highTierLaserEngravers ||
+                    ConfigHolder.U.machines.highTierSifters ||
+                    ConfigHolder.U.machines.highTierThermalCentrifuges ||
+                    ConfigHolder.U.machines.highTierMacerators ||
+                    ConfigHolder.U.machines.highTierUnpackers ||
+                    ConfigHolder.U.machines.highTierWiremills ||
+                    ConfigHolder.U.machines.highTierMassFabricators ||
+                    ConfigHolder.U.machines.highTierReplicators ||
+                    ConfigHolder.U.machines.highTierScanners;
 }

@@ -18,8 +18,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.TankRenderer;
 import gregtech.api.render.Textures;
-import gregtech.api.unification.material.type.Material.MatFlags;
-import gregtech.api.unification.material.type.SolidMaterial;
+import gregtech.api.unification.material.Material;
 import gregtech.api.util.ByteBufUtils;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
@@ -62,6 +61,7 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
+import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
 import static gregtech.api.util.GTUtility.convertOpaqueRGBA_CLtoRGB;
 
 public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMetaTileEntity {
@@ -70,7 +70,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     private final int tankSize;
     private final int maxSizeVertical;
     private final int maxSizeHorizontal;
-    private final SolidMaterial material;
+    private final Material material;
     private boolean addedToMultiblock = false;
     private boolean needsCoversUpdate = false;
     private boolean isRemoved = false;
@@ -91,7 +91,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     private boolean needsShapeResync;
     private boolean needsFluidResync;
 
-    public MetaTileEntityTank(ResourceLocation metaTileEntityId, SolidMaterial material, int tankSize, int maxSizeVertical, int maxSizeHorizontal) {
+    public MetaTileEntityTank(ResourceLocation metaTileEntityId, Material material, int tankSize, int maxSizeVertical, int maxSizeHorizontal) {
         super(metaTileEntityId);
         this.tankSize = tankSize;
         this.material = material;
@@ -248,9 +248,9 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
         }
         MetaTileEntityTank metaTileEntityTank = (MetaTileEntityTank) metaTileEntity;
         if (metaTileEntityTank.isRemoved ||
-            metaTileEntityTank.material != material ||
-            metaTileEntityTank.tankSize != tankSize ||
-            !isTankFluidEqual(metaTileEntityTank, this)) {
+                metaTileEntityTank.material != material ||
+                metaTileEntityTank.tankSize != tankSize ||
+                !isTankFluidEqual(metaTileEntityTank, this)) {
             return null;
         }
         return metaTileEntityTank;
@@ -264,7 +264,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
         if (controllerPos != null) {
             MetaTileEntityTank metaTileEntityTank = getControllerEntity();
             return metaTileEntityTank == null ? new FluidTank(0) :
-                metaTileEntityTank.getActualFluidTank();
+                    metaTileEntityTank.getActualFluidTank();
         } else {
             return multiblockFluidTank;
         }
@@ -309,7 +309,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
         int newCapacity = (connectedTanks.size() + 1) * tankSize;
         this.multiblockFluidTank.setCapacity(newCapacity);
         if (allowShrinking && multiblockFluidTank.getFluid() != null &&
-            multiblockFluidTank.getFluidAmount() > multiblockFluidTank.getCapacity()) {
+                multiblockFluidTank.getFluidAmount() > multiblockFluidTank.getCapacity()) {
             multiblockFluidTank.getFluid().amount = multiblockFluidTank.getCapacity();
         }
     }
@@ -425,7 +425,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
 
     private static boolean canTanksConnect(MetaTileEntityTank tank1, MetaTileEntityTank tank2, EnumFacing side) {
         return side == null || ((tank1.blockedSides & 1 << side.getIndex()) <= 0 &&
-            (tank2.blockedSides & 1 << side.getOpposite().getIndex()) <= 0);
+                (tank2.blockedSides & 1 << side.getOpposite().getIndex()) <= 0);
     }
 
     @Override
@@ -616,8 +616,8 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     @SideOnly(Side.CLIENT)
     private int getActualPaintingColor() {
         int color = ColourRGBA.multiply(
-            GTUtility.convertRGBtoOpaqueRGBA_CL(material.materialRGB),
-            GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())
+                GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()),
+                GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())
         );
         color = convertOpaqueRGBA_CLtoRGB(color);
         return color;
@@ -727,8 +727,8 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
 
     protected boolean canFillFluidType(FluidStack fluid) {
         return !ModHandler.isMaterialWood(material) &&
-            !material.hasFlag(MatFlags.FLAMMABLE) ||
-            fluid.getFluid().getTemperature(fluid) <= 325;
+                !material.hasFlag(FLAMMABLE) ||
+                fluid.getFluid().getTemperature(fluid) <= 325;
     }
 
     @Override
@@ -795,9 +795,9 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
                 currentPos.move(facing);
                 MetaTileEntityTank metaTileEntity;
                 if (!visitedSet.contains(currentPos) &&
-                    !observedSet.containsKey(currentPos) &&
-                    (metaTileEntity = tank.getTankTile(currentPos)) != null &&
-                    canTanksConnect(firstNode, metaTileEntity, facing)) {
+                        !observedSet.containsKey(currentPos) &&
+                        (metaTileEntity = tank.getTankTile(currentPos)) != null &&
+                        canTanksConnect(firstNode, metaTileEntity, facing)) {
                     observedSet.put(metaTileEntity.getPos(), metaTileEntity);
                     visitedSet.add(metaTileEntity.getPos());
                     firstNode = metaTileEntity;

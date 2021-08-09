@@ -12,7 +12,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.render.Textures;
-import gregtech.api.unification.material.type.IngotMaterial;
+import gregtech.api.unification.material.Material;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.metatileentities.multi.electric.generator.RotorHolderMultiblockController;
 import net.minecraft.block.state.IBlockState;
@@ -40,7 +40,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     private static final int NORMAL_MAXIMUM_SPEED = 6000;
     private static final float DAMAGE_PER_INTERACT = 40.0f;
 
-    private InventoryRotorHolder rotorInventory;
+    private final InventoryRotorHolder rotorInventory;
     private final int maxRotorSpeed;
     private int currentRotorSpeed;
 
@@ -261,16 +261,16 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         super.renderMetaTileEntity(renderState, translation, pipeline);
         Textures.ROTOR_HOLDER_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
         Textures.LARGE_TURBINE_ROTOR_RENDERER.renderSided(renderState, translation, pipeline, getFrontFacing(),
-            getController() != null, isHasRotor(), isRotorLooping(), rotorColor);
+                getController() != null, isHasRotor(), isRotorLooping(), rotorColor);
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return ModularUI.defaultBuilder()
-            .label(6, 6, getMetaFullName())
-            .slot(rotorInventory, 0, 79, 36, GuiTextures.SLOT, GuiTextures.TURBINE_OVERLAY)
-            .bindPlayerInventory(entityPlayer.inventory)
-            .build(getHolder(), entityPlayer);
+                .label(6, 6, getMetaFullName())
+                .slot(rotorInventory, 0, 79, 36, GuiTextures.SLOT, GuiTextures.TURBINE_OVERLAY)
+                .bindPlayerInventory(entityPlayer.inventory)
+                .build(getHolder(), entityPlayer);
     }
 
     @Override
@@ -278,18 +278,19 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.machine.rotor_holder.tooltip1"));
         tooltip.add(I18n.format("gregtech.machine.rotor_holder.tooltip2"));
+        tooltip.add(I18n.format("gregtech.universal.disabled"));
     }
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         return onRotorHolderInteract(playerIn) ||
-            super.onRightClick(playerIn, hand, facing, hitResult);
+                super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         return onRotorHolderInteract(playerIn) ||
-            super.onWrenchClick(playerIn, hand, facing, hitResult);
+                super.onWrenchClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
@@ -342,8 +343,8 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
             if (behavior == null) {
                 return -1;
             }
-            IngotMaterial material = behavior.getPartMaterial(itemStack);
-            return material.materialRGB;
+            Material material = behavior.getPartMaterial(itemStack);
+            return material.getMaterialRGB();
         }
 
         public double getRotorEfficiency() {

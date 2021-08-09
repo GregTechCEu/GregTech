@@ -138,7 +138,7 @@ public class ItemListSlotWidget extends Widget {
             }
         } else if (button == 0 || button == 1) {
             if (insertHeldItemStack(button, isClient) ||
-                !gui.entityPlayer.inventory.getItemStack().isEmpty()) {
+                    !gui.entityPlayer.inventory.getItemStack().isEmpty()) {
                 return;
             }
             if (itemInfo != null) {
@@ -150,23 +150,23 @@ public class ItemListSlotWidget extends Widget {
     }
 
     private void handleSelfShiftClick(IItemInfo itemInfo) {
-         ItemStack itemStack = itemInfo.getItemStackKey().getItemStack();
-         itemStack.setCount(itemStack.getMaxStackSize());
-         int currentStackSize = itemStack.getCount();
-         uiAccess.attemptMergeStack(itemStack, true, true);
-         int amountToExtract = Math.min(currentStackSize - itemStack.getCount(), itemInfo.getTotalItemAmount());
-         if (amountToExtract > 0) {
-             int extracted = gridWidget.getItemList().extractItem(itemInfo.getItemStackKey(), amountToExtract, false);
-             ItemStack resultStack = itemInfo.getItemStackKey().getItemStack();
-             resultStack.setCount(extracted);
-             if (!resultStack.isEmpty()) {
-                 uiAccess.attemptMergeStack(resultStack, true, false);
-                 gui.entityPlayer.openContainer.detectAndSendChanges();
-                 if (!resultStack.isEmpty()) {
-                     gui.entityPlayer.dropItem(resultStack, false, false);
-                 }
-             }
-         }
+        ItemStack itemStack = itemInfo.getItemStackKey().getItemStack();
+        itemStack.setCount(itemStack.getMaxStackSize());
+        int currentStackSize = itemStack.getCount();
+        uiAccess.attemptMergeStack(itemStack, true, true);
+        int amountToExtract = Math.min(currentStackSize - itemStack.getCount(), itemInfo.getTotalItemAmount());
+        if (amountToExtract > 0) {
+            int extracted = gridWidget.getItemList().extractItem(itemInfo.getItemStackKey(), amountToExtract, false);
+            ItemStack resultStack = itemInfo.getItemStackKey().getItemStack();
+            resultStack.setCount(extracted);
+            if (!resultStack.isEmpty()) {
+                uiAccess.attemptMergeStack(resultStack, true, false);
+                gui.entityPlayer.openContainer.detectAndSendChanges();
+                if (!resultStack.isEmpty()) {
+                    gui.entityPlayer.dropItem(resultStack, false, false);
+                }
+            }
+        }
     }
 
     @Override
@@ -207,9 +207,7 @@ public class ItemListSlotWidget extends Widget {
     private void dispatchSelfShiftClick() {
         IItemInfo itemInfo = gridWidget.getItemInfoAt(index);
         if (itemInfo != null) {
-            writeClientAction(2, buf -> {
-                buf.writeItemStack(itemInfo.getItemStackKey().getItemStackRaw());
-            });
+            writeClientAction(2, buf -> buf.writeItemStack(itemInfo.getItemStackKey().getItemStackRaw()));
         }
     }
 

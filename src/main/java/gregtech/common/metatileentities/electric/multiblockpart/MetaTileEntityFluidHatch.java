@@ -153,5 +153,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockPart imple
         else
             tooltip.add(I18n.format("gregtech.machine.fluid_hatch.import.tooltip"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", getInventorySize()));
+        tooltip.add(I18n.format("gregtech.universal.enabled"));
     }
 }

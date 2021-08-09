@@ -32,7 +32,7 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
 
     @Override
     @Nonnull
-    public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids) {
+    public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 176, 216) {
             @Override
             public ModularUI.Builder bindPlayerInventory(InventoryPlayer inventoryPlayer) {
@@ -42,13 +42,13 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
 
         };
         builder.widget(new ProgressWidget(progressSupplier, 109, 22, 20, 20, this.progressBarTexture, this.moveType));
-        this.addInventorySlotGroup(builder, importItems, importFluids, false);
-        this.addInventorySlotGroup(builder, exportItems, exportFluids, true);
+        this.addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
+        this.addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
         return builder;
     }
 
     @Override
-    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isOutputs) {
+    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
         int itemInputsCount = itemHandler.getSlots();
         int fluidInputsCount = fluidHandler.getTanks();
         boolean invertFluids = false;
@@ -62,7 +62,7 @@ public class RecipeMapAssemblyLine<R extends RecipeBuilder<R>> extends RecipeMap
         int itemSlotsToLeft = inputSlotGrid[0];
         int itemSlotsToDown = inputSlotGrid[1];
         int startInputsX = isOutputs ? 138 : 101 - itemSlotsToLeft * 18;
-        int startInputsY = 32 - (int) (itemSlotsToDown / 2.0 * 18);
+        int startInputsY = 32 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
                 int slotIndex = i * itemSlotsToLeft + j;

@@ -18,7 +18,7 @@ public class MemorizedRecipeWidget extends SlotWidget {
     private final CraftingRecipeMemory recipeMemory;
     private final int recipeIndex;
     private boolean recipeLocked = false;
-    private IItemHandlerModifiable craftingGrid;
+    private final IItemHandlerModifiable craftingGrid;
 
     public MemorizedRecipeWidget(CraftingRecipeMemory recipeMemory, int index, IItemHandlerModifiable craftingGrid, int xPosition, int yPosition) {
         super(new ItemStackHandler(1), 0, xPosition, yPosition, false, false);

@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.high_voltage.40_workstation.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_2",
-      "data": 32511
+      "item": "gregtech:meta_item_1",
+      "data": 321
     },
     "frame": "goal"
   },
@@ -18,8 +18,8 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:meta_item_2",
-            "data": 32511
+            "item": "gregtech:meta_item_1",
+            "data": 321
           }
         ]
       }

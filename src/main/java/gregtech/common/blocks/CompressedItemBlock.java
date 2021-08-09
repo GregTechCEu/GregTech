@@ -1,12 +1,14 @@
 package gregtech.common.blocks;
 
-import gregtech.api.unification.material.type.Material;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
 
 public class CompressedItemBlock extends ItemBlock {
 
@@ -28,9 +30,10 @@ public class CompressedItemBlock extends ItemBlock {
         return compressedBlock.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
-    public String getItemStackDisplayName(ItemStack stack) {
+    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         Material material = getBlockState(stack).getValue(compressedBlock.variantProperty);
         return OrePrefix.block.getLocalNameForItem(material);
     }

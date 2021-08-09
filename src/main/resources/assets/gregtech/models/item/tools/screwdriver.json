@@ -2,6 +2,6 @@
   "parent": "item/handheld",
   "textures": {
     "layer0": "gregtech:items/tools/handle_screwdriver",
-  	"layer1": "gregtech:items/tools/screwdriver"
+    "layer1": "gregtech:items/tools/screwdriver"
   }
 }

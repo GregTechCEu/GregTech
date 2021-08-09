@@ -9,12 +9,13 @@ import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.conditions.LootConditionManager;
 import net.minecraft.world.storage.loot.functions.LootFunction;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Random;
 
 public abstract class AbstractItemLootEntry extends LootEntry {
 
-    private LootFunction[] functions;
+    private final LootFunction[] functions;
 
     public interface LootEntryCreator {
         AbstractItemLootEntry create(JsonObject jsonObject, int weightIn, int qualityIn, LootFunction[] functionsIn, LootCondition[] conditionsIn, String entryName);
@@ -28,7 +29,7 @@ public abstract class AbstractItemLootEntry extends LootEntry {
     protected abstract ItemStack createItemStack();
 
     @Override
-    public void addLoot(Collection<ItemStack> stacks, Random rand, LootContext context) {
+    public void addLoot(@Nonnull Collection<ItemStack> stacks, @Nonnull Random rand, @Nonnull LootContext context) {
         ItemStack itemStack = createItemStack();
         for (LootFunction lootfunction : this.functions) {
             if (LootConditionManager.testAllConditions(lootfunction.getConditions(), rand, context)) {
@@ -52,7 +53,7 @@ public abstract class AbstractItemLootEntry extends LootEntry {
     }
 
     @Override
-    protected final void serialize(JsonObject json, JsonSerializationContext context) {
+    protected final void serialize(@Nonnull JsonObject json, @Nonnull JsonSerializationContext context) {
         throw new UnsupportedOperationException("Unsupported by custom loot entries");
     }
 }

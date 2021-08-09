@@ -6,7 +6,12 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+import java.util.Collections;
+import java.util.Set;
+
 public class ToolPickaxe extends ToolBase {
+
+    private static final Set<String> PICK_TOOL_CLASSES = Collections.singleton("pickaxe");
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
@@ -32,10 +37,14 @@ public class ToolPickaxe extends ToolBase {
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
         return (tool != null && tool.equals("pickaxe")) ||
-            block.getMaterial() == Material.ROCK ||
-            block.getMaterial() == Material.IRON ||
-            block.getMaterial() == Material.ANVIL ||
-            block.getMaterial() == Material.GLASS;
+                block.getMaterial() == Material.ROCK ||
+                block.getMaterial() == Material.IRON ||
+                block.getMaterial() == Material.ANVIL ||
+                block.getMaterial() == Material.GLASS;
     }
 
+    @Override
+    public Set<String> getToolClasses(ItemStack stack) {
+        return PICK_TOOL_CLASSES;
+    }
 }

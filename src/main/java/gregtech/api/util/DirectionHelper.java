@@ -21,9 +21,11 @@ public class DirectionHelper {
         EnumFacing down;
         switch (facing) {
             case UP:
-                down = player.getHorizontalFacing(); break;
+                down = player.getHorizontalFacing();
+                break;
             case DOWN:
-                down = player.getHorizontalFacing().getOpposite(); break;
+                down = player.getHorizontalFacing().getOpposite();
+                break;
             default:
                 down = EnumFacing.DOWN;
         }

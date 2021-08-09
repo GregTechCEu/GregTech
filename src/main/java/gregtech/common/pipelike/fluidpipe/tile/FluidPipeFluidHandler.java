@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.common.pipelike.fluidpipe.FluidPipeProperties;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
@@ -56,7 +56,7 @@ public class FluidPipeFluidHandler implements IFluidHandler {
     public FluidPipeNet getFluidPipeNet() {
         FluidPipeNet currentPipeNet = this.currentPipeNet.get();
         if (currentPipeNet != null && currentPipeNet.isValid() &&
-            currentPipeNet.containsNode(pipeTile.getPipePos()))
+                currentPipeNet.containsNode(pipeTile.getPipePos()))
             return currentPipeNet; //if current net is valid and does contain position, return it
         WorldFluidPipeNet worldFluidPipeNet = (WorldFluidPipeNet) pipeTile.getPipeBlock().getWorldPipeNet(pipeTile.getPipeWorld());
         currentPipeNet = worldFluidPipeNet.getNetFromPos(pipeTile.getPipePos());

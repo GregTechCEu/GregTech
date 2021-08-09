@@ -26,13 +26,16 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nonnull;
+import java.awt.*;
+
 public class SlotWidget extends Widget implements INativeWidget {
 
-    protected Slot slotReference;
+    protected final Slot slotReference;
     protected boolean isEnabled = true;
 
-    protected boolean canTakeItems;
-    protected boolean canPutItems;
+    protected final boolean canTakeItems;
+    protected final boolean canPutItems;
     protected SlotLocationInfo locationInfo = new SlotLocationInfo(false, false);
 
     protected IGuiTexture[] backgroundTexture;
@@ -179,7 +182,7 @@ public class SlotWidget extends Widget implements INativeWidget {
         }
 
         @Override
-        public boolean canTakeStack(EntityPlayer playerIn) {
+        public boolean canTakeStack(@Nonnull EntityPlayer playerIn) {
             return SlotWidget.this.canTakeStack(playerIn) && super.canTakeStack(playerIn);
         }
 
@@ -191,8 +194,9 @@ public class SlotWidget extends Widget implements INativeWidget {
             }
         }
 
+        @Nonnull
         @Override
-        public final ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
+        public final ItemStack onTake(@Nonnull EntityPlayer thePlayer, @Nonnull ItemStack stack) {
             return onItemTake(thePlayer, super.onTake(thePlayer, stack), false);
         }
 
@@ -232,8 +236,9 @@ public class SlotWidget extends Widget implements INativeWidget {
             }
         }
 
+        @Nonnull
         @Override
-        public final ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
+        public final ItemStack onTake(@Nonnull EntityPlayer thePlayer, @Nonnull ItemStack stack) {
             return onItemTake(thePlayer, super.onTake(thePlayer, stack), false);
         }
 

@@ -2,10 +2,12 @@ package gregtech.common.blocks.properties;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.type.Material;
 import net.minecraft.block.properties.PropertyHelper;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -26,20 +28,23 @@ public class PropertyMaterial extends PropertyHelper<Material> {
         return new PropertyMaterial(name, Arrays.asList(allowedValues));
     }
 
+    @Nonnull
     @Override
     public ImmutableList<Material> getAllowedValues() {
         return allowedValues;
     }
 
+    @Nonnull
     @Override
-    public Optional<Material> parseValue(String value) {
-        Material material = Material.MATERIAL_REGISTRY.getObject(value);
+    public Optional<Material> parseValue(@Nonnull String value) {
+        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(value);
         if (this.allowedValues.contains(material)) {
             return Optional.of(material);
         }
         return Optional.of(Materials._NULL);
     }
 
+    @Nonnull
     @Override
     public String getName(Material material) {
         String name = material.toString();

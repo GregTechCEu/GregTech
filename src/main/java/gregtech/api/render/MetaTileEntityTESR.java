@@ -21,6 +21,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,19 +31,19 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
     @Override
     public void render(MetaTileEntityHolder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         MetaTileEntity metaTileEntity = te.getMetaTileEntity();
-        if(metaTileEntity instanceof IFastRenderMetaTileEntity) {
+        if (metaTileEntity instanceof IFastRenderMetaTileEntity) {
             renderTileEntityFastPart(te, x, y, z, partialTicks, destroyStage);
         }
-        if(metaTileEntity instanceof IRenderMetaTileEntity) {
+        if (metaTileEntity instanceof IRenderMetaTileEntity) {
             ((IRenderMetaTileEntity) metaTileEntity).renderMetaTileEntityDynamic(x, y, z, partialTicks);
         }
-        if(metaTileEntity != null) {
+        if (metaTileEntity != null) {
             List<Tuple<IFastRenderMetaTileEntity, EnumFacing>> coverFast = new ArrayList<>();
-            for (EnumFacing side: EnumFacing.VALUES){
+            for (EnumFacing side : EnumFacing.VALUES) {
                 CoverBehavior cover = metaTileEntity.getCoverAtSide(side);
                 if (cover instanceof IFastRenderMetaTileEntity) {
                     coverFast.add(new Tuple<>((IFastRenderMetaTileEntity) cover, side));
-                } else if (cover instanceof IRenderMetaTileEntity){
+                } else if (cover instanceof IRenderMetaTileEntity) {
                     ((IRenderMetaTileEntity) cover).renderMetaTileEntityDynamic(x, y, z, partialTicks);
                 }
             }
@@ -52,9 +53,10 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
         }
     }
 
-    /** Used Specifically to render covers that are IFastRenderMetaTileEntity
+    /**
+     * Used Specifically to render covers that are IFastRenderMetaTileEntity
      * Adapted from renderTileEntityFastPart
-     * **/
+     **/
     private void renderCoverFast(MetaTileEntityHolder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha, List<Tuple<IFastRenderMetaTileEntity, EnumFacing>> coverList) {
 
         Matrix4 translation = (new Matrix4()).translate(x, y, z);
@@ -67,8 +69,7 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
 
         if (Minecraft.isAmbientOcclusionEnabled()) {
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        }
-        else {
+        } else {
             GlStateManager.shadeModel(GL11.GL_FLAT);
         }
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
@@ -97,8 +98,7 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
 
         if (Minecraft.isAmbientOcclusionEnabled()) {
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        }
-        else {
+        } else {
             GlStateManager.shadeModel(GL11.GL_FLAT);
         }
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
@@ -111,7 +111,7 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
     }
 
     @Override
-    public void renderTileEntityFast(MetaTileEntityHolder te, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer) {
+    public void renderTileEntityFast(MetaTileEntityHolder te, double x, double y, double z, float partialTicks, int destroyStage, float partial, @Nonnull BufferBuilder buffer) {
         MetaTileEntity metaTileEntity = te.getMetaTileEntity();
         if (metaTileEntity instanceof IFastRenderMetaTileEntity) {
             CCRenderState renderState = CCRenderState.instance();
@@ -124,7 +124,7 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
     }
 
     @Override
-    public boolean isGlobalRenderer(MetaTileEntityHolder te) {
+    public boolean isGlobalRenderer(@Nonnull MetaTileEntityHolder te) {
         if (te instanceof IRenderMetaTileEntity) {
             if (((IRenderMetaTileEntity) te).isGlobalRenderer()) {
                 return true;
@@ -138,7 +138,7 @@ public class MetaTileEntityTESR extends TileEntitySpecialRenderer<MetaTileEntity
             if (((IRenderMetaTileEntity) te.getMetaTileEntity()).isGlobalRenderer()) {
                 return true;
             }
-        } else if (te.getMetaTileEntity() instanceof IFastRenderMetaTileEntity){
+        } else if (te.getMetaTileEntity() instanceof IFastRenderMetaTileEntity) {
             return ((IFastRenderMetaTileEntity) te.getMetaTileEntity()).isGlobalRenderer();
         }
         return false;

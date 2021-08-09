@@ -51,7 +51,7 @@ public class AssemblerRecipeLoader {
         // Other
         ASSEMBLER_RECIPES.recipeBuilder()
                 .input(rotor, Titanium, 4)
-                .input(pipeMedium, Titanium, 2)
+                .input(pipeNormalFluid, Titanium, 2)
                 .inputs(METAL_CASING.getItemVariant(TITANIUM_STABLE))
                 .outputs(MULTIBLOCK_CASING.getItemVariant(ENGINE_INTAKE_CASING, 2))
                 .duration(100).EUt(30).buildAndRegister();
@@ -180,21 +180,85 @@ public class AssemblerRecipeLoader {
                 .input(plate, Wood)
                 .circuitMeta(12)
                 .fluidInputs(Glue.getFluid(60))
-                .output(pipeSmall, Wood, 6)
+                .output(pipeSmallFluid, Wood, 6)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
                 .input(plate, Wood, 3)
                 .circuitMeta(4)
                 .fluidInputs(Glue.getFluid(20))
-                .output(pipeMedium, Wood, 4)
+                .output(pipeNormalFluid, Wood, 4)
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30)
                 .input(plate, Wood, 3)
                 .circuitMeta(2)
                 .fluidInputs(Glue.getFluid(10))
-                .output(pipeLarge, Wood)
+                .output(pipeLargeFluid, Wood)
+                .buildAndRegister();
+
+        // Voltage Coils
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(7)
+                .input(stick, IronMagnetic)
+                .input(wireFine, Lead, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_ULV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30)
+                .input(stick, IronMagnetic)
+                .input(wireFine, Steel, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_LV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(120)
+                .input(stick, SteelMagnetic)
+                .input(wireFine, Aluminium, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_MV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(480)
+                .input(stick, SteelMagnetic)
+                .input(wireFine, BlackSteel, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_HV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(1920)
+                .input(stick, NeodymiumMagnetic)
+                .input(wireFine, TungstenSteel, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_EV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(1920)
+                .input(stick, NeodymiumMagnetic)
+                .input(wireFine, Iridium, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_IV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(30720)
+                .input(stick, SamariumMagnetic)
+                .input(wireFine, Osmiridium, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_LUV.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(122880)
+                .input(stick, SamariumMagnetic)
+                .input(wireFine, Europium, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_ZPM.getStackForm())
+                .buildAndRegister();
+
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(491520)
+                .input(stick, SamariumMagnetic)
+                .input(wireFine, FluxedElectrum, 16)
+                .circuitMeta(1)
+                .outputs(VOLTAGE_COIL_UV.getStackForm())
                 .buildAndRegister();
     }
 }

@@ -2,7 +2,10 @@ package gregtech.api.recipes.recipeproperties;
 
 import gregtech.api.util.GTLog;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class RecipePropertyStorage {
     private static final String STACKTRACE = "Stacktrace:";
@@ -54,51 +57,6 @@ public class RecipePropertyStorage {
     }
 
     /**
-     * Stores all {@link RecipeProperty} with values in provided {@link Map}
-     *
-     * @param recipeProperties {@link Map} of {@link RecipeProperty} and values
-     * @return <code>true</code> if store of all succeeds; otherwise <code>false</code>
-     */
-    public boolean store(Map<RecipeProperty<?>, Object> recipeProperties) {
-        boolean success = true;
-        for (Map.Entry<RecipeProperty<?>, Object> recipePropertyEntry : recipeProperties.entrySet()) {
-            if (!store(recipePropertyEntry.getKey(), recipePropertyEntry.getValue())) {
-                success = false;
-            }
-        }
-
-        return success;
-    }
-
-    /**
-     * @param recipeProperties {@link Map} of {@link String} property key and values
-     * @return <code>true</code> if conversion and store of all succeeds; otherwise <code>false</code>
-     * @deprecated use {@link #store(Map recipeProperties)}
-     * Converts recipe properties from old format to new and stores them
-     */
-    @Deprecated
-    public boolean storeOldFormat(Map<String, Object> recipeProperties) {
-        boolean success = true;
-        for (Map.Entry<String, Object> recipePropertyEntry : recipeProperties.entrySet()) {
-            Object value = recipePropertyEntry.getValue();
-            String key = recipePropertyEntry.getKey();
-
-            if (value != null) {
-                DefaultProperty<?> recipeProperty = new DefaultProperty<>(key, value.getClass());
-                if (!store(recipeProperty, value)) {
-                    success = false;
-                }
-            } else {
-                GTLog.logger.warn("Provided value is null for old RecipeProperty with key {}", key);
-                GTLog.logger.warn(STACKTRACE, new IllegalArgumentException());
-                success = false;
-            }
-        }
-
-        return success;
-    }
-
-    /**
      * Provides information how many {@link RecipeProperty} are stored
      *
      * @return number of stored {@link RecipeProperty}
@@ -112,7 +70,6 @@ public class RecipePropertyStorage {
      *
      * @return all stored {@link RecipeProperty} and values
      */
-    @SuppressWarnings("java:S1452")
     public Set<Map.Entry<RecipeProperty<?>, Object>> getRecipeProperties() {
         return this.recipeProperties.entrySet();
     }
@@ -135,23 +92,6 @@ public class RecipePropertyStorage {
         }
 
         return recipeProperty.castValue(value);
-    }
-
-    /**
-     * @param key Key of {@link RecipeProperty}
-     * @return {@link AbstractMap.SimpleEntry} containing {@link RecipeProperty} and value on success; otherwise <code>null</code>
-     * @deprecated use {@link #getRecipePropertyValue(RecipeProperty recipeProperty, Object defaultValue)} instead
-     * Compatibility way of getting {@link RecipeProperty} and value via key
-     */
-    @Deprecated
-    @SuppressWarnings("java:S1452")
-    public AbstractMap.SimpleEntry<RecipeProperty<?>, Object> getRecipeProperty(String key) {
-        RecipeProperty<?> recipeProperty = getRecipePropertyValue(key);
-        if (recipeProperty != null) {
-            return new AbstractMap.SimpleEntry<>(recipeProperty, recipeProperties.get(recipeProperty));
-        }
-
-        return null;
     }
 
     /**

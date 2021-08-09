@@ -55,17 +55,17 @@ public class ProgressWidget extends Widget {
             //fuck this precision-dependent things, they are so fucking annoying
             if (moveType == MoveType.HORIZONTAL) {
                 filledBarArea.drawSubArea(pos.x, pos.y, (int) (size.width * lastProgressValue), size.height,
-                    0.0, 0.0, ((int) (size.width * lastProgressValue)) / (size.width * 1.0), 1.0);
+                        0.0, 0.0, ((int) (size.width * lastProgressValue)) / (size.width * 1.0), 1.0);
             } else if (moveType == MoveType.VERTICAL) {
                 int progressValueScaled = (int) (size.height * lastProgressValue);
                 filledBarArea.drawSubArea(pos.x, pos.y + size.height - progressValueScaled, size.width, progressValueScaled,
-                    0.0, 1.0 - (progressValueScaled / (size.height * 1.0)),
-                    1.0, (progressValueScaled / (size.height * 1.0)));
+                        0.0, 1.0 - (progressValueScaled / (size.height * 1.0)),
+                        1.0, (progressValueScaled / (size.height * 1.0)));
             } else if (moveType == MoveType.VERTICAL_INVERTED) {
                 int progressValueScaled = (int) (size.height * lastProgressValue);
                 filledBarArea.drawSubArea(pos.x, pos.y, size.width, progressValueScaled,
-                    0.0, 0.0,
-                    1.0, (progressValueScaled / (size.height * 1.0)));
+                        0.0, 0.0,
+                        1.0, (progressValueScaled / (size.height * 1.0)));
             }
         }
     }

@@ -15,6 +15,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
@@ -214,15 +215,15 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs) {
-            Recipe recipe = super.findRecipe(maxVoltage, inputs, fluidInputs);
-            return (recipe != null && recipe.getRecipePropertyStorage().getRecipePropertyValue(FusionEUToStartProperty.getInstance(), 0L)
+        protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
+            Recipe recipe = super.findRecipe(maxVoltage, inputs, fluidInputs, mode);
+            return (recipe != null && recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L)
                     <= energyContainer.getEnergyCapacity()) ? recipe : null;
         }
 
         @Override
         protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
-            long heatDiff = recipe.getRecipePropertyStorage().getRecipePropertyValue(FusionEUToStartProperty.getInstance(), 0L) - heat;
+            long heatDiff = recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) - heat;
             if (heatDiff <= 0) {
                 return super.setupAndConsumeRecipeInputs(recipe);
             }
