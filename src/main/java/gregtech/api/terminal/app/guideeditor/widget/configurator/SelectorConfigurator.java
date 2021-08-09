@@ -3,6 +3,7 @@ package gregtech.api.terminal.app.guideeditor.widget.configurator;
 import com.google.gson.JsonObject;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.SelectorWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 
 import java.awt.*;
 import java.util.List;
@@ -25,8 +26,8 @@ public class SelectorConfigurator extends ConfiguratorWidget<String>{
             }
             return config.get(name).getAsString();
         }, true)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setIsUp(true)
                 .setOnChanged(this::updateValue));

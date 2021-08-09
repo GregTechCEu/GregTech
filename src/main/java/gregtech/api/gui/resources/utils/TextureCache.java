@@ -1,4 +1,4 @@
-package gregtech.api.gui.resources.onlinepic;
+package gregtech.api.gui.resources.utils;
 
 import net.minecraft.client.Minecraft;
 import org.apache.commons.codec.binary.Base64;

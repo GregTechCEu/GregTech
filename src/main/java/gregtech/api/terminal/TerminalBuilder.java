@@ -19,6 +19,7 @@ public class TerminalBuilder {
         appRegister.add(new ItemGuideApp());
         appRegister.add(new TutorialGuideApp());
         appRegister.add(new GuideEditorApp());
+        appRegister.add(new ThemeSettingApp());
     }
 
     public static List<AbstractApplication> getApplications() {

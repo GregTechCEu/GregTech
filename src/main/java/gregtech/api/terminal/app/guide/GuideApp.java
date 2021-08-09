@@ -28,7 +28,8 @@ import java.util.Stack;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public abstract class GuideApp<T> extends AbstractApplication implements SearchComponent.IMenuSearch<Stack<TreeNode<String, T>>> {
+public abstract class GuideApp<T> extends AbstractApplication implements
+        SearchComponent.IWidgetSearch<Stack<TreeNode<String, T>>> {
     private GuidePageWidget pageWidget;
     private TreeListWidget<String, T> tree;
     public GuideApp(String name, IGuiTexture icon) {

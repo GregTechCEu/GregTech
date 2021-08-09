@@ -1,10 +1,10 @@
-package gregtech.api.gui.resources.onlinepic;
+package gregtech.api.gui.resources.utils;
 
 import gregtech.GregTechMod;
-import gregtech.api.gui.resources.onlinepictexture.AnimatedPictureTexture;
-import gregtech.api.gui.resources.onlinepictexture.OrdinaryTexture;
-import gregtech.api.gui.resources.onlinepictexture.PictureTexture;
-import gregtech.api.gui.resources.onlinepictexture.VideoTexture;
+import gregtech.api.gui.resources.picturetexture.AnimatedPictureTexture;
+import gregtech.api.gui.resources.picturetexture.OrdinaryTexture;
+import gregtech.api.gui.resources.picturetexture.PictureTexture;
+import gregtech.api.gui.resources.picturetexture.VideoTexture;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.compress.utils.IOUtils;
@@ -78,7 +78,7 @@ public class DownloadThread extends Thread {
         Exception exception = null;
         try {
             byte[] data = load(url);
-            String type = readType(data);
+            String type = ImageUtils.readType(data);
             ByteArrayInputStream in = null;
             try {
                 in = new ByteArrayInputStream(data);
@@ -199,41 +199,6 @@ public class DownloadThread extends Thread {
         } finally {
             IOUtils.closeQuietly(in);
         }
-    }
-
-    private static String readType(byte[] input) throws IOException {
-        InputStream in = null;
-        try {
-            in = new ByteArrayInputStream(input);
-            return readType(in);
-        } finally {
-            IOUtils.closeQuietly(in);
-        }
-    }
-
-    private static String readType(InputStream input) throws IOException {
-        ImageInputStream stream = ImageIO.createImageInputStream(input);
-        Iterator<ImageReader> iter = ImageIO.getImageReaders(stream);
-        if (!iter.hasNext()) {
-            return "";
-        }
-        ImageReader reader = iter.next();
-
-        if (reader.getFormatName().equalsIgnoreCase("gif"))
-            return "gif";
-
-        ImageReadParam param = reader.getDefaultReadParam();
-        reader.setInput(stream, true, true);
-        try {
-            reader.read(0, param);
-        } catch (IOException e) {
-            LOGGER.error("Failed to parse input format", e);
-        } finally {
-            reader.dispose();
-            IOUtils.closeQuietly(stream);
-        }
-        input.reset();
-        return reader.getFormatName();
     }
 
     public static PictureTexture loadImage(DownloadThread thread) {

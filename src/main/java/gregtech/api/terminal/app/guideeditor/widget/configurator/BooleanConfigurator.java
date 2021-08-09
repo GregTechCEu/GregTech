@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 
 import java.awt.*;
 
@@ -26,8 +27,8 @@ public class BooleanConfigurator extends ConfiguratorWidget<Boolean>{
                     }
                     return config.get(name).getAsBoolean();
                 })
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setIcon(new ColorRectTexture(new Color(0, 0, 0, 74).getRGB())));
     }

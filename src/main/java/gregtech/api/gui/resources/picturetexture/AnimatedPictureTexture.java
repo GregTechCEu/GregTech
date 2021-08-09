@@ -1,7 +1,7 @@
-package gregtech.api.gui.resources.onlinepictexture;
+package gregtech.api.gui.resources.picturetexture;
 
 
-import gregtech.api.gui.resources.onlinepic.ProcessedImageData;
+import gregtech.api.gui.resources.utils.ProcessedImageData;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.Arrays;

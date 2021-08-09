@@ -8,6 +8,7 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SimpleTextWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 
 import java.awt.*;
 
@@ -24,30 +25,30 @@ public class NumberConfigurator extends ConfiguratorWidget<Integer>{
     protected void init(){
         int y = 15;
         this.addWidget(new RectButtonWidget(0, y, 20, 20)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> adjustTransferRate(data.isShiftClick ? -100 : -10))
                 .setIcon(new TextTexture("-10", -1)));
         this.addWidget(new RectButtonWidget(96, y, 20, 20)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> adjustTransferRate(data.isShiftClick ? +100 : +10))
                 .setIcon(new TextTexture("+10", -1)));
         this.addWidget(new RectButtonWidget(20, y, 20, 20)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> adjustTransferRate(data.isShiftClick ? -5 : -1))
                 .setIcon(new TextTexture("-1", -1)));
         this.addWidget(new RectButtonWidget(76, y, 20, 20)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> adjustTransferRate(data.isShiftClick ? +5 : +1))
                 .setIcon(new TextTexture("+1", -1)));
-        this.addWidget(new ImageWidget(40, y, 36, 20, new ColorRectTexture(0x9f000000)));
+        this.addWidget(new ImageWidget(40, y, 36, 20, TerminalTheme.COLOR_B_2));
         this.addWidget(new SimpleTextWidget(58, 25, "", 0xFFFFFF, () -> {
             JsonElement element = config.get(name);
             if (element.isJsonNull()) {

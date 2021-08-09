@@ -10,6 +10,7 @@ import gregtech.api.gui.widgets.*;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.app.guide.widget.TankListWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -32,8 +33,8 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
                     addSlot(container, new TankListWidget.FluidStackInfo(null, 0));
                     updateValue();
                 })
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                 new Color(255, 255, 255, 0).getRGB()));
         tanks = new ArrayList<>();
         if (!config.get(name).isJsonNull()) {
@@ -48,15 +49,15 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
         WidgetGroup group = new WidgetGroup(0, tanks.size() * 20, 116, 20);
         tanks.add(fluidStackInfo);
         group.addWidget(new PhantomFluidWidget(1, 1, 18, 18, null, null)
-                .setBackgroundTexture(new ColorRectTexture(0x9f000000))
+                .setBackgroundTexture(TerminalTheme.COLOR_B_2)
                 .setFluidStackSupplier(fluidStackInfo::getInstance, true)
                 .setFluidStackUpdater(fluidStack->{
                     fluidStackInfo.update(fluidStack);
                     updateValue();
                     }, true));
         group.addWidget(new RectButtonWidget(20, 0, 20, 20)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> {
                     fluidStackInfo.amount = Math.max(0, fluidStackInfo.amount - (data.isShiftClick ? data.isCtrlClick ? 1000 : 10 : data.isCtrlClick? 100: 1));
@@ -65,8 +66,8 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
                 .setHoverText("Shift -10|Ctrl -100|Shift+Ctrl -1000")
                 .setIcon(new TextTexture("-1", -1)));
         group.addWidget(new RectButtonWidget(76, 0, 20, 20)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> {
                     fluidStackInfo.amount = Math.max(0, fluidStackInfo.amount + (data.isShiftClick ? data.isCtrlClick ? 1000 : 10 : data.isCtrlClick? 100: 1));
@@ -74,11 +75,11 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
                 })
                 .setHoverText("Shift +10|Ctrl +100|Shift+Ctrl +1000")
                 .setIcon(new TextTexture("+1", -1)));
-        group.addWidget(new ImageWidget(40, 0, 36, 20, new ColorRectTexture(0x9f000000)));
+        group.addWidget(new ImageWidget(40, 0, 36, 20, TerminalTheme.COLOR_B_2));
         group.addWidget(new SimpleTextWidget(58, 10, "", 0xFFFFFF, () -> Integer.toString(fluidStackInfo.amount), true));
         group.addWidget(new RectButtonWidget(96, 0, 20, 20)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> {
                     container.waitToRemoved(group);

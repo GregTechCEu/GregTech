@@ -62,7 +62,7 @@ public class SlotListWidget extends GuideWidgetGroup {
     @Override
     public JsonObject getTemplate(boolean isFixed) {
         JsonObject template = super.getTemplate(isFixed);
-        template.add("item_list", new Gson().toJsonTree(Collections.singletonList(new ItemStackInfo("gregtech:meta_item_2", 32581, 1))));
+        template.add("item_list", new Gson().toJsonTree(Collections.singletonList(new ItemStackInfo("minecraft:ender_pearl", 0, 1))));
         return template;
     }
 

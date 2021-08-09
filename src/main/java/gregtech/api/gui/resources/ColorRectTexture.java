@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import java.awt.*;
 
 public class ColorRectTexture implements IGuiTexture{
-    private final int color;
+    public int color;
 
     public ColorRectTexture(int color) {
         this.color = color;
@@ -16,6 +16,14 @@ public class ColorRectTexture implements IGuiTexture{
 
     public ColorRectTexture(Color color) {
         this.color = color.getRGB();
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public int getColor() {
+        return color;
     }
 
     @Override

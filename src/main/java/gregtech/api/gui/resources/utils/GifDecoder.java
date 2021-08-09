@@ -1,4 +1,4 @@
-package gregtech.api.gui.resources.onlinepic;
+package gregtech.api.gui.resources.utils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

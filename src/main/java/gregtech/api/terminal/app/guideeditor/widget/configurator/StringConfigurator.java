@@ -6,6 +6,7 @@ import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.TextFieldWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 
 import java.awt.*;
 
@@ -22,12 +23,12 @@ public class StringConfigurator extends ConfiguratorWidget<String>{
 
     protected void init() {
         this.addWidget(new RectButtonWidget(76, 15, 40, 20)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> updateString())
                 .setIcon(new TextTexture("Update", -1)));
-        textFieldWidget = new TextFieldWidget(0, 15, 76, 20, new ColorRectTexture(0x9f000000), null, null)
+        textFieldWidget = new TextFieldWidget(0, 15, 76, 20, TerminalTheme.COLOR_B_2, null, null)
                 .setMaxStringLength(Integer.MAX_VALUE)
                 .setValidator(s->true);
         this.addWidget(textFieldWidget);

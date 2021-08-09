@@ -1,4 +1,4 @@
-package gregtech.api.gui.resources.onlinepictexture;
+package gregtech.api.gui.resources.picturetexture;
 
 import gregtech.api.gui.resources.IGuiTexture;
 import net.minecraft.client.renderer.GlStateManager;

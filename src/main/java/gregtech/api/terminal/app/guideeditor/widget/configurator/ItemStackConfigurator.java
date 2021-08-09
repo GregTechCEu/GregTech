@@ -13,6 +13,7 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.app.guide.widget.SlotListWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -37,8 +38,8 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
                     addSlot(container, new SlotListWidget.ItemStackInfo("minecraft:air", 0, 0));
                     updateValue();
                 })
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                 new Color(255, 255, 255, 0).getRGB()));
         slots = new ArrayList<>();
         if (!config.get(name).isJsonNull()) {
@@ -54,13 +55,13 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
         slots.add(itemStackInfo);
         IItemHandlerModifiable handler = new ItemStackHandler();
         handler.setStackInSlot(0, itemStackInfo.getInstance());
-        group.addWidget(new PhantomSlotWidget(handler, 0, 1, 1).setBackgroundTexture(new ColorRectTexture(0x9f000000)).setChangeListener(()->{
+        group.addWidget(new PhantomSlotWidget(handler, 0, 1, 1).setBackgroundTexture(TerminalTheme.COLOR_B_2).setChangeListener(()->{
             itemStackInfo.update(handler.getStackInSlot(0));
             updateValue();
         }));
         group.addWidget(new RectButtonWidget(20, 0, 20, 20)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> {
                     itemStackInfo.count = Math.max(0, itemStackInfo.count - (data.isShiftClick ? 10 : 1));
@@ -68,19 +69,19 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
                 })
                 .setIcon(new TextTexture("-1", -1)));
         group.addWidget(new RectButtonWidget(76, 0, 20, 20)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> {
                     itemStackInfo.count = Math.max(0, itemStackInfo.count + (data.isShiftClick ? 10 : 1));
                     updateValue();
                 })
                 .setIcon(new TextTexture("+1", -1)));
-        group.addWidget(new ImageWidget(40, 0, 36, 20, new ColorRectTexture(0x9f000000)));
+        group.addWidget(new ImageWidget(40, 0, 36, 20, TerminalTheme.COLOR_B_2));
         group.addWidget(new SimpleTextWidget(58, 10, "", 0xFFFFFF, () -> Integer.toString(itemStackInfo.count), true));
         group.addWidget(new RectButtonWidget(96, 0, 20, 20)
-                .setColors(new Color(0, 0, 0, 74).getRGB(),
-                        new Color(128, 255, 128).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> {
                     container.waitToRemoved(group);

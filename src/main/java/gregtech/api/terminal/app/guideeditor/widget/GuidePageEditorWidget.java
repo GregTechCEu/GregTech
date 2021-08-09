@@ -12,6 +12,7 @@ import gregtech.api.terminal.app.guide.widget.GuidePageWidget;
 import gregtech.api.terminal.app.guide.widget.IGuideWidget;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.CustomPositionSizeWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Eases;
@@ -40,22 +41,22 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         toolButtons.setVisible(false);
         toolButtons.addWidget(new CircleButtonWidget(-20, -4, 8, 1, 12)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(88, 198, 88).getRGB(),
-                        new Color(158, 238, 124).getRGB())
+                        TerminalTheme.COLOR_B_2.getColor(),
+                        TerminalTheme.COLOR_1.getColor())
                 .setIcon(GuiTextures.TERMINAL_UP)
                 .setHoverText("up")
                 .setClickListener(this::moveUp));
         toolButtons.addWidget(new CircleButtonWidget(0, -4, 8, 1, 12)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(255, 217, 0).getRGB(),
-                        new Color(243, 217, 117).getRGB())
+                        TerminalTheme.COLOR_B_2.getColor(),
+                        TerminalTheme.COLOR_2.getColor())
                 .setIcon(GuiTextures.TERMINAL_DOWN)
                 .setHoverText("down")
                 .setClickListener(this::moveDown));
         toolButtons.addWidget(new CircleButtonWidget(20, -4, 8, 1, 12)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(238, 46, 46).getRGB(),
-                        new Color(238, 116, 116).getRGB())
+                        TerminalTheme.COLOR_B_2.getColor(),
+                        TerminalTheme.COLOR_3.getColor())
                 .setIcon(GuiTextures.TERMINAL_DELETE)
                 .setHoverText("delete")
                 .setClickListener(this::delete));
@@ -124,7 +125,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         moveDown(selected);
     }
 
-    public String getJsonString() {
+    public JsonObject getJsonConfig() {
         JsonObject json = new JsonObject();
         json.addProperty("section", section);
         json.addProperty("title", title.content.get(0));
@@ -144,7 +145,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
             }
         });
 
-        return new Gson().toJson(json);
+        return json;
     }
 
     public JsonObject addGuideWidget(IGuideWidget widget, boolean isFixed) {

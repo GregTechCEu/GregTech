@@ -1,4 +1,4 @@
-package gregtech.api.gui.resources.onlinepictexture;
+package gregtech.api.gui.resources.picturetexture;
 
 public class VideoTexture extends PictureTexture {
     //TODO implementations of it in the future

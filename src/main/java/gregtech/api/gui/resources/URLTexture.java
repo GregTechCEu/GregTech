@@ -1,12 +1,12 @@
 package gregtech.api.gui.resources;
 
-import gregtech.api.gui.resources.onlinepic.DownloadThread;
-import gregtech.api.gui.resources.onlinepictexture.PictureTexture;
+import gregtech.api.gui.resources.picturetexture.PictureTexture;
+import gregtech.api.gui.resources.utils.DownloadThread;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class URLTexture implements IGuiTexture{
-    private final String url;
+    public final String url;
     @SideOnly(Side.CLIENT)
     private DownloadThread downloader;
     @SideOnly(Side.CLIENT)

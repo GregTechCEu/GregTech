@@ -1,4 +1,4 @@
-package gregtech.api.gui.resources.onlinepic;
+package gregtech.api.gui.resources.utils;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;

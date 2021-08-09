@@ -6,8 +6,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class TextTexture implements IGuiTexture{
-    private final String text;
-    private final int color;
+    public final String text;
+    public final int color;
     private final int textWidth;
 
     public TextTexture(String text) {

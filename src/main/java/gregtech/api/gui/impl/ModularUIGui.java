@@ -224,40 +224,74 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
 
     protected void mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         //noinspection ResultOfMethodCallIgnored
-        modularUI.guiWidgets.values().stream().anyMatch(widget -> widget.mouseWheelMove(mouseX, mouseY, wheelDelta));
+//        modularUI.guiWidgets.values().stream().anyMatch(widget -> widget.mouseWheelMove(mouseX, mouseY, wheelDelta));
+        for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
+            Widget widget = modularUI.guiWidgets.get(i);
+            if(widget.isVisible() && widget.isActive() && widget.mouseWheelMove(mouseX, mouseY, wheelDelta)) {
+                return;
+            }
+        }
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        boolean result = modularUI.guiWidgets.values().stream().anyMatch(widget -> widget.mouseClicked(mouseX, mouseY, mouseButton));
-        if (!result) {
-            super.mouseClicked(mouseX, mouseY, mouseButton);
+//        boolean result = modularUI.guiWidgets.values().stream().anyMatch(widget -> widget.mouseClicked(mouseX, mouseY, mouseButton));
+//        if (!result) {
+//            super.mouseClicked(mouseX, mouseY, mouseButton);
+//        }
+        for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
+            Widget widget = modularUI.guiWidgets.get(i);
+            if(widget.isVisible() && widget.isActive() && widget.mouseClicked(mouseX, mouseY, mouseButton)) {
+                return;
+            }
         }
+        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-        boolean result = modularUI.guiWidgets.values().stream().anyMatch(widget ->
-                widget.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick));
-        if (!result) {
-            super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+//        boolean result = modularUI.guiWidgets.values().stream().anyMatch(widget ->
+//                widget.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick));
+//        if (!result) {
+//            super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+//        }
+        for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
+            Widget widget = modularUI.guiWidgets.get(i);
+            if(widget.isVisible() && widget.isActive() && widget.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)) {
+                return;
+            }
         }
+        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
-        boolean result = modularUI.guiWidgets.values().stream().anyMatch(widget -> widget.mouseReleased(mouseX, mouseY, state));
-        if (!result) {
-            super.mouseReleased(mouseX, mouseY, state);
+//        boolean result = modularUI.guiWidgets.values().stream().anyMatch(widget -> widget.mouseReleased(mouseX, mouseY, state));
+//        if (!result) {
+//            super.mouseReleased(mouseX, mouseY, state);
+//        }
+        for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
+            Widget widget = modularUI.guiWidgets.get(i);
+            if(widget.isVisible() && widget.isActive() && widget.mouseReleased(mouseX, mouseY, state)) {
+                return;
+            }
         }
+        super.mouseReleased(mouseX, mouseY, state);
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        boolean result = modularUI.guiWidgets.values().stream().anyMatch(widget -> widget.keyTyped(typedChar, keyCode));
-        if (!result) {
-            super.keyTyped(typedChar, keyCode);
+//        boolean result = modularUI.guiWidgets.values().stream().anyMatch(widget -> widget.keyTyped(typedChar, keyCode));
+//        if (!result) {
+//            super.keyTyped(typedChar, keyCode);
+//        }
+        for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
+            Widget widget = modularUI.guiWidgets.get(i);
+            if(widget.isVisible() && widget.isActive() && widget.keyTyped(typedChar, keyCode)) {
+                return;
+            }
         }
+        super.keyTyped(typedChar, keyCode);
     }
 
 }

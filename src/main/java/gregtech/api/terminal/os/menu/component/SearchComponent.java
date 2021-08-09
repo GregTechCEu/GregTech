@@ -2,7 +2,6 @@ package gregtech.api.terminal.os.menu.component;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.TextFieldWidget;
@@ -18,18 +17,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchComponent<T> extends WidgetGroup implements IMenuComponent{
-    private final static int SIZE = 6;
+    private final static int SIZE = 10;
     private final SearchEngine<T> engine;
     private final List<Tuple<T, String>> results;
-    private final IMenuSearch<T> search;
+    private final IWidgetSearch<T> search;
     private boolean isUp;
     private int offset;
 
-    public SearchComponent(IMenuSearch<T> search){
+    public SearchComponent(IWidgetSearch<T> search){
+        super(0,0,280,20);
         this.search = search;
         results = new ArrayList<>();
         engine = new SearchEngine<>(search, r -> results.add(new Tuple<>(r, search.resultDisplay(r))));
-        this.addWidget(new TextFieldWidget(0, 0, 260, 20, new ColorRectTexture(0xcf000000), null, null)
+        this.addWidget(new TextFieldWidget(0, 5, 280, 20, new ColorRectTexture(0xcf000000), null, null)
                 .setValidator(s->true)
                 .setTextResponder(s->{
                     results.clear();
@@ -105,7 +105,7 @@ public class SearchComponent<T> extends WidgetGroup implements IMenuComponent{
         return super.mouseWheelMove(mouseX, mouseY, wheelDelta);
     }
 
-    public interface IMenuSearch<T> extends ISearch<T>{
+    public interface IWidgetSearch<T> extends ISearch<T>{
         String resultDisplay(T result);
         void selectResult(T result);
     }

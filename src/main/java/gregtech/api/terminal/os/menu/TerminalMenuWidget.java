@@ -8,6 +8,7 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.terminal.os.menu.component.IMenuComponent;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -35,20 +36,20 @@ public class TerminalMenuWidget extends WidgetGroup {
         components = new ArrayList<>();
         this.addWidget(new CircleButtonWidget(5, 10, 4, 1, 0)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(255, 255, 255).getRGB(),
-                        new Color(239, 105, 105).getRGB())
+                        TerminalTheme.COLOR_7.getColor(),
+                        TerminalTheme.COLOR_3.getColor())
                 .setHoverText("close")
                 .setClickListener(this::close));
         this.addWidget(new CircleButtonWidget(15, 10, 4, 1, 0)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(255, 255, 255).getRGB(),
-                        new Color(243, 217, 117).getRGB())
+                        TerminalTheme.COLOR_7.getColor(),
+                        TerminalTheme.COLOR_2.getColor())
                 .setHoverText("minimize")
                 .setClickListener(this::minimize));
         this.addWidget(new CircleButtonWidget(25, 10, 4, 1, 0)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(255, 255, 255).getRGB(),
-                        new Color(154, 243, 122).getRGB())
+                        TerminalTheme.COLOR_7.getColor(),
+                        TerminalTheme.COLOR_1.getColor())
                 .setHoverText("maximize")
                 .setClickListener(this::maximize));
     }
@@ -74,11 +75,11 @@ public class TerminalMenuWidget extends WidgetGroup {
         WidgetGroup group = new WidgetGroup();
         int x = 15;
         int y = 40 + components.size() * 25;
-        group.addWidget(new CircleButtonWidget(x, y, 10, 1, 14)
+        CircleButtonWidget button = new CircleButtonWidget(x, y, 10, 1, 14)
                 .setColors(0x00FFFFFF, 0xFFFFFFFF, 0xFF505050)
                 .setHoverText(component.hoverText())
-                .setIcon(component.buttonIcon())
-                .setClickListener(c->{
+                .setIcon(component.buttonIcon());
+        button.setClickListener(c->{
                     components.forEach(tuple -> {
                         if (tuple.getFirst() instanceof Widget && tuple.getFirst() != component){
                             ((Widget) tuple.getFirst()).setActive(false);
@@ -89,12 +90,14 @@ public class TerminalMenuWidget extends WidgetGroup {
                         Widget widget = (Widget)component;
                         widget.setVisible(!widget.isVisible());
                         widget.setActive(!widget.isActive());
+                        button.setFill(widget.isVisible() ? 0xFF94E2C1 : 0xFF505050);
                     }
                     component.click(c);
-                }));
+                });
+        group.addWidget(button);
         if (component instanceof Widget) {
             Widget widget = (Widget)component;
-            widget.setSelfPosition(new Position(x + 20, y - 10));
+            widget.setSelfPosition(new Position(x + 20, 0));
             widget.setVisible(false);
             widget.setActive(false);
             group.addWidget(widget);

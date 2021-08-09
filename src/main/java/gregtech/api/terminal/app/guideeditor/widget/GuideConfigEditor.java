@@ -1,13 +1,10 @@
 package gregtech.api.terminal.app.guideeditor.widget;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.tab.IGuiTextureTabInfo;
 import gregtech.api.terminal.app.guide.widget.GuidePageWidget;
@@ -18,14 +15,15 @@ import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.TextEditorWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
+import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.api.terminal.util.FileUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.Map;
+import java.util.Objects;
 
 public class GuideConfigEditor extends TabGroup {
     public String json;
@@ -38,9 +36,7 @@ public class GuideConfigEditor extends TabGroup {
     private final GuideEditorApp app;
 
     public GuideConfigEditor(int x, int y, int width, int height, GuideEditorApp app) {
-        super(x, y + 10, new CustomTabListRenderer(
-                new ColorRectTexture(new Color(175, 0, 0, 131)),
-                new ColorRectTexture(new Color(246, 120, 120, 190)), 30, 10));
+        super(x, y + 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 30, 10));
         setSize(new Size(width, height));
         addButton = new CircleButtonWidget[2];
         widgetSelector = createWidgetSelector();
@@ -59,36 +55,36 @@ public class GuideConfigEditor extends TabGroup {
         });
         this.addWidget(new CircleButtonWidget(97, -5, 5, 1, 3)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(255, 255, 255).getRGB(),
-                        new Color(144, 243, 116).getRGB())
+                        TerminalTheme.COLOR_7.getColor(),
+                        TerminalTheme.COLOR_1.getColor())
                 .setIcon(GuiTextures.TERMINAL_ADD)
                 .setHoverText("New Page")
                 .setClickListener(this::newPage));
         this.addWidget(new CircleButtonWidget(112, -5, 5, 1, 3)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(255, 255, 255).getRGB(),
-                        new Color(243, 208, 116).getRGB())
+                        TerminalTheme.COLOR_7.getColor(),
+                        TerminalTheme.COLOR_2.getColor())
                 .setIcon(GuiTextures.TERMINAL_ADD)
                 .setHoverText("Import Page")
                 .setClickListener(this::loadJson));
         this.addWidget(new CircleButtonWidget(127, -5, 5, 1, 3)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(255, 255, 255).getRGB(),
-                        new Color(231, 95, 95).getRGB())
+                        TerminalTheme.COLOR_7.getColor(),
+                        TerminalTheme.COLOR_3.getColor())
                 .setIcon(GuiTextures.TERMINAL_ADD)
                 .setHoverText("Export Page")
                 .setClickListener(this::saveJson));
         addButton[0] = new CircleButtonWidget(115, 15, 8, 1, 8)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(255, 255, 255).getRGB(),
-                        new Color(0, 115, 255).getRGB())
+                        TerminalTheme.COLOR_7.getColor(),
+                        TerminalTheme.COLOR_4.getColor())
                 .setIcon(GuiTextures.TERMINAL_ADD)
                 .setHoverText("add stream")
                 .setClickListener(this::addStream);
         addButton[1] = new CircleButtonWidget(115, 35, 8, 1, 8)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(255, 255, 255).getRGB(),
-                        new Color(113, 27, 217).getRGB())
+                        TerminalTheme.COLOR_7.getColor(),
+                        TerminalTheme.COLOR_5.getColor())
                 .setIcon(GuiTextures.TERMINAL_ADD)
                 .setHoverText("add fixed")
                 .setClickListener(this::addFixed);
@@ -109,9 +105,9 @@ public class GuideConfigEditor extends TabGroup {
 
     private DraggableScrollableWidgetGroup createPageConfig() {
         DraggableScrollableWidgetGroup group = new DraggableScrollableWidgetGroup(0, 0, getSize().width, getSize().height - 10)
-                .setBackground(new ColorRectTexture(new Color(246, 120, 120, 190)))
+                .setBackground(TerminalTheme.COLOR_B_3)
                 .setYScrollBarWidth(4)
-                .setYBarStyle(null, new ColorRectTexture(new Color(148, 226, 193)));
+                .setYBarStyle(null, TerminalTheme.COLOR_F_1);
         group.addWidget(new LabelWidget(5, 5, "section", -1).setShadow(true));
         group.addWidget(new TextFieldWidget(5, 15, 116, 20, new ColorRectTexture(0x9f000000), null, null)
                 .setTextResponder(s->{
@@ -139,9 +135,9 @@ public class GuideConfigEditor extends TabGroup {
 
     private DraggableScrollableWidgetGroup createWidgetSelector() {
         DraggableScrollableWidgetGroup group = new DraggableScrollableWidgetGroup(0, 0, getSize().width, getSize().height - 10)
-                .setBackground(new ColorRectTexture(new Color(246, 120, 120, 190)))
+                .setBackground(TerminalTheme.COLOR_B_3)
                 .setYScrollBarWidth(4)
-                .setYBarStyle(null, new ColorRectTexture(new Color(148, 226, 193)));
+                .setYBarStyle(null, TerminalTheme.COLOR_F_1);
         int y = 10; //133
         for (Map.Entry<String, IGuideWidget> entry : GuidePageWidget.REGISTER_WIDGETS.entrySet()) {
             IGuideWidget widgetTemplate = entry.getValue();
@@ -157,9 +153,9 @@ public class GuideConfigEditor extends TabGroup {
 
     private DraggableScrollableWidgetGroup createConfigurator() {
         return new DraggableScrollableWidgetGroup(0, 0, getSize().width, getSize().height - 10)
-                .setBackground(new ColorRectTexture(new Color(246, 120, 120, 190)))
+                .setBackground(TerminalTheme.COLOR_B_3)
                 .setYScrollBarWidth(4)
-                .setYBarStyle(null, new ColorRectTexture(new Color(148, 226, 193)));
+                .setYBarStyle(null, TerminalTheme.COLOR_F_1);
     }
 
     public void loadConfigurator(IGuideWidget widget) {
@@ -186,10 +182,8 @@ public class GuideConfigEditor extends TabGroup {
             TerminalDialogWidget.showFileDialog(app.getOs(), "Load Json", file, true, result->{
                if (result != null && result.isFile()) {
                    try {
-                       FileReader reader = new FileReader(result);
-                       JsonObject config = new JsonParser().parse(new JsonReader(reader)).getAsJsonObject();
+                       JsonObject config = Objects.requireNonNull(FileUtils.loadJson(result)).getAsJsonObject();
                        pageEditor.loadJsonConfig(config);
-                       reader.close();
                        getPageEditor().setSection(config.get("section").getAsString());
                        updateTitle(config.get("title").getAsString());
                    } catch (Exception e) {
@@ -205,11 +199,7 @@ public class GuideConfigEditor extends TabGroup {
             File file = new File("terminal\\guide_editor");
             TerminalDialogWidget.showFileDialog(app.getOs(), "Save Json", file, false, result->{
                 if (result != null) {
-                    try {
-                        FileWriter writer = new FileWriter(result);
-                        writer.write(pageEditor.getJsonString());
-                        writer.close();
-                    } catch (Exception e) {
+                    if(!FileUtils.saveJson(result, pageEditor.getJsonConfig())) {
                         TerminalDialogWidget.showInfoDialog(app.getOs(), "ERROR", "An error occurred while saving the file.").setClientSide().open();
                     }
                 }
