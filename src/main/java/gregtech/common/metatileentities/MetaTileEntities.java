@@ -10,18 +10,25 @@ import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
-import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.electric.*;
-import gregtech.common.metatileentities.electric.multiblockpart.*;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityEnergyHatch;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityItemBus;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import gregtech.common.metatileentities.multi.*;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler.BoilerType;
 import gregtech.common.metatileentities.multi.electric.*;
-import gregtech.common.metatileentities.multi.electric.generator.*;
+import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
+import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine.TurbineType;
-import gregtech.common.metatileentities.multi.steam.*;
+import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
+import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
 import gregtech.common.metatileentities.steam.*;
-import gregtech.common.metatileentities.steam.boiler.*;
-import gregtech.common.metatileentities.steam.multiblockpart.*;
+import gregtech.common.metatileentities.steam.boiler.SteamCoalBoiler;
+import gregtech.common.metatileentities.steam.boiler.SteamLavaBoiler;
+import gregtech.common.metatileentities.steam.boiler.SteamSolarBoiler;
+import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamHatch;
+import gregtech.common.metatileentities.steam.multiblockpart.MetaTileEntitySteamItemBus;
 import gregtech.common.metatileentities.storage.*;
 import net.minecraft.util.ResourceLocation;
 
@@ -350,8 +357,7 @@ public class MetaTileEntities {
         registerSimpleMetaTileEntity(CIRCUIT_ASSEMBLER, 635, "circuit_assembler", RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY, true);
 
         // Gas Collector, IDs 665-679
-        registerSimpleMetaTileEntity(GAS_COLLECTOR, 665, "gas_collector", RecipeMaps.GAS_COLLECTOR_RECIPES, Textures.GAS_COLLECTOR_OVERLAY,
-                true, false, false, false);
+        registerSimpleMetaTileEntity(GAS_COLLECTOR, 665, "gas_collector", RecipeMaps.GAS_COLLECTOR_RECIPES, Textures.GAS_COLLECTOR_OVERLAY, false);
 
         // Some space here for more SimpleMachines
 
