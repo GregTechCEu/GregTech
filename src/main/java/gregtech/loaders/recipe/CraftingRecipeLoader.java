@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreIngredient;
 
 import static gregtech.api.unification.material.Materials.*;
+import static gregtech.api.unification.ore.OrePrefix.plate;
 
 public class CraftingRecipeLoader {
 
@@ -63,6 +64,8 @@ public class CraftingRecipeLoader {
         ModHandler.addSmeltingRecipe(MetaItems.COMPRESSED_FIRECLAY.getStackForm(), MetaItems.FIRECLAY_BRICK.getStackForm());
 
         ModHandler.addSmeltingRecipe(new UnificationEntry(OrePrefix.nugget, Materials.Iron), OreDictUnifier.get(OrePrefix.nugget, Materials.WroughtIron));
+
+        ModHandler.addShapedRecipe("clipboard", MetaItems.CLIPBOARD.getStackForm(), " Sd", "BWR", "PPP", 'P', Items.PAPER, 'R', new UnificationEntry(OrePrefix.springSmall, Iron), 'B', new UnificationEntry(OrePrefix.bolt, Iron), 'S', new UnificationEntry(OrePrefix.screw, Iron), 'W', new UnificationEntry(plate, Wood));
 
         for (MetaValueItem batteryItem : ToolRecipeHandler.batteryItems[0]) {
             ModHandler.addShapedEnergyTransferRecipe("scanner_" + batteryItem.unlocalizedName, MetaItems.SCANNER.getStackForm(),

@@ -51,7 +51,6 @@ import static gregtech.common.items.MetaItems.CLIPBOARD;
 
 public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMetaTileEntity, IFastRenderMetaTileEntity {
     private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(2.75 / 16.0, 0.0, 0.0, 13.25 / 16.0, 1.0, 0.4 / 16.0);
-    public static final ResourceLocation MODEL_RESOURCE_LOCATION = new ResourceLocation("gregtech", "block/clipboard");
     public static ModelCache modelCache = new ModelCache();
     public static final float scale = 1;
     public FakeModularGui guiCache;
@@ -109,7 +108,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
 
     @Override
     public boolean isGlobalRenderer() {
-        return false;
+        return true;
     }
 
     @Override
@@ -254,27 +253,21 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
                 : rayTraceResult.hitVec.y - rayTraceResult.getBlockPos().getY();
         if (spin == EnumFacing.NORTH) {
             x = 1 - dX;
-            y = 1 - dY;
         } else if (spin == EnumFacing.SOUTH) {
             x = dX;
-            y = dY;
         } else if (spin == EnumFacing.EAST) {
             x = 1 - dY;
-            y = dX;
             if (rayTraceResult.sideHit.getXOffset() < 0 || rayTraceResult.sideHit.getZOffset() > 0) {
                 x = 1 - x;
-                y = 1 - y;
             }
         } else {
             x = dY;
-            y = 1 - dX;
             if (rayTraceResult.sideHit.getXOffset() < 0 || rayTraceResult.sideHit.getZOffset() > 0) {
                 x = 1 - x;
-                y = 1 - y;
             }
         }
 
-        y = 1 - y; // Since y values are quite weird here
+        y = 1 - dY; // Since y values are quite weird here
 
         // Scale these to be 0 - 1
         x -= 3.0 / 16;
@@ -315,6 +308,8 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         else {
             buf.writeCompoundTag(new NBTTagCompound());
         }
+
+        this.createFakeGui();
     }
 
     @Override
@@ -330,10 +325,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // Reset caches
-        this.guiCache = null;
-        this.guiContainerCache = null;
     }
 
     @Override

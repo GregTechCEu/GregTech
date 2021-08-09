@@ -15,6 +15,7 @@ import gregtech.api.util.GregFakePlayer;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
@@ -75,6 +76,7 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
     @SideOnly(Side.CLIENT)
     public void renderGUI(double x, double y, double z, EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
         GlStateManager.pushMatrix();
+        RenderHelper.disableStandardItemLighting();
 
         // All of these are done in reverse order, by the way, if you're reviewing this :P
 
@@ -89,11 +91,12 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
             Pair<Double, Double> result = clipboard.checkLookingAt();
             if (result == null) {
                 clipboard.guiCache.drawScreen(0, 0, partialTicks);
-            }
-            else {
+            } else {
                 clipboard.guiCache.drawScreen(result.getKey(), result.getValue(), partialTicks);
             }
         }
+
+        RenderHelper.enableStandardItemLighting();
         GlStateManager.popMatrix();
     }
 

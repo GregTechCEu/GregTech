@@ -1,5 +1,6 @@
 package gregtech.common.items.behaviors;
 
+import codechicken.lib.raytracer.RayTracer;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -22,6 +23,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 import static gregtech.common.blocks.MetaBlocks.MACHINE;
@@ -180,7 +182,7 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack heldItem = player.getHeldItem(hand);
-        if (!world.isRemote) {
+        if (!world.isRemote && RayTracer.retrace(player).typeOfHit != RayTraceResult.Type.BLOCK) { // So that the player doesn't place a clipboard before suddenly getting the GUI
             PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
             holder.openUI();
         }
