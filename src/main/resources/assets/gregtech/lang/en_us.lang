@@ -1927,6 +1927,7 @@ recipemap.semi_fluid_generator.name=Semi Fluid Fuels
 recipemap.plasma_generator.name=Plasma Generator
 recipemap.circuit_assembler.name=Circuit Assembler
 recipemap.mass_fabricator.name=Mass Fabricator
+recipemap.gas_collector.name=Gas Collector
 
 behaviour.hoe=Can till dirt
 behaviour.soft_hammer=Activates and Deactivates Machines
@@ -3073,15 +3074,15 @@ tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing VIII
 tile.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
 
 #Air Collectors
-gregtech.machine.air_collector.lv.name=Basic Air Collector
-gregtech.machine.air_collector.mv.name=Advanced Air Collector
-gregtech.machine.air_collector.hv.name=Advanced Air Collector II
-gregtech.machine.air_collector.ev.name=Advanced Air Collector III
-gregtech.machine.air_collector.iv.name=Atmosphere Collector
-gregtech.machine.air_collector.luv.name=Atmosphere Collector II
-gregtech.machine.air_collector.tooltip=Collects air from adjacent blocks at the expense of energy
-gregtech.machine.air_collector.collection_speed=Produces %,d L of Air every %,d ticks
-gregtech.machine.air_collector.jei_description=The Air Collector collects air from adjacent blocks for a little bit of EU
+gregtech.machine.gas_collector.lv.name=Basic Gas Collector
+gregtech.machine.gas_collector.mv.name=Advanced Gas Collector
+gregtech.machine.gas_collector.hv.name=Advanced Gas Collector II
+gregtech.machine.gas_collector.ev.name=Advanced Gas Collector III
+gregtech.machine.gas_collector.iv.name=Atmosphere Collector
+gregtech.machine.gas_collector.luv.name=Atmosphere Collector II
+gregtech.machine.gas_collector.zpm.name=Atmosphere Collector III
+gregtech.machine.gas_collector.uv.name=Atmosphere Collector IV
+gregtech.machine.gas_collector.tooltip=Collects gas from adjacent blocks at the expense of energy, depending on the dimension
 
 #Fisher
 gregtech.machine.fisher.lv.name=Basic Fisher
@@ -3472,6 +3473,7 @@ gregtech.recipe.chance=Chance: %s%% +%s%%/tier
 gregtech.recipe.blast_furnace_temperature=Temperature: %,dK (%s)
 gregtech.recipe.explosive=Explosive: %s
 gregtech.recipe.eu_to_start=Energy To Start: %sEU
+gregtech.recipe.dimensions=Dimensions: %s
 
 gregtech.fluid.click_to_fill=§7Click with a empty fluid container to fill it from tank.
 gregtech.fluid.click_to_fill.shift=§7(Shift-clicking will fill all containers in your hand)

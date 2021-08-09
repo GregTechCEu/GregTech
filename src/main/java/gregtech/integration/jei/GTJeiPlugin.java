@@ -17,7 +17,6 @@ import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -149,7 +148,6 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_TITANIUM_BOILER.getStackForm(), semiFluidMapId);
         registry.addRecipeCatalyst(MetaTileEntities.LARGE_TUNGSTENSTEEL_BOILER.getStackForm(), semiFluidMapId);
 
-        registry.addIngredientInfo(Objects.requireNonNull(Materials.Air.getFluid(1000)), VanillaTypes.FLUID, I18n.format("gregtech.machine.air_collector.jei_description"));
         registry.addIngredientInfo(Objects.requireNonNull(MetaItems.FLUID_CELL.getStackForm()), VanillaTypes.ITEM, I18n.format("gregtech.item.fluid_cell.jei_description"));
 
         String primitiveBlastId = GTValues.MODID + ":" + "primitive_blast_furnace";

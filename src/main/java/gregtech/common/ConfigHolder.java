@@ -120,9 +120,6 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static boolean doLosslessWiresMakeLossyCables = false;
 
-    @Config.Comment("Array of blacklisted dimension IDs in which Air Collector does not work. Default: none")
-    public static int[] airCollectorDimensionBlacklist = new int[]{};
-
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to make glass related recipes harder. Default: true")
@@ -296,8 +293,8 @@ public class ConfigHolder {
             @Config.Comment("Should higher tier Pumps be registered (IV-UV)? Separate from other configs. Default: false")
             public boolean highTierPumps = false;
 
-            @Config.Comment("Should higher tier Air Collectors be registered (IV, LuV)? Separate from other configs. Default: false")
-            public boolean highTierAirCollectors = false;
+            @Config.Comment("Should higher tier Gas Collectors be registered (IV, LuV)? Separate from other configs. Default: false")
+            public boolean highTierGasCollectors = false;
 
             @Config.Comment("Set these to true to enable LuV-UV tiers of machines. Default (all): false")
             public boolean midTierAlloySmelter = false;

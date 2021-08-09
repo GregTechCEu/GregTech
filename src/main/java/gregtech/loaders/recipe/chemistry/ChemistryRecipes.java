@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import net.minecraft.init.Items;
 
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -78,5 +79,11 @@ public class ChemistryRecipes {
                 .output(ingot, RedAlloy, 2)
                 .blastFurnaceTemp(1200)
                 .duration(884).EUt(120).buildAndRegister();
+
+        GAS_COLLECTOR_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
+                .fluidOutputs(Air.getFluid(1000))
+                .dimension(0)
+                .duration(20).EUt(16).buildAndRegister();
     }
 }

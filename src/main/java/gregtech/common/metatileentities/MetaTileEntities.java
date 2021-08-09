@@ -102,6 +102,7 @@ public class MetaTileEntities {
     public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
 
     //GENERATORS SECTION
     public static final SimpleGeneratorMetaTileEntity[] COMBUSTION_GENERATOR = new SimpleGeneratorMetaTileEntity[4];
@@ -185,7 +186,6 @@ public class MetaTileEntities {
     public static MetaTileEntityWorkbench WORKBENCH;
     public static final MetaTileEntityPump[] PUMP = new MetaTileEntityPump[8];
     public static final MetaTileEntityBlockBreaker[] BLOCK_BREAKER = new MetaTileEntityBlockBreaker[4];
-    public static final MetaTileEntityAirCollector[] AIR_COLLECTOR = new MetaTileEntityAirCollector[6];
     public static final MetaTileEntityItemCollector[] ITEM_COLLECTOR = new MetaTileEntityItemCollector[4];
     public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
 
@@ -394,6 +394,10 @@ public class MetaTileEntities {
         registerSimpleMetaTileEntity(CIRCUIT_ASSEMBLER, 650, "circuit_assembler", RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY,
                 true, false, true, true);
 
+        // Gas Collector, IDs 665-679
+        registerSimpleMetaTileEntity(GAS_COLLECTOR, 665, "gas_collector", RecipeMaps.GAS_COLLECTOR_RECIPES, Textures.GAS_COLLECTOR_OVERLAY,
+                ConfigHolder.U.machines.highTierGasCollectors, false, false, false);
+
         // Some space here for more SimpleMachines
 
         // Space left for these just in case
@@ -575,16 +579,6 @@ public class MetaTileEntities {
             PUMP[5] = GregTechAPI.registerMetaTileEntity(1535, new MetaTileEntityPump(gregtechId("pump.luv"), 6));
             PUMP[6] = GregTechAPI.registerMetaTileEntity(1536, new MetaTileEntityPump(gregtechId("pump.zpm"), 7));
             PUMP[7] = GregTechAPI.registerMetaTileEntity(1537, new MetaTileEntityPump(gregtechId("pump.uv"), 8));
-        }
-
-        // Air Collectors, IDs 1545-1559
-        AIR_COLLECTOR[0] = GregTechAPI.registerMetaTileEntity(1545, new MetaTileEntityAirCollector(gregtechId("air_collector.lv"), 1));
-        AIR_COLLECTOR[1] = GregTechAPI.registerMetaTileEntity(1546, new MetaTileEntityAirCollector(gregtechId("air_collector.mv"), 2));
-        AIR_COLLECTOR[2] = GregTechAPI.registerMetaTileEntity(1547, new MetaTileEntityAirCollector(gregtechId("air_collector.hv"), 3));
-        AIR_COLLECTOR[3] = GregTechAPI.registerMetaTileEntity(1548, new MetaTileEntityAirCollector(gregtechId("air_collector.ev"), 4));
-        if (ConfigHolder.U.machines.highTierAirCollectors) {
-            AIR_COLLECTOR[4] = GregTechAPI.registerMetaTileEntity(1549, new MetaTileEntityAirCollector(gregtechId("air_collector.iv"), 5));
-            AIR_COLLECTOR[5] = GregTechAPI.registerMetaTileEntity(1550, new MetaTileEntityAirCollector(gregtechId("air_collector.luv"), 6));
         }
 
         // Super / Quantum Chests, IDs 1560-1574
