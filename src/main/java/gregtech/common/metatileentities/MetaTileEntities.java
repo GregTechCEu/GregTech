@@ -336,7 +336,7 @@ public class MetaTileEntities {
         // Unpacker, IDs 530-544
         registerSimpleMetaTileEntity(UNPACKER, 530, "unpacker", RecipeMaps.UNPACKER_RECIPES, Textures.UNPACKER_OVERLAY);
 
-        // Free Range, IDs 545-559
+        // Gas Collectors, IDs 545-559
         registerSimpleMetaTileEntity(GAS_COLLECTOR, 545, "gas_collector", RecipeMaps.GAS_COLLECTOR_RECIPES, Textures.GAS_COLLECTOR_OVERLAY, false);
 
         // Polarizer, IDs 560-574
