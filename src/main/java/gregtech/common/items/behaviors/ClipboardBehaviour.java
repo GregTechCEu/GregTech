@@ -209,7 +209,6 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
                     // And manipulate it to our liking
                     MetaTileEntityHolder holder = (MetaTileEntityHolder) world.getTileEntity(shiftedPos);
                     if (holder != null) {
-                        holder.setMetaTileEntity(CLIPBOARD_TILE);
                         MetaTileEntityClipboard clipboard = (MetaTileEntityClipboard) holder.setMetaTileEntity(CLIPBOARD_TILE, heldItem);
                         if (clipboard != null) {
                             clipboard.setFrontFacing(playerFacing);
