@@ -7,6 +7,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
+import gregtech.api.capability.impl.ItemHandlerProxy;
+import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -35,6 +37,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
@@ -58,6 +61,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     private static final String NBT_ITEMSTACK = "ItemStack";
     private static final String NBT_PARTIALSTACK = "PartialStack";
     private static final String NBT_ITEMCOUNT = "ItemAmount";
+    protected IItemHandler outputItemInventory;
 
     public MetaTileEntityQuantumChest(ResourceLocation metaTileEntityId, int tier, long maxStoredItems) {
         super(metaTileEntityId);
@@ -185,6 +189,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     protected void initializeInventory() {
         super.initializeInventory();
         this.itemInventory = new QuantumChestItemHandler();
+        this.outputItemInventory = new ItemHandlerProxy(new ItemStackHandler(0), exportItems);
     }
 
     @Override
@@ -342,16 +347,19 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             }
             return null;
         }
+     else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSide()) ? outputItemInventory : itemInventory;
+        if (itemHandler.getSlots() > 0) {
+            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
+        }
+        return null;
+    }
         return super.getCapability(capability, side);
 
     }
 
     @Override
     public boolean canPlaceCoverOnSide(EnumFacing side) {
-        //Done to prevent loops as output always acts as input
-        if (side == getOutputFacing()) {
-            return false;
-        }
         return true;
     }
 
@@ -381,6 +389,30 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     @Override
     public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
         clearInventory(itemBuffer, importItems);
+    }
+
+    @Override
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        EnumFacing hitFacing = ICoverable.determineGridSideHit(hitResult);
+        if (facing == getOutputFacing() || (hitFacing == getOutputFacing() && playerIn.isSneaking())) {
+            if (!getWorld().isRemote) {
+                if (isAllowInputFromOutputSide()) {
+                    setAllowInputFromOutputSide(false);
+                    playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
+                } else {
+                    setAllowInputFromOutputSide(true);
+                    playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
+                }
+            }
+            return true;
+        }
+        return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
+    }
+    public void setAllowInputFromOutputSide(boolean allowInputFromOutputSide) {
+        this.allowInputFromOutputSide = allowInputFromOutputSide;
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
     }
 
     private class QuantumChestItemHandler implements IItemHandler {
