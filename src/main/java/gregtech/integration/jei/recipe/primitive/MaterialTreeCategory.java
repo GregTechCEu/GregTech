@@ -43,38 +43,38 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
     // XY positions of ingredients
 	protected final static ImmutableList<Integer> ITEM_LOCATIONS = ImmutableList.of(
 	        // corresponds pair-to-one with PREFIXES in MaterialTree.java
-            4, 101,   // dust 0
-            4, 67,    // dustSmall
-            4, 135,   // dustTiny
-            29, 67,   // ingotHot
-            29, 101,  // ingot
-            29, 101,  // gem (override) 5
-            29, 135,  // block
-            54, 55,   // stick
-            79, 67,   // stickLong
-            79, 101,  // spring
-            79, 101,  // gemFlawless (override) 10
-            104, 67,  // bolt
-            104, 101, // screw
-            104, 101, // gemExquisite (override)
-            129, 55,  // ring
-            129, 85,  // gear 15
-            129, 117, // frameGt
-            54, 85,   // nugget
-            54, 117,  // pipeNormalFluid
-            54, 147,  // plate
-            79, 135,  // plateDense 20
-            79, 135,  // gemChipped (override)
-            104, 135, // gearSmall
-            104, 135, // gemFlawed (override)
-            129, 147, // foil
-            129, 147, // lens (override) 25
-            154, 147, // wireFine
-            154, 117, // wireGtSingle
-            154, 85   //cableGtSingle 28
+            4, 67,      // dustTiny  0
+            4, 101,     // dust
+            4, 135,     // dustSmall
+            29, 55,     // cableGtSingle
+            29, 85,     // ingotHot
+            29, 117,    // ingot  5
+            29, 117,    // gem
+            29, 147,    // block
+            54, 55,     // wireGtSingle
+            54, 85,     // stick
+            54, 117,    // nugget  10
+            54, 147,    // plate
+            79, 55,     // wireFine
+            79, 85,     // frameGt
+            79, 117,    // round
+            79, 147,    // pipeNormalFluid  15
+            79, 147,    // pipeNormalItem
+            104, 55,    // screw
+            104, 85,    // bolt
+            104, 117,   // gear
+            104, 147,   // plateDouble  20
+            129, 55,    // spring
+            129, 85,    // stickLong
+            129, 117,   // gearSmall
+            129, 147,   // plateDense
+            154, 55,    // springSmall  25
+            154, 78,    // ring
+            154, 124,   // lens
+            154, 147    // foil
     );
 	protected ImmutableList<Integer> FLUID_LOCATIONS = ImmutableList.of(
-	        154, 55    // fluid
+	        154, 101    // fluid
     );
 
     public MaterialTreeCategory(IGuiHelper guiHelper) {
@@ -93,26 +93,32 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
             basename "$file" .png | sed "s/\(.*\)/registerArrow(guiHelper, \"\1\", $dimstring);/"
         done
         */
-        registerArrow(guiHelper, "dh_down_16", 5, 16);
-        registerArrow(guiHelper, "dh_right_down_16_26", 18, 28);
-        registerArrow(guiHelper, "down_12", 5, 12);
-        registerArrow(guiHelper, "down_16", 5, 16);
-        registerArrow(guiHelper, "down_right_8_17", 17, 10);
-        registerArrow(guiHelper, "left_up_16_5", 18, 5);
-        registerArrow(guiHelper, "right_57", 57, 5);
-        registerArrow(guiHelper, "right_7", 7, 5);
-        registerArrow(guiHelper, "right_down_16_5", 18, 5);
-        registerArrow(guiHelper, "right_down_41_5", 43, 5);
-        registerArrow(guiHelper, "right_down_right_3_43_4", 7, 45);
-        registerArrow(guiHelper, "right_down_right_53_31_4", 57, 33);
-        registerArrow(guiHelper, "right_down_right_53_64_4", 57, 66);
-        registerArrow(guiHelper, "right_up_16_5", 18, 5);
-        registerArrow(guiHelper, "right_up_41_5", 43, 5);
-        registerArrow(guiHelper, "right_up_right_3_17_4", 7, 19);
-        registerArrow(guiHelper, "right_up_right_3_35_4", 7, 37);
-        registerArrow(guiHelper, "right_up_right_3_47_4", 7, 49);
-        registerArrow(guiHelper, "up_12", 5, 12);
-        registerArrow(guiHelper, "up_14", 5, 14);
+        registerArrow(guiHelper, "2d12", 5, 12);
+        registerArrow(guiHelper, "2d16", 5, 16);
+        registerArrow(guiHelper, "2r16d37", 18, 40);
+        registerArrow(guiHelper, "d14", 5, 14);
+        registerArrow(guiHelper, "d7r25u6", 28, 7);
+        registerArrow(guiHelper, "d7r50d7", 53, 14);
+        registerArrow(guiHelper, "d7r50u6", 53, 7);
+        registerArrow(guiHelper, "d7r75d7", 78, 14);
+        registerArrow(guiHelper, "d7r75u6", 78, 7);
+        registerArrow(guiHelper, "d7r87u22r4", 92, 25);
+        registerArrow(guiHelper, "d7r87u46r4", 92, 49);
+        registerArrow(guiHelper, "l7", 7, 5);
+        registerArrow(guiHelper, "r3d16r4", 7, 19);
+        registerArrow(guiHelper, "r3d26r4", 7, 29);
+        registerArrow(guiHelper, "r3u15r4", 7, 18);
+        registerArrow(guiHelper, "r3u32r4", 7, 35);
+        registerArrow(guiHelper, "r3u57r4", 7, 60);
+        registerArrow(guiHelper, "r7", 7, 5);
+        registerArrow(guiHelper, "u12", 5, 12);
+        registerArrow(guiHelper, "u7r25d6", 28, 7);
+        registerArrow(guiHelper, "u7r50d6", 53, 7);
+        registerArrow(guiHelper, "u7r50u5", 53, 12);
+        registerArrow(guiHelper, "u7r75d6", 78, 7);
+        registerArrow(guiHelper, "u7r75u5", 78, 12);
+        registerArrow(guiHelper, "u7r87d15r4", 92, 18);
+        registerArrow(guiHelper, "u7r87u8r4", 92, 17);
     }
 
     @Override
@@ -174,65 +180,73 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
 
     	// arrow rendering, aka hardcoded jank
         // indeces are from ITEM_LOCATIONS / MaterialTree.PREFIXES
-        // wire -> cable
-        drawArrow(minecraft, "up_14", 160, 103, itemExists.get(27) && itemExists.get(28));
-    	// wire -> fine wire
-        drawArrow(minecraft, "down_12", 160, 135, itemExists.get(27) && itemExists.get(26));
-        // plate -> normal fluid pipe
-        drawArrow(minecraft, "up_12", 60, 135, itemExists.get(19) && itemExists.get(18));
-        // hot ingot -> ingot
-        drawArrow(minecraft, "down_16", 35, 85, itemExists.get(3) && itemExists.get(4));
-        // long rod -> spring
-        drawArrow(minecraft, "down_16", 85, 85, itemExists.get(8) && itemExists.get(9));
-        // bolt -> screw
-        drawArrow(minecraft, "down_16", 110, 85, itemExists.get(11) && itemExists.get(12));
-        // dust -> ingot/gem
-        // only if no hot ingot
-        drawArrow(minecraft, "right_7", 22, 107, !itemExists.get(3) &&
-                itemExists.get(0) && (itemExists.get(4) || itemExists.get(5)));
-        // foil -> fine wire
-        drawArrow(minecraft, "right_7", 147, 153, itemExists.get(24) && itemExists.get(26));
-        // rod -> ring
-        drawArrow(minecraft, "right_57", 72, 60, itemExists.get(7) && itemExists.get(14));
-        // plate -> foil/lens
-        drawArrow(minecraft, "right_57", 72, 155, itemExists.get(19) &&
-                (itemExists.get(24) || itemExists.get(25)));
-        // small dust <-> dust
-        drawArrow(minecraft, "dh_down_16", 10, 85, itemExists.get(1) && itemExists.get(0));
-        // tiny dust <-> dust
-        drawArrow(minecraft, "dh_down_16", 10, 119, itemExists.get(2) && itemExists.get(0));
-        // block <-> ingot/gem
-        drawArrow(minecraft, "dh_down_16", 35, 119, itemExists.get(6) &&
-                (itemExists.get(4) || itemExists.get(5)));
-        // block -> plate
-        drawArrow(minecraft, "down_right_8_17", 37, 153, itemExists.get(6) && itemExists.get(19));
-        // long rod -> rod
-        drawArrow(minecraft, "left_up_16_5", 61, 73, itemExists.get(8) && itemExists.get(7));
-        // plate -> dense plate
-        drawArrow(minecraft, "right_up_16_5", 72, 153, itemExists.get(19) && itemExists.get(20));
-        // plate -> small gear
-        drawArrow(minecraft, "right_up_41_5", 72, 153, itemExists.get(19) && itemExists.get(22));
-        // rod -> long rod
-        drawArrow(minecraft, "right_down_16_5", 72, 62, itemExists.get(7) && itemExists.get(8));
-        // rod -> bolt
-        drawArrow(minecraft, "right_down_41_5", 72, 62, itemExists.get(7) && itemExists.get(11));
-        // dust <-> block
-        // only if no ingot or gem
-        drawArrow(minecraft, "dh_right_down_16_26", 22, 107, !itemExists.get(4) &&
-                !itemExists.get(5) && itemExists.get(0) && itemExists.get(6));
-        // dust -> hot ingot
-        drawArrow(minecraft, "right_up_right_3_35_4", 22, 73, itemExists.get(0) && itemExists.get(3));
-        // ingot -> plate
-        drawArrow(minecraft, "right_down_right_3_43_4", 47, 109, itemExists.get(4) && itemExists.get(19));
+        // dustTiny <-> dust
+        drawArrow(minecraft, "2d16", 10, 85, itemExists.get(0) && itemExists.get(1));
+    	// dust <-> dustSmall
+        drawArrow(minecraft, "2d16", 10, 119, itemExists.get(1) && itemExists.get(2));
+        // dust <-> block  (if no ingot or gem)
+        drawArrow(minecraft, "2r16d37", 22, 107, !itemExists.get(5) &&
+                !itemExists.get(6) && itemExists.get(1) && itemExists.get(7));
+        // dust -> ingotHot
+        drawArrow(minecraft, "r3u15r4", 22, 92, itemExists.get(1) && itemExists.get(4));
+        // dust -> ingot/gem  (if no ingotHot)
+        drawArrow(minecraft, "r3d16r4", 22, 109, !itemExists.get(4) &&
+                itemExists.get(1) && (itemExists.get(5) || itemExists.get(6)));
+        // ingotHot -> ingot
+        drawArrow(minecraft, "d14", 35, 103, itemExists.get(4) && itemExists.get(5));
+        // ingot/gem <-> block
+        drawArrow(minecraft, "2d12", 35, 135, itemExists.get(7) &&
+                (itemExists.get(5) || itemExists.get(6)));
+        // ingot -> wireGtSingle
+        drawArrow(minecraft, "r3u57r4", 47, 66, itemExists.get(5) && itemExists.get(8));
+        // ingot/gem -> stick
+        drawArrow(minecraft, "r3u32r4", 47, 91, itemExists.get(9) &&
+                (itemExists.get(5) || itemExists.get(6)));
         // ingot -> nugget
-        drawArrow(minecraft, "right_up_right_3_17_4", 47, 91, itemExists.get(4) && itemExists.get(17));
-        // rod -> gear
-        drawArrow(minecraft, "right_down_right_53_31_4", 72, 62, itemExists.get(7) && itemExists.get(15));
-        // ingot/gem -> rod
-        drawArrow(minecraft, "right_up_right_3_47_4", 47, 61, itemExists.get(7) &&
-                (itemExists.get(4) || itemExists.get(5)));
-        // rod -> frame box
-        drawArrow(minecraft, "right_down_right_53_64_4", 72, 62, itemExists.get(7) && itemExists.get(16));
+        drawArrow(minecraft, "r7", 47, 123, itemExists.get(5) && itemExists.get(10));
+        // ingot -> plate
+        drawArrow(minecraft, "r3d26r4", 47, 125, itemExists.get(5) && itemExists.get(11));
+        // block -> plate
+        drawArrow(minecraft, "r7", 47, 158, itemExists.get(7) && itemExists.get(11));
+        // wireGtSingle -> cableGtSingle
+        drawArrow(minecraft, "l7", 47, 57, itemExists.get(8) && itemExists.get(3));
+        // wireGtSingle -> wireFine
+        drawArrow(minecraft, "r7", 72, 61, itemExists.get(8) && itemExists.get(12));
+        // stick -> frameGt
+        drawArrow(minecraft, "d7r25u6", 62, 103, itemExists.get(9) && itemExists.get(13));
+        // stick -> bolt
+        drawArrow(minecraft, "d7r50u6", 62, 103, itemExists.get(9) && itemExists.get(18));
+        // stick -> gear
+        drawArrow(minecraft, "d7r50d7", 62, 103, itemExists.get(9) && itemExists.get(19));
+        // stick -> stickLong
+        drawArrow(minecraft, "d7r75u6", 62, 103, itemExists.get(9) && itemExists.get(22));
+        // stick -> gearSmall
+        drawArrow(minecraft, "d7r75d7", 62, 103, itemExists.get(9) && itemExists.get(23));
+        // stick -> springSmall
+        drawArrow(minecraft, "d7r87u46r4", 62, 61, itemExists.get(9) && itemExists.get(25));
+        // stick -> ring
+        drawArrow(minecraft, "d7r87u22r4", 62, 85, itemExists.get(9) && itemExists.get(26));
+        // nugget -> round
+        drawArrow(minecraft, "r7", 72, 123, itemExists.get(10) && itemExists.get(14));
+        // plate -> pipeNormalFluid/pipeNormalItem
+        drawArrow(minecraft, "u7r25d6", 62, 140, itemExists.get(11) &&
+                (itemExists.get(15) || itemExists.get(16)));
+        // plate -> gear
+        drawArrow(minecraft, "u7r50u5", 62, 135, itemExists.get(11) && itemExists.get(19));
+        // plate -> plateDouble
+        drawArrow(minecraft, "u7r50d6", 62, 140, itemExists.get(11) && itemExists.get(20));
+        // plate -> gearSmall
+        drawArrow(minecraft, "u7r75u5", 62, 135, itemExists.get(11) && itemExists.get(23));
+        // plate -> plateDense
+        drawArrow(minecraft, "u7r75d6", 62, 140, itemExists.get(11) && itemExists.get(24));
+        // plate -> lens
+        drawArrow(minecraft, "u7r87u8r4", 62, 130, itemExists.get(11) && itemExists.get(27));
+        // plate -> foil
+        drawArrow(minecraft, "u7r87d15r4", 62, 140, itemExists.get(11) && itemExists.get(28));
+        // bolt -> screw
+        drawArrow(minecraft, "u12", 110, 73, itemExists.get(18) && itemExists.get(17));
+        // stickLong -> spring
+        drawArrow(minecraft, "u12", 135, 73, itemExists.get(22) && itemExists.get(21));
 
         // material info rendering
         int linesDrawn = 0;

@@ -16,35 +16,36 @@ import java.util.ArrayList;
 
 public class MaterialTree implements IRecipeWrapper {
 	private final static ImmutableList<OrePrefix> PREFIXES = ImmutableList.of(
+            OrePrefix.dustTiny,
             OrePrefix.dust,
             OrePrefix.dustSmall,
-            OrePrefix.dustTiny,
+            OrePrefix.cableGtSingle,
             OrePrefix.ingotHot,
             OrePrefix.ingot,
             OrePrefix.gem,
             OrePrefix.block,
-            OrePrefix.stick,
-            OrePrefix.stickLong,
-            OrePrefix.spring,
-            OrePrefix.gemFlawless,
-            OrePrefix.bolt,
-            OrePrefix.screw,
-            OrePrefix.gemExquisite,
-            OrePrefix.ring,
-            OrePrefix.gear,
-            OrePrefix.frameGt,
-            OrePrefix.nugget,
-            OrePrefix.pipeNormalFluid,
-            OrePrefix.plate,
-            OrePrefix.plateDense,
-            OrePrefix.gemChipped,
-            OrePrefix.gearSmall,
-            OrePrefix.gemFlawed,
-            OrePrefix.foil,
-            OrePrefix.lens,
-            OrePrefix.wireFine,
             OrePrefix.wireGtSingle,
-            OrePrefix.cableGtSingle
+            OrePrefix.stick,
+            OrePrefix.nugget,
+            OrePrefix.plate,
+            OrePrefix.wireFine,
+            OrePrefix.frameGt,
+            OrePrefix.round,
+            OrePrefix.pipeNormalFluid,
+            OrePrefix.pipeNormalItem,
+            OrePrefix.screw,
+            OrePrefix.bolt,
+            OrePrefix.gear,
+            OrePrefix.plateDouble,
+            OrePrefix.spring,
+            OrePrefix.stickLong,
+            OrePrefix.gearSmall,
+            OrePrefix.plateDense,
+            OrePrefix.springSmall,
+            OrePrefix.ring,
+            // fluid,
+            OrePrefix.lens,
+            OrePrefix.foil
 	);
 
 	private final List<List<ItemStack>> itemInputs = new ArrayList<>();
@@ -58,7 +59,7 @@ public class MaterialTree implements IRecipeWrapper {
 	private final long avgN;
 
 	public MaterialTree(Material material) {
-	    // adding an empty list to itemInputs/fluidInputs makes checking if a prefix exists much easier
+	    // adding an empty list to itemInputs/fluidInputs makes checking if a prefix exists later much easier
 		List<ItemStack> inputDusts = new ArrayList<>();
 		for (OrePrefix prefix : PREFIXES) {
 			inputDusts.add(OreDictUnifier.get(prefix, material));
