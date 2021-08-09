@@ -2820,6 +2820,12 @@ gregtech.machine.circuit_assembler.ev.name=Advanced Circuit Assembler III
 gregtech.machine.circuit_assembler.iv.name=Elite Circuit Assembler
 gregtech.machine.circuit_assembler.luv.name=Elite Circuit Assembler II
 gregtech.machine.circuit_assembler.zpm.name=Elite Circuit Assembler III
+gregtech.machine.circuit_assembler.uv.name=Elite Circuit Assembler IV
+gregtech.machine.circuit_assembler.uhv.name=High-Tech Circuit Assembler
+gregtech.machine.circuit_assembler.uev.name=High-Tech Circuit Assembler II
+gregtech.machine.circuit_assembler.uiv.name=High-Tech Circuit Assembler III
+gregtech.machine.circuit_assembler.umv.name=High-Tech Circuit Assembler IV
+gregtech.machine.circuit_assembler.uxv.name=Ultimate Circuit Assembler
 
 gregtech.machine.mass_fabricator.tooltip=UUM = Matter * Fabrication Squared
 

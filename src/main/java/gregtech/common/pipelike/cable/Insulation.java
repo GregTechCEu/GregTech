@@ -58,7 +58,7 @@ public enum Insulation implements IMaterialPipeType<WireProperties> {
     public WireProperties modifyProperties(WireProperties baseProperties) {
 
         int lossPerBlock;
-        if (ConfigHolder.doLosslessWiresMakeLossyCables && baseProperties.lossPerBlock == 0)
+        if (!baseProperties.isSuperconductor && baseProperties.lossPerBlock == 0)
             lossPerBlock = (int) (0.75 * lossMultiplier);
         else lossPerBlock = baseProperties.lossPerBlock * lossMultiplier;
 

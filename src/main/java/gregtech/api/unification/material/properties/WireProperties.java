@@ -7,6 +7,7 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
     public final int voltage;
     public final int amperage;
     public final int lossPerBlock;
+    public final boolean isSuperconductor = false; // todo implement
 
     public WireProperties(int voltage, int baseAmperage, int lossPerBlock) {
         this.voltage = voltage;
