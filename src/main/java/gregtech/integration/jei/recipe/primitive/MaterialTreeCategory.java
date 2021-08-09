@@ -250,8 +250,15 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
 
         // material info rendering
         int linesDrawn = 0;
-		minecraft.fontRenderer.drawString(materialName, 0, 0, 0x111111);
-		linesDrawn++;
+        if (minecraft.fontRenderer.getStringWidth(materialName) > 176) {
+            minecraft.fontRenderer.drawString(minecraft.fontRenderer.trimStringToWidth(materialName, 171) + "...",
+                    0, 0, 0x111111);
+            linesDrawn++;
+        }
+        else if (materialName.length() != 0) {
+            minecraft.fontRenderer.drawString(materialName, 0, 0, 0x111111);
+            linesDrawn++;
+        }
 		if (minecraft.fontRenderer.getStringWidth(materialFormula) > 176) {
 		    minecraft.fontRenderer.drawString(minecraft.fontRenderer.trimStringToWidth(materialFormula, 171) + "...",
                     0, FONT_HEIGHT * linesDrawn, 0x111111);
