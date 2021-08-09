@@ -160,6 +160,41 @@ public class TreeListWidget<K, T> extends Widget {
         GlStateManager.color(1,1,1,1);
     }
 
+    public TreeNode<K, T> jumpTo(List<K> path) {
+        list.removeIf(node->node.dimension != 1);
+        this.selected = null;
+        int dim = 1;
+        int index = 0;
+        boolean flag = false;
+        TreeNode<K, T> node = null;
+        for (K key : path) {
+            flag = false;
+            for (int i = index; i < list.size(); i++) {
+                node = list.get(i);
+                if (node.dimension != dim) {
+                    return null;
+                } else if (node.getKey().equals(key)) { //expand
+                    if(!node.isLeaf() && path.size() > dim) {
+                        for (int j = 0; j < node.getChildren().size(); j++) {
+                            list.add(index + 1 + j, node.getChildren().get(j));
+                        }
+                    }
+                    index = i + 1;
+                    dim++;
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) return null;
+        }
+        if (flag) {
+            this.selected = node;
+            this.scrollOffset = MathHelper.clamp(ITEM_HEIGHT * (index - 1), 0, Math.max(list.size() * ITEM_HEIGHT - getSize().height, 0));
+            return this.selected;
+        }
+        return null;
+    }
+
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (this.isMouseOverElement(mouseX, mouseY)) {

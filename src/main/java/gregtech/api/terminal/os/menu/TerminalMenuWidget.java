@@ -1,28 +1,38 @@
-package gregtech.api.terminal.os;
+package gregtech.api.terminal.os.menu;
 
-import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
+import gregtech.api.terminal.os.TerminalDialogWidget;
+import gregtech.api.terminal.os.TerminalOSWidget;
+import gregtech.api.terminal.os.menu.component.IMenuComponent;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.Tuple;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class TerminalMenuWidget extends WidgetGroup {
     private Interpolator interpolator;
     private IGuiTexture background;
     private final TerminalOSWidget os;
+    private final List<Tuple<IMenuComponent, Widget>> components;
     public boolean isHide;
 
 
     public TerminalMenuWidget(Position position, Size size, TerminalOSWidget os) {
         super(position, size);
         this.os = os;
+        components = new ArrayList<>();
         this.addWidget(new CircleButtonWidget(5, 10, 4, 1, 0)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         new Color(255, 255, 255).getRGB(),
@@ -41,13 +51,6 @@ public class TerminalMenuWidget extends WidgetGroup {
                         new Color(154, 243, 122).getRGB())
                 .setHoverText("maximize")
                 .setClickListener(this::maximize));
-        this.addWidget(new CircleButtonWidget(15, 40, 10, 1, 14)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        new Color(255, 255, 255).getRGB(),
-                        new Color(80, 80, 80).getRGB())
-                .setHoverText("setting")
-                .setIcon(GuiTextures.TERMINAL_SETTING)
-                .setClickListener(this::setting));
     }
 
     public TerminalMenuWidget setBackground(IGuiTexture background) {
@@ -67,11 +70,49 @@ public class TerminalMenuWidget extends WidgetGroup {
         TerminalDialogWidget.showColorDialog(os, "test", System.out::println).addPlayerInventory().open();
     }
 
-    public void setting(ClickData clickData) {
-//        TerminalDialogWidget.showInfoDialog(os, "test");
-//        TerminalDialogWidget.showConfirmDialog(os, "test", null);
-//        TerminalDialogWidget.showTextFieldDialog(os, "test", s->true, System.out::println);
-//        TerminalDialogWidget.showFileDialog(os, "test", new File("./"), System.out::println).setClientSide().open();
+    public void addComponent(IMenuComponent component) {
+        WidgetGroup group = new WidgetGroup();
+        int x = 15;
+        int y = 40 + components.size() * 25;
+        group.addWidget(new CircleButtonWidget(x, y, 10, 1, 14)
+                .setColors(0x00FFFFFF, 0xFFFFFFFF, 0xFF505050)
+                .setHoverText(component.hoverText())
+                .setIcon(component.buttonIcon())
+                .setClickListener(c->{
+                    components.forEach(tuple -> {
+                        if (tuple.getFirst() instanceof Widget && tuple.getFirst() != component){
+                            ((Widget) tuple.getFirst()).setActive(false);
+                            ((Widget) tuple.getFirst()).setVisible(false);
+                        }
+                    });
+                    if (component instanceof Widget) {
+                        Widget widget = (Widget)component;
+                        widget.setVisible(!widget.isVisible());
+                        widget.setActive(!widget.isActive());
+                    }
+                    component.click(c);
+                }));
+        if (component instanceof Widget) {
+            Widget widget = (Widget)component;
+            widget.setSelfPosition(new Position(x + 20, y - 10));
+            widget.setVisible(false);
+            widget.setActive(false);
+            group.addWidget(widget);
+        }
+        this.addWidget(group);
+        components.add(new Tuple<>(component, group));
+    }
+
+    public void loadComponents(AbstractApplication app) {
+        removeComponents();
+        if (app != null) {
+            app.getMenuComponents().forEach(this::addComponent);
+        }
+    }
+
+    public void removeComponents() {
+        components.forEach(component->this.removeWidget(component.getSecond()));
+        components.clear();
     }
 
     public void hideMenu() {
@@ -118,5 +159,16 @@ public class TerminalMenuWidget extends WidgetGroup {
         }
         GlStateManager.color(1,1,1,1);
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
+    }
+
+    @Override
+    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        if (!super.mouseClicked(mouseX, mouseY, button)) {
+            if (!isMouseOverElement(mouseX, mouseY) && !isHide) {
+                hideMenu();
+            }
+            return false;
+        }
+        return true;
     }
 }

@@ -6,6 +6,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;
+import gregtech.api.terminal.os.menu.TerminalMenuWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
@@ -51,7 +52,6 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
         for (AbstractApplication app : openedApps) {
             if (app.getClass() == application.getClass()) {
-                focusApp = app;
                 maximizeApplication(app, isClient);
                 return;
             }
@@ -64,7 +64,6 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         if (app != null) {
             openedApps.add(app);
             desktop.addWidget(app);
-            focusApp = app;
             maximizeApplication(app, isClient);
         }
     }
@@ -77,6 +76,8 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 menu.hideMenu();
             }
         }
+        focusApp = application;
+        menu.loadComponents(focusApp);
         desktop.hideDesktop();
     }
 
@@ -91,6 +92,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             if(focusApp == application) {
                 focusApp = null;
             }
+            menu.removeComponents();
             desktop.showDesktop();
         }
     }
@@ -111,6 +113,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             if(focusApp == application) {
                 focusApp = null;
             }
+            menu.removeComponents();
             desktop.showDesktop();
         }
     }

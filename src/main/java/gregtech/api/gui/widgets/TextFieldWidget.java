@@ -170,9 +170,8 @@ public class TextFieldWidget extends Widget {
         if (textValidator.test(newTextString)) {
             if (isClient && textResponder != null) {
                 textResponder.accept(newTextString);
-            } else {
-                writeClientAction(1, buffer -> buffer.writeString(newTextString));
             }
+            writeClientAction(1, buffer -> buffer.writeString(newTextString));
         }
     }
 

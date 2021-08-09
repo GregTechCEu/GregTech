@@ -3,9 +3,16 @@ package gregtech.api.terminal.app;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
 import gregtech.api.terminal.os.TerminalOSWidget;
+import gregtech.api.terminal.os.menu.component.IMenuComponent;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.nbt.NBTTagCompound;
+import sun.security.util.ArrayUtil;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractApplication extends AnimaWidgetGroup {
     protected final String name;
@@ -42,5 +49,9 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
 
     public TerminalOSWidget getOs() {
         return os;
+    }
+
+    public List<IMenuComponent> getMenuComponents() {
+        return Collections.emptyList();
     }
 }

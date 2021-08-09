@@ -64,7 +64,7 @@ public class SelectorWidget extends WidgetGroup {
             int x = getPosition().x;
             int width = getSize().width;
             int height = getSize().height;
-            int y = (isUp ? -candidates.size(): (candidates.size() + 1)) * height + getPosition().y;
+            int y = (isUp ? -candidates.size() : 1) * height + getPosition().y;
             for (String candidate : candidates) {
                 if (background != null) {
                     background.draw(x, y, width, height);
@@ -75,7 +75,7 @@ public class SelectorWidget extends WidgetGroup {
                 fontRenderer.drawString(candidate, x + 4, y + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, fontColor);
                 y += height;
             }
-            y = (isUp ? -candidates.size(): (candidates.size() + 1)) * height + getPosition().y;
+            y = (isUp ? -candidates.size() : 1) * height + getPosition().y;
             for (String ignored : candidates) {
                 if (isMouseOver(x, y, width, height, mouseX, mouseY)) {
                     drawBorder(x, y, width, height, -1, 1);
@@ -91,13 +91,14 @@ public class SelectorWidget extends WidgetGroup {
             int x = getPosition().x;
             int width = getSize().width;
             int height = getSize().height;
-            int y = (isUp ? -candidates.size(): (candidates.size() + 1)) * height + getPosition().y;
+            int y = (isUp ? -candidates.size() : 1) * height + getPosition().y;
             for (String candidate : candidates) {
                 if (isMouseOver(x, y, width, height, mouseX, mouseY)) {
                     if (onChanged != null) {
                         onChanged.accept(candidate);
                     }
                     writeClientAction(2, buffer -> buffer.writeString(candidate));
+                    return true;
                 }
                 y += height;
             }

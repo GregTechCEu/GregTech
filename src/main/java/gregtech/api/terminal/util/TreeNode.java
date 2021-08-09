@@ -22,23 +22,34 @@ public class TreeNode<T, K> {
     }
 
     public boolean isLeaf(){
-        return children == null || children.isEmpty();
+        return getChildren() == null || getChildren().isEmpty();
     }
 
     public TreeNode<T, K> getOrCreateChild (T childKey) {
         TreeNode<T, K> result;
-        if (children != null) {
-            result = children.stream().filter(child->child.key.equals(childKey)).findFirst().orElseGet(()->{
+        if (getChildren() != null) {
+            result = getChildren().stream().filter(child->child.key.equals(childKey)).findFirst().orElseGet(()->{
                 TreeNode<T, K> newNode = new TreeNode<>(dimension + 1, childKey);
-                children.add(newNode);
+                getChildren().add(newNode);
                 return newNode;
             });
         } else {
             children = new ArrayList<>();
             result = new TreeNode<>(dimension + 1, childKey);
-            children.add(result);
+            getChildren().add(result);
         }
         return result;
+    }
+
+    public TreeNode<T, K> getChild(T key) {
+        if (getChildren() != null) {
+            for (TreeNode<T, K> child : getChildren()) {
+                if (child.key.equals(key)) {
+                    return child;
+                }
+            }
+        }
+        return null;
     }
 
     public void addContent (T key, K content) {

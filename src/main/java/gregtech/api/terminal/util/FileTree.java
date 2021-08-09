@@ -21,21 +21,6 @@ public class FileTree extends TreeNode<File, File> {
     }
 
     @Override
-    public TreeNode<File, File> getOrCreateChild(File childKey) {
-        return super.getOrCreateChild(childKey);
-    }
-
-    @Override
-    public void addContent(File key, File content) {
-        super.addContent(key, content);
-    }
-
-    @Override
-    public File getKey() {
-        return super.getKey();
-    }
-
-    @Override
     public File getContent() {
         return isLeaf() ? getKey() : null;
     }
