@@ -129,7 +129,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             if (!clipboardBehaviour.isPresent())
                 return null;
             if (clipboardBehaviour.get() instanceof ClipboardBehaviour) {
-                return ((ClipboardBehaviour) clipboardBehaviour.get()).createMTEUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
+                if(entityPlayer instanceof GregFakePlayer) {
+                    return ((ClipboardBehaviour) clipboardBehaviour.get()).createMTEUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
+                } else {
+                    return ((ClipboardBehaviour) clipboardBehaviour.get()).createUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
+                }
             }
         }
         return null;
@@ -194,7 +198,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (playerIn.isSneaking()) {
+        if (!playerIn.isSneaking()) {
             if (getWorld() != null && !getWorld().isRemote) {
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
@@ -209,7 +213,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             this.dropAllCovers();
             this.onRemoval();
 
-            this.getHolder().setMetaTileEntity(this);
             world.removeTileEntity(pos);
             world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
         }

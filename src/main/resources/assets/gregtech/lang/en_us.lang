@@ -830,7 +830,7 @@ metaitem.turbine_rotor.tooltip=Turbine Rotors for your power station
 metaitem.tool.magnifying_glass.name=%s Magnifying Glass
 
 metaitem.clipboard.name=Clipboard
-metaitem.clipboard.tooltip=Can be written on (without any writing Instrument)
+metaitem.clipboard.tooltip=Can be written on (without any writing Instrument)\nRight-click on Wall to place, and Shift-Right-Click to remove
 
 metaitem.drill.mode.three_cube=3x3x3 Cube
 metaitem.drill.mode.five_cube=5x5x5 Cube
