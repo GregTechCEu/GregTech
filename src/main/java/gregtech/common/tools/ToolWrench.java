@@ -5,8 +5,10 @@ import gregtech.common.items.behaviors.WrenchBehaviour;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 
 import java.util.Collections;
@@ -48,6 +50,11 @@ public class ToolWrench extends ToolBase {
     @Override
     public void onStatsAddedToTool(MetaValueItem item) {
         item.addComponents(new WrenchBehaviour(DamageValues.DAMAGE_FOR_WRENCH));
+    }
+
+    @Override
+    public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
+        return enchantment == Enchantments.UNBREAKING || enchantment == Enchantments.EFFICIENCY;
     }
 
     @Override
