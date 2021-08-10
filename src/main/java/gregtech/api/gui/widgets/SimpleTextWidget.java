@@ -24,16 +24,22 @@ public class SimpleTextWidget extends Widget {
     protected final int color;
     protected final Supplier<String> textSupplier;
     protected String lastText = "";
+    protected boolean isCentered = true;
 
-    public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
+    public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier, boolean isCentered) {
         super(new Position(xPosition, yPosition), Size.ZERO);
         this.color = color;
         this.formatLocale = formatLocale;
         this.textSupplier = textSupplier;
+        this.isCentered = isCentered;
+    }
+
+    public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
+        this(xPosition, yPosition, formatLocale, color, textSupplier, true);
     }
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, Supplier<String> textSupplier) {
-        this(xPosition, yPosition, formatLocale, 0x404040, textSupplier);
+        this(xPosition, yPosition, formatLocale, 0x404040, textSupplier, true);
     }
 
     private void updateSize() {
@@ -51,8 +57,8 @@ public class SimpleTextWidget extends Widget {
         String text = formatLocale.isEmpty() ? (I18n.hasKey(lastText) ? I18n.format(lastText) : lastText) : I18n.format(formatLocale, lastText);
         Position position = getPosition();
         fontRenderer.drawString(text,
-                position.x - fontRenderer.getStringWidth(text) / 2,
-                position.y - fontRenderer.FONT_HEIGHT / 2, color);
+                isCentered ? position.x - fontRenderer.getStringWidth(text) / 2 : position.x,
+                isCentered ? position.y - fontRenderer.FONT_HEIGHT / 2 : position.y, color);
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 

@@ -27,18 +27,18 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -57,7 +57,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     public FakeModularGui guiCache;
     public FakeModularUIContainerClipboard guiContainerCache;
     private static final Cuboid6 pageBox = new Cuboid6(3 / 16.0, 0.25 / 16.0, 0.25 / 16.0, 13 / 16.0, 14.25 / 16.0, 0.3 / 16.0);
-
+    private boolean isClientReceivingUpdates = false;
 
     private static final int RENDER_PASS_NORMAL = 0;
     private static final NBTBase NO_CLIPBOARD_SIG = new NBTTagInt(0);
@@ -70,15 +70,14 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     @Override
     public void update() {
         super.update();
-        if (this.guiCache == null)
-            createFakeGui();
         if (this.getWorld().isRemote) {
             if (guiCache != null)
                 guiCache.updateScreen();
         } else {
-            if (guiContainerCache != null) {
+            if (!isClientReceivingUpdates && getOffsetTimer() % 20 == 0)
+                createFakeGui();
+            if (guiContainerCache != null)
                 guiContainerCache.detectAndSendChanges();
-            }
         }
     }
 
@@ -130,7 +129,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             if (!clipboardBehaviour.isPresent())
                 return null;
             if (clipboardBehaviour.get() instanceof ClipboardBehaviour) {
-                return ((ClipboardBehaviour) clipboardBehaviour.get()).createUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
+                return ((ClipboardBehaviour) clipboardBehaviour.get()).createMTEUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
             }
         }
         return null;
@@ -185,12 +184,12 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
 
     @Override
     public float getBlockHardness() {
-        return 10;
+        return 100;
     }
 
     @Override
     public int getHarvestLevel() {
-        return 10;
+        return 4;
     }
 
     @Override
@@ -200,11 +199,19 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
         } else {
+            BlockPos pos = this.getPos(); // Saving this for later so it doesn't get mangled
+            World world = this.getWorld(); // Same here
             NonNullList<ItemStack> drops = NonNullList.create();
             getDrops(drops, playerIn);
 
+            world.playEvent(2001, pos, Block.getStateId(world.getBlockState(pos)));
             Block.spawnAsEntity(playerIn.world, this.getPos(), drops.get(0));
-            getWorld().destroyBlock(this.getPos(), false);
+            this.dropAllCovers();
+            this.onRemoval();
+
+            this.getHolder().setMetaTileEntity(this);
+            world.removeTileEntity(pos);
+            world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
         }
         return true;
     }
@@ -212,7 +219,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
 
     @Override
     public String getHarvestTool() {
-        return "wrench";
+        return "axe";
     }
 
     @Override
@@ -260,12 +267,12 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         } else if (spin == EnumFacing.SOUTH) {
             x = dX;
         } else if (spin == EnumFacing.EAST) {
-            x = 1 - dY;
+            x = 1 - dX;
             if (rayTraceResult.sideHit.getXOffset() < 0 || rayTraceResult.sideHit.getZOffset() > 0) {
                 x = 1 - x;
             }
         } else {
-            x = dY;
+            x = dX;
             if (rayTraceResult.sideHit.getXOffset() < 0 || rayTraceResult.sideHit.getZOffset() > 0) {
                 x = 1 - x;
             }
@@ -332,6 +339,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
+        isClientReceivingUpdates = true;
         if (dataId == 0) {
             int windowID = buf.readVarInt();
             int widgetID = buf.readVarInt();
@@ -395,6 +403,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
 
     @Override
     public boolean canPlaceCoverOnSide(EnumFacing side) {
+        return false;
+    }
+
+    @Override
+    public boolean canRenderWrenchOverlay() {
         return false;
     }
 }

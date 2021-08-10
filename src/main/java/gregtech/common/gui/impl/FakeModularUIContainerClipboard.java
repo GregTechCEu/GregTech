@@ -48,7 +48,7 @@ public class FakeModularUIContainerClipboard implements WidgetUIAccess {
             for (int i = 0; i < size; i++) {
                 inventorySlots.get(updateData.readVarInt()).putStack(updateData.readItemStack());
             }
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
     }
@@ -119,22 +119,20 @@ public class FakeModularUIContainerClipboard implements WidgetUIAccess {
     @Override
     public void writeClientAction(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter) {
         NetworkHandler.channel.sendToServer(new PacketClipboardUIWidgetUpdate(this.clipboard, updateId, buffer -> {
-                buffer.writeVarInt(windowId);
-                buffer.writeVarInt(modularUI.guiWidgets.inverse().get(widget));
-                buffer.writeVarInt(updateId);
-                payloadWriter.accept(buffer);
-            }).toFMLPacket());
+            buffer.writeVarInt(windowId);
+            buffer.writeVarInt(modularUI.guiWidgets.inverse().get(widget));
+            buffer.writeVarInt(updateId);
+            payloadWriter.accept(buffer);
+        }).toFMLPacket());
     }
 
     @Override
     public void writeUpdateInfo(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter) {
-
-            this.clipboard.writeCustomData(0, buf -> {
-                buf.writeVarInt(windowId);
-                buf.writeVarInt(modularUI.guiWidgets.inverse().get(widget));
-                buf.writeVarInt(updateId);
-                payloadWriter.accept(buf);
-            });
-
+        this.clipboard.writeCustomData(0, buf -> {
+            buf.writeVarInt(windowId);
+            buf.writeVarInt(modularUI.guiWidgets.inverse().get(widget));
+            buf.writeVarInt(updateId);
+            payloadWriter.accept(buf);
+        });
     }
 }

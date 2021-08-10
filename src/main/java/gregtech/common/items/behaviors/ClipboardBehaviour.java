@@ -3,10 +3,7 @@ package gregtech.common.items.behaviors;
 import codechicken.lib.raytracer.RayTracer;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.ImageCycleButtonWidget;
-import gregtech.api.gui.widgets.SimpleTextWidget;
-import gregtech.api.gui.widgets.TextFieldWidget;
+import gregtech.api.gui.widgets.*;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
@@ -59,6 +56,33 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
 
         return builder.build(holder, entityPlayer);
     }
+
+    public ModularUI createMTEUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) { // So that people don't click on any text fields
+        initNBT(holder.getSampleItem());
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 170, 238);
+
+        builder.widget(new SimpleTextWidget(20, 10, "", 0x000000, () -> getTitle(holder), false));
+        builder.image(20, 21, 130, 4, GuiTextures.BLANK); // To create an underline
+
+
+        for (int i = 0; i < 8; i++) {
+            int finalI = i;
+            builder.widget(new ImageCycleButtonWidget(5, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_CHECKBOX, 2,
+                    () -> getButtonState(holder, finalI), (x) -> toggleButton(holder, finalI)));
+            builder.widget(new SimpleTextWidget(21, 40 + 20 * i, "", 0x000000, () -> getString(holder, finalI), false));
+            builder.image(21, 51 + 20 * i, 140, 4, GuiTextures.BLANK); // To create an underline
+        }
+
+        builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
+                .setButtonTexture(GuiTextures.BUTTON_LEFT));
+        builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, 1))
+                .setButtonTexture(GuiTextures.BUTTON_RIGHT));
+        builder.widget(new SimpleTextWidget(85, 208, "", 0x000000,
+                () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES));
+
+        return builder.build(holder, entityPlayer);
+    }
+
 
     private static NBTTagCompound getPageCompound(ItemStack stack) {
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))

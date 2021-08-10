@@ -110,7 +110,7 @@ public class WrenchOverlayRenderer {
         }
 
         // MetaTileEntities
-        if (tileEntity instanceof MetaTileEntityHolder &&
+        if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity().canRenderWrenchOverlay() &&
                 itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
             return true;
 
