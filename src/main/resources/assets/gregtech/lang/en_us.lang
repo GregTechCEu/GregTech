@@ -2128,6 +2128,8 @@ gregtech.machine.stainless_steel_tank.name=Stainless Steel Tank
 gregtech.machine.titanium_tank.name=Titanium Tank
 gregtech.machine.tungstensteel_tank.name=Tungstensteel Tank
 
+gregtech.machine.clipboard.name=Clipboard
+
 # Granite blocks
 tile.granite.black_granite.normal.name=Black Granite
 tile.granite.black_granite.cracked.name=Black Granite Cobblestone

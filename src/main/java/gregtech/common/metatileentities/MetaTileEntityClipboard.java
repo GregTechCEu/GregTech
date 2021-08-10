@@ -21,6 +21,7 @@ import gregtech.api.util.GregFakePlayer;
 import gregtech.common.blocks.models.ModelCache;
 import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import gregtech.common.items.behaviors.ClipboardBehaviour;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -152,8 +153,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             FakeModularUIContainerClipboard fakeModularUIContainer = new FakeModularUIContainerClipboard(ui, this);
             this.guiContainerCache = fakeModularUIContainer;
             this.guiCache = new FakeModularGui(ui, fakeModularUIContainer);
-            this.writeCustomData(1, buffer -> {
-            });
+            this.writeCustomData(1, buffer -> { });
         } catch (Exception e) {
             GTLog.logger.error(e);
         }
@@ -200,7 +200,11 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
         } else {
-            getWorld().destroyBlock(this.getPos(), true);
+            NonNullList<ItemStack> drops = NonNullList.create();
+            getDrops(drops, playerIn);
+
+            Block.spawnAsEntity(playerIn.world, this.getPos(), drops.get(0));
+            getWorld().destroyBlock(this.getPos(), false);
         }
         return true;
     }
@@ -308,8 +312,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         else {
             buf.writeCompoundTag(new NBTTagCompound());
         }
-
-        this.createFakeGui();
     }
 
     @Override
@@ -375,7 +377,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (this.getWorld().isRemote) return;
         Pair<Double, Double> clickCoords = this.checkLookingAt();
-        if (this.guiContainerCache != null) {
+        if (this.guiContainerCache != null && guiContainerCache.modularUI != null) {
             int width = guiContainerCache.modularUI.getWidth();
             int height = guiContainerCache.modularUI.getHeight();
             double scale = 1.0 / Math.max(width, height);
@@ -389,5 +391,10 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             }
         }
 
+    }
+
+    @Override
+    public boolean canPlaceCoverOnSide(EnumFacing side) {
+        return false;
     }
 }

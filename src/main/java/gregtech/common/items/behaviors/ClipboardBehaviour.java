@@ -197,7 +197,8 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
             EnumFacing playerFacing = player.getHorizontalFacing();
             // Make sure it's the right block
             Block testBlock = world.getBlockState(pos).getBlock();
-            if (!testBlock.isAir(world.getBlockState(pos), world, pos)) {
+            IBlockState testState = testBlock.getDefaultState();
+            if (!testBlock.isAir(world.getBlockState(pos), world, pos) && testState.isSideSolid(world, pos, playerFacing)) {
                 // Step away from the block so you don't replace it, and then give it our fun blockstate
                 BlockPos shiftedPos = pos.offset(playerFacing.getOpposite());
                 Block shiftedBlock = world.getBlockState(shiftedPos).getBlock();
