@@ -1239,8 +1239,4 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public void preInit(Object... data) {
     }
-
-    public boolean canRenderWrenchOverlay() {
-        return true;
-    }
 }

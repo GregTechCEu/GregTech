@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -92,6 +93,11 @@ public class WrenchOverlayRenderer {
     }
 
     public static boolean shouldDrawOverlayForItem(ItemStack itemStack, TileEntity tileEntity) {
+        if (tileEntity instanceof ICoverable) {
+            if(!((ICoverable) tileEntity).canRenderWrenchOverlay())
+                return false;
+        }
+
         if (tileEntity instanceof TileEntityPipeBase) {
             TileEntityPipeBase<?, ?> pipeTE = (TileEntityPipeBase<?, ?>) tileEntity;
             Class<?> pipeClass = pipeTE.getPipeBlock().getPipeTypeClass();
@@ -110,9 +116,8 @@ public class WrenchOverlayRenderer {
         }
 
         // MetaTileEntities
-        if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity().canRenderWrenchOverlay() &&
-                itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
-            return true;
+        if (tileEntity instanceof MetaTileEntityHolder && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
+            return ((MetaTileEntityHolder) tileEntity).getMetaTileEntity().canRenderWrenchOverlay();
 
         // ICoverable
         if (tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null))

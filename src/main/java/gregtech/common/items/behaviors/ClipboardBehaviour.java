@@ -62,7 +62,7 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 170, 238);
 
         builder.widget(new SimpleTextWidget(20, 10, "", 0x000000, () -> getTitle(holder), false));
-        builder.image(20, 21, 130, 4, GuiTextures.BLANK); // To create an underline
+        builder.image(20, 19, 130, 4, GuiTextures.BLANK); // To create an underline
 
 
         for (int i = 0; i < 8; i++) {
@@ -70,7 +70,7 @@ public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
             builder.widget(new ImageCycleButtonWidget(5, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_CHECKBOX, 2,
                     () -> getButtonState(holder, finalI), (x) -> toggleButton(holder, finalI)));
             builder.widget(new SimpleTextWidget(21, 40 + 20 * i, "", 0x000000, () -> getString(holder, finalI), false));
-            builder.image(21, 51 + 20 * i, 140, 4, GuiTextures.BLANK); // To create an underline
+            builder.image(21, 49 + 20 * i, 140, 2, GuiTextures.BLANK); // To create an underline
         }
 
         builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
