@@ -290,6 +290,9 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
+            if (getOutputFacing() == facing || getFrontFacing() == facing) {
+                return false;
+            }
             if (!getWorld().isRemote) {
                 setOutputFacing(facing);
             }
@@ -347,20 +350,14 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             }
             return null;
         }
-     else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-        IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSide()) ? outputItemInventory : itemInventory;
-        if (itemHandler.getSlots() > 0) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
+        else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSide()) ? outputItemInventory : itemInventory;
+            if (itemHandler.getSlots() > 0) {
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
+            }
+            return null;
         }
-        return null;
-    }
         return super.getCapability(capability, side);
-
-    }
-
-    @Override
-    public boolean canPlaceCoverOnSide(EnumFacing side) {
-        return true;
     }
 
     @Override

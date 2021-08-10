@@ -161,11 +161,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     @Override
-    public boolean hasFrontFacing() {
-        return false;
-    }
-
-    @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.VOLTAGE_CASINGS[tier].render(renderState, translation, ArrayUtils.add(pipeline,
                 new ColourMultiplier(GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering()))));
@@ -230,6 +225,14 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         return outputFacing == null ? EnumFacing.SOUTH : outputFacing;
     }
 
+    @Override
+    public void setFrontFacing(EnumFacing frontFacing) {
+        super.setFrontFacing(EnumFacing.UP);
+        if (this.outputFacing == null) {
+            //set initial output facing as opposite to front
+            setOutputFacing(frontFacing.getOpposite());
+        }
+    }
 
     @Override
     public boolean isAutoOutputItems() {
@@ -299,13 +302,11 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     @Override
-    public boolean canPlaceCoverOnSide(EnumFacing side) {
-        return true;
-    }
-
-    @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
+            if (getOutputFacing() == facing || getFrontFacing() == facing) {
+                return false;
+            }
             if (!getWorld().isRemote) {
                 setOutputFacing(facing);
             }
@@ -345,6 +346,4 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             markDirty();
         }
     }
-
-
 }
