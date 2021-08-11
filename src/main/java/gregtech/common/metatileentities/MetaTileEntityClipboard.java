@@ -18,7 +18,6 @@ import gregtech.api.metatileentity.*;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
-import gregtech.common.blocks.models.ModelCache;
 import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import gregtech.common.items.behaviors.ClipboardBehaviour;
 import net.minecraft.block.Block;
@@ -52,7 +51,6 @@ import static gregtech.common.items.MetaItems.CLIPBOARD;
 
 public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMetaTileEntity, IFastRenderMetaTileEntity {
     private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(2.75 / 16.0, 0.0, 0.0, 13.25 / 16.0, 1.0, 0.4 / 16.0);
-    public static ModelCache modelCache = new ModelCache();
     public static final float scale = 1;
     public FakeModularGui guiCache;
     public FakeModularUIContainerClipboard guiContainerCache;
