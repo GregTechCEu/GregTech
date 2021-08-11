@@ -56,7 +56,7 @@ public class CircuitRecipes {
         BLAST_RECIPES.recipeBuilder().duration(18000).EUt(7680)
                 .input(block, Silicon, 32)
                 .input(ingot, Neutronium, 4)
-                .fluidInputs(Radon.getFluid(8000))
+                .fluidInputs(Xenon.getFluid(8000))
                 .output(NEUTRONIUM_BOULE)
                 .blastFurnaceTemp(6484)
                 .buildAndRegister();

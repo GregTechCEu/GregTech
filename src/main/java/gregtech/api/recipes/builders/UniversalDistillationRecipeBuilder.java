@@ -11,6 +11,8 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalDistillationRecipeBuilder> {
 
+    private boolean doDistilleryRecipes = true;
+
     public UniversalDistillationRecipeBuilder() {
     }
 
@@ -29,6 +31,11 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
 
     @Override
     public void buildAndRegister() {
+        if (!this.doDistilleryRecipes) {
+            super.buildAndRegister();
+            return;
+        }
+
         for (int i = 0; i < fluidOutputs.size(); i++) {
             IntCircuitRecipeBuilder builder = RecipeMaps.DISTILLERY_RECIPES.recipeBuilder().copy().EUt(Math.max(1, this.EUt / 4)).circuitMeta(i + 1);
 
@@ -102,6 +109,12 @@ public class UniversalDistillationRecipeBuilder extends RecipeBuilder<UniversalD
 
     private boolean isFluidStackDivisibleForDistillery(FluidStack fluidStack, int divisor) {
         return GTUtility.isFluidStackAmountDivisible(fluidStack, divisor) && fluidStack.amount / divisor >= 25;
+    }
+
+    // todo expose to CT
+    public UniversalDistillationRecipeBuilder disableDistilleryRecipes() {
+        this.doDistilleryRecipes = false;
+        return this;
     }
 
 }

@@ -1243,9 +1243,12 @@ material.tennantite=Tennantite
 
 material.methane=Methane
 material.carbon_dioxide=Carbon Dioxide
-material.noble_gases=Noble Gases
 material.air=Air
 material.liquid_air=Liquid Air
+material.nether_air=Nether Air
+material.liquid_nether_air=Liquid Nether Air
+material.ender_air=Ender Air
+material.liquid_ender_air=Liquid Ender Air
 material.almandine=Almandine
 material.andradite=Andradite
 material.annealed_copper=Annealed Copper

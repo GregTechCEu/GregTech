@@ -635,9 +635,12 @@ public class Materials {
     public static Material DilutedSulfuricAcid;
     public static Material DilutedHydrochloricAcid;
     public static Material Flint;
-    public static Material NobleGases;
     public static Material Air;
     public static Material LiquidAir;
+    public static Material NetherAir;
+    public static Material LiquidNetherAir;
+    public static Material EnderAir;
+    public static Material LiquidEnderAir;
 
     /**
      * Third Degree Materials

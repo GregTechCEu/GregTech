@@ -404,5 +404,41 @@ public class DistillationRecipes {
                 .fluidInputs(OilHeavy.getFluid(100))
                 .fluidOutputs(Oil.getFluid(100))
                 .duration(16).EUt(24).buildAndRegister();
+
+        DISTILLATION_RECIPES.recipeBuilder()
+                .fluidInputs(LiquidAir.getFluid(50000))
+                .fluidOutputs(Nitrogen.getFluid(35750))
+                .fluidOutputs(Oxygen.getFluid(11250))
+                .fluidOutputs(CarbonDioxide.getFluid(2500))
+                .fluidOutputs(Helium.getFluid(250))
+                .fluidOutputs(Argon.getFluid(250))
+                .chancedOutput(dust, Ice, 9000, 0)
+                .disableDistilleryRecipes()
+                .duration(2000).EUt(480).buildAndRegister();
+
+        DISTILLATION_RECIPES.recipeBuilder()
+                .fluidInputs(LiquidNetherAir.getFluid(100000))
+                .fluidOutputs(CarbonMonoxide.getFluid(72000))
+                .fluidOutputs(CoalGas.getFluid(10000))
+                .fluidOutputs(HydrogenSulfide.getFluid(7500))
+                .fluidOutputs(SulfurDioxide.getFluid(7500))
+                .fluidOutputs(Helium3.getFluid(2500))
+                .fluidOutputs(Neon.getFluid(500))
+                .chancedOutput(dustSmall, Ash, 9000, 0)
+                .disableDistilleryRecipes()
+                .duration(2000).EUt(1920).buildAndRegister();
+
+        DISTILLATION_RECIPES.recipeBuilder()
+                .fluidInputs(LiquidEnderAir.getFluid(200000))
+                .fluidOutputs(NitrogenDioxide.getFluid(122000))
+                .fluidOutputs(Deuterium.getFluid(50000))
+                .fluidOutputs(Helium.getFluid(15000))
+                .fluidOutputs(Tritium.getFluid(10000))
+                .fluidOutputs(Krypton.getFluid(1000))
+                .fluidOutputs(Xenon.getFluid(1000))
+                .fluidOutputs(Radon.getFluid(1000))
+                .chancedOutput(dustTiny, EnderPearl, 9000, 0)
+                .disableDistilleryRecipes()
+                .duration(2000).EUt(7680).buildAndRegister();
     }
 }
