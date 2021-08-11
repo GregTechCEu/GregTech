@@ -53,27 +53,6 @@ public class GuideConfigEditor extends TabGroup {
                addButton[1].setVisible(false);
            }
         });
-        this.addWidget(new CircleButtonWidget(97, -5, 5, 1, 3)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        TerminalTheme.COLOR_7.getColor(),
-                        TerminalTheme.COLOR_1.getColor())
-                .setIcon(GuiTextures.TERMINAL_ADD)
-                .setHoverText("New Page")
-                .setClickListener(this::newPage));
-        this.addWidget(new CircleButtonWidget(112, -5, 5, 1, 3)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        TerminalTheme.COLOR_7.getColor(),
-                        TerminalTheme.COLOR_2.getColor())
-                .setIcon(GuiTextures.TERMINAL_ADD)
-                .setHoverText("Import Page")
-                .setClickListener(this::loadJson));
-        this.addWidget(new CircleButtonWidget(127, -5, 5, 1, 3)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        TerminalTheme.COLOR_7.getColor(),
-                        TerminalTheme.COLOR_3.getColor())
-                .setIcon(GuiTextures.TERMINAL_ADD)
-                .setHoverText("Export Page")
-                .setClickListener(this::saveJson));
         addButton[0] = new CircleButtonWidget(115, 15, 8, 1, 8)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         TerminalTheme.COLOR_7.getColor(),
@@ -166,7 +145,7 @@ public class GuideConfigEditor extends TabGroup {
         }
     }
 
-    private void newPage(ClickData data) {
+    public void newPage(ClickData data) {
         TerminalDialogWidget.showConfirmDialog(app.getOs(), "New Page", "New page", res->{
             if (res) {
                 pageEditor.loadJsonConfig("{\"section\":\"default\",\"title\":\"Template\",\"stream\":[],\"fixed\":[]}");
@@ -176,7 +155,7 @@ public class GuideConfigEditor extends TabGroup {
         }).setClientSide().open();
     }
 
-    private void loadJson(ClickData data) {
+    public void loadJson(ClickData data) {
         if (pageEditor != null) {
             File file = new File("terminal\\guide_editor");
             TerminalDialogWidget.showFileDialog(app.getOs(), "Load Json", file, true, result->{
@@ -194,7 +173,7 @@ public class GuideConfigEditor extends TabGroup {
         }
     }
 
-    private void saveJson(ClickData data) {
+    public void saveJson(ClickData data) {
         if(pageEditor != null) {
             File file = new File("terminal\\guide_editor");
             TerminalDialogWidget.showFileDialog(app.getOs(), "Save Json", file, false, result->{

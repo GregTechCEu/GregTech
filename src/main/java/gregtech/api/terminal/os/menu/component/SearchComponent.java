@@ -1,9 +1,9 @@
 package gregtech.api.terminal.os.menu.component;
 
-import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.TextFieldWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.util.ISearch;
@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchComponent<T> extends WidgetGroup implements IMenuComponent{
+    private final static TextureArea SEARCHING = TextureArea.fullImage("textures/gui/terminal/terminal_searching.png");
     private final static int SIZE = 10;
     private final SearchEngine<T> engine;
     private final List<Tuple<T, String>> results;
@@ -40,7 +41,7 @@ public class SearchComponent<T> extends WidgetGroup implements IMenuComponent{
 
     @Override
     public IGuiTexture buttonIcon() {
-        return GuiTextures.TERMINAL_SETTING;
+        return SEARCHING;
     }
 
     @Override

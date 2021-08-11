@@ -5,7 +5,6 @@ import gregtech.api.gui.Widget;
 import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
-import javafx.geometry.Pos;
 
 import java.util.function.BiConsumer;
 
