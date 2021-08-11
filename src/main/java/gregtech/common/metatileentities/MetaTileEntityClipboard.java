@@ -408,7 +408,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     }
 
     @Override
-    public boolean canRenderWrenchOverlay() {
+    public boolean canRenderMachineGrid() {
         return false;
     }
 }

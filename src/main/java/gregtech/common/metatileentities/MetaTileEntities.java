@@ -658,7 +658,7 @@ public class MetaTileEntities {
         STEAM_IMPORT_BUS = GregTechAPI.registerMetaTileEntity(1632, new MetaTileEntitySteamItemBus(gregtechId("steam_import_bus"), false));
         STEAM_HATCH = GregTechAPI.registerMetaTileEntity(1633, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
 
-        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1640, new MetaTileEntityClipboard(gregtechId("clipboard")));
+        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1636, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
         /*
          * FOR ADDON DEVELOPERS:

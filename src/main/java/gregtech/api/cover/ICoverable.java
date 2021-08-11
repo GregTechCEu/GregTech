@@ -199,7 +199,7 @@ public interface ICoverable {
         }
     }
 
-    public default boolean canRenderWrenchOverlay() {
+    public default boolean canRenderMachineGrid() {
         return true;
     }
 }

@@ -14,6 +14,7 @@ public class GuiTextures {
     public static final TextureArea BORDERED_BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/bordered_background.png", 195, 136, 4, 4);
     public static final TextureArea BOXED_BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/base/boxed_background.png", 256, 174, 11, 11);
 
+    public static final TextureArea BLANK = AdoptableTextureArea.fullImage("textures/gui/base/blank.png", 1, 1, 0, 0);
     public static final TextureArea DISPLAY = TextureArea.fullImage("textures/gui/base/display.png");
     public static final TextureArea FLUID_SLOT = AdoptableTextureArea.fullImage("textures/gui/base/fluid_slot.png", 18, 18, 1, 1);
     public static final TextureArea FLUID_TANK_BACKGROUND = TextureArea.fullImage("textures/gui/base/fluid_tank_background.png");
@@ -21,7 +22,6 @@ public class GuiTextures {
     public static final TextureArea SLOT = AdoptableTextureArea.fullImage("textures/gui/base/slot.png", 18, 18, 1, 1);
     public static final TextureArea SLOT_DARKENED = TextureArea.fullImage("textures/gui/base/darkened_slot.png");
 
-    public static final TextureArea BLANK = AdoptableTextureArea.fullImage("textures/gui/base/blank.png", 1, 1, 0, 0);
 
     //FLUID & ITEM OUTPUT BUTTONS
     public static final TextureArea BLOCKS_INPUT = TextureArea.fullImage("textures/gui/widget/button_blocks_input.png");
@@ -33,16 +33,16 @@ public class GuiTextures {
     public static final TextureArea BUTTON_FILTER_NBT = TextureArea.fullImage("textures/gui/widget/button_filter_nbt.png");
     public static final TextureArea BUTTON_FLUID_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_fluid_output.png");
     public static final TextureArea BUTTON_ITEM_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_item_output.png");
-    public static final TextureArea BUTTON_OVERCLOCK = TextureArea.fullImage("textures/gui/widget/button_overclock.png");
     public static final TextureArea BUTTON_LEFT = TextureArea.fullImage("textures/gui/widget/left.png");
+    public static final TextureArea BUTTON_OVERCLOCK = TextureArea.fullImage("textures/gui/widget/button_overclock.png");
     public static final TextureArea BUTTON_RIGHT = TextureArea.fullImage("textures/gui/widget/right.png");
     public static final TextureArea BUTTON_SWITCH_VIEW = TextureArea.fullImage("textures/gui/widget/button_switch_view.png");
+    public static final TextureArea CLIPBOARD_CHECKBOX = TextureArea.fullImage("textures/gui/widget/clipboard_checkbox.png");
     public static final TextureArea DISTRIBUTION_MODE = TextureArea.fullImage("textures/gui/widget/button_distribution_mode.png");
     public static final TextureArea LOCK = TextureArea.fullImage("textures/gui/widget/lock.png");
     public static final TextureArea SWITCH = TextureArea.fullImage("textures/gui/widget/switch.png");
     public static final TextureArea SWITCH_HORIZONTAL = TextureArea.fullImage("textures/gui/widget/switch_horizontal.png");
     public static final SizedTextureArea VANILLA_BUTTON = SizedTextureArea.fullImage("textures/gui/widget/vanilla_button.png", 200, 40);
-    public static final TextureArea CLIPBOARD_CHECKBOX = TextureArea.fullImage("textures/gui/widget/clipboard_checkbox.png");
 
     //INDICATORS & ICONS
     public static final TextureArea INDICATOR_NO_ENERGY = TextureArea.fullImage("textures/gui/base/indicator_no_energy.png");

@@ -94,7 +94,7 @@ public class WrenchOverlayRenderer {
 
     public static boolean shouldDrawOverlayForItem(ItemStack itemStack, TileEntity tileEntity) {
         if (tileEntity instanceof ICoverable) {
-            if(!((ICoverable) tileEntity).canRenderWrenchOverlay())
+            if(!((ICoverable) tileEntity).canRenderMachineGrid())
                 return false;
         }
 
