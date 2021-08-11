@@ -92,20 +92,20 @@ public class ChemistryRecipes {
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(1))
-                .fluidOutputs(Air.getFluid(1000))
+                .fluidOutputs(Air.getFluid(10000))
                 .dimension(0)
-                .duration(20).EUt(16).buildAndRegister();
+                .duration(200).EUt(16).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(1))
-                .fluidOutputs(NetherAir.getFluid(1000))
+                .fluidOutputs(NetherAir.getFluid(10000))
                 .dimension(-1)
-                .duration(20).EUt(64).buildAndRegister();
+                .duration(200).EUt(64).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(1))
-                .fluidOutputs(EnderAir.getFluid(1000))
+                .fluidOutputs(EnderAir.getFluid(10000))
                 .dimension(1)
-                .duration(20).EUt(256).buildAndRegister();
+                .duration(200).EUt(256).buildAndRegister();
     }
 }
