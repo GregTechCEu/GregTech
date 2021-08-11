@@ -71,7 +71,11 @@ public class ModifyGuiTexture implements IGuiTexture{
             config.addProperty("color", ((ColorRectTexture) texture).color);
         } else if (texture instanceof FileTexture) {
             config.addProperty("type", "file");
-            config.addProperty("file", ((FileTexture) texture).file.getPath());
+            if (((FileTexture) texture).file != null) {
+                config.addProperty("file", ((FileTexture) texture).file.getPath());
+            } else {
+                config.addProperty("file", (String)null);
+            }
         } else {
             return null;
         }

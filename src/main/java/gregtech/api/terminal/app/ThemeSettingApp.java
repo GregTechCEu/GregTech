@@ -82,7 +82,7 @@ public class ThemeSettingApp extends AbstractApplication {
         switch (type) {
             case "resource":
                 if (!(TerminalTheme.WALL_PAPER.getTexture() instanceof TextureArea)) {
-                    TerminalTheme.WALL_PAPER.setTexture(new TextureArea(new ResourceLocation("gregtech:textures/gui/icon/gregtech_logo.png"), 0.0, 0.0, 1.0, 1.0));
+                    TerminalTheme.WALL_PAPER.setTexture(new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/terminal_background.png"), 0.0, 0.0, 1.0, 1.0));
                     TerminalTheme.saveConfig();
                 }
                 addStringSetting(((TextureArea)TerminalTheme.WALL_PAPER.getTexture()).imageLocation.toString(),
