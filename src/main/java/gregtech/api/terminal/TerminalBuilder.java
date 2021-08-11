@@ -8,21 +8,35 @@ import gregtech.api.terminal.app.guide.TutorialGuideApp;
 import gregtech.api.terminal.app.guideeditor.GuideEditorApp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TerminalBuilder {
-    private static final List<AbstractApplication> appRegister = new ArrayList<>();
+    private static final Map<String, AbstractApplication> appRegister = new HashMap<>();
+    private static final List<String> defaultApps = new ArrayList<>();
 
     public static void init() {
-        appRegister.add(new SimpleMachineGuideApp());
-        appRegister.add(new MultiBlockGuideApp());
-        appRegister.add(new ItemGuideApp());
-        appRegister.add(new TutorialGuideApp());
-        appRegister.add(new GuideEditorApp());
-        appRegister.add(new ThemeSettingApp());
+        registerApp(new SimpleMachineGuideApp(), true);
+        registerApp(new MultiBlockGuideApp(), true);
+        registerApp(new ItemGuideApp(), true);
+        registerApp(new TutorialGuideApp(), true);
+        registerApp(new GuideEditorApp(), true);
+        registerApp(new ThemeSettingApp(), true);
     }
 
-    public static List<AbstractApplication> getApplications() {
-        return appRegister;
+    public static void registerApp(AbstractApplication application, boolean isDefaultApp) {
+        appRegister.put(application.getName(), application);
+        if (isDefaultApp) {
+            defaultApps.add(application.getName());
+        }
+    }
+
+    public static List<String> getDefaultApps() {
+        return defaultApps;
+    }
+
+    public static AbstractApplication getApplication(String name) {
+        return appRegister.get(name);
     }
 }

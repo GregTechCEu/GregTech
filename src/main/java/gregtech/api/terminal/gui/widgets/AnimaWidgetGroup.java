@@ -1,6 +1,5 @@
 package gregtech.api.terminal.gui.widgets;
 
-import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.util.Position;

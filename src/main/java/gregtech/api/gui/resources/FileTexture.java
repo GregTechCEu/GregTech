@@ -28,6 +28,9 @@ public class FileTexture implements IGuiTexture{
 
     public FileTexture(File file) {
         this.file = file;
+        if (file == null) {
+            init = true;
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -78,7 +81,7 @@ public class FileTexture implements IGuiTexture{
     @Override
     public void draw(double x, double y, int width, int height) {
         if(this.texture != null) {
-            texture.draw(x, y, width, height); // gif\video update
+            texture.render((float)x, (float)y, width, height, 0, 1, 1, false, false);
         } else if (!init){
             loadFile();
         }

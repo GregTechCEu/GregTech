@@ -79,9 +79,10 @@ public class TextFieldWidget extends Widget {
         return this;
     }
 
-    public void setCurrentString(String currentString) {
+    public TextFieldWidget setCurrentString(String currentString) {
         this.currentString = currentString;
         this.textField.setText(currentString);
+        return this;
     }
 
     public String getCurrentString() {

@@ -45,7 +45,6 @@ public class GuideTerminalBehaviour implements IItemBehaviour, ItemUIFactory {
                         new Color(39, 232, 141).getRGB(),
                         0xff9197A5)
                 .setClickListener(clickData -> os.homeTrigger(clickData.isClient));
-        TerminalBuilder.getApplications().forEach(os::installApplication);
         return ModularUI.builder(GuiTextures.TERMINAL_FRAME, 380, 256)
                 .widget(os)
                 .widget(new ImageWidget(0, 0, 380, 256, GuiTextures.TERMINAL_FRAME))

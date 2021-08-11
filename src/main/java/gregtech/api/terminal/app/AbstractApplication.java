@@ -40,7 +40,8 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
 
     public abstract AbstractApplication createApp(boolean isClient, NBTTagCompound nbt);
 
-    public void closeApp(boolean isClient, NBTTagCompound nbt) {
+    public NBTTagCompound closeApp(boolean isClient, NBTTagCompound nbt) {
+        return null;
     }
 
     public boolean isBackgroundApp() {

@@ -67,9 +67,7 @@ public class TerminalMenuWidget extends WidgetGroup {
         os.minimizeApplication(os.focusApp, clickData.isClient);
     }
 
-    public void maximize(ClickData clickData) {
-        TerminalDialogWidget.showColorDialog(os, "test", System.out::println).addPlayerInventory().open();
-    }
+    public void maximize(ClickData clickData) { }
 
     public void addComponent(IMenuComponent component) {
         WidgetGroup group = new WidgetGroup();

@@ -4,8 +4,11 @@ import com.google.gson.JsonObject;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 public class ModifyGuiTexture implements IGuiTexture{
+    public static List<String> TYPES = Arrays.asList("resource", "url", "text", "color", "file");
     private IGuiTexture texture;
 
     public ModifyGuiTexture(IGuiTexture texture) {
@@ -22,6 +25,22 @@ public class ModifyGuiTexture implements IGuiTexture{
     public void setTexture(IGuiTexture texture) {
         if (texture != null) {
             this.texture = texture;
+        }
+    }
+
+    public String getTypeName() {
+        if (texture instanceof TextureArea) {
+            return "resource";
+        } else if (texture instanceof URLTexture) {
+            return "url";
+        } else if (texture instanceof TextTexture) {
+            return "text";
+        } else if (texture instanceof ColorRectTexture) {
+            return "color";
+        } else if (texture instanceof FileTexture) {
+            return "file";
+        } else {
+            return null;
         }
     }
 

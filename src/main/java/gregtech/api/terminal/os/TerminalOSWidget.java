@@ -5,12 +5,16 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
+import gregtech.api.terminal.TerminalBuilder;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.menu.TerminalMenuWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +35,16 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         this.addWidget(desktop);
         this.addWidget(menu);
         this.tabletNBT = tabletNBT;
+        TerminalBuilder.getDefaultApps().forEach(name-> installApplication(TerminalBuilder.getApplication(name)));
+        NBTTagList installed = tabletNBT.getTagList("installed", 8);
+        for (NBTBase nbtBase : installed) {
+            if (nbtBase instanceof NBTTagString) {
+                AbstractApplication app = TerminalBuilder.getApplication(((NBTTagString) nbtBase).getString());
+                if (app != null) {
+                    installApplication(app);
+                }
+            }
+        }
     }
 
     public ModularUI getModularUI(){
@@ -55,10 +69,6 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 maximizeApplication(app, isClient);
                 return;
             }
-        }
-        String name = application.getName();
-        if (!tabletNBT.hasKey(name)) {
-            tabletNBT.setTag(name, new NBTTagCompound());
         }
         AbstractApplication app = application.createApp(isClient, tabletNBT.getCompoundTag(application.getName())).setOs(this);
         if (app != null) {
@@ -99,11 +109,10 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
 
     public void closeApplication(AbstractApplication application, boolean isClient) {
         if (application != null) {
-            String name = application.getName();
-            if (!tabletNBT.hasKey(name)) {
-                tabletNBT.setTag(name, new NBTTagCompound());
+            NBTTagCompound nbt = application.closeApp(isClient, tabletNBT.getCompoundTag(application.getName()));
+            if (nbt != null) {
+                tabletNBT.setTag(application.getName(), nbt);
             }
-            application.closeApp(isClient, tabletNBT.getCompoundTag(name));
             if (isClient) {
                 application.minimizeWidget(desktop::waitToRemoved);
             } else {

@@ -65,13 +65,13 @@ public class SelectorWidget extends WidgetGroup {
             int width = getSize().width;
             int height = getSize().height;
             int y = (isUp ? -candidates.size() : 1) * height + getPosition().y;
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
             for (String candidate : candidates) {
                 if (background != null) {
                     background.draw(x, y, width, height);
                 } else {
                     drawSolidRect(x, y, width, height, 0xAA000000);
                 }
-                FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
                 fontRenderer.drawString(candidate, x + 4, y + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, fontColor);
                 y += height;
             }
@@ -98,6 +98,7 @@ public class SelectorWidget extends WidgetGroup {
                         onChanged.accept(candidate);
                     }
                     writeClientAction(2, buffer -> buffer.writeString(candidate));
+                    isShow = false;
                     return true;
                 }
                 y += height;

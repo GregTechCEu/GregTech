@@ -21,6 +21,8 @@ public class ImageWidget extends Widget {
 
     private BooleanSupplier predicate;
     private boolean isVisible = true;
+    private int border;
+    private int borderColor;
 
     public ImageWidget(int xPosition, int yPosition, int width, int height) {
         super(new Position(xPosition, yPosition), new Size(width, height));
@@ -36,10 +38,23 @@ public class ImageWidget extends Widget {
         return this;
     }
 
+    public ImageWidget setBorder(int border, int color) {
+        this.border = border;
+        this.borderColor = color;
+        return this;
+    }
+
     public ImageWidget setPredicate(BooleanSupplier predicate) {
         this.predicate = predicate;
         this.isVisible = false;
         return this;
+    }
+
+    @Override
+    public void updateScreen() {
+        if (area != null) {
+            area.updateTick();
+        }
     }
 
     @Override
@@ -66,6 +81,9 @@ public class ImageWidget extends Widget {
         Position position = getPosition();
         Size size = getSize();
         area.draw(position.x, position.y, size.width, size.height);
+        if (border > 0) {
+            drawBorder(position.x, position.y, size.width, size.height, borderColor, border);
+        }
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
