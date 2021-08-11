@@ -23,7 +23,6 @@ import gregtech.common.blocks.surfacerock.TileEntitySurfaceRock;
 import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.blocks.wood.BlockGregSapling;
-import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;

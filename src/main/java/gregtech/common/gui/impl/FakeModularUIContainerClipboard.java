@@ -79,17 +79,6 @@ public class FakeModularUIContainerClipboard implements WidgetUIAccess {
                 }
             }
         }
-        /*
-        if (toUpdate.size() > 0 && this.behavior != null) {
-            behavior.writePluginData(-1, packetBuffer -> {
-                packetBuffer.writeVarInt(toUpdate.size());
-                for (Tuple<Integer, ItemStack> tuple : toUpdate) {
-                    packetBuffer.writeVarInt(tuple.getFirst());
-                    packetBuffer.writeItemStack(tuple.getSecond());
-                }
-            });
-        }
-         */
         modularUI.guiWidgets.values().forEach(Widget::detectAndSendChanges);
     }
 
