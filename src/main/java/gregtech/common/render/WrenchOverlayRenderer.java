@@ -116,8 +116,9 @@ public class WrenchOverlayRenderer {
         }
 
         // MetaTileEntities
-        if (tileEntity instanceof MetaTileEntityHolder && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
-            return ((MetaTileEntityHolder) tileEntity).getMetaTileEntity().canRenderWrenchOverlay();
+        if (tileEntity instanceof MetaTileEntityHolder &&
+                itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null))
+            return true;
 
         // ICoverable
         if (tileEntity.hasCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null))

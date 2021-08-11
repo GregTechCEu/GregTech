@@ -90,13 +90,9 @@ public class FakeModularGui implements IRenderContext {
 
     protected List<String> getItemToolTip(ItemStack itemStack) {
         List<String> list = itemStack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
-        for (int i = 0; i < list.size(); ++i) {
-            if (i == 0) {
-                list.set(i, itemStack.getItem().getForgeRarity(itemStack).getColor() + list.get(i));
-            }
-            else {
-                list.set(i, TextFormatting.GRAY + list.get(i));
-            }
+        list.set(0, itemStack.getItem().getForgeRarity(itemStack).getColor() + list.get(0));
+        for (int i = 1; i < list.size(); ++i) {
+            list.set(i, TextFormatting.GRAY + list.get(i));
         }
         return list;
     }
@@ -124,5 +120,4 @@ public class FakeModularGui implements IRenderContext {
     public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
         return modularUI.guiWidgets.values().stream().anyMatch(widget -> widget.mouseClicked(mouseX, mouseY, mouseButton));
     }
-
 }

@@ -436,7 +436,6 @@ public class MetaBlocks {
 
         modelHandler.addBuiltInBlock(SURFACE_ROCK, "stone_andesite");
 
-
         ClientRegistry.bindTileEntitySpecialRenderer(MetaTileEntityHolder.class, new MetaTileEntityTESR());
     }
 

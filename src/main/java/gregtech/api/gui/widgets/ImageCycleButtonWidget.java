@@ -126,8 +126,7 @@ public class ImageCycleButtonWidget extends Widget {
             if(button == RIGHT_MOUSE) {
                 //Wrap from the first option to the last if needed
                 this.currentOption = currentOption == 0 ? optionCount - 1 : currentOption - 1;
-            }
-            else {
+            } else {
                 this.currentOption = (currentOption + 1) % optionCount;
             }
             writeClientAction(1, buf -> buf.writeVarInt(currentOption));

@@ -41,7 +41,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
      * Sets this holder's current meta tile entity to copy of given one
      * Note that this method copies given meta tile entity and returns actual instance
      * so it is safe to call it on sample meta tile entities
-     * Also can use certain data to p
+     * Also can use certain data to preinit the block before data is synced
      */
     public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity, Object... data) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
