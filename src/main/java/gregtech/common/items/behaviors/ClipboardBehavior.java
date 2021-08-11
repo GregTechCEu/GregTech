@@ -26,7 +26,7 @@ import net.minecraft.world.World;
 import static gregtech.common.blocks.MetaBlocks.MACHINE;
 import static gregtech.common.metatileentities.MetaTileEntities.CLIPBOARD_TILE;
 
-public class ClipboardBehaviour implements IItemBehaviour, ItemUIFactory {
+public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
     public static final int MAX_PAGES = 25;
 
     @Override

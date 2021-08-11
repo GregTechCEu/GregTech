@@ -19,7 +19,7 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
-import gregtech.common.items.behaviors.ClipboardBehaviour;
+import gregtech.common.items.behaviors.ClipboardBehavior;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -123,14 +123,14 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     public ModularUI createUI(EntityPlayer entityPlayer) {
         if (getClipboard().isItemEqual(CLIPBOARD.getStackForm())) {
             List<IItemBehaviour> behaviours = ((MetaItem<?>) getClipboard().getItem()).getBehaviours(getClipboard());
-            Optional<IItemBehaviour> clipboardBehaviour = behaviours.stream().filter((x) -> x instanceof ClipboardBehaviour).findFirst();
+            Optional<IItemBehaviour> clipboardBehaviour = behaviours.stream().filter((x) -> x instanceof ClipboardBehavior).findFirst();
             if (!clipboardBehaviour.isPresent())
                 return null;
-            if (clipboardBehaviour.get() instanceof ClipboardBehaviour) {
+            if (clipboardBehaviour.get() instanceof ClipboardBehavior) {
                 if(entityPlayer instanceof GregFakePlayer) {
-                    return ((ClipboardBehaviour) clipboardBehaviour.get()).createMTEUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
+                    return ((ClipboardBehavior) clipboardBehaviour.get()).createMTEUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
                 } else {
-                    return ((ClipboardBehaviour) clipboardBehaviour.get()).createUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
+                    return ((ClipboardBehavior) clipboardBehaviour.get()).createUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
                 }
             }
         }
