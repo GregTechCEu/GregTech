@@ -373,7 +373,7 @@ public class MetaItem1 extends StandardMetaItem {
         NANO_SABER = addItem(463, "nano_saber").addComponents(ElectricStats.createElectricItem(4000000L, GTValues.HV)).addComponents(new NanoSaberBehavior()).setMaxStackSize(1);
         ENERGY_FIELD_PROJECTOR = addItem(464, "energy_field_projector").addComponents(ElectricStats.createElectricItem(16000000L, GTValues.EV)).setMaxStackSize(1);
         SCANNER = addItem(465, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, GTValues.LV), new ScannerBehavior(50));
-        CLIPBOARD = addItem(466, "clipboard").addComponents(new ClipboardBehaviour()).setMaxStackSize(1);
+        CLIPBOARD = addItem(466, "clipboard").addComponents(new ClipboardBehavior()).setMaxStackSize(1);
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");
