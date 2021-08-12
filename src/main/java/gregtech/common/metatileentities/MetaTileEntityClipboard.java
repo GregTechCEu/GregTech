@@ -7,6 +7,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
+import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGui;
@@ -55,7 +56,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     public FakeModularGui guiCache;
     public FakeModularUIContainerClipboard guiContainerCache;
     private static final Cuboid6 pageBox = new Cuboid6(3 / 16.0, 0.25 / 16.0, 0.25 / 16.0, 13 / 16.0, 14.25 / 16.0, 0.3 / 16.0);
-    private boolean isClientReceivingUpdates = false;
 
     private static final int RENDER_PASS_NORMAL = 0;
     private static final NBTBase NO_CLIPBOARD_SIG = new NBTTagInt(0);
@@ -72,7 +72,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             if (guiCache != null)
                 guiCache.updateScreen();
         } else {
-            if (!isClientReceivingUpdates && getOffsetTimer() % 20 == 0)
+            if (getOffsetTimer() % 20 == 0)
                 createFakeGui();
             if (guiContainerCache != null)
                 guiContainerCache.detectAndSendChanges();
@@ -127,9 +127,9 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             if (!clipboardBehaviour.isPresent())
                 return null;
             if (clipboardBehaviour.get() instanceof ClipboardBehavior) {
-                PlayerInventoryHolder holder = new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand());
+                PlayerInventoryHolder holder = new PlayerInventoryHolder(new GregFakePlayer(entityPlayer.world), EnumHand.MAIN_HAND); // We can't have this actually set the player's hand
                 holder.setCurrentItem(this.getClipboard());
-                if(entityPlayer instanceof GregFakePlayer) {
+                if(entityPlayer instanceof GregFakePlayer) { // This is how to tell if this is being called in-world or not
                     return ((ClipboardBehavior) clipboardBehaviour.get()).createMTEUI(holder, entityPlayer);
                 } else {
                     return ((ClipboardBehavior) clipboardBehaviour.get()).createUI(holder, entityPlayer);
@@ -143,6 +143,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         // Basically just the original function from the PluginBehavior, but with a lot of now useless stuff stripped out.
         try {
             GregFakePlayer fakePlayer = new GregFakePlayer(this.getWorld());
+            fakePlayer.setHeldItem(EnumHand.MAIN_HAND, this.getClipboard());
             ModularUI ui = this.createUI(fakePlayer);
 
             ModularUI.Builder builder = new ModularUI.Builder(ui.backgroundPath, ui.getWidth(), ui.getHeight());
@@ -205,10 +206,10 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         } else {
             BlockPos pos = this.getPos(); // Saving this for later so it doesn't get mangled
             World world = this.getWorld(); // Same here
+
             NonNullList<ItemStack> drops = NonNullList.create();
             getDrops(drops, playerIn);
 
-            world.playEvent(2001, pos, Block.getStateId(world.getBlockState(pos)));
             Block.spawnAsEntity(playerIn.world, this.getPos(), drops.get(0));
             this.dropAllCovers();
             this.onRemoval();
@@ -275,7 +276,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
                 x = 1 - x;
             }
         } else {
-            x = dX;
+            x = 1 - dX;
             if (rayTraceResult.sideHit.getXOffset() < 0 || rayTraceResult.sideHit.getZOffset() > 0) {
                 x = 1 - x;
             }
@@ -342,7 +343,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        isClientReceivingUpdates = true;
         if (dataId == 0) {
             int windowID = buf.readVarInt();
             int widgetID = buf.readVarInt();

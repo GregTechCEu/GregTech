@@ -66,11 +66,6 @@ public class PlayerInventoryHolder implements IUIHolder {
      * will also update sample item to this item
      */
     public void setCurrentItem(ItemStack item) {
-        ItemStack itemStack = player.getHeldItem(hand);
-        if (!ItemStack.areItemsEqual(sampleItem, itemStack))
-            return;
-        Preconditions.checkArgument(item.getItem() instanceof ItemUIFactory,
-                "Current Item should implement ItemUIFactory");
         this.sampleItem = item;
         player.setHeldItem(hand, item);
     }

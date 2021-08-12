@@ -3,6 +3,7 @@ package gregtech.api.util;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.StatBase;
 import net.minecraft.util.DamageSource;
@@ -102,5 +103,6 @@ public class GregFakePlayer extends EntityPlayer {
         return FMLCommonHandler.instance().getMinecraftServerInstance();
     }
 
-
+    @Override
+    protected void playEquipSound(ItemStack stack) { }
 }
