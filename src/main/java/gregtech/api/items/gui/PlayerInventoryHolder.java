@@ -17,7 +17,7 @@ public class PlayerInventoryHolder implements IUIHolder {
     /*package-local*/ ItemStack sampleItem;
 
     @SideOnly(Side.CLIENT)
-    public PlayerInventoryHolder(EntityPlayer player, EnumHand hand, ItemStack sampleItem) {
+    /*package-local*/ public PlayerInventoryHolder(EntityPlayer player, EnumHand hand, ItemStack sampleItem) {
         this.player = player;
         this.hand = hand;
         this.sampleItem = sampleItem;
@@ -27,8 +27,6 @@ public class PlayerInventoryHolder implements IUIHolder {
         this.player = entityPlayer;
         this.hand = hand;
         this.sampleItem = player.getHeldItem(hand);
-        Preconditions.checkArgument(sampleItem.getItem() instanceof ItemUIFactory,
-                "Current Item should implement ItemUIFactory");
     }
 
     public static void openHandItemUI(EntityPlayer player, EnumHand hand) {
@@ -54,10 +52,6 @@ public class PlayerInventoryHolder implements IUIHolder {
     @Override
     public boolean isRemote() {
         return player.getEntityWorld().isRemote;
-    }
-
-    public ItemStack getSampleItem() {
-        return sampleItem;
     }
 
     public ItemStack getCurrentItem() {

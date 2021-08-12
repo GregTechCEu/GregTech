@@ -22,7 +22,6 @@ public class TextFieldWidget extends Widget {
     protected GuiTextField textField;
 
     protected int maxStringLength = 32;
-    protected int fontSize = 9;
     protected Predicate<String> textValidator;
     protected final Supplier<String> textSupplier;
     protected final Consumer<String> textResponder;
@@ -42,7 +41,7 @@ public class TextFieldWidget extends Widget {
         this.textResponder = textResponder;
     }
 
-    public TextFieldWidget(int xPosition, int yPosition, int width, int height, boolean enableBackground, Supplier<String> textSupplier, Consumer<String> textResponder, int maxStringLength, int fontSize) {
+    public TextFieldWidget(int xPosition, int yPosition, int width, int height, boolean enableBackground, Supplier<String> textSupplier, Consumer<String> textResponder, int maxStringLength) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         if (isClientSide()) {
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
@@ -51,7 +50,6 @@ public class TextFieldWidget extends Widget {
             this.textField.setEnableBackgroundDrawing(enableBackground);
             this.textField.setMaxStringLength(maxStringLength);
             this.maxStringLength = maxStringLength;
-            this.fontSize = fontSize;
             this.textField.setGuiResponder(MCGuiUtil.createTextFieldResponder(this::onTextChanged));
         }
         this.textSupplier = textSupplier;
@@ -81,10 +79,7 @@ public class TextFieldWidget extends Widget {
     @Override
     public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
         super.drawInBackground(mouseX, mouseY, context);
-        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        fontRenderer.FONT_HEIGHT = fontSize;
         this.textField.drawTextBox();
-        fontRenderer.FONT_HEIGHT = 9;
     }
 
     @Override
