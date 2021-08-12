@@ -29,7 +29,7 @@ public class TerminalDesktopWidget extends WidgetGroup {
                         new Color(105, 224, 216).getRGB(),
                         new Color(206, 206, 206).getRGB())
                 .setIcon(application.getIcon())
-                .setHoverText(application.getLocalizedName());
+                .setHoverText(application.getUnlocalizedName());
         button.setClickListener(clickData -> {
             os.openApplication(application, clickData.isClient);
         });

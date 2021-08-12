@@ -8,6 +8,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Collections;
@@ -33,8 +34,8 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         return name;
     }
 
-    public String getLocalizedName() {
-        return I18n.format("gregtech.guide_terminal.app_name." + name);
+    public String getUnlocalizedName() {
+        return "gregtech.guide_terminal.app_name." + name;
     }
 
     public IGuiTexture getIcon() {
