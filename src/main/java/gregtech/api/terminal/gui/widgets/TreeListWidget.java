@@ -215,9 +215,7 @@ public class TreeListWidget<K, T> extends Widget {
                             onSelected.accept(node);
                         }
                     } else if (node.getChildren().size() > 0 && list.contains(node.getChildren().get(0))){
-                        for (TreeNode<?, T> child : node.getChildren()) {
-                            list.remove(child);
-                        }
+                        removeNode(node);
                     } else {
                         for (int i = 0; i < node.getChildren().size(); i++) {
                             list.add(index + 1 + i, node.getChildren().get(i));
@@ -229,5 +227,13 @@ public class TreeListWidget<K, T> extends Widget {
             return true;
         }
         return false;
+    }
+
+    private void removeNode(TreeNode<?, T> node) {
+        if(node.isLeaf()) return;
+        for (TreeNode<?, T> child : node.getChildren()) {
+            list.remove(child);
+            removeNode(child);
+        }
     }
 }

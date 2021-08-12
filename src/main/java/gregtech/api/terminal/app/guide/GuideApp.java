@@ -14,17 +14,17 @@ import gregtech.api.terminal.os.menu.component.SearchComponent;
 import gregtech.api.terminal.util.TreeNode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.Language;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -32,17 +32,23 @@ public abstract class GuideApp<T> extends AbstractApplication implements
         SearchComponent.IWidgetSearch<Stack<TreeNode<String, T>>> {
     private GuidePageWidget pageWidget;
     private TreeListWidget<String, T> tree;
+    private TreeNode<String, T> ROOT;
+    private Map<T, Map<String, JsonObject>> jsonObjectMap = new HashMap<>();
     public GuideApp(String name, IGuiTexture icon) {
         super(name, icon);
+        ROOT = new TreeNode<>(0, "root");
     }
 
     @Override
     public AbstractApplication createApp(boolean isClient, NBTTagCompound nbt) {
         try {
             GuideApp app = this.getClass().newInstance();
+            app.jsonObjectMap = jsonObjectMap;
+            app.ROOT = ROOT;
             if (isClient && getTree() != null) {
                 app.tree = new TreeListWidget<>(0, 0, 133, 232, getTree(), app::loadPage).setContentIconSupplier(this::itemIcon)
                         .setContentNameSupplier(this::itemName)
+                        .setKeyNameSupplier(key -> I18n.format("gregtech.guide_terminal.app." + getRegistryName() + "." + key))
                         .setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
                         .setLeafTexture(GuiTextures.SLOT_DARKENED);
                 app.addWidget(app.tree);
@@ -63,7 +69,11 @@ public abstract class GuideApp<T> extends AbstractApplication implements
         }
         this.pageWidget = new GuidePageWidget(133, 0, 200, 232, 5);
         if (leaf.isLeaf() && leaf.getContent() != null) {
-            JsonObject page = getPage(leaf.getContent());
+            Language currentLanguage = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage();
+            Map<String, JsonObject> langMap = jsonObjectMap.get(leaf.getContent());
+            JsonObject page = langMap.get(currentLanguage.getLanguageCode().toLowerCase() + "_" + currentLanguage.getJavaLocale().getCountry().toLowerCase());
+            if(page == null)
+                page = langMap.get("en_us");
             if (page != null) {
                 this.pageWidget.loadJsonConfig(page);
             }
@@ -79,13 +89,32 @@ public abstract class GuideApp<T> extends AbstractApplication implements
         return null;
     }
 
-    protected String itemName(T item) {
-        return null;
+    /**
+     * Should return a localised representation of the item
+     * @param item item
+     * @return localised name
+     */
+    protected abstract String itemName(T item);
+
+    protected abstract String rawItemName(T item);
+
+    protected final TreeNode<String, T> getTree() {
+        return ROOT;
     }
 
-    protected abstract JsonObject getPage(T item);
+    public final void loadJsonFile(JsonObject json, String lang) {
+        T t = ofJson(json);
+        if(t != null) {
+            Map<String, JsonObject> langMap = jsonObjectMap.get(t);
+            if(langMap == null)
+                langMap = new HashMap<>();
+            langMap.put(lang, json);
+            jsonObjectMap.put(t, langMap);
+            registerItem(t, json.get("section").getAsString());
+        }
+    }
 
-    protected abstract TreeNode<String, T> getTree();
+    protected abstract T ofJson(JsonObject json);
 
     public static JsonObject getConfig(String fileName) {
         try {
@@ -140,6 +169,17 @@ public abstract class GuideApp<T> extends AbstractApplication implements
         return false;
     }
 
+    protected void registerItem(T item, String path) {
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            String[] parts = path.split("/");
+            TreeNode<String, T> child = ROOT;
+            for(String sub : parts) {
+                child = child.getOrCreateChild(sub);
+            }
+            child.addContent(rawItemName(item), item);
+        }
+    }
+
     @Override
     public void selectResult(Stack<TreeNode<String, T>> result) {
         if (result.size() > 0 && tree != null) {
@@ -151,13 +191,17 @@ public abstract class GuideApp<T> extends AbstractApplication implements
 
     @Override
     public String resultDisplay(Stack<TreeNode<String, T>> result) {
-        return  result.stream().map(node->{
-            String name = node.getContent() != null ? itemName(node.getContent()) : null;
-            if (name == null) {
-                name = node.getKey();
-            }
-             return I18n.format(name);
-        }).collect(Collectors.joining("->"));
+        Iterator<TreeNode<String, T>> iterator = result.iterator();
+        if(!iterator.hasNext()) return "";
+        iterator.next(); // skip root
+        StringBuilder builder = new StringBuilder();
+        while (iterator.hasNext()) {
+            TreeNode<String, T> node = iterator.next();
+            builder.append(node.getContent() == null ? I18n.format("gregtech.guide_terminal.app." + getRegistryName() + "." + node.getKey()) : itemName(node.getContent()));
+            if(iterator.hasNext())
+                builder.append(" / ");
+        }
+        return builder.toString();
     }
 
     @Override

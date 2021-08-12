@@ -1,72 +1,98 @@
 package gregtech.api.terminal.app.guide;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.terminal.util.TreeNode;
 import gregtech.common.items.MetaItems;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.Language;
-import net.minecraft.util.Tuple;
-import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
-public class ItemGuideApp extends GuideApp<MetaItem<?>.MetaValueItem> {
-    private static TreeNode<String, MetaItem<?>.MetaValueItem> ROOT;
-    private static Map<MetaItem<?>.MetaValueItem, JsonObject> MAP;
-    private static Language language;
-
-    private static JsonObject DEFAULT;
-    static {
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            ROOT = new TreeNode<>(0,"root");
-            DEFAULT = getConfig("terminal/guide/items/default.json");
-            MAP = new HashMap<>();
-        }
-    }
+public class ItemGuideApp extends GuideApp<ItemGuideApp.GuideItem> {
 
     public ItemGuideApp() {
-        super("Items", new ItemStackTexture(MetaItems.SCANNER.getStackForm()));
+        super("items", new ItemStackTexture(MetaItems.SCANNER.getStackForm()));
     }
 
     @Override
-    protected IGuiTexture itemIcon(MetaItem<?>.MetaValueItem item) {
-        return new ItemStackTexture(item.getStackForm());
+    protected String itemName(GuideItem item) {
+        return item.stack.getDisplayName();
     }
 
     @Override
-    protected JsonObject getPage(MetaItem<?>.MetaValueItem item) {
-        Language currentLanguage = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage();
-        if (!currentLanguage.equals(language)) {
-            language = currentLanguage;
-            MAP.clear();
+    protected String rawItemName(GuideItem item) {
+        if (item.stack.getItem() instanceof MetaItem) {
+            return ((MetaItem<?>) item.stack.getItem()).getItem((short) item.stack.getMetadata()).unlocalizedName;
         }
-        if (!MAP.containsKey(item)) {
-            JsonObject config = getConfig("terminal/guide/items/" + currentLanguage.getLanguageCode() + "/" + item.unlocalizedName + ".json");
-            if (config == null && !currentLanguage.getLanguageCode().equals("en_us")) {
-                config = getConfig("terminal/guide/items/" + "en_us/" + item.unlocalizedName + ".json");
+        return item.stack.getTranslationKey();
+    }
+
+    @Override
+    protected IGuiTexture itemIcon(GuideItem item) {
+        return new ItemStackTexture(item.stack);
+    }
+
+    @Override
+    protected GuideItem ofJson(JsonObject json) {
+        return GuideItem.ofJson(json);
+    }
+
+    public static class GuideItem {
+        private final ItemStack stack;
+        private final String name;
+
+        public GuideItem(ItemStack stack, String name) {
+            this.stack = stack;
+            this.name = name;
+        }
+
+        public GuideItem(ItemStack stack) {
+            this(stack, stack.getItem().getRegistryName().toString() + ":" + stack.getMetadata());
+        }
+
+        public GuideItem(MetaItem<?>.MetaValueItem item) {
+            this(item.getStackForm(), item.unlocalizedName);
+        }
+
+        public static GuideItem ofJson(JsonObject json) {
+            if (json.has("item")) {
+                JsonElement element = json.get("item");
+                if (element.isJsonPrimitive()) {
+                    String[] s = json.getAsString().split(":");
+                    if (s.length < 2) return null;
+                    Item item = Item.getByNameOrId(s[0] + ":" + s[1]);
+                    if (item == null) return null;
+                    int meta = 0;
+                    if (s.length > 2)
+                        meta = Integer.parseInt(s[2]);
+                    return new GuideItem(new ItemStack(item, 1, meta));
+                }
             }
-            MAP.put(item, config);
+            if (json.has("metaitem")) {
+                String metaItemId = json.get("metaitem").getAsString();
+                for (MetaItem<?> metaItem : MetaItem.getMetaItems()) {
+                    MetaItem<?>.MetaValueItem metaValueItem = metaItem.getAllItems().stream().filter(m -> m.unlocalizedName.equals(metaItemId)).findFirst().orElse(null);
+                    if (metaValueItem != null) return new GuideItem(metaValueItem);
+                    ;
+                }
+            }
+            return null;
         }
-        if (MAP.get(item) == null) {
-            DEFAULT.addProperty("title", "Missing: §4" + item.unlocalizedName + ".json");
-            return DEFAULT;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            GuideItem guideItem = (GuideItem) o;
+            return Objects.equals(stack, guideItem.stack) && Objects.equals(name, guideItem.name);
         }
-        return MAP.get(item);
-    }
 
-    @Override
-    protected TreeNode<String, MetaItem<?>.MetaValueItem> getTree() {
-        return ROOT;
-    }
-
-    public static void registerItem(MetaItem<?>.MetaValueItem item, String section) {
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            ROOT.getOrCreateChild(section).addContent(String.format("metaitem.%s.name", item.unlocalizedName), item);
+        @Override
+        public int hashCode() {
+            return Objects.hash(stack, name);
         }
     }
 }

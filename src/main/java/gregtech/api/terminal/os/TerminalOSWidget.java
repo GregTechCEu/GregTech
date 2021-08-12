@@ -70,7 +70,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 return;
             }
         }
-        AbstractApplication app = application.createApp(isClient, tabletNBT.getCompoundTag(application.getName())).setOs(this);
+        AbstractApplication app = application.createApp(isClient, tabletNBT.getCompoundTag(application.getRegistryName())).setOs(this);
         if (app != null) {
             openedApps.add(app);
             desktop.addWidget(app);
@@ -109,9 +109,9 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
 
     public void closeApplication(AbstractApplication application, boolean isClient) {
         if (application != null) {
-            NBTTagCompound nbt = application.closeApp(isClient, tabletNBT.getCompoundTag(application.getName()));
+            NBTTagCompound nbt = application.closeApp(isClient, tabletNBT.getCompoundTag(application.getRegistryName()));
             if (nbt != null) {
-                tabletNBT.setTag(application.getName(), nbt);
+                tabletNBT.setTag(application.getRegistryName(), nbt);
             }
             if (isClient) {
                 application.minimizeWidget(desktop::waitToRemoved);

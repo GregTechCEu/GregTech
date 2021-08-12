@@ -9,10 +9,7 @@ import gregtech.api.terminal.app.guide.TutorialGuideApp;
 import gregtech.api.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.api.terminal.app.recipegraph.RecipeGraphApp;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TerminalBuilder {
     private static final Map<String, AbstractApplication> appRegister = new HashMap<>();
@@ -31,9 +28,9 @@ public class TerminalBuilder {
     }
 
     public static void registerApp(AbstractApplication application, boolean isDefaultApp) {
-        appRegister.put(application.getName(), application);
+        appRegister.put(application.getRegistryName(), application);
         if (isDefaultApp) {
-            defaultApps.add(application.getName());
+            defaultApps.add(application.getRegistryName());
         }
     }
 

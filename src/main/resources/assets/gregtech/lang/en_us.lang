@@ -3627,3 +3627,11 @@ gregtech.cover.fluid_detector.message_fluid_storage_inverted=Monitoring Inverted
 
 gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item Storage
 gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
+
+gregtech.guide_terminal.app_name.items=Item Guides
+gregtech.guide_terminal.app_name.machines=Machine Guides
+gregtech.guide_terminal.app_name.multiblocks=Multiblock Guides
+gregtech.guide_terminal.app_name.tutorials=Tutorials
+
+gregtech.guide_terminal.app.items.tools=Tools
+gregtech.guide_terminal.app.items.covers=Covers
