@@ -1,7 +1,9 @@
 package gregtech.api.gui.resources;
 
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.picturetexture.PictureTexture;
 import gregtech.api.gui.resources.utils.DownloadThread;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -31,16 +33,16 @@ public class URLTexture implements IGuiTexture{
 
     @Override
     public void draw(double x, double y, int width, int height) {
-        if (url != null &&!this.url.equals("")) {
-            if (texture != null && texture.hasTexture()) {
-                texture.render((float)x, (float)y, width, height, 0, 1, 1, false, false);
+        if (texture != null && texture.hasTexture()) {
+            texture.render((float)x, (float)y, width, height, 0, 1, 1, false, false);
+        } else {
+            if (failed || url == null || this.url.equals("")) {
+                Minecraft.getMinecraft().fontRenderer.drawString(" Load Failed", (int)x, (int)(y + height / 2.0 - 4), 0xffff0000);
             } else {
                 this.loadTexture();
-                if (failed) {
-
-                } else {
-
-                }
+                int s = (int) Math.floorMod(System.currentTimeMillis() / 200, 24);
+                Widget.renderSector((float)(x + width / 2.0), (float)(y + height / 2.0), (float)(Math.min(width, height) / 4.0),
+                        0xFF94E2C1, 24, s, s + 5);
             }
         }
     }
@@ -50,7 +52,6 @@ public class URLTexture implements IGuiTexture{
         if (texture == null && !failed) {
             if (downloader == null && DownloadThread.activeDownloads < DownloadThread.MAXIMUM_ACTIVE_DOWNLOADS) {
                 PictureTexture loadedTexture = DownloadThread.loadedImages.get(url);
-
                 if (loadedTexture == null) {
                     synchronized (DownloadThread.LOCK) {
                         if (!DownloadThread.loadingImages.contains(url)) {

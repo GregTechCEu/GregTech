@@ -7,10 +7,7 @@ import gregtech.api.terminal.os.menu.component.IMenuComponent;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.nbt.NBTTagCompound;
-import sun.security.util.ArrayUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

@@ -31,7 +31,7 @@ public class TerminalTheme {
 
     static {
         JsonElement element = FileUtils.loadJson(new File(FILE_PATH));
-        if (element == null || element.isJsonObject()) {
+        if (element == null || !element.isJsonObject()) {
             saveConfig();
         } else {
             JsonObject config = element.getAsJsonObject();

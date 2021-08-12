@@ -157,6 +157,14 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     @Override
+    public void updateScreen() {
+        super.updateScreen();
+        if( background != null) {
+            background.updateTick();
+        }
+    }
+
+    @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         Position position = getPosition();
         Size size = getSize();
