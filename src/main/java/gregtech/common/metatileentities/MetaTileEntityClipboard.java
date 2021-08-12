@@ -127,10 +127,12 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             if (!clipboardBehaviour.isPresent())
                 return null;
             if (clipboardBehaviour.get() instanceof ClipboardBehavior) {
+                PlayerInventoryHolder holder = new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand());
+                holder.setCurrentItem(this.getClipboard());
                 if(entityPlayer instanceof GregFakePlayer) {
-                    return ((ClipboardBehavior) clipboardBehaviour.get()).createMTEUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
+                    return ((ClipboardBehavior) clipboardBehaviour.get()).createMTEUI(holder, entityPlayer);
                 } else {
-                    return ((ClipboardBehavior) clipboardBehaviour.get()).createUI(new PlayerInventoryHolder(entityPlayer, entityPlayer.getActiveHand(), getClipboard()), entityPlayer);
+                    return ((ClipboardBehavior) clipboardBehaviour.get()).createUI(holder, entityPlayer);
                 }
             }
         }
