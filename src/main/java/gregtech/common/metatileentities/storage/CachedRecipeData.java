@@ -61,15 +61,17 @@ public class CachedRecipeData {
         return true;
     }
 
-    public boolean attemptMatchRecipe() {
-        this.ingredientsMatched = false;
+    public short attemptMatchRecipe() {
+        ingredientsMatched = true;
+        short itemsFound = 0;
         this.requiredItems.clear();
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            if (!getIngredientEquivalent(i))
-                return false; //ingredient didn't match, return false
+            if (getIngredientEquivalent(i))
+                itemsFound += 1 << i; //ingredient was found, and indicate in the short of this fact
+            else
+                ingredientsMatched = false;
         }
-        this.ingredientsMatched = true;
-        return true;
+        return itemsFound;
     }
 
     public boolean checkRecipeValid() {
@@ -96,7 +98,7 @@ public class CachedRecipeData {
         return true;
     }
 
-    private boolean getIngredientEquivalent(int slot) {
+    public boolean getIngredientEquivalent(int slot) {
         ItemStack currentStack = inventory.getStackInSlot(slot);
         if (currentStack.isEmpty()) {
             return true; //stack is empty, nothing to return

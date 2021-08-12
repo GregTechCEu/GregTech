@@ -169,4 +169,8 @@ public class CraftingRecipeResolver {
             this.itemSourceList.addItemHandler(itemSource);
         }
     }
+
+    public CachedRecipeData getCachedRecipeData() {
+        return this.getCachedRecipeData();
+    }
 }
