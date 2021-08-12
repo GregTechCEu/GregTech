@@ -19,6 +19,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
+import static gregtech.api.gui.impl.ModularUIGui.*;
+
 @SideOnly(Side.CLIENT)
 public class FakeModularGui implements IRenderContext {
     public final ModularUI modularUI;
@@ -98,6 +100,7 @@ public class FakeModularGui implements IRenderContext {
     }
 
     public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
         modularUI.backgroundPath.draw(0, 0, modularUI.getWidth(), modularUI.getHeight());
         for (Widget widget : modularUI.guiWidgets.values()) {
             GlStateManager.pushMatrix();

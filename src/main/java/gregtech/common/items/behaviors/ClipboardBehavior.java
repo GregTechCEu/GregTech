@@ -34,16 +34,16 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         initNBT(holder.getCurrentItem());
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 170, 238);
 
-        builder.widget(new TextFieldWidget(20, 10, 130, 13, true,
-                () -> getTitle(holder), (x) -> setTitle(holder, x), 23)
+        builder.widget(new ImageTextFieldWidget(20, 10, 130, 12, GuiTextures.CLIPBOARD_TEXT_BOX,
+                () -> getTitle(holder), (x) -> setTitle(holder, x), 23, 0xFFFFFF)
                 .setValidator((x) -> true));
 
         for (int i = 0; i < 8; i++) {
             int finalI = i;
-            builder.widget(new ImageCycleButtonWidget(5, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_CHECKBOX, 2,
-                    () -> getButtonState(holder, finalI), (x) -> toggleButton(holder, finalI)));
-            builder.widget(new TextFieldWidget(21, 40 + 20 * i, 140, 10, true,
-                    () -> getString(holder, finalI), (x) -> setString(holder, finalI, x), 23)
+            builder.widget(new ImageCycleButtonWidget(6, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_BUTTON, 4,
+                    () -> getButtonState(holder, finalI), (x) -> setButton(holder, finalI, x)));
+            builder.widget(new ImageTextFieldWidget(24, 40 + 20 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX,
+                    () -> getString(holder, finalI), (x) -> setString(holder, finalI, x), 23, 0xFFFFFF)
                     .setValidator((x) -> true));
         }
 
@@ -51,7 +51,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
                 .setButtonTexture(GuiTextures.BUTTON_LEFT));
         builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, 1))
                 .setButtonTexture(GuiTextures.BUTTON_RIGHT));
-        builder.widget(new SimpleTextWidget(85, 208, "", 0x000000,
+        builder.widget(new SimpleTextWidget(85, 208, "", 0xFFFFFF,
                 () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES));
 
         return builder.build(holder, entityPlayer);
@@ -61,23 +61,23 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         initNBT(holder.getCurrentItem());
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 170, 238);
 
-        builder.widget(new SimpleTextWidget(20, 10, "", 0x000000, () -> getTitle(holder), false));
-        builder.image(20, 19, 130, 4, GuiTextures.BLANK); // To create an underline
+        builder.image(18, 8, 130, 14, GuiTextures.CLIPBOARD_TEXT_BOX);
+        builder.widget(new SimpleTextWidget(20, 10, "", 0xFFFFFF, () -> getTitle(holder), false));
 
 
         for (int i = 0; i < 8; i++) {
             int finalI = i;
-            builder.widget(new ImageCycleButtonWidget(5, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_CHECKBOX, 2,
-                    () -> getButtonState(holder, finalI), (x) -> toggleButton(holder, finalI)));
-            builder.widget(new SimpleTextWidget(21, 40 + 20 * i, "", 0x000000, () -> getString(holder, finalI), false));
-            builder.image(21, 49 + 20 * i, 140, 2, GuiTextures.BLANK); // To create an underline
+            builder.widget(new ImageCycleButtonWidget(6, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_BUTTON, 4,
+                    () -> getButtonState(holder, finalI), (x) -> setButton(holder, finalI, x)));
+            builder.image(22, 38 + 20 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX);
+            builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", 0xFFFFFF, () -> getString(holder, finalI), false));
         }
 
         builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
                 .setButtonTexture(GuiTextures.BUTTON_LEFT));
         builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, 1))
                 .setButtonTexture(GuiTextures.BUTTON_RIGHT));
-        builder.widget(new SimpleTextWidget(85, 208, "", 0x000000,
+        builder.widget(new SimpleTextWidget(85, 208, "", 0xFFFFFF,
                 () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES));
 
         return builder.build(holder, entityPlayer);
@@ -111,7 +111,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
 
             NBTTagCompound pageCompound = new NBTTagCompound();
             pageCompound.setShort("ButStat", (short) 0);
-            pageCompound.setString("PageTitle", "");
+            pageCompound.setString("Title", "");
             for (int i = 0; i < 8; i++) {
                 pageCompound.setString("Task" + i, "");
             }
@@ -124,26 +124,29 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         }
     }
 
-    private static void toggleButton(PlayerInventoryHolder holder, int pos) {
+    private static void setButton(PlayerInventoryHolder holder, int pos, int newState) {
         ItemStack stack = holder.getCurrentItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
             throw new IllegalArgumentException("Given item stack is not a clipboard!");
         NBTTagCompound tagCompound = getPageCompound(stack);
         short buttonState;
-        buttonState = tagCompound.getByte("ButStat");
-        buttonState ^= 1 << pos;
+        buttonState = tagCompound.getShort("ButStat");
+
+        short clearedState = (short) (buttonState & ~(3 << (pos * 2))); // Clear out the desired slot
+        buttonState = (short) (clearedState | (newState << (pos * 2))); // And add the new state back in
+
         tagCompound.setShort("ButStat", buttonState);
         setPageCompound(stack, tagCompound);
     }
 
-    private static boolean getButtonState(PlayerInventoryHolder holder, int pos) {
+    private static int getButtonState(PlayerInventoryHolder holder, int pos) {
         ItemStack stack = holder.getCurrentItem();
         if (!MetaItems.CLIPBOARD.isItemEqual(stack))
             throw new IllegalArgumentException("Given item stack is not a clipboard!");
         NBTTagCompound tagCompound = getPageCompound(stack);
-        short buttonState = 0;
+        short buttonState;
         buttonState = tagCompound.getShort("ButStat");
-        return ((buttonState >> pos) & 1) != 0;
+        return ((buttonState >> pos * 2) & 3);
     }
 
     private static void setString(PlayerInventoryHolder holder, int pos, String newString) {
