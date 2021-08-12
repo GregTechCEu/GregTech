@@ -14,6 +14,7 @@ import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.app.guide.widget.SlotListWidget;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -53,7 +54,7 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
     private void addSlot(DraggableScrollableWidgetGroup container, SlotListWidget.ItemStackInfo itemStackInfo) {
         WidgetGroup group = new WidgetGroup(0,slots.size() * 20, 116, 20);
         slots.add(itemStackInfo);
-        IItemHandlerModifiable handler = new ItemStackHandler();
+        IItemHandlerModifiable handler = new SingleItemStackHandler(1);
         handler.setStackInSlot(0, itemStackInfo.getInstance());
         group.addWidget(new PhantomSlotWidget(handler, 0, 1, 1).setBackgroundTexture(TerminalTheme.COLOR_B_2).setChangeListener(()->{
             itemStackInfo.update(handler.getStackInSlot(0));

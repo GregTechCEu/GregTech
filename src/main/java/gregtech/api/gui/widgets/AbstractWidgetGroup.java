@@ -94,7 +94,6 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
             return;
         }
         super.setVisible(visible);
-        widgets.stream().flatMap(it -> it.getNativeWidgets().stream()).forEach(it -> it.setEnabled(visible));
     }
 
     protected void addWidget(Widget widget) {

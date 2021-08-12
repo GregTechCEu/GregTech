@@ -1,18 +1,14 @@
 package gregtech.api.gui.widgets;
 
-import java.awt.Rectangle;
-
-import javax.annotation.Nonnull;
-
-import gregtech.api.gui.*;
+import gregtech.api.gui.INativeWidget;
+import gregtech.api.gui.IRenderContext;
+import gregtech.api.gui.ISizeProvider;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.ItemStackTexture;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +23,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 
 public class SlotWidget extends Widget implements INativeWidget {
 
@@ -87,6 +82,23 @@ public class SlotWidget extends Widget implements INativeWidget {
             GlStateManager.enableAlpha();
             GlStateManager.popMatrix();
             RenderHelper.disableStandardItemLighting();
+        }
+    }
+
+    @Override
+    public void drawInForeground(int mouseX, int mouseY) {
+        if (slotReference instanceof ISlotWidget) {
+            if (isMouseOverElement(mouseX, mouseY)) {
+                ((ISlotWidget) slotReference).setHover(true);
+                GlStateManager.disableDepth();
+                GlStateManager.colorMask(true, true, true, false);
+                drawSolidRect(getPosition().x + 1, getPosition().y + 1, 16, 16, -2130706433);
+                GlStateManager.colorMask(true, true, true, true);
+                GlStateManager.enableDepth();
+                GlStateManager.enableBlend();
+            } else {
+                ((ISlotWidget) slotReference).setHover(false);
+            }
         }
     }
 
@@ -171,9 +183,26 @@ public class SlotWidget extends Widget implements INativeWidget {
         return slotReference;
     }
 
-    protected class WidgetSlot extends Slot {
+    public interface ISlotWidget {
+        void setHover(boolean isHover);
+        boolean isHover();
+    }
+
+    protected class WidgetSlot extends Slot implements ISlotWidget {
+        boolean isHover;
+
         public WidgetSlot(IInventory inventory, int index, int xPosition, int yPosition) {
             super(inventory, index, xPosition, yPosition);
+        }
+
+        @Override
+        public void setHover(boolean isHover) {
+            this.isHover = isHover;
+        }
+
+        @Override
+        public boolean isHover() {
+            return isHover;
         }
 
         @Override
@@ -212,10 +241,21 @@ public class SlotWidget extends Widget implements INativeWidget {
 
     }
 
-    protected class WidgetSlotItemHandler extends SlotItemHandler {
+    protected class WidgetSlotItemHandler extends SlotItemHandler implements ISlotWidget {
+        boolean isHover;
 
         public WidgetSlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
             super(itemHandler, index, xPosition, yPosition);
+        }
+
+        @Override
+        public void setHover(boolean isHover) {
+            this.isHover = isHover;
+        }
+
+        @Override
+        public boolean isHover() {
+            return isHover;
         }
 
         @Override

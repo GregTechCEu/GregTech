@@ -103,6 +103,7 @@ public class GuidePageEditorWidget extends GuidePageWidget {
 
     private void setToolButton(Widget widget) {
         customPositionSizeWidget.setControlled(widget);
+        customPositionSizeWidget.setVisible(true);
         customPositionSizeWidget.setActive(!(widget instanceof IGuideWidget) || ((IGuideWidget) widget).isFixed());
         toolButtons.setVisible(true);
         toolButtons.setSelfPosition(new Position(widget.getSelfPosition().x + widget.getSize().width / 2, widget.getSelfPosition().y));

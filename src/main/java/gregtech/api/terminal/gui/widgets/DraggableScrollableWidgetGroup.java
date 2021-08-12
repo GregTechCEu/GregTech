@@ -122,7 +122,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         }
         int offsetY = 0;
         int offsetX = 0;
-        if (mh > getSize().height && mh < maxHeight) {
+        if (mh > getSize().height) {
             offsetY = maxHeight - mh;
             maxHeight = mh;
             if (scrollYOffset - offsetY < 0) {
@@ -137,7 +137,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
             }
             scrollYOffset -= offsetY;
         }
-        if (mw > getSize().width && mw < maxWidth) {
+        if (mw > getSize().width) {
             offsetX = maxWidth - mw;
             maxWidth = mw;
             if (scrollXOffset - offsetX < 0) {
@@ -201,7 +201,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
     private boolean isOnXScrollPane(int mouseX, int mouseY) {
         Position pos = getPosition();
         Size size = getSize();
-        return isMouseOver(pos.x, pos.y - xBarHeight, size.width, xBarHeight, mouseX, mouseY);
+        return isMouseOver(pos.x, pos.y + size.height - xBarHeight, size.width, xBarHeight, mouseX, mouseY);
     }
 
     private boolean isOnYScrollPane(int mouseX, int mouseY) {
@@ -233,8 +233,8 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
                 xBarB.draw(x, y - xBarHeight, width, xBarHeight);
             }
             if (xBarF != null) {
-                int barWidth = width / getMaxWidth();
-                xBarF.draw(x + scrollXOffset, y - xBarHeight, barWidth, xBarHeight);
+                int barWidth = (int) (width * 1.0f / getMaxWidth() * width);
+                xBarF.draw(x + scrollXOffset * width * 1.0f / getMaxWidth(), y + height - xBarHeight, barWidth, xBarHeight);
             }
         }
         if (yBarWidth > 0) {
@@ -323,8 +323,11 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         } else if (draggedOnYScrollBar && (getMaxHeight() - getSize().height > 0 || scrollYOffset > getMaxHeight() - getSize().height)) {
             setScrollYOffset(MathHelper.clamp(scrollYOffset + deltaY * getMaxHeight() / getSize().height, 0, getMaxHeight() - getSize().height));
             return true;
-        } else if (draggedWidget != null && ((IDraggable)draggedWidget).dragging(mouseX, mouseY, deltaX, deltaY)) {
-            draggedWidget.addSelfPosition(deltaX, deltaY);
+        } else if (draggedWidget != null) {
+            if (((IDraggable)draggedWidget).dragging(mouseX, mouseY, deltaX, deltaY)) {
+                draggedWidget.addSelfPosition(deltaX, deltaY);
+            }
+            computeMax();
             return true;
         } else if (draggedPanel) {
             setScrollXOffset(MathHelper.clamp(scrollXOffset - deltaX, 0, Math.max(getMaxWidth() - yBarWidth - getSize().width, 0)));

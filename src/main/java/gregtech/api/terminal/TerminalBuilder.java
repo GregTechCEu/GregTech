@@ -1,11 +1,13 @@
 package gregtech.api.terminal;
 
+import gregtech.api.GTValues;
 import gregtech.api.terminal.app.*;
 import gregtech.api.terminal.app.guide.ItemGuideApp;
 import gregtech.api.terminal.app.guide.MultiBlockGuideApp;
 import gregtech.api.terminal.app.guide.SimpleMachineGuideApp;
 import gregtech.api.terminal.app.guide.TutorialGuideApp;
 import gregtech.api.terminal.app.guideeditor.GuideEditorApp;
+import gregtech.api.terminal.app.recipegraph.RecipeGraphApp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +25,9 @@ public class TerminalBuilder {
         registerApp(new TutorialGuideApp(), true);
         registerApp(new GuideEditorApp(), true);
         registerApp(new ThemeSettingApp(), true);
+        if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
+            registerApp(new RecipeGraphApp(), true);
+        }
     }
 
     public static void registerApp(AbstractApplication application, boolean isDefaultApp) {
