@@ -21,7 +21,8 @@ public class GuideJsonLoader implements IResourceManagerReloadListener {
         List<ResourceLocation> files = new ArrayList<>();
         CraftingHelper.findFiles(Loader.instance().activeModContainer(), "assets/gregtech/terminal/guide", Files::exists, (path, file) -> {
             if(file.toString().endsWith(".json")) {
-                files.add(new ResourceLocation("gregtech", file.toString().split("assets/gregtech/")[1]));
+                String f = file.toString().replaceAll("\\\\", "/");
+                files.add(new ResourceLocation("gregtech", f.split("assets/gregtech/")[1]));
             }
             return true;
         }, false, true);
