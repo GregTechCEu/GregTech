@@ -104,12 +104,12 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         private final BlockPos pipePos;
         private final EnumFacing faceToHandler;
         private final int distance;
-        private final List<Object> objectsInPath;
+        private final Set<Object> objectsInPath;
         private final int minRate;
         private FluidStack lastTransferredFluid;
         private final List<TileEntityFluidPipeTickable> tickingPipes;
 
-        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, List<Object> objectsInPath, int minRate, List<TileEntityFluidPipeTickable> tickingPipes) {
+        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, Set<Object> objectsInPath, int minRate, List<TileEntityFluidPipeTickable> tickingPipes) {
             this.pipePos = pipePos;
             this.faceToHandler = facing;
             this.distance = distance;
@@ -126,7 +126,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
             return lastTransferredFluid;
         }
 
-        public List<Object> getObjectsInPath() {
+        public Set<Object> getObjectsInPath() {
             return objectsInPath;
         }
 

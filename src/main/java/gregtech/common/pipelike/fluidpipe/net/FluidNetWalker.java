@@ -1,6 +1,8 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -15,23 +17,24 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class FluidNetWalker extends PipeNetWalker {
 
     public static List<FluidPipeNet.Inventory> createNetData(FluidPipeNet net, World world, BlockPos sourcePipe) {
-        FluidNetWalker walker = new FluidNetWalker(net, world, sourcePipe, 1, new ArrayList<>(), new ArrayList<>(), Integer.MAX_VALUE, new ArrayList<>());
+        FluidNetWalker walker = new FluidNetWalker(net, world, sourcePipe, 1, new ArrayList<>(), new HashSet<>(), Integer.MAX_VALUE, new ArrayList<>());
         walker.traversePipeNet();
         return walker.inventories;
     }
 
     private final List<FluidPipeNet.Inventory> inventories;
-    private final List<Object> pathObjects;
+    private final Set<Object> pathObjects;
     private final List<TileEntityFluidPipeTickable> tickingPipes;
+    private final Map<BlockPos, CoverFluidFilter> covers = new HashMap<>();
+    private final Set<PosFace> checkedCovers = new HashSet<>();
     private int rate;
 
-    protected FluidNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, List<FluidPipeNet.Inventory> inventories, List<Object> pathObjects, int rate, List<TileEntityFluidPipeTickable> tickingPipes) {
+    protected FluidNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, List<FluidPipeNet.Inventory> inventories, Set<Object> pathObjects, int rate, List<TileEntityFluidPipeTickable> tickingPipes) {
         super(net, world, sourcePipe, walkedBlocks);
         this.inventories = inventories;
         this.pathObjects = pathObjects;
@@ -41,18 +44,38 @@ public class FluidNetWalker extends PipeNetWalker {
 
     @Override
     protected PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks) {
-        return new FluidNetWalker(net, world, nextPos, walkedBlocks, inventories, new ArrayList<>(pathObjects), rate, new ArrayList<>(tickingPipes));
+        Set<Object> pathObjectsCopy = new HashSet<>(pathObjects);
+        CoverFluidFilter fluidFilter = covers.get(nextPos);
+        if(fluidFilter != null)
+            pathObjectsCopy.add(fluidFilter);
+        return new FluidNetWalker(net, world, nextPos, walkedBlocks, inventories, pathObjectsCopy, rate, new ArrayList<>(tickingPipes));
     }
 
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
+        pathObjects.addAll(covers.values());
+        covers.clear();
         pathObjects.add(pipeTile);
         this.rate = Math.min(this.rate, ((TileEntityFluidPipe) pipeTile).getNodeData().throughput);
         int validPipes = 0;
         for (EnumFacing facing : EnumFacing.values()) {
-            TileEntity tile = pipeTile.getPipeWorld().getTileEntity(pos.offset(facing));
+            BlockPos offset = pos.offset(facing);
+            EnumFacing opposite = facing.getOpposite();
+            TileEntity tile = pipeTile.getPipeWorld().getTileEntity(offset);
             if (tile instanceof IPipeTile && isValidPipe(pipeTile, (IPipeTile<?, ?>) tile, pos, facing)) {
-                checkCover(pipeTile.getCoverableImplementation().getCoverAtSide(facing));
+                if(!checkedCovers.contains(new PosFace(pos, facing))) {
+                    CoverBehavior cover = pipeTile.getCoverableImplementation().getCoverAtSide(facing);
+                    if(cover instanceof CoverFluidFilter) {
+                        covers.put(pos.offset(facing), (CoverFluidFilter) cover);
+                    }
+                }
+                ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, opposite);
+                checkedCovers.add(new PosFace(offset, opposite));
+                if(coverable != null) {
+                    CoverBehavior cover2 = coverable.getCoverAtSide(opposite);
+                    if(cover2 instanceof CoverFluidFilter)
+                        covers.put(pos, (CoverFluidFilter) cover2);
+                }
                 validPipes++;
             }
         }
@@ -61,17 +84,16 @@ public class FluidNetWalker extends PipeNetWalker {
         }
     }
 
-    protected void checkCover(CoverBehavior coverBehavior) {
-        if (coverBehavior instanceof CoverFluidFilter)
-            pathObjects.add(coverBehavior);
-    }
-
     @Override
     protected void checkNeighbour(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
         if (neighbourTile == null) return;
         IFluidHandler handler = neighbourTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, faceToNeighbour.getOpposite());
         if (handler != null) {
-            inventories.add(new FluidPipeNet.Inventory(pipePos, faceToNeighbour, getWalkedBlocks(), new ArrayList<>(pathObjects), rate, new ArrayList<>(tickingPipes)));
+            Set<Object> pathObjectsCopy = new HashSet<>(pathObjects);
+            CoverFluidFilter fluidFilter = covers.get(pipePos.offset(faceToNeighbour));
+            if(fluidFilter != null)
+                pathObjectsCopy.add(fluidFilter);
+            inventories.add(new FluidPipeNet.Inventory(pipePos, faceToNeighbour, getWalkedBlocks(), pathObjectsCopy, rate, new ArrayList<>(tickingPipes)));
             tickingPipes.add((TileEntityFluidPipeTickable) pipeTile.setSupportsTicking());
         }
     }
@@ -79,5 +101,28 @@ public class FluidNetWalker extends PipeNetWalker {
     @Override
     protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
         return neighbourPipe instanceof TileEntityFluidPipe;
+    }
+
+    private static class PosFace {
+        private final BlockPos pos;
+        private final EnumFacing face;
+
+        private PosFace(BlockPos pos, EnumFacing face) {
+            this.pos = pos;
+            this.face = face;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PosFace posFace = (PosFace) o;
+            return Objects.equals(pos, posFace.pos) && face == posFace.face;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(pos, face);
+        }
     }
 }

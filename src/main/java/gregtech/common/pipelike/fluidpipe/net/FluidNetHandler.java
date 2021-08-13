@@ -61,9 +61,6 @@ public class FluidNetHandler implements IFluidHandler {
         if (tileCover != null && !checkImportCover(tileCover, false, resource))
             return 0;
 
-        // check if pipes can handle fluid and destroy of not
-
-
         if (!pipePump && !tilePump)
             return insertFirst(resource, doFill);
 
