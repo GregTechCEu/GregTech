@@ -20,7 +20,6 @@ import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.material.properties.ToolProperty;
@@ -474,28 +473,6 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             return metaToolValueItem.toolStats.canApplyEnchantment(stack, enchantment);
         }
         return false;
-    }
-
-    @Deprecated
-    public static int getMaterialEnchantability(Material material) {
-        if (material.getMaterialIconSet() == MaterialIconSet.SHINY ||
-                material.getMaterialIconSet() == MaterialIconSet.RUBY) {
-            return 33; //all shiny metals have gold enchantability
-        } else if (material.getMaterialIconSet() == MaterialIconSet.DULL ||
-                material.getMaterialIconSet() == MaterialIconSet.METALLIC) {
-            return 21; //dull metals have iron enchantability
-        } else if (material.getMaterialIconSet() == MaterialIconSet.GEM_VERTICAL ||
-                material.getMaterialIconSet() == MaterialIconSet.GEM_HORIZONTAL ||
-                material.getMaterialIconSet() == MaterialIconSet.DIAMOND ||
-                material.getMaterialIconSet() == MaterialIconSet.OPAL ||
-                material.getMaterialIconSet() == MaterialIconSet.NETHERSTAR) {
-            return 15; //standard gems have diamond enchantability
-        } else if (material.getMaterialIconSet() == MaterialIconSet.WOOD ||
-                material.getMaterialIconSet() == MaterialIconSet.ROUGH ||
-                material.getMaterialIconSet() == MaterialIconSet.FINE) {
-            return 11; //wood and stone has their default enchantability
-        }
-        return 10; //otherwise return lowest enchantability
     }
 
     @Override
