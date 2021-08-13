@@ -153,7 +153,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         widgetGroup.addWidget(new CraftingSlotWidget(recipeResolver, 0, 88 - 9, 44 - 9));
 
         //crafting grid
-        widgetGroup.addWidget(new CraftingStationInputWidgetGroup(5, 0, craftingGrid, recipeResolver));
+        widgetGroup.addWidget(new CraftingStationInputWidgetGroup(5, 8, craftingGrid, recipeResolver));
 
         Supplier<String> textSupplier = () -> Integer.toString(recipeResolver.getItemsCrafted());
         widgetGroup.addWidget(new SimpleTextWidget(88, 44 + 20, "", textSupplier));

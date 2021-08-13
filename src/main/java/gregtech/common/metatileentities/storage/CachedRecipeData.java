@@ -103,7 +103,7 @@ public class CachedRecipeData {
         if (currentStack.isEmpty()) {
             return true; //stack is empty, nothing to return
         }
-        ItemStackKey currentStackKey = new ItemStackKey(currentStack);
+        ItemStackKey currentStackKey = new ItemStackKey(currentStack.copy());
         if (simulateExtractItem(currentStackKey)) {
             //we can extract ingredient equal to the one in the crafting grid,
             //so just return it without searching equivalent
@@ -121,6 +121,7 @@ public class CachedRecipeData {
                     return true;
                 }
             }
+            inventory.setInventorySlotContents(slot, currentStack);
         }
         //nothing matched, so return null
         return false;

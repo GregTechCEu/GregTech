@@ -171,6 +171,6 @@ public class CraftingRecipeResolver {
     }
 
     public CachedRecipeData getCachedRecipeData() {
-        return this.getCachedRecipeData();
+        return this.cachedRecipeData;
     }
 }

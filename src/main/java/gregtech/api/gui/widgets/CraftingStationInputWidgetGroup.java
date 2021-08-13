@@ -32,7 +32,7 @@ public class CraftingStationInputWidgetGroup extends AbstractWidgetGroup {
             for (int i = 0; i < 9; i++) {
                 Widget widget = widgets.get(i);
                 if (widget instanceof PhantomSlotWidget && ((tintLocations >> i) & 1) == 0) { // In other words, is this slot usable?
-                    int color = 0x00005555;
+                    int color = 0x66FF0000;
 
                     PhantomSlotWidget phantomSlotWidget = (PhantomSlotWidget) widget;
                     drawSolidRect(phantomSlotWidget.getPosition().x, phantomSlotWidget.getPosition().y,
@@ -45,9 +45,18 @@ public class CraftingStationInputWidgetGroup extends AbstractWidgetGroup {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        if (recipeResolver.getCachedRecipeData().attemptMatchRecipe() != tintLocations) {
-            this.tintLocations = recipeResolver.getCachedRecipeData().attemptMatchRecipe();
+        short newTintLocations = getTintLocations();
+        if (tintLocations != newTintLocations) {
+            this.tintLocations = newTintLocations;
             writeUpdateInfo(2, buffer -> buffer.writeShort(tintLocations));
+        }
+    }
+
+    private short getTintLocations() {
+        if(recipeResolver.getCachedRecipeData() != null) {
+            return recipeResolver.getCachedRecipeData().attemptMatchRecipe();
+        } else {
+            return 511;
         }
     }
 
