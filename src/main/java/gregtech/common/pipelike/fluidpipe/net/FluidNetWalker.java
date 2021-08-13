@@ -30,8 +30,8 @@ public class FluidNetWalker extends PipeNetWalker {
     private final List<FluidPipeNet.Inventory> inventories;
     private final Set<Object> pathObjects;
     private final List<TileEntityFluidPipeTickable> tickingPipes;
-    private final Map<BlockPos, CoverFluidFilter> covers = new HashMap<>();
-    private final Set<PosFace> checkedCovers = new HashSet<>();
+    private final Map<BlockPos, List<CoverFluidFilter>> covers = new HashMap<>();
+    private LinkedList<PosFace> checkedCovers = new LinkedList<>();
     private int rate;
 
     protected FluidNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, List<FluidPipeNet.Inventory> inventories, Set<Object> pathObjects, int rate, List<TileEntityFluidPipeTickable> tickingPipes) {
@@ -45,10 +45,12 @@ public class FluidNetWalker extends PipeNetWalker {
     @Override
     protected PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks) {
         Set<Object> pathObjectsCopy = new HashSet<>(pathObjects);
-        CoverFluidFilter fluidFilter = covers.get(nextPos);
+        List<CoverFluidFilter> fluidFilter = covers.get(nextPos);
         if(fluidFilter != null)
-            pathObjectsCopy.add(fluidFilter);
-        return new FluidNetWalker(net, world, nextPos, walkedBlocks, inventories, pathObjectsCopy, rate, new ArrayList<>(tickingPipes));
+            pathObjectsCopy.addAll(fluidFilter);
+        FluidNetWalker walker = new FluidNetWalker(net, world, nextPos, walkedBlocks, inventories, pathObjectsCopy, rate, new ArrayList<>(tickingPipes));
+        walker.checkedCovers = checkedCovers;
+        return walker;
     }
 
     @Override
@@ -56,6 +58,9 @@ public class FluidNetWalker extends PipeNetWalker {
         pathObjects.addAll(covers.values());
         covers.clear();
         pathObjects.add(pipeTile);
+        while (checkedCovers.size() > 12) {
+            checkedCovers.removeFirst();
+        }
         this.rate = Math.min(this.rate, ((TileEntityFluidPipe) pipeTile).getNodeData().throughput);
         int validPipes = 0;
         for (EnumFacing facing : EnumFacing.values()) {
@@ -65,16 +70,17 @@ public class FluidNetWalker extends PipeNetWalker {
             if (tile instanceof IPipeTile && isValidPipe(pipeTile, (IPipeTile<?, ?>) tile, pos, facing)) {
                 if(!checkedCovers.contains(new PosFace(pos, facing))) {
                     CoverBehavior cover = pipeTile.getCoverableImplementation().getCoverAtSide(facing);
-                    if(cover instanceof CoverFluidFilter) {
-                        covers.put(pos.offset(facing), (CoverFluidFilter) cover);
-                    }
+                    if(cover instanceof CoverFluidFilter)
+                        putFilter(offset, cover);
                 }
                 ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, opposite);
-                checkedCovers.add(new PosFace(offset, opposite));
+                PosFace posFace = new PosFace(offset, opposite);
+                if(!checkedCovers.contains(posFace))
+                    checkedCovers.addLast(posFace);
                 if(coverable != null) {
                     CoverBehavior cover2 = coverable.getCoverAtSide(opposite);
                     if(cover2 instanceof CoverFluidFilter)
-                        covers.put(pos, (CoverFluidFilter) cover2);
+                        putFilter(offset, cover2);
                 }
                 validPipes++;
             }
@@ -84,15 +90,23 @@ public class FluidNetWalker extends PipeNetWalker {
         }
     }
 
+    private void putFilter(BlockPos pos, CoverBehavior cover) {
+        List<CoverFluidFilter> coverFluidFilters = covers.get(pos);
+        if(coverFluidFilters == null)
+            coverFluidFilters = new ArrayList<>();
+        coverFluidFilters.add((CoverFluidFilter) cover);
+        covers.put(pos, coverFluidFilters);
+    }
+
     @Override
     protected void checkNeighbour(IPipeTile<?, ?> pipeTile, BlockPos pipePos, EnumFacing faceToNeighbour, @Nullable TileEntity neighbourTile) {
         if (neighbourTile == null) return;
         IFluidHandler handler = neighbourTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, faceToNeighbour.getOpposite());
         if (handler != null) {
             Set<Object> pathObjectsCopy = new HashSet<>(pathObjects);
-            CoverFluidFilter fluidFilter = covers.get(pipePos.offset(faceToNeighbour));
+            List<CoverFluidFilter> fluidFilter = covers.get(pipePos.offset(faceToNeighbour));
             if(fluidFilter != null)
-                pathObjectsCopy.add(fluidFilter);
+                pathObjectsCopy.addAll(fluidFilter);
             inventories.add(new FluidPipeNet.Inventory(pipePos, faceToNeighbour, getWalkedBlocks(), pathObjectsCopy, rate, new ArrayList<>(tickingPipes)));
             tickingPipes.add((TileEntityFluidPipeTickable) pipeTile.setSupportsTicking());
         }
