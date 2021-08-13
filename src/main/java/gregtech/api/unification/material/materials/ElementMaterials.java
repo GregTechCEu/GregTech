@@ -23,7 +23,7 @@ public class ElementMaterials {
                 .color(0x80C8F0)
                 .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING, GENERATE_FRAME, GENERATE_SPRING, GENERATE_SPRING_SMALL)
                 .element(Elements.Al)
-                .toolStats(10.0f, 2.0f, 128)
+                .toolStats(10.0f, 2.0f, 128, 21)
                 .cableProperties(GTValues.V[4], 1, 1)
                 .fluidPipeProperties(1166, 35, true)
                 .blastTemp(1700)
@@ -154,7 +154,7 @@ public class ElementMaterials {
                 .color(0xFFE6E6).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .element(Elements.Cr)
-                .toolStats(12.0f, 3.0f, 512)
+                .toolStats(12.0f, 3.0f, 512, 33)
                 .fluidPipeProperties(2725, 40, true)
                 .blastTemp(1700)
                 .build();
@@ -164,7 +164,7 @@ public class ElementMaterials {
                 .color(0x5050FA).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_GEAR)
                 .element(Elements.Co)
-                .toolStats(10.0f, 3.0f, 256)
+                .toolStats(10.0f, 3.0f, 256, 21)
                 .cableProperties(GTValues.V[1], 2, 2)
                 .itemPipeProperties(2560, 2.0f)
                 .build();
@@ -348,7 +348,7 @@ public class ElementMaterials {
                 .color(0xF0F0F5)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .element(Elements.Ir)
-                .toolStats(7.0f, 3.0f, 2560)
+                .toolStats(7.0f, 3.0f, 2560, 21)
                 .fluidPipeProperties(3398, 140, true)
                 .blastTemp(2719)
                 .build();
@@ -359,7 +359,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_DENSE, GENERATE_FRAME, GENERATE_ROTOR, GENERATE_SMALL_GEAR,
                         GENERATE_SPRING, GENERATE_SPRING_SMALL, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, BLAST_FURNACE_CALCITE_TRIPLE)
                 .element(Elements.Fe)
-                .toolStats(7.0f, 2.5f, 256)
+                .toolStats(7.0f, 2.5f, 256, 21)
                 .cableProperties(GTValues.V[2], 2, 3)
                 .build();
 
@@ -429,7 +429,7 @@ public class ElementMaterials {
                 .color(0xFAFAFA)
                 .flags(STD_METAL, GENERATE_FOIL)
                 .element(Elements.Mn)
-                .toolStats(7.0f, 2.0f, 512)
+                .toolStats(7.0f, 2.0f, 512, 21)
                 .build();
 
         Meitnerium = new Material.Builder(62, "meitnerium")
@@ -448,7 +448,7 @@ public class ElementMaterials {
                 .ingot().fluid().ore()
                 .color(0xB4B4DC).iconSet(SHINY)
                 .element(Elements.Mo)
-                .toolStats(7.0f, 2.0f, 512)
+                .toolStats(7.0f, 2.0f, 512, 33)
                 .build();
 
         Moscovium = new Material.Builder(65, "moscovium")
@@ -462,7 +462,7 @@ public class ElementMaterials {
                 .color(0x646464).iconSet(METALLIC)
                 .flags(STD_METAL, GENERATE_ROD)
                 .element(Elements.Nd)
-                .toolStats(7.0f, 2.0f, 512)
+                .toolStats(7.0f, 2.0f, 512, 21)
                 .blastTemp(1297)
                 .build();
 
@@ -526,7 +526,7 @@ public class ElementMaterials {
                 .color(0x3232FF).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .element(Elements.Os)
-                .toolStats(16.0f, 4.0f, 1280)
+                .toolStats(16.0f, 4.0f, 1280, 21)
                 .cableProperties(GTValues.V[5], 4, 2)
                 .itemPipeProperties(256, 8.0f)
                 .blastTemp(3306)
@@ -543,7 +543,7 @@ public class ElementMaterials {
                 .color(0x808080).iconSet(SHINY)
                 .flags(EXT2_METAL)
                 .element(Elements.Pd)
-                .toolStats(8.0f, 2.0f, 512)
+                .toolStats(8.0f, 2.0f, 512, 33)
                 .cableProperties(GTValues.V[5], 2, 1)
                 .blastTemp(1228)
                 .build();
@@ -772,7 +772,7 @@ public class ElementMaterials {
                 .color(0x001E00).iconSet(SHINY)
                 .flags(STD_METAL)
                 .element(Elements.Th)
-                .toolStats(6.0f, 2.0f, 512)
+                .toolStats(6.0f, 2.0f, 512, 33)
                 .build();
 
         Thallium = new Material.Builder(110, "thallium")
@@ -803,7 +803,7 @@ public class ElementMaterials {
                 .color(0xDCA0F0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_SPRING, GENERATE_FRAME, GENERATE_DENSE)
                 .element(Elements.Ti)
-                .toolStats(7.0f, 3.0f, 1600)
+                .toolStats(7.0f, 3.0f, 1600, 21)
                 .cableProperties(GTValues.V[4], 4, 2)
                 .fluidPipeProperties(2426, 80, true)
                 .blastTemp(1941)
@@ -820,7 +820,7 @@ public class ElementMaterials {
                 .color(0x323232).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SPRING, GENERATE_SPRING_SMALL)
                 .element(Elements.W)
-                .toolStats(7.0f, 3.0f, 2560)
+                .toolStats(7.0f, 3.0f, 2560, 21)
                 .cableProperties(GTValues.V[5], 2, 2)
                 .fluidPipeProperties(4618, 90, true)
                 .blastTemp(3000)
@@ -831,7 +831,7 @@ public class ElementMaterials {
                 .color(0x32F032).iconSet(METALLIC)
                 .flags(STD_METAL)
                 .element(Elements.U238)
-                .toolStats(6.0f, 3.0f, 512)
+                .toolStats(6.0f, 3.0f, 512, 21)
                 .build();
 
         Uranium235 = new Material.Builder(117, "uranium235")
@@ -839,7 +839,7 @@ public class ElementMaterials {
                 .color(0x46FA46).iconSet(SHINY)
                 .flags(STD_METAL, GENERATE_ROD)
                 .element(Elements.U235)
-                .toolStats(6.0f, 3.0f, 512)
+                .toolStats(6.0f, 3.0f, 512, 33)
                 .build();
 
         Vanadium = new Material.Builder(118, "vanadium")
@@ -892,7 +892,7 @@ public class ElementMaterials {
                 .color(0x323232).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_SPRING)
                 .element(Elements.Nq)
-                .toolStats(6.0f, 4.0f, 1280)
+                .toolStats(6.0f, 4.0f, 1280, 21)
                 .cableProperties(GTValues.V[7], 2, 2)
                 .fluidPipeProperties(19200, 1500, true)
                 .blastTemp(5400)
@@ -903,7 +903,7 @@ public class ElementMaterials {
                 .color(0x3C3C3C).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Nq1)
-                .toolStats(6.0f, 4.0f, 1280)
+                .toolStats(6.0f, 4.0f, 1280, 21)
                 .blastTemp(4500)
                 .build();
 
@@ -920,7 +920,7 @@ public class ElementMaterials {
                 .color(0xFAFAFA)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME)
                 .element(Elements.Nt)
-                .toolStats(24.0f, 12.0f, 655360)
+                .toolStats(24.0f, 12.0f, 655360, 21)
                 .fluidPipeProperties(1000000, 2800, true)
                 .build();
 
@@ -929,7 +929,7 @@ public class ElementMaterials {
                 .color(0x600000).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FRAME)
                 .element(Elements.Tr)
-                .toolStats(20.0f, 6.0f, 10240)
+                .toolStats(20.0f, 6.0f, 10240, 21)
                 .build();
 
         Duranium = new Material.Builder(129, "duranium")
@@ -937,7 +937,7 @@ public class ElementMaterials {
                 .color(0x4BAFAF).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Dr)
-                .toolStats(16.0f, 5.0f, 5120)
+                .toolStats(16.0f, 5.0f, 5120, 21)
                 .cableProperties(GTValues.V[8], 1, 8)
                 .fluidPipeProperties(100000, 2000, true)
                 .build();

@@ -667,8 +667,8 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder toolStats(float speed, float damage, int durability) {
-            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability));
+        public Builder toolStats(float speed, float damage, int durability, int enchantability) {
+            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability, enchantability));
             return this;
         }
 

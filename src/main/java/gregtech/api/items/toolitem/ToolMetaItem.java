@@ -464,8 +464,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     @Override
     public int getItemEnchantability(ItemStack stack) {
-        Material primaryMaterial = getToolMaterial(stack);
-        return getMaterialEnchantability(primaryMaterial);
+        return getToolMaterial(stack).getProperty(PropertyKey.TOOL).toolEnchantability;
     }
 
     @Override
@@ -477,6 +476,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         return false;
     }
 
+    @Deprecated
     public static int getMaterialEnchantability(Material material) {
         if (material.getMaterialIconSet() == MaterialIconSet.SHINY ||
                 material.getMaterialIconSet() == MaterialIconSet.RUBY) {

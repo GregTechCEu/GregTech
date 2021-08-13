@@ -36,6 +36,14 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     public final int toolDurability;
 
     /**
+     * Enchantability of tools made from this Material.
+     * <p>
+     * Default:
+     */
+    //@ZenProperty
+    public final int toolEnchantability;
+
+    /**
      * Enchantment to be applied to tools made from this Material.
      * <p>
      * Default: none.
@@ -43,17 +51,18 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
     //@ZenProperty
     public final List<EnchantmentData> toolEnchantments = new ArrayList<>();
 
-    public ToolProperty(float toolSpeed, float toolAttackDamage, int toolDurability) {
+    public ToolProperty(float toolSpeed, float toolAttackDamage, int toolDurability, int toolEnchantability) {
         this.toolSpeed = toolSpeed;
         this.toolAttackDamage = toolAttackDamage;
         this.toolDurability = toolDurability;
+        this.toolEnchantability = toolEnchantability;
     }
 
     /**
      * Default values constructor.
      */
     public ToolProperty() {
-        this(1.0f, 1.0f, 100);
+        this(1.0f, 1.0f, 100, 10);
     }
 
     @Override
