@@ -172,13 +172,17 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     @Override
     public void setConnectionBlocked(AttachmentType attachmentType, EnumFacing side, boolean blocked, boolean fromNeighbor) {
         // fix desync between two connections. Can happen if a pipe side is blocked, and a new pipe is placed next to it.
-        if (attachmentType == AttachmentType.PIPE && isConnectionOpen(attachmentType, side) == isNeighborPipeBlocked(attachmentType, side) && !fromNeighbor) {
+        TileEntity tile = getWorld().getTileEntity(getPos().offset(side));
+        IPipeTile<?, ?> neighbourPipe = null;
+        if (tile instanceof IPipeTile)
+            neighbourPipe = (IPipeTile<?, ?>) tile;
+        if (neighbourPipe != null && !fromNeighbor && attachmentType == AttachmentType.PIPE && isConnectionOpenAny(side) != neighbourPipe.isConnectionOpenAny(side.getOpposite())) {
             syncPipeConnections(attachmentType, side);
             return;
         }
         int at = attachmentType.ordinal();
-        int openConnections = openConnectionsMap.get(at);
-        this.openConnectionsMap.put(attachmentType.ordinal(), withSideConnectionBlocked(openConnections, side, blocked));
+        int openConnections = withSideConnectionBlocked(openConnectionsMap.get(at), side, blocked);
+        this.openConnectionsMap.put(at, openConnections);
         recomputeBlockedConnections();
         if (!getWorld().isRemote) {
             if (!detachedConversionMode) {
@@ -186,12 +190,12 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             }
             writeCustomData(-2, buffer -> {
                 buffer.writeVarInt(at);
-                buffer.writeVarInt(openConnectionsMap.get(at));
+                buffer.writeVarInt(openConnections);
             });
             markDirty();
-        }
-        if (attachmentType == AttachmentType.PIPE && !fromNeighbor) {
-            setNeighborPipeBlocked(attachmentType, side, blocked);
+            if (neighbourPipe != null && attachmentType == AttachmentType.PIPE && !fromNeighbor) {
+                setNeighborPipeBlocked(attachmentType, side, blocked);
+            }
         }
     }
 
@@ -204,17 +208,17 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         }
     }
 
-    private boolean isNeighborPipeBlocked(AttachmentType type, EnumFacing side) {
+    private boolean isNeighborPipeOpen(AttachmentType type, EnumFacing side) {
         TileEntity te = this.getWorld().getTileEntity(this.getPipePos().offset(side));
-        if (te instanceof TileEntityPipeBase) {
-            TileEntityPipeBase<?, ?> pipeTe = (TileEntityPipeBase<?, ?>) te;
-            return !pipeTe.isConnectionOpen(type, side.getOpposite());
+        if (te instanceof IPipeTile) {
+            IPipeTile<?, ?> pipeTe = (IPipeTile<?, ?>) te;
+            return pipeTe.isConnectionOpen(type, side.getOpposite());
         }
         return false;
     }
 
     private void syncPipeConnections(AttachmentType type, EnumFacing side) {
-        if (isNeighborPipeBlocked(type, side) && isConnectionOpen(type, side)) {
+        if (!isNeighborPipeOpen(type, side) && isConnectionOpen(type, side)) {
             setNeighborPipeBlocked(type, side, false);
         } else {
             setConnectionBlocked(type, side, false, true);
