@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 
 public class ThemeSettingApp extends AbstractApplication {
     public ThemeSettingApp() {
-        super("Theme Setting", GuiTextures.GREGTECH_LOGO);
+        super("theme_settings", GuiTextures.GREGTECH_LOGO);
     }
 
     private WidgetGroup textureGroup;

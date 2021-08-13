@@ -25,14 +25,12 @@ public class TerminalDesktopWidget extends WidgetGroup {
         int x = this.getSize().width / 2 + (3 * r) * (index - 3);
         int y = (index / 7) * (3 * r) + 40;
         CircleButtonWidget button = new CircleButtonWidget(x,y)
-                .setColors(new Color(146, 146, 146, 126).getRGB(),
-                        new Color(105, 224, 216).getRGB(),
+                .setColors(TerminalTheme.COLOR_B_1.getColor(),
+                        TerminalTheme.COLOR_F_1.getColor(),
                         new Color(206, 206, 206).getRGB())
                 .setIcon(application.getIcon())
                 .setHoverText(application.getUnlocalizedName());
-        button.setClickListener(clickData -> {
-            os.openApplication(application, clickData.isClient);
-        });
+        button.setClickListener(clickData -> os.openApplication(application, clickData.isClient));
         appDiv.addWidget(button);
     }
 

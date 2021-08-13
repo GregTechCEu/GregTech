@@ -35,7 +35,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     }
 
     public String getUnlocalizedName() {
-        return "gregtech.guide_terminal.app_name." + name;
+        return "gregtech.terminal.app_name." + name;
     }
 
     public IGuiTexture getIcon() {

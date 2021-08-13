@@ -1,14 +1,13 @@
 {
-  "section": "default",
-  "title": "Json Tutorial",
+  "metaitem": "tool.wrench",
+  "section": "物品/工具",
+  "title": "Wrench",
   "stream": [
     {
       "type": "textbox",
       "isCenter": false,
       "content": [
-        "If you see this page, §4unfortunately§r, this item lacks a Guide Page.",
-        "Let's start the tutorial.Rest assured, this is not difficult, you can easily customize the Guide Page with JSON. We look forward to your contributions.",
-        "------------"
+        "扳扳这，扳扳那"
       ]
     },
     {

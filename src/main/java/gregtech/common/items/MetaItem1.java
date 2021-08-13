@@ -374,7 +374,7 @@ public class MetaItem1 extends StandardMetaItem {
         ENERGY_FIELD_PROJECTOR = addItem(464, "energy_field_projector").addComponents(ElectricStats.createElectricItem(16000000L, GTValues.EV)).setMaxStackSize(1);
         SCANNER = addItem(465, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, GTValues.LV), new ScannerBehavior(50));
         /* CLIPBOARD GOES HERE - ID 466 */
-        GUIDE_TERMINAL = addItem(467, "guide_terminal").addComponents(new GuideTerminalBehaviour());
+        TERMINAL = addItem(467, "terminal").addComponents(new TerminalBehaviour());
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");

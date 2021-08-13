@@ -20,7 +20,7 @@ import net.minecraft.world.World;
 import java.awt.*;
 import java.util.List;
 
-public class GuideTerminalBehaviour implements IItemBehaviour, ItemUIFactory {
+public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {

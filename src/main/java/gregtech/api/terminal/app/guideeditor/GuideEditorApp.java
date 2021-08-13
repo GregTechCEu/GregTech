@@ -23,7 +23,7 @@ public class GuideEditorApp extends AbstractApplication {
 
 
     public GuideEditorApp() {
-        super("Guide Editor", ICON);
+        super("guide_editor", ICON);
     }
 
     @Override

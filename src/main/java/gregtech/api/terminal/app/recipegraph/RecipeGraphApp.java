@@ -15,7 +15,7 @@ public class RecipeGraphApp extends AbstractApplication {
     private RGContainer container;
 
     public RecipeGraphApp() {
-        super("Recipe Graph", ICON);
+        super("recipe_graph", ICON);
     }
 
     @Override
