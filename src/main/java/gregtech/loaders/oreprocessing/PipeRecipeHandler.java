@@ -6,6 +6,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -23,6 +24,9 @@ public class PipeRecipeHandler {
         OrePrefix.pipeNormalFluid.addProcessingHandler(PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeNormal);
         OrePrefix.pipeLargeFluid.addProcessingHandler(PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeLarge);
         OrePrefix.pipeHugeFluid.addProcessingHandler(PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeHuge);
+
+        OrePrefix.pipeQuadrupleFluid.addProcessingHandler(PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeQuadruple);
+        OrePrefix.pipeNonupleFluid.addProcessingHandler(PropertyKey.FLUID_PIPE, PipeRecipeHandler::processPipeNonuple);
 
         OrePrefix.pipeTinyItem.addProcessingHandler(PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeTiny);
         OrePrefix.pipeSmallItem.addProcessingHandler(PropertyKey.ITEM_PIPE, PipeRecipeHandler::processPipeSmall);
@@ -130,6 +134,37 @@ public class PipeRecipeHandler {
                 'X', new UnificationEntry(OrePrefix.plateDouble, material));
     }
 
+    private static void processPipeQuadruple(OrePrefix pipePrefix, Material material, FluidPipeProperties property) {
+        ItemStack normalPipe = OreDictUnifier.get(OrePrefix.pipeNormalFluid, material);
+        ItemStack quadPipe = OreDictUnifier.get(pipePrefix, material);
+        ModHandler.addShapedRecipe(String.format("quadruple_%s_pipe", material.toString()),
+                quadPipe, "XX", "XX",
+                'X', normalPipe);
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(normalPipe.getItem(), 4, normalPipe.getMetadata())
+                .circuitMeta(1)
+                .outputs(quadPipe)
+                .duration(30)
+                .EUt(8)
+                .buildAndRegister();
+    }
+
+    private static void processPipeNonuple(OrePrefix pipePrefix, Material material, FluidPipeProperties property) {
+        ItemStack smallPipe = OreDictUnifier.get(OrePrefix.pipeSmallFluid, material);
+        ItemStack nonuplePipe = OreDictUnifier.get(pipePrefix, material);
+        ModHandler.addShapedRecipe(String.format("nonuple_%s_pipe", material.toString()),
+                nonuplePipe, "XXX", "XXX", "XXX",
+                'X', smallPipe);
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .input(smallPipe.getItem(), 9, smallPipe.getMetadata())
+                .circuitMeta(2)
+                .outputs(nonuplePipe)
+                .duration(40)
+                .EUt(8)
+                .buildAndRegister();
+    }
 
     private static int getVoltageMultiplier(Material material) {
         return material.getBlastTemperature() >= 2800 ? 32 : 8;
