@@ -37,7 +37,7 @@ public class CraftingStationInputWidgetGroup extends AbstractWidgetGroup {
 
                     PhantomSlotWidget phantomSlotWidget = (PhantomSlotWidget) widget;
                     drawSolidRect(phantomSlotWidget.getPosition().x, phantomSlotWidget.getPosition().y,
-                            phantomSlotWidget.getSize().getWidth(), phantomSlotWidget.getSize().getWidth(), color);
+                            phantomSlotWidget.getSize().getWidth() - 1, phantomSlotWidget.getSize().getWidth() - 1, color);
                 }
             }
         }
