@@ -142,7 +142,7 @@ public class PipeRecipeHandler {
                 'X', normalPipe);
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(normalPipe.getItem(), 4, normalPipe.getMetadata())
+                .inputs(GTUtility.copyAmount(4, normalPipe))
                 .circuitMeta(1)
                 .outputs(quadPipe)
                 .duration(30)
@@ -158,7 +158,7 @@ public class PipeRecipeHandler {
                 'X', smallPipe);
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(smallPipe.getItem(), 9, smallPipe.getMetadata())
+                .inputs(GTUtility.copyAmount(9, smallPipe))
                 .circuitMeta(2)
                 .outputs(nonuplePipe)
                 .duration(40)
