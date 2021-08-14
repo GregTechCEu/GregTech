@@ -11,6 +11,7 @@ import net.minecraftforge.items.ItemStackHandler;
 public class CraftingStationInputWidgetGroup extends AbstractWidgetGroup {
     protected CraftingRecipeResolver recipeResolver;
     protected short tintLocations;
+    public static final int LIGHT_RED = 0x66FF0000;
 
     public CraftingStationInputWidgetGroup(int x, int y, ItemStackHandler craftingGrid, CraftingRecipeResolver recipeResolver) {
         super(new Position(x, y));
@@ -32,7 +33,7 @@ public class CraftingStationInputWidgetGroup extends AbstractWidgetGroup {
             for (int i = 0; i < 9; i++) {
                 Widget widget = widgets.get(i);
                 if (widget instanceof PhantomSlotWidget && ((tintLocations >> i) & 1) == 0) { // In other words, is this slot usable?
-                    int color = 0x66FF0000;
+                    int color = LIGHT_RED;
 
                     PhantomSlotWidget phantomSlotWidget = (PhantomSlotWidget) widget;
                     drawSolidRect(phantomSlotWidget.getPosition().x, phantomSlotWidget.getPosition().y,
