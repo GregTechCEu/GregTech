@@ -122,19 +122,6 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
         return tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) != null;
     }
 
-    @Override
-    protected void onActiveModeChange(World world, BlockPos pos, boolean isActiveNow, boolean isInitialChange) {
-        TileEntityItemPipe oldTileEntity = (TileEntityItemPipe) world.getTileEntity(pos);
-        if (!(oldTileEntity instanceof TileEntityItemPipeTickable) && isActiveNow) {
-            TileEntityItemPipeTickable newTileEntity = new TileEntityItemPipeTickable();
-            newTileEntity.transferDataFrom(oldTileEntity);
-            newTileEntity.setActive(true);
-            world.setTileEntity(pos, newTileEntity);
-        } else if (oldTileEntity instanceof TileEntityItemPipeTickable) {
-            ((TileEntityItemPipeTickable) oldTileEntity).setActive(isActiveNow);
-        }
-    }
-
     @Nonnull
     @Override
     public int getVisualConnections(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile) {

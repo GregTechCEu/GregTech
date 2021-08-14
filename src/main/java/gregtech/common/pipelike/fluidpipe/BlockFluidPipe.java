@@ -143,19 +143,6 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         return supportsTicking ? new TileEntityFluidPipeTickable() : new TileEntityFluidPipe();
     }
 
-    @Override
-    protected void onActiveModeChange(World world, BlockPos pos, boolean isActiveNow, boolean isInitialChange) {
-        TileEntityFluidPipe oldTileEntity = (TileEntityFluidPipe) world.getTileEntity(pos);
-        if (!(oldTileEntity instanceof TileEntityFluidPipeTickable) && isActiveNow) {
-            TileEntityFluidPipeTickable newTileEntity = new TileEntityFluidPipeTickable();
-            newTileEntity.transferDataFrom(oldTileEntity);
-            newTileEntity.setActive(true);
-            world.setTileEntity(pos, newTileEntity);
-        } else if (oldTileEntity instanceof TileEntityFluidPipeTickable) {
-            ((TileEntityFluidPipeTickable) oldTileEntity).setActive(isActiveNow);
-        }
-    }
-
     @Nonnull
     @SuppressWarnings("deprecation")
     @Override
