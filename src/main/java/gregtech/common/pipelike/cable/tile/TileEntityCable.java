@@ -31,15 +31,15 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return false;
     }
 
-    public boolean incrementAmperage(long amps, long voltage) {
+    public boolean checkAmperage(long amps) {
+        return getMaxAmperage() >= amperageCounter.get(getWorld()) + amps;
+    }
+
+    public void incrementAmperage(long amps, long voltage) {
         if(voltage > voltageCounter.get(getWorld())) {
             voltageCounter.set(getWorld(), voltage);
         }
-        if(getMaxAmperage() < amperageCounter.get(getWorld()) + amps) {
-            return false;
-        }
         amperageCounter.increment(getWorld(), amps);
-        return true;
     }
 
     public long acceptsAmperage() {

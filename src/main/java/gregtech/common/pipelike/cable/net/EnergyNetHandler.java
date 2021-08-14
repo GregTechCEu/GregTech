@@ -29,17 +29,18 @@ public class EnergyNetHandler implements IEnergyContainer {
 
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
-        if(side == null) {
-            if(facing == null) return 0;
+        if (side == null) {
+            if (facing == null) return 0;
             side = facing;
         }
 
         long amperesUsed = 0L;
         List<RoutePath> paths = net.getNetData(cable.getPos());
+        outer:
         for (RoutePath path : paths) {
             if (path.getMaxLoss() >= voltage)
                 continue;
-            if(GTUtility.arePosEqual(cable.getPos(), path.getPipePos()) && side == path.getFaceToHandler()) {
+            if (GTUtility.arePosEqual(cable.getPos(), path.getPipePos()) && side == path.getFaceToHandler()) {
                 //Do not insert into source handler
                 continue;
             }
@@ -48,13 +49,24 @@ public class EnergyNetHandler implements IEnergyContainer {
             if (dest == null || !dest.inputsEnergy(facing) || dest.getEnergyCanBeInserted() <= 0) continue;
             long amps = dest.acceptEnergyFromNetwork(facing, voltage - path.getMaxLoss(), amperage - amperesUsed);
             amperesUsed += amps;
+            boolean didBurn = false;
             for (TileEntityCable cable : path.getPath()) {
                 boolean overVolt = cable.getMaxVoltage() < voltage;
-                boolean overAmp = !cable.incrementAmperage(amps, voltage);
-                if (overVolt || overAmp) {
-                    burnCables(path.getPath(), overVolt, overAmp, amps);
-                    break;
+                boolean overAmp = !cable.checkAmperage(amps);
+                if (overVolt) {
+                    for (TileEntityCable cable1 : path.getPath()) {
+                        burnCable(cable1.getWorld(), cable1.getPos());
+                    }
+                    break outer;
                 }
+                if (overAmp) {
+                    didBurn = true;
+                    burnCable(cable.getWorld(), cable.getPos());
+                }
+            }
+            if(didBurn) break;
+            for(TileEntityCable cable : path.getPath()) {
+                cable.incrementAmperage(amps, voltage);
             }
             if (amperage == amperesUsed)
                 break;
@@ -62,19 +74,12 @@ public class EnergyNetHandler implements IEnergyContainer {
         return amperesUsed;
     }
 
-    public void burnCables(Collection<TileEntityCable> cables, boolean overAmp, boolean overVolt, long amps) {
-        if(cables == null || cables.size() == 0) return;
-        World world = cables.iterator().next().getWorld();
-        for(TileEntityCable cable : cables) {
-            if(overVolt || (overAmp && amps > cable.getNodeData().amperage)) {
-                BlockPos pos = cable.getPos();
-                world.setBlockState(pos, Blocks.FIRE.getDefaultState());
-                if (!world.isRemote) {
-                    ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_LARGE,
-                            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                            5 + world.rand.nextInt(3), 0.0, 0.0, 0.0, 0.1);
-                }
-            }
+    private void burnCable(World world, BlockPos pos) {
+        world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+        if (!world.isRemote) {
+            ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_LARGE,
+                    pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                    5 + world.rand.nextInt(3), 0.0, 0.0, 0.0, 0.1);
         }
     }
 
