@@ -14,7 +14,6 @@ import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
@@ -125,12 +124,12 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
         Insulation insulation = getPipeTileEntity(worldIn, pos).getPipeType();
-        if (!worldIn.isRemote && insulation.insulationLevel == -1 && entityIn instanceof EntityLivingBase) {
+        if (insulation.insulationLevel == -1 && entityIn instanceof EntityLivingBase) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
-            EnergyNet energyNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (energyNet != null && (energyNet.getAllNodes().get(pos).data.lossPerBlock > 0)) {
-                long voltage = energyNet.getLastMaxVoltage();
-                long amperage = energyNet.getLastAmperage();
+            TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
+            if (cable != null && cable.getNodeData().lossPerBlock > 0) {
+                long voltage = cable.getCurrentVoltage();
+                long amperage = cable.getCurrentAmperage();
                 if (voltage > 0L && amperage > 0L) {
                     float damageAmount = (GTUtility.getTierByVoltage(voltage) + 1) * amperage * 4;
                     entityLiving.attackEntityFrom(DamageSources.getElectricDamage(), damageAmount);
