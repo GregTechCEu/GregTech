@@ -42,10 +42,6 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         return true;
     }
 
-    public void setLastVoltage(long amount) {
-
-    }
-
     public long acceptsAmperage() {
         return getMaxAmperage() - getCurrentAmperage();
     }

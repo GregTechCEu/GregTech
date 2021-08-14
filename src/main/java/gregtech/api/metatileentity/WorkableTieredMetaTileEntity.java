@@ -4,6 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.RecipeLogicEnergy;
@@ -40,6 +41,23 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
 
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
         return new RecipeLogicEnergy(this, recipeMap, () -> energyContainer);
+    }
+
+    @Override
+    protected void reinitializeEnergyContainer() {
+        long tierVoltage = GTValues.V[getTier()];
+        if (isEnergyEmitter()) {
+            this.energyContainer = EnergyContainerHandler.emitterContainer(this,
+                    tierVoltage * 64L, tierVoltage, getMaxInputOutputAmperage());
+        } else this.energyContainer = new EnergyContainerHandler(this, tierVoltage * 64L, tierVoltage, 2, 0L, 0L) {
+            @Override
+            public long getInputAmperage() {
+                if(getEnergyCapacity() / 2 > getEnergyStored() && workable.isActive()) {
+                    return 2;
+                }
+                return 1;
+            }
+        };
     }
 
     @Override

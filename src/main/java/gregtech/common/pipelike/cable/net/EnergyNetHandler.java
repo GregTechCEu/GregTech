@@ -2,6 +2,7 @@ package gregtech.common.pipelike.cable.net;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -23,15 +24,24 @@ public class EnergyNetHandler implements IEnergyContainer {
 
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+        if(side == null) {
+            if(facing == null) return 0;
+            side = facing;
+        }
+
         long amperesUsed = 0L;
         List<RoutePath> paths = net.getNetData(cable.getPos());
         for (RoutePath path : paths) {
             if (path.getMaxLoss() >= voltage)
                 continue;
+            if(GTUtility.arePosEqual(cable.getPos(), path.getPipePos()) && side == path.getFaceToHandler()) {
+                //Do not insert into source handler
+                continue;
+            }
             IEnergyContainer dest = path.getHandler(cable.getWorld());
             EnumFacing facing = path.getFaceToHandler().getOpposite();
             if (dest == null || !dest.inputsEnergy(facing) || dest.getEnergyCanBeInserted() <= 0) continue;
-            long amps = dest.acceptEnergyFromNetwork(facing, voltage, amperage - amperesUsed);
+            long amps = dest.acceptEnergyFromNetwork(facing, voltage - path.getMaxLoss(), amperage - amperesUsed);
             amperesUsed += amps;
             for (TileEntityCable cable : path.getPath()) {
                 if (cable.getMaxVoltage() < voltage || !cable.incrementAmperage(amps, voltage)) {
@@ -42,7 +52,6 @@ public class EnergyNetHandler implements IEnergyContainer {
             if (amperage == amperesUsed)
                 break;
         }
-
         return amperesUsed;
     }
 
