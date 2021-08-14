@@ -4,16 +4,6 @@ import net.minecraft.util.ITickable;
 
 public class TileEntityItemPipeTickable extends TileEntityItemPipe implements ITickable {
 
-    private boolean isActive;
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
     private int transferredItems = 0;
     private long timer = 0;
 

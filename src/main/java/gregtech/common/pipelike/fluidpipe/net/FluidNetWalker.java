@@ -67,7 +67,7 @@ public class FluidNetWalker extends PipeNetWalker {
             BlockPos offset = pos.offset(facing);
             EnumFacing opposite = facing.getOpposite();
             TileEntity tile = pipeTile.getPipeWorld().getTileEntity(offset);
-            if (tile instanceof IPipeTile && isValidPipe(pipeTile, (IPipeTile<?, ?>) tile, pos, facing)) {
+            if (tile instanceof TileEntityFluidPipe) {
                 if(!checkedCovers.contains(new PosFace(pos, facing))) {
                     CoverBehavior cover = pipeTile.getCoverableImplementation().getCoverAtSide(facing);
                     if(cover instanceof CoverFluidFilter)
@@ -86,7 +86,7 @@ public class FluidNetWalker extends PipeNetWalker {
             }
         }
         if (validPipes > 2) {
-            tickingPipes.add((TileEntityFluidPipeTickable) pipeTile.setSupportsTicking());
+            tickingPipes.add((TileEntityFluidPipeTickable) (pipeTile instanceof TileEntityFluidPipeTickable ? pipeTile : pipeTile.setSupportsTicking()));
         }
     }
 
@@ -107,8 +107,9 @@ public class FluidNetWalker extends PipeNetWalker {
             List<CoverFluidFilter> fluidFilter = covers.get(pipePos.offset(faceToNeighbour));
             if(fluidFilter != null)
                 pathObjectsCopy.addAll(fluidFilter);
-            inventories.add(new FluidPipeNet.Inventory(pipePos, faceToNeighbour, getWalkedBlocks(), pathObjectsCopy, rate, new ArrayList<>(tickingPipes)));
-            tickingPipes.add((TileEntityFluidPipeTickable) pipeTile.setSupportsTicking());
+            List<TileEntityFluidPipeTickable> tickables = new ArrayList<>(tickingPipes);
+            tickables.add((TileEntityFluidPipeTickable) pipeTile.setSupportsTicking());
+            inventories.add(new FluidPipeNet.Inventory(pipePos, faceToNeighbour, getWalkedBlocks(), pathObjectsCopy, rate, tickables));
         }
     }
 

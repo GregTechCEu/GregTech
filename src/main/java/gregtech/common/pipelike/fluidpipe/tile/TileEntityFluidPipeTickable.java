@@ -9,7 +9,6 @@ import java.util.Arrays;
 
 public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements ITickable {
 
-    private boolean isActive;
     private int transferredFluids = 0;
     private FluidStack[] fluids;
     private int[] emptyTimer;
@@ -90,25 +89,17 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     public int findChannel(FluidStack stack) {
         if (getContainedFluids().length == 1) {
             FluidStack channelStack = fluids[0];
-            return (channelStack == null || channelStack.amount <= 0 || channelStack.isFluidEqual(stack)) ? 0 : -1;
+            return (channelStack == null || /*channelStack.amount <= 0 || */channelStack.isFluidEqual(stack)) ? 0 : -1;
         }
         int emptyTank = -1;
         for (int i = fluids.length - 1; i >= 0; i--) {
             FluidStack channelStack = fluids[i];
-            if (channelStack == null || channelStack.amount <= 0)
+            if (channelStack == null/* || channelStack.amount <= 0*/)
                 emptyTank = i;
             else if (channelStack.isFluidEqual(stack))
                 return i;
         }
         return emptyTank;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
     }
 
     @Override
@@ -119,7 +110,6 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         super.writeToNBT(nbt);
-        nbt.setBoolean("ActiveNode", isActive);
         NBTTagList list = new NBTTagList();
         for (int i = 0; i < getContainedFluids().length; i++) {
             FluidStack stack1 = fluids[i];
@@ -138,7 +128,6 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
-        this.isActive = nbt.getBoolean("ActiveNode");
         NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
         fluids = new FluidStack[list.tagCount()];
         emptyTimer = new int[list.tagCount()];

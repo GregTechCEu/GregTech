@@ -163,6 +163,8 @@ public class FluidNetHandler implements IFluidHandler {
     }
 
     private int insert(Handler handler, FluidStack stack, boolean doFill, int max) {
+        if(stack == null || stack.amount <= 0 || max <= 0) return 0;
+
         for (TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
             if (!tickingPipe.findAndSetChannel(stack))
                 return 0;
@@ -193,6 +195,7 @@ public class FluidNetHandler implements IFluidHandler {
         if (max >= stack.amount) {
             int inserted = fluidHandler.fill(stack, doFill);
             if (inserted > 0) {
+                stack.amount = inserted;
                 if (doFill)
                     for (TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
                         tickingPipe.setContainingFluid(stack, tickingPipe.getCurrentChannel());
@@ -204,6 +207,7 @@ public class FluidNetHandler implements IFluidHandler {
         toInsert.amount = Math.min(max, stack.amount);
         int inserted = fluidHandler.fill(toInsert, doFill);
         if (inserted > 0) {
+            toInsert.amount = inserted;
             if (doFill)
                 for (TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
                     tickingPipe.setContainingFluid(toInsert, tickingPipe.getCurrentChannel());

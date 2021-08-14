@@ -38,22 +38,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return false;
     }
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setBoolean("Ticking", this instanceof TileEntityFluidPipeTickable);
-        return nbt;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        if (nbt.getBoolean("Ticking") && !(this instanceof TileEntityFluidPipeTickable)) {
-            TileEntityFluidPipeTickable tickable = (TileEntityFluidPipeTickable) setSupportsTicking();
-            tickable.readFromNBT(nbt);
-        }
-    }
-
     @Nullable
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
