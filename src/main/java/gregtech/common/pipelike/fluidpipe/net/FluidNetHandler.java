@@ -6,7 +6,6 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
-import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -19,20 +18,18 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class FluidNetHandler implements IFluidHandler {
 
     private final FluidPipeNet net;
-    private final TileEntityFluidPipeTickable pipe;
+    private final TileEntityFluidPipe pipe;
     private final EnumFacing facing;
     private int simulatedTransfers = 0;
 
     public FluidNetHandler(FluidPipeNet net, TileEntityFluidPipe pipe, EnumFacing facing) {
         this.net = net;
-        if (pipe instanceof TileEntityFluidPipeTickable)
-            this.pipe = (TileEntityFluidPipeTickable) pipe;
-        else
-            this.pipe = (TileEntityFluidPipeTickable) pipe.setSupportsTicking();
+        this.pipe = Objects.requireNonNull(pipe);
         this.facing = facing;
     }
 
@@ -165,7 +162,7 @@ public class FluidNetHandler implements IFluidHandler {
     private int insert(Handler handler, FluidStack stack, boolean doFill, int max) {
         if(stack == null || stack.amount <= 0 || max <= 0) return 0;
 
-        for (TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
+        for (TileEntityFluidPipe tickingPipe : handler.getHoldingPipes())
             if (!tickingPipe.findAndSetChannel(stack))
                 return 0;
 
@@ -197,7 +194,7 @@ public class FluidNetHandler implements IFluidHandler {
             if (inserted > 0) {
                 stack.amount = inserted;
                 if (doFill)
-                    for (TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
+                    for (TileEntityFluidPipe tickingPipe : handler.getHoldingPipes())
                         tickingPipe.setContainingFluid(stack, tickingPipe.getCurrentChannel());
                 transfer(pipe, doFill, inserted);
             }
@@ -209,7 +206,7 @@ public class FluidNetHandler implements IFluidHandler {
         if (inserted > 0) {
             toInsert.amount = inserted;
             if (doFill)
-                for (TileEntityFluidPipeTickable tickingPipe : handler.getTickingPipes())
+                for (TileEntityFluidPipe tickingPipe : handler.getHoldingPipes())
                     tickingPipe.setContainingFluid(toInsert, tickingPipe.getCurrentChannel());
             transfer(pipe, doFill, inserted);
         }
@@ -283,14 +280,14 @@ public class FluidNetHandler implements IFluidHandler {
         return null;
     }
 
-    private int checkTransferable(TileEntityFluidPipeTickable pipe, int throughput, int amount, boolean doFill) {
+    private int checkTransferable(TileEntityFluidPipe pipe, int throughput, int amount, boolean doFill) {
         if (doFill)
             return Math.max(0, Math.min(throughput - pipe.getTransferredFluids(), amount));
         else
             return Math.max(0, Math.min(throughput - (pipe.getTransferredFluids() + simulatedTransfers), amount));
     }
 
-    private void transfer(TileEntityFluidPipeTickable pipe, boolean doFill, int amount) {
+    private void transfer(TileEntityFluidPipe pipe, boolean doFill, int amount) {
         if (doFill) {
             pipe.transferFluid(amount);
         } else
@@ -313,7 +310,7 @@ public class FluidNetHandler implements IFluidHandler {
         private final IFluidHandler handler;
 
         public Handler(IFluidHandler handler, FluidPipeNet.Inventory inv) {
-            super(inv.getPipePos(), inv.getFaceToHandler(), inv.getDistance(), inv.getObjectsInPath(), inv.getMinThroughput(), inv.getTickingPipes());
+            super(inv.getPipePos(), inv.getFaceToHandler(), inv.getDistance(), inv.getObjectsInPath(), inv.getMinThroughput(), inv.getHoldingPipes());
             setLastTransferredFluid(inv.getLastTransferredFluid());
             this.handler = handler;
         }

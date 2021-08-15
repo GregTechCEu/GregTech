@@ -8,7 +8,6 @@ import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
-import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -23,23 +22,26 @@ public class FluidNetWalker extends PipeNetWalker {
 
     public static List<FluidPipeNet.Inventory> createNetData(FluidPipeNet net, World world, BlockPos sourcePipe) {
         FluidNetWalker walker = new FluidNetWalker(net, world, sourcePipe, 1, new ArrayList<>(), new HashSet<>(), Integer.MAX_VALUE, new ArrayList<>());
+        TileEntity tile = world.getTileEntity(sourcePipe);
+        if(tile instanceof TileEntityFluidPipe)
+            walker.holdingPipes.add((TileEntityFluidPipe) tile);
         walker.traversePipeNet();
         return walker.inventories;
     }
 
     private final List<FluidPipeNet.Inventory> inventories;
     private final Set<Object> pathObjects;
-    private final List<TileEntityFluidPipeTickable> tickingPipes;
+    private final List<TileEntityFluidPipe> holdingPipes;
     private final Map<BlockPos, List<CoverFluidFilter>> covers = new HashMap<>();
     private LinkedList<PosFace> checkedCovers = new LinkedList<>();
     private int rate;
 
-    protected FluidNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, List<FluidPipeNet.Inventory> inventories, Set<Object> pathObjects, int rate, List<TileEntityFluidPipeTickable> tickingPipes) {
+    protected FluidNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, List<FluidPipeNet.Inventory> inventories, Set<Object> pathObjects, int rate, List<TileEntityFluidPipe> holdingPipes) {
         super(net, world, sourcePipe, walkedBlocks);
         this.inventories = inventories;
         this.pathObjects = pathObjects;
         this.rate = rate;
-        this.tickingPipes = tickingPipes;
+        this.holdingPipes = holdingPipes;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class FluidNetWalker extends PipeNetWalker {
         List<CoverFluidFilter> fluidFilter = covers.get(nextPos);
         if(fluidFilter != null)
             pathObjectsCopy.addAll(fluidFilter);
-        FluidNetWalker walker = new FluidNetWalker(net, world, nextPos, walkedBlocks, inventories, pathObjectsCopy, rate, new ArrayList<>(tickingPipes));
+        FluidNetWalker walker = new FluidNetWalker(net, world, nextPos, walkedBlocks, inventories, pathObjectsCopy, rate, new ArrayList<>(holdingPipes));
         walker.checkedCovers = checkedCovers;
         return walker;
     }
@@ -86,7 +88,7 @@ public class FluidNetWalker extends PipeNetWalker {
             }
         }
         if (validPipes > 2) {
-            tickingPipes.add((TileEntityFluidPipeTickable) (pipeTile instanceof TileEntityFluidPipeTickable ? pipeTile : pipeTile.setSupportsTicking()));
+            holdingPipes.add((TileEntityFluidPipe) pipeTile);
         }
     }
 
@@ -107,9 +109,9 @@ public class FluidNetWalker extends PipeNetWalker {
             List<CoverFluidFilter> fluidFilter = covers.get(pipePos.offset(faceToNeighbour));
             if(fluidFilter != null)
                 pathObjectsCopy.addAll(fluidFilter);
-            List<TileEntityFluidPipeTickable> tickables = new ArrayList<>(tickingPipes);
-            tickables.add((TileEntityFluidPipeTickable) pipeTile.setSupportsTicking());
-            inventories.add(new FluidPipeNet.Inventory(pipePos, faceToNeighbour, getWalkedBlocks(), pathObjectsCopy, rate, tickables));
+            List<TileEntityFluidPipe> holders = new ArrayList<>(holdingPipes);
+            holders.add((TileEntityFluidPipe) pipeTile);
+            inventories.add(new FluidPipeNet.Inventory(pipePos, faceToNeighbour, getWalkedBlocks(), pathObjectsCopy, rate, holders));
         }
     }
 

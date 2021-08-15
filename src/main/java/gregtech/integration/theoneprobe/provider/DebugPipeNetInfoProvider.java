@@ -58,11 +58,11 @@ public class DebugPipeNetInfoProvider implements IProbeInfoProvider {
                     probeInfo.text(builder.toString());
                 }
                 probeInfo.text("tile open: " + pipeTile.getOpenConnections());
-                if (blockPipe instanceof BlockFluidPipe) {
+                /*if (blockPipe instanceof BlockFluidPipe) {
                     if (pipeTile instanceof TileEntityFluidPipeTickable) {
                         probeInfo.text("tile active: " + ((TileEntityFluidPipeTickable) pipeTile).isActive());
                     }
-                }
+                }*/
             }
         }
     }
