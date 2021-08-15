@@ -42,7 +42,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         return icon;
     }
 
-    public abstract AbstractApplication createApp(boolean isClient, NBTTagCompound nbt);
+    public abstract AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt);
 
     public NBTTagCompound closeApp(boolean isClient, NBTTagCompound nbt) {
         return null;

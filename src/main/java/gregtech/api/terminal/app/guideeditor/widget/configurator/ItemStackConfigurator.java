@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.PhantomSlotWidget;
@@ -16,7 +15,6 @@ import gregtech.api.terminal.app.guide.widget.SlotListWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -93,7 +91,7 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
                     }
                     updateValue();
                 })
-                .setIcon(GuiTextures.TERMINAL_DELETE));
+                .setIcon(GuiTextures.ICON_REMOVE));
         container.addWidget(group);
     }
 

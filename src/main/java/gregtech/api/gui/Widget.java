@@ -15,6 +15,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -24,6 +25,7 @@ import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -410,7 +412,7 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void renderCircle(float x, float y, float r, int color, int segments) {
+    public static void drawCircle(float x, float y, float r, int color, int segments) {
         if (color == 0) return;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -428,7 +430,7 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void renderSector(float x, float y, float r, int color, int segments, int from, int to) {
+    public static void drawSector(float x, float y, float r, int color, int segments, int from, int to) {
         if (from > to || from < 0 || color == 0) return;
         if(to > segments) to = segments;
         Tessellator tessellator = Tessellator.getInstance();
@@ -445,6 +447,96 @@ public abstract class Widget {
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();
+        GlStateManager.color(1,1,1,1);
+    }
+
+    public static void drawTorus(float x, float y, float outer, float inner, int color, int segments, int from, int to) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        setColor(color);
+        bufferbuilder.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION);
+        for (int i = from; i <= to; i++) {
+            float angle = ( i / (float)segments ) * 3.14159f * 2.0f;
+            bufferbuilder.pos( x + inner * Math.cos(-angle), y + inner * Math.sin(-angle), 0).endVertex();
+            bufferbuilder.pos( x + outer * Math.cos(-angle), y + outer * Math.sin(-angle), 0).endVertex();
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1,1,1,1);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawLines(List<Vec2f> points, int startColor, int endColor, float width) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.glLineWidth(width);
+        if (startColor == endColor) {
+            setColor(startColor);
+            bufferbuilder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+            for (Vec2f point : points) {
+                bufferbuilder.pos(point.x, point.y, 0).endVertex();
+            }
+        } else {
+            float startAlpha = (float) (startColor >> 24 & 255) / 255.0F;
+            float startRed = (float) (startColor >> 16 & 255) / 255.0F;
+            float startGreen = (float) (startColor >> 8 & 255) / 255.0F;
+            float startBlue = (float) (startColor & 255) / 255.0F;
+            float endAlpha = (float) (endColor >> 24 & 255) / 255.0F;
+            float endRed = (float) (endColor >> 16 & 255) / 255.0F;
+            float endGreen = (float) (endColor >> 8 & 255) / 255.0F;
+            float endBlue = (float) (endColor & 255) / 255.0F;
+            bufferbuilder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+            int size = points.size();
+
+            for (int i = 0; i < size; i++) {
+                float p = i * 1.0f / size;
+                bufferbuilder.pos(points.get(i).x, points.get(i).y, 0)
+                        .color(startRed + (endRed - startRed) * p,
+                                startGreen + (endGreen - startGreen) * p,
+                                startBlue + (endBlue - startBlue) * p,
+                                startAlpha + (endAlpha - startAlpha) * p)
+                        .endVertex();
+            }
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1, 1, 1, 1);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static List<Vec2f> genBezierPoints(Vec2f from, Vec2f to, boolean horizontal, float u) {
+        Vec2f c1;
+        Vec2f c2;
+        if (horizontal) {
+            c1 = new Vec2f((from.x + to.x) / 2, from.y);
+            c2 = new Vec2f((from.x + to.x) / 2, to.y);
+        } else {
+            c1 = new Vec2f(from.x, (from.y + to.y) / 2);
+            c2 = new Vec2f(to.x, (from.y + to.y) / 2);
+        }
+        Vec2f[] controlPoint = new Vec2f[]{from,c1,c2,to};
+        int n = controlPoint.length - 1;
+        int i, r;
+        List<Vec2f> bezierPoints = new ArrayList<>();
+        for (u = 0; u <= 1; u += 0.01) {
+            Vec2f[] p = new Vec2f[n + 1];
+            for (i = 0; i <= n; i++) {
+                p[i] = new Vec2f(controlPoint[i].x, controlPoint[i].y);
+            }
+            for (r = 1; r <= n; r++) {
+                for (i = 0; i <= n - r; i++) {
+                    p[i] = new Vec2f((1 - u) * p[i].x + u * p[i + 1].x, (1 - u) * p[i].y + u * p[i + 1].y);
+                }
+            }
+            bezierPoints.add(p[0]);
+        }
+        return bezierPoints;
     }
 
     @SideOnly(Side.CLIENT)

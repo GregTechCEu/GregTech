@@ -1,6 +1,5 @@
 package gregtech.api.terminal.os;
 
-import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.IGuiTexture;
@@ -31,7 +30,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.openedApps = new ArrayList<>();
         this.desktop = new TerminalDesktopWidget(Position.ORIGIN, new Size(333, 232), this);
-        this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, 232), this).setBackground(GuiTextures.TERMINAL_MENU);
+        this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, 232), this).setBackground(TerminalTheme.COLOR_B_2);
         this.addWidget(desktop);
         this.addWidget(menu);
         this.tabletNBT = tabletNBT;
@@ -70,7 +69,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 return;
             }
         }
-        AbstractApplication app = application.createApp(isClient, tabletNBT.getCompoundTag(application.getRegistryName())).setOs(this);
+        AbstractApplication app = application.createApp(this, isClient, tabletNBT.getCompoundTag(application.getRegistryName())).setOs(this);
         if (app != null) {
             openedApps.add(app);
             desktop.addWidget(app);

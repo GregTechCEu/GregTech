@@ -11,7 +11,10 @@ import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.api.util.TextFormattingUtil;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -37,6 +40,7 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
     private Supplier<FluidStack> fluidStackSupplier;
     private Consumer<FluidStack> fluidStackUpdater;
     private boolean isClient;
+    private boolean showTip;
     protected FluidStack lastFluidStack;
 
     public PhantomFluidWidget(int xPosition, int yPosition, int width, int height, Supplier<FluidStack> fluidStackSupplier, Consumer<FluidStack> fluidStackUpdater) {
@@ -53,6 +57,10 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
                 return fluidHandler.drain(Integer.MAX_VALUE, false);
         }
         return null;
+    }
+    public PhantomFluidWidget showTip(boolean showTip) {
+        this.showTip = showTip;
+        return this;
     }
 
     public PhantomFluidWidget setFluidStackSupplier(Supplier<FluidStack> fluidStackSupplier, boolean isClient) {
@@ -201,6 +209,14 @@ public class PhantomFluidWidget extends Widget implements IIngredientSlot, IGhos
         if (lastFluidStack != null) {
             GlStateManager.disableBlend();
             RenderUtil.drawFluidForGui(lastFluidStack, lastFluidStack.amount, pos.x + 1, pos.y + 1, size.width - 1, size.height - 1);
+            if(showTip) {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(0.5, 0.5, 1);
+                String s = TextFormattingUtil.formatLongToCompactString(lastFluidStack.amount, 4) + "L";
+                FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+                fontRenderer.drawStringWithShadow(s, (pos.x + (size.width / 3)) * 2 - fontRenderer.getStringWidth(s) + 21, (pos.y + (size.height / 3) + 6) * 2, 0xFFFFFF);
+                GlStateManager.popMatrix();
+            }
             GlStateManager.enableBlend();
             GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
         }

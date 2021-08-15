@@ -11,6 +11,7 @@ import gregtech.api.terminal.gui.widgets.ColorWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.gui.widgets.SelectorWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
+import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -29,7 +30,7 @@ public class ThemeSettingApp extends AbstractApplication {
     private WidgetGroup textureGroup;
 
     @Override
-    public AbstractApplication createApp(boolean isClient, NBTTagCompound nbt) {
+    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
         ThemeSettingApp app = new ThemeSettingApp();
         if (isClient) { //333 232
             float x = 333 * 1.0f / 13;

@@ -61,6 +61,10 @@ public class TabGroup extends AbstractWidgetGroup {
         return this;
     }
 
+    public AbstractWidgetGroup getCurrentTag() {
+        return tabWidgets.get(selectedTabIndex);
+    }
+
     @Override
     public List<Widget> getContainedWidgets(boolean includeHidden) {
         ArrayList<Widget> containedWidgets = new ArrayList<>(widgets.size());
@@ -102,7 +106,7 @@ public class TabGroup extends AbstractWidgetGroup {
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        super.mouseClicked(mouseX, mouseY, button);
+        boolean flag = super.mouseClicked(mouseX, mouseY, button);
         Tuple<ITabInfo, int[]> tabOnMouse = getTabOnMouse(mouseX, mouseY);
         if (tabOnMouse != null) {
             ITabInfo tabInfo = tabOnMouse.getFirst();
@@ -114,7 +118,7 @@ public class TabGroup extends AbstractWidgetGroup {
                 return true;
             }
         }
-        return false;
+        return flag;
     }
 
     private void setSelectedTab(int tabIndex) {

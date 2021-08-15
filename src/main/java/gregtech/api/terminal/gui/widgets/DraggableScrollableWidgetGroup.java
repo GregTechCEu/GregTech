@@ -29,13 +29,13 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
     protected IGuiTexture yBarB;
     protected IGuiTexture yBarF;
     protected boolean focus;
+    protected Widget draggedWidget;
 
     private int lastMouseX;
     private int lastMouseY;
     private boolean draggedPanel;
     private boolean draggedOnXScrollBar;
     private boolean draggedOnYScrollBar;
-    private Widget draggedWidget;
 
 
     public DraggableScrollableWidgetGroup(int x, int y, int width, int height) {
@@ -288,7 +288,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
                 } else if (widget instanceof IDraggable && ((IDraggable) widget).allowDrag(mouseX, mouseY, button)) {
                     draggedWidget = widget;
                     ((IDraggable) widget).startDrag(mouseX, mouseY);
-                    return false;
+                    return true;
                 }
             }
         }

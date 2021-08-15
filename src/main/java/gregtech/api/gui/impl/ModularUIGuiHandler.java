@@ -6,13 +6,11 @@ import gregtech.api.gui.ingredient.IIngredientSlot;
 import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
 import mezz.jei.api.gui.IAdvancedGuiHandler;
 import mezz.jei.api.gui.IGhostIngredientHandler;
-import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,9 +49,7 @@ public class ModularUIGuiHandler implements IAdvancedGuiHandler<ModularUIGui>, I
         if (!transferHandler.isPresent()) {
             return transferHelper.createInternalError();
         }
-        Map<Integer, IGuiIngredient<ItemStack>> group = new HashMap<>(recipeLayout.getItemStacks().getGuiIngredients());
-        group.values().removeIf(it -> it.getAllIngredients().isEmpty());
-        String errorTooltip = transferHandler.get().transferRecipe(container, group, player, maxTransfer, doTransfer);
+        String errorTooltip = transferHandler.get().transferRecipe(container, recipeLayout, player, maxTransfer, doTransfer);
         if (errorTooltip == null) {
             return null;
         }

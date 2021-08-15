@@ -9,6 +9,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.app.guide.widget.GuidePageWidget;
 import gregtech.api.terminal.gui.widgets.TreeListWidget;
+import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.component.IMenuComponent;
 import gregtech.api.terminal.os.menu.component.SearchComponent;
 import gregtech.api.terminal.util.TreeNode;
@@ -41,7 +42,7 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     }
 
     @Override
-    public AbstractApplication createApp(boolean isClient, NBTTagCompound nbt) {
+    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
         try {
             GuideApp app = this.getClass().newInstance();
             app.ROOT = ROOT;

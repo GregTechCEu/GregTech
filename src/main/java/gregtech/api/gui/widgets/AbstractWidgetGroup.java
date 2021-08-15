@@ -42,8 +42,8 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
         ArrayList<Widget> containedWidgets = new ArrayList<>(widgets.size());
 
         for (Widget widget : widgets) {
+            if (!widget.isVisible() && !includeHidden) continue;
             containedWidgets.add(widget);
-
             if (widget instanceof AbstractWidgetGroup)
                 containedWidgets.addAll(((AbstractWidgetGroup) widget).getContainedWidgets(includeHidden));
         }
@@ -104,6 +104,27 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
             throw new IllegalArgumentException("Already added");
         }
         this.widgets.add(widget);
+        widget.setUiAccess(groupUIAccess);
+        widget.setGui(gui);
+        widget.setSizes(sizes);
+        widget.setParentPosition(getPosition());
+        if (initialized) {
+            widget.initWidget();
+        }
+        recomputeSize();
+        if (uiAccess != null) {
+            uiAccess.notifyWidgetChange();
+        }
+    }
+
+    protected void addWidget(int index, Widget widget) {
+        if (widget == this) {
+            throw new IllegalArgumentException("Cannot add self");
+        }
+        if (widgets.contains(widget)) {
+            throw new IllegalArgumentException("Already added");
+        }
+        this.widgets.add(index, widget);
         widget.setUiAccess(groupUIAccess);
         widget.setGui(gui);
         widget.setSizes(sizes);
@@ -186,7 +207,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
         }
         ArrayList<Target<?>> targets = new ArrayList<>();
         for (Widget widget : widgets) {
-            if (widget instanceof IGhostIngredientTarget) {
+            if (widget.isVisible() && widget instanceof IGhostIngredientTarget) {
                 targets.addAll(((IGhostIngredientTarget) widget).getPhantomTargets(ingredient));
             }
         }
@@ -199,7 +220,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
             return Collections.emptyList();
         }
         for (Widget widget : widgets) {
-            if (widget instanceof IIngredientSlot) {
+            if (widget.isVisible() && widget instanceof IIngredientSlot) {
                 IIngredientSlot ingredientSlot = (IIngredientSlot) widget;
                 Object result = ingredientSlot.getIngredientOverMouse(mouseX, mouseY);
                 if (result != null) return result;

@@ -3,10 +3,8 @@ package gregtech.api.terminal.gui.widgets;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
@@ -15,7 +13,6 @@ import org.lwjgl.input.Mouse;
 import java.awt.*;
 import java.util.Collections;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class CircleButtonWidget extends Widget {
     protected int border;
@@ -104,12 +101,12 @@ public class CircleButtonWidget extends Widget {
         int y = this.getPosition().y + r;
         int segments = 24;
 
-        renderCircle(x, y, r, colors[0], segments);
+        drawTorus(x, y, r, r - border, colors[0], segments, 0, segments);
         isHover = this.isMouseOverElement(mouseX, mouseY);
         if (isHover || hoverTick != 0) {
-            renderSector(x, y, r, colors[1], segments, 0, (int) (segments * ((hoverTick + partialTicks) / 8)));
+            drawTorus(x, y, r, r - border, colors[1], segments, 0, (int) (segments * ((hoverTick + partialTicks) / 8)));
         }
-        renderCircle(x, y, r - border, colors[2], segments);
+        drawCircle(x, y, r - border, colors[2], segments);
         if (isHover && hover != null) {
             hover.draw(x - iconSize / 2f, y - iconSize / 2f, iconSize, iconSize);
         }

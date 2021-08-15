@@ -57,6 +57,7 @@ public final class ModularUI implements ISizeProvider {
         List<Widget> widgetList = new ArrayList<>(guiWidgets.size());
 
         for (Widget widget : guiWidgets.values()) {
+            if (!widget.isVisible()) continue;
             widgetList.add(widget);
 
             if (widget instanceof AbstractWidgetGroup)

@@ -1,6 +1,7 @@
 package gregtech.api.gui;
 
 import gregtech.api.gui.resources.AdoptableTextureArea;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
 
@@ -168,12 +169,18 @@ public class GuiTextures {
     public static final TextureArea MULTIBLOCK_CATEGORY = TextureArea.fullImage("textures/gui/icon/coke_oven.png");
 
     //Terminal
-    public static final TextureArea TERMINAL_FRAME = TextureArea.fullImage("textures/gui/terminal/terminal_frame.png");
-    public static final TextureArea TERMINAL_MENU = TextureArea.fullImage("textures/gui/terminal/terminal_menu.png");
-    public static final TextureArea TERMINAL_HOME = TextureArea.fullImage("textures/gui/terminal/terminal_home.png");
-    public static final TextureArea TERMINAL_DELETE = TextureArea.fullImage("textures/gui/terminal/terminal_delete.png");
-    public static final TextureArea TERMINAL_UP = TextureArea.fullImage("textures/gui/terminal/terminal_up.png");
-    public static final TextureArea TERMINAL_DOWN = TextureArea.fullImage("textures/gui/terminal/terminal_down.png");
-    public static final TextureArea TERMINAL_ADD = TextureArea.fullImage("textures/gui/terminal/terminal_add.png");
+    public static final TextureArea ICON_REMOVE = TextureArea.fullImage("textures/gui/terminal/icon/remove_hover.png");
+    public static final TextureArea ICON_UP = TextureArea.fullImage("textures/gui/terminal/icon/up_hover.png");
+    public static final TextureArea ICON_DOWN = TextureArea.fullImage("textures/gui/terminal/icon/down_hover.png");
+    public static final TextureArea ICON_RIGHT = TextureArea.fullImage("textures/gui/terminal/icon/right_hover.png");
+    public static final TextureArea ICON_LEFT = TextureArea.fullImage("textures/gui/terminal/icon/left_hover.png");
+    public static final TextureArea ICON_ADD = TextureArea.fullImage("textures/gui/terminal/icon/add_hover.png");
+
+    public final static TextureArea ICON_NEW_PAGE = TextureArea.fullImage("textures/gui/terminal/icon/system/memory_card_hover.png");
+    public final static TextureArea ICON_LOAD = TextureArea.fullImage("textures/gui/terminal/icon/folder_hover.png");
+    public final static TextureArea ICON_SAVE = TextureArea.fullImage("textures/gui/terminal/icon/system/save_hover.png");
+    public final static TextureArea ICON_LOCATION = TextureArea.fullImage("textures/gui/terminal/icon/guide_hover.png");
+    public final static TextureArea ICON_VISIBLE = TextureArea.fullImage("textures/gui/terminal/icon/appearance_hover.png");
+    public final static TextureArea ICON_CALCULATOR = TextureArea.fullImage("textures/gui/terminal/icon/other/calculator_hover.png");
 
 }

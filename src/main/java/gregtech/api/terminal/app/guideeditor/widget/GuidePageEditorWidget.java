@@ -1,7 +1,6 @@
 package gregtech.api.terminal.app.guideeditor.widget;
 
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.GuiTextures;
@@ -43,21 +42,21 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         TerminalTheme.COLOR_B_2.getColor(),
                         TerminalTheme.COLOR_1.getColor())
-                .setIcon(GuiTextures.TERMINAL_UP)
+                .setIcon(GuiTextures.ICON_UP)
                 .setHoverText("up")
                 .setClickListener(this::moveUp));
         toolButtons.addWidget(new CircleButtonWidget(0, -4, 8, 1, 12)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         TerminalTheme.COLOR_B_2.getColor(),
                         TerminalTheme.COLOR_2.getColor())
-                .setIcon(GuiTextures.TERMINAL_DOWN)
+                .setIcon(GuiTextures.ICON_DOWN)
                 .setHoverText("down")
                 .setClickListener(this::moveDown));
         toolButtons.addWidget(new CircleButtonWidget(20, -4, 8, 1, 12)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         TerminalTheme.COLOR_B_2.getColor(),
                         TerminalTheme.COLOR_3.getColor())
-                .setIcon(GuiTextures.TERMINAL_DELETE)
+                .setIcon(GuiTextures.ICON_REMOVE)
                 .setHoverText("delete")
                 .setClickListener(this::delete));
         addWidget(customPositionSizeWidget);

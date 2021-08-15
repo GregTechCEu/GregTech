@@ -1,9 +1,11 @@
 package gregtech.api.terminal.app.guideeditor;
 
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.app.guideeditor.widget.GuideConfigEditor;
 import gregtech.api.terminal.app.guideeditor.widget.GuidePageEditorWidget;
+import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.component.ClickComponent;
 import gregtech.api.terminal.os.menu.component.IMenuComponent;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,9 +17,7 @@ import java.util.function.Consumer;
 
 public class GuideEditorApp extends AbstractApplication {
     public static final TextureArea ICON = TextureArea.fullImage("textures/gui/terminal/guide_editor/icon.png");
-    private final static TextureArea NEW_PAGE = TextureArea.fullImage("textures/gui/terminal/terminal_new_page.png");
-    private final static TextureArea IMPORT_PAGE = TextureArea.fullImage("textures/gui/terminal/terminal_import.png");
-    private final static TextureArea EXPORT_PAGE = TextureArea.fullImage("textures/gui/terminal/terminal_export.png");
+
 
     private GuideConfigEditor configEditor;
 
@@ -27,7 +27,7 @@ public class GuideEditorApp extends AbstractApplication {
     }
 
     @Override
-    public AbstractApplication createApp(boolean isClient, NBTTagCompound nbt) {
+    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
         GuideEditorApp app = new GuideEditorApp();
         if (isClient) {
             app.configEditor = new GuideConfigEditor(0, 0, 133, 232, app);
@@ -42,17 +42,17 @@ public class GuideEditorApp extends AbstractApplication {
 
     @Override
     public List<IMenuComponent> getMenuComponents() {
-        ClickComponent newPage = new ClickComponent().setIcon(NEW_PAGE).setHoverText("New Page").setClickConsumer(cd->{
+        ClickComponent newPage = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE).setHoverText("New Page").setClickConsumer(cd->{
             if (configEditor != null) {
                 configEditor.newPage(cd);
             }
         });
-        ClickComponent importPage = new ClickComponent().setIcon(IMPORT_PAGE).setHoverText("Import Page").setClickConsumer(cd->{
+        ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD).setHoverText("Import Page").setClickConsumer(cd->{
             if (configEditor != null) {
                 configEditor.loadJson(cd);
             }
         });
-        ClickComponent exportPage = new ClickComponent().setIcon(EXPORT_PAGE).setHoverText("Export Page").setClickConsumer(cd->{
+        ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE).setHoverText("Export Page").setClickConsumer(cd->{
             if (configEditor != null) {
                 configEditor.saveJson(cd);
             }

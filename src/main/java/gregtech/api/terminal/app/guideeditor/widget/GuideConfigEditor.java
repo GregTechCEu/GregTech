@@ -57,14 +57,14 @@ public class GuideConfigEditor extends TabGroup {
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_4.getColor())
-                .setIcon(GuiTextures.TERMINAL_ADD)
+                .setIcon(GuiTextures.ICON_ADD)
                 .setHoverText("add stream")
                 .setClickListener(this::addStream);
         addButton[1] = new CircleButtonWidget(115, 35, 8, 1, 8)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_5.getColor())
-                .setIcon(GuiTextures.TERMINAL_ADD)
+                .setIcon(GuiTextures.ICON_ADD)
                 .setHoverText("add fixed")
                 .setClickListener(this::addFixed);
         addButton[0].setVisible(false);

@@ -97,7 +97,7 @@ public class FileTexture implements IGuiTexture{
             } else {
                 this.loadFile();
                 int s = (int) Math.floorMod(System.currentTimeMillis() / 200, 24);
-                Widget.renderSector((float)(x + width / 2.0), (float)(y + height / 2.0), (float)(Math.min(width, height) / 4.0),
+                Widget.drawSector((float)(x + width / 2.0), (float)(y + height / 2.0), (float)(Math.min(width, height) / 4.0),
                         0xFF94E2C1, 24, s, s + 5);
             }
         }

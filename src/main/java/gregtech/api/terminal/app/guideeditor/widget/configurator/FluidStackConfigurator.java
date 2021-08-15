@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
@@ -90,7 +89,7 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
                     }
                     updateValue();
                 })
-                .setIcon(GuiTextures.TERMINAL_DELETE));
+                .setIcon(GuiTextures.ICON_REMOVE));
         container.addWidget(group);
     }
 

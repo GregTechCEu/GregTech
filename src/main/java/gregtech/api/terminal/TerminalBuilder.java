@@ -7,10 +7,9 @@ import gregtech.api.terminal.app.guide.MultiBlockGuideApp;
 import gregtech.api.terminal.app.guide.SimpleMachineGuideApp;
 import gregtech.api.terminal.app.guide.TutorialGuideApp;
 import gregtech.api.terminal.app.guideeditor.GuideEditorApp;
-import gregtech.api.terminal.app.recipegraph.RecipeGraphApp;
+import gregtech.api.terminal.app.recipechart.RecipeChartApp;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TerminalBuilder {
     private static final Map<String, AbstractApplication> appRegister = new HashMap<>();
@@ -24,7 +23,7 @@ public class TerminalBuilder {
         registerApp(new GuideEditorApp(), true);
         registerApp(new ThemeSettingApp(), true);
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
-            registerApp(new RecipeGraphApp(), true);
+            registerApp(new RecipeChartApp(), true);
         }
     }
 

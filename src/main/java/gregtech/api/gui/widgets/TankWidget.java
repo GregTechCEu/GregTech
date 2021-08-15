@@ -49,12 +49,18 @@ public class TankWidget extends Widget implements IIngredientSlot {
 
     private FluidStack lastFluidInTank;
     private int lastTankCapacity;
+    private boolean isClient;
 
     public TankWidget(IFluidTank fluidTank, int x, int y, int width, int height) {
         super(new Position(x, y), new Size(width, height));
         this.fluidTank = fluidTank;
         this.lastFluidInTank = fluidTank != null ? fluidTank.getFluid() != null ? fluidTank.getFluid().copy() : null : null;
         this.lastTankCapacity = fluidTank != null ? fluidTank.getCapacity() : 0;
+    }
+
+    public TankWidget setClient() {
+        this.isClient = true;
+        return this;
     }
 
     public TankWidget setHideTooltip(boolean hideTooltip) {
@@ -172,6 +178,26 @@ public class TankWidget extends Widget implements IIngredientSlot {
             }
             drawHoveringText(ItemStack.EMPTY, tooltips, 300, mouseX, mouseY);
             GlStateManager.color(1.0f, 1.0f, 1.0f);
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        if (isClient) {
+            FluidStack fluidStack = fluidTank.getFluid();
+            if (fluidTank.getCapacity() != lastTankCapacity) {
+                this.lastTankCapacity = fluidTank.getCapacity();
+            }
+            if (fluidStack == null && lastFluidInTank != null) {
+                this.lastFluidInTank = null;
+
+            } else if (fluidStack != null) {
+                if (!fluidStack.isFluidEqual(lastFluidInTank)) {
+                    this.lastFluidInTank = fluidStack.copy();
+                } else if (fluidStack.amount != lastFluidInTank.amount) {
+                    this.lastFluidInTank.amount = fluidStack.amount;
+                }
+            }
         }
     }
 

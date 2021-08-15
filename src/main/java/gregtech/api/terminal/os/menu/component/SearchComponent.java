@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchComponent<T> extends WidgetGroup implements IMenuComponent{
-    private final static TextureArea SEARCHING = TextureArea.fullImage("textures/gui/terminal/terminal_searching.png");
+    private final static TextureArea SEARCHING = TextureArea.fullImage("textures/gui/terminal/icon/network/search_hover.png");
     private final static int SIZE = 10;
     private final SearchEngine<T> engine;
     private final List<Tuple<T, String>> results;

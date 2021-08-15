@@ -24,12 +24,12 @@ import java.util.function.Predicate;
 
 public class TerminalDialogWidget extends AnimaWidgetGroup {
     private static final IGuiTexture DIALOG_BACKGROUND = TextureArea.fullImage("textures/gui/terminal/terminal_dialog.png");
-    private static final IGuiTexture OK_NORMAL = TextureArea.fullImage("textures/gui/terminal/ok_normal.png");
-    private static final IGuiTexture OK_HOVER = TextureArea.fullImage("textures/gui/terminal/ok_hover.png");
-    private static final IGuiTexture OK_DISABLE = TextureArea.fullImage("textures/gui/terminal/ok_disable.png");
-    private static final IGuiTexture CANCEL_NORMAL = TextureArea.fullImage("textures/gui/terminal/cancel_normal.png");
-    private static final IGuiTexture CANCEL_HOVER = TextureArea.fullImage("textures/gui/terminal/cancel_hover.png");
-    private static final IGuiTexture CANCEL_DISABLE = TextureArea.fullImage("textures/gui/terminal/cancel_disable.png");
+    private static final IGuiTexture OK_NORMAL = TextureArea.fullImage("textures/gui/terminal/icon/ok_normal.png");
+    private static final IGuiTexture OK_HOVER = TextureArea.fullImage("textures/gui/terminal/icon/ok_hover.png");
+    private static final IGuiTexture OK_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/ok_disable.png");
+    private static final IGuiTexture CANCEL_NORMAL = TextureArea.fullImage("textures/gui/terminal/icon/cancel_normal.png");
+    private static final IGuiTexture CANCEL_HOVER = TextureArea.fullImage("textures/gui/terminal/icon/cancel_hover.png");
+    private static final IGuiTexture CANCEL_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/cancel_disable.png");
     private static final int HEIGHT = 128;
     private static final int WIDTH = 184;
 
@@ -177,10 +177,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         }
         AtomicReference<File> selected = new AtomicReference<>();
         selected.set(dir);
-        dialog.addWidget(new TreeListWidget<>(0, 0, 130, size.height, new FileTree(dir), node -> {
-            selected.set(node.getKey());
-            System.out.println(node.toString());
-        }).setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
+        dialog.addWidget(new TreeListWidget<>(0, 0, 130, size.height, new FileTree(dir), node -> selected.set(node.getKey())).setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
                 .canSelectNode(true)
                 .setLeafTexture(GuiTextures.SLOT_DARKENED));
         int x = 130 + (size.width - 133 - WIDTH) / 2;
@@ -235,7 +232,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
 
         dialog.addWidget(new LabelWidget(x + WIDTH / 2, y + 11, title, -1).setXCentered(true));
         os.menu.hideMenu();
-        return dialog;
+        return dialog.setClientSide();
     }
 
     @Override

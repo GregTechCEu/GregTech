@@ -73,8 +73,8 @@ public class TerminalMenuWidget extends WidgetGroup {
         WidgetGroup group = new WidgetGroup();
         int x = 15;
         int y = 40 + components.size() * 25;
-        CircleButtonWidget button = new CircleButtonWidget(x, y, 10, 1, 14)
-                .setColors(0x00FFFFFF, 0xFFFFFFFF, 0xFF505050)
+        CircleButtonWidget button = new CircleButtonWidget(x, y, 10, 1, 16)
+                .setColors(0, 0xFFFFFFFF, 0)
                 .setHoverText(component.hoverText())
                 .setIcon(component.buttonIcon());
         button.setClickListener(c->{
@@ -88,7 +88,7 @@ public class TerminalMenuWidget extends WidgetGroup {
                         Widget widget = (Widget)component;
                         widget.setVisible(!widget.isVisible());
                         widget.setActive(!widget.isActive());
-                        button.setFill(widget.isVisible() ? 0xFF94E2C1 : 0xFF505050);
+                        button.setFill(widget.isVisible() ? 0xFF94E2C1 : 0);
                     }
                     component.click(c);
                 });
