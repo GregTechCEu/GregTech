@@ -87,13 +87,12 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         return new ItemStackHandler(1);
     }
 
+    //todo prevent hatches not of type 1 from accepting items
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        if (type == 1) {
-            this.inventory = new ItemStackHandler(1);
-            this.itemInventory = this.inventory;
-        }
+        this.inventory = new ItemStackHandler(1);
+        this.itemInventory = this.inventory;
     }
 
     @Override
