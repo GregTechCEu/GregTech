@@ -12,6 +12,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.electric.*;
 import gregtech.common.metatileentities.electric.multiblockpart.*;
+import gregtech.common.metatileentities.electric.multiblockpart.maintenance.MetaTileEntityMaintenanceHatch;
 import gregtech.common.metatileentities.multi.*;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler.BoilerType;
 import gregtech.common.metatileentities.multi.electric.*;
@@ -128,6 +129,7 @@ public class MetaTileEntities {
     public static MetaTileEntitySteamItemBus STEAM_IMPORT_BUS;
     public static MetaTileEntitySteamHatch STEAM_HATCH;
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[3]; //HV, LuV, MAX
+    public static final MetaTileEntityMaintenanceHatch[] MAINTENANCE_HATCH = new MetaTileEntityMaintenanceHatch[3];
 
     //MULTIBLOCKS SECTION
     public static MetaTileEntityPrimitiveBlastFurnace PRIMITIVE_BLAST_FURNACE;
@@ -197,7 +199,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
 
     public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
-  
+
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
 
     public static void init() {
@@ -635,7 +637,12 @@ public class MetaTileEntities {
         STEAM_HATCH = GregTechAPI.registerMetaTileEntity(1652, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
         SIMPLE_ORE_WASHER = GregTechAPI.registerMetaTileEntity(1653, new MetaTileEntitySimpleOreWasher(gregtechId("ore_washer.simple"), RecipeMaps.SIMPLE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY, 0));
 
-        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1636, new MetaTileEntityClipboard(gregtechId("clipboard")));
+        // Maintenance Hatches, IDs 1654-1656
+        MAINTENANCE_HATCH[0] = GregTechAPI.registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), 1));
+        MAINTENANCE_HATCH[1] = GregTechAPI.registerMetaTileEntity(1655, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_taping"), 5));
+        MAINTENANCE_HATCH[2] = GregTechAPI.registerMetaTileEntity(1656, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_full_auto"), 8));
+
+        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1657, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
         /*
          * FOR ADDON DEVELOPERS:

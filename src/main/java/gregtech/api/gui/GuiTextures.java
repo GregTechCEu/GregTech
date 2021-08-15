@@ -53,6 +53,7 @@ public class GuiTextures {
     //WIDGET UI RELATED
     public static final TextureArea SLIDER_BACKGROUND = TextureArea.fullImage("textures/gui/widget/slider_background.png");
     public static final TextureArea SLIDER_ICON = TextureArea.fullImage("textures/gui/widget/slider.png");
+    public static final TextureArea MAINTENANCE_ICON = TextureArea.fullImage("textures/gui/widget/button_maintenance.png");
 
     //BRONZE
     public static final TextureArea BRONZE_BACKGROUND = TextureArea.fullImage("textures/gui/steam/bronze/bronze_gui.png");

@@ -392,6 +392,7 @@ public class MetaItem1 extends StandardMetaItem {
         CARBON_FIBERS = addItem(499, "carbon.fibers");
         CARBON_MESH = addItem(500, "carbon.mesh");
         CARBON_PLATE = addItem(501, "carbon.plate");
+        DUCT_TAPE = addItem(502, "duct_tape");
 
         // Circuit Components: ID 516-565
         VACUUM_TUBE = addItem(516, "circuit.vacuum_tube").setUnificationData(OrePrefix.circuit, Tier.Primitive);

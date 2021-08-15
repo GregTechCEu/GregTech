@@ -3586,6 +3586,10 @@ gregtech.machine.rotor_holder.hv.name=HV Rotor Holder
 gregtech.machine.rotor_holder.luv.name=LuV Rotor Holder
 gregtech.machine.rotor_holder.uhv.name=UHV Rotor Holder
 
+gregtech.machine.maintenance_hatch.name=Maintenance Hatch
+gregtech.machine.maintenance_hatch_taping.name=Auto-Taping Maintenance Hatch
+gregtech.machine.maintenance_hatch_full_auto.name=Automatic Maintenance Hatch
+
 gregtech.machine.pump_hatch.name=Pump Output Hatch
 gregtech.machine.pump_hatch.tooltip=Primitive Fluid Output for Water Pump
 
