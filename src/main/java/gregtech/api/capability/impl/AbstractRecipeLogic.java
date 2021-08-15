@@ -202,7 +202,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             currentRecipe = this.previousRecipe;
             // If there is no active recipe, then we need to find one.
         else {
-            currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
+            currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.DEFAULT);
         }
         // If a recipe was found, then inputs were valid. Cache found recipe.
         if (currentRecipe != null) {

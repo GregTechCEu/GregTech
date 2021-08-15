@@ -37,7 +37,8 @@ public class AbstractRecipeLogicTest {
                 3,
                 0,
                 2,
-                new SimpleRecipeBuilder().EUt(30));
+                new SimpleRecipeBuilder().EUt(30),
+                false);
 
         MetaTileEntity at =
                 GregTechAPI.registerMetaTileEntity(190,

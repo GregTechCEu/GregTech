@@ -58,7 +58,8 @@ public class MultiblockRecipeLogicTest {
                 1,
                 0,
                 1,
-                new BlastRecipeBuilder().EUt(32));
+                new BlastRecipeBuilder().EUt(32),
+                false);
 
         RecipeMaps.BLAST_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.COBBLESTONE))
