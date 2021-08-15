@@ -28,12 +28,15 @@ public class CoverInfiniteWater extends CoverBehavior implements ITickable {
 
     public CoverInfiniteWater(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
-        fluidHandler = this.coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+        if(!coverHolder.getWorld().isRemote)
+            fluidHandler = this.coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
+        else
+            fluidHandler = null;
     }
 
     @Override
     public boolean canAttach() {
-        return this.coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null) != null;
+        return this.coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide) != null;
     }
 
     @Override
@@ -43,6 +46,7 @@ public class CoverInfiniteWater extends CoverBehavior implements ITickable {
 
     @Override
     public void update() {
+        if(coverHolder.getWorld().isRemote) return;
         if (timer++ % ((20 * SPEED) / (Math.pow(2, SPEED - 1))) == 0) {
             FluidStack fluidStack = fluidHandler.drain(Water.getFluid(Integer.MAX_VALUE), false);
             Arrays.stream(fluidHandler.getTankProperties())
