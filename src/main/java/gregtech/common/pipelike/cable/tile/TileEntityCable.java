@@ -42,14 +42,6 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
         amperageCounter.increment(getWorld(), amps);
     }
 
-    public long acceptsAmperage() {
-        return getMaxAmperage() - getCurrentAmperage();
-    }
-
-    public long acceptsVoltage() {
-        return getMaxVoltage() - getCurrentVoltage();
-    }
-
     public long getCurrentAmperage() {
         return amperageCounter.get(getWorld());
     }

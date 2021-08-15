@@ -11,7 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,16 +49,15 @@ public class EnergyNetHandler implements IEnergyContainer {
             long amps = dest.acceptEnergyFromNetwork(facing, voltage - path.getMaxLoss(), amperage - amperesUsed);
             amperesUsed += amps;
             boolean didBurn = false;
+
             for (TileEntityCable cable : path.getPath()) {
-                boolean overVolt = cable.getMaxVoltage() < voltage;
-                boolean overAmp = !cable.checkAmperage(amps);
-                if (overVolt) {
+                if (cable.getMaxVoltage() < voltage) {
                     for (TileEntityCable cable1 : path.getPath()) {
                         burnCable(cable1.getWorld(), cable1.getPos());
                     }
                     break outer;
                 }
-                if (overAmp) {
+                if (!cable.checkAmperage(amps)) {
                     didBurn = true;
                     burnCable(cable.getWorld(), cable.getPos());
                 }
@@ -68,6 +66,7 @@ public class EnergyNetHandler implements IEnergyContainer {
             for(TileEntityCable cable : path.getPath()) {
                 cable.incrementAmperage(amps, voltage);
             }
+
             if (amperage == amperesUsed)
                 break;
         }
