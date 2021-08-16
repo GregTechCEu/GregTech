@@ -195,7 +195,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityItemCollector[] ITEM_COLLECTOR = new MetaTileEntityItemCollector[4];
     public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
 
-    public static MetaTileEntityInfiniteEmitter INFINITE_EMITTER;
+    public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
 
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");
@@ -621,7 +621,7 @@ public class MetaTileEntities {
         PRIMITIVE_WATER_PUMP = GregTechAPI.registerMetaTileEntity(1647, new MetaTileEntityPrimitiveWaterPump(gregtechId("primitive_water_pump")));
         PUMP_OUTPUT_HATCH = GregTechAPI.registerMetaTileEntity(1648, new MetaTileEntityPumpHatch(gregtechId("pump_hatch")));
 
-        INFINITE_EMITTER = GregTechAPI.registerMetaTileEntity(1649, new MetaTileEntityInfiniteEmitter(gregtechId("infinite_emitter")));
+        CREATIVE_ENERGY = GregTechAPI.registerMetaTileEntity(1649, new MetaTileEntityCreativeEnergy());
         // Steam Hatches/Buses
         STEAM_EXPORT_BUS = GregTechAPI.registerMetaTileEntity(1650, new MetaTileEntitySteamItemBus(gregtechId("steam_export_bus"), true));
         STEAM_IMPORT_BUS = GregTechAPI.registerMetaTileEntity(1651, new MetaTileEntitySteamItemBus(gregtechId("steam_import_bus"), false));
