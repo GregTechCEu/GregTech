@@ -1,11 +1,16 @@
 package gregtech.api.terminal.app.recipechart.widget;
 
+import gregtech.api.GTValues;
+import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.ColorRectTexture;
+import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.SimpleTextWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
@@ -43,6 +48,10 @@ public class RGLine extends WidgetGroup {
             ItemStackHandler handler = new ItemStackHandler();
             handler.setStackInSlot(0, catalyst);
             infoGroup.addWidget(new SlotWidget(handler, 0, 0, 0, false, false).setBackgroundTexture(new ColorRectTexture(0)));
+            MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(catalyst);
+            if (mte instanceof SimpleMachineMetaTileEntity) {
+                infoGroup.addWidget(new LabelWidget(9, -10, "Tier: " + GTValues.VN[((SimpleMachineMetaTileEntity) mte).getTier()],  -1).setXCentered(true).setShadow(true));
+            }
         }
 
         infoGroup.setVisible(false);
@@ -84,6 +93,9 @@ public class RGLine extends WidgetGroup {
     public static RGLine deserializeLineNBT(NBTTagCompound nbt, RGContainer container) {
         RGLine line = new RGLine(container.nodes.get(nbt.getInteger("parent")), container.nodes.get(nbt.getInteger("child")), container);
         line.ratio = nbt.getInteger("ratio");
+        boolean visible = nbt.getBoolean("visible");
+        line.infoGroup.setVisible(visible);
+        line.infoGroup.setActive(visible);
         return line;
     }
 
@@ -92,6 +104,7 @@ public class RGLine extends WidgetGroup {
         nbt.setInteger("parent", container.nodes.indexOf(parent));
         nbt.setInteger("child", container.nodes.indexOf(child));
         nbt.setInteger("ratio", ratio);
+        nbt.setBoolean("visible", infoGroup.isVisible());
         return nbt;
     }
 

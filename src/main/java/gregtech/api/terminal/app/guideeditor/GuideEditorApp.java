@@ -61,6 +61,8 @@ public class GuideEditorApp extends AbstractApplication {
     }
 
     @Override
-    protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
+    public boolean isClientSideApp() {
+        return true;
     }
+
 }

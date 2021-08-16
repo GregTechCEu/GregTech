@@ -14,7 +14,11 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +28,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public AbstractApplication focusApp;
     public final TerminalMenuWidget menu;
     public final TerminalDesktopWidget desktop;
-    private NBTTagCompound tabletNBT;
+    private final NBTTagCompound tabletNBT;
 
     public TerminalOSWidget(int xPosition, int yPosition, int width, int height, NBTTagCompound tabletNBT) {
         super(new Position(xPosition, yPosition), new Size(width, height));
@@ -106,7 +110,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
     }
 
-    public void closeApplication(AbstractApplication application, boolean isClient) {
+    public NBTTagCompound closeApplication(AbstractApplication application, boolean isClient) {
         if (application != null) {
             NBTTagCompound nbt = application.closeApp(isClient, tabletNBT.getCompoundTag(application.getRegistryName()));
             if (nbt != null) {
@@ -123,7 +127,9 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             }
             menu.removeComponents();
             desktop.showDesktop();
+            return nbt;
         }
+        return null;
     }
 
     public void homeTrigger(boolean isClient) {
@@ -134,6 +140,22 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 menu.hideMenu();
             }
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void shutdown() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        for (AbstractApplication openedApp : openedApps) {
+            String appName = openedApp.getRegistryName();
+            NBTTagCompound synced = openedApp.closeApp(true, tabletNBT.getCompoundTag(appName));
+            if (synced != null) {
+                tabletNBT.setTag(appName, synced);
+                if (openedApp.isClientSideApp()) {//if its a clientSideApp and the nbt not null, meaning this nbt should be synced to the server side.
+                    nbt.setTag(appName, synced);
+                }
+            }
+        }
+        writeClientAction(-1, buffer -> buffer.writeCompoundTag(nbt));
     }
 
     protected TerminalDialogWidget openDialog(TerminalDialogWidget widget) {
@@ -153,6 +175,29 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             desktop.waitToRemoved(widget);
         }
         return widget;
+    }
+
+    @Override
+    public void handleClientAction(int id, PacketBuffer buffer) {
+        if (id == -1) { //shutdown
+            NBTTagCompound nbt = null;
+            try {
+                nbt = buffer.readCompoundTag();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            for (AbstractApplication openedApp : openedApps) {
+                String appName = openedApp.getRegistryName();
+                NBTTagCompound data = openedApp.closeApp(true, tabletNBT.getCompoundTag(appName));
+                if (data != null) {
+                    tabletNBT.setTag(appName, data);
+                } else if (nbt != null && openedApp.isClientSideApp() && nbt.hasKey(appName)) {
+                    tabletNBT.setTag(appName, nbt.getCompoundTag(appName));
+                }
+            }
+            this.getModularUI().entityPlayer.closeScreen(); // must close tablet from server side.
+        }
+        super.handleClientAction(id, buffer);
     }
 
     @Override
@@ -177,4 +222,25 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         });
     }
 
+    boolean waitShutdown;
+    @Override
+    public boolean keyTyped(char charTyped, int keyCode) {
+        if (keyCode == 1) { // hook esc
+            if (waitShutdown) {
+                shutdown();
+            } else {
+                waitShutdown = true;
+                TerminalDialogWidget.showConfirmDialog(this, "Notice", "Confirm the shutdown? (Click ESC again to see ok)", result->{
+                    if (result) {
+                        shutdown();
+                    } else {
+                        waitShutdown = false;
+                    }
+                }).setClientSide().open();
+            }
+            return true;
+        }
+        waitShutdown = false;
+        return super.keyTyped(charTyped, keyCode);
+    }
 }

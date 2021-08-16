@@ -80,7 +80,8 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     }
 
     @Override
-    protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
+    public boolean isClientSideApp() {
+        return true;
     }
 
     protected IGuiTexture itemIcon(T item) {

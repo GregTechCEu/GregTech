@@ -124,6 +124,10 @@ public class RGContainer extends DraggableScrollableWidgetGroup {
                         nodeTag.getTagList("children", Constants.NBT.TAG_INT_ARRAY));
                 this.addWidget(node);
             }
+            for (RGLine line : lines) {
+                removeWidget(line);
+            }
+            lines.clear();
             NBTTagList linesList = nbt.getTagList("lines", Constants.NBT.TAG_COMPOUND);
             for (NBTBase node : linesList) { // build nodes
                 RGLine line = RGLine.deserializeLineNBT((NBTTagCompound)node, this);
@@ -144,7 +148,7 @@ public class RGContainer extends DraggableScrollableWidgetGroup {
         nbt.setTag("nodes", nodesTag);
         NBTTagList linesTag = new NBTTagList();
         for (RGLine line : lines) {
-            nodesTag.appendTag(line.serializeLineNBT());
+            linesTag.appendTag(line.serializeLineNBT());
         }
         nbt.setTag("lines", linesTag);
         return nbt;

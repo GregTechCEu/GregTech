@@ -20,11 +20,9 @@ import gregtech.api.terminal.os.menu.component.IMenuComponent;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class RecipeChartApp extends AbstractApplication implements IRecipeTransferHandlerWidget {
     public static final TextureArea ICON = TextureArea.fullImage("textures/gui/terminal/recipe_graph/icon.png");
@@ -43,6 +41,10 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
             app.tabGroup = new TabGroup(0, 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 60, 10));
             app.addWidget(app.tabGroup);
             app.addTab("default");
+            if (nbt != null) {
+                app.testnbt = nbt;
+                ((RGContainer) app.tabGroup.getCurrentTag()).loadFromNBT(nbt);
+            }
         }
         return app;
     }
@@ -79,8 +81,16 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
     }
 
     @Override
-    protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
+    public NBTTagCompound closeApp(boolean isClient, NBTTagCompound nbt) { //synced data to server side.
+        if (isClient && testnbt != null) {
+            return testnbt;
+        }
+        return super.closeApp(isClient, nbt);
+    }
 
+    @Override
+    public boolean isClientSideApp() {
+        return true;
     }
 
     @Override

@@ -51,6 +51,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
     private WidgetGroup toolGroup;
     private WidgetGroup inputsGroup;
     private RGContainer container;
+    private SimpleTextWidget textWidget;
     protected Map<RGNode, Integer> parentNodes;
     protected Map<Widget, Set<RGNode>> children;
 
@@ -89,7 +90,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
 
     private void init(RGContainer container) {
         this.container = container;
-        SimpleTextWidget textWidget = new SimpleTextWidget(9, -5, "", -1, () -> {
+        textWidget = new SimpleTextWidget(9, -5, "", -1, () -> {
             if (head instanceof ItemStack) {
                 return ((ItemStack) head).getDisplayName();
             } else if (head instanceof FluidStack) {
@@ -98,6 +99,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
             return "Drag ingredients into slot.";
         }, true).setShadow(true);
         textWidget.setVisible(false);
+        textWidget.setActive(false);
         this.addWidget(textWidget);
         inputsGroup = new WidgetGroup(0, 0, 0, 0);
         this.addWidget(inputsGroup);
@@ -408,6 +410,9 @@ public class RGNode extends WidgetGroup implements IDraggable {
                 fluidsList.tagList.stream().map(it->FluidStack.loadFluidStackFromNBT((NBTTagCompound) it)).collect(Collectors.toList()),
                 nodeTag.hasKey("catalyst") ? new ItemStack(nodeTag.getCompoundTag("catalyst")) : null,
                 nodeTag.getInteger("per"));
+        boolean visible = nodeTag.getBoolean("visible");
+        node.textWidget.setVisible(visible);
+        node.textWidget.setActive(visible);
         return node;
     }
 
@@ -454,6 +459,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
             parentsList.appendTag(new NBTTagIntArray(new int[]{container.nodes.indexOf(entry.getKey()), entry.getValue()}));
         }
         nbt.setTag("parents", parentsList);
+        nbt.setBoolean("visible", textWidget.isVisible());
         return nbt;
     }
 

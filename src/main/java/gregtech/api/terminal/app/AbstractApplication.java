@@ -8,9 +8,11 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class AbstractApplication extends AnimaWidgetGroup {
     protected final String name;
@@ -50,6 +52,8 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         return false;
     }
 
+    public boolean isClientSideApp() {return false;}
+
     public TerminalOSWidget getOs() {
         return os;
     }
@@ -60,5 +64,12 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
 
     public boolean canPlayerUse(EntityPlayer player) {
         return true;
+    }
+
+    @Override
+    protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
+        if (!isClientSideApp()) {
+            super.writeClientAction(id, packetBufferWriter);
+        }
     }
 }
