@@ -8,13 +8,12 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
-import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec2f;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
@@ -31,13 +30,13 @@ public class RGLine extends WidgetGroup {
     private final WidgetGroup infoGroup;
     private final WidgetGroup toolGroup;
 
-    public RGLine(RGNode parent, RGNode child, RGContainer container, ItemStack catalyst) {
+    public RGLine(RGNode parent, RGNode child, RGContainer container) {
         super(0, 0, 0, 0);
         this.parent = parent;
         this.child = child;
         this.container = container;
         this.points = new ArrayList<>();
-        this.catalyst = catalyst;
+        this.catalyst = parent.catalyst;
 
         infoGroup = new WidgetGroup(0, 0, 0, 0);
         if (catalyst != null) {
@@ -63,7 +62,7 @@ public class RGLine extends WidgetGroup {
                 .setColors(0, TerminalTheme.COLOR_7.getColor(), 0)
                 .setIcon(GuiTextures.ICON_CALCULATOR)
                 .setHoverText("Ratio")
-                .setClickListener(cd -> TerminalDialogWidget.showTextFieldDialog(container.os, "Demand", s->{
+                .setClickListener(cd -> TerminalDialogWidget.showTextFieldDialog(container.os, "Ratio", s->{
                     try {
                         return Integer.parseInt(s) > 0;
                     } catch (Exception ignored){
@@ -80,6 +79,20 @@ public class RGLine extends WidgetGroup {
         this.addWidget(toolGroup);
         this.ratio = 1;
         updateLine();
+    }
+
+    public static RGLine deserializeLineNBT(NBTTagCompound nbt, RGContainer container) {
+        RGLine line = new RGLine(container.nodes.get(nbt.getInteger("parent")), container.nodes.get(nbt.getInteger("child")), container);
+        line.ratio = nbt.getInteger("ratio");
+        return line;
+    }
+
+    public NBTTagCompound serializeLineNBT() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("parent", container.nodes.indexOf(parent));
+        nbt.setInteger("child", container.nodes.indexOf(child));
+        nbt.setInteger("ratio", ratio);
+        return nbt;
     }
 
     public RGNode getParent() {

@@ -6,9 +6,7 @@ import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.component.IMenuComponent;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Collections;

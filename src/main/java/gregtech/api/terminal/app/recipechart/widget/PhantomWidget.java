@@ -8,7 +8,6 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
 import mezz.jei.api.gui.IGhostIngredientHandler;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;

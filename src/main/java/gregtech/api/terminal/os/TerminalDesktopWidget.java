@@ -6,8 +6,6 @@ import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 
-import java.awt.*;
-
 public class TerminalDesktopWidget extends WidgetGroup {
     private final TerminalOSWidget os;
     private final WidgetGroup appDiv;

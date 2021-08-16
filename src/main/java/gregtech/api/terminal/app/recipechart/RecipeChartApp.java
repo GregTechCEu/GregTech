@@ -54,6 +54,7 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
         }
     }
 
+    NBTTagCompound testnbt;
     @Override
     public List<IMenuComponent> getMenuComponents() {
         ClickComponent newPage = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE).setHoverText("New Page").setClickConsumer(cd->{
@@ -64,7 +65,17 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
                 ((RGContainer) tabGroup.getCurrentTag()).addNode(50, 100);
             }
         });
-        return Arrays.asList(newPage, importPage);
+        ClickComponent save = new ClickComponent().setIcon(GuiTextures.ICON_ADD).setHoverText("save test").setClickConsumer(cd->{
+            if (tabGroup != null && tabGroup.getCurrentTag() instanceof RGContainer) {
+                testnbt = ((RGContainer) tabGroup.getCurrentTag()).saveAsNBT();
+            }
+        });
+        ClickComponent load = new ClickComponent().setIcon(GuiTextures.ICON_ADD).setHoverText("load test").setClickConsumer(cd->{
+            if (tabGroup != null && tabGroup.getCurrentTag() instanceof RGContainer) {
+                ((RGContainer) tabGroup.getCurrentTag()).loadFromNBT(testnbt);
+            }
+        });
+        return Arrays.asList(newPage, importPage, save, load);
     }
 
     @Override

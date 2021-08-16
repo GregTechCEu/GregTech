@@ -8,12 +8,7 @@ import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.math.MathHelper;
-
-import static gregtech.api.gui.impl.ModularUIGui.bColorForOverlay;
-import static gregtech.api.gui.impl.ModularUIGui.gColorForOverlay;
-import static gregtech.api.gui.impl.ModularUIGui.rColorForOverlay;
 
 public class DraggableScrollableWidgetGroup extends WidgetGroup {
     protected int scrollXOffset;

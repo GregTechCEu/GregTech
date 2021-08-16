@@ -11,7 +11,7 @@ import gregtech.api.terminal.app.recipechart.RecipeChartApp;
 
 import java.util.*;
 
-public class TerminalBuilder {
+public class TerminalRegistry {
     private static final Map<String, AbstractApplication> appRegister = new HashMap<>();
     private static final List<String> defaultApps = new ArrayList<>();
 

@@ -4,7 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
-import gregtech.api.terminal.TerminalBuilder;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.menu.TerminalMenuWidget;
 import gregtech.api.util.Position;
@@ -34,11 +34,11 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         this.addWidget(desktop);
         this.addWidget(menu);
         this.tabletNBT = tabletNBT;
-        TerminalBuilder.getDefaultApps().forEach(name-> installApplication(TerminalBuilder.getApplication(name)));
+        TerminalRegistry.getDefaultApps().forEach(name-> installApplication(TerminalRegistry.getApplication(name)));
         NBTTagList installed = tabletNBT.getTagList("installed", 8);
         for (NBTBase nbtBase : installed) {
             if (nbtBase instanceof NBTTagString) {
-                AbstractApplication app = TerminalBuilder.getApplication(((NBTTagString) nbtBase).getString());
+                AbstractApplication app = TerminalRegistry.getApplication(((NBTTagString) nbtBase).getString());
                 if (app != null) {
                     installApplication(app);
                 }
