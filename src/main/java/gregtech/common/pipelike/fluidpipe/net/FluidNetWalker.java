@@ -111,7 +111,7 @@ public class FluidNetWalker extends PipeNetWalker {
                 pathObjectsCopy.addAll(fluidFilter);
             List<TileEntityFluidPipe> holders = new ArrayList<>(holdingPipes);
             holders.add((TileEntityFluidPipe) pipeTile);
-            inventories.add(new FluidPipeNet.Inventory(pipePos, faceToNeighbour, getWalkedBlocks(), pathObjectsCopy, rate, holders));
+            inventories.add(new FluidPipeNet.Inventory(new BlockPos(pipePos), faceToNeighbour, getWalkedBlocks(), pathObjectsCopy, rate, holders));
         }
     }
 

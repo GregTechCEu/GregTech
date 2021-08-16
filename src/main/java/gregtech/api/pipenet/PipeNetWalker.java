@@ -27,7 +27,7 @@ public abstract class PipeNetWalker {
     private final Set<IPipeTile<?, ?>> walked = new HashSet<>();
     private final List<EnumFacing> pipes = new ArrayList<>();
     private List<PipeNetWalker> walkers;
-    private BlockPos currentPos;
+    private final BlockPos.MutableBlockPos currentPos;
     private int walkedBlocks;
     private boolean invalid;
 
@@ -35,7 +35,7 @@ public abstract class PipeNetWalker {
         this.world = Objects.requireNonNull(world);
         this.net = Objects.requireNonNull(net);
         this.walkedBlocks = walkedBlocks;
-        this.currentPos = Objects.requireNonNull(sourcePipe);
+        this.currentPos = new BlockPos.MutableBlockPos(Objects.requireNonNull(sourcePipe));
     }
 
     /**
@@ -100,12 +100,12 @@ public abstract class PipeNetWalker {
 
     private boolean walk() {
         if (walkers == null)
-            checkPos(currentPos);
+            checkPos();
 
         if (pipes.size() == 0)
             return true;
         if (pipes.size() == 1) {
-            currentPos = currentPos.offset(pipes.get(0));
+            currentPos.move(pipes.get(0));
             walkedBlocks++;
             return false;
         }
@@ -129,9 +129,9 @@ public abstract class PipeNetWalker {
         return walkers.size() == 0;
     }
 
-    private void checkPos(BlockPos pos) {
+    private void checkPos() {
         pipes.clear();
-        TileEntity thisPipe = world.getTileEntity(pos);
+        TileEntity thisPipe = world.getTileEntity(currentPos);
         IPipeTile<?, ?> pipeTile = (IPipeTile<?, ?>) thisPipe;
         if (pipeTile == null) {
             if (walkedBlocks == 1) {
@@ -141,27 +141,30 @@ public abstract class PipeNetWalker {
             } else
                 throw new IllegalStateException("PipeTile was not null last walk, but now is");
         }
-        checkPipe(pipeTile, pos);
+        checkPipe(pipeTile, currentPos);
         pipeTile.markWalked();
         walked.add(pipeTile);
 
+        BlockPos.PooledMutableBlockPos pos = BlockPos.PooledMutableBlockPos.retain();
         // check for surrounding pipes and item handlers
         for (EnumFacing accessSide : EnumFacing.VALUES) {
             //skip sides reported as blocked by pipe network
             if (!pipeTile.isConnectionOpenAny(accessSide))
                 continue;
 
-            TileEntity tile = world.getTileEntity(pos.offset(accessSide));
+            pos.setPos(currentPos);
+            pos.move(accessSide);
+            TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof IPipeTile) {
                 IPipeTile<?, ?> otherPipe = (IPipeTile<?, ?>) tile;
                 if (otherPipe.isWalked())
                     continue;
-                if (isValidPipe(pipeTile, otherPipe, pos, accessSide)) {
+                if (isValidPipe(pipeTile, otherPipe, currentPos, accessSide)) {
                     pipes.add(accessSide);
                     continue;
                 }
             }
-            checkNeighbour(pipeTile, pos, accessSide, tile);
+            checkNeighbour(pipeTile, currentPos, accessSide, tile);
         }
     }
 
