@@ -59,7 +59,7 @@ public class MetaOreDictItem extends StandardMetaItem {
             MaterialIconSet materialIconSet = metaItem.getValue().materialIconSet;
             if (prefix.materialIconType == null || DISALLOWED_TYPES.contains(prefix.materialIconType))
                 continue;
-            int registrationKey = prefix.id * 1000 + materialIconSet.ordinal();
+            int registrationKey = prefix.id * 1000 + materialIconSet.id;
             if (!alreadyRegistered.containsKey(registrationKey)) {
                 prefix.materialIconType.getItemModelPath(materialIconSet);
                 ResourceLocation resourceLocation = prefix.materialIconType.getItemModelPath(materialIconSet);

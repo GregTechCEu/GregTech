@@ -124,7 +124,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         for (short metaItem : generatedItems) {
             MaterialIconSet materialIconSet = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(metaItem).getMaterialIconSet();
 
-            short registrationKey = (short) (prefix.id + materialIconSet.ordinal());
+            short registrationKey = (short) (prefix.id + materialIconSet.id);
             if (!alreadyRegistered.containsKey(registrationKey)) {
                 ResourceLocation resourceLocation = prefix.materialIconType.getItemModelPath(materialIconSet);
                 ModelBakery.registerItemVariants(this, resourceLocation);

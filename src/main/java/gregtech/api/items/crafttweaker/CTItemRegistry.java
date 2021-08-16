@@ -15,6 +15,6 @@ public class CTItemRegistry {
     @ZenMethod("registerItem")
     public static void registerItem(String name, short id, int rgb, String materialIconSet, String orePrefix) {
         new MetaOreDictItem.OreDictValueItem(
-                id, name, rgb, MaterialIconSet.valueOf(materialIconSet), OrePrefix.getPrefix(orePrefix));
+                id, name, rgb, MaterialIconSet.ICON_SETS.get(materialIconSet), OrePrefix.getPrefix(orePrefix));
     }
 }
