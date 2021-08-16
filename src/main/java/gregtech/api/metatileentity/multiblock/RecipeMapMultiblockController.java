@@ -142,6 +142,10 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
+        boolean canForm = super.checkStructureComponents(parts, abilities);
+        if (!canForm)
+            return false;
+
         //basically check minimal requirements for inputs count
         //noinspection SuspiciousMethodCalls
         int itemInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_ITEMS, Collections.emptyList())

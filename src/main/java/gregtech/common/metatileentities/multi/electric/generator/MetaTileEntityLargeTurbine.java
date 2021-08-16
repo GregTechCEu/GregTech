@@ -145,8 +145,8 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
 
     public MultiblockAbility<?>[] getAllowedAbilities() {
         return turbineType.hasOutputHatch ?
-                new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.EXPORT_FLUIDS} :
-                new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS};
+                new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.EXPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH} :
+                new MultiblockAbility[]{MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH};
     }
 
     @Override

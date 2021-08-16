@@ -22,6 +22,8 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 
+    public static MultiblockAbility<?>[] ALLOWED_ABILITIES = { MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH };
+
     public MetaTileEntityAssemblyLine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.ASSEMBLY_LINE_RECIPES);
     }
@@ -39,7 +41,7 @@ public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
                 .aisle("#Y#", "GSG", "RTR", "FIF")
                 .where('S', selfPredicate())
                 .where('C', statePredicate(getCasingState()))
-                .where('F', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS)))
+                .where('F', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
                 .where('O', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_ITEMS)))
                 .where('Y', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.INPUT_ENERGY)))
                 .where('I', tilePredicate((state, tile) -> tile.metaTileEntityId.equals(MetaTileEntities.ITEM_IMPORT_BUS[0].metaTileEntityId)))

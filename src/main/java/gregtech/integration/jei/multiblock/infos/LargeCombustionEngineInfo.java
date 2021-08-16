@@ -3,6 +3,7 @@ package gregtech.integration.jei.multiblock.infos;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.BlockTurbineCasing;
@@ -25,9 +26,9 @@ public class LargeCombustionEngineInfo extends MultiblockInfoPage {
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
+        MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
                 .aisle("AAA", "ACA", "AAA")
-                .aisle("HHH", "HGH", "HHH")
+                .aisle("HHH", "MGH", "HHH")
                 .aisle("HHH", "FGH", "HHH")
                 .aisle("HHH", "HEH", "HHH")
                 .where('H', MetaBlocks.METAL_CASING.getState(MetalCasingType.TITANIUM_STABLE))
@@ -36,9 +37,14 @@ public class LargeCombustionEngineInfo extends MultiblockInfoPage {
                 .where('C', MetaTileEntities.LARGE_COMBUSTION_ENGINE, EnumFacing.NORTH)
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.EV], EnumFacing.WEST)
                 .where('E', MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.EV], EnumFacing.SOUTH)
-                .where('#', Blocks.AIR.getDefaultState())
-                .build();
-        return Lists.newArrayList(shapeInfo);
+                .where('#', Blocks.AIR.getDefaultState());
+
+                if (ConfigHolder.U.GT5u.enableMaintenance)
+                    shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.WEST);
+                else
+                    shapeInfo.where('M', MetaBlocks.METAL_CASING.getState(MetalCasingType.TITANIUM_STABLE));
+
+        return Lists.newArrayList(shapeInfo.build());
     }
 
     @Override

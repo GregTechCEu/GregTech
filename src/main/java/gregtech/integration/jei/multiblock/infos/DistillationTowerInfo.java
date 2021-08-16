@@ -3,6 +3,8 @@ package gregtech.integration.jei.multiblock.infos;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -27,9 +29,9 @@ public class DistillationTowerInfo extends MultiblockInfoPage {
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
+        MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
                 .aisle("EXX", "XXX", "XXX", "XXX", "XXX", "XXX")
-                .aisle("SFX", "X#X", "X#X", "X#X", "X#X", "XXX")
+                .aisle("SFX", "M#X", "X#X", "X#X", "X#X", "XXX")
                 .aisle("IXX", "HXX", "HXX", "HXX", "HXX", "HXX")
                 .where('#', Blocks.AIR.getDefaultState())
                 .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.STAINLESS_CLEAN))
@@ -37,9 +39,14 @@ public class DistillationTowerInfo extends MultiblockInfoPage {
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.EV], EnumFacing.WEST)
                 .where('I', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.EV], EnumFacing.WEST)
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.EV], EnumFacing.DOWN)
-                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.EV], EnumFacing.WEST)
-                .build();
-        return Lists.newArrayList(shapeInfo);
+                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.EV], EnumFacing.WEST);
+
+                if (ConfigHolder.U.GT5u.enableMaintenance)
+                    shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.WEST);
+                else
+                    shapeInfo.where('M', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STAINLESS_CLEAN));
+
+        return Lists.newArrayList(shapeInfo.build());
     }
 
     @Override

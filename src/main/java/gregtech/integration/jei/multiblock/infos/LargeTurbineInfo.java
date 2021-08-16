@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.BlockInfo;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
@@ -45,18 +46,24 @@ public class LargeTurbineInfo extends MultiblockInfoPage {
         MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
                 .aisle("CCCC", "CIOC", "CCCC")
                 .aisle("CCCC", "RGGD", "CCCC")
-                .aisle("CCCC", "CSCC", "CCCC")
+                .aisle("CCCC", "CSMC", "CCCC")
                 .where('S', turbine, EnumFacing.SOUTH)
                 .where('C', turbine.turbineType.casingState)
                 .where('R', new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder))
                 .where('D', MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.EV], EnumFacing.EAST)
                 .where('G', turbine.turbineType.gearboxState)
                 .where('I', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.HV], EnumFacing.NORTH);
-        if (turbine.turbineType.hasOutputHatch) {
-            shapeInfo.where('O', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.EV], EnumFacing.NORTH);
-        } else {
-            shapeInfo.where('O', turbine.turbineType.casingState);
-        }
+
+                if (turbine.turbineType.hasOutputHatch)
+                    shapeInfo.where('O', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.EV], EnumFacing.NORTH);
+                else
+                    shapeInfo.where('O', turbine.turbineType.casingState);
+
+                if (ConfigHolder.U.GT5u.enableMaintenance)
+                    shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.SOUTH);
+                else
+                    shapeInfo.where('M', turbine.turbineType.casingState);
+
         return Lists.newArrayList(shapeInfo.build());
     }
 

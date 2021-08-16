@@ -173,4 +173,9 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         super.renderMetaTileEntity(renderState, translation, pipeline);
         Textures.ELECTRIC_FURNACE_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
     }
+
+    @Override
+    public boolean hasMaintenanceMechanics() {
+        return false;
+    }
 }

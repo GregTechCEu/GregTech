@@ -37,7 +37,8 @@ import java.util.List;
 public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS,
+            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.MAINTENANCE_HATCH
     };
 
     protected int heatingCoilLevel;

@@ -1,6 +1,5 @@
 package gregtech.api.metatileentity.multiblock;
 
-import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget.ClickData;
@@ -94,8 +93,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      *
      * @return whether this multiblock has maintenance mechanics
      */
-    public boolean hasMaintenance() {
-        return false;
+    public boolean hasMaintenanceMechanics() {
+        return ConfigHolder.U.GT5u.enableMaintenance;
     }
 
     /**
@@ -103,10 +102,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * @param duration in ticks to add to the counter of active time
      */
     public void calculateMaintenance(int duration) {
-        if (!ConfigHolder.U.GT5u.enableMaintenance || !hasMaintenance())
+        if (!ConfigHolder.U.GT5u.enableMaintenance || !hasMaintenanceMechanics())
             return;
 
-        MetaTileEntityMaintenanceHatch maintenanceHatch = getAbilities(GregtechCapabilities.MAINTENANCE_HATCH).get(0);
+        MetaTileEntityMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
         if (maintenanceHatch.getType() == 2) {
             return;
         }
@@ -123,10 +122,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        if (this.hasMaintenance() && ConfigHolder.U.GT5u.enableMaintenance) { // nothing extra if no maintenance
-            if (getAbilities(GregtechCapabilities.MAINTENANCE_HATCH).isEmpty())
+        if (this.hasMaintenanceMechanics() && ConfigHolder.U.GT5u.enableMaintenance) { // nothing extra if no maintenance
+            if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
-            MetaTileEntityMaintenanceHatch maintenanceHatch = getAbilities(GregtechCapabilities.MAINTENANCE_HATCH).get(0);
+            MetaTileEntityMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             if (maintenanceHatch.getType() == 2) { // set problems fixed with full auto hatches
                 this.maintenance_problems = 0b111111;
             } else {
@@ -164,10 +163,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     @Override
     public void invalidateStructure() {
-        if (hasMaintenance() && ConfigHolder.U.GT5u.enableMaintenance) { // nothing extra if no maintenance
-            if (getAbilities(GregtechCapabilities.MAINTENANCE_HATCH).isEmpty())
+        if (hasMaintenanceMechanics() && ConfigHolder.U.GT5u.enableMaintenance) { // nothing extra if no maintenance
+            if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
-            MetaTileEntityMaintenanceHatch maintenance = getAbilities(GregtechCapabilities.MAINTENANCE_HATCH).get(0);
+            MetaTileEntityMaintenanceHatch maintenance = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             if (maintenance.getType() != 2) // store maintenance data for non full auto hatches
                 maintenance.storeMaintenanceData(maintenance_problems, timeActive);
         }
@@ -180,11 +179,11 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (!canForm)
             return false;
 
-        if (!hasMaintenance())
+        if (!hasMaintenanceMechanics())
             return true;
 
 //        int mufflerCount = abilities.getOrDefault(GregtechCapabilities.MUFFLER_HATCH, Collections.emptyList()).size();
-        int maintenanceCount = abilities.getOrDefault(GregtechCapabilities.MAINTENANCE_HATCH, Collections.emptyList()).size();
+        int maintenanceCount = abilities.getOrDefault(MultiblockAbility.MAINTENANCE_HATCH, Collections.emptyList()).size();
 
 //        if (hasMuffler) {
 //            if (mufflerCount != 1)
@@ -208,7 +207,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
                     .setStyle(new Style().setColor(TextFormatting.RED)
                             .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, tooltip))));
-        } else if (!hasMaintenance()) {
+        } else if (!hasMaintenanceMechanics()) {
             return;
         }
 

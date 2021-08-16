@@ -2,6 +2,7 @@ package gregtech.integration.jei.multiblock.infos;
 
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.BlockTransparentCasing;
@@ -38,15 +39,21 @@ public class AssemblyLineInfo extends MultiblockInfoPage {
                 if (num == 4 || num == 9) builder.aisle("FIf", "RTR", "GAG", "#Y#");
                 else builder.aisle("CIC", "RTR", "GAG", "#Y#");
             }
-            builder.aisle("CIC", "RTR", "GSG", "#Y#")
+            builder.aisle("CIM", "RTR", "GSG", "#Y#")
                     .where('S', MetaTileEntities.ASSEMBLY_LINE, EnumFacing.SOUTH)
                     .where('C', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID))
                     .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[4], EnumFacing.WEST)
                     .where('f', MetaTileEntities.FLUID_IMPORT_HATCH[4], EnumFacing.EAST)
                     .where('O', MetaTileEntities.ITEM_EXPORT_BUS[4], EnumFacing.DOWN)
                     .where('Y', MetaTileEntities.ENERGY_INPUT_HATCH[4], EnumFacing.UP)
-                    .where('I', MetaTileEntities.ITEM_IMPORT_BUS[0], EnumFacing.DOWN)
-                    .where('G', MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING))
+                    .where('I', MetaTileEntities.ITEM_IMPORT_BUS[0], EnumFacing.DOWN);
+
+            if (ConfigHolder.U.GT5u.enableMaintenance)
+                builder.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.EAST);
+            else
+                builder.where('M', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID));
+
+            builder.where('G', MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING))
                     .where('A', MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLER_CASING))
                     .where('R', MetaBlocks.TRANSPARENT_CASING.getState(BlockTransparentCasing.CasingType.REINFORCED_GLASS))
                     .where('T', MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLY_LINE_CASING))

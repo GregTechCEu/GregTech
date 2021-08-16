@@ -3,6 +3,7 @@ package gregtech.integration.jei.multiblock.infos;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -27,18 +28,23 @@ public class ImplosionCompressorInfo extends MultiblockInfoPage {
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
+        MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
                 .aisle("XXX", "XBX", "XXX")
-                .aisle("XXX", "C#E", "XXX")
+                .aisle("MXX", "C#E", "XXX")
                 .aisle("XXX", "XIX", "XXX")
                 .where('C', MetaTileEntities.IMPLOSION_COMPRESSOR, EnumFacing.WEST)
                 .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.STEEL_SOLID))
                 .where('#', Blocks.AIR.getDefaultState())
                 .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.HV], EnumFacing.SOUTH)
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.EAST)
-                .where('B', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.HV], EnumFacing.NORTH)
-                .build();
-        return Lists.newArrayList(shapeInfo);
+                .where('B', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.HV], EnumFacing.NORTH);
+
+                if (ConfigHolder.U.GT5u.enableMaintenance)
+                    shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.WEST);
+                else
+                    shapeInfo.where('M', MetaBlocks.METAL_CASING.getState(MetalCasingType.STEEL_SOLID));
+
+        return Lists.newArrayList(shapeInfo.build());
     }
 
     @Override

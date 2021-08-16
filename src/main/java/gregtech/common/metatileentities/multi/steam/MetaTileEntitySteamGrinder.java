@@ -69,4 +69,9 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
         if (recipeMapWorkable.isActive())
             Textures.ROCK_CRUSHER_ACTIVE_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
     }
+
+    @Override
+    public boolean hasMaintenanceMechanics() {
+        return false;
+    }
 }

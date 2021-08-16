@@ -43,7 +43,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
             MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
             MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.EXPORT_FLUIDS,
-            MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.MAINTENANCE_HATCH
     };
 
     private int blastFurnaceTemperature;

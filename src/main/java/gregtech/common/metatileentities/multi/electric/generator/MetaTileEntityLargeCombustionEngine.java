@@ -30,6 +30,8 @@ import java.util.function.Predicate;
 
 public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockController {
 
+    public static MultiblockAbility<?>[] ALLOWED_ABILITIES = { MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH };
+
     public MetaTileEntityLargeCombustionEngine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.COMBUSTION_GENERATOR_FUELS, GTValues.V[GTValues.EV]);
     }
@@ -82,7 +84,7 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
                 .aisle("AAA", "AYA", "AAA")
                 .where('X', statePredicate(getCasingState()))
                 .where('G', statePredicate(MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX)))
-                .where('H', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS)))
+                .where('H', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
                 .where('D', abilityPartPredicate(MultiblockAbility.OUTPUT_ENERGY))
                 .where('A', intakeCasingPredicate())
                 .where('Y', selfPredicate())

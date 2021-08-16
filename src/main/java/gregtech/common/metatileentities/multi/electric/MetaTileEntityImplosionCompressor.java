@@ -21,7 +21,8 @@ import javax.annotation.Nonnull;
 public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockController {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS,
+            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.MAINTENANCE_HATCH
     };
 
     public MetaTileEntityImplosionCompressor(ResourceLocation metaTileEntityId) {

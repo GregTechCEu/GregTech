@@ -3,6 +3,7 @@ package gregtech.integration.jei.multiblock.infos;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -27,20 +28,25 @@ public class VacuumFreezerInfo extends MultiblockInfoPage {
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
+        MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
                 .aisle("XXX", "BXH", "XXX")
-                .aisle("XXX", "C#E", "XXX")
+                .aisle("MXX", "S#E", "XXX")
                 .aisle("XXX", "IXF", "XXX")
-                .where('C', MetaTileEntities.VACUUM_FREEZER, EnumFacing.WEST)
+                .where('S', MetaTileEntities.VACUUM_FREEZER, EnumFacing.WEST)
                 .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.ALUMINIUM_FROSTPROOF))
                 .where('#', Blocks.AIR.getDefaultState())
                 .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.HV], EnumFacing.SOUTH)
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.HV], EnumFacing.SOUTH)
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.EAST)
                 .where('B', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.HV], EnumFacing.NORTH)
-                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.HV], EnumFacing.NORTH)
-                .build();
-        return Lists.newArrayList(shapeInfo);
+                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.HV], EnumFacing.NORTH);
+
+                if (ConfigHolder.U.GT5u.enableMaintenance)
+                    shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.WEST);
+                else
+                    shapeInfo.where('M', MetaBlocks.METAL_CASING.getState(MetalCasingType.ALUMINIUM_FROSTPROOF));
+
+        return Lists.newArrayList(shapeInfo.build());
     }
 
     @Override

@@ -409,7 +409,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 .where('X', state -> statePredicate(GTUtility.getAllPropertyValues(boilerType.fireboxState, BlockFireboxCasing.ACTIVE))
                         .or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS)).test(state))
                 .where('C', statePredicate(boilerType.casingState).or(abilityPartPredicate(
-                        MultiblockAbility.EXPORT_FLUIDS)))
+                        MultiblockAbility.EXPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH)))
                 .build();
     }
 

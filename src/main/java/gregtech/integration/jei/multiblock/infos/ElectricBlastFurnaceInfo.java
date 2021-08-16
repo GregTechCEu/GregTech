@@ -2,6 +2,7 @@ package gregtech.integration.jei.multiblock.infos;
 
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
@@ -30,24 +31,26 @@ public class ElectricBlastFurnaceInfo extends MultiblockInfoPage {
     public List<MultiblockShapeInfo> getMatchingShapes() {
         ArrayList<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
         for (CoilType coilType : CoilType.values()) {
-            shapeInfo.add(MultiblockShapeInfo.builder()
+            MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
                     .aisle("IFX", "CCC", "CCC", "XXX")
                     .aisle("SXE", "C#C", "C#C", "XXX")
-                    .aisle("ODX", "CCC", "CCC", "XXX")
+                    .aisle("ODM", "CCC", "CCC", "XXX")
                     .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF))
                     .where('C', MetaBlocks.WIRE_COIL.getState(coilType))
                     .where('S', MetaTileEntities.ELECTRIC_BLAST_FURNACE, EnumFacing.WEST)
-
+                    .where('#', Blocks.AIR.getDefaultState())
                     .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.MV], EnumFacing.EAST)
                     .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.LV], EnumFacing.WEST)
                     .where('O', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.LV], EnumFacing.WEST)
-
                     .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.NORTH)
-                    .where('D', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.SOUTH)
+                    .where('D', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.SOUTH);
 
+                    if (ConfigHolder.U.GT5u.enableMaintenance)
+                        builder.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.EAST);
+                    else
+                        builder.where('M', MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF));
 
-                    .where('#', Blocks.AIR.getDefaultState())
-                    .build());
+            shapeInfo.add(builder.build());
         }
         return shapeInfo;
     }

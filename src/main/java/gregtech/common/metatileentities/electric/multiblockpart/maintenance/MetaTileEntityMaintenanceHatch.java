@@ -184,7 +184,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 break;
             }
             case 1: { // Consume Duct Tape for auto taping repair, then fix everything
-                if (!consumeDuctTape(this.inventory, 0)) //todo make this emit redstone if it is out of tape
+                if (consumeDuctTape(this.inventory, 0)) //todo make this emit redstone if it is out of tape
                     fixAllMaintenanceProblems();
                 break;
             }
