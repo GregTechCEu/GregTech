@@ -152,8 +152,7 @@ public abstract class PipeNetWalker {
             if (!pipeTile.isConnectionOpenAny(accessSide))
                 continue;
 
-            pos.setPos(currentPos);
-            pos.move(accessSide);
+            pos.setPos(currentPos).move(accessSide);
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof IPipeTile) {
                 IPipeTile<?, ?> otherPipe = (IPipeTile<?, ?>) tile;
@@ -166,6 +165,7 @@ public abstract class PipeNetWalker {
             }
             checkNeighbour(pipeTile, currentPos, accessSide, tile);
         }
+        pos.release();
     }
 
     public PipeNet<?> getNet() {
