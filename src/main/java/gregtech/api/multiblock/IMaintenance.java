@@ -2,11 +2,11 @@ package gregtech.api.multiblock;
 
 public interface IMaintenance {
 
-    byte getProblems();
+    byte getMaintenanceProblems();
 
-    int getNumProblems();
+    int getNumMaintenanceProblems();
 
-    boolean hasProblems();
+    boolean hasMaintenanceProblems();
 
     void setMaintenanceFixed(int index);
 

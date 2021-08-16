@@ -240,6 +240,10 @@ public class ConfigHolder {
             @Config.Comment("Enable more challenging recipes for Energy Input and Output hatches. Default: false")
             @Config.RequiresMcRestart
             public boolean harderEnergyHatches = false;
+
+            @Config.Comment("Whether to enable maintenance or not. Default: false")
+            @Config.RequiresMcRestart
+            public boolean enableMaintenance = true;
         }
 
         public static class GT6 {

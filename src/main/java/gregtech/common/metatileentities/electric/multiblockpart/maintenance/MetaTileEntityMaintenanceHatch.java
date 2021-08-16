@@ -154,10 +154,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         if (!(this.getController() instanceof IMaintenance))
             return;
 
-        if (!((IMaintenance) this.getController()).hasProblems())
+        if (!((IMaintenance) this.getController()).hasMaintenanceProblems())
             return;
 
-        byte problems = ((IMaintenance) this.getController()).getProblems();
+        byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
 
         switch (this.type) {
             case 0: { // Manual
@@ -306,7 +306,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super.update();
         if (this.type != 0) { // if not a manual hatch, check every second for problems to fix
             if (this.getController() instanceof IMaintenance) {
-                if (getOffsetTimer() % 20 == 0 && ((IMaintenance) this.getController()).hasProblems() && this.getController().isStructureFormed()) {
+                if (getOffsetTimer() % 20 == 0 && ((IMaintenance) this.getController()).hasMaintenanceProblems() && this.getController().isStructureFormed()) {
                     fixMaintenanceProblems(null);
                 }
             }
