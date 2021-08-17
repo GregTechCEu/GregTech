@@ -27,22 +27,22 @@ import java.util.ArrayList;
 
 public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, MaterialTree> {
 
-	protected String materialName;
-	protected String materialFormula;
-	protected int materialBFTemp;
-	protected String materialAvgM;
-	protected String materialAvgP;
-	protected String materialAvgN;
+    protected String materialName;
+    protected String materialFormula;
+    protected int materialBFTemp;
+    protected String materialAvgM;
+    protected String materialAvgP;
+    protected String materialAvgN;
 
-	protected final IDrawable slot;
-	protected final IDrawable icon;
-	protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
+    protected final IDrawable slot;
+    protected final IDrawable icon;
+    protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
 
     protected List<Boolean> itemExists = new ArrayList<>();
     protected List<Boolean> fluidExists = new ArrayList<>();
     // XY positions of ingredients
-	protected final static ImmutableList<Integer> ITEM_LOCATIONS = ImmutableList.of(
-	        // corresponds pair-to-one with PREFIXES in MaterialTree.java
+    protected final static ImmutableList<Integer> ITEM_LOCATIONS = ImmutableList.of(
+            // corresponds pair-to-one with PREFIXES in MaterialTree.java
             4, 67,      // dustTiny  0
             4, 101,     // dust
             4, 135,     // dustSmall
@@ -73,8 +73,8 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
             154, 124,   // lens
             154, 147    // foil
     );
-	protected ImmutableList<Integer> FLUID_LOCATIONS = ImmutableList.of(
-	        154, 101    // fluid
+    protected ImmutableList<Integer> FLUID_LOCATIONS = ImmutableList.of(
+            154, 101    // fluid
     );
 
     public MaterialTreeCategory(IGuiHelper guiHelper) {
@@ -124,33 +124,33 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, MaterialTree recipeWrapper, IIngredients ingredients) {
         // place and check existence of items
-		IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-		List<List<ItemStack>> itemInputs = ingredients.getInputs(VanillaTypes.ITEM);
-		itemExists.clear();
-		for (int i = 0; i < ITEM_LOCATIONS.size(); i+=2) {
-			itemStackGroup.init(i, true, ITEM_LOCATIONS.get(i), ITEM_LOCATIONS.get(i + 1));
+        IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
+        List<List<ItemStack>> itemInputs = ingredients.getInputs(VanillaTypes.ITEM);
+        itemExists.clear();
+        for (int i = 0; i < ITEM_LOCATIONS.size(); i += 2) {
+            itemStackGroup.init(i, true, ITEM_LOCATIONS.get(i), ITEM_LOCATIONS.get(i + 1));
             itemExists.add(itemInputs.get(i / 2).size() > 0);
-		}
-		itemStackGroup.set(ingredients);
-
-		// place and check existence of fluid(s)
-		IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
-		List<List<FluidStack>> fluidInputs = ingredients.getInputs(VanillaTypes.FLUID);
-		fluidExists.clear();
-        for (int i = 0; i < FLUID_LOCATIONS.size(); i+=2) {
-            // fluids annoyingly need to be offset by 1 to fit in the slot graphic
-    		fluidStackGroup.init(0, true, FLUID_LOCATIONS.get(i) + 1, FLUID_LOCATIONS.get(i + 1) + 1);
-    		fluidExists.add(fluidInputs.get(i / 2).size() > 0);
         }
-		fluidStackGroup.set(ingredients);
+        itemStackGroup.set(ingredients);
 
-		// set info of current material
+        // place and check existence of fluid(s)
+        IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
+        List<List<FluidStack>> fluidInputs = ingredients.getInputs(VanillaTypes.FLUID);
+        fluidExists.clear();
+        for (int i = 0; i < FLUID_LOCATIONS.size(); i += 2) {
+            // fluids annoyingly need to be offset by 1 to fit in the slot graphic
+            fluidStackGroup.init(0, true, FLUID_LOCATIONS.get(i) + 1, FLUID_LOCATIONS.get(i + 1) + 1);
+            fluidExists.add(fluidInputs.get(i / 2).size() > 0);
+        }
+        fluidStackGroup.set(ingredients);
+
+        // set info of current material
         materialName = recipeWrapper.getMaterialName();
-		materialFormula = recipeWrapper.getMaterialFormula();
-		materialBFTemp = recipeWrapper.getBlastTemp();
-		materialAvgM = I18n.format("gregtech.jei.materials.average_mass", recipeWrapper.getAvgM());
-		materialAvgP = I18n.format("gregtech.jei.materials.average_protons", recipeWrapper.getAvgP());
-		materialAvgN = I18n.format("gregtech.jei.materials.average_neutrons", recipeWrapper.getAvgN());
+        materialFormula = recipeWrapper.getMaterialFormula();
+        materialBFTemp = recipeWrapper.getBlastTemp();
+        materialAvgM = I18n.format("gregtech.jei.materials.average_mass", recipeWrapper.getAvgM());
+        materialAvgP = I18n.format("gregtech.jei.materials.average_protons", recipeWrapper.getAvgP());
+        materialAvgN = I18n.format("gregtech.jei.materials.average_neutrons", recipeWrapper.getAvgN());
     }
 
     @Override
@@ -165,24 +165,24 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
     }
 
     @Override
-	public void drawExtras(Minecraft minecraft) {
+    public void drawExtras(Minecraft minecraft) {
         // item slot rendering
-    	for (int i = 0; i < ITEM_LOCATIONS.size(); i+=2){
-    	    if(itemExists.get(i / 2))
-        		this.slot.draw(minecraft, ITEM_LOCATIONS.get(i), ITEM_LOCATIONS.get(i + 1));
-		}
+        for (int i = 0; i < ITEM_LOCATIONS.size(); i += 2) {
+            if (itemExists.get(i / 2))
+                this.slot.draw(minecraft, ITEM_LOCATIONS.get(i), ITEM_LOCATIONS.get(i + 1));
+        }
 
-    	// fluid slot rendering
-    	for (int i = 0; i < FLUID_LOCATIONS.size(); i+=2){
-    	    if(fluidExists.get(i / 2))
-        		this.slot.draw(minecraft, FLUID_LOCATIONS.get(i), FLUID_LOCATIONS.get(i + 1));
-		}
+        // fluid slot rendering
+        for (int i = 0; i < FLUID_LOCATIONS.size(); i += 2) {
+            if (fluidExists.get(i / 2))
+                this.slot.draw(minecraft, FLUID_LOCATIONS.get(i), FLUID_LOCATIONS.get(i + 1));
+        }
 
-    	// arrow rendering, aka hardcoded jank
+        // arrow rendering, aka hardcoded jank
         // indeces are from ITEM_LOCATIONS / MaterialTree.PREFIXES
         // dustTiny <-> dust
         drawArrow(minecraft, "2d16", 10, 85, itemExists.get(0) && itemExists.get(1));
-    	// dust <-> dustSmall
+        // dust <-> dustSmall
         drawArrow(minecraft, "2d16", 10, 119, itemExists.get(1) && itemExists.get(2));
         // dust <-> block  (if no ingot or gem)
         drawArrow(minecraft, "2r16d37", 22, 107, !itemExists.get(5) &&
@@ -254,34 +254,32 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
             minecraft.fontRenderer.drawString(minecraft.fontRenderer.trimStringToWidth(materialName, 171) + "...",
                     0, 0, 0x111111);
             linesDrawn++;
-        }
-        else if (materialName.length() != 0) {
+        } else if (materialName.length() != 0) {
             minecraft.fontRenderer.drawString(materialName, 0, 0, 0x111111);
             linesDrawn++;
         }
-		if (minecraft.fontRenderer.getStringWidth(materialFormula) > 176) {
-		    minecraft.fontRenderer.drawString(minecraft.fontRenderer.trimStringToWidth(materialFormula, 171) + "...",
+        if (minecraft.fontRenderer.getStringWidth(materialFormula) > 176) {
+            minecraft.fontRenderer.drawString(minecraft.fontRenderer.trimStringToWidth(materialFormula, 171) + "...",
                     0, FONT_HEIGHT * linesDrawn, 0x111111);
-		    linesDrawn++;
-        }
-		else if (materialFormula.length() != 0) {
+            linesDrawn++;
+        } else if (materialFormula.length() != 0) {
             minecraft.fontRenderer.drawString(materialFormula, 0, FONT_HEIGHT * linesDrawn, 0x111111);
             linesDrawn++;
         }
-		// don't think theres a good way to get the coil tier other than this
-		if (materialBFTemp != 0) {
+        // don't think theres a good way to get the coil tier other than this
+        if (materialBFTemp != 0) {
             BlastTemperatureProperty.getInstance().drawInfo(minecraft, 0, FONT_HEIGHT * linesDrawn, 0x111111, materialBFTemp);
             linesDrawn++;
         }
-		minecraft.fontRenderer.drawString(materialAvgM, 0, FONT_HEIGHT * linesDrawn, 0x111111);
-		linesDrawn++;
-		minecraft.fontRenderer.drawString(materialAvgN, 0, FONT_HEIGHT * linesDrawn, 0x111111);
-		linesDrawn++;
-		minecraft.fontRenderer.drawString(materialAvgP, 0, FONT_HEIGHT * linesDrawn, 0x111111);
-	}
+        minecraft.fontRenderer.drawString(materialAvgM, 0, FONT_HEIGHT * linesDrawn, 0x111111);
+        linesDrawn++;
+        minecraft.fontRenderer.drawString(materialAvgN, 0, FONT_HEIGHT * linesDrawn, 0x111111);
+        linesDrawn++;
+        minecraft.fontRenderer.drawString(materialAvgP, 0, FONT_HEIGHT * linesDrawn, 0x111111);
+    }
 
-	// a couple wrappers to make the code look less terrible
-	private void registerArrow(IGuiHelper guiHelper, String name, int width, int height) {
+    // a couple wrappers to make the code look less terrible
+    private void registerArrow(IGuiHelper guiHelper, String name, int width, int height) {
         DrawableRegistry.initDrawable(guiHelper, GTValues.MODID + ":textures/gui/arrows/" + name + ".png", width, height, name);
     }
 
