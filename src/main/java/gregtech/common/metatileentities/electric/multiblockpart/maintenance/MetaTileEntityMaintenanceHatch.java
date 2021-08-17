@@ -48,8 +48,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super(metaTileEntityId, tier);
         this.initializeInventory();
 
-        if (tier == 8) type = 2;
-        else if (tier == 5) type = 1;
+        if (tier == 6) type = 2;
+        else if (tier == 3) type = 1;
         else type = 0;
     }
 

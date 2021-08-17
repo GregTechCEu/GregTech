@@ -631,5 +631,10 @@ public class MetaTileEntityMachineRecipeLoader {
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.UV].getStackForm())
                 .duration(100).EUt(524288).buildAndRegister();
 
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(HULL[GTValues.LV].getStackForm())
+                .circuitMeta(1)
+                .outputs(MAINTENANCE_HATCH[0].getStackForm())
+                .duration(100).EUt(30).buildAndRegister();
     }
 }

@@ -639,8 +639,8 @@ public class MetaTileEntities {
 
         // Maintenance Hatches, IDs 1654-1656
         MAINTENANCE_HATCH[0] = GregTechAPI.registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), 1));
-        MAINTENANCE_HATCH[1] = GregTechAPI.registerMetaTileEntity(1655, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_taping"), 5));
-        MAINTENANCE_HATCH[2] = GregTechAPI.registerMetaTileEntity(1656, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_full_auto"), 8));
+        MAINTENANCE_HATCH[1] = GregTechAPI.registerMetaTileEntity(1655, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_taping"), 3));
+        MAINTENANCE_HATCH[2] = GregTechAPI.registerMetaTileEntity(1656, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_full_auto"), 6));
 
         CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1657, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
