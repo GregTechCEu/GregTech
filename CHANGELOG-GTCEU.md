@@ -178,7 +178,7 @@
 ### CraftTweaker
 - Materials can now automatically generate IDs
     - Be careful, as changing the order of this will cause items in-world to disappear
-
+- Coke Oven and PBF have normal RecipeMaps now, instead of using custom ones
 
 ### Removals
 - Potion Fluids placeable in-world were removed
@@ -210,3 +210,7 @@
 - OrePrefix is no longer an Enum, and can easily be added to by addons
 - Shaped and Shapeless Recipe methods in `ModHandler` can now accept more types
 - `debug` config will now log failed recipe removals and additions
+- There is now a "PrimitiveMultiblockController" base class, which uses a normal RecipeMap. When paired with the `PrimitiveRecipeBuilder`, it will:
+    - Allow recipes to be run without power
+    - (by default) Initialize inventory for items and fluids to the Controller instead of Multiblock Parts (overridable)
+    - Hide the EU/t and Total EU info from the JEI page
