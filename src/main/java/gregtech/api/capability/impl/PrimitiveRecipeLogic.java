@@ -1,10 +1,8 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockController;
 import gregtech.api.recipes.RecipeMap;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 /**
  * Recipe Logic for a Multiblock that does not require power.
@@ -43,5 +41,20 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
     @Override
     protected int getOverclockingTier(long voltage) {
         return GTValues.LV; // just return something reasonable
+    }
+
+    /**
+     * Used to reset cached values in the Recipe Logic on structure deform
+     */
+    public void invalidate() {
+        lastItemInputs = null;
+        lastFluidInputs = null;
+        previousRecipe = null;
+        progressTime = 0;
+        maxProgressTime = 0;
+        recipeEUt = 0;
+        fluidOutputs = null;
+        itemOutputs = null;
+        setActive(false); // this marks dirty for us
     }
 }

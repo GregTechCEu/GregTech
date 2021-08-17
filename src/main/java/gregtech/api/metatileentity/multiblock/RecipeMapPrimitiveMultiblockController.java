@@ -42,4 +42,10 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
     protected void updateFormedValid() {
         recipeMapWorkable.update();
     }
+
+    @Override
+    public void invalidateStructure() {
+        super.invalidateStructure();
+        recipeMapWorkable.invalidate();
+    }
 }
