@@ -1936,6 +1936,8 @@ recipemap.plasma_generator.name=Plasma Generator
 recipemap.circuit_assembler.name=Circuit Assembler
 recipemap.mass_fabricator.name=Mass Fabricator
 recipemap.gas_collector.name=Gas Collector
+recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
+recipemap.coke_oven.name=Coke Oven
 
 behaviour.hoe=Can till dirt
 behaviour.soft_hammer=Activates and Deactivates Machines

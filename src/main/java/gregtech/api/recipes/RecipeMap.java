@@ -18,6 +18,7 @@ import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
+import gregtech.api.recipes.builders.PrimitiveRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.unification.material.Material;
@@ -93,6 +94,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public static void sortMaps() {
         for (RecipeMap<?> rmap : RECIPE_MAP_REGISTRY.values()) {
+            if (rmap.recipeBuilder() instanceof PrimitiveRecipeBuilder) continue; // just for cleanliness
             rmap.recipeList.sort(Comparator.comparingInt(Recipe::getDuration)
                     .thenComparingInt(Recipe::getEUt));
         }
