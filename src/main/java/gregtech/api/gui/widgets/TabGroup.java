@@ -16,18 +16,16 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Tuple;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 import static gregtech.api.gui.impl.ModularUIGui.*;
 
-public class TabGroup extends AbstractWidgetGroup {
+public class TabGroup<T extends AbstractWidgetGroup> extends AbstractWidgetGroup {
 
     private final List<ITabInfo> tabInfos = new ArrayList<>();
-    private final Map<Integer, AbstractWidgetGroup> tabWidgets = new HashMap<>();
+    private final List<T> tabWidgets = new ArrayList<>();
     protected int selectedTabIndex = 0;
     private final TabListRenderer tabListRenderer;
     private BiConsumer<Integer, Integer> onTabChanged;
@@ -42,27 +40,39 @@ public class TabGroup extends AbstractWidgetGroup {
         this.tabListRenderer = tabLocation.supplier.get();
     }
 
-    public TabGroup(TabLocation tabLocation) {
-        this(tabLocation, Position.ORIGIN);
-    }
-
-    public TabGroup addTab(ITabInfo tabInfo, AbstractWidgetGroup tabWidget) {
+    public void addTab(ITabInfo tabInfo, T tabWidget) {
         this.tabInfos.add(tabInfo);
         int tabIndex = tabInfos.size() - 1;
-        this.tabWidgets.put(tabIndex, tabWidget);
+        this.tabWidgets.add(tabWidget);
         tabWidget.setVisible(tabIndex == selectedTabIndex);
         tabWidget.setActive(tabIndex == selectedTabIndex);
         addWidget(tabWidget);
-        return this;
     }
 
-    public TabGroup setOnTabChanged(BiConsumer<Integer, Integer> onTabChanged) {
+    public void removeTab(int index) {
+        this.tabInfos.remove(index);
+        T tab = this.tabWidgets.remove(index);
+        this.removeWidget(tab);
+        if (selectedTabIndex >= index && selectedTabIndex > 0) {
+            selectedTabIndex--;
+        }
+        for (int i = 0; i < this.tabWidgets.size(); i++) {
+            tabWidgets.get(i).setActive(i == selectedTabIndex);
+            tabWidgets.get(i).setVisible(i == selectedTabIndex);
+        }
+    }
+
+    public TabGroup<T> setOnTabChanged(BiConsumer<Integer, Integer> onTabChanged) {
         this.onTabChanged = onTabChanged;
         return this;
     }
 
-    public AbstractWidgetGroup getCurrentTag() {
+    public T getCurrentTag() {
         return tabWidgets.get(selectedTabIndex);
+    }
+
+    public List<T> getAllTag() {
+        return tabWidgets;
     }
 
     @Override
@@ -70,14 +80,14 @@ public class TabGroup extends AbstractWidgetGroup {
         ArrayList<Widget> containedWidgets = new ArrayList<>(widgets.size());
 
         if (includeHidden) {
-            for (Widget widget : tabWidgets.values()) {
+            for (Widget widget : tabWidgets) {
                 containedWidgets.add(widget);
 
                 if (widget instanceof AbstractWidgetGroup)
                     containedWidgets.addAll(((AbstractWidgetGroup) widget).getContainedWidgets(true));
             }
         } else {
-            AbstractWidgetGroup widgetGroup = tabWidgets.get(selectedTabIndex);
+            T widgetGroup = tabWidgets.get(selectedTabIndex);
             containedWidgets.add(widgetGroup);
             containedWidgets.addAll(widgetGroup.getContainedWidgets(false));
         }
@@ -166,7 +176,7 @@ public class TabGroup extends AbstractWidgetGroup {
     }
 
     public boolean isWidgetVisible(Widget widget) {
-        return tabWidgets.containsKey(selectedTabIndex) && tabWidgets.get(selectedTabIndex) == widget;
+        return tabWidgets.get(selectedTabIndex) == widget;
     }
 
     public enum TabLocation {

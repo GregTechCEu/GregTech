@@ -45,12 +45,12 @@ public class GuideEditorApp extends AbstractApplication {
                 configEditor.newPage(cd);
             }
         });
-        ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD).setHoverText("Import Page").setClickConsumer(cd->{
+        ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD).setHoverText("Load File").setClickConsumer(cd->{
             if (configEditor != null) {
                 configEditor.loadJson(cd);
             }
         });
-        ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE).setHoverText("Export Page").setClickConsumer(cd->{
+        ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE).setHoverText("Save File").setClickConsumer(cd->{
             if (configEditor != null) {
                 configEditor.saveJson(cd);
             }

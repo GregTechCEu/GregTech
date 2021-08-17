@@ -18,7 +18,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.network.PacketBuffer;
 
+import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -230,7 +232,20 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                     .setMaxStringLength(Integer.MAX_VALUE)
                     .setValidator(s->true));
         }
-
+        dialog.addWidget(new CircleButtonWidget(x + 17, y + 15, 10, 1, 16)
+                .setClickListener(cd -> {
+                    File file = selected.get();
+                    if (file != null) {
+                        try {
+                            Desktop.getDesktop().open(file.isDirectory() ? file : file.getParentFile());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                })
+                .setColors(0, 0xFFFFFFFF, 0)
+                .setHoverText("Open Folder")
+                .setIcon(GuiTextures.ICON_LOAD));
         dialog.addWidget(new LabelWidget(x + WIDTH / 2, y + 11, title, -1).setXCentered(true));
         os.menu.hideMenu();
         return dialog.setClientSide();

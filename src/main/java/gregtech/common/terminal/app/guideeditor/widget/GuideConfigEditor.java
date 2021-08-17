@@ -25,7 +25,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.Objects;
 
-public class GuideConfigEditor extends TabGroup {
+public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
     public String json;
     private IGuideWidget selected;
     private GuidePageEditorWidget pageEditor;
