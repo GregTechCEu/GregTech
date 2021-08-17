@@ -14,6 +14,7 @@ import gregtech.api.terminal.gui.widgets.TreeListWidget;
 import gregtech.api.terminal.util.FileTree;
 import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Interpolator;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.network.PacketBuffer;
 
@@ -98,7 +99,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     }
 
     public TerminalDialogWidget addInfo(String info) {
-        this.addWidget(new LabelWidget(WIDTH / 2, HEIGHT / 2 - 10, info, -1).setXCentered(true));
+        this.addWidget(new LabelWidget(WIDTH / 2, HEIGHT / 2, info, -1).setWidth(WIDTH - 10).setYCentered(true).setXCentered(true));
         return this;
     }
 
@@ -237,10 +238,12 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
 
     @Override
     public void hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        GlStateManager.translate(0,0,1000);
         if (background != null) {
             background.draw(getPosition().x, getPosition().y, getSize().width, getSize().height);
         }
         super.hookDrawInBackground(mouseX, mouseY, partialTicks, context);
+        GlStateManager.translate(0,0,-1000);
     }
 
     @Override

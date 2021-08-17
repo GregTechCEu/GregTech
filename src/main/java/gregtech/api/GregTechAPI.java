@@ -2,9 +2,6 @@ package gregtech.api;
 
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.terminal.app.guide.MultiBlockGuideApp;
-import gregtech.api.terminal.app.guide.SimpleMachineGuideApp;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -14,9 +11,6 @@ import gregtech.api.util.BaseCreativeTab;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.IBlockOre;
 import gregtech.common.items.MetaItems;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;

@@ -3,7 +3,7 @@ package gregtech.api.terminal.app;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
 import gregtech.api.terminal.os.TerminalOSWidget;
-import gregtech.api.terminal.os.menu.component.IMenuComponent;
+import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.entity.player.EntityPlayer;

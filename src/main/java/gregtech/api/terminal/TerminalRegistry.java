@@ -2,12 +2,13 @@ package gregtech.api.terminal;
 
 import gregtech.api.GTValues;
 import gregtech.api.terminal.app.*;
-import gregtech.api.terminal.app.guide.ItemGuideApp;
-import gregtech.api.terminal.app.guide.MultiBlockGuideApp;
-import gregtech.api.terminal.app.guide.SimpleMachineGuideApp;
-import gregtech.api.terminal.app.guide.TutorialGuideApp;
-import gregtech.api.terminal.app.guideeditor.GuideEditorApp;
-import gregtech.api.terminal.app.recipechart.RecipeChartApp;
+import gregtech.common.terminal.app.ThemeSettingApp;
+import gregtech.common.terminal.app.guide.ItemGuideApp;
+import gregtech.common.terminal.app.guide.MultiBlockGuideApp;
+import gregtech.common.terminal.app.guide.SimpleMachineGuideApp;
+import gregtech.common.terminal.app.guide.TutorialGuideApp;
+import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
+import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 
 import java.util.*;
 

@@ -2,7 +2,7 @@ package gregtech.api.terminal.util;
 
 import com.google.gson.JsonObject;
 import gregtech.api.terminal.TerminalRegistry;
-import gregtech.api.terminal.app.guide.GuideApp;
+import gregtech.common.terminal.app.guide.GuideApp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
