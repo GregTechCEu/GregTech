@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+// TODO Should be renamed to "BasicRecipeCategory"
 public abstract class PrimitiveRecipeCategory<T, W extends IRecipeWrapper> implements IRecipeCategory<W>, IRecipeWrapperFactory<T> {
 
     public final String uniqueName;
