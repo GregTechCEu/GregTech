@@ -210,6 +210,9 @@ public class MetaTileEntities {
 
     public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
 
+    public static MetaTileEntityConverter[][] CONVERTER_FE = new MetaTileEntityConverter[12][3];
+    public static MetaTileEntityConverter[][] CONVERTER_EU = new MetaTileEntityConverter[12][3];
+
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
 
     public static void init() {
@@ -701,6 +704,18 @@ public class MetaTileEntities {
         }
 
         CLIPBOARD_TILE = registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));
+
+        for(int i = 0; i < 12; i++) {
+            String vn = GTValues.VN[i + 1].toLowerCase();
+            int a = 1;
+            for(int j = 0; j < 3; j++) {
+                int amps = a * a;
+                StringBuilder builder = new StringBuilder(vn).append(".").append(amps);
+                CONVERTER_FE[i][j] = GregTechAPI.registerMetaTileEntity(1667 + j + i * 3, new MetaTileEntityConverter(gregtechId("converter_fe." + builder), i+1, amps, true));
+                CONVERTER_EU[i][j] = GregTechAPI.registerMetaTileEntity(1703 + j + i * 3, new MetaTileEntityConverter(gregtechId("converter_eu." + builder), i+1, amps, false));
+                a *= 2;
+            }
+        }
 
         /*
          * FOR ADDON DEVELOPERS:
