@@ -5,7 +5,6 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.CokeOvenRecipeBuilder;
-import gregtech.api.recipes.builders.PBFRecipeBuilder;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
@@ -78,6 +77,15 @@ public class MachineRecipeLoader {
         registerStoneBricksRecipes();
         registerOrganicRecyclingRecipes();
         registerNBTRemoval();
+
+        // TODO Dummy recipe
+        PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder()
+                .input(gem, Coal)
+                .input(ingot, Iron)
+                .output(ingot, Steel)
+                .duration(500)
+                .EUt(1) // todo make this not needed
+                .buildAndRegister();
     }
 
     private static void registerBendingCompressingRecipes() {
@@ -199,11 +207,12 @@ public class MachineRecipeLoader {
                 .duration(400).EUt(2).buildAndRegister();
     }
 
+    // todo
     private static void registerPrimitiveBlastFurnaceRecipes() {
-        PBFRecipeBuilder.start().input(ingot, Iron).output(ingot, Steel).duration(1500).fuelAmount(2).buildAndRegister();
-        PBFRecipeBuilder.start().input(block, Iron).output(block, Steel).duration(13500).fuelAmount(18).buildAndRegister();
-        PBFRecipeBuilder.start().input(ingot, WroughtIron).output(ingot, Steel).duration(600).fuelAmount(2).buildAndRegister();
-        PBFRecipeBuilder.start().input(block, WroughtIron).output(block, Steel).duration(5600).fuelAmount(18).buildAndRegister();
+        //PBFRecipeBuilder.start().input(ingot, Iron).output(ingot, Steel).duration(1500).fuelAmount(2).buildAndRegister();
+        //PBFRecipeBuilder.start().input(block, Iron).output(block, Steel).duration(13500).fuelAmount(18).buildAndRegister();
+        //PBFRecipeBuilder.start().input(ingot, WroughtIron).output(ingot, Steel).duration(600).fuelAmount(2).buildAndRegister();
+        //PBFRecipeBuilder.start().input(block, WroughtIron).output(block, Steel).duration(5600).fuelAmount(18).buildAndRegister();
     }
 
     private static void registerCokeOvenRecipes() {

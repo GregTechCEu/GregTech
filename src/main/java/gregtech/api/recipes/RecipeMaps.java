@@ -704,12 +704,40 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL);
 
     @ZenProperty
-    public static final FuelRecipeMap COMBUSTION_GENERATOR_FUELS = new FuelRecipeMap("combustion_generator");
+    public static final RecipeMap<SimpleRecipeBuilder> PRIMITIVE_BLAST_FURNACE_RECIPES = new RecipeMap<>("primitive_blast_furnace", 2, 2, 1, 2, 0, 0, 0, 0, new SimpleRecipeBuilder(), false);
 
+    // TODO Remove
+    //@ZenProperty
+    //public static final List<PrimitiveBlastFurnaceRecipe> PRIMITIVE_BLAST_FURNACE_RECIPES = new CopyOnWriteArrayList<>();
+
+    //@ZenProperty
+    //public static final RecipeMap<SimpleRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMap<>("coke_oven", 1, 1, 1, 1, 0, 0, 1, 1, new SimpleRecipeBuilder(), false);
+
+    // TODO Remove
+    @ZenProperty
+    public static final List<CokeOvenRecipe> COKE_OVEN_RECIPES = new CopyOnWriteArrayList<>();
+
+    // TODO Remove
+    //@ZenMethod
+    //public static List<PrimitiveBlastFurnaceRecipe> getPrimitiveBlastFurnaceRecipes() {
+    //    return PRIMITIVE_BLAST_FURNACE_RECIPES;
+    //}
+
+    // TODO Remove
+    @ZenMethod
+    public static List<CokeOvenRecipe> getCokeOvenRecipes() {
+        return COKE_OVEN_RECIPES;
+    }
+
+    //////////////////////////////////////
+    //         Fuel Recipe Maps         //
+    //////////////////////////////////////
+
+    @ZenProperty
+    public static final FuelRecipeMap COMBUSTION_GENERATOR_FUELS = new FuelRecipeMap("combustion_generator");
 
     @ZenProperty
     public static final FuelRecipeMap GAS_TURBINE_FUELS = new FuelRecipeMap("gas_turbine");
-
 
     @ZenProperty
     public static final FuelRecipeMap STEAM_TURBINE_FUELS = new FuelRecipeMap("steam_turbine");
@@ -719,21 +747,4 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final FuelRecipeMap PLASMA_GENERATOR_FUELS = new FuelRecipeMap("plasma_generator");
-
-    @ZenProperty
-    public static final List<PrimitiveBlastFurnaceRecipe> PRIMITIVE_BLAST_FURNACE_RECIPES = new CopyOnWriteArrayList<>();
-
-    @ZenProperty
-    public static final List<CokeOvenRecipe> COKE_OVEN_RECIPES = new CopyOnWriteArrayList<>();
-
-    @ZenMethod
-    public static List<PrimitiveBlastFurnaceRecipe> getPrimitiveBlastFurnaceRecipes() {
-        return PRIMITIVE_BLAST_FURNACE_RECIPES;
-    }
-
-    @ZenMethod
-    public static List<CokeOvenRecipe> getCokeOvenRecipes() {
-        return COKE_OVEN_RECIPES;
-    }
-
 }

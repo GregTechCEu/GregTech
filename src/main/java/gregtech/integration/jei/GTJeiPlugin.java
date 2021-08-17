@@ -75,7 +75,8 @@ public class GTJeiPlugin implements IModPlugin {
         for (FuelRecipeMap fuelRecipeMap : FuelRecipeMap.getRecipeMaps()) {
             registry.addRecipeCategories(new FuelRecipeMapCategory(fuelRecipeMap, registry.getJeiHelpers().getGuiHelper()));
         }
-        registry.addRecipeCategories(new PrimitiveBlastRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
+        // todo
+        //registry.addRecipeCategories(new PrimitiveBlastRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new CokeOvenRecipeCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTOreCategory(registry.getJeiHelpers().getGuiHelper()));
@@ -150,11 +151,12 @@ public class GTJeiPlugin implements IModPlugin {
 
         registry.addIngredientInfo(Objects.requireNonNull(MetaItems.FLUID_CELL.getStackForm()), VanillaTypes.ITEM, I18n.format("gregtech.item.fluid_cell.jei_description"));
 
-        String primitiveBlastId = GTValues.MODID + ":" + "primitive_blast_furnace";
-        registry.addRecipes(RecipeMaps.PRIMITIVE_BLAST_FURNACE_RECIPES.stream()
-                .map(PrimitiveBlastRecipeWrapper::new)
-                .collect(Collectors.toList()), primitiveBlastId);
-        registry.addRecipeCatalyst(MetaTileEntities.PRIMITIVE_BLAST_FURNACE.getStackForm(), primitiveBlastId);
+        // todo
+        //String primitiveBlastId = GTValues.MODID + ":" + "primitive_blast_furnace";
+        //registry.addRecipes(RecipeMaps.PRIMITIVE_BLAST_FURNACE_RECIPES.stream()
+        //        .map(PrimitiveBlastRecipeWrapper::new)
+        //        .collect(Collectors.toList()), primitiveBlastId);
+        //registry.addRecipeCatalyst(MetaTileEntities.PRIMITIVE_BLAST_FURNACE.getStackForm(), primitiveBlastId);
 
         String cokeOvenId = GTValues.MODID + ":" + "coke_oven";
         registry.addRecipes(RecipeMaps.COKE_OVEN_RECIPES.stream()
