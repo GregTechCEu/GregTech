@@ -13,6 +13,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.converter.MetaTileEntityConverter;
 import gregtech.common.metatileentities.electric.*;
 import gregtech.common.metatileentities.electric.multiblockpart.*;
 import gregtech.common.metatileentities.multi.*;
@@ -210,8 +211,7 @@ public class MetaTileEntities {
 
     public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
 
-    public static MetaTileEntityConverter[][] CONVERTER_FE = new MetaTileEntityConverter[12][3];
-    public static MetaTileEntityConverter[][] CONVERTER_EU = new MetaTileEntityConverter[12][3];
+    public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[13][4];
 
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
 
@@ -705,15 +705,12 @@ public class MetaTileEntities {
 
         CLIPBOARD_TILE = registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
-        for(int i = 0; i < 12; i++) {
+        for(int i = 0; i < 13; i++) {
             String vn = GTValues.VN[i + 1].toLowerCase();
-            int a = 1;
-            for(int j = 0; j < 3; j++) {
-                int amps = a * a;
-                StringBuilder builder = new StringBuilder(vn).append(".").append(amps);
-                CONVERTER_FE[i][j] = GregTechAPI.registerMetaTileEntity(1667 + j + i * 3, new MetaTileEntityConverter(gregtechId("converter_fe." + builder), i+1, amps, true));
-                CONVERTER_EU[i][j] = GregTechAPI.registerMetaTileEntity(1703 + j + i * 3, new MetaTileEntityConverter(gregtechId("converter_eu." + builder), i+1, amps, false));
-                a *= 2;
+            for(int j = 0; j < 4; j++) {
+                int amps = (j+1) * (j+1);
+                String id = "energy_converter." + vn + "." + amps;
+                ENERGY_CONVERTER[i][j] = GregTechAPI.registerMetaTileEntity(1667 + j + i * 4, new MetaTileEntityConverter(gregtechId(id), i+1, amps));
             }
         }
 

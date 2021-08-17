@@ -206,8 +206,8 @@ public class Textures {
     public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY_TAPED = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance_taped");
     public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY_FULL_AUTO = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance_full_auto", true);
     public static final SimpleOverlayRenderer MUFFLER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_muffler");
-    public static final SimpleOverlayRenderer CONVERTER_FORGE = new SimpleOverlayRenderer("overlay/converter/convert_forge");
-    public static final SimpleOverlayRenderer CONVERTER_EU = new SimpleOverlayRenderer("overlay/converter/convert_gteu");
+    public static final SimpleOverlayRenderer CONVERTER_FE_OUT = new SimpleOverlayRenderer("overlay/converter/converter_fe_out");
+    public static final SimpleOverlayRenderer CONVERTER_FE_IN = new SimpleOverlayRenderer("overlay/converter/converter_fe_in");
 
     static {
         for (int i = 0; i < VOLTAGE_CASINGS.length; i++) {
