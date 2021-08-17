@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.electric;
 
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
@@ -17,7 +18,7 @@ public class MetaTileEntitySimpleOreWasher extends SimpleMachineMetaTileEntity {
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(1);
+        return new NotifiableItemStackHandler(1, this, true);
     }
 
     @Override

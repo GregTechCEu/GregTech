@@ -63,33 +63,35 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
             Recipe currentRecipe = null;
             IItemHandlerModifiable importInventory = getInputInventory();
             IMultipleTankHandler importFluids = getInputTank();
-            if (previousRecipe != null && previousRecipe.matches(false, importInventory, importFluids)) {
-                //if previous recipe still matches inputs, try to use it
-                currentRecipe = previousRecipe;
-            } else {
-                boolean dirty = checkRecipeInputsDirty(importInventory, importFluids);
-                if (dirty || forceRecipeRecheck) {
-                    this.forceRecipeRecheck = false;
-                    //else, try searching new recipe for given inputs
-                    currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.DEFAULT);
-                    if (currentRecipe != null) {
-                        List<Integer> recipeDimensions = currentRecipe.getProperty(GasCollectorDimensionProperty.getInstance(), new ArrayList<>());
-                        boolean isDimensionValid = false;
-                        for (Integer dimension : recipeDimensions) {
-                            if (dimension == getCurrentDimension()) {
-                                this.previousRecipe = currentRecipe;
-                                isDimensionValid = true;
-                                break;
-                            }
+
+            // see if the last recipe we used still works
+            if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids, MatchingMode.IGNORE_FLUIDS))
+                currentRecipe = this.previousRecipe;
+                // If there is no active recipe, then we need to find one.
+            else {
+                currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.IGNORE_FLUIDS);
+                if (currentRecipe != null) {
+                    List<Integer> recipeDimensions = currentRecipe.getProperty(GasCollectorDimensionProperty.getInstance(), new ArrayList<>());
+                    boolean isDimensionValid = false;
+                    for (Integer dimension : recipeDimensions) {
+                        if (dimension == getCurrentDimension()) {
+                            this.previousRecipe = currentRecipe;
+                            isDimensionValid = true;
+                            break;
                         }
-                        if (!isDimensionValid)
-                            currentRecipe = null;
                     }
+                    if (!isDimensionValid)
+                        currentRecipe = null;
                 }
             }
-            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe)) {
+            this.invalidInputsForRecipes = (currentRecipe == null);
+
+            // proceed if we have a usable recipe.
+            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))
                 setupRecipe(currentRecipe);
-            }
+            // Inputs have been inspected.
+            metaTileEntity.getNotifiedItemInputList().clear();
+            metaTileEntity.getNotifiedFluidInputList().clear();
         }
     }
 }
