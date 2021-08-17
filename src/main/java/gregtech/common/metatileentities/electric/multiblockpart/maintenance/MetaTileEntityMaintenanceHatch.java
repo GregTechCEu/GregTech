@@ -355,6 +355,11 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         if (dataId == STORE_MAINTENANCE) {
             this.maintenanceProblems = buf.readByte();
             this.timeActive = buf.readInt();
+            markDirty();
+        } else if (dataId == IS_TAPED) {
+            this.isTaped = buf.readBoolean();
+            scheduleRenderUpdate();
+            markDirty();
         }
     }
 
