@@ -10,6 +10,9 @@ import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.ToolRenderHandler;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconSet;
+import gregtech.api.unification.material.info.MaterialIconType;
+import gregtech.api.unification.ore.StoneType;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTLog;
@@ -43,6 +46,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -137,6 +141,17 @@ public class ClientProxy extends CommonProxy {
         MetaBlocks.registerStateMappers();
         MetaBlocks.registerItemModels();
         MetaItems.registerModels();
+    }
+
+    @SubscribeEvent
+    public static void registerSprites(TextureStitchEvent.Pre event) {
+        for (StoneType stoneType : StoneType.STONE_TYPE_REGISTRY) {
+            event.getMap().registerSprite(stoneType.backgroundTopTexture);
+            event.getMap().registerSprite(stoneType.backgroundSideTexture);
+        }
+        for (MaterialIconSet set : MaterialIconSet.ICON_SETS.values()) {
+            event.getMap().registerSprite(MaterialIconType.ore.getBlockPath(set));
+        }
     }
 
     @SubscribeEvent

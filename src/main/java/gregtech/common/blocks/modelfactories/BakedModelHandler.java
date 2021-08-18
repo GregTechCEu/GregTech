@@ -3,6 +3,11 @@ package gregtech.common.blocks.modelfactories;
 import codechicken.lib.render.item.CCRenderItem;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
+import gregtech.api.model.ModelFactory;
+import gregtech.api.unification.material.info.MaterialIconType;
+import gregtech.api.unification.ore.StoneType;
+import gregtech.common.blocks.BlockOre;
+import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -80,6 +85,17 @@ public class BakedModelHandler {
             ModelResourceLocation resourceLocation = getSimpleModelLocation(tuple.getFirst());
             ModelBuiltInRenderer bakedModel = new ModelBuiltInRenderer(tuple.getSecond());
             event.getModelRegistry().putObject(resourceLocation, bakedModel);
+        }
+        for (BlockOre ore : MetaBlocks.ORES) {
+            for (IBlockState state : ore.blockState.getValidStates()) {
+                StoneType stoneType = state.getValue(ore.STONE_TYPE);
+                ModelResourceLocation loc = new ModelResourceLocation(ore.getRegistryName(), MetaBlocks.statePropertiesToString(state.getProperties()));
+                IBakedModel bakedModel = new ModelFactory(ModelFactory.ModelTemplate.TINTABLE_2_LAYER_BLOCK, stoneType.backgroundTopTexture)
+                        .addSpriteToLayer(0, stoneType.backgroundTopTexture)
+                        .addSpriteToLayer(1, MaterialIconType.ore.getBlockPath(ore.material.getMaterialIconSet()))
+                        .bake();
+                event.getModelRegistry().putObject(loc, bakedModel);
+            }
         }
     }
 

@@ -60,7 +60,7 @@ public class GregTechMod {
         FluidRegistry.enableUniversalBucket();
         if (FMLCommonHandler.instance().getSide().isClient()) {
             ResourcePackHook.init();
-            BlockOreFactory.init();
+            // BlockOreFactory.init();
             BlockCompressedFactory.init();
             BlockFrameFactory.init();
         }
