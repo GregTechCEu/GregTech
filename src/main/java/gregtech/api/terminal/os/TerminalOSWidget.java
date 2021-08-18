@@ -230,7 +230,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 shutdown();
             } else {
                 waitShutdown = true;
-                TerminalDialogWidget.showConfirmDialog(this, "Notice", "Confirm the shutdown? (Click ESC again to see ok)", result->{
+                TerminalDialogWidget.showConfirmDialog(this, "terminal.component.warning", "terminal.os.shutdown_confirm", result->{
                     if (result) {
                         shutdown();
                     } else {

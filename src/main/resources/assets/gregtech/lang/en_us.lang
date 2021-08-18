@@ -3639,6 +3639,8 @@ gregtech.terminal.app_name.recipe_chart=Recipe Chart
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
 
+terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
+
 terminal.menu.close=Close
 terminal.menu.minimize=Minimize
 terminal.menu.maximize=Maximize
