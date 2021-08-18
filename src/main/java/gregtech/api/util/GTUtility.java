@@ -73,6 +73,8 @@ public class GTUtility {
 
     private static final XSTR random = new XSTR();
 
+    private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
+
     public static Runnable combine(Runnable... runnables) {
         return () -> {
             for (Runnable runnable : runnables) {
@@ -939,4 +941,30 @@ public class GTUtility {
         // HV+
         return 16000;
     };
+
+    public static String romanNumeralString(int num) {
+
+        if(romanNumeralConversions.isEmpty()) { // Initialize on first run-through.
+            romanNumeralConversions.put(1000, "M");
+            romanNumeralConversions.put(900, "CM");
+            romanNumeralConversions.put(500, "D");
+            romanNumeralConversions.put(400, "CD");
+            romanNumeralConversions.put(100, "C");
+            romanNumeralConversions.put(90, "XC");
+            romanNumeralConversions.put(50, "L");
+            romanNumeralConversions.put(40, "XL");
+            romanNumeralConversions.put(10, "X");
+            romanNumeralConversions.put(9, "IX");
+            romanNumeralConversions.put(5, "V");
+            romanNumeralConversions.put(4, "IV");
+            romanNumeralConversions.put(1, "I");
+        }
+
+        int conversion = romanNumeralConversions.floorKey(num);
+        if (num == conversion) {
+            return romanNumeralConversions.get(num);
+        }
+        return romanNumeralConversions.get(conversion) + romanNumeralString(num - conversion);
+    }
+
 }
