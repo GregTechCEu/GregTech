@@ -6,6 +6,7 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -21,8 +22,8 @@ import java.util.BitSet;
 
 public class ConverterTrait extends MTETrait {
 
-    public static final float EU_TO_FE = 4;
-    public static final float FE_TO_EU = 1 / EU_TO_FE;
+    public static final double EU_TO_FE = ConfigHolder.U.energyOptions.euToFeRatio;
+    public static final double FE_TO_EU = ConfigHolder.U.energyOptions.feToEuRatio;
 
     private final BitSet batterySlotsUsedThisTick = new BitSet();
 
