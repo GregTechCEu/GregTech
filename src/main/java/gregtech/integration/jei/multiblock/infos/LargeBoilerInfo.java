@@ -32,7 +32,7 @@ public class LargeBoilerInfo extends MultiblockInfoPage {
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
                 .aisle("FXX", "CCC", "CCC", "CCC")
-                .aisle("XXX", "SPC", "MPC", "CCC")
+                .aisle("XXH", "SPC", "MPC", "CCC")
                 .aisle("IXX", "COC", "CCC", "CCC")
                 .where('S', boiler, EnumFacing.WEST)
                 .where('P', boiler.boilerType.pipeState)
@@ -40,7 +40,8 @@ public class LargeBoilerInfo extends MultiblockInfoPage {
                 .where('C', boiler.boilerType.casingState)
                 .where('O', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.MV], EnumFacing.SOUTH)
                 .where('I', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.MV], EnumFacing.WEST)
-                .where('F', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.MV], EnumFacing.WEST);
+                .where('F', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.MV], EnumFacing.WEST)
+                .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.EAST);
 
                 if (ConfigHolder.U.GT5u.enableMaintenance)
                     shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.WEST);

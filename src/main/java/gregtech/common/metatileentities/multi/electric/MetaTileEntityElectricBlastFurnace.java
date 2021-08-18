@@ -105,12 +105,13 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "CCC", "CCC", "XXX")
-                .aisle("XXX", "C#C", "C#C", "XXX")
+                .aisle("XXX", "C#C", "C#C", "XMX")
                 .aisle("XSX", "CCC", "CCC", "XXX")
                 .setAmountAtLeast('L', 10)
                 .where('S', selfPredicate())
                 .where('L', statePredicate(getCasingState()))
                 .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('M', abilityPartPredicate(MultiblockAbility.MUFFLER_HATCH))
                 .where('C', heatingCoilPredicate())
                 .where('#', isAirPredicate())
                 .build();
@@ -143,6 +144,11 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
         return Textures.BLAST_FURNACE_OVERLAY;
+    }
+
+    @Override
+    public boolean hasMufflerMechanics() {
+        return true;
     }
 
     public static class ElectricBlastFurnaceWorkableHandler extends MultiblockRecipeLogic {

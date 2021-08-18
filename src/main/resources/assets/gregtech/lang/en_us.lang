@@ -3592,6 +3592,24 @@ gregtech.machine.maintenance_hatch.name=Maintenance Hatch
 gregtech.machine.maintenance_hatch_taping.name=Auto-Taping Maintenance Hatch
 gregtech.machine.maintenance_hatch_full_auto.name=Automatic Maintenance Hatch
 
+gregtech.machine.muffler_hatch.ulv.name=ULV Muffler Hatch
+gregtech.machine.muffler_hatch.lv.name=LV Muffler Hatch
+gregtech.machine.muffler_hatch.mv.name=MV Muffler Hatch
+gregtech.machine.muffler_hatch.hv.name=HV Muffler Hatch
+gregtech.machine.muffler_hatch.ev.name=EV Muffler Hatch
+gregtech.machine.muffler_hatch.iv.name=IV Muffler Hatch
+gregtech.machine.muffler_hatch.luv.name=LuV Muffler Hatch
+gregtech.machine.muffler_hatch.zpm.name=ZPM Muffler Hatch
+gregtech.machine.muffler_hatch.uv.name=UV Muffler Hatch
+gregtech.machine.muffler_hatch.uhv.name=UHV Muffler Hatch
+gregtech.machine.muffler_hatch.uev.name=UEV Muffler Hatch
+gregtech.machine.muffler_hatch.uiv.name=UIV Muffler Hatch
+gregtech.machine.muffler_hatch.umv.name=UMV Muffler Hatch
+gregtech.machine.muffler_hatch.uxv.name=UXV Muffler Hatch
+gregtech.machine.muffler_hatch.max.name=MAX Muffler Hatch
+
+gregtech.muffler.recovery_tooltip=Recovers Items §b%d%%§7 of the time!
+
 gregtech.machine.pump_hatch.name=Pump Output Hatch
 gregtech.machine.pump_hatch.tooltip=Primitive Fluid Output for Water Pump
 

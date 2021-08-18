@@ -34,7 +34,7 @@ public class MultiSmelterInfo extends MultiblockInfoPage {
 
             MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
                     .aisle("IXX", "CCC", "XXX")
-                    .aisle("SXE", "C#C", "XXX")
+                    .aisle("SXE", "C#C", "XHX")
                     .aisle("OXM", "CCC", "XXX")
                     .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF))
                     .where('C', MetaBlocks.WIRE_COIL.getState(coilType))
@@ -42,6 +42,7 @@ public class MultiSmelterInfo extends MultiblockInfoPage {
                     .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.MV], EnumFacing.EAST)
                     .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.LV], EnumFacing.WEST)
                     .where('O', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.LV], EnumFacing.WEST)
+                    .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP)
                     .where('#', Blocks.AIR.getDefaultState());
 
                     if (ConfigHolder.U.GT5u.enableMaintenance)

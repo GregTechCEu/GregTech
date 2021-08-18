@@ -33,7 +33,7 @@ public class ElectricBlastFurnaceInfo extends MultiblockInfoPage {
         for (CoilType coilType : CoilType.values()) {
             MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
                     .aisle("IFX", "CCC", "CCC", "XXX")
-                    .aisle("SXE", "C#C", "C#C", "XXX")
+                    .aisle("SXE", "C#C", "C#C", "XHX")
                     .aisle("ODM", "CCC", "CCC", "XXX")
                     .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF))
                     .where('C', MetaBlocks.WIRE_COIL.getState(coilType))
@@ -43,7 +43,8 @@ public class ElectricBlastFurnaceInfo extends MultiblockInfoPage {
                     .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.LV], EnumFacing.WEST)
                     .where('O', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.LV], EnumFacing.WEST)
                     .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.NORTH)
-                    .where('D', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.SOUTH);
+                    .where('D', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.SOUTH)
+                    .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP);
 
                     if (ConfigHolder.U.GT5u.enableMaintenance)
                         builder.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.EAST);

@@ -22,7 +22,8 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
             MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS,
-            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.MAINTENANCE_HATCH
+            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.MAINTENANCE_HATCH,
+            MultiblockAbility.MUFFLER_HATCH
     };
 
     public MetaTileEntityImplosionCompressor(ResourceLocation metaTileEntityId) {
@@ -62,5 +63,10 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
         return Textures.IMPLOSION_COMPRESSOR_OVERLAY;
+    }
+
+    @Override
+    public boolean hasMufflerMechanics() {
+        return true;
     }
 }

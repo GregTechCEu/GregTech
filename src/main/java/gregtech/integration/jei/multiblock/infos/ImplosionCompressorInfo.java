@@ -30,14 +30,15 @@ public class ImplosionCompressorInfo extends MultiblockInfoPage {
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
                 .aisle("XXX", "XBX", "XXX")
-                .aisle("MXX", "C#E", "XXX")
+                .aisle("MXX", "C#E", "XHX")
                 .aisle("XXX", "XIX", "XXX")
                 .where('C', MetaTileEntities.IMPLOSION_COMPRESSOR, EnumFacing.WEST)
                 .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.STEEL_SOLID))
                 .where('#', Blocks.AIR.getDefaultState())
                 .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.HV], EnumFacing.SOUTH)
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.EAST)
-                .where('B', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.HV], EnumFacing.NORTH);
+                .where('B', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.HV], EnumFacing.NORTH)
+                .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP);
 
                 if (ConfigHolder.U.GT5u.enableMaintenance)
                     shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.WEST);

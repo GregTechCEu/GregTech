@@ -82,12 +82,13 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "CCC", "XXX")
-                .aisle("XXX", "C#C", "XXX")
+                .aisle("XXX", "C#C", "XMX")
                 .aisle("XSX", "CCC", "XXX")
                 .setAmountAtLeast('L', 9)
                 .where('S', selfPredicate())
                 .where('L', statePredicate(getCasingState()))
                 .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('M', abilityPartPredicate(MultiblockAbility.MUFFLER_HATCH))
                 .where('C', MetaTileEntityElectricBlastFurnace.heatingCoilPredicate())
                 .where('#', isAirPredicate())
                 .build();
@@ -106,6 +107,11 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
         return Textures.MULTI_FURNACE_OVERLAY;
+    }
+
+    @Override
+    public boolean hasMufflerMechanics() {
+        return true;
     }
 
     protected class MultiFurnaceWorkable extends MultiblockRecipeLogic {

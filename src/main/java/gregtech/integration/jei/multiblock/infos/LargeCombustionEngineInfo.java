@@ -27,16 +27,17 @@ public class LargeCombustionEngineInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
-                .aisle("AAA", "ACA", "AAA")
-                .aisle("HHH", "MGH", "HHH")
-                .aisle("HHH", "FGH", "HHH")
-                .aisle("HHH", "HEH", "HHH")
-                .where('H', MetaBlocks.METAL_CASING.getState(MetalCasingType.TITANIUM_STABLE))
+                .aisle("AAA", "ASA", "AAA")
+                .aisle("CCC", "MGC", "CCC")
+                .aisle("CCC", "FGC", "CHC")
+                .aisle("CCC", "CEC", "CCC")
+                .where('C', MetaBlocks.METAL_CASING.getState(MetalCasingType.TITANIUM_STABLE))
                 .where('G', MetaBlocks.TURBINE_CASING.getState(BlockTurbineCasing.TurbineCasingType.TITANIUM_GEARBOX))
                 .where('A', MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ENGINE_INTAKE_CASING))
-                .where('C', MetaTileEntities.LARGE_COMBUSTION_ENGINE, EnumFacing.NORTH)
+                .where('S', MetaTileEntities.LARGE_COMBUSTION_ENGINE, EnumFacing.NORTH)
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.EV], EnumFacing.WEST)
                 .where('E', MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.EV], EnumFacing.SOUTH)
+                .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP)
                 .where('#', Blocks.AIR.getDefaultState());
 
                 if (ConfigHolder.U.GT5u.enableMaintenance)

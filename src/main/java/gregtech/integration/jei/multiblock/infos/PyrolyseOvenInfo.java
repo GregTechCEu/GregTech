@@ -34,7 +34,7 @@ public class PyrolyseOvenInfo extends MultiblockInfoPage {
                 .aisle("XMX", "ISF", "XXX")
                 .aisle("CCC", "C#C", "CCC")
                 .aisle("CCC", "C#C", "CCC")
-                .aisle("XXX", "BEH", "XXX")
+                .aisle("XXX", "BEL", "XHX")
                 .where('S', MetaTileEntities.PYROLYSE_OVEN, EnumFacing.NORTH)
                 .where('X', MetaBlocks.MACHINE_CASING.getState(BlockMachineCasing.MachineCasingType.ULV))
                 .where('C', MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL))
@@ -43,7 +43,8 @@ public class PyrolyseOvenInfo extends MultiblockInfoPage {
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.HV], EnumFacing.NORTH)
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
                 .where('B', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.HV], EnumFacing.SOUTH)
-                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.HV], EnumFacing.SOUTH);
+                .where('L', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.HV], EnumFacing.SOUTH)
+                .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP);
 
                 if (ConfigHolder.U.GT5u.enableMaintenance)
                     shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.NORTH);

@@ -45,7 +45,7 @@ public class LargeTurbineInfo extends MultiblockInfoPage {
         ((MetaTileEntityRotorHolder) holder.getMetaTileEntity()).getRotorInventory().setStackInSlot(0, rotorStack);
         MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
                 .aisle("CCCC", "CIOC", "CCCC")
-                .aisle("CCCC", "RGGD", "CCCC")
+                .aisle("CCCC", "RGGD", "CCHC")
                 .aisle("CCCC", "CSMC", "CCCC")
                 .where('S', turbine, EnumFacing.SOUTH)
                 .where('C', turbine.turbineType.casingState)
@@ -63,6 +63,11 @@ public class LargeTurbineInfo extends MultiblockInfoPage {
                     shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.SOUTH);
                 else
                     shapeInfo.where('M', turbine.turbineType.casingState);
+
+                if (turbine.hasMufflerMechanics())
+                    shapeInfo.where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP);
+                else
+                    shapeInfo.where('H', turbine.turbineType.casingState);
 
         return Lists.newArrayList(shapeInfo.build());
     }

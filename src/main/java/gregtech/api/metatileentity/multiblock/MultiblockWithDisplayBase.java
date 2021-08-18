@@ -6,10 +6,15 @@ import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.multiblock.IMaintenance;
 import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.XSTR;
 import gregtech.common.ConfigHolder;
-import gregtech.common.metatileentities.electric.multiblockpart.maintenance.MetaTileEntityMaintenanceHatch;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMaintenanceHatch;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMufflerHatch;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -21,13 +26,19 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.util.text.event.HoverEvent.Action;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static gregtech.api.capability.MultiblockDataCodes.STORE_TAPED;
 
 public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance {
+
+    /**
+     * Items to recover in a muffler hatch
+     */
+    protected final List<ItemStack> recoveryItems = new ArrayList<ItemStack>() {{
+        add(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Ash));
+    }};
 
     public static final XSTR XSTR_RAND = new XSTR();
 
@@ -97,6 +108,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return ConfigHolder.U.GT5u.enableMaintenance;
     }
 
+    public boolean hasMufflerMechanics() {
+        return false;
+    }
+
     /**
      * Used to calculate whether a maintenance problem should happen based on machine time active
      * @param duration in ticks to add to the counter of active time
@@ -161,6 +176,42 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         }
     }
 
+    /**
+     * Outputs the recovery items into the muffler hatch
+     */
+    protected void outputRecoveryItems() {
+        MetaTileEntityMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
+        muffler.recoverItemsTable(recoveryItems.stream().map(ItemStack::copy).collect(Collectors.toList()));
+    }
+
+    /**
+     *
+     * @return whether the muffler hatch's front face is free
+     */
+    public boolean isMufflerFaceFree() {
+        if (hasMufflerMechanics() && getAbilities(MultiblockAbility.MUFFLER_HATCH).size() == 0)
+            return false;
+
+        return isStructureFormed() && hasMufflerMechanics() && getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0).isFrontFaceFree();
+    }
+
+    /**
+     * Sets the recovery items of this multiblock
+     * @param recoveryItems is the items to set
+     */
+    protected void setRecoveryItems(ItemStack... recoveryItems) {
+        this.recoveryItems.clear();
+        this.recoveryItems.addAll(Arrays.asList(recoveryItems));
+    }
+
+    /**
+     *
+     * @return whether the current multiblock is active or not
+     */
+    public boolean isActive() {
+        return isStructureFormed();
+    }
+
     @Override
     public void invalidateStructure() {
         if (hasMaintenanceMechanics() && ConfigHolder.U.GT5u.enableMaintenance) { // nothing extra if no maintenance
@@ -179,19 +230,23 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (!canForm)
             return false;
 
+        int mufflerCount = abilities.getOrDefault(MultiblockAbility.MUFFLER_HATCH, Collections.emptyList()).size();
+
+        // Only one muffler if it the multi requires one, otherwise allow none
+        if (hasMufflerMechanics()) {
+            if (mufflerCount != 1)
+                return false;
+        } else {
+            if (mufflerCount != 0)
+                return false;
+        }
+
+        // Only one maintenance hatch if the multi requires one, otherwise allow any amount
         if (!hasMaintenanceMechanics())
             return true;
 
-//        int mufflerCount = abilities.getOrDefault(GregtechCapabilities.MUFFLER_HATCH, Collections.emptyList()).size();
         int maintenanceCount = abilities.getOrDefault(MultiblockAbility.MAINTENANCE_HATCH, Collections.emptyList()).size();
 
-//        if (hasMuffler) {
-//            if (mufflerCount != 1)
-//                return false;
-//        } else {
-//            if (mufflerCount != 0)
-//                return false;
-//        }
         return maintenanceCount == 1;
     }
 
