@@ -8,6 +8,7 @@ import gregtech.api.gui.resources.utils.GifDecoder;
 import gregtech.api.gui.resources.utils.ImageUtils;
 import gregtech.api.gui.resources.utils.ProcessedImageData;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.compress.utils.IOUtils;
@@ -93,7 +94,7 @@ public class FileTexture implements IGuiTexture{
             texture.render((float)x, (float)y, width, height, 0, 1, 1, false, false);
         } else {
             if (failed || file == null) {
-                Minecraft.getMinecraft().fontRenderer.drawString(" Load Failed", (int)x, (int)(y + height / 2.0 - 4), 0xffff0000);
+                Minecraft.getMinecraft().fontRenderer.drawString(I18n.format("texture.url_texture.fail"), (int)x + 2, (int)(y + height / 2.0 - 4), 0xffff0000);
             } else {
                 this.loadFile();
                 int s = (int) Math.floorMod(System.currentTimeMillis() / 200, 24);

@@ -3636,4 +3636,52 @@ gregtech.terminal.app_name.theme_settings=Theme Settings
 gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
 
-gregtech.terminal.guide.tutorials.guide_widget_api=Guide Widget Api
+texture.modify_gui_texture.missing=Missing Texture
+texture.url_texture.fail=Load Failed
+
+terminal.menu.close=Close
+terminal.menu.minimize=Minimize
+terminal.menu.maximize=Maximize
+
+terminal.component.new_page=New Page
+terminal.component.page_name=Page Name
+terminal.component.load_file=Load File
+terminal.component.load_file.error=An error occurred while loading the file.
+terminal.component.save_file=Save File
+terminal.component.save_file.error=An error occurred while saving the file.
+terminal.component.confirm=Are you sure?
+terminal.component.error=ERROR
+terminal.component.warning=WARNING
+terminal.component.searching=searching
+
+terminal.dialog.error_path=error file path:
+terminal.dialog.no_file_selected=No file selected.
+terminal.dialog.folder=Open Folder
+
+terminal.guide_editor.up=Up
+terminal.guide_editor.down=Down
+terminal.guide_editor.remove=Remove
+terminal.guide_editor.add_stream=Add to stream
+terminal.guide_editor.add_fixed=Add to fixed
+terminal.guide_editor.update=Update
+terminal.guide_editor.add_slot=Add Slot
+terminal.guide_editor.default=Default Value
+terminal.guide_editor.page_config=Page Config
+terminal.guide_editor.widgets_box=Widgets Box
+terminal.guide_editor.widget_config=Widget Config
+
+terminal.theme_settings.color=Theme Color Settings
+terminal.theme_settings.wallpaper=Wallpaper Settings
+terminal.theme_settings.select=Select
+terminal.theme_settings.image=Image File
+
+terminal.recipe_chart.limit=Page limit.
+terminal.recipe_chart.delete=Delete Page
+terminal.recipe_chart.add_slot=Add Root Slot
+terminal.recipe_chart.demand=Demand
+terminal.recipe_chart.calculator=Calculator
+terminal.recipe_chart.drag=Drag ingredients here.
+terminal.recipe_chart.visible=Visible
+terminal.recipe_chart.jei=JEI Focus
+terminal.recipe_chart.tier=Tier:
+terminal.recipe_chart.ratio=Ratio

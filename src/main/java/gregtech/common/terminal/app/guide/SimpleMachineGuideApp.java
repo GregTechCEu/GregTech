@@ -2,6 +2,7 @@ package gregtech.common.terminal.app.guide;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
@@ -37,7 +38,7 @@ public class SimpleMachineGuideApp extends GuideApp<MetaTileEntity> {
             for (String valid : valids) {
                 JsonElement id = json.getAsJsonObject().get(valid);
                 if (id != null && id.isJsonPrimitive())
-                    return GregTechAPI.META_TILE_ENTITY_REGISTRY.getObject(new ResourceLocation(id.getAsString()));
+                    return GregTechAPI.META_TILE_ENTITY_REGISTRY.getObject(new ResourceLocation(GTValues.MODID, id.getAsString()));
             }
         }
         return null;

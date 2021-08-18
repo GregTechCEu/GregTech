@@ -4,6 +4,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.picturetexture.PictureTexture;
 import gregtech.api.gui.resources.utils.DownloadThread;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -37,7 +38,7 @@ public class URLTexture implements IGuiTexture{
             texture.render((float)x, (float)y, width, height, 0, 1, 1, false, false);
         } else {
             if (failed || url == null || this.url.equals("")) {
-                Minecraft.getMinecraft().fontRenderer.drawString(" Load Failed", (int)x, (int)(y + height / 2.0 - 4), 0xffff0000);
+                Minecraft.getMinecraft().fontRenderer.drawString(I18n.format("texture.url_texture.fail"), (int)x + 2, (int)(y + height / 2.0 - 4), 0xffff0000);
             } else {
                 this.loadTexture();
                 int s = (int) Math.floorMod(System.currentTimeMillis() / 200, 24);

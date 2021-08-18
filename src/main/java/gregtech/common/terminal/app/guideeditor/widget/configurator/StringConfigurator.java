@@ -26,7 +26,7 @@ public class StringConfigurator extends ConfiguratorWidget<String>{
                         TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(data -> updateString())
-                .setIcon(new TextTexture("Update", -1)));
+                .setIcon(new TextTexture("terminal.guide_editor.update", -1)));
         textFieldWidget = new TextFieldWidget(0, 15, 76, 20, TerminalTheme.COLOR_B_2, null, null)
                 .setMaxStringLength(Integer.MAX_VALUE)
                 .setValidator(s->true);

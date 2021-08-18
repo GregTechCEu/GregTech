@@ -14,7 +14,7 @@ public class ModifyGuiTexture implements IGuiTexture{
     public ModifyGuiTexture(IGuiTexture texture) {
         this.texture = texture;
         if (texture == null) {
-            this.texture = new TextTexture("Missing Texture");
+            this.texture = new TextTexture("texture.modify_gui_texture.missing");
         }
     }
 

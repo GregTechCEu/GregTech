@@ -66,72 +66,72 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
         name = name.isEmpty()? "default" : name;
         RGContainer container = new RGContainer(0, 0, 333, 222, getOs());
         container.setBackground(TerminalTheme.COLOR_B_3);
-        tabGroup.addTab(new IGuiTextureTabInfo(new TextTexture(name, -1), "Widgets Box"), container);
+        tabGroup.addTab(new IGuiTextureTabInfo(new TextTexture(name, -1), name), container);
         containers.put(container, name);
         return container;
     }
 
     @Override
     public List<IMenuComponent> getMenuComponents() {
-        ClickComponent newPage = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE).setHoverText("New Page").setClickConsumer(cd->{
+        ClickComponent newPage = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE).setHoverText("terminal.component.new_page").setClickConsumer(cd->{
             if (tabGroup == null) return;
             if (tabGroup.getAllTag().size() < 5) {
-                TerminalDialogWidget.showTextFieldDialog(getOs(), "Page Name", s -> true, s -> {
+                TerminalDialogWidget.showTextFieldDialog(getOs(), "terminal.component.page_name", s -> true, s -> {
                     if (s != null) {
                         addTab(s);
                     }
                 }).setClientSide().open();
             } else {
-                TerminalDialogWidget.showInfoDialog(getOs(), "NOTICE", "Page limit.").setClientSide().open();
+                TerminalDialogWidget.showInfoDialog(getOs(), "terminal.component.warning", "terminal.recipe_chart.limit").setClientSide().open();
             }
         });
-        ClickComponent deletePage = new ClickComponent().setIcon(GuiTextures.ICON_REMOVE).setHoverText("Delete Page").setClickConsumer(cd->{
+        ClickComponent deletePage = new ClickComponent().setIcon(GuiTextures.ICON_REMOVE).setHoverText("terminal.recipe_chart.delete").setClickConsumer(cd->{
             if (tabGroup == null) return;
             if (tabGroup.getAllTag().size() > 1) {
-                TerminalDialogWidget.showConfirmDialog(getOs(), "Delete Page", "Are you sure?", r->{
+                TerminalDialogWidget.showConfirmDialog(getOs(), "terminal.recipe_chart.delete", "terminal.component.confirm", r->{
                     if (r) {
                         containers.remove(tabGroup.getCurrentTag());
                         tabGroup.removeTab(tabGroup.getAllTag().indexOf(tabGroup.getCurrentTag()));
                     }
                 }).setClientSide().open();
             } else {
-                TerminalDialogWidget.showInfoDialog(getOs(), "NOTICE", "Page limit.").setClientSide().open();
+                TerminalDialogWidget.showInfoDialog(getOs(), "terminal.component.warning", "terminal.recipe_chart.limit").setClientSide().open();
             }
         });
-        ClickComponent addSlot = new ClickComponent().setIcon(GuiTextures.ICON_ADD).setHoverText("Add Root Slot").setClickConsumer(cd->{
+        ClickComponent addSlot = new ClickComponent().setIcon(GuiTextures.ICON_ADD).setHoverText("terminal.recipe_chart.add_slot").setClickConsumer(cd->{
             if (tabGroup == null) return;
             if (tabGroup.getCurrentTag() != null) {
                 tabGroup.getCurrentTag().addNode(50, 100);
             }
         });
-        ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD).setHoverText("Load File").setClickConsumer(cd->{
+        ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD).setHoverText("terminal.component.load_file").setClickConsumer(cd->{
             if (tabGroup == null) return;
             if (tabGroup.getAllTag().size() < 5) {
                 File file = new File("terminal\\recipe_chart");
-                TerminalDialogWidget.showFileDialog(getOs(), "Load File", file, true, result->{
+                TerminalDialogWidget.showFileDialog(getOs(), "terminal.component.load_file", file, true, result->{
                     if (result != null && result.isFile()) {
                         try {
                             NBTTagCompound nbt = CompressedStreamTools.read(result);
                             addTab(result.getName()).loadFromNBT(nbt);
                         } catch (IOException e) {
-                            TerminalDialogWidget.showInfoDialog(getOs(), "ERROR", "An error occurred while loading the file.").setClientSide().open();
+                            TerminalDialogWidget.showInfoDialog(getOs(), "terminal.component.error", "terminal.component.load_file.error").setClientSide().open();
                         }
                     }
                 }).setClientSide().open();
             } else {
-                TerminalDialogWidget.showInfoDialog(getOs(), "NOTICE", "Page limit.").setClientSide().open();
+                TerminalDialogWidget.showInfoDialog(getOs(), "terminal.component.warning", "terminal.recipe_chart.limit").setClientSide().open();
             }
         });
-        ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE).setHoverText("Save File").setClickConsumer(cd->{
+        ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE).setHoverText("terminal.component.save_file").setClickConsumer(cd->{
             if (tabGroup == null) return;
             if (tabGroup.getCurrentTag() != null) {
                 File file = new File("terminal\\recipe_chart");
-                TerminalDialogWidget.showFileDialog(getOs(), "Save File", file, false, result->{
+                TerminalDialogWidget.showFileDialog(getOs(), "terminal.component.save_file", file, false, result->{
                     if (result != null) {
                         try {
                             CompressedStreamTools.safeWrite(tabGroup.getCurrentTag().saveAsNBT(), result);
                         } catch (IOException e) {
-                            TerminalDialogWidget.showInfoDialog(getOs(), "ERROR", "An error occurred while saving the file.").setClientSide().open();
+                            TerminalDialogWidget.showInfoDialog(getOs(), "terminal.component.error", "terminal.component.save_file.error").setClientSide().open();
                         }
                     }
                 }).setClientSide().open();

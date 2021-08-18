@@ -47,7 +47,7 @@ public class SearchComponent<T> extends WidgetGroup implements IMenuComponent {
 
     @Override
     public String hoverText() {
-        return "searching";
+        return "terminal.component.searching";
     }
 
     public void setUp(boolean up) {

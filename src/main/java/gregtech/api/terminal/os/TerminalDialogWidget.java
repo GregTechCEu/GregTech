@@ -15,6 +15,7 @@ import gregtech.api.terminal.util.FileTree;
 import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.network.PacketBuffer;
 
@@ -175,7 +176,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 .setBackground(new ColorRectTexture(0x4f000000));
         if (!dir.isDirectory()) {
             if (!dir.mkdirs()) {
-                return dialog.addInfo("error file path: " + dir.getPath()).addOkButton();
+                return dialog.addInfo(I18n.format("terminal.dialog.error_path") + dir.getPath()).addOkButton();
             }
         }
         AtomicReference<File> selected = new AtomicReference<>();
@@ -209,7 +210,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 if (selected.get() != null) {
                     return selected.get().toString();
                 }
-                return "no file selected";
+                return "terminal.dialog.no_file_selected";
             }, true));
         } else {
             dialog.addWidget(new TextFieldWidget(x + WIDTH / 2 - 38, y + HEIGHT / 2 - 10, 76, 20, new ColorRectTexture(0x4f000000), null, null)
@@ -244,7 +245,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                     }
                 })
                 .setColors(0, 0xFFFFFFFF, 0)
-                .setHoverText("Open Folder")
+                .setHoverText("terminal.dialog.folder")
                 .setIcon(GuiTextures.ICON_LOAD));
         dialog.addWidget(new LabelWidget(x + WIDTH / 2, y + 11, title, -1).setXCentered(true));
         os.menu.hideMenu();

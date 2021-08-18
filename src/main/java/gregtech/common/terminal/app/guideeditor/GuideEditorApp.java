@@ -40,17 +40,17 @@ public class GuideEditorApp extends AbstractApplication {
 
     @Override
     public List<IMenuComponent> getMenuComponents() {
-        ClickComponent newPage = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE).setHoverText("New Page").setClickConsumer(cd->{
+        ClickComponent newPage = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE).setHoverText("terminal.component.new_page").setClickConsumer(cd->{
             if (configEditor != null) {
                 configEditor.newPage(cd);
             }
         });
-        ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD).setHoverText("Load File").setClickConsumer(cd->{
+        ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD).setHoverText("terminal.component.load_file").setClickConsumer(cd->{
             if (configEditor != null) {
                 configEditor.loadJson(cd);
             }
         });
-        ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE).setHoverText("Save File").setClickConsumer(cd->{
+        ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE).setHoverText("terminal.component.save_file").setClickConsumer(cd->{
             if (configEditor != null) {
                 configEditor.saveJson(cd);
             }

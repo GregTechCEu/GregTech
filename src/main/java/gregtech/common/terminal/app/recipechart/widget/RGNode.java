@@ -64,8 +64,8 @@ public class RGNode extends WidgetGroup implements IDraggable {
             toolGroup.addWidget(new CircleButtonWidget(-11, 49, 8, 1, 12)
                     .setColors(0, TerminalTheme.COLOR_7.getColor(), 0)
                     .setIcon(GuiTextures.ICON_CALCULATOR)
-                    .setHoverText("Calculator")
-                    .setClickListener(cd -> TerminalDialogWidget.showTextFieldDialog(container.os, "Demand", s->{
+                    .setHoverText("terminal.recipe_chart.calculator")
+                    .setClickListener(cd -> TerminalDialogWidget.showTextFieldDialog(container.os, "terminal.recipe_chart.demand", s->{
                         try {
                             return Integer.parseInt(s) > 0;
                         } catch (Exception ignored){
@@ -96,7 +96,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
             } else if (head instanceof FluidStack) {
                 return ((FluidStack) head).getLocalizedName();
             }
-            return "Drag ingredients into slot.";
+            return "terminal.recipe_chart.drag";
         }, true).setShadow(true);
         textWidget.setVisible(false);
         textWidget.setActive(false);
@@ -108,12 +108,12 @@ public class RGNode extends WidgetGroup implements IDraggable {
         toolGroup.addWidget(new CircleButtonWidget(-11, 9, 8, 1, 12)
                 .setColors(0, TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_3.getColor())
                 .setIcon(GuiTextures.ICON_REMOVE)
-                .setHoverText("remove")
+                .setHoverText("terminal.guide_editor.remove")
                 .setClickListener(cd -> remove()));
         toolGroup.addWidget(new CircleButtonWidget(-11, 29, 8, 1, 12)
                 .setColors(0, TerminalTheme.COLOR_7.getColor(), 0)
                 .setIcon(GuiTextures.ICON_VISIBLE)
-                .setHoverText("Text Visible")
+                .setHoverText("terminal.recipe_chart.visible")
                 .setClickListener(cd -> {
                     textWidget.setActive(!textWidget.isActive());
                     textWidget.setVisible(!textWidget.isVisible());
@@ -121,7 +121,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
         toolGroup.addWidget(new CircleButtonWidget(9, 29, 8, 1, 12)
                 .setColors(0, TerminalTheme.COLOR_7.getColor(), 0)
                 .setIcon(GuiTextures.ICON_LOCATION)
-                .setHoverText("JEI Focus")
+                .setHoverText("terminal.recipe_chart.jei")
                 .setClickListener(cd -> {
                     if (GTJeiPlugin.jeiRuntime != null && head != null) {
                         GTJeiPlugin.jeiRuntime.getRecipesGui().show(new Focus<>(IFocus.Mode.OUTPUT, head));

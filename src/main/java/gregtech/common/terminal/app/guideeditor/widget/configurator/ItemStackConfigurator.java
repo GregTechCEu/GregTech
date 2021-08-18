@@ -32,7 +32,7 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
         container = new DraggableScrollableWidgetGroup(0, 27,116, 100);
         this.addWidget(container);
         this.addWidget(new RectButtonWidget(0, 15, 116, 10, 1)
-                .setIcon(new TextTexture("Add Slot", -1))
+                .setIcon(new TextTexture("terminal.guide_editor.add_slot", -1))
                 .setClickListener(cd->{
                     addSlot(container, new SlotListWidget.ItemStackInfo("minecraft:air", 0, 0));
                     updateValue();

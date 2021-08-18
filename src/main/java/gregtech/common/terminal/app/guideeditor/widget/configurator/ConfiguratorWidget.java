@@ -8,6 +8,7 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.util.Position;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 
 import java.util.Collections;
@@ -73,7 +74,7 @@ public class ConfiguratorWidget<T> extends WidgetGroup {
         int x = getPosition().x;
         int y = getPosition().y;
         if (canDefault && isMouseOver(x + nameWidth + 4, y + 6, 5, 5, mouseX, mouseY)) {
-            drawHoveringText(ItemStack.EMPTY, Collections.singletonList("default value"), 100, mouseX, mouseY);
+            drawHoveringText(ItemStack.EMPTY, Collections.singletonList(I18n.format("terminal.guide_editor.default")), 100, mouseX, mouseY);
         }
         if (!isDefault) {
             super.drawInForeground(mouseX, mouseY);

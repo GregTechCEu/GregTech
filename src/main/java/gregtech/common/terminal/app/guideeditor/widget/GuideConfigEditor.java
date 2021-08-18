@@ -41,9 +41,9 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
         addButton = new CircleButtonWidget[2];
         widgetSelector = createWidgetSelector();
         widgetConfigurator = createConfigurator();
-        this.addTab(new IGuiTextureTabInfo(new TextTexture("P", -1), "Page Config"), createPageConfig());
-        this.addTab(new IGuiTextureTabInfo(new TextTexture("W", -1), "Widgets Box"), widgetSelector);
-        this.addTab(new IGuiTextureTabInfo(new TextTexture("C", -1), "Widget Config"), widgetConfigurator);
+        this.addTab(new IGuiTextureTabInfo(new TextTexture("P", -1), "terminal.guide_editor.page_config"), createPageConfig());
+        this.addTab(new IGuiTextureTabInfo(new TextTexture("W", -1), "terminal.guide_editor.widgets_box"), widgetSelector);
+        this.addTab(new IGuiTextureTabInfo(new TextTexture("C", -1), "terminal.guide_editor.widget_config"), widgetConfigurator);
         this.setOnTabChanged((oldIndex, newIndex)->{
            if (newIndex == 1) {
                addButton[0].setVisible(true);
@@ -58,14 +58,14 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_4.getColor())
                 .setIcon(GuiTextures.ICON_ADD)
-                .setHoverText("add stream")
+                .setHoverText("terminal.guide_editor.add_stream")
                 .setClickListener(this::addStream);
         addButton[1] = new CircleButtonWidget(115, 35, 8, 1, 8)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_5.getColor())
                 .setIcon(GuiTextures.ICON_ADD)
-                .setHoverText("add fixed")
+                .setHoverText("terminal.guide_editor.add_fixed")
                 .setClickListener(this::addFixed);
         addButton[0].setVisible(false);
         addButton[1].setVisible(false);
@@ -146,7 +146,7 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
     }
 
     public void newPage(ClickData data) {
-        TerminalDialogWidget.showConfirmDialog(app.getOs(), "New Page", "New page", res->{
+        TerminalDialogWidget.showConfirmDialog(app.getOs(), "terminal.component.new_page", "terminal.component.confirm", res->{
             if (res) {
                 pageEditor.loadJsonConfig("{\"section\":\"default\",\"title\":\"Template\",\"stream\":[],\"fixed\":[]}");
                 getPageEditor().setSection("default");
@@ -158,7 +158,7 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
     public void loadJson(ClickData data) {
         if (pageEditor != null) {
             File file = new File("terminal\\guide_editor");
-            TerminalDialogWidget.showFileDialog(app.getOs(), "Load Json", file, true, result->{
+            TerminalDialogWidget.showFileDialog(app.getOs(), "terminal.component.load_file", file, true, result->{
                if (result != null && result.isFile()) {
                    try {
                        JsonObject config = Objects.requireNonNull(FileUtils.loadJson(result)).getAsJsonObject();
@@ -166,7 +166,7 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
                        getPageEditor().setSection(config.get("section").getAsString());
                        updateTitle(config.get("title").getAsString());
                    } catch (Exception e) {
-                       TerminalDialogWidget.showInfoDialog(app.getOs(), "ERROR", "An error occurred while loading the file.").setClientSide().open();
+                       TerminalDialogWidget.showInfoDialog(app.getOs(), "terminal.component.error", "terminal.component.load_file.error").setClientSide().open();
                    }
                }
             }).setClientSide().open();
@@ -176,10 +176,10 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
     public void saveJson(ClickData data) {
         if(pageEditor != null) {
             File file = new File("terminal\\guide_editor");
-            TerminalDialogWidget.showFileDialog(app.getOs(), "Save Json", file, false, result->{
+            TerminalDialogWidget.showFileDialog(app.getOs(), "terminal.component.save_file", file, false, result->{
                 if (result != null) {
                     if(!FileUtils.saveJson(result, pageEditor.getJsonConfig())) {
-                        TerminalDialogWidget.showInfoDialog(app.getOs(), "ERROR", "An error occurred while saving the file.").setClientSide().open();
+                        TerminalDialogWidget.showInfoDialog(app.getOs(), "terminal.component.error", "terminal.component.save_file.error").setClientSide().open();
                     }
                 }
             }).setClientSide().open();

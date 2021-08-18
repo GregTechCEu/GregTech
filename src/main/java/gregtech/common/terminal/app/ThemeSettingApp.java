@@ -36,7 +36,7 @@ public class ThemeSettingApp extends AbstractApplication {
             float x = 333 * 1.0f / 13;
             int y = 50;
             app.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
-            app.addWidget(new LabelWidget(333 / 2, 20, "Theme Color Settings", -1).setXCentered(true));
+            app.addWidget(new LabelWidget(333 / 2, 20, "terminal.theme_settings.color", -1).setXCentered(true));
             app.addColorButton(TerminalTheme.COLOR_1, "COLOR_1", (int) x, y);
             app.addColorButton(TerminalTheme.COLOR_2, "COLOR_2", (int) (x * 2), y);
             app.addColorButton(TerminalTheme.COLOR_3, "COLOR_3", (int) (x * 3), y);
@@ -49,7 +49,7 @@ public class ThemeSettingApp extends AbstractApplication {
             app.addColorButton(TerminalTheme.COLOR_B_1, "COLOR_B_1", (int) (x * 10), y);
             app.addColorButton(TerminalTheme.COLOR_B_2, "COLOR_B_2", (int) (x * 11), y);
             app.addColorButton(TerminalTheme.COLOR_B_3, "COLOR_B_3", (int) (x * 12), y);
-            app.addWidget(new LabelWidget(333 / 2, 85, "Wallpaper Settings", -1).setXCentered(true));
+            app.addWidget(new LabelWidget(333 / 2, 85, "terminal.theme_settings.wallpaper", -1).setXCentered(true));
             app.addWidget(new ImageWidget((int) x, 105, 150, 105, TerminalTheme.WALL_PAPER).setBorder(2, -1));
             app.addWidget(new SelectorWidget((int) (x + 170), 105, 116, 20, Arrays.asList("resource", "url", "color", "file"), -1, TerminalTheme.WALL_PAPER::getTypeName, true)
                     .setIsUp(true)
@@ -70,7 +70,7 @@ public class ThemeSettingApp extends AbstractApplication {
                     buttonWidget.setFill(color);
                     texture.setColor(color);
                     if (!TerminalTheme.saveConfig()) {
-                        TerminalDialogWidget.showInfoDialog(getOs(), "ERROR", "error while saving config").setClientSide().open();
+                        TerminalDialogWidget.showInfoDialog(getOs(), "terminal.component.error", "terminal.component.save_file.error").setClientSide().open();
                     }
                 }
             }).setClientSide().open();
@@ -124,13 +124,13 @@ public class ThemeSettingApp extends AbstractApplication {
                         .setColors(TerminalTheme.COLOR_B_1.getColor(),
                                 TerminalTheme.COLOR_1.getColor(),
                                 new Color(255, 255, 255, 0).getRGB())
-                        .setClickListener(cd-> TerminalDialogWidget.showFileDialog(app.getOs(), "Image File", new File("terminal"), true, file->{
+                        .setClickListener(cd-> TerminalDialogWidget.showFileDialog(app.getOs(), "terminal.theme_settings.image", new File("terminal"), true, file->{
                             if (file != null && file.isFile()) {
                                 TerminalTheme.WALL_PAPER.setTexture(new FileTexture(file));
                                 TerminalTheme.saveConfig();
                             }
                         }).setClientSide().open())
-                        .setIcon(new TextTexture("Select", -1)));
+                        .setIcon(new TextTexture("terminal.theme_settings.select", -1)));
                 break;
         }
     }
@@ -146,7 +146,7 @@ public class ThemeSettingApp extends AbstractApplication {
                         TerminalTheme.COLOR_1.getColor(),
                         new Color(255, 255, 255, 0).getRGB())
                 .setClickListener(cd->callback.accept(textFieldWidget.getCurrentString()))
-                .setIcon(new TextTexture("Update", -1)));
+                .setIcon(new TextTexture("terminal.guide_editor.update", -1)));
     }
 
     @Override

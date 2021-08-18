@@ -36,19 +36,19 @@ public class TerminalMenuWidget extends WidgetGroup {
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_3.getColor())
-                .setHoverText("close")
+                .setHoverText("terminal.menu.close")
                 .setClickListener(this::close));
         this.addWidget(new CircleButtonWidget(15, 10, 4, 1, 0)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_2.getColor())
-                .setHoverText("minimize")
+                .setHoverText("terminal.menu.minimize")
                 .setClickListener(this::minimize));
         this.addWidget(new CircleButtonWidget(25, 10, 4, 1, 0)
                 .setColors(new Color(255, 255, 255, 0).getRGB(),
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_1.getColor())
-                .setHoverText("maximize")
+                .setHoverText("terminal.menu.maximize")
                 .setClickListener(this::maximize));
     }
 

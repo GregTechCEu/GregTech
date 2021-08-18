@@ -16,6 +16,7 @@ import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec2f;
@@ -50,7 +51,7 @@ public class RGLine extends WidgetGroup {
             infoGroup.addWidget(new SlotWidget(handler, 0, 0, 0, false, false).setBackgroundTexture(new ColorRectTexture(0)));
             MetaTileEntity mte = MachineItemBlock.getMetaTileEntity(catalyst);
             if (mte instanceof SimpleMachineMetaTileEntity) {
-                infoGroup.addWidget(new LabelWidget(9, -10, "Tier: " + GTValues.VN[((SimpleMachineMetaTileEntity) mte).getTier()],  -1).setXCentered(true).setShadow(true));
+                infoGroup.addWidget(new LabelWidget(9, -10, I18n.format("terminal.recipe_chart.tier") + GTValues.VN[((SimpleMachineMetaTileEntity) mte).getTier()],  -1).setXCentered(true).setShadow(true));
             }
         }
 
@@ -62,7 +63,7 @@ public class RGLine extends WidgetGroup {
         toolGroup.addWidget(new CircleButtonWidget(-8, 0, 8, 1, 12)
                 .setColors(0, TerminalTheme.COLOR_7.getColor(), 0)
                 .setIcon(GuiTextures.ICON_VISIBLE)
-                .setHoverText("Info Visible")
+                .setHoverText("terminal.recipe_chart.visible")
                 .setClickListener(cd -> {
                     infoGroup.setActive(!infoGroup.isActive());
                     infoGroup.setVisible(!infoGroup.isVisible());
@@ -70,8 +71,8 @@ public class RGLine extends WidgetGroup {
         toolGroup.addWidget(new CircleButtonWidget(8, 0, 8, 1, 12)
                 .setColors(0, TerminalTheme.COLOR_7.getColor(), 0)
                 .setIcon(GuiTextures.ICON_CALCULATOR)
-                .setHoverText("Ratio")
-                .setClickListener(cd -> TerminalDialogWidget.showTextFieldDialog(container.os, "Ratio", s->{
+                .setHoverText("terminal.recipe_chart.ratio")
+                .setClickListener(cd -> TerminalDialogWidget.showTextFieldDialog(container.os, "terminal.recipe_chart.ratio", s->{
                     try {
                         return Integer.parseInt(s) > 0;
                     } catch (Exception ignored){
