@@ -518,7 +518,7 @@ public class MetaBlocks {
         }
     }
 
-    private static String statePropertiesToString(Map<IProperty<?>, Comparable<?>> properties) {
+    public static String statePropertiesToString(Map<IProperty<?>, Comparable<?>> properties) {
         StringBuilder stringbuilder = new StringBuilder();
 
         List<Entry<IProperty<?>, Comparable<?>>> entries = properties.entrySet().stream()
