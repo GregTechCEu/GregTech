@@ -145,10 +145,10 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
                 .where('D', abilityPartPredicate(MultiblockAbility.OUTPUT_ENERGY));
 
                 if (turbineType.hasMufflerHatch)
-                    blockPattern.where('H', statePredicate(getCasingState()).or(abilityPartPredicate(getAllowedAbilities())));
-                else
                     blockPattern.where('H', statePredicate(getCasingState()).or(abilityPartPredicate(getAllowedAbilities()))
                             .or(abilityPartPredicate(MultiblockAbility.MUFFLER_HATCH)));
+                else
+                    blockPattern.where('H', statePredicate(getCasingState()).or(abilityPartPredicate(getAllowedAbilities())));
 
                 return blockPattern.build();
     }

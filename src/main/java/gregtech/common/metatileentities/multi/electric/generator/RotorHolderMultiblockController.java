@@ -44,7 +44,10 @@ public abstract class RotorHolderMultiblockController extends FueledMultiblockCo
      * only air blocks in front of rotor holder
      */
     public boolean isRotorFaceFree() {
-        return isStructureFormed() && getAbilities(ABILITY_ROTOR_HOLDER).get(0).isFrontFaceFree();
+        if (getAbilities(ABILITY_ROTOR_HOLDER).size() == 0)
+            return false;
+
+        return isStructureFormed() && getRotorHolder().isFrontFaceFree();
     }
 
     /**
