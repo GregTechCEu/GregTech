@@ -5,7 +5,6 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
-import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -238,18 +237,13 @@ public class ConverterTrait extends MTETrait {
         @Override
         public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
             long inputAmps = getInputAmperage();
-            GTLog.logger.info("Try inserting EU");
             if (feToEu || usedAmps >= inputAmps) return 0;
-            GTLog.logger.info(" - enough amps");
             long ampsUsed = 0;
             if (amperage <= 0) {
-                GTLog.logger.info(" - inert amps are 0 or lower");
                 return 0;
             }
             if (side == null || inputsEnergy(side)) {
-                //GTLog.logger.info("Try inserting EU, volt {}, amps {}, side {}", voltage, amperage, side);
                 if (voltage > getInputVoltage()) {
-                    GTLog.logger.info(" - overvoltage");
                     GTUtility.doOvervoltageExplosion(metaTileEntity, voltage);
                     return Math.min(amperage, inputAmps - usedAmps);
                 }
@@ -282,23 +276,7 @@ public class ConverterTrait extends MTETrait {
                         if (++ampsUsed == maxAmps) break;
                     }
                 }
-                /*long space = baseCapacity - storedEU;
-                if (space > 0) {
-                    // then move energy from batteries to internal if possible
-                    long inserted = 0;
-                    for (int i = 0; i < inventory.getSlots(); i++) {
-                        ItemStack batteryStack = inventory.getStackInSlot(i);
-                        IElectricItem electricItem = getBatteryContainer(batteryStack);
-                        if (electricItem == null) continue;
-                        long ins = electricItem.discharge(space, tier, true, false, false);
-                        space -= ins;
-                        inserted += ins;
-                        if (space <= 0) break;
-                    }
-                    storedEU += inserted;
-                }*/
             }
-            GTLog.logger.info("Inserted {}", ampsUsed * voltage);
             usedAmps += ampsUsed;
             return ampsUsed;
         }

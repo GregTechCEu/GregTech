@@ -64,6 +64,7 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
                 if(!getWorld().isRemote) {
                     converterTrait.invertMode();
                     writeCustomData(-9, buf -> buf.writeBoolean(converterTrait.isFeToEu()));
+                    notifyBlockUpdate();
                     markDirty();
                 }
                 return true;
@@ -85,6 +86,16 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
         return new MetaTileEntityConverter(metaTileEntityId, tier, converterTrait);
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        buf.writeBoolean(converterTrait.isFeToEu());
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        converterTrait.setMode(buf.readBoolean());
     }
 
     @Override
