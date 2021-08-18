@@ -179,6 +179,10 @@ public class ConfigHolder {
         @Config.Name("Energy Compatibility Options")
         public EnergyCompatibility energyOptions = new EnergyCompatibility();
 
+        @Config.Comment("Allow GregTech to add additional loot. Default: true")
+        @Config.RequiresMcRestart
+        public static boolean addLoot = true;
+
         @Config.Comment("Should recipes for EV and IV Drills be enabled, which may cause large amounts of lag when used on some low-end devices? Default: true")
         @Config.RequiresMcRestart
         public boolean registerRecipesForHighTierDrills = true;
