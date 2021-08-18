@@ -30,6 +30,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+import static gregtech.api.metatileentity.multiblock.MultiblockAbility.ABILITY_ROTOR_HOLDER;
+
 public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController {
 
     private static final int MIN_DURABILITY_TO_WARN = 10;

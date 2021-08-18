@@ -307,7 +307,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
 
     @Override
     public MultiblockAbility<MetaTileEntityRotorHolder> getAbility() {
-        return RotorHolderMultiblockController.ABILITY_ROTOR_HOLDER;
+        return MultiblockAbility.ABILITY_ROTOR_HOLDER;
     }
 
     @Override
