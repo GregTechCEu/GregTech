@@ -5,6 +5,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.metatileentity.MTETrait;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -107,25 +108,22 @@ public class ConverterTrait extends MTETrait {
     }
 
     private long addEnergyInternal(long amount, boolean isEu, boolean simulate) {
-        if(amount == 0)
+        if (amount == 0)
             return 0;
-        if(!isEu)
+        if (!isEu)
             amount *= FE_TO_EU;
         long inserted = 0;
 
-        // if it adds energy add first to internal buffer
-        if(amount > 0) {
-            long change = Math.min(baseCapacity - storedEU, amount);
-            if(!simulate)
-                storedEU += change;
+        long change = Math.min(baseCapacity - storedEU, amount);
+        if (!simulate)
+            storedEU += change;
 
-            inserted += change;
-            amount -= change;
-        }
+        inserted += change;
+        amount -= change;
 
         IItemHandlerModifiable inventory = getInventory();
         for (int i = 0; i < inventory.getSlots(); i++) {
-            if(amount == 0) break;
+            if (amount == 0) break;
             ItemStack batteryStack = inventory.getStackInSlot(i);
             IElectricItem electricItem = getBatteryContainer(batteryStack);
             if (electricItem == null) continue;
@@ -138,48 +136,34 @@ public class ConverterTrait extends MTETrait {
     }
 
     private long removeEnergyInternal(long amount, boolean isEu, boolean simulate) {
-        if(amount == 0)
+        if (amount <= 0)
             return 0;
-        if(!isEu)
+        if (!isEu)
             amount *= FE_TO_EU;
         long inserted = 0;
 
         IItemHandlerModifiable inventory = getInventory();
         for (int i = 0; i < inventory.getSlots(); i++) {
-            if(amount == 0) break;
+            if (amount == 0) break;
             ItemStack batteryStack = inventory.getStackInSlot(i);
             IElectricItem electricItem = getBatteryContainer(batteryStack);
             if (electricItem == null) continue;
-            long ins = electricItem.charge(-amount, tier, false, simulate);
+            long ins = electricItem.discharge(amount, tier, false, true, simulate);
             inserted += ins;
             amount -= ins;
         }
 
-        if(amount < 0) {
-            long change = Math.min(storedEU, -amount);
-            if(!simulate)
-                storedEU -= change;
+        long change = Math.min(storedEU, amount);
+        if (!simulate)
+            storedEU -= change;
 
-            inserted += change;
-        }
+        inserted += change;
 
         return inserted;
     }
 
     private EnumFacing getFront() {
         return metaTileEntity.getFrontFacing();
-    }
-
-    private long getEnergyCapacity() {
-        long energyCapacity = 0L;
-        IItemHandlerModifiable inventory = getInventory();
-        for (int i = 0; i < inventory.getSlots(); i++) {
-            ItemStack batteryStack = inventory.getStackInSlot(i);
-            IElectricItem electricItem = getBatteryContainer(batteryStack);
-            if (electricItem == null) continue;
-            energyCapacity += electricItem.getMaxCharge();
-        }
-        return energyCapacity + baseCapacity;
     }
 
     private long getEnergyStoredInternal() {
@@ -228,17 +212,21 @@ public class ConverterTrait extends MTETrait {
         TileEntity tile = getWorld().getTileEntity(getPos().offset(getFront()));
         if (tile == null) return;
         EnumFacing opposite = getFront().getOpposite();
-        long amps = energyEU.getInputAmperage();
+        long extractable = removeEnergyInternal(energyEU.getEnergyCapacity(), true, true);
+        long ampsToInsert = Math.min(energyEU.getInputAmperage(), getEnergyStoredInternal() / voltage);
+        if(ampsToInsert * voltage > extractable) {
+            ampsToInsert = extractable / voltage;
+        }
         if (feToEu) {
             IEnergyContainer container = tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, opposite);
             if (container != null) {
-                long ampsUsed = container.acceptEnergyFromNetwork(opposite, voltage, Math.min(amps, getEnergyStoredInternal() / voltage));
+                long ampsUsed = container.acceptEnergyFromNetwork(opposite, voltage, ampsToInsert);
                 removeEnergyInternal(voltage * ampsUsed, true, false);
             }
         } else {
             IEnergyStorage storage = tile.getCapability(CapabilityEnergy.ENERGY, opposite);
             if (storage != null) {
-                int inserted = storage.receiveEnergy((int) (Math.min(getEnergyStoredInternal(), voltage * amps) * EU_TO_FE), false);
+                int inserted = storage.receiveEnergy((int) (Math.min(getEnergyStoredInternal(), voltage * ampsToInsert) * EU_TO_FE), false);
                 removeEnergyInternal((long) (inserted * FE_TO_EU), true, false);
             }
         }
@@ -249,29 +237,68 @@ public class ConverterTrait extends MTETrait {
 
         @Override
         public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
-            if(feToEu || usedAmps >= baseAmps) return 0;
+            long inputAmps = getInputAmperage();
+            GTLog.logger.info("Try inserting EU");
+            if (feToEu || usedAmps >= inputAmps) return 0;
+            GTLog.logger.info(" - enough amps");
             long ampsUsed = 0;
-            amperage -= baseAmps;
-            if(amperage <= 0)
+            if (amperage <= 0) {
+                GTLog.logger.info(" - inert amps are 0 or lower");
                 return 0;
+            }
             if (side == null || inputsEnergy(side)) {
+                //GTLog.logger.info("Try inserting EU, volt {}, amps {}, side {}", voltage, amperage, side);
                 if (voltage > getInputVoltage()) {
+                    GTLog.logger.info(" - overvoltage");
                     GTUtility.doOvervoltageExplosion(metaTileEntity, voltage);
-                    return Math.min(amperage, getInputAmperage() - baseAmps);
+                    return Math.min(amperage, inputAmps - usedAmps);
                 }
+
+                final long maxAmps = Math.min(inputAmps - usedAmps, amperage);
+                long space = baseCapacity - storedEU;
+                if(space > voltage) {
+                    for(int i = 0; i < maxAmps; i++) {
+                        space -= voltage;
+                        storedEU += voltage;
+                        if (++ampsUsed == maxAmps || space < voltage) break;
+                    }
+                    if (ampsUsed == maxAmps) {
+                        usedAmps += ampsUsed;
+                        return ampsUsed;
+                    }
+                }
+
+                // first add to batteries
                 IItemHandlerModifiable inventory = getInventory();
                 for (int i = 0; i < inventory.getSlots(); i++) {
                     if (batterySlotsUsedThisTick.get(i)) continue;
                     ItemStack batteryStack = inventory.getStackInSlot(i);
                     IElectricItem electricItem = getBatteryContainer(batteryStack);
                     if (electricItem == null) continue;
-                    if (electricItem.charge(voltage, tier, false, false) > 0) {
+                    if (electricItem.charge(voltage, tier, false, true) == voltage) {
+                        electricItem.charge(voltage, tier, false, false);
                         inventory.setStackInSlot(i, batteryStack);
                         batterySlotsUsedThisTick.set(i);
-                        if(++ampsUsed == amperage) break;
+                        if (++ampsUsed == maxAmps) break;
                     }
                 }
+                /*long space = baseCapacity - storedEU;
+                if (space > 0) {
+                    // then move energy from batteries to internal if possible
+                    long inserted = 0;
+                    for (int i = 0; i < inventory.getSlots(); i++) {
+                        ItemStack batteryStack = inventory.getStackInSlot(i);
+                        IElectricItem electricItem = getBatteryContainer(batteryStack);
+                        if (electricItem == null) continue;
+                        long ins = electricItem.discharge(space, tier, true, false, false);
+                        space -= ins;
+                        inserted += ins;
+                        if (space <= 0) break;
+                    }
+                    storedEU += inserted;
+                }*/
             }
+            GTLog.logger.info("Inserted {}", ampsUsed * voltage);
             usedAmps += ampsUsed;
             return ampsUsed;
         }
@@ -288,12 +315,20 @@ public class ConverterTrait extends MTETrait {
 
         @Override
         public long getEnergyStored() {
-            return storedEU;
+            return getEnergyStoredInternal();
         }
 
         @Override
         public long getEnergyCapacity() {
-            return baseCapacity;
+            long energyCapacity = 0L;
+            IItemHandlerModifiable inventory = getInventory();
+            for (int i = 0; i < inventory.getSlots(); i++) {
+                ItemStack batteryStack = inventory.getStackInSlot(i);
+                IElectricItem electricItem = getBatteryContainer(batteryStack);
+                if (electricItem == null) continue;
+                energyCapacity += electricItem.getMaxCharge();
+            }
+            return energyCapacity + baseCapacity;
         }
 
         @Override
@@ -316,7 +351,7 @@ public class ConverterTrait extends MTETrait {
 
         @Override
         public long getOutputAmperage() {
-            return feToEu ? baseAmps : 0;
+            return feToEu ? getInputAmperage() : 0;
         }
 
         @Override
@@ -331,13 +366,13 @@ public class ConverterTrait extends MTETrait {
 
         @Override
         public int receiveEnergy(int maxReceive, boolean simulate) {
-            if(!feToEu) return 0;
-            return (int) (addEnergyInternal(Math.min(maxReceive, getEnergyCapacity() - getEnergyStoredInternal()), false, simulate) * EU_TO_FE);
+            if (!feToEu) return 0;
+            return (int) (addEnergyInternal((long) Math.min(maxReceive * FE_TO_EU, energyEU.getEnergyCapacity() - getEnergyStoredInternal()), false, simulate) * EU_TO_FE);
         }
 
         @Override
         public int extractEnergy(int maxExtract, boolean simulate) {
-            return (int) removeEnergyInternal((long) Math.min(maxExtract * FE_TO_EU, getEnergyStoredInternal()), true, simulate);
+            return (int) (removeEnergyInternal((long) Math.min(maxExtract * FE_TO_EU, getEnergyStoredInternal()), true, simulate) * EU_TO_FE);
         }
 
         @Override
@@ -347,7 +382,7 @@ public class ConverterTrait extends MTETrait {
 
         @Override
         public int getMaxEnergyStored() {
-            return (int) (getEnergyCapacity() * EU_TO_FE);
+            return (int) (energyEU.getEnergyCapacity() * EU_TO_FE);
         }
 
         @Override
