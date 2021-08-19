@@ -95,6 +95,7 @@ public class GregTechMod {
         if (GTValues.isModLoaded(GTValues.MODID_CT)) {
             GTLog.logger.info("Running early CraftTweaker initialization scripts...");
             runEarlyCraftTweakerScripts();
+            MinecraftForge.EVENT_BUS.register(this);
         }
 
         //freeze material registry before processing items, blocks and fluids
