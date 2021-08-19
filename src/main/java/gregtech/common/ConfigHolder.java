@@ -284,7 +284,7 @@ public class ConfigHolder {
             public boolean emissiveTextures = true;
         }
 
-        public static class ArmorHud{
+        public static class ArmorHud {
             @Config.Comment({"Sets HUD location", "1 - left-upper corner", "2 - right-upper corner", "3 - left-bottom corner", "4 - right-bottom corner"})
             public byte hudLocation = 1;
             @Config.Comment("Horizontal offset of HUD [0 ~ 100)")
@@ -314,7 +314,12 @@ public class ConfigHolder {
             public AdvImpellerJetpack advImpellerJetpack = new AdvImpellerJetpack();
             @Config.Name("Semifluid Jetpack")
             public SemiFluidJetpack semiFluidJetpack = new SemiFluidJetpack();
-
+            @Config.Name("Batpack LV")
+            public BatpackLv batpackLv = new BatpackLv();
+            @Config.Name("Batpack MV")
+            public BatpackMv batpackMv = new BatpackMv();
+            @Config.Name("Batpack HV")
+            public BatpackHv batpackHv = new BatpackHv();
         }
 
         public static class NightvisionGoggles {
@@ -410,7 +415,31 @@ public class ConfigHolder {
             public int capacity = 12000;
         }
 
+        public static class BatpackLv {
+            @Config.RangeInt(min = 0, max = 14)
+            @Config.RequiresMcRestart
+            public int voltageTier = 1;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int capacity = 600000;
+        }
 
+        public static class BatpackMv {
+            @Config.RangeInt(min = 0, max = 14)
+            @Config.RequiresMcRestart
+            public int voltageTier = 2;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int capacity = 2400000;
+        }
 
+        public static class BatpackHv {
+            @Config.RangeInt(min = 0, max = 14)
+            @Config.RequiresMcRestart
+            public int voltageTier = 3;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int capacity = 9600000;
+        }
     }
 }
