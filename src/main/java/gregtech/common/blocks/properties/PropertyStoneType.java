@@ -2,40 +2,41 @@ package gregtech.common.blocks.properties;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.MaterialRegistry;
 import net.minecraft.block.properties.PropertyHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class PropertyStoneType extends PropertyHelper<StoneType> {
+public class PropertyStoneType extends PropertyHelper<Material> {
 
-    private final ImmutableList<StoneType> allowedValues;
+    private final ImmutableList<Material> allowedValues;
 
-    protected PropertyStoneType(String name, Collection<? extends StoneType> allowedValues) {
-        super(name, StoneType.class);
+    protected PropertyStoneType(String name, Collection<? extends Material> allowedValues) {
+        super(name, Material.class);
         this.allowedValues = ImmutableList.copyOf(allowedValues);
     }
 
-    public static PropertyStoneType create(String name, Collection<? extends StoneType> allowedValues) {
+    public static PropertyStoneType create(String name, Collection<? extends Material> allowedValues) {
         return new PropertyStoneType(name, allowedValues);
     }
 
-    public static PropertyStoneType create(String name, StoneType[] allowedValues) {
+    public static PropertyStoneType create(String name, Material[] allowedValues) {
         return new PropertyStoneType(name, Arrays.asList(allowedValues));
     }
 
     @Nonnull
     @Override
-    public ImmutableList<StoneType> getAllowedValues() {
+    public ImmutableList<Material> getAllowedValues() {
         return allowedValues;
     }
 
     @Nonnull
     @Override
-    public Optional<StoneType> parseValue(@Nonnull String value) {
-        StoneType stoneType = StoneType.STONE_TYPE_REGISTRY.getObject(value);
+    public Optional<Material> parseValue(@Nonnull String value) {
+        Material stoneType = MaterialRegistry.MATERIAL_REGISTRY.getObject(value);
         if (this.allowedValues.contains(stoneType)) {
             return Optional.of(stoneType);
         }
@@ -44,8 +45,8 @@ public class PropertyStoneType extends PropertyHelper<StoneType> {
 
     @Nonnull
     @Override
-    public String getName(StoneType stoneType) {
-        return stoneType.name;
+    public String getName(Material stoneType) {
+        return stoneType.toString();
     }
 
     @Override

@@ -2,11 +2,9 @@ package gregtech.common.blocks;
 
 import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.ore.StoneType;
 import gregtech.api.util.IBlockOre;
-import gregtech.common.blocks.properties.PropertyStoneType;
+import gregtech.common.blocks.properties.PropertyMaterial;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.SoundType;
@@ -30,17 +28,17 @@ import java.util.Random;
 
 public class BlockOre extends BlockFalling implements IBlockOre {
 
-    public final PropertyStoneType STONE_TYPE;
+    public final PropertyMaterial STONE_TYPE;
     public final Material material;
 
-    public BlockOre(Material material, StoneType[] allowedValues) {
+    public BlockOre(Material material, Material[] allowedValues) {
         super(net.minecraft.block.material.Material.ROCK);
         setTranslationKey("ore_block");
         setSoundType(SoundType.STONE);
         setHardness(3.0f);
         setResistance(5.0f);
         this.material = material;
-        STONE_TYPE = PropertyStoneType.create("stone_type", allowedValues);
+        STONE_TYPE = PropertyMaterial.create("stone_type", allowedValues);
         initBlockState();
     }
 
@@ -74,19 +72,23 @@ public class BlockOre extends BlockFalling implements IBlockOre {
     @Nonnull
     @Override
     public SoundType getSoundType(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Entity entity) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
-        return stoneType.soundType;
+        Material stoneType = state.getValue(STONE_TYPE);
+        return stoneType.getProperty(PropertyKey.STONE_TYPE).soundType;
     }
 
     @Override
     public String getHarvestTool(IBlockState state) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
-        return stoneType.harvestTool;
+        Material stoneType = state.getValue(STONE_TYPE);
+        IBlockState blockState = stoneType.getProperty(PropertyKey.STONE_TYPE).state.get();
+        return blockState.getBlock().getHarvestTool(blockState);
     }
 
     @Override
     public int getHarvestLevel(IBlockState state) {
-        StoneType stoneType = state.getValue(STONE_TYPE);
+        Material stoneType = state.getValue(STONE_TYPE);
+        IBlockState blockState = stoneType.getProperty(PropertyKey.STONE_TYPE).state.get();
+        return blockState.getBlock().getHarvestLevel(blockState);
+        /*
         if (material != null) {
             DustProperty matProp = material.getProperty(PropertyKey.DUST);
             if (matProp != null) {
@@ -98,6 +100,7 @@ public class BlockOre extends BlockFalling implements IBlockOre {
             }
         }
         return 1;
+         */
     }
 
     @Nonnull
@@ -114,14 +117,20 @@ public class BlockOre extends BlockFalling implements IBlockOre {
 
     @Override
     @SuppressWarnings("deprecation")
-    public float getBlockHardness(IBlockState blockState, @Nonnull World worldIn, @Nonnull BlockPos pos) {
-        return blockState.getValue(STONE_TYPE).unbreakable ? -1.0f : this.blockHardness;
+    public float getBlockHardness(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos) {
+        Material stoneType = state.getValue(STONE_TYPE);
+        IBlockState blockState = stoneType.getProperty(PropertyKey.STONE_TYPE).state.get();
+        return blockState.getBlockHardness(world, pos);
+        // return blockState.getValue(STONE_TYPE).unbreakable ? -1.0f : this.blockHardness;
     }
 
     @Override
     @SuppressWarnings("deprecation")
     public float getExplosionResistance(World world, @Nonnull BlockPos pos, @Nullable Entity exploder, @Nonnull Explosion explosion) {
-        return world.getBlockState(pos).getValue(STONE_TYPE).unbreakable ? 1200000.0F : getExplosionResistance(exploder);
+        Material stoneType = world.getBlockState(pos).getValue(STONE_TYPE);
+        IBlockState blockState = stoneType.getProperty(PropertyKey.STONE_TYPE).state.get();
+        return blockState.getBlock().getExplosionResistance(world, pos, exploder, explosion);
+        // return world.getBlockState(pos).getValue(STONE_TYPE).unbreakable ? 1200000.0F : getExplosionResistance(exploder);
     }
 
     @SuppressWarnings("deprecation")
@@ -151,27 +160,31 @@ public class BlockOre extends BlockFalling implements IBlockOre {
 
     @Override
     public void onBlockAdded(@Nonnull World worldIn, @Nonnull BlockPos pos, IBlockState state) {
-        if (state.getValue(STONE_TYPE).affectedByGravity)
+        if (state.getValue(STONE_TYPE).getProperty(PropertyKey.STONE_TYPE).affectedByGravity) {
             worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
+        }
     }
 
     @Override
     public void neighborChanged(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
-        if (state.getValue(STONE_TYPE).affectedByGravity)
+        if (state.getValue(STONE_TYPE).getProperty(PropertyKey.STONE_TYPE).affectedByGravity) {
             worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
+        }
     }
 
     @Override
     public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, IBlockState state, @Nonnull Random rand) {
-        if (state.getValue(STONE_TYPE).affectedByGravity)
+        if (state.getValue(STONE_TYPE).getProperty(PropertyKey.STONE_TYPE).affectedByGravity) {
             super.updateTick(worldIn, pos, state, rand);
+        }
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick(IBlockState stateIn, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Random rand) {
-        if (stateIn.getValue(STONE_TYPE).affectedByGravity)
+        if (stateIn.getValue(STONE_TYPE).getProperty(PropertyKey.STONE_TYPE).affectedByGravity) {
             super.randomDisplayTick(stateIn, worldIn, pos, rand);
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -181,7 +194,7 @@ public class BlockOre extends BlockFalling implements IBlockOre {
     }
 
     @Override
-    public IBlockState getOreBlock(StoneType stoneType) {
+    public IBlockState getOreBlock(Material stoneType) {
         return this.getDefaultState().withProperty(this.STONE_TYPE, stoneType);
     }
 

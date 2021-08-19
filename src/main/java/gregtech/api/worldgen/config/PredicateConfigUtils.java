@@ -5,7 +5,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.StoneTypeProperty;
 import gregtech.api.util.WorldBlockPredicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -46,13 +47,13 @@ public class PredicateConfigUtils {
         if (stringDeclaration.equals("any")) {
             return (state, world, pos) -> true;
         } else if (stringDeclaration.equals("stone_type")) {
-            return (state, world, pos) -> StoneType.computeStoneType(state, world, pos) != null;
+            return (state, world, pos) -> StoneTypeProperty.compute(state, world, pos) != null;
 
         } else if (stringDeclaration.startsWith("stone_type:")) {
             String typeName = stringDeclaration.substring(11);
             return (state, world, pos) -> {
-                StoneType stoneType = StoneType.computeStoneType(state, world, pos);
-                return stoneType != null && stoneType.name.equalsIgnoreCase(typeName);
+                Material stoneType = StoneTypeProperty.compute(state, world, pos);
+                return stoneType != null && stoneType.toString().equalsIgnoreCase(typeName);
             };
         } else if (stringDeclaration.startsWith("block:")) {
             Block block = OreConfigUtils.getBlockByName(stringDeclaration.substring(6));

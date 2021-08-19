@@ -1,7 +1,8 @@
 package gregtech.common.blocks;
 
 import gregtech.api.GregTechAPI;
-import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
@@ -38,7 +39,7 @@ public class OreItemBlock extends ItemBlock {
     @Override
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         IBlockState blockState = getBlockState(stack);
-        StoneType stoneType = blockState.getValue(oreBlock.STONE_TYPE);
-        return stoneType.processingPrefix.getLocalNameForItem(oreBlock.material);
+        Material stoneType = blockState.getValue(oreBlock.STONE_TYPE);
+        return stoneType.getProperty(PropertyKey.STONE_TYPE).processingPrefix.get().getLocalNameForItem(oreBlock.material);
     }
 }

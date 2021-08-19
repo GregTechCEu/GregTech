@@ -4,6 +4,8 @@ import com.google.common.base.Joiner;
 import gregtech.api.model.AbstractBlockModelFactory;
 import gregtech.api.model.ResourcePackHook;
 import gregtech.api.unification.material.info.MaterialIconType;
+import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.unification.material.properties.StoneTypeProperty;
 import gregtech.common.blocks.BlockOre;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.relauncher.Side;
@@ -41,10 +43,13 @@ public class BlockOreFactory extends AbstractBlockModelFactory {
     protected String fillSample(Block block, String blockStateSample) {
         return blockStateSample
                 .replace("$STONE_TYPES$", COMMA_JOINER.join(((BlockOre) block).STONE_TYPE.getAllowedValues().stream()
-                        .map(stoneType -> VARIANT_DEFINITION
-                                .replace("$STONE_TYPE$", stoneType.name)
-                                .replace("$BASE_TEXTURE_TOP$", stoneType.backgroundTopTexture.toString())
-                                .replace("$BASE_TEXTURE_SIDE$", stoneType.backgroundSideTexture.toString()))
+                        .map(stoneType -> {
+                            StoneTypeProperty property = stoneType.getProperty(PropertyKey.STONE_TYPE);
+                            return VARIANT_DEFINITION
+                                    .replace("$STONE_TYPE$", stoneType.toString())
+                                    .replace("$BASE_TEXTURE_TOP$", property.backgroundTopTexture)
+                                    .replace("$BASE_TEXTURE_SIDE$", property.backgroundSideTexture);
+                        })
                         .collect(Collectors.toList())))
                 .replace("$MATERIAL_TEXTURE_NORMAL$", MaterialIconType.ore.getBlockPath(((BlockOre) block).material.getMaterialIconSet()).toString());
     }

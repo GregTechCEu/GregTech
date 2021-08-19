@@ -5,13 +5,10 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.world.IBiome;
 import gregtech.api.GTValues;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.material.properties.StoneTypeProperty;
 import gregtech.api.util.WorldBlockPredicate;
 import gregtech.api.worldgen.filler.BlockFiller;
 import gregtech.api.worldgen.populator.IVeinPopulator;
-import gregtech.api.worldgen.populator.SurfaceRockPopulator;
 import gregtech.api.worldgen.shape.ShapeGenerator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
@@ -34,7 +31,7 @@ public class OreDepositDefinition {
 
     public static final Function<Biome, Integer> NO_BIOME_INFLUENCE = biome -> 0;
     public static final Predicate<WorldProvider> PREDICATE_SURFACE_WORLD = WorldProvider::isSurfaceWorld;
-    public static final WorldBlockPredicate PREDICATE_STONE_TYPE = (state, world, pos) -> StoneType.computeStoneType(state, world, pos) != null;
+    public static final WorldBlockPredicate PREDICATE_STONE_TYPE = (state, world, pos) -> StoneTypeProperty.compute(state, world, pos) != null;
 
     private final String depositName;
 

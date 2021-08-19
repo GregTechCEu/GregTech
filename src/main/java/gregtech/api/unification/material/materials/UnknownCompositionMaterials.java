@@ -2,6 +2,9 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Material.FluidType;
+import gregtech.api.unification.ore.OrePrefix;
+import net.minecraft.block.state.pattern.BlockMatcher;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 
 import static gregtech.api.unification.material.Materials.*;
@@ -248,6 +251,7 @@ public class UnknownCompositionMaterials {
                 .dust(1)
                 .color(0xCDCDCD).iconSet(ROUGH)
                 .flags(MORTAR_GRINDABLE, GENERATE_GEAR, NO_SMASHING)
+                .stoneType(0, Blocks.STONE::getDefaultState, () -> OrePrefix.ore, BlockMatcher.forBlock(Blocks.STONE), "minecraft:blocks/stone", "minecraft:blocks/stone")
                 .build();
 
         Lava = new Material.Builder(1600, "lava")
@@ -268,6 +272,7 @@ public class UnknownCompositionMaterials {
         Endstone = new Material.Builder(1603, "endstone")
                 .dust(1)
                 .flags(NO_SMASHING)
+                .stoneType(1, Blocks.END_STONE::getDefaultState, () -> OrePrefix.oreEndstone, BlockMatcher.forBlock(Blocks.END_STONE), "minecraft:blocks/end_stone", "minecraft:blocks/end_stone")
                 .build();
 
         Netherrack = new Material.Builder(1604, "netherrack")

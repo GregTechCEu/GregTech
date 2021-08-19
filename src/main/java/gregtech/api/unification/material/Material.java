@@ -2,6 +2,7 @@ package gregtech.api.unification.material;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
@@ -9,9 +10,12 @@ import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -23,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 //@ZenClass("mods.gregtech.material.Material")
 //@ZenRegister
@@ -757,6 +762,27 @@ public class Material implements Comparable<Material> {
             if (!properties.hasProperty(PropertyKey.TOOL)) // cannot assign default here
                 throw new IllegalArgumentException("Material cannot have an Enchant without Tools!");
             properties.getProperty(PropertyKey.TOOL).addEnchantmentForTools(enchant, level);
+            return this;
+        }
+
+        public Builder stoneType(int id, Supplier<IBlockState> state, Supplier<OrePrefix> processingPrefix, Predicate<IBlockState> generationCondition, String backgroundTopTexture, String backgroundSideTexture) {
+            properties.setProperty(PropertyKey.STONE_TYPE, new StoneTypeProperty(id, state, processingPrefix, generationCondition, backgroundTopTexture, backgroundSideTexture));
+            return this;
+        }
+
+        public Builder setSoundType(SoundType soundType) {
+            if (!properties.hasProperty(PropertyKey.STONE_TYPE)) { // cannot assign default here
+                throw new IllegalArgumentException("Material cannot have SoundType without StoneType!");
+            }
+            properties.getProperty(PropertyKey.STONE_TYPE).setSoundType(soundType);
+            return this;
+        }
+
+        public Builder setAffectedByGravity(boolean affectedByGravity) {
+            if (!properties.hasProperty(PropertyKey.STONE_TYPE)) { // cannot assign default here
+                throw new IllegalArgumentException("Material cannot setAffectedByGravity without StoneType!");
+            }
+            properties.getProperty(PropertyKey.STONE_TYPE).setAffectedByGravity(affectedByGravity);
             return this;
         }
 

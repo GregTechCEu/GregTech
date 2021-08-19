@@ -7,7 +7,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.PropertyKey;
-import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.BlockOre;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
@@ -43,7 +42,7 @@ public class OreConfigUtils {
         return allBlocks;
     }
 
-    public static Map<StoneType, IBlockState> getOreStateMap(String stringDeclaration) {
+    public static Map<Material, IBlockState> getOreStateMap(String stringDeclaration) {
         String materialName;
         if (stringDeclaration.startsWith("ore:")) {
             materialName = stringDeclaration.substring(4);
@@ -54,13 +53,13 @@ public class OreConfigUtils {
         return getOreForMaterial(material);
     }
 
-    public static Map<StoneType, IBlockState> getOreForMaterial(Material material) {
+    public static Map<Material, IBlockState> getOreForMaterial(Material material) {
         List<BlockOre> oreBlocks = MetaBlocks.ORES.stream()
                 .filter(ore -> ore.material == material)
                 .collect(Collectors.toList());
-        HashMap<StoneType, IBlockState> stoneTypeMap = new HashMap<>();
+        HashMap<Material, IBlockState> stoneTypeMap = new HashMap<>();
         for (BlockOre blockOre : oreBlocks) {
-            for (StoneType stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
+            for (Material stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
                 IBlockState blockState = blockOre.getOreBlock(stoneType);
                 stoneTypeMap.put(stoneType, blockState);
             }

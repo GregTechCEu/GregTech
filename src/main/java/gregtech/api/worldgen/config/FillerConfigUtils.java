@@ -7,8 +7,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import gregtech.api.unification.ore.StoneType;
-import gregtech.api.unification.ore.StoneTypes;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.material.properties.StoneTypeProperty;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.WorldBlockPredicate;
 import gregtech.api.worldgen.filler.FillerEntry;
@@ -64,7 +65,7 @@ public class FillerConfigUtils {
             return FillerEntry.createSimpleFiller(fluid.getBlock().getDefaultState());
 
         } else if (stringDeclaration.startsWith("ore:")) {
-            Map<StoneType, IBlockState> blockStateMap = OreConfigUtils.getOreStateMap(stringDeclaration);
+            Map<Material, IBlockState> blockStateMap = OreConfigUtils.getOreStateMap(stringDeclaration);
             return new OreFilterEntry(blockStateMap);
 
         } else if (stringDeclaration.startsWith("ore_dict:")) {
@@ -119,20 +120,20 @@ public class FillerConfigUtils {
 
     private static class OreFilterEntry implements FillerEntry {
 
-        private final Map<StoneType, IBlockState> blockStateMap;
+        private final Map<Material, IBlockState> blockStateMap;
         private final ImmutableSet<IBlockState> allowedStates;
-        private final StoneType defaultValue;
+        private final Material defaultValue;
 
-        public OreFilterEntry(Map<StoneType, IBlockState> blockStateMap) {
+        public OreFilterEntry(Map<Material, IBlockState> blockStateMap) {
             this.blockStateMap = blockStateMap;
-            this.defaultValue = blockStateMap.containsKey(StoneTypes.STONE) ? StoneTypes.STONE : blockStateMap.keySet().iterator().next();
+            this.defaultValue = blockStateMap.containsKey(Materials.Stone) ? Materials.Stone : blockStateMap.keySet().iterator().next();
             this.allowedStates = ImmutableSet.copyOf(blockStateMap.values());
         }
 
         @Override
         public IBlockState apply(IBlockState source, IBlockAccess blockAccess, BlockPos blockPos) {
-            StoneType stoneType = StoneType.computeStoneType(source, blockAccess, blockPos);
-            return blockStateMap.get(stoneType == null ? defaultValue : stoneType);
+            Material material = StoneTypeProperty.compute(source, blockAccess, blockPos);
+            return blockStateMap.get(material == null ? defaultValue : material);
         }
 
         @Override

@@ -14,7 +14,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.ore.StoneType;
 import gregtech.common.blocks.foam.BlockFoam;
 import gregtech.common.blocks.foam.BlockPetrifiedFoam;
 import gregtech.common.blocks.modelfactories.BakedModelHandler;
@@ -182,7 +181,7 @@ public class MetaBlocks {
         SURFACE_ROCK = new BlockSurfaceRock();
         SURFACE_ROCK.setRegistryName("surface_rock_new");
 
-        StoneType.init();
+        // StoneType.init();
 
         createGeneratedBlock(
                 material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM))
@@ -268,10 +267,13 @@ public class MetaBlocks {
     }
 
     private static void createOreBlock(Material material) {
-        StoneType[] stoneTypeBuffer = new StoneType[16];
+        Material[] stoneTypeBuffer = new Material[16];
         int generationIndex = 0;
-        for (StoneType stoneType : StoneType.STONE_TYPE_REGISTRY) {
-            int id = StoneType.STONE_TYPE_REGISTRY.getIDForObject(stoneType), index = id / 16;
+        for (Material stoneType : MaterialRegistry.MATERIAL_REGISTRY) {
+            if (!stoneType.hasProperty(PropertyKey.STONE_TYPE)) {
+                continue;
+            }
+            int id = stoneType.getProperty(PropertyKey.STONE_TYPE).id, index = id / 16;
             if (index > generationIndex) {
                 createOreBlock(material, copyNotNull(stoneTypeBuffer), generationIndex);
                 Arrays.fill(stoneTypeBuffer, null);
@@ -287,11 +289,11 @@ public class MetaBlocks {
         return Arrays.copyOfRange(src, 0, nullIndex == -1 ? src.length : nullIndex);
     }
 
-    private static void createOreBlock(Material material, StoneType[] stoneTypes, int index) {
+    private static void createOreBlock(Material material, Material[] stoneTypes, int index) {
         BlockOre block = new BlockOre(material, stoneTypes);
         block.setRegistryName("ore_" + material + "_" + index);
-        for (StoneType stoneType : stoneTypes) {
-            GregTechAPI.oreBlockTable.computeIfAbsent(material, m -> new HashMap<>()).put(stoneType, block);
+        for (Material stoneType : stoneTypes) {
+            stoneType.getProperty(PropertyKey.STONE_TYPE).addOre(material, block);
         }
         ORES.add(block);
     }
@@ -482,11 +484,11 @@ public class MetaBlocks {
 
         for (BlockOre blockOre : ORES) {
             Material material = blockOre.material;
-            for (StoneType stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
-                if (stoneType == null) continue;
-                ItemStack normalStack = blockOre.getItem(blockOre.getDefaultState()
-                        .withProperty(blockOre.STONE_TYPE, stoneType));
-                OreDictUnifier.registerOre(normalStack, stoneType.processingPrefix, material);
+            for (Material stoneType : blockOre.STONE_TYPE.getAllowedValues()) {
+                if (stoneType != null) {
+                    ItemStack normalStack = blockOre.getItem(blockOre.getDefaultState().withProperty(blockOre.STONE_TYPE, stoneType));
+                    OreDictUnifier.registerOre(normalStack, stoneType.getProperty(PropertyKey.STONE_TYPE).processingPrefix.get(), material);
+                }
             }
         }
         for (BlockCable cable : CABLES) {

@@ -1,10 +1,10 @@
 package gregtech.api.util;
 
-import gregtech.api.unification.ore.StoneType;
+import gregtech.api.unification.material.Material;
 import net.minecraft.block.state.IBlockState;
 
 public interface IBlockOre {
 
-    IBlockState getOreBlock(StoneType stoneType);
+    IBlockState getOreBlock(Material stoneType);
 
 }
