@@ -516,6 +516,10 @@ public final class MetaItems {
     public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_NANO_MUSCLE_CHESTPLATE;
     public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_QAURK_TECH_SUITE_CHESTPLATE;
 
+    public static MetaItem<?>.MetaValueItem IMPELLER_MV;
+    public static MetaItem<?>.MetaValueItem IMPELLER_HV;
+    public static MetaItem<?>.MetaValueItem GRAVITATION_ENGINE;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);
         add(OrePrefix.dustSmall);
