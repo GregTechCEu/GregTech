@@ -104,7 +104,6 @@ public class ClientProxy extends CommonProxy {
     public void onPreLoad() {
         super.onPreLoad();
         Keybinds.initBinds();
-        Keybinds.registerClient();
         MetaTileEntityRenderer.preInit();
         CableRenderer.preInit();
         FluidPipeRenderer.preInit();
@@ -118,6 +117,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void onLoad() {
+        Keybinds.registerClient();
         super.onLoad();
         registerColors();
     }
