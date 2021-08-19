@@ -36,7 +36,7 @@ import java.util.Map.Entry;
 public class ArmorUtils {
 
     public static final Side SIDE = FMLCommonHandler.instance().getSide();
-    public static final SoundEvent JET_ENGINE = new SoundEvent(new ResourceLocation("gtadditions:jet_engine"));
+    public static final SoundEvent JET_ENGINE = new SoundEvent(new ResourceLocation("gregtech:jet_engine"));
 
     /**
      * Check is possible to charge item
