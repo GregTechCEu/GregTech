@@ -242,8 +242,8 @@ public class QuarkTechSuite extends ArmorLogicSuite {
         String armorTexture = "quark_tech_suite";
         if (advancedChest.isItemEqual(currentChest)) armorTexture = "advanced_quark_tech_suite";
         return SLOT != EntityEquipmentSlot.LEGS ?
-                String.format("gtadditions:textures/armor/%s_1.png", armorTexture) :
-                String.format("gtadditions:textures/armor/%s_2.png", armorTexture);
+                String.format("gregtech:textures/armor/%s_1.png", armorTexture) :
+                String.format("gregtech:textures/armor/%s_2.png", armorTexture);
     }
 
     @Override
