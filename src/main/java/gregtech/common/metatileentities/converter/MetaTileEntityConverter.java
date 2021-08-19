@@ -91,11 +91,13 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         buf.writeBoolean(converterTrait.isFeToEu());
+        super.writeInitialSyncData(buf);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         converterTrait.setMode(buf.readBoolean());
+        super.receiveInitialSyncData(buf);
     }
 
     @Override
