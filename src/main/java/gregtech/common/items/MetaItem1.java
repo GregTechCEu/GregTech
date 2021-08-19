@@ -563,5 +563,10 @@ public class MetaItem1 extends StandardMetaItem {
 
         ZERO_POINT_MODULE = addItem(752, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, false)).setModelAmount(8);
         ULTIMATE_BATTERY = addItem(753, "max.battery").addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.MAX)).setUnificationData(OrePrefix.battery, Tier.Maximum).setModelAmount(8);
+
+        IMPELLER_MV = addItem(776, "impeller.mv");
+        IMPELLER_HV = addItem(777, "impeller.hv");
+        GRAVITATION_ENGINE = addItem(778, "gravitation_engine");
     }
+
 }
