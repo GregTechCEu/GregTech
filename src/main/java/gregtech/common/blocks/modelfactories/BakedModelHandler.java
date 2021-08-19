@@ -90,7 +90,7 @@ public class BakedModelHandler {
             for (IBlockState state : ore.blockState.getValidStates()) {
                 StoneType stoneType = state.getValue(ore.STONE_TYPE);
                 ModelResourceLocation loc = new ModelResourceLocation(ore.getRegistryName(), MetaBlocks.statePropertiesToString(state.getProperties()));
-                IBakedModel bakedModel = new ModelFactory(ModelFactory.ModelTemplate.TINTABLE_2_LAYER_BLOCK, stoneType.backgroundTopTexture)
+                IBakedModel bakedModel = new ModelFactory(ModelFactory.ModelTemplate.DOUBLE_LAYERED_BLOCK, stoneType.backgroundTopTexture)
                         .addSpriteToLayer(0, stoneType.backgroundTopTexture)
                         .addSpriteToLayer(1, MaterialIconType.ore.getBlockPath(ore.material.getMaterialIconSet()))
                         .bake();
