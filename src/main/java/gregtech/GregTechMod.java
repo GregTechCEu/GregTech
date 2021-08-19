@@ -78,10 +78,9 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
         NetworkHandler.init();
-        Keybinds.register();
+
         MinecraftForge.EVENT_BUS.register(new EventHandlers());
         GTLog.init(event.getModLog());
-        NetworkHandler.init();
         MetaTileEntityUIFactory.INSTANCE.init();
         PlayerInventoryUIFactory.INSTANCE.init();
         CoverBehaviorUIFactory.INSTANCE.init();
@@ -114,6 +113,7 @@ public class GregTechMod {
         AnnotatedComponentHandlerLoader.discoverAndLoadAnnotatedComponentHandlers(event.getAsmData());
 
         proxy.onPreLoad();
+        Keybinds.register();
     }
 
     @Mod.EventHandler
