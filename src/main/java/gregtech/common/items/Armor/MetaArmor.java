@@ -23,12 +23,21 @@ public class MetaArmor  extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueIte
         MetaItems.SEMIFLUID_JETPACK = addItem(8, "liquid_fuel_jetpack").setArmorLogic(new PowerlessJetpack(e.semiFluidJetpack.capacity, e.semiFluidJetpack.voltageTier));
         MetaItems.IMPELLER_JETPACK = addItem(9, "impeller_jetpack").setArmorLogic(new Jetpack(e.impellerJetpack.energyPerUse, e.impellerJetpack.capacity, e.impellerJetpack.voltageTier));
 
-      
+        MetaItems.BATPACK_LV = addItem(10, "battery_pack.lv").setArmorLogic(new BatteryPack(0, e.batpackLv.capacity, e.batpackLv.voltageTier));
+        MetaItems.BATPACK_MV = addItem(11, "battery_pack.mv").setArmorLogic(new BatteryPack(0, e.batpackMv.capacity, e.batpackMv.voltageTier));
+        MetaItems.BATPACK_HV = addItem(12, "battery_pack.hv").setArmorLogic(new BatteryPack(0, e.batpackHv.capacity, e.batpackHv.voltageTier));
+
+
         MetaItems.ADVANCED_QAURK_TECH_SUITE_CHESTPLATE = addItem(13, "qts.advanced_chestplate").setArmorLogic(new AdvancedQurakTechSuite());
         MetaItems.ADVANCED_NANO_MUSCLE_CHESTPLATE = addItem(14, "nms.advanced_chestplate").setArmorLogic(new AdvancedNanoMuscleSuite());
         MetaItems.ADVANCED_IMPELLER_JETPACK = addItem(15, "advanced_impeller_jetpack").setArmorLogic(new AdvancedJetpack(e.advImpellerJetpack.energyPerUse, e.advImpellerJetpack.capacity, e.advImpellerJetpack.voltageTier));
 
+        MetaItems.NIGHTVISION_GOGGLES = addItem(16, "nightvision_goggles").setArmorLogic(new NightvisionGoggles());
+
         MetaItems.IMPELLER_JETPACK.setModelAmount(8);
-        
+        MetaItems.BATPACK_LV.setModelAmount(8);
+        MetaItems.BATPACK_MV.setModelAmount(8);
+        MetaItems.BATPACK_HV.setModelAmount(8);
+
     }
 }
