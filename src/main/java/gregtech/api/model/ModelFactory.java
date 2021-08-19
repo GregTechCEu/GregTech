@@ -85,7 +85,7 @@ public class ModelFactory {
             return ModelLoaderRegistry.getModelOrMissing(loc);
         }
 
-        public static final ModelTemplate TINTABLE_2_LAYER_BLOCK = new ModelTemplate(GTValues.MODID, "block/tintable_2_layer_block");
+        public static final ModelTemplate DOUBLE_LAYERED_BLOCK = new ModelTemplate(GTValues.MODID, "block/double_layered_block");
         public static final ModelTemplate NORMAL_ITEM = new ModelTemplate("minecraft", "item/generated");
         public static final ModelTemplate HANDHELD_ITEM = new ModelTemplate("minecraft", "item/handheld");
 
