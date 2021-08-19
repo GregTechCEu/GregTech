@@ -251,7 +251,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite {
 
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-        return "gtadditions:textures/armor/advanced_nano_muscle_suite_1.png";
+        return "gregtech:textures/armor/advanced_nano_muscle_suite_1.png";
     }
 
     @Override

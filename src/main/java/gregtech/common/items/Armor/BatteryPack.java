@@ -137,6 +137,6 @@ public class BatteryPack extends ArmorLogicSuite {
 
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-        return String.format("gtadditions:textures/armor/battery_pack_%s.png", GTValues.VN[tier].toLowerCase());
+        return String.format("gregtech:textures/armor/battery_pack_%s.png", GTValues.VN[tier].toLowerCase());
     }
 }

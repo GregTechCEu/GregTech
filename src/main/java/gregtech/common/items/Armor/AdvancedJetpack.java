@@ -172,7 +172,7 @@ import java.util.List;
 
         @Override
         public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-            return "gtadditions:textures/armor/advanced_jetpack.png";
+            return "gregtech:textures/armor/advanced_jetpack.png";
         }
     }
 

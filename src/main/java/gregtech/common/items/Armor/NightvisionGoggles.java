@@ -101,7 +101,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
 
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-        return "gtadditions:textures/armor/nightvision_goggles.png";
+        return "gregtech:textures/armor/nightvision_goggles.png";
     }
 
     @Override

@@ -281,7 +281,7 @@ public class AdvancedQurakTechSuite extends QuarkTechSuite {
 
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-        return "gtadditions:textures/armor/advanced_quark_tech_suite_1.png";
+        return "gregtech:textures/armor/advanced_quark_tech_suite_1.png";
     }
 
     @Override

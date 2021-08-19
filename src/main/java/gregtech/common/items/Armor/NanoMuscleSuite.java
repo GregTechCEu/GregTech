@@ -124,8 +124,8 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
         String armorTexture = "nano_muscule_suite";
         if (advancedChest.isItemEqual(currentChest)) armorTexture = "advanced_nano_muscle_suite";
         return SLOT != EntityEquipmentSlot.LEGS ?
-                String.format("gtadditions:textures/armor/%s_1.png", armorTexture) :
-                String.format("gtadditions:textures/armor/%s_2.png", armorTexture);
+                String.format("gregtech:textures/armor/%s_1.png", armorTexture) :
+                String.format("gregtech:textures/armor/%s_2.png", armorTexture);
     }
 
     @Override

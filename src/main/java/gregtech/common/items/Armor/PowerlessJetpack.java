@@ -189,7 +189,7 @@ public class PowerlessJetpack implements IArmorLogic {
 
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-        return "gtadditions:textures/armor/liquid_fuel_jetpack.png";
+        return "gregtech:textures/armor/liquid_fuel_jetpack.png";
     }
 
     @SideOnly(Side.CLIENT)

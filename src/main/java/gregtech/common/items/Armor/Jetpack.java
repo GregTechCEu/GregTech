@@ -122,7 +122,7 @@ public class Jetpack extends ArmorLogicSuite {
 
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-        return "gtadditions:textures/armor/jetpack.png";
+        return "gregtech:textures/armor/jetpack.png";
     }
 
     @Override
