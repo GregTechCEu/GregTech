@@ -53,7 +53,7 @@ public class EnergyNetWalker extends PipeNetWalker {
         if (neighbourTile != null) {
             IEnergyContainer container = neighbourTile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, faceToNeighbour.getOpposite());
             if (container != null) {
-                routes.add(new RoutePath(pipePos, faceToNeighbour, new HashSet<>(pipes), getWalkedBlocks(), loss));
+                routes.add(new RoutePath(new BlockPos(pipePos), faceToNeighbour, new HashSet<>(pipes), getWalkedBlocks(), loss));
             }
         }
     }
