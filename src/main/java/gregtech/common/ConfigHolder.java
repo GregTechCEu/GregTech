@@ -169,6 +169,11 @@ public class ConfigHolder {
         @Config.Name("GregTech 6 Options")
         public GT6 GT6 = new GT6();
 
+        @Config.Comment("Config category Armor hud")
+        @Config.Name("Hud Location")
+        public static ArmorHud armorHud = new ArmorHud();
+
+
         @Config.Comment("Config category for energy compatibility features")
         @Config.Name("Energy Compatibility Options")
         public EnergyCompatibility energyOptions = new EnergyCompatibility();
@@ -278,5 +283,134 @@ public class ConfigHolder {
             @Config.Comment("Whether or not to enable Emissive Textures for GregTech Machines. Default: true")
             public boolean emissiveTextures = true;
         }
+
+        public static class ArmorHud{
+            @Config.Comment({"Sets HUD location", "1 - left-upper corner", "2 - right-upper corner", "3 - left-bottom corner", "4 - right-bottom corner"})
+            public byte hudLocation = 1;
+            @Config.Comment("Horizontal offset of HUD [0 ~ 100)")
+            public byte hudOffsetX = 0;
+            @Config.Comment("Vertical offset of HUD [0 ~ 100)")
+            public byte hudOffsetY = 0;
+
+        }
+
+        @Config.Comment({"Configs for Armor and Tools", "Tiers are from ULV-0 to MAX-14"})
+        public static Equipment equipment = new Equipment();
+
+        public static class Equipment {
+            @Config.Name("Nightvision Goggles")
+            public NightvisionGoggles nightvisionGoggles = new NightvisionGoggles();
+            @Config.Name("NanoMuscle Suit")
+            public NanoSuit nanoSuit = new NanoSuit();
+            @Config.Name("Advanced NanoMuscle Suit")
+            public AdvNanoSuit advNanoSuit = new AdvNanoSuit();
+            @Config.Name("QuarkTech Suit")
+            public QuarkTechSuit quarkTechSuit = new QuarkTechSuit();
+            @Config.Name("Advanced QuarkTech Suit")
+            public AdvQuarkTechSuit advQuarkTechSuit = new AdvQuarkTechSuit();
+            @Config.Name("Impeller Jetpack")
+            public ImpellerJetpack impellerJetpack = new ImpellerJetpack();
+            @Config.Name("Advanced Impeller Jetpack")
+            public AdvImpellerJetpack advImpellerJetpack = new AdvImpellerJetpack();
+            @Config.Name("Semifluid Jetpack")
+            public SemiFluidJetpack semiFluidJetpack = new SemiFluidJetpack();
+
+        }
+
+        public static class NightvisionGoggles {
+            @Config.RangeInt(min = 0, max = 14)
+            @Config.RequiresMcRestart
+            public int voltageTier = 2;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int capacity = 400000;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int energyPerUse = 3600;
+        }
+
+        public static class NanoSuit {
+            @Config.RangeInt(min = 0, max = 14)
+            @Config.RequiresMcRestart
+            public int voltageTier = 3;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int capacity = 1600000;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int energyPerUse = 5000;
+        }
+
+        public static class AdvNanoSuit {
+            @Config.RangeInt(min = 0, max = 14)
+            @Config.RequiresMcRestart
+            public int voltageTier = 6;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int capacity = 11400000;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int energyPerUse = 5000;
+        }
+
+        public static class QuarkTechSuit {
+            @Config.RangeInt(min = 0, max = 14)
+            @Config.RequiresMcRestart
+            public int voltageTier = 5;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int capacity = 8000000;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int energyPerUse = 10000;
+        }
+
+        public static class AdvQuarkTechSuit {
+            @Config.RangeInt(min = 0, max = 14)
+            @Config.RequiresMcRestart
+            public int voltageTier = 6;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int capacity = 100000000;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int energyPerUse = 10000;
+        }
+
+        public static class ImpellerJetpack {
+            @Config.RangeInt(min = 0, max = 14)
+            @Config.RequiresMcRestart
+            public int voltageTier = 3;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int capacity = 2520000;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int energyPerUse = 125;
+        }
+
+        public static class AdvImpellerJetpack {
+            @Config.RangeInt(min = 0, max = 14)
+            @Config.RequiresMcRestart
+            public int voltageTier = 4;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int capacity = 11400000;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int energyPerUse = 512;
+        }
+
+        public static class SemiFluidJetpack {
+            @Config.RangeInt(min = 0, max = 14)
+            @Config.RequiresMcRestart
+            public int voltageTier = 2;
+            @Config.RangeInt(min = 0)
+            @Config.RequiresMcRestart
+            public int capacity = 12000;
+        }
+
+
+
     }
 }
