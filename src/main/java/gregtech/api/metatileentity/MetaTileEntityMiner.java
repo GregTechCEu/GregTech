@@ -27,7 +27,7 @@ public abstract class MetaTileEntityMiner extends MetaTileEntity {
         return 1L;
     }
 
-    static List<BlockPos> getBlockToMinePerChunk(MetaTileEntityMiner miner, AtomicLong x, AtomicLong y, AtomicLong z, ChunkPos chunkPos) {
+    public static List<BlockPos> getBlockToMinePerChunk(MetaTileEntityMiner miner, AtomicLong x, AtomicLong y, AtomicLong z, ChunkPos chunkPos) {
         List<BlockPos> blocks = new ArrayList<>();
         for (int i = 0; i < miner.getNbBlock(); i++) {
             if (y.get() >= 0 && miner.getOffsetTimer() % miner.getTicksPerOperation() == 0) {
