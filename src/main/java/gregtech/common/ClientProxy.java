@@ -103,6 +103,8 @@ public class ClientProxy extends CommonProxy {
 
     public void onPreLoad() {
         super.onPreLoad();
+        Keybinds.initBinds();
+        Keybinds.registerClient();
         MetaTileEntityRenderer.preInit();
         CableRenderer.preInit();
         FluidPipeRenderer.preInit();
@@ -111,8 +113,7 @@ public class ClientProxy extends CommonProxy {
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
         MinecraftForge.EVENT_BUS.register(ToolRenderHandler.INSTANCE);
-        Keybinds.initBinds();
-        Keybinds.registerClient();
+
     }
 
     @Override
