@@ -1,7 +1,6 @@
 package gregtech.common.items.Armor;
 
-import gregtech.api.items.armor.ArmorMetaItem;
-import gregtech.api.items.armor.QuarkTechSuite;
+import gregtech.api.items.armor.*;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.inventory.EntityEquipmentSlot;
