@@ -1,6 +1,7 @@
 package gregtech.common.items;
 
 import com.google.common.base.CaseFormat;
+import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
@@ -8,6 +9,7 @@ import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
+import gregtech.common.items.Armor.MetaArmor;
 import gregtech.common.render.FacadeItemModel;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -491,6 +493,23 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem CLIPBOARD;
 
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_CHESTPLATE;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_LEGGINS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_BOOTS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_HELMET;
+
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_CHESTPLATE;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_LEGGINS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_BOOTS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_HELMET;
+
+    public static ArmorMetaItem<?>.ArmorMetaValueItem SEMIFLUID_JETPACK;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem IMPELLER_JETPACK;
+
+    public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_IMPELLER_JETPACK;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_NANO_MUSCLE_CHESTPLATE;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_QAURK_TECH_SUITE_CHESTPLATE;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);
         add(OrePrefix.dustSmall);
@@ -550,6 +569,8 @@ public final class MetaItems {
         tool.setRegistryName("meta_tool");
         MetaOreDictItem oreDictItem = new MetaOreDictItem((short) 0);
         oreDictItem.setRegistryName("meta_oredict_item");
+        MetaArmor armor = new MetaArmor();
+        armor.setRegistryName("gt_armor");
         for (OrePrefix prefix : orePrefixes) {
             String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());
             MetaPrefixItem metaOrePrefix = new MetaPrefixItem(prefix);
