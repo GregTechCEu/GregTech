@@ -184,9 +184,21 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
 
         return 50;
     }
-//TODO add Enchantability list by armor type
+
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return enchantment.isAllowedOnBooks();
+        switch (this.getEquipmentSlot(stack)) {
+            case HEAD:
+                return enchantment.type.canEnchantItem(Items.DIAMOND_HELMET);
+            case CHEST:
+                return enchantment.type.canEnchantItem(Items.DIAMOND_CHESTPLATE);
+            case LEGS:
+                return enchantment.type.canEnchantItem(Items.DIAMOND_LEGGINGS);
+            case FEET:
+                return enchantment.type.canEnchantItem(Items.DIAMOND_BOOTS);
+            default:
+                return enchantment.isAllowedOnBooks();
+        }
     }
+
 }
