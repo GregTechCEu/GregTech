@@ -110,32 +110,57 @@ public class EventHandlers {
         }
     }
 
-//TODO add jetpack
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onEntityLivingFallEvent(LivingFallEvent event) {
         if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityLivingBase) {
             EntityLivingBase entity = (EntityLivingBase) event.getEntity();
             ItemStack armor = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET);
+            ItemStack jet = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
             final ItemStack NANO = MetaItems.NANO_MUSCLE_SUITE_BOOTS.getStackForm();
             final ItemStack QUARK = MetaItems.QUARK_TECH_SUITE_BOOTS.getStackForm();
-            if (armor != null) {
+            final ItemStack JET = MetaItems.IMPELLER_JETPACK.getStackForm();
+            final ItemStack ADJET = MetaItems.ADVANCED_IMPELLER_JETPACK.getStackForm();
+            final ItemStack FLUIDJET = MetaItems.SEMIFLUID_JETPACK.getStackForm();
+
+
+            if (armor != null || jet != null) {
                 int fallDamage = 0;
                 if (armor.isItemEqual(NANO)) {
                     fallDamage = MathHelper.floor(event.getDistance() - 3.0);
                     if (fallDamage >= 8) return;
                 } else if (armor.isItemEqual(QUARK)) {
                     fallDamage = Math.max((int) event.getDistance() - 10, 0);
+                }
+                if (jet.isItemEqual(JET) || (jet.isItemEqual(ADJET) || (jet.isItemEqual(FLUIDJET)))) {
+
                 } else {
                     return;
                 }
-                ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
-                ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-                IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                if (item == null) return;
-                int energyCost = armorLogic.getEnergyPerUse() * fallDamage;
-                if (item.getCharge() >= energyCost) {
-                    item.discharge(energyCost, item.getTier(), true, false, false);
-                    event.setCanceled(true);
+                if (jet.isItemEqual(FLUIDJET)) {
+                } else {
+
+                    if (fallDamage != 0) {
+                        ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
+                        ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
+                        IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                        if (item == null) return;
+                        int energyCost = armorLogic.getEnergyPerUse() * fallDamage;
+                        if (item.getCharge() >= energyCost) {
+                            item.discharge(energyCost, item.getTier(), true, false, false);
+                            event.setCanceled(true);
+                        }
+                    }
+                    else{
+                        ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) jet.getItem()).getItem(jet);
+                        ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
+                        IElectricItem item = jet.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                        if (item == null) return;
+                        int energyCost = armorLogic.getEnergyPerUse();
+                        if (item.getCharge() >= energyCost) {
+                            item.discharge(energyCost, item.getTier(), true, false, false);
+                            event.setCanceled(true);
+                        }
+                    }
                 }
             }
         }
