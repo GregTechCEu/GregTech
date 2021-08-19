@@ -18,11 +18,9 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.util.AnnotatedMaterialHandlerLoader;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
+import gregtech.api.util.input.Keybinds;
 import gregtech.api.worldgen.config.WorldGenRegistry;
-import gregtech.common.CommonProxy;
-import gregtech.common.ConfigHolder;
-import gregtech.common.MetaEntities;
-import gregtech.common.MetaFluids;
+import gregtech.common.*;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.modelfactories.BlockCompressedFactory;
 import gregtech.common.blocks.modelfactories.BlockFrameFactory;
@@ -41,6 +39,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import gregtech.loaders.recipe.component.AnnotatedComponentHandlerLoader;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.LoaderException;
@@ -78,6 +77,9 @@ public class GregTechMod {
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
+        NetworkHandler.init();
+        Keybinds.register();
+        MinecraftForge.EVENT_BUS.register(new EventHandlers());
         GTLog.init(event.getModLog());
         NetworkHandler.init();
         MetaTileEntityUIFactory.INSTANCE.init();
