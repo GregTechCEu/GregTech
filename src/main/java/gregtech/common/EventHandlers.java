@@ -137,6 +137,7 @@ public class EventHandlers {
                     return;
                 }
                 if (jet.isItemEqual(FLUIDJET)) {
+                    event.setCanceled(true);
                 } else {
 
                     if (fallDamage != 0) {
