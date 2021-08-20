@@ -238,11 +238,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     protected BlockPattern createStructurePattern() {
         return material == null ? null : FactoryBlockPattern.start()
-                .aisle("F###F", "F###F", "PPPPP", "#####", "#####", "#####", "#####", "#####", "#####", "#####")
-                .aisle("#####", "#####", "PPPPP", "#CCC#", "#####", "#####", "#####", "#####", "#####", "#####")
-                .aisle("#####", "#####", "PPPPP", "#CPC#", "#FFF#", "#FFF#", "#FFF#", "##F##", "##F##", "##F##")
-                .aisle("#####", "#####", "PPPPP", "#CSC#", "#####", "#####", "#####", "#####", "#####", "#####")
-                .aisle("F###F", "F###F", "PPPPP", "#####", "#####", "#####", "#####", "#####", "#####", "#####")
+                .aisle("CCC", "#F#", "#F#", "#F#", "###", "###", "###")
+                .aisle("CPC", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
+                .aisle("CSC", "#F#", "#F#", "#F#", "###", "###", "###")
                 .setAmountAtLeast('L', 3)
                 .where('S', selfPredicate())
                 .where('L', statePredicate(getCasingState()))
