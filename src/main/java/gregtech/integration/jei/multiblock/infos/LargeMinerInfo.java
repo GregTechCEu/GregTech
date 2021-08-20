@@ -29,11 +29,9 @@ public class LargeMinerInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
-                .aisle("F###F", "F###F", "PPPPP", "#####", "#####", "#####", "#####", "#####", "#####", "#####")
-                .aisle("#####", "#####", "PPPPP", "#PPO#", "##F##", "##F##", "##F##", "#####", "#####", "#####")
-                .aisle("#####", "#####", "PPPPP", "#SPE#", "##F##", "##F##", "##F##", "##F##", "##F##", "##F##")
-                .aisle("#####", "#####", "PPPPP", "#IPP#", "##F##", "##F##", "##F##", "#####", "#####", "#####")
-                .aisle("F###F", "F###F", "PPPPP", "#####", "#####", "#####", "#####", "#####", "#####", "#####")
+                .aisle("PPO", "#F#", "#F#", "#F#", "###", "###", "###")
+                .aisle("SPE", "FPF", "FPF", "FPF", "#F#", "#F#", "#F#")
+                .aisle("IPP", "#F#", "#F#", "#F#", "###", "###", "###")
                 .where('S', largeMiner, EnumFacing.WEST)
                 .where('P', largeMiner.getCasingState())
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[4], EnumFacing.EAST)
