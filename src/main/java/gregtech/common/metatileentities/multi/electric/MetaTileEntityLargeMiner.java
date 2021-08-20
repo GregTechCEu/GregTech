@@ -20,6 +20,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Material;
@@ -205,7 +206,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 NonNullList<ItemStack> itemStacks = NonNullList.create();
                 IBlockState blockState = this.getWorld().getBlockState(blockPos1);
                 if (!silktouch) {
-                    ToolUtility.applyHammerDrops(world.rand, blockState, itemStacks, this.getFortune(), null);
+                    ToolUtility.applyHammerDrops(world.rand, blockState, itemStacks, this.getFortune(), null, RecipeMaps.MACERATOR_RECIPES);
                 } else {
                     itemStacks.add(new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState)));
                 }
