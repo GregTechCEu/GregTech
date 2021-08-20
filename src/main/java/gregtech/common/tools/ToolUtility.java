@@ -1,6 +1,10 @@
 package gregtech.common.tools;
 
 import codechicken.lib.raytracer.RayTracer;
+import gregtech.api.recipes.MatchingMode;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
