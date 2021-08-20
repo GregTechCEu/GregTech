@@ -86,6 +86,7 @@ public class ModelFactory {
         }
 
         public static final ModelTemplate DOUBLE_LAYERED_BLOCK = new ModelTemplate(GTValues.MODID, "block/double_layered_block");
+        public static final ModelTemplate BLOCK = new ModelTemplate("minecraft", "block/block");
         public static final ModelTemplate NORMAL_ITEM = new ModelTemplate("minecraft", "item/generated");
         public static final ModelTemplate HANDHELD_ITEM = new ModelTemplate("minecraft", "item/handheld");
 
@@ -106,7 +107,6 @@ public class ModelFactory {
         public IModel getModel() {
             return model;
         }
-
     }
 
 }
