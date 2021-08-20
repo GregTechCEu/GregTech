@@ -75,10 +75,10 @@ public class GuiTextures {
     public static final TextureArea BRONZE_FURNACE_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/slot_bronze_furnace_background.png");
     public static final TextureArea BRONZE_INGOT_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/overlay_bronze_ingot.png");
     public static final TextureArea BRONZE_SLOT = TextureArea.fullImage("textures/gui/steam/bronze/slot_bronze.png");
-    public static final TextureArea BRONZE_IN_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze_in_slot_overlay.png");
-    public static final TextureArea BRONZE_OUT_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze_out_slot_overlay.png");
-    public static final TextureArea BRONZE_FLUID_SLOT = TextureArea.fullImage("textures/gui/steam/fluid_slot.png");
-    public static final TextureArea BRONZE_TANK_ICON = TextureArea.fullImage("textures/gui/steam/bronze_tank_icon.png");
+    public static final TextureArea BRONZE_IN_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/bronze_in_slot_overlay.png");
+    public static final TextureArea BRONZE_OUT_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/bronze_out_slot_overlay.png");
+    public static final TextureArea BRONZE_FLUID_SLOT = TextureArea.fullImage("textures/gui/steam/bronze/fluid_slot.png");
+    public static final TextureArea BRONZE_TANK_ICON = TextureArea.fullImage("textures/gui/steam/bronze/bronze_tank_icon.png");
 
 
 

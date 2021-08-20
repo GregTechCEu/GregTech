@@ -14,9 +14,9 @@ import gregtech.api.gui.widgets.FluidContainerSlotWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.metatileentity.IMiner;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.MetaTileEntityMiner;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
@@ -51,7 +51,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class SteamMiner extends MetaTileEntityMiner {
+public class SteamMiner extends MetaTileEntity implements IMiner {
 
     private final int inventorySize;
     private AtomicLong x = new AtomicLong(Long.MAX_VALUE), y = new AtomicLong(Long.MAX_VALUE), z = new AtomicLong(Long.MAX_VALUE);
@@ -250,7 +250,7 @@ public class SteamMiner extends MetaTileEntityMiner {
                 y.set(getPos().getY());
             }
 
-            List<BlockPos> blockPos = getBlockToMinePerChunk(this, x, y, z, chuck.getPos());
+            List<BlockPos> blockPos = IMiner.getBlockToMinePerChunk(this, x, y, z, chuck.getPos());
             blockPos.forEach(blockPos1 -> {
                 NonNullList<ItemStack> itemStacks = NonNullList.create();
                 IBlockState blockState = this.getWorld().getBlockState(blockPos1);
@@ -272,8 +272,8 @@ public class SteamMiner extends MetaTileEntityMiner {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gtadditions.machine.miner.steam.description"));
-        tooltip.add(I18n.format("gtadditions.machine.miner.fluid_usage", this.getDrillingFluidConsumedPerTick(), I18n.format(Materials.DrillingFluid.getFluid(0).getUnlocalizedName())));
+        tooltip.add(I18n.format("gregtech.machine.miner.steam.description"));
+        tooltip.add(I18n.format("gregtech.machine.miner.fluid_usage", this.getDrillingFluidConsumedPerTick(), I18n.format(Materials.DrillingFluid.getFluid(0).getUnlocalizedName())));
     }
 
     @Override
