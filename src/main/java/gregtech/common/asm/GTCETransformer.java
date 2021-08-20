@@ -17,6 +17,7 @@ public class GTCETransformer implements IClassTransformer, Opcodes {
             ClassWriter classWriter = new ClassWriter(0);
             classReader.accept(new TargetClassVisitor(classWriter, JEIVisitor.TARGET_METHOD, JEIVisitor::new), 0);
             return classWriter.toByteArray();
+
         } else if (internalName.equals(ConcretePowderVisitor.TARGET_CLASS_NAME)) {
             if (ConfigHolder.vanillaRecipes.disableConcreteInWorld) {
                 ClassReader classReader = new ClassReader(basicClass);
@@ -24,6 +25,24 @@ public class GTCETransformer implements IClassTransformer, Opcodes {
                 classReader.accept(new TargetClassVisitor(classWriter, ConcretePowderVisitor.TARGET_METHOD, ConcretePowderVisitor::new), 0);
                 return classWriter.toByteArray();
             }
+        }
+        if (internalName.equals(LayerCustomHeadVisitor.TARGET_CLASS_NAME)) {
+            ClassReader classReader = new ClassReader(basicClass);
+            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+            classReader.accept(new TargetClassVisitor(classWriter, LayerCustomHeadVisitor.TARGET_METHOD, LayerCustomHeadVisitor::new), 0);
+            return classWriter.toByteArray();
+        }
+        if (internalName.equals(SpecialArmorApplyVisitor.TARGET_CLASS_NAME)) {
+            ClassReader classReader = new ClassReader(basicClass);
+            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+            classReader.accept(new SpecialArmorClassVisitor(classWriter, SpecialArmorApplyVisitor.TARGET_METHOD, SpecialArmorApplyVisitor::new), 0);
+            return classWriter.toByteArray();
+        }
+        if (internalName.equals(LayerArmorBaseVisitor.TARGET_CLASS_NAME)) {
+            ClassReader classReader = new ClassReader(basicClass);
+            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+            classReader.accept(new TargetClassVisitor(classWriter, LayerArmorBaseVisitor.TARGET_METHOD, LayerArmorBaseVisitor::new), 0);
+            return classWriter.toByteArray();
         }
         return basicClass;
     }
