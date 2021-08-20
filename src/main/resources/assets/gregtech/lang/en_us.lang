@@ -2349,6 +2349,7 @@ gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
 gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava adjancent
 gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
 gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava adjancent
+gregtech.machine.steam_miner.name=Steam Miner
 
 # Generators
 gregtech.machine.combustion_generator.lv.name=Basic Combustion Generator
@@ -3551,6 +3552,11 @@ gregtech.machine.cracker.name=Cracker Unit
 gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven. Must be centered on coke oven side.
+gregtech.machine.large_miner.ev.name=Basic Large Miner
+gregtech.machine.large_miner.iv.name=Large Miner
+gregtech.machine.large_miner.luv.name=Advanced Large Miner
+
+
 
 gregtech.machine.large_combustion_engine.name=Large Combustion Engine
 gregtech.machine.large_turbine.steam.name=Large Steam Turbine
@@ -3566,6 +3572,14 @@ gregtech.machine.assembly_line.name=Assembly Line
 gregtech.machine.fusion_reactor.luv.name=Fusion Reactor Computer Mark 1
 gregtech.machine.fusion_reactor.zpm.name=Fusion Reactor Computer Mark 2
 gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
+
+gregtech.machine.chunk_miner.lv.name=Basic Miner
+gregtech.machine.chunk_miner.mv.name=Advanced Miner
+gregtech.machine.chunk_miner.hv.name=Advanced Miner II
+gregtech.machine.miner.multi.description=Mines all ore in an area of %dx%d Chunks. Can mine ore as if it was using a hammer with fortune %s, or with silk touch.
+gregtech.machine.miner.description=Mines all ores in the current chunk. Requires 1 amp.
+gregtech.machine.miner.steam.description=Mines all ores in the current chunk. Requires 16 mb/t of steam.
+gregtech.machine.miner.fluid_usage=Consumes %dmb of %s per tick
 
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
@@ -3911,6 +3925,13 @@ gregtech.multiblock.large_boiler.heat_efficiency=Heat Efficiency: %d%%
 gregtech.multiblock.large_boiler.heat_efficiency.tooltip=The higher boiler temperature is, the higher it's fuel efficiency
 gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less steam and consume less fuel, but it comes with price: the fuel efficiency is lower at higher throttle rates.
 gregtech.multiblock.large_boiler.throttle_modify=Modify Throttle:
+
+gregtech.multiblock.large_miner.chunk=Chunk: %d
+gregtech.multiblock.large_miner.nb_chunk=Chunks To Mine: %d
+gregtech.multiblock.large_miner.mode=Screwdriver to change mode.
+gregtech.multiblock.large_miner.block_per_tick=Speed: %d Blocks/tick
+gregtech.multiblock.large_miner.silktouch=Silktouch mode: %s
+gregtech.multiblock.large_miner.done=Done!
 
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>

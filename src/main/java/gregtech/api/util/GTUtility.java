@@ -14,6 +14,8 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
 import gregtech.common.items.behaviors.CrowbarBehaviour;
@@ -979,6 +981,12 @@ public class GTUtility {
             return romanNumeralConversions.get(num);
         }
         return romanNumeralConversions.get(conversion) + romanNumeralString(num - conversion);
+    }
+
+
+    public static boolean isOre(Block block) {
+        OrePrefix orePrefix = OreDictUnifier.getPrefix(new ItemStack(block));
+        return orePrefix != null && orePrefix.name().startsWith("ore");
     }
 
 }
