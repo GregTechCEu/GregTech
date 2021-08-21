@@ -167,12 +167,12 @@ public class OreRecipeHandler {
                         OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
                 .buildAndRegister();
 
-        if (property.getWashedIn() != null) {
+        if (property.getWashedIn().getKey() != null) {
             Material washingByproduct = GTUtility.selectItemInList(3, material, property.getOreByProducts(), Material.class);
             Pair<Material, Integer> washedInTuple = property.getWashedIn();
             RecipeMaps.CHEMICAL_BATH_RECIPES.recipeBuilder()
                     .input(crushedPrefix, material)
-                    .fluidInputs(washedInTuple.getKey().getFluid(washedInTuple.getRight()))
+                    .fluidInputs(washedInTuple.getKey().getFluid(washedInTuple.getValue()))
                     .outputs(crushedPurifiedOre)
                     .chancedOutput(OreDictUnifier.get(OrePrefix.dust, washingByproduct, property.getByProductMultiplier()), 7000, 580)
                     .chancedOutput(OreDictUnifier.get(OrePrefix.dust, Materials.Stone), 4000, 650)
