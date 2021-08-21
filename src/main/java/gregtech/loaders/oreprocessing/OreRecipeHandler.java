@@ -14,6 +14,7 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
@@ -168,9 +169,10 @@ public class OreRecipeHandler {
 
         if (property.getWashedIn() != null) {
             Material washingByproduct = GTUtility.selectItemInList(3, material, property.getOreByProducts(), Material.class);
+            Pair<Material, Integer> washedInTuple = property.getWashedIn();
             RecipeMaps.CHEMICAL_BATH_RECIPES.recipeBuilder()
                     .input(crushedPrefix, material)
-                    .fluidInputs(property.getWashedIn().getFluid(property.getWashedIn() == Materials.SodiumPersulfate ? 100 : 1000))
+                    .fluidInputs(washedInTuple.getKey().getFluid(washedInTuple.getRight()))
                     .outputs(crushedPurifiedOre)
                     .chancedOutput(OreDictUnifier.get(OrePrefix.dust, washingByproduct, property.getByProductMultiplier()), 7000, 580)
                     .chancedOutput(OreDictUnifier.get(OrePrefix.dust, Materials.Stone), 4000, 650)

@@ -1,6 +1,7 @@
 package gregtech.api.unification.material.properties;
 
 import gregtech.api.unification.material.Material;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -54,6 +55,14 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
     private Material washedIn;
 
     /**
+     * The amount of Material that the ore should be washed in
+     * in the Chemical Bath.
+     * <p>
+     * Default 100 mb
+     */
+    private int washedAmount = 100;
+
+    /**
      * During Electromagnetic Separation, this Ore will be separated
      * into this Material and the Material specified by this field.
      * Limit 2 Materials
@@ -105,9 +114,14 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
         this.washedIn = m;
     }
 
+    public void setWashedIn(@Nullable Material m, int washedAmount) {
+        this.washedIn = m;
+        this.washedAmount = washedAmount;
+    }
+
     @Nullable
-    public Material getWashedIn() {
-        return this.washedIn;
+    public Pair<Material, Integer> getWashedIn() {
+        return Pair.of(this.washedIn, this.washedAmount);
     }
 
     public void setSeparatedInto(Material... materials) {
