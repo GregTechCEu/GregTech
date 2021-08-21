@@ -27,7 +27,7 @@ public class SteamOvenInfo extends MultiblockInfoPage {
     public List<MultiblockShapeInfo> getMatchingShapes() {
         ArrayList<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
 
-        if (ConfigHolder.steelSteamMultiblocks) {
+        if (ConfigHolder.U.steelSteamMultiblocks) {
             shapeInfo.add(MultiblockShapeInfo.builder()
                     .aisle("FFF", "IXX", "###")
                     .aisle("HFF", "S#X", "XXX")

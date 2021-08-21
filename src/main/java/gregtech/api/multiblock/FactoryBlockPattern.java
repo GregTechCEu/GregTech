@@ -3,7 +3,7 @@ package gregtech.api.multiblock;
 import com.google.common.base.Joiner;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import gregtech.api.multiblock.BlockPattern.RelativeDirection;
+import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.IntRange;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
 
-import static gregtech.api.multiblock.BlockPattern.RelativeDirection.*;
+import static gregtech.api.util.RelativeDirection.*;
 
 public class FactoryBlockPattern {
 

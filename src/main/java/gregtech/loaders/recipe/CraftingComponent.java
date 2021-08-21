@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static gregtech.common.blocks.HermeticCasings.HermeticCasingsType.*;
-
 public class CraftingComponent {
 
     public static Component CIRCUIT;
@@ -50,7 +48,6 @@ public class CraftingComponent {
     public static Component STICK_ELECTROMAGNETIC;
     public static Component STICK_RADIOACTIVE;
     public static Component PIPE_REACTOR;
-    public static Component HERMETIC_CASINGS;
 
 
     public static void initializeComponents() {
@@ -70,6 +67,11 @@ public class CraftingComponent {
                 {7, new UnificationEntry(OrePrefix.circuit, Tier.Ultimate)},
                 {8, new UnificationEntry(OrePrefix.circuit, Tier.Superconductor)},
                 {9, new UnificationEntry(OrePrefix.circuit, Tier.Infinite)},
+                {10, new UnificationEntry(OrePrefix.circuit, Tier.Ultra)},
+                {11, new UnificationEntry(OrePrefix.circuit, Tier.Insane)},
+                {12, new UnificationEntry(OrePrefix.circuit, Tier.UMVCircuit)},
+                {13, new UnificationEntry(OrePrefix.circuit, Tier.UXVCircuit)},
+                {14, new UnificationEntry(OrePrefix.circuit, Tier.Maximum)}
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -84,6 +86,11 @@ public class CraftingComponent {
                 {6, new UnificationEntry(OrePrefix.circuit, Tier.Ultimate)},
                 {7, new UnificationEntry(OrePrefix.circuit, Tier.Superconductor)},
                 {8, new UnificationEntry(OrePrefix.circuit, Tier.Infinite)},
+                {9, new UnificationEntry(OrePrefix.circuit, Tier.Ultra)},
+                {10, new UnificationEntry(OrePrefix.circuit, Tier.Insane)},
+                {11, new UnificationEntry(OrePrefix.circuit, Tier.UMVCircuit)},
+                {12, new UnificationEntry(OrePrefix.circuit, Tier.UXVCircuit)},
+                {13, new UnificationEntry(OrePrefix.circuit, Tier.Maximum)}
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -223,14 +230,14 @@ public class CraftingComponent {
 
         MOTOR = new Component(Stream.of(new Object[][]{
 
-                {1, MetaItems.ELECTRIC_MOTOR_LV.getStackForm(),},
-                {2, MetaItems.ELECTRIC_MOTOR_MV.getStackForm(),},
-                {3, MetaItems.ELECTRIC_MOTOR_HV.getStackForm(),},
-                {4, MetaItems.ELECTRIC_MOTOR_EV.getStackForm(),},
-                {5, MetaItems.ELECTRIC_MOTOR_IV.getStackForm(),},
-                {6, MetaItems.ELECTRIC_MOTOR_LUV.getStackForm(),},
-                {7, MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm(),},
-                {8, MetaItems.ELECTRIC_MOTOR_UV.getStackForm(),},
+                {1, MetaItems.ELECTRIC_MOTOR_LV.getStackForm()},
+                {2, MetaItems.ELECTRIC_MOTOR_MV.getStackForm()},
+                {3, MetaItems.ELECTRIC_MOTOR_HV.getStackForm()},
+                {4, MetaItems.ELECTRIC_MOTOR_EV.getStackForm()},
+                {5, MetaItems.ELECTRIC_MOTOR_IV.getStackForm()},
+                {6, MetaItems.ELECTRIC_MOTOR_LUV.getStackForm()},
+                {7, MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm()},
+                {8, MetaItems.ELECTRIC_MOTOR_UV.getStackForm()},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -452,23 +459,6 @@ public class CraftingComponent {
                 {GTValues.FALLBACK, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Polyethylene)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
-
-
-        HERMETIC_CASINGS = new Component(Stream.of(new Object[][]{
-
-                {1, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_LV)},
-                {2, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_MV)},
-                {3, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_HV)},
-                {4, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_EV)},
-                {5, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_IV)},
-                {6, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_LUV)},
-                {7, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_ZPM)},
-                {8, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_UV)},
-                {14, MetaBlocks.HERMETIC_CASING.getItemVariant(HERMETIC_MAX)},
-
-                {GTValues.FALLBACK, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Polyethylene)},
-
-        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
     }
 
 
@@ -476,7 +466,7 @@ public class CraftingComponent {
 
         private final Map<Integer, Object> ingredients;
 
-        private Component(Map<Integer, Object> craftingComponents) {
+        public Component(Map<Integer, Object> craftingComponents) {
             ingredients = craftingComponents;
         }
 

@@ -79,6 +79,7 @@ public class WireRecipeHandler {
     }
 
     public static void generateWireRecipe(OrePrefix wirePrefix, Material material, WireProperties property) {
+        if (property.isSuperconductor) return;
         int cableAmount = (int) (wirePrefix.materialAmount * 2 / M);
         OrePrefix cablePrefix = OrePrefix.getPrefix("cable" + wirePrefix.name().substring(4));
         ItemStack cableStack = OreDictUnifier.get(cablePrefix, material);
@@ -154,6 +155,7 @@ public class WireRecipeHandler {
     }
 
     public static void generateCableCombiningRecipe(OrePrefix cablePrefix, Material material, WireProperties property) {
+        if (property.isSuperconductor) return;
         int cableIndex = ArrayUtils.indexOf(CABLE_DOUBLING_ORDER, cablePrefix);
 
         if (cableIndex < CABLE_DOUBLING_ORDER.length - 1) {

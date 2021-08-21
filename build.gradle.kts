@@ -69,7 +69,6 @@ minecraft {
     mappings = "stable_39"
     runDir = "run"
     isUseDepAts = true
-    makeObfSourceJar = false
 }
 
 repositories {

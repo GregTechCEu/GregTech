@@ -151,7 +151,7 @@ public class ClientProxy extends CommonProxy {
         if (unificationEntry != null && unificationEntry.material != null) {
             chemicalFormula = unificationEntry.material.getChemicalFormula();
 
-            // Test for Fluids
+        // Test for Fluids
         } else if (ItemNBTUtils.hasTag(itemStack)) {
 
             // Vanilla bucket
@@ -165,7 +165,7 @@ public class ClientProxy extends CommonProxy {
                 }
             }
 
-            // Water buckets have a separate registry name from other buckets
+        // Water buckets have a separate registry name from other buckets
         } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) {
             chemicalFormula = FluidTooltipUtil.getWaterTooltip();
         }

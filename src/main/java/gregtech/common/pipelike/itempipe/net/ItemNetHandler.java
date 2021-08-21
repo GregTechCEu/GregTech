@@ -5,14 +5,12 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackKey;
-import gregtech.common.covers.CoverConveyor;
-import gregtech.common.covers.CoverRoboticArm;
+import gregtech.common.covers.*;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -44,13 +42,37 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
         simulatedTransfers = 0;
-        Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(pipe.getPos(), facing);
-        if (exportsToPipe(tuple)) {
-            if (tuple.getFirst().getDistributionMode() == CoverConveyor.ItemDistributionMode.ROUND_ROBIN) {
-                return insertRoundRobin(stack, simulate);
-            }
+        CoverBehavior pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
+        CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);
+
+        boolean pipeConveyor = pipeCover instanceof CoverConveyor, tileConveyor = tileCover instanceof CoverConveyor;
+        // abort if there are two conveyors
+        if (pipeConveyor && tileConveyor) return stack;
+
+        if (tileCover != null && !checkImportCover(tileCover, false, stack))
+            return stack;
+
+        if (!pipeConveyor && !tileConveyor)
+            return insertFirst(stack, simulate);
+
+        CoverConveyor conveyor = (CoverConveyor) (pipeConveyor ? pipeCover : tileCover);
+        if (conveyor.getConveyorMode() == (pipeConveyor ? CoverConveyor.ConveyorMode.IMPORT : CoverConveyor.ConveyorMode.EXPORT) &&
+                conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN) {
+            return insertRoundRobin(stack, simulate);
         }
+
         return insertFirst(stack, simulate);
+    }
+
+    public boolean checkImportCover(CoverBehavior cover, boolean onPipe, ItemStack stack) {
+        if (cover == null) return true;
+        if (cover instanceof CoverItemFilter) {
+            CoverItemFilter filter = (CoverItemFilter) cover;
+            return (filter.getFilterMode() != ItemFilterMode.FILTER_BOTH &&
+                    (filter.getFilterMode() != ItemFilterMode.FILTER_INSERT || !onPipe) &&
+                    (filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT || onPipe)) || filter.testItemStack(stack);
+        }
+        return true;
     }
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
@@ -132,17 +154,29 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insert(Handler handler, ItemStack stack, boolean simulate) {
         int allowed = checkTransferable(pipe, handler.getProperties().transferRate, stack.getCount(), simulate);
         if (allowed == 0) return stack;
-        Tuple<CoverConveyor, Boolean> tuple = getCoverAtPipe(handler.getPipePos(), handler.getFaceToHandler());
-        if (tuple != null) {
-            if (!tuple.getFirst().getItemFilterContainer().testItemStack(stack))
-                return stack;
-            boolean exportsFromPipe = exportsToPipe(tuple);
-            if (tuple.getFirst() instanceof CoverRoboticArm && !exportsFromPipe)
-                return insertOverRobotArm(handler.handler, (CoverRoboticArm) tuple.getFirst(), tuple.getSecond(), stack, simulate, allowed);
-            if (exportsFromPipe && tuple.getFirst().blocksInput())
-                return stack;
-        }
+        CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
+        CoverBehavior tileCover = getCoverOnNeighbour(handler.getPipePos(), handler.getFaceToHandler());
+        if (pipeCover instanceof CoverRoboticArm && tileCover instanceof CoverRoboticArm)
+            return stack;
+        if (pipeCover != null && !checkExportCover(pipeCover, true, stack))
+            return stack;
+
+        if (pipeCover instanceof CoverRoboticArm && ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)
+            return insertOverRobotArm(handler.handler, (CoverRoboticArm) pipeCover, stack, simulate, allowed);
+        if (tileCover instanceof CoverRoboticArm && ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT)
+            return insertOverRobotArm(handler.handler, (CoverRoboticArm) tileCover, stack, simulate, allowed);
+
         return insert(handler.handler, stack, simulate, allowed);
+    }
+
+    public boolean checkExportCover(CoverBehavior cover, boolean onPipe, ItemStack stack) {
+        if (cover instanceof CoverItemFilter) {
+            CoverItemFilter filter = (CoverItemFilter) cover;
+            return (filter.getFilterMode() != ItemFilterMode.FILTER_BOTH &&
+                    (filter.getFilterMode() != ItemFilterMode.FILTER_INSERT || onPipe) &&
+                    (filter.getFilterMode() != ItemFilterMode.FILTER_EXTRACT || !onPipe)) || filter.testItemStack(stack);
+        }
+        return true;
     }
 
     private ItemStack insert(IItemHandler handler, ItemStack stack, boolean simulate, int allowed) {
@@ -160,30 +194,26 @@ public class ItemNetHandler implements IItemHandler {
         return remainder;
     }
 
-    public Tuple<CoverConveyor, Boolean> getCoverAtPipe(BlockPos pipePos, EnumFacing handlerFacing) {
-        TileEntity tile = pipe.getWorld().getTileEntity(pipePos);
+    public CoverBehavior getCoverOnPipe(BlockPos pos, EnumFacing handlerFacing) {
+        TileEntity tile = pipe.getWorld().getTileEntity(pos);
         if (tile instanceof TileEntityItemPipe) {
             ICoverable coverable = ((TileEntityItemPipe) tile).getCoverableImplementation();
-            CoverBehavior cover = coverable.getCoverAtSide(handlerFacing);
-            if (cover instanceof CoverConveyor) return new Tuple<>((CoverConveyor) cover, true);
-        }
-        tile = pipe.getWorld().getTileEntity(pipePos.offset(handlerFacing));
-        if (tile != null) {
-            ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
-            if (coverable == null) return null;
-            CoverBehavior cover = coverable.getCoverAtSide(handlerFacing.getOpposite());
-            if (cover instanceof CoverConveyor) return new Tuple<>((CoverConveyor) cover, false);
+            return coverable.getCoverAtSide(handlerFacing);
         }
         return null;
     }
 
-    public boolean exportsToPipe(Tuple<CoverConveyor, Boolean> tuple) {
-        return tuple != null && (tuple.getSecond() ?
-                tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT :
-                tuple.getFirst().getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT);
+    public CoverBehavior getCoverOnNeighbour(BlockPos pos, EnumFacing handlerFacing) {
+        TileEntity tile = pipe.getWorld().getTileEntity(pos.offset(handlerFacing));
+        if (tile != null) {
+            ICoverable coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, handlerFacing.getOpposite());
+            if (coverable == null) return null;
+            return coverable.getCoverAtSide(handlerFacing.getOpposite());
+        }
+        return null;
     }
 
-    public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, boolean isOnPipe, ItemStack stack, boolean simulate, int allowed) {
+    public ItemStack insertOverRobotArm(IItemHandler handler, CoverRoboticArm arm, ItemStack stack, boolean simulate, int allowed) {
         int rate;
         boolean isStackSpecific = false;
         Object index = arm.getItemFilterContainer().matchItemStack(stack);

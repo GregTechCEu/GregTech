@@ -119,6 +119,10 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
                             MIN_DURABILITY_TO_WARN, rotorDurability).setStyle(new Style().setColor(TextFormatting.RED)));
                 }
             }
+            if(!isRotorFaceFree()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+            }
         }
         super.addDisplayText(textList);
     }

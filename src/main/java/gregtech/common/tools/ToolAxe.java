@@ -53,7 +53,7 @@ public class ToolAxe extends ToolBase {
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
-        return (tool != null && tool.equals("axe")) ||
+        return (tool != null && AXE_TOOL_CLASSES.contains(tool)) ||
                 block.getMaterial() == Material.WOOD;
     }
 

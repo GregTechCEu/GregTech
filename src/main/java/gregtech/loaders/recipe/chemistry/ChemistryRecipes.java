@@ -1,5 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
+import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import net.minecraft.init.Items;
 
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -46,7 +47,17 @@ public class ChemistryRecipes {
         VACUUM_RECIPES.recipeBuilder()
                 .fluidInputs(Air.getFluid(4000))
                 .fluidOutputs(LiquidAir.getFluid(4000))
-                .duration(400).EUt(30).buildAndRegister();
+                .duration(80).EUt(480).buildAndRegister();
+
+        VACUUM_RECIPES.recipeBuilder()
+                .fluidInputs(NetherAir.getFluid(4000))
+                .fluidOutputs(LiquidNetherAir.getFluid(4000))
+                .duration(80).EUt(1920).buildAndRegister();
+
+        VACUUM_RECIPES.recipeBuilder()
+                .fluidInputs(EnderAir.getFluid(4000))
+                .fluidOutputs(LiquidEnderAir.getFluid(4000))
+                .duration(80).EUt(7680).buildAndRegister();
 
         BLAST_RECIPES.recipeBuilder()
                 .input(dust, FerriteMixture)
@@ -78,5 +89,23 @@ public class ChemistryRecipes {
                 .output(ingot, RedAlloy, 2)
                 .blastFurnaceTemp(1200)
                 .duration(884).EUt(120).buildAndRegister();
+
+        GAS_COLLECTOR_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
+                .fluidOutputs(Air.getFluid(10000))
+                .dimension(0)
+                .duration(200).EUt(16).buildAndRegister();
+
+        GAS_COLLECTOR_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
+                .fluidOutputs(NetherAir.getFluid(10000))
+                .dimension(-1)
+                .duration(200).EUt(64).buildAndRegister();
+
+        GAS_COLLECTOR_RECIPES.recipeBuilder()
+                .notConsumable(new IntCircuitIngredient(1))
+                .fluidOutputs(EnderAir.getFluid(10000))
+                .dimension(1)
+                .duration(200).EUt(256).buildAndRegister();
     }
 }

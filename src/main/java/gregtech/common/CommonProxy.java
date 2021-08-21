@@ -31,6 +31,8 @@ import gregtech.loaders.oreprocessing.DecompositionRecipeHandler;
 import gregtech.loaders.oreprocessing.RecipeHandlerList;
 import gregtech.loaders.oreprocessing.ToolRecipeHandler;
 import gregtech.loaders.recipe.*;
+import gregtech.loaders.recipe.component.AnnotatedComponentHandlerLoader;
+import gregtech.loaders.recipe.component.IComponentHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -154,6 +156,7 @@ public class CommonProxy {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void initComponents(RegistryEvent.Register<IRecipe> event) {
         CraftingComponent.initializeComponents();
+        IComponentHandler.runComponentHandlers();
     }
 
     //this is called with normal priority, so most mods working with

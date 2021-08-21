@@ -3,6 +3,7 @@ package gregtech.api.multiblock;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gregtech.api.util.IntRange;
+import gregtech.api.util.RelativeDirection;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
@@ -197,27 +198,4 @@ public class BlockPattern {
         }
         return pos.setPos(c1[0], c1[1], c1[2]);
     }
-
-    /**
-     * Relative direction when facing horizontally
-     */
-    public enum RelativeDirection {
-        UP(f -> EnumFacing.UP),
-        DOWN(f -> EnumFacing.DOWN),
-        LEFT(EnumFacing::rotateYCCW),
-        RIGHT(EnumFacing::rotateY),
-        FRONT(Function.identity()),
-        BACK(EnumFacing::getOpposite);
-
-        final Function<EnumFacing, EnumFacing> actualFacing;
-
-        RelativeDirection(Function<EnumFacing, EnumFacing> actualFacing) {
-            this.actualFacing = actualFacing;
-        }
-
-        public EnumFacing getActualFacing(EnumFacing facing) {
-            return actualFacing.apply(facing);
-        }
-    }
-
 }

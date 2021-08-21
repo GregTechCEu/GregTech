@@ -160,11 +160,11 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
 
     @Override
     protected int[] calculateOverclock(int EUt, long voltage, int duration) {
-        if (!isHighPressure) {
-            //disallow overclocking for low pressure bronze machines
-            return new int[]{EUt, duration};
-        }
-        return super.calculateOverclock(EUt, voltage, duration);
+        // double duration for normal Steam machines, double EUt for HP Steam
+        return new int[]{
+                isHighPressure ? EUt * 2 : EUt,
+                isHighPressure ? duration : duration * 2
+        };
     }
 
     @Override

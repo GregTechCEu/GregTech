@@ -143,6 +143,12 @@ public class OreRecipeHandler {
                         OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
                 .buildAndRegister();
 
+        RecipeMaps.SIMPLE_WASHER_RECIPES.recipeBuilder()
+                .input(crushedPrefix, material)
+                .fluidInputs(Materials.Water.getFluid(100))
+                .outputs(crushedPurifiedOre)
+                .duration(8).EUt(1).buildAndRegister();
+
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
                 .fluidInputs(Materials.DistilledWater.getFluid(1000))
@@ -224,6 +230,12 @@ public class OreRecipeHandler {
                 .EUt(12)
                 .buildAndRegister();
 
+        RecipeMaps.SIMPLE_WASHER_RECIPES.recipeBuilder()
+                .input(purifiedPrefix, material)
+                .fluidInputs(Materials.Water.getFluid(100))
+                .outputs(dustStack)
+                .duration(8).EUt(1).buildAndRegister();
+
         ModHandler.addShapelessRecipe(String.format("purified_ore_to_dust_%s", material), dustStack,
                 'h', new UnificationEntry(purifiedPrefix, material));
 
@@ -288,6 +300,12 @@ public class OreRecipeHandler {
         }
 
         builder.buildAndRegister();
+
+        RecipeMaps.SIMPLE_WASHER_RECIPES.recipeBuilder()
+                .input(dustPrefix, material)
+                .fluidInputs(Materials.Water.getFluid(100))
+                .outputs(dustStack)
+                .duration(8).EUt(1).buildAndRegister();
 
         //dust gains same amount of material as normal dust
         processMetalSmelting(dustPrefix, material, property);

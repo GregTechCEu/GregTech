@@ -2,6 +2,7 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import net.minecraft.block.Block;
@@ -52,7 +53,7 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
 
     protected IMultipleTankHandler getSteamFluidTank() {
         RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
-        return controller.steamFluidTank;
+        return controller.getSteamFluidTank();
     }
 
     private void combineSteamTanks() {
@@ -113,12 +114,6 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
             controller.checkRecipe(recipe, true);
             return true;
         } else return false;
-    }
-
-    // Do this to casually ignore fluids from steam multiblocks
-    @Override
-    protected boolean checkRecipeInputsDirty(IItemHandler inputs, IMultipleTankHandler fluidInputs) {
-        return super.checkRecipeInputsDirty(inputs, new FluidTankList(false));
     }
 
     @Override

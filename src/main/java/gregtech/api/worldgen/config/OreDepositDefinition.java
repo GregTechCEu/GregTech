@@ -88,14 +88,6 @@ public class OreDepositDefinition {
         if (configRoot.has("generation_predicate")) {
             this.generationPredicate = PredicateConfigUtils.createBlockStatePredicate(configRoot.get("generation_predicate"));
         }
-        //legacy surface rock specifier support
-        if (configRoot.has("surface_stone_material")) {
-            Material surfaceStoneMaterial = OreConfigUtils.getMaterialByName(configRoot.get("surface_stone_material").getAsString());
-            if (!surfaceStoneMaterial.hasProperty(PropertyKey.ORE)) {
-                throw new IllegalArgumentException("Material " + surfaceStoneMaterial + " doesn't have surface rock variant");
-            }
-            this.veinPopulator = new SurfaceRockPopulator(surfaceStoneMaterial);
-        }
         if (configRoot.has("vein_populator")) {
             JsonObject object = configRoot.get("vein_populator").getAsJsonObject();
             this.veinPopulator = WorldGenRegistry.INSTANCE.createVeinPopulator(object);

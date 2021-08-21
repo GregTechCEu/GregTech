@@ -7,11 +7,20 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
     public final int maxFluidTemperature;
     public final int throughput;
     public final boolean gasProof;
+    public final int tanks;
 
     public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof) {
+        this(maxFluidTemperature, throughput, gasProof, 1);
+    }
+
+    /**
+     * Should only be called from {@link gregtech.common.pipelike.fluidpipe.FluidPipeType#modifyProperties(FluidPipeProperties)}
+     */
+    public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof, int tanks) {
         this.maxFluidTemperature = maxFluidTemperature;
         this.throughput = throughput;
         this.gasProof = gasProof;
+        this.tanks = tanks;
     }
 
     /**
@@ -38,20 +47,21 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
         if (!(o instanceof FluidPipeProperties)) return false;
         FluidPipeProperties that = (FluidPipeProperties) o;
         return maxFluidTemperature == that.maxFluidTemperature &&
-                throughput == that.throughput;
+            throughput == that.throughput && gasProof == that.gasProof && tanks == that.tanks;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(maxFluidTemperature, throughput);
+        return Objects.hash(maxFluidTemperature, throughput, gasProof, tanks);
     }
 
     @Override
     public String toString() {
         return "FluidPipeProperties{" +
-                ", maxFluidTemperature=" + maxFluidTemperature +
+                "maxFluidTemperature=" + maxFluidTemperature +
                 ", throughput=" + throughput +
                 ", gasProof=" + gasProof +
+                ", tanks=" + tanks +
                 '}';
     }
 }

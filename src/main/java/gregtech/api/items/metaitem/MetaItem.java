@@ -22,6 +22,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -57,6 +58,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -71,7 +74,6 @@ import java.util.*;
  * {@code addItem(0, "test_item").addStats(new ElectricStats(10000, 1,  false)) }
  * This will add single-use (not rechargeable) LV battery with initial capacity 10000 EU
  */
-@SuppressWarnings("deprecation")
 public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item implements ItemUIFactory {
 
     private static final List<MetaItem<?>> META_ITEMS = new ArrayList<>();
@@ -486,7 +488,6 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
     @Nonnull
     @Override
-    @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack stack) {
         if (stack.getItemDamage() >= metaItemOffset) {
             T item = getItem(stack);
@@ -501,9 +502,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                     .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
             if (fluidHandlerItem != null) {
                 FluidStack fluidInside = fluidHandlerItem.drain(Integer.MAX_VALUE, false);
-                return I18n.format(unlocalizedName, fluidInside == null ? I18n.format("metaitem.fluid_cell.empty") : fluidInside.getLocalizedName());
+                return LocalizationUtils.format(unlocalizedName, fluidInside == null ?
+                        LocalizationUtils.format("metaitem.fluid_cell.empty") :
+                        fluidInside.getLocalizedName());
             }
-            return I18n.format(unlocalizedName);
+            return LocalizationUtils.format(unlocalizedName);
         }
         return super.getItemStackDisplayName(stack);
     }
@@ -520,10 +523,14 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null) {
-            lines.add(I18n.format("metaitem.generic.electric_item.tooltip",
-                    electricItem.getCharge(),
-                    electricItem.getMaxCharge(),
-                    GTValues.VN[electricItem.getTier()]));
+            if (electricItem.canProvideChargeExternally()) {
+                addDischargeItemTooltip(lines, electricItem.getMaxCharge(), electricItem.getCharge(), electricItem.getTier());
+            } else {
+                lines.add(I18n.format("metaitem.generic.electric_item.tooltip",
+                        electricItem.getCharge(),
+                        electricItem.getMaxCharge(),
+                        GTValues.VN[electricItem.getTier()]));
+            }
         }
 
         IFluidHandlerItem fluidHandler = ItemHandlerHelper.copyStackWithSize(itemStack, 1)
@@ -542,6 +549,33 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         for (IItemBehaviour behaviour : getBehaviours(itemStack)) {
             behaviour.addInformation(itemStack, lines);
         }
+    }
+
+    private static void addDischargeItemTooltip(List<String> tooltip, long maxCharge, long currentCharge, int tier) {
+        if (currentCharge == 0) { // do not display when empty
+            tooltip.add(I18n.format("metaitem.generic.electric_item.tooltip", currentCharge, maxCharge, GTValues.VN[tier]));
+            return;
+        }
+        Instant start = Instant.now();
+        Instant end = Instant.now().plusSeconds((long)((currentCharge * 1.0) / GTValues.V[tier] / 20));
+        Duration duration = Duration.between(start, end);
+        double percentRemaining = currentCharge * 1.0 / maxCharge * 100; // used for color
+
+        long timeRemaining;
+        String unit;
+        if (duration.getSeconds() <= 180) {
+            timeRemaining = duration.getSeconds();
+            unit = "sec";
+        } else if (duration.toMinutes() <= 180) {
+            timeRemaining = duration.toMinutes();
+            unit = "min";
+        } else {
+            timeRemaining = duration.toHours();
+            unit = "hr";
+        }
+        tooltip.add(I18n.format("metaitem.battery.charge_detailed", currentCharge, maxCharge, GTValues.VN[tier],
+                percentRemaining < 30 ? 'c' : percentRemaining < 60 ? 'e' : 'a',
+                timeRemaining, unit));
     }
 
     @Override

@@ -109,9 +109,10 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         FluidPipeType pipeType = blockFluidPipe.getItemPipeType(stack);
         Material material = blockFluidPipe.getItemMaterial(stack);
         if (pipeType != null && material != null) {
-            renderPipeBlock(material, pipeType, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0],
-                    1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
-                            1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
+            int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
+                    1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex());
+            connections |= 1 << 12;
+            renderPipeBlock(material, pipeType, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0], connections);
         }
         renderState.draw();
         GlStateManager.disableBlend();
@@ -172,35 +173,30 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
                 if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
                     int oppositeIndex = renderedSide.getOpposite().getIndex();
-                    if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & ~(1 << oppositeIndex)) == 0) {
+                    if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & 63 & ~(1 << oppositeIndex)) == 0) {
                         renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
                     } else {
                         renderPipeSide(state, pipeSide, renderedSide, cuboid6);
                     }
+                } else {
+                    renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, renderedSide, thickness);
                 }
             }
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.DOWN, thickness);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.UP, thickness);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.WEST, thickness);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.EAST, thickness);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.NORTH, thickness);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, EnumFacing.SOUTH, thickness);
         }
     }
 
     private static void renderPipeCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] pipeConnectSide, EnumFacing side, float thickness) {
-        if ((connections & 1 << side.getIndex()) > 0) {
-            boolean renderFrontSide = (connections & 1 << (6 + side.getIndex())) > 0;
-            Cuboid6 cuboid6 = BlockFluidPipe.getSideBox(side, thickness);
-            for (EnumFacing renderedSide : EnumFacing.VALUES) {
-                if (renderedSide == side) {
-                    if (renderFrontSide) {
-                        renderPipeSide(renderState, pipeConnectSide, renderedSide, cuboid6);
-                    }
-                } else if (renderedSide != side.getOpposite()) {
-                    renderPipeSide(renderState, pipeline, renderedSide, cuboid6);
-                }
+        Cuboid6 cuboid6 = BlockFluidPipe.getSideBox(side, thickness);
+        for (EnumFacing renderedSide : EnumFacing.VALUES) {
+            if (renderedSide.getAxis() != side.getAxis()) {
+                renderPipeSide(renderState, pipeline, renderedSide, cuboid6);
             }
+        }
+        if ((connections & 1 << 12) > 0) {
+            renderPipeSide(renderState, pipeConnectSide, side, cuboid6);
+        } else if ((connections & 1 << (6 + side.getIndex())) > 0) {
+            // if neighbour pipe is smaller, render closed texture
+            renderPipeSide(renderState, pipeline, side, cuboid6);
         }
     }
 

@@ -141,12 +141,15 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_CANNER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_canner.png");
     public static final TextureArea PROGRESS_BAR_CIRCUIT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_circuit.png");
     public static final TextureArea PROGRESS_BAR_CIRCUIT_ASSEMBLER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_circuit_assembler.png");
+    public static final TextureArea PROGRESS_BAR_COKE_OVEN = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_coke_oven.png");
     public static final TextureArea PROGRESS_BAR_COMPRESS = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_compress.png");
     public static final TextureArea PROGRESS_BAR_CRACKING = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_cracking.png");
     public static final TextureArea PROGRESS_BAR_CRYSTALLIZATION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_crystallization.png");
+    public static final TextureArea PROGRESS_BAR_DISTILLATION_TOWER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_distillation_tower.png");
     public static final TextureArea PROGRESS_BAR_EXTRACT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_extract.png");
     public static final TextureArea PROGRESS_BAR_EXTRUDER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_extruder.png");
     public static final TextureArea PROGRESS_BAR_FUSION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fusion.png");
+    public static final TextureArea PROGRESS_BAR_GAS_COLLECTOR = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_gas_collector.png");
     public static final TextureArea PROGRESS_BAR_HAMMER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_hammer.png");
     public static final TextureArea PROGRESS_BAR_HAMMER_BASE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_hammer_base.png");
     public static final TextureArea PROGRESS_BAR_LATHE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_lathe.png");

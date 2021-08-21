@@ -5,8 +5,6 @@ import com.google.common.collect.Multimap;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.items.metaitem.stats.IEnchantabilityHelper;
-import gregtech.api.items.toolitem.ToolMetaItem;
-import gregtech.api.unification.material.Materials;
 import gregtech.common.ConfigHolder;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -57,7 +55,7 @@ public class NanoSaberBehavior extends ToggleEnergyConsumerBehavior implements I
 
     @Override
     public int getItemEnchantability(ItemStack stack) {
-        return ToolMetaItem.getMaterialEnchantability(Materials.Platinum);
+        return 33;
     }
 
     @Override

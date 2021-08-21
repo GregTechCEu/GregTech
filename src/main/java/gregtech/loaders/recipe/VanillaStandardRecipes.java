@@ -16,6 +16,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.api.GTValues.L;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -127,7 +128,7 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.GLASS, 2))
                 .buildAndRegister();
 
-        RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder().duration(100).EUt(30)
+        RecipeMaps.FORMING_PRESS_RECIPES.recipeBuilder().duration(80).EUt(30)
                 .input(dust, Materials.Glass)
                 .notConsumable(SHAPE_MOLD_BLOCK.getStackForm())
                 .outputs(new ItemStack(Blocks.GLASS, 1))
@@ -157,7 +158,7 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.GLASS))
                 .buildAndRegister();
 
-        RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder().duration(200).EUt(16)
+        RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder().duration(120).EUt(16)
                 .input(dust, Materials.Glass)
                 .notConsumable(SHAPE_MOLD_BLOCK.getStackForm())
                 .outputs(new ItemStack(Blocks.GLASS, 1))
@@ -783,6 +784,7 @@ public class VanillaStandardRecipes {
      * Adds anvil recipes
      * Adds Slime to rubber
      * Adds alternative gunpowder recipes
+     * Adds polished stone variant autoclave recipes
      */
     private static void miscRecipes() {
         ASSEMBLER_RECIPES.recipeBuilder()
@@ -952,6 +954,26 @@ public class VanillaStandardRecipes {
                 'R', new UnificationEntry(ring, Iron),
                 'S', new ItemStack(Items.STRING)
         );
+
+        for (FluidStack fluidStack : new FluidStack[]{Water.getFluid(200), DistilledWater.getFluid(36)}) {
+            AUTOCLAVE_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.STONE, 1, 1))
+                    .fluidInputs(fluidStack)
+                    .outputs(new ItemStack(Blocks.STONE, 1, 2))
+                    .duration(100).EUt(8).buildAndRegister();
+
+            AUTOCLAVE_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.STONE, 1, 3))
+                    .fluidInputs(fluidStack)
+                    .outputs(new ItemStack(Blocks.STONE, 1, 4))
+                    .duration(100).EUt(8).buildAndRegister();
+
+            AUTOCLAVE_RECIPES.recipeBuilder()
+                    .inputs(new ItemStack(Blocks.STONE, 1, 5))
+                    .fluidInputs(fluidStack)
+                    .outputs(new ItemStack(Blocks.STONE, 1, 6))
+                    .duration(100).EUt(8).buildAndRegister();
+        }
     }
 
     /**

@@ -34,7 +34,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 
-import static gregtech.api.multiblock.BlockPattern.RelativeDirection.*;
+import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
 
@@ -197,6 +197,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         this.getBaseTexture(null).render(renderState, translation, pipeline);
         Textures.FUSION_REACTOR_OVERLAY.render(renderState, translation, pipeline, this.getFrontFacing(), this.recipeMapWorkable.isActive());
+    }
+
+    public long getHeat() {
+        return heat;
     }
 
     private class FusionRecipeLogic extends MultiblockRecipeLogic {

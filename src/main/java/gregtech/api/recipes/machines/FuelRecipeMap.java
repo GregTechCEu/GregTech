@@ -6,11 +6,9 @@ import crafttweaker.api.minecraft.CraftTweakerMC;
 import gregtech.api.GTValues;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.recipes.FuelRecipe;
-import net.minecraft.client.resources.I18n;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenGetter;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -84,10 +82,9 @@ public class FuelRecipeMap {
         return Collections.unmodifiableList(recipeList);
     }
 
-    @SideOnly(Side.CLIENT)
     @ZenGetter("localizedName")
     public String getLocalizedName() {
-        return I18n.format("recipemap." + unlocalizedName + ".name");
+        return LocalizationUtils.format("recipemap." + unlocalizedName + ".name");
     }
 
     @ZenGetter("unlocalizedName")

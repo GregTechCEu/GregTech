@@ -13,12 +13,17 @@ import net.minecraft.util.math.BlockPos;
 public class SteamSolarBoiler extends SteamBoiler {
 
     public SteamSolarBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure) {
-        super(metaTileEntityId, isHighPressure, Textures.SOLAR_BOILER_OVERLAY, 55);
+        super(metaTileEntityId, isHighPressure, Textures.SOLAR_BOILER_OVERLAY);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
         return new SteamSolarBoiler(metaTileEntityId, isHighPressure);
+    }
+
+    @Override
+    protected int getBaseSteamOutput() {
+        return isHighPressure ? 360 : 120;
     }
 
     protected boolean checkCanSeeSun() {

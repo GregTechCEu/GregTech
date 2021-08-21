@@ -8,13 +8,12 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
+import gregtech.api.util.LocalizationUtils;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -65,10 +64,9 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack itemStack, String unlocalizedName) {
         Material material = getPartMaterial(itemStack);
-        return I18n.format(unlocalizedName, material.getLocalizedName());
+        return LocalizationUtils.format(unlocalizedName, material.getLocalizedName());
     }
 
     @Override

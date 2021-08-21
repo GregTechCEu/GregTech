@@ -4,11 +4,14 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.UniversalDistillationRecipeBuilder;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import java.util.function.DoubleSupplier;
 
 public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationRecipeBuilder> {
 
@@ -32,6 +35,7 @@ public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationR
             else if (slotIndex == 2 || slotIndex == 5 || slotIndex == 8 || slotIndex == 11)
                 tankWidget.setBackgroundTexture(base, GuiTextures.BEAKER_OVERLAY_4);
 
+            tankWidget.setAlwaysShowFull(true);
             builder.widget(tankWidget);
         } else {
             SlotWidget slotWidget = new SlotWidget(itemHandler, slotIndex, x, y, true, !isOutputs);
@@ -40,6 +44,63 @@ public class RecipeMapDistillationTower extends RecipeMap<UniversalDistillationR
             slotWidget.setBackgroundTexture(base, GuiTextures.DUST_OVERLAY);
 
             builder.widget(slotWidget);
+        }
+    }
+
+    @Override
+    //this DOES NOT include machine control widgets or binds player inventory
+    public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
+        ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
+        builder.widget(new ImageWidget(41, 1, 72, 72, GuiTextures.PROGRESS_BAR_DISTILLATION_TOWER));
+        addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
+        addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
+        if (this.specialTexture != null && this.specialTexturePosition != null)
+            addSpecialTexture(builder);
+        return builder;
+    }
+
+    @Override
+    protected void addInventorySlotGroup(ModularUI.Builder builder, IItemHandlerModifiable itemHandler, FluidTankList fluidHandler, boolean isOutputs, int yOffset) {
+        int itemInputsCount = itemHandler.getSlots();
+        int fluidInputsCount = fluidHandler.getTanks();
+        boolean invertFluids = false;
+        if (itemInputsCount == 0) {
+            int tmp = itemInputsCount;
+            itemInputsCount = fluidInputsCount;
+            fluidInputsCount = tmp;
+            invertFluids = true;
+        }
+        int[] inputSlotGrid = determineSlotsGrid(itemInputsCount);
+        int itemSlotsToLeft = inputSlotGrid[0];
+        int itemSlotsToDown = inputSlotGrid[1];
+        int startInputsX = isOutputs ? 104 : 68 - itemSlotsToLeft * 18;
+        int startInputsY = 55 - (int) (itemSlotsToDown / 2.0 * 18) + yOffset;
+        boolean wasGroupOutput = itemHandler.getSlots() + fluidHandler.getTanks() == 12;
+        if (wasGroupOutput && isOutputs) startInputsY -= 9;
+        if (itemHandler.getSlots() == 6 && fluidHandler.getTanks() == 2 && !isOutputs) startInputsY -= 9;
+        if (!isOutputs)
+            addSlot(builder, 40, startInputsY + (itemSlotsToDown - 1) * 18 - 18, 0, itemHandler, fluidHandler, invertFluids, false);
+        else
+            addSlot(builder, 94, startInputsY + (itemSlotsToDown - 1) * 18, 0, itemHandler, fluidHandler, invertFluids, true);
+
+        if (wasGroupOutput) startInputsY += 2;
+
+        if (!isOutputs)
+            return;
+
+        if (!invertFluids) {
+            startInputsY -= 18;
+            startInputsX += 9;
+        }
+
+        if (fluidInputsCount > 0 || invertFluids) {
+
+            int startSpecY = startInputsY + itemSlotsToDown * 18;
+            for (int i = 0; i < fluidInputsCount; i++) {
+                int x = startInputsX + 18 * (i % 3);
+                int y = startSpecY - (i / 3) * 18;
+                addSlot(builder, x, y, i, itemHandler, fluidHandler, true, true);
+            }
         }
     }
 }

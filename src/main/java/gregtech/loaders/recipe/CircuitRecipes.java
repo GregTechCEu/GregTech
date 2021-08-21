@@ -56,7 +56,7 @@ public class CircuitRecipes {
         BLAST_RECIPES.recipeBuilder().duration(18000).EUt(7680)
                 .input(block, Silicon, 32)
                 .input(ingot, Neutronium, 4)
-                .fluidInputs(Radon.getFluid(8000))
+                .fluidInputs(Xenon.getFluid(8000))
                 .output(NEUTRONIUM_BOULE)
                 .blastFurnaceTemp(6484)
                 .buildAndRegister();
@@ -198,7 +198,7 @@ public class CircuitRecipes {
                 .output(VACUUM_TUBE, 6)
                 .buildAndRegister();
 
-        ALLOY_SMELTER_RECIPES.recipeBuilder().duration(240).EUt(8)
+        ALLOY_SMELTER_RECIPES.recipeBuilder().duration(160).EUt(16)
                 .input(dust, Glass)
                 .notConsumable(SHAPE_MOLD_BALL)
                 .output(GLASS_TUBE)
@@ -1360,7 +1360,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_RESISTOR, 32)
                 .input(foil, SiliconeRubber, 64)
                 .input(RANDOM_ACCESS_MEMORY, 32)
-                .input(wireGtDouble, Tier.Superconductor, 16)
+                .input(wireGtDouble, EnrichedNaquadahTriniumEuropiumDuranide, 16)
                 .input(plate, Europium, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 8))

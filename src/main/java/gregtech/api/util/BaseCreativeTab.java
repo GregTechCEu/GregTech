@@ -12,10 +12,6 @@ public class BaseCreativeTab extends CreativeTabs {
     private final boolean hasSearchBar;
     private final Supplier<ItemStack> iconSupplier;
 
-    public BaseCreativeTab(String tabName, Supplier<ItemStack> iconSupplier) {
-        this(tabName, iconSupplier, false);
-    }
-
     public BaseCreativeTab(String TabName, Supplier<ItemStack> iconSupplier, boolean hasSearchBar) {
         super(TabName);
         this.iconSupplier = iconSupplier;
