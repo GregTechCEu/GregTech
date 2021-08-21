@@ -17,20 +17,6 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
 
     private WeakReference<ItemPipeNet> currentPipeNet = new WeakReference<>(null);
 
-    private boolean walked;
-
-    public void markWalked() {
-        this.walked = true;
-    }
-
-    public void resetWalk() {
-        this.walked = false;
-    }
-
-    public boolean isWalked() {
-        return walked;
-    }
-
     @Override
     public Class<ItemPipeType> getPipeTypeClass() {
         return ItemPipeType.class;

@@ -17,6 +17,7 @@ import gregtech.api.gui.widgets.tab.ItemTabInfo;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
+import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
@@ -153,11 +154,8 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
         widgetGroup.addWidget(new CraftingSlotWidget(recipeResolver, 0, 88 - 9, 44 - 9));
 
         //crafting grid
-        for (int i = 0; i < 3; ++i) {
-            for (int j = 0; j < 3; ++j) {
-                widgetGroup.addWidget(new PhantomSlotWidget(craftingGrid, j + i * 3, 8 + j * 18, 17 + i * 18).setBackgroundTexture(GuiTextures.SLOT));
-            }
-        }
+        widgetGroup.addWidget(new CraftingStationInputWidgetGroup(5, 8, craftingGrid, recipeResolver));
+
         Supplier<String> textSupplier = () -> Integer.toString(recipeResolver.getItemsCrafted());
         widgetGroup.addWidget(new SimpleTextWidget(88, 44 + 20, "", textSupplier));
 
@@ -199,7 +197,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
                 .bindPlayerInventory(entityPlayer.inventory, 140);
         builder.label(5, 5, getMetaFullName());
 
-        TabGroup tabGroup = new TabGroup(TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
+        TabGroup<AbstractWidgetGroup> tabGroup = new TabGroup<>(TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
         tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.workbench", new ItemStack(Blocks.CRAFTING_TABLE)), createWorkbenchTab(getRecipeResolver(), craftingGrid, recipeMemory, toolInventory, internalInventory));
         tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.item_list", new ItemStack(Blocks.CHEST)), createItemListTab());
         builder.widget(tabGroup);

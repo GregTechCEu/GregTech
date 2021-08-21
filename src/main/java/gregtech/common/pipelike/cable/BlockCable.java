@@ -3,6 +3,7 @@ package gregtech.common.pipelike.cable;
 import com.google.common.base.Preconditions;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.tool.ICutterItem;
+import gregtech.api.cover.CoverBehavior;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.AttachmentType;
@@ -12,13 +13,14 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
+import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.render.CableRenderer;
 import gregtech.common.tools.DamageValues;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -111,8 +113,19 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+        if (!worldIn.isRemote) {
+            EnergyNet enet = getWorldPipeNet(worldIn).getNetFromPos(pos);
+            if (enet != null) {
+                enet.nodeNeighbourChanged(pos);
+            }
+        }
+    }
+
+    @Override
     public boolean canPipesConnect(IPipeTile<Insulation, WireProperties> selfTile, EnumFacing side, IPipeTile<Insulation, WireProperties> sideTile) {
-        return true;
+        return selfTile instanceof TileEntityCable && sideTile instanceof TileEntityCable;
     }
 
     @Override
@@ -124,19 +137,38 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     public void onEntityCollision(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Entity entityIn) {
         if (worldIn.isRemote) return;
         Insulation insulation = getPipeTileEntity(worldIn, pos).getPipeType();
-        boolean damageOnLossless = ConfigHolder.doLosslessWiresDamage;
-        if (!worldIn.isRemote && insulation.insulationLevel == -1 && entityIn instanceof EntityLivingBase) {
+        if (insulation.insulationLevel == -1 && entityIn instanceof EntityLivingBase) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
-            EnergyNet energyNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (energyNet != null && (damageOnLossless || energyNet.getAllNodes().get(pos).data.lossPerBlock > 0)) {
-                long voltage = energyNet.getLastMaxVoltage();
-                long amperage = energyNet.getLastAmperage();
+            TileEntityCable cable = (TileEntityCable) getPipeTileEntity(worldIn, pos);
+            if (cable != null && cable.getNodeData().lossPerBlock > 0) {
+                long voltage = cable.getCurrentVoltage();
+                long amperage = cable.getCurrentAmperage();
                 if (voltage > 0L && amperage > 0L) {
                     float damageAmount = (GTUtility.getTierByVoltage(voltage) + 1) * amperage * 4;
                     entityLiving.attackEntityFrom(DamageSources.getElectricDamage(), damageAmount);
                 }
             }
         }
+    }
+
+    @Override
+    public int getVisualConnections(IPipeTile<Insulation, WireProperties> selfTile) {
+        int connections = selfTile.getOpenConnections();
+        float selfTHICCness = selfTile.getPipeType().getThickness();
+        for (EnumFacing facing : EnumFacing.values()) {
+            CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
+            if (cover != null) {
+                // adds side to open connections of it isn't already open & has a cover
+                connections |= 1 << facing.getIndex();
+                continue;
+            }
+            // check if neighbour is a smaller cable
+            TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
+            if (neighbourTile instanceof TileEntityCable && ((TileEntityCable) neighbourTile).getPipeType().getThickness() < selfTHICCness) {
+                connections |= 1 << (facing.getIndex() + 6);
+            }
+        }
+        return connections;
     }
 
     @Nonnull

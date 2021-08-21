@@ -10,13 +10,11 @@ import gregtech.api.unification.material.info.MaterialFlags;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.*;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import stanhebben.zenscript.annotations.OperatorType;
 import stanhebben.zenscript.annotations.ZenOperator;
 
@@ -301,10 +299,9 @@ public class Material implements Comparable<Material> {
         return "material." + materialInfo.name;
     }
 
-    @SideOnly(Side.CLIENT)
     //@ZenGetter("localizedName")
     public String getLocalizedName() {
-        return I18n.format(getUnlocalizedName());
+        return LocalizationUtils.format(getUnlocalizedName());
     }
 
     @Override
@@ -667,8 +664,8 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
-        public Builder toolStats(float speed, float damage, int durability) {
-            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability));
+        public Builder toolStats(float speed, float damage, int durability, int enchantability) {
+            properties.setProperty(PropertyKey.TOOL, new ToolProperty(speed, damage, durability, enchantability));
             return this;
         }
 
@@ -743,6 +740,11 @@ public class Material implements Comparable<Material> {
 
         public Builder cableProperties(long voltage, int amperage, int loss) {
             properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss));
+            return this;
+        }
+
+        public Builder cableProperties(long voltage, int amperage, int loss, boolean isSuperCon) {
+            properties.setProperty(PropertyKey.WIRE, new WireProperties((int) voltage, amperage, loss, isSuperCon));
             return this;
         }
 

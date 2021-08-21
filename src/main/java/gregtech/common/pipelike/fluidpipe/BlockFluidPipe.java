@@ -1,7 +1,9 @@
 package gregtech.common.pipelike.fluidpipe;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.cover.CoverBehavior;
 import gregtech.api.damagesources.DamageSources;
+import gregtech.api.pipenet.PipeGatherer;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -10,10 +12,10 @@ import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
-import gregtech.common.pipelike.fluidpipe.tile.FluidPipeFluidHandler;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import gregtech.common.render.FluidPipeRenderer;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -28,7 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -91,66 +92,24 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+        if (!worldIn.isRemote) {
+            FluidPipeNet itemPipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
+            if (itemPipeNet != null) {
+                itemPipeNet.nodeNeighbourChanged(pos);
+            }
+        }
+    }
+
+    @Override
     public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
-        return selfTile.getNodeData().equals(sideTile.getNodeData());
+        return selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe;
     }
 
     @Override
     public boolean canPipeConnectToBlock(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, TileEntity tile) {
         return tile != null && tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()) != null;
-    }
-
-    /*@Override
-    public int getActiveVisualConnections(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile) {
-        return selfTile.getBlockedConnections();
-        int activeNodeConnections = 0;
-        for (EnumFacing side : EnumFacing.VALUES) {
-            BlockPos offsetPos = selfTile.getPipePos().offset(side);
-            TileEntity tileEntity = selfTile.getPipeWorld().getTileEntity(offsetPos);
-            if(tileEntity != null) {
-                EnumFacing opposite = side.getOpposite();
-                IFluidHandler sourceHandler = selfTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
-                IFluidHandler receivedHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, opposite);
-                if (sourceHandler != null && receivedHandler != null) {
-                    activeNodeConnections |= 1 << side.getIndex();
-                }
-            }
-        }
-        return activeNodeConnections;
-    }*/
-
-    /*@Override
-    public int getActiveNodeConnections(IBlockAccess world, BlockPos nodePos, IPipeTile<FluidPipeType, FluidPipeProperties> selfTileEntity) {
-        return getPipeTileEntity(world, nodePos).getBlockedConnections();
-        /*int activeNodeConnections = 0;
-        for (EnumFacing side : EnumFacing.VALUES) {
-            BlockPos offsetPos = nodePos.offset(side);
-            TileEntity tileEntity = world.getTileEntity(offsetPos);
-            if(tileEntity != null) {
-                EnumFacing opposite = side.getOpposite();
-                IFluidHandler sourceHandler = selfTileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
-                IFluidHandler receivedHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, opposite);
-                if (sourceHandler != null && receivedHandler != null && canPushIntoFluidHandler(selfTileEntity, tileEntity, sourceHandler, receivedHandler)) {
-                    activeNodeConnections |= 1 << side.getIndex();
-                }
-            }
-        }
-        return activeNodeConnections;
-    }*/
-
-    public boolean canPushIntoFluidHandler(IPipeTile<FluidPipeType, FluidPipeProperties> selfTileEntity, TileEntity otherTileEntity, IFluidHandler sourceHandler, IFluidHandler destinationHandler) {
-        boolean isSourcePipe = sourceHandler instanceof FluidPipeFluidHandler;
-        boolean isDestPipe = destinationHandler instanceof FluidPipeFluidHandler;
-        if (isSourcePipe && isDestPipe) {
-            float sourceThickness = selfTileEntity.getPipeType().getThickness();
-            IPipeTile<FluidPipeType, FluidPipeProperties> otherPipe = getPipeTileEntity(otherTileEntity);
-            if (otherPipe == null) {
-                return false;
-            }
-            float destThickness = otherPipe.getPipeType().getThickness();
-            return sourceThickness > destThickness;
-        }
-        return true;
     }
 
     @Override
@@ -159,23 +118,22 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         if (entityIn instanceof EntityLivingBase && entityIn.world.getWorldTime() % 20 == 0L) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             FluidPipeNet pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (pipeNet != null) {
-                FluidStack fluidStack = pipeNet.getFluidNetTank().getFluid();
-                if (fluidStack == null) {
-                    return; //pipe network is empty
-                }
-                int fluidTemperature = fluidStack.getFluid().getTemperature(fluidStack);
-                if (fluidTemperature >= 373) {
-                    //100C, temperature of boiling water
-                    float damageAmount = (fluidTemperature - 363) / 4.0f;
-                    entityLiving.attackEntityFrom(DamageSources.getHeatDamage(), damageAmount);
+            if (pipeNet == null) return;
+            TileEntityFluidPipeTickable pipeTile = (TileEntityFluidPipeTickable) PipeGatherer.findFirstMatching(pipeNet, worldIn, pos, pipe -> pipe instanceof TileEntityFluidPipeTickable);
+            if (pipeTile == null || pipeTile.getNodeData().tanks > 1) return;
+            FluidStack fluidStack = pipeTile.getContainedFluid(0);
+            if (fluidStack == null)
+                return; //pipe network is empty
+            int fluidTemperature = fluidStack.getFluid().getTemperature(fluidStack);
+            if (fluidTemperature >= 373) {
+                //100C, temperature of boiling water
+                float damageAmount = (fluidTemperature - 363) / 4.0f;
+                entityLiving.attackEntityFrom(DamageSources.getHeatDamage(), damageAmount);
 
-                } else if (fluidTemperature <= 183) {
-                    //-90C, temperature of freezing of most gaseous elements
-                    float damageAmount = fluidTemperature / 4.0f;
-                    entityLiving.attackEntityFrom(DamageSources.getFrostDamage(), damageAmount);
-
-                }
+            } else if (fluidTemperature <= 183) {
+                //-90C, temperature of freezing of most gaseous elements
+                float damageAmount = fluidTemperature / 4.0f;
+                entityLiving.attackEntityFrom(DamageSources.getFrostDamage(), damageAmount);
             }
         }
     }
@@ -185,21 +143,30 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         return supportsTicking ? new TileEntityFluidPipeTickable() : new TileEntityFluidPipe();
     }
 
-    @Override
-    protected void onActiveModeChange(World world, BlockPos pos, boolean isActiveNow, boolean isInitialChange) {
-        TileEntityFluidPipe oldTileEntity = (TileEntityFluidPipe) world.getTileEntity(pos);
-        if (!(oldTileEntity instanceof TileEntityFluidPipeTickable) && isActiveNow) {
-            TileEntityFluidPipeTickable newTileEntity = new TileEntityFluidPipeTickable();
-            newTileEntity.transferDataFrom(oldTileEntity);
-            newTileEntity.setActive(true);
-            world.setTileEntity(pos, newTileEntity);
-        } else if (oldTileEntity instanceof TileEntityFluidPipeTickable) {
-            ((TileEntityFluidPipeTickable) oldTileEntity).setActive(isActiveNow);
-        }
-    }
-
     @Nonnull
     @SuppressWarnings("deprecation")
+    @Override
+    public int getVisualConnections(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile) {
+        int connections = selfTile.getOpenConnections();
+        float selfTHICCness = selfTile.getPipeType().getThickness();
+        for (EnumFacing facing : EnumFacing.values()) {
+            CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
+            if (cover != null) {
+                // adds side to open connections of it isn't already open & has a cover
+                connections |= 1 << facing.getIndex();
+                continue;
+            }
+            // check if neighbour is a smaller item pipe
+            TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
+            if (neighbourTile instanceof TileEntityFluidPipe &&
+                    ((TileEntityFluidPipe) neighbourTile).isConnectionOpenAny(facing.getOpposite()) &&
+                    ((TileEntityFluidPipe) neighbourTile).getPipeType().getThickness() < selfTHICCness) {
+                connections |= 1 << (facing.getIndex() + 6);
+            }
+        }
+        return connections;
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {

@@ -3,8 +3,6 @@ package gregtech.api.pipenet.block.material;
 import gregtech.api.pipenet.block.ItemBlockPipe;
 import gregtech.api.unification.material.Material;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -17,7 +15,6 @@ public class ItemBlockMaterialPipe<PipeType extends Enum<PipeType> & IMaterialPi
     @Nonnull
     @SuppressWarnings("unchecked")
     @Override
-    @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         PipeType pipeType = blockPipe.getItemPipeType(stack);
         Material material = ((BlockMaterialPipe<PipeType, NodeDataType, ?>) blockPipe).getItemMaterial(stack);

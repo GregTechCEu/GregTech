@@ -53,6 +53,8 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
                 if (ingredient instanceof ItemStack) {
                     int mouseButton = Mouse.getEventButton();
                     boolean shiftDown = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
+                    ClickType clickType = shiftDown ? ClickType.QUICK_MOVE : ClickType.PICKUP;
+                    SlotUtil.slotClickPhantom(slotReference, mouseButton, clickType, (ItemStack)ingredient);
                     writeClientAction(1, buffer -> {
                         buffer.writeItemStack((ItemStack) ingredient);
                         buffer.writeVarInt(mouseButton);

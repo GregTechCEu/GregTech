@@ -59,6 +59,10 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         return filterMode;
     }
 
+    public boolean testFluidStack(FluidStack stack) {
+        return fluidFilter.testFluidStack(stack);
+    }
+
     public boolean canAttach() {
         return this.coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.attachedSide) != null;
     }

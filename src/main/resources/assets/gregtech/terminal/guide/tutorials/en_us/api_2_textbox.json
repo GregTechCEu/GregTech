@@ -1,0 +1,256 @@
+{
+  "section": "Guide Widget Api",
+  "title": "1. TextBox Widget",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "In this page we'll learn how to use the powerful §4§lTextBox§r, which is the most commonly used. So you should read the API documentation carefully.",
+        "-------------------------------",
+        "§lWidget Type§r: §ntextbox§r",
+        "-------------------------------",
+        "§lJSON§r:",
+        "{",
+        "  \"type\": \"textbox\",",
+        "  \"space\": 1,",
+        "  \"fontSize\": 9,",
+        "  \"fontColor\": 4278190080,",
+        "  \"isCenter\": false,",
+        "  \"isShadow\": false,",
+        "  \"content\": [\"content here!\"]",
+        "}",
+        "-------------------------------",
+        "§lContents§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "content",
+      "content": [
+        "    1.§ncontent§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "space",
+      "content": [
+        "    2.§nspace§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fontSize",
+      "content": [
+        "    3.§nfontSize§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fontColor",
+      "content": [
+        "    4.§nfontColor§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "isCenter",
+      "content": [
+        "    5.§nisCenter§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "isShadow",
+      "content": [
+        "    6.§nisShadow§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "content",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §ncontent§r (§4required§r)",
+        "§ltype§r: Array",
+        "§lillustrate§r: Text contents, each item will be a newline.Text that is too long will auto wrap itself. (Supporting Minecraft Formatting Code)"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "stroke": 4294901760,
+      "content": [
+        "§lDemo§r: [...]",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "space",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nspace§r (§6optional§r)",
+        "§ltype§r: Number",
+        "§ldefault§r: 1",
+        "§lillustrate§r: The spacing between lines of text."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "stroke": 4294901760,
+      "space": 5,
+      "content": [
+        "§lDemo§r: 5",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },{
+      "type": "textbox",
+      "ref": "fontSize",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nfontSize§r (§6optional§r)",
+        "§ltype§r: Number",
+        "§ldefault§r: 9",
+        "§lillustrate§r: The font size. (Actually it's the height of the font)"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "stroke": 4294901760,
+      "fontSize": 5,
+      "content": [
+        "§lDemo§r: 5",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },{
+      "type": "textbox",
+      "ref": "fontColor",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nfontColor§r (§6optional§r)",
+        "§ltype§r: Number",
+        "§ldefault§r: 4278190080",
+        "§lillustrate§r: The default color of the content. You can also set the colors with special symbols (provided by Minecraft).But maybe you need it sometimes."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "stroke": 4294901760,
+      "fontColor": 5,
+      "content": [
+        "§lDemo§r: 4294901760 (0xFFFF0000)",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "isCenter",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nisCenter§r (§6optional§r)",
+        "§ltype§r: Boolean",
+        "§ldefault§r: false",
+        "§lillustrate§r: Text-align center."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": false,
+      "stroke": 4294901760,
+      "content": [
+        "§lDemo§r: false",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },{
+      "type": "textbox",
+      "ref": "isShadow",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nisShadow§r (§6optional§r)",
+        "§ltype§r: Boolean",
+        "§ldefault§r: false",
+        "§lillustrate§r: Render shadow."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "stroke": 4294901760,
+      "isShadow": true,
+      "content": [
+        "§lDemo§r: true",
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    }
+  ],
+  "fixed": []
+}

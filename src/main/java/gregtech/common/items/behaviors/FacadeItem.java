@@ -3,9 +3,9 @@ package gregtech.common.items.behaviors;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.items.metaitem.stats.IItemNameProvider;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.common.ConfigHolder;
 import gregtech.common.covers.facade.FacadeHelper;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -24,7 +24,7 @@ public class FacadeItem implements IItemNameProvider, ISubItemHandler {
     public String getItemStackDisplayName(ItemStack itemStack, String unlocalizedName) {
         ItemStack facadeStack = getFacadeStack(itemStack);
         String name = facadeStack.getItem().getItemStackDisplayName(facadeStack);
-        return I18n.format(unlocalizedName, name);
+        return LocalizationUtils.format(unlocalizedName, name);
     }
 
     @Override

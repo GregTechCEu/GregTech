@@ -18,7 +18,7 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 
-import static gregtech.api.multiblock.BlockPattern.RelativeDirection.*;
+import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityAssemblyLine extends RecipeMapMultiblockController {
 

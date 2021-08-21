@@ -1,5 +1,6 @@
 package gregtech.common.tools;
 
+import com.google.common.collect.ImmutableSet;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.RecipeMaps;
 import net.minecraft.block.material.Material;
@@ -16,16 +17,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class ToolHardHammer extends ToolBase {
 
-    private static final Set<String> HAMMER_TOOL_CLASSES = new HashSet<String>() {{
-        add("hammer");
-        add("pickaxe");
-    }};
+    private static final Set<String> HAMMER_TOOL_CLASSES = ImmutableSet.of("hammer", "pickaxe");
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
@@ -78,7 +75,7 @@ public class ToolHardHammer extends ToolBase {
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
         ItemStack itemStack = new ItemStack(block.getBlock(), 1, block.getBlock().getMetaFromState(block));
-        return (tool != null && (tool.equals("hammer") || tool.equals("pickaxe"))) ||
+        return (tool != null && HAMMER_TOOL_CLASSES.contains(tool)) ||
                 block.getMaterial() == Material.ROCK ||
                 block.getMaterial() == Material.GLASS ||
                 block.getMaterial() == Material.ICE ||

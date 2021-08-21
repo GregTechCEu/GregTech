@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.itempipe;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.cover.CoverBehavior;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -66,20 +67,6 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
         }
     }
 
-    /*@Override
-    public int getActiveNodeConnections(IBlockAccess world, BlockPos nodePos, IPipeTile<ItemPipeType, ItemPipeProperties> selfTileEntity) {
-        return getPipeTileEntity(world, nodePos).getBlockedConnections();
-        /*int activeNodeConnections = 0;
-        for (EnumFacing side : EnumFacing.VALUES) {
-            BlockPos offsetPos = nodePos.offset(side);
-            TileEntity tileEntity = world.getTileEntity(offsetPos);
-            if (tileEntity != null && tileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())) {
-                activeNodeConnections |= 1 << side.getIndex();
-            }
-        }
-        return activeNodeConnections;
-    }*/
-
     @Override
     public Class<ItemPipeType> getPipeTypeClass() {
         return ItemPipeType.class;
@@ -135,39 +122,29 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
         return tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) != null;
     }
 
-    /*@Override
-    public int getActiveVisualConnections(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile) {
-        return selfTile.getBlockedConnections();
-        /*int activeNodeConnections = 0;
-        for (EnumFacing side : EnumFacing.VALUES) {
-            BlockPos offsetPos = selfTile.getPipePos().offset(side);
-            TileEntity tileEntity = selfTile.getPipeWorld().getTileEntity(offsetPos);
-            if (tileEntity != null) {
-                EnumFacing opposite = side.getOpposite();
-                IItemHandler sourceHandler = selfTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
-                IItemHandler receivedHandler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, opposite);
-                if (sourceHandler != null && receivedHandler != null) {
-                    activeNodeConnections |= 1 << side.getIndex();
-                }
+    @Nonnull
+    @Override
+    public int getVisualConnections(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile) {
+        int connections = selfTile.getOpenConnections();
+        float selfTHICCness = selfTile.getPipeType().getThickness();
+        for (EnumFacing facing : EnumFacing.values()) {
+            CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
+            if (cover != null) {
+                // adds side to open connections of it isn't already open & has a cover
+                connections |= 1 << facing.getIndex();
+                continue;
+            }
+            // check if neighbour is a smaller item pipe
+            TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
+            if (neighbourTile instanceof TileEntityItemPipe &&
+                    ((TileEntityItemPipe) neighbourTile).isConnectionOpenAny(facing.getOpposite()) &&
+                    ((TileEntityItemPipe) neighbourTile).getPipeType().getThickness() < selfTHICCness) {
+                connections |= 1 << (facing.getIndex() + 6);
             }
         }
-        return activeNodeConnections;
-    }*/
-
-    @Override
-    protected void onActiveModeChange(World world, BlockPos pos, boolean isActiveNow, boolean isInitialChange) {
-        TileEntityItemPipe oldTileEntity = (TileEntityItemPipe) world.getTileEntity(pos);
-        if (!(oldTileEntity instanceof TileEntityItemPipeTickable) && isActiveNow) {
-            TileEntityItemPipeTickable newTileEntity = new TileEntityItemPipeTickable();
-            newTileEntity.transferDataFrom(oldTileEntity);
-            newTileEntity.setActive(true);
-            world.setTileEntity(pos, newTileEntity);
-        } else if (oldTileEntity instanceof TileEntityItemPipeTickable) {
-            ((TileEntityItemPipeTickable) oldTileEntity).setActive(isActiveNow);
-        }
+        return connections;
     }
 
-    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
     public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {

@@ -6,6 +6,7 @@ import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.common.metatileentities.storage.CraftingRecipeResolver;
 import mezz.jei.api.gui.IGuiIngredient;
+import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
@@ -106,11 +107,12 @@ public class CraftingSlotWidget extends SlotWidget implements IRecipeTransferHan
     }
 
     @Override
-    public String transferRecipe(ModularUIContainer container, Map<Integer, IGuiIngredient<ItemStack>> ingredients, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
+    public String transferRecipe(ModularUIContainer container, IRecipeLayout recipeLayout, EntityPlayer player, boolean maxTransfer, boolean doTransfer) {
         if (!doTransfer) {
             return null;
         }
-        ingredients.values().removeIf(it -> !it.isInput());
+        Map<Integer, IGuiIngredient<ItemStack>> ingredients = new HashMap<>(recipeLayout.getItemStacks().getGuiIngredients());
+        ingredients.values().removeIf(it -> it.getAllIngredients().isEmpty() || !it.isInput());
         writeClientAction(1, buf -> {
             buf.writeVarInt(ingredients.size());
             for (Entry<Integer, IGuiIngredient<ItemStack>> entry : ingredients.entrySet()) {

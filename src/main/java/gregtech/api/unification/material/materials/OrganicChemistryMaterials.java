@@ -56,7 +56,7 @@ public class OrganicChemistryMaterials {
         ReinforcedEpoxyResin = new Material.Builder(1006, "reinforced_epoxy_resin")
                 .ingot().fluid()
                 .color(0xA07A10)
-                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING)
+                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, GENERATE_FINE_WIRE, GENERATE_ROD)
                 .components(Carbon, 6, Hydrogen, 4, Oxygen, 1)
                 .build();
 
@@ -99,7 +99,7 @@ public class OrganicChemistryMaterials {
         Polyethylene = new Material.Builder(1012, "plastic") //todo add polyethylene oredicts
                 .ingot(1).fluid()
                 .color(0xC8C8C8)
-                .flags(GENERATE_FOIL, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_FOIL, GENERATE_ROTOR, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
                 .components(Carbon, 1, Hydrogen, 2)
                 .fluidPipeProperties(350, 60, true)
                 .build();
@@ -121,14 +121,14 @@ public class OrganicChemistryMaterials {
         Polycaprolactam = new Material.Builder(1015, "polycaprolactam")
                 .ingot(1).fluid()
                 .color(0x323232)
-                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING)
+                .flags(STD_METAL, DISABLE_DECOMPOSITION, NO_SMASHING, GENERATE_FOIL)
                 .components(Carbon, 6, Hydrogen, 11, Nitrogen, 1, Oxygen, 1)
                 .build();
 
         Polytetrafluoroethylene = new Material.Builder(1016, "polytetrafluoroethylene")
                 .ingot(1).fluid()
                 .color(0x646464)
-                .flags(STD_METAL, GENERATE_FRAME, DISABLE_DECOMPOSITION, NO_SMASHING)
+                .flags(STD_METAL, GENERATE_FRAME, DISABLE_DECOMPOSITION, NO_SMASHING, GENERATE_FOIL)
                 .components(Carbon, 2, Fluorine, 4)
                 .fluidPipeProperties(600, 80, true)
                 .build();
@@ -470,7 +470,7 @@ public class OrganicChemistryMaterials {
         Rubber = new Material.Builder(1068, "rubber")
                 .ingot(0).fluid()
                 .color(0x000000).iconSet(SHINY)
-                .flags(GENERATE_GEAR, GENERATE_RING, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
+                .flags(GENERATE_GEAR, GENERATE_RING, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION, GENERATE_FOIL, GENERATE_BOLT_SCREW)
                 .components(Carbon, 5, Hydrogen, 8)
                 .build();
     }

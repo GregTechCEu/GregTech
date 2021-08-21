@@ -42,7 +42,7 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     boolean isConnectionOpen(AttachmentType type, EnumFacing side);
 
-    default boolean isConnectionOpenVisual(EnumFacing side) {
+    default boolean isConnectionOpenAny(EnumFacing side) {
         return (getOpenConnections() & 1 << side.getIndex()) > 0;
     }
 
@@ -73,4 +73,10 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     boolean isValidTile();
 
     void scheduleChunkForRenderUpdate();
+
+    void markWalked();
+
+    boolean isWalked();
+
+    void resetWalk();
 }

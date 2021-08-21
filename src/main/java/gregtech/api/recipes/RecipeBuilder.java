@@ -305,6 +305,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return chancedOutput(item, 1, chance, tierChanceBoost);
     }
 
+    public R chancedOutputs(List<ChanceEntry> chancedOutputs) {
+        chancedOutputs.stream().map(ChanceEntry::copy).forEach(this.chancedOutputs::add);
+        return (R) this;
+    }
+
     public R duration(int duration) {
         this.duration = duration;
         return (R) this;

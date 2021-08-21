@@ -10,14 +10,6 @@ public class ConfigHolder {
     @Config.Name("Unofficial Options")
     public static UnofficialOptions U = new UnofficialOptions();
 
-    @Config.Comment("Whether to enable that Steam Multiblocks use Steel instead of Bronze. Default: false")
-    @Config.RequiresMcRestart
-    public static boolean steelSteamMultiblocks = false;
-
-    @Config.Comment("Steam to EU multiplier for Steam Multiblocks. 1.0 means 1 Steam -> 1 EU. 0.5 means 2 Steam -> 1 EU")
-    @Config.RequiresMcRestart
-    public static double multiblockSteamtoEU = 0.5;
-
     @Config.Comment("Whether to enable more verbose logging. Default: false")
     public static boolean debug = false;
 
@@ -113,16 +105,6 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static int gasTurbineBonusOutput = 6144;
 
-    @Config.Comment("If true, powered zero loss wires will damage the player. Default: false")
-    public static boolean doLosslessWiresDamage = false;
-
-    @Config.Comment("If true, lossless cables will have lossy wires. Default: false")
-    @Config.RequiresMcRestart
-    public static boolean doLosslessWiresMakeLossyCables = false;
-
-    @Config.Comment("Array of blacklisted dimension IDs in which Air Collector does not work. Default: none")
-    public static int[] airCollectorDimensionBlacklist = new int[]{};
-
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to make glass related recipes harder. Default: true")
@@ -157,6 +139,9 @@ public class ConfigHolder {
 
         @Config.Comment("Whether to make vanilla tools and armor recipes harder. Excludes flint and steel, and buckets. Default: false")
         public boolean hardToolArmorRecipes = false;
+
+        @Config.Comment("Whether to disable the vanilla Concrete from Powder with Water behavior, forcing the GT recipe. Default: false")
+        public boolean disableConcreteInWorld = false;
     }
 
     public static class NanoSaberConfiguration {
@@ -182,11 +167,6 @@ public class ConfigHolder {
 
     public static class UnofficialOptions {
 
-        @Config.Comment("Config category for enabling higher-tier machines.")
-        @Config.Name("Higher Tier Machines")
-        @Config.RequiresMcRestart
-        public HighTierMachines machines = new HighTierMachines();
-
         @Config.Comment("Config category for GT5u inspired features.")
         @Config.Name("GregTech 5 Unofficial Options")
         public GT5U GT5u = new GT5U();
@@ -195,13 +175,13 @@ public class ConfigHolder {
         @Config.Name("GregTech 6 Options")
         public GT6 GT6 = new GT6();
 
-        @Config.Comment("Should Drums be enabled? Default: true")
-        @Config.RequiresMcRestart
-        public boolean registerDrums = true;
+        @Config.Comment("Config category for energy compatibility features")
+        @Config.Name("Energy Compatibility Options")
+        public EnergyCompatibility energyOptions = new EnergyCompatibility();
 
-        @Config.Comment("Should Crates be enabled? Default: true")
+        @Config.Comment("Allow GregTech to add additional loot. Default: true")
         @Config.RequiresMcRestart
-        public boolean registerCrates = true;
+        public static boolean addLoot = true;
 
         @Config.Comment("Should recipes for EV and IV Drills be enabled, which may cause large amounts of lag when used on some low-end devices? Default: true")
         @Config.RequiresMcRestart
@@ -211,28 +191,26 @@ public class ConfigHolder {
         @Config.RequiresMcRestart
         public boolean registerRecipesForMiningHammers = true;
 
-        @Config.Comment("Divisor for Recipe Duration per Overclock. This will be removed eventually, once a value is chosen. Default: 2.0")
+        @Config.Comment("Divisor for Recipe Duration per Overclock. Default: 2.0")
         @Config.RangeDouble(min = 2.0, max = 3.0)
         public double overclockDivisor = 2.0;
 
+        @Config.Comment("Whether to enable that Steam Multiblocks use Steel instead of Bronze. Default: false")
+        @Config.RequiresMcRestart
+        public boolean steelSteamMultiblocks = false;
+
+        @Config.Comment("Steam to EU multiplier for Steam Multiblocks. 1.0 means 1 Steam -> 1 EU. 0.5 means 2 Steam -> 1 EU. Default: 0.5")
+        @Config.RequiresWorldRestart
+        public double multiblockSteamToEU = 0.5;
+
         public static class GT5U {
 
-            @Config.Comment("Enable an extra ZPM and UV Battery (this also makes the Ultimate Battery harder to make). Default: false")
-            @Config.RequiresMcRestart
-            public boolean enableZPMandUVBats = false;
-
-            @Config.Comment("Replace the Ultimate Battery with a MAX Battery. Default: false")
-            @Config.RequiresMcRestart
-            public boolean replaceUVwithMAXBat = false;
-
-            @Config.Comment("This config requires 'B:Use custom machine tank sizes' = true to take effect. Changes the input tank size to the first value, and out tank size to the second value for nearly every single block machine. Units are millibuckets.")
-            @Config.Name("Custom machine fluid tank sizes")
+            @Config.Comment("This config requires 'B:Use custom machine tank sizes' = true to take effect. Changes the input tank size to the first value, and out tank size to the second value for nearly every single block machine. Units are millibuckets. Default: {64000, 64000}")
             @Config.RangeInt(min = 1)
             @Config.RequiresMcRestart
             public int[] customMachineTankSizes = new int[]{64000, 64000};
 
-            @Config.Comment("This config enables the customization of nearly every single block machine's input and output fluid tank sizes.")
-            @Config.Name("Use custom machine tank sizes")
+            @Config.Comment("This config enables the customization of nearly every single block machine's input and output fluid tank sizes. Default: false")
             @Config.RequiresMcRestart
             public boolean useCustomMachineTankSizes = false;
 
@@ -240,33 +218,32 @@ public class ConfigHolder {
             public boolean requireWrenchForMachines = false;
 
             @Config.Comment("Change the recipe of rods to result in 1 stick and 2 small piles of dusts. Default: false")
+            @Config.RequiresMcRestart
             public boolean harderRods = false;
 
             @Config.Comment("Whether or not to use polymers instead of rare metals for Carbon Fibers. REMOVES THE CHANCED OUTPUT! Default: false")
+            @Config.RequiresMcRestart
             public boolean polymerCarbonFiber = false;
 
             @Config.Comment("The default color to overlay onto machines. \n16777215 (0xFFFFFF in decimal) is no coloring (default), and 13819135 (0xD2DCFF in decimal) is the classic blue from GT5. THIS IS SERVER SIDE!!!")
-            @Config.Name("Default Machine Color")
             @Config.RequiresMcRestart
             public int defaultPaintingColor = 0xFFFFFF;
 
             @Config.Comment("The default color to overlay onto cable insulation. \n7829367 (0x777777 in decimal) is no coloring (default), and 4210752 (0x404040 in decimal) is the classic black from GT5. THIS IS SERVER SIDE!!!")
-            @Config.Name("Default Cable Color")
             @Config.RequiresMcRestart
             public int defaultInsulationColor = 0x777777;
 
             @Config.Comment("Enable temperature based bonuses for the Electric Blast Furnace. Default: true")
-            @Config.Name("Use electric blast furnace temperature bonuses")
             @Config.RequiresMcRestart
             public boolean ebfTemperatureBonuses = true;
 
             @Config.Comment("Enable more challenging recipes for Electric Blast Furnace Coils. Default: true")
-            @Config.Name("Enable harder heating coil recipes")
+            @Config.RequiresMcRestart
             public boolean harderHeatingCoils = true;
 
             @Config.Comment("Enable more challenging recipes for Energy Input and Output hatches. Default: false")
-            @Config.Name("Enable harder energy hatch recipes")
-            public boolean harderEnergyHatches = true;
+            @Config.RequiresMcRestart
+            public boolean harderEnergyHatches = false;
         }
 
         public static class GT6 {
@@ -280,99 +257,14 @@ public class ConfigHolder {
             public boolean plateWrenches = false;
         }
 
-        public static class HighTierMachines {
+        public static class EnergyCompatibility {
 
-            @Config.Comment("Enable all LuV-UV Machines, overrides individual values if true. Default: false")
-            @Config.Name("LuV-UV Machines")
-            public boolean midTierMachines = false;
+            @Config.Comment("Enable Native GTEU to Forge Energy (RF and alike) on GT Cables and Wires. Default: true")
+            public boolean nativeEUToFE = true;
 
-            @Config.Comment("Enable all UHV-UXV Machines, overrides individual values if true. THESE WILL HAVE NO RECIPES BY DEFAULT WITHOUT GREGICALITY! Default: false")
-            @Config.Name("UHV-UXV Machines")
-            public boolean highTierMachines = false;
-
-            @Config.Comment("Should higher tier Pumps be registered (IV-UV)? Separate from other configs. Default: false")
-            public boolean highTierPumps = false;
-
-            @Config.Comment("Should higher tier Air Collectors be registered (IV, LuV)? Separate from other configs. Default: false")
-            public boolean highTierAirCollectors = false;
-
-            @Config.Comment("Set these to true to enable LuV-UV tiers of machines. Default (all): false")
-            public boolean midTierAlloySmelter = false;
-            public boolean midTierArcFurnaces = false;
-            public boolean midTierAssemblers = false;
-            public boolean midTierAutoclaves = false;
-            public boolean midTierBenders = false;
-            public boolean midTierBreweries = false;
-            public boolean midTierCanners = false;
-            public boolean midTierCentrifuges = false;
-            public boolean midTierChemicalBaths = false;
-            public boolean midTierChemicalReactors = false;
-            public boolean midTierCompressors = false;
-            public boolean midTierCutters = false;
-            public boolean midTierDistilleries = false;
-            public boolean midTierElectricFurnace = false;
-            public boolean midTierElectrolyzers = false;
-            public boolean midTierElectromagneticSeparators = false;
-            public boolean midTierExtractors = false;
-            public boolean midTierExtruders = false;
-            public boolean midTierFermenters = false;
-            public boolean midTierFluidHeaters = false;
-            public boolean midTierFluidSolidifiers = false;
-            public boolean midTierForgeHammers = false;
-            public boolean midTierFormingPresses = false;
-            public boolean midTierLathes = false;
-            public boolean midTierMixers = false;
-            public boolean midTierOreWashers = false;
-            public boolean midTierPackers = false;
-            public boolean midTierPolarizers = false;
-            public boolean midTierLaserEngravers = false;
-            public boolean midTierSifters = false;
-            public boolean midTierThermalCentrifuges = false;
-            public boolean midTierMacerators = false;
-            public boolean midTierUnpackers = false;
-            public boolean midTierWiremills = false;
-            public boolean midTierMassFabricators = false;
-            public boolean midTierReplicators = false;
-            public boolean midTierScanners = false;
-
-            @Config.Comment("Set these to true to enable UHV-UXV tiers of machines. THESE WILL HAVE NO RECIPES BY DEFAULT WITHOUT GREGICALITY! Default (all): false")
-            public boolean highTierAlloySmelter = false;
-            public boolean highTierArcFurnaces = false;
-            public boolean highTierAssemblers = false;
-            public boolean highTierAutoclaves = false;
-            public boolean highTierBenders = false;
-            public boolean highTierBreweries = false;
-            public boolean highTierCanners = false;
-            public boolean highTierCentrifuges = false;
-            public boolean highTierChemicalBaths = false;
-            public boolean highTierChemicalReactors = false;
-            public boolean highTierCompressors = false;
-            public boolean highTierCutters = false;
-            public boolean highTierDistilleries = false;
-            public boolean highTierElectricFurnace = false;
-            public boolean highTierElectrolyzers = false;
-            public boolean highTierElectromagneticSeparators = false;
-            public boolean highTierExtractors = false;
-            public boolean highTierExtruders = false;
-            public boolean highTierFermenters = false;
-            public boolean highTierFluidHeaters = false;
-            public boolean highTierFluidSolidifiers = false;
-            public boolean highTierForgeHammers = false;
-            public boolean highTierFormingPresses = false;
-            public boolean highTierLathes = false;
-            public boolean highTierMixers = false;
-            public boolean highTierOreWashers = false;
-            public boolean highTierPackers = false;
-            public boolean highTierPolarizers = false;
-            public boolean highTierLaserEngravers = false;
-            public boolean highTierSifters = false;
-            public boolean highTierThermalCentrifuges = false;
-            public boolean highTierMacerators = false;
-            public boolean highTierUnpackers = false;
-            public boolean highTierWiremills = false;
-            public boolean highTierMassFabricators = false;
-            public boolean highTierReplicators = false;
-            public boolean highTierScanners = false;
+            @Config.Comment("GTEU to Forge Energy (RF and alike) ratio. Default: 4 FE to 1 EU")
+            @Config.RangeDouble() // to ensure positive number
+            public double rfRatio = 4;
         }
     }
 }

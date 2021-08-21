@@ -8,10 +8,9 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.IMaterialProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.function.TriConsumer;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nullable;
@@ -100,8 +99,6 @@ public class OrePrefix {
     public static final OrePrefix plateDouble = new OrePrefix("plateDouble", M * 2, null, MaterialIconType.plateDouble, ENABLE_UNIFICATION, hasIngotProperty.and(mat -> mat.hasFlag(GENERATE_PLATE) && !mat.hasFlag(NO_SMASHING)));
     // Regular Plate made of one Ingot/Dust. Introduced by Calclavia
     public static final OrePrefix plate = new OrePrefix("plate", M, null, MaterialIconType.plate, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_PLATE));
-    // Compressed Material, worth 1 Unit. Introduced by Galacticraft
-    public static final OrePrefix compressed = new OrePrefix("compressed", M * 2, null, null, ENABLE_UNIFICATION, null);
 
     // Round made of 1 Nugget
     public static final OrePrefix round = new OrePrefix("round", M / 9, null, MaterialIconType.round, OrePrefix.Flags.ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_ROUND));
@@ -166,7 +163,6 @@ public class OrePrefix {
     // made of 5 Ingots.
     public static final OrePrefix turbineBlade = new OrePrefix("turbineBlade", M * 10, null, MaterialIconType.turbineBlade, ENABLE_UNIFICATION, hasToolProperty.and(m -> m.hasFlags(GENERATE_BOLT_SCREW, GENERATE_PLATE)));
 
-    public static final OrePrefix glass = new OrePrefix("glass", -1, Materials.Glass, null, SELF_REFERENCING, null);
     public static final OrePrefix paneGlass = new OrePrefix("paneGlass", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null);
     public static final OrePrefix blockGlass = new OrePrefix("blockGlass", -1, MarkerMaterials.Color.Colorless, null, SELF_REFERENCING, null);
 
@@ -182,7 +178,6 @@ public class OrePrefix {
     public static final OrePrefix stone = new OrePrefix("stone", -1, Materials.Stone, null, SELF_REFERENCING, null);
     public static final OrePrefix cobblestone = new OrePrefix("cobblestone", -1, Materials.Stone, null, SELF_REFERENCING, null);
     // Prefix to determine which kind of Rock this is.
-    public static final OrePrefix rock = new OrePrefix("rock", -1, Materials.Stone, null, SELF_REFERENCING, null);
     // Cobblestone Prefix for all Cobblestones.
     public static final OrePrefix stoneCobble = new OrePrefix("stoneCobble", -1, Materials.Stone, null, SELF_REFERENCING, null);
 
@@ -193,6 +188,8 @@ public class OrePrefix {
     public static final OrePrefix pipeNormalFluid = new OrePrefix("pipeNormalFluid", M * 3, null, MaterialIconType.pipeMedium, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeLargeFluid = new OrePrefix("pipeLargeFluid", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeHugeFluid = new OrePrefix("pipeHugeFluid", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeQuadrupleFluid = new OrePrefix("pipeQuadrupleFluid", M * 12, null, MaterialIconType.pipeQuadruple, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeNonupleFluid = new OrePrefix("pipeNonupleFluid", M * 12, null, MaterialIconType.pipeQuadruple, ENABLE_UNIFICATION, null);
 
     public static final OrePrefix pipeTinyItem = new OrePrefix("pipeTinyItem", M / 2, null, MaterialIconType.pipeTiny, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeSmallItem = new OrePrefix("pipeSmallItem", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null);
@@ -226,22 +223,13 @@ public class OrePrefix {
      *
      * @see MarkerMaterials.Tier
      */
-    public static final OrePrefix batterySingleUse = new OrePrefix("batterySingleUse", -1, null, null, 0, null);
     // Introduced by Calclavia
     public static final OrePrefix battery = new OrePrefix("battery", -1, null, null, 0, null);
     // Introduced by Calclavia
     public static final OrePrefix circuit = new OrePrefix("circuit", -1, null, null, ENABLE_UNIFICATION, null);
-    // Introduced by Buildcraft
-    public static final OrePrefix chipset = new OrePrefix("chipset", -1, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix component = new OrePrefix("component", -1, null, null, ENABLE_UNIFICATION, null);
 
     // Used for Gregification Addon TODO Don't do these here post De-Enum
-
-    // Ex Nihilo Compat
-    public static final OrePrefix oreChunk = new OrePrefix("oreChunk", -1, null, MaterialIconType.oreChunk, ENABLE_UNIFICATION, null);
-    public static final OrePrefix oreEnderChunk = new OrePrefix("oreEnderChunk", -1, null, MaterialIconType.oreEnderChunk, ENABLE_UNIFICATION, null);
-    public static final OrePrefix oreNetherChunk = new OrePrefix("oreNetherChunk", -1, null, MaterialIconType.oreNetherChunk, ENABLE_UNIFICATION, null);
-    public static final OrePrefix oreSandyChunk = new OrePrefix("oreSandyChunk", -1, null, MaterialIconType.oreSandyChunk, ENABLE_UNIFICATION, null);
 
     // Myst Ag Compat
     public static final OrePrefix seed = new OrePrefix("seed", -1, null, MaterialIconType.seed, ENABLE_UNIFICATION, null);
@@ -292,10 +280,8 @@ public class OrePrefix {
 
         craftingLens.setMarkerPrefix(true);
         dye.setMarkerPrefix(true);
-        batterySingleUse.setMarkerPrefix(true);
         battery.setMarkerPrefix(true);
         circuit.setMarkerPrefix(true);
-        chipset.setMarkerPrefix(true);
 
         gem.setIgnored(Materials.Diamond);
         gem.setIgnored(Materials.Emerald);
@@ -380,6 +366,8 @@ public class OrePrefix {
 
         pipeTinyFluid.setIgnored(Materials.Wood);
         pipeHugeFluid.setIgnored(Materials.Wood);
+        pipeQuadrupleFluid.setIgnored(Materials.Wood);
+        pipeNonupleFluid.setIgnored(Materials.Wood);
         plate.setIgnored(Materials.BorosilicateGlass);
         foil.setIgnored(Materials.BorosilicateGlass);
     }
@@ -423,7 +411,9 @@ public class OrePrefix {
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
     public float heatDamage = 0.0F; // Negative for Frost Damage
 
-    OrePrefix(String name, long materialAmount, @Nullable Material material, @Nullable MaterialIconType materialIconType, long flags, @Nullable Predicate<Material> condition) {
+    private String alternativeOreName = null;
+
+    public OrePrefix(String name, long materialAmount, @Nullable Material material, @Nullable MaterialIconType materialIconType, long flags, @Nullable Predicate<Material> condition) {
         Preconditions.checkArgument(!PREFIXES.containsKey(name), "OrePrefix " + name + " already registered!");
         this.name = name;
         this.id = idCounter.getAndIncrement();
@@ -544,13 +534,21 @@ public class OrePrefix {
         currentProcessingPrefix.set(null);
     }
 
-    @SideOnly(Side.CLIENT) // todo clean this up
+    public void setAlternativeOreName(String name) {
+        this.alternativeOreName = name;
+    }
+
+    public String getAlternativeOreName() {
+        return alternativeOreName;
+    }
+
+    // todo clean this up
     public String getLocalNameForItem(Material material) {
         String specifiedUnlocalized = "item." + material.toString() + "." + this.name;
-        if (I18n.hasKey(specifiedUnlocalized)) return I18n.format(specifiedUnlocalized);
+        if (LocalizationUtils.hasKey(specifiedUnlocalized)) return I18n.format(specifiedUnlocalized);
         String unlocalized = "item.material.oreprefix." + this.name;
         String matLocalized = material.getLocalizedName();
-        String formatted = I18n.format(unlocalized, matLocalized);
+        String formatted = LocalizationUtils.format(unlocalized, matLocalized);
         return formatted.equals(unlocalized) ? matLocalized : formatted;
     }
 

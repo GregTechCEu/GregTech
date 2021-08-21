@@ -41,7 +41,7 @@ public class ToolCrowbar extends ToolBase {
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
-        return (tool != null && tool.equals("crowbar")) ||
+        return (tool != null && CROWBAR_TOOL_CLASSES.contains(tool)) ||
                 block.getMaterial() == Material.CIRCUITS;
     }
 

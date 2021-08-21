@@ -1,7 +1,6 @@
 package gregtech.api.util;
 
 import gregtech.api.unification.material.Materials;
-import gregtech.api.unification.stack.MaterialStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -78,7 +77,6 @@ public class FluidTooltipUtil {
      * @return "H₂O"
      */
     public static String getWaterTooltip() {
-        // Done like this to not return parenthesis around the tooltip
-        return (new MaterialStack(Materials.Hydrogen, 2)).toString() + "O";
+        return Materials.Water.getChemicalFormula();
     }
 }

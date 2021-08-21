@@ -31,7 +31,6 @@ public class CraftingRecipeResolver {
     private final InventoryCrafting inventoryCrafting = new InventoryCrafting(new DummyContainer(), 3, 3);
     private IRecipe cachedRecipe = null;
     private final IInventory craftingResultInventory = new InventoryCraftResult();
-    private long timer = 0L;
     private CachedRecipeData cachedRecipeData = null;
     private int itemsCrafted = 0;
     private final CraftingRecipeMemory recipeMemory;
@@ -151,16 +150,13 @@ public class CraftingRecipeResolver {
     }
 
     public void update() {
-        //update item sources every second, it is enough
+        //update item sources every tick for fast tinting updates
         //if they are being modified, they will update themselves anyway
-        if (timer % 20 == 0L) {
-            this.itemSourceList.update();
-        }
+        this.itemSourceList.update();
         //update crafting inventory state
         if (updateInventoryCrafting()) {
             updateCurrentRecipe();
         }
-        this.timer++;
     }
 
     public void checkNeighbourInventories(BlockPos blockPos) {
@@ -168,5 +164,9 @@ public class CraftingRecipeResolver {
             TileItemSource itemSource = new TileItemSource(world, blockPos, side);
             this.itemSourceList.addItemHandler(itemSource);
         }
+    }
+
+    public CachedRecipeData getCachedRecipeData() {
+        return this.cachedRecipeData;
     }
 }

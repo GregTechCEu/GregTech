@@ -99,9 +99,10 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         Insulation insulation = blockCable.getItemPipeType(stack);
         Material material = blockCable.getItemMaterial(stack);
         if (insulation != null && material != null) {
-            renderCableBlock(material, insulation, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0],
-                    1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
-                            1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
+            int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
+                    1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex());
+            connections |= 1 << 12;
+            renderCableBlock(material, insulation, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0], connections);
         }
         renderState.draw();
         GlStateManager.disableBlend();
@@ -152,38 +153,31 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
         for (EnumFacing renderedSide : EnumFacing.VALUES) {
             if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
                 int oppositeIndex = renderedSide.getOpposite().getIndex();
-                if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & ~(1 << oppositeIndex)) == 0) {
+                if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & 63 & ~(1 << oppositeIndex)) == 0) {
                     //if there is something on opposite side, render overlay + wire
                     renderCableSide(state, wire, renderedSide, cuboid6);
                     renderCableSide(state, overlays, renderedSide, cuboid6);
                 } else {
                     renderCableSide(state, insulation, renderedSide, cuboid6);
                 }
+            } else {
+                renderCableCube(connectMask, state, insulation, wire, overlays, renderedSide, thickness);
             }
         }
-
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.DOWN, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.UP, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.WEST, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.EAST, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.NORTH, thickness);
-        renderCableCube(connectMask, state, insulation, wire, overlays, EnumFacing.SOUTH, thickness);
     }
 
     private static void renderCableCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] wire, IVertexOperation[] overlays, EnumFacing side, float thickness) {
-        if ((connections & 1 << side.getIndex()) > 0) {
-            boolean renderFrontSide = (connections & 1 << (6 + side.getIndex())) > 0;
-            Cuboid6 cuboid6 = BlockCable.getSideBox(side, thickness);
-            for (EnumFacing renderedSide : EnumFacing.VALUES) {
-                if (renderedSide == side) {
-                    if (renderFrontSide) {
-                        renderCableSide(renderState, wire, renderedSide, cuboid6);
-                        renderCableSide(renderState, overlays, renderedSide, cuboid6);
-                    }
-                } else if (renderedSide != side.getOpposite()) {
-                    renderCableSide(renderState, pipeline, renderedSide, cuboid6);
-                }
+        Cuboid6 cuboid6 = BlockCable.getSideBox(side, thickness);
+        for (EnumFacing renderedSide : EnumFacing.VALUES) {
+            if (renderedSide.getAxis() != side.getAxis()) {
+                renderCableSide(renderState, pipeline, renderedSide, cuboid6);
             }
+        }
+        if ((connections & 1 << 12) > 0) {
+            renderCableSide(renderState, wire, side, cuboid6);
+            renderCableSide(renderState, overlays, side, cuboid6);
+        } else if ((connections & 1 << (6 + side.getIndex())) > 0) {
+            renderCableSide(renderState, pipeline, side, cuboid6);
         }
     }
 

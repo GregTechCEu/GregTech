@@ -64,6 +64,7 @@ public class CoverBehaviors {
         registerBehavior(51, new ResourceLocation(GTValues.MODID, "fluid_detector"), MetaItems.COVER_FLUID_DETECTOR, CoverDetectorFluid::new);
         registerBehavior(52, new ResourceLocation(GTValues.MODID, "item_detector"), MetaItems.COVER_ITEM_DETECTOR, CoverDetectorItem::new);
         registerBehavior(53, new ResourceLocation(GTValues.MODID, "crafting_table"), MetaItems.COVER_CRAFTING, CoverCraftingTable::new);
+        registerBehavior(54, new ResourceLocation(GTValues.MODID, "infinite_water"), MetaItems.COVER_INFINITE_WATER, CoverInfiniteWater::new);
 
         for (int i = 0; i < COVERS_PER_ITEM; i++) {
             int throughput = (int) (Math.pow(4, i) * 1280);

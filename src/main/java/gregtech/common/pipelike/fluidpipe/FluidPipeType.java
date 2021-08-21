@@ -12,20 +12,29 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
     SMALL_OPAQUE("small", 0.375f, 2, OrePrefix.pipeSmallFluid, true),
     NORMAL_OPAQUE("normal", 0.5f, 6, OrePrefix.pipeNormalFluid, true),
     LARGE_OPAQUE("large", 0.75f, 12, OrePrefix.pipeLargeFluid, true),
-    HUGE_OPAQUE("huge", 0.875f, 24, OrePrefix.pipeHugeFluid, true);
+    HUGE_OPAQUE("huge", 0.875f, 24, OrePrefix.pipeHugeFluid, true),
+
+    QUADRUPLE("quadruple", 0.95f, 6, OrePrefix.pipeQuadrupleFluid, true, 4),
+    NONUPLE("nonuple", 0.95f, 2, OrePrefix.pipeNonupleFluid, true, 9);
 
     public final String name;
     public final float thickness;
     public final int capacityMultiplier;
     public final OrePrefix orePrefix;
     public final boolean opaque;
+    public final int channels;
 
     FluidPipeType(String name, float thickness, int capacityMultiplier, OrePrefix orePrefix, boolean opaque) {
+        this(name, thickness, capacityMultiplier, orePrefix, opaque, 1);
+    }
+
+    FluidPipeType(String name, float thickness, int capacityMultiplier, OrePrefix orePrefix, boolean opaque, int channels) {
         this.name = name;
         this.thickness = thickness;
         this.capacityMultiplier = capacityMultiplier;
         this.orePrefix = orePrefix;
         this.opaque = opaque;
+        this.channels = channels;
     }
 
     @Nonnull
@@ -49,7 +58,8 @@ public enum FluidPipeType implements IMaterialPipeType<FluidPipeProperties> {
         return new FluidPipeProperties(
                 baseProperties.maxFluidTemperature,
                 baseProperties.throughput * capacityMultiplier,
-                baseProperties.gasProof);
+                baseProperties.gasProof,
+                channels);
     }
 
     @Override

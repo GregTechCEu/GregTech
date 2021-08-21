@@ -1,5 +1,6 @@
 package gregtech.common.tools;
 
+import com.google.common.collect.ImmutableSet;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -18,16 +19,12 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class ToolSaw extends ToolBase {
 
-    private static final Set<String> SAW_TOOL_CLASSES = new HashSet<String>() {{
-        add("axe");
-        add("saw");
-    }};
+    private static final Set<String> SAW_TOOL_CLASSES = ImmutableSet.of("axe", "saw");
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
@@ -52,7 +49,7 @@ public class ToolSaw extends ToolBase {
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
-        return (tool != null && (tool.equals("axe") || tool.equals("saw"))) ||
+        return (tool != null && SAW_TOOL_CLASSES.contains(tool)) ||
                 block.getMaterial() == Material.LEAVES ||
                 block.getMaterial() == Material.VINE ||
                 block.getMaterial() == Material.WOOD ||

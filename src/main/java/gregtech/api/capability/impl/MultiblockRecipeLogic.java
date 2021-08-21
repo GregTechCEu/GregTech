@@ -29,7 +29,13 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
      * Used to reset cached values in the Recipe Logic on structure deform
      */
     public void invalidate() {
-
+        previousRecipe = null;
+        progressTime = 0;
+        maxProgressTime = 0;
+        recipeEUt = 0;
+        fluidOutputs = null;
+        itemOutputs = null;
+        setActive(false); // this marks dirty for us
     }
 
     public IEnergyContainer getEnergyContainer() {

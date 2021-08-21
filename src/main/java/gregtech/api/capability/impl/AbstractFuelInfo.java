@@ -12,10 +12,6 @@ public abstract class AbstractFuelInfo implements IFuelInfo {
     private int fuelMinConsumed;
     private long fuelBurnTime;
 
-    public AbstractFuelInfo(final int fuelRemaining, final int fuelCapacity, final int fuelMinConsumed, final int fuelBurnTime) {
-        this(fuelRemaining, fuelCapacity, fuelMinConsumed, (long) fuelBurnTime);
-    }
-
     public AbstractFuelInfo(final int fuelRemaining, final int fuelCapacity, final int fuelMinConsumed, final long fuelBurnTime) {
         this.fuelRemaining = fuelRemaining;
         this.fuelCapacity = fuelCapacity;

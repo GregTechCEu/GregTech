@@ -48,7 +48,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
     public final int maxItemTransferRate;
     protected int transferRate;
     protected ConveyorMode conveyorMode;
-    protected ItemDistributionMode distributionMode;
+    protected DistributionMode distributionMode;
     protected boolean blocksInput;
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
     protected final ItemFilterContainer itemFilterContainer;
@@ -63,7 +63,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.transferRate = maxItemTransferRate;
         this.itemsLeftToTransferLastSecond = transferRate;
         this.conveyorMode = ConveyorMode.EXPORT;
-        this.distributionMode = ItemDistributionMode.INSERT_FIRST;
+        this.distributionMode = DistributionMode.INSERT_FIRST;
         this.blocksInput = true;
         this.itemFilterContainer = new ItemFilterContainer(this);
     }
@@ -86,11 +86,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         return conveyorMode;
     }
 
-    public ItemDistributionMode getDistributionMode() {
+    public DistributionMode getDistributionMode() {
         return distributionMode;
     }
 
-    public void setDistributionMode(ItemDistributionMode distributionMode) {
+    public void setDistributionMode(DistributionMode distributionMode) {
         this.distributionMode = distributionMode;
         coverHolder.markDirty();
     }
@@ -460,8 +460,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         TileEntity otherTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
         if (!(this instanceof CoverRoboticArm) && coverTile instanceof TileEntityItemPipe ^ otherTile instanceof TileEntityItemPipe) {
             primaryGroup.addWidget(new ToggleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE,
-                    () -> distributionMode == ItemDistributionMode.INSERT_FIRST,
-                    val -> distributionMode = val ? ItemDistributionMode.INSERT_FIRST : ItemDistributionMode.ROUND_ROBIN)
+                    () -> distributionMode == DistributionMode.INSERT_FIRST,
+                    val -> distributionMode = val ? DistributionMode.INSERT_FIRST : DistributionMode.ROUND_ROBIN)
                     .setTooltipText("cover.conveyor.distribution"));
         }
 
@@ -500,7 +500,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
         this.conveyorMode = ConveyorMode.values()[tagCompound.getInteger("ConveyorMode")];
-        this.distributionMode = ItemDistributionMode.values()[tagCompound.getInteger("DistributionMode")];
+        this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
         this.blocksInput = tagCompound.getBoolean("BlocksInput");
         //LEGACY SAVE FORMAT SUPPORT
         if (tagCompound.hasKey("AllowManualIO")) {
@@ -543,11 +543,6 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         public String getName() {
             return localeName;
         }
-    }
-
-    public enum ItemDistributionMode {
-        INSERT_FIRST,
-        ROUND_ROBIN
     }
 
     private class CoverableItemHandlerWrapper extends ItemHandlerDelegate {

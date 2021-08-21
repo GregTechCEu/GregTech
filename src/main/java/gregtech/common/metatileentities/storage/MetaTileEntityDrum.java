@@ -122,10 +122,36 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     public ICapabilityProvider initItemStackCapabilities(ItemStack itemStack) {
         return new FluidHandlerItemStack(itemStack, tankSize) {
             @Override
-            protected void setContainerToEmpty() {
-                this.container.setTagCompound(null);
+            public FluidStack drain(FluidStack resource, boolean doDrain) {
+                FluidStack drained = super.drain(resource, doDrain);
+                this.removeTagWhenEmptied(doDrain);
+                return drained;
+            }
+
+            @Override
+            public FluidStack drain(int maxDrain, boolean doDrain) {
+                FluidStack drained = super.drain(maxDrain, doDrain);
+                this.removeTagWhenEmptied(doDrain);
+                return drained;
+            }
+
+            private void removeTagWhenEmptied(boolean doDrain) {
+                if (doDrain && this.getFluid() == null) {
+                    this.container.setTagCompound(null);
+                }
+            }
+
+            @Override
+            public boolean canFillFluidType(FluidStack fluid) {
+                return MetaTileEntityDrum.this.canFillFluidType(fluid);
             }
         };
+    }
+
+    protected boolean canFillFluidType(FluidStack fluid) {
+        return !ModHandler.isMaterialWood(material) &&
+                !material.hasFlag(FLAMMABLE) ||
+                fluid.getFluid().getTemperature(fluid) <= 325;
     }
 
     @Override

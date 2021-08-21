@@ -24,11 +24,13 @@ import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFl
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.*;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
@@ -59,24 +61,23 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
     }
 
     private static int getAmountForBiome(Biome biome) {
-        Class<? extends Biome> biomeClass = biome.getBiomeClass();
-        if (biomeClass == BiomeOcean.class || biomeClass == BiomeRiver.class) {
+        Set<BiomeDictionary.Type> biomeTypes = BiomeDictionary.getTypes(biome);
+        if (biomeTypes.contains(BiomeDictionary.Type.WATER)) {
             return 1000;
-        } else if (biomeClass == BiomeSwamp.class) {
+        } else if (biomeTypes.contains(BiomeDictionary.Type.SWAMP) || biomeTypes.contains(BiomeDictionary.Type.WET)) {
             return 800;
-        } else if (biomeClass == BiomeJungle.class) {
+        } else if (biomeTypes.contains(BiomeDictionary.Type.JUNGLE)) {
             return 350;
-        } else if (biomeClass == BiomeSnow.class) {
+        } else if (biomeTypes.contains(BiomeDictionary.Type.SNOWY)) {
             return 300;
-        } else if (biomeClass == BiomePlains.class || biomeClass == BiomeForest.class) {
+        } else if (biomeTypes.contains(BiomeDictionary.Type.PLAINS) || biomeTypes.contains(BiomeDictionary.Type.FOREST)) {
             return 250;
-        } else if (biomeClass == BiomeTaiga.class) {
+        } else if (biomeTypes.contains(BiomeDictionary.Type.COLD)) {
             return 175;
-        } else if (biomeClass == BiomeBeach.class) {
+        } else if (biomeTypes.contains(BiomeDictionary.Type.BEACH)) {
             return 170;
-        } else {
-            return 100;
         }
+        return 100;
     }
 
     @Override

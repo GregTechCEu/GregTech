@@ -137,7 +137,7 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
     public ICubeRenderer getBaseTexture() {
         MultiblockControllerBase controller = getController();
         if (controller == null)
-            return ConfigHolder.steelSteamMultiblocks ? Textures.SOLID_STEEL_CASING : Textures.BRONZE_PLATED_BRICKS;
+            return ConfigHolder.U.steelSteamMultiblocks ? Textures.SOLID_STEEL_CASING : Textures.BRONZE_PLATED_BRICKS;
         return controller.getBaseTexture(this);
     }
 

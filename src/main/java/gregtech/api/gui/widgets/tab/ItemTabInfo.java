@@ -1,6 +1,7 @@
 package gregtech.api.gui.widgets.tab;
 
 import com.google.common.collect.Lists;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -23,7 +24,7 @@ public class ItemTabInfo implements ITabInfo {
     }
 
     @Override
-    public void renderTab(TextureArea tabTexture, int posX, int posY, int xSize, int ySize, boolean isSelected) {
+    public void renderTab(IGuiTexture tabTexture, int posX, int posY, int xSize, int ySize, boolean isSelected) {
         tabTexture.draw(posX, posY, xSize, ySize);
         GlStateManager.enableRescaleNormal();
         RenderHelper.enableGUIStandardItemLighting();
@@ -35,10 +36,12 @@ public class ItemTabInfo implements ITabInfo {
 
     @Override
     public void renderHoverText(int posX, int posY, int xSize, int ySize, int guiWidth, int guiHeight, boolean isSelected, int mouseX, int mouseY) {
-        String localizedText = I18n.format(nameLocale);
-        Minecraft mc = Minecraft.getMinecraft();
-        ScaledResolution resolution = new ScaledResolution(mc);
-        GuiUtils.drawHoveringText(Lists.newArrayList(localizedText), mouseX, mouseY,
-                resolution.getScaledWidth(), resolution.getScaledHeight(), -1, mc.fontRenderer);
+        if (nameLocale != null) {
+            String localizedText = I18n.format(nameLocale);
+            Minecraft mc = Minecraft.getMinecraft();
+            ScaledResolution resolution = new ScaledResolution(mc);
+            GuiUtils.drawHoveringText(Lists.newArrayList(localizedText), mouseX, mouseY,
+                    resolution.getScaledWidth(), resolution.getScaledHeight(), -1, mc.fontRenderer);
+        }
     }
 }

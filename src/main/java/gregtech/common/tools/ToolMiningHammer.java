@@ -1,5 +1,6 @@
 package gregtech.common.tools;
 
+import com.google.common.collect.ImmutableSet;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.util.GTUtility;
 import gregtech.common.items.behaviors.ModeSwitchBehavior;
@@ -20,10 +21,7 @@ import java.util.*;
 
 public class ToolMiningHammer extends ToolBase {
 
-    private static final Set<String> HAMMER_TOOL_CLASSES = new HashSet<String>() {{
-        add("pickaxe");
-        add("hammer");
-    }};
+    private static final Set<String> HAMMER_TOOL_CLASSES = ImmutableSet.of("pickaxe", "hammer");
 
     public enum MiningHammerMode implements ModeSwitchBehavior.ILocalizationKey {
         THREE_BY_THREE("metaitem.drill.mode.three_by_three", 3, 3, 0.75f),
@@ -89,7 +87,7 @@ public class ToolMiningHammer extends ToolBase {
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
-        return (tool != null && (tool.equals("hammer") || tool.equals("pickaxe"))) ||
+        return (tool != null && HAMMER_TOOL_CLASSES.contains(tool)) ||
                 block.getMaterial() == Material.ROCK ||
                 block.getMaterial() == Material.GLASS ||
                 block.getMaterial() == Material.ICE ||

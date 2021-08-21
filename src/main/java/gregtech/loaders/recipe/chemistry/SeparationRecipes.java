@@ -39,23 +39,6 @@ public class SeparationRecipes {
                 .duration(200).EUt(5).buildAndRegister();
 
         CENTRIFUGE_RECIPES.recipeBuilder()
-                .fluidInputs(LiquidAir.getFluid(53000))
-                .fluidOutputs(Nitrogen.getFluid(32000))
-                .fluidOutputs(Nitrogen.getFluid(8000))
-                .fluidOutputs(Oxygen.getFluid(11000))
-                .fluidOutputs(Argon.getFluid(1000))
-                .fluidOutputs(NobleGases.getFluid(1000))
-                .duration(1484).EUt(5).buildAndRegister();
-
-        CENTRIFUGE_RECIPES.recipeBuilder()
-                .fluidInputs(NobleGases.getFluid(34000))
-                .fluidOutputs(CarbonDioxide.getFluid(21000))
-                .fluidOutputs(Helium.getFluid(9000))
-                .fluidOutputs(Methane.getFluid(3000))
-                .fluidOutputs(Deuterium.getFluid(1000))
-                .duration(680).EUt(5).buildAndRegister();
-
-        CENTRIFUGE_RECIPES.recipeBuilder()
                 .fluidInputs(Butane.getFluid(320))
                 .fluidOutputs(LPG.getFluid(370))
                 .duration(20).EUt(5).buildAndRegister();
@@ -297,6 +280,18 @@ public class SeparationRecipes {
                 .fluidOutputs(Oxygen.getFluid(1000))
                 .buildAndRegister();
 
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(30)
+                .fluidInputs(NetherAir.getFluid(10000))
+                .fluidOutputs(CarbonMonoxide.getFluid(3900))
+                .fluidOutputs(SulfurDioxide.getFluid(1000))
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(1600).EUt(480)
+                .fluidInputs(EnderAir.getFluid(10000))
+                .fluidOutputs(NitrogenDioxide.getFluid(3900))
+                .fluidOutputs(Deuterium.getFluid(1000))
+                .buildAndRegister();
+
         // Stone Dust
         CENTRIFUGE_RECIPES.recipeBuilder().duration(480).EUt(120)
                 .input(dust, Stone)
@@ -316,6 +311,11 @@ public class SeparationRecipes {
                 .output(dustTiny, Barite)
                 .chancedOutput(dustTiny, Chromite, 7500, 750)
                 .chancedOutput(dustTiny, Ilmenite, 5000, 500)
+                .buildAndRegister();
+
+        CENTRIFUGE_RECIPES.recipeBuilder().duration(800).EUt(5)
+                .input(dust, Oilsands)
+                .fluidOutputs(Oil.getFluid(1000))
                 .buildAndRegister();
 
 

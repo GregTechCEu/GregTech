@@ -61,15 +61,17 @@ public class CachedRecipeData {
         return true;
     }
 
-    public boolean attemptMatchRecipe() {
-        this.ingredientsMatched = false;
+    public short attemptMatchRecipe() {
+        ingredientsMatched = true;
+        short itemsFound = 0;
         this.requiredItems.clear();
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            if (!getIngredientEquivalent(i))
-                return false; //ingredient didn't match, return false
+            if (getIngredientEquivalent(i))
+                itemsFound += 1 << i; //ingredient was found, and indicate in the short of this fact
+            else
+                ingredientsMatched = false;
         }
-        this.ingredientsMatched = true;
-        return true;
+        return itemsFound;
     }
 
     public boolean checkRecipeValid() {
@@ -96,12 +98,12 @@ public class CachedRecipeData {
         return true;
     }
 
-    private boolean getIngredientEquivalent(int slot) {
+    public boolean getIngredientEquivalent(int slot) {
         ItemStack currentStack = inventory.getStackInSlot(slot);
         if (currentStack.isEmpty()) {
             return true; //stack is empty, nothing to return
         }
-        ItemStackKey currentStackKey = new ItemStackKey(currentStack);
+        ItemStackKey currentStackKey = new ItemStackKey(currentStack.copy());
         if (simulateExtractItem(currentStackKey)) {
             //we can extract ingredient equal to the one in the crafting grid,
             //so just return it without searching equivalent
@@ -119,6 +121,7 @@ public class CachedRecipeData {
                     return true;
                 }
             }
+            inventory.setInventorySlotContents(slot, currentStack);
         }
         //nothing matched, so return null
         return false;

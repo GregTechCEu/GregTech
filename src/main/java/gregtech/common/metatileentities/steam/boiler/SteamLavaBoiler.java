@@ -27,12 +27,17 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
     private FluidTank lavaFluidTank;
 
     public SteamLavaBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure) {
-        super(metaTileEntityId, isHighPressure, Textures.LAVA_BOILER_OVERLAY, 100);
+        super(metaTileEntityId, isHighPressure, Textures.LAVA_BOILER_OVERLAY);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
         return new SteamLavaBoiler(metaTileEntityId, isHighPressure);
+    }
+
+    @Override
+    protected int getBaseSteamOutput() {
+        return isHighPressure ? 600 : 240;
     }
 
     @Override
@@ -44,7 +49,7 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
 
     }
 
-    public static final int LAVA_PER_OPERATION = 100;
+    public static final int LAVA_PER_OPERATION = 100; // todo this may be too good?
 
     @Override
     protected void tryConsumeNewFuel() {
@@ -71,7 +76,7 @@ public class SteamLavaBoiler extends SteamBoiler implements IFuelable {
             return Collections.emptySet();
         final int fuelRemaining = lava.amount;
         final int fuelCapacity = lavaFluidTank.getCapacity();
-        final long burnTime = fuelRemaining * (this.isHighPressure ? 6 : 12); // 100 mb lasts 600 or 1200 ticks
+        final long burnTime = (long) fuelRemaining * (this.isHighPressure ? 6 : 12); // 100 mb lasts 600 or 1200 ticks
         return Collections.singleton(new FluidFuelInfo(lava, fuelRemaining, fuelCapacity, LAVA_PER_OPERATION, burnTime));
     }
 

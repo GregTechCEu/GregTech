@@ -334,7 +334,7 @@ public class ReactorRecipes {
                 .fluidInputs(Water.getFluid(1000))
                 .output(dust, SodiumHydroxide, 3)
                 .fluidOutputs(Hydrogen.getFluid(1000))
-                .duration(40).EUt(8).buildAndRegister();
+                .duration(80).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(1))
@@ -611,7 +611,7 @@ public class ReactorRecipes {
                 .buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(PhosphoricAcid.getFluid(0))
+                .fluidInputs(PhosphoricAcid.getFluid(1000))
                 .fluidInputs(Benzene.getFluid(8000))
                 .fluidInputs(Propene.getFluid(8000))
                 .fluidOutputs(Cumene.getFluid(8000))
@@ -654,7 +654,7 @@ public class ReactorRecipes {
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, Aluminium, 4)
                 .fluidInputs(IndiumConcentrate.getFluid(1000))
-                .output(dustTiny, Indium)
+                .output(dustSmall, Indium)
                 .fluidOutputs(LeadZincSolution.getFluid(1000))
                 .duration(50).EUt(600).buildAndRegister();
 
@@ -1098,5 +1098,11 @@ public class ReactorRecipes {
                 .fluidInputs(GlycerylTrinitrate.getFluid(500))
                 .output(MetaItems.DYNAMITE)
                 .duration(160).EUt(4).buildAndRegister();
+
+        CHEMICAL_RECIPES.recipeBuilder()
+                .input(dust, Niobium)
+                .fluidInputs(Nitrogen.getFluid(1000))
+                .output(dust, NiobiumNitride, 2)
+                .duration(200).EUt(480).buildAndRegister();
     }
 }

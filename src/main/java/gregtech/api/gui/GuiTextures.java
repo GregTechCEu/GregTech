@@ -1,6 +1,7 @@
 package gregtech.api.gui;
 
 import gregtech.api.gui.resources.AdoptableTextureArea;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
 
@@ -140,12 +141,15 @@ public class GuiTextures {
     public static final TextureArea PROGRESS_BAR_CANNER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_canner.png");
     public static final TextureArea PROGRESS_BAR_CIRCUIT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_circuit.png");
     public static final TextureArea PROGRESS_BAR_CIRCUIT_ASSEMBLER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_circuit_assembler.png");
+    public static final TextureArea PROGRESS_BAR_COKE_OVEN = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_coke_oven.png");
     public static final TextureArea PROGRESS_BAR_COMPRESS = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_compress.png");
     public static final TextureArea PROGRESS_BAR_CRACKING = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_cracking.png");
     public static final TextureArea PROGRESS_BAR_CRYSTALLIZATION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_crystallization.png");
+    public static final TextureArea PROGRESS_BAR_DISTILLATION_TOWER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_distillation_tower.png");
     public static final TextureArea PROGRESS_BAR_EXTRACT = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_extract.png");
     public static final TextureArea PROGRESS_BAR_EXTRUDER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_extruder.png");
     public static final TextureArea PROGRESS_BAR_FUSION = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_fusion.png");
+    public static final TextureArea PROGRESS_BAR_GAS_COLLECTOR = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_gas_collector.png");
     public static final TextureArea PROGRESS_BAR_HAMMER = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_hammer.png");
     public static final TextureArea PROGRESS_BAR_HAMMER_BASE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_hammer_base.png");
     public static final TextureArea PROGRESS_BAR_LATHE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_lathe.png");
@@ -166,5 +170,20 @@ public class GuiTextures {
     //JEI
     public static final TextureArea INFO_ICON = TextureArea.fullImage("textures/gui/widget/information.png");
     public static final TextureArea MULTIBLOCK_CATEGORY = TextureArea.fullImage("textures/gui/icon/coke_oven.png");
+
+    //Terminal
+    public static final TextureArea ICON_REMOVE = TextureArea.fullImage("textures/gui/terminal/icon/remove_hover.png");
+    public static final TextureArea ICON_UP = TextureArea.fullImage("textures/gui/terminal/icon/up_hover.png");
+    public static final TextureArea ICON_DOWN = TextureArea.fullImage("textures/gui/terminal/icon/down_hover.png");
+    public static final TextureArea ICON_RIGHT = TextureArea.fullImage("textures/gui/terminal/icon/right_hover.png");
+    public static final TextureArea ICON_LEFT = TextureArea.fullImage("textures/gui/terminal/icon/left_hover.png");
+    public static final TextureArea ICON_ADD = TextureArea.fullImage("textures/gui/terminal/icon/add_hover.png");
+
+    public final static TextureArea ICON_NEW_PAGE = TextureArea.fullImage("textures/gui/terminal/icon/system/memory_card_hover.png");
+    public final static TextureArea ICON_LOAD = TextureArea.fullImage("textures/gui/terminal/icon/folder_hover.png");
+    public final static TextureArea ICON_SAVE = TextureArea.fullImage("textures/gui/terminal/icon/system/save_hover.png");
+    public final static TextureArea ICON_LOCATION = TextureArea.fullImage("textures/gui/terminal/icon/guide_hover.png");
+    public final static TextureArea ICON_VISIBLE = TextureArea.fullImage("textures/gui/terminal/icon/appearance_hover.png");
+    public final static TextureArea ICON_CALCULATOR = TextureArea.fullImage("textures/gui/terminal/icon/other/calculator_hover.png");
 
 }

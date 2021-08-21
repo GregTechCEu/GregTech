@@ -41,9 +41,9 @@ public class SecondDegreeMaterials {
         Olivine = new Material.Builder(2004, "olivine")
                 .gem().ore(2, 1)
                 .color(0x96FF96).iconSet(RUBY)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_PLATE)
                 .components(Magnesium, 2, Iron, 1, SiliconDioxide, 2)
-                .toolStats(7.5f, 3.0f, 312)
+                .toolStats(7.5f, 3.0f, 312, 33)
                 .build();
 
         Opal = new Material.Builder(2005, "opal")
@@ -51,7 +51,7 @@ public class SecondDegreeMaterials {
                 .color(0x0000FF).iconSet(OPAL)
                 .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_LENS)
                 .components(SiliconDioxide, 1)
-                .toolStats(7.5f, 3.0f, 312)
+                .toolStats(7.5f, 3.0f, 312, 15)
                 .build();
 
         Amethyst = new Material.Builder(2006, "amethyst")
@@ -59,13 +59,14 @@ public class SecondDegreeMaterials {
                 .color(0xD232D2).iconSet(RUBY)
                 .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(SiliconDioxide, 4, Iron, 1)
-                .toolStats(7.5f, 3.0f, 312)
+                .toolStats(7.5f, 3.0f, 312, 33)
                 .build();
 
         Lapis = new Material.Builder(2007, "lapis")
                 .gem(1).ore(6, 4)
                 .color(0x4646DC).iconSet(LAPIS)
-                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, NO_WORKING, DECOMPOSITION_BY_ELECTROLYZING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
+                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, NO_WORKING, DECOMPOSITION_BY_ELECTROLYZING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES,
+                        GENERATE_PLATE)
                 .components(Lazurite, 12, Sodalite, 2, Pyrite, 1, Calcite, 1)
                 .build();
 
@@ -86,16 +87,16 @@ public class SecondDegreeMaterials {
         Apatite = new Material.Builder(2010, "apatite")
                 .gem(1).ore(4, 2)
                 .color(0xC8C8FF).iconSet(DIAMOND)
-                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE)
+                .flags(NO_SMASHING, NO_SMELTING, CRYSTALLIZABLE, GENERATE_BOLT_SCREW)
                 .components(Calcium, 5, Phosphate, 3, Chlorine, 1)
                 .build();
 
         BlackSteel = new Material.Builder(2011, "black_steel")
                 .ingot().fluid()
                 .color(0x646464).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_FINE_WIRE)
+                .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Nickel, 1, BlackBronze, 1, Steel, 3)
-                .toolStats(6.5f, 6.5f, 768)
+                .toolStats(6.5f, 6.5f, 768, 21)
                 .cableProperties(GTValues.V[4], 3, 2)
                 .blastTemp(1200)
                 .build();
@@ -105,7 +106,7 @@ public class SecondDegreeMaterials {
                 .color(0x6E6E6E).iconSet(METALLIC)
                 .flags(EXT_METAL)
                 .components(Steel, 1)
-                .toolStats(8.0f, 5.0f, 1280)
+                .toolStats(8.0f, 5.0f, 1280, 21)
                 .blastTemp(1500)
                 .build();
 
@@ -114,7 +115,7 @@ public class SecondDegreeMaterials {
                 .color(0x6464A0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_DENSE, GENERATE_FRAME, GENERATE_SPRING)
                 .components(Steel, 1, Tungsten, 1)
-                .toolStats(8.0f, 4.0f, 2560)
+                .toolStats(8.0f, 4.0f, 2560, 21)
                 .fluidPipeProperties(7568, 100, true)
                 .cableProperties(GTValues.V[5], 3, 2)
                 .blastTemp(3000)
@@ -125,7 +126,7 @@ public class SecondDegreeMaterials {
                 .color(0xB4B4A0).iconSet(METALLIC)
                 .flags(EXT2_METAL)
                 .components(Brass, 7, Aluminium, 1, Cobalt, 1)
-                .toolStats(8.0f, 2.0f, 256)
+                .toolStats(8.0f, 2.0f, 256, 21)
                 .itemPipeProperties(2048, 1)
                 .build();
 
@@ -141,7 +142,7 @@ public class SecondDegreeMaterials {
                 .color(0xC85050).iconSet(RUBY)
                 .flags(STD_SOLID, GENERATE_LENS, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Pyrope, 3, Almandine, 5, Spessartine, 8)
-                .toolStats(7.5f, 3.0f, 156)
+                .toolStats(7.5f, 3.0f, 156, 33)
                 .build();
 
         GarnetYellow = new Material.Builder(2017, "garnet_yellow")
@@ -149,7 +150,7 @@ public class SecondDegreeMaterials {
                 .color(0xC8C850).iconSet(RUBY)
                 .flags(STD_SOLID, GENERATE_LENS, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
-                .toolStats(7.5f, 3.0f, 156)
+                .toolStats(7.5f, 3.0f, 156, 33)
                 .build();
 
         Marble = new Material.Builder(2018, "marble")
@@ -279,7 +280,7 @@ public class SecondDegreeMaterials {
                 .color(0xc0c0c0).iconSet(METALLIC)
                 .flags(EXT2_METAL)
                 .components(Vanadium, 1, Chrome, 1, Steel, 7)
-                .toolStats(7.0f, 3.0f, 1920)
+                .toolStats(7.0f, 3.0f, 1920, 21)
                 .fluidPipeProperties(2073, 100, true)
                 .blastTemp(1453)
                 .build();
@@ -295,7 +296,7 @@ public class SecondDegreeMaterials {
         BorosilicateGlass = new Material.Builder(2038, "borosilicate_glass")
                 .ingot(1).fluid()
                 .color(0xE6F3E6).iconSet(SHINY)
-                .flags(GENERATE_FINE_WIRE)
+                .flags(GENERATE_FINE_WIRE, GENERATE_PLATE)
                 .components(Boron, 1, SiliconDioxide, 7)
                 .build();
 
@@ -320,7 +321,7 @@ public class SecondDegreeMaterials {
                 .color(0x282828).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_SPRING)
                 .components(Naquadah, 1, Osmiridium, 1)
-                .toolStats(8.0f, 5.0f, 5120)
+                .toolStats(8.0f, 5.0f, 5120, 21)
                 .cableProperties(GTValues.V[8], 2, 4)
                 .blastTemp(7200)
                 .build();
@@ -369,27 +370,49 @@ public class SecondDegreeMaterials {
                 .gem(1)
                 .color(0x002040).iconSet(FLINT)
                 .flags(NO_SMASHING, MORTAR_GRINDABLE, DECOMPOSITION_BY_CENTRIFUGING)
+                .toolStats(6, 4, 80, 10)
                 .build();
 
-        //todo this is stupid
-        NobleGases = new Material.Builder(2050, "noble_gases")
-                .fluid(Material.FluidType.GAS)
-                .color(0xA9D0F5)
-                .components(CarbonDioxide, 25, Helium, 11, Methane, 4, Deuterium, 2, Radon, 1)
-                .build();
-
-        Air = new Material.Builder(2051, "air")
+        Air = new Material.Builder(2050, "air")
                 .fluid(Material.FluidType.GAS)
                 .color(0xA9D0F5)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Nitrogen, 40, Oxygen, 11, Argon, 1, NobleGases, 1)
+                .components(Nitrogen, 78, Oxygen, 21, Argon, 9)
                 .build();
 
-        LiquidAir = new Material.Builder(2052, "liquid_air")
+        LiquidAir = new Material.Builder(2051, "liquid_air")
                 .fluid()
                 .color(0xA9D0F5)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Nitrogen, 40, Oxygen, 11, Argon, 1, NobleGases, 1)
+                .components(Nitrogen, 143, Oxygen, 45, CarbonDioxide, 10, Helium, 1, Argon, 1, Ice, 1)
+                .build();
+
+        NetherAir = new Material.Builder(2052, "nether_air")
+                .fluid(Material.FluidType.GAS)
+                .color(0x4C3434)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(CarbonMonoxide, 78, HydrogenSulfide, 21, Neon, 9)
+                .build();
+
+        LiquidNetherAir = new Material.Builder(2053, "liquid_nether_air")
+                .fluid()
+                .color(0x4C3434)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(CarbonMonoxide, 144, CoalGas, 20, HydrogenSulfide, 15, SulfurDioxide, 15, Helium3, 5, Neon, 1, Ash, 1)
+                .build();
+
+        EnderAir = new Material.Builder(2054, "ender_air")
+                .fluid(Material.FluidType.GAS)
+                .color(0x283454)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(NitrogenDioxide, 78, Deuterium, 21, Xenon, 9)
+                .build();
+
+        LiquidEnderAir = new Material.Builder(2055, "liquid_ender_air")
+                .fluid()
+                .color(0x283454)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(NitrogenDioxide, 122, Deuterium, 50, Helium, 15, Tritium, 10, Krypton, 1, Xenon, 1, Radon, 1, EnderPearl, 1)
                 .build();
     }
 }

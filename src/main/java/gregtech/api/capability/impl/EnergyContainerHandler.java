@@ -29,6 +29,8 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
     private Predicate<EnumFacing> sideInputCondition;
     private Predicate<EnumFacing> sideOutputCondition;
 
+    private long amps = 0;
+
     public EnergyContainerHandler(MetaTileEntity tileEntity, long maxCapacity, long maxInputVoltage, long maxInputAmperage, long maxOutputVoltage, long maxOutputAmperage) {
         super(tileEntity);
         this.maxCapacity = maxCapacity;
@@ -133,6 +135,7 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
 
     @Override
     public void update() {
+        amps = 0;
         if (getMetaTileEntity().getWorld().isRemote)
             return;
         if (getEnergyStored() >= getOutputVoltage() && getOutputVoltage() > 0 && getOutputAmperage() > 0) {
@@ -159,16 +162,18 @@ public class EnergyContainerHandler extends MTETrait implements IEnergyContainer
 
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
+        if(amps >= getInputAmperage()) return 0;
         long canAccept = getEnergyCapacity() - getEnergyStored();
-        if (voltage > 0L && amperage > 0L && (side == null || inputsEnergy(side))) {
+        if (voltage > 0L && (side == null || inputsEnergy(side))) {
             if (voltage > getInputVoltage()) {
                 GTUtility.doOvervoltageExplosion(metaTileEntity, voltage);
-                return Math.min(amperage, getInputAmperage());
+                return Math.min(amperage, getInputAmperage() - amps);
             }
             if (canAccept >= voltage) {
-                long amperesAccepted = Math.min(canAccept / voltage, Math.min(amperage, getInputAmperage()));
+                long amperesAccepted = Math.min(canAccept / voltage, Math.min(amperage, getInputAmperage() - amps));
                 if (amperesAccepted > 0) {
                     setEnergyStored(getEnergyStored() + voltage * amperesAccepted);
+                    amps += amperesAccepted;
                     return amperesAccepted;
                 }
             }

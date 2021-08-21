@@ -6,8 +6,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -32,18 +30,15 @@ public class OreItemBlock extends ItemBlock {
         return new CreativeTabs[]{CreativeTabs.SEARCH, GregTechAPI.TAB_GREGTECH_ORES};
     }
 
-    @SuppressWarnings("deprecation")
     protected IBlockState getBlockState(ItemStack stack) {
         return oreBlock.getStateFromMeta(getMetadata(stack.getItemDamage()));
     }
 
     @Nonnull
     @Override
-    @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         IBlockState blockState = getBlockState(stack);
         StoneType stoneType = blockState.getValue(oreBlock.STONE_TYPE);
         return stoneType.processingPrefix.getLocalNameForItem(oreBlock.material);
     }
-
 }

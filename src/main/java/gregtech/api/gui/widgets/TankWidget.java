@@ -4,8 +4,8 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.RenderUtil;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -44,15 +44,23 @@ public class TankWidget extends Widget implements IIngredientSlot {
     private boolean allowClickFilling;
     private boolean allowClickEmptying;
 
-    private TextureArea[] backgroundTexture;
-    private TextureArea overlayTexture;
+    private IGuiTexture[] backgroundTexture;
+    private IGuiTexture overlayTexture;
 
     private FluidStack lastFluidInTank;
     private int lastTankCapacity;
+    private boolean isClient;
 
     public TankWidget(IFluidTank fluidTank, int x, int y, int width, int height) {
         super(new Position(x, y), new Size(width, height));
         this.fluidTank = fluidTank;
+        this.lastFluidInTank = fluidTank != null ? fluidTank.getFluid() != null ? fluidTank.getFluid().copy() : null : null;
+        this.lastTankCapacity = fluidTank != null ? fluidTank.getCapacity() : 0;
+    }
+
+    public TankWidget setClient() {
+        this.isClient = true;
+        return this;
     }
 
     public TankWidget setHideTooltip(boolean hideTooltip) {
@@ -65,12 +73,12 @@ public class TankWidget extends Widget implements IIngredientSlot {
         return this;
     }
 
-    public TankWidget setBackgroundTexture(TextureArea... backgroundTexture) {
+    public TankWidget setBackgroundTexture(IGuiTexture... backgroundTexture) {
         this.backgroundTexture = backgroundTexture;
         return this;
     }
 
-    public TankWidget setOverlayTexture(TextureArea overlayTexture) {
+    public TankWidget setOverlayTexture(IGuiTexture overlayTexture) {
         this.overlayTexture = overlayTexture;
         return this;
     }
@@ -109,7 +117,7 @@ public class TankWidget extends Widget implements IIngredientSlot {
         Position pos = getPosition();
         Size size = getSize();
         if (backgroundTexture != null) {
-            for (TextureArea textureArea : backgroundTexture) {
+            for (IGuiTexture textureArea : backgroundTexture) {
                 textureArea.draw(pos.x, pos.y, size.width, size.height);
             }
         }
@@ -170,6 +178,26 @@ public class TankWidget extends Widget implements IIngredientSlot {
             }
             drawHoveringText(ItemStack.EMPTY, tooltips, 300, mouseX, mouseY);
             GlStateManager.color(1.0f, 1.0f, 1.0f);
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        if (isClient) {
+            FluidStack fluidStack = fluidTank.getFluid();
+            if (fluidTank.getCapacity() != lastTankCapacity) {
+                this.lastTankCapacity = fluidTank.getCapacity();
+            }
+            if (fluidStack == null && lastFluidInTank != null) {
+                this.lastFluidInTank = null;
+
+            } else if (fluidStack != null) {
+                if (!fluidStack.isFluidEqual(lastFluidInTank)) {
+                    this.lastFluidInTank = fluidStack.copy();
+                } else if (fluidStack.amount != lastFluidInTank.amount) {
+                    this.lastFluidInTank.amount = fluidStack.amount;
+                }
+            }
         }
     }
 
