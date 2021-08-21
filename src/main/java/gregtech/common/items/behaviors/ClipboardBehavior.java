@@ -49,9 +49,9 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         }
 
         builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
-                .setButtonTexture(GuiTextures.BUTTON_LEFT));
+                .setButtonTexture(GuiTextures.BUTTON_LEFT).setShouldClientCallback(true));
         builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, 1))
-                .setButtonTexture(GuiTextures.BUTTON_RIGHT));
+                .setButtonTexture(GuiTextures.BUTTON_RIGHT).setShouldClientCallback(true));
         builder.widget(new SimpleTextWidget(85, 208, "", 0xFFFFFF,
                 () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES));
 
@@ -75,9 +75,9 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         }
 
         builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))
-                .setButtonTexture(GuiTextures.BUTTON_LEFT));
+                .setButtonTexture(GuiTextures.BUTTON_LEFT).setShouldClientCallback(true));
         builder.widget(new ClickButtonWidget(124, 200, 16, 16, "", (x) -> incrPageNum(holder, 1))
-                .setButtonTexture(GuiTextures.BUTTON_RIGHT));
+                .setButtonTexture(GuiTextures.BUTTON_RIGHT).setShouldClientCallback(true));
         builder.widget(new SimpleTextWidget(85, 208, "", 0xFFFFFF,
                 () -> (getPageNum(holder) + 1) + " / " + MAX_PAGES));
 

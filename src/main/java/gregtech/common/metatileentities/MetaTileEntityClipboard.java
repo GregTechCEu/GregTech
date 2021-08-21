@@ -413,4 +413,9 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     public boolean canRenderMachineGrid() {
         return false;
     }
+
+    @Override
+    public ItemStack getPickItem(CuboidRayTraceResult result, EntityPlayer player) {
+        return this.getClipboard();
+    }
 }

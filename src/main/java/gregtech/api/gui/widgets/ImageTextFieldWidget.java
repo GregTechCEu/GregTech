@@ -27,7 +27,7 @@ public class ImageTextFieldWidget extends TextFieldWidget {
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        this.textureArea.drawHorizontalCutArea(this.getPosition().x - 2, this.getPosition().y - 2, this.getSize().width, this.getSize().height);
+        this.textureArea.drawHorizontalCutArea(this.getPosition().x - 2, this.getPosition().y, this.getSize().width, this.getSize().height);
         super.drawInBackground(mouseX, mouseY, context);
     }
 }
