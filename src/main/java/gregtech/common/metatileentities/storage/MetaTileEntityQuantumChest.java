@@ -275,7 +275,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     }
 
     public EnumFacing getOutputFacing() {
-        return outputFacing == null ? EnumFacing.SOUTH : outputFacing;
+        return outputFacing == null ? frontFacing.getOpposite() : outputFacing;
     }
 
     public void setOutputFacing(EnumFacing outputFacing) {
