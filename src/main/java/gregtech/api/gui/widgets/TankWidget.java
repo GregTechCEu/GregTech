@@ -54,12 +54,12 @@ public class TankWidget extends Widget implements IIngredientSlot {
     public TankWidget(IFluidTank fluidTank, int x, int y, int width, int height) {
         super(new Position(x, y), new Size(width, height));
         this.fluidTank = fluidTank;
-        this.lastFluidInTank = fluidTank != null ? fluidTank.getFluid() != null ? fluidTank.getFluid().copy() : null : null;
-        this.lastTankCapacity = fluidTank != null ? fluidTank.getCapacity() : 0;
     }
 
     public TankWidget setClient() {
         this.isClient = true;
+        this.lastFluidInTank = fluidTank != null ? fluidTank.getFluid() != null ? fluidTank.getFluid().copy() : null : null;
+        this.lastTankCapacity = fluidTank != null ? fluidTank.getCapacity() : 0;
         return this;
     }
 
