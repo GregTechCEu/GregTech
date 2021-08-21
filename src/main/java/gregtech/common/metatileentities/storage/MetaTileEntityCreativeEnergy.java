@@ -80,9 +80,8 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        String[] V = {"NAN", "ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UMV", "UXV", "MAX"};
         ModularUI.Builder builder = ModularUI.defaultBuilder()
-                .widget(new CycleButtonWidget(7, 7, 30, 20, V, () -> setTier, tier -> {
+                .widget(new CycleButtonWidget(7, 7, 30, 20, GTValues.VN, () -> setTier, tier -> {
                     setTier = tier;
                     if (tier > 0)
                         voltage = GTValues.V[setTier - 1];
@@ -91,8 +90,10 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                 }));
         builder.label(7, 32, "Voltage");
         builder.widget(new TextFieldWidget(7, 44, 156, 20, true, () -> String.valueOf(voltage), value -> {
-            voltage = Integer.parseInt(value);
-            setTier = 0;
+            if(!value.isEmpty()) {
+                voltage = Long.parseLong(value);
+                setTier = 0;
+            }
         }).setValidator(value -> {
             for (int i = 0; i < value.length(); i++) {
                 char c = value.charAt(i);
@@ -104,7 +105,9 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         builder.label(7, 74, "Amperage");
         builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = amps-- == -1 ? 0 : amps--));
         builder.widget(new TextFieldWidget(29, 87, 118, 20, true, () -> String.valueOf(amps), value -> {
-            amps = Integer.parseInt(value);
+            if(!value.isEmpty()) {
+                amps = Integer.parseInt(value);
+            }
         }).setValidator(value -> {
             for (int i = 0; i < value.length(); i++) {
                 char c = value.charAt(i);
