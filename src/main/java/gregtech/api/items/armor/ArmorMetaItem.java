@@ -2,7 +2,6 @@ package gregtech.api.items.armor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Streams;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IEnchantabilityHelper;
 import gregtech.api.items.metaitem.stats.IItemComponent;
@@ -94,7 +93,7 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
     public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity) {
         IArmorLogic armorLogic = getArmorLogic(stack);
         return super.isValidArmor(stack, armorType, entity) &&
-            armorLogic.isValidArmor(stack, entity, armorType);
+                armorLogic.isValidArmor(stack, entity, armorType);
     }
 
     @Nullable
@@ -139,10 +138,14 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
 
     private static EntityEquipmentSlot getSlotByIndex(int index) {
         switch (index) {
-            case 0: return EntityEquipmentSlot.FEET;
-            case 1: return EntityEquipmentSlot.LEGS;
-            case 2: return EntityEquipmentSlot.CHEST;
-            default: return EntityEquipmentSlot.HEAD;
+            case 0:
+                return EntityEquipmentSlot.FEET;
+            case 1:
+                return EntityEquipmentSlot.LEGS;
+            case 2:
+                return EntityEquipmentSlot.CHEST;
+            default:
+                return EntityEquipmentSlot.HEAD;
         }
     }
 
@@ -174,6 +177,7 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
             return this;
         }
     }
+
     @Override
     public boolean isEnchantable(ItemStack stack) {
         return true;

@@ -1,7 +1,6 @@
 package gregtech.api.net;
 
 
-
 import gregtech.api.util.input.EnumKey;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.Keybinds;

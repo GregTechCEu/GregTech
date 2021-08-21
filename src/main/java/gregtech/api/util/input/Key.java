@@ -4,8 +4,9 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class Key {    @SideOnly(Side.CLIENT)
-private KeyBinding binding;
+public class Key {
+    @SideOnly(Side.CLIENT)
+    private KeyBinding binding;
     public final EnumKey KEY;
     public boolean state;
     public static final String KEYS_CATEGORY = "gregtech";

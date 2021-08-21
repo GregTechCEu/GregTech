@@ -38,21 +38,21 @@ public class NightvisionGoggles extends ArmorLogicSuite {
         NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
         byte toggleTimer = nbtData.getByte("toggleTimer");
         boolean ret = false;
-        if(!player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem().equals(itemStack.getItem())) {
+        if (!player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem().equals(itemStack.getItem())) {
             disableNightVision(world, player, false);
         }
         if (SLOT == EntityEquipmentSlot.HEAD) {
             boolean nightvision = nbtData.getBoolean("Nightvision");
             if (ArmorUtils.isKeyDown(player, EnumKey.MENU) && ArmorUtils.isKeyDown(player, EnumKey.MODE_SWITCH) && toggleTimer == 0) {
                 toggleTimer = 10;
-                if(!nightvision && item.getCharge() >= energyPerUse / 100) {
+                if (!nightvision && item.getCharge() >= energyPerUse / 100) {
                     nightvision = true;
                     player.sendMessage(new TextComponentTranslation("metaarmor.message.nightvision.enabled"));
-                } else if(nightvision){
+                } else if (nightvision) {
                     nightvision = false;
                     disableNightVision(world, player, true);
                 } else {
-                    if(!world.isRemote) {
+                    if (!world.isRemote) {
                         player.sendMessage(new TextComponentTranslation("metaarmor.message.nightvision.error"));
                     }
                 }
@@ -87,10 +87,10 @@ public class NightvisionGoggles extends ArmorLogicSuite {
     }
 
     public void disableNightVision(World world, EntityPlayer player, boolean sendMsg) {
-        if(!world.isRemote) {
+        if (!world.isRemote) {
             player.removePotionEffect(MobEffects.NIGHT_VISION);
             player.removePotionEffect(MobEffects.BLINDNESS);
-            if(sendMsg) player.sendMessage(new TextComponentTranslation("metaarmor.message.nightvision.disabled"));
+            if (sendMsg) player.sendMessage(new TextComponentTranslation("metaarmor.message.nightvision.disabled"));
         }
     }
 
@@ -107,10 +107,10 @@ public class NightvisionGoggles extends ArmorLogicSuite {
     @Override
     public void addInfo(ItemStack itemStack, List<String> lines) {
         super.addInfo(itemStack, lines);
-        if(SLOT == EntityEquipmentSlot.HEAD) {
+        if (SLOT == EntityEquipmentSlot.HEAD) {
             NBTTagCompound nbtData = GTUtility.getOrCreateNbtCompound(itemStack);
             boolean nv = nbtData.getBoolean("Nightvision");
-            if(nv) {
+            if (nv) {
                 lines.add(I18n.format("metaarmor.message.nightvision.enabled"));
             } else {
                 lines.add(I18n.format("metaarmor.message.nightvision.disabled"));

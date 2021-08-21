@@ -5,7 +5,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.inventory.EntityEquipmentSlot;
 
-public class MetaArmor  extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem> {
+public class MetaArmor extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem> {
     @Override
     public void registerSubItems() {
         ConfigHolder.UnofficialOptions.Equipment e = ConfigHolder.UnofficialOptions.equipment;

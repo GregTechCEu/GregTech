@@ -3,7 +3,6 @@ package gregtech.common.pipelike.cable;
 import gregtech.api.pipenet.block.material.IMaterialPipeType;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.common.ConfigHolder;
 
 import javax.annotation.Nonnull;
 

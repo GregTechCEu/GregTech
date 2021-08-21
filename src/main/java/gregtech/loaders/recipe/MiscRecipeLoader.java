@@ -2,7 +2,6 @@ package gregtech.loaders.recipe;
 
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.recipes.recipes.FuelRecipe;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -11,27 +10,17 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.BlockTransparentCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.items.Armor.PowerlessJetpack;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import scala.tools.cmd.Meta;
 
 import static gregtech.api.GTValues.L;
-import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
-import static gregtech.api.recipes.RecipeMaps.FORMING_PRESS_RECIPES;
-import static gregtech.api.unification.material.MarkerMaterials.Tier.*;
-import static gregtech.api.unification.material.MarkerMaterials.Tier.Elite;
-import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.recipes.RecipeMaps.*;
+import static gregtech.api.unification.material.MarkerMaterials.Tier.*;
+import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.api.unification.ore.OrePrefix.wireGtSingle;
 import static gregtech.common.items.MetaItems.*;
 
 public class MiscRecipeLoader {
@@ -342,7 +331,7 @@ public class MiscRecipeLoader {
                 .inputs(FIELD_GENERATOR_IV.getStackForm())
                 .inputs(FIELD_GENERATOR_EV.getStackForm(2))
                 .input(circuit, Master, 4)
-               // .input(wireGtSingle, IVSuperconductor, 4)
+                // .input(wireGtSingle, IVSuperconductor, 4)
                 .inputs(POWER_INTEGRATED_CIRCUIT.getStackForm(4))
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
                 .outputs(GRAVITATION_ENGINE.getStackForm())
@@ -350,7 +339,7 @@ public class MiscRecipeLoader {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(3600).EUt(8192)
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(16))
-               // .input(wireGtSingle, IVSuperconductor, 8)
+                // .input(wireGtSingle, IVSuperconductor, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
                 .inputs(PLATE_IRIDIUM_ALLOY.getStackForm(12))
                 .input(circuit, Elite, 4)
@@ -361,7 +350,7 @@ public class MiscRecipeLoader {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(3600).EUt(8192)
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(8))
-               // .input(wireGtSingle, IVSuperconductor, 8)
+                // .input(wireGtSingle, IVSuperconductor, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
                 .inputs(PLATE_IRIDIUM_ALLOY.getStackForm(16))
                 .input(circuit, Elite, 2)

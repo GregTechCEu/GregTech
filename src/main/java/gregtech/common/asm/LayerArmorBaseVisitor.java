@@ -1,9 +1,8 @@
 package gregtech.common.asm;
 
+import gregtech.common.asm.util.ObfMapping;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import gregtech.common.asm.util.ObfMapping;
 
 class LayerArmorBaseVisitor extends MethodVisitor implements Opcodes {
 
@@ -23,7 +22,8 @@ class LayerArmorBaseVisitor extends MethodVisitor implements Opcodes {
         if (opcode == Opcodes.RETURN) {
             super.visitVarInsn(ALOAD, 0); //this
             super.visitVarInsn(ALOAD, 1); //entityLivingBaseIn
-            for (int i = 0; i < 7; i++) super.visitVarInsn(FLOAD, 2 + i); //limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale
+            for (int i = 0; i < 7; i++)
+                super.visitVarInsn(FLOAD, 2 + i); //limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch, scale
             super.visitVarInsn(ALOAD, 9); //slotIn
             super.visitMethodInsn(INVOKESTATIC, ARMOR_HOOKS_OWNER, ARMOR_HOOKS_METHOD_NAME, ARMOR_HOOKS_SIGNATURE, false);
         }

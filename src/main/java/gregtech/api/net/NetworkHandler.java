@@ -75,6 +75,7 @@ public class NetworkHandler {
             this.decoder = decoder;
         }
     }
+
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel("Gregtech");
     private static final HashMap<Class<? extends Packet>, PacketCodec<? extends Packet>> codecMap = new HashMap<>();
     @SideOnly(Side.CLIENT)

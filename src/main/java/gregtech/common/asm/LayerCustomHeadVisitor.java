@@ -1,11 +1,10 @@
 package gregtech.common.asm;
 
+import gregtech.common.asm.util.ObfMapping;
+import gregtech.common.asm.util.SafeMethodVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import gregtech.common.asm.util.ObfMapping;
-import gregtech.common.asm.util.SafeMethodVisitor;
 
 class LayerCustomHeadVisitor extends SafeMethodVisitor {
 
@@ -16,7 +15,7 @@ class LayerCustomHeadVisitor extends SafeMethodVisitor {
     private static final String METHOD_SIGNATURE = "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/item/ItemStack;Lnet/minecraft/client/renderer/block/model/ItemCameraTransforms$TransformType;)V";
     private static final String METHOD_NAME = "func_178099_a";
     private static final ObfMapping METHOD_MAPPING = new ObfMapping(METHOD_OWNER, METHOD_NAME, METHOD_SIGNATURE).toRuntime();
-    
+
 
     private static final String ARMOR_HOOKS_OWNER = "gregtech/api/items/armor/ArmorRenderHooks";
     private static final String ARMOR_HOOKS_SIGNATURE = "(Lnet/minecraft/entity/EntityLivingBase;)Z";
@@ -27,13 +26,13 @@ class LayerCustomHeadVisitor extends SafeMethodVisitor {
     }
 
     private boolean checkTargetInsn(int opcode, String owner, String name, String desc) {
-    	return opcode == Opcodes.INVOKEVIRTUAL && METHOD_MAPPING.s_owner.equals(owner) && METHOD_MAPPING.matches(name, desc);
+        return opcode == Opcodes.INVOKEVIRTUAL && METHOD_MAPPING.s_owner.equals(owner) && METHOD_MAPPING.matches(name, desc);
     }
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         if (checkTargetInsn(opcode, owner, name, desc)) {
-        	markPatchedSuccessfully();
+            markPatchedSuccessfully();
             Label endLabel = new Label();
             Label skipLabel = new Label();
             super.visitVarInsn(Opcodes.ALOAD, 1); //load entity
@@ -48,9 +47,9 @@ class LayerCustomHeadVisitor extends SafeMethodVisitor {
         }
         super.visitMethodInsn(opcode, owner, name, desc, itf);
     }
-    
+
     @Override
     protected String getInjectTargetString() {
-    	return String.format("Patch target: %s; injection point: %s; (point not found)", TARGET_METHOD, METHOD_MAPPING);
+        return String.format("Patch target: %s; injection point: %s; (point not found)", TARGET_METHOD, METHOD_MAPPING);
     }
 }
