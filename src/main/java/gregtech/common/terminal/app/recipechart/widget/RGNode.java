@@ -493,7 +493,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
                 public boolean mouseClicked(int mouseX, int mouseY, int button) {
                     return RGNode.this.handleTipsSlotClick(mouseX, mouseY,this, tank.getFluid().copy());
                 }
-            }.setAlwaysShowFull(true).setBackgroundTexture(TerminalTheme.COLOR_B_2);
+            }.setAlwaysShowFull(true).setBackgroundTexture(TerminalTheme.COLOR_B_2).setClient();
             inputsGroup.addWidget(widget);
             children.put(widget, new HashSet<>());
         }
