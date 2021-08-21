@@ -652,7 +652,7 @@ public class MetaTileEntities {
         }
 
 
-        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));
+        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1673, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
         /*
          * FOR ADDON DEVELOPERS:
