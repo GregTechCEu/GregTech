@@ -221,7 +221,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     public EnumFacing getOutputFacing() {
-        return outputFacing == null ? EnumFacing.SOUTH : outputFacing;
+        return outputFacing == null ? frontFacing.getOpposite() : outputFacing;
     }
 
     @Override
