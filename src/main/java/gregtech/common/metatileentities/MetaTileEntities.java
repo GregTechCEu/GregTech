@@ -197,7 +197,7 @@ public class MetaTileEntities {
     public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
 
     public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
-
+  
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
 
     public static void init() {

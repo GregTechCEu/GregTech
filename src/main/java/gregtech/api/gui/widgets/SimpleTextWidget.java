@@ -40,6 +40,14 @@ public class SimpleTextWidget extends Widget {
         this.clientWidget = clientWidget;
     }
 
+    public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier, boolean clientWidget) {
+        super(new Position(xPosition, yPosition), Size.ZERO);
+        this.color = color;
+        this.formatLocale = formatLocale;
+        this.textSupplier = textSupplier;
+        this.clientWidget = clientWidget;
+    }
+
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, Supplier<String> textSupplier) {
         this(xPosition, yPosition, formatLocale, 0x404040, textSupplier, true);
     }
@@ -51,6 +59,11 @@ public class SimpleTextWidget extends Widget {
 
     public SimpleTextWidget setCenter(boolean isCentered) {
         this.isCentered = isCentered;
+        return this;
+    }
+
+    public SimpleTextWidget setShadow(boolean shadow) {
+        isShadow = shadow;
         return this;
     }
 
@@ -82,8 +95,8 @@ public class SimpleTextWidget extends Widget {
         String text = formatLocale.isEmpty() ? (I18n.hasKey(lastText) ? I18n.format(lastText) : lastText) : I18n.format(formatLocale, lastText);
         Position position = getPosition();
         fontRenderer.drawString(text,
-        isCentered ? position.x - fontRenderer.getStringWidth(text) / 2 : position.x,
-        isCentered ? position.y - fontRenderer.FONT_HEIGHT / 2 : position.y, color, isShadow);
+            isCentered ? position.x - fontRenderer.getStringWidth(text) / 2 : position.x,
+            isCentered ? position.y - fontRenderer.FONT_HEIGHT / 2 : position.y, color, isShadow);
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 

@@ -55,7 +55,11 @@ public class TextFieldWidget extends Widget {
         super(new Position(xPosition, yPosition), new Size(width, height));
         if (isClientSide()) {
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-            this.textField = new GuiTextField(0, fontRenderer, xPosition, yPosition, width, height);
+            if (enableBackground) {
+                this.textField = new GuiTextField(0, fontRenderer, xPosition, yPosition, width, height);
+            } else {
+                this.textField = new GuiTextField(0, fontRenderer, xPosition + 1, yPosition + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, width - 2, height);
+            }
             this.textField.setCanLoseFocus(true);
             this.textField.setEnableBackgroundDrawing(enableBackground);
             this.textField.setMaxStringLength(maxStringLength);
@@ -64,6 +68,47 @@ public class TextFieldWidget extends Widget {
         }
         this.textSupplier = textSupplier;
         this.textResponder = textResponder;
+    }
+
+    public TextFieldWidget(int xPosition, int yPosition, int width, int height, IGuiTexture background, Supplier<String> textSupplier, Consumer<String> textResponder) {
+        super(new Position(xPosition, yPosition), new Size(width, height));
+        if (isClientSide()) {
+            this.enableBackground = false;
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+            this.textField = new GuiTextField(0, fontRenderer, xPosition + 1, yPosition + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, width - 2, height);
+            this.textField.setCanLoseFocus(true);
+            this.textField.setEnableBackgroundDrawing(false);
+            this.textField.setMaxStringLength(maxStringLength);
+            this.textField.setGuiResponder(MCGuiUtil.createTextFieldResponder(this::onTextChanged));
+        }
+        this.background = background;
+        this.textSupplier = textSupplier;
+        this.textResponder = textResponder;
+    }
+
+    public TextFieldWidget setTextSupplier(Supplier<String> textSupplier, boolean isClient) {
+        this.isClient = isClient;
+        this.textSupplier = textSupplier;
+        return this;
+    }
+
+    public TextFieldWidget setTextResponder(Consumer<String> textResponder, boolean isClient) {
+        this.isClient = isClient;
+        this.textResponder = textResponder;
+        return this;
+    }
+
+    public TextFieldWidget setCurrentString(String currentString) {
+        this.currentString = currentString;
+        this.textField.setText(currentString);
+        return this;
+    }
+
+    public String getCurrentString() {
+        if (isRemote()) {
+            return this.textField.getText();
+        }
+        return this.currentString;
     }
 
     public TextFieldWidget(int xPosition, int yPosition, int width, int height, IGuiTexture background, Supplier<String> textSupplier, Consumer<String> textResponder) {
