@@ -693,12 +693,31 @@ public class RecipeMaps {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
 
     @ZenProperty
-    public static final FuelRecipeMap COMBUSTION_GENERATOR_FUELS = new FuelRecipeMap("combustion_generator");
+    public static final RecipeMap<GasCollectorRecipeBuilder> GAS_COLLECTOR_RECIPES = new RecipeMap<>("gas_collector", 1, 1, 0, 0, 0, 0, 1, 1, new GasCollectorRecipeBuilder(), false)
+            .setSlotOverlay(false, false, GuiTextures.INT_CIRCUIT_OVERLAY)
+            .setSlotOverlay(true, true, GuiTextures.CENTRIFUGE_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_GAS_COLLECTOR, MoveType.HORIZONTAL);
 
+    public static final RecipeMap<SimpleRecipeBuilder> SIMPLE_WASHER_RECIPES = new RecipeMap<>("simple_washer", 1, 1, 1, 1, 1, 1, 0, 0, new SimpleRecipeBuilder(), true)
+            .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
+            .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, MoveType.HORIZONTAL);
+
+    @ZenProperty
+    public static final RecipeMap<PrimitiveRecipeBuilder> PRIMITIVE_BLAST_FURNACE_RECIPES = new RecipeMap<>("primitive_blast_furnace", 2, 2, 1, 2, 0, 0, 0, 0, new PrimitiveRecipeBuilder(), false);
+
+    @ZenProperty
+    public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMap<>("coke_oven", 1, 1, 0, 1, 0, 0, 0, 1, new PrimitiveRecipeBuilder(), false);
+
+    //////////////////////////////////////
+    //         Fuel Recipe Maps         //
+    //////////////////////////////////////
+
+    @ZenProperty
+    public static final FuelRecipeMap COMBUSTION_GENERATOR_FUELS = new FuelRecipeMap("combustion_generator");
 
     @ZenProperty
     public static final FuelRecipeMap GAS_TURBINE_FUELS = new FuelRecipeMap("gas_turbine");
-
 
     @ZenProperty
     public static final FuelRecipeMap STEAM_TURBINE_FUELS = new FuelRecipeMap("steam_turbine");
@@ -708,21 +727,4 @@ public class RecipeMaps {
 
     @ZenProperty
     public static final FuelRecipeMap PLASMA_GENERATOR_FUELS = new FuelRecipeMap("plasma_generator");
-
-    @ZenProperty
-    public static final List<PrimitiveBlastFurnaceRecipe> PRIMITIVE_BLAST_FURNACE_RECIPES = new CopyOnWriteArrayList<>();
-
-    @ZenProperty
-    public static final List<CokeOvenRecipe> COKE_OVEN_RECIPES = new CopyOnWriteArrayList<>();
-
-    @ZenMethod
-    public static List<PrimitiveBlastFurnaceRecipe> getPrimitiveBlastFurnaceRecipes() {
-        return PRIMITIVE_BLAST_FURNACE_RECIPES;
-    }
-
-    @ZenMethod
-    public static List<CokeOvenRecipe> getCokeOvenRecipes() {
-        return COKE_OVEN_RECIPES;
-    }
-
 }

@@ -14,6 +14,7 @@ import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.InventoryCrafting;
@@ -478,28 +479,33 @@ public class ModHandler {
             RecipeMap.setFoundInvalidRecipe(true);
             return false;
         }
+
+        boolean wasRemoved = false;
         for (ItemStack stack : FurnaceRecipes.instance().getSmeltingList().keySet()) {
             if (ItemStack.areItemStacksEqual(input, stack)) {
                 FurnaceRecipes.instance().getSmeltingList().remove(stack);
-                return true;
+                wasRemoved = true;
+                break;
             }
         }
-        return false;
-    }
+        if (ConfigHolder.debug) {
+            if (wasRemoved)
+                GTLog.logger.info("Removed Smelting Recipe for Input: {}", input.getDisplayName());
+            else GTLog.logger.error("Failed to Remove Smelting Recipe for Input: {}", input.getDisplayName());
+        }
 
-    public static int removeRecipes(Item output) {
-        return removeRecipes(recipe -> {
-            ItemStack recipeOutput = recipe.getRecipeOutput();
-            return !recipeOutput.isEmpty() && recipeOutput.getItem() == output;
-        });
+        return wasRemoved;
     }
 
     public static int removeRecipes(ItemStack output) {
-        return removeRecipes(recipe -> ItemStack.areItemStacksEqual(recipe.getRecipeOutput(), output));
-    }
+        int recipesRemoved = removeRecipes(recipe -> ItemStack.areItemStacksEqual(recipe.getRecipeOutput(), output));
 
-    public static <R extends IRecipe> int removeRecipes(Class<R> recipeClass) {
-        return removeRecipes(recipeClass::isInstance);
+        if (ConfigHolder.debug) {
+            if (recipesRemoved != 0)
+                GTLog.logger.info("Removed {} Recipe(s) with Output: {}", recipesRemoved, output.getDisplayName());
+            else GTLog.logger.error("Failed to Remove Recipe with Output: {}", output.getDisplayName());
+        }
+        return recipesRemoved;
     }
 
     public static int removeRecipes(Predicate<IRecipe> predicate) {
@@ -520,8 +526,51 @@ public class ModHandler {
         return recipesRemoved;
     }
 
+    /**
+     * Removes a Crafting Table Recipe with the given name.
+     *
+     * @param location The ResourceLocation of the Recipe.
+     *                 Can also accept a String.
+     */
     public static void removeRecipeByName(ResourceLocation location) {
+        if (ConfigHolder.debug) {
+            String recipeName = location.toString();
+            if (ForgeRegistries.RECIPES.containsKey(location))
+                GTLog.logger.info("Removed Recipe with Name: {}", recipeName);
+            else GTLog.logger.error("Failed to Remove Recipe with Name: {}", recipeName);
+        }
         ForgeRegistries.RECIPES.register(new DummyRecipe().setRegistryName(location));
+    }
+
+    public static void removeRecipeByName(String recipeName) {
+        removeRecipeByName(new ResourceLocation(recipeName));
+    }
+
+    /**
+     * Removes Crafting Table Recipes with a range of names, being {@link GTValues} voltage names.
+     * An example of how to use it:
+     *
+     * <cr>
+     *     removeTieredRecipeByName("gregtech:transformer_", EV, UV);
+     * </cr>
+     *
+     * This will remove recipes with names:
+     *
+     * <cr>
+     *     gregtech:transformer_ev
+     *     gregtech:transformer_iv
+     *     gregtech:transformer_luv
+     *     gregtech:transformer_zpm
+     *     gregtech:transformer_uv
+     * </cr>
+     *
+     * @param recipeName The base name of the Recipes to remove.
+     * @param startTier  The starting tier index, inclusive.
+     * @param endTier    The ending tier index, inclusive.
+     */
+    public static void removeTieredRecipeByName(String recipeName, int startTier, int endTier) {
+        for (int i = startTier; i <= endTier; i++)
+            removeRecipeByName(String.format("%s%s", recipeName, GTValues.VN[i].toLowerCase()));
     }
 
     ///////////////////////////////////////////////////

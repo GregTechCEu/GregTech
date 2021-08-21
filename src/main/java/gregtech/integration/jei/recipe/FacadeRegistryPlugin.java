@@ -66,10 +66,7 @@ public class FacadeRegistryPlugin implements IRecipeRegistryPlugin {
     }
 
     private static List<IRecipeWrapper> createFacadeRecipes(ItemStack itemStack) {
-        return Lists.newArrayList(
-                createFacadeRecipe(itemStack, Materials.Aluminium, 5),
-                createFacadeRecipe(itemStack, Materials.WroughtIron, 3),
-                createFacadeRecipe(itemStack, Materials.Iron, 2));
+        return Lists.newArrayList(createFacadeRecipe(itemStack, Materials.Iron, 4));
     }
 
     private static IRecipeWrapper createFacadeRecipe(ItemStack itemStack, Material material, int facadeAmount) {

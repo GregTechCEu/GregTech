@@ -28,12 +28,17 @@ import java.util.Collections;
 public class SteamCoalBoiler extends SteamBoiler implements IFuelable {
 
     public SteamCoalBoiler(ResourceLocation metaTileEntityId, boolean isHighPressure) {
-        super(metaTileEntityId, isHighPressure, Textures.COAL_BOILER_OVERLAY, 150);
+        super(metaTileEntityId, isHighPressure, Textures.COAL_BOILER_OVERLAY);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
         return new SteamCoalBoiler(metaTileEntityId, isHighPressure);
+    }
+
+    @Override
+    protected int getBaseSteamOutput() {
+        return isHighPressure ? 300 : 120;
     }
 
     @Override

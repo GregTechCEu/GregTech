@@ -1,23 +1,17 @@
 package gregtech.common.tools;
 
+import com.google.common.collect.ImmutableSet;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.common.items.behaviors.CrowbarBehaviour;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 
-import java.util.HashSet;
 import java.util.Set;
 
 public class ToolUniversalSpade extends ToolBase {
 
-    private static final Set<String> SPADE_TOOL_CLASSES = new HashSet<String>() {{
-        add("shovel");
-        add("axe");
-        add("saw");
-        add("sword");
-        add("crowbar");
-    }};
+    private static final Set<String> SPADE_TOOL_CLASSES = ImmutableSet.of("shovel", "axe", "saw", "sword", "crowbar");
 
     @Override
     public int getToolDamagePerBlockBreak(ItemStack stack) {
@@ -47,11 +41,7 @@ public class ToolUniversalSpade extends ToolBase {
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
-        return (tool != null && (tool.equals("shovel") ||
-                tool.equals("axe") ||
-                tool.equals("saw") ||
-                tool.equals("sword") ||
-                tool.equals("crowbar"))) ||
+        return (tool != null && SPADE_TOOL_CLASSES.contains(tool)) ||
                 block.getMaterial() == Material.SAND ||
                 block.getMaterial() == Material.GRASS ||
                 block.getMaterial() == Material.GROUND ||

@@ -28,7 +28,7 @@ public class ToolWireCutter extends ToolBase {
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
-        return tool != null && tool.equals("cutter");
+        return tool != null && CUTTER_TOOL_CLASSES.contains(tool);
     }
 
     @Override

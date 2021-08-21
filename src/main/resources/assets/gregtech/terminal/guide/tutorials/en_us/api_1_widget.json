@@ -1,0 +1,304 @@
+{
+  "section": "Guide Widget Api",
+  "title": "Guide Widget",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "In this page we'll learn what is §4§lGuide Widget§r, and its public attributes.",
+        "Widgets are rendered in the Guide Page, which is the basis for your custom pages. §nTextbox§r, §nImage§r, etc",
+        "To use it, just add the related JSON code under the §l\"fixed\"§r or §l\"stream\"§r.",
+        "There are some attributes effects (styles) that are valid for all widgets",
+        "-------------------------------",
+        "§lJSON§r:",
+        "{",
+        "  \"type\": \"type here\",",
+        "  \"x\": 50,",
+        "  \"y\": 100,",
+        "  \"width\": 150,",
+        "  \"height\": 40,",
+        "  \"ref\": \"ref\",",
+        "  \"stroke\": 0,",
+        "  \"stroke_width\": 1,",
+        "  \"fill\": 0,",
+        "  \"link\": \"ref\"",
+        "  \"hover_text\": [\"text here\"]",
+        "}",
+        "-------------------------------",
+        "§lContents§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "type",
+      "content": [
+        "    1.§ntype§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "xywh",
+      "content": [
+        "    2.§nx, y, width, height§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "ref",
+      "content": [
+        "    3.§nref§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fill",
+      "content": [
+        "    4.§nfill§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "stroke",
+      "content": [
+        "    5.§nstroke§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "stroke_width",
+      "content": [
+        "    6.§nstroke_width§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "link",
+      "content": [
+        "    7.§nlink§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "hover",
+      "content": [
+        "    8.§nhover_text§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "type",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §ntype§r (§4required§r)",
+        "§ltype§r: String",
+        "§lillustrate§r: This is the unique id of the widget. See the API documentation for each widget."
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "xywh",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nx, y, width, height§r (§4optional§r)",
+        "§ltype§r: Integer",
+        "§lillustrate§r: The position and size of the widget. In a stream layout, you usually  don't need to set it (the image widget needs to set width and height). Under fixed layout you must set these four attributes."
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "ref",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nref§r (§4optional§r)",
+        "§ltype§r: String",
+        "§ldefault§r: null",
+        "§lillustrate§r: This is a tag of this widget. The ref should be unique on the same page."
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "fill",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nfill§r (§6optional§r)",
+        "§ltype§r: Number",
+        "§ldefault§r: 0",
+        "§lillustrate§r: The background color."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§lDemo§r: 4278190335 (0xFF0000FF)"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "fill": 4278190335,
+      "content": [
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "stroke",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nstroke§r (§6optional§r)",
+        "§ltype§r: Number",
+        "§ldefault§r: 0",
+        "§lillustrate§r: The border color."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§lDemo§r: 4278190335 (0xFF0000FF)"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "item",
+      "source": "minecraft:ender_pearl",
+      "stroke": 4278190335,
+      "width": 50,
+      "height": 50
+    },
+    {
+      "type": "textbox",
+      "ref": "stroke_width",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nstroke_width§r (§6optional§r)",
+        "§ltype§r: Number",
+        "§ldefault§r: 1",
+        "§lillustrate§r: The border width."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§lDemo§r: 5"
+      ]
+    },
+    {
+      "type": "image",
+      "form": "item",
+      "source": "minecraft:ender_pearl",
+      "stroke": 4278190335,
+      "stroke_width": 5,
+      "width": 50,
+      "height": 50
+    },
+    {
+      "type": "textbox",
+      "ref": "link",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nlink§r (§6optional§r)",
+        "§ltype§r: String",
+        "§ldefault§r: null",
+        "§lillustrate§r: Click to jump to the specified location. Need to be used with ref, target is ref."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§lDemo§r: \"P2\""
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "fill": 4286430975,
+      "hover_text": ["\"ref\": \"P1\""],
+      "ref": "P1",
+      "link": "P2",
+      "content": ["Click Me!"]
+    },
+    {
+      "type": "textbox",
+      "content": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§lDemo§r: \"P1\""
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "fill": 4286430975,
+      "hover_text": ["\"ref\": \"P2\""],
+      "ref": "P2",
+      "link": "P1",
+      "content": ["Click Me!"]
+    },
+    {
+      "type": "textbox",
+      "ref": "hover",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nhover_text§r (§6optional§r)",
+        "§ltype§r: Array",
+        "§ldefault§r: null",
+        "§lillustrate§r: Displays text when the mouse is over the widget."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§lDemo§r: [\"THIS IS\",\"GT ICON\"]"
+      ]
+    },
+    {
+      "type": "image",
+      "hover_text": ["THIS IS","GT ICON"],
+      "form": "resource",
+      "source": "gregtech:textures/gui/icon/gregtech_logo.png",
+      "width": 100,
+      "height": 100
+    }
+  ],
+  "fixed": []
+}

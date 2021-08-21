@@ -71,15 +71,10 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     private void registerSpecialOreDict(ItemStack item, Material material, OrePrefix prefix) {
+        if (prefix.getAlternativeOreName() != null) {
+            OreDictUnifier.registerOre(item, prefix.getAlternativeOreName(), material);
+        }
         if (prefix.equals(OrePrefix.dust)) OreDictUnifier.registerOre(item, OrePrefix.DUST_REGULAR, material);
-        else if (prefix.equals(OrePrefix.oreChunk))
-            OreDictUnifier.registerOre(item, OrePrefix.oreGravel.name(), material);
-        else if (prefix.equals(OrePrefix.oreEnderChunk))
-            OreDictUnifier.registerOre(item, OrePrefix.oreEndstone.name(), material);
-        else if (prefix.equals(OrePrefix.oreNetherChunk))
-            OreDictUnifier.registerOre(item, OrePrefix.oreNetherrack.name(), material);
-        else if (prefix.equals(OrePrefix.oreSandyChunk))
-            OreDictUnifier.registerOre(item, OrePrefix.oreSand.name(), material);
 
         if (material == Materials.Plutonium239) {
             OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "239");
@@ -97,7 +92,6 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
     public String getItemStackDisplayName(ItemStack itemStack) {
         Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(itemStack.getItemDamage());
         if (material == null || prefix == null) return "";
@@ -125,7 +119,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         for (short metaItem : generatedItems) {
             MaterialIconSet materialIconSet = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(metaItem).getMaterialIconSet();
 
-            short registrationKey = (short) (prefix.id + materialIconSet.ordinal());
+            short registrationKey = (short) (prefix.id + materialIconSet.id);
             if (!alreadyRegistered.containsKey(registrationKey)) {
                 ResourceLocation resourceLocation = prefix.materialIconType.getItemModelPath(materialIconSet);
                 ModelBakery.registerItemVariants(this, resourceLocation);

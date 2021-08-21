@@ -36,7 +36,6 @@ public class GTOreCategory extends PrimitiveRecipeCategory<GTOreInfo, GTOreInfo>
     protected List<Integer> dimensionIDs;
     protected final int FONT_HEIGHT = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
     protected final Map<Integer, String> namedDimensions = WorldGenRegistry.getNamedDimensions();
-    private final Map<DimensionType, IntSortedSet> dimMap = DimensionManager.getRegisteredDimensions();
     private final Supplier<List<Integer>> dimension = this::getAllRegisteredDimensions;
     private final int NUM_OF_SLOTS = 5;
     private final int SLOT_WIDTH = 18;
@@ -193,29 +192,21 @@ public class GTOreCategory extends PrimitiveRecipeCategory<GTOreInfo, GTOreInfo>
 
     public List<Integer> getAllRegisteredDimensions() {
         List<Integer> dims = new ArrayList<>();
+        /*
+        Gather the registered dimensions here instead of at the top of the class to catch very late registered dimensions
+        such as Advanced Rocketry
+         */
+        Map<DimensionType, IntSortedSet> dimMap = DimensionManager.getRegisteredDimensions();
         dimMap.values().stream()
                 .flatMap(Collection::stream)
                 .mapToInt(Integer::intValue)
                 .filter(num -> definition.getDimensionFilter().test(DimensionManager.createProviderFor(num)))
                 .forEach(dims::add);
 
+        //Slight cleanup of the list if Advanced Rocketry is installed
         if (isModLoaded(MODID_AR)) {
             try {
-                int[] plantDims = DimensionManager.getDimensions(DimensionType.byName("planet"));
-                int[] asteroidDims = DimensionManager.getDimensions(DimensionType.byName("asteroid"));
                 int[] spaceDims = DimensionManager.getDimensions(DimensionType.byName("space"));
-
-                //Add the Planets to the dimension list
-                Arrays.stream(plantDims)
-                        .filter(num -> !dims.contains(num))
-                        .filter(num -> definition.getDimensionFilter().test(DimensionManager.createProviderFor(num)))
-                        .forEach(dims::add);
-
-                //Add the Asteroids to the dimension list
-                Arrays.stream(asteroidDims)
-                        .filter(num -> !dims.contains(num))
-                        .filter(num -> definition.getDimensionFilter().test(DimensionManager.createProviderFor(num)))
-                        .forEach(dims::add);
 
                 //Remove Space from the dimension list
                 for (int spaceDim : spaceDims) {

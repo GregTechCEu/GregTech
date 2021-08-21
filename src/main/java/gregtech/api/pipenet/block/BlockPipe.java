@@ -83,6 +83,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
 
     protected abstract NodeDataType getFallbackType();
 
+    // TODO this has no reason to need an ItemStack parameter
     public abstract PipeType getItemPipeType(ItemStack itemStack);
 
     public abstract void setTileEntityData(TileEntityPipeBase<PipeType, NodeDataType> pipeTile, ItemStack itemStack);
@@ -160,7 +161,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 }
             }
             if (facing == null) throw new NullPointerException("Facing is null");
-            boolean open = pipeTile.isConnectionOpenVisual(facing);
+            boolean open = pipeTile.isConnectionOpenAny(facing);
             boolean canConnect = canConnect(pipeTile, facing);
             if (!open && canConnect && !ConfigHolder.U.GT6.gt6StylePipesCables)
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
@@ -193,7 +194,6 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public void updateActiveNodeStatus(World worldIn, BlockPos pos, IPipeTile<PipeType, NodeDataType> pipeTile) {
         PipeNet<NodeDataType> pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
         if (pipeNet != null && pipeTile != null) {
-            //int activeConnections = ~getActiveNodeConnections(worldIn, pos, pipeTile);
             int activeConnections = pipeTile.getOpenConnections(); //remove blocked connections
             boolean isActiveNodeNow = activeConnections != 0;
             boolean modeChanged = pipeNet.markNodeAsActive(pos, isActiveNodeNow);
@@ -407,7 +407,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         int connections = selfTile.getOpenConnections();
         for (EnumFacing facing : EnumFacing.values()) {
             // continue if connection is already open
-            if (selfTile.isConnectionOpenVisual(facing)) continue;
+            if (selfTile.isConnectionOpenAny(facing)) continue;
             CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
             if (cover == null) continue;
             // adds side to open connections of it isn't already open & has a cover

@@ -4,7 +4,7 @@ package gregtech.common.metatileentities.multi.steam;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.capability.impl.RecipeMapSteamMultiblockController;
+import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -27,7 +27,6 @@ import net.minecraft.util.math.BlockPos;
 
 public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController {
 
-    private static final double CONVERSION_RATE = ConfigHolder.multiblockSteamtoEU;
     private boolean isActive;
 
     public MetaTileEntitySteamOven(ResourceLocation metaTileEntityId) {
@@ -71,13 +70,13 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     }
 
     public IBlockState getCasingState() {
-        return ConfigHolder.steelSteamMultiblocks ?
+        return ConfigHolder.U.steelSteamMultiblocks ?
                 MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID) :
                 MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.BRONZE_BRICKS);
     }
 
     public IBlockState getFireboxState() {
-        return ConfigHolder.steelSteamMultiblocks ?
+        return ConfigHolder.U.steelSteamMultiblocks ?
                 MetaBlocks.BOILER_FIREBOX_CASING.getState(BlockFireboxCasing.FireboxCasingType.STEEL_FIREBOX) :
                 MetaBlocks.BOILER_FIREBOX_CASING.getState(BlockFireboxCasing.FireboxCasingType.BRONZE_FIREBOX);
     }
@@ -88,7 +87,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
 
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
-        if (ConfigHolder.steelSteamMultiblocks) {
+        if (ConfigHolder.U.steelSteamMultiblocks) {
             if (sourcePart != null && isFireboxPart(sourcePart)) {
                 return isActive ? Textures.STEEL_FIREBOX_ACTIVE : Textures.STEEL_FIREBOX;
             }

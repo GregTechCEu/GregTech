@@ -4,6 +4,7 @@ import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Transformation;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
+import com.google.gson.JsonObject;
 import gregtech.api.GTValues;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
@@ -22,7 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * This representation doesn't take image size in account, so all image variables are
  * 0.0 - 1.0 bounds
  */
-public class TextureArea {
+public class TextureArea implements IGuiTexture {
 
     public final ResourceLocation imageLocation;
 

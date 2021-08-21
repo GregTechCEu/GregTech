@@ -69,8 +69,9 @@ public class PipeCoverableImplementation implements ICoverable {
             buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));
             coverBehavior.writeInitialSyncData(buffer);
         });
+        holder.setConnectionBlocked(AttachmentType.COVER, side, false, false);
         if (!coverBehavior.canPipePassThrough()) {
-            holder.setConnectionBlocked(AttachmentType.COVER, side, true, false);
+            holder.setConnectionBlocked(AttachmentType.PIPE, side, true, false);
         }
         holder.notifyBlockUpdate();
         holder.markAsDirty();
@@ -91,8 +92,9 @@ public class PipeCoverableImplementation implements ICoverable {
             Block.spawnAsEntity(getWorld(), getPos(), dropStack);
         }
         writeCustomData(2, buffer -> buffer.writeByte(side.getIndex()));
-        BlockPipe pipeBlock = (BlockPipe<?, ?, ?>) getWorld().getBlockState(getPos()).getBlock();
-        holder.setConnectionBlocked(AttachmentType.COVER, side, !pipeBlock.canConnect(holder, side), false);
+        BlockPipe blockPipe = holder.getPipeBlock();
+        holder.setConnectionBlocked(AttachmentType.COVER, side, true, false);
+        holder.setConnectionBlocked(AttachmentType.PIPE, side, !blockPipe.canConnect(holder, side), false);
         holder.notifyBlockUpdate();
         holder.markAsDirty();
         return true;

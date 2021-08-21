@@ -5,8 +5,8 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
-import gregtech.api.util.DirectionHelper;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.RelativeDirection;
 import gregtech.common.items.behaviors.ModeSwitchBehavior;
 import gregtech.common.tools.ToolBase;
 import net.minecraft.block.material.Material;
@@ -137,7 +137,7 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
         Vec3d lookVec = player.getLookVec();
         EnumFacing facing = EnumFacing.getFacingFromVector((float) lookVec.x, (float) lookVec.y, (float) lookVec.z);
         BlockPos corner = findCorner(max, hitPos, player, facing);
-        BlockPos oppositeCorner = findOppositeCorner(max, corner, player);
+        BlockPos oppositeCorner = findOppositeCorner(max, corner, facing);
 
         List<BlockPos> posList = Lists.newArrayList(BlockPos.getAllInBox(corner, oppositeCorner));
         return posList.stream()
@@ -155,22 +155,22 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
      * Returns the relative bottom left closest corner of the possible mining area for the drill.
      */
     private static BlockPos findCorner(int max, BlockPos startPos, EntityPlayer player, EnumFacing facing) {
-        Vec3i leftVec = DirectionHelper.getRelativeLeft(player).getDirectionVec();
-        Vec3i downVec = DirectionHelper.getRelativeDown(player).getDirectionVec();
+        Vec3i leftVec = RelativeDirection.LEFT.applyVec3i(facing);
+        Vec3i downVec = RelativeDirection.DOWN.applyVec3i(facing);
         switch (facing) {
             case UP:
             case DOWN:
                 // treat up and down as standard cube. just acquire leftmost corner, ignoring floor level
                 return startPos
-                        .add(DirectionHelper.multiplyVec(leftVec, max / 2))
-                        .add(DirectionHelper.multiplyVec(downVec, max / 2));
+                        .add(multiplyVec(leftVec, max / 2))
+                        .add(multiplyVec(downVec, max / 2));
             default:
                 // try to find lowest pos
-                Vec3i towardsVec = DirectionHelper.getRelativeForward(player).getDirectionVec();
+                Vec3i towardsVec = RelativeDirection.FRONT.applyVec3i(facing);
 
                 // Find the relative downwards offset
                 for (int i = 1; i <= max; i++) {
-                    BlockPos currentPos = startPos.add(DirectionHelper.multiplyVec(downVec, i));
+                    BlockPos currentPos = startPos.add(multiplyVec(downVec, i));
 
                     BlockPos forwardPos = currentPos.add(towardsVec);
                     IBlockState state = player.world.getBlockState(forwardPos);
@@ -181,19 +181,27 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
                 }
 
                 // Find the relative leftmost BlockPos
-                return startPos.add(DirectionHelper.multiplyVec(leftVec, max / 2));
+                return startPos.add(multiplyVec(leftVec, max / 2));
         }
     }
 
-    private static BlockPos findOppositeCorner(int max, BlockPos corner, EntityPlayer player) {
-        Vec3i rightVec = DirectionHelper.getRelativeRight(player).getDirectionVec();
-        Vec3i forwardVec = DirectionHelper.getRelativeForward(player).getDirectionVec();
-        Vec3i upVec = DirectionHelper.getRelativeUp(player).getDirectionVec();
+    private static BlockPos findOppositeCorner(int max, BlockPos corner, EnumFacing facing) {
+        Vec3i rightVec = RelativeDirection.RIGHT.applyVec3i(facing);
+        Vec3i forwardVec = RelativeDirection.FRONT.applyVec3i(facing);
+        Vec3i upVec = RelativeDirection.UP.applyVec3i(facing);
 
         return corner
-                .add(DirectionHelper.multiplyVec(rightVec, max - 1))
-                .add(DirectionHelper.multiplyVec(forwardVec, max - 1))
-                .add(DirectionHelper.multiplyVec(upVec, max - 1));
+                .add(multiplyVec(rightVec, max - 1))
+                .add(multiplyVec(forwardVec, max - 1))
+                .add(multiplyVec(upVec, max - 1));
+    }
+
+    private static Vec3i multiplyVec(Vec3i start, int multiplier) {
+        return new Vec3i(
+                start.getX() * multiplier,
+                start.getY() * multiplier,
+                start.getZ() * multiplier
+        );
     }
 
     @Override

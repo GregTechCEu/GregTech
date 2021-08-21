@@ -1,0 +1,216 @@
+## Changes made by GregTech: CE Unofficial
+
+### Features
+- Shadows of Greg content was almost entirely merged in, including:
+    - Assembly Line
+    - Fusion Reactors (MK 1-3)
+    - Replicators, Mass Fabricators
+    - Crates, Drums (now with an Aluminium variant)
+    - Higher Tier Machines
+    - Cluster Mill NOT moved over
+- Russian Localization updated
+- Machine Tank Sizes are now configurable (default unchanged)
+- Pipes now have proper models
+- GT6-Style Pipe and Cable connections config option (default false)
+- Pipes and Cables now have the "Machine Grid" when holding a tool or Cover
+- Cables now require Wire Cutters to connect and disconnect
+- Machines can require a Wrench to break with a config option (default false)
+- New Programmed Circuit texture (credit IMPACT)
+- Added Huge Pipes
+- Frame texture reworked, Colored Frames removed to reduce clutter
+- TheOneProbe now displays if a multiblock is formed or not
+- Many fluid textures were updated to be more unique
+- Added the Large Chemical Reactor (LCR), a multiblock Chemical Reactor with some custom recipes and perfect overclocking (4x the power, /4 the duration)
+- EBF coils have new textures, and have connected textures
+- Fusion and Superconductor coils for EBF replaced with Diamericium Titanium and Fluxed Electrum (tentative replacements)
+- Tanks in Machines now display their total fluid amount without needing the tooltip
+- Circuits have been entirely overhauled, with an inspiration from Omnifactory and IMPACT
+- New Boule, Neutronium Boule, as well as new SMD components, circuit boards, silicon chips, etc.
+- Fusion Reactor now illuminates its "rings" with a bright yellow texture
+- Multiblock Parts can now be placed facing directly up or down (instead of only towards the side)
+- Machines and Cables have a configurable color tint (default none, like GTCE)
+- Shadows of Greg Bundler recipes added to Packer and Unpacker
+- New tiers of Cells to hold much larger quantities of fluids
+- EBF now has coil bonuses:
+    - Every 900K above the recipe temperature applies a multiplicative 5% energy discount
+    - Every 1800K above the recipe temperature applies a "perfect overclock" (/4 duration instead of /2)
+    - Every voltage tier above MV increases the total temperature by 100K
+- Transformers now have the "lower voltage side" on 5 sides, with higher voltage on one side
+- Infinite Energy Emitter for debug and Creative (or expert-pack endgame)
+- Added 3x3 Hammers (like Tinker's Hammers)
+- Added Electric Drills up to IV, can be as large as 9x9x9 (can be set in the tool with shift-right-click)
+- Added Super Tanks and Super Chests, starting at MV. Quantum Tanks and Chests are now later and much, much larger
+- Fluids can now be manually removed from Singleblock Generators
+- Advancements (achievements) were added all the way from Bronze to MK3 Fusion Reactor and Wetware Mainframe
+- TheOneProbe now displays recipe time in ticks when duration is short, to be more accurate
+- Progress Bars in JEI now are active (like Vanilla Furnace progress bar in JEI)
+- "Allow Input from Output Side" now defaults to True
+- Energy Output Hatches (now called Dynamo Hatches) now only output energy on one side (Energy Input unchanged)
+- Scanner from GT5U added, for Matter Replication among other things
+- Overclocking logic was changed:
+    - Default logic is a flat /2 (from 2/2.8 split previously)
+    - Config option is available, allowing a range from 2.0 to 3.0
+    - ULV -> LV no longer overclocks, keeping ULV recipes much more energy efficient
+- Primitive Water Pump was added (credit IMPACT)
+    - Craftable before Steam-Era, requiring only Iron, Wood, and Stone
+    - Outputs up to 3B/s of water, or as low as 150mB depending on the Hatch used and the Biome it is placed in
+    - Look at JEI Info Tab for more details
+- Steam Machines now have a more distinct texture on their Venting Output
+- Drums and Tanks can now be cleared via a crafting recipe (like EIO Tanks), similar to Quantum/Super Tanks
+- Some Steam-Era Multiblock Machines were added:
+    - Steam Grinder:
+        - Multiblock Macerator at Steam-Age
+        - Consumes 2x the base rate of Steam, at 1.5x the base duration, but up to 8 items at a time
+    - Steam Oven:
+        - Multiblock Furnace at Steam-Age
+        - Consumes 2x the base rate of Steam, at 1.5x the base duration, but up to 8 items at a time
+- Tools can now be enchanted with Unbreaking, and Wrenches can have Efficiency as well
+- Item Pipes have been added
+    - Much larger throughput compared to options from other Mods
+    - More efficient (TPS) than EnderIO Conduits
+    - Two Modes with a Conveyor or Robot Arm cover:
+        - Priority:
+            - Each Pipe has a "priority" value
+            - Items will go to the lowest priority value first
+            - Restrictive Pipes can be used to drastically increase priority value (lower priority)
+        - Round Robin
+            - Items will be evenly distributed to each destination
+            - Unlike EnderIO, a single "group" of items extracted will be split across destinations
+            - If an uneven amount of items to destinations, priority will break the tie
+- Many more materials now have Fluid Pipes and Item Pipes
+- Multiblocks can now share ALL hatches (energy, item in/out, fluid in/out) excluding Rotor Holders
+- Mixer now has 2 more Item Input slots
+- Chemical Reactor now has 1 more Item Output Slot
+- Distillery now has an Item Output Slot
+- GT Wrenches will now work for: BuildCraft, EnderIO, Thermal Expansion, Applied Energistics
+- New Covers:
+    - Computer Monitor: a decorative cover
+    - Energy Detector Cover: outputs redstone signal based on energy stored (has a few modes)
+    - Fluid Detector Cover: outputs redstone signal based on fluid stored (has a few modes)
+    - Item Detector Cover: outputs redstone signal based on items stored (has a few modes)
+    - Crafting Station Cover: a GT Crafting Station, as a Cover!
+    - Infinite Water Cover: creates 16 Buckets of water every second
+- Air Collectors reworked to Gas Collectors:
+    - Have different Gases in each dimension
+    - Use a Programmed Circuit, so can collect different gases in each dimension
+    - Can be added to by CraftTweaker
+- Steam Era reworked:
+    - Steam Machines:
+        - Bronze Steam Machines now have double the duration of LV/Steel Steam Machines
+        - Steel Steam Machines have normal LV duration but 2x the Steam Consumption
+        - In total, Bronze/Steel/LV machines all have equivalent Steam Consumption (if using Steam Turbine for LV)
+        - Many early game recipes tweaked to make the Bronze Machine nerf not as bad
+        - Steel Steam Machine recipes are much more reasonable, requiring at most 1 Steel per machine, and being "direct upgrade" recipes for Bronze Machines
+    - Steam Boilers:
+        - Added Steel Solar Boiler
+        - Boilers have a more clear steam production, now per second instead of 25/10 ticks
+        - Lava generators buffed by 3x
+        - Bronze Solar Steam Boiler buffed by 2x
+- Many JEI pages reworked (distillation tower, coke oven, assembly line) to be fancier
+- Cable Loss reworked:
+    - Lossless wires will now no longer damage you
+    - Cables will always have lossy wires, unless they are "Superconductors"
+    - Superconductors are available at every tier, and are available only wires to reduce clutter
+- High-Amp Energy Hatches added (can be configured with a Screwdriver, with amperages: 2, 4, 8, 16)
+- High-Amp Transformers added (can be configured with a Screwdriver, with ranges: 1->4, 2->8, 4->16, 16->64)
+- Diodes Added, which allow energy flow in one direction and restrict amperage (can be configured with a Screwdriver, with amperages: 1, 2, 4, 8, 16)
+- GT Cables and wires can now natively power RF-consuming machines (with config, default true)
+- Simple Ore Washer added
+    - Ore Washer, but only at ULV
+    - Consumes 100mB of Water per recipe
+    - Is much faster than an Ore Washer, but grants no byproducts
+    - Can do: crushed -> crushedPurified, impureDust -> dust, pureDust -> dust
+    - Effectively an Electric Cauldron
+- Fluid Pipe Algorithm fully reworked:
+    - Pipes will behave similar to GT5, but without sloshing
+    - Fluids will be evenly split across all directions at a pipe "junction"
+    - Can also be set to Round Robin (with Pump cover)
+- Added Quadruple (4) and Nonuple (9) Pipes, which can move multiple fluid types through them at once
+- Distillation Tower Fluid Input Hatch can be placed on any block on the bottom layer. Energy Input Hatch can be placed on any block in the structure
+- Added Buffers, which can hold both a small amount of a few types of each Items and Fluids, meant for use in machine automation
+- Crafting Station now highlights missing items in saved recipes in red
+
+### Major Recipe Changes
+- Many, many new recipes for Vanilla items and blocks, with various configs to toggle
+- Casings now only make 2 per craft (instead of 3), Frames are cheaper to craft
+- Polybenzimidazole (PBI) has been added as a late-game polymer
+- Some processes have been rebalanced to be better to play with (Sulfuric and Nitric Acids, among others)
+- Singleblock Distilleries are now much faster, but do less fluid at a time
+- LCR has many recipes to "short-cut" processes (Epoxy, Polyethylene, etc.)
+- Uraninite processing is now slightly more complex (2 recipes total)
+- Electrolysis recipes are now on average 4x less duration
+- Ores that can be "directly smelted" into their materials have been reworked, so that dusts, crushed ore, etc will also direct smelt to the material
+- Decomposition Recipes (electrolysis, centrifuging) will now divide down to as few inputs as possible, still retaining full dusts and full buckets of outputs
+- Double Plates and Rounds were added, used in specific recipes
+- Many, many, many progression-related recipes were fixed (mostly from SoG) to allow full progression in the base mod
+- EBF coils now have slightly more complex recipes (configurable, default true)
+- Coal Gas and Coal Tar were added as another optional but very beneficial source of resources
+- Singleblock Distilleries will now always output the Item in the Distillation Recipe
+- Alloys can no longer be handcrafted past Stainless Steel, and require an on-tier Mixer to make
+- Harder recipes for Energy Hatches (configurable, default false)
+- Config to disable in-world Concrete Powder -> Concrete conversion
+- Indium now outputs 1 Small Dust each recipe instead of 1 Tiny Dust
+- High Octane Gasoline (HOG) and Nitrobenzene were added as more power options (as well as normal Gasoline)
+
+### Bug Fixes
+- Electric Tools now properly use power over durability
+- Many textures were fixed to be more consistent (z-fighting, improper coloration, etc.)
+- Drums and Tanks now respect sneaking and will not fill a bucket when sneaking
+- Steam Machines are no longer the Icon in JEI for machine categories
+- All tiers of wood pipes can now be crafted by hand
+- Fix Transformers not updating textures, and not properly sending a chat message
+- Machines with lots of slots causing the "Title" to overlap now have a larger GUI (no overlap)
+- Fix rare world corruption bug with Redstone cache
+- Fix Rubber Trees spawning in a perfect grid pattern
+- Drums now properly display their Tank contents in TheOneProbe
+- Tools now properly override `getToolClasses()`, leading to better mod compatibility
+- Fix Distillation Tower not respecting the output order in some arrangements of output hatches
+- Fix GT items being improperly sorted in JEI
+- Fix recipes being improperly sorted in each category
+    - Sorted in groups of voltage-tier, with duration increasing within each tier
+- Fix recipes in JEI taking an odd number of ticks rounding up
+    - 1 tick recipes properly display as 0.05s (instead of 0.1s)
+    - Example: 19 ticks will show as 0.95s (before would have been 1s)
+- Cables and Wires now properly respect amperage on the line
+- Machines (and other Energy-acceptors) now no longer accept their maximum amount of amps per side, instead its per container
+- Cables will no longer burn improper parts of the network, and now is only the overamped/overvolted portion
+
+### CraftTweaker
+- Materials can now automatically generate IDs
+    - Be careful, as changing the order of this will cause items in-world to disappear
+- Coke Oven and PBF have normal RecipeMaps now, instead of using custom ones
+
+### Removals
+- Potion Fluids placeable in-world were removed
+- Fluid Extractor and Extractor were combined into one machine (now Extractor)
+- Both Arc Furnaces were combined into one machine (now Arc Furnace)
+- Canning Machine and Fluid Canning Machine were combined (now Canning Machine)
+- Microwave, Amplifabricator, and Tesla Coil were removed
+- Dust-only Materials no longer generate blocks
+- GT Chests were removed (in favor of Crates, Super Chests, Quantum Chests)
+- Single-Use Batteries were removed (Except the ZPM)
+- Energy Field Projector was removed
+- Re-breather was removed
+
+### Misc Changes
+- Many Material colors and IconSets (their overall appearance) have been updated
+- Machine UIs were updated to be much cleaner, new progress bars, slot icons, better layouts
+- Electrolyzer and Centrifuge now show all 12 slots at once
+
+### Internal Changes
+- UHV - UXV Tiers are supported natively by GTCEu for addons to take advantage of
+- `Elements` is no longer an Enum
+- Machines can now be indestructable and Wither Proof, if properly set in the Class
+- Material ID limit was raised from 1,000 to 32,767
+    - GTCEu uses 1-2,999
+    - Gregicality/SoG uses 3,000-19,999
+    - 20,000-32,767 available for modpacks or other addons, not yet claimed
+- Material API was rewritten from scratch:
+    - TODO
+- OrePrefix is no longer an Enum, and can easily be added to by addons
+- Shaped and Shapeless Recipe methods in `ModHandler` can now accept more types
+- `debug` config will now log failed recipe removals and additions
+- There is now a "PrimitiveMultiblockController" base class, which uses a normal RecipeMap. When paired with the `PrimitiveRecipeBuilder`, it will:
+    - Allow recipes to be run without power
+    - (by default) Initialize inventory for items and fluids to the Controller instead of Multiblock Parts (overridable)
+    - Hide the EU/t and Total EU info from the JEI page

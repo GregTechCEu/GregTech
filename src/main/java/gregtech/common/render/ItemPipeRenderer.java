@@ -110,9 +110,10 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         ItemPipeType pipeType = blockFluidPipe.getItemPipeType(stack);
         Material material = blockFluidPipe.getItemMaterial(stack);
         if (pipeType != null && material != null) {
-            renderPipeBlock(material, pipeType, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0],
-                    1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
-                            1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex()));
+            int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
+                    1 << (6 + EnumFacing.SOUTH.getIndex()) | 1 << (6 + EnumFacing.NORTH.getIndex());
+            connections |= 1 << 12;
+            renderPipeBlock(material, pipeType, IPipeTile.DEFAULT_INSULATION_COLOR, renderState, new IVertexOperation[0], connections);
         }
         renderState.draw();
         GlStateManager.disableBlend();
@@ -168,48 +169,47 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         Cuboid6 cuboid6 = BlockItemPipe.getSideBox(null, thickness);
         if (connectMask == 0) {
+            // base pipe without connections
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
                 renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
-                if (restrictive)
-                    renderPipeSide(state, pipeRestrictive, renderedSide, cuboid6);
             }
         } else {
             for (EnumFacing renderedSide : EnumFacing.VALUES) {
-                //if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
-                int oppositeIndex = renderedSide.getOpposite().getIndex();
-                if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & ~(1 << oppositeIndex)) == 0) {
-                    renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
+                // if connection is blocked
+                if ((connectMask & 1 << renderedSide.getIndex()) == 0) {
+                    int oppositeIndex = renderedSide.getOpposite().getIndex();
+                    if ((connectMask & 1 << oppositeIndex) > 0 && (connectMask & 63 & ~(1 << oppositeIndex)) == 0) {
+                        // render open texture if opposite is open and no other
+                        renderPipeSide(state, pipeConnectSide, renderedSide, cuboid6);
+                    } else {
+                        // else render pipe side
+                        renderPipeSide(state, pipeSide, renderedSide, cuboid6);
+                    }
                 } else {
-                    renderPipeSide(state, pipeSide, renderedSide, cuboid6);
-                    if (restrictive)
-                        renderPipeSide(state, pipeRestrictive, renderedSide, cuboid6);
+                    // else render connection cuboid
+                    renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, renderedSide, thickness, restrictive);
                 }
-                //}
             }
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, EnumFacing.DOWN, thickness, restrictive);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, EnumFacing.UP, thickness, restrictive);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, EnumFacing.WEST, thickness, restrictive);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, EnumFacing.EAST, thickness, restrictive);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, EnumFacing.NORTH, thickness, restrictive);
-            renderPipeCube(connectMask, state, pipeSide, pipeConnectSide, pipeRestrictive, EnumFacing.SOUTH, thickness, restrictive);
         }
     }
 
     private void renderPipeCube(int connections, CCRenderState renderState, IVertexOperation[] pipeline, IVertexOperation[] pipeConnectSide, IVertexOperation[] pipeRestrictive, EnumFacing side, float thickness, boolean isRestrictive) {
-        if ((connections & 1 << side.getIndex()) > 0) {
-            boolean renderFrontSide = (connections & 1 << (6 + side.getIndex())) > 0;
-            Cuboid6 cuboid6 = BlockItemPipe.getSideBox(side, thickness);
-            for (EnumFacing renderedSide : EnumFacing.VALUES) {
-                if (renderedSide == side) {
-                    if (renderFrontSide) {
-                        renderPipeSide(renderState, pipeConnectSide, renderedSide, cuboid6);
-                    }
-                } else if (renderedSide != side.getOpposite()) {
-                    renderPipeSide(renderState, pipeline, renderedSide, cuboid6);
-                    if (isRestrictive)
-                        renderPipeSide(renderState, pipeRestrictive, renderedSide, cuboid6);
-                }
+        Cuboid6 cuboid6 = BlockItemPipe.getSideBox(side, thickness);
+        // render connection cuboid
+        for (EnumFacing renderedSide : EnumFacing.VALUES) {
+            if (renderedSide.getAxis() != side.getAxis()) {
+                // render base side texture
+                renderPipeSide(renderState, pipeline, renderedSide, cuboid6);
+                if (isRestrictive)
+                    // render restrictive texture
+                    renderPipeSide(renderState, pipeRestrictive, renderedSide, cuboid6);
             }
+        }
+        if ((connections & 1 << 12) > 0) {
+            renderPipeSide(renderState, pipeConnectSide, side, cuboid6);
+        } else if ((connections & 1 << (6 + side.getIndex())) > 0) {
+            // if neighbour pipe is smaller, render closed texture
+            renderPipeSide(renderState, pipeline, side, cuboid6);
         }
     }
 

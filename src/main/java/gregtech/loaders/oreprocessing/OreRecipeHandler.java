@@ -14,6 +14,7 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
@@ -143,6 +144,12 @@ public class OreRecipeHandler {
                         OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
                 .buildAndRegister();
 
+        RecipeMaps.SIMPLE_WASHER_RECIPES.recipeBuilder()
+                .input(crushedPrefix, material)
+                .fluidInputs(Materials.Water.getFluid(100))
+                .outputs(crushedPurifiedOre)
+                .duration(8).EUt(1).buildAndRegister();
+
         RecipeMaps.ORE_WASHER_RECIPES.recipeBuilder()
                 .input(crushedPrefix, material)
                 .fluidInputs(Materials.DistilledWater.getFluid(1000))
@@ -160,11 +167,12 @@ public class OreRecipeHandler {
                         OreDictUnifier.get(OrePrefix.dust, Materials.Stone))
                 .buildAndRegister();
 
-        if (property.getWashedIn() != null) {
+        if (property.getWashedIn().getKey() != null) {
             Material washingByproduct = GTUtility.selectItemInList(3, material, property.getOreByProducts(), Material.class);
+            Pair<Material, Integer> washedInTuple = property.getWashedIn();
             RecipeMaps.CHEMICAL_BATH_RECIPES.recipeBuilder()
                     .input(crushedPrefix, material)
-                    .fluidInputs(property.getWashedIn().getFluid(property.getWashedIn() == Materials.SodiumPersulfate ? 100 : 1000))
+                    .fluidInputs(washedInTuple.getKey().getFluid(washedInTuple.getValue()))
                     .outputs(crushedPurifiedOre)
                     .chancedOutput(OreDictUnifier.get(OrePrefix.dust, washingByproduct, property.getByProductMultiplier()), 7000, 580)
                     .chancedOutput(OreDictUnifier.get(OrePrefix.dust, Materials.Stone), 4000, 650)
@@ -223,6 +231,12 @@ public class OreRecipeHandler {
                 .duration(200)
                 .EUt(12)
                 .buildAndRegister();
+
+        RecipeMaps.SIMPLE_WASHER_RECIPES.recipeBuilder()
+                .input(purifiedPrefix, material)
+                .fluidInputs(Materials.Water.getFluid(100))
+                .outputs(dustStack)
+                .duration(8).EUt(1).buildAndRegister();
 
         ModHandler.addShapelessRecipe(String.format("purified_ore_to_dust_%s", material), dustStack,
                 'h', new UnificationEntry(purifiedPrefix, material));
@@ -288,6 +302,12 @@ public class OreRecipeHandler {
         }
 
         builder.buildAndRegister();
+
+        RecipeMaps.SIMPLE_WASHER_RECIPES.recipeBuilder()
+                .input(dustPrefix, material)
+                .fluidInputs(Materials.Water.getFluid(100))
+                .outputs(dustStack)
+                .duration(8).EUt(1).buildAndRegister();
 
         //dust gains same amount of material as normal dust
         processMetalSmelting(dustPrefix, material, property);

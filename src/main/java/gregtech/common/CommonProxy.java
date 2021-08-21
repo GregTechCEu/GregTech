@@ -7,6 +7,8 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
+import gregtech.api.terminal.TerminalRegistry;
+import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -29,6 +31,8 @@ import gregtech.loaders.oreprocessing.DecompositionRecipeHandler;
 import gregtech.loaders.oreprocessing.RecipeHandlerList;
 import gregtech.loaders.oreprocessing.ToolRecipeHandler;
 import gregtech.loaders.recipe.*;
+import gregtech.loaders.recipe.component.AnnotatedComponentHandlerLoader;
+import gregtech.loaders.recipe.component.IComponentHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -152,6 +156,7 @@ public class CommonProxy {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void initComponents(RegistryEvent.Register<IRecipe> event) {
         CraftingComponent.initializeComponents();
+        IComponentHandler.runComponentHandlers();
     }
 
     //this is called with normal priority, so most mods working with
@@ -270,5 +275,7 @@ public class CommonProxy {
 
     public void onPostLoad() {
         WoodMachineRecipes.postInit();
+        TerminalRegistry.init();
+        new GuideJsonLoader().onResourceManagerReload(null);
     }
 }

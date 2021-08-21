@@ -20,6 +20,7 @@ import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.common.covers.filter.FluidFilterContainer;
+import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,6 +48,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     protected int transferRate;
     protected PumpMode pumpMode;
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
+    protected DistributionMode distributionMode;
+    protected boolean blocksInput;
     protected int fluidLeftToTransferLastSecond;
     private CoverableFluidHandlerWrapper fluidHandlerWrapper;
     protected boolean isWorkingAllowed = true;
@@ -60,6 +63,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.transferRate = mbPerTick;
         this.fluidLeftToTransferLastSecond = transferRate;
         this.pumpMode = PumpMode.EXPORT;
+        this.distributionMode = DistributionMode.INSERT_FIRST;
+        this.blocksInput = true;
         this.bucketMode = BucketMode.MILLI_BUCKET;
         this.fluidFilter = new FluidFilterContainer(this);
     }
@@ -83,6 +88,15 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         return pumpMode;
     }
 
+    public DistributionMode getDistributionMode() {
+        return distributionMode;
+    }
+
+    public void setDistributionMode(DistributionMode distributionMode) {
+        this.distributionMode = distributionMode;
+        coverHolder.markDirty();
+    }
+
     public void setBucketMode(BucketMode bucketMode) {
         this.bucketMode = bucketMode;
         if (this.bucketMode == BucketMode.BUCKET)
@@ -101,6 +115,14 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     protected void setManualImportExportMode(ManualImportExportMode manualImportExportMode) {
         this.manualImportExportMode = manualImportExportMode;
         coverHolder.markDirty();
+    }
+
+    public FluidFilterContainer getFluidFilterContainer() {
+        return fluidFilter;
+    }
+
+    public boolean blocksInput() {
+        return blocksInput;
     }
 
     @Override
@@ -168,9 +190,20 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
                 PumpMode.class, this::getPumpMode, this::setPumpMode));
 
         primaryGroup.addWidget(new CycleButtonWidget(7, 160, 116, 20,
-                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+           ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
+            .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
+        primaryGroup.addWidget(new ToggleButtonWidget(130, 160, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
+
+        TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
+        TileEntity otherTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
+        if(!(this instanceof CoverFluidRegulator) && coverTile instanceof TileEntityFluidPipe ^ otherTile instanceof TileEntityFluidPipe) {
+            primaryGroup.addWidget(new ToggleButtonWidget(149, 160, 20, 20, GuiTextures.DISTRIBUTION_MODE,
+                    () -> distributionMode == DistributionMode.INSERT_FIRST,
+                    val -> distributionMode = val ? DistributionMode.INSERT_FIRST : DistributionMode.ROUND_ROBIN)
+                    .setTooltipText("cover.conveyor.distribution"));
+        }
+              
         this.fluidFilter.initUI(88, primaryGroup::addWidget);
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 184 + 82)
@@ -241,6 +274,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferRate", transferRate);
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
+        tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
+        tagCompound.setBoolean("BlocksInput", blocksInput);
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
         tagCompound.setTag("Filter", fluidFilter.serializeNBT());
@@ -251,6 +286,8 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
         this.pumpMode = PumpMode.values()[tagCompound.getInteger("PumpMode")];
+        this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
+        this.blocksInput = tagCompound.getBoolean("BlocksInput");
         //LEGACY SAVE FORMAT SUPPORT
         if (tagCompound.hasKey("AllowManualIO")) {
             this.manualImportExportMode = tagCompound.getBoolean("AllowManualIO")
@@ -319,7 +356,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
         @Override
         public int fill(FluidStack resource, boolean doFill) {
-            if (pumpMode == PumpMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
+            if (blocksInput && pumpMode == PumpMode.EXPORT && manualImportExportMode == ManualImportExportMode.DISABLED) {
                 return 0;
             }
             if (!checkInputFluid(resource) && manualImportExportMode == ManualImportExportMode.FILTERED) {

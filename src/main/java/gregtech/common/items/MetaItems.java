@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
+import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class MetaItems {
@@ -128,19 +130,30 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_HULL_LV;
     public static MetaItem<?>.MetaValueItem BATTERY_HULL_MV;
     public static MetaItem<?>.MetaValueItem BATTERY_HULL_HV;
+    public static MetaItem<?>.MetaValueItem BATTERY_HULL_SMALL_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_HULL_MEDIUM_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_HULL_LARGE_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_HULL_MEDIUM_NAQUADRIA;
+    public static MetaItem<?>.MetaValueItem BATTERY_HULL_LARGE_NAQUADRIA;
 
-    public static MetaItem<?>.MetaValueItem BATTERY_RE_ULV_TANTALUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_RE_LV_CADMIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_RE_LV_LITHIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_RE_LV_SODIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_RE_MV_CADMIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_RE_MV_LITHIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_RE_MV_SODIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_RE_HV_CADMIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_RE_HV_LITHIUM;
-    public static MetaItem<?>.MetaValueItem BATTERY_RE_HV_SODIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_ULV_TANTALUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_LV_CADMIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_LV_LITHIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_LV_SODIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_MV_CADMIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_MV_LITHIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_MV_SODIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_HV_CADMIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_HV_LITHIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_HV_SODIUM;
     public static MetaItem<?>.MetaValueItem ENERGY_CRYSTAL;
     public static MetaItem<?>.MetaValueItem LAPOTRON_CRYSTAL;
+
+    public static MetaItem<?>.MetaValueItem BATTERY_EV_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_IV_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_LUV_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_ZPM_NAQUADRIA;
+    public static MetaItem<?>.MetaValueItem BATTERY_UV_NAQUADRIA;
 
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB;
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB2;
@@ -387,6 +400,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_SCREEN;
     public static MetaItem<?>.MetaValueItem COVER_CRAFTING;
     public static MetaItem<?>.MetaValueItem COVER_DRAIN;
+    public static MetaItem<?>.MetaValueItem COVER_INFINITE_WATER;
 
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ULV;
@@ -412,8 +426,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem POWER_UNIT_IV;
 
     public static MetaItem<?>.MetaValueItem NANO_SABER;
-    public static MetaItem<?>.MetaValueItem ENERGY_FIELD_PROJECTOR;
     public static MetaItem<?>.MetaValueItem SCANNER;
+    public static MetaItem<?>.MetaValueItem TERMINAL;
 
     public static final MetaItem<?>.MetaValueItem[] DYE_ONLY_ITEMS = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
     public static final MetaItem<?>.MetaValueItem[] SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
@@ -511,7 +525,6 @@ public final class MetaItems {
         add(OrePrefix.wireFine);
         add(OrePrefix.rotor);
         add(OrePrefix.lens);
-        add(OrePrefix.oreChunk);
         add(OrePrefix.turbineBlade);
         add(OrePrefix.toolHeadSword);
         add(OrePrefix.toolHeadPickaxe);
@@ -534,6 +547,8 @@ public final class MetaItems {
         first.setRegistryName("meta_item_1");
         MetaTool tool = new MetaTool();
         tool.setRegistryName("meta_tool");
+        MetaOreDictItem oreDictItem = new MetaOreDictItem((short) 0);
+        oreDictItem.setRegistryName("meta_oredict_item");
         for (OrePrefix prefix : orePrefixes) {
             String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());
             MetaPrefixItem metaOrePrefix = new MetaPrefixItem(prefix);
@@ -588,7 +603,8 @@ public final class MetaItems {
         event.getModelRegistry().putObject(modelResourceLocation, bakedModel);
     }
 
-    private static void addOrePrefix(OrePrefix orePrefix) {
-        orePrefixes.add(orePrefix);
+    @SuppressWarnings("unused")
+    public static void addOrePrefix(OrePrefix... prefixes) {
+        orePrefixes.addAll(Arrays.asList(prefixes));
     }
 }

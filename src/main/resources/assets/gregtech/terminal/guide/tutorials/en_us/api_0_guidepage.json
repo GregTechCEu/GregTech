@@ -1,0 +1,148 @@
+{
+  "section": "Guide Widget Api",
+  "title": "Guide Page",
+  "stream": [
+    {
+      "type": "textbox",
+      "content": [
+        "In this page we'll learn how to write a guide page.",
+        "-------------------------------",
+        "Let's take a look at an example config file for a guide page.",
+        "§lJSON§r:",
+        "{",
+        "  \"section\": \"section name here\",",
+        "  \"title\": \"title here\",",
+        "  \"stream\": [",
+        "    {",
+        "      \"type\": \"textbox\",",
+        "      \"content\": [\"TextBox widget\"]",
+        "    }",
+        "  ],",
+        "  \"fixed\": [",
+        "    {",
+        "      \"x\": 50,",
+        "      \"y\": 100,",
+        "      \"width\": 150,",
+        "      \"height\": 40,",
+        "      \"type\": 0,",
+        "      \"content\": [\"TextBox widget\"]",
+        "    }",
+        "  ]",
+        "}",
+        "-------------------------------",
+        "§lContents§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "section",
+      "content": [
+        "    1.§nsection§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "title",
+      "content": [
+        "    2.§ntitle§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "stream",
+      "content": [
+        "    3.§nstream§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "link": "fixed",
+      "content": [
+        "    4.§nfixed§r"
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "section",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nsection§r (§4required§r)",
+        "§ltype§r: String",
+        "§lillustrate§r: Specifies which section of the application the page belongs to.",
+        "The application automatically merges pages of the same section name and builds a directory tree."
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "title",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §ntitle§r (§4required§r)",
+        "§ltype§r: String",
+        "§lillustrate§r: The page title."
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "stream",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nstream§r (§4required§r)",
+        "§ltype§r: Array",
+        "§lillustrate§r: Widgets in streaming layout. You don't need to care the position and size of widgets in stream, all typography will be done automatically."
+      ]
+    },
+    {
+      "type": "textbox",
+      "ref": "fixed",
+      "content": [
+        "-------------------------------",
+        "",
+        "§lAttr§r: §nfixed§r (§4required§r)",
+        "§ltype§r: Array",
+        "§lillustrate§r: Widgets in fixed layout. You need to specify the position and size of each widget."
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "content": [
+        "§lDemo§r: fixed and stream"
+      ]
+    },
+    {
+      "type": "textbox",
+      "isCenter": true,
+      "hover_text": ["stream widget"],
+      "content": [
+        "§nMinecraft Formatting",
+        "§r§00 §11 §22 §33",
+        "§44 §55 §66 §77",
+        "§88 §99 §aa §bb",
+        "§cc §dd §ee §ff",
+        "§r§0k §kMinecraft",
+        "§rl §lMinecraft",
+        "§rm §mMinecraft",
+        "§rn §nMinecraft",
+        "§ro §oMinecraft",
+        "§rr §rMinecraft"
+      ]
+    }
+  ],
+  "fixed": [
+    {
+      "type": "image",
+      "x": 30,
+      "y": 800,
+      "stroke": 4278190335,
+      "hover_text": ["fixed widget", "\"x\": 30","\"y\": 800","\"width\": 100","\"width\": 100"],
+      "form": "item",
+      "source": "minecraft:ender_pearl",
+      "width": 100,
+      "height": 100
+    }
+  ]
+}

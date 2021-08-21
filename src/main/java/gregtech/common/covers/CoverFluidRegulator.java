@@ -30,14 +30,15 @@ import java.util.function.Predicate;
 public class CoverFluidRegulator extends CoverPump {
 
     protected TransferMode transferMode;
-    protected int keepAmount = 0;
-    protected int supplyAmount = 0;
-    private static final String supplyKey = "SupplyAmount";
-    private static final String keepKey = "KeepAmount";
+    protected int transferAmount = 0;
 
     public CoverFluidRegulator(ICoverable coverHolder, EnumFacing attachedSide, int tier, int mbPerTick) {
         super(coverHolder, attachedSide, tier, mbPerTick);
         this.transferMode = TransferMode.TRANSFER_ANY;
+    }
+
+    public int getTransferAmount() {
+        return transferAmount;
     }
 
     @Override
@@ -55,12 +56,9 @@ public class CoverFluidRegulator extends CoverPump {
             return 0;
         }
         switch (transferMode) {
-            case TRANSFER_ANY:
-                return GTFluidUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
-            case KEEP_EXACT:
-                return doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.keepAmount);
-            case TRANSFER_EXACT:
-                return doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.supplyAmount);
+            case TRANSFER_ANY: return GTFluidUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
+            case KEEP_EXACT: return doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
+            case TRANSFER_EXACT: return doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
         }
         return 0;
     }
@@ -123,17 +121,7 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     private String getTransferSizeString() {
-        int val;
-        switch (transferMode) {
-            case KEEP_EXACT:
-                val = keepAmount;
-                break;
-            case TRANSFER_EXACT:
-                val = supplyAmount;
-                break;
-            default:
-                val = -1;
-        }
+        int val = transferAmount;
         if (this.bucketMode == BucketMode.BUCKET) {
             val /= 1000;
         }
@@ -141,48 +129,33 @@ public class CoverFluidRegulator extends CoverPump {
     }
 
     protected void getHoverString(List<ITextComponent> textList) {
-        switch (this.transferMode) {
-            case KEEP_EXACT:
-                ITextComponent keepComponent = new TextComponentString(getTransferSizeString());
-                TextComponentTranslation hoverKeep = new TextComponentTranslation("cover.fluid_regulator.keep_exact", this.keepAmount);
-                keepComponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverKeep));
-                textList.add(keepComponent);
-                break;
-            case TRANSFER_EXACT:
-                ITextComponent supplyComponent = new TextComponentString(getTransferSizeString());
-                TextComponentTranslation hoverSupply = new TextComponentTranslation("cover.fluid_regulator.supply_exact", this.supplyAmount);
-                supplyComponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverSupply));
-                textList.add(supplyComponent);
-                break;
-        }
+        ITextComponent keepComponent = new TextComponentString(getTransferSizeString());
+        TextComponentTranslation hoverKeep = new TextComponentTranslation("cover.fluid_regulator." + transferMode.name().toLowerCase(), this.transferAmount);
+        keepComponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverKeep));
+        textList.add(keepComponent);
     }
 
     @Override
     public void setBucketMode(BucketMode bucketMode) {
         super.setBucketMode(bucketMode);
         if (this.bucketMode == BucketMode.BUCKET) {
-            setKeepAmount(keepAmount / 1000 * 1000);
-            setSupplyAmount(supplyAmount / 1000 * 1000);
+            setTransferAmount(transferRate / 1000 * 1000);
         }
     }
 
     private void adjustTransferSize(int amount) {
-        amount *= this.bucketMode == BucketMode.BUCKET ? 1000 : 1;
-        switch (this.transferMode) {
+        if(bucketMode == BucketMode.BUCKET)
+            amount *= 1000;
+        switch(this.transferMode) {
             case TRANSFER_EXACT:
-                setSupplyAmount(MathHelper.clamp(this.supplyAmount + amount, 0, this.transferRate));
+                setTransferAmount(MathHelper.clamp(this.transferAmount + amount, 0, this.transferRate));
             case KEEP_EXACT:
-                setKeepAmount(MathHelper.clamp(this.keepAmount + amount, 0, Integer.MAX_VALUE));
+                setTransferAmount(MathHelper.clamp(this.transferAmount + amount, 0, Integer.MAX_VALUE));
         }
     }
 
-    private void setKeepAmount(int keepAmount) {
-        this.keepAmount = keepAmount;
-        coverHolder.markDirty();
-    }
-
-    private void setSupplyAmount(int supplyAmount) {
-        this.supplyAmount = supplyAmount;
+    private void setTransferAmount(int transferAmount) {
+        this.transferAmount = transferAmount;
         coverHolder.markDirty();
     }
 
@@ -211,16 +184,14 @@ public class CoverFluidRegulator extends CoverPump {
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferMode", transferMode.ordinal());
-        tagCompound.setInteger(keepKey, keepAmount);
-        tagCompound.setInteger(supplyKey, supplyAmount);
+        tagCompound.setInteger("TransferAmount", transferAmount);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         this.transferMode = TransferMode.values()[tagCompound.getInteger("TransferMode")];
-        this.keepAmount = tagCompound.getInteger(keepKey);
-        this.supplyAmount = tagCompound.getInteger(supplyKey);
+        this.transferAmount = tagCompound.getInteger("TransferAmount");
     }
 
     @Override

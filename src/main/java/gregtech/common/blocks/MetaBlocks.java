@@ -78,7 +78,7 @@ public class MetaBlocks {
 
     public static BlockMachine MACHINE;
     public static final BlockCable[] CABLES = new BlockCable[10];
-    public static final BlockFluidPipe[] FLUID_PIPES = new BlockFluidPipe[5];
+    public static final BlockFluidPipe[] FLUID_PIPES = new BlockFluidPipe[7];
     public static final BlockItemPipe[] ITEM_PIPES = new BlockItemPipe[6];
 
     public static BlockBoilerCasing BOILER_CASING;
@@ -185,7 +185,8 @@ public class MetaBlocks {
         StoneType.init();
 
         createGeneratedBlock(
-                material -> material.hasProperty(PropertyKey.DUST) && !OrePrefix.block.isIgnored(material),
+                material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM))
+                        && !OrePrefix.block.isIgnored(material),
                 MetaBlocks::createCompressedBlock);
 
         for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
@@ -200,8 +201,10 @@ public class MetaBlocks {
             }
 
             if (material.hasProperty(PropertyKey.WIRE)) {
-                for (BlockCable cable : CABLES)
-                    cable.addCableMaterial(material, material.getProperty(PropertyKey.WIRE));
+                for (BlockCable cable : CABLES) {
+                    if (!cable.getItemPipeType(null).isCable() || !material.getProperty(PropertyKey.WIRE).isSuperconductor)
+                        cable.addCableMaterial(material, material.getProperty(PropertyKey.WIRE));
+                }
             }
             if (material.hasProperty(PropertyKey.FLUID_PIPE)) {
                 for (BlockFluidPipe pipe : FLUID_PIPES)

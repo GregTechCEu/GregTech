@@ -7,7 +7,9 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IActiveOutputSide;
+import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -28,11 +30,14 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -49,7 +54,8 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     private final ItemStackHandler containerInventory;
     private boolean autoOutputFluids;
     private EnumFacing outputFacing;
-    private final boolean allowInputFromOutputSide = true;
+    private boolean allowInputFromOutputSide = true;
+    protected IFluidHandler outputFluidInventory;
 
     public MetaTileEntityQuantumTank(ResourceLocation metaTileEntityId, int tier, int maxFluidCapacity) {
         super(metaTileEntityId);
@@ -71,6 +77,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.fluidInventory = fluidTank;
         this.importFluids = new FluidTankList(false, fluidTank);
         this.exportFluids = new FluidTankList(false, fluidTank);
+        this.outputFluidInventory = new FluidHandlerProxy(new FluidTankList(false), exportFluids);
     }
 
     @Override
@@ -89,10 +96,9 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         if (!getWorld().isRemote) {
             fillContainerFromInternalTank(containerInventory, containerInventory, 0, 1);
             fillInternalTankFromFluidContainer(containerInventory, containerInventory, 0, 1);
-
-        }
-        if (isAutoOutputFluids()) {
-            pushFluidsIntoNearbyHandlers(currentOutputFacing);
+            if (isAutoOutputFluids()) {
+                pushFluidsIntoNearbyHandlers(currentOutputFacing);
+            }
         }
     }
 
@@ -151,11 +157,6 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     @Override
     protected FluidTankList createExportFluidHandler() {
         return new FluidTankList(false, fluidTank);
-    }
-
-    @Override
-    public boolean hasFrontFacing() {
-        return false;
     }
 
     @Override
@@ -220,9 +221,17 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     public EnumFacing getOutputFacing() {
-        return outputFacing == null ? EnumFacing.SOUTH : outputFacing;
+        return outputFacing == null ? frontFacing.getOpposite() : outputFacing;
     }
 
+    @Override
+    public void setFrontFacing(EnumFacing frontFacing) {
+        super.setFrontFacing(EnumFacing.UP);
+        if (this.outputFacing == null) {
+            //set initial output facing as opposite to front
+            setOutputFacing(frontFacing.getOpposite());
+        }
+    }
 
     @Override
     public boolean isAutoOutputItems() {
@@ -235,7 +244,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
 
     @Override
     public boolean isAllowInputFromOutputSide() {
-        return true;
+        return allowInputFromOutputSide;
     }
 
     @Override
@@ -279,22 +288,24 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             }
             return null;
         }
+        else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            IFluidHandler fluidHandler = (side == getOutputFacing() && !isAllowInputFromOutputSide()) ? outputFluidInventory : fluidInventory;
+            if (fluidHandler.getTankProperties().length > 0) {
+                return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler);
+            }
+
+            return null;
+        }
         return super.getCapability(capability, side);
 
     }
 
     @Override
-    public boolean canPlaceCoverOnSide(EnumFacing side) {
-        //Done to prevent loops as output always acts as input
-        if (side == getOutputFacing()) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
+            if (getOutputFacing() == facing || getFrontFacing() == facing) {
+                return false;
+            }
             if (!getWorld().isRemote) {
                 setOutputFacing(facing);
             }
@@ -303,7 +314,30 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         return super.onWrenchClick(playerIn, hand, facing, hitResult);
     }
 
+    @Override
+    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        EnumFacing hitFacing = ICoverable.determineGridSideHit(hitResult);
+        if (facing == getOutputFacing() || (hitFacing == getOutputFacing() && playerIn.isSneaking())) {
+            if (!getWorld().isRemote) {
+                if (isAllowInputFromOutputSide()) {
+                    setAllowInputFromOutputSide(false);
+                    playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
+                } else {
+                    setAllowInputFromOutputSide(true);
+                    playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
+                }
+            }
+            return true;
+        }
+        return super.onScrewdriverClick(playerIn, hand, facing, hitResult);
+    }
 
+    public void setAllowInputFromOutputSide(boolean allowInputFromOutputSide) {
+        this.allowInputFromOutputSide = allowInputFromOutputSide;
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
+    }
     public void setAutoOutputFluids(boolean autoOutputFluids) {
         this.autoOutputFluids = autoOutputFluids;
         if (!getWorld().isRemote) {
@@ -311,6 +345,4 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             markDirty();
         }
     }
-
-
 }

@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.steam;
 
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
@@ -12,7 +13,6 @@ import gregtech.api.render.Textures;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 public class SteamFurnace extends SteamMetaTileEntity {
 
@@ -31,13 +31,13 @@ public class SteamFurnace extends SteamMetaTileEntity {
     }
 
     @Override
-    public IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(1);
+    protected IItemHandlerModifiable createImportItemHandler() {
+        return new NotifiableItemStackHandler(1, this, false);
     }
 
     @Override
-    public IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(1);
+    protected IItemHandlerModifiable createExportItemHandler() {
+        return new NotifiableItemStackHandler(1, this, true);
     }
 
     @Override

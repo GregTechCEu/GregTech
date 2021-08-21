@@ -164,6 +164,7 @@ public class MetaFluids {
 
         // handle vanilla fluids
         Materials.Water.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.WATER);
+        FluidTooltipUtil.registerTooltip(FluidRegistry.WATER, Materials.Water.getChemicalFormula());
         Materials.Lava.getProperty(PropertyKey.FLUID).setFluid(FluidRegistry.LAVA);
 
         //alternative names for forestry fluids

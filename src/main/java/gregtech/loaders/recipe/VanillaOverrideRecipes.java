@@ -583,6 +583,7 @@ public class VanillaOverrideRecipes {
      * - Removes Vanilla Glistering Melon Recipe
      * - Removes Vanilla Golden Carrot Recipe
      * - Removes Vanilla Magma Cream Recipe
+     * - Removes Vanilla Polished Stone Variant Recipes
      */
     private static void miscRecipes() {
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:tnt"));
@@ -684,6 +685,10 @@ public class VanillaOverrideRecipes {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(6).input("logWood", 1).inputs(new ItemStack(Items.FLINT)).outputs(new ItemStack(Blocks.CRAFTING_TABLE)).buildAndRegister();
 
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.STONEBRICK));
+
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:polished_granite"));
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:polished_diorite"));
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:polished_andesite"));
     }
 
     /**

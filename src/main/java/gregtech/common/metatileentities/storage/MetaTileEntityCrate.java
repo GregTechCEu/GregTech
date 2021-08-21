@@ -111,11 +111,12 @@ public class MetaTileEntityCrate extends MetaTileEntity {
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 338, 8 + inventorySize + 104).label(5, 5, getMetaFullName());
+        int factor = inventorySize / 9 > 8 ? 18 : 9;
+        Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176 + (factor == 18 ? 176 : 0), 8 + inventorySize / factor * 18 + 104).label(5, 5, getMetaFullName());
         for (int i = 0; i < inventorySize; i++) {
-            builder.slot(inventory, i, 8 + i % 18 * 18, 18 + i / 18 * 18, GuiTextures.SLOT);
+            builder.slot(inventory, i, 7 * (factor == 18 ? 2 : 1) + i % factor * 18, 18 + i / factor * 18, GuiTextures.SLOT);
         }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 90, 18 + inventorySize + 12);
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7 + (factor == 18 ? 88 : 0), 18 + inventorySize / factor * 18 + 11);
         return builder.build(getHolder(), entityPlayer);
     }
 

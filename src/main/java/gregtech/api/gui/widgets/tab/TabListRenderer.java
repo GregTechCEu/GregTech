@@ -19,6 +19,6 @@ public abstract class TabListRenderer {
 
     public abstract void renderTabs(Position offset, List<ITabInfo> tabInfos, int guiWidth, int guiHeight, int selectedTabIndex);
 
-    public abstract int[] getTabPos(int guiWidth, int guiHeight, int tabIndex);
+    public abstract int[] getTabPos(int tabIndex, int guiWidth, int guiHeight);
 
 }

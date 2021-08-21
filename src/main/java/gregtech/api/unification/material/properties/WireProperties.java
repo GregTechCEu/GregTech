@@ -7,18 +7,24 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
     public final int voltage;
     public final int amperage;
     public final int lossPerBlock;
+    public final boolean isSuperconductor;
 
     public WireProperties(int voltage, int baseAmperage, int lossPerBlock) {
+        this(voltage, baseAmperage, lossPerBlock, false);
+    }
+
+    public WireProperties(int voltage, int baseAmperage, int lossPerBlock, boolean isSuperCon) {
         this.voltage = voltage;
         this.amperage = baseAmperage;
-        this.lossPerBlock = lossPerBlock;
+        this.lossPerBlock = isSuperCon ? 0 : lossPerBlock;
+        this.isSuperconductor = isSuperCon;
     }
 
     /**
      * Default values constructor
      */
     public WireProperties() {
-        this(8, 1, 1);
+        this(8, 1, 1, false);
     }
 
     @Override
@@ -33,7 +39,8 @@ public class WireProperties implements IMaterialProperty<WireProperties> {
         WireProperties that = (WireProperties) o;
         return voltage == that.voltage &&
                 amperage == that.amperage &&
-                lossPerBlock == that.lossPerBlock;
+                lossPerBlock == that.lossPerBlock &&
+                isSuperconductor == that.isSuperconductor;
     }
 
     @Override

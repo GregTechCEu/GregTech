@@ -41,7 +41,7 @@ public class ToolShovel extends ToolBase {
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
-        return (tool != null && tool.equals("shovel")) ||
+        return (tool != null && SHOVEL_TOOL_CLASSES.contains(tool)) ||
                 block.getMaterial() == Material.SAND ||
                 block.getMaterial() == Material.GRASS ||
                 block.getMaterial() == Material.GROUND ||

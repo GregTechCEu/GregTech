@@ -23,6 +23,7 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
 
     private final BitSet batterySlotsUsedThisTick = new BitSet();
     private final int tier;
+    private long amps = 0;
 
     public EnergyContainerBatteryBuffer(MetaTileEntity metaTileEntity, int tier) {
         super(metaTileEntity);
@@ -31,11 +32,14 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
 
     @Override
     public long acceptEnergyFromNetwork(EnumFacing side, long voltage, long amperage) {
-        long initialAmperage = amperage;
+        long usedAmps = 0;
+        amperage -= amps;
+        if(amperage <= 0)
+            return 0;
         if (side == null || inputsEnergy(side)) {
             if (voltage > getInputVoltage()) {
                 GTUtility.doOvervoltageExplosion(metaTileEntity, voltage);
-                return Math.min(amperage, getInputAmperage());
+                return Math.min(amperage, getInputAmperage() - amps);
             }
             IItemHandlerModifiable inventory = getInventory();
             for (int i = 0; i < inventory.getSlots(); i++) {
@@ -47,15 +51,15 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
                     chargeItemWithVoltage(electricItem, voltage, getTier(), false);
                     inventory.setStackInSlot(i, batteryStack);
                     this.batterySlotsUsedThisTick.set(i);
-                    if (--amperage == 0) break;
+                    if(++usedAmps == amperage) break;
                 }
             }
         }
-        long amperageUsed = initialAmperage - amperage;
-        if (amperageUsed > 0L) {
+        if (usedAmps > 0L) {
             notifyEnergyListener(false);
         }
-        return amperageUsed;
+        amps += usedAmps;
+        return usedAmps;
     }
 
     private static boolean chargeItemWithVoltage(IElectricItem electricItem, long voltage, int tier, boolean simulate) {
@@ -73,6 +77,7 @@ public class EnergyContainerBatteryBuffer extends MTETrait implements IEnergyCon
 
     @Override
     public void update() {
+        amps = 0;
         if (!metaTileEntity.getWorld().isRemote) {
             this.batterySlotsUsedThisTick.clear();
             EnumFacing outFacing = metaTileEntity.getFrontFacing();

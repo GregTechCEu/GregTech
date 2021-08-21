@@ -1,6 +1,7 @@
 package gregtech.api.gui;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.gui.widgets.WidgetUIAccess;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -8,14 +9,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -25,10 +25,12 @@ import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import org.lwjgl.opengl.GL11;
 
 /**
  * Widget is functional element of ModularUI
@@ -37,13 +39,15 @@ import java.util.function.Supplier;
  */
 public abstract class Widget {
 
-    protected ModularUI gui;
-    protected ISizeProvider sizes;
-    protected WidgetUIAccess uiAccess;
-    private Position parentPosition = Position.ORIGIN;
-    private Position selfPosition;
-    private Position position;
-    private Size size;
+    protected transient ModularUI gui;
+    protected transient ISizeProvider sizes;
+    protected transient WidgetUIAccess uiAccess;
+    private transient Position parentPosition = Position.ORIGIN;
+    private transient Position selfPosition;
+    private transient Position position;
+    private transient Size size;
+    private transient boolean isVisible;
+    private transient boolean isActive;
 
     public Widget(Position selfPosition, Size size) {
         Preconditions.checkNotNull(selfPosition, "selfPosition");
@@ -51,6 +55,12 @@ public abstract class Widget {
         this.selfPosition = selfPosition;
         this.size = size;
         this.position = this.parentPosition.add(selfPosition);
+        this.isVisible = true;
+        this.isActive = true;
+    }
+
+    public Widget(int x, int y, int width, int height) {
+        this(new Position(x, y), new Size(width, height));
     }
 
     public void setGui(ModularUI gui) {
@@ -71,13 +81,23 @@ public abstract class Widget {
         recomputePosition();
     }
 
-    protected void setSelfPosition(Position selfPosition) {
+    public void setSelfPosition(Position selfPosition) {
         Preconditions.checkNotNull(selfPosition, "selfPosition");
         this.selfPosition = selfPosition;
         recomputePosition();
     }
 
-    protected void setSize(Size size) {
+    public Position addSelfPosition(int addX, int addY) {
+        this.selfPosition = new Position(selfPosition.x + addX, selfPosition.y + addY);
+        recomputePosition();
+        return this.selfPosition;
+    }
+
+    public Position getSelfPosition() {
+        return selfPosition;
+    }
+
+    public void setSize(Size size) {
         Preconditions.checkNotNull(size, "size");
         this.size = size;
         onSizeUpdate();
@@ -91,18 +111,31 @@ public abstract class Widget {
         return size;
     }
 
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        isVisible = visible;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public Rectangle toRectangleBox() {
         Position pos = getPosition();
         Size size = getSize();
         return new Rectangle(pos.x, pos.y, size.width, size.height);
     }
 
-    private void recomputePosition() {
+    protected void recomputePosition() {
         this.position = this.parentPosition.add(selfPosition);
         onPositionUpdate();
-    }
-
-    public void applyScissor(final int parentX, final int parentY, final int parentWidth, final int parentHeight) {
     }
 
     protected void onPositionUpdate() {
@@ -112,7 +145,7 @@ public abstract class Widget {
     }
 
     public boolean isMouseOverElement(int mouseX, int mouseY, boolean correctPositionOnMouseWheelMoveEvent) {
-        mouseX = correctPositionOnMouseWheelMoveEvent ? mouseX + getPosition().x : mouseX;
+        mouseX = correctPositionOnMouseWheelMoveEvent ? mouseX + this.gui.getGuiLeft(): mouseX;
         return isMouseOverElement(mouseX, mouseY);
     }
 
@@ -152,10 +185,19 @@ public abstract class Widget {
     }
 
     /**
+     * Called each draw tick to draw this widget in GUI (@Deprecated)
+     */
+    @Deprecated
+    @SideOnly(Side.CLIENT)
+    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    }
+
+    /**
      * Called each draw tick to draw this widget in GUI
      */
     @SideOnly(Side.CLIENT)
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        drawInBackground(mouseX, mouseY, context);
     }
 
     /**
@@ -219,17 +261,25 @@ public abstract class Widget {
     /**
      * Writes data to be sent to client's {@link #readUpdateInfo}
      */
-    protected final void writeUpdateInfo(int id, Consumer<PacketBuffer> packetBufferWriter) {
+    protected void writeUpdateInfo(int id, Consumer<PacketBuffer> packetBufferWriter) {
         if (uiAccess != null && gui != null) {
             uiAccess.writeUpdateInfo(this, id, packetBufferWriter);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    protected final void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
+    protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
         if (uiAccess != null) {
             uiAccess.writeClientAction(this, id, packetBufferWriter);
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    protected void drawBorder(int x, int y, int width, int height, int stroke, int stroke_width) {
+        drawGradientRect(x - stroke_width, y - stroke_width, width + 2 * stroke_width, stroke_width, stroke, stroke);
+        drawGradientRect(x - stroke_width, y + height, width + 2 * stroke_width, stroke_width, stroke, stroke);
+        drawGradientRect(x - stroke_width, y - stroke_width, stroke_width, height + 2 * stroke_width, stroke, stroke);
+        drawGradientRect(x + width, y - stroke_width, stroke_width, height + 2 * stroke_width, stroke, stroke);
     }
 
     @SideOnly(Side.CLIENT)
@@ -314,8 +364,179 @@ public abstract class Widget {
 
     @SideOnly(Side.CLIENT)
     protected static void drawGradientRect(int x, int y, int width, int height, int startColor, int endColor) {
-        GuiUtils.drawGradientRect(0, x, y, x + width, y + height, startColor, endColor);
+        drawGradientRect(x, y, width, height, startColor, endColor, false);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawGradientRect(float x, float y, float width, float height, int startColor, int endColor, boolean horizontal) {
+        float startAlpha = (float) (startColor >> 24 & 255) / 255.0F;
+        float startRed = (float) (startColor >> 16 & 255) / 255.0F;
+        float startGreen = (float) (startColor >> 8 & 255) / 255.0F;
+        float startBlue = (float) (startColor & 255) / 255.0F;
+        float endAlpha = (float) (endColor >> 24 & 255) / 255.0F;
+        float endRed = (float) (endColor >> 16 & 255) / 255.0F;
+        float endGreen = (float) (endColor >> 8 & 255) / 255.0F;
+        float endBlue = (float) (endColor & 255) / 255.0F;
+        GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        if (horizontal) {
+            buffer.pos(x + width, y, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            buffer.pos(x, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x, y + height, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x + width, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            tessellator.draw();
+        } else {
+            buffer.pos(x + width, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x, y, 0).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+            buffer.pos(x, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            buffer.pos(x + width, y + height, 0).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+            tessellator.draw();
+        }
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void setColor(int color) { // ARGB
+        GlStateManager.color((color >> 16 & 255) / 255.0F,
+                (color >> 8 & 255) / 255.0F,
+                (color & 255) / 255.0F,
+                (color >> 24 & 255) / 255.0F);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawCircle(float x, float y, float r, int color, int segments) {
+        if (color == 0) return;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        setColor(color);
+        bufferbuilder.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION);
+        for (int i = 0; i < segments; i++) {
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / segments), y + r * Math.sin(-2 * Math.PI * i / segments), 0.0D).endVertex();
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1,1,1,1);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawSector(float x, float y, float r, int color, int segments, int from, int to) {
+        if (from > to || from < 0 || color == 0) return;
+        if(to > segments) to = segments;
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        setColor(color);
+        bufferbuilder.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION);
+        for (int i = from; i < to; i++) {
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * i / segments), y + r * Math.sin(-2 * Math.PI * i / segments), 0.0D).endVertex();
+            bufferbuilder.pos(x + r * Math.cos(-2 * Math.PI * (i + 1) / segments), y + r * Math.sin(-2 * Math.PI * (i + 1) / segments), 0.0D).endVertex();
+            bufferbuilder.pos(x, y, 0.0D).endVertex();
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1,1,1,1);
+    }
+
+    public static void drawTorus(float x, float y, float outer, float inner, int color, int segments, int from, int to) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        setColor(color);
+        bufferbuilder.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION);
+        for (int i = from; i <= to; i++) {
+            float angle = ( i / (float)segments ) * 3.14159f * 2.0f;
+            bufferbuilder.pos( x + inner * Math.cos(-angle), y + inner * Math.sin(-angle), 0).endVertex();
+            bufferbuilder.pos( x + outer * Math.cos(-angle), y + outer * Math.sin(-angle), 0).endVertex();
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1,1,1,1);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawLines(List<Vec2f> points, int startColor, int endColor, float width) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.glLineWidth(width);
+        if (startColor == endColor) {
+            setColor(startColor);
+            bufferbuilder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+            for (Vec2f point : points) {
+                bufferbuilder.pos(point.x, point.y, 0).endVertex();
+            }
+        } else {
+            float startAlpha = (float) (startColor >> 24 & 255) / 255.0F;
+            float startRed = (float) (startColor >> 16 & 255) / 255.0F;
+            float startGreen = (float) (startColor >> 8 & 255) / 255.0F;
+            float startBlue = (float) (startColor & 255) / 255.0F;
+            float endAlpha = (float) (endColor >> 24 & 255) / 255.0F;
+            float endRed = (float) (endColor >> 16 & 255) / 255.0F;
+            float endGreen = (float) (endColor >> 8 & 255) / 255.0F;
+            float endBlue = (float) (endColor & 255) / 255.0F;
+            bufferbuilder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+            int size = points.size();
+
+            for (int i = 0; i < size; i++) {
+                float p = i * 1.0f / size;
+                bufferbuilder.pos(points.get(i).x, points.get(i).y, 0)
+                        .color(startRed + (endRed - startRed) * p,
+                                startGreen + (endGreen - startGreen) * p,
+                                startBlue + (endBlue - startBlue) * p,
+                                startAlpha + (endAlpha - startAlpha) * p)
+                        .endVertex();
+            }
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1, 1, 1, 1);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static List<Vec2f> genBezierPoints(Vec2f from, Vec2f to, boolean horizontal, float u) {
+        Vec2f c1;
+        Vec2f c2;
+        if (horizontal) {
+            c1 = new Vec2f((from.x + to.x) / 2, from.y);
+            c2 = new Vec2f((from.x + to.x) / 2, to.y);
+        } else {
+            c1 = new Vec2f(from.x, (from.y + to.y) / 2);
+            c2 = new Vec2f(to.x, (from.y + to.y) / 2);
+        }
+        Vec2f[] controlPoint = new Vec2f[]{from,c1,c2,to};
+        int n = controlPoint.length - 1;
+        int i, r;
+        List<Vec2f> bezierPoints = new ArrayList<>();
+        for (u = 0; u <= 1; u += 0.01) {
+            Vec2f[] p = new Vec2f[n + 1];
+            for (i = 0; i <= n; i++) {
+                p[i] = new Vec2f(controlPoint[i].x, controlPoint[i].y);
+            }
+            for (r = 1; r <= n; r++) {
+                for (i = 0; i <= n - r; i++) {
+                    p[i] = new Vec2f((1 - u) * p[i].x + u * p[i + 1].x, (1 - u) * p[i].y + u * p[i + 1].y);
+                }
+            }
+            bezierPoints.add(p[0]);
+        }
+        return bezierPoints;
     }
 
     @SideOnly(Side.CLIENT)
@@ -333,6 +554,10 @@ public abstract class Widget {
         return Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
     }
 
+    protected boolean isRemote() {
+        return gui.holder.isRemote();
+    }
+
     protected static boolean isClientSide() {
         return FMLCommonHandler.instance().getSide().isClient();
     }
@@ -341,24 +566,35 @@ public abstract class Widget {
         public final int button;
         public final boolean isShiftClick;
         public final boolean isCtrlClick;
+        public final boolean isClient;
 
         public ClickData(int button, boolean isShiftClick, boolean isCtrlClick) {
             this.button = button;
             this.isShiftClick = isShiftClick;
             this.isCtrlClick = isCtrlClick;
+            this.isClient = false;
+        }
+
+        public ClickData(int button, boolean isShiftClick, boolean isCtrlClick, boolean isClient) {
+            this.button = button;
+            this.isShiftClick = isShiftClick;
+            this.isCtrlClick = isCtrlClick;
+            this.isClient = isClient;
         }
 
         public void writeToBuf(PacketBuffer buf) {
             buf.writeVarInt(button);
             buf.writeBoolean(isShiftClick);
             buf.writeBoolean(isCtrlClick);
+            buf.writeBoolean(isClient);
         }
 
         public static ClickData readFromBuf(PacketBuffer buf) {
             int button = buf.readVarInt();
             boolean shiftClick = buf.readBoolean();
             boolean ctrlClick = buf.readBoolean();
-            return new ClickData(button, shiftClick, ctrlClick);
+            boolean isClient = buf.readBoolean();
+            return new ClickData(button, shiftClick, ctrlClick, isClient);
         }
     }
 

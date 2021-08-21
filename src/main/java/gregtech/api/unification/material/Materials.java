@@ -415,6 +415,15 @@ public class Materials {
     public static Material DistilledWater;
     public static Material SodiumPotassium;
     public static Material SamariumMagnetic;
+    public static Material ManganesePhosphide;
+    public static Material MagnesiumDiboride;
+    public static Material MercuryBariumCalciumCuprate;
+    public static Material UraniumTriplatinum;
+    public static Material SamariumIronArsenicOxide;
+    public static Material IndiumTinBariumTitaniumCuprate;
+    public static Material UraniumRhodiumDinaquadide;
+    public static Material EnrichedNaquadahTriniumEuropiumDuranide;
+    public static Material RutheniumTriniumAmericiumNeutronate;
 
     /**
      * Organic chemistry
@@ -635,9 +644,12 @@ public class Materials {
     public static Material DilutedSulfuricAcid;
     public static Material DilutedHydrochloricAcid;
     public static Material Flint;
-    public static Material NobleGases;
     public static Material Air;
     public static Material LiquidAir;
+    public static Material NetherAir;
+    public static Material LiquidNetherAir;
+    public static Material EnderAir;
+    public static Material LiquidEnderAir;
 
     /**
      * Third Degree Materials

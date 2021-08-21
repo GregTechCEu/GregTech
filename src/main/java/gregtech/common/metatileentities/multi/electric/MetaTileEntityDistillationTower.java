@@ -17,15 +17,17 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static gregtech.api.multiblock.BlockPattern.RelativeDirection.*;
+import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityDistillationTower extends RecipeMapMultiblockController {
 
@@ -36,6 +38,11 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
         return new MetaTileEntityDistillationTower(metaTileEntityId);
+    }
+
+    @Override
+    protected Function<BlockPos, Integer> multiblockPartSorter() {
+        return BlockPos::getY; // todo this needs to be "relative up" with Freedom Wrench
     }
 
     @Override

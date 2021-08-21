@@ -29,7 +29,7 @@ public class ToolFile extends ToolBase {
     @Override
     public boolean canMineBlock(IBlockState block, ItemStack stack) {
         String tool = block.getBlock().getHarvestTool(block);
-        return (tool != null && tool.equals("file")) ||
+        return (tool != null && FILE_TOOL_CLASSES.contains(tool)) ||
                 block.getMaterial() == Material.CIRCUITS;
     }
 

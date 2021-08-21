@@ -26,6 +26,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.ArrayUtils;
@@ -35,6 +36,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
@@ -170,14 +172,18 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     /**
-     * if true allows all hatches to share but energy hatches and rotor holders
-     * defualt true
-     *
-     * @return
+     * Override to disable MultiblockPart sharing for this Multiblock. (Rotor Holders always disallowed).
      */
     public boolean canShare() {
         return true;
+    }
 
+    /**
+     * Used if MultiblockPart Abilities need to be sorted a certain way, like
+     * Distillation Tower and Assembly Line.
+     */
+    protected Function<BlockPos, Integer> multiblockPartSorter() {
+        return BlockPos::hashCode;
     }
 
     protected void checkStructurePattern() {
@@ -186,7 +192,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         if (context != null && !structureFormed) {
             Set<IMultiblockPart> rawPartsSet = context.getOrCreate("MultiblockParts", HashSet::new);
             ArrayList<IMultiblockPart> parts = new ArrayList<>(rawPartsSet);
-            parts.sort(Comparator.comparing(it -> ((MetaTileEntity) it).getPos().hashCode()));
+            parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             for (IMultiblockPart part : parts) {
                 if (part.isAttachedToMultiBlock()) {
                     if (!canShare() || part instanceof MetaTileEntityRotorHolder) {
@@ -204,6 +210,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
             if (checkStructureComponents(parts, abilities)) {
                 parts.forEach(part -> part.addToMultiBlock(this));
+                parts.forEach(part -> part.setupNotifiableMetaTileEntity(this));
                 this.multiblockParts.addAll(parts);
                 this.multiblockAbilities.putAll(abilities);
                 this.structureFormed = true;

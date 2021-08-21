@@ -75,7 +75,7 @@ public class AssemblyLineInfo extends MultiblockInfoPage {
 
         ITextComponent inputTooltip = new TextComponentTranslation(
                 "gregtech.multiblock.preview.only",
-                new TextComponentTranslation("gregtech.machine.item_bus.export.ulv.name"))
+                new TextComponentTranslation("gregtech.machine.item_bus.import.ulv.name"))
                 .setStyle(new Style().setColor(TextFormatting.RED));
 
         for (int i = 0; i < GTValues.UHV + 1; i++) {
