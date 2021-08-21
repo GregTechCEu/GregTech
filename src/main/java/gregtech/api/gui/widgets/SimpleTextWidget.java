@@ -28,14 +28,6 @@ public class SimpleTextWidget extends Widget {
     protected boolean clientWidget;
     protected boolean isShadow;
 
-    public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier, boolean isCentered) {
-        super(new Position(xPosition, yPosition), Size.ZERO);
-        this.color = color;
-        this.formatLocale = formatLocale;
-        this.textSupplier = textSupplier;
-        this.isCentered = isCentered;
-    }
-
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
         this(xPosition, yPosition, formatLocale, color, textSupplier, true);
     }
@@ -54,6 +46,11 @@ public class SimpleTextWidget extends Widget {
 
     public SimpleTextWidget setShadow(boolean shadow) {
         isShadow = shadow;
+        return this;
+    }
+
+    public SimpleTextWidget setCenter(boolean isCentered) {
+        this.isCentered = isCentered;
         return this;
     }
 

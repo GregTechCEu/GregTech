@@ -8,6 +8,7 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.util.RenderUtil;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import net.minecraft.block.Block;
@@ -62,7 +63,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 170, 238);
 
         builder.image(18, 8, 130, 14, GuiTextures.CLIPBOARD_TEXT_BOX);
-        builder.widget(new SimpleTextWidget(20, 10, "", 0xFFFFFF, () -> getTitle(holder), false));
+        builder.widget(new SimpleTextWidget(20, 10, "", 0xFFFFFF, () -> getTitle(holder)).setCenter(false));
 
 
         for (int i = 0; i < 8; i++) {
@@ -70,7 +71,7 @@ public class ClipboardBehavior implements IItemBehaviour, ItemUIFactory {
             builder.widget(new ImageCycleButtonWidget(6, 37 + 20 * i, 15, 15, GuiTextures.CLIPBOARD_BUTTON, 4,
                     () -> getButtonState(holder, finalI), (x) -> setButton(holder, finalI, x)));
             builder.image(22, 38 + 20 * i, 140, 12, GuiTextures.CLIPBOARD_TEXT_BOX);
-            builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", 0xFFFFFF, () -> getString(holder, finalI), false));
+            builder.widget(new SimpleTextWidget(24, 40 + 20 * i, "", 0xFFFFFF, () -> getString(holder, finalI)).setCenter(false));
         }
 
         builder.widget(new ClickButtonWidget(30, 200, 16, 16, "", (x) -> incrPageNum(holder, -1))

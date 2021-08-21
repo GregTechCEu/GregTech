@@ -275,7 +275,7 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    protected void drawBorder(int x, int y, int width, int height, int stroke, int stroke_width) {
+    public void drawBorder(int x, int y, int width, int height, int stroke, int stroke_width) {
         drawGradientRect(x - stroke_width, y - stroke_width, width + 2 * stroke_width, stroke_width, stroke, stroke);
         drawGradientRect(x - stroke_width, y + height, width + 2 * stroke_width, stroke_width, stroke, stroke);
         drawGradientRect(x - stroke_width, y - stroke_width, stroke_width, height + 2 * stroke_width, stroke, stroke);
@@ -283,7 +283,7 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    protected void drawHoveringText(ItemStack itemStack, List<String> tooltip, int maxTextWidth, int mouseX, int mouseY) {
+    public void drawHoveringText(ItemStack itemStack, List<String> tooltip, int maxTextWidth, int mouseX, int mouseY) {
         Minecraft mc = Minecraft.getMinecraft();
         GuiUtils.drawHoveringText(itemStack, tooltip, mouseX, mouseY,
                 sizes.getScreenWidth(),
@@ -291,7 +291,7 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    protected void drawStringSized(String text, double x, double y, int color, boolean dropShadow, float scale, boolean center) {
+    public void drawStringSized(String text, double x, double y, int color, boolean dropShadow, float scale, boolean center) {
         GlStateManager.pushMatrix();
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         double scaledTextWidth = center ? fontRenderer.getStringWidth(text) * scale : 0.0;
@@ -302,7 +302,7 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    protected void drawStringFixedCorner(String text, double x, double y, int color, boolean dropShadow, float scale) {
+    public void drawStringFixedCorner(String text, double x, double y, int color, boolean dropShadow, float scale) {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         double scaledWidth = fontRenderer.getStringWidth(text) * scale;
         double scaledHeight = fontRenderer.FONT_HEIGHT * scale;
@@ -310,7 +310,7 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    protected static void drawItemStack(ItemStack itemStack, int x, int y, @Nullable String altTxt) {
+    public static void drawItemStack(ItemStack itemStack, int x, int y, @Nullable String altTxt) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0F, 0.0F, 32.0F);
         GlStateManager.color(1F, 1F, 1F, 1F);
@@ -331,7 +331,7 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    protected static List<String> getItemToolTip(ItemStack itemStack) {
+    public static List<String> getItemToolTip(ItemStack itemStack) {
         Minecraft mc = Minecraft.getMinecraft();
         ITooltipFlag flag = mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
         List<String> tooltip = itemStack.getTooltip(mc.player, flag);
@@ -346,7 +346,7 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    protected static void drawSelectionOverlay(int x, int y, int width, int height) {
+    public static void drawSelectionOverlay(int x, int y, int width, int height) {
         GlStateManager.disableDepth();
         GlStateManager.colorMask(true, true, true, false);
         drawGradientRect(x, y, width, height, -2130706433, -2130706433);
@@ -356,14 +356,14 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    protected static void drawSolidRect(int x, int y, int width, int height, int color) {
+    public static void drawSolidRect(int x, int y, int width, int height, int color) {
         Gui.drawRect(x, y, x + width, y + height, color);
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
         GlStateManager.enableBlend();
     }
 
     @SideOnly(Side.CLIENT)
-    protected static void drawGradientRect(int x, int y, int width, int height, int startColor, int endColor) {
+    public static void drawGradientRect(int x, int y, int width, int height, int startColor, int endColor) {
         drawGradientRect(x, y, width, height, startColor, endColor, false);
     }
 

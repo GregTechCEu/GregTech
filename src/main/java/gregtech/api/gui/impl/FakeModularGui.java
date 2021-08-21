@@ -63,17 +63,13 @@ public class FakeModularGui implements IRenderContext {
 
         drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
-        for (int i = 0; i < this.container.inventorySlots.size(); ++i) {
-            RenderUtil.renderSlot(this.container.inventorySlots.get(i), fr);
-        }
-
-
         GlStateManager.scale(1, 1, 0);
         drawGuiContainerForegroundLayer(mouseX, mouseY);
+
         for (int i = 0; i < this.container.inventorySlots.size(); ++i) {
             Slot slot = this.container.inventorySlots.get(i);
             if (!slot.getStack().isEmpty() && slot.xPos < mouseX && mouseX < slot.xPos + 18 && slot.yPos < mouseY && mouseY < slot.yPos + 18) {
-                RenderUtil.renderRect(slot.xPos, slot.yPos, 18, 18, 0, 0X8fffffff);
+                Widget.drawSolidRect(slot.xPos, slot.yPos, 18, 18, 0X8fffffff);
                 renderToolTip(slot.getStack(), slot.xPos, slot.yPos);
             }
         }
