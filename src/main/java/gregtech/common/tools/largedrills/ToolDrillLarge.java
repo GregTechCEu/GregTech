@@ -134,10 +134,8 @@ public abstract class ToolDrillLarge<E extends Enum<E> & IDrillMode> extends Too
     }
 
     private List<BlockPos> getAOEBlocks(int max, EntityPlayer player, BlockPos hitPos) {
-        Vec3d lookVec = player.getLookVec();
-        EnumFacing facing = EnumFacing.getFacingFromVector((float) lookVec.x, (float) lookVec.y, (float) lookVec.z);
-        BlockPos corner = findCorner(max, hitPos, player, facing);
-        BlockPos oppositeCorner = findOppositeCorner(max, corner, facing);
+        BlockPos corner = findCorner(max, hitPos, player, player.getHorizontalFacing());
+        BlockPos oppositeCorner = findOppositeCorner(max, corner, player.getHorizontalFacing());
 
         List<BlockPos> posList = Lists.newArrayList(BlockPos.getAllInBox(corner, oppositeCorner));
         return posList.stream()

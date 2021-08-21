@@ -74,11 +74,6 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.infinite_energy.tooltip"));
-    }
-
-    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.defaultBuilder()
                 .widget(new CycleButtonWidget(7, 7, 30, 20, GTValues.VN, () -> setTier, tier -> {
