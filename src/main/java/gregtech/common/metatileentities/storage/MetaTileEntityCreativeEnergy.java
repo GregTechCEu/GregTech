@@ -102,7 +102,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
             return true;
         }));
         builder.label(7, 74, "Amperage");
-        builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = Math.max(0, amps+1)));
+        builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = amps-- == -1 ? 0 : amps--));
         builder.widget(new TextFieldWidget(29, 87, 118, 20, true, () -> String.valueOf(amps), value -> {
             amps = Integer.parseInt(value);
         }).setValidator(value -> {
