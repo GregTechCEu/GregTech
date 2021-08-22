@@ -1983,7 +1983,7 @@ tile.gt.reinforced_stone.name=Reinforced Stone
 tile.gt.log.rubber_wood.name=Rubber Wood
 tile.gt.leaves.rubber_wood.name=Rubber Tree Leaves
 tile.gt.sapling.rubber_wood.name=Rubber Tree Sapling
-tile.gt_plank.rubber_plank.name=Rubber Wood Planks
+tile.gt.plank.rubber_plank.name=Rubber Wood Planks
 
 tile.surface_rock.name=Surface Rock
 
