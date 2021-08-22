@@ -67,13 +67,14 @@ public class SlotWidget extends Widget implements INativeWidget {
     @Override
     @SideOnly(Side.CLIENT)
     public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        if (isEnabled() && backgroundTexture != null) {
+        if (isEnabled()) {
             Position pos = getPosition();
             Size size = getSize();
-            for (IGuiTexture backgroundTexture : this.backgroundTexture) {
-                backgroundTexture.draw(pos.x, pos.y, size.width, size.height);
+            if (backgroundTexture != null) {
+                for (IGuiTexture backgroundTexture : this.backgroundTexture) {
+                    backgroundTexture.draw(pos.x, pos.y, size.width, size.height);
+                }
             }
-
             RenderHelper.enableGUIStandardItemLighting();
             GlStateManager.pushMatrix();
             RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();

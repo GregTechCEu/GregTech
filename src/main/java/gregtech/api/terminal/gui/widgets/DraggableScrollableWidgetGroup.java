@@ -273,7 +273,7 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
         return false;
     }
 
-    private boolean checkClickedDragged(int mouseX, int mouseY, int button) {
+    protected boolean checkClickedDragged(int mouseX, int mouseY, int button) {
         draggedWidget = null;
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
