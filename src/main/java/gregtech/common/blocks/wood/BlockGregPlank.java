@@ -26,7 +26,7 @@ public class BlockGregPlank extends Block {
         super(Material.WOOD);
         this.setDefaultState(this.blockState.getBaseState()
                 .withProperty(VARIANT, PlankVariant.RUBBER_PLANK));
-        setTranslationKey("gt_plank");
+        setTranslationKey("gt.plank");
         this.setCreativeTab(GregTechAPI.TAB_GREGTECH);
     }
 
