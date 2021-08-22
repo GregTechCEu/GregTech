@@ -29,7 +29,7 @@ public class SimpleTextWidget extends Widget {
     protected boolean isShadow;
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
-        this(xPosition, yPosition, formatLocale, color, textSupplier, true);
+        this(xPosition, yPosition, formatLocale, color, textSupplier, false);
     }
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier, boolean clientWidget) {
@@ -41,7 +41,7 @@ public class SimpleTextWidget extends Widget {
     }
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, Supplier<String> textSupplier) {
-        this(xPosition, yPosition, formatLocale, 0x404040, textSupplier, true);
+        this(xPosition, yPosition, formatLocale, 0x404040, textSupplier, false);
     }
 
     public SimpleTextWidget setShadow(boolean shadow) {

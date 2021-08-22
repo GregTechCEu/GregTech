@@ -162,15 +162,30 @@ public class RGNode extends WidgetGroup implements IDraggable {
 
     public boolean canMerge(RGNode node) {
         if (this.head instanceof ItemStack && node.head instanceof ItemStack && ((ItemStack) this.head).isItemEqual((ItemStack) node.head)) {
-            Position pos1 = this.getPosition();
-            Position pos2 = node.getPosition();
-            return Math.abs(pos1.x - pos2.x) < 18 && Math.abs(pos1.y - pos2.y) < 18;
+            return checkMergeAvailable(node);
         } else if (this.head instanceof FluidStack && node.head instanceof FluidStack && ((FluidStack) this.head).isFluidEqual((FluidStack) node.head)) {
-            Position pos1 = this.getPosition();
-            Position pos2 = node.getPosition();
-            return Math.abs(pos1.x - pos2.x) < 18 && Math.abs(pos1.y - pos2.y) < 18;
+            return checkMergeAvailable(node);
         }
         return false;
+    }
+
+    private boolean checkMergeAvailable(RGNode node) {
+        Position pos1 = this.getPosition();
+        Position pos2 = node.getPosition();
+        return Math.abs(pos1.x - pos2.x) < 18 && Math.abs(pos1.y - pos2.y) < 18&&
+                !this.findAllChildren().contains(node) &&
+                !node.findAllChildren().contains(this);
+    }
+
+    public Set<RGNode> findAllChildren() {
+        Set<RGNode> result = new HashSet<>();
+        for (Set<RGNode> nodes : children.values()) {
+            for (RGNode node : nodes) {
+                result.add(node);
+                result.addAll(node.findAllChildren());
+            }
+        }
+        return result;
     }
 
     public void mergeNode(RGNode node) {
@@ -223,6 +238,12 @@ public class RGNode extends WidgetGroup implements IDraggable {
     }
 
     public void updateDemand(int demand) {
+        dfsUpdateDemand(demand, new Stack<>());
+    }
+
+    private void dfsUpdateDemand(int demand, Stack<RGNode> updated) {
+        if (updated.contains(this)) return;
+        updated.push(this);
         if (head instanceof ItemStack) {
             ((ItemStack) head).setCount(demand);
         } else if (head instanceof FluidStack) {
@@ -231,9 +252,10 @@ public class RGNode extends WidgetGroup implements IDraggable {
         for (Set<RGNode> children : children.values()) {
             for (RGNode child : children) {
                 child.parentNodes.put(this, this.getChildDemand(child));
-                child.updateDemand(child.parentNodes.values().stream().mapToInt(it->it).sum());
+                child.dfsUpdateDemand(child.parentNodes.values().stream().mapToInt(it->it).sum(), updated);
             }
         }
+        updated.pop();
     }
 
     public void removeParent(RGNode parent) {
