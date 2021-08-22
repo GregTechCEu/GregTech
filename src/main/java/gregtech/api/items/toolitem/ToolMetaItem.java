@@ -601,7 +601,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             return Materials.Neutronium;
         }
         Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(toolMaterialName);
-        if (material != null && material.hasProperty(PropertyKey.TOOL)) {
+        if (material != null) {
             return material;
         }
         return Materials.Neutronium;

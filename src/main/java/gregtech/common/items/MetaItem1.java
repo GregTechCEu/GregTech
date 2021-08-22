@@ -22,7 +22,7 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
-import static gregtech.api.util.DyeUtil.getOrdictColorName;
+import static gregtech.api.util.DyeUtil.getOredictColorName;
 import static gregtech.common.items.MetaItems.*;
 
 public class MetaItem1 extends StandardMetaItem {
@@ -355,7 +355,7 @@ public class MetaItem1 extends StandardMetaItem {
         DYE_INDIGO = addItem(421, "dye.indigo").addOreDict("dyeBlue");
         for (int i = 0; i < EnumDyeColor.values().length; i++) {
             EnumDyeColor dyeColor = EnumDyeColor.values()[i];
-            DYE_ONLY_ITEMS[i] = addItem(422 + i, "dye." + dyeColor.getName()).addOreDict(getOrdictColorName(dyeColor));
+            DYE_ONLY_ITEMS[i] = addItem(422 + i, "dye." + dyeColor.getName()).addOreDict(getOredictColorName(dyeColor));
         }
 
         // Plant/Rubber Related: ID 438-445

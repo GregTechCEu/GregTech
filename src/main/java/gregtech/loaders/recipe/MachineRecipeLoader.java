@@ -43,7 +43,7 @@ import static gregtech.api.GTValues.L;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.api.util.DyeUtil.getOrdictColorName;
+import static gregtech.api.util.DyeUtil.getOredictColorName;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.WORKBENCH;
 
@@ -399,7 +399,7 @@ public class MachineRecipeLoader {
         for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
             CANNER_RECIPES.recipeBuilder()
                     .inputs(MetaItems.SPRAY_EMPTY.getStackForm())
-                    .input(getOrdictColorName(dyeColor), 1)
+                    .input(getOredictColorName(dyeColor), 1)
                     .outputs(MetaItems.SPRAY_CAN_DYES[dyeColor.getMetadata()].getStackForm())
                     .EUt(8).duration(200)
                     .buildAndRegister();

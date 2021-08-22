@@ -540,6 +540,7 @@ public final class MetaItems {
         add(OrePrefix.toolHeadUniversalSpade);
         add(OrePrefix.toolHeadSense);
         add(OrePrefix.toolHeadBuzzSaw);
+        add(OrePrefix.toolHeadScrewdriver);
     }};
 
     public static void init() {
