@@ -13,11 +13,10 @@ import gregtech.api.util.GTLog;
 import gregtech.common.blocks.BlockTransparentCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregLog.LogVariant;
+import gregtech.common.blocks.wood.BlockGregPlank;
 import gregtech.common.crafting.FacadeRecipe;
 import gregtech.common.items.MetaItems;
 import gregtech.loaders.oreprocessing.ToolRecipeHandler;
-import net.minecraft.block.BlockPlanks.EnumType;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -93,7 +92,7 @@ public class CraftingRecipeLoader {
                     MetaItems.CAPACITOR.getStackForm());
         }
 
-        ModHandler.addShapelessRecipe("rubber_wood_planks", new ItemStack(Blocks.PLANKS, 4, EnumType.JUNGLE.getMetadata()), new ItemStack(MetaBlocks.LOG, 1, LogVariant.RUBBER_WOOD.ordinal()));
+        ModHandler.addShapelessRecipe("rubber_wood_planks", new ItemStack(MetaBlocks.PLANKS, 4, BlockGregPlank.PlankVariant.RUBBER_PLANK.ordinal()), new ItemStack(MetaBlocks.LOG, 1, LogVariant.RUBBER_WOOD.ordinal()));
 
         ModHandler.addShapedRecipe("paper_ring", OreDictUnifier.get(OrePrefix.ring, Materials.Paper), "k", "X", 'X', new UnificationEntry(OrePrefix.plate, Materials.Paper));
         ModHandler.addShapedRecipe("rubber_ring", OreDictUnifier.get(OrePrefix.ring, Materials.Rubber), "k", "X", 'X', new UnificationEntry(OrePrefix.plate, Materials.Rubber));
