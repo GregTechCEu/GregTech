@@ -20,7 +20,7 @@ public class TerminalDesktopWidget extends WidgetGroup {
     public void installApplication(AbstractApplication application){
         int r = 12;
         int index = appDiv.widgets.size();
-        int x = this.getSize().width / 2 + (3 * r) * (index - 3);
+        int x = this.getSize().width / 2 + (3 * r) * (index % 7 - 3);
         int y = (index / 7) * (3 * r) + 40;
         CircleButtonWidget button = new CircleButtonWidget(x,y)
                 .setColors(TerminalTheme.COLOR_B_2.getColor(),

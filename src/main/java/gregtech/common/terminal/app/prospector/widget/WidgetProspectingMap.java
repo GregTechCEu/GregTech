@@ -44,13 +44,16 @@ public class WidgetProspectingMap extends Widget {
         this.mode = mode;
         this.scanTick = scanTick;
         oreList = widgetOreList;
-        oreList.onSelected = name->{
-            if (texture != null) {
-                texture.loadTexture(null, name);
-            }
-        };
+        if (oreList != null) {
+            oreList.onSelected = name->{
+                if (texture != null) {
+                    texture.loadTexture(null, name);
+                }
+            };
+        }
     }
 
+    @SideOnly(Side.CLIENT)
     public void setDarkMode(boolean mode) {
         if (darkMode != mode) {
             darkMode = mode;
@@ -60,6 +63,7 @@ public class WidgetProspectingMap extends Widget {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public boolean getDarkMode() {
         return darkMode;
     }
@@ -109,9 +113,9 @@ public class WidgetProspectingMap extends Widget {
                     break;
             }
             writeUpdateInfo(2, packet::writePacketData);
-            if (oreList != null) {
-                oreList.addOres(packet.ores, packet.mode);
-            }
+//            if (oreList != null) {
+//                oreList.addOres(packet.ores, packet.mode);
+//            }
             chunkIndex++;
         }
     }
@@ -120,6 +124,7 @@ public class WidgetProspectingMap extends Widget {
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         if(texture !=null) {
+            GlStateManager.color(1,1,1,1);
             texture.draw(this.getPosition().x, this.getPosition().y);
         }
     }
@@ -159,7 +164,7 @@ public class WidgetProspectingMap extends Widget {
                     (cZ + 1) * 16 + this.getPosition().y,
                     new Color(0x4B6C6C6C, true).getRGB());
             if (this.mode == 0) { // draw ore
-                tooltips.add(I18n.format("metaitem.tool.prospect.tooltips.ore"));
+                tooltips.add(I18n.format("terminal.prospector.ore"));
                 HashMap<String, Integer> oreInfo = new HashMap<>();
                 for (int i = 0; i < 16; i++) {
                     for (int j = 0; j < 16; j++) {
@@ -175,7 +180,7 @@ public class WidgetProspectingMap extends Widget {
                 }
                 oreInfo.forEach((name, count)->tooltips.add(name + " --- " + count));
             } else if(this.mode == 1){
-                tooltips.add(I18n.format("metaitem.tool.prospect.tooltips.fluid"));
+                tooltips.add(I18n.format("terminal.prospector.fluid"));
                 if (texture.map[cX][cZ] != null && !texture.map[cX][cZ].isEmpty()) {
                     String name = FluidRegistry.getFluidStack(texture.map[cX][cZ].get((byte) 1),1).getLocalizedName();
                     if (texture.getSelected().equals("[all]") || texture.getSelected().equals(texture.map[cX][cZ].get((byte) 1))) {

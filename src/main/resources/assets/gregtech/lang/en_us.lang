@@ -3789,6 +3789,7 @@ gregtech.terminal.app_name.tutorials=Tutorials
 gregtech.terminal.app_name.theme_settings=Theme Settings
 gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
+gregtech.terminal.app_name.ore_prospector=Ore Prospector
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
@@ -3841,3 +3842,8 @@ terminal.recipe_chart.visible=Visible
 terminal.recipe_chart.jei=JEI Focus
 terminal.recipe_chart.tier=Tier:
 terminal.recipe_chart.ratio=Ratio
+
+terminal.prospector.vis_mode=dark mode
+terminal.prospector.list=All Resources
+terminal.prospector.ore=Ore statistics
+terminal.prospector.fluid=Fluid statistics

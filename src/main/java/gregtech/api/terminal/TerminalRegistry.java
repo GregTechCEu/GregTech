@@ -8,7 +8,7 @@ import gregtech.common.terminal.app.guide.MultiBlockGuideApp;
 import gregtech.common.terminal.app.guide.SimpleMachineGuideApp;
 import gregtech.common.terminal.app.guide.TutorialGuideApp;
 import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
-import gregtech.common.terminal.app.prospector.ProspectorApp;
+import gregtech.common.terminal.app.prospector.OreProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 
 import java.util.*;
@@ -24,7 +24,7 @@ public class TerminalRegistry {
         registerApp(new TutorialGuideApp(), true);
         registerApp(new GuideEditorApp(), true);
         registerApp(new ThemeSettingApp(), true);
-        registerApp(new ProspectorApp(), true);
+        registerApp(new OreProspectorApp(), true);
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
             registerApp(new RecipeChartApp(), true);
         }

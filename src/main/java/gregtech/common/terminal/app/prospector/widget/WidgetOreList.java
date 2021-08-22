@@ -1,10 +1,11 @@
 package gregtech.common.terminal.app.prospector.widget;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.terminal.gui.IDraggable;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.unification.OreDictUnifier;
@@ -12,36 +13,42 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.Position;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.*;
 import java.util.function.Consumer;
 
-import static gregtech.api.gui.impl.ModularUIGui.bColorForOverlay;
-import static gregtech.api.gui.impl.ModularUIGui.gColorForOverlay;
-import static gregtech.api.gui.impl.ModularUIGui.rColorForOverlay;
+import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class WidgetOreList extends DraggableScrollableWidgetGroup {
-    private WidgetGroup selected;
-    private final Map<WidgetGroup, String> widgetMap;
-    public Consumer<String> onSelected = null;
-    public Set<String> ores;
-    @SideOnly(Side.CLIENT)
+    protected WidgetGroup selected;
+    protected final BiMap<WidgetGroup, String> widgetMap;
+    protected Consumer<String> onSelected = null;
+    public Map<String, String> ores;
     private int tickCounter;
 
     public WidgetOreList(int xPosition, int yPosition, int width, int slotSize) {
         super(xPosition, yPosition, width, slotSize);
-        widgetMap = new HashMap<>();
-        ores = new HashSet<>();
+        widgetMap = HashBiMap.create();
+        ores = new HashMap<>();
         this.setYScrollBarWidth(5);
         this.setYBarStyle(null, TerminalTheme.COLOR_F_1);
         clear();
+    }
+
+    public void setSelected(String oreName) {
+        WidgetGroup widget = widgetMap.inverse().get(oreName);
+        if (widget != null) {
+            this.selected = widget;
+            if (this.onSelected != null) {
+                onSelected.accept(widgetMap.get(this.selected));
+            }
+        }
     }
 
     public void addOres(Set<String> ores, int mode) {
@@ -58,12 +65,12 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
     }
 
     private void addOre(String orePrefix) {
-        if (ores.contains(orePrefix)) {
+        if (ores.containsKey(orePrefix)) {
             return;
-        } else {
-            ores.add(orePrefix);
         }
         ItemStack itemStack = OreDictUnifier.get(orePrefix);
+        if (itemStack == null || itemStack.isEmpty()) return;
+        ores.put(orePrefix, itemStack.getDisplayName());
         MaterialStack materialStack = OreDictUnifier.getMaterial(OreDictUnifier.get(orePrefix));
         ItemStackHandler itemStackHandler = new ItemStackHandler(1);
         itemStackHandler.insertItem(0, itemStack, false);
@@ -86,13 +93,12 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
     }
 
     private void addOil(String orePrefix) {
-        if (ores.contains(orePrefix)) {
+        if (ores.containsKey(orePrefix)) {
             return;
-        } else {
-            ores.add(orePrefix);
         }
         FluidStack fluidStack = FluidRegistry.getFluidStack(orePrefix, 1);
         if (fluidStack == null) return;
+        ores.put(orePrefix, fluidStack.getLocalizedName());
         FluidTank fluidTank = new FluidTank(1);
         fluidTank.setCanFill(false);
         fluidTank.fillInternal(fluidStack, true);
@@ -108,9 +114,9 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
     public void clear() {
         this.clearAllWidgets();
         widgetMap.clear();
-        WidgetGroup widgetGroup = new WidgetGroup();
+        WidgetGroup widgetGroup = new WidgetGroup(0, 0, getSize().width - 5, 18);
         widgetGroup.addWidget(new ImageWidget(0, 0, 18, 18, GuiTextures.LOCK));
-        widgetGroup.addWidget(new LabelWidget(20, 9, "metaitem.tool.prospect.gui.list"));
+        widgetGroup.addWidget(new LabelWidget(20, 9, "terminal.prospector.list", -1));
         selected = widgetGroup;
         widgetMap.put(widgetGroup, "[all]");
         this.addWidget(widgetGroup);
@@ -133,17 +139,14 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
     @Override
     protected boolean checkClickedDragged(int mouseX, int mouseY, int button) {
         draggedWidget = null;
-        if (isMouseOverElement(mouseX, mouseY)) {
-            for (int i = widgets.size() - 1; i >= 0; i--) {
-                Widget widget = widgets.get(i);
-                if(widget.isVisible() && widget instanceof WidgetGroup) {
-                    if(widget.isMouseOverElement(mouseX, mouseY) && this.selected != widget) {
-                        this.selected = (WidgetGroup) widget;
-                        if (this.onSelected != null) {
-                            onSelected.accept(widgetMap.get(this.selected));
-                        }
-                        return true;
+        for (int i = widgets.size() - 1; i >= 0; i--) {
+            Widget widget = widgets.get(i);
+            if(widget.isVisible() && widget instanceof WidgetGroup) {
+                if(widget.isMouseOverElement(mouseX, mouseY)) {
+                    if (isMouseOverElement(mouseX, mouseY) && this.selected != widget) {
+                        this.setSelected(widgetMap.get(widget));
                     }
+                    return true;
                 }
             }
         }
@@ -180,4 +183,8 @@ public class WidgetOreList extends DraggableScrollableWidgetGroup {
         }
     }
 
+    @Override
+    protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
+
+    }
 }
