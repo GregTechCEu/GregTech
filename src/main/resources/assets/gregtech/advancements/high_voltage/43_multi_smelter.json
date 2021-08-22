@@ -17,7 +17,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:wire_coil",
+            "item": "gregtech:machine",
             "data": 1006
           }
         ]

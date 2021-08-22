@@ -8,7 +8,7 @@
     },
     "icon": {
       "item": "gregtech:fluid_pipe_normal",
-      "data": 134
+      "data": 260
     },
     "background": "gregtech:textures/blocks/casings/solid/machine_bronze_plated_bricks.png"
   },

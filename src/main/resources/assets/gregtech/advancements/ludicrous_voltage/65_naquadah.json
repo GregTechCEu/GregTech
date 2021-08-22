@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.ludicrous_voltage.65_naquadah.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
-      "data": 10353
+      "item": "gregtech:meta_ingot",
+      "data": 124
     }
   },
   "criteria": {

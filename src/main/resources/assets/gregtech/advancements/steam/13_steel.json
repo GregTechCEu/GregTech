@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.steam.13_steel.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
-      "data": 10198
+      "item": "gregtech:meta_ingot",
+      "data": 324
     },
     "frame": "goal"
   },

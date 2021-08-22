@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.extreme_voltage.48_osmium.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
-      "data": 10075
+      "item": "gregtech:meta_ingot",
+      "data": 75
     }
   },
   "criteria": {
