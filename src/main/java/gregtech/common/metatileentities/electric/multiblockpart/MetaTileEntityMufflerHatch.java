@@ -9,7 +9,9 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.metatileentity.multiblock.*;
+import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.render.Textures;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -122,9 +124,9 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
         BlockPos pos = this.getPos();
         EnumFacing facing = this.getFrontFacing();
-        float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.25F;
+        float xPos = facing.getXOffset() * 0.76F + pos.getX() + 0.5F;
         float yPos = facing.getYOffset() * 0.76F + pos.getY() + 0.25F;
-        float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.25F;
+        float zPos = facing.getZOffset() * 0.76F + pos.getZ() + 0.5F;
 
         float ySpd = facing.getYOffset() * 0.1F + 0.2F + 0.1F * XSTR_RAND.nextFloat();
         float xSpd;
@@ -138,11 +140,8 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
             xSpd = facing.getXOffset() * (0.1F + 0.2F * XSTR_RAND.nextFloat());
             zSpd = facing.getZOffset() * (0.1F + 0.2F * XSTR_RAND.nextFloat());
         }
-        MultiblockControllerBase controllerBase = getController();
-        if (controllerBase instanceof RecipeMapMultiblockController) {
-            RecipeMapMultiblockController controller = (RecipeMapMultiblockController) controllerBase;
-            controller.runMufflerEffect(xPos, yPos, zPos, xSpd, ySpd, zSpd);
-        }
+        if (getController() instanceof MultiblockWithDisplayBase)
+            ((MultiblockWithDisplayBase) getController()).runMufflerEffect(xPos, yPos, zPos, xSpd, ySpd, zSpd);
     }
 
     @Override

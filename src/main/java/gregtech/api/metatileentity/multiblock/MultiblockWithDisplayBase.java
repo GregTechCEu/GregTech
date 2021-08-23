@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
@@ -25,6 +26,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.util.text.event.HoverEvent.Action;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,7 +46,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     public static final XSTR XSTR_RAND = new XSTR();
 
     private int timeActive;
-    private static final int minimumMaintenanceTime = 5184000; // 72 real-life hours = 5184000 ticks
+    private static final int minimumMaintenanceTime = 3456000; // 48 real-life hours = 3456000 ticks
 
     /**
      * This value stores whether each of the 5 maintenance problems have been fixed.
@@ -179,7 +182,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     /**
      * Outputs the recovery items into the muffler hatch
      */
-    protected void outputRecoveryItems() {
+    public void outputRecoveryItems() {
         MetaTileEntityMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
         muffler.recoverItemsTable(recoveryItems.stream().map(ItemStack::copy).collect(Collectors.toList()));
     }
@@ -193,6 +196,14 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             return false;
 
         return isStructureFormed() && hasMufflerMechanics() && getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0).isFrontFaceFree();
+    }
+
+    /**
+     * Produces the muffler particles
+     */
+    @SideOnly(Side.CLIENT)
+    public void runMufflerEffect(float xPos, float yPos, float zPos, float xSpd, float ySpd, float zSpd) {
+        getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, xSpd, ySpd, zSpd);
     }
 
     /**
@@ -298,6 +309,13 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
         textList.add(textTranslation.setStyle(new Style().setColor(TextFormatting.RED)
                 .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverEventTranslation))));
+
+        if (hasMufflerMechanics() && !isMufflerFaceFree())
+            textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed")
+                    .setStyle(new Style().setColor(TextFormatting.RED)
+                            .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                    new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed.tooltip")))));
+
     }
 
     /**

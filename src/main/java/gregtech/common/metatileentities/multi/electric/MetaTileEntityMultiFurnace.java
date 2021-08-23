@@ -122,6 +122,9 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
 
         @Override
         protected void trySearchNewRecipe() {
+            if (((RecipeMapMultiblockController) metaTileEntity).getNumMaintenanceProblems() > 5)
+                return;
+
             long maxVoltage = getMaxVoltage();
             Recipe currentRecipe = null;
             IItemHandlerModifiable importInventory = getInputInventory();

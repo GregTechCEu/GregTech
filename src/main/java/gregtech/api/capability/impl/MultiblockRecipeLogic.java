@@ -2,6 +2,7 @@ package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.Recipe;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -68,6 +69,28 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
+    protected void trySearchNewRecipe() {
+        // do not run recipes when there are more than 5 maintenance problems
+        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
+        if (controller.hasMaintenanceMechanics() && controller.getNumMaintenanceProblems() > 5)
+            return;
+
+        super.trySearchNewRecipe();
+    }
+
+    @Override
+    protected int[] calculateOverclock(int EUt, long voltage, int duration) {
+        // apply maintenance penalties
+        int numMaintenanceProblems = (this.metaTileEntity instanceof MultiblockWithDisplayBase) ?
+                ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems() : 0;
+
+        int[] overclock = super.calculateOverclock(EUt, voltage, duration);
+        overclock[1] = (int) (duration * (1 + 0.1 * numMaintenanceProblems));
+
+        return overclock;
+    }
+
+    @Override
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         if (controller.checkRecipe(recipe, false) &&
@@ -75,6 +98,22 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             controller.checkRecipe(recipe, true);
             return true;
         } else return false;
+    }
+
+    @Override
+    protected void completeRecipe() {
+        if (metaTileEntity instanceof MultiblockWithDisplayBase) {
+            MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
+
+            // output muffler items
+            if (controller.hasMufflerMechanics())
+                controller.outputRecoveryItems();
+
+            // increase total on time
+            if (controller.hasMaintenanceMechanics())
+                controller.calculateMaintenance(this.progressTime);
+        }
+        super.completeRecipe();
     }
 
     @Override

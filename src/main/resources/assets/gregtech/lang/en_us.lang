@@ -3719,6 +3719,8 @@ gregtech.multiblock.universal.problem.soft_mallet=%s§7Something is stuck. (§aS
 gregtech.multiblock.universal.problem.hard_hammer=%s§7Plating is dented. (§aHard Hammer§7)
 gregtech.multiblock.universal.problem.wire_cutter=%s§7Wires burned out. (§aWire Cutter§7)
 gregtech.multiblock.universal.problem.crowbar=%s§7That doesn't belong there. (§aCrowbar§7)
+gregtech.multiblock.universal.muffler_obstructed=Muffler Hatch is Obstructed!
+gregtech.multiblock.universal.muffler_obstructed.tooltip=Muffler Hatch must have a block of airspace in front of it.
 
 gregtech.multiblock.preview.tilt=Shift+LMB to tilt
 gregtech.multiblock.preview.zoom=Shift+RMB to zoom

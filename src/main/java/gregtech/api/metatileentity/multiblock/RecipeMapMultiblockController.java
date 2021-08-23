@@ -17,14 +17,11 @@ import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMufflerHatch;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
@@ -93,7 +90,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.recipeMapWorkable.invalidate();
     }
 
-    protected void outputRecoveryItems() {
+    public void outputRecoveryItems() {
         MetaTileEntityMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
         muffler.recoverItemsTable(recoveryItems.stream().map(ItemStack::copy).collect(Collectors.toList()));
     }
@@ -106,11 +103,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     public boolean isActive() {
         return isStructureFormed() && recipeMapWorkable.isActive();
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void runMufflerEffect(float xPos, float yPos, float zPos, float xSpd, float ySpd, float zSpd) {
-        getWorld().spawnParticle(EnumParticleTypes.SMOKE_LARGE, xPos, yPos, zPos, xSpd, ySpd, zSpd);
     }
 
     private void initializeAbilities() {

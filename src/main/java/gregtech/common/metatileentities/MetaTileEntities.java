@@ -651,7 +651,6 @@ public class MetaTileEntities {
             GregTechAPI.registerMetaTileEntity(1657 + i, MUFFLER_HATCH[i]);
         }
 
-
         CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1673, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
         /*
