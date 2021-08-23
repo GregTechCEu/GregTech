@@ -145,12 +145,9 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public static void registerSprites(TextureStitchEvent.Pre event) {
-        for (StoneType stoneType : StoneType.STONE_TYPE_REGISTRY) {
-            event.getMap().registerSprite(stoneType.backgroundTopTexture);
-            event.getMap().registerSprite(stoneType.backgroundSideTexture);
-        }
         for (MaterialIconSet set : MaterialIconSet.ICON_SETS.values()) {
             event.getMap().registerSprite(MaterialIconType.ore.getBlockPath(set));
+            event.getMap().registerSprite(MaterialIconType.block.getBlockPath(set));
         }
     }
 

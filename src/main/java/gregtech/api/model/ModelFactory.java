@@ -2,15 +2,22 @@ package gregtech.api.model;
 
 import com.google.common.collect.ImmutableMap;
 import gregtech.api.GTValues;
+import gregtech.api.util.GTLog;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.client.renderer.block.model.FaceBakery;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
 
+import javax.vecmath.Vector3f;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
@@ -19,21 +26,58 @@ import java.util.function.UnaryOperator;
  */
 public class ModelFactory {
 
-    private final ModelTemplate template;
-    private final String particleLocation;
-    private final Map<String, String> sprites;
+    private static final Map<ItemCameraTransforms.TransformType, TRSRTransformation> blockTransformationMap = new EnumMap<>(ItemCameraTransforms.TransformType.class);
+    private static final Map<ItemCameraTransforms.TransformType, TRSRTransformation> itemTransformationMap = new EnumMap<>(ItemCameraTransforms.TransformType.class);
 
-    private VertexFormat format = DefaultVertexFormats.BLOCK;
-    private UnaryOperator<IModel> mutation;
+    private static FaceBakery INSTANCE;
 
-    public ModelFactory(ModelTemplate template, ResourceLocation particleLocation) {
-        this(template, particleLocation.toString());
+    static {
+        blockTransformationMap.put(ItemCameraTransforms.TransformType.GUI, getTransform(0, 0, 0, 30, 225, 0, 0.625f));
+        blockTransformationMap.put(ItemCameraTransforms.TransformType.GROUND, getTransform(0, 2, 0, 0, 0, 0, 0.25f));
+        blockTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, getTransform(0, 0, 0, 0, 45, 0, 0.4f));
+        blockTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, getTransform(0, 0, 0, 0, 0, 0, 0.4f));
+        blockTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f));
+        blockTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f));
+
+        itemTransformationMap.put(ItemCameraTransforms.TransformType.GUI, getTransform(0, 0, 0, 0, 0, 0, 1f));
+        itemTransformationMap.put(ItemCameraTransforms.TransformType.GROUND, getTransform(0, 2, 0, 0, 0, 0, 0.5f));
+        itemTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, getTransform(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f));
+        itemTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, getTransform(0, 3, 1, 0, 0, 0, 0.55f));
+        itemTransformationMap.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, getTransform(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f));
+        itemTransformationMap.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0f, 4.0f, 0.5f, 0, 90, -55, 0.85f));
     }
 
-    public ModelFactory(ModelTemplate template, String particleLocation) {
+    public static FaceBakery getBakery() {
+        if (INSTANCE == null) {
+            INSTANCE = new FaceBakery();
+        }
+        return INSTANCE;
+    }
+
+    public static TRSRTransformation getBlockTransform(ItemCameraTransforms.TransformType transformType) {
+        return blockTransformationMap.get(transformType);
+    }
+
+    public static TRSRTransformation getItemTransform(ItemCameraTransforms.TransformType transformType) {
+        return itemTransformationMap.get(transformType);
+    }
+
+    private static TRSRTransformation getTransform(float tx, float ty, float tz, float ax, float ay, float az, float s) {
+        return new TRSRTransformation(new Vector3f(tx / 16, ty / 16, tz / 16), TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)), new Vector3f(s, s, s), null);
+    }
+
+    private final ModelTemplate template;
+    private final Map<String, String> sprites;
+
+    private IModelState state;
+    private VertexFormat format;
+    private UnaryOperator<IModel> mutation;
+
+    public ModelFactory(ModelTemplate template) {
         this.template = template;
-        this.particleLocation = particleLocation;
         this.sprites = new Object2ObjectOpenHashMap<>();
+        this.state = template.model.getDefaultState();
+        this.format = DefaultVertexFormats.BLOCK;
     }
 
     public ModelFactory addSpriteToLayer(int layer, ResourceLocation textureLocation) {
@@ -54,6 +98,15 @@ public class ModelFactory {
         return this;
     }
 
+    public ModelFactory addParticleSprite(ResourceLocation textureLocation) {
+        return addParticleSprite(textureLocation.toString());
+    }
+
+    public ModelFactory addParticleSprite(String textureLocation) {
+        this.sprites.put("particle", textureLocation);
+        return this;
+    }
+
     public ModelFactory changeFormat(VertexFormat format) {
         this.format = format;
         return this;
@@ -66,7 +119,7 @@ public class ModelFactory {
 
     public IBakedModel bake() {
         if (!sprites.containsKey("particle")) {
-            sprites.put("particle", particleLocation);
+            GTLog.logger.error("ModelFactory is baking a model without a valid particle sprite!");
         }
         IModel mapped = template.model.retexture(ImmutableMap.copyOf(sprites));
         if (mutation != null) {
@@ -77,14 +130,6 @@ public class ModelFactory {
 
     public static class ModelTemplate {
 
-        public static IModel load(String domain, String path) {
-            return load(new ResourceLocation(domain, path));
-        }
-
-        public static IModel load(ResourceLocation loc) {
-            return ModelLoaderRegistry.getModelOrMissing(loc);
-        }
-
         public static final ModelTemplate DOUBLE_LAYERED_BLOCK = new ModelTemplate(GTValues.MODID, "block/double_layered_block");
         public static final ModelTemplate BLOCK = new ModelTemplate("minecraft", "block/block");
         public static final ModelTemplate NORMAL_ITEM = new ModelTemplate("minecraft", "item/generated");
@@ -93,11 +138,7 @@ public class ModelFactory {
         private final IModel model;
 
         public ModelTemplate(String locationDomain, String locationPath) {
-            this.model = load(locationDomain, locationPath);
-        }
-
-        public ModelTemplate(ResourceLocation location) {
-            this.model = load(location);
+            this.model = ModelLoaderRegistry.getModelOrMissing(new ResourceLocation(locationDomain, locationPath));
         }
 
         public ModelTemplate(IModel model) {

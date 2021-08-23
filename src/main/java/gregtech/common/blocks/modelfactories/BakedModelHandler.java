@@ -3,11 +3,10 @@ package gregtech.common.blocks.modelfactories;
 import codechicken.lib.render.item.CCRenderItem;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
-import gregtech.api.model.ModelFactory;
-import gregtech.api.unification.material.info.MaterialIconType;
-import gregtech.api.unification.ore.StoneType;
+import gregtech.client.model.CompressedBlockBakedModel;
+import gregtech.client.model.OreBakedModel;
+import gregtech.common.blocks.BlockCompressed;
 import gregtech.common.blocks.BlockOre;
-import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -24,7 +23,6 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ModelFluid;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.PerspectiveMapWrapper;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -34,10 +32,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
 
 public class BakedModelHandler {
@@ -53,29 +49,6 @@ public class BakedModelHandler {
 
     private static ModelResourceLocation getSimpleModelLocation(Block block) {
         return new ModelResourceLocation(Block.REGISTRY.getNameForObject(block), "");
-    }
-
-    public static final EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_ITEM = new EnumMap<>(ItemCameraTransforms.TransformType.class);
-    public static final EnumMap<ItemCameraTransforms.TransformType, Matrix4f> TRANSFORM_MAP_BLOCK = new EnumMap<>(ItemCameraTransforms.TransformType.class);
-
-    static {
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.GUI, getTransform(0, 0, 0, 0, 0, 0, 1f).getMatrix());
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.GROUND, getTransform(0, 2, 0, 0, 0, 0, 0.5f).getMatrix());
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, getTransform(1.13f, 3.2f, 1.13f, 0, -90, 25, 0.68f).getMatrix());
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, getTransform(0, 3, 1, 0, 0, 0, 0.55f).getMatrix());
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, getTransform(1.13f, 3.2f, 1.13f, 0, 90, -25, 0.68f).getMatrix());
-        TRANSFORM_MAP_ITEM.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0f, 4.0f, 0.5f, 0, 90, -55, 0.85f).getMatrix());
-
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.GUI, getTransform(0, 0, 0, 30, 225, 0, 0.625f).getMatrix());
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.GROUND, getTransform(0, 2, 0, 0, 0, 0, 0.25f).getMatrix());
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND, getTransform(0, 0, 0, 0, 45, 0, 0.4f).getMatrix());
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, getTransform(0, 0, 0, 0, 0, 0, 0.4f).getMatrix());
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f).getMatrix());
-        TRANSFORM_MAP_BLOCK.put(ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, getTransform(0, 0, 0, 45, 0, 0, 0.4f).getMatrix());
-    }
-
-    private static TRSRTransformation getTransform(float tx, float ty, float tz, float ax, float ay, float az, float s) {
-        return new TRSRTransformation(new Vector3f(tx / 16, ty / 16, tz / 16), TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)), new Vector3f(s, s, s), null);
     }
 
     private final List<Tuple<Block, String>> builtInBlocks = new ArrayList<>();
@@ -109,19 +82,8 @@ public class BakedModelHandler {
             ModelBuiltInRenderer bakedModel = new ModelBuiltInRenderer(tuple.getSecond());
             event.getModelRegistry().putObject(resourceLocation, bakedModel);
         }
-        for (BlockOre ore : MetaBlocks.ORES) {
-            for (IBlockState state : ore.blockState.getValidStates()) {
-                // StoneType stoneType = state.getValue(ore.STONE_TYPE);
-                ModelResourceLocation loc = new ModelResourceLocation(ore.getRegistryName(), MetaBlocks.statePropertiesToString(state.getProperties()));
-                /*
-                IBakedModel bakedModel = new ModelFactory(ModelFactory.ModelTemplate.DOUBLE_LAYERED_BLOCK, stoneType.backgroundTopTexture)
-                        .addSpriteToLayer(0, stoneType.backgroundTopTexture)
-                        .addSpriteToLayer(1, MaterialIconType.ore.getBlockPath(ore.material.getMaterialIconSet()))
-                        .bake();
-                 */
-                event.getModelRegistry().putObject(loc, OreBakedModel.INSTANCE);
-            }
-        }
+        event.getModelRegistry().putObject(BlockOre.MODEL_LOCATION, OreBakedModel.INSTANCE);
+        event.getModelRegistry().putObject(BlockCompressed.MODEL_LOCATION, CompressedBlockBakedModel.INSTANCE);
     }
 
     private static class ModelBuiltInRenderer implements IBakedModel {

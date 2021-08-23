@@ -1,7 +1,6 @@
-package gregtech.common.blocks.modelfactories;
+package gregtech.client.model;
 
 import gregtech.api.model.ModelFactory;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.ore.StoneType;
@@ -17,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -29,15 +27,15 @@ public class OreBakedModel implements IBakedModel {
 
     public static final OreBakedModel INSTANCE = new OreBakedModel();
 
-    private final FaceBakery bakery = new FaceBakery();
-    private final float[] uv = new float[]{ 0.0F, 0.0F, 16.0F, 16.0F, 0.0F, 0.0F, 16.0F, 16.0F };
-    private final Vector3f fromPos = new Vector3f(0.0F, 0.0F, 0.0F);
-    private final Vector3f toPos = new Vector3f(16.0F, 16.0F, 16.0F);
-    private final Map<StoneType, IBakedModel> stoneTypeModels = new Object2ObjectOpenHashMap<>();
-    private final Map<MaterialIconSet, Map<EnumFacing, BakedQuad>> materialFaces = new Object2ObjectOpenHashMap<>();
-    private final ThreadLocal<TextureAtlasSprite> particle = ThreadLocal.withInitial(() -> Minecraft.getMinecraft().getTextureMapBlocks().missingImage);
+    private final Map<StoneType, IBakedModel> stoneTypeModels;
+    private final Map<MaterialIconSet, Map<EnumFacing, BakedQuad>> materialFaces;
+    private final ThreadLocal<TextureAtlasSprite> particle;
 
-    private OreBakedModel() { }
+    private OreBakedModel() {
+        this.stoneTypeModels = new Object2ObjectOpenHashMap<>();
+        this.materialFaces = new Object2ObjectOpenHashMap<>();
+        this.particle = ThreadLocal.withInitial(() -> Minecraft.getMinecraft().getTextureMapBlocks().missingImage);
+    }
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
@@ -57,10 +55,10 @@ public class OreBakedModel implements IBakedModel {
             }
             BakedQuad materialFaceQuad = materialFace.get(side);
             if (materialFaceQuad == null) {
-                materialFace.put(side, materialFaceQuad = bakery.makeBakedQuad(
-                        fromPos,
-                        toPos,
-                        new BlockPartFace(side, 1, "", new BlockFaceUV(uv, 0)),
+                materialFace.put(side == null ? EnumFacing.NORTH : side, materialFaceQuad = ModelFactory.getBakery().makeBakedQuad(
+                        new Vector3f(0F, 0F, 0F),
+                        new Vector3f(16F, 16F, 16F),
+                        new BlockPartFace(side, 1, "", new BlockFaceUV(new float[] { 0.0F, 0.0F, 16.0F, 16.0F, 0.0F, 0.0F, 16.0F, 16.0F }, 0)),
                         ModelLoader.defaultTextureGetter().apply(MaterialIconType.ore.getBlockPath(ore.material.getMaterialIconSet())),
                         side == null ? EnumFacing.NORTH : side,
                         ModelRotation.X0_Y0,
@@ -104,7 +102,7 @@ public class OreBakedModel implements IBakedModel {
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-        return Pair.of(this, BakedModelHandler.TRANSFORM_MAP_BLOCK.getOrDefault(cameraTransformType, TRSRTransformation.identity().getMatrix()));
+        return Pair.of(this, ModelFactory.getBlockTransform(cameraTransformType).getMatrix());
     }
 
     @Override
