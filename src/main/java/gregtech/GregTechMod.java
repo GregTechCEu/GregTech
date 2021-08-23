@@ -25,7 +25,6 @@ import gregtech.common.MetaFluids;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.modelfactories.BlockCompressedFactory;
 import gregtech.common.blocks.modelfactories.BlockFrameFactory;
-import gregtech.common.blocks.modelfactories.BlockOreFactory;
 import gregtech.common.command.GregTechCommand;
 import gregtech.common.covers.CoverBehaviors;
 import gregtech.common.covers.filter.FilterTypeRegistry;
@@ -62,7 +61,7 @@ public class GregTechMod {
             ResourcePackHook.init();
             // BlockOreFactory.init();
             BlockCompressedFactory.init();
-            BlockFrameFactory.init();
+            // BlockFrameFactory.init();
         }
     }
 

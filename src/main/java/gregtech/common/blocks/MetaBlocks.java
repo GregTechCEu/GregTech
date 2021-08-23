@@ -5,6 +5,7 @@ import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.model.IModelSupplier;
 import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.MetaTileEntityTESR;
 import gregtech.api.unification.OreDictUnifier;
@@ -38,6 +39,7 @@ import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import gregtech.common.render.CableRenderer;
 import gregtech.common.render.FluidPipeRenderer;
 import gregtech.common.render.ItemPipeRenderer;
+import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog.EnumAxis;
 import net.minecraft.block.properties.IProperty;
@@ -111,8 +113,8 @@ public class MetaBlocks {
 
     public static final Map<Material, BlockCompressed> COMPRESSED = new HashMap<>();
     public static final Map<Material, BlockFrame> FRAMES = new HashMap<>();
-    public static final Collection<BlockOre> ORES = new HashSet<>();
-    public static final Collection<BlockFluidBase> FLUID_BLOCKS = new HashSet<>();
+    public static final Collection<BlockOre> ORES = new ReferenceArrayList<>();
+    public static final Collection<BlockFluidBase> FLUID_BLOCKS = new ReferenceArrayList<>();
 
     public static void init() {
         GregTechAPI.MACHINE = MACHINE = new BlockMachine();
@@ -335,9 +337,9 @@ public class MetaBlocks {
         registerItemModel(LEAVES);
         registerItemModel(SAPLING);
 
-        COMPRESSED.values().stream().distinct().forEach(MetaBlocks::registerItemModel);
+        COMPRESSED.values().forEach(IModelSupplier::onModelRegister);
         FRAMES.values().forEach(MetaBlocks::registerItemModelWithFilteredProperties);
-        ORES.stream().distinct().forEach(MetaBlocks::registerItemModel);
+        ORES.forEach(IModelSupplier::onModelRegister);
     }
 
     @SideOnly(Side.CLIENT)

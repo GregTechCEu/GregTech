@@ -1,6 +1,9 @@
 package gregtech.common.blocks;
 
+import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.model.IModelSupplier;
+import gregtech.api.model.SimpleStateMapper;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -12,14 +15,18 @@ import net.minecraft.block.BlockFalling;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -28,7 +35,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class BlockOre extends BlockFalling implements IBlockOre {
+public class BlockOre extends BlockFalling implements IBlockOre, IModelSupplier {
+
+    public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "ore_block"), "normal");
 
     public final PropertyStoneType STONE_TYPE;
     public final Material material;
@@ -185,4 +194,13 @@ public class BlockOre extends BlockFalling implements IBlockOre {
         return this.getDefaultState().withProperty(this.STONE_TYPE, stoneType);
     }
 
+    @Override
+    public void onModelRegister() {
+        MetaBlocks.ORES.forEach(o -> {
+            ModelLoader.setCustomStateMapper(o, new SimpleStateMapper(MODEL_LOCATION));
+            for (IBlockState state : o.getBlockState().getValidStates()) {
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(o), o.getMetaFromState(state), MODEL_LOCATION);
+            }
+        });
+    }
 }
