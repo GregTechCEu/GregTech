@@ -6,7 +6,7 @@ import net.minecraft.util.EnumFacing;
  * Represents a single node in network of pipes
  * It can have blocked connections and be active or not
  */
-public final class Node<NodeDataType> {
+public final class PipeNode<NodeDataType> {
 
     public static final int DEFAULT_MARK = 0;
 
@@ -25,7 +25,7 @@ public final class Node<NodeDataType> {
     public int mark;
     public boolean isActive;
 
-    public Node(NodeDataType data, int openConnections, int mark, boolean isActive) {
+    public PipeNode(NodeDataType data, int openConnections, int mark, boolean isActive) {
         this.data = data;
         this.openConnections = openConnections;
         this.mark = mark;

@@ -2,7 +2,6 @@ package gregtech.common.pipelike.cable.net;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
@@ -19,33 +18,37 @@ import java.util.Set;
 
 public class EnergyNetWalker extends PipeNetWalker {
 
-    public static List<RoutePath> createNetData(PipeNet<?> net, World world, BlockPos sourcePipe) {
-        EnergyNetWalker walker = new EnergyNetWalker(net, world, sourcePipe, 1, new ArrayList<>());
+    public static List<RoutePath> createNetData(World world, BlockPos sourcePipe) {
+        EnergyNetWalker walker = new EnergyNetWalker(world, sourcePipe, 1, new ArrayList<>());
         walker.traversePipeNet();
         return walker.routes;
     }
 
     private final List<RoutePath> routes;
-    private Set<TileEntityCable> pipes = new HashSet<>();
+    private Set<EnergyNode> nodes = new HashSet<>();
     private int loss;
 
-    protected EnergyNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, List<RoutePath> routes) {
-        super(net, world, sourcePipe, walkedBlocks);
+    protected EnergyNetWalker(World world, BlockPos sourcePipe, int walkedBlocks, List<RoutePath> routes) {
+        super(world, sourcePipe, walkedBlocks);
         this.routes = routes;
     }
 
     @Override
-    protected PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks) {
-        EnergyNetWalker walker = new EnergyNetWalker(net, world, nextPos, walkedBlocks, routes);
+    protected PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks) {
+        EnergyNetWalker walker = new EnergyNetWalker(world, nextPos, walkedBlocks, routes);
         walker.loss = loss;
-        walker.pipes = new HashSet<>(pipes);
+        walker.nodes = new HashSet<>(nodes);
         return walker;
     }
 
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
-        pipes.add((TileEntityCable) pipeTile);
-        loss += ((TileEntityCable) pipeTile).getNodeData().lossPerBlock;
+        if (pipeTile.getNode() instanceof EnergyNode) {
+            EnergyNode node = (EnergyNode) pipeTile.getNode();
+            if (nodes.add(node)) {
+                loss += node.getWeight() * node.getNodeData().lossPerBlock;
+            }
+        }
     }
 
     @Override
@@ -53,7 +56,7 @@ public class EnergyNetWalker extends PipeNetWalker {
         if (neighbourTile != null) {
             IEnergyContainer container = neighbourTile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, faceToNeighbour.getOpposite());
             if (container != null) {
-                routes.add(new RoutePath(new BlockPos(pipePos), faceToNeighbour, new HashSet<>(pipes), getWalkedBlocks(), loss));
+                routes.add(new RoutePath(new BlockPos(pipePos), faceToNeighbour, new HashSet<>(nodes), getWalkedBlocks(), loss));
             }
         }
     }

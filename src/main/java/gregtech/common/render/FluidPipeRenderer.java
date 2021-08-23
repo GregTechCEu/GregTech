@@ -135,7 +135,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         FluidPipeType fluidPipeType = tileEntityPipe.getPipeType();
         Material pipeMaterial = tileEntityPipe.getPipeMaterial();
-        int paintingColor = tileEntityPipe.getInsulationColor();
+        int paintingColor = tileEntityPipe.getPaintingColor();
         int connectedSidesMap = blockFluidPipe.getVisualConnections(tileEntityPipe);
 
         if (fluidPipeType != null && pipeMaterial != null) {
@@ -144,7 +144,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             if (renderLayer == BlockRenderLayer.CUTOUT)
                 renderPipeBlock(pipeMaterial, fluidPipeType, paintingColor, renderState, pipeline, connectedSidesMap);
 
-            ICoverable coverable = tileEntityPipe.getCoverableImplementation();
+            ICoverable coverable = tileEntityPipe.getCoverable();
             coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), renderLayer);
         }
         return true;
@@ -277,7 +277,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
         TextureAtlasSprite atlasSprite = pipeTextures.get(fluidPipeType).sideTexture;
-        int pipeColor = getPipeColor(material, tileEntity.getInsulationColor());
+        int pipeColor = getPipeColor(material, tileEntity.getPaintingColor());
         return Pair.of(atlasSprite, pipeColor);
     }
 }

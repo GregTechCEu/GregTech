@@ -13,10 +13,8 @@ import net.minecraft.item.ItemStack;
 
 public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType> & IMaterialPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
 
-    protected final PipeType pipeType;
-
     public BlockMaterialPipe(PipeType pipeType) {
-        this.pipeType = pipeType;
+        super(pipeType);
     }
 
     @Override
@@ -32,10 +30,10 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
     @Override
     public NodeDataType createItemProperties(ItemStack itemStack) {
         Material material = getItemMaterial(itemStack);
-        if (pipeType == null || material == null) {
+        if (getPipeType() == null || material == null) {
             return getFallbackType();
         }
-        return createProperties(pipeType, material);
+        return createProperties(getPipeType(), material);
     }
 
     public ItemStack getItem(Material material) {
@@ -50,7 +48,7 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
 
     @Override
     public void setTileEntityData(TileEntityPipeBase<PipeType, NodeDataType> pipeTile, ItemStack itemStack) {
-        ((TileEntityMaterialPipeBase<PipeType, NodeDataType>) pipeTile).setPipeData(this, pipeType, getItemMaterial(itemStack));
+        ((TileEntityMaterialPipeBase<PipeType, NodeDataType>) pipeTile).setPipeData(this, getPipeType(), getItemMaterial(itemStack));
     }
 
     @Override
@@ -62,10 +60,10 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
     protected abstract NodeDataType createProperties(PipeType pipeType, Material material);
 
     public OrePrefix getPrefix() {
-        return pipeType.getOrePrefix();
+        return getPipeType().getOrePrefix();
     }
 
     public PipeType getItemPipeType(ItemStack is) {
-        return pipeType;
+        return getPipeType();
     }
 }

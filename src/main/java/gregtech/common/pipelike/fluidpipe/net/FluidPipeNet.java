@@ -1,13 +1,13 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.pipenet.Node;
+import gregtech.api.pipenet.PipeNode;
 import gregtech.api.pipenet.PipeGatherer;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
-import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -30,8 +30,10 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
     }
 
     public List<Inventory> getNetData(BlockPos pipePos) {
+        if(!hasValidNodeNet())
+            rebuildNodeNet(getWorldData(), pipePos);
         return NET_DATA.computeIfAbsent(pipePos, pos -> {
-            List<Inventory> data = FluidNetWalker.createNetData(this, getWorldData(), pos);
+            List<Inventory> data = FluidNetWalker.createNetData(getWorldData(), pos);
             data.sort(Comparator.comparingInt(inv -> inv.distance));
             return data;
         });
@@ -49,7 +51,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
 
     public void destroyNetwork(BlockPos source, boolean isLeaking, boolean isBurning, int temp) {
         World world = getWorldData();
-        List<IPipeTile<?, ?>> pipes = PipeGatherer.gatherPipesInDistance(this, world, source, pipe -> {
+        List<IPipeTile<?, ?>> pipes = PipeGatherer.gatherPipesInDistance(world, source, pipe -> {
             if (pipe instanceof TileEntityFluidPipe) {
                 TileEntityFluidPipe fluidPipe = (TileEntityFluidPipe) pipe;
                 return (isBurning && fluidPipe.getNodeData().maxFluidTemperature < temp) || (isLeaking && !fluidPipe.getNodeData().gasProof);
@@ -57,7 +59,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
             return false;
         }, 2 + world.rand.nextInt(4));
         for (IPipeTile<?, ?> pipeTile : pipes) {
-            BlockPos pos = pipeTile.getPipePos();
+            BlockPos pos = pipeTile.getPos();
             Random random = world.rand;
             if (isBurning) {
                 world.setBlockState(pos, Blocks.FIRE.getDefaultState());
@@ -76,7 +78,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
     }
 
     @Override
-    protected void transferNodeData(Map<BlockPos, Node<FluidPipeProperties>> transferredNodes, PipeNet<FluidPipeProperties> parentNet1) {
+    protected void transferNodeData(Map<BlockPos, PipeNode<FluidPipeProperties>> transferredNodes, PipeNet<FluidPipeProperties> parentNet1) {
         super.transferNodeData(transferredNodes, parentNet1);
         FluidPipeNet parentNet = (FluidPipeNet) parentNet1;
         NET_DATA.clear();
@@ -104,18 +106,20 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         private final BlockPos pipePos;
         private final EnumFacing faceToHandler;
         private final int distance;
-        private final Set<Object> objectsInPath;
+        private final Set<FluidNode> nodes;
+        private final Set<CoverFluidFilter> filters;
+        //private final Set<Object> objectsInPath;
         private final int minRate;
         private FluidStack lastTransferredFluid;
-        private final List<TileEntityFluidPipe> holdingPipes;
+        //private final List<TileEntityFluidPipe> holdingPipes;
 
-        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, Set<Object> objectsInPath, int minRate, List<TileEntityFluidPipe> holdingPipes) {
+        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, Set<FluidNode> nodes, int minRate, Set<CoverFluidFilter> filters) {
             this.pipePos = pipePos;
             this.faceToHandler = facing;
             this.distance = distance;
-            this.objectsInPath = objectsInPath;
+            this.nodes = nodes;
             this.minRate = minRate;
-            this.holdingPipes = holdingPipes;
+            this.filters = filters;
         }
 
         public void setLastTransferredFluid(FluidStack lastTransferredFluid) {
@@ -126,16 +130,16 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
             return lastTransferredFluid;
         }
 
-        public Set<Object> getObjectsInPath() {
-            return objectsInPath;
+        public Set<FluidNode> getPath() {
+            return nodes;
         }
 
         public int getMinThroughput() {
             return minRate;
         }
 
-        public List<TileEntityFluidPipe> getHoldingPipes() {
-            return holdingPipes;
+        public Set<CoverFluidFilter> getFilters() {
+            return filters;
         }
 
         public BlockPos getPipePos() {

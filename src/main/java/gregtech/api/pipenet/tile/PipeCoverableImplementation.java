@@ -57,7 +57,7 @@ public class PipeCoverableImplementation implements ICoverable {
         boolean requiresTicking = coverBehavior instanceof ITickable;
         if (requiresTicking && !holder.supportsTicking()) {
             IPipeTile<?, ?> newHolderTile = holder.setSupportsTicking();
-            return newHolderTile.getCoverableImplementation().placeCoverOnSide(side, itemStack, coverDefinition);
+            return newHolderTile.getCoverable().placeCoverOnSide(side, itemStack, coverDefinition);
         }
         if (coverBehaviors[side.getIndex()] != null) {
             removeCover(side);
@@ -165,7 +165,7 @@ public class PipeCoverableImplementation implements ICoverable {
     @Override
     public int getPaintingColor() {
         //todo make insulation colors separate for pipes and cables so cover plates have the correct overlay
-        return holder.getInsulationColor() == IPipeTile.DEFAULT_INSULATION_COLOR ? IPipeTile.DEFAULT_INSULATION_COLOR : holder.getInsulationColor();
+        return holder.getPaintingColor() == IPipeTile.DEFAULT_INSULATION_COLOR ? IPipeTile.DEFAULT_INSULATION_COLOR : holder.getPaintingColor();
     }
 
     @Override
@@ -318,12 +318,12 @@ public class PipeCoverableImplementation implements ICoverable {
 
     @Override
     public World getWorld() {
-        return holder.getPipeWorld();
+        return holder.getWorld();
     }
 
     @Override
     public BlockPos getPos() {
-        return holder.getPipePos();
+        return holder.getPos();
     }
 
     @Override

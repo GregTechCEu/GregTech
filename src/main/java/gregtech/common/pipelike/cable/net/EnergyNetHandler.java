@@ -1,6 +1,7 @@
 package gregtech.common.pipelike.cable.net;
 
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.pipenet.Pos;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
@@ -13,6 +14,7 @@ import net.minecraft.world.WorldServer;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class EnergyNetHandler implements IEnergyContainer {
 
@@ -49,22 +51,20 @@ public class EnergyNetHandler implements IEnergyContainer {
             long amps = dest.acceptEnergyFromNetwork(facing, voltage - path.getMaxLoss(), amperage - amperesUsed);
             amperesUsed += amps;
             boolean didBurn = false;
-
-            for (TileEntityCable cable : path.getPath()) {
-                if (cable.getMaxVoltage() < voltage) {
-                    for (TileEntityCable cable1 : path.getPath()) {
-                        burnCable(cable1.getWorld(), cable1.getPos());
-                    }
+            GTLog.logger.info("Net has {} nodes", path.getPath().size());
+            for (EnergyNode node : path.getPath()) {
+                if (node.getNodeData().voltage < voltage) {
+                    burnNet(path.getPath());
                     break outer;
                 }
-                if (!cable.checkAmperage(amps)) {
+                if (!node.checkAmperage(amps)) {
                     didBurn = true;
-                    burnCable(cable.getWorld(), cable.getPos());
+                    burnNode(node);
                 }
             }
-            if(didBurn) break;
-            for(TileEntityCable cable : path.getPath()) {
-                cable.incrementAmperage(amps, voltage);
+            if (didBurn) break;
+            for (EnergyNode node : path.getPath()) {
+                node.incrementAmperage(amps, voltage);
             }
 
             if (amperage == amperesUsed)
@@ -73,7 +73,23 @@ public class EnergyNetHandler implements IEnergyContainer {
         return amperesUsed;
     }
 
-    private void burnCable(World world, BlockPos pos) {
+    private void burnNet(Set<EnergyNode> nodes) {
+        for (EnergyNode node : nodes) {
+            burnNode(node);
+        }
+    }
+
+    private void burnNode(EnergyNode node) {
+        GTLog.logger.info(" - burning Node");
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (Long rawPos : node.getPipePositions()) {
+            Pos.setPos(pos, rawPos);
+            burnCable(pos);
+        }
+    }
+
+    private void burnCable(BlockPos pos) {
+        World world = cable.getWorld();
         world.setBlockState(pos, Blocks.FIRE.getDefaultState());
         if (!world.isRemote) {
             ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_LARGE,

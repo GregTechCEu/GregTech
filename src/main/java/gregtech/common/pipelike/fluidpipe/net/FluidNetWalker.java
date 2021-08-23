@@ -20,58 +20,60 @@ import java.util.*;
 
 public class FluidNetWalker extends PipeNetWalker {
 
-    public static List<FluidPipeNet.Inventory> createNetData(FluidPipeNet net, World world, BlockPos sourcePipe) {
-        FluidNetWalker walker = new FluidNetWalker(net, world, sourcePipe, 1, new ArrayList<>(), new HashSet<>(), Integer.MAX_VALUE, new ArrayList<>());
-        TileEntity tile = world.getTileEntity(sourcePipe);
-        if(tile instanceof TileEntityFluidPipe)
-            walker.holdingPipes.add((TileEntityFluidPipe) tile);
+    public static List<FluidPipeNet.Inventory> createNetData(World world, BlockPos sourcePipe) {
+        FluidNetWalker walker = new FluidNetWalker(world, sourcePipe, 1, new ArrayList<>(), new HashSet<>(), Integer.MAX_VALUE, new HashSet<>());
         walker.traversePipeNet();
         return walker.inventories;
     }
 
     private final List<FluidPipeNet.Inventory> inventories;
-    private final Set<Object> pathObjects;
-    private final List<TileEntityFluidPipe> holdingPipes;
+    private final Set<FluidNode> nodes;
+    private final Set<CoverFluidFilter> filters;
     private final Map<BlockPos, List<CoverFluidFilter>> covers = new HashMap<>();
     private LinkedList<PosFace> checkedCovers = new LinkedList<>();
     private int rate;
 
-    protected FluidNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, List<FluidPipeNet.Inventory> inventories, Set<Object> pathObjects, int rate, List<TileEntityFluidPipe> holdingPipes) {
-        super(net, world, sourcePipe, walkedBlocks);
+    protected FluidNetWalker(World world, BlockPos sourcePipe, int walkedBlocks, List<FluidPipeNet.Inventory> inventories, Set<FluidNode> nodes, int rate, Set<CoverFluidFilter> filters) {
+        super(world, sourcePipe, walkedBlocks);
         this.inventories = inventories;
-        this.pathObjects = pathObjects;
+        this.nodes = nodes;
         this.rate = rate;
-        this.holdingPipes = holdingPipes;
+        this.filters = filters;
     }
 
     @Override
-    protected PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks) {
-        Set<Object> pathObjectsCopy = new HashSet<>(pathObjects);
-        List<CoverFluidFilter> fluidFilter = covers.get(nextPos);
+    protected PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks) {
+        Set<FluidNode> nodes = new HashSet<>(this.nodes);
+        Collection<CoverFluidFilter> fluidFilter = covers.get(nextPos);
         if(fluidFilter != null)
-            pathObjectsCopy.addAll(fluidFilter);
-        FluidNetWalker walker = new FluidNetWalker(net, world, nextPos, walkedBlocks, inventories, pathObjectsCopy, rate, new ArrayList<>(holdingPipes));
+            filters.addAll(fluidFilter);
+        FluidNetWalker walker = new FluidNetWalker(world, nextPos, walkedBlocks, inventories, nodes, rate, new HashSet<>(filters));
         walker.checkedCovers = checkedCovers;
         return walker;
     }
 
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
-        pathObjects.addAll(covers.values());
+        for(List<CoverFluidFilter> filters1 : covers.values()) {
+            filters.addAll(filters1);
+        }
         covers.clear();
-        pathObjects.add(pipeTile);
+        if(pipeTile.getNode() instanceof FluidNode) {
+            FluidNode node = (FluidNode) pipeTile.getNode();
+            if(nodes.add(node)) {
+                this.rate = Math.min(this.rate, node.getNodeData().throughput);
+            }
+        }
         while (checkedCovers.size() > 12) {
             checkedCovers.removeFirst();
         }
-        this.rate = Math.min(this.rate, ((TileEntityFluidPipe) pipeTile).getNodeData().throughput);
-        int validPipes = 0;
         for (EnumFacing facing : EnumFacing.values()) {
             BlockPos offset = pos.offset(facing);
             EnumFacing opposite = facing.getOpposite();
-            TileEntity tile = pipeTile.getPipeWorld().getTileEntity(offset);
+            TileEntity tile = pipeTile.getWorld().getTileEntity(offset);
             if (tile instanceof TileEntityFluidPipe) {
                 if(!checkedCovers.contains(new PosFace(pos, facing))) {
-                    CoverBehavior cover = pipeTile.getCoverableImplementation().getCoverAtSide(facing);
+                    CoverBehavior cover = pipeTile.getCoverable().getCoverAtSide(facing);
                     if(cover instanceof CoverFluidFilter)
                         putFilter(offset, cover);
                 }
@@ -84,11 +86,7 @@ public class FluidNetWalker extends PipeNetWalker {
                     if(cover2 instanceof CoverFluidFilter)
                         putFilter(offset, cover2);
                 }
-                validPipes++;
             }
-        }
-        if (validPipes > 2) {
-            holdingPipes.add((TileEntityFluidPipe) pipeTile);
         }
     }
 
@@ -105,13 +103,11 @@ public class FluidNetWalker extends PipeNetWalker {
         if (neighbourTile == null) return;
         IFluidHandler handler = neighbourTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, faceToNeighbour.getOpposite());
         if (handler != null) {
-            Set<Object> pathObjectsCopy = new HashSet<>(pathObjects);
-            List<CoverFluidFilter> fluidFilter = covers.get(pipePos.offset(faceToNeighbour));
+            Set<FluidNode> nodes = new HashSet<>(this.nodes);
+            Collection<CoverFluidFilter> fluidFilter = covers.get(pipePos.offset(faceToNeighbour));
             if(fluidFilter != null)
-                pathObjectsCopy.addAll(fluidFilter);
-            List<TileEntityFluidPipe> holders = new ArrayList<>(holdingPipes);
-            holders.add((TileEntityFluidPipe) pipeTile);
-            inventories.add(new FluidPipeNet.Inventory(new BlockPos(pipePos), faceToNeighbour, getWalkedBlocks(), pathObjectsCopy, rate, holders));
+                filters.addAll(fluidFilter);
+            inventories.add(new FluidPipeNet.Inventory(new BlockPos(pipePos), faceToNeighbour, getWalkedBlocks(), nodes, rate, new HashSet<>(filters)));
         }
     }
 

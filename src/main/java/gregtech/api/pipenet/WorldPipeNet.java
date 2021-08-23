@@ -47,16 +47,16 @@ public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
 
     public void addNode(BlockPos nodePos, NodeDataType nodeData, int mark, int openConnections, boolean isActive) {
         T myPipeNet = null;
-        Node<NodeDataType> node = new Node<>(nodeData, openConnections, mark, isActive);
+        PipeNode<NodeDataType> pipeNode = new PipeNode<>(nodeData, openConnections, mark, isActive);
         for (EnumFacing facing : EnumFacing.VALUES) {
             BlockPos offsetPos = nodePos.offset(facing);
             T pipeNet = getNetFromPos(offsetPos);
-            Node<NodeDataType> secondNode = pipeNet == null ? null : pipeNet.getAllNodes().get(offsetPos);
+            PipeNode<NodeDataType> secondPipeNode = pipeNet == null ? null : pipeNet.getAllNodes().get(offsetPos);
             if (pipeNet != null && pipeNet.canAttachNode(nodeData) &&
-                    pipeNet.canNodesConnect(secondNode, facing.getOpposite(), node, null)) {
+                    pipeNet.canNodesConnect(secondPipeNode, facing.getOpposite(), pipeNode, null)) {
                 if (myPipeNet == null) {
                     myPipeNet = pipeNet;
-                    myPipeNet.addNode(nodePos, node);
+                    myPipeNet.addNode(nodePos, pipeNode);
                 } else if (myPipeNet != pipeNet) {
                     myPipeNet.uniteNetworks(pipeNet);
                 }
@@ -65,7 +65,7 @@ public abstract class WorldPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
         }
         if (myPipeNet == null) {
             myPipeNet = createNetInstance();
-            myPipeNet.addNode(nodePos, node);
+            myPipeNet.addNode(nodePos, pipeNode);
             addPipeNet(myPipeNet);
             markDirty();
         }

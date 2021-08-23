@@ -3,6 +3,8 @@ package gregtech.api.pipenet.tile;
 import gnu.trove.map.TIntIntMap;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
+import gregtech.api.pipenet.nodenet.Node;
+import gregtech.api.pipenet.nodenet.NodeNet;
 import gregtech.common.ConfigHolder;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -16,29 +18,33 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     int DEFAULT_INSULATION_COLOR = ConfigHolder.U.GT5u.defaultInsulationColor;
 
-    World getPipeWorld();
+    World getWorld();
 
-    BlockPos getPipePos();
+    BlockPos getPos();
+
+    default boolean hasNode() {
+        return getNode() != null;
+    }
+
+    Node<NodeDataType> getNode();
+
+    Node<NodeDataType> createNode(NodeNet<NodeDataType> nodeNet);
 
     default long getTickTimer() {
-        return getPipeWorld().getWorldTime();
+        return getWorld().getWorldTime();
     }
 
     BlockPipe<PipeType, NodeDataType, ?> getPipeBlock();
 
     void transferDataFrom(IPipeTile<PipeType, NodeDataType> sourceTile);
 
-    int getInsulationColor();
+    int getPaintingColor();
 
-    void setInsulationColor(int newInsulationColor);
-
-    //int getBlockedConnections();
+    void setPaintingColor(int newInsulationColor);
 
     int getOpenConnections();
 
     TIntIntMap getOpenConnectionsMap();
-
-    //boolean isConnectionBlocked(AttachmentType type, EnumFacing side);
 
     boolean isConnectionOpen(AttachmentType type, EnumFacing side);
 
@@ -52,7 +58,7 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     NodeDataType getNodeData();
 
-    PipeCoverableImplementation getCoverableImplementation();
+    PipeCoverableImplementation getCoverable();
 
     boolean supportsTicking();
 
@@ -74,9 +80,5 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     void scheduleChunkForRenderUpdate();
 
-    void markWalked();
-
-    boolean isWalked();
-
-    void resetWalk();
+    boolean isSameType(IPipeTile<?, ?> pipeTile);
 }

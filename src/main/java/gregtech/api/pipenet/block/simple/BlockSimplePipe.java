@@ -10,6 +10,10 @@ import net.minecraft.item.ItemStack;
 
 public abstract class BlockSimplePipe<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType, WorldPipeNetType extends WorldPipeNet<NodeDataType, ? extends PipeNet<NodeDataType>>> extends BlockPipe<PipeType, NodeDataType, WorldPipeNetType> {
 
+    public BlockSimplePipe(PipeType pipeType) {
+        super(pipeType);
+    }
+
     @Override
     public NodeDataType createProperties(IPipeTile<PipeType, NodeDataType> pipeTile) {
         return createProperties(pipeTile.getPipeType());

@@ -42,8 +42,8 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
         simulatedTransfers = 0;
-        CoverBehavior pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
-        CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);
+        CoverBehavior pipeCover = getCoverOnPipe(pipe.getPos(), facing);
+        CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPos(), facing);
 
         boolean pipeConveyor = pipeCover instanceof CoverConveyor, tileConveyor = tileCover instanceof CoverConveyor;
         // abort if there are two conveyors
@@ -76,8 +76,8 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
-        for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
-            if (GTUtility.arePosEqual(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
+        for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPos())) {
+            if (GTUtility.arePosEqual(pipe.getPos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
                 continue;
             IItemHandler handler = inv.getHandler(pipe.getWorld());
             if (handler == null) continue;
@@ -90,8 +90,8 @@ public class ItemNetHandler implements IItemHandler {
 
     public ItemStack insertRoundRobin(ItemStack stack, boolean simulate) {
         List<Handler> handlers = new ArrayList<>();
-        for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
-            if (GTUtility.arePosEqual(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
+        for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPos())) {
+            if (GTUtility.arePosEqual(pipe.getPos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
                 continue;
             IItemHandler handler = inv.getHandler(pipe.getWorld());
             if (handler != null)
@@ -197,7 +197,7 @@ public class ItemNetHandler implements IItemHandler {
     public CoverBehavior getCoverOnPipe(BlockPos pos, EnumFacing handlerFacing) {
         TileEntity tile = pipe.getWorld().getTileEntity(pos);
         if (tile instanceof TileEntityItemPipe) {
-            ICoverable coverable = ((TileEntityItemPipe) tile).getCoverableImplementation();
+            ICoverable coverable = ((TileEntityItemPipe) tile).getCoverable();
             return coverable.getCoverAtSide(handlerFacing);
         }
         return null;

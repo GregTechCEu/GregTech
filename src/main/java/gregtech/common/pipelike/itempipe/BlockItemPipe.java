@@ -1,19 +1,16 @@
 package gregtech.common.pipelike.itempipe;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.cover.CoverBehavior;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
-import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipeTickable;
 import gregtech.common.render.ItemPipeRenderer;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
@@ -54,17 +51,6 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     @Override
     public TileEntityPipeBase<ItemPipeType, ItemPipeProperties> createNewTileEntity(boolean supportsTicking) {
         return supportsTicking ? new TileEntityItemPipeTickable() : new TileEntityItemPipe();
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
-        if (!worldIn.isRemote) {
-            ItemPipeNet itemPipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (itemPipeNet != null) {
-                itemPipeNet.nodeNeighbourChanged(pos);
-            }
-        }
     }
 
     @Override
@@ -120,29 +106,6 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     @Override
     public boolean canPipeConnectToBlock(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile, EnumFacing side, TileEntity tile) {
         return tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite()) != null;
-    }
-
-    @Nonnull
-    @Override
-    public int getVisualConnections(IPipeTile<ItemPipeType, ItemPipeProperties> selfTile) {
-        int connections = selfTile.getOpenConnections();
-        float selfTHICCness = selfTile.getPipeType().getThickness();
-        for (EnumFacing facing : EnumFacing.values()) {
-            CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
-            if (cover != null) {
-                // adds side to open connections of it isn't already open & has a cover
-                connections |= 1 << facing.getIndex();
-                continue;
-            }
-            // check if neighbour is a smaller item pipe
-            TileEntity neighbourTile = selfTile.getPipeWorld().getTileEntity(selfTile.getPipePos().offset(facing));
-            if (neighbourTile instanceof TileEntityItemPipe &&
-                    ((TileEntityItemPipe) neighbourTile).isConnectionOpenAny(facing.getOpposite()) &&
-                    ((TileEntityItemPipe) neighbourTile).getPipeType().getThickness() < selfTHICCness) {
-                connections |= 1 << (facing.getIndex() + 6);
-            }
-        }
-        return connections;
     }
 
     @Override

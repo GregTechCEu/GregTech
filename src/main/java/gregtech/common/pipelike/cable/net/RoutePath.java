@@ -2,7 +2,6 @@ package gregtech.common.pipelike.cable.net;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -14,10 +13,10 @@ public class RoutePath {
     private final BlockPos destPipePos;
     private final EnumFacing destFacing;
     private final int distance;
-    private final Set<TileEntityCable> path;
+    private final Set<EnergyNode> path;
     private final long maxLoss;
 
-    public RoutePath(BlockPos destPipePos, EnumFacing destFacing, Set<TileEntityCable> path, int distance, long maxLoss) {
+    public RoutePath(BlockPos destPipePos, EnumFacing destFacing, Set<EnergyNode> path, int distance, long maxLoss) {
         this.destPipePos = destPipePos;
         this.destFacing = destFacing;
         this.path = path;
@@ -33,7 +32,7 @@ public class RoutePath {
         return maxLoss;
     }
 
-    public Set<TileEntityCable> getPath() {
+    public Set<EnergyNode> getPath() {
         return path;
     }
 
@@ -51,7 +50,7 @@ public class RoutePath {
 
     public IEnergyContainer getHandler(World world) {
         TileEntity tile = world.getTileEntity(getHandlerPos());
-        if(tile != null) {
+        if (tile != null) {
             return tile.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, destFacing.getOpposite());
         }
         return null;

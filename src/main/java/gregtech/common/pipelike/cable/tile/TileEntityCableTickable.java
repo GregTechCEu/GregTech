@@ -9,11 +9,6 @@ public class TileEntityCableTickable extends TileEntityCable implements ITickabl
 
     @Override
     public void update() {
-        getCoverableImplementation().update();
-    }
-
-    @Override
-    public boolean supportsTicking() {
-        return true;
+        getCoverable().update();
     }
 }

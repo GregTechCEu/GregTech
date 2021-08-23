@@ -22,18 +22,16 @@ import java.util.*;
  */
 public abstract class PipeNetWalker {
 
-    private final PipeNet<?> net;
     private final World world;
-    private final Set<IPipeTile<?, ?>> walked = new HashSet<>();
+    private Set<Long> walked = new HashSet<>();
     private final List<EnumFacing> pipes = new ArrayList<>();
     private List<PipeNetWalker> walkers;
     private final BlockPos.MutableBlockPos currentPos;
     private int walkedBlocks;
     private boolean invalid;
 
-    protected PipeNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks) {
+    protected PipeNetWalker(World world, BlockPos sourcePipe, int walkedBlocks) {
         this.world = Objects.requireNonNull(world);
-        this.net = Objects.requireNonNull(net);
         this.walkedBlocks = walkedBlocks;
         this.currentPos = new BlockPos.MutableBlockPos(Objects.requireNonNull(sourcePipe));
     }
@@ -42,13 +40,12 @@ public abstract class PipeNetWalker {
      * Creates a sub walker
      * Will be called when a pipe has multiple valid pipes
      *
-     * @param net          pipe net
      * @param world        world
      * @param nextPos      next pos to check
      * @param walkedBlocks distance from source in blocks
      * @return new sub walker
      */
-    protected abstract PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks);
+    protected abstract PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks);
 
     /**
      * You can increase walking stats here. for example
@@ -94,7 +91,7 @@ public abstract class PipeNetWalker {
             throw new IllegalStateException("This walker already walked. Create a new one if you want to walk again");
         int i = 0;
         while (!walk() && i++ < maxWalks) ;
-        walked.forEach(IPipeTile::resetWalk);
+        walked.clear();
         invalid = true;
     }
 
@@ -113,17 +110,12 @@ public abstract class PipeNetWalker {
         if (walkers == null) {
             walkers = new ArrayList<>();
             for (EnumFacing side : pipes) {
-                walkers.add(Objects.requireNonNull(createSubWalker(net, world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null"));
+                PipeNetWalker walker = Objects.requireNonNull(createSubWalker(world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null");
+                walker.walked = walked;
+                walkers.add(walker);
             }
         } else {
-            Iterator<PipeNetWalker> iterator = walkers.iterator();
-            while (iterator.hasNext()) {
-                PipeNetWalker walker = iterator.next();
-                if (walker.walk()) {
-                    walked.addAll(walker.walked);
-                    iterator.remove();
-                }
-            }
+            walkers.removeIf(PipeNetWalker::walk);
         }
 
         return walkers.size() == 0;
@@ -142,8 +134,7 @@ public abstract class PipeNetWalker {
                 throw new IllegalStateException("PipeTile was not null last walk, but now is");
         }
         checkPipe(pipeTile, currentPos);
-        pipeTile.markWalked();
-        walked.add(pipeTile);
+        walked.add(pipeTile.getPos().toLong());
 
         BlockPos.PooledMutableBlockPos pos = BlockPos.PooledMutableBlockPos.retain();
         // check for surrounding pipes and item handlers
@@ -156,7 +147,7 @@ public abstract class PipeNetWalker {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof IPipeTile) {
                 IPipeTile<?, ?> otherPipe = (IPipeTile<?, ?>) tile;
-                if (otherPipe.isWalked())
+                if (isWalked(otherPipe))
                     continue;
                 if (isValidPipe(pipeTile, otherPipe, currentPos, accessSide)) {
                     pipes.add(accessSide);
@@ -168,8 +159,12 @@ public abstract class PipeNetWalker {
         pos.release();
     }
 
-    public PipeNet<?> getNet() {
-        return net;
+    public boolean isWalked(BlockPos pos) {
+        return walked.contains(pos.toLong());
+    }
+
+    public boolean isWalked(IPipeTile<?, ?> pipe) {
+        return walked.contains((pipe.getPos().toLong()));
     }
 
     public World getWorld() {

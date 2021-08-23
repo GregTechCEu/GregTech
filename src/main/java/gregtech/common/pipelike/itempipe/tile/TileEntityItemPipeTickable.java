@@ -9,15 +9,10 @@ public class TileEntityItemPipeTickable extends TileEntityItemPipe implements IT
 
     @Override
     public void update() {
-        getCoverableImplementation().update();
+        getCoverable().update();
         if (++timer % 20 == 0) {
             transferredItems = 0;
         }
-    }
-
-    @Override
-    public boolean supportsTicking() {
-        return true;
     }
 
     public void transferItems(int amount) {

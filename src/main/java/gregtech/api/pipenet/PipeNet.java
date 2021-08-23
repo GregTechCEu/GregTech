@@ -4,6 +4,7 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+import gregtech.api.pipenet.nodenet.NodeNet;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -20,15 +21,28 @@ import java.util.Map.Entry;
 public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCompound> {
 
     protected final WorldPipeNet<NodeDataType, PipeNet<NodeDataType>> worldData;
-    private final Map<BlockPos, Node<NodeDataType>> nodeByBlockPos = new HashMap<>();
-    private final Map<BlockPos, Node<NodeDataType>> unmodifiableNodeByBlockPos = Collections.unmodifiableMap(nodeByBlockPos);
+    private final Map<BlockPos, PipeNode<NodeDataType>> nodeByBlockPos = new HashMap<>();
+    private final Map<BlockPos, PipeNode<NodeDataType>> unmodifiableNodeByBlockPos = Collections.unmodifiableMap(nodeByBlockPos);
     private final Map<ChunkPos, Integer> ownedChunks = new HashMap<>();
+    private NodeNet<NodeDataType> nodeNet;
     private long lastUpdate;
     boolean isValid = false;
 
     public PipeNet(WorldPipeNet<NodeDataType, ? extends PipeNet> world) {
         //noinspection unchecked
         this.worldData = (WorldPipeNet<NodeDataType, PipeNet<NodeDataType>>) world;
+    }
+
+    public void rebuildNodeNet(World world, BlockPos pos) {
+        nodeNet = new NodeNet<>(world, pos);
+    }
+
+    public NodeNet<NodeDataType> getNodeNet() {
+        return nodeNet;
+    }
+
+    public boolean hasValidNodeNet() {
+        return nodeNet != null && nodeNet.isValid();
     }
 
     public Set<ChunkPos> getContainedChunks() {
@@ -49,13 +63,18 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
 
     protected void onConnectionsUpdate() {
         this.lastUpdate = System.currentTimeMillis();
+        if (hasValidNodeNet())
+            nodeNet.invalidate();
     }
 
-    public Map<BlockPos, Node<NodeDataType>> getAllNodes() {
+    public void onNodeNeighbourChange(World world, BlockPos pipePos, EnumFacing facing) {
+    }
+
+    public Map<BlockPos, PipeNode<NodeDataType>> getAllNodes() {
         return unmodifiableNodeByBlockPos;
     }
 
-    public Node<NodeDataType> getNodeAt(BlockPos blockPos) {
+    public PipeNode<NodeDataType> getNodeAt(BlockPos blockPos) {
         return nodeByBlockPos.get(blockPos);
     }
 
@@ -63,28 +82,28 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         return nodeByBlockPos.containsKey(blockPos);
     }
 
-    protected void addNodeSilently(BlockPos nodePos, Node<NodeDataType> node) {
-        this.nodeByBlockPos.put(nodePos, node);
+    protected void addNodeSilently(BlockPos nodePos, PipeNode<NodeDataType> pipeNode) {
+        this.nodeByBlockPos.put(nodePos, pipeNode);
         checkAddedInChunk(nodePos);
     }
 
-    protected void addNode(BlockPos nodePos, Node<NodeDataType> node) {
-        addNodeSilently(nodePos, node);
+    protected void addNode(BlockPos nodePos, PipeNode<NodeDataType> pipeNode) {
+        addNodeSilently(nodePos, pipeNode);
         onConnectionsUpdate();
         worldData.markDirty();
     }
 
-    protected Node<NodeDataType> removeNodeWithoutRebuilding(BlockPos nodePos) {
-        Node<NodeDataType> removedNode = this.nodeByBlockPos.remove(nodePos);
+    protected PipeNode<NodeDataType> removeNodeWithoutRebuilding(BlockPos nodePos) {
+        PipeNode<NodeDataType> removedPipeNode = this.nodeByBlockPos.remove(nodePos);
         ensureRemovedFromChunk(nodePos);
         worldData.markDirty();
-        return removedNode;
+        return removedPipeNode;
     }
 
     protected void removeNode(BlockPos nodePos) {
         if (nodeByBlockPos.containsKey(nodePos)) {
-            Node<NodeDataType> selfNode = removeNodeWithoutRebuilding(nodePos);
-            rebuildNetworkOnNodeRemoval(nodePos, selfNode);
+            PipeNode<NodeDataType> selfPipeNode = removeNodeWithoutRebuilding(nodePos);
+            rebuildNetworkOnNodeRemoval(nodePos, selfPipeNode);
         }
     }
 
@@ -111,11 +130,11 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         if (!containsNode(nodePos)) {
             return;
         }
-        Node<NodeDataType> selfNode = getNodeAt(nodePos);
-        if (selfNode.isBlocked(facing) == isBlocked)
+        PipeNode<NodeDataType> selfPipeNode = getNodeAt(nodePos);
+        if (selfPipeNode.isBlocked(facing) == isBlocked)
             return;
 
-        setBlocked(selfNode, facing, isBlocked);
+        setBlocked(selfPipeNode, facing, isBlocked);
         BlockPos offsetPos = nodePos.offset(facing);
         PipeNet<NodeDataType> pipeNetAtOffset = worldData.getNetFromPos(offsetPos);
         if (pipeNetAtOffset == null) {
@@ -130,11 +149,11 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             //if it is blocked now, but was able to connect with neighbour node before, try split networks
             if (isBlocked) {
                 //need to unblock node before doing canNodesConnectCheck
-                setBlocked(selfNode, facing, false);
-                if (canNodesConnect(selfNode, facing, getNodeAt(offsetPos), this)) {
+                setBlocked(selfPipeNode, facing, false);
+                if (canNodesConnect(selfPipeNode, facing, getNodeAt(offsetPos), this)) {
                     //now block again to call findAllConnectedBlocks
-                    setBlocked(selfNode, facing, true);
-                    HashMap<BlockPos, Node<NodeDataType>> thisENet = findAllConnectedBlocks(nodePos);
+                    setBlocked(selfPipeNode, facing, true);
+                    HashMap<BlockPos, PipeNode<NodeDataType>> thisENet = findAllConnectedBlocks(nodePos);
                     if (!getAllNodes().equals(thisENet)) {
                         //node visibility has changed, split network into 2
                         //node that code below is similar to removeNodeInternal, but only for 2 networks, and without node removal
@@ -149,10 +168,10 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             //if this is an unblock, and we can connect with their node, merge them
 
         } else if (!isBlocked) {
-            Node<NodeDataType> neighbourNode = pipeNetAtOffset.getNodeAt(offsetPos);
+            PipeNode<NodeDataType> neighbourPipeNode = pipeNetAtOffset.getNodeAt(offsetPos);
             //check connection availability from both networks
-            if (canNodesConnect(selfNode, facing, neighbourNode, pipeNetAtOffset) &&
-                    pipeNetAtOffset.canNodesConnect(neighbourNode, facing.getOpposite(), selfNode, this)) {
+            if (canNodesConnect(selfPipeNode, facing, neighbourPipeNode, pipeNetAtOffset) &&
+                    pipeNetAtOffset.canNodesConnect(neighbourPipeNode, facing.getOpposite(), selfPipeNode, this)) {
                 //so, side is unblocked now, and nodes can connect, merge two networks
                 //our network consumes other one
                 uniteNetworks(pipeNetAtOffset);
@@ -166,22 +185,22 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         if (!containsNode(nodePos)) {
             return;
         }
-        HashMap<BlockPos, Node<NodeDataType>> selfConnectedBlocks = null;
-        Node<NodeDataType> selfNode = getNodeAt(nodePos);
-        int oldMark = selfNode.mark;
-        selfNode.mark = newMark;
+        HashMap<BlockPos, PipeNode<NodeDataType>> selfConnectedBlocks = null;
+        PipeNode<NodeDataType> selfPipeNode = getNodeAt(nodePos);
+        int oldMark = selfPipeNode.mark;
+        selfPipeNode.mark = newMark;
         for (EnumFacing facing : EnumFacing.VALUES) {
             BlockPos offsetPos = nodePos.offset(facing);
             PipeNet<NodeDataType> otherPipeNet = worldData.getNetFromPos(offsetPos);
-            Node<NodeDataType> secondNode = otherPipeNet == null ? null : otherPipeNet.getNodeAt(offsetPos);
-            if (secondNode == null)
+            PipeNode<NodeDataType> secondPipeNode = otherPipeNet == null ? null : otherPipeNet.getNodeAt(offsetPos);
+            if (secondPipeNode == null)
                 continue; //there is noting here
-            if (!areNodeBlockedConnectionsCompatible(selfNode, facing, secondNode) ||
-                    !areNodesCustomContactable(selfNode.data, secondNode.data, otherPipeNet))
+            if (!areNodeBlockedConnectionsCompatible(selfPipeNode, facing, secondPipeNode) ||
+                    !areNodesCustomContactable(selfPipeNode.data, secondPipeNode.data, otherPipeNet))
                 continue; //if connections aren't compatible, skip them
-            if (areMarksCompatible(oldMark, secondNode.mark) == areMarksCompatible(newMark, secondNode.mark))
+            if (areMarksCompatible(oldMark, secondPipeNode.mark) == areMarksCompatible(newMark, secondPipeNode.mark))
                 continue; //if compatibility didn't change, skip it
-            if (areMarksCompatible(newMark, secondNode.mark)) {
+            if (areMarksCompatible(newMark, secondPipeNode.mark)) {
                 //if marks are compatible now, and offset network is different network, merge them
                 //if it is same network, just update mask and paths
                 if (otherPipeNet != this) {
@@ -198,7 +217,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
                     continue; //if this node is still connected to this network, just continue
                 }
                 //otherwise, it is not connected
-                HashMap<BlockPos, Node<NodeDataType>> offsetConnectedBlocks = findAllConnectedBlocks(offsetPos);
+                HashMap<BlockPos, PipeNode<NodeDataType>> offsetConnectedBlocks = findAllConnectedBlocks(offsetPos);
                 //if in the result of remarking offset node has separated from main network,
                 //and it is also separated from current cable too, form new network for it
                 if (!offsetConnectedBlocks.equals(selfConnectedBlocks)) {
@@ -213,11 +232,11 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         worldData.markDirty();
     }
 
-    private void setBlocked(Node<NodeDataType> selfNode, EnumFacing facing, boolean isBlocked) {
+    private void setBlocked(PipeNode<NodeDataType> selfPipeNode, EnumFacing facing, boolean isBlocked) {
         if (!isBlocked) {
-            selfNode.openConnections |= 1 << facing.getIndex();
+            selfPipeNode.openConnections |= 1 << facing.getIndex();
         } else {
-            selfNode.openConnections &= ~(1 << facing.getIndex());
+            selfPipeNode.openConnections &= ~(1 << facing.getIndex());
         }
     }
 
@@ -232,18 +251,18 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
     }
 
     protected final void uniteNetworks(PipeNet<NodeDataType> unitedPipeNet) {
-        Map<BlockPos, Node<NodeDataType>> allNodes = new HashMap<>(unitedPipeNet.getAllNodes());
+        Map<BlockPos, PipeNode<NodeDataType>> allNodes = new HashMap<>(unitedPipeNet.getAllNodes());
         worldData.removePipeNet(unitedPipeNet);
         allNodes.keySet().forEach(unitedPipeNet::removeNodeWithoutRebuilding);
         transferNodeData(allNodes, unitedPipeNet);
     }
 
-    private boolean areNodeBlockedConnectionsCompatible(Node<NodeDataType> first, EnumFacing firstFacing, Node<NodeDataType> second) {
+    private boolean areNodeBlockedConnectionsCompatible(PipeNode<NodeDataType> first, EnumFacing firstFacing, PipeNode<NodeDataType> second) {
         return !first.isBlocked(firstFacing) && !second.isBlocked(firstFacing.getOpposite());
     }
 
     private boolean areMarksCompatible(int mark1, int mark2) {
-        return mark1 == mark2 || mark1 == Node.DEFAULT_MARK || mark2 == Node.DEFAULT_MARK;
+        return mark1 == mark2 || mark1 == PipeNode.DEFAULT_MARK || mark2 == PipeNode.DEFAULT_MARK;
     }
 
     /**
@@ -251,42 +270,42 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
      * Note that this logic should equal with block connection logic
      * for proper work of network
      */
-    protected final boolean canNodesConnect(Node<NodeDataType> first, EnumFacing firstFacing, Node<NodeDataType> second, PipeNet<NodeDataType> secondPipeNet) {
+    protected final boolean canNodesConnect(PipeNode<NodeDataType> first, EnumFacing firstFacing, PipeNode<NodeDataType> second, PipeNet<NodeDataType> secondPipeNet) {
         return areNodeBlockedConnectionsCompatible(first, firstFacing, second) &&
                 areMarksCompatible(first.mark, second.mark) &&
                 areNodesCustomContactable(first.data, second.data, secondPipeNet);
     }
 
     //we need to search only this network
-    protected HashMap<BlockPos, Node<NodeDataType>> findAllConnectedBlocks(BlockPos startPos) {
-        HashMap<BlockPos, Node<NodeDataType>> observedSet = new HashMap<>();
+    protected HashMap<BlockPos, PipeNode<NodeDataType>> findAllConnectedBlocks(BlockPos startPos) {
+        HashMap<BlockPos, PipeNode<NodeDataType>> observedSet = new HashMap<>();
         observedSet.put(startPos, getNodeAt(startPos));
-        Node<NodeDataType> firstNode = getNodeAt(startPos);
+        PipeNode<NodeDataType> firstPipeNode = getNodeAt(startPos);
         MutableBlockPos currentPos = new MutableBlockPos(startPos);
         Stack<EnumFacing> moveStack = new Stack<>();
         main:
         while (true) {
             for (EnumFacing facing : EnumFacing.VALUES) {
                 currentPos.move(facing);
-                Node<NodeDataType> secondNode = getNodeAt(currentPos);
+                PipeNode<NodeDataType> secondPipeNode = getNodeAt(currentPos);
                 //if there is node, and it can connect with previous node, add it to list, and set previous node as current
-                if (secondNode != null && canNodesConnect(firstNode, facing, secondNode, this) && !observedSet.containsKey(currentPos)) {
+                if (secondPipeNode != null && canNodesConnect(firstPipeNode, facing, secondPipeNode, this) && !observedSet.containsKey(currentPos)) {
                     observedSet.put(currentPos.toImmutable(), getNodeAt(currentPos));
-                    firstNode = secondNode;
+                    firstPipeNode = secondPipeNode;
                     moveStack.push(facing.getOpposite());
                     continue main;
                 } else currentPos.move(facing.getOpposite());
             }
             if (!moveStack.isEmpty()) {
                 currentPos.move(moveStack.pop());
-                firstNode = getNodeAt(currentPos);
+                firstPipeNode = getNodeAt(currentPos);
             } else break;
         }
         return observedSet;
     }
 
     //called when node is removed to rebuild network
-    protected void rebuildNetworkOnNodeRemoval(BlockPos nodePos, Node<NodeDataType> selfNode) {
+    protected void rebuildNetworkOnNodeRemoval(BlockPos nodePos, PipeNode<NodeDataType> selfPipeNode) {
         int amountOfConnectedSides = 0;
         for (EnumFacing facing : EnumFacing.values()) {
             BlockPos offsetPos = nodePos.offset(facing);
@@ -299,12 +318,12 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
         if (amountOfConnectedSides >= 2) {
             for (EnumFacing facing : EnumFacing.VALUES) {
                 BlockPos offsetPos = nodePos.offset(facing);
-                Node<NodeDataType> secondNode = getNodeAt(offsetPos);
-                if (secondNode == null || !canNodesConnect(selfNode, facing, secondNode, this)) {
+                PipeNode<NodeDataType> secondPipeNode = getNodeAt(offsetPos);
+                if (secondPipeNode == null || !canNodesConnect(selfPipeNode, facing, secondPipeNode, this)) {
                     //if there isn't any neighbour node, or it wasn't connected with us, just skip it
                     continue;
                 }
-                HashMap<BlockPos, Node<NodeDataType>> thisENet = findAllConnectedBlocks(offsetPos);
+                HashMap<BlockPos, PipeNode<NodeDataType>> thisENet = findAllConnectedBlocks(offsetPos);
                 if (getAllNodes().equals(thisENet)) {
                     //if cable on some direction contains all nodes of this network
                     //the network didn't change so keep it as is
@@ -342,7 +361,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
      * from parent network and add it to it's own tank, keeping network contents when old network is split
      * Note that it should be called when parent net doesn't have transferredNodes in allNodes already
      */
-    protected void transferNodeData(Map<BlockPos, Node<NodeDataType>> transferredNodes, PipeNet<NodeDataType> parentNet) {
+    protected void transferNodeData(Map<BlockPos, PipeNode<NodeDataType>> transferredNodes, PipeNet<NodeDataType> parentNet) {
         transferredNodes.forEach(this::addNodeSilently);
         onConnectionsUpdate();
         worldData.markDirty();
@@ -397,38 +416,38 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<NBTTagCo
             int openConnections = nodeTag.getInteger("open");
             int mark = nodeTag.getInteger("mark");
             boolean isNodeActive = nodeTag.getBoolean("active");
-            addNodeSilently(blockPos, new Node<>(nodeData, openConnections, mark, isNodeActive));
+            addNodeSilently(blockPos, new PipeNode<>(nodeData, openConnections, mark, isNodeActive));
         }
     }
 
-    protected NBTTagCompound serializeAllNodeList(Map<BlockPos, Node<NodeDataType>> allNodes) {
+    protected NBTTagCompound serializeAllNodeList(Map<BlockPos, PipeNode<NodeDataType>> allNodes) {
         NBTTagCompound compound = new NBTTagCompound();
         NBTTagList allNodesList = new NBTTagList();
         NBTTagList wirePropertiesList = new NBTTagList();
         TObjectIntMap<NodeDataType> alreadyWritten = new TObjectIntHashMap<>(10, 0.5f, -1);
         int currentIndex = 0;
 
-        for (Entry<BlockPos, Node<NodeDataType>> entry : allNodes.entrySet()) {
+        for (Entry<BlockPos, PipeNode<NodeDataType>> entry : allNodes.entrySet()) {
             BlockPos nodePos = entry.getKey();
-            Node<NodeDataType> node = entry.getValue();
+            PipeNode<NodeDataType> pipeNode = entry.getValue();
             NBTTagCompound nodeTag = new NBTTagCompound();
             nodeTag.setInteger("x", nodePos.getX());
             nodeTag.setInteger("y", nodePos.getY());
             nodeTag.setInteger("z", nodePos.getZ());
-            int wirePropertiesIndex = alreadyWritten.get(node.data);
+            int wirePropertiesIndex = alreadyWritten.get(pipeNode.data);
             if (wirePropertiesIndex == -1) {
                 wirePropertiesIndex = currentIndex;
-                alreadyWritten.put(node.data, wirePropertiesIndex);
+                alreadyWritten.put(pipeNode.data, wirePropertiesIndex);
                 currentIndex++;
             }
             nodeTag.setInteger("index", wirePropertiesIndex);
-            if (node.mark != Node.DEFAULT_MARK) {
-                nodeTag.setInteger("mark", node.mark);
+            if (pipeNode.mark != PipeNode.DEFAULT_MARK) {
+                nodeTag.setInteger("mark", pipeNode.mark);
             }
-            if (node.openConnections > 0) {
-                nodeTag.setInteger("open", node.openConnections);
+            if (pipeNode.openConnections > 0) {
+                nodeTag.setInteger("open", pipeNode.openConnections);
             }
-            if (node.isActive) {
+            if (pipeNode.isActive) {
                 nodeTag.setBoolean("active", true);
             }
             allNodesList.appendTag(nodeTag);

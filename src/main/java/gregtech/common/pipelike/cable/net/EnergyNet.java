@@ -1,12 +1,13 @@
 package gregtech.common.pipelike.cable.net;
 
-import gregtech.api.pipenet.Node;
+import gregtech.api.pipenet.PipeNode;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.WireProperties;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,16 +23,19 @@ public class EnergyNet extends PipeNet<WireProperties> {
     }
 
     public List<RoutePath> getNetData(BlockPos pipePos) {
+        if(!hasValidNodeNet())
+            rebuildNodeNet(getWorldData(), pipePos);
         List<RoutePath> data = NET_DATA.get(pipePos);
         if (data == null) {
-            data = EnergyNetWalker.createNetData(this, getWorldData(), pipePos);
+            data = EnergyNetWalker.createNetData(getWorldData(), pipePos);
             data.sort(Comparator.comparingInt(RoutePath::getDistance));
             NET_DATA.put(pipePos, data);
         }
         return data;
     }
 
-    public void nodeNeighbourChanged(BlockPos pos) {
+    @Override
+    public void onNodeNeighbourChange(World world, BlockPos pipePos, EnumFacing facing) {
         NET_DATA.clear();
     }
 
@@ -42,7 +46,7 @@ public class EnergyNet extends PipeNet<WireProperties> {
     }
 
     @Override
-    protected void transferNodeData(Map<BlockPos, Node<WireProperties>> transferredNodes, PipeNet<WireProperties> parentNet) {
+    protected void transferNodeData(Map<BlockPos, PipeNode<WireProperties>> transferredNodes, PipeNet<WireProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);
         NET_DATA.clear();
         ((EnergyNet) parentNet).NET_DATA.clear();

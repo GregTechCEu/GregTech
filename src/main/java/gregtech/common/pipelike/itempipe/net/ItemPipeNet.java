@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.itempipe.net;
 
-import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
+import gregtech.api.pipenet.PipeNode;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,22 +21,18 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
     private final Map<BlockPos, List<Inventory>> NET_DATA = new HashMap<>();
 
-    public ItemPipeNet(WorldPipeNet<ItemPipeProperties, ? extends PipeNet<ItemPipeProperties>> world) {
+    public ItemPipeNet(WorldPipeNet<ItemPipeProperties, ? extends PipeNet> world) {
         super(world);
     }
 
     public List<Inventory> getNetData(BlockPos pipePos) {
         List<Inventory> data = NET_DATA.get(pipePos);
         if (data == null) {
-            data = ItemNetWalker.createNetData(this, getWorldData(), pipePos);
+            data = ItemNetWalker.createNetData(getWorldData(), pipePos);
             data.sort(Comparator.comparingInt(inv -> inv.properties.priority));
             NET_DATA.put(pipePos, data);
         }
         return data;
-    }
-
-    public void nodeNeighbourChanged(BlockPos pos) {
-        NET_DATA.clear();
     }
 
     @Override
@@ -46,19 +42,17 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
     }
 
     @Override
-    protected void transferNodeData(Map<BlockPos, Node<ItemPipeProperties>> transferredNodes, PipeNet<ItemPipeProperties> parentNet) {
+    protected void transferNodeData(Map<BlockPos, PipeNode<ItemPipeProperties>> transferredNodes, PipeNet<ItemPipeProperties> parentNet) {
         super.transferNodeData(transferredNodes, parentNet);
         NET_DATA.clear();
         ((ItemPipeNet) parentNet).NET_DATA.clear();
     }
 
-    @Override
     protected void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
         tagCompound.setInteger("Resistance", nodeData.priority);
         tagCompound.setFloat("Rate", nodeData.transferRate);
     }
 
-    @Override
     protected ItemPipeProperties readNodeData(NBTTagCompound tagCompound) {
         return new ItemPipeProperties(tagCompound.getInteger("Range"), tagCompound.getFloat("Rate"));
     }

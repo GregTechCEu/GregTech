@@ -2,6 +2,7 @@ package gregtech.common.pipelike.itempipe.tile;
 
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
@@ -31,18 +32,22 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new ItemNetHandler(getItemPipeNet(), this, facing));
+            ItemPipeNet net = getPipeNet();
+            if(net == null)
+                GTLog.logger.error("PipeNet can't be null");
+            else
+                return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new ItemNetHandler(net, this, facing));
         }
         return super.getCapabilityInternal(capability, facing);
     }
 
-    public ItemPipeNet getItemPipeNet() {
+    public ItemPipeNet getPipeNet() {
         ItemPipeNet currentPipeNet = this.currentPipeNet.get();
         if (currentPipeNet != null && currentPipeNet.isValid() &&
-                currentPipeNet.containsNode(getPipePos()))
+                currentPipeNet.containsNode(getPos()))
             return currentPipeNet; //if current net is valid and does contain position, return it
-        WorldItemPipeNet worldFluidPipeNet = (WorldItemPipeNet) getPipeBlock().getWorldPipeNet(getPipeWorld());
-        currentPipeNet = worldFluidPipeNet.getNetFromPos(getPipePos());
+        WorldItemPipeNet worldFluidPipeNet = (WorldItemPipeNet) getPipeBlock().getWorldPipeNet(getWorld());
+        currentPipeNet = worldFluidPipeNet.getNetFromPos(getPos());
         if (currentPipeNet != null) {
             this.currentPipeNet = new WeakReference<>(currentPipeNet);
         }

@@ -16,6 +16,7 @@ import codechicken.lib.vec.Vector3;
 import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.pipenet.block.material.IMaterialPipeTile;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
@@ -24,7 +25,6 @@ import gregtech.api.util.ModCompatibility;
 import gregtech.common.pipelike.itempipe.BlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemBlockItemPipe;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
-import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -107,7 +107,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         renderState.reset();
         renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
         BlockItemPipe blockFluidPipe = (BlockItemPipe) ((ItemBlockItemPipe) stack.getItem()).getBlock();
-        ItemPipeType pipeType = blockFluidPipe.getItemPipeType(stack);
+        ItemPipeType pipeType = blockFluidPipe.getPipeType();
         Material material = blockFluidPipe.getItemMaterial(stack);
         if (pipeType != null && material != null) {
             int connections = 1 << EnumFacing.SOUTH.getIndex() | 1 << EnumFacing.NORTH.getIndex() |
@@ -128,7 +128,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         IVertexOperation[] pipeline = {new Translation(pos)};
 
         BlockItemPipe blockFluidPipe = ((BlockItemPipe) state.getBlock());
-        TileEntityItemPipe tileEntityPipe = (TileEntityItemPipe) blockFluidPipe.getPipeTileEntity(world, pos);
+        IMaterialPipeTile<ItemPipeType, ItemPipeProperties> tileEntityPipe = (IMaterialPipeTile<ItemPipeType, ItemPipeProperties>) blockFluidPipe.getPipeTileEntity(world, pos);
 
         if (tileEntityPipe == null) {
             return false;
@@ -136,7 +136,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
         ItemPipeType itemPipeType = tileEntityPipe.getPipeType();
         Material pipeMaterial = tileEntityPipe.getPipeMaterial();
-        int paintingColor = tileEntityPipe.getInsulationColor();
+        int paintingColor = tileEntityPipe.getPaintingColor();
         int connectedSidesMap = blockFluidPipe.getVisualConnections(tileEntityPipe);
 
         if (itemPipeType != null && pipeMaterial != null) {
@@ -145,7 +145,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
             if (renderLayer == BlockRenderLayer.CUTOUT)
                 renderPipeBlock(pipeMaterial, itemPipeType, paintingColor, renderState, pipeline, connectedSidesMap);
 
-            ICoverable coverable = tileEntityPipe.getCoverableImplementation();
+            ICoverable coverable = tileEntityPipe.getCoverable();
             coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), renderLayer);
         }
         return true;
@@ -280,17 +280,17 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         return true;
     }
 
-    public Pair<TextureAtlasSprite, Integer> getParticleTexture(IPipeTile<ItemPipeType, ItemPipeProperties> tileEntity) {
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture(IMaterialPipeTile<ItemPipeType, ItemPipeProperties> tileEntity) {
         if (tileEntity == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
         ItemPipeType fluidPipeType = tileEntity.getPipeType();
-        Material material = ((TileEntityItemPipe) tileEntity).getPipeMaterial();
+        Material material = tileEntity.getPipeMaterial();
         if (fluidPipeType == null || material == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
         TextureAtlasSprite atlasSprite = pipeTextures.get(fluidPipeType).sideTexture;
-        int pipeColor = getPipeColor(material, tileEntity.getInsulationColor());
+        int pipeColor = getPipeColor(material, tileEntity.getPaintingColor());
         return Pair.of(atlasSprite, pipeColor);
     }
 }

@@ -2,11 +2,13 @@ package gregtech.common.pipelike.cable.tile;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
+import gregtech.api.pipenet.nodenet.Node;
+import gregtech.api.pipenet.nodenet.NodeNet;
 import gregtech.api.unification.material.properties.WireProperties;
-import gregtech.api.util.PerTickLongCounter;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.EnergyNetHandler;
+import gregtech.common.pipelike.cable.net.EnergyNode;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -18,44 +20,14 @@ public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, Wire
 
     private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
 
-    private final PerTickLongCounter amperageCounter = new PerTickLongCounter(0);
-    private final PerTickLongCounter voltageCounter = new PerTickLongCounter(0);
-
     @Override
     public Class<Insulation> getPipeTypeClass() {
         return Insulation.class;
     }
 
     @Override
-    public boolean supportsTicking() {
-        return false;
-    }
-
-    public boolean checkAmperage(long amps) {
-        return getMaxAmperage() >= amperageCounter.get(getWorld()) + amps;
-    }
-
-    public void incrementAmperage(long amps, long voltage) {
-        if(voltage > voltageCounter.get(getWorld())) {
-            voltageCounter.set(getWorld(), voltage);
-        }
-        amperageCounter.increment(getWorld(), amps);
-    }
-
-    public long getCurrentAmperage() {
-        return amperageCounter.get(getWorld());
-    }
-
-    public long getCurrentVoltage() {
-        return voltageCounter.get(getWorld());
-    }
-
-    public long getMaxAmperage() {
-        return getNodeData().amperage;
-    }
-
-    public long getMaxVoltage() {
-        return getNodeData().voltage;
+    public Node<WireProperties> createNode(NodeNet<WireProperties> nodeNet) {
+        return new EnergyNode(nodeNet, this);
     }
 
     @Nullable
