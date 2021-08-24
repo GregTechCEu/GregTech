@@ -71,7 +71,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static gregtech.api.unification.material.info.MaterialFlags.GENERATE_FRAME;
-import static gregtech.common.ClientProxy.*;
+import static gregtech.client.ClientProxy.*;
 
 public class MetaBlocks {
 
