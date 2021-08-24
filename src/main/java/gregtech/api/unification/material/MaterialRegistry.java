@@ -1,42 +1,29 @@
 package gregtech.api.unification.material;
 
 import gregtech.api.util.GTControlledRegistry;
-import gregtech.api.util.GTLog;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.GameData;
 
-import java.util.ArrayList;
-import java.util.List;
+public class MaterialRegistry extends GTControlledRegistry<Material> {
 
-public class MaterialRegistry {
-
-    private MaterialRegistry() {
+    public MaterialRegistry() {
+        super(Short.MAX_VALUE);
     }
 
-    public static final GTControlledRegistry<String, Material> MATERIAL_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
-
-    private static List<Material> DEFERRED_REGISTRY = new ArrayList<>();
-
-    public static void freeze() {
-        GTLog.logger.info("Freezing material registry...");
-        DEFERRED_REGISTRY.forEach(MaterialRegistry::finalizeRegistry);
-        DEFERRED_REGISTRY.forEach(MaterialRegistry::postVerify);
-        DEFERRED_REGISTRY = null; // destroy the deferred registry
-        MATERIAL_REGISTRY.freezeRegistry();
-    }
-
-    public static boolean isFrozen() {
-        return MATERIAL_REGISTRY.isFrozen();
-    }
-
-    private static void finalizeRegistry(Material material) {
-        material.verifyMaterial();
-    }
-
-    private static void postVerify(Material material) {
-        material.postVerify();
-        MATERIAL_REGISTRY.register(material.getId(), material.toString(), material);
-    }
-
-    public static void register(Material material) {
-        DEFERRED_REGISTRY.add(material);
+    @Override
+    public void register(int id, ResourceLocation key, Material value) {
+        if (id < 0 || id >= maxId) {
+            throw new IndexOutOfBoundsException("Id is out of range: " + id);
+        }
+        key = GameData.checkPrefix(key.toString());
+        value.verifyMaterial();
+        value.postVerify();
+        super.putObject(key, value);
+        Material objectWithId = getObjectById(id);
+        if (objectWithId != null) {
+            throw new IllegalArgumentException(String.format("Tried to reassign id %d to %s (%s), but it is already assigned to %s (%s)!",
+                    id, value, key, objectWithId, getNameForObject(objectWithId)));
+        }
+        underlyingIntegerMap.put(value, id);
     }
 }
