@@ -58,11 +58,11 @@ public class TerminalMenuWidget extends WidgetGroup {
     }
 
     public void close(ClickData clickData) {
-        os.closeApplication(os.focusApp, clickData.isClient);
+        os.closeApplication(os.getFocusApp(), clickData.isClient);
     }
 
     public void minimize(ClickData clickData) {
-        os.minimizeApplication(os.focusApp, clickData.isClient);
+        os.minimizeApplication(os.getFocusApp(), clickData.isClient);
     }
 
     public void maximize(ClickData clickData) { }

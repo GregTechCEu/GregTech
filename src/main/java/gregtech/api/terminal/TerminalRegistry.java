@@ -3,6 +3,7 @@ package gregtech.api.terminal;
 import gregtech.api.GTValues;
 import gregtech.api.terminal.app.*;
 import gregtech.common.terminal.app.ThemeSettingApp;
+import gregtech.common.terminal.app.console.ConsoleApp;
 import gregtech.common.terminal.app.guide.ItemGuideApp;
 import gregtech.common.terminal.app.guide.MultiBlockGuideApp;
 import gregtech.common.terminal.app.guide.SimpleMachineGuideApp;
@@ -28,6 +29,7 @@ public class TerminalRegistry {
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
             registerApp(new RecipeChartApp(), true);
         }
+        registerApp(new ConsoleApp(), true);
     }
 
     public static void registerApp(AbstractApplication application, boolean isDefaultApp) {

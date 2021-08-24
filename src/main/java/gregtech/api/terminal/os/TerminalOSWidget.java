@@ -10,11 +10,10 @@ import gregtech.api.terminal.os.menu.TerminalMenuWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.*;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -24,11 +23,12 @@ import java.util.List;
 
 public class TerminalOSWidget extends AbstractWidgetGroup {
     private IGuiTexture background;
+    private AbstractApplication focusApp;
+    public final NBTTagCompound tabletNBT;
     public final List<AbstractApplication> openedApps;
-    public AbstractApplication focusApp;
     public final TerminalMenuWidget menu;
     public final TerminalDesktopWidget desktop;
-    private final NBTTagCompound tabletNBT;
+    public final BlockPos clickPos;
 
     public TerminalOSWidget(int xPosition, int yPosition, int width, int height, NBTTagCompound tabletNBT) {
         super(new Position(xPosition, yPosition), new Size(width, height));
@@ -39,7 +39,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         this.addWidget(menu);
         this.tabletNBT = tabletNBT;
         TerminalRegistry.getDefaultApps().forEach(name-> installApplication(TerminalRegistry.getApplication(name)));
-        NBTTagList installed = tabletNBT.getTagList("installed", 8);
+        NBTTagList installed = tabletNBT.getTagList("_installed", Constants.NBT.TAG_STRING);
         for (NBTBase nbtBase : installed) {
             if (nbtBase instanceof NBTTagString) {
                 AbstractApplication app = TerminalRegistry.getApplication(((NBTTagString) nbtBase).getString());
@@ -47,6 +47,11 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                     installApplication(app);
                 }
             }
+        }
+        if (tabletNBT.hasKey("_click")) {
+            clickPos = NBTUtil.getPosFromTag((NBTTagCompound) tabletNBT.getTag("_click"));
+        } else {
+            clickPos = null;
         }
     }
 
@@ -57,6 +62,10 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public TerminalOSWidget setBackground(IGuiTexture background) {
         this.background = background;
         return this;
+    }
+
+    public AbstractApplication getFocusApp() {
+        return focusApp;
     }
 
     public void installApplication(AbstractApplication application){
@@ -110,12 +119,21 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
     }
 
-    public NBTTagCompound closeApplication(AbstractApplication application, boolean isClient) {
+    public void closeApplication(AbstractApplication application, boolean isClient) {
         if (application != null) {
-            NBTTagCompound nbt = application.closeApp(isClient, tabletNBT.getCompoundTag(application.getRegistryName()));
-            if (nbt != null) {
-                tabletNBT.setTag(application.getRegistryName(), nbt);
+            String appName = application.getRegistryName();
+            NBTTagCompound synced = application.closeApp(isClient, tabletNBT.getCompoundTag(appName));
+
+            if (synced != null && !synced.isEmpty()) {
+                tabletNBT.setTag(appName, synced);
+                if (application.isClientSideApp() && isClient) { //if its a clientSideApp and the nbt not null, meaning this nbt should be synced to the server side.
+                    writeClientAction(-2, buffer -> {
+                        buffer.writeString(appName);
+                        buffer.writeCompoundTag(synced);
+                    });
+                }
             }
+
             if (isClient) {
                 application.minimizeWidget(desktop::waitToRemoved);
             } else {
@@ -127,9 +145,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             }
             menu.removeComponents();
             desktop.showDesktop();
-            return nbt;
         }
-        return null;
     }
 
     public void homeTrigger(boolean isClient) {
@@ -196,8 +212,20 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 }
             }
             this.getModularUI().entityPlayer.closeScreen(); // must close tablet from server side.
+        } else if (id == -2) { // closeApp sync
+            String appName = buffer.readString(32767);
+            NBTTagCompound nbt = null;
+            try {
+                nbt = buffer.readCompoundTag();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (nbt != null ) {
+                tabletNBT.setTag(appName, nbt);
+            }
+        } else {
+            super.handleClientAction(id, buffer);
         }
-        super.handleClientAction(id, buffer);
     }
 
     @Override

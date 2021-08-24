@@ -30,36 +30,35 @@ public class ThemeSettingApp extends AbstractApplication {
     private WidgetGroup textureGroup;
 
     @Override
-    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
-        ThemeSettingApp app = new ThemeSettingApp();
+    protected AbstractApplication initApp(boolean isClient, NBTTagCompound nbt) {
         if (isClient) { //333 232
             float x = 333 * 1.0f / 13;
             int y = 50;
-            app.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
-            app.addWidget(new LabelWidget(333 / 2, 20, "terminal.theme_settings.color", -1).setXCentered(true));
-            app.addColorButton(TerminalTheme.COLOR_1, "COLOR_1", (int) x, y);
-            app.addColorButton(TerminalTheme.COLOR_2, "COLOR_2", (int) (x * 2), y);
-            app.addColorButton(TerminalTheme.COLOR_3, "COLOR_3", (int) (x * 3), y);
-            app.addColorButton(TerminalTheme.COLOR_4, "COLOR_4", (int) (x * 4), y);
-            app.addColorButton(TerminalTheme.COLOR_5, "COLOR_5", (int) (x * 5), y);
-            app.addColorButton(TerminalTheme.COLOR_6, "COLOR_6", (int) (x * 6), y);
-            app.addColorButton(TerminalTheme.COLOR_7, "COLOR_7", (int) (x * 7), y);
-            app.addColorButton(TerminalTheme.COLOR_F_1, "COLOR_F_1", (int) (x * 8), y);
-            app.addColorButton(TerminalTheme.COLOR_F_2, "COLOR_F_2", (int) (x * 9), y);
-            app.addColorButton(TerminalTheme.COLOR_B_1, "COLOR_B_1", (int) (x * 10), y);
-            app.addColorButton(TerminalTheme.COLOR_B_2, "COLOR_B_2", (int) (x * 11), y);
-            app.addColorButton(TerminalTheme.COLOR_B_3, "COLOR_B_3", (int) (x * 12), y);
-            app.addWidget(new LabelWidget(333 / 2, 85, "terminal.theme_settings.wallpaper", -1).setXCentered(true));
-            app.addWidget(new ImageWidget((int) x, 105, 150, 105, TerminalTheme.WALL_PAPER).setBorder(2, -1));
-            app.addWidget(new SelectorWidget((int) (x + 170), 105, 116, 20, Arrays.asList("resource", "url", "color", "file"), -1, TerminalTheme.WALL_PAPER::getTypeName, true)
+            this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
+            this.addWidget(new LabelWidget(333 / 2, 20, "terminal.theme_settings.color", -1).setXCentered(true));
+            this.addColorButton(TerminalTheme.COLOR_1, "COLOR_1", (int) x, y);
+            this.addColorButton(TerminalTheme.COLOR_2, "COLOR_2", (int) (x * 2), y);
+            this.addColorButton(TerminalTheme.COLOR_3, "COLOR_3", (int) (x * 3), y);
+            this.addColorButton(TerminalTheme.COLOR_4, "COLOR_4", (int) (x * 4), y);
+            this.addColorButton(TerminalTheme.COLOR_5, "COLOR_5", (int) (x * 5), y);
+            this.addColorButton(TerminalTheme.COLOR_6, "COLOR_6", (int) (x * 6), y);
+            this.addColorButton(TerminalTheme.COLOR_7, "COLOR_7", (int) (x * 7), y);
+            this.addColorButton(TerminalTheme.COLOR_F_1, "COLOR_F_1", (int) (x * 8), y);
+            this.addColorButton(TerminalTheme.COLOR_F_2, "COLOR_F_2", (int) (x * 9), y);
+            this.addColorButton(TerminalTheme.COLOR_B_1, "COLOR_B_1", (int) (x * 10), y);
+            this.addColorButton(TerminalTheme.COLOR_B_2, "COLOR_B_2", (int) (x * 11), y);
+            this.addColorButton(TerminalTheme.COLOR_B_3, "COLOR_B_3", (int) (x * 12), y);
+            this.addWidget(new LabelWidget(333 / 2, 85, "terminal.theme_settings.wallpaper", -1).setXCentered(true));
+            this.addWidget(new ImageWidget((int) x, 105, 150, 105, TerminalTheme.WALL_PAPER).setBorder(2, -1));
+            this.addWidget(new SelectorWidget((int) (x + 170), 105, 116, 20, Arrays.asList("resource", "url", "color", "file"), -1, TerminalTheme.WALL_PAPER::getTypeName, true)
                     .setIsUp(true)
-                    .setOnChanged(type->onModifyTextureChanged(type, app))
+                    .setOnChanged(type->onModifyTextureChanged(type, this))
                     .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), 0)
                     .setBackground(TerminalTheme.COLOR_B_1));
             textureGroup = new WidgetGroup((int) (x + 170), 132, (int) (x * 11 - 170), 65);
-            app.addWidget(textureGroup);
+            this.addWidget(textureGroup);
         }
-        return app;
+        return this;
     }
 
     private void addColorButton(ColorRectTexture texture, String name, int x, int y) {

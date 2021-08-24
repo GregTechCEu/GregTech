@@ -2,13 +2,18 @@ package gregtech.integration.jei.multiblock;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.raytracer.IndexedCuboid6;
+import codechicken.lib.render.BlockRenderer;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.vec.Cuboid6;
+import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.render.scene.SceneRenderCallback;
+import gregtech.api.render.scene.GuiWorldSceneRenderer;
 import gregtech.api.render.scene.WorldSceneRenderer;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
@@ -24,6 +29,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
@@ -37,18 +44,20 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.Vector3f;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderCallback {
+public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private static final int MAX_PARTS = 20;
     private static final int PARTS_HEIGHT = 36;
     private final int SLOT_SIZE = 18;
@@ -156,7 +165,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
 
     private void toggleNextLayer() {
         WorldSceneRenderer renderer = getCurrentRenderer();
-        int height = (int) renderer.getSize().getY() - 1;
+        int height = (int) renderer.getSceneSize().getY() - 1;
         if (++this.layerIndex > height) {
             //if current layer index is more than max height, reset it
             //to display all layers
@@ -207,9 +216,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
         return relativeHeight == getLayerIndex();
     }
 
-    @Override
-    public void preRenderScene(WorldSceneRenderer renderer) {
-        Vector3f size = renderer.getSize();
+    public void preRenderScene() {
+        WorldSceneRenderer renderer = getCurrentRenderer();
+        Vector3f size = renderer.getSceneSize();
         Vector3f minPos = renderer.world.getMinPos();
         minPos = new Vector3f(minPos);
         minPos.add(new Vector3f(0.0f, -1.0f, 0.5f));
@@ -238,7 +247,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
         WorldSceneRenderer renderer = getCurrentRenderer();
         int sceneHeight = recipeHeight - PARTS_HEIGHT;
 
-        renderer.render(recipeLayout.getPosX(), recipeLayout.getPosY(), recipeWidth, sceneHeight, 0xC6C6C6);
+        renderer.render(recipeLayout.getPosX(), recipeLayout.getPosY(), recipeWidth, sceneHeight, Mouse.getX(), Mouse.getY());
         drawMultiblockName(recipeWidth);
 
         //reset colors (so any elements render after this point are not dark)
@@ -436,12 +445,15 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
                 }
             }
         }
-        WorldSceneRenderer worldSceneRenderer = new WorldSceneRenderer(blockMap);
+        GuiWorldSceneRenderer worldSceneRenderer = new GuiWorldSceneRenderer();
+        worldSceneRenderer.setClearColor(0xC6C6C6);
+        worldSceneRenderer.addBlocks(blockMap);
         worldSceneRenderer.world.updateEntities();
         HashMap<ItemStackKey, PartInfo> partsMap = new HashMap<>();
         gatherBlockDrops(worldSceneRenderer.world, blockMap, blockDrops, partsMap);
-        worldSceneRenderer.setRenderCallback(this);
+        worldSceneRenderer.setBeforeWorldRender(this::preRenderScene);
         worldSceneRenderer.setRenderFilter(this::shouldDisplayBlock);
+        worldSceneRenderer.setOnLookingAt(this::renderBlockOverLay);
         ArrayList<PartInfo> partInfos = new ArrayList<>(partsMap.values());
         partInfos.sort((one, two) -> {
             if (one.isController) return -1;
@@ -456,6 +468,27 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
             parts.add(partInfo.getItemStack());
         }
         return new MBPattern(worldSceneRenderer, parts);
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void renderBlockOverLay(BlockPos pos) {
+        Tessellator tessellator = Tessellator.getInstance();
+        GlStateManager.disableTexture2D();
+        CCRenderState renderState = CCRenderState.instance();
+        renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR, tessellator.getBuffer());
+        ColourMultiplier multiplier = new ColourMultiplier(0);
+        renderState.setPipeline(new Translation(pos), multiplier);
+        BlockRenderer.BlockFace blockFace = new BlockRenderer.BlockFace();
+        renderState.setModel(blockFace);
+        for (EnumFacing renderSide : EnumFacing.VALUES) {
+            float diffuse = LightUtil.diffuseLight(renderSide);
+            int color = (int) (255 * diffuse);
+            multiplier.colour = RenderUtil.packColor(color, color, color, 100);
+            blockFace.loadCuboidFace(Cuboid6.full, renderSide.getIndex());
+            renderState.render();
+        }
+        renderState.draw();
+        GlStateManager.enableTexture2D();
     }
 
 }

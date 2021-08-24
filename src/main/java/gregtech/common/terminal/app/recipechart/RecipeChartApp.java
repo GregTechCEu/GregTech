@@ -43,23 +43,21 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
     }
 
     @Override
-    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
-        RecipeChartApp app = new RecipeChartApp();
+    protected AbstractApplication initApp(boolean isClient, NBTTagCompound nbt) {
         if (isClient) {
-            app.setOs(os);
-            app.containers = new LinkedHashMap<>();
-            app.tabGroup = new TabGroup<>(0, 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 60, 10));
-            app.addWidget(app.tabGroup);
+            this.containers = new LinkedHashMap<>();
+            this.tabGroup = new TabGroup<>(0, 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 60, 10));
+            this.addWidget(this.tabGroup);
             if (nbt.isEmpty()) {
-                app.addTab("default");
+                this.addTab("default");
             } else {
                 for (NBTBase l : nbt.getTagList("list", Constants.NBT.TAG_COMPOUND)) {
                     NBTTagCompound container = (NBTTagCompound) l;
-                    app.addTab(container.getString("name")).loadFromNBT((NBTTagCompound) container.getTag("data"));
+                    this.addTab(container.getString("name")).loadFromNBT((NBTTagCompound) container.getTag("data"));
                 }
             }
         }
-        return app;
+        return this;
     }
 
     private RGContainer addTab(String name) {

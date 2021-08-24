@@ -3786,6 +3786,7 @@ gregtech.terminal.app_name.theme_settings=Theme Settings
 gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
 gregtech.terminal.app_name.ore_prospector=Ore Prospector
+gregtech.terminal.app_name.console=GT Console
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
@@ -3807,6 +3808,7 @@ terminal.component.error=ERROR
 terminal.component.warning=WARNING
 terminal.component.searching=searching
 
+terminal.dialog.notice=NOTICE
 terminal.dialog.error_path=error file path:
 terminal.dialog.no_file_selected=No file selected.
 terminal.dialog.folder=Open Folder
@@ -3843,3 +3845,5 @@ terminal.prospector.vis_mode=dark mode
 terminal.prospector.list=All Resources
 terminal.prospector.ore=Ore statistics
 terminal.prospector.fluid=Fluid statistics
+
+terminal.console.notice=Please right click the machine when opening the terminal.

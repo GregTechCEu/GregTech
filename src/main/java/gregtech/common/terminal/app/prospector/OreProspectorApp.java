@@ -27,18 +27,17 @@ public class OreProspectorApp extends AbstractApplication implements
     }
 
     @Override
-    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) { //333, 232
-        OreProspectorApp app = new OreProspectorApp();
-        app.addWidget(new ImageWidget(0, 0, 333, 232, TerminalTheme.COLOR_B_2));
+    protected AbstractApplication initApp(boolean isClient, NBTTagCompound nbt) {
+        this.addWidget(new ImageWidget(0, 0, 333, 232, TerminalTheme.COLOR_B_2));
         int chunkRadius = 7;
         int offset = (232 - 32 * 7 + 16) / 2;
         if (isClient) {
-            app.widgetOreList = new WidgetOreList(32 * chunkRadius - 16, offset, 333 - 32 * chunkRadius  + 16, 232 - 2 * offset);
-            app.addWidget(app.widgetOreList);
+            this.widgetOreList = new WidgetOreList(32 * chunkRadius - 16, offset, 333 - 32 * chunkRadius  + 16, 232 - 2 * offset);
+            this.addWidget(this.widgetOreList);
         }
-        app.widgetProspectingMap = new WidgetProspectingMap(0, offset, chunkRadius, app.widgetOreList, 0, 1);
-        app.addWidget(1, app.widgetProspectingMap);
-        return app;
+        this.widgetProspectingMap = new WidgetProspectingMap(0, offset, chunkRadius, this.widgetOreList, 0, 1);
+        this.addWidget(1, this.widgetProspectingMap);
+        return this;
     }
 
     @Override

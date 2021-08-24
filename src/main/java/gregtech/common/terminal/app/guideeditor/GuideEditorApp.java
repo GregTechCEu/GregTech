@@ -25,17 +25,16 @@ public class GuideEditorApp extends AbstractApplication {
     }
 
     @Override
-    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
-        GuideEditorApp app = new GuideEditorApp();
+    protected AbstractApplication initApp(boolean isClient, NBTTagCompound nbt) {
         if (isClient) {
-            app.configEditor = new GuideConfigEditor(0, 0, 133, 232, app);
+            this.configEditor = new GuideConfigEditor(0, 0, 133, 232, this);
             GuidePageEditorWidget pageEditor = new GuidePageEditorWidget(133, 0, 200, 232, 5);
-            app.configEditor.setGuidePageEditorWidget(pageEditor);
-            pageEditor.setGuideConfigEditor(app.configEditor);
-            app.addWidget(pageEditor);
-            app.addWidget(app.configEditor);
+            this.configEditor.setGuidePageEditorWidget(pageEditor);
+            pageEditor.setGuideConfigEditor(this.configEditor);
+            this.addWidget(pageEditor);
+            this.addWidget(this.configEditor);
         }
-        return app;
+        return this;
     }
 
     @Override

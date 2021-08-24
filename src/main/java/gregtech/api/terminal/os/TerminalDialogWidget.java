@@ -65,9 +65,13 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return this;
     }
 
-    public TerminalDialogWidget addOkButton() {
+    public TerminalDialogWidget addOkButton(Runnable callback) {
         addWidget(new CircleButtonWidget(WIDTH / 2, HEIGHT - 22, 12, 0, 24)
-                .setClickListener(cd -> os.closeDialog(this))
+                .setClickListener(cd -> {
+                    os.closeDialog(this);
+                    if (callback != null)
+                        callback.run();
+                })
                 .setColors(0, 0, 0)
                 .setIcon(OK_NORMAL)
                 .setHoverIcon(OK_HOVER));
@@ -131,8 +135,12 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return new TerminalDialogWidget(os, (size.width - WIDTH) / 2, (size.height - HEIGHT) / 2, WIDTH, HEIGHT).setBackground(DIALOG_BACKGROUND);
     }
 
+    public static TerminalDialogWidget showInfoDialog(TerminalOSWidget os, String title, String info, Runnable callback) {
+        return createEmptyTemplate(os).addTitle(title).addInfo(info).addOkButton(callback);
+    }
+
     public static TerminalDialogWidget showInfoDialog(TerminalOSWidget os, String title, String info) {
-        return createEmptyTemplate(os).addTitle(title).addInfo(info).addOkButton();
+        return createEmptyTemplate(os).addTitle(title).addInfo(info).addOkButton(null);
     }
 
     public static TerminalDialogWidget showConfirmDialog(TerminalOSWidget os, String title, String info, Consumer<Boolean> result) {
@@ -176,7 +184,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 .setBackground(new ColorRectTexture(0x4f000000));
         if (!dir.isDirectory()) {
             if (!dir.mkdirs()) {
-                return dialog.addInfo(I18n.format("terminal.dialog.error_path") + dir.getPath()).addOkButton();
+                return dialog.addInfo(I18n.format("terminal.dialog.error_path") + dir.getPath()).addOkButton(null);
             }
         }
         AtomicReference<File> selected = new AtomicReference<>();

@@ -4,8 +4,10 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.IMenuComponent;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.common.terminal.app.guide.GuideApp;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -42,7 +44,18 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         return icon;
     }
 
-    public abstract AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt);
+    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
+        try {
+            return this.getClass().newInstance().setOs(os).initApp(isClient, nbt);
+        } catch (InstantiationException | IllegalAccessException e) {
+            GTLog.logger.error("Error while create default app. {}", this.getClass(), e);
+        }
+        return null;
+    }
+
+    protected AbstractApplication initApp(boolean isClient, NBTTagCompound nbt) {
+        return this;
+    }
 
     public NBTTagCompound closeApp(boolean isClient, NBTTagCompound nbt) {
         return null;
