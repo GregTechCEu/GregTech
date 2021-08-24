@@ -47,4 +47,16 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
         super.invalidateStructure();
         recipeMapWorkable.invalidate();
     }
+
+    @Override
+    public void update() {
+        if (!getWorld().isRemote) {
+            if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
+                checkStructurePattern();
+            }
+            if (isStructureFormed()) {
+                updateFormedValid();
+            }
+        }
+    }
 }
