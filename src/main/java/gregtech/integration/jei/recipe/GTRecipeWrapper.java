@@ -9,7 +9,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.integration.jei.utils.JEIHelpers;
 import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
@@ -29,7 +29,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.comparingAllButCount();
 
     private final Set<ItemStack> notConsumedInput = new ObjectOpenCustomHashSet<>(strategy);
-    private final Map<ItemStack, ChanceEntry> chanceOutput = new Object2ObjectOpenCustomHashMap<>(strategy);
+    private final Map<Integer, ChanceEntry> chanceOutput = new Int2ObjectOpenHashMap<>();
     private final List<FluidStack> notConsumedFluidInput = new ArrayList<>();
 
     private final Recipe recipe;
@@ -44,6 +44,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void getIngredients(@Nonnull IIngredients ingredients) {
+        int currentSlot = 0;
         if (!recipe.getInputs().isEmpty()) {
             List<CountableIngredient> recipeInputs = recipe.getInputs();
             List<List<ItemStack>> matchingInputs = new ArrayList<>(recipeInputs.size());
@@ -61,6 +62,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
                 matchingInputs.add(ingredientValues);
             }
             ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);
+            currentSlot = recipeInputs.size();
         }
 
         if (!recipe.getFluidInputs().isEmpty()) {
@@ -80,18 +82,20 @@ public class GTRecipeWrapper implements IRecipeWrapper {
             List<ItemStack> recipeOutputs = recipe.getOutputs()
                     .stream().map(ItemStack::copy).collect(Collectors.toList());
             List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
+            currentSlot += recipeOutputs.size();
             for (ChanceEntry chancedEntry : chancedOutputs) {
                 ItemStack chancedStack = chancedEntry.getItemStack();
-                chanceOutput.put(chancedStack, chancedEntry);
+                chanceOutput.put(currentSlot, chancedEntry);
                 recipeOutputs.add(chancedStack);
+                currentSlot++;
             }
 
-            recipeOutputs.sort(Comparator.comparingInt(stack -> {
+            /*recipeOutputs.sort(Comparator.comparingInt(stack -> {
                 ChanceEntry chanceEntry = chanceOutput.get(stack);
                 if (chanceEntry == null)
                     return 0;
                 return chanceEntry.getChance();
-            }));
+            }));*/
             ingredients.setOutputs(VanillaTypes.ITEM, recipeOutputs);
         }
 
@@ -113,7 +117,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
             ItemStack itemStack = ((ItemStack) ingredient);
             if (notConsumedInput.contains(itemStack))
                 notConsumed = true;
-            else entry = chanceOutput.get(itemStack);
+            else entry = chanceOutput.get(slotIndex);
         } else {
             throw new IllegalArgumentException("Unknown ingredient type: " + ingredient.getClass());
         }
