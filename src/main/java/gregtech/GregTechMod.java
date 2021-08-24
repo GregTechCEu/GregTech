@@ -40,6 +40,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import gregtech.loaders.recipe.component.AnnotatedComponentHandlerLoader;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.LoaderException;
@@ -62,9 +63,6 @@ public class GregTechMod {
         FluidRegistry.enableUniversalBucket();
         if (FMLCommonHandler.instance().getSide().isClient()) {
             ResourcePackHook.init();
-            // BlockOreFactory.init();
-            BlockCompressedFactory.init();
-            // BlockFrameFactory.init();
             ((SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new GuideJsonLoader());
         }
     }
@@ -72,12 +70,13 @@ public class GregTechMod {
     @Mod.Instance(GTValues.MODID)
     public static GregTechMod instance;
 
-    @SidedProxy(modId = GTValues.MODID, clientSide = "gregtech.common.ClientProxy", serverSide = "gregtech.common.CommonProxy")
+    @SidedProxy(modId = GTValues.MODID, clientSide = "gregtech.client.ClientProxy", serverSide = "gregtech.common.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
         GTLog.init(event.getModLog());
+        MinecraftForge.EVENT_BUS.register(proxy);
         NetworkHandler.init();
         MetaTileEntityUIFactory.INSTANCE.init();
         PlayerInventoryUIFactory.INSTANCE.init();
