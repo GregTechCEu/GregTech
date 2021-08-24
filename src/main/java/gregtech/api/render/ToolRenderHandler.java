@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -59,7 +58,7 @@ public class ToolRenderHandler {
             }
         }
         DestroyBlockProgress progress = event.getContext().damagedBlocks.get(player.getEntityId());
-        if (aoeBlocksToRender != null && progress != null && Minecraft.getMinecraft().playerController.getIsHittingBlock()) {
+        if (aoeBlocksToRender != null && progress != null) {
             preRenderDamagedBlocks();
             drawBlockDamageTexture(event, aoeBlocksToRender, progress.getPartialBlockDamage());
             postRenderDamagedBlocks();
@@ -104,6 +103,8 @@ public class ToolRenderHandler {
         bufferBuilder.setTranslation(-d3, -d4, -d5);
         bufferBuilder.noColor();
 
+        TextureAtlasSprite sprite = ((TextureAtlasSprite[]) destroyBlockIconsHandle.invokeExact(event.getContext()))[partialBlockDamage];
+
         for (BlockPos blockPos : blocksToRender) {
             IBlockState blockState = mc.world.getBlockState(blockPos);
             if (blockState.getMaterial() == Material.AIR) {
@@ -112,7 +113,6 @@ public class ToolRenderHandler {
             TileEntity tileEntity = mc.world.getTileEntity(blockPos);
             boolean hasBreak = tileEntity != null && tileEntity.canRenderBreaking();
             if (!hasBreak) {
-                TextureAtlasSprite sprite = ((TextureAtlasSprite[]) destroyBlockIconsHandle.invokeExact(event.getContext()))[partialBlockDamage];
                 rendererDispatcher.renderBlockDamage(blockState, blockPos, sprite, mc.world);
             }
         }
