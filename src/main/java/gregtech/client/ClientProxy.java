@@ -2,7 +2,6 @@ package gregtech.client;
 
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.ItemNBTUtils;
-import codechicken.lib.util.ResourceUtils;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
@@ -57,6 +56,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,6 +67,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+@SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
     public static final IBlockColor COMPRESSED_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
@@ -122,7 +124,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void onPostLoad() {
         super.onPostLoad();
-        ResourceUtils.registerReloadListener(ToolRenderHandler.INSTANCE);
         ModCompatibility.initCompat();
         FacadeRenderer.init();
         startCapeLoadingThread();
