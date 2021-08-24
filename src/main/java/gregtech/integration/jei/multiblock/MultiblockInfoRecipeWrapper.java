@@ -40,6 +40,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -48,7 +49,6 @@ import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -86,10 +86,10 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private int currentRendererPage = 0;
     private int lastMouseX;
     private int lastMouseY;
-    private float panX;
-    private float panY;
+    private Vector3f center;
     private float rotationYaw;
     private float rotationPitch;
+    private float maxZoom;
     private float zoom;
 
     private GuiButton buttonPreviousPattern;
@@ -144,13 +144,18 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         this.buttonPreviousPattern.enabled = false;
         this.buttonNextPattern.enabled = patterns.length > 1;
 
-        this.panX = 0.0f;
-        this.panY = 0.0f;
-        this.zoom = infoPage.getDefaultZoom();
-        this.rotationYaw = -45.0f;
-        this.rotationPitch = 0.0f;
-        this.currentRendererPage = 0;
-
+        if (Mouse.getEventDWheel() == 0) {
+            this.maxZoom = infoPage.getDefaultZoom() * 15;
+            this.zoom = this.maxZoom;
+            this.rotationYaw = 20.0f;
+            this.rotationPitch = 135.0f;
+            this.currentRendererPage = 0;
+        } else {
+            zoom = (float) MathHelper.clamp(zoom + (Mouse.getEventDWheel() < 0 ? 0.5 : -0.5), 3, maxZoom);
+        }
+        if (center != null) {
+            getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+        }
         setNextLayer(-1);
         updateParts();
     }
@@ -165,7 +170,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     private void toggleNextLayer() {
         WorldSceneRenderer renderer = getCurrentRenderer();
-        int height = (int) renderer.getSceneSize().getY() - 1;
+        int height = (int) renderer.world.getSize().getY() - 1;
         if (++this.layerIndex > height) {
             //if current layer index is more than max height, reset it
             //to display all layers
@@ -216,32 +221,6 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         return relativeHeight == getLayerIndex();
     }
 
-    public void preRenderScene() {
-        WorldSceneRenderer renderer = getCurrentRenderer();
-        Vector3f size = renderer.getSceneSize();
-        Vector3f minPos = renderer.world.getMinPos();
-        minPos = new Vector3f(minPos);
-        minPos.add(new Vector3f(0.0f, -1.0f, 0.5f));
-
-        GlStateManager.scale(zoom, zoom, zoom);
-        GlStateManager.translate(panX, panY, 0);
-        GlStateManager.translate(-minPos.x, -minPos.y, -minPos.z);
-        Vector3 centerPosition = new Vector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f);
-        GlStateManager.translate(centerPosition.x, centerPosition.y, centerPosition.z);
-        GlStateManager.scale(2.0, 2.0, 2.0);
-        GlStateManager.translate(-centerPosition.x, -centerPosition.y, -centerPosition.z);
-        GlStateManager.translate(minPos.x, minPos.y, minPos.z);
-
-        GlStateManager.translate(centerPosition.x, centerPosition.y, centerPosition.z);
-        GlStateManager.rotate(rotationYaw, 0.0f, 1.0f, 0.0f);
-        GlStateManager.rotate(rotationPitch, 0.0f, 0.0f, 1.0f);
-        GlStateManager.translate(-centerPosition.x, -centerPosition.y, -centerPosition.z);
-
-        if (layerIndex >= 0) {
-            GlStateManager.translate(0.0, -layerIndex + 1, 0.0);
-        }
-    }
-
     @Override
     public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         WorldSceneRenderer renderer = getCurrentRenderer();
@@ -268,38 +247,28 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         drawHoveringInformationText(minecraft, infoPage.informationText(), mouseX, mouseY);
 
         this.tooltipBlockStack = null;
-        BlockPos pos = renderer.getLastHitBlock();
+        RayTraceResult rayTraceResult = renderer.getLastTraceResult();
         boolean insideView = mouseX >= 0 && mouseY >= 0 &&
                 mouseX < recipeWidth && mouseY < sceneHeight;
         boolean leftClickHeld = Mouse.isButtonDown(0);
         boolean rightClickHeld = Mouse.isButtonDown(1);
-        boolean isHoldingShift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
-
         if (insideView) {
             if (leftClickHeld) {
-                if (isHoldingShift) {
-                    int mouseDeltaY = mouseY - lastMouseY;
-                    this.rotationPitch += mouseDeltaY * 2.0f;
-                } else {
-                    int mouseDeltaX = mouseX - lastMouseX;
-                    this.rotationYaw += mouseDeltaX * 2.0f;
-                }
+                rotationPitch += mouseX - lastMouseX + 360;
+                rotationPitch = rotationPitch % 360;
+                rotationYaw = (float) MathHelper.clamp(rotationYaw + (mouseY - lastMouseY), -89.9, 89.9);
             } else if (rightClickHeld) {
                 int mouseDeltaY = mouseY - lastMouseY;
-                if (isHoldingShift) {
-                    this.zoom *= Math.pow(1.05d, -mouseDeltaY);
-                } else {
-                    int mouseDeltaX = mouseX - lastMouseX;
-                    this.panX -= mouseDeltaX / 2.0f;
-                    this.panY -= mouseDeltaY / 2.0f;
+                if (Math.abs(mouseDeltaY) > 1) {
+                    this.zoom = (float) MathHelper.clamp(zoom + (mouseDeltaY > 0 ? 0.5 : -0.5), 3, maxZoom);
                 }
             }
+            renderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
         }
 
-        if (!(leftClickHeld || rightClickHeld) && pos != null && !renderer.world.isAirBlock(pos)) {
-            IBlockState blockState = renderer.world.getBlockState(pos);
-            RayTraceResult result = new CuboidRayTraceResult(new Vector3(0.5, 0.5, 0.5).add(pos), pos, EnumFacing.UP, new IndexedCuboid6(null, Cuboid6.full), 1.0);
-            ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, result, renderer.world, pos, minecraft.player);
+        if (!(leftClickHeld || rightClickHeld) && rayTraceResult != null && !renderer.world.isAirBlock(rayTraceResult.getBlockPos())) {
+            IBlockState blockState = renderer.world.getBlockState(rayTraceResult.getBlockPos());
+            ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world, rayTraceResult.getBlockPos(), minecraft.player);
             if (itemStack != null && !itemStack.isEmpty()) {
                 this.tooltipBlockStack = itemStack;
             }
@@ -448,10 +417,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         GuiWorldSceneRenderer worldSceneRenderer = new GuiWorldSceneRenderer();
         worldSceneRenderer.setClearColor(0xC6C6C6);
         worldSceneRenderer.addBlocks(blockMap);
+        Vector3f size = worldSceneRenderer.world.getSize();
+        Vector3f minPos = worldSceneRenderer.world.getMinPos();
+        center = new Vector3f(minPos.x + size.x / 2, minPos.y + size.y / 2, minPos.z + size.z / 2);
         worldSceneRenderer.world.updateEntities();
         HashMap<ItemStackKey, PartInfo> partsMap = new HashMap<>();
         gatherBlockDrops(worldSceneRenderer.world, blockMap, blockDrops, partsMap);
-        worldSceneRenderer.setBeforeWorldRender(this::preRenderScene);
         worldSceneRenderer.setRenderFilter(this::shouldDisplayBlock);
         worldSceneRenderer.setOnLookingAt(this::renderBlockOverLay);
         ArrayList<PartInfo> partInfos = new ArrayList<>(partsMap.values());
@@ -471,7 +442,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     @SideOnly(Side.CLIENT)
-    private void renderBlockOverLay(BlockPos pos) {
+    private void renderBlockOverLay(RayTraceResult rayTraceResult) {
+        BlockPos pos = rayTraceResult.getBlockPos();
         Tessellator tessellator = Tessellator.getInstance();
         GlStateManager.disableTexture2D();
         CCRenderState renderState = CCRenderState.instance();

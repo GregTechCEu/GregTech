@@ -1,6 +1,7 @@
 package gregtech.api.render.scene;
 
 import gregtech.api.util.GTLog;
+import gregtech.api.util.PositionedRect;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -76,7 +77,7 @@ public class FBOWorldSceneRenderer extends WorldSceneRenderer {
         mouseY = (int) (this.resolutionHeight * (1 - mouseY / height));
         // bind to FBO
         int lastID = bindFBO();
-        super.render(x, y, width, height, mouseX, mouseY);
+        super.render(0, 0, this.resolutionWidth, this.resolutionHeight, mouseX, mouseY);
         // unbind FBO
         unbindFBO(lastID);
 
@@ -99,11 +100,6 @@ public class FBOWorldSceneRenderer extends WorldSceneRenderer {
         tessellator.draw();
 
         GlStateManager.bindTexture(lastID);
-    }
-
-    @Override
-    protected void setupCamera(int x, int y, int width, int height) {
-        super.setupCamera(0, 0, this.resolutionWidth, this.resolutionHeight);
     }
 
     private int bindFBO(){

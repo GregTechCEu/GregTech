@@ -23,11 +23,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+
+import javax.vecmath.Vector3f;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,39 +41,35 @@ import org.lwjgl.opengl.GL11;
  */
 public class MachineSceneWidget extends Widget {
     @SideOnly(Side.CLIENT)
-    private static WorldSceneRenderer worldSceneRenderer;
+    private WorldSceneRenderer worldSceneRenderer;
     protected MetaTileEntity mte;
     protected final BlockPos pos;
     private boolean dragging;
     private int lastMouseX;
     private int lastMouseY;
-    private float rotateY;
-    private float rotateX;
+    private float rotationYaw;
+    private float rotationPitch;
+    private float zoom;
 
 
     public MachineSceneWidget(int x, int y, int width, int height, BlockPos pos, boolean isClient) {
         super(x, y, width, height);
         this.pos = pos;
         if (isClient) {
-            if (worldSceneRenderer instanceof  FBOWorldSceneRenderer) {
-                ((FBOWorldSceneRenderer) worldSceneRenderer).releaseFBO();
-            }
+            zoom = 5;
+            rotationYaw = 45;
             worldSceneRenderer = new FBOWorldSceneRenderer(1080, 1080);
+            worldSceneRenderer.setCameraLookAt(new Vector3f(0.5f, 0.5f, 0.5f), zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
             worldSceneRenderer.setBeforeWorldRender(()->{
                 Vector3 centerPosition = new Vector3(0.5, 0.5, 0.5);
-                GlStateManager.translate(centerPosition.x, centerPosition.y, centerPosition.z);
-                GlStateManager.scale(2.0, 2.0, 2.0);
-                GlStateManager.rotate(0, 1.0f, 0.0f, 0.0f);
-                GlStateManager.rotate(rotateY, 0.0f, 1.0f, 0.0f);
-                GlStateManager.rotate(rotateX, 0.0f, 0.0f, 1.0f);
-                GlStateManager.translate(-centerPosition.x, -centerPosition.y, -centerPosition.z);
             });
             worldSceneRenderer.setOnLookingAt(this::renderBlockOverLay);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    private void renderBlockOverLay(WorldSceneRenderer.BlockPosFace pos) {
+    private void renderBlockOverLay(RayTraceResult rayTraceResult) {
+        BlockPos pos = rayTraceResult.getBlockPos();
         Tessellator tessellator = Tessellator.getInstance();
         GlStateManager.disableTexture2D();
         CCRenderState renderState = CCRenderState.instance();
@@ -139,12 +138,23 @@ public class MachineSceneWidget extends Widget {
     }
 
     @Override
+    public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
+        if (isMouseOverElement(mouseX, mouseY)) {
+            zoom = (float) MathHelper.clamp(zoom + (wheelDelta < 0 ? 0.5 : -0.5), 3, 10);
+            worldSceneRenderer.setCameraLookAt(new Vector3f(0.5f, 0.5f, 0.5f), zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+        }
+        return super.mouseWheelMove(mouseX, mouseY, wheelDelta);
+    }
+
+    @Override
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
         if (dragging) {
-            rotateY += mouseX - lastMouseX;
-            rotateX = MathHelper.clamp(rotateX - (mouseY - lastMouseY), -90, 90);
+            rotationPitch += mouseX - lastMouseX + 360;
+            rotationPitch = rotationPitch % 360;
+            rotationYaw = (float) MathHelper.clamp(rotationYaw + (mouseY - lastMouseY), -89.9, 89.9);
             lastMouseY = mouseY;
             lastMouseX = mouseX;
+            worldSceneRenderer.setCameraLookAt(new Vector3f(0.5f, 0.5f, 0.5f), zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
             return true;
         }
         return super.mouseDragged(mouseX, mouseY, button, timeDragged);

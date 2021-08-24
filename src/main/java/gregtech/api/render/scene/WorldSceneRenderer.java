@@ -3,6 +3,9 @@ package gregtech.api.render.scene;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.util.BlockInfo;
+import gregtech.api.util.Position;
+import gregtech.api.util.PositionedRect;
+import gregtech.api.util.Size;
 import gregtech.api.util.world.DummyWorld;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -16,7 +19,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
@@ -54,8 +58,8 @@ public abstract class WorldSceneRenderer {
     private Runnable beforeRender;
     private Runnable afterRender;
     private Predicate<BlockPos> renderFilter;
-    private Consumer<BlockPosFace> onLookingAt;
-    private BlockPosFace lastHitBlock;
+    private Consumer<RayTraceResult> onLookingAt;
+    private RayTraceResult lastTraceResult;
     private Vector3f eyePos = new Vector3f(0, 0, 10f);
     private Vector3f lookAt = new Vector3f(0, 0, 0);
     private Vector3f worldUp = new Vector3f(0, 1, 0);
@@ -95,33 +99,51 @@ public abstract class WorldSceneRenderer {
         return this;
     }
 
-    public WorldSceneRenderer setOnLookingAt(Consumer<BlockPosFace> onLookingAt) {
+    public WorldSceneRenderer setOnLookingAt(Consumer<RayTraceResult> onLookingAt) {
         this.onLookingAt = onLookingAt;
         return this;
     }
 
-    public Vector3f getSceneSize() {
-        return world.getSize();
-    }
-
-    public BlockPosFace getLastHitBlock() {
-        return lastHitBlock;
+    public RayTraceResult getLastTraceResult() {
+        return lastTraceResult;
     }
 
     public void render(float x, float y, float width, float height, int mouseX, int mouseY) {
         // setupCamera
-        setupCamera((int)x, (int)y, (int)width, (int)height);
+        PositionedRect positionedRect = getPositionedRect((int)x, (int)y, (int)width, (int)height);
+        setupCamera(positionedRect);
         // render TrackedDummyWorld
         drawWorld();
-        // render lookingAt
-        lastHitBlock = unProject(mouseX, mouseY);
-        if (lastHitBlock != null) {
-            if(onLookingAt != null) {
-                onLookingAt.accept(lastHitBlock);
+        // check lookingAt
+        Vector3f lastHitPos = null;
+        if (mouseX > positionedRect.position.x && mouseX < positionedRect.position.x + positionedRect.size.width
+                && mouseY > positionedRect.position.y && mouseY < positionedRect.position.y + positionedRect.size.height) {
+            lastHitPos = unProject(mouseX, mouseY);
+        }
+        this.lastTraceResult = null;
+        if (lastHitPos != null) {
+            RayTraceResult result = rayTrace(lastHitPos);
+            if (result != null) {
+                this.lastTraceResult = result;
+                if(onLookingAt != null) {
+                    onLookingAt.accept(result);
+                }
             }
         }
         // resetCamera
         resetCamera();
+    }
+
+    public Vector3f getEyePos() {
+        return eyePos;
+    }
+
+    public Vector3f getLookAt() {
+        return lookAt;
+    }
+
+    public Vector3f getWorldUp() {
+        return worldUp;
     }
 
     public void setCameraLookAt(Vector3f eyePos, Vector3f lookAt, Vector3f worldUp) {
@@ -130,15 +152,24 @@ public abstract class WorldSceneRenderer {
         this.worldUp = worldUp;
     }
 
-    public void setCameraLookAt(Vector3f lookAt, float radius, float verticalD, float horizontalD) {
+    public void setCameraLookAt(Vector3f lookAt, double radius, double rotationPitch, double rotationYaw) {
         this.lookAt = lookAt;
-        Vector3 vecX = new Vector3(Math.tan(horizontalD), 0, 1);
-        Vector3 vecY = new Vector3(0, Math.tan(verticalD) * vecX.mag(),0);
+        Vector3 vecX = new Vector3(Math.cos(rotationPitch), 0, Math.sin(rotationPitch));
+        Vector3 vecY = new Vector3(0, Math.tan(rotationYaw) * vecX.mag(),0);
         Vector3 pos = vecX.copy().add(vecY).normalize().multiply(radius);
         this.eyePos = pos.add(lookAt.x, lookAt.y, lookAt.z).vector3f();
     }
 
-    protected void setupCamera(int x, int y, int width, int height) {
+    protected PositionedRect getPositionedRect(int x, int y, int width, int height) {
+        return new PositionedRect(new Position(x, y), new Size(width, height));
+    }
+
+    protected void setupCamera(PositionedRect positionedRect) {
+        int x = positionedRect.getPosition().x;
+        int y = positionedRect.getPosition().y;
+        int width = positionedRect.getSize().width;
+        int height = positionedRect.getSize().height;
+
         GlStateManager.pushAttrib();
 
         Minecraft.getMinecraft().entityRenderer.disableLightmap();
@@ -222,6 +253,13 @@ public abstract class WorldSceneRenderer {
         }
     }
 
+    public RayTraceResult rayTrace(Vector3f pos) {
+        Vec3d vec3d = new Vec3d(eyePos.x, eyePos.y, eyePos.z);
+        Vec3d vec3d1 = new Vec3d(pos.getX() - eyePos.x, pos.getY() - eyePos.y, pos.getZ() - eyePos.z);
+        Vec3d vec3d2 = vec3d.add(vec3d1.x * 1.5, vec3d1.y * 1.5, vec3d1.z * 1.5);
+        return this.world.rayTraceBlocks(vec3d, vec3d2, false, false, true);
+    }
+
     public Vector3f project(BlockPos pos, boolean depth) {
         //read current rendering parameters
         GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, MODELVIEW_MATRIX_BUFFER);
@@ -260,7 +298,7 @@ public abstract class WorldSceneRenderer {
         return null;
     }
 
-    public BlockPosFace unProject(int mouseX, int mouseY) {
+    public Vector3f unProject(int mouseX, int mouseY) {
         //read depth of pixel under mouse
         GL11.glReadPixels(mouseX, mouseY, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, PIXEL_DEPTH_BUFFER);
 
@@ -307,6 +345,26 @@ public abstract class WorldSceneRenderer {
             return null; //stop execution at that point
         }
 
+        return new Vector3f(posX, posY, posZ);
+    }
+
+    /***
+     * For better performance, You'd better handle the event {@link #setOnLookingAt(Consumer)} or {@link #getLastTraceResult()}
+     * @param mouseX xPos in Texture
+     * @param mouseY yPos in Texture
+     * @return BlockPosFace Hit
+     */
+    protected BlockPosFace screenPos2BlockPosFace(int mouseX, int mouseY, int x, int y, int width, int height) {
+        // render a frame
+        GlStateManager.enableDepth();
+        setupCamera(getPositionedRect(x, y, width, height));
+
+        drawWorld();
+
+        Vector3f looking = unProject(mouseX, mouseY);
+        float posX = looking.x;
+        float posY = looking.y;
+        float posZ = looking.z;
         BlockPos pos = new BlockPos(posX, posY, posZ);
         if (world.isAirBlock(pos)) {
             //if block is air, then search for nearest adjacent block
@@ -347,26 +405,10 @@ public abstract class WorldSceneRenderer {
             else
                 facing = EnumFacing.SOUTH;
         }
-        return new BlockPosFace(pos, facing);
-    }
-
-    /***
-     * For better performance, You'd better handle the event {@link #setOnLookingAt(Consumer)} or {@link #getLastHitBlock()}
-     * @param mouseX xPos in Texture
-     * @param mouseY yPos in Texture
-     * @return BlockPosFace Hit
-     */
-    protected BlockPosFace screenPos2BlockPosFace(int mouseX, int mouseY, int x, int y, int width, int height) {
-        // render a frame
-        GlStateManager.enableDepth();
-        setupCamera(x, y, width, height);
-
-        drawWorld();
-        BlockPosFace looking = unProject(mouseX, mouseY);
 
         resetCamera();
 
-        return looking;
+        return new BlockPosFace(pos, facing);
     }
 
     /***
@@ -378,7 +420,7 @@ public abstract class WorldSceneRenderer {
     protected Vector3f blockPos2ScreenPos(BlockPos pos, boolean depth, int x, int y, int width, int height){
         // render a frame
         GlStateManager.enableDepth();
-        setupCamera(x, y, width, height);
+        setupCamera(getPositionedRect(x, y, width, height));
 
         drawWorld();
         Vector3f winPos = project(pos, depth);

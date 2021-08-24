@@ -1,6 +1,7 @@
 package gregtech.api.render.scene;
 
 import gregtech.api.gui.resources.RenderUtil;
+import gregtech.api.util.PositionedRect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,7 +19,8 @@ import javax.vecmath.Vector3f;
 public class GuiWorldSceneRenderer extends WorldSceneRenderer {
     private int clearColor;
 
-    public void setupCamera(int x, int y, int width, int height) {
+    @Override
+    protected PositionedRect getPositionedRect(int x, int y, int width, int height) {
         Minecraft mc = Minecraft.getMinecraft();
         ScaledResolution resolution = new ScaledResolution(mc);
         //compute window size from scaled width & height
@@ -27,8 +29,8 @@ public class GuiWorldSceneRenderer extends WorldSceneRenderer {
         //translate gui coordinates to window's ones (y is inverted)
         int windowX = (int) (x / (resolution.getScaledWidth() * 1.0) * mc.displayWidth);
         int windowY = mc.displayHeight - (int) (y / (resolution.getScaledHeight() * 1.0) * mc.displayHeight) - windowHeight;
-        //setup viewport and clear GL buffers
-        super.setupCamera(windowX, windowY, windowWidth, windowHeight);
+
+        return super.getPositionedRect(windowX, windowY, windowWidth, windowHeight);
     }
 
     public void setClearColor(int clearColor) {
