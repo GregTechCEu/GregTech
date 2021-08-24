@@ -81,21 +81,16 @@ public class GTRecipeWrapper implements IRecipeWrapper {
         if (!recipe.getOutputs().isEmpty() || !recipe.getChancedOutputs().isEmpty()) {
             List<ItemStack> recipeOutputs = recipe.getOutputs()
                     .stream().map(ItemStack::copy).collect(Collectors.toList());
-            List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
             currentSlot += recipeOutputs.size();
+
+            List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
+            chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
             for (ChanceEntry chancedEntry : chancedOutputs) {
                 ItemStack chancedStack = chancedEntry.getItemStack();
                 chanceOutput.put(currentSlot, chancedEntry);
                 recipeOutputs.add(chancedStack);
                 currentSlot++;
             }
-
-            /*recipeOutputs.sort(Comparator.comparingInt(stack -> {
-                ChanceEntry chanceEntry = chanceOutput.get(stack);
-                if (chanceEntry == null)
-                    return 0;
-                return chanceEntry.getChance();
-            }));*/
             ingredients.setOutputs(VanillaTypes.ITEM, recipeOutputs);
         }
 
