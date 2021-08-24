@@ -38,7 +38,7 @@ import org.lwjgl.opengl.GL11;
  */
 public class MachineSceneWidget extends Widget {
     @SideOnly(Side.CLIENT)
-    private WorldSceneRenderer worldSceneRenderer;
+    private static WorldSceneRenderer worldSceneRenderer;
     protected MetaTileEntity mte;
     protected final BlockPos pos;
     private boolean dragging;
@@ -52,6 +52,9 @@ public class MachineSceneWidget extends Widget {
         super(x, y, width, height);
         this.pos = pos;
         if (isClient) {
+            if (worldSceneRenderer instanceof  FBOWorldSceneRenderer) {
+                ((FBOWorldSceneRenderer) worldSceneRenderer).releaseFBO();
+            }
             worldSceneRenderer = new FBOWorldSceneRenderer(1080, 1080);
             worldSceneRenderer.setBeforeWorldRender(()->{
                 Vector3 centerPosition = new Vector3(0.5, 0.5, 0.5);

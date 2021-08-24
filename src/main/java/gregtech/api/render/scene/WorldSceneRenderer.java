@@ -1,5 +1,6 @@
 package gregtech.api.render.scene;
 
+import codechicken.lib.vec.Vector3;
 import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.world.DummyWorld;
@@ -15,6 +16,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
@@ -37,7 +39,7 @@ import java.util.function.Predicate;
  * Created with IntelliJ IDEA.
  *
  * @Author: KilaBash
- * @Date: 2021/08/23/22:22
+ * @Date: 2021/08/23
  * @Description: Abstract class, and extend a lot of features compared with the original one.
  */
 public abstract class WorldSceneRenderer {
@@ -54,6 +56,9 @@ public abstract class WorldSceneRenderer {
     private Predicate<BlockPos> renderFilter;
     private Consumer<BlockPosFace> onLookingAt;
     private BlockPosFace lastHitBlock;
+    private Vector3f eyePos = new Vector3f(0, 0, 10f);
+    private Vector3f lookAt = new Vector3f(0, 0, 0);
+    private Vector3f worldUp = new Vector3f(0, 1, 0);
 
     public WorldSceneRenderer addBlocks(Map<BlockPos, BlockInfo> renderedBlocks) {
         for (Map.Entry<BlockPos, BlockInfo> renderEntry : renderedBlocks.entrySet()) {
@@ -119,6 +124,20 @@ public abstract class WorldSceneRenderer {
         resetCamera();
     }
 
+    public void setCameraLookAt(Vector3f eyePos, Vector3f lookAt, Vector3f worldUp) {
+        this.eyePos = eyePos;
+        this.lookAt = lookAt;
+        this.worldUp = worldUp;
+    }
+
+    public void setCameraLookAt(Vector3f lookAt, float radius, float verticalD, float horizontalD) {
+        this.lookAt = lookAt;
+        Vector3 vecX = new Vector3(Math.tan(horizontalD), 0, 1);
+        Vector3 vecY = new Vector3(0, Math.tan(verticalD) * vecX.mag(),0);
+        Vector3 pos = vecX.copy().add(vecY).normalize().multiply(radius);
+        this.eyePos = pos.add(lookAt.x, lookAt.y, lookAt.z).vector3f();
+    }
+
     protected void setupCamera(int x, int y, int width, int height) {
         GlStateManager.pushAttrib();
 
@@ -144,7 +163,7 @@ public abstract class WorldSceneRenderer {
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
-        GLU.gluLookAt(0.0f, 0.0f, -10.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+        GLU.gluLookAt(eyePos.x, eyePos.y, eyePos.z, lookAt.x, lookAt.y, lookAt.z, worldUp.x, worldUp.y, worldUp.z);
     }
 
     protected void clearView(int x, int y, int width, int height) {
@@ -329,6 +348,44 @@ public abstract class WorldSceneRenderer {
                 facing = EnumFacing.SOUTH;
         }
         return new BlockPosFace(pos, facing);
+    }
+
+    /***
+     * For better performance, You'd better handle the event {@link #setOnLookingAt(Consumer)} or {@link #getLastHitBlock()}
+     * @param mouseX xPos in Texture
+     * @param mouseY yPos in Texture
+     * @return BlockPosFace Hit
+     */
+    protected BlockPosFace screenPos2BlockPosFace(int mouseX, int mouseY, int x, int y, int width, int height) {
+        // render a frame
+        GlStateManager.enableDepth();
+        setupCamera(x, y, width, height);
+
+        drawWorld();
+        BlockPosFace looking = unProject(mouseX, mouseY);
+
+        resetCamera();
+
+        return looking;
+    }
+
+    /***
+     * For better performance, You'd better do project in {@link #setAfterWorldRender(Runnable)}
+     * @param pos BlockPos
+     * @param depth should pass Depth Test
+     * @return x, y, z
+     */
+    protected Vector3f blockPos2ScreenPos(BlockPos pos, boolean depth, int x, int y, int width, int height){
+        // render a frame
+        GlStateManager.enableDepth();
+        setupCamera(x, y, width, height);
+
+        drawWorld();
+        Vector3f winPos = project(pos, depth);
+
+        resetCamera();
+
+        return winPos;
     }
 
     public static class BlockPosFace extends BlockPos {

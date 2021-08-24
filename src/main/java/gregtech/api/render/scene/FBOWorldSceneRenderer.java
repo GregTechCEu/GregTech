@@ -11,17 +11,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.EXTFramebufferObject;
+import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector3f;
-
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glGetInteger;
 
 /**
  * Created with IntelliJ IDEA.
  *
  * @Author: KilaBash
- * @Date: 2021/08/23/18:52
+ * @Date: 2021/08/23
  * @Description: It looks similar to {@link GuiWorldSceneRenderer}, but totally different.
  * It uses FBO and is more universality and efficient.
  * FBO can be rendered anywhere more flexibly, not just in the GUI.
@@ -29,83 +27,53 @@ import static org.lwjgl.opengl.GL11.glGetInteger;
  */
 @SideOnly(Side.CLIENT)
 public class FBOWorldSceneRenderer extends WorldSceneRenderer {
-    private int width = 1080;
-    private int height = 1080;
-    private Framebuffer fbo = new Framebuffer(1080, 1080, true);
+    private int resolutionWidth = 1080;
+    private int resolutionHeight = 1080;
+    private Framebuffer fbo;
 
     public FBOWorldSceneRenderer(int resolutionWidth, int resolutionHeight) {
         setFBOSize(resolutionWidth, resolutionHeight);
     }
 
-    public int getWidth() {
-        return width;
+    public int getResolutionWidth() {
+        return resolutionWidth;
     }
 
-    public int getHeight() {
-        return height;
+    public int getResolutionHeight() {
+        return resolutionHeight;
     }
 
     /***
      * This will modify the size of the FBO. You'd better know what you're doing before you call it.
      */
-    public void setFBOSize(int width, int height) {
-        this.width = width;
-        this.height = height;
+    public void setFBOSize(int resolutionWidth, int resolutionHeight) {
+        this.resolutionWidth = resolutionWidth;
+        this.resolutionHeight = resolutionHeight;
+        releaseFBO();
         try {
-            if (fbo != null) {
-                fbo.deleteFramebuffer();
-            }
-            fbo = new Framebuffer(width, height, true);
+            fbo = new Framebuffer(resolutionWidth, resolutionHeight, true);
         } catch (Exception e) {
             GTLog.logger.error(e);
         }
     }
 
-    /***
-     * You'd better do unProject in {@link #setAfterWorldRender(Runnable)}
-     * @param mouseX xPos in Texture
-     * @param mouseY yPos in Texture
-     * @return BlockPos Hit
-     */
-    public BlockPos screenPos2BlockPos(int mouseX, int mouseY) {
-        // render a frame
-        GlStateManager.enableDepth();
+    public BlockPosFace screenPos2BlockPosFace(int mouseX, int mouseY) {
         int lastID = bindFBO();
-        setupCamera(0, 0, width, height);
-
-        drawWorld();
-        BlockPos looking = unProject(mouseX, mouseY);
-
-        resetCamera();
+        BlockPosFace looking = super.screenPos2BlockPosFace(mouseX, mouseY, 0, 0, this.resolutionWidth, this.resolutionHeight);
         unbindFBO(lastID);
-
         return looking;
     }
 
-    /***
-     * You'd better do project in {@link #setAfterWorldRender(Runnable)}
-     * @param pos BlockPos
-     * @param depth should pass Depth Test
-     * @return x, y, z
-     */
     public Vector3f blockPos2ScreenPos(BlockPos pos, boolean depth){
-        // render a frame
-        GlStateManager.enableDepth();
         int lastID = bindFBO();
-        setupCamera(0, 0, this.width, this.height);
-
-        drawWorld();
-        Vector3f winPos = project(pos, depth);
-
-        resetCamera();
+        Vector3f winPos = super.blockPos2ScreenPos(pos, depth, 0, 0, this.resolutionWidth, this.resolutionHeight);
         unbindFBO(lastID);
-
         return winPos;
     }
 
     public void render(float x, float y, float width, float height, int mouseX, int mouseY) {
-        mouseX = (int) (this.width * mouseX / width);
-        mouseY = (int) (this.height * (1 - mouseY / height));
+        mouseX = (int) (this.resolutionWidth * mouseX / width);
+        mouseY = (int) (this.resolutionHeight * (1 - mouseY / height));
         // bind to FBO
         int lastID = bindFBO();
         super.render(x, y, width, height, mouseX, mouseY);
@@ -115,7 +83,7 @@ public class FBOWorldSceneRenderer extends WorldSceneRenderer {
         // bind FBO as texture
         GlStateManager.enableTexture2D();
         GlStateManager.disableLighting();
-        lastID = glGetInteger(GL_TEXTURE_2D);
+        lastID = GL11.glGetInteger(GL11.GL_TEXTURE_2D);
         GlStateManager.bindTexture(fbo.framebufferTexture);
         GlStateManager.color(1,1,1,1);
 
@@ -135,11 +103,11 @@ public class FBOWorldSceneRenderer extends WorldSceneRenderer {
 
     @Override
     protected void setupCamera(int x, int y, int width, int height) {
-        super.setupCamera(0, 0, this.width, this.height);
+        super.setupCamera(0, 0, this.resolutionWidth, this.resolutionHeight);
     }
 
     private int bindFBO(){
-        int lastID = glGetInteger(EXTFramebufferObject.GL_FRAMEBUFFER_BINDING_EXT);
+        int lastID = GL11.glGetInteger(EXTFramebufferObject.GL_FRAMEBUFFER_BINDING_EXT);
         fbo.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
         fbo.framebufferClear();
         fbo.bindFramebuffer(true);
@@ -151,5 +119,12 @@ public class FBOWorldSceneRenderer extends WorldSceneRenderer {
         GlStateManager.popMatrix();
         fbo.unbindFramebufferTexture();
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
+    }
+
+    public void releaseFBO() {
+        if (fbo != null) {
+            fbo.deleteFramebuffer();
+        }
+        fbo = null;
     }
 }

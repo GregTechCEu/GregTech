@@ -4,8 +4,17 @@ import gregtech.api.gui.resources.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
 
+import javax.vecmath.Vector3f;
+
+/**
+ * Created with IntelliJ IDEA.
+ * @Author: KilaBash
+ * @Date: 2021/8/24
+ * @Description:
+ */
 public class GuiWorldSceneRenderer extends WorldSceneRenderer {
     private int clearColor;
 
@@ -33,5 +42,15 @@ public class GuiWorldSceneRenderer extends WorldSceneRenderer {
         RenderUtil.setGlClearColorFromInt(clearColor, 255);
         GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
+    }
+
+    @Override
+    public BlockPosFace screenPos2BlockPosFace(int mouseX, int mouseY, int x, int y, int width, int height) {
+        return super.screenPos2BlockPosFace(mouseX, mouseY, x, y, width, height);
+    }
+
+    @Override
+    public Vector3f blockPos2ScreenPos(BlockPos pos, boolean depth, int x, int y, int width, int height) {
+        return super.blockPos2ScreenPos(pos, depth, x, y, width, height);
     }
 }
