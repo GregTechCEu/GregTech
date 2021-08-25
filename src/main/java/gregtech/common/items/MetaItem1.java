@@ -25,6 +25,7 @@ import net.minecraft.item.ItemStack;
 
 import static gregtech.api.util.DyeUtil.getOredictColorName;
 import static gregtech.common.items.MetaItems.*;
+import static gregtech.common.items.MetaItems.COVER_SOLAR_PANEL_UV;
 
 public class MetaItem1 extends StandardMetaItem {
 
@@ -312,6 +313,13 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_SOLAR_PANEL = addItem(331, "cover.solar.panel");
         COVER_SOLAR_PANEL_ULV = addItem(332, "cover.solar.panel.ulv");
         COVER_SOLAR_PANEL_LV = addItem(333, "cover.solar.panel.lv");
+        COVER_SOLAR_PANEL_MV = addItem(334, "cover.solar.panel.mv");
+        COVER_SOLAR_PANEL_HV = addItem(335, "cover.solar.panel.hv");
+        COVER_SOLAR_PANEL_EV = addItem(336, "cover.solar.panel.ev");
+        COVER_SOLAR_PANEL_IV = addItem(337, "cover.solar.panel.iv");
+        COVER_SOLAR_PANEL_LUV = addItem(338, "cover.solar.panel.luv");
+        COVER_SOLAR_PANEL_ZPM = addItem(339, "cover.solar.panel.zpm");
+        COVER_SOLAR_PANEL_UV = addItem(340, "cover.solar.panel.uv");
 
         // Early Game Brick Related: ID 347-360
         IItemContainerItemProvider selfContainerItemProvider = itemStack -> itemStack;
