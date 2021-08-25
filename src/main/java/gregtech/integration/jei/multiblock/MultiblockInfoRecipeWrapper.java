@@ -1,19 +1,17 @@
 package gregtech.integration.jei.multiblock;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.BlockRenderer;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
-import codechicken.lib.vec.Vector3;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.render.scene.GuiWorldSceneRenderer;
+import gregtech.api.render.scene.ImmediateWorldSceneRenderer;
+import gregtech.api.render.scene.TrackedDummyWorld;
 import gregtech.api.render.scene.WorldSceneRenderer;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
@@ -56,6 +54,7 @@ import javax.annotation.Nonnull;
 import javax.vecmath.Vector3f;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private static final int MAX_PARTS = 20;
@@ -150,13 +149,14 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             this.rotationYaw = 20.0f;
             this.rotationPitch = 135.0f;
             this.currentRendererPage = 0;
+            setNextLayer(-1);
         } else {
             zoom = (float) MathHelper.clamp(zoom + (Mouse.getEventDWheel() < 0 ? 0.5 : -0.5), 3, maxZoom);
+            setNextLayer(getLayerIndex());
         }
         if (center != null) {
             getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
         }
-        setNextLayer(-1);
         updateParts();
     }
 
@@ -170,7 +170,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
     private void toggleNextLayer() {
         WorldSceneRenderer renderer = getCurrentRenderer();
-        int height = (int) renderer.world.getSize().getY() - 1;
+        int height = (int) ((TrackedDummyWorld)renderer.world).getSize().getY() - 1;
         if (++this.layerIndex > height) {
             //if current layer index is more than max height, reset it
             //to display all layers
@@ -182,6 +182,19 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private void setNextLayer(int newLayer) {
         this.layerIndex = newLayer;
         this.nextLayerButton.displayString = "L:" + (layerIndex == -1 ? "A" : Integer.toString(layerIndex + 1));
+        WorldSceneRenderer renderer = getCurrentRenderer();
+        if (renderer != null) {
+            TrackedDummyWorld world = ((TrackedDummyWorld)renderer.world);
+            renderer.renderedBlocksMap.clear();
+            int minY = (int) world.getMinPos().getY();
+            Collection<BlockPos> renderBlocks;
+            if (newLayer == -1) {
+                renderBlocks = world.renderedBlocks;
+            } else {
+                renderBlocks = world.renderedBlocks.stream().filter(pos->pos.getY() - minY == newLayer).collect(Collectors.toSet());
+            }
+            renderer.addRenderedBlocks(renderBlocks, null);
+        }
     }
 
     private void switchRenderPage(int amount) {
@@ -210,15 +223,6 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             itemStackGroup.set(i, parts.get(i));
         for (int i = parts.size(); i < limit; ++i)
             itemStackGroup.set(i, (ItemStack) null);
-    }
-
-    private boolean shouldDisplayBlock(BlockPos pos) {
-        if (getLayerIndex() == -1)
-            return true;
-        WorldSceneRenderer renderer = getCurrentRenderer();
-        int minHeight = (int) renderer.world.getMinPos().getY();
-        int relativeHeight = pos.getY() - minHeight;
-        return relativeHeight == getLayerIndex();
     }
 
     @Override
@@ -414,17 +418,19 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 }
             }
         }
-        GuiWorldSceneRenderer worldSceneRenderer = new GuiWorldSceneRenderer();
+        TrackedDummyWorld world = new TrackedDummyWorld();
+        ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
+        world.setRenderFilter(pos->worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c->c.contains(pos)));
         worldSceneRenderer.setClearColor(0xC6C6C6);
-        worldSceneRenderer.addBlocks(blockMap);
-        Vector3f size = worldSceneRenderer.world.getSize();
-        Vector3f minPos = worldSceneRenderer.world.getMinPos();
+        world.addBlocks(blockMap);
+        Vector3f size = world.getSize();
+        Vector3f minPos = world.getMinPos();
         center = new Vector3f(minPos.x + size.x / 2, minPos.y + size.y / 2, minPos.z + size.z / 2);
-        worldSceneRenderer.world.updateEntities();
         HashMap<ItemStackKey, PartInfo> partsMap = new HashMap<>();
         gatherBlockDrops(worldSceneRenderer.world, blockMap, blockDrops, partsMap);
-        worldSceneRenderer.setRenderFilter(this::shouldDisplayBlock);
+        worldSceneRenderer.addRenderedBlocks(world.renderedBlocks, null);
         worldSceneRenderer.setOnLookingAt(this::renderBlockOverLay);
+        worldSceneRenderer.world.updateEntities();
         ArrayList<PartInfo> partInfos = new ArrayList<>(partsMap.values());
         partInfos.sort((one, two) -> {
             if (one.isController) return -1;

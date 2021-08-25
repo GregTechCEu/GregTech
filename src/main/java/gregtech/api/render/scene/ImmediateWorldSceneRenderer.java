@@ -1,23 +1,23 @@
 package gregtech.api.render.scene;
 
-import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.util.PositionedRect;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
-
-import javax.vecmath.Vector3f;
 
 /**
  * Created with IntelliJ IDEA.
  * @Author: KilaBash
  * @Date: 2021/8/24
- * @Description:
+ * @Description: Real-time rendering renderer.
+ * If you need to render scene as a texture, use the FBO {@link FBOWorldSceneRenderer}.
  */
-public class GuiWorldSceneRenderer extends WorldSceneRenderer {
-    private int clearColor;
+public class ImmediateWorldSceneRenderer extends WorldSceneRenderer {
+
+    public ImmediateWorldSceneRenderer(World world) {
+        super(world);
+    }
 
     @Override
     protected PositionedRect getPositionedRect(int x, int y, int width, int height) {
@@ -33,26 +33,12 @@ public class GuiWorldSceneRenderer extends WorldSceneRenderer {
         return super.getPositionedRect(windowX, windowY, windowWidth, windowHeight);
     }
 
-    public void setClearColor(int clearColor) {
-        this.clearColor = clearColor;
-    }
 
     @Override
     protected void clearView(int x, int y, int width, int height) {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(x, y, width, height);
-        RenderUtil.setGlClearColorFromInt(clearColor, 255);
-        GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        super.clearView(x, y, width, height);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-    }
-
-    @Override
-    public BlockPosFace screenPos2BlockPosFace(int mouseX, int mouseY, int x, int y, int width, int height) {
-        return super.screenPos2BlockPosFace(mouseX, mouseY, x, y, width, height);
-    }
-
-    @Override
-    public Vector3f blockPos2ScreenPos(BlockPos pos, boolean depth, int x, int y, int width, int height) {
-        return super.blockPos2ScreenPos(pos, depth, x, y, width, height);
     }
 }

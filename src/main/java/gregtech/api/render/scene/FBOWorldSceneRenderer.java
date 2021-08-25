@@ -1,7 +1,6 @@
 package gregtech.api.render.scene;
 
 import gregtech.api.util.GTLog;
-import gregtech.api.util.PositionedRect;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -9,6 +8,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.EXTFramebufferObject;
@@ -21,10 +21,11 @@ import javax.vecmath.Vector3f;
  *
  * @Author: KilaBash
  * @Date: 2021/08/23
- * @Description: It looks similar to {@link GuiWorldSceneRenderer}, but totally different.
- * It uses FBO and is more universality and efficient.
+ * @Description: It looks similar to {@link ImmediateWorldSceneRenderer}, but totally different.
+ * It uses FBO and is more universality and efficient(X).
  * FBO can be rendered anywhere more flexibly, not just in the GUI.
  * If you have scene rendering needs, you will love this FBO renderer.
+ * TODO OP_LIST might be used in the future to further improve performance.
  */
 @SideOnly(Side.CLIENT)
 public class FBOWorldSceneRenderer extends WorldSceneRenderer {
@@ -32,7 +33,8 @@ public class FBOWorldSceneRenderer extends WorldSceneRenderer {
     private int resolutionHeight = 1080;
     private Framebuffer fbo;
 
-    public FBOWorldSceneRenderer(int resolutionWidth, int resolutionHeight) {
+    public FBOWorldSceneRenderer(World world, int resolutionWidth, int resolutionHeight) {
+        super(world);
         setFBOSize(resolutionWidth, resolutionHeight);
     }
 

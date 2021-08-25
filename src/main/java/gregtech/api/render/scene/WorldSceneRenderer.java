@@ -2,42 +2,38 @@ package gregtech.api.render.scene;
 
 import codechicken.lib.vec.Vector3;
 import gregtech.api.gui.resources.RenderUtil;
-import gregtech.api.util.BlockInfo;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;
 import gregtech.api.util.Size;
-import gregtech.api.util.world.DummyWorld;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
-import javax.annotation.Nonnull;
 import javax.vecmath.Vector3f;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,35 +49,20 @@ public abstract class WorldSceneRenderer {
     protected static final FloatBuffer PIXEL_DEPTH_BUFFER = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asFloatBuffer();
     protected static final FloatBuffer OBJECT_POS_BUFFER = ByteBuffer.allocateDirect(3 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 
-    public final TrackedDummyWorld world = new TrackedDummyWorld();
-    public final Set<BlockPos> renderedBlocks = new HashSet<>();
+    public final World world;
+    public final Map<Collection<BlockPos>, ISceneRenderHook> renderedBlocksMap;
     private Runnable beforeRender;
     private Runnable afterRender;
-    private Predicate<BlockPos> renderFilter;
     private Consumer<RayTraceResult> onLookingAt;
+    private int clearColor;
     private RayTraceResult lastTraceResult;
     private Vector3f eyePos = new Vector3f(0, 0, 10f);
     private Vector3f lookAt = new Vector3f(0, 0, 0);
     private Vector3f worldUp = new Vector3f(0, 1, 0);
 
-    public WorldSceneRenderer addBlocks(Map<BlockPos, BlockInfo> renderedBlocks) {
-        for (Map.Entry<BlockPos, BlockInfo> renderEntry : renderedBlocks.entrySet()) {
-            BlockPos pos = renderEntry.getKey();
-            BlockInfo blockInfo = renderEntry.getValue();
-            if (blockInfo.getBlockState().getBlock() == Blocks.AIR)
-                continue; //do not render air blocks
-            this.renderedBlocks.add(pos);
-            blockInfo.apply(world, pos);
-        }
-        return this;
-    }
-
-    public WorldSceneRenderer addBlock(BlockPos pos, BlockInfo blockInfo) {
-        if (blockInfo.getBlockState().getBlock() == Blocks.AIR)
-            return this;
-        this.renderedBlocks.add(pos);
-        blockInfo.apply(world, pos);
-        return this;
+    public WorldSceneRenderer(World world) {
+        this.world = world;
+        renderedBlocksMap = new LinkedHashMap<>();
     }
 
     public WorldSceneRenderer setBeforeWorldRender(Runnable callback) {
@@ -94,14 +75,20 @@ public abstract class WorldSceneRenderer {
         return this;
     }
 
-    public WorldSceneRenderer setRenderFilter(Predicate<BlockPos> filter) {
-        this.renderFilter = filter;
+    public WorldSceneRenderer addRenderedBlocks(Collection<BlockPos> blocks, ISceneRenderHook renderHook) {
+        if (blocks != null) {
+            this.renderedBlocksMap.put(blocks, renderHook);
+        }
         return this;
     }
 
     public WorldSceneRenderer setOnLookingAt(Consumer<RayTraceResult> onLookingAt) {
         this.onLookingAt = onLookingAt;
         return this;
+    }
+
+    public void setClearColor(int clearColor) {
+        this.clearColor = clearColor;
     }
 
     public RayTraceResult getLastTraceResult() {
@@ -198,7 +185,7 @@ public abstract class WorldSceneRenderer {
     }
 
     protected void clearView(int x, int y, int width, int height) {
-        RenderUtil.setGlClearColorFromInt(0, 0);
+        RenderUtil.setGlClearColorFromInt(clearColor, clearColor >> 24);
         GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 
@@ -226,30 +213,99 @@ public abstract class WorldSceneRenderer {
             beforeRender.run();
         }
 
-        Minecraft minecraft = Minecraft.getMinecraft();
-        minecraft.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        BlockRendererDispatcher dispatcher = minecraft.getBlockRendererDispatcher();
+        Minecraft mc = Minecraft.getMinecraft();
+        GlStateManager.enableCull();
+        GlStateManager.enableRescaleNormal();
+        RenderHelper.disableStandardItemLighting();
+        mc.entityRenderer.disableLightmap();
+        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        com.enderio.core.client.render.RenderUtil.bindBlockTexture();
         BlockRenderLayer oldRenderLayer = MinecraftForgeClient.getRenderLayer();
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
+        GlStateManager.disableLighting();
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableAlpha();
 
-        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        for (BlockPos pos : renderedBlocks) {
-            if (renderFilter != null && !renderFilter.test(pos))
-                continue; //do not render if position is skipped
-            IBlockState blockState = world.getBlockState(pos);
-            for(BlockRenderLayer renderLayer : BlockRenderLayer.values()) {
-                if (!blockState.getBlock().canRenderInLayer(blockState, renderLayer)) continue;
-                ForgeHooksClient.setRenderLayer(renderLayer);
-                dispatcher.renderBlock(blockState, pos, world, bufferBuilder);
+        try { // render block in each layer
+            for (BlockRenderLayer layer : BlockRenderLayer.values()) {
+                ForgeHooksClient.setRenderLayer(layer);
+                int pass = layer == BlockRenderLayer.TRANSLUCENT ? 1 : 0;
+
+                renderedBlocksMap.forEach((renderedBlocks, hook)->{
+                    if (hook != null) {
+                        if (!hook.apply(false, pass, layer)) {
+                            return;
+                        }
+                    } else {
+                        setDefaultPassRenderState(pass);
+                    }
+
+                    BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+                    buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+                    BlockRendererDispatcher blockrendererdispatcher = mc.getBlockRendererDispatcher();
+
+                    for (BlockPos pos : renderedBlocks) {
+                        IBlockState state = world.getBlockState(pos);
+                        Block block = state.getBlock();
+                        if (block == Blocks.AIR) continue;
+                        state = state.getActualState(world, pos);
+                        if (block.canRenderInLayer(state, layer)) {
+                            blockrendererdispatcher.renderBlock(state, pos, world, buffer);
+                        }
+                    }
+
+                    Tessellator.getInstance().draw();
+                    Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
+                });
             }
+        } finally {
+            ForgeHooksClient.setRenderLayer(oldRenderLayer);
         }
 
-        tessellator.draw();
-        ForgeHooksClient.setRenderLayer(oldRenderLayer);
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.enableLighting();
+
+        // render TESR
+        for (int pass = 0; pass < 2; pass++) {
+            ForgeHooksClient.setRenderPass(pass);
+            int finalPass = pass;
+            renderedBlocksMap.forEach((renderedBlocks, hook)->{
+                if (hook != null) {
+                    if (!hook.apply(true, finalPass, null)) {
+                        return;
+                    }
+                } else {
+                    setDefaultPassRenderState(finalPass);
+                }
+                for (BlockPos pos : renderedBlocks) {
+                    TileEntity tile = world.getTileEntity(pos);
+                    if (tile != null) {
+                        if (tile.shouldRenderInPass(finalPass)) {
+                            TileEntityRendererDispatcher.instance.render(tile, pos.getX(), pos.getY(), pos.getZ(), 0);
+                        }
+                    }
+                }
+            });
+        }
+        ForgeHooksClient.setRenderPass(-1);
+        GlStateManager.enableDepth();
+        GlStateManager.disableBlend();
+        GlStateManager.depthMask(true);
 
         if (afterRender != null) {
             afterRender.run();
+        }
+    }
+
+    public static void setDefaultPassRenderState(int pass) {
+        GlStateManager.color(1, 1, 1, 1);
+        if (pass == 0) { // SOLID
+            GlStateManager.enableDepth();
+            GlStateManager.disableBlend();
+            GlStateManager.depthMask(true);
+        } else { // TRANSLUCENT
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.depthMask(false);
         }
     }
 
@@ -438,51 +494,5 @@ public abstract class WorldSceneRenderer {
             this.facing = facing;
         }
 
-    }
-
-    public class TrackedDummyWorld extends DummyWorld {
-
-        private final Vector3f minPos = new Vector3f(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
-        private final Vector3f maxPos = new Vector3f(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
-
-        @Override
-        public boolean setBlockState(@Nonnull BlockPos pos, IBlockState newState, int flags) {
-            if (newState.getBlock() == Blocks.AIR) {
-                renderedBlocks.remove(pos);
-            } else {
-                renderedBlocks.add(pos);
-            }
-            minPos.setX(Math.min(minPos.getX(), pos.getX()));
-            minPos.setY(Math.min(minPos.getY(), pos.getY()));
-            minPos.setZ(Math.min(minPos.getZ(), pos.getZ()));
-            maxPos.setX(Math.max(maxPos.getX(), pos.getX()));
-            maxPos.setY(Math.max(maxPos.getY(), pos.getY()));
-            maxPos.setZ(Math.max(maxPos.getZ(), pos.getZ()));
-            return super.setBlockState(pos, newState, flags);
-        }
-
-        @Nonnull
-        @Override
-        public IBlockState getBlockState(@Nonnull BlockPos pos) {
-            if (renderFilter != null && !renderFilter.test(pos))
-                return Blocks.AIR.getDefaultState(); //return air if not rendering this block
-            return super.getBlockState(pos);
-        }
-
-        public Vector3f getSize() {
-            Vector3f result = new Vector3f();
-            result.setX(maxPos.getX() - minPos.getX() + 1);
-            result.setY(maxPos.getY() - minPos.getY() + 1);
-            result.setZ(maxPos.getZ() - minPos.getZ() + 1);
-            return result;
-        }
-
-        public Vector3f getMinPos() {
-            return minPos;
-        }
-
-        public Vector3f getMaxPos() {
-            return maxPos;
-        }
     }
 }
