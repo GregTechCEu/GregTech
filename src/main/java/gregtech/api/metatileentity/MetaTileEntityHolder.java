@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity;
 
 import com.google.common.base.Preconditions;
+import gregtech.GregTechRegistries;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
@@ -52,7 +53,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
             writeCustomData(-1, buffer -> {
-                buffer.writeVarInt(GregTechAPI.META_TILE_ENTITY_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
+                buffer.writeVarInt(GregTechRegistries.getMetaTileEntityRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId));
                 metaTileEntity.writeInitialSyncData(buffer);
             });
             //just to update neighbours so cables and other things will work properly
@@ -93,7 +94,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
             } else {
                 metaTileEntityId = new ResourceLocation(metaTileEntityIdRaw);
             }
-            MetaTileEntity sampleMetaTileEntity = metaTileEntityId == null ? null : GregTechAPI.META_TILE_ENTITY_REGISTRY.getObject(metaTileEntityId);
+            MetaTileEntity sampleMetaTileEntity = metaTileEntityId == null ? null : GregTechRegistries.getMetaTileEntityRegistry().getObject(metaTileEntityId);
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
                 this.metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(this);
@@ -109,7 +110,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
 
     private static ResourceLocation convertMetaTileEntityId(String metaTileEntityIdOld) {
         ResourceLocation gregtechId = new ResourceLocation(GTValues.MODID, metaTileEntityIdOld);
-        GTControlledRegistry<ResourceLocation, MetaTileEntity> registry = GregTechAPI.META_TILE_ENTITY_REGISTRY;
+        GTControlledRegistry<MetaTileEntity> registry = GregTechRegistries.getMetaTileEntityRegistry();
         if (registry.containsKey(gregtechId)) {
             return gregtechId; //remap to gregtech meta tile entities first
         }
@@ -174,7 +175,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     public void writeInitialSyncData(PacketBuffer buf) {
         if (metaTileEntity != null) {
             buf.writeBoolean(true);
-            buf.writeVarInt(GregTechAPI.META_TILE_ENTITY_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
+            buf.writeVarInt(GregTechRegistries.getMetaTileEntityRegistry().getIdByObjectName(metaTileEntity.metaTileEntityId));
             metaTileEntity.writeInitialSyncData(buf);
         } else buf.writeBoolean(false);
     }
@@ -183,7 +184,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     public void receiveInitialSyncData(PacketBuffer buf) {
         if (buf.readBoolean()) {
             int metaTileEntityId = buf.readVarInt();
-            setMetaTileEntity(GregTechAPI.META_TILE_ENTITY_REGISTRY.getObjectById(metaTileEntityId));
+            setMetaTileEntity(GregTechRegistries.getMetaTileEntityRegistry().getObjectById(metaTileEntityId));
             this.metaTileEntity.receiveInitialSyncData(buf);
             scheduleChunkForRenderUpdate();
             this.needToUpdateLightning = true;
@@ -194,7 +195,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     public void receiveCustomData(int discriminator, PacketBuffer buffer) {
         if (discriminator == -1) {
             int metaTileEntityId = buffer.readVarInt();
-            setMetaTileEntity(GregTechAPI.META_TILE_ENTITY_REGISTRY.getObjectById(metaTileEntityId));
+            setMetaTileEntity(GregTechRegistries.getMetaTileEntityRegistry().getObjectById(metaTileEntityId));
             this.metaTileEntity.receiveInitialSyncData(buffer);
             scheduleChunkForRenderUpdate();
             this.needToUpdateLightning = true;

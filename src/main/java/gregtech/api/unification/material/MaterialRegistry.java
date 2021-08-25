@@ -1,36 +1,34 @@
 package gregtech.api.unification.material;
 
 import gregtech.api.util.GTControlledRegistry;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.GameData;
 
 public class MaterialRegistry extends GTControlledRegistry<Material> {
+
+    // Temp measure - TODO: what should we do about materials?
+    private final ObjectOpenHashSet<Material> namespaceless = new ObjectOpenHashSet<>();
 
     public MaterialRegistry() {
         super(Short.MAX_VALUE);
     }
 
-    @Override
-    public void register(int id, ResourceLocation key, Material value) {
-        if (id < 0 || id >= maxId) {
-            throw new IndexOutOfBoundsException("Id is out of range: " + id);
-        }
-        key = GameData.checkPrefix(key.toString());
-        super.putObject(key, value);
-        Material objectWithId = getObjectById(id);
-        if (objectWithId != null) {
-            throw new IllegalArgumentException(String.format("Tried to reassign id %d to %s (%s), but it is already assigned to %s (%s)!",
-                    id, value, key, objectWithId, getNameForObject(objectWithId)));
-        }
-        underlyingIntegerMap.put(value, id);
+    public Material getObject(String material) {
+        return namespaceless.get(material);
     }
 
     @Override
-    public void freezeRegistry() {
-        if (!frozen) {
+    public void freeze() {
+        super.freeze();
+        if (frozen) {
             underlyingIntegerMap.iterator().forEachRemaining(Material::verifyMaterial);
             underlyingIntegerMap.iterator().forEachRemaining(Material::postVerify);
         }
-        super.freezeRegistry();
+    }
+
+    @Override
+    public void register(int id, ResourceLocation key, Material value) {
+        super.register(id, key, value);
+        namespaceless.add(value);
     }
 }

@@ -3,8 +3,8 @@ package gregtech.api.unification.crafttweaker;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import crafttweaker.annotations.ZenRegister;
+import gregtech.GregTechRegistries;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
@@ -21,12 +21,12 @@ public class CTMaterialRegistry {
     @ZenMethod
     @Nullable
     public static Material get(String name) {
-        return MaterialRegistry.MATERIAL_REGISTRY.getObject(name);
+        return GregTechRegistries.getMaterialRegistry().getObject(name);
     }
 
     @ZenMethod
     public static List<Material> getAllMaterials() {
-        return Lists.newArrayList(MaterialRegistry.MATERIAL_REGISTRY);
+        return Lists.newArrayList(GregTechRegistries.getMaterialRegistry());
     }
 
     private static ImmutableList<MaterialStack> validateComponentList(@Nullable MaterialStack[] components) {

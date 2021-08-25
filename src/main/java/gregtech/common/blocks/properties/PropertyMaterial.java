@@ -2,6 +2,7 @@ package gregtech.common.blocks.properties;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import gregtech.GregTechRegistries;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
@@ -37,7 +38,7 @@ public class PropertyMaterial extends PropertyHelper<Material> {
     @Nonnull
     @Override
     public Optional<Material> parseValue(@Nonnull String value) {
-        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(value);
+        Material material = GregTechRegistries.getMaterialRegistry().getObject(value);
         if (this.allowedValues.contains(material)) {
             return Optional.of(material);
         }

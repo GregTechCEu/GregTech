@@ -15,6 +15,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -430,6 +432,21 @@ public class CraftingComponent {
                     ingredients.merge(key, value, (v1, v2) -> v2)
             );
         }
+    }
+
+    public static class ComponentRegisteredEvent extends Event {
+
+        private static boolean hasRun = false;
+
+        public static void post() {
+            if (!hasRun) {
+                MinecraftForge.EVENT_BUS.post(new ComponentRegisteredEvent());
+                hasRun = true;
+            }
+        }
+
+        private ComponentRegisteredEvent() { }
+
     }
 }
 

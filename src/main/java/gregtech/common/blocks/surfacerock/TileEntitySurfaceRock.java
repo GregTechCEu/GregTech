@@ -1,5 +1,6 @@
 package gregtech.common.blocks.surfacerock;
 
+import gregtech.GregTechRegistries;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
@@ -64,22 +65,23 @@ public class TileEntitySurfaceRock extends TileEntity {
     @Override
     public void readFromNBT(@Nonnull NBTTagCompound compound) {
         super.readFromNBT(compound);
-        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(compound.getString("Material"));
+        Material material = GregTechRegistries.getMaterialRegistry().getObject(compound.getString("Material"));
         this.material = material == null ? Materials.Aluminium : material;
 
         for (NBTBase undergroundMaterialNBTBase : compound.getTagList("UndergroundMaterials", NBT.TAG_STRING)) {
-            undergroundMaterials.add(MaterialRegistry.MATERIAL_REGISTRY.getObject(((NBTTagString) undergroundMaterialNBTBase).getString()));
+            undergroundMaterials.add(GregTechRegistries.getMaterialRegistry().getObject(((NBTTagString) undergroundMaterialNBTBase).getString()));
         }
     }
 
     @Nonnull
     @Override
+    // TODO
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setString("Material", MaterialRegistry.MATERIAL_REGISTRY.getNameForObject(material));
+        compound.setString("Material", GregTechRegistries.getMaterialRegistry().getNameForObject(material).getPath());
         NBTTagList tagList = new NBTTagList();
         this.undergroundMaterials.forEach(it ->
-                tagList.appendTag(new NBTTagString(MaterialRegistry.MATERIAL_REGISTRY.getNameForObject(it))));
+                tagList.appendTag(new NBTTagString(GregTechRegistries.getMaterialRegistry().getNameForObject(it).getPath())));
         compound.setTag("UndergroundMaterials", tagList);
         return compound;
     }

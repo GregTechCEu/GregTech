@@ -9,6 +9,7 @@ import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.base.Preconditions;
+import gregtech.GregTechRegistries;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
@@ -644,7 +645,7 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
     public final ItemStack getStackForm(int amount) {
-        int metaTileEntityIntId = GregTechAPI.META_TILE_ENTITY_REGISTRY.getIdByObjectName(metaTileEntityId);
+        int metaTileEntityIntId = GregTechRegistries.getMetaTileEntityRegistry().getIdByObjectName(metaTileEntityId);
         return new ItemStack(GregTechAPI.MACHINE, amount, metaTileEntityIntId);
     }
 

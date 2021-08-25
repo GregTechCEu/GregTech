@@ -62,11 +62,10 @@ import java.util.function.Function;
 
 import static gregtech.common.blocks.MetaBlocks.*;
 
-@Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class CommonProxy {
 
     @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event) {
+    public void registerBlocks(RegistryEvent.Register<Block> event) {
         GTLog.logger.info("Registering Blocks...");
         IForgeRegistry<Block> registry = event.getRegistry();
 
@@ -107,13 +106,13 @@ public class CommonProxy {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void registerBlocksLast(RegistryEvent.Register<Block> event) {
+    public void registerBlocksLast(RegistryEvent.Register<Block> event) {
         //last chance for mods to register their potion types is here
         FLUID_BLOCKS.forEach(event.getRegistry()::register);
     }
 
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event) {
+    public void registerItems(RegistryEvent.Register<Item> event) {
         GTLog.logger.info("Registering Items...");
         IForgeRegistry<Item> registry = event.getRegistry();
 
@@ -163,15 +162,15 @@ public class CommonProxy {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public static void initComponents(RegistryEvent.Register<IRecipe> event) {
+    public void initComponents(RegistryEvent.Register<IRecipe> event) {
         CraftingComponent.initializeComponents();
-        IComponentHandler.runComponentHandlers();
+        CraftingComponent.ComponentRegisteredEvent.post();
     }
 
     //this is called with normal priority, so most mods working with
     //ore dictionary and recipes will get recipes accessible in time
     @SubscribeEvent
-    public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
+    public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         // registers coiltypes for the BlastTemperatureProperty used in Blast Furnace Recipes
         for (BlockWireCoil.CoilType values : BlockWireCoil.CoilType.values()) {
             BlastTemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
@@ -204,7 +203,7 @@ public class CommonProxy {
     //items and blocks for running first phase of material handlers
     //it will also clear generated materials
     @SubscribeEvent(priority = EventPriority.LOW)
-    public static void runEarlyMaterialHandlers(RegistryEvent.Register<IRecipe> event) {
+    public void runEarlyMaterialHandlers(RegistryEvent.Register<IRecipe> event) {
         GTLog.logger.info("Running early material handlers...");
         OrePrefix.runMaterialHandlers();
     }
@@ -212,7 +211,7 @@ public class CommonProxy {
     //this is called last, so all mods finished registering their stuff, as example, CraftTweaker
     //if it registered some kind of ore dictionary entry, late processing will hook it and generate recipes
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void registerRecipesLowest(RegistryEvent.Register<IRecipe> event) {
+    public void registerRecipesLowest(RegistryEvent.Register<IRecipe> event) {
         GTLog.logger.info("Running late material handlers...");
         OrePrefix.runMaterialHandlers();
         DecompositionRecipeHandler.runRecipeGeneration();
@@ -225,19 +224,19 @@ public class CommonProxy {
     }
 
     @SubscribeEvent
-    public static void registerEnchantments(RegistryEvent.Register<Enchantment> event) {
+    public void registerEnchantments(RegistryEvent.Register<Enchantment> event) {
         EnchantmentEnderDamage.INSTANCE.register(event);
     }
 
     @SubscribeEvent
-    public static void syncConfigValues(ConfigChangedEvent.OnConfigChangedEvent event) {
+    public void syncConfigValues(ConfigChangedEvent.OnConfigChangedEvent event) {
         if (event.getModID().equals(GTValues.MODID)) {
             ConfigManager.sync(GTValues.MODID, Type.INSTANCE);
         }
     }
 
     @SubscribeEvent
-    public static void modifyFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
+    public void modifyFuelBurnTime(FurnaceFuelBurnTimeEvent event) {
         ItemStack stack = event.getItemStack();
         Block block = Block.getBlockFromItem(stack.getItem());
         //handle sapling and log burn rates

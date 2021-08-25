@@ -1,13 +1,13 @@
 package gregtech.api.items.materialitem;
 
 import gnu.trove.map.hash.TShortObjectHashMap;
+import gregtech.GregTechRegistries;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.DustProperty;
@@ -52,8 +52,8 @@ public class MetaPrefixItem extends StandardMetaItem {
     public MetaPrefixItem(OrePrefix orePrefix) {
         super();
         this.prefix = orePrefix;
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
-            short i = (short) MaterialRegistry.MATERIAL_REGISTRY.getIDForObject(material);
+        for (Material material : GregTechRegistries.getMaterialRegistry()) {
+            short i = (short) GregTechRegistries.getMaterialRegistry().getIDForObject(material);
             if (orePrefix != null && canGenerate(orePrefix, material)) {
                 generatedItems.add(i);
             }
@@ -62,7 +62,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     public void registerOreDict() {
         for (short metaItem : generatedItems) {
-            Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(metaItem);
+            Material material = GregTechRegistries.getMaterialRegistry().getObjectById(metaItem);
             ItemStack item = new ItemStack(this, 1, metaItem);
             OreDictUnifier.registerOre(item, prefix, material);
             registerSpecialOreDict(item, material, prefix);
@@ -93,7 +93,7 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     @Override
     public String getItemStackDisplayName(ItemStack itemStack) {
-        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(itemStack.getItemDamage());
+        Material material = GregTechRegistries.getMaterialRegistry().getObjectById(itemStack.getItemDamage());
         if (material == null || prefix == null) return "";
         return prefix.getLocalNameForItem(material);
     }
@@ -102,7 +102,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     @SideOnly(Side.CLIENT)
     protected int getColorForItemStack(ItemStack stack, int tintIndex) {
         if (tintIndex == 0) {
-            Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(stack.getMetadata());
+            Material material = GregTechRegistries.getMaterialRegistry().getObjectById(stack.getMetadata());
             if (material == null)
                 return 0xFFFFFF;
             return material.getMaterialRGB();
@@ -117,7 +117,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         super.registerModels();
         TShortObjectHashMap<ModelResourceLocation> alreadyRegistered = new TShortObjectHashMap<>();
         for (short metaItem : generatedItems) {
-            MaterialIconSet materialIconSet = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(metaItem).getMaterialIconSet();
+            MaterialIconSet materialIconSet = GregTechRegistries.getMaterialRegistry().getObjectById(metaItem).getMaterialIconSet();
 
             short registrationKey = (short) (prefix.id + materialIconSet.id);
             if (!alreadyRegistered.containsKey(registrationKey)) {
@@ -175,14 +175,14 @@ public class MetaPrefixItem extends StandardMetaItem {
     public void addInformation(ItemStack itemStack, @Nullable World worldIn, List<String> lines, ITooltipFlag tooltipFlag) {
         super.addInformation(itemStack, worldIn, lines, tooltipFlag);
         int damage = itemStack.getItemDamage();
-        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(damage);
+        Material material = GregTechRegistries.getMaterialRegistry().getObjectById(damage);
         if (prefix == null || material == null) return;
         addMaterialTooltip(lines);
     }
 
     public Material getMaterial(ItemStack itemStack) {
         int damage = itemStack.getItemDamage();
-        return MaterialRegistry.MATERIAL_REGISTRY.getObjectById(damage);
+        return GregTechRegistries.getMaterialRegistry().getObjectById(damage);
     }
 
     public OrePrefix getOrePrefix() {
@@ -192,7 +192,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     @Override
     public int getItemBurnTime(ItemStack itemStack) {
         int damage = itemStack.getItemDamage();
-        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(damage);
+        Material material = GregTechRegistries.getMaterialRegistry().getObjectById(damage);
         DustProperty property = material == null ? null : material.getProperty(PropertyKey.DUST);
         if (property != null) return (int) (property.getBurnTime() * prefix.materialAmount / GTValues.M);
         return super.getItemBurnTime(itemStack);
@@ -203,7 +203,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     public boolean isBeaconPayment(ItemStack stack) {
         int damage = stack.getMetadata();
 
-        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(damage);
+        Material material = GregTechRegistries.getMaterialRegistry().getObjectById(damage);
         if (this.prefix != null && material != null) {
             boolean isSolidState = this.prefix == OrePrefix.ingot || this.prefix == OrePrefix.gem;
             DustProperty property = material.getProperty(PropertyKey.DUST);
@@ -219,7 +219,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         if (itemEntity.getEntityWorld().isRemote)
             return false;
 
-        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(damage);
+        Material material = GregTechRegistries.getMaterialRegistry().getObjectById(damage);
         if (!purifyMap.containsKey(this.prefix))
             return false;
 
