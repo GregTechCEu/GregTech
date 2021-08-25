@@ -25,7 +25,6 @@ import net.minecraft.item.ItemStack;
 
 import static gregtech.api.util.DyeUtil.getOredictColorName;
 import static gregtech.common.items.MetaItems.*;
-import static gregtech.common.items.MetaItems.COVER_SOLAR_PANEL_UV;
 
 public class MetaItem1 extends StandardMetaItem {
 
