@@ -28,6 +28,9 @@ public class MaterialRegistry extends GTControlledRegistry<Material> {
 
     @Override
     public void register(int id, ResourceLocation key, Material value) {
+        if (value instanceof MarkerMaterial) {
+            throw new IllegalArgumentException("MarkerMaterial " + value + " should not be registered to the MaterialRegistry.");
+        }
         super.register(id, key, value);
         namespaceless.add(value);
     }

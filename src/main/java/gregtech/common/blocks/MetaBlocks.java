@@ -1,6 +1,7 @@
 package gregtech.common.blocks;
 
 import com.google.common.collect.ImmutableMap;
+import gregtech.GregTechRegistries;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
@@ -191,7 +192,7 @@ public class MetaBlocks {
                         && !OrePrefix.block.isIgnored(material),
                 MetaBlocks::createCompressedBlock);
 
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+        for (Material material : GregTechRegistries.getMaterialRegistry()) {
 
             if (material.hasProperty(PropertyKey.ORE))
                 createOreBlock(material);
@@ -241,7 +242,7 @@ public class MetaBlocks {
 
         Map<Integer, Material[]> blocksToGenerate = new TreeMap<>();
 
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY)
+        for (Material material : GregTechRegistries.getMaterialRegistry())
             if (materialPredicate.test(material)) {
                 int id = material.getId();
                 int metaBlockID = id / 16;
