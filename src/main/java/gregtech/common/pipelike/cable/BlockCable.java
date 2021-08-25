@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.cable;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.cover.CoverBehavior;
@@ -10,14 +9,12 @@ import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
-import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.render.CableRenderer;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.block.Block;
@@ -55,9 +52,6 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
     }
 
     public void addCableMaterial(Material material, WireProperties wireProperties) {
-        Preconditions.checkNotNull(material, "material");
-        Preconditions.checkNotNull(wireProperties, "wireProperties");
-        Preconditions.checkArgument(MaterialRegistry.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
         if (!pipeType.orePrefix.isIgnored(material)) {
             this.enabledMaterials.put(material, wireProperties);
         }

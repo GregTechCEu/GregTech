@@ -1,8 +1,8 @@
 package gregtech.common;
 
+import gregtech.GregTechRegistries;
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.FluidProperty;
@@ -220,7 +220,7 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.NaturalGas, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Blaze, FluidType.NORMAL);
 
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+        for (Material material : GregTechRegistries.getMaterialRegistry()) {
             FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
             if (fluidProperty == null) continue;
 
