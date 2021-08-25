@@ -16,8 +16,6 @@ public class MaterialRegistry extends GTControlledRegistry<Material> {
             throw new IndexOutOfBoundsException("Id is out of range: " + id);
         }
         key = GameData.checkPrefix(key.toString());
-        value.verifyMaterial();
-        value.postVerify();
         super.putObject(key, value);
         Material objectWithId = getObjectById(id);
         if (objectWithId != null) {
@@ -25,5 +23,14 @@ public class MaterialRegistry extends GTControlledRegistry<Material> {
                     id, value, key, objectWithId, getNameForObject(objectWithId)));
         }
         underlyingIntegerMap.put(value, id);
+    }
+
+    @Override
+    public void freezeRegistry() {
+        if (!frozen) {
+            underlyingIntegerMap.iterator().forEachRemaining(Material::verifyMaterial);
+            underlyingIntegerMap.iterator().forEachRemaining(Material::postVerify);
+        }
+        super.freezeRegistry();
     }
 }
