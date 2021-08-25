@@ -4,6 +4,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.SteamMultiblockRecipeLogic;
+import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -126,14 +127,7 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     }
 
     @Override
-    public void update() {
-        if (!getWorld().isRemote) {
-            if (getOffsetTimer() % 20 == 0 || isFirstTick()) {
-                checkStructurePattern();
-            }
-            if (isStructureFormed()) {
-                updateFormedValid();
-            }
-        }
+    protected boolean shouldUpdate(MTETrait trait) {
+        return !(trait instanceof SteamMultiblockRecipeLogic);
     }
 }
