@@ -3,6 +3,8 @@ package gregtech.api.unification.material;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import gregtech.GregTechRegistries;
+import gregtech.api.GTValues;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
@@ -13,6 +15,7 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.SmallDigits;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.OperatorType;
@@ -108,12 +111,13 @@ public class Material implements Comparable<Material> {
     }
 
     protected void registerMaterial(Material material) {
-        MaterialRegistry.register(this);
+        GregTechRegistries.getMaterialRegistry().register(materialInfo.metaItemSubId, new ResourceLocation(GTValues.MODID, materialInfo.name), this);
     }
 
     public void addFlag(MaterialFlag... flags) {
-        if (MaterialRegistry.isFrozen())
+        if (GregTechRegistries.isMaterialRegistryFrozen()) {
             throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
+        }
         this.flags.addFlags(flags).verify(this);
     }
 
@@ -339,7 +343,7 @@ public class Material implements Comparable<Material> {
     }
 
     public <T extends IMaterialProperty<T>> void setProperty(PropertyKey<T> key, IMaterialProperty<T> property) {
-        if (MaterialRegistry.isFrozen()) {
+        if (GregTechRegistries.isMaterialRegistryFrozen()) {
             throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
         }
         properties.setProperty(key, property);

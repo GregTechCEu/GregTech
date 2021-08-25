@@ -1,6 +1,7 @@
 package gregtech.api.unification.ore;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.GTControlledRegistry;
@@ -37,7 +38,8 @@ public class StoneType implements Comparable<StoneType> {
     public final boolean unbreakable;
     public final boolean affectedByGravity;
 
-    public static final GTControlledRegistry<String, StoneType> STONE_TYPE_REGISTRY = new GTControlledRegistry<>(128);
+    @Deprecated
+    public static final GTControlledRegistry<StoneType> STONE_TYPE_REGISTRY = new GTControlledRegistry<>(128);
 
     public StoneType(int id, String name, ResourceLocation backgroundSideTexture, ResourceLocation backgroundTopTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, int flags, Supplier<IBlockState> stone, Predicate<IBlockState> predicate) {
         Preconditions.checkArgument(
@@ -55,7 +57,7 @@ public class StoneType implements Comparable<StoneType> {
         this.affectedByGravity = (flags & AFFECTED_BY_GRAVITY) > 0;
         this.stone = stone;
         this.predicate = predicate::test;
-        STONE_TYPE_REGISTRY.register(id, name, this);
+        STONE_TYPE_REGISTRY.register(id, new ResourceLocation(GTValues.MODID, name), this);
     }
 
     public StoneType(int id, String name, ResourceLocation backgroundTexture, SoundType soundType, OrePrefix processingPrefix, Material stoneMaterial, String harvestTool, int flags, Supplier<IBlockState> stone, Predicate<IBlockState> predicate) {

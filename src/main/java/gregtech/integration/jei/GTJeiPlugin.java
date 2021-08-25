@@ -1,5 +1,6 @@
 package gregtech.integration.jei;
 
+import gregtech.GregTechRegistries;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
@@ -109,8 +110,8 @@ public class GTJeiPlugin implements IModPlugin {
         }
 
         List<SteamMetaTileEntity> deferredCatalysts = new ArrayList<>();
-        for (ResourceLocation metaTileEntityId : GregTechAPI.META_TILE_ENTITY_REGISTRY.getKeys()) {
-            MetaTileEntity metaTileEntity = GregTechAPI.META_TILE_ENTITY_REGISTRY.getObject(metaTileEntityId);
+        for (ResourceLocation metaTileEntityId : GregTechRegistries.getMetaTileEntityRegistry().getKeys()) {
+            MetaTileEntity metaTileEntity = GregTechRegistries.getMetaTileEntityRegistry().getObject(metaTileEntityId);
             assert metaTileEntity != null;
             if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
                 IControllable workableCapability = metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
@@ -150,7 +151,7 @@ public class GTJeiPlugin implements IModPlugin {
 
         //TODO, add Electromagnetic Separator to the Ore Byproduct page
         List<OreByProduct> oreByproductList = new CopyOnWriteArrayList<>();
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+        for (Material material : GregTechRegistries.getMaterialRegistry()) {
             if (material.hasProperty(PropertyKey.ORE)) {
                 final OreByProduct oreByProduct = new OreByProduct(material);
                 if (oreByProduct.hasByProducts())

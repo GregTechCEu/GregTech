@@ -2,9 +2,12 @@ package gregtech.api.util;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import gregtech.GregTechMod;
 import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistrySimple;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.registries.GameData;
 
 import javax.annotation.Nonnull;
@@ -16,8 +19,9 @@ import java.util.Map;
 // ForgeGradle bug (https://github.com/MinecraftForge/ForgeGradle/issues/498) it gives compile errors in CI environment
 public class GTControlledRegistry<V> extends RegistrySimple<ResourceLocation, V> {
 
-    protected boolean frozen = false;
     protected final int maxId;
+
+    protected boolean frozen = true;
 
     public GTControlledRegistry(int maxId) {
         this.maxId = maxId;
@@ -28,18 +32,39 @@ public class GTControlledRegistry<V> extends RegistrySimple<ResourceLocation, V>
         return frozen;
     }
 
-    public void freezeRegistry() {
+    public void unfreeze() {
+        if (!frozen) {
+            throw new IllegalStateException("Registry is already unfrozen!");
+        }
+        ModContainer container = Loader.instance().activeModContainer();
+        if (container == null || container.getMod() != GregTechMod.instance) {
+            return;
+        }
+        this.frozen = false;
+    }
+
+    public void freeze() {
         if (frozen) {
             throw new IllegalStateException("Registry is already frozen!");
+        }
+        ModContainer container = Loader.instance().activeModContainer();
+        if (container == null || container.getMod() != GregTechMod.instance) {
+            return;
         }
         this.frozen = true;
     }
 
     public void register(int id, ResourceLocation key, V value) {
+        if (frozen) {
+            ModContainer container = Loader.instance().activeModContainer();
+            if (container == null || container.getMod() != GregTechMod.instance) {
+                throw new IllegalStateException("Registry is frozen! Do not attempt to register at this time!");
+            }
+        }
         if (id < 0 || id >= maxId) {
             throw new IndexOutOfBoundsException("Id is out of range: " + id);
         }
-        key = GameData.checkPrefix(key.toString());
+        key = GameData.checkPrefix(key.toString(), true);
         super.putObject(key, value);
 
         V objectWithId = getObjectById(id);

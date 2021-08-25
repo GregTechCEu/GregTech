@@ -1,5 +1,6 @@
 package gregtech.loaders.oreprocessing;
 
+import gregtech.GregTechRegistries;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
@@ -21,7 +22,7 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
 public class DecompositionRecipeHandler {
 
     public static void runRecipeGeneration() {
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+        for (Material material : GregTechRegistries.getMaterialRegistry()) {
             OrePrefix prefix = material.hasProperty(PropertyKey.DUST) ? OrePrefix.dust : null;
             processDecomposition(prefix, material);
         }

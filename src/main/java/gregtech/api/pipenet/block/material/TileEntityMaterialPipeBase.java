@@ -1,5 +1,6 @@
 package gregtech.api.pipenet.block.material;
 
+import gregtech.GregTechRegistries;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -48,27 +49,27 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        this.pipeMaterial = MaterialRegistry.MATERIAL_REGISTRY.getObject(compound.getString("PipeMaterial"));
+        this.pipeMaterial = GregTechRegistries.getMaterialRegistry().getObject(compound.getString("PipeMaterial"));
     }
 
     private void writePipeMaterial(PacketBuffer buf) {
-        buf.writeVarInt(MaterialRegistry.MATERIAL_REGISTRY.getIDForObject(pipeMaterial));
+        buf.writeVarInt(GregTechRegistries.getMaterialRegistry().getIDForObject(pipeMaterial));
     }
 
     private void readPipeMaterial(PacketBuffer buf) {
-        this.pipeMaterial = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(buf.readVarInt());
+        this.pipeMaterial = GregTechRegistries.getMaterialRegistry().getObjectById(buf.readVarInt());
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeVarInt(MaterialRegistry.MATERIAL_REGISTRY.getIDForObject(pipeMaterial));
+        buf.writeVarInt(GregTechRegistries.getMaterialRegistry().getIDForObject(pipeMaterial));
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.pipeMaterial = MaterialRegistry.MATERIAL_REGISTRY.getObjectById(buf.readVarInt());
+        this.pipeMaterial = GregTechRegistries.getMaterialRegistry().getObjectById(buf.readVarInt());
     }
 
     @Override

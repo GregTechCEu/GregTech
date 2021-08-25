@@ -1,5 +1,6 @@
 package gregtech.common.items.behaviors;
 
+import gregtech.GregTechRegistries;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.IItemColorProvider;
 import gregtech.api.items.metaitem.stats.IItemDurabilityManager;
@@ -34,7 +35,7 @@ public abstract class AbstractMaterialPartBehavior implements IItemBehaviour, II
             return defaultMaterial;
         }
         String materialName = compound.getString("Material");
-        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(materialName);
+        Material material = GregTechRegistries.getMaterialRegistry().getObject(materialName);
         if (material == null || !material.hasProperty(PropertyKey.INGOT)) {
             return defaultMaterial;
         }

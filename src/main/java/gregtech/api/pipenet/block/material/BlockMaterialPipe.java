@@ -1,5 +1,6 @@
 package gregtech.api.pipenet.block.material;
 
+import gregtech.GregTechRegistries;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -40,12 +41,12 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
 
     public ItemStack getItem(Material material) {
         if (material == null) return ItemStack.EMPTY;
-        int materialId = MaterialRegistry.MATERIAL_REGISTRY.getIDForObject(material);
+        int materialId = GregTechRegistries.getMaterialRegistry().getIDForObject(material);
         return new ItemStack(this, 1, materialId);
     }
 
     public Material getItemMaterial(ItemStack itemStack) {
-        return MaterialRegistry.MATERIAL_REGISTRY.getObjectById(itemStack.getMetadata());
+        return GregTechRegistries.getMaterialRegistry().getObjectById(itemStack.getMetadata());
     }
 
     @Override
