@@ -2039,7 +2039,7 @@ behavior.plunger.description=Use to clear 1000 L out of a machine's output tank.
 behavior.toggle_energy_consumer.tooltip=Use to toggle mode
 
 enchantment.damage.endermen=Disjunction
-enchantment.damage.radioactivity=Radioactivity
+enchantment.hard.hammer=Hammering
 
 tile.gt.seal.name=Sealed Block
 tile.gt.foam.name=Foam
