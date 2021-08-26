@@ -194,6 +194,10 @@ public class ConfigHolder {
         @Config.RequiresWorldRestart
         public double multiblockSteamToEU = 0.5;
 
+        @Config.Comment("Disable to prevent Hammering enchant from being stacked  with fortune enchant Default: True")
+        @Config.RequiresWorldRestart
+        public static boolean CanHardHammerStackWithFortune = true;
+
         public static class GT5U {
 
             @Config.Comment("This config requires 'B:Use custom machine tank sizes' = true to take effect. Changes the input tank size to the first value, and out tank size to the second value for nearly every single block machine. Units are millibuckets. Default: {64000, 64000}")
