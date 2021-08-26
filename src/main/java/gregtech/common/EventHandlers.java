@@ -17,6 +17,11 @@ import gregtech.common.items.MetaItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityZombie;
+import gregtech.api.enchants.EnchantmentHardHammer;
+import gregtech.common.tools.ToolUtility;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -27,6 +32,8 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -73,6 +80,17 @@ public class EventHandlers {
                 event.setCanceled(true);
             }
         }
+    }
+    @SubscribeEvent
+    public static void Hammer(BlockEvent.HarvestDropsEvent event) {
+        if (!event.getWorld().isRemote && event.getHarvester() != null && !event.isSilkTouching()) {
+            int level = EnchantmentHelper.getEnchantmentLevel(EnchantmentHardHammer.INSTANCE, event.getHarvester().getHeldItemMainhand());
+            if (level > 0) {
+                ToolUtility.applyHammerDrops(event.getWorld().rand, event.getState(), event.getDrops(), EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, event.getHarvester().getHeldItemMainhand()), event.getHarvester());
+
+            }
+        }
+
     }
 
     @SideOnly(Side.CLIENT)
