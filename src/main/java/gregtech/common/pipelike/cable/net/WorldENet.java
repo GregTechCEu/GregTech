@@ -1,7 +1,10 @@
 package gregtech.common.pipelike.cable.net;
 
+import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
+import gregtech.api.pipenet.nodenet.Node;
 import gregtech.api.unification.material.properties.WireProperties;
+import gregtech.api.util.GTLog;
 import net.minecraft.world.World;
 
 public class WorldENet extends WorldPipeNet<WireProperties, EnergyNet> {
@@ -14,6 +17,7 @@ public class WorldENet extends WorldPipeNet<WireProperties, EnergyNet> {
         if (eNetWorldData == null) {
             eNetWorldData = new WorldENet(DATA_ID);
             world.setData(DATA_ID, eNetWorldData);
+            GTLog.logger.info("Initialized WorldENet");
         }
         eNetWorldData.setWorldAndInit(world);
         return eNetWorldData;
@@ -24,8 +28,13 @@ public class WorldENet extends WorldPipeNet<WireProperties, EnergyNet> {
     }
 
     @Override
-    protected EnergyNet createNetInstance() {
+    public EnergyNet createNetInstance() {
         return new EnergyNet(this);
+    }
+
+    @Override
+    public Node<WireProperties> createNode(PipeNet<WireProperties> nodeNet) {
+        return new EnergyNode(nodeNet);
     }
 
 }

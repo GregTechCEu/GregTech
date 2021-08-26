@@ -5,11 +5,10 @@ import gnu.trove.map.hash.TIntIntHashMap;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.metatileentity.SyncedTileEntityBase;
-import gregtech.api.pipenet.nodenet.Node;
-import gregtech.api.pipenet.WorldPipeNet;
+import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
-import gregtech.api.pipenet.nodenet.NodeNet;
+import gregtech.api.pipenet.nodenet.Node;
 import gregtech.api.util.FirstTickScheduler;
 import gregtech.api.util.IFirstTickTask;
 import net.minecraft.block.Block;
@@ -33,7 +32,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     private TIntIntMap openConnectionsMap = new TIntIntHashMap();
     private int openConnections = 0;
-    private boolean walked = false;
 
     protected int insulationColor = DEFAULT_INSULATION_COLOR;
     protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
@@ -49,22 +47,32 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public Node<NodeDataType> getNode() {
+        if (hasNode()) {
+            if (!node.getPipeNet().isValid())
+                node.getPipeNet().rebuildNodeNet(getPos());
+        }
+        return getNodeSilently();
+    }
+
+    public Node<NodeDataType> getNodeSilently() {
         return node;
     }
 
     @Override
-    public Node<NodeDataType> createNode(NodeNet<NodeDataType> nodeNet) {
-        return new Node<>(nodeNet, this);
+    public boolean hasNode() {
+        return node != null;
     }
 
     public void setNode(Node<NodeDataType> node) {
+        if (hasNode() && node != null)
+            node.transferNodeData(this.node);
         this.node = node;
-        if(node != null)
+        if (hasNode())
             this.node.addPipe(this);
     }
 
-    public void createAndSetNode(NodeNet<NodeDataType> net, boolean junction) {
-        this.node = createNode(net);
+    public void createAndSetNode(PipeNet<NodeDataType> net, boolean junction) {
+        setNode(net.createNode());
         node.setJunction(junction);
     }
 
@@ -147,7 +155,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public void setPaintingColor(int insulationColor) {
         this.insulationColor = insulationColor;
         if (!getWorld().isRemote) {
-            getPipeBlock().getWorldPipeNet(getWorld()).updateMark(getPos(), getCableMark());
+            //getPipeBlock().getWorldPipeNet(getWorld()).updateMark(getPos(), getCableMark());
             writeCustomData(-1, buffer -> buffer.writeInt(insulationColor));
             markDirty();
         }
@@ -175,7 +183,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.openConnectionsMap.put(at, openConnections);
         recomputeBlockedConnections();
         if (!getWorld().isRemote) {
-            updateSideBlockedConnection(side);
+            if (hasNode())
+                node.getPipeNet().onConnectionsUpdate();
             writeCustomData(-2, buffer -> {
                 buffer.writeVarInt(at);
                 buffer.writeVarInt(openConnections);
@@ -219,16 +228,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             resultOpenConnections |= openConnections;
         }
         this.openConnections = resultOpenConnections;
-    }
-
-    private void updateSideBlockedConnection(EnumFacing side) {
-            WorldPipeNet<?, ?> worldPipeNet = getPipeBlock().getWorldPipeNet(getWorld());
-            boolean isSideOpen = false;
-            int sideIndex = 1 << side.getIndex();
-            for (int blockedConnections : openConnectionsMap.values()) {
-                isSideOpen |= (blockedConnections & sideIndex) > 0;
-            }
-            worldPipeNet.updateBlockedConnections(getPos(), side, !isSideOpen);
     }
 
     private int withSideConnectionBlocked(int blockedConnections, EnumFacing side, boolean blocked) {
@@ -419,6 +418,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     }
 
     public boolean isSameType(IPipeTile<?, ?> pipeTile) {
-        return getPipeTypeClass().isAssignableFrom(((TileEntityPipeBase<?, ?>)pipeTile).getPipeTypeClass());
+        return getPipeTypeClass().isAssignableFrom(((TileEntityPipeBase<?, ?>) pipeTile).getPipeTypeClass());
     }
 }

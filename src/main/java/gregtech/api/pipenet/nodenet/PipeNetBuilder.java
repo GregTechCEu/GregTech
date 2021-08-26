@@ -1,5 +1,6 @@
 package gregtech.api.pipenet.nodenet;
 
+import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -13,24 +14,24 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NodeNetBuilder<NodeDataType> extends PipeNetWalker {
+public class PipeNetBuilder<NodeDataType> extends PipeNetWalker {
 
-    public static void build(NodeNet<?> net, World world, BlockPos sourcePipe) {
-        NodeNetBuilder<?> builder = new NodeNetBuilder(net, world, sourcePipe, 1);
+    public static void build(PipeNet<?> net, World world, BlockPos sourcePipe) {
+        PipeNetBuilder<?> builder = new PipeNetBuilder(net, world, sourcePipe, 1);
         GTLog.logger.info("Building Pipe Net");
         builder.traversePipeNet();
     }
 
-    private final NodeNet nodeNet;
+    private final PipeNet nodeNet;
 
-    protected NodeNetBuilder(NodeNet<NodeDataType> nodeNet, World world, BlockPos sourcePipe, int walkedBlocks) {
+    protected PipeNetBuilder(PipeNet<NodeDataType> nodeNet, World world, BlockPos sourcePipe, int walkedBlocks) {
         super(world, sourcePipe, walkedBlocks);
         this.nodeNet = nodeNet;
     }
 
     @Override
     protected PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks) {
-        NodeNetBuilder<NodeDataType> builder = new NodeNetBuilder(nodeNet, world, nextPos, walkedBlocks);
+        PipeNetBuilder<NodeDataType> builder = new PipeNetBuilder(nodeNet, world, nextPos, walkedBlocks);
         return builder;
     }
 
@@ -44,8 +45,8 @@ public class NodeNetBuilder<NodeDataType> extends PipeNetWalker {
         for(EnumFacing facing : EnumFacing.values()) {
             offsetPos.setPos(pos).move(facing);
             TileEntity tile = getWorld().getTileEntity(offsetPos);
-            if(!(tile instanceof IPipeTile)) continue;
-            IPipeTile<?, ?> otherPipe = (IPipeTile<?, ?>) tile;
+            if(!(tile instanceof TileEntityPipeBase)) continue;
+            TileEntityPipeBase<?, ?> otherPipe = (TileEntityPipeBase<?, ?>) tile;
             if(isValidPipe(pipeTile, otherPipe, pos, facing)) {
                 if(++pipes > 2) {
                     pipe.createAndSetNode(nodeNet, true);
@@ -53,8 +54,8 @@ public class NodeNetBuilder<NodeDataType> extends PipeNetWalker {
                     return;
                 }
                 //pipes.add(pipe);
-                if(otherPipe.getNodeData().equals(pipeTile.getNodeData()) && otherPipe.hasNode() && !otherPipe.getNode().isJunction() && isWalked(pos.offset(facing))) {
-                    nodes.add(otherPipe.getNode());
+                if(otherPipe.getNodeData().equals(pipeTile.getNodeData()) && otherPipe.hasNode() && !otherPipe.getNodeSilently().isJunction() && isWalked(pos.offset(facing))) {
+                    nodes.add(otherPipe.getNodeSilently());
                 }
             }
         }
@@ -79,6 +80,6 @@ public class NodeNetBuilder<NodeDataType> extends PipeNetWalker {
 
     @Override
     protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        return ((TileEntityPipeBase<?, ?>)currentPipe).getPipeTypeClass().isAssignableFrom(((TileEntityPipeBase<?, ?>)neighbourPipe).getPipeTypeClass());
+        return currentPipe.isSameType(neighbourPipe);
     }
 }

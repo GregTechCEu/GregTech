@@ -1,11 +1,11 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
+import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.nodenet.Node;
-import gregtech.api.pipenet.nodenet.NodeNet;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.PerTickIntCounter;
 import gregtech.api.util.TickingObjectHolder;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.FluidStack;
 
 public class FluidNode extends Node<FluidPipeProperties> {
@@ -14,8 +14,8 @@ public class FluidNode extends Node<FluidPipeProperties> {
     private final PerTickIntCounter transferredFluids = new PerTickIntCounter(0);
     private int currentChannel = -1;
 
-    public FluidNode(NodeNet<FluidPipeProperties> nodeNet, IPipeTile<?, FluidPipeProperties> pipe) {
-        super(nodeNet, pipe);
+    public FluidNode(PipeNet<FluidPipeProperties> nodeNet) {
+        super(nodeNet);
     }
 
     public void transferFluid(int amount) {
@@ -36,9 +36,9 @@ public class FluidNode extends Node<FluidPipeProperties> {
     }
 
     protected TickingObjectHolder<FluidStack>[] getFluidHolders() {
-        if(fluidHolders == null) {
+        if (fluidHolders == null) {
             this.fluidHolders = new TickingObjectHolder[getNodeData().tanks];
-            for(int i = 0; i < fluidHolders.length; i++) {
+            for (int i = 0; i < fluidHolders.length; i++) {
                 fluidHolders[i] = new TickingObjectHolder<>(null, 20);
             }
         }
@@ -47,7 +47,7 @@ public class FluidNode extends Node<FluidPipeProperties> {
 
     public FluidStack[] getContainedFluids() {
         FluidStack[] fluids = new FluidStack[getFluidHolders().length];
-        for(int i = 0; i < fluids.length; i++) {
+        for (int i = 0; i < fluids.length; i++) {
             fluids[i] = fluidHolders[i].getNullable(getWorld());
         }
         return fluids;
@@ -97,5 +97,27 @@ public class FluidNode extends Node<FluidPipeProperties> {
                 return i;
         }
         return emptyTank;
+    }
+
+    @Override
+    public void readNbt(NBTTagCompound nbt) {
+        super.readNbt(nbt);
+        /*NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
+        fluidHolders = new TickingObjectHolder[list.tagCount()];
+        for(int i = 0; i < fluidHolders.length; i++) {
+            fluidHolders[i] = new TickingObjectHolder<>(null, 20);
+        }
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTTagCompound tag = list.getCompoundTagAt(i);
+            if (!tag.getBoolean("isNull")) {
+                fluidHolders[i].reset(FluidStack.loadFluidStackFromNBT(tag), tag.getInteger("Timer"));
+            }
+        }*/
+    }
+
+    @Override
+    public NBTTagCompound writeNbt() {
+        NBTTagCompound nbt = super.writeNbt();
+        return nbt;
     }
 }

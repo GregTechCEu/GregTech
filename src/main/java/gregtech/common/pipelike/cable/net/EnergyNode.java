@@ -1,18 +1,18 @@
 package gregtech.common.pipelike.cable.net;
 
+import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.nodenet.Node;
-import gregtech.api.pipenet.nodenet.NodeNet;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.PerTickLongCounter;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class EnergyNode extends Node<WireProperties> {
 
     private final PerTickLongCounter amperageCounter = new PerTickLongCounter(0);
     private final PerTickLongCounter voltageCounter = new PerTickLongCounter(0);
 
-    public EnergyNode(NodeNet<WireProperties> nodeNet, IPipeTile<?, WireProperties> pipe) {
-        super(nodeNet, pipe);
+    public EnergyNode(PipeNet<WireProperties> nodeNet) {
+        super(nodeNet);
     }
 
     public boolean checkAmperage(long amps) {
@@ -20,7 +20,7 @@ public class EnergyNode extends Node<WireProperties> {
     }
 
     public void incrementAmperage(long amps, long voltage) {
-        if(voltage > voltageCounter.get(getWorld())) {
+        if (voltage > voltageCounter.get(getWorld())) {
             voltageCounter.set(getWorld(), voltage);
         }
         amperageCounter.increment(getWorld(), amps);
@@ -40,5 +40,12 @@ public class EnergyNode extends Node<WireProperties> {
 
     public long getMaxVoltage() {
         return getNodeData().voltage;
+    }
+
+    @Override
+    public void transferNodeData(Node<WireProperties> oldNode) {
+        EnergyNode oldEnergyNode = (EnergyNode) oldNode;
+        amperageCounter.set(getWorld(), Math.max(amperageCounter.get(getWorld()), oldEnergyNode.amperageCounter.get(getWorld())));
+        voltageCounter.set(getWorld(), Math.max(voltageCounter.get(getWorld()), oldEnergyNode.voltageCounter.get(getWorld())));
     }
 }

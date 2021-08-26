@@ -1,7 +1,7 @@
 package gregtech.common.pipelike.cable.net;
 
-import gregtech.api.pipenet.PipeNode;
 import gregtech.api.pipenet.PipeNet;
+import gregtech.api.pipenet.PipeNode;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.WireProperties;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,8 +23,8 @@ public class EnergyNet extends PipeNet<WireProperties> {
     }
 
     public List<RoutePath> getNetData(BlockPos pipePos) {
-        if(!hasValidNodeNet())
-            rebuildNodeNet(getWorldData(), pipePos);
+        if (!isValid())
+            rebuildNodeNet(pipePos);
         List<RoutePath> data = NET_DATA.get(pipePos);
         if (data == null) {
             data = EnergyNetWalker.createNetData(getWorldData(), pipePos);
@@ -40,8 +40,8 @@ public class EnergyNet extends PipeNet<WireProperties> {
     }
 
     @Override
-    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
-        super.updateBlockedConnections(nodePos, facing, isBlocked);
+    public void invalidate() {
+        super.invalidate();
         NET_DATA.clear();
     }
 
@@ -53,14 +53,14 @@ public class EnergyNet extends PipeNet<WireProperties> {
     }
 
     @Override
-    protected void writeNodeData(WireProperties nodeData, NBTTagCompound tagCompound) {
+    public void writeNodeData(WireProperties nodeData, NBTTagCompound tagCompound) {
         tagCompound.setInteger("voltage", nodeData.voltage);
         tagCompound.setInteger("amperage", nodeData.amperage);
         tagCompound.setInteger("loss", nodeData.lossPerBlock);
     }
 
     @Override
-    protected WireProperties readNodeData(NBTTagCompound tagCompound) {
+    public WireProperties readNodeData(NBTTagCompound tagCompound) {
         int voltage = tagCompound.getInteger("voltage");
         int amperage = tagCompound.getInteger("amperage");
         int lossPerBlock = tagCompound.getInteger("loss");

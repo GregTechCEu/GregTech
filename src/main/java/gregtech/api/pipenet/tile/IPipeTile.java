@@ -1,10 +1,10 @@
 package gregtech.api.pipenet.tile;
 
 import gnu.trove.map.TIntIntMap;
+import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.nodenet.Node;
-import gregtech.api.pipenet.nodenet.NodeNet;
 import gregtech.common.ConfigHolder;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
@@ -28,7 +28,12 @@ public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
 
     Node<NodeDataType> getNode();
 
-    Node<NodeDataType> createNode(NodeNet<NodeDataType> nodeNet);
+    default PipeNet<NodeDataType> getPipeNet() {
+        if (!hasNode()) {
+            return getPipeBlock().getWorldPipeNet(getWorld()).getNetFromPos(getPos());
+        }
+        return getNode().getPipeNet();
+    }
 
     default long getTickTimer() {
         return getWorld().getWorldTime();

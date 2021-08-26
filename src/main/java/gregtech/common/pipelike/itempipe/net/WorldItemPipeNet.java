@@ -23,7 +23,7 @@ public class WorldItemPipeNet extends WorldPipeNet<ItemPipeProperties, ItemPipeN
     }
 
     @Override
-    protected ItemPipeNet createNetInstance() {
+    public ItemPipeNet createNetInstance() {
         return new ItemPipeNet(this);
     }
 }

@@ -36,8 +36,13 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
     }
 
     @Override
-    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
-        super.updateBlockedConnections(nodePos, facing, isBlocked);
+    public void invalidate() {
+        super.invalidate();
+        NET_DATA.clear();
+    }
+
+    @Override
+    public void onNodeNeighbourChange(World world, BlockPos pipePos, EnumFacing facing) {
         NET_DATA.clear();
     }
 
@@ -48,12 +53,14 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         ((ItemPipeNet) parentNet).NET_DATA.clear();
     }
 
-    protected void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
+    @Override
+    public void writeNodeData(ItemPipeProperties nodeData, NBTTagCompound tagCompound) {
         tagCompound.setInteger("Resistance", nodeData.priority);
         tagCompound.setFloat("Rate", nodeData.transferRate);
     }
 
-    protected ItemPipeProperties readNodeData(NBTTagCompound tagCompound) {
+    @Override
+    public ItemPipeProperties readNodeData(NBTTagCompound tagCompound) {
         return new ItemPipeProperties(tagCompound.getInteger("Range"), tagCompound.getFloat("Rate"));
     }
 

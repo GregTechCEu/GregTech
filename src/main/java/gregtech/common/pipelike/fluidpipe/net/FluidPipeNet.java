@@ -30,8 +30,8 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
     }
 
     public List<Inventory> getNetData(BlockPos pipePos) {
-        if(!hasValidNodeNet())
-            rebuildNodeNet(getWorldData(), pipePos);
+        if(!isValid())
+            rebuildNodeNet(pipePos);
         return NET_DATA.computeIfAbsent(pipePos, pos -> {
             List<Inventory> data = FluidNetWalker.createNetData(getWorldData(), pos);
             data.sort(Comparator.comparingInt(inv -> inv.distance));
@@ -39,13 +39,14 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         });
     }
 
-    public void nodeNeighbourChanged(BlockPos pos) {
+    @Override
+    public void invalidate() {
+        super.invalidate();
         NET_DATA.clear();
     }
 
     @Override
-    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
-        super.updateBlockedConnections(nodePos, facing, isBlocked);
+    public void onNodeNeighbourChange(World world, BlockPos pipePos, EnumFacing facing) {
         NET_DATA.clear();
     }
 
@@ -86,7 +87,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
     }
 
     @Override
-    protected void writeNodeData(FluidPipeProperties nodeData, NBTTagCompound tagCompound) {
+    public void writeNodeData(FluidPipeProperties nodeData, NBTTagCompound tagCompound) {
         tagCompound.setInteger("max_temperature", nodeData.maxFluidTemperature);
         tagCompound.setInteger("throughput", nodeData.throughput);
         tagCompound.setBoolean("gas_proof", nodeData.gasProof);
@@ -94,7 +95,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
     }
 
     @Override
-    protected FluidPipeProperties readNodeData(NBTTagCompound tagCompound) {
+    public FluidPipeProperties readNodeData(NBTTagCompound tagCompound) {
         int maxTemperature = tagCompound.getInteger("max_temperature");
         int throughput = tagCompound.getInteger("throughput");
         boolean gasProof = tagCompound.getBoolean("gas_proof");

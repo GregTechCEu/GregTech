@@ -20,7 +20,7 @@ public class Pos {
     }
 
     public static long asLong(int x, int y, int z) {
-        return (x & X_MASK) << X_SHIFT | (y & Y_MASK) << Y_SHIFT | (z & Z_MASK) << 0;
+        return (x & X_MASK) << X_SHIFT | (y & Y_MASK) << Y_SHIFT | (z & Z_MASK);
     }
 
     /**

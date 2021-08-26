@@ -6,7 +6,6 @@ import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
 import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
-import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -32,25 +31,12 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            ItemPipeNet net = getPipeNet();
-            if(net == null)
+            ItemPipeNet net = (ItemPipeNet) getPipeNet();
+            if (net == null)
                 GTLog.logger.error("PipeNet can't be null");
             else
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(new ItemNetHandler(net, this, facing));
         }
         return super.getCapabilityInternal(capability, facing);
-    }
-
-    public ItemPipeNet getPipeNet() {
-        ItemPipeNet currentPipeNet = this.currentPipeNet.get();
-        if (currentPipeNet != null && currentPipeNet.isValid() &&
-                currentPipeNet.containsNode(getPos()))
-            return currentPipeNet; //if current net is valid and does contain position, return it
-        WorldItemPipeNet worldFluidPipeNet = (WorldItemPipeNet) getPipeBlock().getWorldPipeNet(getWorld());
-        currentPipeNet = worldFluidPipeNet.getNetFromPos(getPos());
-        if (currentPipeNet != null) {
-            this.currentPipeNet = new WeakReference<>(currentPipeNet);
-        }
-        return currentPipeNet;
     }
 }

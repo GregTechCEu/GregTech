@@ -51,7 +51,6 @@ public class EnergyNetHandler implements IEnergyContainer {
             long amps = dest.acceptEnergyFromNetwork(facing, voltage - path.getMaxLoss(), amperage - amperesUsed);
             amperesUsed += amps;
             boolean didBurn = false;
-            GTLog.logger.info("Net has {} nodes", path.getPath().size());
             for (EnergyNode node : path.getPath()) {
                 if (node.getNodeData().voltage < voltage) {
                     burnNet(path.getPath());
@@ -59,7 +58,7 @@ public class EnergyNetHandler implements IEnergyContainer {
                 }
                 if (!node.checkAmperage(amps)) {
                     didBurn = true;
-                    burnNode(node);
+                    burnNode(node, new BlockPos.MutableBlockPos());
                 }
             }
             if (didBurn) break;
@@ -74,14 +73,14 @@ public class EnergyNetHandler implements IEnergyContainer {
     }
 
     private void burnNet(Set<EnergyNode> nodes) {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (EnergyNode node : nodes) {
-            burnNode(node);
+            burnNode(node, pos);
         }
     }
 
-    private void burnNode(EnergyNode node) {
+    private void burnNode(EnergyNode node, BlockPos.MutableBlockPos pos) {
         GTLog.logger.info(" - burning Node");
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (Long rawPos : node.getPipePositions()) {
             Pos.setPos(pos, rawPos);
             burnCable(pos);

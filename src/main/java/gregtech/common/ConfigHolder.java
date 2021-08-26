@@ -250,7 +250,7 @@ public class ConfigHolder {
 
             @Config.Comment("Whether or not to use GT6-style pipe and cable connections, meaning they will not auto-connect " +
                     "unless placed directly onto another pipe or cable. Default: false")
-            public boolean gt6StylePipesCables = false;
+            public boolean gt6StylePipesCables = true;
 
             @Config.Comment("Whether or not to use Plates instead of Ingots for Wrench Recipes. Default: false")
             @Config.RequiresMcRestart

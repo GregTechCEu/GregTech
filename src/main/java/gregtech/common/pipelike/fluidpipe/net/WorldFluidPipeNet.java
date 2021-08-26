@@ -24,12 +24,7 @@ public class WorldFluidPipeNet extends WorldPipeNet<FluidPipeProperties, FluidPi
     }
 
     @Override
-    protected void removePipeNet(FluidPipeNet pipeNet) {
-        super.removePipeNet(pipeNet);
-    }
-
-    @Override
-    protected FluidPipeNet createNetInstance() {
+    public FluidPipeNet createNetInstance() {
         return new FluidPipeNet(this);
     }
 

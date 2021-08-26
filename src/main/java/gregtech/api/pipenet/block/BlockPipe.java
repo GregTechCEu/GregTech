@@ -48,7 +48,10 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import static gregtech.api.metatileentity.MetaTileEntity.FULL_CUBE_COLLISION;
 
@@ -116,10 +119,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
     public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand) {
         IPipeTile<PipeType, NodeDataType> pipeTile = getPipeTileEntity(worldIn, pos);
         if (pipeTile != null) {
-            int activeConnections = pipeTile.getOpenConnections();
-            boolean isActiveNode = activeConnections != 0;
-            getWorldPipeNet(worldIn).addNode(pos, createProperties(pipeTile), 0, activeConnections, isActiveNode);
-            onActiveModeChange(worldIn, pos, isActiveNode, true);
+            getWorldPipeNet(worldIn).addNode(pos, createProperties(pipeTile), pipeTile);
         }
     }
 
@@ -172,14 +172,9 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, false, false);
             if (open && !canConnect)
                 pipeTile.setConnectionBlocked(AttachmentType.PIPE, facing, true, false);
-            //updateActiveNodeStatus(worldIn, pos, pipeTile);
             pipeTile.getCoverable().updateInputRedstoneSignals();
-            WorldPipeNetType worldPipeNet = getWorldPipeNet(worldIn);
-            if(worldPipeNet != null) {
-                PipeNet<NodeDataType> net = worldPipeNet.getNetFromPos(pos);
-                if(net != null)
-                    net.onNodeNeighbourChange(worldIn, pos, facing);
-            }
+            if (pipeTile.hasNode())
+                pipeTile.getNode().getPipeNet().onNodeNeighbourChange(worldIn, pos, facing);
         }
     }
 
@@ -202,30 +197,12 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         return pipeTile == null ? 0 : pipeTile.getCoverable().getOutputRedstoneSignal(side.getOpposite());
     }
 
-    public void updateActiveNodeStatus(World worldIn, BlockPos pos, IPipeTile<PipeType, NodeDataType> pipeTile) {
-        /*PipeNetOld<NodeDataType> pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
-        if (pipeNet != null && pipeTile != null) {
-            int activeConnections = pipeTile.getOpenConnections(); //remove blocked connections
-            boolean isActiveNodeNow = activeConnections != 0;
-            boolean modeChanged = pipeNet.markNodeAsActive(pos, isActiveNodeNow);
-            if (modeChanged) {
-                onActiveModeChange(worldIn, pos, isActiveNodeNow, false);
-            }
-        }*/
-    }
-
     @Nullable
     @Override
     public TileEntity createNewTileEntity(@Nonnull World worldIn, int meta) {
         return createNewTileEntity(false);
     }
 
-    /**
-     * Can be used to update tile entity to tickable when node becomes active
-     * usable for fluid pipes, as example
-     */
-    protected void onActiveModeChange(World world, BlockPos pos, boolean isActiveNow, boolean isInitialChange) {
-    }
 
     @Nonnull
     @Override
@@ -426,7 +403,7 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             }
             // check if neighbour is a smaller cable
             TileEntity neighbourTile = selfTile.getWorld().getTileEntity(selfTile.getPos().offset(facing));
-            if(neighbourTile instanceof IPipeTile && selfTile.isSameType((IPipeTile<?, ?>) neighbourTile) &&
+            if (neighbourTile instanceof IPipeTile && selfTile.isSameType((IPipeTile<?, ?>) neighbourTile) &&
                     ((IPipeTile<?, ?>) neighbourTile).isConnectionOpenAny(facing.getOpposite()) &&
                     ((IPipeTile<?, ?>) neighbourTile).getPipeType().getThickness() < selfTHICCness) {
                 connections |= 1 << (facing.getIndex() + 6);
