@@ -95,11 +95,14 @@ public class GTJeiPlugin implements IModPlugin {
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler, VanillaRecipeCategoryUid.CRAFTING);
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
-            List<GTRecipeWrapper> recipesList = recipeMap.getRecipeList()
-                    .stream().filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay())
-                    .map(GTRecipeWrapper::new)
-                    .collect(Collectors.toList());
-            registry.addRecipes(recipesList, GTValues.MODID + ":" + recipeMap.unlocalizedName);
+            if (!recipeMap.isHidden) {
+                List<GTRecipeWrapper> recipesList = recipeMap.getRecipeList()
+                        .stream()
+                        .filter(recipe -> !recipe.isHidden() && recipe.hasValidInputsForDisplay())
+                        .map(GTRecipeWrapper::new)
+                        .collect(Collectors.toList());
+                registry.addRecipes(recipesList, GTValues.MODID + ":" + recipeMap.unlocalizedName);
+            }
         }
 
         for (FuelRecipeMap fuelRecipeMap : FuelRecipeMap.getRecipeMaps()) {
