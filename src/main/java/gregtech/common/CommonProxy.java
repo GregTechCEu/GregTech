@@ -3,6 +3,7 @@ package gregtech.common;
 import gregtech.api.GTValues;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.enchants.EnchantmentEnderDamage;
+import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
@@ -227,6 +228,7 @@ public class CommonProxy {
     @SubscribeEvent
     public static void registerEnchantments(RegistryEvent.Register<Enchantment> event) {
         EnchantmentEnderDamage.INSTANCE.register(event);
+        EnchantmentHardHammer.INSTANCE.register(event);
     }
 
     @SubscribeEvent
