@@ -1,0 +1,20 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.low_voltage.86_electrocution_death.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.low_voltage.86_electrocution_death.name"
+    },
+    "icon": {
+      "item": "gregtech:wire_quadruple",
+      "data": 112
+    }
+  },
+  "criteria": {
+    "electrocution_death": {
+      "trigger": "gregtech:electrocution_death"
+    }
+  },
+  "parent": "gregtech:low_voltage/root_lv"
+}

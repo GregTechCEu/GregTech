@@ -415,6 +415,15 @@ public class Materials {
     public static Material DistilledWater;
     public static Material SodiumPotassium;
     public static Material SamariumMagnetic;
+    public static Material ManganesePhosphide;
+    public static Material MagnesiumDiboride;
+    public static Material MercuryBariumCalciumCuprate;
+    public static Material UraniumTriplatinum;
+    public static Material SamariumIronArsenicOxide;
+    public static Material IndiumTinBariumTitaniumCuprate;
+    public static Material UraniumRhodiumDinaquadide;
+    public static Material EnrichedNaquadahTriniumEuropiumDuranide;
+    public static Material RutheniumTriniumAmericiumNeutronate;
 
     /**
      * Organic chemistry
@@ -582,6 +591,10 @@ public class Materials {
     public static Material Meat;
     public static Material Wood;
     public static Material Paper;
+    public static Material FishOil;
+    public static Material RubySlurry;
+    public static Material SapphireSlurry;
+    public static Material GreenSapphireSlurry;
 
     /**
      * Second Degree Compounds
@@ -641,6 +654,7 @@ public class Materials {
     public static Material LiquidNetherAir;
     public static Material EnderAir;
     public static Material LiquidEnderAir;
+    public static Material AquaRegia;
 
     /**
      * Third Degree Materials

@@ -11,15 +11,24 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class LabelWidget extends Widget {
 
-    protected boolean xCentered = false;
+    protected boolean xCentered;
+    protected boolean yCentered;
+    protected int width;
 
     protected final String text;
     protected final Object[] formatting;
     private final int color;
+    private boolean dropShadow;
+    @SideOnly(Side.CLIENT)
+    private List<String> texts;
 
     public LabelWidget(int xPosition, int yPosition, String text, Object... formatting) {
         this(xPosition, yPosition, text, 0x404040, formatting);
@@ -34,7 +43,32 @@ public class LabelWidget extends Widget {
         this.text = text;
         this.color = color;
         this.formatting = formatting;
+        if (isClientSide()) {
+            texts = Collections.singletonList(getResultText());
+        }
         recomputeSize();
+    }
+
+    public LabelWidget setShadow(boolean dropShadow){
+        this.dropShadow = dropShadow;
+        return this;
+    }
+
+    public LabelWidget setWidth(int width) {
+        this.width = width;
+        if (isClientSide()) {
+            if (this.width > 0) {
+                texts = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(getResultText(), width);
+            } else {
+                texts = Collections.singletonList(getResultText());
+            }
+        }
+        return this;
+    }
+
+    public LabelWidget setYCentered(boolean yCentered) {
+        this.yCentered = yCentered;
+        return this;
     }
 
     private String getResultText() {
@@ -60,15 +94,17 @@ public class LabelWidget extends Widget {
     @Override
     @SideOnly(Side.CLIENT)
     public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        String resultText = getResultText();
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         Position pos = getPosition();
-        if (!xCentered) {
-            fontRenderer.drawString(resultText, pos.x, pos.y, color);
-        } else {
-            fontRenderer.drawString(resultText,
-                    pos.x - fontRenderer.getStringWidth(resultText) / 2, pos.y, color);
+        int height = fontRenderer.FONT_HEIGHT * texts.size();
+        for (int i = 0; i < texts.size(); i++) {
+            String resultText = texts.get(i);
+            int width = fontRenderer.getStringWidth(resultText);;
+            float x = pos.x - (xCentered ? width / 2f : 0);
+            float y = pos.y - (yCentered ? height / 2f : 0) + i * fontRenderer.FONT_HEIGHT;
+            fontRenderer.drawString(resultText, x, y, color, dropShadow);
         }
+
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 

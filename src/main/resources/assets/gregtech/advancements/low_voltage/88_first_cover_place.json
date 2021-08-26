@@ -1,0 +1,20 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.low_voltage.88_first_cover_place.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.low_voltage.88_first_cover_place.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 302
+    }
+  },
+  "criteria": {
+    "first_cover_place": {
+      "trigger": "gregtech:first_cover_place"
+    }
+  },
+  "parent": "gregtech:low_voltage/21_machine_controller_cover"
+}

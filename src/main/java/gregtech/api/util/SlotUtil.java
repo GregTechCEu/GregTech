@@ -27,9 +27,8 @@ public class SlotUtil {
             } else if (slot.isItemValid(stackHeld)) {
                 if (areItemsEqual(stackSlot, stackHeld)) {
                     adjustPhantomSlot(slot, mouseButton, clickTypeIn);
-                } else {
-                    fillPhantomSlot(slot, stackHeld, mouseButton);
                 }
+                fillPhantomSlot(slot, stackHeld, mouseButton);
             }
         } else if (mouseButton == 5) {
             if (!slot.getHasStack()) {

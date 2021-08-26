@@ -34,22 +34,29 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
         long maxVoltage = getMaxVoltage(); // Will always be LV voltage
         Recipe currentRecipe = null;
         IItemHandlerModifiable importInventory = getInputInventory();
-        boolean dirty = checkRecipeInputsDirty(importInventory, null);
+        IMultipleTankHandler importFluids = getInputTank();
 
-        if (dirty || forceRecipeRecheck) {
-            this.forceRecipeRecheck = false;
-
-            currentRecipe = findRecipe(maxVoltage, importInventory, null, MatchingMode.DEFAULT);
-            if (currentRecipe != null) {
-                this.previousRecipe = currentRecipe;
-            }
-        } else if (previousRecipe != null && previousRecipe.matches(false, importInventory, new FluidTankList(false))) {
+        //inverse of logic in normal AbstractRecipeLogic
+        //for MultiSmelter, we can reuse previous recipe if inputs didn't change
+        //otherwise, we need to recompute it for new ingredients
+        //but technically, it means we can cache multi smelter recipe, but changing inputs have more priority
+        if (hasNotifiedInputs() ||
+                previousRecipe == null ||
+                !previousRecipe.matches(false, importInventory, importFluids, MatchingMode.IGNORE_FLUIDS)) {
+            //Inputs changed, try searching new recipe for given inputs
+            currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.IGNORE_FLUIDS);
+        } else {
+            //if previous recipe still matches inputs, try to use it
             currentRecipe = previousRecipe;
         }
-
-        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe)) {
+        if (currentRecipe != null)
+            // replace old recipe with new one
+            this.previousRecipe = currentRecipe;
+        // proceed if we have a usable recipe.
+        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))
             setupRecipe(currentRecipe);
-        }
+        // Inputs have been inspected.
+        metaTileEntity.getNotifiedItemInputList().clear();
     }
 
     @Override
@@ -64,6 +71,9 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
         /* Iterate over input items looking for more items to process until we
          * have touched every item, or are at maximum item capacity
          */
+        boolean matchedRecipe = false;
+        boolean canFitOutputs = true;
+
         for (int index = 0; index < inputs.getSlots() && currentItemsEngaged < MAX_PROCESSES; index++) {
             final ItemStack currentInputItem = inputs.getStackInSlot(index);
 
@@ -78,6 +88,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
                     MatchingMode.DEFAULT);
             CountableIngredient inputIngredient;
             if (matchingRecipe != null) {
+                matchedRecipe = true;
                 if (matchingRecipe.getOutputs().isEmpty())
                     return doChancedOnlyRecipe(matchingRecipe, currentInputItem);
                 inputIngredient = matchingRecipe.getInputs().get(0);
@@ -104,7 +115,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
                 computeOutputItemStacks(temp, matchingRecipe.getOutputs().get(0), recipeMultiplier);
 
                 // Check to see if we have output space available for the recipe
-                boolean canFitOutputs = InventoryUtils.simulateItemStackMerge(temp, this.getOutputInventory());
+                canFitOutputs = InventoryUtils.simulateItemStackMerge(temp, this.getOutputInventory());
                 if (!canFitOutputs)
                     break;
 
@@ -120,9 +131,10 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
             }
         }
 
-        // No recipe was found
+        this.invalidInputsForRecipes = !matchedRecipe;
+        this.isOutputsFull = !canFitOutputs;
+
         if (recipeInputs.isEmpty()) {
-            forceRecipeRecheck = true;
             return null;
         }
 

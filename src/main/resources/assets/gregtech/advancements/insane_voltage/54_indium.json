@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.insane_voltage.54_indium.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
+      "item": "gregtech:meta_dust_small",
       "data": 48
     }
   },
@@ -18,7 +18,7 @@
         "items": [
           {
             "type": "forge:ore_dict",
-            "ore": "dustTinyIndium"
+            "ore": "dustSmallIndium"
           }
         ]
       }

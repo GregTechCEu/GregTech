@@ -15,6 +15,7 @@ import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
+import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
@@ -23,6 +24,7 @@ import gregtech.api.render.Textures;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.advancement.GTTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -43,6 +45,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -91,6 +94,10 @@ public abstract class MetaTileEntity implements ICoverable {
     protected boolean isFragile = false;
 
     private final CoverBehavior[] coverBehaviors = new CoverBehavior[6];
+    protected List<IItemHandlerModifiable> notifiedItemOutputList = new ArrayList<>();
+    protected List<IItemHandlerModifiable> notifiedItemInputList = new ArrayList<>();
+    protected List<IFluidHandler> notifiedFluidInputList = new ArrayList<>();
+    protected List<IFluidHandler> notifiedFluidOutputList = new ArrayList<>();
 
     public MetaTileEntity(ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -250,6 +257,30 @@ public abstract class MetaTileEntity implements ICoverable {
         return getMetaName() + ".name";
     }
 
+    public <T> void addNotifiedInput(T input) {
+        if (input instanceof IItemHandlerModifiable) {
+            if (!notifiedItemInputList.contains(input)) {
+                this.notifiedItemInputList.add((IItemHandlerModifiable) input);
+            }
+        } else if (input instanceof FluidTank) {
+            if (!notifiedFluidInputList.contains(input)) {
+                this.notifiedFluidInputList.add((FluidTank) input);
+            }
+        }
+    }
+
+    public <T> void addNotifiedOutput(T output) {
+        if (output instanceof IItemHandlerModifiable) {
+            if (!notifiedItemOutputList.contains(output)) {
+                this.notifiedItemOutputList.add((IItemHandlerModifiable) output);
+            }
+        } else if (output instanceof NotifiableFluidTank) {
+            if (!notifiedFluidOutputList.contains(output)) {
+                this.notifiedFluidOutputList.add((NotifiableFluidTank) output);
+            }
+        }
+    }
+
     /**
      * Adds a trait to this meta tile entity
      * traits are objects linked with meta tile entity and performing certain
@@ -312,7 +343,11 @@ public abstract class MetaTileEntity implements ICoverable {
         EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
                 coverBehavior.onRightClick(playerIn, hand, result);
         if (coverResult != EnumActionResult.PASS) {
-            return coverResult == EnumActionResult.SUCCESS;
+            if (coverResult == EnumActionResult.SUCCESS) {
+                if (!getWorld().isRemote) GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) playerIn);
+                return true;
+            }
+            return false;
         }
         return onRightClick(playerIn, hand, result.sideHit, result);
     }
@@ -344,6 +379,15 @@ public abstract class MetaTileEntity implements ICoverable {
                 MetaTileEntityUIFactory.INSTANCE.openUI(getHolder(), (EntityPlayerMP) playerIn);
             }
             return true;
+        } else if (playerIn.isSneaking()) {
+            EnumFacing hitFacing = hitResult.sideHit;
+
+            CoverBehavior coverBehavior = hitFacing == null ? null : getCoverAtSide(hitFacing);
+
+            EnumActionResult coverResult = coverBehavior == null ? EnumActionResult.PASS :
+                    coverBehavior.onScrewdriverClick(playerIn, hand, hitResult);
+
+            return coverResult == EnumActionResult.SUCCESS;
         }
         return false;
     }
@@ -1206,6 +1250,22 @@ public abstract class MetaTileEntity implements ICoverable {
         return exportFluids;
     }
 
+    public List<IItemHandlerModifiable> getNotifiedItemOutputList() {
+        return notifiedItemOutputList;
+    }
+
+    public List<IItemHandlerModifiable> getNotifiedItemInputList() {
+        return notifiedItemInputList;
+    }
+
+    public List<IFluidHandler> getNotifiedFluidInputList() {
+        return notifiedFluidInputList;
+    }
+
+    public List<IFluidHandler> getNotifiedFluidOutputList() {
+        return notifiedFluidOutputList;
+    }
+
     public boolean isFragile() {
         return isFragile;
     }
@@ -1235,5 +1295,8 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public boolean getWitherProof() {
         return false;
+    }
+
+    public void preInit(Object... data) {
     }
 }

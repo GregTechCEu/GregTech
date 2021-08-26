@@ -29,13 +29,14 @@ public class Textures {
 
     private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
     public static final List<IIconRegister> iconRegisters = new ArrayList<>();
-    public static final SafeRenderer SAFE = new SafeRenderer("storage/safe");
-    public static final DrumRenderer WOODEN_DRUM = new DrumRenderer("storage/drums/wooden_drum");
-    public static final DrumRenderer DRUM = new DrumRenderer("storage/drums/drum");
-    public static final TankRenderer WOODEN_TANK = new TankRenderer("storage/tank/wooden");
-    public static final TankRenderer METAL_TANK = new TankRenderer("storage/tank/metal");
+    public static ClipboardRenderer CLIPBOARD_RENDERER = new ClipboardRenderer();
     public static final CrateRenderer WOODEN_CRATE = new CrateRenderer("storage/crates/wooden_crate");
     public static final CrateRenderer METAL_CRATE = new CrateRenderer("storage/crates/metal_crate");
+    public static final DrumRenderer WOODEN_DRUM = new DrumRenderer("storage/drums/wooden_drum");
+    public static final DrumRenderer DRUM = new DrumRenderer("storage/drums/drum");
+    public static final SafeRenderer SAFE = new SafeRenderer("storage/safe");
+    public static final TankRenderer WOODEN_TANK = new TankRenderer("storage/tank/wooden");
+    public static final TankRenderer METAL_TANK = new TankRenderer("storage/tank/metal");
     public static final SimpleSidedCubeRenderer STEAM_CASING_BRONZE = new SimpleSidedCubeRenderer("casings/steam/bronze");
     public static final SimpleSidedCubeRenderer STEAM_CASING_STEEL = new SimpleSidedCubeRenderer("casings/steam/steel");
     public static final SimpleSidedCubeRenderer STEAM_BRICKED_CASING_BRONZE = new SimpleSidedCubeRenderer("casings/steam/bricked_bronze");

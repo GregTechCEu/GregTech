@@ -241,7 +241,7 @@ public class MaterialFlagAddition {
         prop.setOreByProducts(RockSalt, Borax);
 
         prop = Saltpeter.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Saltpeter);
+        prop.setOreByProducts(Salt, Potassium);
 
         prop = Sapphire.getProperty(PropertyKey.ORE);
         prop.setOreByProducts(Aluminium, GreenSapphire);
@@ -458,8 +458,43 @@ public class MaterialFlagAddition {
         prop = BandedIron.getProperty(PropertyKey.ORE);
         prop.setSeparatedInto(Iron);
         prop.setDirectSmeltResult(Iron);
+        prop.setOreByProducts(Magnetite, Calcium, Magnesium, SiliconDioxide);
 
         prop = Wulfenite.getProperty(PropertyKey.ORE);
         prop.setSeparatedInto(Trinium);
+        prop.setOreByProducts(Iron, Manganese, Manganese, Lead);
+
+        prop = Soapstone.getProperty(PropertyKey.ORE);
+        prop.setOreByProducts(SiliconDioxide, Magnesium, Calcite, Talc);
+
+        prop = Dolomite.getProperty(PropertyKey.ORE);
+        prop.setOreByProducts(Dolomite, Calcium, Magnesium);
+
+        prop = Wollastonite.getProperty(PropertyKey.ORE);
+        prop.setOreByProducts(Calcite, SiliconDioxide, Calcite, SiliconDioxide);
+
+        prop = Kyanite.getProperty(PropertyKey.ORE);
+        prop.setOreByProducts(Talc, Aluminium, Silicon);
+
+        prop = Kaolinite.getProperty(PropertyKey.ORE);
+        prop.setOreByProducts(Clay, Clay, SiliconDioxide, Kaolinite);
+
+        prop = Gypsum.getProperty(PropertyKey.ORE);
+        prop.setOreByProducts(Sulfur, Calcium, Salt);
+
+        prop = Talc.getProperty(PropertyKey.ORE);
+        prop.setOreByProducts(Clay, Clay, Carbon);
+
+        prop = Powellite.getProperty(PropertyKey.ORE);
+        prop.setOreByProducts(Iron, Molybdenite, Potassium);
+
+        prop = Trona.getProperty(PropertyKey.ORE);
+        prop.setOreByProducts(Sodium, SodaAsh, SodaAsh);
+
+        prop = Mica.getProperty(PropertyKey.ORE);
+        prop.setOreByProducts(Potassium, Aluminium);
+
+        prop = Zeolite.getProperty(PropertyKey.ORE);
+        prop.setOreByProducts(Calcium, Silicon, Aluminium);
     }
 }

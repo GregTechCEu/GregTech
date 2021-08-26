@@ -4,10 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
-import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.capability.impl.FilteredFluidHandler;
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.RecipeLogicEnergy;
+import gregtech.api.capability.impl.*;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.render.OrientedOverlayRenderer;
@@ -74,13 +71,13 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new ItemStackHandler(workable.recipeMap.getMaxInputs());
+        return new NotifiableItemStackHandler(workable.recipeMap.getMaxInputs(), this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new ItemStackHandler(workable.recipeMap.getMaxOutputs());
+        return new NotifiableItemStackHandler(workable.recipeMap.getMaxOutputs(), this, true);
     }
 
     @Override
@@ -88,7 +85,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         if (workable == null) return new FluidTankList(false);
         FilteredFluidHandler[] fluidImports = new FilteredFluidHandler[workable.recipeMap.getMaxFluidInputs()];
         for (int i = 0; i < fluidImports.length; i++) {
-            FilteredFluidHandler filteredFluidHandler = new FilteredFluidHandler(getInputTankCapacity(i));
+            NotifiableFilteredFluidHandler filteredFluidHandler = new NotifiableFilteredFluidHandler(getInputTankCapacity(i), this, false);
             filteredFluidHandler.setFillPredicate(this::canInputFluid);
             fluidImports[i] = filteredFluidHandler;
         }
@@ -100,7 +97,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         if (workable == null) return new FluidTankList(false);
         FluidTank[] fluidExports = new FluidTank[workable.recipeMap.getMaxFluidOutputs()];
         for (int i = 0; i < fluidExports.length; i++) {
-            fluidExports[i] = new FluidTank(getOutputTankCapacity(i));
+            fluidExports[i] = new NotifiableFluidTank(getOutputTankCapacity(i), this, true);
         }
         return new FluidTankList(false, fluidExports);
     }

@@ -198,4 +198,8 @@ public interface ICoverable {
                 throw new UnsupportedOperationException();
         }
     }
+
+    public default boolean canRenderMachineGrid() {
+        return true;
+    }
 }

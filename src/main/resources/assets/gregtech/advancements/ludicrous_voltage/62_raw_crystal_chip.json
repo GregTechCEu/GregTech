@@ -8,7 +8,7 @@
     },
     "icon": {
       "item": "gregtech:meta_item_1",
-      "data": 291
+      "data": 701
     }
   },
   "criteria": {
@@ -18,7 +18,7 @@
         "items": [
           {
             "item": "gregtech:meta_item_1",
-            "data": 291
+            "data": 701
           }
         ]
       }

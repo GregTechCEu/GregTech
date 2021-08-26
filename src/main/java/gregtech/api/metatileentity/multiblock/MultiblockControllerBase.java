@@ -210,6 +210,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
             if (checkStructureComponents(parts, abilities)) {
                 parts.forEach(part -> part.addToMultiBlock(this));
+                parts.forEach(part -> part.setupNotifiableMetaTileEntity(this));
                 this.multiblockParts.addAll(parts);
                 this.multiblockAbilities.putAll(abilities);
                 this.structureFormed = true;

@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.ultimate_voltage.76_neutronium.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
-      "data": 10357
+      "item": "gregtech:meta_ingot",
+      "data": 127
     },
     "frame": "goal"
   },

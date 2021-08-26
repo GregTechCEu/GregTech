@@ -4,6 +4,8 @@ import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 
+import java.util.ArrayList;
+
 public class WidgetGroup extends AbstractWidgetGroup {
 
     public WidgetGroup() {
@@ -18,8 +20,27 @@ public class WidgetGroup extends AbstractWidgetGroup {
         super(position, size);
     }
 
+    public WidgetGroup(int x, int y, int width, int height) {
+        super(new Position(x, y), new Size(width, height));
+    }
+
     @Override
     public void addWidget(Widget widget) {
         super.addWidget(widget);
+    }
+
+    @Override
+    public void removeWidget(Widget widget) {
+        super.removeWidget(widget);
+    }
+
+    @Override
+    public void waitToRemoved(Widget widget) {
+        super.waitToRemoved(widget);
+    }
+
+    @Override
+    public void clearAllWidgets() {
+        super.clearAllWidgets();
     }
 }

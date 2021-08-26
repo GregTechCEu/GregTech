@@ -91,8 +91,6 @@ public class OrePrefix {
     // A Nugget. Introduced by Eloraam
     public static final OrePrefix nugget = new OrePrefix("nugget", M / 9, null, MaterialIconType.nugget, ENABLE_UNIFICATION, hasIngotProperty);
 
-    // A Plate, but Curved. Introduced by GT6
-    public static final OrePrefix plateCurved = new OrePrefix("plateCurved", M, null, MaterialIconType.plateCurved, ENABLE_UNIFICATION, null);
     // 9 Plates combined in one Item.
     public static final OrePrefix plateDense = new OrePrefix("plateDense", M * 9, null, MaterialIconType.plateDense, ENABLE_UNIFICATION, mat -> mat.hasFlag(GENERATE_DENSE) && !mat.hasFlag(NO_SMASHING));
     // 2 Plates combined in one Item
@@ -366,6 +364,8 @@ public class OrePrefix {
 
         pipeTinyFluid.setIgnored(Materials.Wood);
         pipeHugeFluid.setIgnored(Materials.Wood);
+        pipeQuadrupleFluid.setIgnored(Materials.Wood);
+        pipeNonupleFluid.setIgnored(Materials.Wood);
         plate.setIgnored(Materials.BorosilicateGlass);
         foil.setIgnored(Materials.BorosilicateGlass);
     }

@@ -900,4 +900,15 @@ public class GTUtility {
     public static boolean isItemStackCountDivisible(ItemStack itemStack, int divisor) {
         return itemStack.getCount() % divisor == 0 && itemStack.getCount() % divisor != itemStack.getCount() && itemStack.getCount() / divisor != 0;
     }
+
+    public static AxisAlignedBB rotateAroundYAxis(AxisAlignedBB aabb, EnumFacing from, EnumFacing to) {
+        if(from == EnumFacing.UP || from == EnumFacing.DOWN || to == EnumFacing.UP || to == EnumFacing.DOWN)
+            throw new IllegalArgumentException("Either the second or third parameters were EnumFacing.DOWN or EnumFacing.UP.");
+        AxisAlignedBB rotatedAABB = new AxisAlignedBB(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ);
+        while(from != to) {
+            from = from.rotateY();
+            rotatedAABB = new AxisAlignedBB(1 - rotatedAABB.maxZ, rotatedAABB.minY, rotatedAABB.minX, 1 - rotatedAABB.minZ, rotatedAABB.maxY, rotatedAABB.maxX);
+        }
+        return rotatedAABB;
+    }
 }

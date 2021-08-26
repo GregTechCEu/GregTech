@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.ludicrous_voltage.61_europium.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
-      "data": 10033
+      "item": "gregtech:meta_ingot",
+      "data": 33
     }
   },
   "criteria": {

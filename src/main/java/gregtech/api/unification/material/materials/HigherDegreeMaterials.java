@@ -14,7 +14,7 @@ public class HigherDegreeMaterials {
          * Third Degree
          */
         Redstone = new Material.Builder(2507, "redstone")
-                .dust().ore(5, 1)
+                .dust().ore(5, 1).fluid()
                 .color(0xC80000).iconSet(ROUGH)
                 .flags(GENERATE_PLATE, NO_SMASHING, NO_SMELTING, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Silicon, 1, Pyrite, 5, Ruby, 1, Mercury, 3)

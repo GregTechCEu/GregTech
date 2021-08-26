@@ -6,10 +6,8 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.gui.IUIHolder;
-import gregtech.api.util.FirstTickScheduler;
 import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.IFirstTickTask;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -28,7 +26,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder, IFirstTickTask {
+public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder {
 
     private MetaTileEntity metaTileEntity;
     private boolean needToUpdateLightning = false;
@@ -41,11 +39,15 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
      * Sets this holder's current meta tile entity to copy of given one
      * Note that this method copies given meta tile entity and returns actual instance
      * so it is safe to call it on sample meta tile entities
+     * Also can use certain data to preinit the block before data is synced
      */
-    public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity) {
+    public MetaTileEntity setMetaTileEntity(MetaTileEntity sampleMetaTileEntity, Object... data) {
         Preconditions.checkNotNull(sampleMetaTileEntity, "metaTileEntity");
         this.metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(this);
         this.metaTileEntity.holder = this;
+        if(data.length != 0) {
+            this.metaTileEntity.preInit(data);
+        }
         this.metaTileEntity.onAttached();
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
@@ -220,14 +222,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     public void onLoad() {
         super.onLoad();
         if (metaTileEntity != null) {
-            FirstTickScheduler.addTask(this);
-        }
-    }
-
-    @Override
-    public void handleFirstTick() {
-        if (this.metaTileEntity != null) {
-            this.metaTileEntity.onLoad();
+            metaTileEntity.onLoad();
         }
     }
 
@@ -240,8 +235,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     }
 
     @Override
-    public boolean shouldRefresh(@Nonnull World world, @Nonnull BlockPos pos, IBlockState oldState, IBlockState newSate) {
-        return oldState.getBlock() != newSate.getBlock(); //MetaTileEntityHolder should never refresh (until block changes)
+    public boolean shouldRefresh(@Nonnull World world, @Nonnull BlockPos pos, IBlockState oldState, IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock(); //MetaTileEntityHolder should never refresh (until block changes)
     }
 
     @Override

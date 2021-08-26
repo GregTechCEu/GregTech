@@ -116,12 +116,6 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
         } else return false;
     }
 
-    // Do this to casually ignore fluids from steam multiblocks
-    @Override
-    protected boolean checkRecipeInputsDirty(IItemHandler inputs, IMultipleTankHandler fluidInputs) {
-        return super.checkRecipeInputsDirty(inputs, new FluidTankList(false));
-    }
-
     @Override
     protected void completeRecipe() {
         super.completeRecipe();

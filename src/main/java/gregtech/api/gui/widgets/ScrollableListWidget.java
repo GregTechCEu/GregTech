@@ -66,7 +66,6 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
             currentPosY += widget.getSize().getHeight();
             totalListHeight += widget.getSize().getHeight();
             final Size size = getSize();
-            widget.applyScissor(position.x, position.y, size.width - scrollPaneWidth, size.height);
         }
         this.totalListHeight = totalListHeight;
         this.slotHeight = widgets.isEmpty() ? 0 : totalListHeight / widgets.size();
@@ -85,7 +84,7 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         //make sure mouse is not hovered on any element when outside of bounds
         if (!isPositionInsideScissor(mouseX, mouseY)) {
             mouseX = Integer.MAX_VALUE;
@@ -107,7 +106,7 @@ public class ScrollableListWidget extends AbstractWidgetGroup {
         drawGradientRect(scrollX + 1, scrollSliderY, paneSize - 2, scrollSliderHeight, 0xFF555555, 0xFF454545);
 
         RenderUtil.useScissor(position.x, position.y, size.width - paneSize, size.height, () ->
-                super.drawInBackground(finalMouseX, finalMouseY, context));
+            super.drawInBackground(finalMouseX, finalMouseY, partialTicks, context));
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 

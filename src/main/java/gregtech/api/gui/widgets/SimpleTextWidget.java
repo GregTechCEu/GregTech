@@ -24,16 +24,34 @@ public class SimpleTextWidget extends Widget {
     protected final int color;
     protected final Supplier<String> textSupplier;
     protected String lastText = "";
+    protected boolean isCentered = true;
+    protected boolean clientWidget;
+    protected boolean isShadow;
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
+        this(xPosition, yPosition, formatLocale, color, textSupplier, false);
+    }
+
+    public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier, boolean clientWidget) {
         super(new Position(xPosition, yPosition), Size.ZERO);
         this.color = color;
         this.formatLocale = formatLocale;
         this.textSupplier = textSupplier;
+        this.clientWidget = clientWidget;
     }
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, Supplier<String> textSupplier) {
-        this(xPosition, yPosition, formatLocale, 0x404040, textSupplier);
+        this(xPosition, yPosition, formatLocale, 0x404040, textSupplier, false);
+    }
+
+    public SimpleTextWidget setShadow(boolean shadow) {
+        isShadow = shadow;
+        return this;
+    }
+
+    public SimpleTextWidget setCenter(boolean isCentered) {
+        this.isCentered = isCentered;
+        return this;
     }
 
     private void updateSize() {
@@ -46,13 +64,26 @@ public class SimpleTextWidget extends Widget {
     }
 
     @Override
+    public void updateScreen() {
+        super.updateScreen();
+        if (clientWidget && textSupplier != null) {
+            String newString = textSupplier.get();
+            if (!newString.equals(lastText)) {
+                lastText = newString;
+                updateSize();
+            }
+            lastText = newString;
+        }
+    }
+
+    @Override
     public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         String text = formatLocale.isEmpty() ? (I18n.hasKey(lastText) ? I18n.format(lastText) : lastText) : I18n.format(formatLocale, lastText);
         Position position = getPosition();
         fontRenderer.drawString(text,
-                position.x - fontRenderer.getStringWidth(text) / 2,
-                position.y - fontRenderer.FONT_HEIGHT / 2, color);
+            isCentered ? position.x - fontRenderer.getStringWidth(text) / 2 : position.x,
+            isCentered ? position.y - fontRenderer.FONT_HEIGHT / 2 : position.y, color, isShadow);
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 

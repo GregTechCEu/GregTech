@@ -13,11 +13,13 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Material;
+import gregtech.common.advancement.GTTriggers;
 import gregtech.common.items.behaviors.TurbineRotorBehavior;
 import gregtech.common.metatileentities.multi.electric.generator.RotorHolderMultiblockController;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -125,7 +127,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
             double relativeSpeed = getRelativeRotorSpeed();
             float damageApplied = (float) (DAMAGE_PER_INTERACT * relativeSpeed);
             player.attackEntityFrom(DamageSources.getTurbineDamage(), damageApplied);
-            //TODO achievement here
+            GTTriggers.ROTOR_HOLDER_DEATH.trigger((EntityPlayerMP) player);
             return true;
         }
         return isRotorLooping;

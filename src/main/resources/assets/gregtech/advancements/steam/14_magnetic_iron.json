@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.steam.14_magnetic_iron.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
-      "data": 15344
+      "item": "gregtech:meta_stick",
+      "data": 395
     }
   },
   "criteria": {

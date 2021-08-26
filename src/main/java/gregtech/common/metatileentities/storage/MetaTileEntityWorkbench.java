@@ -17,6 +17,7 @@ import gregtech.api.gui.widgets.tab.ItemTabInfo;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
+import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.Position;
@@ -149,32 +150,32 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     public static AbstractWidgetGroup createWorkbenchTab(CraftingRecipeResolver recipeResolver, ItemStackHandler craftingGrid, CraftingRecipeMemory recipeMemory,
                                                          ItemStackHandler toolInventory, ItemStackHandler internalInventory) {
         WidgetGroup widgetGroup = new WidgetGroup();
-        widgetGroup.addWidget(new ImageWidget(88 - 13, 44 - 13, 26, 26, GuiTextures.SLOT));
+        widgetGroup.addWidget(new ImageWidget(88 - 13, 44 - 14, 26, 26, GuiTextures.SLOT));
         widgetGroup.addWidget(new CraftingSlotWidget(recipeResolver, 0, 88 - 9, 44 - 9));
 
         //crafting grid
-        widgetGroup.addWidget(new CraftingStationInputWidgetGroup(5, 8, craftingGrid, recipeResolver));
+        widgetGroup.addWidget(new CraftingStationInputWidgetGroup(4, 7, craftingGrid, recipeResolver));
 
         Supplier<String> textSupplier = () -> Integer.toString(recipeResolver.getItemsCrafted());
-        widgetGroup.addWidget(new SimpleTextWidget(88, 44 + 20, "", textSupplier));
+        widgetGroup.addWidget(new SimpleTextWidget(88, 44 + 19, "", textSupplier));
 
         Consumer<ClickData> clearAction = (clickData) -> recipeResolver.clearCraftingGrid();
-        widgetGroup.addWidget(new ClickButtonWidget(8 + 18 * 3 + 1, 17, 8, 8, "", clearAction).setButtonTexture(GuiTextures.BUTTON_CLEAR_GRID));
+        widgetGroup.addWidget(new ClickButtonWidget(8 + 18 * 3 + 3, 16, 8, 8, "", clearAction).setButtonTexture(GuiTextures.BUTTON_CLEAR_GRID));
 
-        widgetGroup.addWidget(new ImageWidget(168 - 18 * 3, 44 - 18 * 3 / 2, 18 * 3, 18 * 3, TextureArea.fullImage("textures/gui/base/darkened_slot.png")));
+        widgetGroup.addWidget(new ImageWidget(168 - 18 * 3, 44 - 19 * 3 / 2, 18 * 3, 18 * 3, TextureArea.fullImage("textures/gui/base/darkened_slot.png")));
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                widgetGroup.addWidget(new MemorizedRecipeWidget(recipeMemory, j + i * 3, craftingGrid, 168 - 18 * 3 / 2 - 27 + j * 18, 44 - 27 + i * 18));
+                widgetGroup.addWidget(new MemorizedRecipeWidget(recipeMemory, j + i * 3, craftingGrid, 168 - 18 * 3 / 2 - 27 + j * 18, 44 - 28 + i * 18));
             }
         }
         //tool inventory
         for (int i = 0; i < 9; i++) {
-            widgetGroup.addWidget(new SlotWidget(toolInventory, i, 8 + i * 18, 76).setBackgroundTexture(GuiTextures.SLOT, GuiTextures.TOOL_SLOT_OVERLAY));
+            widgetGroup.addWidget(new SlotWidget(toolInventory, i, 7 + i * 18, 75).setBackgroundTexture(GuiTextures.SLOT, GuiTextures.TOOL_SLOT_OVERLAY));
         }
         //internal inventory
         for (int i = 0; i < 2; ++i) {
             for (int j = 0; j < 9; ++j) {
-                widgetGroup.addWidget(new SlotWidget(internalInventory, j + i * 9, 8 + j * 18, 99 + i * 18).setBackgroundTexture(GuiTextures.SLOT));
+                widgetGroup.addWidget(new SlotWidget(internalInventory, j + i * 9, 7 + j * 18, 98 + i * 18).setBackgroundTexture(GuiTextures.SLOT));
             }
         }
         return widgetGroup;
@@ -193,10 +194,10 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         Builder builder = ModularUI.builder(GuiTextures.BORDERED_BACKGROUND, 176, 221)
-                .bindPlayerInventory(entityPlayer.inventory, 140);
+                .bindPlayerInventory(entityPlayer.inventory, 138);
         builder.label(5, 5, getMetaFullName());
 
-        TabGroup tabGroup = new TabGroup(TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
+        TabGroup<AbstractWidgetGroup> tabGroup = new TabGroup<>(TabLocation.HORIZONTAL_TOP_LEFT, Position.ORIGIN);
         tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.workbench", new ItemStack(Blocks.CRAFTING_TABLE)), createWorkbenchTab(getRecipeResolver(), craftingGrid, recipeMemory, toolInventory, internalInventory));
         tabGroup.addTab(new ItemTabInfo("gregtech.machine.workbench.tab.item_list", new ItemStack(Blocks.CHEST)), createItemListTab());
         builder.widget(tabGroup);

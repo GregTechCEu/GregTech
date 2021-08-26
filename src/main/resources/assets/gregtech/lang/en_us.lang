@@ -260,14 +260,22 @@ metaitem.battery.hull.mv.name=Medium Battery Hull
 metaitem.battery.hull.mv.tooltip=An empty MV Battery Hull
 metaitem.battery.hull.hv.name=Large Battery Hull
 metaitem.battery.hull.hv.tooltip=An empty HV Battery Hull
+metaitem.battery.hull.ev.name=Small Vanadium Battery Hull
+metaitem.battery.hull.ev.tooltip=An empty EV Battery Hull
+metaitem.battery.hull.iv.name=Medium Vanadium Battery Hull
+metaitem.battery.hull.iv.tooltip=An empty IV Battery Hull
+metaitem.battery.hull.luv.name=Large Vanadium Battery Hull
+metaitem.battery.hull.luv.tooltip=An empty LuV Battery Hull
+metaitem.battery.hull.zpm.name=Medium Naquadria Battery Hull
+metaitem.battery.hull.zpm.tooltip=An empty ZPM Battery Hull
+metaitem.battery.hull.uv.name=Large Naquadria Battery Hull
+metaitem.battery.hull.uv.tooltip=An empty UV Battery Hull
+
+metaitem.battery.charge_time=§aHolds %,d%s of Power
+metaitem.battery.charge_detailed=%,d/%,d EU - Tier §e%s §r(§%c%,d%s remaining§r)
 
 metaitem.battery.re.ulv.tantalum.name=Tantalum Capacitor
 metaitem.battery.re.ulv.tantalum.tooltip=Reusable Battery
-
-metaitem.battery.su.lv.sulfuricacid.name=Small Acid Battery
-metaitem.battery.su.lv.sulfuricacid.tooltip=Single Use Battery
-metaitem.battery.su.lv.mercury.name=Small Mercury Battery
-metaitem.battery.su.lv.mercury.tooltip=Single Use Battery
 
 metaitem.battery.re.lv.cadmium.name=Small Cadmium Battery
 metaitem.battery.re.lv.cadmium.tooltip=Reusable Battery
@@ -276,11 +284,6 @@ metaitem.battery.re.lv.lithium.tooltip=Reusable Battery
 metaitem.battery.re.lv.sodium.name=Small Sodium Battery
 metaitem.battery.re.lv.sodium.tooltip=Reusable Battery
 
-metaitem.battery.su.mv.sulfuricacid.name=Medium Acid Battery
-metaitem.battery.su.mv.sulfuricacid.tooltip=Single Use Battery
-metaitem.battery.su.mv.mercury.name=Medium Mercury Battery
-metaitem.battery.su.mv.mercury.tooltip=Single Use Battery
-
 metaitem.battery.re.mv.cadmium.name=Medium Cadmium Battery
 metaitem.battery.re.mv.cadmium.tooltip=Reusable Battery
 metaitem.battery.re.mv.lithium.name=Medium Lithium Battery
@@ -288,17 +291,24 @@ metaitem.battery.re.mv.lithium.tooltip=Reusable Battery
 metaitem.battery.re.mv.sodium.name=Medium Sodium Battery
 metaitem.battery.re.mv.sodium.tooltip=Reusable Battery
 
-metaitem.battery.su.hv.sulfuricacid.name=Large Acid Battery
-metaitem.battery.su.hv.sulfuricacid.tooltip=Single Use Battery
-metaitem.battery.su.hv.mercury.name=Large Mercury Battery
-metaitem.battery.su.hv.mercury.tooltip=Single Use Battery
-
 metaitem.battery.re.hv.cadmium.name=Large Cadmium Battery
 metaitem.battery.re.hv.cadmium.tooltip=Reusable Battery
 metaitem.battery.re.hv.lithium.name=Large Lithium Battery
 metaitem.battery.re.hv.lithium.tooltip=Reusable Battery
 metaitem.battery.re.hv.sodium.name=Large Sodium Battery
 metaitem.battery.re.hv.sodium.tooltip=Reusable Battery
+
+metaitem.battery.ev.vanadium.name=Small Vanadium Battery
+metaitem.battery.ev.vanadium.tooltip=Reusable Battery
+metaitem.battery.iv.vanadium.name=Medium Vanadium Battery
+metaitem.battery.iv.vanadium.tooltip=Reusable Battery
+metaitem.battery.luv.vanadium.name=Large Vanadium Battery
+metaitem.battery.luv.vanadium.tooltip=Reusable Battery
+
+metaitem.battery.zpm.naquadria.name=Medium Naquadria Battery
+metaitem.battery.zpm.naquadria.tooltip=Reusable Battery
+metaitem.battery.uv.naquadria.name=Large Naquadria Battery
+metaitem.battery.uv.naquadria.tooltip=Reusable Battery
 
 metaitem.energy_crystal.name=Energy Crystal
 metaitem.energy_crystal.tooltip=Reusable Battery
@@ -311,9 +321,11 @@ metaitem.energy.lapotronicorb2.tooltip=Reusable Battery
 metaitem.zpm.name=Zero Point Module
 metaitem.zpm.tooltip=Single Use Battery
 metaitem.energy.module.name=Energy Module
+metaitem.energy.module.tooltip=Reusable Battery
 metaitem.energy.cluster.name=Energy Cluster
+metaitem.energy.cluster.tooltip=Reusable Battery
 metaitem.max.battery.name=Ultimate Battery
-metaitem.max.battery.tooltip=Fill this to win minecraft
+metaitem.max.battery.tooltip=Fill this to win Minecraft
 
 metaitem.electric.motor.lv.name=LV Electric Motor
 metaitem.electric.motor.mv.name=MV Electric Motor
@@ -832,6 +844,9 @@ metaitem.turbine_rotor.name=%s Turbine Rotor
 metaitem.turbine_rotor.tooltip=Turbine Rotors for your power station
 metaitem.tool.magnifying_glass.name=%s Magnifying Glass
 
+metaitem.clipboard.name=Clipboard
+metaitem.clipboard.tooltip=Can be written on (without any writing Instrument). Right-click on Wall to place, and Shift-Right-Click to remove
+
 metaitem.drill.mode.three_cube=3x3x3 Cube
 metaitem.drill.mode.five_cube=5x5x5 Cube
 metaitem.drill.mode.seven_cube=7x7x7 Cube
@@ -1224,6 +1239,7 @@ material.oilsands=Oilsands
 material.paper=Paper
 material.rare_earth=Rare Earth
 material.seed_oil=Seed Oil
+material.fish_oil=Fish Oil
 material.stone=Stone
 material.lava=Lava
 material.glowstone=Glowstone
@@ -1236,6 +1252,7 @@ material.construction_foam=Construction Foam
 material.epichlorohydrin=Epichlorohydrin
 material.nitric_acid=Nitric Acid
 material.nitration_mixture=Nitration Mixture
+material.aqua_regia=Aqua Regia
 material.fireclay=Fireclay
 material.brick=Brick
 material.coke=Coke
@@ -1613,16 +1630,9 @@ material.duranium=Duranium
 material.diamericium_titanium=Diamericium Titanium
 material.fluxed_electrum=Fluxed Electrum
 
-material.cheese=Cheese
-material.chili=Chili
-material.chocolate=Chocolate
-material.meat_raw=Raw Meat
-material.meat_cooked=Cooked Meat
 material.milk=Milk
 material.honey=Honey
-material.juice=Fruit Juice
 material.cocoa=Cocoa
-material.coffee=Coffee
 material.wheat=Wheat
 material.meat=Mince Meat
 
@@ -1665,6 +1675,20 @@ material.coal_gas=Coal Gas
 material.coal_tar=Coal Tar
 material.ethylbenzene=Ethylbenzene
 material.naphthalene=Naphthalene
+
+material.manganese_phosphide=Manganese Phosphide
+material.magnesium_diboride=Magnesium Diboride
+material.mercury_barium_calcium_cuprate=Mercury Barium Calcium Cuprate
+material.uranium_triplatinum=Uranium Triplatinum
+material.samarium_iron_arsenic_oxide=Samarium Iron Arsenic Oxide
+material.indium_tin_barium_titanium_cuprate=Indium Tin Barium Titanium Cuprate
+material.uranium_rhodium_dinaquadide=Uranium Rhodium Dinaquadide
+material.enriched_naquadah_trinium_europium_duranide=Enriched Naquadah Trinium Europium Duranide
+material.ruthenium_trinium_americium_neutronate=Ruthenium Trinium Americium Neutronate
+
+material.ruby_slurry=Ruby Slurry
+material.sapphire_slurry=Sapphire Slurry
+material.green_sapphire_slurry=Green Sapphire Slurry
 
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
 item.gunpowder.dustTiny=Tiny Pile of Gunpowder
@@ -1935,6 +1959,7 @@ recipemap.semi_fluid_generator.name=Semi Fluid Fuels
 recipemap.plasma_generator.name=Plasma Generator
 recipemap.circuit_assembler.name=Circuit Assembler
 recipemap.mass_fabricator.name=Mass Fabricator
+recipemap.materialtree.name=Material Tree
 recipemap.gas_collector.name=Gas Collector
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
@@ -1957,6 +1982,7 @@ tile.gt.reinforced_stone.name=Reinforced Stone
 tile.gt.log.rubber_wood.name=Rubber Wood
 tile.gt.leaves.rubber_wood.name=Rubber Tree Leaves
 tile.gt.sapling.rubber_wood.name=Rubber Tree Sapling
+tile.gt.plank.rubber_plank.name=Rubber Wood Planks
 
 tile.surface_rock.name=Surface Rock
 
@@ -1970,6 +1996,9 @@ behavior.scanner.analyzing=Analyzing...
 behavior.scanner.analyzing_failed=Analyzing failed!
 behavior.scanner.analyzing_complete=Analyzing complete!
 behavior.scanner.not_enough_energy=Analyzing failed: Not Enough Energy!
+
+metaitem.terminal.name=Terminal
+metaitem.terminal.tooltip=Hope it will help you
 
 tile.casing.ulv=ULV Machine Casing
 tile.casing.lv=LV Machine Casing
@@ -2135,6 +2164,8 @@ gregtech.machine.aluminium_tank.name=Aluminium Tank
 gregtech.machine.stainless_steel_tank.name=Stainless Steel Tank
 gregtech.machine.titanium_tank.name=Titanium Tank
 gregtech.machine.tungstensteel_tank.name=Tungstensteel Tank
+
+gregtech.machine.clipboard.name=Clipboard
 
 # Granite blocks
 tile.granite.black_granite.normal.name=Black Granite
@@ -3202,6 +3233,12 @@ gregtech.advancement.steam.16_steel_boiler.name=High Pressure
 gregtech.advancement.steam.16_steel_boiler.desc=Craft a High Pressure Boiler.
 gregtech.advancement.steam.81_crafting_station.name=Crafting Station
 gregtech.advancement.steam.81_crafting_station.desc=Craft a Crafting Station to make complex crafts much more manageable.
+gregtech.advancement.steam.83_hp_solar_boiler.name=Solar OP Pls Nerf
+gregtech.advancement.steam.83_hp_solar_boiler.desc=Craft a High Pressure Solar Boiler.
+gregtech.advancement.steam.85_steam_vent_death.name=Get out of the way!
+gregtech.advancement.steam.85_steam_vent_death.desc=Die to a venting Steam Machine.
+gregtech.advancement.steam.87_fluid_pipe_death.name=Boiling Hot!
+gregtech.advancement.steam.87_fluid_pipe_death.desc=Die to a Fluid Pipe full of Hot Fluid.
 gregtech.advancement.root_lv.name=Low Voltage
 gregtech.advancement.root_lv.desc=Craft a Basic Steam Turbine
 gregtech.advancement.low_voltage.17_lv_pump.name=Pump
@@ -3232,6 +3269,10 @@ gregtech.advancement.low_voltage.29_lv_battery_buffer.name=Batteries
 gregtech.advancement.low_voltage.29_lv_battery_buffer.desc=Craft an LV 4A Battery Buffer.
 gregtech.advancement.low_voltage.30_good_electronic_circuit.name=Better Circuits
 gregtech.advancement.low_voltage.30_good_electronic_circuit.desc=Get Good Circuits.
+gregtech.advancement.low_voltage.86_electrocution_death.name=Shoulda Covered your Wires!
+gregtech.advancement.low_voltage.86_electrocution_death.desc=Die to an Uninsulated Wire.
+gregtech.advancement.low_voltage.88_first_cover_place.name=The First of Many
+gregtech.advancement.low_voltage.88_first_cover_place.desc=Place your first Machine Cover.
 gregtech.advancement.root_mv.name=Medium Voltage
 gregtech.advancement.root_mv.desc=Produce an Aluminium Ingot.
 gregtech.advancement.medium_voltage.31_mv_energy_hatch.name=Upgrade Your EBF
@@ -3270,6 +3311,8 @@ gregtech.advancement.high_voltage.46_hv_macerator.name=Universal Macerator
 gregtech.advancement.high_voltage.46_hv_macerator.desc=Craft an HV Macerator for ore byproducts.
 gregtech.advancement.high_voltage.82_large_chemical_reactor.name=Large Chemical Reactor
 gregtech.advancement.high_voltage.82_large_chemical_reactor.desc=Set up a Large Chemical Reactor for more efficient chemistry.
+gregtech.advancement.high_voltage.84_rotor_holder_open.name=A Painful Way to Go Out
+gregtech.advancement.high_voltage.84_rotor_holder_open.desc=Die by opening a spinning Rotor Holder.
 gregtech.advancement.root_ev.name=Extreme Voltage
 gregtech.advancement.root_ev.desc=Cool down a Hot Titanium Ingot.
 gregtech.advancement.extreme_voltage.47_nichrome_coil.name=Upgrade your Coils to Level III
@@ -3616,6 +3659,10 @@ gregtech.jei.ore.surface_rock_2=They can be broken for 3 Tiny Piles of the dust,
 gregtech.jei.ore.biome_weighting=%s Weight: %d
 gregtech.jei.ore.biome_weighting_no_spawn=%s Weight: Cannot Spawn
 
+gregtech.jei.materials.average_mass=Average mass: %,d
+gregtech.jei.materials.average_protons=Average protons: %,d
+gregtech.jei.materials.average_neutrons=Average neutrons: %,d
+
 gregtech.item_filter.empty_item=Empty (No Item)
 gregtech.item_filter.footer=§eClick with item to override
 
@@ -3734,3 +3781,69 @@ gregtech.cover.fluid_detector.message_fluid_storage_inverted=Monitoring Inverted
 
 gregtech.cover.item_detector.message_item_storage_normal=Monitoring Normal Item Storage
 gregtech.cover.item_detector.message_item_storage_inverted=Monitoring Inverted Item Storage
+
+gregtech.terminal.app_name.items=Item Guides
+gregtech.terminal.app_name.machines=Machine Guides
+gregtech.terminal.app_name.multiblocks=Multiblock Guides
+gregtech.terminal.app_name.tutorials=Tutorials
+gregtech.terminal.app_name.theme_settings=Theme Settings
+gregtech.terminal.app_name.guide_editor=Guide Editor
+gregtech.terminal.app_name.recipe_chart=Recipe Chart
+gregtech.terminal.app_name.ore_prospector=Ore Prospector
+
+texture.modify_gui_texture.missing=Missing Texture
+texture.url_texture.fail=Load Failed
+
+terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
+
+terminal.menu.close=Close
+terminal.menu.minimize=Minimize
+terminal.menu.maximize=Maximize
+
+terminal.component.new_page=New Page
+terminal.component.page_name=Page Name
+terminal.component.load_file=Load File
+terminal.component.load_file.error=An error occurred while loading the file.
+terminal.component.save_file=Save File
+terminal.component.save_file.error=An error occurred while saving the file.
+terminal.component.confirm=Are you sure?
+terminal.component.error=ERROR
+terminal.component.warning=WARNING
+terminal.component.searching=searching
+
+terminal.dialog.error_path=error file path:
+terminal.dialog.no_file_selected=No file selected.
+terminal.dialog.folder=Open Folder
+
+terminal.guide_editor.up=Up
+terminal.guide_editor.down=Down
+terminal.guide_editor.remove=Remove
+terminal.guide_editor.add_stream=Add to stream
+terminal.guide_editor.add_fixed=Add to fixed
+terminal.guide_editor.update=Update
+terminal.guide_editor.add_slot=Add Slot
+terminal.guide_editor.default=Default Value
+terminal.guide_editor.page_config=Page Config
+terminal.guide_editor.widgets_box=Widgets Box
+terminal.guide_editor.widget_config=Widget Config
+
+terminal.theme_settings.color=Theme Color Settings
+terminal.theme_settings.wallpaper=Wallpaper Settings
+terminal.theme_settings.select=Select
+terminal.theme_settings.image=Image File
+
+terminal.recipe_chart.limit=Page limit.
+terminal.recipe_chart.delete=Delete Page
+terminal.recipe_chart.add_slot=Add Root Slot
+terminal.recipe_chart.demand=Demand
+terminal.recipe_chart.calculator=Calculator
+terminal.recipe_chart.drag=Drag ingredients here.
+terminal.recipe_chart.visible=Visible
+terminal.recipe_chart.jei=JEI Focus
+terminal.recipe_chart.tier=Tier:
+terminal.recipe_chart.ratio=Ratio
+
+terminal.prospector.vis_mode=dark mode
+terminal.prospector.list=All Resources
+terminal.prospector.ore=Ore statistics
+terminal.prospector.fluid=Fluid statistics

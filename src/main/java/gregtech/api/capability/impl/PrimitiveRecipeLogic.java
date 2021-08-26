@@ -47,8 +47,6 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
      * Used to reset cached values in the Recipe Logic on structure deform
      */
     public void invalidate() {
-        lastItemInputs = null;
-        lastFluidInputs = null;
         previousRecipe = null;
         progressTime = 0;
         maxProgressTime = 0;

@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.root_uv.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
-      "data": 32726
+      "item": "gregtech:meta_ingot",
+      "data": 128
     },
     "background": "gregtech:textures/blocks/casings/fusion/machine_casing_fusion_2.png"
   },

@@ -57,7 +57,7 @@ public class Elements {
     public static final Element Kr = add(36, 48, -1, null, "Krypton", "Kr", false);
     public static final Element Rb = add(37, 48, -1, null, "Rubidium", "Rb", false);
     public static final Element Sr = add(38, 49, -1, null, "Strontium", "Sr", false);
-    public static final Element Yt = add(39, 50, -1, null, "Yttrium", "Yt", false);
+    public static final Element Y = add(39, 50, -1, null, "Yttrium", "Y", false);
     public static final Element Zr = add(40, 51, -1, null, "Zirconium", "Zr", false);
     public static final Element Nb = add(41, 53, -1, null, "Niobium", "Nb", false);
     public static final Element Mo = add(42, 53, -1, null, "Molybdenum", "Mo", false);

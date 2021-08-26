@@ -873,7 +873,7 @@ public class ElementMaterials {
                 .ingot().fluid()
                 .color(0xDCFADC).iconSet(METALLIC)
                 .flags(STD_METAL)
-                .element(Elements.Yt)
+                .element(Elements.Y)
                 .blastTemp(1799)
                 .build();
 

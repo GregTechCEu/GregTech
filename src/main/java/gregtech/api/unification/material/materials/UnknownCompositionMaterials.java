@@ -236,7 +236,6 @@ public class UnknownCompositionMaterials {
         Oilsands = new Material.Builder(1597, "oilsands")
                 .dust(1).ore()
                 .color(0x0A0A0A).iconSet(SAND)
-                .components(Oil, 1)
                 .build();
 
         RareEarth = new Material.Builder(1598, "rare_earth")
@@ -352,5 +351,19 @@ public class UnknownCompositionMaterials {
                 .flags(GENERATE_PLATE, FLAMMABLE, NO_SMELTING, NO_SMASHING,
                         MORTAR_GRINDABLE, GENERATE_RING, EXCLUDE_PLATE_COMPRESSOR_RECIPE)
                 .build();
+
+        FishOil = new Material.Builder(1619, "fish_oil")
+                .fluid()
+                .color(0xDCC15D)
+                .build();
+
+        RubySlurry = new Material.Builder(1620, "ruby_slurry")
+                .fluid().color(0xff6464).build();
+
+        SapphireSlurry = new Material.Builder(1621, "sapphire_slurry")
+                .fluid().color(0x6464c8).build();
+
+        GreenSapphireSlurry = new Material.Builder(1622, "green_sapphire_slurry")
+                .fluid().color(0x64c882).build();
     }
 }

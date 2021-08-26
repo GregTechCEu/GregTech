@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.insane_voltage.53_plutonium_239.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
+      "item": "gregtech:meta_dust_tiny",
       "data": 81
     }
   },

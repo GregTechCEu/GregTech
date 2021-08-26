@@ -7,8 +7,10 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.impl.ModularUIGui;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTLog;
+import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.state.IBlockState;
@@ -20,6 +22,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.math.BlockPos;
@@ -193,6 +196,27 @@ public class NetworkHandler {
                 (buf) -> new PacketClipboard(buf.readString(32767))
         ));
 
+        registerPacket(6, PacketClipboardUIWidgetUpdate.class, new NetworkHandler.PacketCodec<>(
+                (packet, buf) -> {
+                    buf.writeVarInt(packet.clipboard.getWorld().provider.getDimension());
+                    buf.writeBlockPos(packet.clipboard.getPos());
+                    buf.writeVarInt(packet.id);
+                    if(packet.payloadWriter != null) {
+                        packet.payloadWriter.accept(buf);
+                    }
+                },
+                (buf) -> {
+                    int dim = buf.readVarInt();
+                    BlockPos pos = buf.readBlockPos();
+                    TileEntity te = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim).getTileEntity(pos);
+                    if(te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).getMetaTileEntity() instanceof MetaTileEntityClipboard) {
+                        return new PacketClipboardUIWidgetUpdate((MetaTileEntityClipboard) ((MetaTileEntityHolder) te).getMetaTileEntity(), buf);
+                    }
+                    return new PacketClipboardUIWidgetUpdate(null, buf);
+                }
+        ));
+
+
         registerServerExecutor(PacketUIClientAction.class, (packet, handler) -> {
             Container openContainer = handler.player.openContainer;
             if (openContainer instanceof ModularUIContainer &&
@@ -200,6 +224,12 @@ public class NetworkHandler {
                 ModularUI modularUI = ((ModularUIContainer) openContainer).getModularUI();
                 PacketBuffer buffer = packet.updateData;
                 modularUI.guiWidgets.get(packet.widgetId).handleClientAction(buffer.readVarInt(), buffer);
+            }
+        });
+
+        NetworkHandler.registerServerExecutor(PacketClipboardUIWidgetUpdate.class, (packet, handler) -> {
+            if (packet.clipboard != null) {
+                packet.clipboard.readUIAction(handler.player, packet.id, packet.buf);
             }
         });
 

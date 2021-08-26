@@ -57,10 +57,6 @@ public class ConfigHolder {
     @Config.Comment("Chance with which flint and steel will create fire. Default: 50")
     public static int flintChanceToCreateFire = 50;
 
-    @Config.Comment("Recipes for machine hulls use more materials. Default: true")
-    @Config.RequiresMcRestart
-    public static boolean harderMachineHulls = true;
-
     @Config.Comment("If true, insufficient energy supply will reset recipe progress to zero. If false, progress will decrease to zero with 2x speed. Default: false")
     @Config.RequiresWorldRestart
     public static boolean insufficientEnergySupplyWipesRecipeProgress = false;

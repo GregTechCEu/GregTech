@@ -239,19 +239,20 @@ public class SecondDegreeMaterials {
                 .build();
 
         Trona = new Material.Builder(2031, "trona")
-                .dust(1)
+                .dust(1).ore()
                 .color(0x87875F).iconSet(METALLIC)
+                .flags(DISABLE_DECOMPOSITION)
                 .components(Sodium, 3, Carbon, 2, Hydrogen, 1, Water, 2, Oxygen, 6)
                 .build();
 
         Gypsum = new Material.Builder(2032, "gypsum")
-                .dust(1)
+                .dust(1).ore()
                 .color(0xE6E6FA)
                 .components(Calcium, 1, Sulfur, 1, Water, 2, Oxygen, 4)
                 .build();
 
         Zeolite = new Material.Builder(2033, "zeolite")
-                .dust()
+                .dust().ore()
                 .color(0xF0E6E6)
                 .components(Sodium, 1, Calcium, 4, Silicon, 27, Aluminium, 9, Water, 28, Oxygen, 72)
                 .build();
@@ -290,7 +291,7 @@ public class SecondDegreeMaterials {
                 .color(0xc99781).iconSet(METALLIC)
                 .flags(EXT2_METAL)
                 .components(Lead, 2, Bronze, 2, Tin, 1)
-                .fluidPipeProperties(2023, 96, true)
+                .fluidPipeProperties(2023, 69, true)
                 .build();
 
         BorosilicateGlass = new Material.Builder(2038, "borosilicate_glass")
@@ -413,6 +414,13 @@ public class SecondDegreeMaterials {
                 .color(0x283454)
                 .flags(DISABLE_DECOMPOSITION)
                 .components(NitrogenDioxide, 122, Deuterium, 50, Helium, 15, Tritium, 10, Krypton, 1, Xenon, 1, Radon, 1, EnderPearl, 1)
+                .build();
+
+        AquaRegia = new Material.Builder(2056, "aqua_regia")
+                .fluid()
+                .color(0xFFB132)
+                .flags(DISABLE_DECOMPOSITION)
+                .components(NitricAcid, 1, HydrochloricAcid, 1)
                 .build();
     }
 }

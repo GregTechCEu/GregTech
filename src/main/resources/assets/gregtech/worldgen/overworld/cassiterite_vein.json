@@ -1,0 +1,41 @@
+{
+  "weight": 80,
+  "density": 0.6,
+  "max_height": 60,
+  "min_height": 50,
+  "vein_populator": {
+    "type": "surface_rock",
+    "material": "cassiterite_sand"
+  },
+  "generator": {
+    "type": "ellipsoid",
+    "radius": [
+      11,
+      12
+    ]
+  },
+  "filler": {
+    "type": "simple",
+    "value": {
+      "type": "weight_random",
+      "values": [
+        {
+          "weight": 30,
+          "value": "ore:cassiterite_sand"
+        },
+        {
+          "weight": 30,
+          "value": "ore:garnet_sand"
+        },
+        {
+          "weight": 30,
+          "value": "ore:asbestos"
+        },
+        {
+          "weight": 10,
+          "value": "ore:diatomite"
+        }
+      ]
+    }
+  }
+}

@@ -35,7 +35,7 @@ public class DyeUtil {
         return CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, dyeColor.getName());
     }
 
-    public static String getOrdictColorName(EnumDyeColor dyeColor) {
+    public static String getOredictColorName(EnumDyeColor dyeColor) {
         String colorName;
 
         if (dyeColor == EnumDyeColor.SILVER)

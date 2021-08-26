@@ -17,7 +17,7 @@ public class PlayerInventoryHolder implements IUIHolder {
     /*package-local*/ ItemStack sampleItem;
 
     @SideOnly(Side.CLIENT)
-        /*package-local*/ PlayerInventoryHolder(EntityPlayer player, EnumHand hand, ItemStack sampleItem) {
+    /*package-local*/ public PlayerInventoryHolder(EntityPlayer player, EnumHand hand, ItemStack sampleItem) {
         this.player = player;
         this.hand = hand;
         this.sampleItem = sampleItem;
@@ -27,8 +27,6 @@ public class PlayerInventoryHolder implements IUIHolder {
         this.player = entityPlayer;
         this.hand = hand;
         this.sampleItem = player.getHeldItem(hand);
-        Preconditions.checkArgument(sampleItem.getItem() instanceof ItemUIFactory,
-                "Current Item should implement ItemUIFactory");
     }
 
     public static void openHandItemUI(EntityPlayer player, EnumHand hand) {
@@ -68,11 +66,6 @@ public class PlayerInventoryHolder implements IUIHolder {
      * will also update sample item to this item
      */
     public void setCurrentItem(ItemStack item) {
-        ItemStack itemStack = player.getHeldItem(hand);
-        if (!ItemStack.areItemsEqual(sampleItem, itemStack))
-            return;
-        Preconditions.checkArgument(item.getItem() instanceof ItemUIFactory,
-                "Current Item should implement ItemUIFactory");
         this.sampleItem = item;
         player.setHeldItem(hand, item);
     }

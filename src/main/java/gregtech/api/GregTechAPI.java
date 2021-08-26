@@ -34,5 +34,4 @@ public class GregTechAPI {
         META_TILE_ENTITY_REGISTRY.register(id, sampleMetaTileEntity.metaTileEntityId, sampleMetaTileEntity);
         return sampleMetaTileEntity;
     }
-
 }

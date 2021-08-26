@@ -13,6 +13,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -70,12 +71,12 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return isExportHatch ? new ItemStackHandler(getInventorySize()) : new ItemStackHandler(0);
+        return isExportHatch ? new NotifiableItemStackHandler(getInventorySize(), getController(), true) : new ItemStackHandler(0);
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return isExportHatch ? new ItemStackHandler(0) : new ItemStackHandler(getInventorySize());
+        return isExportHatch ? new ItemStackHandler(0) : new NotifiableItemStackHandler(getInventorySize(), getController(), false);
     }
 
     @Override
@@ -86,6 +87,20 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
         abilityList.add(isExportHatch ? this.exportItems : this.importItems);
+    }
+
+    @Override
+    public void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+        NotifiableItemStackHandler handler = null;
+        if (isExportHatch && getExportItems() instanceof NotifiableItemStackHandler) {
+            handler = (NotifiableItemStackHandler) getExportItems();
+        } else if (!isExportHatch && getImportItems() instanceof NotifiableItemStackHandler) {
+            handler = (NotifiableItemStackHandler) getImportItems();
+        }
+        if (handler != null) {
+            handler.setNotifiableMetaTileEntity(metaTileEntity);
+            handler.addToNotifiedList(this, handler, isExportHatch);
+        }
     }
 
     @Override

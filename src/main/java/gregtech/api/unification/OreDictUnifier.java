@@ -10,6 +10,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.*;
 import gregtech.api.util.CustomModPriorityComparator;
 import gregtech.common.ConfigHolder;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.MinecraftForge;
@@ -198,6 +199,10 @@ public class OreDictUnifier {
         UnificationEntry entry = stackUnificationInfo.get(simpleItemStack);
         if (entry != null) return entry.orePrefix;
         return null;
+    }
+
+    public static OrePrefix getPrefix(Block block) {
+        return getPrefix(new ItemStack(block));
     }
 
     @Nullable

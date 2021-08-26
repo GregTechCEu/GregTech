@@ -38,6 +38,7 @@ import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategoryRegistration;
 import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
+import mezz.jei.config.Constants;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -53,6 +54,12 @@ import java.util.stream.Collectors;
 public class GTJeiPlugin implements IModPlugin {
 
     public static IIngredientRegistry ingredientRegistry;
+    public static IJeiRuntime jeiRuntime;
+
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+        GTJeiPlugin.jeiRuntime = jeiRuntime;
+    }
 
     @Override
     public void registerItemSubtypes(@Nonnull ISubtypeRegistry subtypeRegistry) {
@@ -77,6 +84,7 @@ public class GTJeiPlugin implements IModPlugin {
         }
         registry.addRecipeCategories(new OreByProductCategory(registry.getJeiHelpers().getGuiHelper()));
         registry.addRecipeCategories(new GTOreCategory(registry.getJeiHelpers().getGuiHelper()));
+        registry.addRecipeCategories(new MaterialTreeCategory(registry.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
@@ -91,7 +99,7 @@ public class GTJeiPlugin implements IModPlugin {
         ModularUIGuiHandler modularUIGuiHandler = new ModularUIGuiHandler(jeiHelpers.recipeTransferHandlerHelper());
         registry.addAdvancedGuiHandlers(modularUIGuiHandler);
         registry.addGhostIngredientHandler(modularUIGuiHandler.getGuiContainerClass(), modularUIGuiHandler);
-        registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler, VanillaRecipeCategoryUid.CRAFTING);
+        registry.getRecipeTransferRegistry().addRecipeTransferHandler(modularUIGuiHandler, Constants.UNIVERSAL_RECIPE_TRANSFER_UID);
 
         for (RecipeMap<?> recipeMap : RecipeMap.getRecipeMaps()) {
             List<GTRecipeWrapper> recipesList = recipeMap.getRecipeList()
@@ -179,6 +187,15 @@ public class GTJeiPlugin implements IModPlugin {
             if (machine == null) continue;
             registry.addRecipeCatalyst(machine.getStackForm(), oreByProductId);
         }
+
+        //Material Tree
+        List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
+        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+            if (material.hasProperty(PropertyKey.DUST)) {
+                materialTreeList.add(new MaterialTree(material));
+            }
+        }
+        registry.addRecipes(materialTreeList, GTValues.MODID + ":" + "material_tree");
 
         //Ore Veins
         List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();

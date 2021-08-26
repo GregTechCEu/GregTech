@@ -1,0 +1,20 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.high_voltage.84_rotor_holder_open.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.high_voltage.84_rotor_holder_open.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 711
+    }
+  },
+  "criteria": {
+    "rotor_holder_open": {
+      "trigger": "gregtech:rotor_holder_death"
+    }
+  },
+  "parent": "gregtech:high_voltage/45_large_steam_turbine"
+}

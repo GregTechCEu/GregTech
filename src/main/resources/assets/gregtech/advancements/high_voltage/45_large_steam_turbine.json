@@ -8,7 +8,7 @@
     },
     "icon": {
       "item": "gregtech:machine",
-      "data": 1005
+      "data": 1009
     }
   },
   "criteria": {
@@ -17,8 +17,8 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:wire_coil",
-            "data": 1005
+            "item": "gregtech:machine",
+            "data": 1009
           }
         ]
       }

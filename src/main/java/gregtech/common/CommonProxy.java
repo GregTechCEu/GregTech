@@ -7,14 +7,19 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
+import gregtech.api.terminal.TerminalRegistry;
+import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
+import gregtech.common.advancement.GTTriggers;
+import gregtech.api.util.advancement.GTTrigger;
 import gregtech.common.blocks.*;
 import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
+import gregtech.common.blocks.wood.BlockGregPlank;
 import gregtech.common.blocks.wood.BlockGregSapling;
 import gregtech.common.items.MetaItems;
 import gregtech.common.pipelike.cable.BlockCable;
@@ -29,8 +34,9 @@ import gregtech.loaders.oreprocessing.DecompositionRecipeHandler;
 import gregtech.loaders.oreprocessing.RecipeHandlerList;
 import gregtech.loaders.oreprocessing.ToolRecipeHandler;
 import gregtech.loaders.recipe.*;
-import gregtech.loaders.recipe.component.AnnotatedComponentHandlerLoader;
 import gregtech.loaders.recipe.component.IComponentHandler;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -45,10 +51,13 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.function.Function;
 
 import static gregtech.common.blocks.MetaBlocks.*;
@@ -89,6 +98,7 @@ public class CommonProxy {
         registry.register(LOG);
         registry.register(LEAVES);
         registry.register(SAPLING);
+        registry.register(PLANKS);
         registry.register(SURFACE_ROCK);
 
         COMPRESSED.values().stream().distinct().forEach(registry::register);
@@ -137,6 +147,7 @@ public class CommonProxy {
         registry.register(createMultiTexItemBlock(LOG, state -> state.getValue(BlockGregLog.VARIANT).getName()));
         registry.register(createMultiTexItemBlock(LEAVES, state -> state.getValue(BlockGregLeaves.VARIANT).getName()));
         registry.register(createMultiTexItemBlock(SAPLING, state -> state.getValue(BlockGregSapling.VARIANT).getName()));
+        registry.register(createMultiTexItemBlock(PLANKS, state -> state.getValue(BlockGregPlank.VARIANT).getName()));
 
         COMPRESSED.values()
                 .stream().distinct()
@@ -269,9 +280,21 @@ public class CommonProxy {
     }
 
     public void onLoad() {
+        Method triggerRegistry = ObfuscationReflectionHelper.findMethod(CriteriaTriggers.class, "func_192118_a", ICriterionTrigger.class, ICriterionTrigger.class);
+        triggerRegistry.setAccessible(true);
+        for (GTTrigger<?> trigger : GTTriggers.GT_TRIGGERS) {
+            try {
+                triggerRegistry.invoke(null, trigger);
+            } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                GTLog.logger.error("Failed to register Advancement trigger: {}", trigger.getId());
+                GTLog.logger.error("Stacktrace:", e);
+            }
+        }
     }
 
     public void onPostLoad() {
         WoodMachineRecipes.postInit();
+        TerminalRegistry.init();
+        new GuideJsonLoader().onResourceManagerReload(null);
     }
 }

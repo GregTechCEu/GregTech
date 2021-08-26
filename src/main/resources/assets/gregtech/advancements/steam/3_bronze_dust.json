@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.steam.3_bronze_dust.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
-      "data": 2134
+      "item": "gregtech:meta_dust",
+      "data": 260
     }
   },
   "criteria": {

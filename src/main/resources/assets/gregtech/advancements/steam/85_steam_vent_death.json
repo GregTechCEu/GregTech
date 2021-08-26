@@ -1,0 +1,21 @@
+{
+  "display": {
+    "description": {
+      "translate": "gregtech.advancement.85_steam_vent_death.desc"
+    },
+    "title": {
+      "translate": "gregtech.advancement.85_steam_vent_death.name"
+    },
+    "icon": {
+      "item": "gregtech:meta_item_1",
+      "data": 78,
+      "nbt": "{FluidName:\"steam\", Amount:1000}"
+    }
+  },
+  "criteria": {
+    "steam_vent_death": {
+      "trigger": "gregtech:steam_vent_death"
+    }
+  },
+  "parent": "gregtech:steam/4_bronze_boiler"
+}

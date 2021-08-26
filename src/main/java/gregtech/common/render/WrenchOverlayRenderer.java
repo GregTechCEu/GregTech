@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.cover.ICoverable;
 import gregtech.api.cover.ICoverable.PrimaryBoxData;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
@@ -92,6 +93,11 @@ public class WrenchOverlayRenderer {
     }
 
     public static boolean shouldDrawOverlayForItem(ItemStack itemStack, TileEntity tileEntity) {
+        if (tileEntity instanceof MetaTileEntityHolder) {
+            if(!((MetaTileEntityHolder) tileEntity).getMetaTileEntity().canRenderMachineGrid())
+                return false;
+        }
+
         if (tileEntity instanceof TileEntityPipeBase) {
             TileEntityPipeBase<?, ?> pipeTE = (TileEntityPipeBase<?, ?>) tileEntity;
             Class<?> pipeClass = pipeTE.getPipeBlock().getPipeTypeClass();

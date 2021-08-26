@@ -9,6 +9,8 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.net.FluidNode;
+import gregtech.common.advancement.GTTriggers;
+import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
@@ -18,6 +20,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -110,15 +113,21 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             if (fluidStack == null)
                 return; //pipe network is empty
             int fluidTemperature = fluidStack.getFluid().getTemperature(fluidStack);
+            boolean wasDamaged = false;
             if (fluidTemperature >= 373) {
                 //100C, temperature of boiling water
                 float damageAmount = (fluidTemperature - 363) / 4.0f;
                 entityLiving.attackEntityFrom(DamageSources.getHeatDamage(), damageAmount);
+                wasDamaged = true;
 
             } else if (fluidTemperature <= 183) {
                 //-90C, temperature of freezing of most gaseous elements
                 float damageAmount = fluidTemperature / 4.0f;
                 entityLiving.attackEntityFrom(DamageSources.getFrostDamage(), damageAmount);
+                wasDamaged = true;
+            }
+            if (wasDamaged && entityLiving instanceof EntityPlayerMP) {
+                GTTriggers.FLUID_PIPE_DEATH.trigger((EntityPlayerMP) entityLiving);
             }
         }
     }

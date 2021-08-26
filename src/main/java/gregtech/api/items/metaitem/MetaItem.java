@@ -58,6 +58,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -521,10 +523,14 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null) {
-            lines.add(I18n.format("metaitem.generic.electric_item.tooltip",
-                    electricItem.getCharge(),
-                    electricItem.getMaxCharge(),
-                    GTValues.VN[electricItem.getTier()]));
+            if (electricItem.canProvideChargeExternally()) {
+                addDischargeItemTooltip(lines, electricItem.getMaxCharge(), electricItem.getCharge(), electricItem.getTier());
+            } else {
+                lines.add(I18n.format("metaitem.generic.electric_item.tooltip",
+                        electricItem.getCharge(),
+                        electricItem.getMaxCharge(),
+                        GTValues.VN[electricItem.getTier()]));
+            }
         }
 
         IFluidHandlerItem fluidHandler = ItemHandlerHelper.copyStackWithSize(itemStack, 1)
@@ -543,6 +549,33 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         for (IItemBehaviour behaviour : getBehaviours(itemStack)) {
             behaviour.addInformation(itemStack, lines);
         }
+    }
+
+    private static void addDischargeItemTooltip(List<String> tooltip, long maxCharge, long currentCharge, int tier) {
+        if (currentCharge == 0) { // do not display when empty
+            tooltip.add(I18n.format("metaitem.generic.electric_item.tooltip", currentCharge, maxCharge, GTValues.VN[tier]));
+            return;
+        }
+        Instant start = Instant.now();
+        Instant end = Instant.now().plusSeconds((long)((currentCharge * 1.0) / GTValues.V[tier] / 20));
+        Duration duration = Duration.between(start, end);
+        double percentRemaining = currentCharge * 1.0 / maxCharge * 100; // used for color
+
+        long timeRemaining;
+        String unit;
+        if (duration.getSeconds() <= 180) {
+            timeRemaining = duration.getSeconds();
+            unit = "sec";
+        } else if (duration.toMinutes() <= 180) {
+            timeRemaining = duration.toMinutes();
+            unit = "min";
+        } else {
+            timeRemaining = duration.toHours();
+            unit = "hr";
+        }
+        tooltip.add(I18n.format("metaitem.battery.charge_detailed", currentCharge, maxCharge, GTValues.VN[tier],
+                percentRemaining < 30 ? 'c' : percentRemaining < 60 ? 'e' : 'a',
+                timeRemaining, unit));
     }
 
     @Override

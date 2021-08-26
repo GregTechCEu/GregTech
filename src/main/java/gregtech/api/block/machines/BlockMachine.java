@@ -84,7 +84,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
         setHardness(6.0f);
         setResistance(6.0f);
         setTranslationKey("unnamed");
-        setHarvestLevel("wrench", 1);
         setDefaultState(getDefaultState().withProperty(OPAQUE, true));
     }
 

@@ -17,6 +17,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -27,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -55,6 +57,11 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     }
 
     @Override
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
+        return Pair.of(Textures.VOLTAGE_CASINGS[this.setTier].getParticleSprite(), this.getPaintingColor());
+    }
+
+    @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
         return new MetaTileEntityCreativeEnergy();
     }
@@ -67,15 +74,9 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.infinite_energy.tooltip"));
-    }
-
-    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        String[] V = {"NAN", "ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "UHV", "UEV", "UIV", "UMV", "UXV", "MAX"};
         ModularUI.Builder builder = ModularUI.defaultBuilder()
-                .widget(new CycleButtonWidget(7, 7, 30, 20, V, () -> setTier, tier -> {
+                .widget(new CycleButtonWidget(7, 7, 30, 20, GTValues.VN, () -> setTier, tier -> {
                     setTier = tier;
                     if (tier > 0)
                         voltage = GTValues.V[setTier - 1];
@@ -84,8 +85,10 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                 }));
         builder.label(7, 32, "Voltage");
         builder.widget(new TextFieldWidget(7, 44, 156, 20, true, () -> String.valueOf(voltage), value -> {
-            voltage = Integer.parseInt(value);
-            setTier = 0;
+            if(!value.isEmpty()) {
+                voltage = Long.parseLong(value);
+                setTier = 0;
+            }
         }).setValidator(value -> {
             for (int i = 0; i < value.length(); i++) {
                 char c = value.charAt(i);
@@ -95,9 +98,11 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
             return true;
         }));
         builder.label(7, 74, "Amperage");
-        builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = Math.max(0, amps+1)));
+        builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = amps-- == -1 ? 0 : amps--));
         builder.widget(new TextFieldWidget(29, 87, 118, 20, true, () -> String.valueOf(amps), value -> {
-            amps = Integer.parseInt(value);
+            if(!value.isEmpty()) {
+                amps = Integer.parseInt(value);
+            }
         }).setValidator(value -> {
             for (int i = 0; i < value.length(); i++) {
                 char c = value.charAt(i);

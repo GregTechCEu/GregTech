@@ -91,7 +91,6 @@ public class MaterialIconType {
     public static final MaterialIconType turbineBlade = new MaterialIconType("turbineBlade");
     public static final MaterialIconType handleMallet = new MaterialIconType("handleMallet");
     public static final MaterialIconType toolHeadMallet = new MaterialIconType("toolHeadMallet");
-    public static final MaterialIconType plateCurved = new MaterialIconType("plateCurved");
     public static final MaterialIconType coke = new MaterialIconType("coke");
 
     // BLOCK TEXTURES

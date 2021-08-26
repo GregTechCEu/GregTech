@@ -2,6 +2,7 @@ package gregtech.api.gui.widgets;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -16,16 +17,18 @@ import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class ImageWidget extends Widget {
 
-    protected TextureArea area;
+    protected IGuiTexture area;
 
     private BooleanSupplier predicate;
     private boolean isVisible = true;
+    private int border;
+    private int borderColor;
 
     public ImageWidget(int xPosition, int yPosition, int width, int height) {
         super(new Position(xPosition, yPosition), new Size(width, height));
     }
 
-    public ImageWidget(int xPosition, int yPosition, int width, int height, TextureArea area) {
+    public ImageWidget(int xPosition, int yPosition, int width, int height, IGuiTexture area) {
         this(xPosition, yPosition, width, height);
         this.area = area;
     }
@@ -35,10 +38,23 @@ public class ImageWidget extends Widget {
         return this;
     }
 
+    public ImageWidget setBorder(int border, int color) {
+        this.border = border;
+        this.borderColor = color;
+        return this;
+    }
+
     public ImageWidget setPredicate(BooleanSupplier predicate) {
         this.predicate = predicate;
         this.isVisible = false;
         return this;
+    }
+
+    @Override
+    public void updateScreen() {
+        if (area != null) {
+            area.updateTick();
+        }
     }
 
     @Override
@@ -65,6 +81,9 @@ public class ImageWidget extends Widget {
         Position position = getPosition();
         Size size = getSize();
         area.draw(position.x, position.y, size.width, size.height);
+        if (border > 0) {
+            drawBorder(position.x, position.y, size.width, size.height, borderColor, border);
+        }
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 

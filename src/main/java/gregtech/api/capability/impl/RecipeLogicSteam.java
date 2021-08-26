@@ -5,9 +5,11 @@ import gregtech.api.damagesources.DamageSources;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.common.advancement.GTTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -119,7 +121,12 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
         if (blockOnPos.getCollisionBoundingBox(metaTileEntity.getWorld(), ventingBlockPos) == Block.NULL_AABB) {
             metaTileEntity.getWorld()
                     .getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ventingBlockPos), EntitySelectors.CAN_AI_TARGET)
-                    .forEach(entity -> entity.attackEntityFrom(DamageSources.getHeatDamage(), this.isHighPressure ? 12.0f : 6.0f));
+                    .forEach(entity -> {
+                        entity.attackEntityFrom(DamageSources.getHeatDamage(), this.isHighPressure ? 12.0f : 6.0f);
+                        if (entity instanceof EntityPlayerMP) {
+                            GTTriggers.STEAM_VENT_DEATH.trigger((EntityPlayerMP) entity);
+                        }
+                    });
             WorldServer world = (WorldServer) metaTileEntity.getWorld();
             double posX = machinePos.getX() + 0.5 + ventingSide.getXOffset() * 0.6;
             double posY = machinePos.getY() + 0.5 + ventingSide.getYOffset() * 0.6;

@@ -13,6 +13,8 @@ import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.common.pipelike.cable.net.EnergyNode;
+import gregtech.common.advancement.GTTriggers;
+import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
@@ -25,6 +27,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
@@ -134,6 +137,9 @@ public class BlockCable extends BlockMaterialPipe<Insulation, WireProperties, Wo
                 if (voltage > 0L && amperage > 0L) {
                     float damageAmount = (GTUtility.getTierByVoltage(voltage) + 1) * amperage * 4;
                     entityLiving.attackEntityFrom(DamageSources.getElectricDamage(), damageAmount);
+                    if (entityLiving instanceof EntityPlayerMP) {
+                        GTTriggers.ELECTROCUTION_DEATH.trigger((EntityPlayerMP) entityLiving);
+                    }
                 }
             }
         }

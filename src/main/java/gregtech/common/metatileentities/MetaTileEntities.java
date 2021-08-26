@@ -197,6 +197,8 @@ public class MetaTileEntities {
     public static final MetaTileEntityFisher[] FISHER = new MetaTileEntityFisher[4];
 
     public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
+  
+    public static MetaTileEntityClipboard CLIPBOARD_TILE;
 
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");
@@ -632,6 +634,8 @@ public class MetaTileEntities {
         STEAM_IMPORT_BUS = GregTechAPI.registerMetaTileEntity(1651, new MetaTileEntitySteamItemBus(gregtechId("steam_import_bus"), false));
         STEAM_HATCH = GregTechAPI.registerMetaTileEntity(1652, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
         SIMPLE_ORE_WASHER = GregTechAPI.registerMetaTileEntity(1653, new MetaTileEntitySimpleOreWasher(gregtechId("ore_washer.simple"), RecipeMaps.SIMPLE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY, 0));
+
+        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1636, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
         /*
          * FOR ADDON DEVELOPERS:

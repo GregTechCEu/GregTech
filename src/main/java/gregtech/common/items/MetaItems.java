@@ -130,6 +130,11 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_HULL_LV;
     public static MetaItem<?>.MetaValueItem BATTERY_HULL_MV;
     public static MetaItem<?>.MetaValueItem BATTERY_HULL_HV;
+    public static MetaItem<?>.MetaValueItem BATTERY_HULL_SMALL_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_HULL_MEDIUM_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_HULL_LARGE_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_HULL_MEDIUM_NAQUADRIA;
+    public static MetaItem<?>.MetaValueItem BATTERY_HULL_LARGE_NAQUADRIA;
 
     public static MetaItem<?>.MetaValueItem BATTERY_ULV_TANTALUM;
     public static MetaItem<?>.MetaValueItem BATTERY_LV_CADMIUM;
@@ -143,6 +148,12 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem BATTERY_HV_SODIUM;
     public static MetaItem<?>.MetaValueItem ENERGY_CRYSTAL;
     public static MetaItem<?>.MetaValueItem LAPOTRON_CRYSTAL;
+
+    public static MetaItem<?>.MetaValueItem BATTERY_EV_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_IV_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_LUV_VANADIUM;
+    public static MetaItem<?>.MetaValueItem BATTERY_ZPM_NAQUADRIA;
+    public static MetaItem<?>.MetaValueItem BATTERY_UV_NAQUADRIA;
 
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB;
     public static MetaItem<?>.MetaValueItem ENERGY_LAPOTRONIC_ORB2;
@@ -416,6 +427,7 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem NANO_SABER;
     public static MetaItem<?>.MetaValueItem SCANNER;
+    public static MetaItem<?>.MetaValueItem TERMINAL;
 
     public static final MetaItem<?>.MetaValueItem[] DYE_ONLY_ITEMS = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
     public static final MetaItem<?>.MetaValueItem[] SPRAY_CAN_DYES = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
@@ -476,6 +488,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_ZPM;
     public static MetaItem<?>.MetaValueItem VOLTAGE_COIL_UV;
 
+    public static MetaItem<?>.MetaValueItem CLIPBOARD;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);
         add(OrePrefix.dustSmall);
@@ -493,7 +507,6 @@ public final class MetaItems {
         add(OrePrefix.ingot);
         add(OrePrefix.ingotHot);
         add(OrePrefix.plate);
-        add(OrePrefix.plateCurved);
         add(OrePrefix.plateDouble);
         add(OrePrefix.plateDense);
         add(OrePrefix.foil);
@@ -526,6 +539,7 @@ public final class MetaItems {
         add(OrePrefix.toolHeadUniversalSpade);
         add(OrePrefix.toolHeadSense);
         add(OrePrefix.toolHeadBuzzSaw);
+        add(OrePrefix.toolHeadScrewdriver);
     }};
 
     public static void init() {

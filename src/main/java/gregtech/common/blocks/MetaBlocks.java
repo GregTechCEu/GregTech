@@ -22,6 +22,7 @@ import gregtech.common.blocks.surfacerock.BlockSurfaceRock;
 import gregtech.common.blocks.surfacerock.TileEntitySurfaceRock;
 import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
+import gregtech.common.blocks.wood.BlockGregPlank;
 import gregtech.common.blocks.wood.BlockGregSapling;
 import gregtech.common.pipelike.cable.BlockCable;
 import gregtech.common.pipelike.cable.Insulation;
@@ -106,6 +107,7 @@ public class MetaBlocks {
     public static BlockGregLog LOG;
     public static BlockGregLeaves LEAVES;
     public static BlockGregSapling SAPLING;
+    public static BlockGregPlank PLANKS;
 
     public static BlockSurfaceRock SURFACE_ROCK;
 
@@ -178,6 +180,8 @@ public class MetaBlocks {
         LEAVES.setRegistryName("leaves");
         SAPLING = new BlockGregSapling();
         SAPLING.setRegistryName("sapling");
+        PLANKS = new BlockGregPlank();
+        PLANKS.setRegistryName("plank");
 
         SURFACE_ROCK = new BlockSurfaceRock();
         SURFACE_ROCK.setRegistryName("surface_rock_new");
@@ -227,6 +231,7 @@ public class MetaBlocks {
         //could possibly override block methods, but since these props don't depend on state why not just use nice and simple vanilla method
         Blocks.FIRE.setFireInfo(LOG, 5, 5);
         Blocks.FIRE.setFireInfo(LEAVES, 30, 60);
+        Blocks.FIRE.setFireInfo(PLANKS, 5, 20);
     }
 
     /**
@@ -336,6 +341,7 @@ public class MetaBlocks {
         registerItemModelWithOverride(LOG, ImmutableMap.of(BlockGregLog.LOG_AXIS, EnumAxis.Y));
         registerItemModel(LEAVES);
         registerItemModel(SAPLING);
+        registerItemModel(PLANKS);
 
         COMPRESSED.values().stream().distinct().forEach(MetaBlocks::registerItemModel);
         FRAMES.values().forEach(MetaBlocks::registerItemModelWithFilteredProperties);
@@ -466,6 +472,7 @@ public class MetaBlocks {
         OreDictUnifier.registerOre(new ItemStack(LOG, 1, GTValues.W), OrePrefix.log, Materials.Wood);
         OreDictUnifier.registerOre(new ItemStack(LEAVES, 1, GTValues.W), "treeLeaves");
         OreDictUnifier.registerOre(new ItemStack(SAPLING, 1, GTValues.W), "treeSapling");
+        OreDictUnifier.registerOre(new ItemStack(PLANKS, 1, GTValues.W), OrePrefix.plank, Materials.Wood);
         GameRegistry.addSmelting(LOG, new ItemStack(Items.COAL, 1, 1), 0.15F);
 
         for (Entry<Material, BlockCompressed> entry : COMPRESSED.entrySet()) {

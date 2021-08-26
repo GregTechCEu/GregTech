@@ -1360,7 +1360,7 @@ public class CircuitRecipes {
                 .input(ADVANCED_SMD_RESISTOR, 32)
                 .input(foil, SiliconeRubber, 64)
                 .input(RANDOM_ACCESS_MEMORY, 32)
-                .input(wireGtDouble, Tier.Superconductor, 16)
+                .input(wireGtDouble, EnrichedNaquadahTriniumEuropiumDuranide, 16)
                 .input(plate, Europium, 8)
                 .fluidInputs(SolderingAlloy.getFluid(L * 20))
                 .fluidInputs(Polybenzimidazole.getFluid(L * 8))

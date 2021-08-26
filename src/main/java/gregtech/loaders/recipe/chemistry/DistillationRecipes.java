@@ -316,6 +316,11 @@ public class DistillationRecipes {
                 .duration(16).EUt(96).buildAndRegister();
 
         DISTILLATION_RECIPES.recipeBuilder()
+                .fluidInputs(FishOil.getFluid(1200))
+                .fluidOutputs(Lubricant.getFluid(500))
+                .duration(16).EUt(96).buildAndRegister();
+
+        DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(FermentedBiomass.getFluid(1000))
                 .outputs(new ItemStack(Items.DYE, 1, 15))
                 .fluidOutputs(AceticAcid.getFluid(25))

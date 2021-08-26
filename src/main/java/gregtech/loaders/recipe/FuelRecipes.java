@@ -61,6 +61,7 @@ public class FuelRecipes {
         registerSemiFluidGeneratorFuel(OilHeavy.getFluid(16), 5, LV);
         registerSemiFluidGeneratorFuel(SulfuricHeavyFuel.getFluid(16), 5, LV);
         registerSemiFluidGeneratorFuel(HeavyFuel.getFluid(8), 15, LV);
+        registerSemiFluidGeneratorFuel(FishOil.getFluid(8), 1, LV);
 
         //plasma turbine
         registerPlasmaFuel(Helium.getPlasma(1), 2560, LV);

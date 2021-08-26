@@ -90,7 +90,8 @@ public class GTValues {
             MODID_EIO = "enderio",
             MODID_BC = "buildcraftcore",
             MODID_COFH = "cofhcore",
-            MODID_APPENG = "appliedenergistics2";
+            MODID_APPENG = "appliedenergistics2",
+            MODID_JEI = "jei";
 
     //because forge is too fucking retarded to cache results or at least do not create fucking
     //immutable collections every time you retrieve indexed mod list

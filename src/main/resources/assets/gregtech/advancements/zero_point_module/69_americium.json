@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.zero_point_module.69_americium.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
-      "data": 10003
+      "item": "gregtech:meta_ingot",
+      "data": 3
     }
   },
   "criteria": {

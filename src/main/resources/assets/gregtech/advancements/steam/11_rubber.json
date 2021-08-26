@@ -7,8 +7,8 @@
       "translate": "gregtech.advancement.steam.11_rubber.name"
     },
     "icon": {
-      "item": "gregtech:meta_item_1",
-      "data": 10184
+      "item": "gregtech:meta_ingot",
+      "data": 1068
     },
     "frame": "goal"
   },

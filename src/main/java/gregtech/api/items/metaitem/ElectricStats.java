@@ -1,5 +1,6 @@
 package gregtech.api.items.metaitem;
 
+import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.ElectricItem;
@@ -20,6 +21,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 public class ElectricStats implements IItemComponent, IItemCapabilityProvider, IItemMaxStackSizeProvider, IItemBehaviour {
@@ -114,8 +117,29 @@ public class ElectricStats implements IItemComponent, IItemCapabilityProvider, I
     public void addInformation(ItemStack itemStack, List<String> lines) {
         IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null && electricItem.canProvideChargeExternally()) {
+            addTotalChargeTooltip(lines, electricItem.getMaxCharge(), electricItem.getTier());
             lines.add(I18n.format("metaitem.electric.discharge_mode.tooltip"));
         }
+    }
+
+    private static void addTotalChargeTooltip(List<String> tooltip, long maxCharge, int tier) {
+        Instant start = Instant.now();
+        Instant end = Instant.now().plusSeconds((long) ((maxCharge * 1.0) / GTValues.V[tier] / 20));
+        Duration duration = Duration.between(start, end);
+
+        long chargeTime;
+        String unit;
+        if (duration.getSeconds() <= 180) {
+            chargeTime = duration.getSeconds();
+            unit = "sec";
+        } else if (duration.toMinutes() <= 180) {
+            chargeTime = duration.toMinutes();
+            unit = "min";
+        } else {
+            chargeTime = duration.toHours();
+            unit = "hr";
+        }
+        tooltip.add(I18n.format("metaitem.battery.charge_time", chargeTime, unit, GTValues.VN[tier]));
     }
 
     private static boolean isInDischargeMode(ItemStack itemStack) {

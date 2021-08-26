@@ -94,6 +94,10 @@ public class RecipePropertyStorage {
         return recipeProperty.castValue(value);
     }
 
+    public boolean hasRecipeProperty(RecipeProperty<?> recipeProperty) {
+        return recipeProperties.containsKey(recipeProperty);
+    }
+
     /**
      * Provides keys of all stored {@link RecipeProperty}
      *
