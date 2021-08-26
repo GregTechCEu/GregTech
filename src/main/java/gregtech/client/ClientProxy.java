@@ -5,6 +5,7 @@ import codechicken.lib.util.ItemNBTUtils;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
+import gregtech.api.model.IModelSupplier;
 import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.ToolRenderHandler;
 import gregtech.api.unification.OreDictUnifier;
@@ -79,15 +80,13 @@ public class ClientProxy extends CommonProxy {
         return state.getValue(block.variantProperty).getMaterialRGB();
     };
 
-    public static final IBlockColor FRAME_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) -> {
-        Material material = ((BlockFrame) state.getBlock()).frameMaterial;
-        return material.getMaterialRGB();
-    };
+    public static final IBlockColor FRAME_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
+        state.getValue(((BlockFrame) state.getBlock()).variantProperty).getMaterialRGB();
 
     public static final IItemColor FRAME_ITEM_COLOR = (stack, tintIndex) -> {
-        IBlockState frameState = ((FrameItemBlock) stack.getItem()).getBlockState(stack);
-        BlockFrame block = (BlockFrame) frameState.getBlock();
-        return block.frameMaterial.getMaterialRGB();
+        BlockFrame block = (BlockFrame) ((ItemBlock) stack.getItem()).getBlock();
+        IBlockState state = block.getStateFromMeta(stack.getItemDamage());
+        return state.getValue(block.variantProperty).getMaterialRGB();
     };
 
     public static final IBlockColor ORE_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
@@ -138,10 +137,9 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void registerSprites(TextureStitchEvent.Pre event) {
-        for (MaterialIconSet set : MaterialIconSet.ICON_SETS.values()) {
-            event.getMap().registerSprite(MaterialIconType.ore.getBlockPath(set));
-            event.getMap().registerSprite(MaterialIconType.block.getBlockPath(set));
-        }
+        MetaBlocks.COMPRESSED.values().stream().distinct().forEach(c -> c.onTextureStitch(event));
+        MetaBlocks.FRAMES.values().stream().distinct().forEach(f -> f.onTextureStitch(event));
+        MetaBlocks.ORES.forEach(o -> o.onTextureStitch(event));
     }
 
     @SubscribeEvent

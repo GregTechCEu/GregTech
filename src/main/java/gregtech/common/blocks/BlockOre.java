@@ -5,6 +5,7 @@ import gregtech.api.GregTechAPI;
 import gregtech.api.model.IModelSupplier;
 import gregtech.api.model.SimpleStateMapper;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
@@ -26,6 +27,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -195,12 +197,20 @@ public class BlockOre extends BlockFalling implements IBlockOre, IModelSupplier 
     }
 
     @Override
+    public void onTextureStitch(TextureStitchEvent.Pre event) {
+        event.getMap().registerSprite(MaterialIconType.block.getBlockPath(material.getMaterialIconSet()));
+        for (IBlockState state : this.getBlockState().getValidStates()) {
+            StoneType stoneType = state.getValue(STONE_TYPE);
+            event.getMap().registerSprite(stoneType.backgroundTopTexture);
+            event.getMap().registerSprite(stoneType.backgroundSideTexture);
+        }
+    }
+
+    @Override
     public void onModelRegister() {
-        MetaBlocks.ORES.forEach(o -> {
-            ModelLoader.setCustomStateMapper(o, new SimpleStateMapper(MODEL_LOCATION));
-            for (IBlockState state : o.getBlockState().getValidStates()) {
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(o), o.getMetaFromState(state), MODEL_LOCATION);
-            }
-        });
+        ModelLoader.setCustomStateMapper(this, new SimpleStateMapper(MODEL_LOCATION));
+        for (IBlockState state : this.getBlockState().getValidStates()) {
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), this.getMetaFromState(state), MODEL_LOCATION);
+        }
     }
 }

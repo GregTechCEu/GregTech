@@ -4,8 +4,10 @@ import codechicken.lib.render.item.CCRenderItem;
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.util.TransformUtils;
 import gregtech.client.model.CompressedBlockBakedModel;
+import gregtech.client.model.FrameModel;
 import gregtech.client.model.OreBakedModel;
 import gregtech.common.blocks.BlockCompressed;
+import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.BlockOre;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -84,6 +86,7 @@ public class BakedModelHandler {
         }
         event.getModelRegistry().putObject(BlockOre.MODEL_LOCATION, OreBakedModel.INSTANCE);
         event.getModelRegistry().putObject(BlockCompressed.MODEL_LOCATION, CompressedBlockBakedModel.INSTANCE);
+        event.getModelRegistry().putObject(BlockFrame.MODEL_LOCATION, FrameModel.INSTANCE);
     }
 
     private static class ModelBuiltInRenderer implements IBakedModel {
