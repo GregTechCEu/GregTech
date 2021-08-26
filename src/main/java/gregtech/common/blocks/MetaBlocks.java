@@ -63,6 +63,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
+import scala.sys.Prop;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -187,22 +188,13 @@ public class MetaBlocks {
 
         StoneType.init();
 
-        createGeneratedBlock(
-                material -> (material.hasProperty(PropertyKey.INGOT) || material.hasProperty(PropertyKey.GEM))
-                        && !OrePrefix.block.isIgnored(material),
-                MetaBlocks::createCompressedBlock);
+        createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && (m.hasProperty(PropertyKey.INGOT) || m.hasProperty(PropertyKey.GEM)) && !OrePrefix.block.isIgnored(m), MetaBlocks::createCompressedBlock);
+        createGeneratedBlock(m -> m.hasProperty(PropertyKey.DUST) && m.hasFlag(GENERATE_FRAME), MetaBlocks::createFrameBlock);
 
         for (Material material : GregTechRegistries.getMaterialRegistry()) {
-
-            if (material.hasProperty(PropertyKey.ORE))
+            if (material.hasProperty(PropertyKey.ORE)) {
                 createOreBlock(material);
-
-            if (material.hasProperty(PropertyKey.DUST) && material.hasFlag(GENERATE_FRAME)) {
-                BlockFrame blockFrame = new BlockFrame(material);
-                blockFrame.setRegistryName("frame_" + material.toString());
-                FRAMES.put(material, blockFrame);
             }
-
             if (material.hasProperty(PropertyKey.WIRE)) {
                 for (BlockCable cable : CABLES)
                     cable.addCableMaterial(material, material.getProperty(PropertyKey.WIRE));
@@ -264,9 +256,15 @@ public class MetaBlocks {
         BlockCompressed block = new BlockCompressed(materials);
         block.setRegistryName("meta_block_compressed_" + index);
         for (Material material : materials) {
-            if (material.hasProperty(PropertyKey.DUST)) {
-                COMPRESSED.put(material, block);
-            }
+            COMPRESSED.put(material, block);
+        }
+    }
+
+    private static void createFrameBlock(Material[] materials, int index) {
+        BlockFrame block = new BlockFrame(materials);
+        block.setRegistryName("meta_block_frame_" + index);
+        for (Material material : materials) {
+            FRAMES.put(material, block);
         }
     }
 
@@ -338,8 +336,8 @@ public class MetaBlocks {
         registerItemModel(LEAVES);
         registerItemModel(SAPLING);
 
-        COMPRESSED.values().forEach(IModelSupplier::onModelRegister);
-        FRAMES.values().forEach(MetaBlocks::registerItemModelWithFilteredProperties);
+        COMPRESSED.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
+        FRAMES.values().stream().distinct().forEach(IModelSupplier::onModelRegister);
         ORES.forEach(IModelSupplier::onModelRegister);
     }
 
@@ -431,7 +429,6 @@ public class MetaBlocks {
         ModelLoader.setCustomStateMapper(REINFORCED_FOAM, normalStateMapper);
         ModelLoader.setCustomStateMapper(PETRIFIED_FOAM, normalStateMapper);
         ModelLoader.setCustomStateMapper(REINFORCED_PETRIFIED_FOAM, normalStateMapper);
-        FRAMES.values().forEach(it -> ModelLoader.setCustomStateMapper(it, normalStateMapper));
 
         BakedModelHandler modelHandler = new BakedModelHandler();
         MinecraftForge.EVENT_BUS.register(modelHandler);
@@ -479,7 +476,7 @@ public class MetaBlocks {
         for (Entry<Material, BlockFrame> entry : FRAMES.entrySet()) {
             Material material = entry.getKey();
             BlockFrame block = entry.getValue();
-            ItemStack itemStack = new ItemStack(block, 1);
+            ItemStack itemStack = block.getItem(material);
             OreDictUnifier.registerOre(itemStack, OrePrefix.frameGt, material);
         }
 

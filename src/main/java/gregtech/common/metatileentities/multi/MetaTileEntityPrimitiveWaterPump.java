@@ -18,6 +18,7 @@ import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Materials;
+import gregtech.common.blocks.BlockFrame;
 import gregtech.common.blocks.BlockSteamCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
@@ -124,13 +125,14 @@ public class MetaTileEntityPrimitiveWaterPump extends MultiblockControllerBase {
 
     @Override
     protected BlockPattern createStructurePattern() {
+        BlockFrame woodenFrame = MetaBlocks.FRAMES.get(Materials.Wood);
         return FactoryBlockPattern.start()
                 .aisle("XXXX", "**F*", "**F*")
                 .aisle("XXHX", "F**F", "FFFF")
                 .aisle("SXXX", "**F*", "**F*")
                 .where('S', selfPredicate())
                 .where('X', statePredicate(MetaBlocks.STEAM_CASING.getState(BlockSteamCasing.SteamCasingType.PUMP_DECK)))
-                .where('F', statePredicate(MetaBlocks.FRAMES.get(Materials.Wood).getBlockState().getBaseState()))
+                .where('F', statePredicate(woodenFrame.getDefaultState().withProperty(woodenFrame.variantProperty, Materials.Wood)))
                 .where('H', hatchPredicate())
                 .where('*', (x) -> true)
                 .build();
