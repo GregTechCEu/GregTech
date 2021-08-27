@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -67,10 +68,12 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
     public void recoverItemsTable(List<ItemStack> recoveryItems) {
         int numRolls = Math.min(recoveryItems.size(), inventory.getSlots());
+        List<ItemStack> items = new ArrayList<>();
         IntStream.range(0, numRolls).forEach(slot -> {
             if (calculateChance())
-                inventory.insertItem(slot, recoveryItems.get(slot), false);
+                items.add(recoveryItems.get(slot));
         });
+        addItemsToItemHandler(inventory, false, items);
     }
 
     private boolean calculateChance() {
