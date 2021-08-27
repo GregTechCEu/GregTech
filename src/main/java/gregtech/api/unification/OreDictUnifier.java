@@ -5,13 +5,12 @@ import com.google.common.base.Joiner;
 import gregtech.GregTechRegistries;
 import gregtech.api.unification.material.MarkerMaterial;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.*;
 import gregtech.api.util.CustomModPriorityComparator;
 import gregtech.common.ConfigHolder;
-import net.minecraft.block.Block;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,12 +33,12 @@ public class OreDictUnifier {
     }
 
     //simple version of material registry for marker materials
-    private static final Map<String, MarkerMaterial> markerMaterialRegistry = new HashMap<>();
-    private static final Map<ItemAndMetadata, ItemMaterialInfo> materialUnificationInfo = new WildcardAwareHashMap<>();
-    private static final Map<ItemAndMetadata, UnificationEntry> stackUnificationInfo = new WildcardAwareHashMap<>();
-    private static final Map<UnificationEntry, ArrayList<ItemAndMetadata>> stackUnificationItems = new HashMap<>();
+    private static final Map<String, MarkerMaterial> markerMaterialRegistry = new Object2ObjectOpenHashMap<>();
+    private static final Map<ItemAndMetadata, ItemMaterialInfo> materialUnificationInfo = new Object2ObjectOpenHashMap<>();
+    private static final Map<ItemAndMetadata, UnificationEntry> stackUnificationInfo = new Object2ObjectOpenHashMap<>();
+    private static final Map<UnificationEntry, ArrayList<ItemAndMetadata>> stackUnificationItems = new Object2ObjectOpenHashMap<>();
     private static final Map<ItemAndMetadata, Set<String>> stackOreDictName = new WildcardAwareHashMap<>();
-    private static final Map<String, List<ItemStack>> oreDictNameStacks = new HashMap<>();
+    private static final Map<String, List<ItemStack>> oreDictNameStacks = new Object2ObjectOpenHashMap<>();
 
     @Nullable
     private static Comparator<ItemAndMetadata> stackComparator;
