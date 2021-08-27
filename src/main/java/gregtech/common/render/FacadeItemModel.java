@@ -8,7 +8,6 @@ import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.util.ModCompatibility;
 import gregtech.common.covers.facade.FacadeRenderer;
 import gregtech.common.items.behaviors.FacadeItem;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
@@ -16,7 +15,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.model.IModelState;
 import org.lwjgl.opengl.GL11;
 
-public class FacadeItemModel implements IBakedModel, IItemRenderer {
+public class FacadeItemModel implements IItemRenderer {
 
     @Override
     public void renderItem(ItemStack rawStack, TransformType transformType) {

@@ -69,6 +69,10 @@ public class GregTechMod {
     @SidedProxy(modId = GTValues.MODID, clientSide = "gregtech.client.ClientProxy", serverSide = "gregtech.common.CommonProxy")
     public static CommonProxy proxy;
 
+    static {
+        FluidRegistry.enableUniversalBucket();
+    }
+
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
         GTLog.init(event.getModLog());

@@ -13,6 +13,9 @@ import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.shorts.ShortArrayList;
+import it.unimi.dsi.fastutil.shorts.ShortList;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -32,22 +35,23 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MetaPrefixItem extends StandardMetaItem {
 
-    private final ArrayList<Short> generatedItems = new ArrayList<>();
-    private final ArrayList<ItemStack> items = new ArrayList<>();
-    private final OrePrefix prefix;
+    public static final Map<OrePrefix, OrePrefix> PURIFY_MAP;
 
-    public static final Map<OrePrefix, OrePrefix> purifyMap = new HashMap<OrePrefix, OrePrefix>() {{
-        put(OrePrefix.crushed, OrePrefix.crushedPurified);
-        put(OrePrefix.dustImpure, OrePrefix.dust);
-        put(OrePrefix.dustPure, OrePrefix.dust);
-    }};
+    static {
+        PURIFY_MAP = new Object2ObjectArrayMap<>(3);
+        PURIFY_MAP.put(OrePrefix.crushed, OrePrefix.crushedPurified);
+        PURIFY_MAP.put(OrePrefix.dustImpure, OrePrefix.dust);
+        PURIFY_MAP.put(OrePrefix.dustPure, OrePrefix.dust);
+    }
+
+    private final ShortList generatedItems = new ShortArrayList();
+    private final OrePrefix prefix;
 
     public MetaPrefixItem(OrePrefix orePrefix) {
         super();
@@ -66,7 +70,6 @@ public class MetaPrefixItem extends StandardMetaItem {
             ItemStack item = new ItemStack(this, 1, metaItem);
             OreDictUnifier.registerOre(item, prefix, material);
             registerSpecialOreDict(item, material, prefix);
-            items.add(item);
         }
     }
 
@@ -81,10 +84,6 @@ public class MetaPrefixItem extends StandardMetaItem {
         } else if (material == Materials.Uranium238) {
             OreDictUnifier.registerOre(item, prefix.name() + material.toCamelCaseString() + "238");
         }
-    }
-
-    public List<ItemStack> getEntries() {
-        return items;
     }
 
     protected boolean canGenerate(OrePrefix orePrefix, Material material) {
@@ -103,8 +102,9 @@ public class MetaPrefixItem extends StandardMetaItem {
     protected int getColorForItemStack(ItemStack stack, int tintIndex) {
         if (tintIndex == 0) {
             Material material = GregTechRegistries.getMaterialRegistry().getObjectById(stack.getMetadata());
-            if (material == null)
+            if (material == null) {
                 return 0xFFFFFF;
+            }
             return material.getMaterialRGB();
         }
         return super.getColorForItemStack(stack, tintIndex);
@@ -215,28 +215,25 @@ public class MetaPrefixItem extends StandardMetaItem {
 
     @Override
     public boolean onEntityItemUpdate(EntityItem itemEntity) {
-        int damage = itemEntity.getItem().getMetadata();
-        if (itemEntity.getEntityWorld().isRemote)
+        if (itemEntity.getEntityWorld().isRemote) {
             return false;
-
-        Material material = GregTechRegistries.getMaterialRegistry().getObjectById(damage);
-        if (!purifyMap.containsKey(this.prefix))
+        }
+        OrePrefix purifyInto = PURIFY_MAP.get(this.prefix);
+        if (purifyInto == null) {
             return false;
-
+        }
+        Material material = GregTechRegistries.getMaterialRegistry().getObjectById(itemEntity.getItem().getMetadata());
         BlockPos blockPos = new BlockPos(itemEntity);
-        IBlockState blockState = itemEntity.getEntityWorld().getBlockState(blockPos);
-
-        if (!(blockState.getBlock() instanceof BlockCauldron))
+        IBlockState state = itemEntity.getEntityWorld().getBlockState(blockPos);
+        if (!(state.getBlock() instanceof BlockCauldron)) {
             return false;
-
-        int waterLevel = blockState.getValue(BlockCauldron.LEVEL);
-        if (waterLevel == 0)
+        }
+        int waterLevel = state.getValue(BlockCauldron.LEVEL);
+        if (waterLevel == 0) {
             return false;
-
-        itemEntity.getEntityWorld().setBlockState(blockPos,
-                blockState.withProperty(BlockCauldron.LEVEL, waterLevel - 1));
-        ItemStack replacementStack = OreDictUnifier.get(purifyMap.get(prefix), material,
-                itemEntity.getItem().getCount());
+        }
+        itemEntity.getEntityWorld().setBlockState(blockPos, state.withProperty(BlockCauldron.LEVEL, waterLevel - 1));
+        ItemStack replacementStack = OreDictUnifier.get(purifyInto, material, itemEntity.getItem().getCount());
         itemEntity.setItem(replacementStack);
         return false;
     }
