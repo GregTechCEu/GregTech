@@ -216,7 +216,6 @@ public abstract class WorldSceneRenderer {
         RenderHelper.disableStandardItemLighting();
         mc.entityRenderer.disableLightmap();
         mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        com.enderio.core.client.render.RenderUtil.bindBlockTexture();
         BlockRenderLayer oldRenderLayer = MinecraftForgeClient.getRenderLayer();
         GlStateManager.disableLighting();
         GlStateManager.enableTexture2D();
