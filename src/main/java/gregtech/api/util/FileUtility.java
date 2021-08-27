@@ -1,20 +1,20 @@
 package gregtech.api.util;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
 import org.apache.commons.io.IOUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FileUtility {
-    private static final JsonParser jsonParser = new JsonParser();
+    public static final JsonParser jsonParser = new JsonParser();
+    public static final Gson gson = new Gson();
 
     private FileUtility() {
     }
@@ -49,4 +49,46 @@ public class FileUtility {
         return null;
     }
 
+    public static JsonElement loadJson(File file) {
+        try {
+            if (!file.isFile()) return null;
+            FileReader reader = new FileReader(file);
+            JsonElement json = jsonParser.parse(new JsonReader(reader));
+            reader.close();
+            return json;
+        } catch (Exception e) {
+            GTLog.logger.error("Failed to read file on path {}", file, e);
+        }
+        return null;
+    }
+
+    public static boolean saveJson(File file, JsonElement element) {
+        try {
+            if (!file.getParentFile().isDirectory()) {
+                if (!file.getParentFile().mkdirs()){
+                    GTLog.logger.error("Failed to create file dirs on path {}", file);
+                }
+            }
+            FileWriter writer = new FileWriter(file);
+            writer.write(gson.toJson(element));
+            writer.close();
+            return true;
+        } catch (Exception e) {
+            GTLog.logger.error("Failed to save file on path {}", file, e);
+        }
+        return false;
+    }
+
+    public static void extractJarFiles(Path resourcePath, Path targetPath, boolean replace) throws IOException { //terminal/guide
+        List<Path> jarFiles = Files.walk(resourcePath)
+                .filter(Files::isRegularFile)
+                .collect(Collectors.toList());
+        for (Path jarFile : jarFiles) {
+            Path genPath = targetPath.resolve(resourcePath.relativize(jarFile).toString());
+            Files.createDirectories(genPath.getParent());
+            if (replace || !genPath.toFile().isFile()) {
+                Files.copy(jarFile, genPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }
 }

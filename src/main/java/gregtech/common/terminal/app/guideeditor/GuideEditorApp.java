@@ -5,7 +5,6 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.common.terminal.app.guideeditor.widget.GuideConfigEditor;
 import gregtech.common.terminal.app.guideeditor.widget.GuidePageEditorWidget;
-import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.common.terminal.component.ClickComponent;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import net.minecraft.nbt.NBTTagCompound;
@@ -41,17 +40,17 @@ public class GuideEditorApp extends AbstractApplication {
     public List<IMenuComponent> getMenuComponents() {
         ClickComponent newPage = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE).setHoverText("terminal.component.new_page").setClickConsumer(cd->{
             if (configEditor != null) {
-                configEditor.newPage(cd);
+                configEditor.newPage();
             }
         });
         ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD).setHoverText("terminal.component.load_file").setClickConsumer(cd->{
             if (configEditor != null) {
-                configEditor.loadJson(cd);
+                configEditor.loadJson();
             }
         });
         ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE).setHoverText("terminal.component.save_file").setClickConsumer(cd->{
             if (configEditor != null) {
-                configEditor.saveJson(cd);
+                configEditor.saveJson();
             }
         });
         return Arrays.asList(newPage, importPage, exportPage);

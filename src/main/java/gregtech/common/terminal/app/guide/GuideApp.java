@@ -1,28 +1,25 @@
 package gregtech.common.terminal.app.guide;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
 import gregtech.api.terminal.gui.widgets.TreeListWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.IMenuComponent;
-import gregtech.common.terminal.component.SearchComponent;
+import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.terminal.util.TreeNode;
-import net.minecraft.client.Minecraft;
+import gregtech.api.util.FileUtility;
+import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
+import gregtech.common.terminal.component.ClickComponent;
+import gregtech.common.terminal.component.SearchComponent;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -113,17 +110,9 @@ public abstract class GuideApp<T> extends AbstractApplication implements
 
     protected abstract T ofJson(JsonObject json);
 
-    public JsonObject getConfig(String fileName, String lang) {
-        try {
-            InputStream inputStream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(GTValues.MODID, "terminal/guide/" + getRegistryName() + "/" + lang + "/" + fileName)).getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            JsonElement je = new Gson().fromJson(reader, JsonElement.class);
-            reader.close();
-            inputStream.close();
-            return je.getAsJsonObject();
-        } catch (IOException e) {
-            return null;
-        }
+    public JsonObject getConfig(File file) {
+        JsonElement je = FileUtility.loadJson(file);
+        return je == null ? null : je.isJsonObject() ? je.getAsJsonObject() : null;
     }
 
     // ISearch
@@ -203,6 +192,24 @@ public abstract class GuideApp<T> extends AbstractApplication implements
 
     @Override
     public List<IMenuComponent> getMenuComponents() {
-        return Collections.singletonList(new SearchComponent<>(this));
+        ClickComponent reloadResource = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE).setHoverText("terminal.component.reload").setClickConsumer(cd->{
+            if (cd.isClient) {
+                new GuideJsonLoader().onResourceManagerReload(null);
+                AbstractApplication app = TerminalRegistry.getApplication(getRegistryName());
+                if (app != null && app.getClass() == this.getClass()) {
+                    this.ROOT = ((GuideApp<T>) app).ROOT;
+                    this.jsonObjectMap = ((GuideApp<T>) app).jsonObjectMap;
+                    this.clearAllWidgets();
+                    this.pageWidget = null;
+                    this.tree = new TreeListWidget<>(0, 0, 133, 232, getTree(), this::loadPage).setContentIconSupplier(this::itemIcon)
+                            .setContentNameSupplier(this::itemName)
+                            .setKeyNameSupplier(key -> key)
+                            .setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
+                            .setLeafTexture(GuiTextures.SLOT_DARKENED);
+                    this.addWidget(this.tree);
+                }
+            }
+        });
+        return Arrays.asList(new SearchComponent<>(this), reloadResource);
     }
 }

@@ -8,10 +8,10 @@ import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.TabGroup;
 import gregtech.api.gui.widgets.tab.IGuiTextureTabInfo;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.CustomTabListRenderer;
 import gregtech.api.terminal.os.TerminalDialogWidget;
-import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.common.terminal.app.recipechart.widget.RGContainer;
@@ -105,7 +105,7 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
         ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD).setHoverText("terminal.component.load_file").setClickConsumer(cd->{
             if (tabGroup == null) return;
             if (tabGroup.getAllTag().size() < 5) {
-                File file = new File("terminal\\recipe_chart");
+                File file = new File(TerminalRegistry.TERMINAL_PATH, "recipe_chart");
                 TerminalDialogWidget.showFileDialog(getOs(), "terminal.component.load_file", file, true, result->{
                     if (result != null && result.isFile()) {
                         try {
@@ -123,7 +123,7 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
         ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE).setHoverText("terminal.component.save_file").setClickConsumer(cd->{
             if (tabGroup == null) return;
             if (tabGroup.getCurrentTag() != null) {
-                File file = new File("terminal\\recipe_chart");
+                File file = new File(TerminalRegistry.TERMINAL_PATH, "recipe_chart");
                 TerminalDialogWidget.showFileDialog(getOs(), "terminal.component.save_file", file, false, result->{
                     if (result != null) {
                         try {

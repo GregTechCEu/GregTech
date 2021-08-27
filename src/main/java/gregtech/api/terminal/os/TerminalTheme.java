@@ -5,13 +5,15 @@ import com.google.gson.JsonObject;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.ModifyGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.terminal.util.FileUtils;
+import gregtech.api.util.FileUtility;
 
 import java.awt.*;
 import java.io.File;
 
+import static gregtech.api.terminal.TerminalRegistry.TERMINAL_PATH;
+
 public class TerminalTheme {
-    private static final String FILE_PATH = "terminal\\config\\theme.json";
+    private static final String FILE_PATH = "config/theme.json";
     public static final ColorRectTexture COLOR_1 = new ColorRectTexture(new Color(144, 243, 116));
     public static final ColorRectTexture COLOR_2 = new ColorRectTexture(new Color(243, 208, 116));
     public static final ColorRectTexture COLOR_3 = new ColorRectTexture(new Color(231, 95, 95));
@@ -30,7 +32,7 @@ public class TerminalTheme {
     public static final ModifyGuiTexture WALL_PAPER = new ModifyGuiTexture(TextureArea.fullImage("textures/gui/terminal/terminal_background.png"));
 
     static {
-        JsonElement element = FileUtils.loadJson(new File(FILE_PATH));
+        JsonElement element = FileUtility.loadJson(new File(TERMINAL_PATH, FILE_PATH));
         if (element == null || !element.isJsonObject()) {
             saveConfig();
         } else {
@@ -66,6 +68,6 @@ public class TerminalTheme {
         config.addProperty("COLOR_B_2", COLOR_B_2.getColor());
         config.addProperty("COLOR_B_3", COLOR_B_3.getColor());
         config.add("WALL_PAPER", WALL_PAPER.saveConfig());
-        return FileUtils.saveJson(new File(FILE_PATH), config);
+        return FileUtility.saveJson(new File(TERMINAL_PATH, FILE_PATH), config);
     }
 }

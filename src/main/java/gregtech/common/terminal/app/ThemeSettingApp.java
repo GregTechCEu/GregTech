@@ -6,6 +6,7 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.TextFieldWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.ColorWidget;
@@ -123,7 +124,7 @@ public class ThemeSettingApp extends AbstractApplication {
                         .setColors(TerminalTheme.COLOR_B_1.getColor(),
                                 TerminalTheme.COLOR_1.getColor(),
                                 TerminalTheme.COLOR_B_1.getColor())
-                        .setClickListener(cd-> TerminalDialogWidget.showFileDialog(app.getOs(), "terminal.theme_settings.image", new File("terminal"), true, file->{
+                        .setClickListener(cd-> TerminalDialogWidget.showFileDialog(app.getOs(), "terminal.theme_settings.image", TerminalRegistry.TERMINAL_PATH, true, file->{
                             if (file != null && file.isFile()) {
                                 TerminalTheme.WALL_PAPER.setTexture(new FileTexture(file));
                                 TerminalTheme.saveConfig();
