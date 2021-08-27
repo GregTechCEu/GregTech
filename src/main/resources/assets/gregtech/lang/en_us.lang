@@ -3589,8 +3589,13 @@ gregtech.machine.rotor_holder.luv.name=LuV Rotor Holder
 gregtech.machine.rotor_holder.uhv.name=UHV Rotor Holder
 
 gregtech.machine.maintenance_hatch.name=Maintenance Hatch
+gregtech.machine.maintenance_hatch.tooltip=For maintaining Multiblocks
 gregtech.machine.maintenance_hatch_taping.name=Auto-Taping Maintenance Hatch
+gregtech.machine.maintenance_hatch_taping.tooltip=For automatically maintaining Multiblocks with Tape
 gregtech.machine.maintenance_hatch_full_auto.name=Automatic Maintenance Hatch
+gregtech.machine.maintenance_hatch_full_auto.tooltip=For automatically maintaining Multiblocks
+
+gregtech.machine.muffler_hatch.tooltip=DO NOT OBSTRUCT THE OUTPUT!
 
 gregtech.machine.muffler_hatch.ulv.name=ULV Muffler Hatch
 gregtech.machine.muffler_hatch.lv.name=LV Muffler Hatch
@@ -3728,11 +3733,13 @@ gregtech.multiblock.preview.pan=LMB+Drag to pan
 gregtech.multiblock.preview.move=RMB+Drag to move
 gregtech.multiblock.preview.reset=Scroll Mousewheel to reset
 gregtech.multiblock.preview.any_hatch=Any tier hatch can be used to form the structure
+gregtech.multiblock.preview.any_hatch_maintenance=Any type of maintenance hatch can be used to form the structure
 gregtech.multiblock.preview.limit=Minimum Limit: %d
 gregtech.multiblock.preview.limit_per_layer=Only %d per layer
 gregtech.multiblock.preview.only=Only %s allowed
 gregtech.multiblock.preview.only_location=Only allowed at %s
 gregtech.multiblock.preview.location.b_c=Bottom Center
+gregtech.multiblock.preview.location.t_c=Top Center
 gregtech.multiblock.preview.primitive_pump.hatch=Only Pump Hatch, ULV Hatch, or LV Hatch allowed
 gregtech.multiblock.preview.location_end=Very End
 

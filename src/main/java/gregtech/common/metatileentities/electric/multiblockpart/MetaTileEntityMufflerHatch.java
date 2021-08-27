@@ -18,7 +18,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -40,43 +39,16 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
     private boolean frontFaceFree;
 
-    public MetaTileEntityMufflerHatch(ResourceLocation metaTileEntityId, int tier, int recoveryChance) {
+    public MetaTileEntityMufflerHatch(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
-//        this.recoveryChance = recoveryChance;
+        this.recoveryChance = Math.max(1, tier * 10);
         this.inventory = new ItemStackHandler((int) Math.pow(tier + 1, 2));
         this.frontFaceFree = false;
-
-        switch (tier) { //todo replace this with a proper function
-            case 2:
-                this.recoveryChance = 20;
-                break;
-            case 3:
-                this.recoveryChance = 33;
-                break;
-            case 4:
-                this.recoveryChance = 44;
-                break;
-            case 5:
-                this.recoveryChance = 53;
-                break;
-            case 6:
-                this.recoveryChance = 61;
-                break;
-            case 7:
-                this.recoveryChance = 68;
-                break;
-            case 8:
-                this.recoveryChance = 73;
-                break;
-            default:
-                this.recoveryChance = 5;
-                break;
-        }
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityMufflerHatch(metaTileEntityId, getTier(), recoveryChance);
+        return new MetaTileEntityMufflerHatch(metaTileEntityId, getTier());
     }
 
     @Override
@@ -153,6 +125,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        tooltip.add(I18n.format("gregtech.machine.muffler_hatch.tooltip"));
         tooltip.add(I18n.format("gregtech.muffler.recovery_tooltip", recoveryChance));
     }
 
@@ -187,12 +160,6 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
             }
         }
         return builder.bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7 + xOffset, 18 + 18 * rowSize + 12);
-    }
-
-    @Override
-    public void receiveCustomData(int dataId, PacketBuffer buf) {
-        super.receiveCustomData(dataId, buf);
-        // TODO if needed
     }
 
     @Override

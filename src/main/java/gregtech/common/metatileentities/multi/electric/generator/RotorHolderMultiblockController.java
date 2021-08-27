@@ -45,9 +45,6 @@ public abstract class RotorHolderMultiblockController extends FueledMultiblockCo
         if (getAbilities(ABILITY_ROTOR_HOLDER).size() == 0)
             return false;
 
-//        if (getWorld().isRemote)
-//            return false;
-
         return isStructureFormed() && getRotorHolder().isFrontFaceFree();
     }
 
@@ -55,9 +52,6 @@ public abstract class RotorHolderMultiblockController extends FueledMultiblockCo
      * @return true if structure formed, workable is active and front face is free
      */
     public boolean isActive() {
-        System.out.println("isRotorFaceFree() " + isRotorFaceFree());
-        System.out.println("workableHandler.isActive() " + workableHandler.isActive());
-        System.out.println("workableHandler.isWorkingEnabled() " + workableHandler.isWorkingEnabled());
         return isRotorFaceFree() && workableHandler.isActive() && workableHandler.isWorkingEnabled();
     }
 

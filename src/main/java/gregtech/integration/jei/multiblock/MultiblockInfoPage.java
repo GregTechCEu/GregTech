@@ -4,6 +4,8 @@ import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMaintenanceHatch;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMufflerHatch;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import net.minecraft.client.resources.I18n;
@@ -26,6 +28,7 @@ public abstract class MultiblockInfoPage {
     private final Map<ItemStack, List<ITextComponent>> blockTooltips = new Object2ObjectOpenCustomHashMap<>(strategy);
 
     protected static final ITextComponent defaultText = new TextComponentTranslation("gregtech.multiblock.preview.any_hatch").setStyle(new Style().setColor(TextFormatting.GREEN));
+    protected static final ITextComponent maintenanceText = new TextComponentTranslation("gregtech.multiblock.preview.any_hatch_maintenance").setStyle(new Style().setColor(TextFormatting.GREEN));
 
     public abstract MultiblockControllerBase getController();
 
@@ -69,6 +72,12 @@ public abstract class MultiblockInfoPage {
             addBlockTooltip(MetaTileEntities.ITEM_IMPORT_BUS[i].getStackForm(), defaultText);
             addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(), defaultText);
             addBlockTooltip(MetaTileEntities.FLUID_IMPORT_HATCH[i].getStackForm(), defaultText);
+        }
+        for (MetaTileEntityMufflerHatch mufflerHatch : MetaTileEntities.MUFFLER_HATCH) {
+            addBlockTooltip(mufflerHatch.getStackForm(), defaultText);
+        }
+        for (MetaTileEntityMaintenanceHatch maintenanceHatch : MetaTileEntities.MAINTENANCE_HATCH) {
+            addBlockTooltip(maintenanceHatch.getStackForm(), maintenanceText);
         }
     }
 
