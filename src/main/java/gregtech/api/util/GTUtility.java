@@ -377,17 +377,6 @@ public class GTUtility {
     }
 
     /**
-     * Capitalizes string, making first letter upper case
-     *
-     * @return capitalized string
-     */
-    public static String capitalizeString(String string) {
-        if (string != null && string.length() > 0)
-            return string.substring(0, 1).toUpperCase() + string.substring(1);
-        return "";
-    }
-
-    /**
      * @return lowest tier that can handle passed voltage
      */
     public static byte getTierByVoltage(long voltage) {
@@ -403,8 +392,7 @@ public class GTUtility {
     }
 
     public static BiomeDictionary.Type getBiomeTypeTagByName(String name) {
-        Map<String, BiomeDictionary.Type> byName = ReflectionHelper.getPrivateValue(BiomeDictionary.Type.class, null, "byName");
-        return byName.get(name);
+        return BiomeDictionary.Type.getAll().stream().filter(type -> type.getName().equals(name)).findFirst().get();
     }
 
     public static List<Tuple<ItemStack, Integer>> getGrassSeedEntries() {
@@ -576,15 +564,6 @@ public class GTUtility {
             }
         }
         return result;
-    }
-
-    public static <T> boolean iterableContains(Iterable<T> list, Predicate<T> predicate) {
-        for (T t : list) {
-            if (predicate.test(t)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static int amountOfNonNullElements(List<?> collection) {

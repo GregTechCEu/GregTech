@@ -96,7 +96,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     public R inputs(Collection<ItemStack> inputs) {
-        if (GTUtility.iterableContains(inputs, stack -> stack == null || stack.isEmpty())) {
+        if (inputs.stream().anyMatch(stack -> stack == null || stack.isEmpty())) {
             GTLog.logger.error("Input cannot contain null or empty ItemStacks. Inputs: {}", inputs);
             GTLog.logger.error("Stacktrace:", new IllegalArgumentException());
             recipeStatus = EnumValidationResult.INVALID;
