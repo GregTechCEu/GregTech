@@ -73,6 +73,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public void openApplication(AbstractApplication application, boolean isClient) {
+        if (!application.canPlayerUse(gui.entityPlayer)) return;
         if (focusApp != null ) {
             closeApplication(focusApp, isClient);
         }
@@ -82,8 +83,10 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 return;
             }
         }
-        AbstractApplication app = application.createApp(this, isClient, tabletNBT.getCompoundTag(application.getRegistryName())).setOs(this);
+        NBTTagCompound nbt = tabletNBT.getCompoundTag(application.getRegistryName());
+        AbstractApplication app = application.createAppInstance(this, isClient, nbt);
         if (app != null) {
+            app.setOs(this).initApp();
             openedApps.add(app);
             desktop.addWidget(app);
             maximizeApplication(app, isClient);
@@ -122,7 +125,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public void closeApplication(AbstractApplication application, boolean isClient) {
         if (application != null) {
             String appName = application.getRegistryName();
-            NBTTagCompound synced = application.closeApp(isClient, tabletNBT.getCompoundTag(appName));
+            NBTTagCompound synced = application.closeApp();
 
             if (synced != null && !synced.isEmpty()) {
                 tabletNBT.setTag(appName, synced);
@@ -163,7 +166,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         NBTTagCompound nbt = new NBTTagCompound();
         for (AbstractApplication openedApp : openedApps) {
             String appName = openedApp.getRegistryName();
-            NBTTagCompound synced = openedApp.closeApp(true, tabletNBT.getCompoundTag(appName));
+            NBTTagCompound synced = openedApp.closeApp();
             if (synced != null && !synced.isEmpty()) {
                 tabletNBT.setTag(appName, synced);
                 if (openedApp.isClientSideApp()) {//if its a clientSideApp and the nbt not null, meaning this nbt should be synced to the server side.
@@ -204,7 +207,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             }
             for (AbstractApplication openedApp : openedApps) {
                 String appName = openedApp.getRegistryName();
-                NBTTagCompound data = openedApp.closeApp(false, tabletNBT.getCompoundTag(appName));
+                NBTTagCompound data = openedApp.closeApp();
                 if (data != null && !data.isEmpty()) {
                     tabletNBT.setTag(appName, data);
                 } else if (nbt != null && openedApp.isClientSideApp() && nbt.hasKey(appName)) {

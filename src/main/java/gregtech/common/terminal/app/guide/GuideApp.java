@@ -37,24 +37,27 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     }
 
     @Override
-    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
-        try {
-            GuideApp app = this.getClass().newInstance();
-            app.ROOT = ROOT;
-            app.jsonObjectMap = jsonObjectMap;
-            if (isClient && getTree() != null) {
-                app.tree = new TreeListWidget<>(0, 0, 133, 232, getTree(), app::loadPage).setContentIconSupplier(this::itemIcon)
-                        .setContentNameSupplier(this::itemName)
-                        .setKeyNameSupplier(key -> key)
-                        .setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
-                        .setLeafTexture(GuiTextures.SLOT_DARKENED);
-                app.addWidget(app.tree);
-            }
+    public AbstractApplication createAppInstance(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
+        AbstractApplication app = super.createAppInstance(os, isClient, nbt);
+        if (app instanceof GuideApp) {
+            ((GuideApp) app).ROOT = ROOT;
+            ((GuideApp) app).jsonObjectMap = jsonObjectMap;
             return app;
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public AbstractApplication initApp() {
+        if (isClient && getTree() != null) {
+            this.tree = new TreeListWidget<>(0, 0, 133, 232, getTree(), this::loadPage).setContentIconSupplier(this::itemIcon)
+                    .setContentNameSupplier(this::itemName)
+                    .setKeyNameSupplier(key -> key)
+                    .setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
+                    .setLeafTexture(GuiTextures.SLOT_DARKENED);
+            this.addWidget(this.tree);
+        }
+        return this;
     }
 
     protected void loadPage(TreeNode<String, T> leaf) {

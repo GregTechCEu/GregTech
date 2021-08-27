@@ -31,7 +31,7 @@ public class ThemeSettingApp extends AbstractApplication {
     private WidgetGroup textureGroup;
 
     @Override
-    protected AbstractApplication initApp(boolean isClient, NBTTagCompound nbt) {
+    public AbstractApplication initApp() {
         if (isClient) { //333 232
             float x = 333 * 1.0f / 13;
             int y = 50;

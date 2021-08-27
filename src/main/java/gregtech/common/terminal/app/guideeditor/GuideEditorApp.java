@@ -24,7 +24,7 @@ public class GuideEditorApp extends AbstractApplication {
     }
 
     @Override
-    protected AbstractApplication initApp(boolean isClient, NBTTagCompound nbt) {
+    public AbstractApplication initApp() {
         if (isClient) {
             this.configEditor = new GuideConfigEditor(0, 0, 133, 232, this);
             GuidePageEditorWidget pageEditor = new GuidePageEditorWidget(133, 0, 200, 232, 5);

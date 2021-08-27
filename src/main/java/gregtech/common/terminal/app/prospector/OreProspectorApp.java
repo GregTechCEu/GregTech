@@ -27,7 +27,7 @@ public class OreProspectorApp extends AbstractApplication implements
     }
 
     @Override
-    protected AbstractApplication initApp(boolean isClient, NBTTagCompound nbt) {
+    public AbstractApplication initApp() {
         int chunkRadius = 7;
         int offset = (232 - 32 * 7 + 16) / 2;
         this.addWidget(new ImageWidget(0, 0, 333, 232, TerminalTheme.COLOR_B_2));

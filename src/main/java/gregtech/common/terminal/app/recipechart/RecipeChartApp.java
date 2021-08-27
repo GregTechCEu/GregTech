@@ -43,7 +43,7 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
     }
 
     @Override
-    protected AbstractApplication initApp(boolean isClient, NBTTagCompound nbt) {
+    public AbstractApplication initApp() {
         if (isClient) {
             this.containers = new LinkedHashMap<>();
             this.tabGroup = new TabGroup<>(0, 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 60, 10));
@@ -139,7 +139,7 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
     }
 
     @Override
-    public NBTTagCompound closeApp(boolean isClient, NBTTagCompound nbt) { //synced data to server side.
+    public NBTTagCompound closeApp() { //synced data to server side.
         if (isClient) {
             NBTTagList list = new NBTTagList();
             for (Map.Entry<RGContainer, String> entry : containers.entrySet()) {
@@ -151,7 +151,7 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
             nbt.setTag("list", list);
             return nbt;
         }
-        return super.closeApp(false, nbt);
+        return super.closeApp();
     }
 
     @Override
