@@ -43,7 +43,7 @@ public class EnchantmentHardHammer extends Enchantment {
 
     @Override
     protected boolean canApplyTogether(Enchantment ench) {
-           return ench != Enchantments.FORTUNE && ench != Enchantments.SILK_TOUCH && super.canApplyTogether(ench);
+            return ench != Enchantments.SILK_TOUCH && super.canApplyTogether(ench);
     }
 }
 
