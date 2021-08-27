@@ -55,15 +55,15 @@ import static gregtech.GregTechRegistries.*;
         dependencies = "required:forge@[14.23.5.2847,);" + CodeChickenLib.MOD_VERSION_DEP + "after:forestry;after:jei@[4.15.0,);after:crafttweaker;")
 public class GregTechMod {
 
-    static {
-        FluidRegistry.enableUniversalBucket();
-    }
-
     @Mod.Instance(GTValues.MODID)
     public static GregTechMod instance;
 
     @SidedProxy(modId = GTValues.MODID, clientSide = "gregtech.client.ClientProxy", serverSide = "gregtech.common.CommonProxy")
     public static CommonProxy proxy;
+
+    static {
+        FluidRegistry.enableUniversalBucket();
+    }
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {

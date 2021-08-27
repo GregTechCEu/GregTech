@@ -6,11 +6,9 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.zenscript.IBracketHandler;
-import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
@@ -34,17 +32,9 @@ public class MetaItemBracketHandler implements IBracketHandler {
         this.method = CraftTweakerAPI.getJavaMethod(MetaItemBracketHandler.class, "getMetaItem", String.class);
     }
 
-    @SuppressWarnings("ConstantConditions")
     public static void rebuildComponentRegistry() {
         metaItemNames.clear();
         for (MetaItem<?> item : MetaItem.getMetaItems()) {
-            if (item instanceof MetaPrefixItem) {
-                MetaPrefixItem metaPrefixItem = ((MetaPrefixItem) item);
-                OrePrefix prefix = metaPrefixItem.getOrePrefix();
-                for (ItemStack entry : ((MetaPrefixItem) item).getEntries()) {
-                    metaItemNames.put(prefix.name() + OreDictUnifier.getMaterial(entry).material.toCamelCaseString(), entry);
-                }
-            }
             for (MetaValueItem entry : item.getAllItems()) {
                 if (!entry.unlocalizedName.equals("meta_item")) {
                     metaItemNames.put(entry.unlocalizedName, entry.getStackForm());
@@ -58,7 +48,8 @@ public class MetaItemBracketHandler implements IBracketHandler {
         if (item != null) {
             return new MCItemStack(item);
         } else {
-            return null;
+            item = OreDictUnifier.get(name);
+            return item == ItemStack.EMPTY ? null : new MCItemStack(item);
         }
     }
 
