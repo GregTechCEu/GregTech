@@ -16,7 +16,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.NBTUtil;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.CommonProxy;
 import gregtech.common.ConfigHolder;
@@ -98,7 +97,6 @@ public class GregTechMod {
         /* End Materials Registration */
 
         OreDictUnifier.init();
-        NBTUtil.registerSerializers();
 
         MetaBlocks.init();
         MetaItems.init();

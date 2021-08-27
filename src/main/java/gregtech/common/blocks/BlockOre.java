@@ -9,7 +9,6 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.StoneType;
-import gregtech.api.util.IBlockOre;
 import gregtech.common.blocks.properties.PropertyStoneType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
@@ -37,7 +36,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class BlockOre extends BlockFalling implements IBlockOre, IModelSupplier {
+public class BlockOre extends BlockFalling implements IModelSupplier {
 
     public static final ModelResourceLocation MODEL_LOCATION = new ModelResourceLocation(new ResourceLocation(GTValues.MODID, "ore_block"), "normal");
 
@@ -191,7 +190,6 @@ public class BlockOre extends BlockFalling implements IBlockOre, IModelSupplier 
         return this.material.getMaterialRGB();
     }
 
-    @Override
     public IBlockState getOreBlock(StoneType stoneType) {
         return this.getDefaultState().withProperty(this.STONE_TYPE, stoneType);
     }

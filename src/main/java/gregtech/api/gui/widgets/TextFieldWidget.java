@@ -2,9 +2,9 @@ package gregtech.api.gui.widgets;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
-import gregtech.api.util.MCGuiUtil;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.api.util.TextFieldGuiResponder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiTextField;
@@ -35,7 +35,7 @@ public class TextFieldWidget extends Widget {
             this.textField.setCanLoseFocus(true);
             this.textField.setEnableBackgroundDrawing(enableBackground);
             this.textField.setMaxStringLength(maxStringLength);
-            this.textField.setGuiResponder(MCGuiUtil.createTextFieldResponder(this::onTextChanged));
+            this.textField.setGuiResponder(new TextFieldGuiResponder(this::onTextChanged));
         }
         this.textSupplier = textSupplier;
         this.textResponder = textResponder;
