@@ -95,7 +95,7 @@ public class ToolUtility {
 
     public static void applyHammerDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, EntityPlayer player) {
         MaterialStack input = OreDictUnifier.getMaterial(new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState)));
-        if (input != null && input.material.getProperty(PropertyKey.ORE) != null && !(player instanceof FakePlayer)) {
+        if (input != null && input.material.hasProperty(PropertyKey.ORE) && !(player instanceof FakePlayer)) {
             drops.clear();
             ItemStack output = OreDictUnifier.get(OrePrefix.crushed, input.material);
             if(fortuneLevel > 0){
