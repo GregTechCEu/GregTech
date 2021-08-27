@@ -880,7 +880,6 @@ metaitem.tool.tooltip.attack_damage=§fAttack damage: §9%,.1f
 metaitem.tool.tooltip.mining_speed=§fMining speed: §6%,.1f
 metaitem.tool.tooltip.durability=§fDurability: §a%,d / %,d
 metaitem.tool.tooltip.rotor.efficiency=Turbine Efficiency: §9%,d%%
-metaitem.tool.tooltip.hammer.extra_drop=Has a chance to drop double crushed ores
 
 metaitem.voltage_coil.ulv.name=Ultra Low Voltage Coil
 metaitem.voltage_coil.ulv.tooltip=Primitive Coil
