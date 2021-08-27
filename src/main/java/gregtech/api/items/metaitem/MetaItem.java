@@ -3,8 +3,6 @@ package gregtech.api.items.metaitem;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
-import gnu.trove.map.TShortObjectMap;
-import gnu.trove.map.hash.TShortObjectHashMap;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechCapabilities;
@@ -23,6 +21,9 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.util.LocalizationUtils;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
+import it.unimi.dsi.fastutil.shorts.Short2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -80,10 +81,10 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         return Collections.unmodifiableList(META_ITEMS);
     }
 
-    protected final Map<Short, T> metaItems = new TreeMap<>();
-    private final Map<String, T> names = new HashMap<>();
-    protected final TShortObjectMap<ModelResourceLocation> metaItemsModels = new TShortObjectHashMap<>();
-    protected final TShortObjectHashMap<ModelResourceLocation[]> specialItemsModels = new TShortObjectHashMap<>();
+    protected final Short2ObjectMap<T> metaItems = new Short2ObjectOpenHashMap<>();
+    private final Map<String, T> names = new Object2ObjectOpenHashMap<>();
+    protected final Short2ObjectMap<ModelResourceLocation> metaItemsModels = new Short2ObjectOpenHashMap<>();
+    protected final Short2ObjectMap<ModelResourceLocation[]> specialItemsModels = new Short2ObjectOpenHashMap<>();
     private static final ModelResourceLocation MISSING_LOCATION = new ModelResourceLocation("builtin/missing", "inventory");
 
     protected final short metaItemOffset;
@@ -602,7 +603,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private IItemNameProvider nameProvider;
         private IItemMaxStackSizeProvider stackSizeProvider;
         private IItemContainerItemProvider containerItemProvider;
-        private ISubItemHandler subItemHandler = new DefaultSubItemHandler();
+        private ISubItemHandler subItemHandler = DefaultSubItemHandler.INSTANCE;
 
         private final List<IItemComponent> allStats = new ArrayList<>();
         private final List<IItemBehaviour> behaviours = new ArrayList<>();
