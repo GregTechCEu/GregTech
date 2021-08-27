@@ -20,6 +20,8 @@ import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Size;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
+import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
 import net.minecraft.network.PacketBuffer;
@@ -112,7 +114,6 @@ public class MachineConsoleWidget extends WidgetGroup {
                                 controllable.setWorkingEnabled(p);
                             }
                         })
-                        .setInitValue(controllable.isWorkingEnabled())
                         .setValueSupplier(false, controllable::isWorkingEnabled)
                         .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), 0)
                         .setHoverText("terminal.console.controllable")
@@ -162,7 +163,7 @@ public class MachineConsoleWidget extends WidgetGroup {
                                 }
                             })
                             .setInitValue(simpleMTE.isAutoOutputItems())
-                            .setValueSupplier(false, ((SimpleMachineMetaTileEntity) simpleMTE)::isAutoOutputItems)
+                            .setValueSupplier(false, simpleMTE::isAutoOutputItems)
                             .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), 0)
                             .setHoverText("terminal.console.auto_output")
                             .setIcon(GuiTextures.BUTTON_ITEM_OUTPUT.getSubArea(0, 0, 1, 0.5)));
@@ -173,7 +174,7 @@ public class MachineConsoleWidget extends WidgetGroup {
                                 }
                             })
                             .setInitValue(simpleMTE.isAllowInputFromOutputSideItems())
-                            .setValueSupplier(false, ((SimpleMachineMetaTileEntity) simpleMTE)::isAllowInputFromOutputSideItems)
+                            .setValueSupplier(false, simpleMTE::isAllowInputFromOutputSideItems)
                             .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), 0)
                             .setHoverText("terminal.console.input")
                             .setIcon(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0, 1, 0.5)));
@@ -199,7 +200,7 @@ public class MachineConsoleWidget extends WidgetGroup {
                                 }
                             })
                             .setInitValue(simpleMTE.isAutoOutputFluids())
-                            .setValueSupplier(false, ((SimpleMachineMetaTileEntity) simpleMTE)::isAutoOutputFluids)
+                            .setValueSupplier(false, simpleMTE::isAutoOutputFluids)
                             .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), 0)
                             .setHoverText("terminal.console.auto_output")
                             .setIcon(GuiTextures.BUTTON_FLUID_OUTPUT.getSubArea(0, 0, 1, 0.5)));
@@ -217,6 +218,79 @@ public class MachineConsoleWidget extends WidgetGroup {
                     y += 20;
                 }
                 y += 5;
+            }
+
+            // MetaTileEntityQuantumTank
+            if (mte instanceof MetaTileEntityQuantumChest) {
+                MetaTileEntityQuantumChest chest = (MetaTileEntityQuantumChest) mte;
+                addWidget(new ImageWidget(10, y, 20 ,20, new ItemStackTexture(Items.GLOWSTONE_DUST)));
+                addWidget(new RectButtonWidget(33, y, 50, 20, 1)
+                        .setClickListener(clickData -> {
+                            if (!isRemote() && mte.getFrontFacing() != facing) {
+                                chest.setOutputFacing(facing);
+                            }
+                        })
+                        .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
+                        .setHoverText("terminal.console.items"));
+                addWidget(new SimpleTextWidget(58, y + 10, "", -1, ()->chest.getOutputFacing().toString()));
+                addWidget(new RectButtonWidget(83, y, 20, 20, 1)
+                        .setToggleButton(GuiTextures.BUTTON_ITEM_OUTPUT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                            if (!isRemote()) {
+                                chest.setAutoOutputItems(p);
+                            }
+                        })
+                        .setInitValue(chest.isAutoOutputItems())
+                        .setValueSupplier(false, chest::isAutoOutputItems)
+                        .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), 0)
+                        .setHoverText("terminal.console.auto_output")
+                        .setIcon(GuiTextures.BUTTON_ITEM_OUTPUT.getSubArea(0, 0, 1, 0.5)));
+                addWidget(new RectButtonWidget(103, y, 20, 20, 1)
+                        .setToggleButton(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                            if (!isRemote()) {
+                                chest.setAllowInputFromOutputSide(p);
+                            }
+                        })
+                        .setInitValue(chest.isAllowInputFromOutputSideItems())
+                        .setValueSupplier(false, chest::isAllowInputFromOutputSideItems)
+                        .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), 0)
+                        .setHoverText("terminal.console.input")
+                        .setIcon(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0, 1, 0.5)));
+                y += 25;
+            } else if (mte instanceof MetaTileEntityQuantumTank) {
+                MetaTileEntityQuantumTank tank = (MetaTileEntityQuantumTank) mte;
+                addWidget(new ImageWidget(10, y, 20 ,20, new ItemStackTexture(Items.WATER_BUCKET)));
+                addWidget(new RectButtonWidget(33, y, 50, 20, 1)
+                        .setClickListener(clickData -> {
+                            if (!isRemote() && tank.getFrontFacing() != facing) {
+                                tank.setOutputFacing(facing);
+                            }
+                        })
+                        .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
+                        .setHoverText("terminal.console.fluids"));
+                addWidget(new SimpleTextWidget(58, y + 10, "", -1, ()->tank.getOutputFacing().toString()));
+                addWidget(new RectButtonWidget(83, y, 20, 20, 1)
+                        .setToggleButton(GuiTextures.BUTTON_FLUID_OUTPUT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                            if (!isRemote()) {
+                                tank.setAutoOutputFluids(p);
+                            }
+                        })
+                        .setInitValue(tank.isAutoOutputFluids())
+                        .setValueSupplier(false, tank::isAutoOutputFluids)
+                        .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), 0)
+                        .setHoverText("terminal.console.auto_output")
+                        .setIcon(GuiTextures.BUTTON_FLUID_OUTPUT.getSubArea(0, 0, 1, 0.5)));
+                addWidget(new RectButtonWidget(103, y, 20, 20, 1)
+                        .setToggleButton(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0.5, 1, 0.5), (c, p)->{
+                            if (!isRemote()) {
+                                tank.setAllowInputFromOutputSide(p);
+                            }
+                        })
+                        .setInitValue(tank.isAllowInputFromOutputSideFluids())
+                        .setValueSupplier(false, tank::isAllowInputFromOutputSideFluids)
+                        .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), 0)
+                        .setHoverText("terminal.console.input")
+                        .setIcon(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0, 1, 0.5)));
+                y += 25;
             }
 
             // CoverBehavior
