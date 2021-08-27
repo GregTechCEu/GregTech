@@ -356,5 +356,14 @@ public class UnknownCompositionMaterials {
                 .fluid()
                 .color(0xDCC15D)
                 .build();
+
+        RubySlurry = new Material.Builder(1620, "ruby_slurry")
+                .fluid().color(0xff6464).build();
+
+        SapphireSlurry = new Material.Builder(1621, "sapphire_slurry")
+                .fluid().color(0x6464c8).build();
+
+        GreenSapphireSlurry = new Material.Builder(1622, "green_sapphire_slurry")
+                .fluid().color(0x64c882).build();
     }
 }

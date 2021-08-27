@@ -1,16 +1,14 @@
 package gregtech.integration.jei.recipe;
 
-import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.GTUtility;
 import gregtech.integration.jei.utils.JEIHelpers;
-import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -24,14 +22,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GTRecipeWrapper implements IRecipeWrapper {
+
     private static final int LINE_HEIGHT = 10;
 
-    private final Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.comparingAllButCount();
-
-    private final Set<ItemStack> notConsumedInput = new ObjectOpenCustomHashSet<>(strategy);
-    private final Map<ItemStack, ChanceEntry> chanceOutput = new Object2ObjectOpenCustomHashMap<>(strategy);
-    private final List<FluidStack> notConsumedFluidInput = new ArrayList<>();
-
+    private final Int2ObjectMap<ChanceEntry> chanceOutput = new Int2ObjectOpenHashMap<>();
     private final Recipe recipe;
 
     public GTRecipeWrapper(Recipe recipe) {
@@ -44,85 +38,58 @@ public class GTRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void getIngredients(@Nonnull IIngredients ingredients) {
+        int currentSlot = 0;
+
+        // Inputs
         if (!recipe.getInputs().isEmpty()) {
-            List<CountableIngredient> recipeInputs = recipe.getInputs();
-            List<List<ItemStack>> matchingInputs = new ArrayList<>(recipeInputs.size());
-            for (CountableIngredient ingredient : recipeInputs) {
-                List<ItemStack> ingredientValues = Arrays.stream(ingredient.getIngredient().getMatchingStacks())
-                        .map(ItemStack::copy)
-                        .sorted(OreDictUnifier.getItemStackComparator())
-                        .collect(Collectors.toList());
-                ingredientValues.forEach(stack -> {
-                    if (ingredient.getCount() == 0) {
-                        notConsumedInput.add(stack);
-                        stack.setCount(1);
-                    } else stack.setCount(ingredient.getCount());
-                });
-                matchingInputs.add(ingredientValues);
-            }
+            List<List<ItemStack>> matchingInputs = new ArrayList<>(recipe.getInputs().size());
+            recipe.getInputs().forEach(ci -> matchingInputs.add(Arrays.stream(ci.getIngredient().getMatchingStacks())
+                    .sorted(OreDictUnifier.getItemStackComparator())
+                    .map(is -> GTUtility.copyAmount(ci.getCount() == 0 ? 1 : ci.getCount(), is))
+                    .collect(Collectors.toList())));
             ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);
+            currentSlot = recipe.getInputs().size();
         }
 
+        // Fluid Inputs
         if (!recipe.getFluidInputs().isEmpty()) {
-            List<FluidStack> recipeInputs = recipe.getFluidInputs()
-                    .stream().map(FluidStack::copy)
-                    .collect(Collectors.toList());
-            recipeInputs.forEach(stack -> {
-                if (stack.amount == 0) {
-                    notConsumedFluidInput.add(stack);
-                    stack.amount = 1;
-                }
-            });
-            ingredients.setInputs(VanillaTypes.FLUID, recipeInputs);
+            ingredients.setInputs(VanillaTypes.FLUID, recipe.getFluidInputs().stream()
+                    .map(fs -> GTUtility.copyAmount(fs.amount == 0 ? 1 : fs.amount, fs))
+                    .collect(Collectors.toList()));
         }
 
+        // Outputs
         if (!recipe.getOutputs().isEmpty() || !recipe.getChancedOutputs().isEmpty()) {
             List<ItemStack> recipeOutputs = recipe.getOutputs()
                     .stream().map(ItemStack::copy).collect(Collectors.toList());
-            List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
-            for (ChanceEntry chancedEntry : chancedOutputs) {
-                ItemStack chancedStack = chancedEntry.getItemStack();
-                chanceOutput.put(chancedStack, chancedEntry);
-                recipeOutputs.add(chancedStack);
-            }
+            currentSlot += recipeOutputs.size();
 
-            recipeOutputs.sort(Comparator.comparingInt(stack -> {
-                ChanceEntry chanceEntry = chanceOutput.get(stack);
-                if (chanceEntry == null)
-                    return 0;
-                return chanceEntry.getChance();
-            }));
+            List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
+            chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
+            for (ChanceEntry chancedEntry : chancedOutputs) {
+                chanceOutput.put(currentSlot++, chancedEntry);
+                recipeOutputs.add(chancedEntry.getItemStack());
+            }
             ingredients.setOutputs(VanillaTypes.ITEM, recipeOutputs);
         }
 
+        // Fluid Outputs
         if (!recipe.getFluidOutputs().isEmpty()) {
-            List<FluidStack> recipeOutputs = recipe.getFluidOutputs()
-                    .stream().map(FluidStack::copy).collect(Collectors.toList());
-            ingredients.setOutputs(VanillaTypes.FLUID, recipeOutputs);
+            ingredients.setOutputs(VanillaTypes.FLUID, recipe.getFluidOutputs().stream()
+                    .map(FluidStack::copy)
+                    .collect(Collectors.toList()));
         }
     }
 
     public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
-        boolean notConsumed = false;
-        ChanceEntry entry = null;
-        if (ingredient instanceof FluidStack) {
-            FluidStack fluidStack = ((FluidStack) ingredient);
-            if (notConsumedFluidInput.contains(fluidStack))
-                notConsumed = true;
-        } else if (ingredient instanceof ItemStack) {
-            ItemStack itemStack = ((ItemStack) ingredient);
-            if (notConsumedInput.contains(itemStack))
-                notConsumed = true;
-            else entry = chanceOutput.get(itemStack);
-        } else {
-            throw new IllegalArgumentException("Unknown ingredient type: " + ingredient.getClass());
-        }
+        boolean notConsumed = input && recipe.isNotConsumedInput(ingredient);
+        ChanceEntry entry = input ? null : chanceOutput.get(slotIndex);
 
-        if (entry != null && !input) {
+        if (entry != null) {
             double chance = entry.getChance() / 100.0;
             double boost = entry.getBoostPerTier() / 100.0;
             tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
-        } else if (notConsumed && input) {
+        } else if (notConsumed) {
             tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
         }
     }
@@ -143,7 +110,6 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     }
 
     private int getPropertyListHeight() {
-        return (recipe.getPropertyCount() + 3) * LINE_HEIGHT;
+        return (recipe.getPropertyCount() + 3) * LINE_HEIGHT - 3;
     }
-
 }

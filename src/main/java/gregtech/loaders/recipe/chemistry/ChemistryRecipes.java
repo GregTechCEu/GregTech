@@ -24,6 +24,7 @@ public class ChemistryRecipes {
         GrowthMediumRecipes.init();
         NuclearRecipes.init();
         FuelRecipeChains.init();
+        GemSlurryRecipes.init();
 
 
         // A Few Random Recipes
