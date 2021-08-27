@@ -6,5 +6,7 @@ public interface IActiveOutputSide {
 
     boolean isAutoOutputFluids();
 
-    boolean isAllowInputFromOutputSide();
+    boolean isAllowInputFromOutputSideItems();
+
+    boolean isAllowInputFromOutputSideFluids();
 }

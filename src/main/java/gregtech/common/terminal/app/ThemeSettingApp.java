@@ -53,7 +53,7 @@ public class ThemeSettingApp extends AbstractApplication {
             this.addWidget(new SelectorWidget((int) (x + 170), 105, 116, 20, Arrays.asList("resource", "url", "color", "file"), -1, TerminalTheme.WALL_PAPER::getTypeName, true)
                     .setIsUp(true)
                     .setOnChanged(type->onModifyTextureChanged(type, this))
-                    .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), 0)
+                    .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), TerminalTheme.COLOR_B_2.getColor())
                     .setBackground(TerminalTheme.COLOR_B_1));
             textureGroup = new WidgetGroup((int) (x + 170), 132, (int) (x * 11 - 170), 65);
             this.addWidget(textureGroup);
@@ -122,7 +122,7 @@ public class ThemeSettingApp extends AbstractApplication {
                 textureGroup.addWidget(new RectButtonWidget(0, 0, 116, 20)
                         .setColors(TerminalTheme.COLOR_B_1.getColor(),
                                 TerminalTheme.COLOR_1.getColor(),
-                                new Color(255, 255, 255, 0).getRGB())
+                                TerminalTheme.COLOR_B_1.getColor())
                         .setClickListener(cd-> TerminalDialogWidget.showFileDialog(app.getOs(), "terminal.theme_settings.image", new File("terminal"), true, file->{
                             if (file != null && file.isFile()) {
                                 TerminalTheme.WALL_PAPER.setTexture(new FileTexture(file));
@@ -143,7 +143,7 @@ public class ThemeSettingApp extends AbstractApplication {
         textureGroup.addWidget(new RectButtonWidget(76, 0, 40, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(cd->callback.accept(textFieldWidget.getCurrentString()))
                 .setIcon(new TextTexture("terminal.guide_editor.update", -1)));
     }

@@ -253,6 +253,9 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     boolean waitShutdown;
     @Override
     public boolean keyTyped(char charTyped, int keyCode) {
+        if (super.keyTyped(charTyped, keyCode)) {
+            return true;
+        }
         if (keyCode == 1) { // hook esc
             if (waitShutdown) {
                 shutdown();
@@ -269,6 +272,6 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             return true;
         }
         waitShutdown = false;
-        return super.keyTyped(charTyped, keyCode);
+        return false;
     }
 }

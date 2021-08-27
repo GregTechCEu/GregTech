@@ -420,7 +420,6 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         }
         TrackedDummyWorld world = new TrackedDummyWorld();
         ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
-        world.setRenderFilter(pos->worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c->c.contains(pos)));
         worldSceneRenderer.setClearColor(0xC6C6C6);
         world.addBlocks(blockMap);
         Vector3f size = world.getSize();
@@ -431,6 +430,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         worldSceneRenderer.addRenderedBlocks(world.renderedBlocks, null);
         worldSceneRenderer.setOnLookingAt(this::renderBlockOverLay);
         worldSceneRenderer.world.updateEntities();
+        world.setRenderFilter(pos->worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c->c.contains(pos)));
         ArrayList<PartInfo> partInfos = new ArrayList<>(partsMap.values());
         partInfos.sort((one, two) -> {
             if (one.isController) return -1;

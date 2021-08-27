@@ -11,12 +11,9 @@ import net.minecraft.item.ItemStack;
  * That means controls are delegated to vanilla {@link net.minecraft.client.gui.inventory.GuiContainer}
  * Rendering is still handled by widget via helpers in {@link gregtech.api.gui.IRenderContext}
  */
-public interface INativeWidget extends EnableNotifiedWidget {
+public interface INativeWidget {
 
     ItemStack VANILLA_LOGIC = new ItemStack(Items.AIR);
-
-    @Override
-    void setEnabled(boolean isEnabled);
 
     /**
      * You should return MC slot handle instance you created earlier

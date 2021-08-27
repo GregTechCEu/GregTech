@@ -11,9 +11,5 @@ import net.minecraft.util.BlockRenderLayer;
  * This is where you decide whether or not this group of pos should be rendered. What other requirements do you have for rendering.
  */
 public interface ISceneRenderHook {
-    /***
-     *
-     * @return should blocks be rendered.
-     */
-    boolean apply(boolean isTESR, int pass, BlockRenderLayer layer);
+    void apply(boolean isTESR, int pass, BlockRenderLayer layer);
 }

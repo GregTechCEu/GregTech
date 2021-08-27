@@ -1,11 +1,14 @@
 package gregtech.api.gui.resources;
 
+import gregtech.api.gui.widgets.SlotWidget;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import org.lwjgl.opengl.GL14;
 
 public class ItemStackTexture implements IGuiTexture{
     private final ItemStack[] itemStack;
@@ -35,6 +38,8 @@ public class ItemStackTexture implements IGuiTexture{
 
     @Override
     public void draw(double x, double y, int width, int height) {
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.disableDepth();
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
         GlStateManager.scale(width / 16f, height / 16f, 0.0001);

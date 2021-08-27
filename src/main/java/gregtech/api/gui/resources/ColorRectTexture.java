@@ -59,5 +59,6 @@ public class ColorRectTexture implements IGuiTexture{
         bufferbuilder.pos(x, y, 0.0D).endVertex();
         tessellator.draw();
         GlStateManager.enableTexture2D();
+        GlStateManager.color(1, 1, 1, 1);
     }
 }

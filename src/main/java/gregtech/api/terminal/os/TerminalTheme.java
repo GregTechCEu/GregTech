@@ -17,15 +17,15 @@ public class TerminalTheme {
     public static final ColorRectTexture COLOR_3 = new ColorRectTexture(new Color(231, 95, 95));
     public static final ColorRectTexture COLOR_4 = new ColorRectTexture(new Color(0, 115, 255));
     public static final ColorRectTexture COLOR_5 = new ColorRectTexture(new Color(113, 27, 217));
-    public static final ColorRectTexture COLOR_6 = new ColorRectTexture(new Color(0, 0, 0, 255));
-    public static final ColorRectTexture COLOR_7 = new ColorRectTexture(new Color(255, 255, 255, 255));
+    public static final ColorRectTexture COLOR_6 = new ColorRectTexture(new Color(30, 30, 30, 255));
+    public static final ColorRectTexture COLOR_7 = new ColorRectTexture(new Color(230, 230, 230, 255));
 
     public static final ColorRectTexture COLOR_F_1 = new ColorRectTexture(new Color(148, 226, 193));
     public static final ColorRectTexture COLOR_F_2 = new ColorRectTexture(new Color(175, 0, 0, 131));
 
-    public static final ColorRectTexture COLOR_B_1 = new ColorRectTexture(new Color(0, 0, 0, 79));
-    public static final ColorRectTexture COLOR_B_2 = new ColorRectTexture(new Color(0, 0, 0, 159));
-    public static final ColorRectTexture COLOR_B_3 = new ColorRectTexture(new Color(246, 120, 120, 190));
+    public static final ColorRectTexture COLOR_B_1 = new ColorRectTexture(new Color(0, 0, 0, 80));
+    public static final ColorRectTexture COLOR_B_2 = new ColorRectTexture(new Color(0, 0, 0, 160));
+    public static final ColorRectTexture COLOR_B_3 = new ColorRectTexture(new Color(246, 120, 120, 160));
 
     public static final ModifyGuiTexture WALL_PAPER = new ModifyGuiTexture(TextureArea.fullImage("textures/gui/terminal/terminal_background.png"));
 

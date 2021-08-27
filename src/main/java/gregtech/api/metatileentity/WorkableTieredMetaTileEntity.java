@@ -36,6 +36,10 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         reinitializeEnergyContainer();
     }
 
+    public RecipeLogicEnergy getWorkable() {
+        return workable;
+    }
+
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
         return new RecipeLogicEnergy(this, recipeMap, () -> energyContainer);
     }

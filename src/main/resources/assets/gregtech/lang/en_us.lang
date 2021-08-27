@@ -3847,3 +3847,11 @@ terminal.prospector.ore=Ore statistics
 terminal.prospector.fluid=Fluid statistics
 
 terminal.console.notice=Please right click the machine when opening the terminal.
+terminal.console.front=Set as front
+terminal.console.items=set as items output
+terminal.console.fluids=set as fluids output
+terminal.console.auto_output=allow auto output
+terminal.console.input=allow input from output
+terminal.console.cover_rs=signal: %s
+terminal.console.cover_gui=Gui
+terminal.console.gui=Open machine gui

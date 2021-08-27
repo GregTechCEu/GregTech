@@ -45,11 +45,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     private final boolean hasFrontFacing;
 
     private final ItemStackHandler chargerInventory;
-    private EnumFacing outputFacing;
+    private EnumFacing outputFacingItems;
+    private EnumFacing outputFacingFluids;
 
     private boolean autoOutputItems;
     private boolean autoOutputFluids;
-    private boolean allowInputFromOutputSide = true;
+    private boolean allowInputFromOutputSideItems = true;
+    private boolean allowInputFromOutputSideFluids = true;
 
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
@@ -89,11 +91,13 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking()) {
+            //TODO Separate the setters
             EnumFacing currentOutputSide = getOutputFacing();
             if (currentOutputSide == facing || getFrontFacing() == facing) {
                 return false;
             }
             if (!getWorld().isRemote) {
+                //TODO Separate two setters
                 setOutputFacing(facing);
             }
             return true;
@@ -104,10 +108,14 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition) {
         boolean coverPlaced = super.placeCoverOnSide(side, itemStack, coverDefinition);
-        if (coverPlaced && getOutputFacing() == side) {
+        if (coverPlaced) {
             CoverBehavior cover = getCoverAtSide(side);
             if (cover != null && cover.shouldCoverInteractWithOutputside()) {
-                setAllowInputFromOutputSide(true);
+                if (getOutputFacingItems() == side) {
+                    setAllowInputFromOutputSideItems(true);
+                } else if (getOutputFacingFluids() == side) {
+                    setAllowInputFromOutputSideFluids(true);
+                }
             }
         }
         return coverPlaced;
@@ -117,14 +125,17 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        if (outputFacing != null) {
-            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
-            if (isAutoOutputItems()) {
-                Textures.ITEM_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
-            }
-            if (isAutoOutputFluids()) {
-                Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacing, renderState, translation, pipeline);
-            }
+        if (outputFacingFluids != null) {
+            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingFluids, renderState, translation, pipeline);
+        }
+        if (outputFacingItems != null) {
+            Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingItems, renderState, translation, pipeline);
+        }
+        if (isAutoOutputItems() && outputFacingItems != null) {
+            Textures.ITEM_OUTPUT_OVERLAY.renderSided(outputFacingItems, renderState, translation, pipeline);
+        }
+        if (isAutoOutputFluids() && outputFacingFluids != null) {
+            Textures.FLUID_OUTPUT_OVERLAY.renderSided(outputFacingFluids, renderState, translation, pipeline);
         }
     }
 
@@ -135,12 +146,11 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
             ((EnergyContainerHandler) this.energyContainer).dischargeOrRechargeEnergyContainers(chargerInventory, 0);
 
             if (getOffsetTimer() % 5 == 0) {
-                EnumFacing currentOutputFacing = getOutputFacing();
                 if (isAutoOutputFluids()) {
-                    pushFluidsIntoNearbyHandlers(currentOutputFacing);
+                    pushFluidsIntoNearbyHandlers(getOutputFacingFluids());
                 }
                 if (isAutoOutputItems()) {
-                    pushItemsIntoNearbyHandlers(currentOutputFacing);
+                    pushItemsIntoNearbyHandlers(getOutputFacingItems());
                 }
             }
         }
@@ -149,14 +159,26 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         EnumFacing hitFacing = ICoverable.determineGridSideHit(hitResult);
-        if (facing == getOutputFacing() || (hitFacing == getOutputFacing() && playerIn.isSneaking())) {
+        if (facing == getOutputFacingItems() || facing == getOutputFacingFluids() ||
+                ((hitFacing == getOutputFacingItems() || hitFacing == getOutputFacingFluids()) && playerIn.isSneaking())) {
             if (!getWorld().isRemote) {
-                if (isAllowInputFromOutputSide()) {
-                    setAllowInputFromOutputSide(false);
-                    playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
-                } else {
-                    setAllowInputFromOutputSide(true);
-                    playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
+                if (facing == getOutputFacingItems() || hitFacing == getOutputFacingItems()) {
+                    if (isAllowInputFromOutputSideItems()) {
+                        setAllowInputFromOutputSideItems(false);
+                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
+                    } else {
+                        setAllowInputFromOutputSideItems(true);
+                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
+                    }
+                }
+                if (facing == getOutputFacingFluids() || hitFacing == getOutputFacingFluids()) {
+                    if (isAllowInputFromOutputSideFluids()) {
+                        setAllowInputFromOutputSideFluids(false);
+                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
+                    } else {
+                        setAllowInputFromOutputSideFluids(true);
+                        playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.allow"));
+                    }
                 }
             }
             return true;
@@ -167,19 +189,19 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidHandler fluidHandler = (side == getOutputFacing() && !isAllowInputFromOutputSide()) ? outputFluidInventory : fluidInventory;
+            IFluidHandler fluidHandler = (side == getOutputFacingFluids() && !isAllowInputFromOutputSideFluids()) ? outputFluidInventory : fluidInventory;
             if (fluidHandler.getTankProperties().length > 0) {
                 return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler);
             }
             return null;
         } else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSide()) ? outputItemInventory : itemInventory;
+            IItemHandler itemHandler = (side == getOutputFacingItems() && !isAllowInputFromOutputSideFluids()) ? outputItemInventory : itemInventory;
             if (itemHandler.getSlots() > 0) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
             }
             return null;
         } else if (capability == GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE) {
-            if (side == getOutputFacing()) {
+            if (side == getOutputFacingItems() || side == getOutputFacingFluids()) {
                 return GregtechTileCapabilities.CAPABILITY_ACTIVE_OUTPUT_SIDE.cast(this);
             }
             return null;
@@ -191,10 +213,12 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setTag("ChargerInventory", chargerInventory.serializeNBT());
-        data.setInteger("OutputFacing", getOutputFacing().getIndex());
+        data.setInteger("OutputFacing", getOutputFacingItems().getIndex());
+        data.setInteger("OutputFacingF", getOutputFacingFluids().getIndex());
         data.setBoolean("AutoOutputItems", autoOutputItems);
         data.setBoolean("AutoOutputFluids", autoOutputFluids);
-        data.setBoolean("AllowInputFromOutputSide", allowInputFromOutputSide);
+        data.setBoolean("AllowInputFromOutputSide", allowInputFromOutputSideItems);
+        data.setBoolean("AllowInputFromOutputSideF", allowInputFromOutputSideFluids);
         return data;
     }
 
@@ -202,16 +226,19 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         this.chargerInventory.deserializeNBT(data.getCompoundTag("ChargerInventory"));
-        this.outputFacing = EnumFacing.VALUES[data.getInteger("OutputFacing")];
+        this.outputFacingItems = EnumFacing.VALUES[data.getInteger("OutputFacing")];
+        this.outputFacingFluids = EnumFacing.VALUES[data.getInteger("OutputFacingF")];
         this.autoOutputItems = data.getBoolean("AutoOutputItems");
         this.autoOutputFluids = data.getBoolean("AutoOutputFluids");
-        this.allowInputFromOutputSide = data.getBoolean("AllowInputFromOutputSide");
+        this.allowInputFromOutputSideItems = data.getBoolean("AllowInputFromOutputSide");
+        this.allowInputFromOutputSideFluids = data.getBoolean("AllowInputFromOutputSideF");
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeByte(getOutputFacing().getIndex());
+        buf.writeByte(getOutputFacingItems().getIndex());
+        buf.writeByte(getOutputFacingFluids().getIndex());
         buf.writeBoolean(autoOutputItems);
         buf.writeBoolean(autoOutputFluids);
     }
@@ -219,7 +246,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.outputFacing = EnumFacing.VALUES[buf.readByte()];
+        this.outputFacingItems = EnumFacing.VALUES[buf.readByte()];
+        this.outputFacingFluids = EnumFacing.VALUES[buf.readByte()];
         this.autoOutputItems = buf.readBoolean();
         this.autoOutputFluids = buf.readBoolean();
     }
@@ -228,7 +256,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
         if (dataId == 100) {
-            this.outputFacing = EnumFacing.VALUES[buf.readByte()];
+            this.outputFacingItems = EnumFacing.VALUES[buf.readByte()];
+            this.outputFacingFluids = EnumFacing.VALUES[buf.readByte()];
             getHolder().scheduleChunkForRenderUpdate();
         } else if (dataId == 101) {
             this.autoOutputItems = buf.readBoolean();
@@ -243,14 +272,43 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public boolean isValidFrontFacing(EnumFacing facing) {
         //use direct outputFacing field instead of getter method because otherwise
         //it will just return SOUTH for null output facing
-        return super.isValidFrontFacing(facing) && facing != outputFacing;
+        return super.isValidFrontFacing(facing) && facing != outputFacingItems && facing != outputFacingFluids;
     }
 
+    @Deprecated
     public void setOutputFacing(EnumFacing outputFacing) {
-        this.outputFacing = outputFacing;
+        this.outputFacingItems = outputFacing;
+        this.outputFacingFluids = outputFacing;
         if (!getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
-            writeCustomData(100, buf -> buf.writeByte(outputFacing.getIndex()));
+            writeCustomData(100, buf -> {
+                buf.writeByte(outputFacingItems.getIndex());
+                buf.writeByte(outputFacingFluids.getIndex());
+            });
+            markDirty();
+        }
+    }
+
+    public void setOutputFacingItems(EnumFacing outputFacing) {
+        this.outputFacingItems = outputFacing;
+        if (!getWorld().isRemote) {
+            getHolder().notifyBlockUpdate();
+            writeCustomData(100, buf -> {
+                buf.writeByte(outputFacingItems.getIndex());
+                buf.writeByte(outputFacingFluids.getIndex());
+            });
+            markDirty();
+        }
+    }
+
+    public void setOutputFacingFluids(EnumFacing outputFacing) {
+        this.outputFacingFluids = outputFacing;
+        if (!getWorld().isRemote) {
+            getHolder().notifyBlockUpdate();
+            writeCustomData(100, buf -> {
+                buf.writeByte(outputFacingItems.getIndex());
+                buf.writeByte(outputFacingFluids.getIndex());
+            });
             markDirty();
         }
     }
@@ -271,8 +329,15 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         }
     }
 
-    public void setAllowInputFromOutputSide(boolean allowInputFromOutputSide) {
-        this.allowInputFromOutputSide = allowInputFromOutputSide;
+    public void setAllowInputFromOutputSideItems(boolean allowInputFromOutputSide) {
+        this.allowInputFromOutputSideItems = allowInputFromOutputSide;
+        if (!getWorld().isRemote) {
+            markDirty();
+        }
+    }
+
+    public void setAllowInputFromOutputSideFluids(boolean allowInputFromOutputSide) {
+        this.allowInputFromOutputSideFluids = allowInputFromOutputSide;
         if (!getWorld().isRemote) {
             markDirty();
         }
@@ -281,14 +346,23 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public void setFrontFacing(EnumFacing frontFacing) {
         super.setFrontFacing(frontFacing);
-        if (this.outputFacing == null) {
+        if (this.outputFacingItems == null || this.outputFacingFluids == null) {
             //set initial output facing as opposite to front
             setOutputFacing(frontFacing.getOpposite());
         }
     }
 
+    @Deprecated
     public EnumFacing getOutputFacing() {
-        return outputFacing == null ? EnumFacing.SOUTH : outputFacing;
+        return getOutputFacingItems();
+    }
+
+    public EnumFacing getOutputFacingItems() {
+        return outputFacingItems == null ? EnumFacing.SOUTH : outputFacingItems;
+    }
+
+    public EnumFacing getOutputFacingFluids() {
+        return outputFacingFluids == null ? EnumFacing.SOUTH : outputFacingFluids;
     }
 
     public boolean isAutoOutputItems() {
@@ -299,8 +373,12 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         return autoOutputFluids;
     }
 
-    public boolean isAllowInputFromOutputSide() {
-        return allowInputFromOutputSide;
+    public boolean isAllowInputFromOutputSideItems() {
+        return allowInputFromOutputSideItems;
+    }
+
+    public boolean isAllowInputFromOutputSideFluids() {
+        return allowInputFromOutputSideFluids;
     }
 
     @Override

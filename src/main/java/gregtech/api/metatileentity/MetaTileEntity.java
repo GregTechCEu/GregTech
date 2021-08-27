@@ -331,6 +331,10 @@ public abstract class MetaTileEntity implements ICoverable {
      */
     protected abstract ModularUI createUI(EntityPlayer entityPlayer);
 
+    public ModularUI getModularUI(EntityPlayer entityPlayer) {
+        return createUI(entityPlayer);
+    }
+
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {
         CoverBehavior coverBehavior = getCoverAtSide(result.sideHit);
         if (coverBehavior == null || !coverBehavior.onLeftClick(playerIn, result)) {

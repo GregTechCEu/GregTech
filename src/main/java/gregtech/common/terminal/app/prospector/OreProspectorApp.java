@@ -28,10 +28,12 @@ public class OreProspectorApp extends AbstractApplication implements
 
     @Override
     protected AbstractApplication initApp(boolean isClient, NBTTagCompound nbt) {
-        this.addWidget(new ImageWidget(0, 0, 333, 232, TerminalTheme.COLOR_B_2));
         int chunkRadius = 7;
         int offset = (232 - 32 * 7 + 16) / 2;
+        this.addWidget(new ImageWidget(0, 0, 333, 232, TerminalTheme.COLOR_B_2));
         if (isClient) {
+            this.addWidget(new ImageWidget(0, 0, 333, offset, GuiTextures.UI_FRAME_SIDE_UP));
+            this.addWidget(new ImageWidget(0, 232 - offset, 333, offset, GuiTextures.UI_FRAME_SIDE_DOWN));
             this.widgetOreList = new WidgetOreList(32 * chunkRadius - 16, offset, 333 - 32 * chunkRadius  + 16, 232 - 2 * offset);
             this.addWidget(this.widgetOreList);
         }

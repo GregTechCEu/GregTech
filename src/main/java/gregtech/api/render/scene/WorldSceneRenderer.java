@@ -27,6 +27,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+import javax.annotation.Nullable;
 import javax.vecmath.Vector3f;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -51,8 +52,8 @@ public abstract class WorldSceneRenderer {
 
     public final World world;
     public final Map<Collection<BlockPos>, ISceneRenderHook> renderedBlocksMap;
-    private Runnable beforeRender;
-    private Runnable afterRender;
+    private Consumer<WorldSceneRenderer> beforeRender;
+    private Consumer<WorldSceneRenderer> afterRender;
     private Consumer<RayTraceResult> onLookingAt;
     private int clearColor;
     private RayTraceResult lastTraceResult;
@@ -65,12 +66,12 @@ public abstract class WorldSceneRenderer {
         renderedBlocksMap = new LinkedHashMap<>();
     }
 
-    public WorldSceneRenderer setBeforeWorldRender(Runnable callback) {
+    public WorldSceneRenderer setBeforeWorldRender(Consumer<WorldSceneRenderer> callback) {
         this.beforeRender = callback;
         return this;
     }
 
-    public WorldSceneRenderer setAfterWorldRender(Runnable callback) {
+    public WorldSceneRenderer setAfterWorldRender(Consumer<WorldSceneRenderer> callback) {
         this.afterRender = callback;
         return this;
     }
@@ -102,19 +103,15 @@ public abstract class WorldSceneRenderer {
         // render TrackedDummyWorld
         drawWorld();
         // check lookingAt
-        Vector3f lastHitPos = null;
-        if (mouseX > positionedRect.position.x && mouseX < positionedRect.position.x + positionedRect.size.width
-                && mouseY > positionedRect.position.y && mouseY < positionedRect.position.y + positionedRect.size.height) {
-            lastHitPos = unProject(mouseX, mouseY);
-        }
         this.lastTraceResult = null;
-        if (lastHitPos != null) {
-            RayTraceResult result = rayTrace(lastHitPos);
+        if (onLookingAt != null && mouseX > positionedRect.position.x && mouseX < positionedRect.position.x + positionedRect.size.width
+                && mouseY > positionedRect.position.y && mouseY < positionedRect.position.y + positionedRect.size.height) {
+            Vector3f hitPos = unProject(mouseX, mouseY);
+            RayTraceResult result = rayTrace(hitPos);
             if (result != null) {
+                this.lastTraceResult = null;
                 this.lastTraceResult = result;
-                if(onLookingAt != null) {
-                    onLookingAt.accept(result);
-                }
+                onLookingAt.accept(result);
             }
         }
         // resetCamera
@@ -210,7 +207,7 @@ public abstract class WorldSceneRenderer {
 
     protected void drawWorld() {
         if (beforeRender != null) {
-            beforeRender.run();
+            beforeRender.accept(this);
         }
 
         Minecraft mc = Minecraft.getMinecraft();
@@ -232,9 +229,7 @@ public abstract class WorldSceneRenderer {
 
                 renderedBlocksMap.forEach((renderedBlocks, hook)->{
                     if (hook != null) {
-                        if (!hook.apply(false, pass, layer)) {
-                            return;
-                        }
+                        hook.apply(false, pass, layer);
                     } else {
                         setDefaultPassRenderState(pass);
                     }
@@ -270,9 +265,7 @@ public abstract class WorldSceneRenderer {
             int finalPass = pass;
             renderedBlocksMap.forEach((renderedBlocks, hook)->{
                 if (hook != null) {
-                    if (!hook.apply(true, finalPass, null)) {
-                        return;
-                    }
+                    hook.apply(true, finalPass, null);
                 } else {
                     setDefaultPassRenderState(finalPass);
                 }
@@ -292,7 +285,7 @@ public abstract class WorldSceneRenderer {
         GlStateManager.depthMask(true);
 
         if (afterRender != null) {
-            afterRender.run();
+            afterRender.accept(this);
         }
     }
 
@@ -309,14 +302,14 @@ public abstract class WorldSceneRenderer {
         }
     }
 
-    public RayTraceResult rayTrace(Vector3f pos) {
-        Vec3d vec3d = new Vec3d(eyePos.x, eyePos.y, eyePos.z);
-        Vec3d vec3d1 = new Vec3d(pos.getX() - eyePos.x, pos.getY() - eyePos.y, pos.getZ() - eyePos.z);
-        Vec3d vec3d2 = vec3d.add(vec3d1.x * 1.5, vec3d1.y * 1.5, vec3d1.z * 1.5);
-        return this.world.rayTraceBlocks(vec3d, vec3d2, false, false, true);
+    public RayTraceResult rayTrace(Vector3f hitPos) {
+        Vec3d startPos = new Vec3d(this.eyePos.x, this.eyePos.y, this.eyePos.z);
+        hitPos.scale(2); // Double view range to ensure pos can be seen.
+        Vec3d endPos = new Vec3d((hitPos.x - startPos.x), (hitPos.y - startPos.y), (hitPos.z - startPos.z));
+        return this.world.rayTraceBlocks(startPos, endPos);
     }
 
-    public Vector3f project(BlockPos pos, boolean depth) {
+    public Vector3f project(BlockPos pos) {
         //read current rendering parameters
         GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, MODELVIEW_MATRIX_BUFFER);
         GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, PROJECTION_MATRIX_BUFFER);
@@ -346,12 +339,7 @@ public abstract class WorldSceneRenderer {
         //rewind buffer after read
         OBJECT_POS_BUFFER.rewind();
 
-        //check whether pass depth test
-        if (!depth || Objects.equals(unProject((int) winX, (int) winY), pos)) {
-            return new Vector3f(winX, winY, winZ);
-        }
-
-        return null;
+        return new Vector3f(winX, winY, winZ);
     }
 
     public Vector3f unProject(int mouseX, int mouseY) {
@@ -396,11 +384,6 @@ public abstract class WorldSceneRenderer {
         //rewind buffer after read
         OBJECT_POS_BUFFER.rewind();
 
-        //if we didn't hit anything, just return null. also return null if hit is too far from us
-        if (posY < -100.0f) {
-            return null; //stop execution at that point
-        }
-
         return new Vector3f(posX, posY, posZ);
     }
 
@@ -408,67 +391,25 @@ public abstract class WorldSceneRenderer {
      * For better performance, You'd better handle the event {@link #setOnLookingAt(Consumer)} or {@link #getLastTraceResult()}
      * @param mouseX xPos in Texture
      * @param mouseY yPos in Texture
-     * @return BlockPosFace Hit
+     * @return RayTraceResult Hit
      */
-    protected BlockPosFace screenPos2BlockPosFace(int mouseX, int mouseY, int x, int y, int width, int height) {
+    protected RayTraceResult screenPos2BlockPosFace(int mouseX, int mouseY, int x, int y, int width, int height) {
         // render a frame
         GlStateManager.enableDepth();
         setupCamera(getPositionedRect(x, y, width, height));
 
         drawWorld();
 
-        Vector3f looking = unProject(mouseX, mouseY);
-        float posX = looking.x;
-        float posY = looking.y;
-        float posZ = looking.z;
-        BlockPos pos = new BlockPos(posX, posY, posZ);
-        if (world.isAirBlock(pos)) {
-            //if block is air, then search for nearest adjacent block
-            //this can happen under extreme rotation angles
-            for (EnumFacing offset : EnumFacing.VALUES) {
-                BlockPos relative = pos.offset(offset);
-                if (world.isAirBlock(relative)) continue;
-                pos = relative;
-                break;
-            }
-        }
-        if (world.isAirBlock(pos)) {
-            //if we didn't found any other block, return null
-            return null;
-        }
-        EnumFacing.Axis axis = EnumFacing.Axis.X;
-        double min = Math.abs(Math.round(posX) - posX);
-        double tmp = Math.abs(Math.round(posY) - posY);
-        if (min > tmp) {
-            min = tmp;
-            axis = EnumFacing.Axis.Y;
-        }
-        tmp = Math.abs(Math.round(posZ) - posZ);
-        if (min > tmp) {
-            axis = EnumFacing.Axis.Z;
-        }
-        EnumFacing facing = EnumFacing.UP;
-        if (axis == EnumFacing.Axis.Y && (posY - pos.getY()) < 0.5) {
-            facing = EnumFacing.DOWN;
-        } else if (axis == EnumFacing.Axis.X) {
-            if ((posX - pos.getX()) < 0.5)
-                facing = EnumFacing.WEST;
-            else
-                facing = EnumFacing.EAST;
-        } else if (axis == EnumFacing.Axis.Z) {
-            if ((posZ - pos.getZ()) < 0.5)
-                facing = EnumFacing.NORTH;
-            else
-                facing = EnumFacing.SOUTH;
-        }
+        Vector3f hitPos = unProject(mouseX, mouseY);
+        RayTraceResult result = rayTrace(hitPos);
 
         resetCamera();
 
-        return new BlockPosFace(pos, facing);
+        return result;
     }
 
     /***
-     * For better performance, You'd better do project in {@link #setAfterWorldRender(Runnable)}
+     * For better performance, You'd better do project in {@link #setAfterWorldRender(Consumer)}
      * @param pos BlockPos
      * @param depth should pass Depth Test
      * @return x, y, z
@@ -479,7 +420,7 @@ public abstract class WorldSceneRenderer {
         setupCamera(getPositionedRect(x, y, width, height));
 
         drawWorld();
-        Vector3f winPos = project(pos, depth);
+        Vector3f winPos = project(pos);
 
         resetCamera();
 
@@ -494,5 +435,12 @@ public abstract class WorldSceneRenderer {
             this.facing = facing;
         }
 
+        @Override
+        public boolean equals(@Nullable Object bp) {
+            if (bp instanceof BlockPosFace) {
+                return super.equals(bp) && ((BlockPosFace) bp).facing == facing;
+            }
+            return false;
+        }
     }
 }

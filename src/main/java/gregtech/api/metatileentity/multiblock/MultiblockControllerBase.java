@@ -41,7 +41,7 @@ import java.util.function.Predicate;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
 
-    protected BlockPattern structurePattern;
+    public BlockPattern structurePattern;
 
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();

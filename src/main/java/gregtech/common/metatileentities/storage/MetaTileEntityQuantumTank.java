@@ -243,7 +243,12 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     }
 
     @Override
-    public boolean isAllowInputFromOutputSide() {
+    public boolean isAllowInputFromOutputSideItems() {
+        return false;
+    }
+
+    @Override
+    public boolean isAllowInputFromOutputSideFluids() {
         return allowInputFromOutputSide;
     }
 
@@ -289,7 +294,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
             return null;
         }
         else if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            IFluidHandler fluidHandler = (side == getOutputFacing() && !isAllowInputFromOutputSide()) ? outputFluidInventory : fluidInventory;
+            IFluidHandler fluidHandler = (side == getOutputFacing() && !isAllowInputFromOutputSideFluids()) ? outputFluidInventory : fluidInventory;
             if (fluidHandler.getTankProperties().length > 0) {
                 return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(fluidHandler);
             }
@@ -319,7 +324,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         EnumFacing hitFacing = ICoverable.determineGridSideHit(hitResult);
         if (facing == getOutputFacing() || (hitFacing == getOutputFacing() && playerIn.isSneaking())) {
             if (!getWorld().isRemote) {
-                if (isAllowInputFromOutputSide()) {
+                if (isAllowInputFromOutputSideFluids()) {
                     setAllowInputFromOutputSide(false);
                     playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
                 } else {

@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -60,9 +61,9 @@ public class FBOWorldSceneRenderer extends WorldSceneRenderer {
         }
     }
 
-    public BlockPosFace screenPos2BlockPosFace(int mouseX, int mouseY) {
+    public RayTraceResult screenPos2BlockPosFace(int mouseX, int mouseY) {
         int lastID = bindFBO();
-        BlockPosFace looking = super.screenPos2BlockPosFace(mouseX, mouseY, 0, 0, this.resolutionWidth, this.resolutionHeight);
+        RayTraceResult looking = super.screenPos2BlockPosFace(mouseX, mouseY, 0, 0, this.resolutionWidth, this.resolutionHeight);
         unbindFBO(lastID);
         return looking;
     }
