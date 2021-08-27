@@ -845,6 +845,8 @@ public abstract class MetaTileEntity implements ICoverable {
         return originalCapability;
     }
 
+
+
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_COVERABLE) {
             return GregtechTileCapabilities.CAPABILITY_COVERABLE.cast(this);

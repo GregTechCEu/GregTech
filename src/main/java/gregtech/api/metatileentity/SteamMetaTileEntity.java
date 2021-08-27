@@ -50,6 +50,10 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity {
         this.setPaintingColor(0xFFFFFF);
     }
 
+    public RecipeLogicSteam getWorkableHandler() {
+        return workableHandler;
+    }
+
     @SideOnly(Side.CLIENT)
     protected SimpleSidedCubeRenderer getBaseRenderer() {
         if (isHighPressure) {

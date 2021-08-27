@@ -125,9 +125,6 @@ public class SlotWidget extends Widget implements INativeWidget {
 
     @Override
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
-        if (isMouseOverElement(mouseX, mouseY) && gui != null) {
-            gui.needNativeClick = true;
-        }
         return super.mouseDragged(mouseX, mouseY, button, timeDragged);
     }
 

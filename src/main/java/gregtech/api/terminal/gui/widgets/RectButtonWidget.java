@@ -8,6 +8,7 @@ import net.minecraft.network.PacketBuffer;
 import org.lwjgl.input.Mouse;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class RectButtonWidget extends CircleButtonWidget{
@@ -32,6 +33,12 @@ public class RectButtonWidget extends CircleButtonWidget{
     public RectButtonWidget setToggleButton(IGuiTexture pressedIcon, BiConsumer<ClickData, Boolean> onPressed) {
         this.pressedIcon = pressedIcon;
         this.onPressed = onPressed;
+        return this;
+    }
+
+    public RectButtonWidget setToggleButton(IGuiTexture pressedIcon, Consumer<Boolean> onPressed) {
+        this.pressedIcon = pressedIcon;
+        this.onPressed = onPressed != null ? (c, p)-> onPressed.accept(p) : null;
         return this;
     }
 

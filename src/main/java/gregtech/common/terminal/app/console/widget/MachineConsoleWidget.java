@@ -1,6 +1,9 @@
 package gregtech.common.terminal.app.console.widget;
 
-import gregtech.api.capability.impl.RecipeLogicEnergy;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
+import gregtech.api.capability.impl.AbstractRecipeLogic;
+import gregtech.api.capability.impl.RecipeLogicSteam;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.gui.GuiTextures;
@@ -14,7 +17,6 @@ import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
-import gregtech.api.metatileentity.WorkableTieredMetaTileEntity;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Size;
@@ -89,6 +91,7 @@ public class MachineConsoleWidget extends WidgetGroup {
             addWidget(new SimpleTextWidget(size.width / 2, 12, "", -1, ()->facing.toString().toUpperCase()).setShadow(true));
             int y = 20;
             if (mte.hasFrontFacing()) {
+//                GregtechTileCapabilities.CAPABILITY_WORKABLE
                 addWidget(new RectButtonWidget(10, y, size.width - 20, 20, 1)
                         .setClickListener(clickData -> {
                             if (!isRemote() && mte.isValidFrontFacing(facing)) {
@@ -100,18 +103,44 @@ public class MachineConsoleWidget extends WidgetGroup {
                 y += 25;
             }
 
-            if (mte instanceof WorkableTieredMetaTileEntity) {
-                RecipeLogicEnergy workable = ((WorkableTieredMetaTileEntity) mte).getWorkable();
-                addWidget(new CycleButtonWidget(10, y, 20, 20,
-                        workable.getAvailableOverclockingTiers(), workable::getOverclockTier, workable::setOverclockTier)
-                        .setTooltipHoverString("gregtech.gui.overclock.description")
-                        .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
-                addWidget(new ImageWidget(35, y, 20, 20, GuiTextures.INDICATOR_NO_ENERGY)
-                        .setPredicate(workable::isHasNotEnoughEnergy));
-                addWidget(new ProgressWidget(workable::getProgressPercent, 60, y, 63, 20, GuiTextures.PROGRESS_BAR_ARC_FURNACE, ProgressWidget.MoveType.HORIZONTAL));
-                y += 20;
+            // IControllable
+            IControllable controllable = mte.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, facing);
+            if (controllable != null) {
+                addWidget(new RectButtonWidget(10, y, 20, 20, 1)
+                        .setToggleButton(GuiTextures.BUTTON_WORKING_ENABLE.getSubArea(0, 0, 1, 0.5), (c, p)->{
+                            if (!isRemote()) {
+                                controllable.setWorkingEnabled(p);
+                            }
+                        })
+                        .setInitValue(controllable.isWorkingEnabled())
+                        .setValueSupplier(false, controllable::isWorkingEnabled)
+                        .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), 0)
+                        .setHoverText("terminal.console.controllable")
+                        .setIcon(GuiTextures.BUTTON_WORKING_ENABLE.getSubArea(0, 0.5, 1, 0.5)));
+                // AbstractRecipeLogic
+                AbstractRecipeLogic recipeLogic = mte.getCapability(GregtechTileCapabilities.CAPABILITY_RECIPE_LOGIC, facing);
+                if (recipeLogic != null) {
+                    addWidget(new CycleButtonWidget(35, y, 20, 20,
+                            recipeLogic.getAvailableOverclockingTiers(), recipeLogic::getOverclockTier, recipeLogic::setOverclockTier)
+                            .setTooltipHoverString("gregtech.gui.overclock.description")
+                            .setButtonTexture(GuiTextures.BUTTON_OVERCLOCK));
+                    addWidget(new ProgressWidget(recipeLogic::getProgressPercent, 60, y, 63, 20, GuiTextures.PROGRESS_BAR_ARC_FURNACE, ProgressWidget.MoveType.HORIZONTAL));
+                    if (recipeLogic instanceof RecipeLogicSteam) {
+                        y += 25;
+                        addWidget(new RectButtonWidget(10, y, size.width - 20, 20, 1)
+                                .setClickListener(clickData -> {
+                                    EnumFacing currentVentingSide = ((RecipeLogicSteam) recipeLogic).getVentingSide();
+                                    if (currentVentingSide == facing || mte.getFrontFacing() == facing) return;
+                                    ((RecipeLogicSteam) recipeLogic).setVentingSide(facing);
+                                })
+                                .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
+                                .setIcon(new TextTexture("terminal.console.venting", -1)));
+                    }
+                }
+                y += 25;
             }
 
+            // SimpleMachineMetaTileEntity
             if (mte instanceof SimpleMachineMetaTileEntity) {
                 SimpleMachineMetaTileEntity simpleMTE = (SimpleMachineMetaTileEntity) mte;
                 // items output
@@ -190,6 +219,7 @@ public class MachineConsoleWidget extends WidgetGroup {
                 y += 5;
             }
 
+            // CoverBehavior
             CoverBehavior cover = mte.getCoverAtSide(facing);
             if (cover != null) {
                 this.addWidget(new SlotWidget(new ItemStackHandler(NonNullList.withSize(1, cover.getPickItem())), 0,

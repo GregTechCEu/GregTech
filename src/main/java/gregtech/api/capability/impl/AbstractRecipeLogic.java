@@ -108,6 +108,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             return GregtechTileCapabilities.CAPABILITY_WORKABLE.cast(this);
         } else if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        } else if (capability == GregtechTileCapabilities.CAPABILITY_RECIPE_LOGIC) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
         return null;
     }
