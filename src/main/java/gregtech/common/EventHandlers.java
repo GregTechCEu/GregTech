@@ -82,7 +82,7 @@ public class EventHandlers {
         }
     }
     @SubscribeEvent
-    public static void Hammer(BlockEvent.HarvestDropsEvent event) {
+    public static void hammer(BlockEvent.HarvestDropsEvent event) {
         if (!event.getWorld().isRemote && event.getHarvester() != null && !event.isSilkTouching()) {
             int level = EnchantmentHelper.getEnchantmentLevel(EnchantmentHardHammer.INSTANCE, event.getHarvester().getHeldItemMainhand());
             if (level > 0) {
