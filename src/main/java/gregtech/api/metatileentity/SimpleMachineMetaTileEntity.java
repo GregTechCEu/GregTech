@@ -125,10 +125,10 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        if (outputFacingFluids != null) {
+        if (outputFacingFluids != null && getExportFluids().getTanks() > 0) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingFluids, renderState, translation, pipeline);
         }
-        if (outputFacingItems != null) {
+        if (outputFacingItems != null && getExportItems().getSlots() > 0) {
             Textures.PIPE_OUT_OVERLAY.renderSided(outputFacingItems, renderState, translation, pipeline);
         }
         if (isAutoOutputItems() && outputFacingItems != null) {
