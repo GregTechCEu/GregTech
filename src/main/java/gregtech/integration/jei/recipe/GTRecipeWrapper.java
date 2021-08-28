@@ -126,7 +126,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     @Override
     public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         int yPosition = recipeHeight - getPropertyListHeight();
-        if (recipe.getProperty(PrimitiveProperty.getInstance(), null) == null) {
+        if (!recipe.hasProperty(PrimitiveProperty.getInstance())) {
             minecraft.fontRenderer.drawString(I18n.format("gregtech.recipe.total", Math.abs((long) recipe.getEUt()) * recipe.getDuration()), 0, yPosition, 0x111111);
             minecraft.fontRenderer.drawString(I18n.format(recipe.getEUt() >= 0 ? "gregtech.recipe.eu" : "gregtech.recipe.eu_inverted", Math.abs(recipe.getEUt()), JEIHelpers.getMinTierForVoltage(recipe.getEUt())), 0, yPosition += LINE_HEIGHT, 0x111111);
         }

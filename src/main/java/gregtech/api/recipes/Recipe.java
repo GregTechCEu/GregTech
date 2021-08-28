@@ -306,6 +306,10 @@ public class Recipe {
         return recipePropertyStorage.store(property, value);
     }
 
+    public boolean hasProperty(RecipeProperty<?> property) {
+        return recipePropertyStorage.has(property);
+    }
+
     public Set<Map.Entry<RecipeProperty<?>, Object>> getPropertyValues() {
         return recipePropertyStorage.getRecipeProperties();
     }

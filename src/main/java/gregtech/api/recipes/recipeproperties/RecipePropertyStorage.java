@@ -1,8 +1,8 @@
 package gregtech.api.recipes.recipeproperties;
 
 import gregtech.api.util.GTLog;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +13,7 @@ public class RecipePropertyStorage {
     private final Map<RecipeProperty<?>, Object> recipeProperties;
 
     public RecipePropertyStorage() {
-        recipeProperties = new HashMap<>();
+        recipeProperties = new Reference2ObjectOpenHashMap<>();
     }
 
     /**
@@ -25,24 +25,21 @@ public class RecipePropertyStorage {
      */
     public boolean store(RecipeProperty<?> recipeProperty, Object value) {
         boolean success = true;
-        String key = recipeProperty.getKey();
-
-        for (RecipeProperty<?> existingRecipeProperty : recipeProperties.keySet()) {
-            if (existingRecipeProperty.getKey().equals(key)) {
-                GTLog.logger.warn("Unable to add RecipeProperty with key {} as it already exists", key);
-                success = false;
-            }
-        }
 
         if (value == null) {
-            GTLog.logger.warn("Provided value is null for RecipeProperty with key {}", key);
+            GTLog.logger.warn("Provided value is null for RecipeProperty with key {}", recipeProperty.getKey());
+            success = false;
+        }
+
+        if (recipeProperties.containsKey(recipeProperty)) {
+            GTLog.logger.warn("Unable to add RecipeProperty with key {} as it already exists", recipeProperty.getKey());
             success = false;
         }
 
         try {
             recipeProperty.castValue(value);
         } catch (ClassCastException ex) {
-            GTLog.logger.warn("Provided incorrect value for RecipeProperty with key {}", key);
+            GTLog.logger.warn("Provided incorrect value for RecipeProperty with key {}", recipeProperty.getKey());
             GTLog.logger.warn("Full exception:", ex);
             success = false;
         }
@@ -54,6 +51,15 @@ public class RecipePropertyStorage {
         }
 
         return success;
+    }
+
+    /**
+     * Checks if a certain {@link RecipeProperty} is stored
+     *
+     * @return if the specified {@link RecipeProperty} is stored
+     */
+    public <T> boolean has(RecipeProperty<T> recipeProperty) {
+        return this.recipeProperties.containsKey(recipeProperty);
     }
 
     /**
