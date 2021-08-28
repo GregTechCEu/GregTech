@@ -98,10 +98,14 @@ public class ToolUtility {
         if (input != null && input.material.hasProperty(PropertyKey.ORE) && !(player instanceof FakePlayer)) {
             drops.clear();
             ItemStack output = OreDictUnifier.get(OrePrefix.crushed, input.material);
+
             if(fortuneLevel > 0){
                 if(fortuneLevel > 3) fortuneLevel = 3;
-                output.setCount(output.getCount() * Math.max(1, random.nextInt(fortuneLevel + 2) - 1));
+                output.setCount((input.material.getProperty((PropertyKey.ORE)).getOreMultiplier()) * Math.max(1, random.nextInt(fortuneLevel + 2) - 1));
                 if (output.getCount() == 0) output.setCount(1);
+            }
+            else{
+                output.setCount(input.material.getProperty((PropertyKey.ORE)).getOreMultiplier());
             }
             drops.add(output);
 
