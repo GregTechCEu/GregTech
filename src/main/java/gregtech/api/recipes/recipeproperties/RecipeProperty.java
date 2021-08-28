@@ -35,17 +35,4 @@ public abstract class RecipeProperty<T> {
     public boolean isHidden() {
         return false;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RecipeProperty<?> that = (RecipeProperty<?>) o;
-        return Objects.equals(type, that.type) && Objects.equals(key, that.key);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, key);
-    }
 }
