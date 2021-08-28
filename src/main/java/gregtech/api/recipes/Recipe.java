@@ -5,8 +5,12 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.ItemStackKey;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.tuple.Pair;
@@ -59,6 +63,25 @@ public class Recipe {
     private final boolean hidden;
 
     private final RecipePropertyStorage recipePropertyStorage;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Recipe recipe = (Recipe) o;
+        return duration == recipe.duration &&
+                EUt == recipe.EUt && inputs.equals(recipe.inputs) &&
+                Objects.equals(outputs, recipe.outputs) &&
+                Objects.equals(chancedOutputs, recipe.chancedOutputs) &&
+                Objects.equals(fluidInputs, recipe.fluidInputs) &&
+                Objects.equals(fluidOutputs, recipe.fluidOutputs) &&
+                Objects.equals(recipePropertyStorage, recipe.recipePropertyStorage);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, recipePropertyStorage);
+    }
 
     public Recipe(List<CountableIngredient> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
                   List<FluidStack> fluidInputs, List<FluidStack> fluidOutputs,
