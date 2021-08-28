@@ -38,7 +38,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         this.addWidget(desktop);
         this.addWidget(menu);
         this.tabletNBT = tabletNBT;
-        TerminalRegistry.getDefaultApps().forEach(name-> installApplication(TerminalRegistry.getApplication(name)));
+        TerminalRegistry.getDefaultApps().forEach(this::installApplication);
         NBTTagList installed = tabletNBT.getTagList("_installed", Constants.NBT.TAG_STRING);
         for (NBTBase nbtBase : installed) {
             if (nbtBase instanceof NBTTagString) {

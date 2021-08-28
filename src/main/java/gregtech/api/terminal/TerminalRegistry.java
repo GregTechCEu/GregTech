@@ -1,7 +1,9 @@
 package gregtech.api.terminal;
 
 import gregtech.api.GTValues;
-import gregtech.api.terminal.app.*;
+import gregtech.api.terminal.app.AbstractApplication;
+import gregtech.api.terminal.hardware.BatteryHardware;
+import gregtech.api.terminal.hardware.IHardware;
 import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
@@ -16,37 +18,48 @@ import gregtech.common.terminal.app.prospector.OreProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
+import net.minecraft.util.registry.RegistryDefaulted;
+import net.minecraft.util.registry.RegistrySimple;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TerminalRegistry {
-    private static final Map<String, AbstractApplication> APP_REGISTER = new HashMap<>();
-    private static final List<String> DEFAULT_APPS = new ArrayList<>();
+    public static final RegistrySimple<String, AbstractApplication> APP_REGISTER = new RegistrySimple<>();
+    public static final RegistrySimple<String, IHardware> HW_REGISTER = new RegistrySimple<>();
+    public static final RegistrySimple<String, List<IHardware>> APP_HW_DEMAND = new RegistryDefaulted<>(Collections.emptyList());
+    public static final RegistrySimple<String, List<List<Object>>> APP_UPGRADE_CONDITIONS = new RegistryDefaulted<>(Collections.emptyList());
+    public static final List<String> DEFAULT_APPS = new ArrayList<>();
     @SideOnly(Side.CLIENT)
     public static final File TERMINAL_PATH = new File(Loader.instance().getConfigDir().getParentFile(), "terminal");
 
     public static void init() {
-        registerApp(new SimpleMachineGuideApp(), true);
-        registerApp(new MultiBlockGuideApp(), true);
-        registerApp(new ItemGuideApp(), true);
-        registerApp(new TutorialGuideApp(), true);
-        registerApp(new GuideEditorApp(), true);
-        registerApp(new ThemeSettingApp(), true);
-        registerApp(new OreProspectorApp(), true);
+        // register hardware
+        registerHardware(new BatteryHardware());
+        // register applications
+        AppBuilder.create(new SimpleMachineGuideApp()).defaultApp(true).build();
+        AppBuilder.create(new MultiBlockGuideApp()).defaultApp(true).build();
+        AppBuilder.create(new ItemGuideApp()).defaultApp(true).build();
+        AppBuilder.create(new TutorialGuideApp()).defaultApp(true).build();
+        AppBuilder.create(new GuideEditorApp()).defaultApp(true).build();
+        AppBuilder.create(new ThemeSettingApp()).defaultApp(true).build();
+        AppBuilder.create(new OreProspectorApp()).defaultApp(true).build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
-            registerApp(new RecipeChartApp(), true);
+            AppBuilder.create(new RecipeChartApp()).defaultApp(true).build();
         }
-        registerApp(new ConsoleApp(), true);
+        AppBuilder.create(new ConsoleApp()).defaultApp(true).build();
 
-        initTerminalFiles();
     }
 
     public static void initTerminalFiles() {
@@ -62,22 +75,98 @@ public class TerminalRegistry {
         }
     }
 
-    public static void registerApp(AbstractApplication application, boolean isDefaultApp) {
-        APP_REGISTER.put(application.getRegistryName(), application);
-        if (isDefaultApp) {
-            DEFAULT_APPS.add(application.getRegistryName());
+    public static void registerApp(AbstractApplication application) {
+        String name = application.getRegistryName();
+        if (APP_REGISTER.containsKey(name)) {
+            GTLog.logger.warn("Duplicate APP registry names exist: {}", name);
+            return;
+        }
+        APP_REGISTER.putObject(name, application);
+    }
+
+    public static void registerHardware(IHardware hardware) {
+        String name = hardware.getRegistryName();
+        if (APP_REGISTER.containsKey(name)) {
+            GTLog.logger.warn("Duplicate APP registry names exist: {}", name);
+            return;
+        }
+        HW_REGISTER.putObject(name, hardware);
+    }
+
+    public static void registerHardwareDemand(String name, boolean isDefaultApp, @Nullable List<IHardware> hardware, @Nullable List<List<Object>> upgrade) {
+        if (name != null && APP_REGISTER.containsKey(name)) {
+            if (isDefaultApp) {
+                DEFAULT_APPS.add(name);
+            }
+            if (hardware != null) {
+                APP_HW_DEMAND.putObject(name, hardware);
+            }
+            if (upgrade != null) {
+                APP_UPGRADE_CONDITIONS.putObject(name, upgrade);
+            }
+        } else {
+            GTLog.logger.error("Not found the app {}", name);
         }
     }
 
-    public static List<String> getDefaultApps() {
-        return DEFAULT_APPS;
+    public static List<AbstractApplication> getDefaultApps() {
+        return DEFAULT_APPS.stream().map(APP_REGISTER::getObject).collect(Collectors.toList());
     }
 
-    public static List<String> getAllApps() {
-        return new ArrayList<>(APP_REGISTER.keySet());
+    public static List<AbstractApplication> getAllApps() {
+        return APP_REGISTER.getKeys().stream().map(APP_REGISTER::getObject).collect(Collectors.toList());
     }
 
     public static AbstractApplication getApplication(String name) {
-        return APP_REGISTER.get(name);
+        return APP_REGISTER.getObject(name);
+    }
+
+    public static List<IHardware> getAllHardware() {
+        return HW_REGISTER.getKeys().stream().map(HW_REGISTER::getObject).collect(Collectors.toList());
+    }
+
+    public static IHardware getHardware(String name) {
+        return HW_REGISTER.getObject(name);
+    }
+
+    public static List<IHardware> getAppHardwareDemand(String name) {
+        return APP_HW_DEMAND.getObject(name);
+    }
+
+    public static List<List<Object>> getAppHardwareUpgradeConditions(String name) {
+        return APP_UPGRADE_CONDITIONS.getObject(name);
+    }
+
+    private static class AppBuilder {
+        AbstractApplication app;
+        boolean isDefaultApp;
+        List<IHardware> hardware;
+        List<List<Object>> upgrade;
+
+        public static AppBuilder create(AbstractApplication app){
+            AppBuilder builder = new AppBuilder();
+            builder.app = app;
+            return builder;
+        }
+
+        public AppBuilder defaultApp(boolean isDefaultApp){
+            this.isDefaultApp = isDefaultApp;
+            return this;
+        }
+
+        public AppBuilder hardware(List<IHardware> hardware) {
+            this.hardware = hardware;
+            return this;
+        }
+
+        public AppBuilder upgrade(List<List<Object>> upgrade) {
+            this.upgrade = upgrade;
+            return this;
+        }
+
+        public void build() {
+            TerminalRegistry.registerApp(app);
+            TerminalRegistry.registerHardwareDemand(app.getRegistryName(), isDefaultApp, hardware, upgrade);
+        }
     }
 }

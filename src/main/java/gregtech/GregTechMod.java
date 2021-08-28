@@ -10,6 +10,7 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.model.ResourcePackHook;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.IMaterialHandler;
 import gregtech.api.unification.material.MaterialRegistry;
@@ -80,6 +81,7 @@ public class GregTechMod {
         PlayerInventoryUIFactory.INSTANCE.init();
         CoverBehaviorUIFactory.INSTANCE.init();
         SimpleCapabilityManager.init();
+        TerminalRegistry.init();
 
         //first, register primary materials and run material handlers
         Materials.register();

@@ -293,6 +293,6 @@ public class CommonProxy {
 
     public void onPostLoad() {
         WoodMachineRecipes.postInit();
-        TerminalRegistry.init();
+        TerminalRegistry.initTerminalFiles();
     }
 }

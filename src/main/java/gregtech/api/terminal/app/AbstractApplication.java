@@ -8,7 +8,6 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
@@ -86,13 +85,13 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
 
     public final int getAppTier() {
         if (nbt != null) {
-            return nbt.getInteger("tier");
+            return nbt.getInteger("_tier");
         }
         return 0;
     }
 
-    public List<ItemStack> getTierUpgradeConditions() {
-        return Collections.emptyList();
+    public int getMaxTier() {
+        return 0;
     }
 
     @Override
