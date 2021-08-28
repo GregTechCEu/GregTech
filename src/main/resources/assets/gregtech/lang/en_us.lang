@@ -3196,6 +3196,11 @@ gregtech.machine.rock_breaker.iv.name=Elite Rock Breaker
 gregtech.machine.rock_breaker.luv.name=Elite Rock Breaker II
 gregtech.machine.rock_breaker.zpm.name=Elite Rock Breaker III
 gregtech.machine.rock_breaker.uv.name=Elite Rock Breaker IV
+gregtech.machine.rock_breaker.uhv.name=High-Tech Rock Breaker
+gregtech.machine.rock_breaker.uev.name=High-Tech Rock Breaker II
+gregtech.machine.rock_breaker.uiv.name=High-Tech Rock Breaker III
+gregtech.machine.rock_breaker.umv.name=High-Tech Rock Breaker IV
+gregtech.machine.rock_breaker.uxv.name=Ultimate Rock Breaker
 gregtech.machine.rock_breaker.tooltip=Place Lava and Water adjacent
 
 #Fisher
