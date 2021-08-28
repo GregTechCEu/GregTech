@@ -81,7 +81,6 @@ public class GregTechMod {
         PlayerInventoryUIFactory.INSTANCE.init();
         CoverBehaviorUIFactory.INSTANCE.init();
         SimpleCapabilityManager.init();
-        TerminalRegistry.init();
 
         //first, register primary materials and run material handlers
         Materials.register();

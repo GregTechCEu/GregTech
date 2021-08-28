@@ -8,6 +8,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
 import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.ToolRenderHandler;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.UnificationEntry;
@@ -121,6 +122,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void onPostLoad() {
         super.onPostLoad();
+        TerminalRegistry.initTerminalFiles();
         ResourceUtils.registerReloadListener(ToolRenderHandler.INSTANCE);
         ModCompatibility.initCompat();
         FacadeRenderer.init();

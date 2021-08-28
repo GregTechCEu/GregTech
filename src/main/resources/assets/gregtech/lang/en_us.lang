@@ -1994,7 +1994,9 @@ behavior.scanner.analyzing_complete=Analyzing complete!
 behavior.scanner.not_enough_energy=Analyzing failed: Not Enough Energy!
 
 metaitem.terminal.name=Terminal
-metaitem.terminal.tooltip=Hope it will help you
+metaitem.terminal.tooltip=Sharp tools make good work
+metaitem.terminal.tooltip.creative=§bCreative Mode
+metaitem.terminal.tooltip.hardware=§aHardware: %d
 
 tile.casing.ulv=ULV Machine Casing
 tile.casing.lv=LV Machine Casing
@@ -3790,6 +3792,8 @@ gregtech.terminal.app_name.console=GT Console
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
+
+terminal.hw.battery=Battery
 
 terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
 

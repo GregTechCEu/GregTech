@@ -7,6 +7,7 @@ import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.common.items.behaviors.TerminalBehaviour;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -85,7 +86,10 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
 
     public final int getAppTier() {
         if (nbt != null) {
-            return nbt.getInteger("_tier");
+            if (TerminalBehaviour.isCreative(getOs().itemStack)) {
+                return getMaxTier();
+            }
+            return Math.min(nbt.getInteger("_tier"), getMaxTier());
         }
         return 0;
     }

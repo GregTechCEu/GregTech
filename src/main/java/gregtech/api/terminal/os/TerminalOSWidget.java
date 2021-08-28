@@ -1,15 +1,20 @@
 package gregtech.api.terminal.os;
 
+import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
+import gregtech.api.terminal.hardware.HardwareProvider;
+import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.os.menu.TerminalMenuWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.common.items.behaviors.TerminalBehaviour;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
@@ -19,6 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TerminalOSWidget extends AbstractWidgetGroup {
@@ -29,22 +35,30 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public final TerminalMenuWidget menu;
     public final TerminalDesktopWidget desktop;
     public final BlockPos clickPos;
+    public final ItemStack itemStack;
+    public final HardwareProvider hardwareProvider;
 
-    public TerminalOSWidget(int xPosition, int yPosition, int width, int height, NBTTagCompound tabletNBT) {
+    public TerminalOSWidget(int xPosition, int yPosition, int width, int height, ItemStack itemStack) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.openedApps = new ArrayList<>();
         this.desktop = new TerminalDesktopWidget(Position.ORIGIN, new Size(333, 232), this);
         this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, 232), this).setBackground(TerminalTheme.COLOR_B_2);
         this.addWidget(desktop);
         this.addWidget(menu);
-        this.tabletNBT = tabletNBT;
-        TerminalRegistry.getDefaultApps().forEach(this::installApplication);
-        NBTTagList installed = tabletNBT.getTagList("_installed", Constants.NBT.TAG_STRING);
-        for (NBTBase nbtBase : installed) {
-            if (nbtBase instanceof NBTTagString) {
-                AbstractApplication app = TerminalRegistry.getApplication(((NBTTagString) nbtBase).getString());
-                if (app != null) {
-                    installApplication(app);
+        this.itemStack = itemStack;
+        this.tabletNBT = itemStack.getOrCreateSubCompound("terminal");
+        this.hardwareProvider = itemStack.getCapability(GregtechCapabilities.CAPABILITY_HARDWARE_PROVIDER, null);
+        if (TerminalBehaviour.isCreative(itemStack)) {
+            TerminalRegistry.getAllApps().forEach(this::installApplication);
+        } else {
+            TerminalRegistry.getDefaultApps().forEach(this::installApplication);
+            NBTTagList installed = tabletNBT.getTagList("_installed", Constants.NBT.TAG_STRING);
+            for (NBTBase nbtBase : installed) {
+                if (nbtBase instanceof NBTTagString) {
+                    AbstractApplication app = TerminalRegistry.getApplication(((NBTTagString) nbtBase).getString());
+                    if (app != null) {
+                        installApplication(app);
+                    }
                 }
             }
         }
@@ -68,12 +82,25 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         return focusApp;
     }
 
+    public List<Hardware> getHardware() {
+        if (hardwareProvider == null) {
+            return Collections.emptyList();
+        }
+        return hardwareProvider.getHardware();
+    }
+
     public void installApplication(AbstractApplication application){
         desktop.installApplication(application);
     }
 
     public void openApplication(AbstractApplication application, boolean isClient) {
-        if (!application.canPlayerUse(gui.entityPlayer)) return;
+        List<Hardware> hwDemand = TerminalRegistry.getAppHardwareDemand(application.getRegistryName());
+        if (hwDemand.stream().anyMatch(demand -> getHardware().stream().noneMatch(hw -> hw.isHardwareAdequate(demand)))) {
+            return;
+        }
+        if (!application.canPlayerUse(gui.entityPlayer)) {
+            return;
+        }
         if (focusApp != null ) {
             closeApplication(focusApp, isClient);
         }

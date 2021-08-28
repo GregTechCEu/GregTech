@@ -3,7 +3,7 @@ package gregtech.api.terminal;
 import gregtech.api.GTValues;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.hardware.BatteryHardware;
-import gregtech.api.terminal.hardware.IHardware;
+import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
@@ -37,8 +37,8 @@ import java.util.stream.Collectors;
 
 public class TerminalRegistry {
     public static final RegistrySimple<String, AbstractApplication> APP_REGISTER = new RegistrySimple<>();
-    public static final RegistrySimple<String, IHardware> HW_REGISTER = new RegistrySimple<>();
-    public static final RegistrySimple<String, List<IHardware>> APP_HW_DEMAND = new RegistryDefaulted<>(Collections.emptyList());
+    public static final RegistrySimple<String, Hardware> HW_REGISTER = new RegistrySimple<>();
+    public static final RegistrySimple<String, List<Hardware>> APP_HW_DEMAND = new RegistryDefaulted<>(Collections.emptyList());
     public static final RegistrySimple<String, List<List<Object>>> APP_UPGRADE_CONDITIONS = new RegistryDefaulted<>(Collections.emptyList());
     public static final List<String> DEFAULT_APPS = new ArrayList<>();
     @SideOnly(Side.CLIENT)
@@ -54,11 +54,11 @@ public class TerminalRegistry {
         AppBuilder.create(new TutorialGuideApp()).defaultApp(true).build();
         AppBuilder.create(new GuideEditorApp()).defaultApp(true).build();
         AppBuilder.create(new ThemeSettingApp()).defaultApp(true).build();
-        AppBuilder.create(new OreProspectorApp()).defaultApp(true).build();
+        AppBuilder.create(new OreProspectorApp()).defaultApp(false).build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
-            AppBuilder.create(new RecipeChartApp()).defaultApp(true).build();
+            AppBuilder.create(new RecipeChartApp()).defaultApp(false).build();
         }
-        AppBuilder.create(new ConsoleApp()).defaultApp(true).build();
+        AppBuilder.create(new ConsoleApp()).defaultApp(false).build();
 
     }
 
@@ -84,7 +84,7 @@ public class TerminalRegistry {
         APP_REGISTER.putObject(name, application);
     }
 
-    public static void registerHardware(IHardware hardware) {
+    public static void registerHardware(Hardware hardware) {
         String name = hardware.getRegistryName();
         if (APP_REGISTER.containsKey(name)) {
             GTLog.logger.warn("Duplicate APP registry names exist: {}", name);
@@ -93,7 +93,7 @@ public class TerminalRegistry {
         HW_REGISTER.putObject(name, hardware);
     }
 
-    public static void registerHardwareDemand(String name, boolean isDefaultApp, @Nullable List<IHardware> hardware, @Nullable List<List<Object>> upgrade) {
+    public static void registerHardwareDemand(String name, boolean isDefaultApp, @Nullable List<Hardware> hardware, @Nullable List<List<Object>> upgrade) {
         if (name != null && APP_REGISTER.containsKey(name)) {
             if (isDefaultApp) {
                 DEFAULT_APPS.add(name);
@@ -121,15 +121,15 @@ public class TerminalRegistry {
         return APP_REGISTER.getObject(name);
     }
 
-    public static List<IHardware> getAllHardware() {
+    public static List<Hardware> getAllHardware() {
         return HW_REGISTER.getKeys().stream().map(HW_REGISTER::getObject).collect(Collectors.toList());
     }
 
-    public static IHardware getHardware(String name) {
+    public static Hardware getHardware(String name) {
         return HW_REGISTER.getObject(name);
     }
 
-    public static List<IHardware> getAppHardwareDemand(String name) {
+    public static List<Hardware> getAppHardwareDemand(String name) {
         return APP_HW_DEMAND.getObject(name);
     }
 
@@ -140,7 +140,7 @@ public class TerminalRegistry {
     private static class AppBuilder {
         AbstractApplication app;
         boolean isDefaultApp;
-        List<IHardware> hardware;
+        List<Hardware> hardware;
         List<List<Object>> upgrade;
 
         public static AppBuilder create(AbstractApplication app){
@@ -154,7 +154,7 @@ public class TerminalRegistry {
             return this;
         }
 
-        public AppBuilder hardware(List<IHardware> hardware) {
+        public AppBuilder hardware(List<Hardware> hardware) {
             this.hardware = hardware;
             return this;
         }
