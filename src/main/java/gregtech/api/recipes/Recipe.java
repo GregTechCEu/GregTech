@@ -5,6 +5,7 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.ItemStackKey;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
@@ -64,24 +65,14 @@ public class Recipe {
 
     private final RecipePropertyStorage recipePropertyStorage;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Recipe recipe = (Recipe) o;
-        return duration == recipe.duration &&
-                EUt == recipe.EUt && inputs.equals(recipe.inputs) &&
-                Objects.equals(outputs, recipe.outputs) &&
-                Objects.equals(chancedOutputs, recipe.chancedOutputs) &&
-                Objects.equals(fluidInputs, recipe.fluidInputs) &&
-                Objects.equals(fluidOutputs, recipe.fluidOutputs) &&
-                Objects.equals(recipePropertyStorage, recipe.recipePropertyStorage);
-    }
+    private static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.builder()
+            .compareItem(true)
+            .compareCount(true)
+            .compareDamage(true)
+            .compareTag(true)
+            .build();
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, recipePropertyStorage);
-    }
+    private int hashCode;
 
     public Recipe(List<CountableIngredient> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
                   List<FluidStack> fluidInputs, List<FluidStack> fluidOutputs,
@@ -100,6 +91,7 @@ public class Recipe {
 
         //sort not consumables inputs to the end
         this.inputs.sort((ing1, ing2) -> ing1.getCount() == 0 ? 1 : 0);
+        this.hashCode = makeHashCode();
     }
 
     public final boolean matches(boolean consumeIfSuccessful, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode matchingMode) {
@@ -232,6 +224,138 @@ public class Recipe {
                 return Pair.of(false, fluidAmountInTank);
         }
         return Pair.of(true, fluidAmountInTank);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Recipe recipe = (Recipe) o;
+        return  hasSameInputs(recipe) &&
+                hasSameOutputs(recipe) &&
+                hasSameChancedOutputs(recipe) &&
+                hasSameFluidInputs(recipe) &&
+                hasSameFluidOutputs(recipe) &&
+                hasSameRecipeProperties(recipe);
+    }
+
+    private int makeHashCode(){
+        int hash = 0;
+        hash += hashInputs();
+        hash += hashOutputs();
+        hash += hashChancedOutputs();
+        hash += hashFluidList(this.fluidInputs);
+        hash += hashFluidList(this.fluidOutputs);
+        hash += hashRecipeProperties();
+        return hash;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.hashCode;
+    }
+
+    private int hashInputs() {
+        int hash = 0;
+        for (CountableIngredient countableIngredient : this.inputs) {
+            for (ItemStack is : countableIngredient.getIngredient().getMatchingStacks()) {
+                hash += ItemStackHashStrategy.comparingAllButCount().hashCode(is);
+                hash += countableIngredient.getCount();
+            }
+        }
+        return hash;
+    }
+
+    private boolean hasSameInputs(Recipe otherRecipe) {
+        if (this.inputs.size() != otherRecipe.inputs.size()) return false;
+        for (int i = 0; i < inputs.size(); i++) {
+            for (int j = 0; j < this.inputs.get(i).getIngredient().getMatchingStacks().length; j++) {
+                if (!hashStrategy.equals(this.inputs.get(i).getIngredient().getMatchingStacks()[j],
+                        otherRecipe.inputs.get(i).getIngredient().getMatchingStacks()[j])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private int hashOutputs() {
+        int hash = 0;
+            for (ItemStack is : this.outputs) {
+                hash += hashStrategy.hashCode(is);
+            }
+        return hash;
+    }
+
+    private boolean hasSameOutputs(Recipe otherRecipe) {
+        if (this.outputs.size() != otherRecipe.outputs.size()) return false;
+        for (int i = 0; i < outputs.size(); i++) {
+            if (!hashStrategy.equals(this.outputs.get(i), otherRecipe.outputs.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private int hashChancedOutputs() {
+        int hash = 0;
+        for (ChanceEntry chanceEntry : this.chancedOutputs) {
+            hash += hashStrategy.hashCode(chanceEntry.itemStack);
+            hash += chanceEntry.chance;
+            hash += chanceEntry.boostPerTier;
+        }
+        return hash;
+    }
+
+    private boolean hasSameChancedOutputs(Recipe otherRecipe) {
+        if (this.chancedOutputs.size() != otherRecipe.chancedOutputs.size()) return false;
+        for (int i = 0; i < chancedOutputs.size(); i++) {
+            if (!hashStrategy.equals(this.chancedOutputs.get(i).itemStack, otherRecipe.chancedOutputs.get(i).itemStack)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int hashFluidList(List<FluidStack> fluids) {
+        int hash = 0;
+        for (FluidStack fluidStack : fluids) {
+            hash += new FluidKey(fluidStack).hashCode();
+        }
+        return hash;
+    }
+
+    private boolean hasSameFluidInputs(Recipe otherRecipe) {
+        if (this.fluidInputs.size() != otherRecipe.fluidInputs.size()) return false;
+        for (int i = 0; i < fluidInputs.size(); i++) {
+            if (!fluidInputs.get(i).isFluidStackIdentical(otherRecipe.fluidInputs.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean hasSameFluidOutputs(Recipe otherRecipe) {
+        if (this.fluidOutputs.size() != otherRecipe.fluidOutputs.size()) return false;
+        for (int i = 0; i < fluidOutputs.size(); i++) {
+            if (!fluidOutputs.get(i).isFluidStackIdentical(otherRecipe.fluidOutputs.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private int hashRecipeProperties() {
+        int hash = 0;
+        for (Map.Entry<RecipeProperty<?>, Object> propertyObjectEntry : this.recipePropertyStorage.getRecipeProperties()) {
+            hash += propertyObjectEntry.getKey().hashCode();
+        }
+        return hash;
+    }
+
+    private boolean hasSameRecipeProperties(Recipe otherRecipe) {
+        if (this.getPropertyCount() != otherRecipe.getPropertyCount()) return false;
+        return this.recipePropertyStorage.getRecipeProperties().containsAll(otherRecipe.recipePropertyStorage.getRecipeProperties());
     }
 
     ///////////////////

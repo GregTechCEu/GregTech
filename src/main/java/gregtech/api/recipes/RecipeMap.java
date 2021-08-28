@@ -65,9 +65,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private static final Comparator<Recipe> RECIPE_DURATION_THEN_EU =
             Comparator.comparingInt(Recipe::getDuration)
-                    .thenComparingLong(Recipe::getEUt);
+                    .thenComparingInt(Recipe::getEUt);
 
-    private final SortedSet<Recipe> recipeTreeSet = new TreeSet<>(RECIPE_DURATION_THEN_EU);
+    private final Set<Recipe> recipeSet = new HashSet<>();
+    private List<Recipe> sortedRecipeList;
 
     public RecipeMap(String unlocalizedName,
                      int minInputs, int maxInputs, int minOutputs, int maxOutputs,
@@ -166,32 +167,33 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 return;
         }
         Recipe recipe = validationResult.getResult();
-        recipeTreeSet.add(recipe);
+        if (recipeSet.add(recipe)) {
 
-        for (CountableIngredient countableIngredient : recipe.getInputs()) {
-            ItemStack[] stacks = countableIngredient.getIngredient().getMatchingStacks();
-            for (ItemStack itemStack : stacks) {
-                ItemStackKey stackKey = KeySharedStack.getRegisteredStack(itemStack);
-                recipeItemMap.computeIfPresent(stackKey, (k, v) -> {
+            for (CountableIngredient countableIngredient : recipe.getInputs()) {
+                ItemStack[] stacks = countableIngredient.getIngredient().getMatchingStacks();
+                for (ItemStack itemStack : stacks) {
+                    ItemStackKey stackKey = KeySharedStack.getRegisteredStack(itemStack);
+                    recipeItemMap.computeIfPresent(stackKey, (k, v) -> {
+                        v.add(recipe);
+                        return v;
+                    });
+                    recipeItemMap.computeIfAbsent(stackKey, k -> new HashSet<>(1)).add(recipe);
+                }
+            }
+            for (FluidStack fluid : recipe.getFluidInputs()) {
+                FluidKey fluidKey = new FluidKey(fluid);
+                recipeFluidMap.computeIfPresent(fluidKey, (k, v) -> {
                     v.add(recipe);
                     return v;
                 });
-                recipeItemMap.computeIfAbsent(stackKey, k -> new HashSet<>(1)).add(recipe);
+                recipeFluidMap.computeIfAbsent(fluidKey, k -> new HashSet<>(1)).add(recipe);
             }
-        }
-        for (FluidStack fluid : recipe.getFluidInputs()) {
-            FluidKey fluidKey = new FluidKey(fluid);
-            recipeFluidMap.computeIfPresent(fluidKey, (k, v) -> {
-                v.add(recipe);
-                return v;
-            });
-            recipeFluidMap.computeIfAbsent(fluidKey, k -> new HashSet<>(1)).add(recipe);
         }
     }
 
     public boolean removeRecipe(Recipe recipe) {
         //if we actually removed this recipe
-        if (recipeTreeSet.remove(recipe)) {
+        if (recipeSet.remove(recipe)) {
             //also iterate trough fluid mappings and remove recipe from them
             recipeFluidMap.values().forEach(fluidMap ->
                     fluidMap.removeIf(fluidRecipe -> fluidRecipe == recipe));
@@ -246,7 +248,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      */
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, MatchingMode matchingMode) {
-        if (recipeTreeSet.isEmpty())
+        if (recipeSet.isEmpty())
             return null;
         if (minFluidInputs > 0 && GTUtility.amountOfNonNullElements(fluidInputs) < minFluidInputs) {
             return null;
@@ -304,7 +306,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             if (inputs.size() > 0 && slotOrTank < inputs.size()) {
                 ItemStack stack = inputs.get(slotOrTank);
                 if (!stack.isEmpty()) {
-                    ItemStackKey itemStackKey = new ItemStackKey(stack);
+                    ItemStackKey itemStackKey = KeySharedStack.getRegisteredStack(stack);
                     if (recipeItemMap.containsKey(itemStackKey)) {
                         for (Recipe tmpRecipe : recipeItemMap.get(itemStackKey)) {
                             if (voltage == tmpRecipe.getEUt()) {
@@ -461,7 +463,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
 
     public List<Recipe> getRecipeList() {
-        return Collections.unmodifiableList(new ArrayList<>(recipeTreeSet));
+        if (this.sortedRecipeList != null) {
+            return this.sortedRecipeList;
+        }
+        return this.sortedRecipeList = Collections.unmodifiableList(recipeSet.stream().sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList()));
     }
 
     @ZenMethod("findRecipe")
