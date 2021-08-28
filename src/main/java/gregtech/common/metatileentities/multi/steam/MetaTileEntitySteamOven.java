@@ -1,9 +1,6 @@
 package gregtech.common.metatileentities.multi.steam;
 
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.capability.impl.SteamMultiWorkable;
 import gregtech.api.metatileentity.MetaTileEntity;
@@ -14,6 +11,7 @@ import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -24,6 +22,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+
+import javax.annotation.Nonnull;
 
 public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController {
 
@@ -168,9 +168,9 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
         }
     }
 
+    @Nonnull
     @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.ELECTRIC_FURNACE_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
+    protected OrientedOverlayRenderer getFrontOverlay() {
+        return Textures.ELECTRIC_FURNACE_OVERLAY;
     }
 }

@@ -317,6 +317,8 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("steam_compressor_steel", MetaTileEntities.STEAM_COMPRESSOR_STEEL.getStackForm(), "PSP", "WMW", "PPP", 'M', MetaTileEntities.STEAM_COMPRESSOR_BRONZE.getStackForm(), 'S', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron));
         ModHandler.addShapedRecipe("steam_alloy_smelter_bronze", MetaTileEntities.STEAM_ALLOY_SMELTER_BRONZE.getStackForm(), "XXX", "FMF", "XXX", 'M', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_BRICKS_HULL), 'X', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Bronze), 'F', OreDictNames.craftingFurnace);
         ModHandler.addShapedRecipe("steam_alloy_smelter_steel", MetaTileEntities.STEAM_ALLOY_SMELTER_STEEL.getStackForm(), "WSW", "WMW", "WPW", 'M', MetaTileEntities.STEAM_ALLOY_SMELTER_BRONZE.getStackForm(), 'S', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron));
+        ModHandler.addShapedRecipe("steam_rock_breaker_bronze", MetaTileEntities.STEAM_ROCK_BREAKER_BRONZE.getStackForm(), "PXP", "XMX", "DXD", 'M', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_BRICKS_HULL), 'X', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Bronze), 'P', "craftingPiston", 'D', new UnificationEntry(OrePrefix.gem, Materials.Diamond));
+        ModHandler.addShapedRecipe("steam_rock_breaker_steel", MetaTileEntities.STEAM_ROCK_BREAKER_STEEL.getStackForm(), "WSW", "PMP", "WWW", 'M', MetaTileEntities.STEAM_ROCK_BREAKER_BRONZE.getStackForm(), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'S', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'P', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron));
 
         // MULTI BLOCK CONTROLLERS
         ModHandler.addShapedRecipe("bronze_primitive_blast_furnace", MetaTileEntities.PRIMITIVE_BLAST_FURNACE.getStackForm(), "hRS", "PBR", "dRS", 'R', new UnificationEntry(OrePrefix.stick, Materials.Iron), 'S', new UnificationEntry(OrePrefix.screw, Materials.Iron), 'P', new UnificationEntry(OrePrefix.plate, Materials.Iron), 'B', MetaBlocks.METAL_CASING.getItemVariant(PRIMITIVE_BRICKS));
@@ -407,6 +409,7 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(MetaTileEntities.REPLICATOR, "EFE", "CMC", "EQE", 'M', HULL, 'Q', CABLE_QUAD, 'C', BETTER_CIRCUIT, 'F', FIELD_GENERATOR, 'E', EMITTER);
         registerMachineRecipe(MetaTileEntities.SCANNER, "CEC", "WHW", "CSC", 'C', BETTER_CIRCUIT, 'E', EMITTER, 'W', CABLE, 'H', HULL, 'S', SENSOR);
         registerMachineRecipe(MetaTileEntities.GAS_COLLECTOR, "WFW", "PHP", "WCW", 'W', Blocks.IRON_BARS, 'F', MetaItems.FLUID_FILTER, 'P', PUMP, 'H', HULL, 'C', CIRCUIT);
+        registerMachineRecipe(MetaTileEntities.ROCK_BREAKER, "PMW", "CHC", "GGG", 'P', PISTON, 'M', MOTOR, 'W', GRINDER, 'C', CABLE, 'H', HULL, 'G', GLASS);
 
         registerMachineRecipe(MetaTileEntities.PUMP, "WGW", "GMG", "TGT", 'M', HULL, 'W', CIRCUIT, 'G', PUMP, 'T', PIPE_LARGE);
         registerMachineRecipe(MetaTileEntities.FISHER, "WTW", "PMP", "TGT", 'M', HULL, 'W', CIRCUIT, 'G', PUMP, 'T', MOTOR, 'P', PISTON);

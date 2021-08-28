@@ -1961,6 +1961,7 @@ recipemap.circuit_assembler.name=Circuit Assembler
 recipemap.mass_fabricator.name=Mass Fabricator
 recipemap.materialtree.name=Material Tree
 recipemap.gas_collector.name=Gas Collector
+recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 
@@ -2264,6 +2265,10 @@ gregtech.machine.steam_alloy_smelter_bronze.name=Steam Alloy Smelter
 gregtech.machine.steam_alloy_smelter_bronze.tooltip=Combination Smelter
 gregtech.machine.steam_alloy_smelter_steel.name=High Pressure Steam Alloy Smelter
 gregtech.machine.steam_alloy_smelter_steel.tooltip=Combination Smelter
+gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
+gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava adjancent
+gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
+gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava adjancent
 
 # Generators
 gregtech.machine.combustion_generator.lv.name=Basic Combustion Generator
@@ -3171,7 +3176,7 @@ tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VII
 tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing VIII
 tile.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
 
-#Air Collectors
+#Gas Collectors
 gregtech.machine.gas_collector.lv.name=Basic Gas Collector
 gregtech.machine.gas_collector.mv.name=Advanced Gas Collector
 gregtech.machine.gas_collector.hv.name=Advanced Gas Collector II
@@ -3181,6 +3186,17 @@ gregtech.machine.gas_collector.luv.name=Atmosphere Collector II
 gregtech.machine.gas_collector.zpm.name=Atmosphere Collector III
 gregtech.machine.gas_collector.uv.name=Atmosphere Collector IV
 gregtech.machine.gas_collector.tooltip=Collects gas from adjacent blocks at the expense of energy, depending on the dimension
+
+#Rock Breakers
+gregtech.machine.rock_breaker.lv.name=Basic Rock Breaker
+gregtech.machine.rock_breaker.mv.name=Advanced Rock Breaker
+gregtech.machine.rock_breaker.hv.name=Advanced Rock Breaker II
+gregtech.machine.rock_breaker.ev.name=Advanced Rock Breaker III
+gregtech.machine.rock_breaker.iv.name=Elite Rock Breaker
+gregtech.machine.rock_breaker.luv.name=Elite Rock Breaker II
+gregtech.machine.rock_breaker.zpm.name=Elite Rock Breaker III
+gregtech.machine.rock_breaker.uv.name=Elite Rock Breaker IV
+gregtech.machine.rock_breaker.tooltip=Place Lava and Water adjacent
 
 #Fisher
 gregtech.machine.fisher.lv.name=Basic Fisher

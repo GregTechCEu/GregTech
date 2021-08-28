@@ -62,6 +62,8 @@ public class MetaTileEntities {
     public static SteamFurnace STEAM_FURNACE_STEEL;
     public static SteamAlloySmelter STEAM_ALLOY_SMELTER_BRONZE;
     public static SteamAlloySmelter STEAM_ALLOY_SMELTER_STEEL;
+    public static SteamRockBreaker STEAM_ROCK_BREAKER_BRONZE;
+    public static SteamRockBreaker STEAM_ROCK_BREAKER_STEEL;
 
     public static MetaTileEntityPumpHatch PUMP_OUTPUT_HATCH;
     public static MetaTileEntityPrimitiveWaterPump PRIMITIVE_WATER_PUMP;
@@ -106,6 +108,7 @@ public class MetaTileEntities {
     public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final MetaTileEntityRockBreaker[] ROCK_BREAKER = new MetaTileEntityRockBreaker[GTValues.V.length - 1];
     public static MetaTileEntitySimpleOreWasher SIMPLE_ORE_WASHER;
 
     //GENERATORS SECTION
@@ -229,6 +232,9 @@ public class MetaTileEntities {
 
         STEAM_ALLOY_SMELTER_BRONZE = GregTechAPI.registerMetaTileEntity(17, new SteamAlloySmelter(gregtechId("steam_alloy_smelter_bronze"), false));
         STEAM_ALLOY_SMELTER_STEEL = GregTechAPI.registerMetaTileEntity(18, new SteamAlloySmelter(gregtechId("steam_alloy_smelter_steel"), true));
+
+        STEAM_ROCK_BREAKER_BRONZE = GregTechAPI.registerMetaTileEntity(19, new SteamRockBreaker(gregtechId("steam_rock_breaker_bronze"), false));
+        STEAM_ROCK_BREAKER_STEEL = GregTechAPI.registerMetaTileEntity(20, new SteamRockBreaker(gregtechId("steam_rock_breaker_steel"), true));
 
         // Electric Furnace, IDs 50-64
         registerSimpleMetaTileEntity(ELECTRIC_FURNACE, 50, "electric_furnace", RecipeMaps.FURNACE_RECIPES, Textures.ELECTRIC_FURNACE_OVERLAY);
@@ -364,6 +370,25 @@ public class MetaTileEntities {
 
         // Circuit Assembler, IDs 650-664
         registerSimpleMetaTileEntity(CIRCUIT_ASSEMBLER, 635, "circuit_assembler", RecipeMaps.CIRCUIT_ASSEMBLER_RECIPES, Textures.ASSEMBLER_OVERLAY, true);
+
+        // Rock Breaker, IDs 665-679
+        ROCK_BREAKER[0] = GregTechAPI.registerMetaTileEntity(665, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.lv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 1));
+        ROCK_BREAKER[1] = GregTechAPI.registerMetaTileEntity(666, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.mv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 2));
+        ROCK_BREAKER[2] = GregTechAPI.registerMetaTileEntity(667, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.hv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 3));
+        ROCK_BREAKER[3] = GregTechAPI.registerMetaTileEntity(668, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.ev"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 4));
+        ROCK_BREAKER[4] = GregTechAPI.registerMetaTileEntity(669, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.iv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 5));
+        if (getMidTier("rock_breaker")) {
+            ROCK_BREAKER[5] = GregTechAPI.registerMetaTileEntity(670, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.luv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 6));
+            ROCK_BREAKER[6] = GregTechAPI.registerMetaTileEntity(671, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.zpm"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 7));
+            ROCK_BREAKER[7] = GregTechAPI.registerMetaTileEntity(672, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 8));
+        }
+        if (getHighTier("rock_breaker")) {
+            ROCK_BREAKER[8] = GregTechAPI.registerMetaTileEntity(673, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uhv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 9));
+            ROCK_BREAKER[9] = GregTechAPI.registerMetaTileEntity(674, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uev"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 10));
+            ROCK_BREAKER[10] = GregTechAPI.registerMetaTileEntity(675, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uiv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 11));
+            ROCK_BREAKER[11] = GregTechAPI.registerMetaTileEntity(676, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.umv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 12));
+            ROCK_BREAKER[12] = GregTechAPI.registerMetaTileEntity(677, new MetaTileEntityRockBreaker(gregtechId("rock_breaker.uxv"), RecipeMaps.ROCK_BREAKER_RECIPES, Textures.ROCK_BREAKER_OVERLAY, 13));
+        }
 
         // Some space here for more SimpleMachines
 

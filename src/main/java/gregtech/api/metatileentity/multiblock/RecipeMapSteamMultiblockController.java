@@ -1,5 +1,8 @@
 package gregtech.api.metatileentity.multiblock;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
@@ -129,5 +132,11 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     @Override
     protected boolean shouldUpdate(MTETrait trait) {
         return !(trait instanceof SteamMultiblockRecipeLogic);
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive());
     }
 }
