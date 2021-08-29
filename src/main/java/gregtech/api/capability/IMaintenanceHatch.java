@@ -33,4 +33,8 @@ public interface IMaintenanceHatch {
      * @return Tuple of Byte, Integer corresponding to the maintenance problems, and total time active
      */
     Tuple<Byte, Integer> readMaintenanceData();
+
+    double getDurationMultiplier();
+
+    double getTimeMultiplier();
 }

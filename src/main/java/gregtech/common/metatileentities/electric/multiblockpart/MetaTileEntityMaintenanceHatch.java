@@ -4,16 +4,18 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IMaintenanceHatch;
+import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
+import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.multiblock.IMaintenance;
-import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTToolTypes;
 import gregtech.common.items.MetaItems;
@@ -21,6 +23,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -32,12 +35,14 @@ import static gregtech.api.capability.MultiblockDataCodes.STORE_MAINTENANCE;
 
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
-    private ItemStackHandler inventory;
     private boolean isTaped;
 
     // Used to store state temporarily if the Controller is broken
     private byte maintenanceProblems = -1;
     private int timeActive = -1;
+
+    private double durationMultiplier = 1.0;
+    private double timeMultiplier = 1.0;
 
     public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, 1);
@@ -64,20 +69,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(1);
-    }
-
-    @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.inventory = new ItemStackHandler(1);
-        this.itemInventory = this.inventory;
-    }
-
-    @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
-        clearInventory(itemBuffer, this.inventory);
+        this.itemInventory = new ItemHandlerProxy(importItems, importItems);
     }
 
     /**
@@ -130,6 +124,21 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         return data;
     }
 
+    @Override
+    public void update() {
+        super.update();
+        if (!getWorld().isRemote && getOffsetTimer() % 20 == 0) {
+            MultiblockControllerBase controller = getController();
+            if (controller instanceof IMaintenance) {
+                if (((IMaintenance) controller).hasMaintenanceProblems()) {
+                    if (consumeDuctTape(this.itemInventory, 0)) {
+                        fixAllMaintenanceProblems();
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Fixes the maintenance problems of this hatch's Multiblock Controller
      * @param entityPlayer the player performing the fixing
@@ -141,14 +150,13 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         if (!((IMaintenance) this.getController()).hasMaintenanceProblems())
             return;
 
-        byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
-
         if (entityPlayer != null) {
+            // Fix automatically on slot click by player in Creative Mode
             if (entityPlayer.capabilities.isCreativeMode) {
                 fixAllMaintenanceProblems();
                 return;
             }
-            // For every slot in the player's main inventory, try to duct tape fix
+            // Then for every slot in the player's main inventory, try to duct tape fix
             for (int i = 0; i < entityPlayer.inventory.mainInventory.size(); i++) {
                 if (consumeDuctTape(new ItemStackHandler(entityPlayer.inventory.mainInventory), i)) {
                     fixAllMaintenanceProblems();
@@ -156,7 +164,8 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                     return;
                 }
             }
-            // For each problem the multi has, try to fix with tools
+            // Lastly for each problem the multi has, try to fix with tools
+            byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
             for (byte i = 0; i < 6; i++) {
                 if (((problems >> i) & 1) == 0)
                     fixProblemWithTool(i, entityPlayer);
@@ -172,7 +181,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * @param slot is the inventory slot to check for tape
      * @return true if tape was consumed, else false
      */
-    private boolean consumeDuctTape(@Nullable ItemStackHandler handler, int slot) {
+    private boolean consumeDuctTape(@Nullable IItemHandler handler, int slot) {
         if (handler == null)
             return false;
 
@@ -256,6 +265,16 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
+    public double getDurationMultiplier() {
+        return durationMultiplier;
+    }
+
+    @Override
+    public double getTimeMultiplier() {
+        return timeMultiplier;
+    }
+
+    @Override
     public void onRemoval() {
         if (getController() instanceof IMaintenance) {
             IMaintenance controller = (IMaintenance) getController();
@@ -267,11 +286,13 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 + 18 + 94)
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 * 3 + 98)
                 .label(10, 5, this.getMetaFullName())
-                .widget(new ClickButtonWidget(89 - 9 - 1, 18 - 1, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
-                .setButtonTexture(GuiTextures.MAINTENANCE_ICON))
-                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 + 12)
+                .widget(new SlotWidget(this.importItems, 0, 89 - 9, 18 - 1)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY))
+                .widget(new ClickButtonWidget(89 - 9 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
+                        .setButtonTexture(GuiTextures.MAINTENANCE_ICON))
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16)
                 .build(this.getHolder(), entityPlayer);
     }
 

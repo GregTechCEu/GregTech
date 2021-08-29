@@ -59,6 +59,16 @@ public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblock
     }
 
     @Override
+    public double getDurationMultiplier() {
+        return 1.0;
+    }
+
+    @Override
+    public double getTimeMultiplier() {
+        return 1.0;
+    }
+
+    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return null;
     }

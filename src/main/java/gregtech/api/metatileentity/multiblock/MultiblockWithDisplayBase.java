@@ -13,6 +13,7 @@ import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -159,9 +160,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     public void storeTaped(boolean isTaped) {
         this.storedTaped = isTaped;
-        writeCustomData(STORE_TAPED, buf -> {
-            buf.writeBoolean(isTaped);
-        });
+        writeCustomData(STORE_TAPED, buf -> buf.writeBoolean(isTaped));
     }
 
     /**
@@ -181,7 +180,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     public void outputRecoveryItems() {
         IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
-        muffler.recoverItemsTable(recoveryItems.stream().map(ItemStack::copy).collect(Collectors.toList()));
+        muffler.recoverItemsTable(GTUtility.copyStackList(recoveryItems));
     }
 
     /**
