@@ -6,6 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
@@ -15,7 +16,6 @@ import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMufflerHatch;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -91,7 +91,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     public void outputRecoveryItems() {
-        MetaTileEntityMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
+        IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
         muffler.recoverItemsTable(recoveryItems.stream().map(ItemStack::copy).collect(Collectors.toList()));
     }
 

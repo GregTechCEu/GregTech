@@ -1,5 +1,8 @@
 package gregtech.api.metatileentity.multiblock;
 
+import gregtech.api.GTValues;
+import gregtech.api.capability.IMaintenanceHatch;
+import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget.ClickData;
@@ -9,10 +12,7 @@ import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.XSTR;
 import gregtech.common.ConfigHolder;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMaintenanceHatch;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMufflerHatch;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,8 +42,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     protected final List<ItemStack> recoveryItems = new ArrayList<ItemStack>() {{
         add(OreDictUnifier.get(OrePrefix.dustTiny, Materials.Ash));
     }};
-
-    public static final XSTR XSTR_RAND = new XSTR();
 
     private int timeActive;
     private static final int minimumMaintenanceTime = 3456000; // 48 real-life hours = 3456000 ticks
@@ -76,7 +74,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Used to cause a single random maintenance problem
      */
     protected void causeMaintenanceProblems() {
-        this.maintenance_problems &= ~(1 << ((int) (XSTR_RAND.nextFloat()*5)));
+        this.maintenance_problems &= ~(1 << ((int) (GTValues.RNG.nextFloat()*5)));
     }
 
     /**
@@ -123,14 +121,14 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (!ConfigHolder.U.GT5u.enableMaintenance || !hasMaintenanceMechanics())
             return;
 
-        MetaTileEntityMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
+        IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
         if (maintenanceHatch.getType() == 2) {
             return;
         }
 
         timeActive += duration;
         if (minimumMaintenanceTime - timeActive <= 0)
-            if (XSTR_RAND.nextFloat() - 0.75f >= 0) {
+            if (GTValues.RNG.nextFloat() - 0.75f >= 0) {
                 causeMaintenanceProblems();
                 maintenanceHatch.setTaped(false);
                 timeActive = timeActive - minimumMaintenanceTime;
@@ -143,7 +141,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (this.hasMaintenanceMechanics() && ConfigHolder.U.GT5u.enableMaintenance) { // nothing extra if no maintenance
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
-            MetaTileEntityMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
+            IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             if (maintenanceHatch.getType() == 2) { // set problems fixed with full auto hatches
                 this.maintenance_problems = 0b111111;
             } else {
@@ -171,7 +169,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * reads maintenance data from a maintenance hatch
      * @param hatch is the hatch to read the data from
      */
-    private void readMaintenanceData(MetaTileEntityMaintenanceHatch hatch) {
+    private void readMaintenanceData(IMaintenanceHatch hatch) {
         if (hatch.hasMaintenanceData()) {
             Tuple<Byte, Integer> data = hatch.readMaintenanceData();
             this.maintenance_problems = data.getFirst();
@@ -183,7 +181,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Outputs the recovery items into the muffler hatch
      */
     public void outputRecoveryItems() {
-        MetaTileEntityMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
+        IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
         muffler.recoverItemsTable(recoveryItems.stream().map(ItemStack::copy).collect(Collectors.toList()));
     }
 
@@ -228,7 +226,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (hasMaintenanceMechanics() && ConfigHolder.U.GT5u.enableMaintenance) { // nothing extra if no maintenance
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
-            MetaTileEntityMaintenanceHatch maintenance = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
+            IMaintenanceHatch maintenance = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             if (maintenance.getType() != 2) // store maintenance data for non full auto hatches
                 maintenance.storeMaintenanceData(maintenance_problems, timeActive);
         }

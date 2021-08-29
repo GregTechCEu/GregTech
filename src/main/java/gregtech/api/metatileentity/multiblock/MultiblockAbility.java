@@ -1,8 +1,8 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.capability.IEnergyContainer;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMaintenanceHatch;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMufflerHatch;
+import gregtech.api.capability.IMaintenanceHatch;
+import gregtech.api.capability.IMufflerHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -27,6 +27,6 @@ public class MultiblockAbility<T> {
     public static final MultiblockAbility<IItemHandlerModifiable> STEAM_IMPORT_ITEMS = new MultiblockAbility<>();
     public static final MultiblockAbility<IItemHandlerModifiable> STEAM_EXPORT_ITEMS = new MultiblockAbility<>();
 
-    public static final MultiblockAbility<MetaTileEntityMaintenanceHatch> MAINTENANCE_HATCH = new MultiblockAbility<>();
-    public static final MultiblockAbility<MetaTileEntityMufflerHatch> MUFFLER_HATCH = new MultiblockAbility<>();
+    public static final MultiblockAbility<IMaintenanceHatch> MAINTENANCE_HATCH = new MultiblockAbility<>();
+    public static final MultiblockAbility<IMufflerHatch> MUFFLER_HATCH = new MultiblockAbility<>();
 }

@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -33,7 +34,7 @@ import java.util.List;
 import static gregtech.api.capability.MultiblockDataCodes.IS_TAPED;
 import static gregtech.api.capability.MultiblockDataCodes.STORE_MAINTENANCE;
 
-public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<MetaTileEntityMaintenanceHatch> {
+public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
     private ItemStackHandler inventory;
     private final byte type; // Type 0 is regular, 1 is auto taping, 2 is full auto
@@ -363,12 +364,12 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public MultiblockAbility<MetaTileEntityMaintenanceHatch> getAbility() {
+    public MultiblockAbility<IMaintenanceHatch> getAbility() {
         return MultiblockAbility.MAINTENANCE_HATCH;
     }
 
     @Override
-    public void registerAbilities(List<MetaTileEntityMaintenanceHatch> abilityList) {
-        abilityList.add(this);
+    public void registerAbilities(List<IMaintenanceHatch> abilityList) {
+        abilityList.add((IMaintenanceHatch) this);
     }
 }
