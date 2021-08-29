@@ -82,14 +82,13 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XDX", "XXX")
-                .aisle("XCX", "CGC", "XHX")
+                .aisle("XCX", "CGC", "XCX")
                 .aisle("XCX", "CGC", "XCX")
                 .aisle("AAA", "AYA", "AAA")
                 .where('X', statePredicate(getCasingState()))
                 .where('G', statePredicate(MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX)))
                 .where('C', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
                 .where('D', abilityPartPredicate(MultiblockAbility.OUTPUT_ENERGY))
-                .where('H', abilityPartPredicate(MultiblockAbility.MUFFLER_HATCH))
                 .where('A', intakeCasingPredicate())
                 .where('Y', selfPredicate())
                 .build();
