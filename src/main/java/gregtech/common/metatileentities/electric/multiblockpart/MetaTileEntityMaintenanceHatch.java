@@ -37,6 +37,7 @@ import static gregtech.api.capability.GregtechDataCodes.STORE_MAINTENANCE;
 
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
+    private final boolean isConfigurable;
     private boolean isTaped;
 
     // Used to store state temporarily if the Controller is broken
@@ -46,13 +47,14 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     private double durationMultiplier = 1.0;
     private double timeMultiplier = 1.0;
 
-    public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, 1);
+    public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, boolean isConfigurable) {
+        super(metaTileEntityId, isConfigurable ? 3 : 1);
+        this.isConfigurable = isConfigurable;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
-        return new MetaTileEntityMaintenanceHatch(metaTileEntityId);
+        return new MetaTileEntityMaintenanceHatch(metaTileEntityId, isConfigurable);
     }
 
     @Override
