@@ -88,6 +88,6 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
                 }
             }
         }
-        return capability == GregtechCapabilities.CAPABILITY_HARDWARE_PROVIDER ? (T) this : null;
+        return capability == GregtechCapabilities.CAPABILITY_HARDWARE_PROVIDER ? GregtechCapabilities.CAPABILITY_HARDWARE_PROVIDER.cast(this) : null;
     }
 }
