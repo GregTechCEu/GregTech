@@ -109,6 +109,10 @@ public class GTRecipeWrapper implements IRecipeWrapper {
         }
     }
 
+    public Int2ObjectMap<ChanceEntry> getChanceOutputMap() {
+        return chanceOutput;
+    }
+
     private int getPropertyListHeight() {
         return (recipe.getPropertyCount() + 3) * LINE_HEIGHT - 3;
     }
