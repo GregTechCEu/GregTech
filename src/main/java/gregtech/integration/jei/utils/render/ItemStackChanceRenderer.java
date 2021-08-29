@@ -1,9 +1,6 @@
 package gregtech.integration.jei.utils.render;
 
-import gregtech.api.gui.resources.RenderUtil;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
-import gregtech.api.util.TextFormattingUtil;
 import mezz.jei.plugins.vanilla.ingredients.item.ItemStackRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -13,7 +10,7 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nullable;
 
 public class ItemStackChanceRenderer extends ItemStackRenderer {
-    private ChanceEntry chance;
+    private final ChanceEntry chance;
 
     public ItemStackChanceRenderer(ChanceEntry chance) {
         this.chance = chance;
