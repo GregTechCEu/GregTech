@@ -664,7 +664,7 @@ public class MetaTileEntities {
         SIMPLE_ORE_WASHER = GregTechAPI.registerMetaTileEntity(1653, new MetaTileEntitySimpleOreWasher(gregtechId("ore_washer.simple"), RecipeMaps.SIMPLE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY, 0));
 
         // Maintenance Hatches, IDs 1654-1655
-        MAINTENANCE_HATCH = GregTechAPI.registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), false));
+        MAINTENANCE_HATCH = GregTechAPI.registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch")));
         AUTO_MAINTENANCE_HATCH = GregTechAPI.registerMetaTileEntity(1655, new MetaTileEntityAutoMaintenanceHatch(gregtechId("maintenance_hatch_full_auto")));
 
         // Muffler Hatches, IDs 1656-

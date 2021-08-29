@@ -145,14 +145,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
             IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-            if (maintenanceHatch.isFullAuto()) { // set problems fixed with full auto hatches
-                this.maintenance_problems = 0b111111;
-            } else {
-                readMaintenanceData(maintenanceHatch);
-                if (!maintenanceHatch.isFullAuto() && storedTaped) {
-                    maintenanceHatch.setTaped(true);
-                    storeTaped(false);
-                }
+            readMaintenanceData(maintenanceHatch);
+            if (storedTaped) {
+                maintenanceHatch.setTaped(true);
+                storeTaped(false);
             }
         }
     }
@@ -229,9 +225,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (hasMaintenanceMechanics() && ConfigHolder.U.GT5u.enableMaintenance) { // nothing extra if no maintenance
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
-            IMaintenanceHatch maintenance = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-            if (!maintenance.isFullAuto()) // store maintenance data for non full auto hatches
-                maintenance.storeMaintenanceData(maintenance_problems, timeActive);
+            getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0)
+                    .storeMaintenanceData(maintenance_problems, timeActive);
         }
         super.invalidateStructure();
     }
@@ -274,49 +269,51 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure")
                     .setStyle(new Style().setColor(TextFormatting.RED)
                             .setHoverEvent(new HoverEvent(Action.SHOW_TEXT, tooltip))));
-        } else if (!hasMaintenanceMechanics()) {
-            return;
+        } else {
+            if (hasMaintenanceMechanics()) {
+                addMaintenanceText(textList);
+            }
+            if (hasMufflerMechanics() && !isMufflerFaceFree())
+                textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed")
+                        .setStyle(new Style().setColor(TextFormatting.RED)
+                                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                        new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed.tooltip")))));
         }
+    }
 
+    private void addMaintenanceText(List<ITextComponent> textList) {
         if (!hasMaintenanceProblems()) {
             textList.add(new TextComponentTranslation("gregtech.multiblock.universal.no_problems")
-                .setStyle(new Style().setColor(TextFormatting.AQUA))
+                    .setStyle(new Style().setColor(TextFormatting.AQUA))
             );
-            return;
+        } else {
+
+            ITextComponent hoverEventTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems_header")
+                    .setStyle(new Style().setColor(TextFormatting.GRAY));
+
+            if (((this.maintenance_problems) & 1) == 0)
+                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.wrench", "\n"));
+
+            if (((this.maintenance_problems >> 1) & 1) == 0)
+                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.screwdriver", "\n"));
+
+            if (((this.maintenance_problems >> 2) & 1) == 0)
+                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.soft_mallet", "\n"));
+
+            if (((this.maintenance_problems >> 3) & 1) == 0)
+                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.hard_hammer", "\n"));
+
+            if (((this.maintenance_problems >> 4) & 1) == 0)
+                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.wire_cutter", "\n"));
+
+            if (((this.maintenance_problems >> 5) & 1) == 0)
+                hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.crowbar", "\n"));
+
+            TextComponentTranslation textTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems");
+
+            textList.add(textTranslation.setStyle(new Style().setColor(TextFormatting.RED)
+                    .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverEventTranslation))));
         }
-
-        ITextComponent hoverEventTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems_header")
-                .setStyle(new Style().setColor(TextFormatting.GRAY));
-
-        if (((this.maintenance_problems >> 0) & 1) == 0)
-            hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.wrench", "\n"));
-
-        if (((this.maintenance_problems >> 1) & 1) == 0)
-            hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.screwdriver", "\n"));
-
-        if (((this.maintenance_problems >> 2) & 1) == 0)
-            hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.soft_mallet", "\n"));
-
-        if (((this.maintenance_problems >> 3) & 1) == 0)
-            hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.hard_hammer", "\n"));
-
-        if (((this.maintenance_problems >> 4) & 1) == 0)
-            hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.wire_cutter", "\n"));
-
-        if (((this.maintenance_problems >> 5) & 1) == 0)
-            hoverEventTranslation.appendSibling(new TextComponentTranslation("gregtech.multiblock.universal.problem.crowbar", "\n"));
-
-        TextComponentTranslation textTranslation = new TextComponentTranslation("gregtech.multiblock.universal.has_problems");
-
-        textList.add(textTranslation.setStyle(new Style().setColor(TextFormatting.RED)
-                .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverEventTranslation))));
-
-        if (hasMufflerMechanics() && !isMufflerFaceFree())
-            textList.add(new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed")
-                    .setStyle(new Style().setColor(TextFormatting.RED)
-                            .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                    new TextComponentTranslation("gregtech.multiblock.universal.muffler_obstructed.tooltip")))));
-
     }
 
     /**
