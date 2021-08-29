@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.electric.multiblockpart;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -13,9 +12,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.multiblock.IMaintenance;
-import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTToolTypes;
@@ -36,21 +33,19 @@ import static gregtech.api.capability.MultiblockDataCodes.STORE_MAINTENANCE;
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
     private ItemStackHandler inventory;
-    private final boolean isFullAuto;
     private boolean isTaped;
 
     // Used to store state temporarily if the Controller is broken
     private byte maintenanceProblems = -1;
     private int timeActive = -1;
 
-    public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, boolean isFullAuto) {
-        super(metaTileEntityId, isFullAuto ? 3 : 1);
-        this.isFullAuto = isFullAuto;
+    public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId) {
+        super(metaTileEntityId, 1);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
-        return new MetaTileEntityMaintenanceHatch(metaTileEntityId, isFullAuto);
+        return new MetaTileEntityMaintenanceHatch(metaTileEntityId);
     }
 
     @Override
@@ -58,31 +53,21 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super.renderMetaTileEntity(renderState, translation, pipeline);
 
         if (shouldRenderOverlay()) {
-
-            SimpleOverlayRenderer renderer;
-            if (isFullAuto) renderer = Textures.MAINTENANCE_OVERLAY_FULL_AUTO;
-            else if (isTaped) renderer = Textures.MAINTENANCE_OVERLAY_TAPED;
-            else renderer = Textures.MAINTENANCE_OVERLAY;
-
-            renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            (isTaped ? Textures.MAINTENANCE_OVERLAY_TAPED : Textures.MAINTENANCE_OVERLAY)
+                    .renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        if (isFullAuto)
-            return super.createImportItemHandler();
         return new ItemStackHandler(1);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        if (isFullAuto)
-            return super.createExportItemHandler();
         return new ItemStackHandler(1);
     }
 
-    //todo prevent hatches not of type 1 from accepting items
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
@@ -99,6 +84,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * Sets this Maintenance Hatch as being duct taped
      * @param isTaped is the state of the hatch being taped or not
      */
+    @Override
     public void setTaped(boolean isTaped) {
         this.isTaped = isTaped;
         if (!getWorld().isRemote) {
@@ -112,6 +98,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * @param maintenanceProblems is the byte value representing the problems
      * @param timeActive is the int value representing the total time the parent multiblock has been active
      */
+    @Override
     public void storeMaintenanceData(byte maintenanceProblems, int timeActive) {
         this.maintenanceProblems = maintenanceProblems;
         this.timeActive = timeActive;
@@ -127,6 +114,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      *
      * @return whether this maintenance hatch has maintenance data
      */
+    @Override
     public boolean hasMaintenanceData() {
         return this.maintenanceProblems != -1;
     }
@@ -135,6 +123,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * reads this MetaTileEntity's maintenance data
      * @return Tuple of Byte, Integer corresponding to the maintenance problems, and total time active
      */
+    @Override
     public Tuple<Byte, Integer> readMaintenanceData() {
         Tuple<Byte, Integer> data = new Tuple<>(this.maintenanceProblems, this.timeActive);
         storeMaintenanceData((byte) -1, -1);
@@ -154,7 +143,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
         byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
 
-        if (!isFullAuto && entityPlayer != null) {
+        if (entityPlayer != null) {
             if (entityPlayer.capabilities.isCreativeMode) {
                 fixAllMaintenanceProblems();
                 return;
@@ -263,13 +252,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public boolean isFullAuto() {
-        return isFullAuto;
-    }
-
-    //todo make this emit redstone if it is out of tape
-    @Override
-    protected boolean canMachineConnectRedstone(EnumFacing side) {
-        return super.canMachineConnectRedstone(side);
+        return false;
     }
 
     @Override
@@ -283,48 +266,13 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void update() { // todo do this better
-        super.update();
-        if (isFullAuto) { // if not a manual hatch, check every second for problems to fix
-            if (this.getController() instanceof IMaintenance) {
-                if (getOffsetTimer() % 20 == 0 && ((IMaintenance) this.getController()).hasMaintenanceProblems() && this.getController().isStructureFormed()) {
-                    fixMaintenanceProblems(null);
-                }
-            }
-        }
-    }
-
-    @Override
-    public ICubeRenderer getBaseTexture() {
-        MultiblockControllerBase controller = getController();
-        if (controller == null) {
-            return Textures.VOLTAGE_CASINGS[getTier()];
-        }
-        return controller.getBaseTexture(this);
-    }
-
-    /**
-     * Do not open the gui if the hatch is a full auto hatch
-     */
-    @Override
-    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (isFullAuto) {
-            return false;
-        }
-        return super.onRightClick(playerIn, hand, facing, hitResult);
-    }
-
-    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 + 18 + 94).label(10, 5, this.getMetaFullName());
-        if (!isFullAuto) {
-            builder.widget(new ClickButtonWidget(89 - 9 - 1, 18 - 1, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
-                    .setButtonTexture(GuiTextures.MAINTENANCE_ICON));
-        }
-
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 + 12);
-        return builder.build(this.getHolder(), entityPlayer);
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 + 18 + 94)
+                .label(10, 5, this.getMetaFullName())
+                .widget(new ClickButtonWidget(89 - 9 - 1, 18 - 1, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
+                .setButtonTexture(GuiTextures.MAINTENANCE_ICON))
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 + 12)
+                .build(this.getHolder(), entityPlayer);
     }
 
     @Override
@@ -348,6 +296,6 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public void registerAbilities(List<IMaintenanceHatch> abilityList) {
-        abilityList.add((IMaintenanceHatch) this);
+        abilityList.add(this);
     }
 }

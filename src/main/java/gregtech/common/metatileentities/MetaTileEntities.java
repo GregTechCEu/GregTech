@@ -131,7 +131,8 @@ public class MetaTileEntities {
     public static MetaTileEntitySteamItemBus STEAM_IMPORT_BUS;
     public static MetaTileEntitySteamHatch STEAM_HATCH;
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[3]; //HV, LuV, MAX
-    public static final MetaTileEntityMaintenanceHatch[] MAINTENANCE_HATCH = new MetaTileEntityMaintenanceHatch[2]; // normal, full-auto
+    public static MetaTileEntityMaintenanceHatch MAINTENANCE_HATCH;
+    public static MetaTileEntityAutoMaintenanceHatch AUTO_MAINTENANCE_HATCH;
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV]; // LV-UV
 
     //MULTIBLOCKS SECTION
@@ -663,8 +664,8 @@ public class MetaTileEntities {
         SIMPLE_ORE_WASHER = GregTechAPI.registerMetaTileEntity(1653, new MetaTileEntitySimpleOreWasher(gregtechId("ore_washer.simple"), RecipeMaps.SIMPLE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY, 0));
 
         // Maintenance Hatches, IDs 1654-1655
-        MAINTENANCE_HATCH[0] = GregTechAPI.registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), false));
-        MAINTENANCE_HATCH[1] = GregTechAPI.registerMetaTileEntity(1655, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_full_auto"), true));
+        MAINTENANCE_HATCH = GregTechAPI.registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), false));
+        AUTO_MAINTENANCE_HATCH = GregTechAPI.registerMetaTileEntity(1655, new MetaTileEntityAutoMaintenanceHatch(gregtechId("maintenance_hatch_full_auto")));
 
         // Muffler Hatches, IDs 1656-
         for (int i = 0; i < MUFFLER_HATCH.length; i++) {

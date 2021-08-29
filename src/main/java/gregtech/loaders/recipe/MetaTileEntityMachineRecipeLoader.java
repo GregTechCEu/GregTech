@@ -634,7 +634,7 @@ public class MetaTileEntityMachineRecipeLoader {
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(HULL[GTValues.LV].getStackForm())
                 .circuitMeta(1)
-                .outputs(MAINTENANCE_HATCH[0].getStackForm())
+                .outputs(MAINTENANCE_HATCH.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
     }
 }
