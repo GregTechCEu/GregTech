@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.electric.multiblockpart;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -133,6 +134,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 if (((IMaintenance) controller).hasMaintenanceProblems()) {
                     if (consumeDuctTape(this.itemInventory, 0)) {
                         fixAllMaintenanceProblems();
+                        setTaped(true);
                     }
                 }
             }
@@ -184,13 +186,16 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     private boolean consumeDuctTape(@Nullable IItemHandler handler, int slot) {
         if (handler == null)
             return false;
+        return consumeDuctTape(null, handler.getStackInSlot(slot));
+    }
 
-        ItemStack itemStack = handler.getStackInSlot(slot);
-        if (!itemStack.isEmpty() && itemStack.isItemEqual(MetaItems.DUCT_TAPE.getStackForm()))
-            if (itemStack.getCount() - 1 >= 0) {
+    private boolean consumeDuctTape(@Nullable EntityPlayer player, ItemStack itemStack) {
+        if (!itemStack.isEmpty() && itemStack.isItemEqual(MetaItems.DUCT_TAPE.getStackForm())) {
+            if (player == null || !player.capabilities.isCreativeMode) {
                 itemStack.shrink(1);
-                return true;
             }
+            return true;
+        }
         return false;
     }
 
@@ -202,33 +207,21 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * @param entityPlayer is the target player whose inventory is used to scan for tools
      */
     private void fixProblemWithTool(int problemIndex, EntityPlayer entityPlayer) {
-        List<ToolMetaItem.MetaToolValueItem> tools = null;
+        List<ToolMetaItem<?>.MetaToolValueItem> tools = null;
 
         switch (problemIndex) {
-            case 0:
-                tools = GTToolTypes.wrenches;
-                break;
-            case 1:
-                tools = GTToolTypes.screwdrivers;
-                break;
-            case 2:
-                tools = GTToolTypes.softHammers;
-                break;
-            case 3:
-                tools = GTToolTypes.hardHammers;
-                break;
-            case 4:
-                tools = GTToolTypes.wireCutters;
-                break;
-            case 5:
-                tools = GTToolTypes.crowbars;
-                break;
+            case 0: tools = GTToolTypes.wrenches; break;
+            case 1: tools = GTToolTypes.screwdrivers; break;
+            case 2: tools = GTToolTypes.softHammers; break;
+            case 3: tools = GTToolTypes.hardHammers; break;
+            case 4: tools = GTToolTypes.wireCutters; break;
+            case 5: tools = GTToolTypes.crowbars; break;
         }
 
         if (tools == null)
             return;
 
-        for (ToolMetaItem.MetaToolValueItem tool : tools) {
+        for (ToolMetaItem<?>.MetaToolValueItem tool : tools) {
             for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
                 if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
                     ((IMaintenance) this.getController()).setMaintenanceFixed(problemIndex);
@@ -282,6 +275,18 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 controller.storeTaped(isTaped);
         }
         super.onRemoval();
+    }
+
+    @Override
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (getController() instanceof IMaintenance && ((IMaintenance) getController()).hasMaintenanceProblems()) {
+            if (consumeDuctTape(playerIn, playerIn.getHeldItem(hand))) {
+                fixAllMaintenanceProblems();
+                setTaped(true);
+                return true;
+            }
+        }
+        return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
