@@ -208,7 +208,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.invalidInputsForRecipes = (currentRecipe == null);
 
         // proceed if we have a usable recipe.
-        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))
+        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory))
             setupRecipe(currentRecipe);
         // Inputs have been inspected.
         metaTileEntity.getNotifiedItemInputList().clear();
@@ -236,10 +236,21 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
                         ItemStack.areItemStackTagsEqual(stackA, stackB));
     }
 
-    protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
+    /**
+     * Determines if the provided recipe is possible to run from the provided inventory, or if there is anything preventing
+     * the Recipe from being completed.
+     *
+     * Will consume the inputs of the Recipe if it is possible to run.
+     *
+     * @param recipe - The Recipe that will be consumed from the inputs and ran in the machine
+     * @param importInventory - The inventory that the recipe should be consumed from.
+     *                        Used mainly for Distinct bus implementation for multiblocks to specify
+     *                        a specific bus
+     * @return - true if the recipe is successful, false if the recipe is not successful
+     */
+    protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
         int[] resultOverclock = calculateOverclock(recipe.getEUt(), recipe.getDuration());
         int totalEUt = resultOverclock[0] * resultOverclock[1];
-        IItemHandlerModifiable importInventory = getInputInventory();
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();

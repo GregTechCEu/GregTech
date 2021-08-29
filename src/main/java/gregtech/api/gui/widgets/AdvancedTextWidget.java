@@ -52,7 +52,9 @@ public class AdvancedTextWidget extends Widget {
     public static ITextComponent withButton(ITextComponent textComponent, String componentData) {
         Style style = textComponent.getStyle();
         style.setClickEvent(new ClickEvent(Action.OPEN_URL, "@!" + componentData));
-        style.setColor(TextFormatting.YELLOW);
+        if(style.getColor() == null) {
+            style.setColor(TextFormatting.YELLOW);
+        }
         return textComponent;
     }
 

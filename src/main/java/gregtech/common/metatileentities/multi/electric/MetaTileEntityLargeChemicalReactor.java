@@ -85,4 +85,9 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     protected OrientedOverlayRenderer getFrontOverlay() {
         return Textures.LARGE_CHEMICAL_REACTOR_OVERLAY;
     }
+
+    @Override
+    public boolean canBeDistinct() {
+        return false;
+    }
 }

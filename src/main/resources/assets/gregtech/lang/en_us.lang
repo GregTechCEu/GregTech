@@ -3749,6 +3749,10 @@ gregtech.multiblock.universal.problem.wire_cutter=%s§7Wires burned out. (§aWir
 gregtech.multiblock.universal.problem.crowbar=%s§7That doesn't belong there. (§aCrowbar§7)
 gregtech.multiblock.universal.muffler_obstructed=Muffler Hatch is Obstructed!
 gregtech.multiblock.universal.muffler_obstructed.tooltip=Muffler Hatch must have a block of airspace in front of it.
+gregtech.multiblock.universal.distinct=Distinct Buses:
+gregtech.multiblock.universal.distinct.no=No
+gregtech.multiblock.universal.distinct.yes=Yes
+gregtech.multiblock.universal.distinct.info=If enabled, each bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Extruder Shapes, Laser Lenses, etc..
 
 gregtech.multiblock.preview.tilt=Shift+LMB to tilt
 gregtech.multiblock.preview.zoom=Shift+RMB to zoom
