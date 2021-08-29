@@ -3,11 +3,13 @@ package gregtech.integration.jei.multiblock;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.common.ConfigHolder;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMaintenanceHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMufflerHatch;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -18,6 +20,7 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -102,5 +105,15 @@ public abstract class MultiblockInfoPage {
             this.blockTooltips.put(itemStack, tooltipList);
 
         }
+    }
+
+    public static Supplier<?> maintenanceIfEnabled(IBlockState alternative) {
+        return maintenanceIfEnabled(0, alternative);
+    }
+
+    public static Supplier<?> maintenanceIfEnabled(int type, IBlockState alternative) {
+        return ConfigHolder.U.GT5u.enableMaintenance ?
+                () -> MetaTileEntities.MAINTENANCE_HATCH[type] :
+                () -> alternative;
     }
 }

@@ -3,7 +3,6 @@ package gregtech.integration.jei.multiblock.infos;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -30,7 +29,7 @@ public class LargeBoilerInfo extends MultiblockInfoPage {
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
+        return Lists.newArrayList(MultiblockShapeInfo.builder()
                 .aisle("FXX", "CCC", "CCC", "CCC")
                 .aisle("XXH", "SPC", "MPC", "CCC")
                 .aisle("IXX", "COC", "CCC", "CCC")
@@ -41,14 +40,9 @@ public class LargeBoilerInfo extends MultiblockInfoPage {
                 .where('O', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.MV], EnumFacing.SOUTH)
                 .where('I', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.MV], EnumFacing.WEST)
                 .where('F', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.MV], EnumFacing.WEST)
-                .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.EAST);
-
-                if (ConfigHolder.U.GT5u.enableMaintenance)
-                    shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.WEST);
-                else
-                    shapeInfo.where('M', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.BRONZE_BRICKS));
-
-        return Lists.newArrayList(shapeInfo.build());
+                .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.EAST)
+                .where('M', maintenanceIfEnabled(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.BRONZE_BRICKS)), EnumFacing.WEST)
+                .build());
     }
 
     @Override

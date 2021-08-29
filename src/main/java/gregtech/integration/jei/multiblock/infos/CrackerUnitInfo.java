@@ -3,7 +3,6 @@ package gregtech.integration.jei.multiblock.infos;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
@@ -29,7 +28,7 @@ public class CrackerUnitInfo extends MultiblockInfoPage {
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        MultiblockShapeInfo.Builder shapeInfo = new MultiblockShapeInfo.Builder()
+        return Lists.newArrayList(MultiblockShapeInfo.builder()
                 .aisle("XCMCX", "XCSCF", "XCXCX")
                 .aisle("XCXCX", "H###X", "XCXCX")
                 .aisle("XCXCX", "XCECF", "XCXCX")
@@ -39,14 +38,9 @@ public class CrackerUnitInfo extends MultiblockInfoPage {
                 .where('#', Blocks.AIR.getDefaultState())
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.HV], EnumFacing.EAST)
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
-                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.HV], EnumFacing.WEST);
-
-                if (ConfigHolder.U.GT5u.enableMaintenance)
-                    shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.NORTH);
-                else
-                    shapeInfo.where('M', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STAINLESS_CLEAN));
-
-        return Lists.newArrayList(shapeInfo.build());
+                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.HV], EnumFacing.WEST)
+                .where('M', maintenanceIfEnabled(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STAINLESS_CLEAN)), EnumFacing.NORTH)
+                .build());
     }
 
     @Override

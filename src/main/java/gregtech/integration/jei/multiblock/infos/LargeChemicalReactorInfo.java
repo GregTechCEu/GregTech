@@ -1,7 +1,6 @@
 package gregtech.integration.jei.multiblock.infos;
 
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockBoilerCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockWireCoil;
@@ -40,12 +39,8 @@ public class LargeChemicalReactorInfo extends MultiblockInfoPage {
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[3], EnumFacing.EAST)
                 .where('O', MetaTileEntities.ITEM_EXPORT_BUS[3], EnumFacing.WEST)
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[3], EnumFacing.WEST)
-                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[3], EnumFacing.WEST);
-
-                if (ConfigHolder.U.GT5u.enableMaintenance)
-                    baseBuilder.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.WEST);
-                else
-                    baseBuilder.where('M', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING));
+                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[3], EnumFacing.WEST)
+                .where('M', maintenanceIfEnabled(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING)), EnumFacing.WEST);
 
         shapeInfo.add(
                 baseBuilder.shallowCopy()

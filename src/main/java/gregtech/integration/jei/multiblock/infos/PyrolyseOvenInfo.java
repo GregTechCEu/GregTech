@@ -3,7 +3,6 @@ package gregtech.integration.jei.multiblock.infos;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMachineCasing;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
@@ -30,7 +29,7 @@ public class PyrolyseOvenInfo extends MultiblockInfoPage {
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
+        return Lists.newArrayList(MultiblockShapeInfo.builder()
                 .aisle("XMX", "ISF", "XXX")
                 .aisle("CCC", "C#C", "CCC")
                 .aisle("CCC", "C#C", "CCC")
@@ -44,14 +43,9 @@ public class PyrolyseOvenInfo extends MultiblockInfoPage {
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
                 .where('B', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.HV], EnumFacing.SOUTH)
                 .where('L', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.HV], EnumFacing.SOUTH)
-                .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP);
-
-                if (ConfigHolder.U.GT5u.enableMaintenance)
-                    shapeInfo.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.NORTH);
-                else
-                    shapeInfo.where('M', MetaBlocks.MACHINE_CASING.getState(BlockMachineCasing.MachineCasingType.ULV));
-
-        return Lists.newArrayList(shapeInfo.build());
+                .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP)
+                .where('M', maintenanceIfEnabled(MetaBlocks.MACHINE_CASING.getState(BlockMachineCasing.MachineCasingType.ULV)), EnumFacing.NORTH)
+                .build());
     }
 
     @Override

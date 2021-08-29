@@ -2,7 +2,6 @@ package gregtech.integration.jei.multiblock.infos;
 
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.MetaBlocks;
@@ -32,7 +31,7 @@ public class ElectricBlastFurnaceInfo extends MultiblockInfoPage {
     public List<MultiblockShapeInfo> getMatchingShapes() {
         ArrayList<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
         for (CoilType coilType : CoilType.values()) {
-            MultiblockShapeInfo.Builder builder = MultiblockShapeInfo.builder()
+            shapeInfo.add(MultiblockShapeInfo.builder()
                     .aisle("IFX", "CCC", "CCC", "XXX")
                     .aisle("SXE", "C#C", "C#C", "XHX")
                     .aisle("ODM", "CCC", "CCC", "XXX")
@@ -45,14 +44,9 @@ public class ElectricBlastFurnaceInfo extends MultiblockInfoPage {
                     .where('O', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.LV], EnumFacing.WEST)
                     .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.NORTH)
                     .where('D', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.LV], EnumFacing.SOUTH)
-                    .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP);
-
-                    if (ConfigHolder.U.GT5u.enableMaintenance)
-                        builder.where('M', MetaTileEntities.MAINTENANCE_HATCH[0], EnumFacing.EAST);
-                    else
-                        builder.where('M', MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF));
-
-            shapeInfo.add(builder.build());
+                    .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP)
+                    .where('M', maintenanceIfEnabled(MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF)), EnumFacing.EAST)
+                    .build());
         }
         return shapeInfo;
     }

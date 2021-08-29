@@ -72,7 +72,7 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
                 .aisle("XXX", "XXX", "XXX")
                 .where('S', selfPredicate())
                 .where('Y', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-                .where('X', fluidExportPredicate.or(statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.MAINTENANCE_HATCH))))
+                .where('X', fluidExportPredicate.or(maintenancePredicate(getCasingState())))
                 .where('#', isAirPredicate())
                 .validateLayer(1, exactlyOneHatch)
                 .validateLayer(2, exactlyOneHatch)

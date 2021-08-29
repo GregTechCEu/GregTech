@@ -17,6 +17,7 @@ import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.gui.recipes.RecipeLayout;
 import net.minecraft.block.Block;
@@ -105,8 +106,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        ingredients.setInputs(ItemStack.class, allItemStackInputs);
-        ingredients.setOutput(ItemStack.class, controllerStack);
+        ingredients.setInputs(VanillaTypes.ITEM, allItemStackInputs);
+        ingredients.setOutput(VanillaTypes.ITEM, controllerStack);
     }
 
     public MultiblockInfoPage getInfoPage() {
@@ -291,7 +292,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
             IBlockState blockState = renderer.world.getBlockState(pos);
             RayTraceResult result = new CuboidRayTraceResult(new Vector3(0.5, 0.5, 0.5).add(pos), pos, EnumFacing.UP, new IndexedCuboid6(null, Cuboid6.full), 1.0);
             ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, result, renderer.world, pos, minecraft.player);
-            if (itemStack != null && !itemStack.isEmpty()) {
+            if (!itemStack.isEmpty()) {
                 this.tooltipBlockStack = itemStack;
             }
         }
