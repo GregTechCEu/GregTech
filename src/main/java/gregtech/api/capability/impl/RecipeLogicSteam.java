@@ -21,6 +21,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class RecipeLogicSteam extends AbstractRecipeLogic {
 
@@ -155,8 +156,8 @@ public class RecipeLogicSteam extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
-        return !this.needsVenting && super.setupAndConsumeRecipeInputs(recipe);
+    protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
+        return !this.needsVenting && super.setupAndConsumeRecipeInputs(recipe, importInventory);
     }
 
     @Override
