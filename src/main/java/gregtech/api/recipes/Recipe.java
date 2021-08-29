@@ -14,6 +14,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -356,6 +357,20 @@ public class Recipe {
     private boolean hasSameRecipeProperties(Recipe otherRecipe) {
         if (this.getPropertyCount() != otherRecipe.getPropertyCount()) return false;
         return this.recipePropertyStorage.getRecipeProperties().containsAll(otherRecipe.recipePropertyStorage.getRecipeProperties());
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("inputs", inputs)
+                .append("outputs", outputs)
+                .append("chancedOutputs", chancedOutputs)
+                .append("fluidInputs", fluidInputs)
+                .append("fluidOutputs", fluidOutputs)
+                .append("duration", duration)
+                .append("EUt", EUt)
+                .append("hidden", hidden)
+                .toString();
     }
 
     ///////////////////

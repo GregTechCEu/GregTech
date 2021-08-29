@@ -24,6 +24,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.*;
 import gregtech.api.util.ItemStackKey;
+import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -168,7 +169,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         }
         Recipe recipe = validationResult.getResult();
         if (recipeSet.add(recipe)) {
-
             for (CountableIngredient countableIngredient : recipe.getInputs()) {
                 ItemStack[] stacks = countableIngredient.getIngredient().getMatchingStacks();
                 for (ItemStack itemStack : stacks) {
@@ -188,6 +188,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 });
                 recipeFluidMap.computeIfAbsent(fluidKey, k -> new HashSet<>(1)).add(recipe);
             }
+        } else if (ConfigHolder.debug) {
+            GTLog.logger.debug("Recipe: " + recipe.toString() + " is a duplicate and was not added");
         }
     }
 
@@ -272,8 +274,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     if (recipeItemMap.containsKey(itemStackKey)) {
                         for (Recipe tmpRecipe : recipeItemMap.get(itemStackKey)) {
                             if (alreadyIteratedRecipes.add(tmpRecipe)) {
-                                if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
-                                    return voltage >= tmpRecipe.getEUt() ? tmpRecipe : null;
+                                if (voltage >= tmpRecipe.getEUt()) {
+                                    if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
+                                        return tmpRecipe;
+                                    }
                                 }
                             }
                         }
@@ -288,8 +292,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     if (recipeFluidMap.containsKey(fluidKey)) {
                         for (Recipe tmpRecipe : recipeFluidMap.get(fluidKey)) {
                             if (alreadyIteratedRecipes.add(tmpRecipe)) {
-                                if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
-                                    return voltage >= tmpRecipe.getEUt() ? tmpRecipe : null;
+                                if (voltage >= tmpRecipe.getEUt()) {
+                                    if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
+                                        return tmpRecipe;
+                                    }
                                 }
                             }
                         }
