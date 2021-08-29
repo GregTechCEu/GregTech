@@ -101,8 +101,9 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
             this.recipeMapWorkable.updateWorkable();
     }
 
+    @Override
     public boolean isActive() {
-        return isStructureFormed() && recipeMapWorkable.isActive();
+        return isStructureFormed() && recipeMapWorkable.isActive() && recipeMapWorkable.isWorkingEnabled();
     }
 
     private void initializeAbilities() {
