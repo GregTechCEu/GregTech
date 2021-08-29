@@ -155,6 +155,10 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
 
         if (!isFullAuto && entityPlayer != null) {
+            if (entityPlayer.capabilities.isCreativeMode) {
+                fixAllMaintenanceProblems();
+                return;
+            }
             // For every slot in the player's main inventory, try to duct tape fix
             for (int i = 0; i < entityPlayer.inventory.mainInventory.size(); i++) {
                 if (consumeDuctTape(new ItemStackHandler(entityPlayer.inventory.mainInventory), i)) {
