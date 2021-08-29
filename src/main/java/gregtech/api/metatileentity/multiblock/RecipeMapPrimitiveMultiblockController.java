@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.capability.impl.*;
+import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.recipes.RecipeMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidTank;
@@ -46,5 +47,10 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
     public void invalidateStructure() {
         super.invalidateStructure();
         recipeMapWorkable.invalidate();
+    }
+
+    @Override
+    protected boolean shouldUpdate(MTETrait trait) {
+        return !(trait instanceof PrimitiveRecipeLogic);
     }
 }

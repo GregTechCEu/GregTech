@@ -6,6 +6,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.BlockWorldState;
@@ -43,7 +44,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
             MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
             MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.EXPORT_FLUIDS,
-            MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.MAINTENANCE_HATCH
     };
 
     private int blastFurnaceTemperature;
@@ -105,12 +106,13 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "CCC", "CCC", "XXX")
-                .aisle("XXX", "C#C", "C#C", "XXX")
+                .aisle("XXX", "C#C", "C#C", "XMX")
                 .aisle("XSX", "CCC", "CCC", "XXX")
                 .setAmountAtLeast('L', 10)
                 .where('S', selfPredicate())
                 .where('L', statePredicate(getCasingState()))
                 .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('M', abilityPartPredicate(MultiblockAbility.MUFFLER_HATCH))
                 .where('C', heatingCoilPredicate())
                 .where('#', isAirPredicate())
                 .build();
@@ -143,6 +145,11 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
         return Textures.BLAST_FURNACE_OVERLAY;
+    }
+
+    @Override
+    public boolean hasMufflerMechanics() {
+        return true;
     }
 
     public static class ElectricBlastFurnaceWorkableHandler extends MultiblockRecipeLogic {
@@ -187,32 +194,31 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 return new int[]{EUt, duration};
             if (negativeEU)
                 EUt = -EUt;
-            if (EUt <= 16) {
-                int multiplier = EUt <= 8 ? tier : tier - 1;
-                int resultEUt = EUt * (1 << multiplier) * (1 << multiplier);
-                int resultDuration = duration / (1 << multiplier);
-                return new int[]{negativeEU ? -resultEUt : resultEUt, resultDuration};
-            } else {
-                int resultEUt = EUt;
-                double resultDuration = duration;
 
-                //do not overclock further if duration is already too small
-                //perfect overclock for every 1800k over recipe temperature
-                while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1] && amountPerfectOC > 0) {
-                    resultEUt *= 4;
-                    resultDuration /= 4;
-                    amountPerfectOC--;
-                }
+            int resultEUt = EUt;
+            double resultDuration = duration;
 
-                //do not overclock further if duration is already too small
-                //regular overclocking
-                while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1]) {
-                    resultEUt *= 4;
-                    resultDuration /= 2.8;
-                }
-
-                return new int[]{negativeEU ? -resultEUt : resultEUt, (int) Math.ceil(resultDuration)};
+            //do not overclock further if duration is already too small
+            //perfect overclock for every 1800k over recipe temperature
+            while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1] && amountPerfectOC > 0) {
+                resultEUt *= 4;
+                resultDuration /= 4;
+                amountPerfectOC--;
             }
+
+            //do not overclock further if duration is already too small
+            //regular overclocking
+            while (resultDuration >= 3 && resultEUt <= GTValues.V[tier - 1]) {
+                resultEUt *= 4;
+                resultDuration /= ConfigHolder.U.overclockDivisor;
+            }
+
+            // apply maintenance slowdown
+            int numMaintenanceProblems = ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems();
+            resultDuration = (int) (resultDuration * (1 + 0.1 * numMaintenanceProblems));
+
+            return new int[]{negativeEU ? -resultEUt : resultEUt, (int) Math.ceil(resultDuration)};
+
         }
     }
 }

@@ -3,6 +3,8 @@ package gregtech.integration.jei.multiblock.infos;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
+import gregtech.common.blocks.BlockMetalCasing;
+import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler;
 import gregtech.integration.jei.multiblock.MultiblockInfoPage;
@@ -27,9 +29,9 @@ public class LargeBoilerInfo extends MultiblockInfoPage {
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
+        return Lists.newArrayList(MultiblockShapeInfo.builder()
                 .aisle("FXX", "CCC", "CCC", "CCC")
-                .aisle("XXX", "SPC", "CPC", "CCC")
+                .aisle("XXH", "SPC", "MPC", "CCC")
                 .aisle("IXX", "COC", "CCC", "CCC")
                 .where('S', boiler, EnumFacing.WEST)
                 .where('P', boiler.boilerType.pipeState)
@@ -38,8 +40,9 @@ public class LargeBoilerInfo extends MultiblockInfoPage {
                 .where('O', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.MV], EnumFacing.SOUTH)
                 .where('I', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.MV], EnumFacing.WEST)
                 .where('F', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.MV], EnumFacing.WEST)
-                .build();
-        return Lists.newArrayList(shapeInfo);
+                .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.EAST)
+                .where('M', maintenanceIfEnabled(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.BRONZE_BRICKS)), EnumFacing.WEST)
+                .build());
     }
 
     @Override

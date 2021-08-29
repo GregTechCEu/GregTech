@@ -44,19 +44,26 @@ public class LargeTurbineInfo extends MultiblockInfoPage {
         ((MetaTileEntityRotorHolder) holder.getMetaTileEntity()).getRotorInventory().setStackInSlot(0, rotorStack);
         MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
                 .aisle("CCCC", "CIOC", "CCCC")
-                .aisle("CCCC", "RGGD", "CCCC")
-                .aisle("CCCC", "CSCC", "CCCC")
+                .aisle("CCCC", "RGGD", "CCHC")
+                .aisle("CCCC", "CSMC", "CCCC")
                 .where('S', turbine, EnumFacing.SOUTH)
                 .where('C', turbine.turbineType.casingState)
                 .where('R', new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder))
                 .where('D', MetaTileEntities.ENERGY_OUTPUT_HATCH[GTValues.EV], EnumFacing.EAST)
                 .where('G', turbine.turbineType.gearboxState)
-                .where('I', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.HV], EnumFacing.NORTH);
-        if (turbine.turbineType.hasOutputHatch) {
-            shapeInfo.where('O', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.EV], EnumFacing.NORTH);
-        } else {
-            shapeInfo.where('O', turbine.turbineType.casingState);
-        }
+                .where('I', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.HV], EnumFacing.NORTH)
+                .where('M', maintenanceIfEnabled(turbine.turbineType.casingState), EnumFacing.SOUTH);
+
+                if (turbine.turbineType.hasOutputHatch)
+                    shapeInfo.where('O', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.EV], EnumFacing.NORTH);
+                else
+                    shapeInfo.where('O', turbine.turbineType.casingState);
+
+                if (turbine.hasMufflerMechanics())
+                    shapeInfo.where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP);
+                else
+                    shapeInfo.where('H', turbine.turbineType.casingState);
+
         return Lists.newArrayList(shapeInfo.build());
     }
 

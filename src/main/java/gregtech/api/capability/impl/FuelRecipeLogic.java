@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.recipes.FuelRecipe;
 import gregtech.api.util.GTUtility;
@@ -139,6 +140,15 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
     }
 
     private void tryAcquireNewRecipe() {
+        if (metaTileEntity instanceof MultiblockWithDisplayBase) {
+
+            MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
+
+            // do not run recipes when there are more than 5 maintenance problems
+            if (controller.hasMaintenanceMechanics() && controller.getNumMaintenanceProblems() > 5)
+                return;
+        }
+
         IMultipleTankHandler fluidTanks = this.fluidTank.get();
         for (IFluidTank fluidTank : fluidTanks) {
             FluidStack tankContents = fluidTank.getFluid();
@@ -146,6 +156,19 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
                 int fuelAmountUsed = tryAcquireNewRecipe(tankContents);
                 if (fuelAmountUsed > 0) {
                     fluidTank.drain(fuelAmountUsed, true);
+
+                    if (metaTileEntity instanceof MultiblockWithDisplayBase) {
+                        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
+                        if (previousRecipe != null) {
+                            // output muffler items
+                            if (controller.hasMufflerMechanics())
+                                controller.outputRecoveryItems();
+
+                            // increase total on time
+                            controller.calculateMaintenance(previousRecipe.getDuration());
+                        }
+                    }
+
                     break; //recipe is found and ready to use
                 }
             }
@@ -211,7 +234,11 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
     }
 
     protected int calculateRecipeDuration(FuelRecipe currentRecipe) {
-        return currentRecipe.getDuration();
+        int numMaintenanceProblems = (this.metaTileEntity instanceof MultiblockWithDisplayBase) ?
+                ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems() : 0;
+
+        // apply maintenance penalties
+        return (int) (currentRecipe.getDuration() * (1 - 0.1 * numMaintenanceProblems));
     }
 
     /**

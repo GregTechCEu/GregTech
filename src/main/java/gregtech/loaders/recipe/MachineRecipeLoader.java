@@ -554,6 +554,11 @@ public class MachineRecipeLoader {
         ASSEMBLER_RECIPES.recipeBuilder().EUt(2).inputs(new ItemStack(Blocks.TRAPPED_CHEST, 1, GTValues.W)).input(plate, Iron, 5).outputs(new ItemStack(Blocks.HOPPER)).duration(800).buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().EUt(2).input(gear, CobaltBrass).input(dust, Diamond).output(COMPONENT_SAW_BLADE_DIAMOND).duration(1600).buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(30).input(foil, Polycaprolactam, 4).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(288)).output(DUCT_TAPE).duration(100).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(30).input(foil, SiliconeRubber, 4).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(288)).output(DUCT_TAPE, 2).duration(100).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(30).input(foil, StyreneButadieneRubber, 2).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(144)).output(DUCT_TAPE, 4).duration(100).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().EUt(30).input(foil, Polybenzimidazole).input(CARBON_MESH).fluidInputs(Polyethylene.getFluid(72)).output(DUCT_TAPE, 8).duration(100).buildAndRegister();
+
     }
 
     private static void registerBlastFurnaceRecipes() {

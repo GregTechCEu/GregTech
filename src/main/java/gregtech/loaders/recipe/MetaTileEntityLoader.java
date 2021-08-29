@@ -292,6 +292,10 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("rotor_holder_luv", MetaTileEntities.ROTOR_HOLDER[1].getStackForm(), "WHW", "WRW", "WWW", 'H', MetaTileEntities.HULL[GTValues.LuV].getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtHex, Materials.YttriumBariumCuprate), 'R', new UnificationEntry(OrePrefix.gear, Materials.Chrome));
         ModHandler.addShapedRecipe("rotor_holder_max", MetaTileEntities.ROTOR_HOLDER[2].getStackForm(), "WHW", "WRW", "WWW", 'H', MetaTileEntities.HULL[GTValues.MAX].getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtHex, Tier.Superconductor), 'R', new UnificationEntry(OrePrefix.gear, Materials.HSSS));
 
+        ModHandler.addShapedRecipe("maintenance_hatch", MetaTileEntities.MAINTENANCE_HATCH[0].getStackForm(), "dwx", "hHc", "fsr", 'H', MetaTileEntities.HULL[GTValues.LV].getStackForm());
+        ModHandler.addShapedRecipe("maintenance_hatch_auto_taping", MetaTileEntities.MAINTENANCE_HATCH[1].getStackForm(), "CMC", "RHR", "CMC", 'C', CIRCUIT.getIngredient(GTValues.HV), 'M', MetaTileEntities.MAINTENANCE_HATCH[0].getStackForm(), 'R', ROBOT_ARM.getIngredient(GTValues.HV), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm());
+        ModHandler.addShapedRecipe("maintenance_hatch_automatic", MetaTileEntities.MAINTENANCE_HATCH[2].getStackForm(), "CGC", "RHR", "CGC", 'C', CIRCUIT.getIngredient(GTValues.LuV), 'G', new UnificationEntry(OrePrefix.gear, Materials.HSSG), 'R', ROBOT_ARM.getIngredient(GTValues.LuV), 'H', MetaTileEntities.HULL[GTValues.LuV].getStackForm());
+
         // STEAM MACHINES
         ModHandler.addShapedRecipe("bronze_hull", MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), "PPP", "PhP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze));
         ModHandler.addShapedRecipe("bronze_bricks_hull", MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_BRICKS_HULL), "PPP", "PhP", "BBB", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze), 'B', new ItemStack(Blocks.BRICK_BLOCK));
@@ -317,6 +321,8 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("steam_compressor_steel", MetaTileEntities.STEAM_COMPRESSOR_STEEL.getStackForm(), "PSP", "WMW", "PPP", 'M', MetaTileEntities.STEAM_COMPRESSOR_BRONZE.getStackForm(), 'S', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron));
         ModHandler.addShapedRecipe("steam_alloy_smelter_bronze", MetaTileEntities.STEAM_ALLOY_SMELTER_BRONZE.getStackForm(), "XXX", "FMF", "XXX", 'M', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_BRICKS_HULL), 'X', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Bronze), 'F', OreDictNames.craftingFurnace);
         ModHandler.addShapedRecipe("steam_alloy_smelter_steel", MetaTileEntities.STEAM_ALLOY_SMELTER_STEEL.getStackForm(), "WSW", "WMW", "WPW", 'M', MetaTileEntities.STEAM_ALLOY_SMELTER_BRONZE.getStackForm(), 'S', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron));
+        ModHandler.addShapedRecipe("steam_rock_breaker_bronze", MetaTileEntities.STEAM_ROCK_BREAKER_BRONZE.getStackForm(), "PXP", "XMX", "DXD", 'M', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_BRICKS_HULL), 'X', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Bronze), 'P', "craftingPiston", 'D', new UnificationEntry(OrePrefix.gem, Materials.Diamond));
+        ModHandler.addShapedRecipe("steam_rock_breaker_steel", MetaTileEntities.STEAM_ROCK_BREAKER_STEEL.getStackForm(), "WSW", "PMP", "WWW", 'M', MetaTileEntities.STEAM_ROCK_BREAKER_BRONZE.getStackForm(), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'S', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'P', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron));
 
         // MULTI BLOCK CONTROLLERS
         ModHandler.addShapedRecipe("bronze_primitive_blast_furnace", MetaTileEntities.PRIMITIVE_BLAST_FURNACE.getStackForm(), "hRS", "PBR", "dRS", 'R', new UnificationEntry(OrePrefix.stick, Materials.Iron), 'S', new UnificationEntry(OrePrefix.screw, Materials.Iron), 'P', new UnificationEntry(OrePrefix.plate, Materials.Iron), 'B', MetaBlocks.METAL_CASING.getItemVariant(PRIMITIVE_BRICKS));
@@ -407,11 +413,14 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(MetaTileEntities.REPLICATOR, "EFE", "CMC", "EQE", 'M', HULL, 'Q', CABLE_QUAD, 'C', BETTER_CIRCUIT, 'F', FIELD_GENERATOR, 'E', EMITTER);
         registerMachineRecipe(MetaTileEntities.SCANNER, "CEC", "WHW", "CSC", 'C', BETTER_CIRCUIT, 'E', EMITTER, 'W', CABLE, 'H', HULL, 'S', SENSOR);
         registerMachineRecipe(MetaTileEntities.GAS_COLLECTOR, "WFW", "PHP", "WCW", 'W', Blocks.IRON_BARS, 'F', MetaItems.FLUID_FILTER, 'P', PUMP, 'H', HULL, 'C', CIRCUIT);
+        registerMachineRecipe(MetaTileEntities.ROCK_BREAKER, "PMW", "CHC", "GGG", 'P', PISTON, 'M', MOTOR, 'W', GRINDER, 'C', CABLE, 'H', HULL, 'G', GLASS);
 
         registerMachineRecipe(MetaTileEntities.PUMP, "WGW", "GMG", "TGT", 'M', HULL, 'W', CIRCUIT, 'G', PUMP, 'T', PIPE_LARGE);
         registerMachineRecipe(MetaTileEntities.FISHER, "WTW", "PMP", "TGT", 'M', HULL, 'W', CIRCUIT, 'G', PUMP, 'T', MOTOR, 'P', PISTON);
         registerMachineRecipe(MetaTileEntities.ITEM_COLLECTOR, "MRM", "RHR", "CWC", 'M', MOTOR, 'R', ROTOR, 'H', HULL, 'C', CIRCUIT, 'W', CABLE);
         registerMachineRecipe(MetaTileEntities.BLOCK_BREAKER, "MGM", "CHC", "WSW", 'M', MOTOR, 'H', HULL, 'C', CIRCUIT, 'W', CABLE, 'S', Blocks.CHEST, 'G', GRINDER);
+
+        registerMachineRecipe(MetaTileEntities.MUFFLER_HATCH, "HM", "PR", 'H', HULL, 'M', MOTOR, 'P', PIPE_NORMAL, 'R', ROTOR);
 
         ModHandler.addShapedRecipe("gregtech.machine.simple_washer.lv", MetaTileEntities.SIMPLE_ORE_WASHER.getStackForm(), "WPW", "WBW", "WHW", 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', MetaItems.ELECTRIC_PUMP_LV.getStackForm(), 'B', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials. Bronze), 'H', MetaTileEntities.HULL[GTValues.ULV].getStackForm());
 

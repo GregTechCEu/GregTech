@@ -38,7 +38,7 @@ public class AssemblyLineInfo extends MultiblockInfoPage {
                 if (num == 4 || num == 9) builder.aisle("FIf", "RTR", "GAG", "#Y#");
                 else builder.aisle("CIC", "RTR", "GAG", "#Y#");
             }
-            builder.aisle("CIC", "RTR", "GSG", "#Y#")
+            builder.aisle("CIM", "RTR", "GSG", "#Y#")
                     .where('S', MetaTileEntities.ASSEMBLY_LINE, EnumFacing.SOUTH)
                     .where('C', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID))
                     .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[4], EnumFacing.WEST)
@@ -46,6 +46,7 @@ public class AssemblyLineInfo extends MultiblockInfoPage {
                     .where('O', MetaTileEntities.ITEM_EXPORT_BUS[4], EnumFacing.DOWN)
                     .where('Y', MetaTileEntities.ENERGY_INPUT_HATCH[4], EnumFacing.UP)
                     .where('I', MetaTileEntities.ITEM_IMPORT_BUS[0], EnumFacing.DOWN)
+                    .where('M', maintenanceIfEnabled(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID)), EnumFacing.EAST)
                     .where('G', MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.GRATE_CASING))
                     .where('A', MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.ASSEMBLER_CASING))
                     .where('R', MetaBlocks.TRANSPARENT_CASING.getState(BlockTransparentCasing.CasingType.REINFORCED_GLASS))

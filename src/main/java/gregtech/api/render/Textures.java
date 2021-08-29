@@ -127,6 +127,7 @@ public class Textures {
     public static final OrientedOverlayRenderer UNPACKER_OVERLAY = new OrientedOverlayRenderer("machines/unpacker", FRONT);
     public static final OrientedOverlayRenderer POLARIZER_OVERLAY = new OrientedOverlayRenderer("machines/polarizer", FRONT, TOP);
     public static final OrientedOverlayRenderer LASER_ENGRAVER_OVERLAY = new OrientedOverlayRenderer("machines/laser_engraver", FRONT);
+    public static final OrientedOverlayRenderer ROCK_BREAKER_OVERLAY = new OrientedOverlayRenderer("machines/rock_crusher", FRONT);
     public static final OrientedOverlayRenderer SIFTER_OVERLAY = new OrientedOverlayRenderer("machines/sifter", FRONT, TOP);
     public static final OrientedOverlayRenderer THERMAL_CENTRIFUGE_OVERLAY = new OrientedOverlayRenderer("machines/thermal_centrifuge", FRONT);
     public static final OrientedOverlayRenderer WIREMILL_OVERLAY = new OrientedOverlayRenderer("machines/wiremill", FRONT, TOP);
@@ -145,8 +146,6 @@ public class Textures {
     public static final SimpleOverlayRenderer CRAFTING = new SimpleOverlayRenderer("cover/overlay_crafting");
     public static final SimpleOverlayRenderer SOLAR_PANEL = new SimpleOverlayRenderer("cover/overlay_solar_panel");
     public static final SimpleOverlayRenderer INFINITE_WATER = new SimpleOverlayRenderer("cover/overlay_infinite_water");
-    public static final SimpleOverlayRenderer ROCK_CRUSHER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_rock_crusher");
-    public static final SimpleOverlayRenderer ROCK_CRUSHER_ACTIVE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_rock_crusher_active");
     public static final SimpleOverlayRenderer PIPE_OUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_out");
     public static final SimpleOverlayRenderer PIPE_IN_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_in");
     public static final SimpleOverlayRenderer FLUID_HATCH_OUTPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_fluid_hatch_output");
@@ -183,6 +182,10 @@ public class Textures {
     public static final SimpleOverlayRenderer QUANTUM_TANK_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_qtank");
     public static final SimpleOverlayRenderer QUANTUM_CHEST_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_qchest");
     public static final SimpleOverlayRenderer BUFFER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_buffer");
+    public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance");
+    public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY_TAPED = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance_taped");
+    public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY_AUTO_TAPING = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance_auto_taping");
+    public static final SimpleOverlayRenderer MUFFLER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_muffler");
 
     static {
         for (int i = 0; i < VOLTAGE_CASINGS.length; i++) {

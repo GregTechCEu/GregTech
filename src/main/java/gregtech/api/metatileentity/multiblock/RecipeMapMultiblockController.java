@@ -6,6 +6,7 @@ import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMufflerHatch;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
@@ -15,6 +16,7 @@ import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -27,6 +29,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase {
 
@@ -87,9 +90,19 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         this.recipeMapWorkable.invalidate();
     }
 
+    public void outputRecoveryItems() {
+        IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
+        muffler.recoverItemsTable(recoveryItems.stream().map(ItemStack::copy).collect(Collectors.toList()));
+    }
+
     @Override
     protected void updateFormedValid() {
-        this.recipeMapWorkable.updateWorkable();
+        if (!hasMufflerMechanics() || isMufflerFaceFree())
+            this.recipeMapWorkable.updateWorkable();
+    }
+
+    public boolean isActive() {
+        return isStructureFormed() && recipeMapWorkable.isActive();
     }
 
     private void initializeAbilities() {
@@ -142,6 +155,10 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     @Override
     protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
+        boolean canForm = super.checkStructureComponents(parts, abilities);
+        if (!canForm)
+            return false;
+
         //basically check minimal requirements for inputs count
         //noinspection SuspiciousMethodCalls
         int itemInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_ITEMS, Collections.emptyList())

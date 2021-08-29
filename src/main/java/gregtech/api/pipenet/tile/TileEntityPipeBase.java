@@ -31,7 +31,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     private int openConnections = 0;
     private boolean walked = false;
 
-    protected int insulationColor = DEFAULT_INSULATION_COLOR;
+    protected int insulationColor = DEFAULT_COVER_COLOR;
     protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
     private NodeDataType cachedNodeData;
     private BlockPipe<PipeType, NodeDataType, ?> pipeBlock;

@@ -266,6 +266,26 @@ public class Recipe {
         return false;
     }
 
+    public boolean isNotConsumedInput(Object stack) {
+        if (stack instanceof FluidStack) {
+            if (fluidInputs.contains(stack)) {
+                return fluidInputs.get(fluidInputs.indexOf(stack)).amount == 0;
+            } else return false;
+        } else if (stack instanceof ItemStack) {
+            for (CountableIngredient ing : inputs) {
+                if (ing.getCount() != 0) continue;
+                for (ItemStack inputStack : ing.getIngredient().getMatchingStacks()) {
+                    if (inputStack.getItem() == ((ItemStack) stack).getItem()
+                            && inputStack.getItemDamage() == ((ItemStack) stack).getItemDamage()
+                            && Objects.equals(inputStack.getTagCompound(), ((ItemStack) stack).getTagCompound())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else return false;
+    }
+
     public List<FluidStack> getFluidOutputs() {
         return fluidOutputs;
     }

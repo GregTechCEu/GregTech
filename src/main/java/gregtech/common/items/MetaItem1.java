@@ -21,6 +21,7 @@ import gregtech.common.items.behaviors.*;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 
 import static gregtech.api.util.DyeUtil.getOredictColorName;
@@ -37,17 +38,17 @@ public class MetaItem1 extends StandardMetaItem {
         // Credits: ID 0-10
         CREDIT_COPPER = addItem(0, "credit.copper").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Copper, GTValues.M / 4)));
         CREDIT_CUPRONICKEL = addItem(1, "credit.cupronickel").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Cupronickel, GTValues.M / 4)));
-        CREDIT_SILVER = addItem(2, "credit.silver").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Silver, GTValues.M / 4)));
-        CREDIT_GOLD = addItem(3, "credit.gold").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4)));
-        CREDIT_PLATINUM = addItem(4, "credit.platinum").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, GTValues.M / 4)));
-        CREDIT_OSMIUM = addItem(5, "credit.osmium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmium, GTValues.M / 4)));
-        CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Naquadah, GTValues.M / 4)));
-        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Neutronium, GTValues.M / 4)));
+        CREDIT_SILVER = addItem(2, "credit.silver").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Silver, GTValues.M / 4))).setRarity(EnumRarity.UNCOMMON);
+        CREDIT_GOLD = addItem(3, "credit.gold").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4))).setRarity(EnumRarity.UNCOMMON);
+        CREDIT_PLATINUM = addItem(4, "credit.platinum").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
+        CREDIT_OSMIUM = addItem(5, "credit.osmium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmium, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
+        CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Naquadah, GTValues.M / 4))).setRarity(EnumRarity.RARE);
+        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Neutronium, GTValues.M / 4))).setRarity(EnumRarity.RARE);
 
         COIN_GOLD_ANCIENT = addItem(8, "coin.gold.ancient").
-                setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4)));
+                setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4))).setRarity(EnumRarity.RARE);
         COIN_DOGE = addItem(9, "coin.doge")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Brass, GTValues.M / 4)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Brass, GTValues.M / 4))).setRarity(EnumRarity.RARE);
         COIN_CHOCOLATE = addItem(10, "coin.chocolate")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4)))
                 .addComponents(new FoodStats(1, 0.1F, false, true, OreDictUnifier.get(OrePrefix.foil, Materials.Gold), new RandomPotionEffect(MobEffects.SPEED, 200, 1, 10)));
@@ -393,6 +394,7 @@ public class MetaItem1 extends StandardMetaItem {
         CARBON_FIBERS = addItem(499, "carbon.fibers");
         CARBON_MESH = addItem(500, "carbon.mesh");
         CARBON_PLATE = addItem(501, "carbon.plate");
+        DUCT_TAPE = addItem(502, "duct_tape");
 
         // Circuit Components: ID 516-565
         VACUUM_TUBE = addItem(516, "circuit.vacuum_tube").setUnificationData(OrePrefix.circuit, Tier.Primitive);

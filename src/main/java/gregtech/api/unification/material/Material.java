@@ -627,6 +627,10 @@ public class Material implements Comparable<Material> {
             );
 
             for (int i = 0; i < components.length; i += 2) {
+                if (components[i] == null) {
+                    throw new IllegalArgumentException("Material in Components List is null for Material "
+                            + this.materialInfo.name);
+                }
                 composition.add(new MaterialStack(
                         (Material) components[i],
                         (Integer) components[i + 1]

@@ -1,12 +1,13 @@
 package gregtech.api.metatileentity.multiblock;
 
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.SteamMultiblockRecipeLogic;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
@@ -126,5 +127,16 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
                 .stream().map(it -> (IItemHandler) it).mapToInt(IItemHandler::getSlots).sum();
         return itemInputsCount >= recipeMap.getMinInputs() &&
                 abilities.containsKey(MultiblockAbility.STEAM);
+    }
+
+    @Override
+    protected boolean shouldUpdate(MTETrait trait) {
+        return !(trait instanceof SteamMultiblockRecipeLogic);
+    }
+
+    @Override
+    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderMetaTileEntity(renderState, translation, pipeline);
+        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive());
     }
 }

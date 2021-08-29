@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.multi.electric.generator;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FuelRecipeLogic;
+import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.recipes.FuelRecipe;
 import gregtech.api.unification.material.Material;
@@ -34,7 +35,7 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
     @Override
     public void update() {
         super.update();
-        MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MetaTileEntityLargeTurbine.ABILITY_ROTOR_HOLDER).get(0);
+        MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MultiblockAbility.ABILITY_ROTOR_HOLDER).get(0);
         if (!rotorHolder.isHasRotor()) {
             setActive(false);
         }
@@ -53,7 +54,7 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
 
     @Override
     public boolean checkRecipe(FuelRecipe recipe) {
-        MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MetaTileEntityLargeTurbine.ABILITY_ROTOR_HOLDER).get(0);
+        MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MultiblockAbility.ABILITY_ROTOR_HOLDER).get(0);
         if (++rotorCycleLength >= CYCLE_LENGTH) {
             int damageToBeApplied = (int) Math.round(BASE_ROTOR_DAMAGE * rotorHolder.getRelativeRotorSpeed()) + 1;
             if (rotorHolder.applyDamageToRotor(damageToBeApplied, false)) {
@@ -66,7 +67,7 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
 
     @Override
     public long getMaxVoltage() {
-        MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MetaTileEntityLargeTurbine.ABILITY_ROTOR_HOLDER).get(0);
+        MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MultiblockAbility.ABILITY_ROTOR_HOLDER).get(0);
         if (rotorHolder.hasRotorInInventory()) {
             double rotorEfficiency = rotorHolder.getRotorEfficiency();
             double totalEnergyOutput = (BASE_EU_OUTPUT + getBonusForTurbineType(largeTurbine) * rotorEfficiency);
@@ -77,7 +78,7 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
 
     @Override
     protected boolean isReadyForRecipes() {
-        MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MetaTileEntityLargeTurbine.ABILITY_ROTOR_HOLDER).get(0);
+        MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MultiblockAbility.ABILITY_ROTOR_HOLDER).get(0);
         return rotorHolder.isHasRotor();
     }
 
@@ -117,7 +118,7 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
 
     @Override
     public long getRecipeOutputVoltage() {
-        MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MetaTileEntityLargeTurbine.ABILITY_ROTOR_HOLDER).get(0);
+        MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MultiblockAbility.ABILITY_ROTOR_HOLDER).get(0);
         double relativeRotorSpeed = rotorHolder.getRelativeRotorSpeed();
         if (rotorHolder.getCurrentRotorSpeed() > 0 && rotorHolder.hasRotorInInventory()) {
             double rotorEfficiency = rotorHolder.getRotorEfficiency();

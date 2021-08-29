@@ -54,6 +54,17 @@ public class GuiTextures {
     //WIDGET UI RELATED
     public static final TextureArea SLIDER_BACKGROUND = TextureArea.fullImage("textures/gui/widget/slider_background.png");
     public static final TextureArea SLIDER_ICON = TextureArea.fullImage("textures/gui/widget/slider.png");
+    public static final TextureArea MAINTENANCE_ICON = TextureArea.fullImage("textures/gui/widget/button_maintenance.png");
+
+    //PRIMITIVE
+    public static final TextureArea PRIMITIVE_BACKGROUND = AdoptableTextureArea.fullImage("textures/gui/primitive/primitive_background.png", 176, 166, 3, 3);
+    public static final TextureArea PRIMITIVE_SLOT = AdoptableTextureArea.fullImage("textures/gui/primitive/primitive_slot.png", 18, 18, 1, 1);
+    public static final TextureArea PRIMITIVE_FURNACE_OVERLAY = TextureArea.fullImage("textures/gui/primitive/overlay_primitive_furnace.png");
+    public static final TextureArea PRIMITIVE_DUST_OVERLAY = TextureArea.fullImage("textures/gui/primitive/overlay_primitive_dust.png");
+    public static final TextureArea PRIMITIVE_INGOT_OVERLAY = TextureArea.fullImage("textures/gui/primitive/overlay_primitive_ingot.png");
+    public static final TextureArea PRIMITIVE_LARGE_FLUID_TANK = TextureArea.fullImage("textures/gui/primitive/primitive_large_fluid_tank.png");
+    public static final TextureArea PRIMITIVE_LARGE_FLUID_TANK_OVERLAY = TextureArea.fullImage("textures/gui/primitive/primitive_large_fluid_tank_overlay.png");
+    public static final TextureArea PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR = TextureArea.fullImage("textures/gui/primitive/progress_bar_primitive_blast_furnace.png");
 
     //BRONZE
     public static final TextureArea BRONZE_BACKGROUND = TextureArea.fullImage("textures/gui/steam/bronze/bronze_gui.png");

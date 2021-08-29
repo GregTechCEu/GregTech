@@ -36,43 +36,44 @@ public class LargeChemicalReactorInfo extends MultiblockInfoPage {
                 .where('P', MetaBlocks.BOILER_CASING.getState(BlockBoilerCasing.BoilerCasingType.POLYTETRAFLUOROETHYLENE_PIPE))
                 .where('C', MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL))
                 .where('I', MetaTileEntities.ITEM_IMPORT_BUS[3], EnumFacing.WEST)
-                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[3], EnumFacing.WEST)
+                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[3], EnumFacing.EAST)
                 .where('O', MetaTileEntities.ITEM_EXPORT_BUS[3], EnumFacing.WEST)
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[3], EnumFacing.WEST)
-                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[3], EnumFacing.WEST);
+                .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[3], EnumFacing.WEST)
+                .where('M', maintenanceIfEnabled(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING)), EnumFacing.WEST);
 
         shapeInfo.add(
                 baseBuilder.shallowCopy()
                         .aisle("IXX", "FXX", "XXX")
-                        .aisle("EXX", "SPC", "XXX")
+                        .aisle("MXE", "SPC", "XXX")
                         .aisle("OXX", "HXX", "XXX")
                         .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
                         .aisle("IXX", "FXX", "XXX")
-                        .aisle("EXX", "SPX", "XCX")
+                        .aisle("MXE", "SPX", "XCX")
                         .aisle("OXX", "HXX", "XXX")
                         .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
                         .aisle("IXX", "FXX", "XXX")
-                        .aisle("ECX", "SPX", "XXX")
+                        .aisle("MCE", "SPX", "XXX")
                         .aisle("OXX", "HXX", "XXX")
                         .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
                         .aisle("IXX", "FCX", "XXX")
-                        .aisle("EXX", "SPX", "XXX")
+                        .aisle("MXE", "SPX", "XXX")
                         .aisle("OXX", "HXX", "XXX")
                         .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
                         .aisle("IXX", "FXX", "XXX")
-                        .aisle("EXX", "SPX", "XXX")
+                        .aisle("MXE", "SPX", "XXX")
                         .aisle("OXX", "HCX", "XXX")
                         .build()
         );

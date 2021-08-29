@@ -3,6 +3,7 @@ package gregtech.common.metatileentities.electric;
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
+import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
@@ -59,7 +60,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.ROCK_CRUSHER_OVERLAY.renderSided(getFrontFacing(), renderState, translation, pipeline);
+        Textures.ROCK_BREAKER_OVERLAY.render(renderState, translation, pipeline, Cuboid6.full, getFrontFacing(), false);
         Textures.PIPE_OUT_OVERLAY.renderSided(getOutputFacing(), renderState, translation, pipeline);
     }
 
