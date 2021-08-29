@@ -601,10 +601,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             return Materials.Neutronium;
         }
         Material material = GregTechRegistries.getMaterialRegistry().getObject(toolMaterialName);
-        if (material != null) {
-            return material;
-        }
-        return Materials.Neutronium;
+        return material != null ? material : Materials.Neutronium;
     }
 
     @Override

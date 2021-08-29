@@ -45,7 +45,7 @@ public class TextFieldWidget extends Widget {
             this.textField.setCanLoseFocus(true);
             this.textField.setEnableBackgroundDrawing(enableBackground);
             this.textField.setMaxStringLength(this.maxStringLength);
-            this.textField.setGuiResponder(MCGuiUtil.createTextFieldResponder(this::onTextChanged));
+            this.textField.setGuiResponder(new TextFieldGuiResponder(this::onTextChanged));
         }
         this.textSupplier = textSupplier;
         this.textResponder = textResponder;
@@ -79,7 +79,8 @@ public class TextFieldWidget extends Widget {
             this.textField.setCanLoseFocus(true);
             this.textField.setEnableBackgroundDrawing(false);
             this.textField.setMaxStringLength(maxStringLength);
-            this.textField.setGuiResponder(MCGuiUtil.createTextFieldResponder(this::onTextChanged));
+            this.textField.setGuiResponder(new TextFieldGuiResponder(this::onTextChanged));
+            this.textField.setGuiResponder(new TextFieldGuiResponder(this::onTextChanged));
         }
         this.background = background;
         this.textSupplier = textSupplier;
