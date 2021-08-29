@@ -5,10 +5,9 @@ import net.minecraft.util.Tuple;
 public interface IMaintenanceHatch {
 
     /**
-     *
-     * @return int corresponding to maintenance hatch type, bounded [0,3)
+     * @return true if this is a Full-Auto Maintenance Hatch, false otherwise.
      */
-    int getType();
+    boolean isFullAuto();
 
     /**
      * Sets this Maintenance Hatch as being duct taped

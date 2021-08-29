@@ -125,7 +125,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             return;
 
         IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-        if (maintenanceHatch.getType() == 2) {
+        if (maintenanceHatch.isFullAuto()) {
             return;
         }
 
@@ -145,11 +145,11 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
             IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-            if (maintenanceHatch.getType() == 2) { // set problems fixed with full auto hatches
+            if (maintenanceHatch.isFullAuto()) { // set problems fixed with full auto hatches
                 this.maintenance_problems = 0b111111;
             } else {
                 readMaintenanceData(maintenanceHatch);
-                if (maintenanceHatch.getType() == 0 && storedTaped) {
+                if (!maintenanceHatch.isFullAuto() && storedTaped) {
                     maintenanceHatch.setTaped(true);
                     storeTaped(false);
                 }
@@ -230,7 +230,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
             IMaintenanceHatch maintenance = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
-            if (maintenance.getType() != 2) // store maintenance data for non full auto hatches
+            if (!maintenance.isFullAuto()) // store maintenance data for non full auto hatches
                 maintenance.storeMaintenanceData(maintenance_problems, timeActive);
         }
         super.invalidateStructure();

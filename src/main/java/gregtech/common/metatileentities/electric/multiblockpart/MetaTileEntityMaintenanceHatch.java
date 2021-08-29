@@ -8,7 +8,6 @@ import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -37,25 +36,21 @@ import static gregtech.api.capability.MultiblockDataCodes.STORE_MAINTENANCE;
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
     private ItemStackHandler inventory;
-    private final byte type; // Type 0 is regular, 1 is auto taping, 2 is full auto
+    private final boolean isFullAuto;
     private boolean isTaped;
 
     // Used to store state temporarily if the Controller is broken
     private byte maintenanceProblems = -1;
     private int timeActive = -1;
 
-    public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, int tier) {
-        super(metaTileEntityId, tier);
-        this.initializeInventory();
-
-        if (tier == 6) type = 2;
-        else if (tier == 3) type = 1;
-        else type = 0;
+    public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, boolean isFullAuto) {
+        super(metaTileEntityId, isFullAuto ? 3 : 1);
+        this.isFullAuto = isFullAuto;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
-        return new MetaTileEntityMaintenanceHatch(metaTileEntityId, getTier());
+        return new MetaTileEntityMaintenanceHatch(metaTileEntityId, isFullAuto);
     }
 
     @Override
@@ -65,7 +60,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         if (shouldRenderOverlay()) {
 
             SimpleOverlayRenderer renderer;
-            if (type == 2) renderer = Textures.MAINTENANCE_OVERLAY_AUTO_TAPING;
+            if (isFullAuto) renderer = Textures.MAINTENANCE_OVERLAY_FULL_AUTO;
             else if (isTaped) renderer = Textures.MAINTENANCE_OVERLAY_TAPED;
             else renderer = Textures.MAINTENANCE_OVERLAY;
 
@@ -75,14 +70,14 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        if (this.type != 1)
+        if (isFullAuto)
             return super.createImportItemHandler();
         return new ItemStackHandler(1);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        if (this.type != 1)
+        if (isFullAuto)
             return super.createExportItemHandler();
         return new ItemStackHandler(1);
     }
@@ -159,36 +154,20 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
         byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
 
-        switch (this.type) {
-            case 0: { // Manual
-                if (entityPlayer == null)
-                    break;
-
+        if (!isFullAuto && entityPlayer != null) {
             // For every slot in the player's main inventory, try to duct tape fix
             for (int i = 0; i < entityPlayer.inventory.mainInventory.size(); i++) {
                 if (consumeDuctTape(new ItemStackHandler(entityPlayer.inventory.mainInventory), i)) {
                     fixAllMaintenanceProblems();
                     setTaped(true);
-                    break;
+                    return;
                 }
             }
-
-                if (isTaped)
-                    break;
-
-                // For each problem the multi has, try to fix with tools
-                for (byte i = 0; i < 6; i++) {
-                    if (((problems >> i) & 1) == 0)
-                        fixProblemWithTool(i, entityPlayer);
-                }
-                break;
+            // For each problem the multi has, try to fix with tools
+            for (byte i = 0; i < 6; i++) {
+                if (((problems >> i) & 1) == 0)
+                    fixProblemWithTool(i, entityPlayer);
             }
-            case 1: { // Consume Duct Tape for auto taping repair, then fix everything
-                if (consumeDuctTape(this.inventory, 0)) //todo make this emit redstone if it is out of tape
-                    fixAllMaintenanceProblems();
-                break;
-            }
-            // Fully automatic hatch never lets maintenance change elsewhere
         }
     }
 
@@ -278,11 +257,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             for (int i = 0; i < 6; i++) ((IMaintenance) this.getController()).setMaintenanceFixed(i);
     }
 
-    /**
-     * @return the maintenance hatch type, bounded [0, 3)
-     */
-    public int getType() {
-        return this.type;
+    @Override
+    public boolean isFullAuto() {
+        return isFullAuto;
     }
 
     //todo make this emit redstone if it is out of tape
@@ -302,9 +279,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void update() {
+    public void update() { // todo do this better
         super.update();
-        if (this.type != 0) { // if not a manual hatch, check every second for problems to fix
+        if (isFullAuto) { // if not a manual hatch, check every second for problems to fix
             if (this.getController() instanceof IMaintenance) {
                 if (getOffsetTimer() % 20 == 0 && ((IMaintenance) this.getController()).hasMaintenanceProblems() && this.getController().isStructureFormed()) {
                     fixMaintenanceProblems(null);
@@ -327,7 +304,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      */
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (type == 2) {
+        if (isFullAuto) {
             return false;
         }
         return super.onRightClick(playerIn, hand, facing, hitResult);
@@ -337,10 +314,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     protected ModularUI createUI(EntityPlayer entityPlayer) {
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 + 18 + 94).label(10, 5, this.getMetaFullName());
-        if (type == 1) {
-            builder.widget(new SlotWidget(this.getItemInventory(), 0, 89 - 9, 18, true, true)
-                    .setBackgroundTexture(GuiTextures.SLOT));
-        } else if (type == 0) {
+        if (!isFullAuto) {
             builder.widget(new ClickButtonWidget(89 - 9 - 1, 18 - 1, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
                     .setButtonTexture(GuiTextures.MAINTENANCE_ICON));
         }
