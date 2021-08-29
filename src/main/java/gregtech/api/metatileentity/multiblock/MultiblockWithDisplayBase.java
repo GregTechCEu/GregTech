@@ -34,7 +34,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static gregtech.api.capability.MultiblockDataCodes.STORE_TAPED;
 

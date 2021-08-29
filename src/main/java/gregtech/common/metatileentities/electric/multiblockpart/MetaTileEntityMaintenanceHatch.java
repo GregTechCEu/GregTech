@@ -22,6 +22,7 @@ import gregtech.api.util.GTToolTypes;
 import gregtech.common.items.MetaItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraftforge.items.IItemHandler;
@@ -299,6 +300,31 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                         .setButtonTexture(GuiTextures.MAINTENANCE_ICON))
                 .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16)
                 .build(this.getHolder(), entityPlayer);
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setBoolean("IsTaped", isTaped);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        isTaped = data.getBoolean("IsTaped");
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(isTaped);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        isTaped = buf.readBoolean();
     }
 
     @Override
