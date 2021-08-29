@@ -199,6 +199,11 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
         Textures.FUSION_REACTOR_OVERLAY.render(renderState, translation, pipeline, this.getFrontFacing(), this.recipeMapWorkable.isActive());
     }
 
+    @Override
+    public boolean hasMaintenanceMechanics() {
+        return false;
+    }
+
     public long getHeat() {
         return heat;
     }

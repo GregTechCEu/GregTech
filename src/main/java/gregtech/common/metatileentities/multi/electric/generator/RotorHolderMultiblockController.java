@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.electric.generator;
 
-import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
@@ -9,10 +8,9 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public abstract class RotorHolderMultiblockController extends FueledMultiblockController {
+import static gregtech.api.metatileentity.multiblock.MultiblockAbility.ABILITY_ROTOR_HOLDER;
 
-    @SuppressWarnings("InstantiationOfUtilityClass")
-    public static final MultiblockAbility<MetaTileEntityRotorHolder> ABILITY_ROTOR_HOLDER = new MultiblockAbility<>();
+public abstract class RotorHolderMultiblockController extends FueledMultiblockController {
 
     public RotorHolderMultiblockController(ResourceLocation metaTileEntityId, FuelRecipeMap recipeMap, long maxVoltage) {
         super(metaTileEntityId, recipeMap, maxVoltage);
@@ -44,7 +42,10 @@ public abstract class RotorHolderMultiblockController extends FueledMultiblockCo
      * only air blocks in front of rotor holder
      */
     public boolean isRotorFaceFree() {
-        return isStructureFormed() && getAbilities(ABILITY_ROTOR_HOLDER).get(0).isFrontFaceFree();
+        if (getAbilities(ABILITY_ROTOR_HOLDER).size() == 0)
+            return false;
+
+        return isStructureFormed() && getRotorHolder().isFrontFaceFree();
     }
 
     /**

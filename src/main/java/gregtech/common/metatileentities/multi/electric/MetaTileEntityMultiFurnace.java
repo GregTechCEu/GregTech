@@ -37,7 +37,8 @@ import java.util.List;
 public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS,
+            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.MAINTENANCE_HATCH
     };
 
     protected int heatingCoilLevel;
@@ -81,12 +82,13 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "CCC", "XXX")
-                .aisle("XXX", "C#C", "XXX")
+                .aisle("XXX", "C#C", "XMX")
                 .aisle("XSX", "CCC", "XXX")
                 .setAmountAtLeast('L', 9)
                 .where('S', selfPredicate())
                 .where('L', statePredicate(getCasingState()))
                 .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('M', abilityPartPredicate(MultiblockAbility.MUFFLER_HATCH))
                 .where('C', MetaTileEntityElectricBlastFurnace.heatingCoilPredicate())
                 .where('#', isAirPredicate())
                 .build();
@@ -107,6 +109,11 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
         return Textures.MULTI_FURNACE_OVERLAY;
     }
 
+    @Override
+    public boolean hasMufflerMechanics() {
+        return true;
+    }
+
     protected class MultiFurnaceWorkable extends MultiblockRecipeLogic {
 
         public MultiFurnaceWorkable(RecipeMapMultiblockController tileEntity) {
@@ -115,6 +122,9 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
 
         @Override
         protected void trySearchNewRecipe() {
+            if (((RecipeMapMultiblockController) metaTileEntity).getNumMaintenanceProblems() > 5)
+                return;
+
             long maxVoltage = getMaxVoltage();
             Recipe currentRecipe = null;
             IItemHandlerModifiable importInventory = getInputInventory();

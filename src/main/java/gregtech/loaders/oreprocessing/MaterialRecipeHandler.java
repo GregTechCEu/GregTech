@@ -249,7 +249,7 @@ public class MaterialRecipeHandler {
                     RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
                             .input(ingotPrefix, material, 3)
                             .outputs(GTUtility.copyAmount(2, plateStack))
-                            .EUt(16).duration((int) (material.getAverageMass() * 2))
+                            .EUt(16).duration((int) material.getAverageMass())
                             .buildAndRegister();
 
                     ModHandler.addShapedRecipe(String.format("plate_%s", material.toString()),

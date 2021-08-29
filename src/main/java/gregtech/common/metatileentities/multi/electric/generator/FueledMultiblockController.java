@@ -79,7 +79,12 @@ public abstract class FueledMultiblockController extends MultiblockWithDisplayBa
 
     @Override
     protected void updateFormedValid() {
-        this.workableHandler.update();
+        if (!hasMufflerMechanics() || isMufflerFaceFree())
+            this.workableHandler.update();
+    }
+
+    public boolean isActive() {
+        return isStructureFormed() && workableHandler.isActive();
     }
 
     @Override

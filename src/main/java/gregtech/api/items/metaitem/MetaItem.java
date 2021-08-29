@@ -36,6 +36,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -209,6 +210,15 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
             return metaValueItem.getDurabilityManager().getRGBDurabilityForDisplay(stack);
         }
         return MathHelper.hsvToRGB(0.33f, 1.0f, 1.0f);
+    }
+
+    @Nonnull
+    @Override
+    @SuppressWarnings("deprecation")
+    public EnumRarity getRarity(@Nonnull ItemStack stack) {
+        T metaValueItem = getItem(stack);
+        if (metaValueItem != null && metaValueItem.getRarity() != null) return metaValueItem.getRarity();
+        else return super.getRarity(stack);
     }
 
     protected abstract T constructMetaValueItem(short metaValue, String unlocalizedName);
@@ -650,6 +660,7 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
         private IItemColorProvider colorProvider;
         private IItemDurabilityManager durabilityManager;
         private IEnchantabilityHelper enchantabilityHelper;
+        private EnumRarity rarity;
 
         private int burnValue = 0;
         private boolean visible = true;
@@ -724,6 +735,11 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
                 throw new IllegalArgumentException("Cannot set amount of models to negative or zero number.");
             }
             this.modelAmount = modelAmount;
+            return this;
+        }
+
+        public MetaValueItem setRarity(EnumRarity rarity) {
+            this.rarity = rarity;
             return this;
         }
 
@@ -845,6 +861,10 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
 
         public int getModelAmount() {
             return modelAmount;
+        }
+
+        public EnumRarity getRarity() {
+            return rarity;
         }
 
         public ItemStack getStackForm(int amount) {

@@ -7,8 +7,7 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.widgets.ProgressWidget;
-import gregtech.api.gui.widgets.SlotWidget;
+import gregtech.api.gui.widgets.*;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -60,17 +59,22 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
 
     @Override
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 166)
-                .widget(new SlotWidget(importItems, 0, 33, 15, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INGOT_OVERLAY))
-                .widget(new SlotWidget(importItems, 1, 33, 33, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FURNACE_OVERLAY))
-                .progressBar(recipeMapWorkable::getProgressPercent, 58, 24, 20, 15, GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR, ProgressWidget.MoveType.HORIZONTAL)
-                .widget(new SlotWidget(exportItems, 0, 85, 24, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.INGOT_OVERLAY))
-                .widget(new SlotWidget(exportItems, 1, 103, 24, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUST_OVERLAY))
-                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 0);
+        return ModularUI.builder(GuiTextures.PRIMITIVE_BACKGROUND, 176, 166)
+                .widget(new LabelWidget(5, 5, getMetaFullName()))
+                .widget(new SlotWidget(importItems, 0, 52, 20, true, true)
+                        .setBackgroundTexture(GuiTextures.PRIMITIVE_SLOT, GuiTextures.PRIMITIVE_INGOT_OVERLAY))
+                .widget(new SlotWidget(importItems, 1, 52, 38, true, true)
+                        .setBackgroundTexture(GuiTextures.PRIMITIVE_SLOT, GuiTextures.PRIMITIVE_DUST_OVERLAY))
+                .widget(new SlotWidget(importItems, 2, 52, 56, true, true)
+                        .setBackgroundTexture(GuiTextures.PRIMITIVE_SLOT, GuiTextures.PRIMITIVE_FURNACE_OVERLAY))
+                .progressBar(recipeMapWorkable::getProgressPercent, 77, 39, 20, 15, GuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, ProgressWidget.MoveType.HORIZONTAL)
+                .widget(new SlotWidget(exportItems, 0, 104, 38, true, false)
+                        .setBackgroundTexture(GuiTextures.PRIMITIVE_SLOT, GuiTextures.PRIMITIVE_INGOT_OVERLAY))
+                .widget(new SlotWidget(exportItems, 1, 122, 38, true, false)
+                        .setBackgroundTexture(GuiTextures.PRIMITIVE_SLOT, GuiTextures.PRIMITIVE_DUST_OVERLAY))
+                .widget(new SlotWidget(exportItems, 2, 140, 38, true, false)
+                        .setBackgroundTexture(GuiTextures.PRIMITIVE_SLOT, GuiTextures.PRIMITIVE_DUST_OVERLAY))
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.PRIMITIVE_SLOT, 0);
     }
 
     @Override
@@ -85,5 +89,10 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
             renderState.colour = 0xFFFFFFFF;
             Textures.renderFace(renderState, offset, new IVertexOperation[0], EnumFacing.UP, Cuboid6.full, sprite);
         }
+    }
+
+    @Override
+    public boolean hasMaintenanceMechanics() {
+        return false;
     }
 }

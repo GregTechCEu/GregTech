@@ -31,6 +31,11 @@ import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityDistillationTower extends RecipeMapMultiblockController {
 
+    public static MultiblockAbility<?>[] ALLOWED_ABILITIES = {
+            MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.INPUT_ENERGY,
+            MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH
+    };
+
     public MetaTileEntityDistillationTower(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.DISTILLATION_RECIPES);
     }
@@ -66,8 +71,8 @@ public class MetaTileEntityDistillationTower extends RecipeMapMultiblockControll
                 .aisle("XXX", "X#X", "XXX").setRepeatable(0, 11)
                 .aisle("XXX", "XXX", "XXX")
                 .where('S', selfPredicate())
-                .where('Y', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.INPUT_ENERGY, MultiblockAbility.IMPORT_FLUIDS)))
-                .where('X', fluidExportPredicate.or(statePredicate(getCasingState())))
+                .where('Y', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
+                .where('X', fluidExportPredicate.or(maintenancePredicate(getCasingState())))
                 .where('#', isAirPredicate())
                 .validateLayer(1, exactlyOneHatch)
                 .validateLayer(2, exactlyOneHatch)

@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.PerTickLongCounter;
+import gregtech.common.ConfigHolder;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.EnergyNetHandler;
@@ -15,6 +16,11 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 
 public class TileEntityCable extends TileEntityMaterialPipeBase<Insulation, WireProperties> {
+
+    public TileEntityCable() {
+        super();
+        this.insulationColor = ConfigHolder.U.GT5u.defaultInsulationColor;
+    }
 
     private WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
 

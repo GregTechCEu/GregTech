@@ -31,7 +31,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     public static final MultiblockAbility<?>[] ALLOWED_ABILITIES = new MultiblockAbility[]{
             MultiblockAbility.INPUT_ENERGY, MultiblockAbility.IMPORT_ITEMS,
             MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
-            MultiblockAbility.EXPORT_FLUIDS
+            MultiblockAbility.EXPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH
     };
 
     public MetaTileEntityLargeChemicalReactor(ResourceLocation metaTileEntityId) {

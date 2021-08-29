@@ -407,9 +407,9 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 .where('S', selfPredicate())
                 .where('P', statePredicate(boilerType.pipeState))
                 .where('X', state -> statePredicate(GTUtility.getAllPropertyValues(boilerType.fireboxState, BlockFireboxCasing.ACTIVE))
-                        .or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS)).test(state))
+                        .or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.MUFFLER_HATCH)).test(state))
                 .where('C', statePredicate(boilerType.casingState).or(abilityPartPredicate(
-                        MultiblockAbility.EXPORT_FLUIDS)))
+                        MultiblockAbility.EXPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH)))
                 .build();
     }
 
@@ -545,5 +545,10 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             }
         }
         return fuels.values();
+    }
+
+    @Override
+    public boolean hasMufflerMechanics() {
+        return true;
     }
 }

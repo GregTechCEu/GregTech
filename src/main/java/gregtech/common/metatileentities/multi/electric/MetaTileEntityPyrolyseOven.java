@@ -24,7 +24,8 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
             MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS,
             MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.EXPORT_FLUIDS,
-            MultiblockAbility.INPUT_ENERGY
+            MultiblockAbility.INPUT_ENERGY, MultiblockAbility.MAINTENANCE_HATCH,
+            MultiblockAbility.MUFFLER_HATCH
     };
 
     public MetaTileEntityPyrolyseOven(ResourceLocation metaTileEntityId) {
@@ -63,5 +64,10 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
         return Textures.PYROLYSE_OVEN_OVERLAY;
+    }
+
+    @Override
+    public boolean hasMufflerMechanics() {
+        return true;
     }
 }

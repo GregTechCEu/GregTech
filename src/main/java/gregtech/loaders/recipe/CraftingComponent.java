@@ -184,7 +184,7 @@ public class CraftingComponent {
                 {4, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Titanium)},
                 {5, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.TungstenSteel)},
                 {6, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.NiobiumTitanium)},
-                {7, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Ultimet)},
+                {7, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Iridium)},
                 {8, new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Naquadah)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
@@ -488,7 +488,7 @@ public class CraftingComponent {
          */
         @SuppressWarnings("unused")
         public void appendIngredients(Map<Integer, Object> newIngredients) {
-            newIngredients.remove(GTValues.FALLBACK);
+            ingredients.remove(GTValues.FALLBACK);
             newIngredients.forEach((key, value) ->
                     ingredients.merge(key, value, (v1, v2) -> v2)
             );

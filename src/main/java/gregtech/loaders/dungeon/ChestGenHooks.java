@@ -2,6 +2,7 @@ package gregtech.loaders.dungeon;
 
 import com.google.common.collect.Lists;
 import gregtech.api.util.GTLog;
+import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.loot.LootContext;
@@ -43,7 +44,9 @@ public class ChestGenHooks {
             ArrayList<LootEntryItem> entryItems = lootEntryItems.get(event.getName());
             for (LootEntryItem entry : entryItems) {
                 try {
-                    GTLog.logger.info("adding " + entry.getEntryName() + " to lootTable");
+                    if(ConfigHolder.debug) {
+                        GTLog.logger.info("adding " + entry.getEntryName() + " to lootTable");
+                    }
                     mainPool.addEntry(entry);
                 } catch (java.lang.RuntimeException e) {
                     GTLog.logger.error("Couldn't add " + entry.getEntryName() + " to lootTable");

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class MultiblockShapeInfo {
 
@@ -53,6 +54,18 @@ public class MultiblockShapeInfo {
             holder.setMetaTileEntity(tileEntity);
             holder.getMetaTileEntity().setFrontFacing(frontSide);
             return where(symbol, new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), holder));
+        }
+
+        /**
+         * @param partSupplier Should supply either a MetaTileEntity or an IBlockState.
+         */
+        public Builder where(char symbol, Supplier<?> partSupplier, EnumFacing frontSideIfTE) {
+            Object part = partSupplier.get();
+            if (part instanceof IBlockState) {
+                return where(symbol, (IBlockState) part);
+            } else if (part instanceof MetaTileEntity) {
+                return where(symbol, (MetaTileEntity) part, frontSideIfTE);
+            } else throw new IllegalArgumentException("Supplier must supply either a MetaTileEntity or an IBlockState! Actual: " + part.getClass());
         }
 
         private BlockInfo[][][] bakeArray() {

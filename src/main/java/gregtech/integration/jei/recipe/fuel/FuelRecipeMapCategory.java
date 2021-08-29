@@ -3,6 +3,7 @@ package gregtech.integration.jei.recipe.fuel;
 import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.recipes.machines.FuelRecipeMap;
+import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -48,8 +49,9 @@ public class FuelRecipeMapCategory implements IRecipeCategory<GTFuelRecipeWrappe
 
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, GTFuelRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-        recipeLayout.getFluidStacks().init(0, true, 52, 24, 16, 16,
-                recipeWrapper.recipe.getRecipeFluid().amount, false, null);
+        recipeLayout.getFluidStacks().init(0, true,
+                new FluidStackTextRenderer(recipeWrapper.recipe.getRecipeFluid().amount, false, 16, 16, null),
+                52, 24, 16, 16, 0, 0);
         recipeLayout.getFluidStacks().set(ingredients);
     }
 

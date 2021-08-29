@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 public interface IPipeTile<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> {
 
     int DEFAULT_INSULATION_COLOR = ConfigHolder.U.GT5u.defaultInsulationColor;
+    int DEFAULT_COVER_COLOR = ConfigHolder.U.GT5u.defaultPaintingColor;
 
     World getPipeWorld();
 

@@ -124,6 +124,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem CARBON_FIBERS;
     public static MetaItem<?>.MetaValueItem CARBON_MESH;
     public static MetaItem<?>.MetaValueItem CARBON_PLATE;
+    public static MetaItem<?>.MetaValueItem DUCT_TAPE;
 
     public static MetaItem<?>.MetaValueItem NEUTRON_REFLECTOR;
 

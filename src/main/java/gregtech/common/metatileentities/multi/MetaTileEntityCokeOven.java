@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
@@ -68,17 +69,23 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
     }
 
     @Override
+    public boolean hasMaintenanceMechanics() {
+        return false;
+    }
+
+    @Override
     protected ModularUI.Builder createUITemplate(EntityPlayer entityPlayer) {
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 166)
-                .widget(new SlotWidget(importItems, 0, 33, 30, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FURNACE_OVERLAY))
-                .progressBar(recipeMapWorkable::getProgressPercent, 58, 30, 20, 15, GuiTextures.BRONZE_BLAST_FURNACE_PROGRESS_BAR, ProgressWidget.MoveType.HORIZONTAL)
-                .widget(new SlotWidget(exportItems, 0, 85, 30, true, false)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.FURNACE_OVERLAY))
-                .widget(new TankWidget(exportFluids.getTankAt(0), 133, 13, 20, 58)
-                        .setBackgroundTexture(GuiTextures.FLUID_TANK_BACKGROUND)
-                        .setOverlayTexture(GuiTextures.FLUID_TANK_OVERLAY)
+        return ModularUI.builder(GuiTextures.PRIMITIVE_BACKGROUND, 176, 166)
+                .widget(new LabelWidget(5, 5, getMetaFullName()))
+                .widget(new SlotWidget(importItems, 0, 52, 30, true, true)
+                        .setBackgroundTexture(GuiTextures.PRIMITIVE_SLOT, GuiTextures.PRIMITIVE_FURNACE_OVERLAY))
+                .progressBar(recipeMapWorkable::getProgressPercent, 76, 32, 20, 15, GuiTextures.PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR, ProgressWidget.MoveType.HORIZONTAL)
+                .widget(new SlotWidget(exportItems, 0, 103, 30, true, false)
+                        .setBackgroundTexture(GuiTextures.PRIMITIVE_SLOT, GuiTextures.PRIMITIVE_FURNACE_OVERLAY))
+                .widget(new TankWidget(exportFluids.getTankAt(0), 134, 13, 20, 58)
+                        .setBackgroundTexture(GuiTextures.PRIMITIVE_LARGE_FLUID_TANK)
+                        .setOverlayTexture(GuiTextures.PRIMITIVE_LARGE_FLUID_TANK_OVERLAY)
                         .setContainerClicking(true, false))
-                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 0);
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.PRIMITIVE_SLOT, 0);
     }
 }

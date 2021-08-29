@@ -592,6 +592,9 @@ public class Materials {
     public static Material Wood;
     public static Material Paper;
     public static Material FishOil;
+    public static Material RubySlurry;
+    public static Material SapphireSlurry;
+    public static Material GreenSapphireSlurry;
 
     /**
      * Second Degree Compounds

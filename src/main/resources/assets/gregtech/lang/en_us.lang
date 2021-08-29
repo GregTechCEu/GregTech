@@ -684,6 +684,7 @@ metaitem.ingot.iridium_alloy.tooltip=Used to make Iridium Alloy Plates
 metaitem.plate.iridium_alloy=Iridium Alloy Plate
 metaitem.neutron_reflector.name=Iridium Neutron Reflector
 metaitem.neutron_reflector.tooltip=Indestructible
+metaitem.duct_tape.name=BrainTech Aerospace Advanced Reinforced Duct Tape FAL-84
 
 metaitem.component.sawblade.diamond.name=Diamond Sawblade
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
@@ -1686,6 +1687,10 @@ material.uranium_rhodium_dinaquadide=Uranium Rhodium Dinaquadide
 material.enriched_naquadah_trinium_europium_duranide=Enriched Naquadah Trinium Europium Duranide
 material.ruthenium_trinium_americium_neutronate=Ruthenium Trinium Americium Neutronate
 
+material.ruby_slurry=Ruby Slurry
+material.sapphire_slurry=Sapphire Slurry
+material.green_sapphire_slurry=Green Sapphire Slurry
+
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
 item.gunpowder.dustTiny=Tiny Pile of Gunpowder
 item.gunpowder.dustSmall=Small Pile of Gunpowder
@@ -1815,6 +1820,7 @@ item.styrene_butadiene_rubber.dust=Styrene-Butadiene Rubber Pulp
 item.styrene_butadiene_rubber.nugget=Styrene-Butadiene Rubber Chip
 item.styrene_butadiene_rubber.ingot=Styrene-Butadiene Rubber Bar
 item.styrene_butadiene_rubber.plate=Styrene-Butadiene Rubber Sheet
+item.styrene_butadiene_rubber.foil=Thin Styrene-Butadiene Rubber Sheet
 item.wood.dustTiny=Tiny Pile of Wood Pulp
 item.wood.dustSmall=Small Pile of Wood Pulp
 item.wood.dust=Wood Pulp
@@ -1957,6 +1963,7 @@ recipemap.circuit_assembler.name=Circuit Assembler
 recipemap.mass_fabricator.name=Mass Fabricator
 recipemap.materialtree.name=Material Tree
 recipemap.gas_collector.name=Gas Collector
+recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 
@@ -2260,6 +2267,10 @@ gregtech.machine.steam_alloy_smelter_bronze.name=Steam Alloy Smelter
 gregtech.machine.steam_alloy_smelter_bronze.tooltip=Combination Smelter
 gregtech.machine.steam_alloy_smelter_steel.name=High Pressure Steam Alloy Smelter
 gregtech.machine.steam_alloy_smelter_steel.tooltip=Combination Smelter
+gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
+gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava adjancent
+gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
+gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava adjancent
 
 # Generators
 gregtech.machine.combustion_generator.lv.name=Basic Combustion Generator
@@ -3167,7 +3178,7 @@ tile.hermetic_casing.hermetic_casing_zpm.name=Hermetic Casing VII
 tile.hermetic_casing.hermetic_casing_uv.name=Hermetic Casing VIII
 tile.hermetic_casing.hermetic_casing_max.name=Hermetic Casing IX
 
-#Air Collectors
+#Gas Collectors
 gregtech.machine.gas_collector.lv.name=Basic Gas Collector
 gregtech.machine.gas_collector.mv.name=Advanced Gas Collector
 gregtech.machine.gas_collector.hv.name=Advanced Gas Collector II
@@ -3177,6 +3188,22 @@ gregtech.machine.gas_collector.luv.name=Atmosphere Collector II
 gregtech.machine.gas_collector.zpm.name=Atmosphere Collector III
 gregtech.machine.gas_collector.uv.name=Atmosphere Collector IV
 gregtech.machine.gas_collector.tooltip=Collects gas from adjacent blocks at the expense of energy, depending on the dimension
+
+#Rock Breakers
+gregtech.machine.rock_breaker.lv.name=Basic Rock Breaker
+gregtech.machine.rock_breaker.mv.name=Advanced Rock Breaker
+gregtech.machine.rock_breaker.hv.name=Advanced Rock Breaker II
+gregtech.machine.rock_breaker.ev.name=Advanced Rock Breaker III
+gregtech.machine.rock_breaker.iv.name=Elite Rock Breaker
+gregtech.machine.rock_breaker.luv.name=Elite Rock Breaker II
+gregtech.machine.rock_breaker.zpm.name=Elite Rock Breaker III
+gregtech.machine.rock_breaker.uv.name=Elite Rock Breaker IV
+gregtech.machine.rock_breaker.uhv.name=High-Tech Rock Breaker
+gregtech.machine.rock_breaker.uev.name=High-Tech Rock Breaker II
+gregtech.machine.rock_breaker.uiv.name=High-Tech Rock Breaker III
+gregtech.machine.rock_breaker.umv.name=High-Tech Rock Breaker IV
+gregtech.machine.rock_breaker.uxv.name=Ultimate Rock Breaker
+gregtech.machine.rock_breaker.tooltip=Place Lava and Water adjacent
 
 #Fisher
 gregtech.machine.fisher.lv.name=Basic Fisher
@@ -3586,6 +3613,33 @@ gregtech.machine.rotor_holder.hv.name=HV Rotor Holder
 gregtech.machine.rotor_holder.luv.name=LuV Rotor Holder
 gregtech.machine.rotor_holder.uhv.name=UHV Rotor Holder
 
+gregtech.machine.maintenance_hatch.name=Maintenance Hatch
+gregtech.machine.maintenance_hatch.tooltip=For maintaining Multiblocks
+gregtech.machine.maintenance_hatch_taping.name=Auto-Taping Maintenance Hatch
+gregtech.machine.maintenance_hatch_taping.tooltip=For automatically maintaining Multiblocks with Tape
+gregtech.machine.maintenance_hatch_full_auto.name=Automatic Maintenance Hatch
+gregtech.machine.maintenance_hatch_full_auto.tooltip=For automatically maintaining Multiblocks
+
+gregtech.machine.muffler_hatch.tooltip=DO NOT OBSTRUCT THE OUTPUT!
+
+gregtech.machine.muffler_hatch.ulv.name=ULV Muffler Hatch
+gregtech.machine.muffler_hatch.lv.name=LV Muffler Hatch
+gregtech.machine.muffler_hatch.mv.name=MV Muffler Hatch
+gregtech.machine.muffler_hatch.hv.name=HV Muffler Hatch
+gregtech.machine.muffler_hatch.ev.name=EV Muffler Hatch
+gregtech.machine.muffler_hatch.iv.name=IV Muffler Hatch
+gregtech.machine.muffler_hatch.luv.name=LuV Muffler Hatch
+gregtech.machine.muffler_hatch.zpm.name=ZPM Muffler Hatch
+gregtech.machine.muffler_hatch.uv.name=UV Muffler Hatch
+gregtech.machine.muffler_hatch.uhv.name=UHV Muffler Hatch
+gregtech.machine.muffler_hatch.uev.name=UEV Muffler Hatch
+gregtech.machine.muffler_hatch.uiv.name=UIV Muffler Hatch
+gregtech.machine.muffler_hatch.umv.name=UMV Muffler Hatch
+gregtech.machine.muffler_hatch.uxv.name=UXV Muffler Hatch
+gregtech.machine.muffler_hatch.max.name=MAX Muffler Hatch
+
+gregtech.muffler.recovery_tooltip=Recovers Items §b%d%%§7 of the time!
+
 gregtech.machine.pump_hatch.name=Pump Output Hatch
 gregtech.machine.pump_hatch.tooltip=Primitive Fluid Output for Water Pump
 
@@ -3682,23 +3736,37 @@ gregtech.multiblock.idling=Idling.
 gregtech.multiblock.not_enough_energy=WARNING: Machine needs more energy.
 gregtech.multiblock.progress=Progress: %s%%
 gregtech.multiblock.invalid_structure=Invalid structure.
-gregtech.multiblock.invalid_structure.tooltip=This block is a controller of the multiblock structure. For building help, see structure template in JEI
+gregtech.multiblock.invalid_structure.tooltip=This block is a controller of the multiblock structure. For building help, see structure template in JEI.
 gregtech.multiblock.validation_failed=Invalid amount of inputs/outputs.
 gregtech.multiblock.max_energy_per_tick=Max EU/t: §a%s (%s)
 gregtech.multiblock.generation_eu=Outputting: §a%s EU/t
+gregtech.multiblock.universal.no_problems=No Maintenance Problems!
+gregtech.multiblock.universal.has_problems=Has Maintenance Problems!
+gregtech.multiblock.universal.has_problems_header=Fix the following issues in a Maintenance Hatch:
+gregtech.multiblock.universal.problem.wrench=%s§7Pipe is loose. (§aWrench§7)
+gregtech.multiblock.universal.problem.screwdriver=%s§7Screws are loose. (§aScrewdriver§7)
+gregtech.multiblock.universal.problem.soft_mallet=%s§7Something is stuck. (§aSoft Mallet§7)
+gregtech.multiblock.universal.problem.hard_hammer=%s§7Plating is dented. (§aHard Hammer§7)
+gregtech.multiblock.universal.problem.wire_cutter=%s§7Wires burned out. (§aWire Cutter§7)
+gregtech.multiblock.universal.problem.crowbar=%s§7That doesn't belong there. (§aCrowbar§7)
+gregtech.multiblock.universal.muffler_obstructed=Muffler Hatch is Obstructed!
+gregtech.multiblock.universal.muffler_obstructed.tooltip=Muffler Hatch must have a block of airspace in front of it.
+
 gregtech.multiblock.preview.tilt=Shift+LMB to tilt
 gregtech.multiblock.preview.zoom=Shift+RMB to zoom
 gregtech.multiblock.preview.pan=LMB+Drag to pan
 gregtech.multiblock.preview.move=RMB+Drag to move
 gregtech.multiblock.preview.reset=Scroll Mousewheel to reset
 gregtech.multiblock.preview.any_hatch=Any tier hatch can be used to form the structure
+gregtech.multiblock.preview.any_hatch_maintenance=Any type of maintenance hatch can be used to form the structure
 gregtech.multiblock.preview.limit=Minimum Limit: %d
 gregtech.multiblock.preview.limit_per_layer=Only %d per layer
 gregtech.multiblock.preview.only=Only %s allowed
 gregtech.multiblock.preview.only_location=Only allowed at %s
 gregtech.multiblock.preview.location.b_c=Bottom Center
+gregtech.multiblock.preview.location.t_c=Top Center
 gregtech.multiblock.preview.primitive_pump.hatch=Only Pump Hatch, ULV Hatch, or LV Hatch allowed
-gregtech.multiblock.preview.location_end=very end
+gregtech.multiblock.preview.location_end=Very End
 
 gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s

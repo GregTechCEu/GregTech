@@ -156,7 +156,7 @@ public class FirstDegreeMaterials {
         Clay = new Material.Builder(270, "clay")
                 .dust(1)
                 .color(0xC8C8DC).iconSet(ROUGH)
-                .flags(MORTAR_GRINDABLE)
+                .flags(MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Sodium, 2, Lithium, 1, Aluminium, 2, Silicon, 2, Water, 6)
                 .build();
 

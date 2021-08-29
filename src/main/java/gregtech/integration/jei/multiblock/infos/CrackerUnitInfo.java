@@ -28,8 +28,8 @@ public class CrackerUnitInfo extends MultiblockInfoPage {
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
-        MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
-                .aisle("XCXCX", "XCSCF", "XCXCX")
+        return Lists.newArrayList(MultiblockShapeInfo.builder()
+                .aisle("XCMCX", "XCSCF", "XCXCX")
                 .aisle("XCXCX", "H###X", "XCXCX")
                 .aisle("XCXCX", "XCECF", "XCXCX")
                 .where('S', MetaTileEntities.CRACKER, EnumFacing.NORTH)
@@ -39,8 +39,8 @@ public class CrackerUnitInfo extends MultiblockInfoPage {
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.HV], EnumFacing.EAST)
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.SOUTH)
                 .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.HV], EnumFacing.WEST)
-                .build();
-        return Lists.newArrayList(shapeInfo);
+                .where('M', maintenanceIfEnabled(MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STAINLESS_CLEAN)), EnumFacing.NORTH)
+                .build());
     }
 
     @Override

@@ -105,10 +105,53 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         RecipeMaps.PACKER_RECIPES.recipeBuilder()
-                .inputs(TOOL_MATCHES.getStackForm(16)).input(OrePrefix.plate, Materials.Paper)
+                .inputs(TOOL_MATCHES.getStackForm(16))
+                .input(OrePrefix.plate, Materials.Paper)
                 .outputs(TOOL_MATCHBOX.getStackForm())
                 .duration(64)
                 .EUt(16)
+                .buildAndRegister();
+
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .notConsumable(new ItemStack(Blocks.COBBLESTONE))
+                .outputs(new ItemStack(Blocks.COBBLESTONE))
+                .duration(16)
+                .EUt(30)
+                .buildAndRegister();
+
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .notConsumable(new ItemStack(Blocks.STONE, 1, 0))
+                .outputs(new ItemStack(Blocks.STONE, 1, 0))
+                .duration(16)
+                .EUt(30)
+                .buildAndRegister();
+
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .notConsumable(new ItemStack(Blocks.STONE, 1, 1))
+                .outputs(new ItemStack(Blocks.STONE, 1, 1))
+                .duration(16)
+                .EUt(30)
+                .buildAndRegister();
+
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .notConsumable(new ItemStack(Blocks.STONE, 1, 3))
+                .outputs(new ItemStack(Blocks.STONE, 1, 3))
+                .duration(16)
+                .EUt(30)
+                .buildAndRegister();
+
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .notConsumable(new ItemStack(Blocks.STONE, 1, 5))
+                .outputs(new ItemStack(Blocks.STONE, 1, 5))
+                .duration(16)
+                .EUt(30)
+                .buildAndRegister();
+
+        RecipeMaps.ROCK_BREAKER_RECIPES.recipeBuilder()
+                .input(dust, Redstone)
+                .outputs(new ItemStack(Blocks.OBSIDIAN, 1))
+                .duration(128)
+                .EUt(30)
                 .buildAndRegister();
     }
 }

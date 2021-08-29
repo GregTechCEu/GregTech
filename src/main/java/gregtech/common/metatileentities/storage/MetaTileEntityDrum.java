@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.WatchedFluidTank;
@@ -273,7 +274,9 @@ public class MetaTileEntityDrum extends MetaTileEntity {
 
         @Override
         public boolean canFillFluidType(FluidStack fluid) {
-            return !material.toString().contains("wood") && !material.hasFlag(FLAMMABLE) || fluid.getFluid().getTemperature() <= 325;
+            if (material.toString().contains("wood"))
+                return !fluid.getFluid().isGaseous() && fluid.getFluid().getTemperature() <= 325;
+            return true;
         }
 
         @Override
