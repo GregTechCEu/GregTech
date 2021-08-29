@@ -1,5 +1,6 @@
 package gregtech.api.capability;
 
+import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.ISoftHammerItem;
@@ -42,6 +43,7 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(IActiveOutputSide.class);
         registerCapabilityWithNoDefault(IFuelable.class);
         registerCapabilityWithNoDefault(IMultiblockController.class);
+        registerCapabilityWithNoDefault(AbstractRecipeLogic.class);
 
         registerCapabilityWithNoDefault(IWrenchItem.class);
         registerCapabilityWithNoDefault(ICutterItem.class);

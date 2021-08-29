@@ -20,6 +20,8 @@ import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Size;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMaintenanceHatch;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumChest;
 import gregtech.common.metatileentities.storage.MetaTileEntityQuantumTank;
 import net.minecraft.client.renderer.GlStateManager;
@@ -93,7 +95,6 @@ public class MachineConsoleWidget extends WidgetGroup {
             addWidget(new SimpleTextWidget(size.width / 2, 12, "", -1, ()->facing.toString().toUpperCase()).setShadow(true));
             int y = 20;
             if (mte.hasFrontFacing()) {
-//                GregtechTileCapabilities.CAPABILITY_WORKABLE
                 addWidget(new RectButtonWidget(10, y, size.width - 20, 20, 1)
                         .setClickListener(clickData -> {
                             if (!isRemote() && mte.isValidFrontFacing(facing)) {
@@ -291,6 +292,22 @@ public class MachineConsoleWidget extends WidgetGroup {
                         .setHoverText("terminal.console.input")
                         .setIcon(GuiTextures.BUTTON_ALLOW_IMPORT_EXPORT.getSubArea(0, 0, 1, 0.5)));
                 y += 25;
+            }
+
+            // MultiBlockPart
+            if (mte instanceof MetaTileEntityMultiblockPart) {
+                // MetaTileEntityMaintenanceHatch
+                if (mte instanceof MetaTileEntityMaintenanceHatch) {
+                    addWidget(new RectButtonWidget(10, y, size.width - 20, 20, 1)
+                            .setClickListener(clickData -> {
+                              if (!isRemote()) {
+                                  ((MetaTileEntityMaintenanceHatch) mte).fixAllMaintenanceProblems();
+                              }
+                            })
+                            .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
+                            .setIcon(new TextTexture("terminal.console.maintenance", -1)));
+                    y += 25;
+                }
             }
 
             // CoverBehavior

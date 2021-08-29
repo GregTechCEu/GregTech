@@ -3923,5 +3923,6 @@ terminal.console.input=allow input from output
 terminal.console.cover_rs=signal: %s
 terminal.console.cover_gui=Gui
 terminal.console.gui=Open machine gui
+terminal.console.maintenance=Fix all problems
 terminal.console.venting=set as venting
 terminal.console.controllable=set working enable

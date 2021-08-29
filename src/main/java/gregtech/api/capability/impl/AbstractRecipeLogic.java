@@ -21,7 +21,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.ArrayList;
@@ -109,7 +108,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         } else if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         } else if (capability == GregtechTileCapabilities.CAPABILITY_RECIPE_LOGIC) {
-            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+            return GregtechTileCapabilities.CAPABILITY_RECIPE_LOGIC.cast(this);
         }
         return null;
     }
