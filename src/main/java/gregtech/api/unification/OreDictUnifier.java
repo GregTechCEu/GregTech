@@ -45,13 +45,13 @@ public class OreDictUnifier {
 
     public static Comparator<ItemAndMetadata> getSimpleItemStackComparator() {
         if (stackComparator == null) {
-            if (ConfigHolder.useCustomModPriorities) {
-                List<String> modPriorities = Arrays.asList(ConfigHolder.modPriorities);
-                stackComparator = Collections.reverseOrder(new CustomModPriorityComparator(modPriorities));
-            } else {
+            List<String> modPriorities = Arrays.asList(ConfigHolder.modPriorities);
+            if (modPriorities.isEmpty()) {
                 //noinspection ConstantConditions
                 Function<ItemAndMetadata, String> modIdExtractor = stack -> stack.item.getRegistryName().getNamespace();
                 stackComparator = Comparator.comparing(modIdExtractor);
+            } else {
+                stackComparator = Collections.reverseOrder(new CustomModPriorityComparator(modPriorities));
             }
         }
         return stackComparator;

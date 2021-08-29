@@ -61,16 +61,14 @@ public class ConfigHolder {
     @Config.RequiresWorldRestart
     public static boolean insufficientEnergySupplyWipesRecipeProgress = false;
 
-    @Config.Comment("Whether to use modPriorities setting in config for prioritizing ore dictionary item registrations. " +
-            "By default, GTCE will sort ore dictionary registrations alphabetically comparing their owner ModIDs. Default: false")
-    @Config.RequiresMcRestart
-    public static boolean useCustomModPriorities = false;
-
     @Config.Comment("Specifies priorities of mods in ore dictionary item registration. First ModID has highest priority, last - lowest. " +
-            "Unspecified ModIDs follow standard sorting, but always have lower priority than last specified ModID." +
-            "\nFor this to work \"useCustomModPriorities\" has to be set to true.")
+            "Unspecified ModIDs follow standard sorting, but always have lower priority than last specified ModID.")
     @Config.RequiresMcRestart
-    public static String[] modPriorities = new String[0];
+    public static String[] modPriorities = {
+            "minecraft",
+            "gregtech",
+            "gtadditions"
+    };
 
     @Config.Comment("Setting this to true makes GTCE ignore error and invalid recipes that would otherwise cause crash. Default: true")
     @Config.RequiresMcRestart
