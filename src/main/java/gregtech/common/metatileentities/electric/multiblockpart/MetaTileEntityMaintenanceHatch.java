@@ -21,7 +21,6 @@ import gregtech.api.multiblock.IMaintenance;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTToolTypes;
 import gregtech.common.items.MetaItems;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,7 +37,6 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_TAPED;
 import static gregtech.api.capability.GregtechDataCodes.STORE_MAINTENANCE;
@@ -278,17 +276,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         return durationMultiplier;
     }
 
-    private int getDurationPercentage() {
-        return 100;
-    }
-
     @Override
     public double getTimeMultiplier() {
         return timeMultiplier;
-    }
-
-    private int getTimePercentage() {
-        return 98;
     }
 
     @Override
@@ -324,22 +314,21 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16);
 
         if (isConfigurable) {
-            builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", getDurationPercentage()), getDurationColor()))
-                    .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", getTimePercentage()), getTimeColor()));
+            builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", getDurationMultiplier()), getDurationColor()))
+                    .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", getTimeMultiplier()), getTimeColor()));
         }
         return builder.build(getHolder(), entityPlayer);
     }
 
-    private Consumer<List<ITextComponent>> getTextWidgetText(String type, int percentage) {
+    private Consumer<List<ITextComponent>> getTextWidgetText(String type, double multiplier) {
         return (list) -> {
             ITextComponent tooltip;
-            if (percentage == 100) {
+            if (multiplier == 1.0) {
                 tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".unchanged_description");
             } else {
-                tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".changed_description", percentage,
-                        I18n.format("gregtech.maintenance.configurable." + (percentage > 100 ? "faster" : "slower")));
+                tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".changed_description", multiplier);
             }
-            list.add(new TextComponentTranslation("gregtech.maintenance.configurable_" + type, percentage)
+            list.add(new TextComponentTranslation("gregtech.maintenance.configurable_" + type, multiplier)
                     .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
         };
     }

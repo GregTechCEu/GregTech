@@ -3722,15 +3722,13 @@ gregtech.machine.maintenance_hatch_configurable.tooltip=For finer control over M
 gregtech.machine.maintenance_hatch_full_auto.name=Automatic Maintenance Hatch
 gregtech.machine.maintenance_hatch_full_auto.tooltip=For automatically maintaining Multiblocks
 
-gregtech.maintenance.configurable_duration=Duration: %d%%
+gregtech.maintenance.configurable_duration=Duration: %fx
 gregtech.maintenance.configurable_duration.unchanged_description=Recipes will run at normal speed. Change configuration to update.
-gregtech.maintenance.configurable_duration.changed_description=Recipes will run %d%% %s, applied before overclocking.
-gregtech.maintenance.configurable.faster=faster
-gregtech.maintenance.configurable.slower=slower
+gregtech.maintenance.configurable_duration.changed_description=Recipes will run at %fx speed, applied before overclocking.
 
-gregtech.maintenance.configurable_time=Time: %d%%
+gregtech.maintenance.configurable_time=Time: %fx
 gregtech.maintenance.configurable_time.unchanged_description=Maintenance problems will occur at normal rate. Change configuration to update.
-gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur %d%% %s.
+gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur %fx more often.
 
 gregtech.machine.muffler_hatch.tooltip=DO NOT OBSTRUCT THE OUTPUT!
 
