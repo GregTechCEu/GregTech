@@ -205,6 +205,7 @@ public class Textures {
     public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance");
     public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY_TAPED = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance_taped");
     public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY_FULL_AUTO = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance_full_auto", true);
+    public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY_CONFIGURABLE = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance_configurable");
     public static final SimpleOverlayRenderer MUFFLER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_muffler");
 
     static {

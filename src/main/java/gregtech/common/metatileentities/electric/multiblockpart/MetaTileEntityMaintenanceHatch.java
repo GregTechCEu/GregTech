@@ -8,6 +8,7 @@ import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.toolitem.ToolMetaItem;
@@ -20,17 +21,24 @@ import gregtech.api.multiblock.IMaintenance;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTToolTypes;
 import gregtech.common.items.MetaItems;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_TAPED;
 import static gregtech.api.capability.GregtechDataCodes.STORE_MAINTENANCE;
@@ -62,7 +70,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super.renderMetaTileEntity(renderState, translation, pipeline);
 
         if (shouldRenderOverlay()) {
-            (isTaped ? Textures.MAINTENANCE_OVERLAY_TAPED : Textures.MAINTENANCE_OVERLAY)
+            (isConfigurable ? Textures.MAINTENANCE_OVERLAY_CONFIGURABLE : isTaped ? Textures.MAINTENANCE_OVERLAY_TAPED : Textures.MAINTENANCE_OVERLAY)
                     .renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
@@ -126,6 +134,11 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         Tuple<Byte, Integer> data = new Tuple<>(this.maintenanceProblems, this.timeActive);
         storeMaintenanceData((byte) -1, -1);
         return data;
+    }
+
+    @Override
+    public boolean startWithoutProblems() {
+        return isConfigurable;
     }
 
     @Override
@@ -265,9 +278,17 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         return durationMultiplier;
     }
 
+    private int getDurationPercentage() {
+        return 100;
+    }
+
     @Override
     public double getTimeMultiplier() {
         return timeMultiplier;
+    }
+
+    private int getTimePercentage() {
+        return 98;
     }
 
     @Override
@@ -294,14 +315,41 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 * 3 + 98)
-                .label(10, 5, this.getMetaFullName())
-                .widget(new SlotWidget(this.importItems, 0, 89 - 9, 18 - 1)
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 * 3 + 98)
+                .label(5, 5, getMetaFullName())
+                .widget(new SlotWidget(importItems, 0, 89 - 9, 18 - 1)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY))
                 .widget(new ClickButtonWidget(89 - 9 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
                         .setButtonTexture(GuiTextures.MAINTENANCE_ICON))
-                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16)
-                .build(this.getHolder(), entityPlayer);
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16);
+
+        if (isConfigurable) {
+            builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", getDurationPercentage()), getDurationColor()))
+                    .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", getTimePercentage()), getTimeColor()));
+        }
+        return builder.build(getHolder(), entityPlayer);
+    }
+
+    private Consumer<List<ITextComponent>> getTextWidgetText(String type, int percentage) {
+        return (list) -> {
+            ITextComponent tooltip;
+            if (percentage == 100) {
+                tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".unchanged_description");
+            } else {
+                tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".changed_description", percentage,
+                        I18n.format("gregtech.maintenance.configurable." + (percentage > 100 ? "faster" : "slower")));
+            }
+            list.add(new TextComponentTranslation("gregtech.maintenance.configurable_" + type, percentage)
+                    .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
+        };
+    }
+
+    private int getDurationColor() {
+        return 0x404040; // todo?
+    }
+
+    private int getTimeColor() {
+        return 0x404040; // todo?
     }
 
     @Override

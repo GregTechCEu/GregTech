@@ -145,6 +145,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
             IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
+            if (maintenanceHatch.startWithoutProblems()) {
+                this.maintenance_problems = (byte) 0b111111;
+                this.timeActive = 0;
+            }
             readMaintenanceData(maintenanceHatch);
             if (storedTaped) {
                 maintenanceHatch.setTaped(true);
