@@ -120,6 +120,31 @@ public class BatteryHardware extends Hardware implements IElectricItem {
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability) {
-        return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM ? (T) this : null;
+        return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM ? GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM.cast(this) : null;
+    }
+
+    public static class BatteryDemand extends BatteryHardware {
+
+        public final int tier;
+        public final long cost;
+
+        public BatteryDemand(int tier, long cost) {
+            this.tier = tier;
+            this.cost = cost;
+        }
+
+        @Override
+        public int getTier() {
+            return super.getTier();
+        }
+
+        @Override
+        public long getCharge() {
+            return this.getCost();
+        }
+
+        public long getCost() {
+            return cost;
+        }
     }
 }

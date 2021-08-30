@@ -20,17 +20,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.registry.RegistryDefaulted;
 import net.minecraft.util.registry.RegistrySimple;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,17 +59,10 @@ public class TerminalRegistry {
 
     }
 
+    @SideOnly(Side.CLIENT)
     public static void initTerminalFiles() {
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            try {
-                FileUtility.extractJarFiles(Paths.get(TerminalRegistry.class.getResource(String.format("/assets/%s/%s", GTValues.MODID, "terminal")).toURI()),
-                        TERMINAL_PATH.toPath(),
-                        false);
-            } catch (IOException | URISyntaxException e) {
-                GTLog.logger.error("error while init terminal resources.", e);
-            }
-            ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new GuideJsonLoader());
-        }
+        FileUtility.extractJarFiles(String.format("/assets/%s/%s", GTValues.MODID, "terminal"), TERMINAL_PATH, false);
+        ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new GuideJsonLoader());
     }
 
     public static void registerApp(AbstractApplication application) {
@@ -98,10 +88,10 @@ public class TerminalRegistry {
             if (isDefaultApp) {
                 DEFAULT_APPS.add(name);
             }
-            if (hardware != null) {
+            if (hardware != null && !hardware.isEmpty()) {
                 APP_HW_DEMAND.putObject(name, hardware);
             }
-            if (upgrade != null) {
+            if (upgrade != null && !upgrade.isEmpty()) {
                 APP_UPGRADE_CONDITIONS.putObject(name, upgrade);
             }
         } else {
@@ -146,6 +136,8 @@ public class TerminalRegistry {
         public static AppBuilder create(AbstractApplication app){
             AppBuilder builder = new AppBuilder();
             builder.app = app;
+            builder.hardware = new ArrayList<>();
+            builder.upgrade = new ArrayList<>(Collections.nCopies(app.getMaxTier(), null));
             return builder;
         }
 
@@ -154,13 +146,20 @@ public class TerminalRegistry {
             return this;
         }
 
-        public AppBuilder hardware(List<Hardware> hardware) {
-            this.hardware = hardware;
+        public AppBuilder battery(int tier, long cost) {
+            this.hardware.add(new BatteryHardware.BatteryDemand(tier, cost));
             return this;
         }
 
-        public AppBuilder upgrade(List<List<Object>> upgrade) {
-            this.upgrade = upgrade;
+        public AppBuilder hardware(Hardware... hardware) {
+            this.hardware.addAll(Arrays.asList(hardware));
+            return this;
+        }
+
+        public AppBuilder upgrade(int tier, List<Object> objects) {
+            if (tier < upgrade.size()) {
+                upgrade.set(tier, objects);
+            }
             return this;
         }
 
