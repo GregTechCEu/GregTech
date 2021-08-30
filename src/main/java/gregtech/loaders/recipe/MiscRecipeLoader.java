@@ -159,12 +159,11 @@ public class MiscRecipeLoader {
                 .buildAndRegister();
 
         //armor
-//TODO add tape when it is added
         // Nightvision Goggles
         ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(128)
                 .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS))
                 .inputs(EMITTER_MV.getStackForm(2))
-                //.inputs(INSULATING_TAPE.getStackForm(2))
+                .inputs(DUCT_TAPE.getStackForm(2))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
                 .outputs(NIGHTVISION_GOGGLES.getStackForm())
                 .circuitMeta(3)
@@ -209,7 +208,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Advanced, 2)
                 .inputs(NANO_MUSCLE_SUITE_CHESTPLATE.getStackForm())
                 .inputs(ADVANCED_IMPELLER_JETPACK.getStackForm())
-                //.inputs(INSULATING_TAPE.getStackForm(4))
+                .inputs(DUCT_TAPE.getStackForm(2))
                 .inputs(POWER_INTEGRATED_CIRCUIT.getStackForm(4))
                 .outputs(ADVANCED_NANO_MUSCLE_CHESTPLATE.getStackForm())
                 .buildAndRegister();
