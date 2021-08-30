@@ -99,6 +99,16 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static int gasTurbineBonusOutput = 6144;
 
+    @Config.Comment("Client configs for file path, rendering and so on")
+    @Config.Name("Client Options")
+    @Config.RequiresMcRestart
+    public static ClientConfig clientConfig = new ClientConfig();
+
+    public static class ClientConfig {
+        @Config.Comment("Whether to use shader program. Default: true")
+        public boolean useShader = true;
+    }
+
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to make glass related recipes harder. Default: true")
