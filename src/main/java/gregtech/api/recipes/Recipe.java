@@ -6,12 +6,8 @@ import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.recipes.recipeproperties.RecipePropertyStorage;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackHashStrategy;
-import gregtech.api.util.ItemStackKey;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -73,7 +69,7 @@ public class Recipe {
             .compareTag(true)
             .build();
 
-    private int hashCode;
+    private final int hashCode;
 
     public Recipe(List<CountableIngredient> inputs, List<ItemStack> outputs, List<ChanceEntry> chancedOutputs,
                   List<FluidStack> fluidInputs, List<FluidStack> fluidOutputs,
@@ -232,7 +228,9 @@ public class Recipe {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Recipe recipe = (Recipe) o;
-        return  hasSameInputs(recipe) &&
+        return  this.EUt == recipe.EUt &&
+                this.duration == recipe.duration &&
+                hasSameInputs(recipe) &&
                 hasSameOutputs(recipe) &&
                 hasSameChancedOutputs(recipe) &&
                 hasSameFluidInputs(recipe) &&
@@ -240,14 +238,14 @@ public class Recipe {
                 hasSameRecipeProperties(recipe);
     }
 
-    private int makeHashCode(){
-        int hash = 0;
-        hash += hashInputs();
-        hash += hashOutputs();
-        hash += hashChancedOutputs();
-        hash += hashFluidList(this.fluidInputs);
-        hash += hashFluidList(this.fluidOutputs);
-        hash += hashRecipeProperties();
+    private int makeHashCode() {
+        int hash = Objects.hash(EUt, duration);
+        hash += hashInputs() * 7;
+        hash += hashOutputs() * 11;
+        hash += hashChancedOutputs() * 13;
+        hash += hashFluidList(this.fluidInputs) * 17;
+        hash += hashFluidList(this.fluidOutputs) * 19;
+        hash += hashRecipeProperties() * 23;
         return hash;
     }
 

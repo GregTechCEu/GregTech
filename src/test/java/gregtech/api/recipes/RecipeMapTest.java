@@ -47,21 +47,19 @@ public class RecipeMapTest {
                 .EUt(1).duration(1)
                 .buildAndRegister();
 
-        assertEquals(1, map.getRecipeList().size());
-
         map.recipeBuilder()
                 .notConsumable(new ItemStack(Blocks.COBBLESTONE))
                 .outputs(new ItemStack(Blocks.STONE))
                 .EUt(2).duration(1)
                 .buildAndRegister();
 
-        assertEquals(1,map.getRecipeList().size());
-
         map.recipeBuilder()
                 .notConsumable(FluidRegistry.WATER)
                 .outputs(new ItemStack(Blocks.STONE))
                 .EUt(1).duration(1)
                 .buildAndRegister();
+
+        assertEquals(3,map.getRecipeList().size());
 
         Recipe r = map.findRecipe(1, Collections.singletonList(new ItemStack(Blocks.COBBLESTONE)), Collections.singletonList(null), 0, MatchingMode.DEFAULT);
         assertNotNull(r);

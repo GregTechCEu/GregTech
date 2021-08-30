@@ -69,7 +69,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     .thenComparingInt(Recipe::getEUt);
 
     private final Set<Recipe> recipeSet = new HashSet<>();
-    private List<Recipe> sortedRecipeList;
 
     public RecipeMap(String unlocalizedName,
                      int minInputs, int maxInputs, int minOutputs, int maxOutputs,
@@ -261,86 +260,139 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return findByMixedInputs(voltage, inputs, fluidInputs, matchingMode);
     }
 
+    /**
+     *  Finds a Recipe, alternating between item and fluid slots. Each valid recipe returned from
+     *  the map is compared against every other valid recipe then given a priority of the amount
+     *  of times this recipe was returned as valid.
+     *
+     * @param voltage                 Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs                  the Item Inputs
+     * @param fluidInputs             the Fluid Inputs
+     * @param matchingMode            matching logic used for finding the recipe according to {@link MatchingMode}
+     * @return the Recipe it has found or null for no matching Recipe
+     */
+
     @Nullable
     private Recipe findByMixedInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
-
-        HashSet<Recipe> alreadyIteratedRecipes = new HashSet<>();
+        HashSet<Recipe> iteratedRecipes = new HashSet<>();
+        HashSet<ItemStackKey> searchedItems = new HashSet<>();
+        HashSet<FluidKey> searchedFluids = new HashSet<>();
+        HashMap<Integer, HashSet<Recipe>> priorityRecipeMap = new HashMap<>();
+        HashMap<Recipe, Integer> promotedTimes = new HashMap<>();
 
         for (int slotOrTank = 0; slotOrTank < Math.max(inputs.size(), fluidInputs.size()); slotOrTank++) {
             if (inputs.size() > 0 && slotOrTank < inputs.size()) {
                 ItemStack stack = inputs.get(slotOrTank);
                 if (!stack.isEmpty()) {
                     ItemStackKey itemStackKey = KeySharedStack.getRegisteredStack(stack);
-                    if (recipeItemMap.containsKey(itemStackKey)) {
+                    if (!searchedItems.contains(itemStackKey) && recipeItemMap.containsKey(itemStackKey)) {
+                        searchedItems.add(itemStackKey);
                         for (Recipe tmpRecipe : recipeItemMap.get(itemStackKey)) {
-                            if (alreadyIteratedRecipes.add(tmpRecipe)) {
-                                if (voltage >= tmpRecipe.getEUt()) {
-                                    if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
-                                        return tmpRecipe;
-                                    }
-                                }
+                            if (voltage < tmpRecipe.getEUt()) {
+                                continue;
                             }
+                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
                         }
                     }
                 }
             }
-
             if (fluidInputs.size() > 0 && slotOrTank < fluidInputs.size()) {
                 FluidStack fluid = fluidInputs.get(slotOrTank);
                 if (fluid != null) {
                     FluidKey fluidKey = new FluidKey(fluid);
-                    if (recipeFluidMap.containsKey(fluidKey)) {
+                    if (!searchedFluids.contains(fluidKey) && recipeFluidMap.containsKey(fluidKey)) {
+                        searchedFluids.add(fluidKey);
                         for (Recipe tmpRecipe : recipeFluidMap.get(fluidKey)) {
-                            if (alreadyIteratedRecipes.add(tmpRecipe)) {
-                                if (voltage >= tmpRecipe.getEUt()) {
-                                    if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
-                                        return tmpRecipe;
-                                    }
-                                }
+                            if (voltage < tmpRecipe.getEUt()) {
+                                continue;
                             }
+                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
                         }
                     }
                 }
             }
         }
+        for (int i = priorityRecipeMap.size(); i >= 0; i--) {
+            if (priorityRecipeMap.containsKey(i)) {
+                for (Recipe tmpRecipe : priorityRecipeMap.get(i)) {
+                    if (iteratedRecipes.add(tmpRecipe)) {
+                        if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
+                            return tmpRecipe;
+                        }
+                    }
+                }
+            }
+        }
+
         return null;
+    }
+
+    private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, HashMap<Integer, HashSet<Recipe>> priorityRecipeMap ) {
+        if (promotedTimes.get(recipe) != null) {
+            promotedTimes.put(recipe, promotedTimes.get(recipe) + 1);
+            if (priorityRecipeMap.get(promotedTimes.get(recipe)) == null) {
+                priorityRecipeMap.put(promotedTimes.get(recipe), new HashSet<>());
+            }
+            priorityRecipeMap.get(promotedTimes.get(recipe)).add(recipe);
+        } else {
+            promotedTimes.put(recipe, 0);
+            priorityRecipeMap.put(0, new HashSet<>());
+            priorityRecipeMap.get(0).add(recipe);
+        }
     }
 
     @Nullable
     private Recipe findByMixedInputsExactVoltage(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
+        HashSet<Recipe> iteratedRecipes = new HashSet<>();
+        HashSet<ItemStackKey> searchedItems = new HashSet<>();
+        HashSet<FluidKey> searchedFluids = new HashSet<>();
+        HashMap<Integer, HashSet<Recipe>> priorityRecipeMap = new HashMap<>();
+        HashMap<Recipe, Integer> promotedTimes = new HashMap<>();
+
         for (int slotOrTank = 0; slotOrTank < Math.max(inputs.size(), fluidInputs.size()); slotOrTank++) {
             if (inputs.size() > 0 && slotOrTank < inputs.size()) {
                 ItemStack stack = inputs.get(slotOrTank);
                 if (!stack.isEmpty()) {
                     ItemStackKey itemStackKey = KeySharedStack.getRegisteredStack(stack);
-                    if (recipeItemMap.containsKey(itemStackKey)) {
+                    if (!searchedItems.contains(itemStackKey) && recipeItemMap.containsKey(itemStackKey)) {
+                        searchedItems.add(itemStackKey);
                         for (Recipe tmpRecipe : recipeItemMap.get(itemStackKey)) {
-                            if (voltage == tmpRecipe.getEUt()) {
-                                if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
-                                    return tmpRecipe;
-                                }
+                            if (voltage != tmpRecipe.getEUt()) {
+                                continue;
                             }
+                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
                         }
                     }
                 }
             }
-
             if (fluidInputs.size() > 0 && slotOrTank < fluidInputs.size()) {
                 FluidStack fluid = fluidInputs.get(slotOrTank);
                 if (fluid != null) {
                     FluidKey fluidKey = new FluidKey(fluid);
-                    if (recipeFluidMap.containsKey(fluidKey)) {
+                    if (!searchedFluids.contains(fluidKey) && recipeFluidMap.containsKey(fluidKey)) {
+                        searchedFluids.add(fluidKey);
                         for (Recipe tmpRecipe : recipeFluidMap.get(fluidKey)) {
-                            if (voltage == tmpRecipe.getEUt()) {
-                                if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
-                                    return tmpRecipe;
-                                }
+                            if (voltage != tmpRecipe.getEUt()) {
+                                continue;
                             }
+                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
                         }
                     }
                 }
             }
         }
+        for (int i = priorityRecipeMap.size(); i >= 0; i--) {
+            if (priorityRecipeMap.containsKey(i)) {
+                for (Recipe tmpRecipe : priorityRecipeMap.get(i)) {
+                    if (iteratedRecipes.add(tmpRecipe)) {
+                        if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
+                            return tmpRecipe;
+                        }
+                    }
+                }
+            }
+        }
+
         return null;
     }
 
@@ -469,10 +521,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
 
     public List<Recipe> getRecipeList() {
-        if (this.sortedRecipeList != null) {
-            return this.sortedRecipeList;
-        }
-        return this.sortedRecipeList = Collections.unmodifiableList(recipeSet.stream().sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList()));
+        return Collections.unmodifiableList(recipeSet.stream().sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList()));
     }
 
     @ZenMethod("findRecipe")
