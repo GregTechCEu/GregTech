@@ -46,7 +46,6 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected IMultipleTankHandler outputFluidInventory;
     protected IEnergyContainer energyContainer;
 
-    private boolean canDistinct = true;
     private boolean isDistinct = false;
 
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
@@ -224,7 +223,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     public boolean canBeDistinct() {
-        return canDistinct;
+        return true;
     }
 
     public boolean isDistinct() {
