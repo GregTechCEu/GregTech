@@ -114,14 +114,14 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         // This guarantees that if we get a recipe cache hit, our efficiency is no different from other machines
         if (previousRecipe != null && previousRecipe.matches(false, importInventory.get(lastRecipeIndex), importFluids)) {
             currentRecipe = previousRecipe;
-            // TODO, is setting the invalidInputs here needed?
-            invalidInputsForRecipes = false;
             // If a valid recipe is found, immediately attempt to return it to prevent inventory scanning
             if (setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(lastRecipeIndex))) {
                 setupRecipe(currentRecipe);
-                metaTileEntity.getNotifiedItemInputList().clear();
-                metaTileEntity.getNotifiedFluidInputList().clear();
-                //TODO, should we set the previous recipe to the current recipe here, or would that cause some issues with caching once parallel is introduced?
+                metaTileEntity.getNotifiedItemInputList().remove(lastRecipeIndex);
+                metaTileEntity.getNotifiedFluidInputList().remove(lastRecipeIndex);
+
+                // No need to cache the previous recipe here, as it is not null and matched by the current recipe,
+                // so it will always be the same
                 return;
             }
         }
@@ -145,14 +145,15 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(i))) {
                 lastRecipeIndex = i;
                 setupRecipe(currentRecipe);
-                metaTileEntity.getNotifiedItemInputList().clear();
-                metaTileEntity.getNotifiedFluidInputList().clear();
+                metaTileEntity.getNotifiedItemInputList().remove(i);
+                metaTileEntity.getNotifiedFluidInputList().remove(i);
                 break;
             }
         }
 
-        // TODO, if we don't find anything, should we reset the notified inputs?
-
+        //If no matching recipes are found, clear the notified inputs so we know when new items are given
+        metaTileEntity.getNotifiedItemInputList().clear();
+        metaTileEntity.getNotifiedFluidInputList().clear();
     }
 
     @Override
