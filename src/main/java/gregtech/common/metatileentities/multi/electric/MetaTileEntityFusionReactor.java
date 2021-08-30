@@ -200,11 +200,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
     }
 
     @Override
-    public boolean canBeDistinct() {
-        return false;
-    }
-
-    @Override
     public boolean hasMaintenanceMechanics() {
         return false;
     }
