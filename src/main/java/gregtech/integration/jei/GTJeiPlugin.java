@@ -2,7 +2,6 @@ package gregtech.integration.jei;
 
 import gregtech.GregTechRegistries;
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
@@ -17,7 +16,6 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -48,7 +46,6 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @JEIPlugin
@@ -161,12 +158,13 @@ public class GTJeiPlugin implements IModPlugin {
         registry.addIngredientInfo(Objects.requireNonNull(MetaItems.FLUID_CELL.getStackForm()), VanillaTypes.ITEM, I18n.format("gregtech.item.fluid_cell.jei_description"));
 
         //TODO, add Electromagnetic Separator to the Ore Byproduct page
-        List<OreByProduct> oreByproductList = new CopyOnWriteArrayList<>();
+        List<OreByProduct> oreByproductList = new ArrayList<>();
         for (Material material : GregTechRegistries.getMaterialRegistry()) {
             if (material.hasProperty(PropertyKey.ORE)) {
                 final OreByProduct oreByProduct = new OreByProduct(material);
-                if (oreByProduct.hasByProducts())
+                if (oreByProduct.hasByProducts()) {
                     oreByproductList.add(oreByProduct);
+                }
             }
         }
         String oreByProductId = GTValues.MODID + ":" + "ore_by_product";
@@ -193,8 +191,8 @@ public class GTJeiPlugin implements IModPlugin {
         }
 
         //Material Tree
-        List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+        List<MaterialTree> materialTreeList = new ArrayList<>();
+        for (Material material : GregTechRegistries.getMaterialRegistry()) {
             if (material.hasProperty(PropertyKey.DUST)) {
                 materialTreeList.add(new MaterialTree(material));
             }
@@ -203,7 +201,7 @@ public class GTJeiPlugin implements IModPlugin {
 
         //Ore Veins
         List<OreDepositDefinition> oreVeins = WorldGenRegistry.getOreDeposits();
-        List<GTOreInfo> oreInfoList = new CopyOnWriteArrayList<>();
+        List<GTOreInfo> oreInfoList = new ArrayList<>();
         for (OreDepositDefinition vein : oreVeins) {
             oreInfoList.add(new GTOreInfo(vein));
         }

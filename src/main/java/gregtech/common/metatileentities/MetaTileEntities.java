@@ -239,30 +239,6 @@ public class MetaTileEntities {
         STEAM_ROCK_BREAKER_BRONZE = registerMetaTileEntity(19, new SteamRockBreaker(gregtechId("steam_rock_breaker_bronze"), false));
         STEAM_ROCK_BREAKER_STEEL = registerMetaTileEntity(20, new SteamRockBreaker(gregtechId("steam_rock_breaker_steel"), true));
 
-        STEAM_BOILER_SOLAR_BRONZE = registerMetaTileEntity(3, new SteamSolarBoiler(gregtechId("steam_boiler_solar_bronze"), false));
-        STEAM_BOILER_SOLAR_STEEL = registerMetaTileEntity(4, new SteamSolarBoiler(gregtechId("steam_boiler_solar_steel"), true));
-
-        STEAM_BOILER_LAVA_BRONZE = registerMetaTileEntity(5, new SteamLavaBoiler(gregtechId("steam_boiler_lava_bronze"), false));
-        STEAM_BOILER_LAVA_STEEL = registerMetaTileEntity(6, new SteamLavaBoiler(gregtechId("steam_boiler_lava_steel"), true));
-
-        STEAM_EXTRACTOR_BRONZE = registerMetaTileEntity(7, new SteamExtractor(gregtechId("steam_extractor_bronze"), false));
-        STEAM_EXTRACTOR_STEEL = registerMetaTileEntity(8, new SteamExtractor(gregtechId("steam_extractor_steel"), true));
-
-        STEAM_MACERATOR_BRONZE = registerMetaTileEntity(9, new SteamMacerator(gregtechId("steam_macerator_bronze"), false));
-        STEAM_MACERATOR_STEEL = registerMetaTileEntity(10, new SteamMacerator(gregtechId("steam_macerator_steel"), true));
-
-        STEAM_COMPRESSOR_BRONZE = registerMetaTileEntity(11, new SteamCompressor(gregtechId("steam_compressor_bronze"), false));
-        STEAM_COMPRESSOR_STEEL = registerMetaTileEntity(12, new SteamCompressor(gregtechId("steam_compressor_steel"), true));
-
-        STEAM_HAMMER_BRONZE = registerMetaTileEntity(13, new SteamHammer(gregtechId("steam_hammer_bronze"), false));
-        STEAM_HAMMER_STEEL = registerMetaTileEntity(14, new SteamHammer(gregtechId("steam_hammer_steel"), true));
-
-        STEAM_FURNACE_BRONZE = registerMetaTileEntity(15, new SteamFurnace(gregtechId("steam_furnace_bronze"), false));
-        STEAM_FURNACE_STEEL = registerMetaTileEntity(16, new SteamFurnace(gregtechId("steam_furnace_steel"), true));
-
-        STEAM_ALLOY_SMELTER_BRONZE = registerMetaTileEntity(17, new SteamAlloySmelter(gregtechId("steam_alloy_smelter_bronze"), false));
-        STEAM_ALLOY_SMELTER_STEEL = registerMetaTileEntity(18, new SteamAlloySmelter(gregtechId("steam_alloy_smelter_steel"), true));
-
         // Electric Furnace, IDs 50-64
         registerSimpleMetaTileEntity(ELECTRIC_FURNACE, 50, "electric_furnace", RecipeMaps.FURNACE_RECIPES, Textures.ELECTRIC_FURNACE_OVERLAY);
 

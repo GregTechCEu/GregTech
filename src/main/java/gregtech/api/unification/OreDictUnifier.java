@@ -11,6 +11,7 @@ import gregtech.api.unification.stack.*;
 import gregtech.api.util.CustomModPriorityComparator;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.MinecraftForge;

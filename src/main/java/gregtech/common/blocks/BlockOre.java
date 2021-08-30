@@ -196,7 +196,7 @@ public class BlockOre extends BlockFalling implements IModelSupplier {
 
     @Override
     public void onTextureStitch(TextureStitchEvent.Pre event) {
-        event.getMap().registerSprite(MaterialIconType.block.getBlockPath(material.getMaterialIconSet()));
+        event.getMap().registerSprite(MaterialIconType.ore.getBlockPath(material.getMaterialIconSet()));
         for (IBlockState state : this.getBlockState().getValidStates()) {
             StoneType stoneType = state.getValue(STONE_TYPE);
             event.getMap().registerSprite(stoneType.backgroundTopTexture);

@@ -25,14 +25,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class FrameModel implements IBakedModel {
+public class FrameBakedModel implements IBakedModel {
 
-    public static final FrameModel INSTANCE = new FrameModel();
+    public static final FrameBakedModel INSTANCE = new FrameBakedModel();
 
     private final Map<MaterialIconSet, Map<EnumFacing, BakedQuad>> materialFaces;
     private final ThreadLocal<TextureAtlasSprite> particle;
 
-    private FrameModel() {
+    private FrameBakedModel() {
         this.materialFaces = new Object2ObjectOpenHashMap<>();
         this.particle = ThreadLocal.withInitial(() -> Minecraft.getMinecraft().getTextureMapBlocks().missingImage);
     }

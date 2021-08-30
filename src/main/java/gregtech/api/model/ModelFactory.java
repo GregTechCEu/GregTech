@@ -62,7 +62,7 @@ public class ModelFactory {
         return itemTransformationMap.get(transformType);
     }
 
-    private static TRSRTransformation getTransform(float tx, float ty, float tz, float ax, float ay, float az, float s) {
+    public static TRSRTransformation getTransform(float tx, float ty, float tz, float ax, float ay, float az, float s) {
         return new TRSRTransformation(new Vector3f(tx / 16, ty / 16, tz / 16), TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)), new Vector3f(s, s, s), null);
     }
 

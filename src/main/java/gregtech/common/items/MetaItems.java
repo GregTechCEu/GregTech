@@ -8,6 +8,7 @@ import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
+import gregtech.client.model.item.FacadeBakedModel;
 import gregtech.common.render.FacadeItemModel;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -591,7 +592,8 @@ public final class MetaItems {
     @SideOnly(Side.CLIENT)
     public static void registerBakedModels(ModelBakeEvent event) {
         GTLog.logger.info("Registering special item models");
-        registerSpecialItemModel(event, COVER_FACADE, new FacadeItemModel());
+        // registerSpecialItemModel(event, COVER_FACADE, new FacadeItemModel());
+        registerSpecialItemModel(event, COVER_FACADE, FacadeBakedModel.INSTANCE);
     }
 
     @SideOnly(Side.CLIENT)
