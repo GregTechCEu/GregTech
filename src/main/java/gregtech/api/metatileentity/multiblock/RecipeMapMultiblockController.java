@@ -223,7 +223,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     public boolean canBeDistinct() {
-        return true;
+        return false;
     }
 
     public boolean isDistinct() {

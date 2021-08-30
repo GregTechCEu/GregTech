@@ -69,4 +69,9 @@ public class MetaTileEntityImplosionCompressor extends RecipeMapMultiblockContro
     public boolean hasMufflerMechanics() {
         return true;
     }
+
+    @Override
+    public boolean canBeDistinct() {
+        return true;
+    }
 }

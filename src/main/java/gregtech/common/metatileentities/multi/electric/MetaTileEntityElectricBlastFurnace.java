@@ -148,6 +148,11 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @Override
+    public boolean canBeDistinct() {
+        return true;
+    }
+
+    @Override
     public boolean hasMufflerMechanics() {
         return true;
     }

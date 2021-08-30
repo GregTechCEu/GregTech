@@ -86,8 +86,4 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
         return Textures.LARGE_CHEMICAL_REACTOR_OVERLAY;
     }
 
-    @Override
-    public boolean canBeDistinct() {
-        return false;
-    }
 }
