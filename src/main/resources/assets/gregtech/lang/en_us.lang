@@ -2001,7 +2001,9 @@ behavior.scanner.analyzing_complete=Analyzing complete!
 behavior.scanner.not_enough_energy=Analyzing failed: Not Enough Energy!
 
 metaitem.terminal.name=Terminal
-metaitem.terminal.tooltip=Hope it will help you
+metaitem.terminal.tooltip=Sharp tools make good work
+metaitem.terminal.tooltip.creative=§bCreative Mode
+metaitem.terminal.tooltip.hardware=§aHardware: %d
 
 tile.casing.ulv=ULV Machine Casing
 tile.casing.lv=LV Machine Casing
@@ -3859,6 +3861,8 @@ gregtech.terminal.app_name.console=GT Console
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
 
+terminal.hw.battery=Battery
+
 terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
 
 terminal.menu.close=Close
@@ -3875,6 +3879,7 @@ terminal.component.confirm=Are you sure?
 terminal.component.error=ERROR
 terminal.component.warning=WARNING
 terminal.component.searching=searching
+terminal.component.reload=reload resource
 
 terminal.dialog.notice=NOTICE
 terminal.dialog.error_path=error file path:
@@ -3907,7 +3912,7 @@ terminal.recipe_chart.drag=Drag ingredients here.
 terminal.recipe_chart.visible=Visible
 terminal.recipe_chart.jei=JEI Focus
 terminal.recipe_chart.tier=Tier:
-terminal.recipe_chart.ratio=Ratio
+terminal.recipe_chart.ratio=Weight
 
 terminal.prospector.vis_mode=dark mode
 terminal.prospector.list=All Resources

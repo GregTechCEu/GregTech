@@ -18,7 +18,7 @@ public class ConsoleApp extends AbstractApplication {
     }
 
     @Override
-    protected AbstractApplication initApp(boolean isClient, NBTTagCompound nbt) {
+    public AbstractApplication initApp() {
         if (os.clickPos == null) { // 333 232
             TerminalDialogWidget.showInfoDialog(os,
                     "terminal.dialog.notice",

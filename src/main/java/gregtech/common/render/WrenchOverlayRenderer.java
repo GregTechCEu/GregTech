@@ -93,7 +93,7 @@ public class WrenchOverlayRenderer {
     }
 
     public static boolean shouldDrawOverlayForItem(ItemStack itemStack, TileEntity tileEntity) {
-        if (tileEntity instanceof MetaTileEntityHolder) {
+        if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() != null) {
             if(!((MetaTileEntityHolder) tileEntity).getMetaTileEntity().canRenderMachineGrid())
                 return false;
         }

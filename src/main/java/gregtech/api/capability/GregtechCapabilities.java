@@ -6,6 +6,7 @@ import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.capability.tool.IWrenchItem;
+import gregtech.api.terminal.hardware.HardwareProvider;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -40,6 +41,9 @@ public class GregtechCapabilities {
 
     @CapabilityInject(IMultiblockController.class)
     public static Capability<IMultiblockController> CAPABILITY_MULTIBLOCK_CONTROLLER = null;
+
+    @CapabilityInject(HardwareProvider.class)
+    public static Capability<HardwareProvider> CAPABILITY_HARDWARE_PROVIDER = null;
 
     private static final ResourceLocation CAPABILITY_EU_TO_FE = new ResourceLocation(GTValues.MODID, "fe_capability");
 

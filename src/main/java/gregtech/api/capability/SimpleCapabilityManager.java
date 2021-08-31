@@ -6,6 +6,7 @@ import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.capability.tool.IWrenchItem;
 import gregtech.api.cover.ICoverable;
+import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.worldgen.generator.GTWorldGenCapability;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
@@ -44,6 +45,7 @@ public class SimpleCapabilityManager {
         registerCapabilityWithNoDefault(IFuelable.class);
         registerCapabilityWithNoDefault(IMultiblockController.class);
         registerCapabilityWithNoDefault(AbstractRecipeLogic.class);
+        registerCapabilityWithNoDefault(HardwareProvider.class);
 
         registerCapabilityWithNoDefault(IWrenchItem.class);
         registerCapabilityWithNoDefault(ICutterItem.class);
