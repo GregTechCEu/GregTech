@@ -21,7 +21,6 @@ import static codechicken.lib.render.shader.ShaderObject.ShaderType.VERTEX;
  * @Description: Shaders are magic!!!
  */
 public class Shaders {
-    public static ShaderObject test;
 
     static {
         if (allowedShader()) {
@@ -30,8 +29,6 @@ public class Shaders {
     }
 
     public static void initShaders() {
-        unloadShader(test);
-        test = loadShader(FRAGMENT, "reactor.fs");
     }
 
     public static ShaderObject loadShader(ShaderObject.ShaderType shaderType, String location) {
