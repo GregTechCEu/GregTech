@@ -152,17 +152,14 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             // Cache the current recipe, if one is found
             if (currentRecipe != null) {
                 this.previousRecipe = currentRecipe;
-            }
-
-            if (currentRecipe == null) {
+                if (setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(i))) {
+                    lastRecipeIndex = i;
+                    setupRecipe(currentRecipe);
+                    metaTileEntity.getNotifiedItemInputList().remove(bus);
+                    return;
+                }
+            } else {
                 invalidatedInputList.add(bus);
-            }
-
-            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(i))) {
-                lastRecipeIndex = i;
-                setupRecipe(currentRecipe);
-                metaTileEntity.getNotifiedItemInputList().remove(bus);
-                return;
             }
         }
 
