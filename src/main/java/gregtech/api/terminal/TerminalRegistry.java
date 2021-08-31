@@ -7,6 +7,7 @@ import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
+import gregtech.common.ConfigHolder;
 import gregtech.common.terminal.app.ThemeSettingApp;
 import gregtech.common.terminal.app.console.ConsoleApp;
 import gregtech.common.terminal.app.guide.ItemGuideApp;
@@ -39,7 +40,7 @@ public class TerminalRegistry {
     public static final RegistrySimple<String, List<List<Object>>> APP_UPGRADE_CONDITIONS = new RegistryDefaulted<>(Collections.emptyList());
     public static final List<String> DEFAULT_APPS = new ArrayList<>();
     @SideOnly(Side.CLIENT)
-    public static final File TERMINAL_PATH = new File(Loader.instance().getConfigDir().getParentFile(), "terminal");
+    public static final File TERMINAL_PATH = new File(Loader.instance().getConfigDir(), ConfigHolder.clientConfig.terminalRootPath);
 
     public static void init() {
         // register hardware

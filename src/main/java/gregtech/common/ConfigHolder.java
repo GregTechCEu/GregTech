@@ -102,6 +102,16 @@ public class ConfigHolder {
     @Config.Comment("Whether to give the terminal to new players")
     public static boolean spawnTerminal = true;
 
+    @Config.Comment("Client configs for file path, rendering and so on")
+    @Config.Name("Client Options")
+    @Config.RequiresMcRestart
+    public static ClientConfig clientConfig = new ClientConfig();
+
+    public static class ClientConfig {
+        @Config.Comment("Terminal root path. Default: gregtech/terminal")
+        public String terminalRootPath = "gregtech/terminal";
+    }
+
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to make glass related recipes harder. Default: true")
