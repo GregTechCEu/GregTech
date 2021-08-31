@@ -249,6 +249,23 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
      */
     @Nullable
     public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, MatchingMode matchingMode) {
+        return findRecipe(voltage, inputs, fluidInputs, outputFluidTankCapacity, matchingMode, false);
+    }
+
+    /**
+     * Finds a Recipe matching the Fluid and/or ItemStack Inputs.
+     *
+     * @param voltage                 Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
+     * @param inputs                  the Item Inputs
+     * @param fluidInputs             the Fluid Inputs
+     * @param outputFluidTankCapacity minimal capacity of output fluid tank, used for fluid canner recipes for example
+     * @param matchingMode            matching logic used for finding the recipe according to {@link MatchingMode}
+     * @param exactVoltage            should require exact voltage matching on recipe. used by craftweaker
+     * @return the Recipe it has found or null for no matching Recipe
+     */
+
+    @Nullable
+    public Recipe findRecipe(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, int outputFluidTankCapacity, MatchingMode matchingMode, boolean exactVoltage) {
         if (recipeSet.isEmpty())
             return null;
         if (minFluidInputs > 0 && GTUtility.amountOfNonNullElements(fluidInputs) < minFluidInputs) {
@@ -257,61 +274,67 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs) {
             return null;
         }
-        return findByMixedInputs(voltage, inputs, fluidInputs, matchingMode);
+        if (maxInputs > 0) {
+            return findByInputs(voltage, inputs, fluidInputs, matchingMode, exactVoltage);
+        } else {
+            return findByFluidInputs(voltage, inputs, fluidInputs, matchingMode, exactVoltage);
+        }
     }
 
-    /**
-     *  Finds a Recipe, alternating between item and fluid slots. Each valid recipe returned from
-     *  the map is compared against every other valid recipe then given a priority of the amount
-     *  of times this recipe was returned as valid.
-     *
-     * @param voltage                 Voltage of the Machine or Long.MAX_VALUE if it has no Voltage
-     * @param inputs                  the Item Inputs
-     * @param fluidInputs             the Fluid Inputs
-     * @param matchingMode            matching logic used for finding the recipe according to {@link MatchingMode}
-     * @return the Recipe it has found or null for no matching Recipe
-     */
-
     @Nullable
-    private Recipe findByMixedInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
+    private Recipe findByInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode, boolean exactVoltage) {
         HashSet<Recipe> iteratedRecipes = new HashSet<>();
         HashSet<ItemStackKey> searchedItems = new HashSet<>();
-        HashSet<FluidKey> searchedFluids = new HashSet<>();
         HashMap<Integer, HashSet<Recipe>> priorityRecipeMap = new HashMap<>();
         HashMap<Recipe, Integer> promotedTimes = new HashMap<>();
 
-        for (int slotOrTank = 0; slotOrTank < Math.max(inputs.size(), fluidInputs.size()); slotOrTank++) {
-            if (inputs.size() > 0 && slotOrTank < inputs.size()) {
-                ItemStack stack = inputs.get(slotOrTank);
-                if (!stack.isEmpty()) {
-                    ItemStackKey itemStackKey = KeySharedStack.getRegisteredStack(stack);
-                    if (!searchedItems.contains(itemStackKey) && recipeItemMap.containsKey(itemStackKey)) {
-                        searchedItems.add(itemStackKey);
-                        for (Recipe tmpRecipe : recipeItemMap.get(itemStackKey)) {
-                            if (voltage < tmpRecipe.getEUt()) {
-                                continue;
-                            }
-                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
+        for (ItemStack stack : inputs) {
+            if (!stack.isEmpty()) {
+                ItemStackKey itemStackKey = KeySharedStack.getRegisteredStack(stack);
+                if (!searchedItems.contains(itemStackKey) && recipeItemMap.containsKey(itemStackKey)) {
+                    searchedItems.add(itemStackKey);
+                    for (Recipe tmpRecipe : recipeItemMap.get(itemStackKey)) {
+                        if (!exactVoltage && voltage < tmpRecipe.getEUt()) {
+                            continue;
+                        } else if (exactVoltage && voltage != tmpRecipe.getEUt()) {
+                            continue;
                         }
-                    }
-                }
-            }
-            if (fluidInputs.size() > 0 && slotOrTank < fluidInputs.size()) {
-                FluidStack fluid = fluidInputs.get(slotOrTank);
-                if (fluid != null) {
-                    FluidKey fluidKey = new FluidKey(fluid);
-                    if (!searchedFluids.contains(fluidKey) && recipeFluidMap.containsKey(fluidKey)) {
-                        searchedFluids.add(fluidKey);
-                        for (Recipe tmpRecipe : recipeFluidMap.get(fluidKey)) {
-                            if (voltage < tmpRecipe.getEUt()) {
-                                continue;
-                            }
-                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
-                        }
+                        calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
                     }
                 }
             }
         }
+        return prioritizedRecipe(priorityRecipeMap,iteratedRecipes,inputs,fluidInputs,matchingMode);
+
+    }
+
+    @Nullable
+    private Recipe findByFluidInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode, boolean exactVoltage) {
+        HashSet<Recipe> iteratedRecipes = new HashSet<>();
+        HashSet<FluidKey> searchedFluids = new HashSet<>();
+        Map<Integer, HashSet<Recipe>> priorityRecipeMap = new HashMap<>();
+        HashMap<Recipe, Integer> promotedTimes = new HashMap<>();
+
+        for (FluidStack fluidStack : fluidInputs) {
+            if (fluidStack != null) {
+                FluidKey fluidKey = new FluidKey(fluidStack);
+                if (!searchedFluids.contains(fluidKey) && recipeFluidMap.containsKey(fluidKey)) {
+                    searchedFluids.add(fluidKey);
+                    for (Recipe tmpRecipe : recipeFluidMap.get(fluidKey)) {
+                        if (!exactVoltage && voltage < tmpRecipe.getEUt()) {
+                            continue;
+                        } else if (exactVoltage && voltage != tmpRecipe.getEUt()) {
+                            continue;
+                        }
+                        calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
+                    }
+                }
+            }
+        }
+        return prioritizedRecipe(priorityRecipeMap,iteratedRecipes,inputs,fluidInputs,matchingMode);
+    }
+
+    private Recipe prioritizedRecipe(Map<Integer, HashSet<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes,List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
         for (int i = priorityRecipeMap.size(); i >= 0; i--) {
             if (priorityRecipeMap.containsKey(i)) {
                 for (Recipe tmpRecipe : priorityRecipeMap.get(i)) {
@@ -327,73 +350,19 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, HashMap<Integer, HashSet<Recipe>> priorityRecipeMap ) {
-        if (promotedTimes.get(recipe) != null) {
-            promotedTimes.put(recipe, promotedTimes.get(recipe) + 1);
-            if (priorityRecipeMap.get(promotedTimes.get(recipe)) == null) {
-                priorityRecipeMap.put(promotedTimes.get(recipe), new HashSet<>());
+    private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, Map<Integer, HashSet<Recipe>> priorityRecipeMap ) {
+        Integer p = promotedTimes.get(recipe);
+        if (p != null) {
+            promotedTimes.put(recipe, p + 1);
+            if (priorityRecipeMap.get(p) == null) {
+                priorityRecipeMap.put(p, new HashSet<>());
             }
-            priorityRecipeMap.get(promotedTimes.get(recipe)).add(recipe);
+            priorityRecipeMap.get(p).add(recipe);
         } else {
             promotedTimes.put(recipe, 0);
-            priorityRecipeMap.put(0, new HashSet<>());
-            priorityRecipeMap.get(0).add(recipe);
+            priorityRecipeMap.put(1, new HashSet<>());
+            priorityRecipeMap.get(1).add(recipe);
         }
-    }
-
-    @Nullable
-    private Recipe findByMixedInputsExactVoltage(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
-        HashSet<Recipe> iteratedRecipes = new HashSet<>();
-        HashSet<ItemStackKey> searchedItems = new HashSet<>();
-        HashSet<FluidKey> searchedFluids = new HashSet<>();
-        HashMap<Integer, HashSet<Recipe>> priorityRecipeMap = new HashMap<>();
-        HashMap<Recipe, Integer> promotedTimes = new HashMap<>();
-
-        for (int slotOrTank = 0; slotOrTank < Math.max(inputs.size(), fluidInputs.size()); slotOrTank++) {
-            if (inputs.size() > 0 && slotOrTank < inputs.size()) {
-                ItemStack stack = inputs.get(slotOrTank);
-                if (!stack.isEmpty()) {
-                    ItemStackKey itemStackKey = KeySharedStack.getRegisteredStack(stack);
-                    if (!searchedItems.contains(itemStackKey) && recipeItemMap.containsKey(itemStackKey)) {
-                        searchedItems.add(itemStackKey);
-                        for (Recipe tmpRecipe : recipeItemMap.get(itemStackKey)) {
-                            if (voltage != tmpRecipe.getEUt()) {
-                                continue;
-                            }
-                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
-                        }
-                    }
-                }
-            }
-            if (fluidInputs.size() > 0 && slotOrTank < fluidInputs.size()) {
-                FluidStack fluid = fluidInputs.get(slotOrTank);
-                if (fluid != null) {
-                    FluidKey fluidKey = new FluidKey(fluid);
-                    if (!searchedFluids.contains(fluidKey) && recipeFluidMap.containsKey(fluidKey)) {
-                        searchedFluids.add(fluidKey);
-                        for (Recipe tmpRecipe : recipeFluidMap.get(fluidKey)) {
-                            if (voltage != tmpRecipe.getEUt()) {
-                                continue;
-                            }
-                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
-                        }
-                    }
-                }
-            }
-        }
-        for (int i = priorityRecipeMap.size(); i >= 0; i--) {
-            if (priorityRecipeMap.containsKey(i)) {
-                for (Recipe tmpRecipe : priorityRecipeMap.get(i)) {
-                    if (iteratedRecipes.add(tmpRecipe)) {
-                        if (tmpRecipe.matches(false, inputs, fluidInputs, matchingMode)) {
-                            return tmpRecipe;
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
     }
 
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
@@ -536,7 +505,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
             Arrays.stream(fluidInputs)
                 .map(CraftTweakerMC::getLiquidStack)
                 .collect(Collectors.toList());
-        Recipe backingRecipe = findByMixedInputsExactVoltage(maxVoltage, mcItemInputs, mcFluidInputs, MatchingMode.DEFAULT);
+        Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, outputFluidTankCapacity, MatchingMode.DEFAULT, true);
         return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
     }
 
