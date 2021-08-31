@@ -705,12 +705,13 @@ public class MetaTileEntities {
 
         CLIPBOARD_TILE = registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
+        // ENERGY CONVERTER, IDs 1667-1718
         for(int i = 0; i < 13; i++) {
             String vn = GTValues.VN[i + 1].toLowerCase();
             for(int j = 0; j < 4; j++) {
                 int amps = (j+1) * (j+1);
                 String id = "energy_converter." + vn + "." + amps;
-                ENERGY_CONVERTER[i][j] = GregTechAPI.registerMetaTileEntity(1667 + j + i * 4, new MetaTileEntityConverter(gregtechId(id), i+1, amps));
+                ENERGY_CONVERTER[i][j] = registerMetaTileEntity(1667 + j + i * 4, new MetaTileEntityConverter(gregtechId(id), i+1, amps));
             }
         }
 
