@@ -114,6 +114,8 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
             renderState.lightMatrix.locate(world, pos);
             IVertexOperation[] pipeline = new IVertexOperation[]{renderState.lightMatrix};
             metaTileEntity.renderMetaTileEntity(renderState, translation.copy(), pipeline);
+            pipeline =  new IVertexOperation[]{new LightMapOperation(240, 240)};
+            metaTileEntity.renderEmissiveMetaTileEntity(renderState, translation.copy(), pipeline);
         }
         Matrix4 coverTranslation = new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ());
         metaTileEntity.renderCovers(renderState, coverTranslation, renderLayer);

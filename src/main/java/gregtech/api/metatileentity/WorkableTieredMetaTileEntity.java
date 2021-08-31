@@ -65,7 +65,17 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        renderer.render(renderState, translation, pipeline, getFrontFacing(), workable.isActive());
+        if (!workable.isActive()) {
+            renderer.render(renderState, translation, pipeline, getFrontFacing(), false);
+        }
+    }
+
+    @Override
+    public void renderEmissiveMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
+        super.renderEmissiveMetaTileEntity(renderState, translation, pipeline);
+        if (workable.isActive()) {
+            renderer.render(renderState, translation, pipeline, getFrontFacing(), true);
+        }
     }
 
     @Override
