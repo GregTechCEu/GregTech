@@ -133,6 +133,12 @@ public abstract class Widget {
         return new Rectangle(pos.x, pos.y, size.width, size.height);
     }
 
+    public Rectangle toSelfRectangleBox() {
+        Position pos = getSelfPosition();
+        Size size = getSize();
+        return new Rectangle(pos.x, pos.y, size.width, size.height);
+    }
+
     protected void recomputePosition() {
         this.position = this.parentPosition.add(selfPosition);
         onPositionUpdate();

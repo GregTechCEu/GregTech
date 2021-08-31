@@ -3,6 +3,7 @@ package gregtech.api.terminal;
 import gregtech.api.GTValues;
 import gregtech.api.terminal.app.*;
 import gregtech.common.terminal.app.ThemeSettingApp;
+import gregtech.common.terminal.app.game.pong.PongApp;
 import gregtech.common.terminal.app.guide.ItemGuideApp;
 import gregtech.common.terminal.app.guide.MultiBlockGuideApp;
 import gregtech.common.terminal.app.guide.SimpleMachineGuideApp;
@@ -25,6 +26,7 @@ public class TerminalRegistry {
         registerApp(new GuideEditorApp(), true);
         registerApp(new ThemeSettingApp(), true);
         registerApp(new OreProspectorApp(), true);
+        registerApp(new PongApp(), true);
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
             registerApp(new RecipeChartApp(), true);
         }
