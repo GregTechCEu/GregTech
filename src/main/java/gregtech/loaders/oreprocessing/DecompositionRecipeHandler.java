@@ -32,7 +32,8 @@ public class DecompositionRecipeHandler {
                 (!material.hasFlag(DECOMPOSITION_BY_ELECTROLYZING) &&
                         !material.hasFlag(DECOMPOSITION_BY_CENTRIFUGING)) ||
                 //disable decomposition if explicitly disabled for this material or for one of it's components
-                material.hasFlag(DISABLE_DECOMPOSITION)) return;
+                material.hasFlag(DISABLE_DECOMPOSITION) ||
+                material.getMaterialComponents().size() > 6) return;
 
         ArrayList<ItemStack> outputs = new ArrayList<>();
         ArrayList<FluidStack> fluidOutputs = new ArrayList<>();

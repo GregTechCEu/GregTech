@@ -96,14 +96,14 @@ public class CraftingComponent {
 
         PUMP = new Component(Stream.of(new Object[][]{
 
-                {1, MetaItems.ELECTRIC_PUMP_LV},
-                {2, MetaItems.ELECTRIC_PUMP_MV},
-                {3, MetaItems.ELECTRIC_PUMP_HV},
-                {4, MetaItems.ELECTRIC_PUMP_EV},
-                {5, MetaItems.ELECTRIC_PUMP_IV},
-                {6, MetaItems.ELECTRIC_PUMP_LUV},
-                {7, MetaItems.ELECTRIC_PUMP_ZPM},
-                {8, MetaItems.ELECTRIC_PUMP_UV},
+                {1, MetaItems.ELECTRIC_PUMP_LV.getStackForm()},
+                {2, MetaItems.ELECTRIC_PUMP_MV.getStackForm()},
+                {3, MetaItems.ELECTRIC_PUMP_HV.getStackForm()},
+                {4, MetaItems.ELECTRIC_PUMP_EV.getStackForm()},
+                {5, MetaItems.ELECTRIC_PUMP_IV.getStackForm()},
+                {6, MetaItems.ELECTRIC_PUMP_LUV.getStackForm()},
+                {7, MetaItems.ELECTRIC_PUMP_ZPM.getStackForm()},
+                {8, MetaItems.ELECTRIC_PUMP_UV.getStackForm()},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

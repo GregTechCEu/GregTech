@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IMaintenanceHatch;
+import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
@@ -16,15 +17,15 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.multiblock.IMaintenance;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTToolTypes;
 import gregtech.common.items.MetaItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -36,26 +37,22 @@ import static gregtech.api.capability.MultiblockDataCodes.STORE_MAINTENANCE;
 
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
-    private ItemStackHandler inventory;
-    private final byte type; // Type 0 is regular, 1 is auto taping, 2 is full auto
     private boolean isTaped;
 
     // Used to store state temporarily if the Controller is broken
     private byte maintenanceProblems = -1;
     private int timeActive = -1;
 
-    public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, int tier) {
-        super(metaTileEntityId, tier);
-        this.initializeInventory();
+    private double durationMultiplier = 1.0;
+    private double timeMultiplier = 1.0;
 
-        if (tier == 6) type = 2;
-        else if (tier == 3) type = 1;
-        else type = 0;
+    public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId) {
+        super(metaTileEntityId, 1);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
-        return new MetaTileEntityMaintenanceHatch(metaTileEntityId, getTier());
+        return new MetaTileEntityMaintenanceHatch(metaTileEntityId);
     }
 
     @Override
@@ -63,47 +60,27 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super.renderMetaTileEntity(renderState, translation, pipeline);
 
         if (shouldRenderOverlay()) {
-
-            SimpleOverlayRenderer renderer;
-            if (type == 2) renderer = Textures.MAINTENANCE_OVERLAY_AUTO_TAPING;
-            else if (isTaped) renderer = Textures.MAINTENANCE_OVERLAY_TAPED;
-            else renderer = Textures.MAINTENANCE_OVERLAY;
-
-            renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
+            (isTaped ? Textures.MAINTENANCE_OVERLAY_TAPED : Textures.MAINTENANCE_OVERLAY)
+                    .renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        if (this.type != 1)
-            return super.createImportItemHandler();
         return new ItemStackHandler(1);
     }
 
-    @Override
-    protected IItemHandlerModifiable createExportItemHandler() {
-        if (this.type != 1)
-            return super.createExportItemHandler();
-        return new ItemStackHandler(1);
-    }
-
-    //todo prevent hatches not of type 1 from accepting items
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.inventory = new ItemStackHandler(1);
-        this.itemInventory = this.inventory;
-    }
-
-    @Override
-    public void clearMachineInventory(NonNullList<ItemStack> itemBuffer) {
-        clearInventory(itemBuffer, this.inventory);
+        this.itemInventory = new ItemHandlerProxy(importItems, importItems);
     }
 
     /**
      * Sets this Maintenance Hatch as being duct taped
      * @param isTaped is the state of the hatch being taped or not
      */
+    @Override
     public void setTaped(boolean isTaped) {
         this.isTaped = isTaped;
         if (!getWorld().isRemote) {
@@ -117,6 +94,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * @param maintenanceProblems is the byte value representing the problems
      * @param timeActive is the int value representing the total time the parent multiblock has been active
      */
+    @Override
     public void storeMaintenanceData(byte maintenanceProblems, int timeActive) {
         this.maintenanceProblems = maintenanceProblems;
         this.timeActive = timeActive;
@@ -132,6 +110,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      *
      * @return whether this maintenance hatch has maintenance data
      */
+    @Override
     public boolean hasMaintenanceData() {
         return this.maintenanceProblems != -1;
     }
@@ -140,10 +119,27 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * reads this MetaTileEntity's maintenance data
      * @return Tuple of Byte, Integer corresponding to the maintenance problems, and total time active
      */
+    @Override
     public Tuple<Byte, Integer> readMaintenanceData() {
         Tuple<Byte, Integer> data = new Tuple<>(this.maintenanceProblems, this.timeActive);
         storeMaintenanceData((byte) -1, -1);
         return data;
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (!getWorld().isRemote && getOffsetTimer() % 20 == 0) {
+            MultiblockControllerBase controller = getController();
+            if (controller instanceof IMaintenance) {
+                if (((IMaintenance) controller).hasMaintenanceProblems()) {
+                    if (consumeDuctTape(this.itemInventory, 0)) {
+                        fixAllMaintenanceProblems();
+                        setTaped(true);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -157,38 +153,26 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         if (!((IMaintenance) this.getController()).hasMaintenanceProblems())
             return;
 
-        byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
-
-        switch (this.type) {
-            case 0: { // Manual
-                if (entityPlayer == null)
-                    break;
-
-            // For every slot in the player's main inventory, try to duct tape fix
+        if (entityPlayer != null) {
+            // Fix automatically on slot click by player in Creative Mode
+            if (entityPlayer.capabilities.isCreativeMode) {
+                fixAllMaintenanceProblems();
+                return;
+            }
+            // Then for every slot in the player's main inventory, try to duct tape fix
             for (int i = 0; i < entityPlayer.inventory.mainInventory.size(); i++) {
                 if (consumeDuctTape(new ItemStackHandler(entityPlayer.inventory.mainInventory), i)) {
                     fixAllMaintenanceProblems();
                     setTaped(true);
-                    break;
+                    return;
                 }
             }
-
-                if (isTaped)
-                    break;
-
-                // For each problem the multi has, try to fix with tools
-                for (byte i = 0; i < 6; i++) {
-                    if (((problems >> i) & 1) == 0)
-                        fixProblemWithTool(i, entityPlayer);
-                }
-                break;
+            // Lastly for each problem the multi has, try to fix with tools
+            byte problems = ((IMaintenance) this.getController()).getMaintenanceProblems();
+            for (byte i = 0; i < 6; i++) {
+                if (((problems >> i) & 1) == 0)
+                    fixProblemWithTool(i, entityPlayer);
             }
-            case 1: { // Consume Duct Tape for auto taping repair, then fix everything
-                if (consumeDuctTape(this.inventory, 0)) //todo make this emit redstone if it is out of tape
-                    fixAllMaintenanceProblems();
-                break;
-            }
-            // Fully automatic hatch never lets maintenance change elsewhere
         }
     }
 
@@ -200,16 +184,19 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * @param slot is the inventory slot to check for tape
      * @return true if tape was consumed, else false
      */
-    private boolean consumeDuctTape(@Nullable ItemStackHandler handler, int slot) {
+    private boolean consumeDuctTape(@Nullable IItemHandler handler, int slot) {
         if (handler == null)
             return false;
+        return consumeDuctTape(null, handler.getStackInSlot(slot));
+    }
 
-        ItemStack itemStack = handler.getStackInSlot(slot);
-        if (!itemStack.isEmpty() && itemStack.isItemEqual(MetaItems.DUCT_TAPE.getStackForm()))
-            if (itemStack.getCount() - 1 >= 0) {
+    private boolean consumeDuctTape(@Nullable EntityPlayer player, ItemStack itemStack) {
+        if (!itemStack.isEmpty() && itemStack.isItemEqual(MetaItems.DUCT_TAPE.getStackForm())) {
+            if (player == null || !player.capabilities.isCreativeMode) {
                 itemStack.shrink(1);
-                return true;
             }
+            return true;
+        }
         return false;
     }
 
@@ -221,33 +208,21 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
      * @param entityPlayer is the target player whose inventory is used to scan for tools
      */
     private void fixProblemWithTool(int problemIndex, EntityPlayer entityPlayer) {
-        List<ToolMetaItem.MetaToolValueItem> tools = null;
+        List<ToolMetaItem<?>.MetaToolValueItem> tools = null;
 
         switch (problemIndex) {
-            case 0:
-                tools = GTToolTypes.wrenches;
-                break;
-            case 1:
-                tools = GTToolTypes.screwdrivers;
-                break;
-            case 2:
-                tools = GTToolTypes.softHammers;
-                break;
-            case 3:
-                tools = GTToolTypes.hardHammers;
-                break;
-            case 4:
-                tools = GTToolTypes.wireCutters;
-                break;
-            case 5:
-                tools = GTToolTypes.crowbars;
-                break;
+            case 0: tools = GTToolTypes.wrenches; break;
+            case 1: tools = GTToolTypes.screwdrivers; break;
+            case 2: tools = GTToolTypes.softHammers; break;
+            case 3: tools = GTToolTypes.hardHammers; break;
+            case 4: tools = GTToolTypes.wireCutters; break;
+            case 5: tools = GTToolTypes.crowbars; break;
         }
 
         if (tools == null)
             return;
 
-        for (ToolMetaItem.MetaToolValueItem tool : tools) {
+        for (ToolMetaItem<?>.MetaToolValueItem tool : tools) {
             for (ItemStack itemStack : entityPlayer.inventory.mainInventory) {
                 if (itemStack.isItemEqualIgnoreDurability(tool.getStackForm())) {
                     ((IMaintenance) this.getController()).setMaintenanceFixed(problemIndex);
@@ -278,17 +253,19 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
             for (int i = 0; i < 6; i++) ((IMaintenance) this.getController()).setMaintenanceFixed(i);
     }
 
-    /**
-     * @return the maintenance hatch type, bounded [0, 3)
-     */
-    public int getType() {
-        return this.type;
+    @Override
+    public boolean isFullAuto() {
+        return false;
     }
 
-    //todo make this emit redstone if it is out of tape
     @Override
-    protected boolean canMachineConnectRedstone(EnumFacing side) {
-        return super.canMachineConnectRedstone(side);
+    public double getDurationMultiplier() {
+        return durationMultiplier;
+    }
+
+    @Override
+    public double getTimeMultiplier() {
+        return timeMultiplier;
     }
 
     @Override
@@ -302,51 +279,52 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     }
 
     @Override
-    public void update() {
-        super.update();
-        if (this.type != 0) { // if not a manual hatch, check every second for problems to fix
-            if (this.getController() instanceof IMaintenance) {
-                if (getOffsetTimer() % 20 == 0 && ((IMaintenance) this.getController()).hasMaintenanceProblems() && this.getController().isStructureFormed()) {
-                    fixMaintenanceProblems(null);
-                }
-            }
-        }
-    }
-
-    @Override
-    public ICubeRenderer getBaseTexture() {
-        MultiblockControllerBase controller = getController();
-        if (controller == null) {
-            return Textures.VOLTAGE_CASINGS[getTier()];
-        }
-        return controller.getBaseTexture(this);
-    }
-
-    /**
-     * Do not open the gui if the hatch is a full auto hatch
-     */
-    @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (type == 2) {
-            return false;
+        if (getController() instanceof IMaintenance && ((IMaintenance) getController()).hasMaintenanceProblems()) {
+            if (consumeDuctTape(playerIn, playerIn.getHeldItem(hand))) {
+                fixAllMaintenanceProblems();
+                setTaped(true);
+                return true;
+            }
         }
         return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 * 3 + 98)
+                .label(10, 5, this.getMetaFullName())
+                .widget(new SlotWidget(this.importItems, 0, 89 - 9, 18 - 1)
+                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY))
+                .widget(new ClickButtonWidget(89 - 9 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
+                        .setButtonTexture(GuiTextures.MAINTENANCE_ICON))
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16)
+                .build(this.getHolder(), entityPlayer);
+    }
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 + 18 + 94).label(10, 5, this.getMetaFullName());
-        if (type == 1) {
-            builder.widget(new SlotWidget(this.getItemInventory(), 0, 89 - 9, 18, true, true)
-                    .setBackgroundTexture(GuiTextures.SLOT));
-        } else if (type == 0) {
-            builder.widget(new ClickButtonWidget(89 - 9 - 1, 18 - 1, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
-                    .setButtonTexture(GuiTextures.MAINTENANCE_ICON));
-        }
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setBoolean("IsTaped", isTaped);
+        return data;
+    }
 
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 + 12);
-        return builder.build(this.getHolder(), entityPlayer);
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        isTaped = data.getBoolean("IsTaped");
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(isTaped);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        isTaped = buf.readBoolean();
     }
 
     @Override
@@ -370,6 +348,6 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public void registerAbilities(List<IMaintenanceHatch> abilityList) {
-        abilityList.add((IMaintenanceHatch) this);
+        abilityList.add(this);
     }
 }

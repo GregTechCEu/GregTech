@@ -109,7 +109,7 @@ public class ElementMaterials {
                 .build();
 
         Caesium = new Material.Builder(15, "caesium")
-                .ingot()
+                .ingot().fluid()
                 .color(0x80620B).iconSet(METALLIC)
                 .element(Elements.Cs)
                 .build();

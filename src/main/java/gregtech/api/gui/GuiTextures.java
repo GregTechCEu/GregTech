@@ -149,6 +149,7 @@ public class GuiTextures {
     public static final TextureArea NEUTRAL_MATTER_OVERLAY = TextureArea.fullImage("textures/gui/overlay/neutral_matter_overlay.png");
     public static final TextureArea DATA_ORB_OVERLAY = TextureArea.fullImage("textures/gui/overlay/data_orb_overlay.png");
     public static final TextureArea SCANNER_OVERLAY = TextureArea.fullImage("textures/gui/overlay/scanner_overlay.png");
+    public static final TextureArea DUCT_TAPE_OVERLAY = TextureArea.fullImage("textures/gui/overlay/duct_tape_overlay.png");
 
     //PROGRESS BARS
     public static final TextureArea PROGRESS_BAR_ARC_FURNACE = TextureArea.fullImage("textures/gui/progress_bar/progress_bar_arc_furnace.png");

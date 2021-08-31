@@ -11,6 +11,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
+import gregtech.api.unification.material.Materials;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityItemBus;
@@ -37,6 +38,7 @@ public class MultiblockRecipeLogicTest {
     @BeforeClass
     public static void init() {
         Bootstrap.register();
+        Materials.register();
     }
 
     private static ResourceLocation gregtechId(String name) {
@@ -82,6 +84,18 @@ public class MultiblockRecipeLogicTest {
                             @Override
                             public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
                                 return true;
+                            }
+
+                            // ignore maintenance problems
+                            @Override
+                            public boolean hasMaintenanceMechanics() {
+                                return false;
+                            }
+
+                            // ignore muffler outputs
+                            @Override
+                            public boolean hasMufflerMechanics() {
+                                return false;
                             }
                         });
 

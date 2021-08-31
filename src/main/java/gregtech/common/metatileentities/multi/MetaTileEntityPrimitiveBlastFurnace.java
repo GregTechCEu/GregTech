@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.texture.TextureUtils;
@@ -22,6 +23,7 @@ import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
 public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMultiblockController {
@@ -55,6 +57,13 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
     @Override
     public int getLightValueForPart(IMultiblockPart sourcePart) {
         return sourcePart == null && recipeMapWorkable.isActive() ? 15 : 0;
+    }
+
+    @Override
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (!isStructureFormed())
+            return false;
+        return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override

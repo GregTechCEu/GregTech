@@ -292,9 +292,8 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("rotor_holder_luv", MetaTileEntities.ROTOR_HOLDER[1].getStackForm(), "WHW", "WRW", "WWW", 'H', MetaTileEntities.HULL[GTValues.LuV].getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtHex, Materials.YttriumBariumCuprate), 'R', new UnificationEntry(OrePrefix.gear, Materials.Chrome));
         ModHandler.addShapedRecipe("rotor_holder_max", MetaTileEntities.ROTOR_HOLDER[2].getStackForm(), "WHW", "WRW", "WWW", 'H', MetaTileEntities.HULL[GTValues.MAX].getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtHex, Tier.Superconductor), 'R', new UnificationEntry(OrePrefix.gear, Materials.HSSS));
 
-        ModHandler.addShapedRecipe("maintenance_hatch", MetaTileEntities.MAINTENANCE_HATCH[0].getStackForm(), "dwx", "hHc", "fsr", 'H', MetaTileEntities.HULL[GTValues.LV].getStackForm());
-        ModHandler.addShapedRecipe("maintenance_hatch_auto_taping", MetaTileEntities.MAINTENANCE_HATCH[1].getStackForm(), "CMC", "RHR", "CMC", 'C', CIRCUIT.getIngredient(GTValues.HV), 'M', MetaTileEntities.MAINTENANCE_HATCH[0].getStackForm(), 'R', ROBOT_ARM.getIngredient(GTValues.HV), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm());
-        ModHandler.addShapedRecipe("maintenance_hatch_automatic", MetaTileEntities.MAINTENANCE_HATCH[2].getStackForm(), "CGC", "RHR", "CGC", 'C', CIRCUIT.getIngredient(GTValues.LuV), 'G', new UnificationEntry(OrePrefix.gear, Materials.HSSG), 'R', ROBOT_ARM.getIngredient(GTValues.LuV), 'H', MetaTileEntities.HULL[GTValues.LuV].getStackForm());
+        ModHandler.addShapedRecipe("maintenance_hatch", MetaTileEntities.MAINTENANCE_HATCH.getStackForm(), "dwx", "hHc", "fsr", 'H', MetaTileEntities.HULL[GTValues.LV].getStackForm());
+        ModHandler.addShapedRecipe("maintenance_hatch_automatic", MetaTileEntities.AUTO_MAINTENANCE_HATCH.getStackForm(), "CMC", "RHR", "CMC", 'C', CIRCUIT.getIngredient(GTValues.HV), 'M', MetaTileEntities.MAINTENANCE_HATCH.getStackForm(), 'R', ROBOT_ARM.getIngredient(GTValues.HV), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm());
 
         // STEAM MACHINES
         ModHandler.addShapedRecipe("bronze_hull", MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), "PPP", "PhP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Bronze));

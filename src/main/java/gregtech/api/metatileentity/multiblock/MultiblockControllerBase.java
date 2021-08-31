@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -195,7 +196,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             parts.sort(Comparator.comparing(it -> multiblockPartSorter().apply(((MetaTileEntity) it).getPos())));
             for (IMultiblockPart part : parts) {
                 if (part.isAttachedToMultiBlock()) {
-                    if (!canShare() || part instanceof MetaTileEntityRotorHolder) {
+                    if (!canShare() || part instanceof MetaTileEntityRotorHolder || part instanceof IMaintenanceHatch) {
                         return;
                     }
                 }

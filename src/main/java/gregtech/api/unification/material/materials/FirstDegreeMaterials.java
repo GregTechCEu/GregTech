@@ -679,6 +679,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_SPRING_SMALL)
                 .components(Yttrium, 1, Barium, 2, Copper, 3, Oxygen, 7)
                 .cableProperties(GTValues.V[8], 4, 4)
+                .blastTemp(4500)
                 .build();
 
         NetherQuartz = new Material.Builder(339, "nether_quartz")
@@ -1247,7 +1248,7 @@ public class FirstDegreeMaterials {
         Samarium.getProperty(PropertyKey.INGOT).setMagneticMaterial(SamariumMagnetic);
 
         ManganesePhosphide = new Material.Builder(424, "manganese_phosphide")
-                .ingot()
+                .ingot().fluid()
                 .color(0xE1B454).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Manganese, 1, Phosphorus, 1)
@@ -1256,7 +1257,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         MagnesiumDiboride = new Material.Builder(425, "magnesium_diboride")
-                .ingot()
+                .ingot().fluid()
                 .color(0x331900).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Magnesium, 1, Boron, 2)
@@ -1265,7 +1266,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         MercuryBariumCalciumCuprate = new Material.Builder(426, "mercury_barium_calcium_cuprate")
-                .ingot()
+                .ingot().fluid()
                 .color(0x555555).iconSet(SHINY)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Mercury, 1, Barium, 2, Calcium, 2, Copper, 3, Oxygen, 8)
@@ -1274,7 +1275,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         UraniumTriplatinum = new Material.Builder(427, "uranium_triplatinum")
-                .ingot()
+                .ingot().fluid()
                 .color(0x008700).iconSet(SHINY)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Uranium238, 1, Platinum, 3)
@@ -1284,7 +1285,7 @@ public class FirstDegreeMaterials {
                 .setFormula("UPt3", true);
 
         SamariumIronArsenicOxide = new Material.Builder(428, "samarium_iron_arsenic_oxide")
-                .ingot()
+                .ingot().fluid()
                 .color(0x330033).iconSet(SHINY)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Samarium, 1, Iron, 1, Arsenic, 1, Oxygen, 1)
@@ -1293,7 +1294,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         IndiumTinBariumTitaniumCuprate = new Material.Builder(429, "indium_tin_barium_titanium_cuprate")
-                .ingot()
+                .ingot().fluid()
                 .color(0x994C00).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Indium, 4, Tin, 2, Barium, 2, Titanium, 1, Copper, 7, Oxygen, 14)
@@ -1302,7 +1303,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         UraniumRhodiumDinaquadide = new Material.Builder(430, "uranium_rhodium_dinaquadide")
-                .ingot()
+                .ingot().fluid()
                 .color(0x0A0A0A)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Uranium238, 1, Rhodium, 1, Naquadah, 2)
@@ -1312,7 +1313,7 @@ public class FirstDegreeMaterials {
                 .setFormula("URhNq2", true);
 
         EnrichedNaquadahTriniumEuropiumDuranide = new Material.Builder(431, "enriched_naquadah_trinium_europium_duranide")
-                .ingot()
+                .ingot().fluid()
                 .color(0x7D9673).iconSet(METALLIC)
                 .flags(DECOMPOSITION_BY_CENTRIFUGING)
                 .components(NaquadahEnriched, 4, Trinium, 3, Europium, 2, Duranium, 1)
@@ -1321,7 +1322,7 @@ public class FirstDegreeMaterials {
                 .build();
 
         RutheniumTriniumAmericiumNeutronate = new Material.Builder(432, "ruthenium_trinium_americium_neutronate")
-                .ingot()
+                .ingot().fluid()
                 .color(0xFFFFFF).iconSet(BRIGHT)
                 .flags(DECOMPOSITION_BY_ELECTROLYZING)
                 .components(Ruthenium, 1, Trinium, 2, Americium, 1, Neutronium, 2, Oxygen, 8)

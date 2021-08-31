@@ -131,7 +131,8 @@ public class MetaTileEntities {
     public static MetaTileEntitySteamItemBus STEAM_IMPORT_BUS;
     public static MetaTileEntitySteamHatch STEAM_HATCH;
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[3]; //HV, LuV, MAX
-    public static final MetaTileEntityMaintenanceHatch[] MAINTENANCE_HATCH = new MetaTileEntityMaintenanceHatch[3];
+    public static MetaTileEntityMaintenanceHatch MAINTENANCE_HATCH;
+    public static MetaTileEntityAutoMaintenanceHatch AUTO_MAINTENANCE_HATCH;
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV]; // LV-UV
 
     //MULTIBLOCKS SECTION
@@ -662,17 +663,16 @@ public class MetaTileEntities {
         STEAM_HATCH = GregTechAPI.registerMetaTileEntity(1652, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
         SIMPLE_ORE_WASHER = GregTechAPI.registerMetaTileEntity(1653, new MetaTileEntitySimpleOreWasher(gregtechId("ore_washer.simple"), RecipeMaps.SIMPLE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY, 0));
 
-        // Maintenance Hatches, IDs 1654-1656
-        MAINTENANCE_HATCH[0] = GregTechAPI.registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), 1));
-        MAINTENANCE_HATCH[1] = GregTechAPI.registerMetaTileEntity(1655, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_taping"), 3));
-        MAINTENANCE_HATCH[2] = GregTechAPI.registerMetaTileEntity(1656, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_full_auto"), 6));
+        // Maintenance Hatches, IDs 1654-1655
+        MAINTENANCE_HATCH = GregTechAPI.registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch")));
+        AUTO_MAINTENANCE_HATCH = GregTechAPI.registerMetaTileEntity(1655, new MetaTileEntityAutoMaintenanceHatch(gregtechId("maintenance_hatch_full_auto")));
 
-        // Muffler Hatches, IDs 1657-
+        // Muffler Hatches, IDs 1656-
         for (int i = 0; i < MUFFLER_HATCH.length; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
             MUFFLER_HATCH[i] = new MetaTileEntityMufflerHatch(gregtechId("muffler_hatch." + voltageName), i + 1);
 
-            GregTechAPI.registerMetaTileEntity(1657 + i, MUFFLER_HATCH[i]);
+            GregTechAPI.registerMetaTileEntity(1656 + i, MUFFLER_HATCH[i]);
         }
 
         CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));

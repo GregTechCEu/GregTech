@@ -79,9 +79,8 @@ public abstract class MultiblockInfoPage {
         for (MetaTileEntityMufflerHatch mufflerHatch : MetaTileEntities.MUFFLER_HATCH) {
             addBlockTooltip(mufflerHatch.getStackForm(), defaultText);
         }
-        for (MetaTileEntityMaintenanceHatch maintenanceHatch : MetaTileEntities.MAINTENANCE_HATCH) {
-            addBlockTooltip(maintenanceHatch.getStackForm(), maintenanceText);
-        }
+        addBlockTooltip(MetaTileEntities.MAINTENANCE_HATCH.getStackForm(), maintenanceText);
+        addBlockTooltip(MetaTileEntities.AUTO_MAINTENANCE_HATCH.getStackForm(), maintenanceText);
     }
 
     /**
@@ -113,7 +112,9 @@ public abstract class MultiblockInfoPage {
 
     public static Supplier<?> maintenanceIfEnabled(int type, IBlockState alternative) {
         return ConfigHolder.U.GT5u.enableMaintenance ?
-                () -> MetaTileEntities.MAINTENANCE_HATCH[type] :
+                () -> type == 0 ?
+                        MetaTileEntities.MAINTENANCE_HATCH :
+                        MetaTileEntities.AUTO_MAINTENANCE_HATCH :
                 () -> alternative;
     }
 }

@@ -9,8 +9,11 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
+import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.integration.jei.utils.render.FluidStackTextRenderer;
+import gregtech.integration.jei.utils.render.ItemStackChanceRenderer;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
@@ -86,6 +89,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     public void setRecipe(IRecipeLayout recipeLayout, @Nonnull GTRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         IGuiFluidStackGroup fluidStackGroup = recipeLayout.getFluidStacks();
+        Int2ObjectMap<ChanceEntry> chanceOutputMap = recipeWrapper.getChanceOutputMap();
         for (Widget uiWidget : modularUI.guiWidgets.values()) {
 
             if (uiWidget instanceof SlotWidget) {
@@ -102,8 +106,11 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
                 } else if (handle.getItemHandler() == exportItems) {
                     //this is output item stack slot widget, so add it to item group
                     itemStackGroup.init(importItems.getSlots() + handle.getSlotIndex(), false,
-                            slotWidget.getPosition().x,
-                            slotWidget.getPosition().y);
+                            new ItemStackChanceRenderer(chanceOutputMap.get(importItems.getSlots() + handle.getSlotIndex())),
+                            slotWidget.getPosition().x + 1,
+                            slotWidget.getPosition().y + 1,
+                            slotWidget.getSize().width - 2,
+                            slotWidget.getSize().height - 2, 0, 0);
                 }
             } else if (uiWidget instanceof TankWidget) {
                 TankWidget tankWidget = (TankWidget) uiWidget;

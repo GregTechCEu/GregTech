@@ -1,5 +1,6 @@
 package gregtech.common.metatileentities.multi;
 
+import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
@@ -22,6 +23,8 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
 public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockController {
@@ -71,6 +74,13 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
     @Override
     public boolean hasMaintenanceMechanics() {
         return false;
+    }
+
+    @Override
+    public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
+        if (!isStructureFormed())
+            return false;
+        return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
     @Override

@@ -10,7 +10,10 @@ import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTLog;
 import net.minecraft.item.ItemStack;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
@@ -42,7 +45,10 @@ public class MetaItemBracketHandler implements IBracketHandler {
                 MetaPrefixItem metaPrefixItem = ((MetaPrefixItem) item);
                 OrePrefix prefix = metaPrefixItem.getOrePrefix();
                 for (ItemStack entry : ((MetaPrefixItem) item).getEntries()) {
-                    metaItemNames.put(prefix.name() + OreDictUnifier.getMaterial(entry).material.toCamelCaseString(), entry);
+                    MaterialStack material = OreDictUnifier.getMaterial(entry);
+                    if (material != null) {
+                        metaItemNames.put(prefix.name() + OreDictUnifier.getMaterial(entry).material.toCamelCaseString(), entry);
+                    } else GTLog.logger.error("Material in entry {} is null!", entry.toString());
                 }
             }
             for (MetaValueItem entry : item.getAllItems()) {

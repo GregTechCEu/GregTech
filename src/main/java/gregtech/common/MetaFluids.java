@@ -222,9 +222,8 @@ public class MetaFluids {
 
         for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
             FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
-            if (fluidProperty == null) continue;
 
-            if (fluidProperty.getFluid() == null) {
+            if (fluidProperty != null && fluidProperty.getFluid() == null) {
                 int temperature = fluidProperty.getFluidTemperature();
                 Fluid fluid = registerFluid(material, FluidType.NORMAL, temperature, fluidProperty.hasBlock());
                 fluidProperty.setFluid(fluid);
@@ -233,7 +232,8 @@ public class MetaFluids {
 
             PlasmaProperty plasmaProperty = material.getProperty(PropertyKey.PLASMA);
             if (plasmaProperty != null && plasmaProperty.getPlasma() == null) {
-                Fluid fluid = registerFluid(material, FluidType.PLASMA, fluidProperty.getFluidTemperature() + 30000, false);
+                int baseTemperature = fluidProperty == null ? 0 : fluidProperty.getFluidTemperature();
+                Fluid fluid = registerFluid(material, FluidType.PLASMA, baseTemperature + 30000, false);
                 plasmaProperty.setPlasma(fluid);
                 FluidTooltipUtil.registerTooltip(fluid, material.getChemicalFormula());
             }
