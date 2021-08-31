@@ -3233,7 +3233,8 @@ gregtech.machine.energy_converter.uxv.4.name=UXV Energy Converter (4A)
 gregtech.machine.energy_converter.uxv.9.name=UXV Energy Converter (9A)
 gregtech.machine.energy_converter.uxv.16.name=UXV Energy Converter (16A)
 
-gregtech.machine.energy_converter.tooltip=Converts Forge Energy to and from EU \nUse Soft Hammer to invert
+gregtech.machine.energy_converter.tooltip.1=Converts Forge Energy to and from EU
+gregtech.machine.energy_converter.tooltip.2=Use Soft Hammer to invert
 
 # Pumps
 gregtech.machine.pump.tooltip_range=Pumping Area: %,dx%,d

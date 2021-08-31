@@ -192,7 +192,8 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         long voltage = converterTrait.getVoltage();
         long amps = converterTrait.getBaseAmps();
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip.1"));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip.2"));
         if(converterTrait.isFeToEu()) {
             tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", voltage, GTValues.VN[tier]));
             tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out", amps));
