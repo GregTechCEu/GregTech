@@ -49,12 +49,11 @@ public interface IMiner {
         while (y.get() > 0) {
             if (z.get() <= startZ.get() + aRadius * 2) {
                 if (x.get() <= startX.get() + aRadius * 2) {
-                    LinkedList<BlockPos> blockPos = new LinkedList<>();
                     for (int a = 0; a < aRadius * 2; a++) {
-                        blockPos.addLast(new BlockPos(x.get(), y.get(), startZ.get() + a));
-                        Block block = miner.getWorld().getBlockState(blockPos.getLast()).getBlock();
-                        if (miner.getWorld().getTileEntity(blockPos.getLast()) == null && GTUtility.isOre(block)) {
-                            blocks.addLast(blockPos.getLast());
+                        BlockPos blockPos = new BlockPos(x.get(), y.get(), startZ.get() + a);
+                        Block block = miner.getWorld().getBlockState(blockPos).getBlock();
+                        if (miner.getWorld().getTileEntity(blockPos) == null && GTUtility.isOre(block)) {
+                            blocks.addLast(blockPos);
                         }
                     }
                     x.incrementAndGet();
