@@ -174,6 +174,12 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
         isDistinct = !isDistinct;
+        //mark busses as changed on distinct toggle
+        if (isDistinct) {
+            this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+        } else {
+            this.notifiedItemInputList.add(this.inputInventory);
+        }
     }
 
     @Override

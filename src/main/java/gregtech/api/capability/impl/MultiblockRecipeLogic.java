@@ -9,12 +9,14 @@ import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     // Used for distinct mode
     protected int lastRecipeIndex = 0;
+    protected List<IItemHandlerModifiable> invalidatedInputList = new ArrayList<>();
 
 
     public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity) {
@@ -110,6 +112,16 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         List<IItemHandlerModifiable> importInventory = getInputBuses();
         IMultipleTankHandler importFluids = getInputTank();
 
+        //if fluids changed, iterate all input busses again
+        if (metaTileEntity.getNotifiedFluidInputList().size() > 0) {
+            for (IItemHandlerModifiable ihm : importInventory){
+                if (!metaTileEntity.getNotifiedItemInputList().contains(ihm)){
+                    metaTileEntity.getNotifiedItemInputList().add(ihm);
+                }
+            }
+            metaTileEntity.getNotifiedFluidInputList().clear();
+        }
+
         // Our caching implementation
         // This guarantees that if we get a recipe cache hit, our efficiency is no different from other machines
         if (previousRecipe != null && previousRecipe.matches(false, importInventory.get(lastRecipeIndex), importFluids)) {
@@ -117,8 +129,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             // If a valid recipe is found, immediately attempt to return it to prevent inventory scanning
             if (setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(lastRecipeIndex))) {
                 setupRecipe(currentRecipe);
-                metaTileEntity.getNotifiedItemInputList().remove(lastRecipeIndex);
-                metaTileEntity.getNotifiedFluidInputList().remove(lastRecipeIndex);
+                metaTileEntity.getNotifiedItemInputList().remove(importInventory.get(lastRecipeIndex));
 
                 // No need to cache the previous recipe here, as it is not null and matched by the current recipe,
                 // so it will always be the same
@@ -130,30 +141,30 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         // each bus individually instead of the combined inventory all at once.
         for (int i = 0; i < importInventory.size(); i++) {
             IItemHandlerModifiable bus = importInventory.get(i);
-            boolean inputsChanged = hasNotifiedInputs();
-            // If the inputs have changed since the last recipe calculation, find a new recipe based on the new inputs
-            if (inputsChanged) {
-                currentRecipe = findRecipe(maxVoltage, bus, importFluids, MatchingMode.DEFAULT);
-                // Cache the current recipe, if one is found
-                if (currentRecipe != null) {
-                    this.previousRecipe = currentRecipe;
-                }
+            // Skip this bus if no recipe was found last time and the inventory did not change
+            if (invalidatedInputList.contains(bus) && !metaTileEntity.getNotifiedItemInputList().contains(bus)) {
+                continue;
+            } else {
+                invalidatedInputList.remove(bus);
             }
-
-            invalidInputsForRecipes = (currentRecipe == null);
-
-            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(i))) {
-                lastRecipeIndex = i;
-                setupRecipe(currentRecipe);
-                metaTileEntity.getNotifiedItemInputList().remove(i);
-                metaTileEntity.getNotifiedFluidInputList().remove(i);
-                break;
+            // Look for a new recipe after a cache miss
+            currentRecipe = findRecipe(maxVoltage, bus, importFluids, MatchingMode.DEFAULT);
+            // Cache the current recipe, if one is found
+            if (currentRecipe != null) {
+                this.previousRecipe = currentRecipe;
+                if (setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(i))) {
+                    lastRecipeIndex = i;
+                    setupRecipe(currentRecipe);
+                    metaTileEntity.getNotifiedItemInputList().remove(bus);
+                    return;
+                }
+            } else {
+                invalidatedInputList.add(bus);
             }
         }
 
         //If no matching recipes are found, clear the notified inputs so we know when new items are given
         metaTileEntity.getNotifiedItemInputList().clear();
-        metaTileEntity.getNotifiedFluidInputList().clear();
     }
 
     @Override
