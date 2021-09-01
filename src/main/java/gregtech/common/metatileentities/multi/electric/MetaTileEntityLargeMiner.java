@@ -7,7 +7,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
-import crafttweaker.api.item.IItemStack;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -64,7 +63,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static gregtech.api.unification.material.Materials.*;
+import static gregtech.api.unification.material.Materials.DrillingFluid;
 
 public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements IMiner { //todo implement maintenance and soft hammering
 
@@ -92,10 +91,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private boolean chunkMode = false;
 
     private LinkedList<BlockPos> blockPos = new LinkedList<>();
-    private int index = 0;
     private int aRadius;
     private int pipeY = 0;
-    private Iterator iterate;
     private boolean invFull = false;
     private final int tier;
     private int overclockAmount;
@@ -164,9 +161,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 }
                 if (invFull && getOffsetTimer() % 20 == 0) {
                     pushItemsIntoNearbyHandlers(getFrontFacing());
-                    NonNullList<ItemStack> itemStacks = NonNullList.create();
-                    itemStacks.add(new ItemStack(Blocks.STONE));
-                    if (addItemsToItemHandler(outputInventory, true, itemStacks)) {
+                    NonNullList<ItemStack> testSpace = NonNullList.create();
+                    testSpace.add(new ItemStack(Blocks.STONE));
+                    if (addItemsToItemHandler(outputInventory, true, testSpace)) {
                         invFull = false;
                     }
                 }
@@ -186,9 +183,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 markDirty();
             }
 
-            if (blockPos.isEmpty()) {
-                blockPos = IMiner.getBlocksToMine(this, x, y, z, startX, startZ, startY, aRadius);
-                iterate = blockPos.iterator();
+            if(y.get() > 0) {
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, startY, aRadius, IMiner.getTPS(world)));
             }
 
             //MAINTENANCE IMPLEMENTATION:
@@ -196,8 +192,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             //    for (int x = 0; x < (this.getNumProblems() > 0 ? 1 : overclockAmount); ) {
 
             if (getOffsetTimer() % type.tick == 0 && !blockPos.isEmpty()) {
-                for (int x = 0; x < overclockAmount; ) {
-                    BlockPos tempPos = (BlockPos) iterate.next();
+                int a = 0;
+                while (a < overclockAmount && !blockPos.isEmpty()) {
+                    BlockPos tempPos = blockPos.getFirst();
                     NonNullList<ItemStack> itemStacks = NonNullList.create();
                     IBlockState blockState = this.getWorld().getBlockState(tempPos);
                     if (blockState != Blocks.AIR.getDefaultState()) {
@@ -212,20 +209,22 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                             mineX.set(tempPos.getX());
                             mineZ.set(tempPos.getZ());
                             mineY.set(tempPos.getY());
-                            index++;
-                            x++;
-                        } else
+                            a++;
+                            blockPos.removeFirst();
+                        } else {
                             invFull = true;
-
+                            break;
+                        }
                     } else {
-                        index++;
-                        x++;
+                        a++;
+                        blockPos.removeFirst();
                     }
                 }
             } else if (blockPos.isEmpty()) {
-                initPos();
-                blockPos = IMiner.getBlocksToMine(this, x, y, z, startX, startZ, startY, aRadius);
-                iterate = blockPos.iterator();
+                x.set(mineX.get());
+                y.set(mineY.get());
+                z.set(mineZ.get());
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, startY, aRadius, IMiner.getTPS(world)));
                 if (blockPos.isEmpty()) {
                     done = true;
                 }
@@ -235,10 +234,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 pushItemsIntoNearbyHandlers(getFrontFacing());
             }
 
-            if (blockPos.size() - 1 == index) {
-                pushItemsIntoNearbyHandlers(getFrontFacing());
-                done = true;
-            }
+
         }
 
     }
@@ -367,7 +363,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         data.setTag("tempY", new NBTTagInt(tempY.get()));
         data.setTag("pipeY", new NBTTagInt(pipeY));
         data.setTag("radius", new NBTTagInt(aRadius));
-        data.setTag("index,", new NBTTagInt(index));
         data.setTag("isActive", new NBTTagInt(isActive ? 1 : 0));
         data.setTag("done", new NBTTagInt(done ? 1 : 0));
         data.setTag("chunkMode", new NBTTagInt(chunkMode ? 1 : 0));
@@ -389,7 +384,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         startZ.set(data.getInteger("szPos"));
         tempY.set(data.getInteger("tempY"));
         pipeY = data.getInteger("pipeY");
-        index = data.getInteger("index");
         aRadius = data.getInteger("radius");
         done = data.getInteger("done") != 0;
         isActive = data.getInteger("isActive") != 0;
