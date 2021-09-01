@@ -3587,7 +3587,7 @@ gregtech.machine.miner.lv.tooltip=Mines ores under the miner ONLY! Use screwdriv
 gregtech.machine.miner.mv.tooltip=Mines ores under the miner ONLY! Use screwdriver to configure radius.
 gregtech.machine.miner.hv.tooltip=Mines ores under the miner ONLY! Use screwdriver to configure radius.
 gregtech.machine.miner.steam.tooltip=Mines ores under the miner ONLY! Use screwdriver to configure radius.
-gregtech.machine.miner.steam.description=Max radius: %d. %d sec per block, no stuttering. Uses 16 mb/t of steam.
+gregtech.machine.miner.steam.description=Max radius: %d. %d sec per block, no stuttering. Uses 16 L/t of steam.
 gregtech.machine.miner.fluid_usage=Consumes %dmb of %s per tick
 gregtech.machine.miner.overclock=Overclocks up to §e%s§7
 

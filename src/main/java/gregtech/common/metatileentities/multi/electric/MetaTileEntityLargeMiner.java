@@ -7,6 +7,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.collect.Lists;
+import crafttweaker.api.item.IItemStack;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -161,9 +162,13 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 if (!done && x.get() == Integer.MAX_VALUE && y.get() == Integer.MAX_VALUE && z.get() == Integer.MAX_VALUE) {
                     initPos();
                 }
-                if (invFull && getOffsetTimer() % 5 == 0) {
+                if (invFull && getOffsetTimer() % 20 == 0) {
                     pushItemsIntoNearbyHandlers(getFrontFacing());
-                    invFull = false;
+                    NonNullList<ItemStack> itemStacks = NonNullList.create();
+                    itemStacks.add(new ItemStack(Blocks.STONE));
+                    if (addItemsToItemHandler(outputInventory, true, itemStacks)) {
+                        invFull = false;
+                    }
                 }
                 return;
             }
@@ -209,9 +214,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                             mineY.set(tempPos.getY());
                             index++;
                             x++;
-                        } else {
+                        } else
                             invFull = true;
-                        }
+
                     } else {
                         index++;
                         x++;

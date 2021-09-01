@@ -134,7 +134,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(inventorySize);
 
-        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BRONZE_BACKGROUND, 195, 176);
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BRONZE_BACKGROUND, 175, 180);
         builder.bindPlayerInventory(entityPlayer.inventory, 94);
 
         for (int y = 0; y < rowSize; y++) {
@@ -144,9 +144,9 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
                         .setBackgroundTexture(GuiTextures.BRONZE_SLOT));
             }
         }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.BRONZE_SLOT, 0);
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.BRONZE_SLOT, 10);
 
-        builder.image(7, 16, 105, 75, GuiTextures.BRONZE_DISPLAY)
+        builder.image(7, 16, 105, 65, GuiTextures.BRONZE_DISPLAY)
                 .label(10, 5, getMetaFullName());
         builder.widget(new AdvancedTextWidget(10, 23, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(84));
@@ -189,14 +189,13 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
                     pushItemsIntoNearbyHandlers(getFrontFacing());
                     invFull = false;
                 }
-                return;
-            }
-
-            if (needsVenting) {
-                tryDoVenting();
-                if (ventingStuck) {
-                    return;
+                if (needsVenting) {
+                    tryDoVenting();
+                    if (ventingStuck) {
+                        return;
+                    }
                 }
+                return;
             }
 
             WorldServer world = (WorldServer) this.getWorld();
@@ -228,6 +227,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
                         mineZ.set(tempPos.getZ());
                         mineY.set(tempPos.getY());
                         index++;
+                        setNeedsVenting(true);
                     } else {
                         invFull = true;
                     }
@@ -306,9 +306,9 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         else if (invFull)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
         else if (ventingStuck)
-            textList.add(new TextComponentString("gregtech.multiblock.large_miner.vent").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.vent").setStyle(new Style().setColor(TextFormatting.RED)));
         else
-            textList.add(new TextComponentString("gregtech.multiblock.large_miner.steam").setStyle(new Style().setColor(TextFormatting.RED)));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.steam").setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
     void addDisplayText2(List<ITextComponent> textList) {
