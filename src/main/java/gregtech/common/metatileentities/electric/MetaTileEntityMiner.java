@@ -164,7 +164,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
     }
 
     public boolean drainEnergy() {
-        if (energyContainer.getEnergyStored() >= energyPerTick && !done && !invFull) {
+        if (energyContainer.getEnergyStored() >= energyPerTick && !done && !invFull && !testForMax()) {
             energyContainer.removeEnergy(energyPerTick);
             return true;
         }
@@ -177,7 +177,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
         super.update();
         if (!getWorld().isRemote) {
             if (!drainEnergy()) {
-                if (!done && x.get() == Integer.MAX_VALUE && y.get() == Integer.MAX_VALUE && z.get() == Integer.MAX_VALUE) {
+                if (!done && testForMax()) {
                     initPos();
                 }
                 if (invFull && getOffsetTimer() % 5 == 0) {
@@ -362,14 +362,14 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
         }
     }
 
+    public boolean testForMax() {
+        return x.get() == Integer.MAX_VALUE && y.get() == Integer.MAX_VALUE && z.get() == Integer.MAX_VALUE;
+    }
 
     @Override
     public Type getType() {
         return type;
     }
 
-    void mineBlock() {
-
-    }
 
 }

@@ -145,7 +145,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             return false;
         FluidStack drillingFluid = DrillingFluid.getFluid(type.drillingFluidConsumePerTick);
         FluidStack canDrain = importFluidHandler.drain(drillingFluid, false);
-        if (energyContainer.getEnergyStored() >= getMaxVoltage() && canDrain != null && canDrain.amount == type.drillingFluidConsumePerTick && !invFull) {
+        if (energyContainer.getEnergyStored() >= getMaxVoltage() && canDrain != null && canDrain.amount == type.drillingFluidConsumePerTick && !invFull && !testForMax()) {
             energyContainer.removeEnergy(energyContainer.getInputVoltage());
             importFluidHandler.drain(drillingFluid, true);
             return true;
@@ -159,7 +159,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             if (done || !drainEnergy()) {
                 if (isActive)
                     setActive(false);
-                if (!done && x.get() == Integer.MAX_VALUE && y.get() == Integer.MAX_VALUE && z.get() == Integer.MAX_VALUE) {
+                if (!done && testForMax()) {
                     initPos();
                 }
                 if (invFull && getOffsetTimer() % 20 == 0) {
@@ -525,6 +525,10 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.errorradius"), false);
         }
         return true;
+    }
+
+    public boolean testForMax() {
+        return x.get() == Integer.MAX_VALUE && y.get() == Integer.MAX_VALUE && z.get() == Integer.MAX_VALUE;
     }
 
     public void initPos() {

@@ -163,7 +163,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
     }
 
     public boolean drainSteam() {
-        if (importFluids.getTankAt(0).getFluidAmount() >= 16 && !done && !invFull && !ventingStuck) {
+        if (importFluids.getTankAt(0).getFluidAmount() >= 16 && !done && !invFull && !ventingStuck & !testForMax()) {
             importFluids.getTankAt(0).drain(16, true);
             return true;
         }
@@ -175,7 +175,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         super.update();
         if (!getWorld().isRemote) {
             if (!drainSteam()) {
-                if (!done && x.get() == Integer.MAX_VALUE && y.get() == Integer.MAX_VALUE && z.get() == Integer.MAX_VALUE) {
+                if (!done && testForMax()) {
                     setXYZ();
                     startX.set(getPos().getX() - aRadius);
                     startZ.set(getPos().getZ() - aRadius);
@@ -426,6 +426,10 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         } else if (!this.ventingStuck) {
             this.setVentingStuck(true);
         }
+    }
+
+    public boolean testForMax() {
+        return x.get() == Integer.MAX_VALUE && y.get() == Integer.MAX_VALUE && z.get() == Integer.MAX_VALUE;
     }
 
     @Override
