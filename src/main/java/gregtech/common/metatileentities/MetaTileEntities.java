@@ -2,6 +2,7 @@ package gregtech.common.metatileentities;
 
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
+import gregtech.api.metatileentity.IMiner;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.SimpleGeneratorMetaTileEntity;
 import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
@@ -113,7 +114,7 @@ public class MetaTileEntities {
     public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length - 1];
     public static final MetaTileEntityRockBreaker[] ROCK_BREAKER = new MetaTileEntityRockBreaker[GTValues.V.length - 1];
-    public static final MetaTileEntityChunkMiner[] CHUNK_MINER = new MetaTileEntityChunkMiner[GTValues.V.length - 1];
+    public static final MetaTileEntityMiner[] MINER = new MetaTileEntityMiner[GTValues.V.length - 1];
     public static MetaTileEntitySimpleOreWasher SIMPLE_ORE_WASHER;
 
     //GENERATORS SECTION
@@ -421,9 +422,9 @@ public class MetaTileEntities {
 
         // Chunk Miner, IDs 920-934
 
-        CHUNK_MINER[0] = registerMetaTileEntity(920, new MetaTileEntityChunkMiner(gregtechId("chunk_miner.lv"), 1));
-        CHUNK_MINER[1] = registerMetaTileEntity(921, new MetaTileEntityChunkMiner(gregtechId("chunk_miner.mv"), 2));
-        CHUNK_MINER[2] = registerMetaTileEntity(922, new MetaTileEntityChunkMiner(gregtechId("chunk_miner.hv"), 3));
+        MINER[0] = registerMetaTileEntity(920, new MetaTileEntityMiner(gregtechId("miner.lv"), IMiner.Type.LV, 1));
+        MINER[1] = registerMetaTileEntity(921, new MetaTileEntityMiner(gregtechId("miner.mv"), IMiner.Type.MV, 2));
+        MINER[2] = registerMetaTileEntity(922, new MetaTileEntityMiner(gregtechId("miner.hv"), IMiner.Type.HV, 3));
 
         // Diesel Generator, IDs 935-949
         COMBUSTION_GENERATOR[0] = registerMetaTileEntity(935, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.lv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 1));
@@ -491,9 +492,9 @@ public class MetaTileEntities {
         STEAM_OVEN = registerMetaTileEntity(1023, new MetaTileEntitySteamOven(gregtechId("steam_oven")));
         STEAM_GRINDER = registerMetaTileEntity(1024, new MetaTileEntitySteamGrinder(gregtechId("steam_grinder")));
 
-        BASIC_LARGE_MINER = GregTechAPI.registerMetaTileEntity(1025, new MetaTileEntityLargeMiner(gregtechId("large_miner.ev"), Materials.Steel, 1, 3, 3, 8));
-        LARGE_MINER = GregTechAPI.registerMetaTileEntity(1026, new MetaTileEntityLargeMiner(gregtechId("large_miner.iv"), Materials.Titanium, 1, 5, 6, 16));
-        ADVANCED_LARGE_MINER = GregTechAPI.registerMetaTileEntity(1027, new MetaTileEntityLargeMiner(gregtechId("large_miner.luv"), Materials.TungstenSteel, 1, 7, 9, 32));
+        BASIC_LARGE_MINER = registerMetaTileEntity(1025, new MetaTileEntityLargeMiner(gregtechId("large_miner.ev"), IMiner.Type.BASIC, 4, Materials.Steel));
+        LARGE_MINER = registerMetaTileEntity(1026, new MetaTileEntityLargeMiner(gregtechId("large_miner.iv"), IMiner.Type.LARGE, 5, Materials.Titanium));
+        ADVANCED_LARGE_MINER = registerMetaTileEntity(1027, new MetaTileEntityLargeMiner(gregtechId("large_miner.luv"), IMiner.Type.ADVANCE, 6, Materials.TungstenSteel));
 
         // MISC MTE's START: IDs 1150-2000
 

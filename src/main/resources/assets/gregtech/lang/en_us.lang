@@ -3576,10 +3576,20 @@ gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
 gregtech.machine.chunk_miner.lv.name=Basic Miner
 gregtech.machine.chunk_miner.mv.name=Advanced Miner
 gregtech.machine.chunk_miner.hv.name=Advanced Miner II
-gregtech.machine.miner.multi.description=Mines all ore in an area of %dx%d Chunks. Can mine ore as if it was using a hammer with fortune %s, or with silk touch.
-gregtech.machine.miner.description=Mines all ores in the current chunk. Requires 1 amp.
-gregtech.machine.miner.steam.description=Mines all ores in the current chunk. Requires 16 mb/t of steam.
+gregtech.machine.miner.basic.name=Basic Large Miner
+gregtech.machine.miner.large.name=Large Miner
+gregtech.machine.miner.advance.name=Advanced Large Miner
+gregtech.machine.miner.multi.description=Mines all ores under the miner in an area of %dx%d Chunks. Can mine ore as if it was using a hammer with fortune %s, or with silk touch. Use screwdriver to configure radius.
+gregtech.machine.miner.description.lv=Max radius: %d. %d sec per block, no stuttering. Uses %d EU/t
+gregtech.machine.miner.description.mv=Max radius: %d. %d sec per block, no stuttering. Uses %d EU/t
+gregtech.machine.miner.description.hv=Max radius: %d. %d sec per block, no stuttering. Uses %d EU/t
+gregtech.machine.miner.lv.tooltip=Mines ores under the miner ONLY! Use screwdriver to configure radius.
+gregtech.machine.miner.mv.tooltip=Mines ores under the miner ONLY! Use screwdriver to configure radius.
+gregtech.machine.miner.hv.tooltip=Mines ores under the miner ONLY! Use screwdriver to configure radius.
+gregtech.machine.miner.steam.tooltip=Mines ores under the miner ONLY! Use screwdriver to configure radius.
+gregtech.machine.miner.steam.description=Max radius: %d. %d sec per block, no stuttering. Uses 16 mb/t of steam.
 gregtech.machine.miner.fluid_usage=Consumes %dmb of %s per tick
+gregtech.machine.miner.overclock=Overclocks up to §e%s§7
 
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
@@ -3823,6 +3833,10 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
+gregtech.gui.silktouch.enabled=Silk Touch Enabled./nClick to Disable
+gregtech.gui.silktouch.disabled=Silk Touch Disabled./nClick to Enable
+gregtech.gui.chunkmode.enabled=Chunk Mode Enabled./nClick to Disable
+gregtech.gui.chunkmode.disabled=Chunk Mode Disabled./nClick to Enable
 
 gregtech.jei.ore_by_product_from_ore=Use %s for %s
 gregtech.jei.ore_by_product_from_machine=Produce by processing %s with %s
@@ -3926,12 +3940,15 @@ gregtech.multiblock.large_boiler.heat_efficiency.tooltip=The higher boiler tempe
 gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less steam and consume less fuel, but it comes with price: the fuel efficiency is lower at higher throttle rates.
 gregtech.multiblock.large_boiler.throttle_modify=Modify Throttle:
 
-gregtech.multiblock.large_miner.chunk=Chunk: %d
-gregtech.multiblock.large_miner.nb_chunk=Chunks To Mine: %d
-gregtech.multiblock.large_miner.mode=Screwdriver to change mode.
-gregtech.multiblock.large_miner.block_per_tick=Speed: %d Blocks/tick
-gregtech.multiblock.large_miner.silktouch=Silktouch mode: %s
 gregtech.multiblock.large_miner.done=Done!
+gregtech.multiblock.large_miner.working=Working...
+gregtech.multiblock.large_miner.invfull=Inventory Full!
+gregtech.multiblock.large_miner.needspower=Needs Power
+gregtech.multiblock.large_miner.vent=Venting Blocked!
+gregtech.multiblock.large_miner.steam=Needs Steam
+gregtech.multiblock.large_miner.radius=Radius: %d
+gregtech.multiblock.large_miner.errorradius=Cannot change radius while working!
+gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>
