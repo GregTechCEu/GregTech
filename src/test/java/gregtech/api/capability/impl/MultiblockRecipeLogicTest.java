@@ -11,17 +11,13 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.Position;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityItemBus;
-import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMufflerHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
 import gregtech.common.metatileentities.multi.electric.MetaTileEntityElectricBlastFurnace;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
@@ -317,7 +313,7 @@ public class MultiblockRecipeLogicTest {
                 .buildAndRegister();
 
         RecipeMapMultiblockController mbt =
-                GregTechAPI.registerMetaTileEntity(511,
+                GregTechAPI.registerMetaTileEntity(512,
                         new MetaTileEntityElectricBlastFurnace(
                                 // super function calls the world, which equal null in test
                                 new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
