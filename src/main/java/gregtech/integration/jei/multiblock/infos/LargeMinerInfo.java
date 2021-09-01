@@ -1,3 +1,4 @@
+
 package gregtech.integration.jei.multiblock.infos;
 
 import com.google.common.collect.Lists;
@@ -12,6 +13,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 
 import java.util.List;
+
 
 public class LargeMinerInfo extends MultiblockInfoPage {
 
@@ -29,12 +31,12 @@ public class LargeMinerInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
-                .aisle("PPO", "#F#", "#F#", "#F#", "###", "###", "###")
-                .aisle("SPE", "FPF", "FPF", "FPF", "#F#", "#F#", "#F#")
+                .aisle("EPO", "#F#", "#F#", "#F#", "###", "###", "###")
+                .aisle("SPP", "FPF", "FPF", "FPF", "#F#", "#F#", "#F#")
                 .aisle("IPP", "#F#", "#F#", "#F#", "###", "###", "###")
                 .where('S', largeMiner, EnumFacing.WEST)
                 .where('P', largeMiner.getCasingState())
-                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[4], EnumFacing.EAST)
+                .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[4], EnumFacing.WEST)
                 .where('O', MetaTileEntities.ITEM_EXPORT_BUS[0], EnumFacing.EAST)
                 .where('I', MetaTileEntities.FLUID_IMPORT_HATCH[0], EnumFacing.WEST)
                 .where('F', MetaBlocks.FRAMES.get(largeMiner.getMaterial()).getDefaultState())
@@ -45,7 +47,9 @@ public class LargeMinerInfo extends MultiblockInfoPage {
 
     @Override
     public String[] getDescription() {
-        return new String[]{I18n.format("gregtech.machine.miner.multi.description")};
+
+        return new String[]{I18n.format("gregtech.machine.miner.multi.description", largeMiner.type.radius, largeMiner.type.radius, largeMiner.type.fortuneString)};
+
     }
 
     @Override
