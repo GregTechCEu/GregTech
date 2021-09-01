@@ -22,7 +22,6 @@ import java.util.*;
  */
 public abstract class PipeNetWalker {
 
-    private final PipeNet<?> net;
     private final World world;
     private final Set<IPipeTile<?, ?>> walked = new HashSet<>();
     private final List<EnumFacing> pipes = new ArrayList<>();
@@ -31,9 +30,8 @@ public abstract class PipeNetWalker {
     private int walkedBlocks;
     private boolean invalid;
 
-    protected PipeNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks) {
+    protected PipeNetWalker(World world, BlockPos sourcePipe, int walkedBlocks) {
         this.world = Objects.requireNonNull(world);
-        this.net = Objects.requireNonNull(net);
         this.walkedBlocks = walkedBlocks;
         this.currentPos = new BlockPos.MutableBlockPos(Objects.requireNonNull(sourcePipe));
     }
@@ -42,13 +40,12 @@ public abstract class PipeNetWalker {
      * Creates a sub walker
      * Will be called when a pipe has multiple valid pipes
      *
-     * @param net          pipe net
      * @param world        world
      * @param nextPos      next pos to check
      * @param walkedBlocks distance from source in blocks
      * @return new sub walker
      */
-    protected abstract PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks);
+    protected abstract PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks);
 
     /**
      * You can increase walking stats here. for example
@@ -113,7 +110,7 @@ public abstract class PipeNetWalker {
         if (walkers == null) {
             walkers = new ArrayList<>();
             for (EnumFacing side : pipes) {
-                walkers.add(Objects.requireNonNull(createSubWalker(net, world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null"));
+                walkers.add(Objects.requireNonNull(createSubWalker(world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null"));
             }
         } else {
             Iterator<PipeNetWalker> iterator = walkers.iterator();
@@ -166,10 +163,6 @@ public abstract class PipeNetWalker {
             checkNeighbour(pipeTile, currentPos, accessSide, tile);
         }
         pos.release();
-    }
-
-    public PipeNet<?> getNet() {
-        return net;
     }
 
     public World getWorld() {

@@ -19,8 +19,8 @@ import java.util.Set;
 
 public class EnergyNetWalker extends PipeNetWalker {
 
-    public static List<RoutePath> createNetData(PipeNet<?> net, World world, BlockPos sourcePipe) {
-        EnergyNetWalker walker = new EnergyNetWalker(net, world, sourcePipe, 1, new ArrayList<>());
+    public static List<RoutePath> createNetData(World world, BlockPos sourcePipe) {
+        EnergyNetWalker walker = new EnergyNetWalker(world, sourcePipe, 1, new ArrayList<>());
         walker.traversePipeNet();
         return walker.routes;
     }
@@ -29,14 +29,14 @@ public class EnergyNetWalker extends PipeNetWalker {
     private Set<TileEntityCable> pipes = new HashSet<>();
     private int loss;
 
-    protected EnergyNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, List<RoutePath> routes) {
-        super(net, world, sourcePipe, walkedBlocks);
+    protected EnergyNetWalker(World world, BlockPos sourcePipe, int walkedBlocks, List<RoutePath> routes) {
+        super(world, sourcePipe, walkedBlocks);
         this.routes = routes;
     }
 
     @Override
-    protected PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks) {
-        EnergyNetWalker walker = new EnergyNetWalker(net, world, nextPos, walkedBlocks, routes);
+    protected PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks) {
+        EnergyNetWalker walker = new EnergyNetWalker(world, nextPos, walkedBlocks, routes);
         walker.loss = loss;
         walker.pipes = new HashSet<>(pipes);
         return walker;

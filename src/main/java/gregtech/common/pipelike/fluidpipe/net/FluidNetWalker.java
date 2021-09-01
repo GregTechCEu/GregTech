@@ -20,8 +20,8 @@ import java.util.*;
 
 public class FluidNetWalker extends PipeNetWalker {
 
-    public static List<FluidPipeNet.Inventory> createNetData(FluidPipeNet net, World world, BlockPos sourcePipe) {
-        FluidNetWalker walker = new FluidNetWalker(net, world, sourcePipe, 1, new ArrayList<>(), new HashSet<>(), Integer.MAX_VALUE, new ArrayList<>());
+    public static List<FluidPipeNet.Inventory> createNetData(World world, BlockPos sourcePipe) {
+        FluidNetWalker walker = new FluidNetWalker(world, sourcePipe, 1, new ArrayList<>(), new HashSet<>(), Integer.MAX_VALUE, new ArrayList<>());
         TileEntity tile = world.getTileEntity(sourcePipe);
         if(tile instanceof TileEntityFluidPipe)
             walker.holdingPipes.add((TileEntityFluidPipe) tile);
@@ -36,8 +36,8 @@ public class FluidNetWalker extends PipeNetWalker {
     private LinkedList<PosFace> checkedCovers = new LinkedList<>();
     private int rate;
 
-    protected FluidNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks, List<FluidPipeNet.Inventory> inventories, Set<Object> pathObjects, int rate, List<TileEntityFluidPipe> holdingPipes) {
-        super(net, world, sourcePipe, walkedBlocks);
+    protected FluidNetWalker(World world, BlockPos sourcePipe, int walkedBlocks, List<FluidPipeNet.Inventory> inventories, Set<Object> pathObjects, int rate, List<TileEntityFluidPipe> holdingPipes) {
+        super(world, sourcePipe, walkedBlocks);
         this.inventories = inventories;
         this.pathObjects = pathObjects;
         this.rate = rate;
@@ -45,12 +45,12 @@ public class FluidNetWalker extends PipeNetWalker {
     }
 
     @Override
-    protected PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks) {
+    protected PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks) {
         Set<Object> pathObjectsCopy = new HashSet<>(pathObjects);
         List<CoverFluidFilter> fluidFilter = covers.get(nextPos);
         if(fluidFilter != null)
             pathObjectsCopy.addAll(fluidFilter);
-        FluidNetWalker walker = new FluidNetWalker(net, world, nextPos, walkedBlocks, inventories, pathObjectsCopy, rate, new ArrayList<>(holdingPipes));
+        FluidNetWalker walker = new FluidNetWalker(world, nextPos, walkedBlocks, inventories, pathObjectsCopy, rate, new ArrayList<>(holdingPipes));
         walker.checkedCovers = checkedCovers;
         return walker;
     }
