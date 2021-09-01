@@ -352,17 +352,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, Map<Integer, HashSet<Recipe>> priorityRecipeMap ) {
         Integer p = promotedTimes.get(recipe);
-        if (p != null) {
-            promotedTimes.put(recipe, p + 1);
-            if (priorityRecipeMap.get(p) == null) {
-                priorityRecipeMap.put(p, new HashSet<>());
-            }
-            priorityRecipeMap.get(p).add(recipe);
-        } else {
-            promotedTimes.put(recipe, 0);
-            priorityRecipeMap.put(1, new HashSet<>());
-            priorityRecipeMap.get(1).add(recipe);
+        if (p == null) {
+            p = 0;
         }
+        promotedTimes.put(recipe, p + 1);
+        if (priorityRecipeMap.get(p) == null) {
+            priorityRecipeMap.put(p, new HashSet<>());
+        }
+        priorityRecipeMap.get(p).add(recipe);
     }
 
     public ModularUI.Builder createJeiUITemplate(IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
