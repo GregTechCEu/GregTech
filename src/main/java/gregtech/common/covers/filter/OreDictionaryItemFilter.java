@@ -59,12 +59,12 @@ public class OreDictionaryItemFilter extends ItemFilter {
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setString("OreDictionaryFilter", oreDictionaryFilter);
+        tagCompound.setString("Filter", oreDictionaryFilter);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
-        this.oreDictionaryFilter = tagCompound.getString("OreDictionaryFilter");
+        this.oreDictionaryFilter = tagCompound.getString("Filter");
     }
 
     public static String matchesOreDictionaryFilter(String oreDictionaryFilter, ItemStack itemStack) {

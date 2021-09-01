@@ -115,13 +115,8 @@ public class CoverFluidFilter extends CoverBehavior implements CoverWithUI {
         super.readFromNBT(tagCompound);
         this.filterMode = FluidFilterMode.values()[tagCompound.getInteger("FilterMode")];
         this.fluidFilter.setBlacklistFilter(tagCompound.getBoolean("IsBlacklist"));
-        //LEGACY SAVE FORMAT SUPPORT
-        if (tagCompound.hasKey("FluidFilter")) {
-            this.fluidFilter.getFluidFilter().readFromNBT(tagCompound);
-        } else {
-            NBTTagCompound filterComponent = tagCompound.getCompoundTag("Filter");
-            this.fluidFilter.getFluidFilter().readFromNBT(filterComponent);
-        }
+        NBTTagCompound filterComponent = tagCompound.getCompoundTag("Filter");
+        this.fluidFilter.getFluidFilter().readFromNBT(filterComponent);
     }
 
     private class FluidHandlerFiltered extends FluidHandlerDelegate {

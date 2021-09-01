@@ -99,14 +99,14 @@ public class SimpleItemFilter extends ItemFilter {
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setTag("ItemFilter", itemFilterSlots.serializeNBT());
+        tagCompound.setTag("Filter", itemFilterSlots.serializeNBT());
         tagCompound.setBoolean("IgnoreDamage", ignoreDamage);
         tagCompound.setBoolean("IgnoreNBT", ignoreNBT);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
-        this.itemFilterSlots.deserializeNBT(tagCompound.getCompoundTag("ItemFilter"));
+        this.itemFilterSlots.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         this.ignoreDamage = tagCompound.getBoolean("IgnoreDamage");
         this.ignoreNBT = tagCompound.getBoolean("IgnoreNBT");
     }

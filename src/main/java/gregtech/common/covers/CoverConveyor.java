@@ -514,12 +514,6 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         this.conveyorMode = ConveyorMode.values()[tagCompound.getInteger("ConveyorMode")];
         this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
         this.blocksInput = tagCompound.getBoolean("BlocksInput");
-        //LEGACY SAVE FORMAT SUPPORT
-        if (tagCompound.hasKey("AllowManualIO")) {
-            this.manualImportExportMode = tagCompound.getBoolean("AllowManualIO")
-                    ? ManualImportExportMode.FILTERED
-                    : ManualImportExportMode.DISABLED;
-        }
         if (tagCompound.hasKey("FilterInventory")) {
             this.itemFilterContainer.deserializeNBT(tagCompound);
         } else {

@@ -62,11 +62,11 @@ public class SimpleFluidFilter extends FluidFilter {
                 filterSlots.appendTag(stackTag);
             }
         }
-        tagCompound.setTag("FluidFilter", filterSlots);
+        tagCompound.setTag("Filter", filterSlots);
     }
 
     public void readFromNBT(NBTTagCompound tagCompound) {
-        NBTTagList filterSlots = tagCompound.getTagList("FluidFilter", 10);
+        NBTTagList filterSlots = tagCompound.getTagList("Filter", 10);
         for (NBTBase nbtBase : filterSlots) {
             NBTTagCompound stackTag = (NBTTagCompound) nbtBase;
             FluidStack fluidStack = FluidStack.loadFluidStackFromNBT(stackTag);
