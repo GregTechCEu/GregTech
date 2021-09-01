@@ -37,7 +37,6 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,10 +61,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
     private static final Cuboid6 PIPE_CUBOID = new Cuboid6(4 / 16.0, 0.0, 4 / 16.0, 12 / 16.0, 1.0, 12 / 16.0);
 
     private LinkedList<BlockPos> blockPos = new LinkedList<>();
-    private int index = 0;
     private int aRadius;
     private int pipeY = 0;
-    private Iterator iterate;
 
     public MetaTileEntityMiner(ResourceLocation metaTileEntityId, IMiner.Type type, int tier) {
         super(metaTileEntityId, tier);
@@ -198,14 +195,12 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
                 markDirty();
             }
 
-            if (blockPos.isEmpty()) {
-                blockPos = IMiner.getBlocksToMine(this, x, y, z, startX, startZ, startY, aRadius);
-                iterate = blockPos.iterator();
+            if(y.get() > 0) {
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, startY, aRadius, IMiner.getTPS(world)));
             }
 
-
             if (getOffsetTimer() % type.tick == 0 && !blockPos.isEmpty()) {
-                BlockPos tempPos = (BlockPos) iterate.next();
+                BlockPos tempPos = blockPos.getFirst();
                 NonNullList<ItemStack> itemStacks = NonNullList.create();
                 IBlockState blockState = this.getWorld().getBlockState(tempPos);
                 if (blockState != Blocks.AIR.getDefaultState()) {
@@ -216,16 +211,17 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
                         mineX.set(tempPos.getX());
                         mineZ.set(tempPos.getZ());
                         mineY.set(tempPos.getY());
-                        index++;
+                        blockPos.removeFirst();
                     } else {
                         invFull = true;
                     }
                 } else
-                    index++;
+                    blockPos.removeFirst();
             } else if (blockPos.isEmpty()) {
-                initPos();
-                blockPos = IMiner.getBlocksToMine(this, x, y, z, startX, startZ, startY, aRadius);
-                iterate = blockPos.iterator();
+                x.set(mineX.get());
+                y.set(mineY.get());
+                z.set(mineZ.get());
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, startY, aRadius, IMiner.getTPS(world)));
                 if (blockPos.isEmpty()) {
                     done = true;
                 }
@@ -235,10 +231,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
                 pushItemsIntoNearbyHandlers(getFrontFacing());
             }
 
-            if (blockPos.size() - 1 == index) {
-                pushItemsIntoNearbyHandlers(getFrontFacing());
-                done = true;
-            }
         }
     }
 
@@ -257,7 +249,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
         data.setTag("tempY", new NBTTagInt(tempY.get()));
         data.setTag("pipeY", new NBTTagInt(pipeY));
         data.setTag("radius", new NBTTagInt(aRadius));
-        data.setTag("index,", new NBTTagInt(index));
         data.setTag("done", new NBTTagInt(done ? 1 : 0));
         return data;
     }
@@ -276,7 +267,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
         startZ.set(data.getInteger("szPos"));
         tempY.set(data.getInteger("tempY"));
         pipeY = data.getInteger("pipeY");
-        index = data.getInteger("index");
         aRadius = data.getInteger("radius");
         done = data.getInteger("done") != 0;
     }
