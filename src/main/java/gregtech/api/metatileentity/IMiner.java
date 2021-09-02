@@ -1,13 +1,21 @@
 package gregtech.api.metatileentity;
 
 
+import gregtech.api.recipes.MatchingMode;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 
-import java.util.LinkedList;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public interface IMiner {
@@ -39,11 +47,11 @@ public interface IMiner {
 
     }
 
-    short MAX_SPEED = 256;
+    short MAX_SPEED = Short.MAX_VALUE;
 
-    byte POWER = 4;
+    byte POWER = 5;
 
-    byte TICK_TOLERANCE = 30;
+    byte TICK_TOLERANCE = 20;
 
     double DIVIDEND = MAX_SPEED * Math.pow(TICK_TOLERANCE, POWER);
 
@@ -96,5 +104,23 @@ public interface IMiner {
     static double getTPS(World world) {
         double meanTickTime = mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
         return meanTickTime;
+    }
+
+    static void applyTieredHammerNoRandomDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, EntityPlayer player, RecipeMap map, int tier) {
+        ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
+        Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.DEFAULT);
+        if (recipe != null && !recipe.getOutputs().isEmpty()) {
+            drops.clear();
+            for (ItemStack outputStack : recipe.getResultItemOutputs(Integer.MAX_VALUE, random, tier)) {
+                outputStack = outputStack.copy();
+                if (!(player instanceof FakePlayer) && OreDictUnifier.getPrefix(outputStack) == OrePrefix.crushed) {
+                    if (fortuneLevel > 0) {
+                        int i = Math.max(0, fortuneLevel - 1);
+                        outputStack.grow(outputStack.getCount() * i);
+                    }
+                }
+                drops.add(outputStack);
+            }
+        }
     }
 }

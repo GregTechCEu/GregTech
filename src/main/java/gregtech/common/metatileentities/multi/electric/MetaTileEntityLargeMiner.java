@@ -140,7 +140,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     public boolean drainEnergy() {
         if (energyContainer.getInputVoltage() < getMaxVoltage())
             return false;
-        FluidStack drillingFluid = DrillingFluid.getFluid(type.drillingFluidConsumePerTick);
+        FluidStack drillingFluid = DrillingFluid.getFluid(type.drillingFluidConsumePerTick * overclockAmount);
         FluidStack canDrain = importFluidHandler.drain(drillingFluid, false);
         if (energyContainer.getEnergyStored() >= getMaxVoltage() && canDrain != null && canDrain.amount == type.drillingFluidConsumePerTick && !invFull && !testForMax()) {
             energyContainer.removeEnergy(energyContainer.getInputVoltage());
@@ -199,7 +199,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                     IBlockState blockState = this.getWorld().getBlockState(tempPos);
                     if (blockState != Blocks.AIR.getDefaultState()) {
                         if (!silkTouch) {
-                            ToolUtility.applyHammerDrops(world.rand, blockState, itemStacks, type.fortune, null, RecipeMaps.MACERATOR_RECIPES);
+                            IMiner.applyTieredHammerNoRandomDrops(world.rand, blockState, itemStacks, type.fortune, null, RecipeMaps.MACERATOR_RECIPES, getVoltageTier());
                         } else {
                             itemStacks.add(new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState)));
                         }
@@ -441,7 +441,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     public int getVoltageTier() {
-        int voltageCap = getType() == Type.BASIC ? 5 : getType() == Type.LARGE ? 6 : 9;
+        int voltageCap = getType() == Type.BASIC ? 5 : getType() == Type.LARGE ? 6 : 14;
         int inputVoltage = GTUtility.getTierByVoltage(energyContainer.getInputVoltage());
 
         if (inputVoltage < this.tier)
