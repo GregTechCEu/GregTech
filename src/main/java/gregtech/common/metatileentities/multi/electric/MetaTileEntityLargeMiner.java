@@ -189,7 +189,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
             //MAINTENANCE IMPLEMENTATION:
             // if (getOffsetTimer() % (this.getNumProblems() > 0 ? type.tick * 2L : type.tick) == 0 && !blockPos.isEmpty()) {
-            //    for (int x = 0; x < (this.getNumProblems() > 0 ? 1 : overclockAmount); ) {
+            // int a = 0;
+            //    while (a < (this.getNumProblems() > 0 ? 1 : overclockAmount); ) {
 
             if (getOffsetTimer() % type.tick == 0 && !blockPos.isEmpty()) {
                 int a = 0;
