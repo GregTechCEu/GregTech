@@ -1,18 +1,14 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.pipenet.Node;
-import gregtech.api.pipenet.PipeGatherer;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
-import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -21,66 +17,52 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.*;
 
-public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
+public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITickable {
 
-    private final Map<BlockPos, List<Inventory>> NET_DATA = new HashMap<>();
+    private final Set<FluidStack> fluids = new HashSet<>();
+    private Set<FluidStack> dirtyStacks = new HashSet<>();
 
     public FluidPipeNet(WorldPipeNet<FluidPipeProperties, FluidPipeNet> world) {
         super(world);
     }
 
-    public List<Inventory> getNetData(BlockPos pipePos) {
-        return NET_DATA.computeIfAbsent(pipePos, pos -> {
-            List<Inventory> data = FluidNetWalker.createNetData(this, getWorldData(), pos);
-            data.sort(Comparator.comparingInt(inv -> inv.distance));
-            return data;
-        });
-    }
-
-    public void nodeNeighbourChanged(BlockPos pos) {
-        NET_DATA.clear();
-    }
-
     @Override
     protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
         super.updateBlockedConnections(nodePos, facing, isBlocked);
-        NET_DATA.clear();
+        dirtyStacks.addAll(fluids);
     }
 
-    public void destroyNetwork(BlockPos source, boolean isLeaking, boolean isBurning, int temp) {
-        World world = getWorldData();
-        List<IPipeTile<?, ?>> pipes = PipeGatherer.gatherPipesInDistance(this, world, source, pipe -> {
-            if (pipe instanceof TileEntityFluidPipe) {
-                TileEntityFluidPipe fluidPipe = (TileEntityFluidPipe) pipe;
-                return (isBurning && fluidPipe.getNodeData().maxFluidTemperature < temp) || (isLeaking && !fluidPipe.getNodeData().gasProof);
-            }
-            return false;
-        }, 2 + world.rand.nextInt(4));
-        for (IPipeTile<?, ?> pipeTile : pipes) {
-            BlockPos pos = pipeTile.getPipePos();
-            Random random = world.rand;
-            if (isBurning) {
-                world.setBlockState(pos, Blocks.FIRE.getDefaultState());
-                TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP,
-                        EnumParticleTypes.FLAME, 3 + random.nextInt(2), random);
-                if (random.nextInt(4) == 0)
-                    TileEntityFluidPipe.setNeighboursToFire(world, pos);
-            } else
-                world.setBlockToAir(pos);
-            if (isLeaking && world.rand.nextInt(isBurning ? 3 : 7) == 0) {
-                world.createExplosion(null,
-                        pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                        1.0f + world.rand.nextFloat(), false);
+    protected int drain(FluidStack stack) {
+        if (stack == null || stack.amount <= 0) return 0;
+        for (FluidStack stack1 : fluids) {
+            if (stack1.isFluidEqual(stack)) {
+                int amount = Math.min(stack.amount, stack1.amount);
+                stack1.amount -= amount;
+                markDirtyPipeNetStack(stack1);
+                return amount;
             }
         }
+        return 0;
+    }
+
+    protected void fill(FluidStack stack) {
+        if (stack == null || stack.amount <= 0) return;
+        for (FluidStack stack1 : fluids) {
+            if (stack1.isFluidEqual(stack)) {
+                stack1.amount += stack.amount;
+                markDirtyPipeNetStack(stack1);
+                return;
+            }
+        }
+        fluids.add(stack);
+        markDirty(stack);
     }
 
     @Override
     protected void transferNodeData(Map<BlockPos, Node<FluidPipeProperties>> transferredNodes, PipeNet<FluidPipeProperties> parentNet1) {
         super.transferNodeData(transferredNodes, parentNet1);
         FluidPipeNet parentNet = (FluidPipeNet) parentNet1;
-        NET_DATA.clear();
-        parentNet.NET_DATA.clear();
+        fluids.addAll(parentNet.fluids);
     }
 
     @Override
@@ -98,6 +80,53 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         boolean gasProof = tagCompound.getBoolean("gas_proof");
         int channels = tagCompound.getInteger("channels");
         return new FluidPipeProperties(maxTemperature, throughput, gasProof, channels);
+    }
+
+    @Override
+    public void update() {
+        if (dirtyStacks.size() == 0) return;
+        Iterator<FluidStack> iterator = dirtyStacks.iterator();
+        while (iterator.hasNext()) {
+            FluidStack dirtyStack = iterator.next();
+            if (dirtyStack.amount <= 0) {
+                iterator.remove();
+                continue;
+            }
+            int c = dirtyStack.amount / getAllNodes().size();
+            int m = dirtyStack.amount % getAllNodes().size();
+            int overflow = 0;
+            for (BlockPos pos : getAllNodes().keySet()) {
+                int count = c;
+                if (m > 0) {
+                    count++;
+                    m--;
+                }
+                FluidStack stack = dirtyStack.copy();
+                stack.amount = count;
+                TileEntityFluidPipe tile = (TileEntityFluidPipe) getWorldData().getTileEntity(pos);
+                int channel = tile.findChannel(dirtyStack);
+                overflow += tile.setContainingFluid(stack, channel);
+            }
+            dirtyStack.amount -= overflow;
+            iterator.remove();
+        }
+        dirtyStacks.clear();
+    }
+
+    private void markDirtyPipeNetStack(FluidStack stack) {
+        if (stack != null && stack.amount > 0) {
+            dirtyStacks.add(stack);
+        }
+    }
+
+    public void markDirty(FluidStack stack) {
+        if (stack == null || stack.amount <= 0) return;
+        for (FluidStack stack1 : this.fluids) {
+            if (stack1.isFluidEqual(stack)) {
+                dirtyStacks.add(stack);
+                return;
+            }
+        }
     }
 
     public static class Inventory {

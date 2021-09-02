@@ -1,0 +1,57 @@
+package gregtech.common.pipelike.fluidpipe.net;
+
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
+
+import javax.annotation.Nullable;
+
+public class PipeTankList extends FluidTankList {
+
+    private final TileEntityFluidPipe pipe;
+
+    public PipeTankList(TileEntityFluidPipe pipe, IFluidTank... fluidTanks) {
+        super(false, fluidTanks);
+        this.pipe = pipe;
+    }
+
+    @Override
+    public int fill(FluidStack resource, boolean doFill) {
+        boolean wasEmpty = pipe.getContainedFluid(pipe.findChannel(resource)) == null;
+        int filled = super.fill(resource, doFill);
+        if(filled > 0 && doFill) {
+            FluidStack stack = resource.copy();
+            stack.amount = filled;
+            pipe.getFluidPipeNet().fill(stack);
+            if(wasEmpty) {
+                boolean burning = pipe.getNodeData().maxFluidTemperature < resource.getFluid().getTemperature(resource);
+                boolean leaking = !pipe.getNodeData().gasProof && resource.getFluid().isGaseous(resource);
+                if(burning || leaking) {
+                    pipe.destroyPipe(burning, leaking);
+                }
+            }
+        }
+        return filled;
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(int maxDrain, boolean doDrain) {
+        FluidStack drained = super.drain(maxDrain, doDrain);
+        if(drained != null) {
+            pipe.getFluidPipeNet().drain(drained);
+        }
+        return drained;
+    }
+
+    @Nullable
+    @Override
+    public FluidStack drain(FluidStack resource, boolean doDrain) {
+        FluidStack drained = super.drain(resource, doDrain);
+        if(drained != null) {
+            pipe.getFluidPipeNet().drain(drained);
+        }
+        return drained;
+    }
+}

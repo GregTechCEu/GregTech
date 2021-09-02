@@ -8,13 +8,13 @@ import gregtech.api.metatileentity.SyncedTileEntityBase;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.pipenet.block.IPipeType;
-import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -36,8 +36,8 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     private NodeDataType cachedNodeData;
     private BlockPipe<PipeType, NodeDataType, ?> pipeBlock;
     private PipeType pipeType = getPipeTypeClass().getEnumConstants()[0];
-    private boolean detachedConversionMode;
-    private boolean wasInDetachedConversionMode;
+    private boolean detachedConversionMode = false;
+    private boolean wasInDetachedConversionMode = false;
 
     public TileEntityPipeBase() {
         openConnectionsMap.put(AttachmentType.PIPE.ordinal(), 0);
@@ -91,7 +91,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public abstract Class<PipeType> getPipeTypeClass();
 
     @Override
-    public abstract boolean supportsTicking();
+    public boolean supportsTicking() {
+        return this instanceof ITickable;
+    }
 
     @Override
     public World getPipeWorld() {

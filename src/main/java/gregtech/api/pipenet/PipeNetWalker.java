@@ -29,6 +29,7 @@ public abstract class PipeNetWalker {
     private final BlockPos.MutableBlockPos currentPos;
     private int walkedBlocks;
     private boolean invalid;
+    private boolean running;
 
     protected PipeNetWalker(World world, BlockPos sourcePipe, int walkedBlocks) {
         this.world = Objects.requireNonNull(world);
@@ -90,7 +91,9 @@ public abstract class PipeNetWalker {
         if (invalid)
             throw new IllegalStateException("This walker already walked. Create a new one if you want to walk again");
         int i = 0;
-        while (!walk() && i++ < maxWalks) ;
+        running = true;
+        while (running && !walk() && i++ < maxWalks) ;
+        running = false;
         walked.forEach(IPipeTile::resetWalk);
         invalid = true;
     }
@@ -123,7 +126,7 @@ public abstract class PipeNetWalker {
             }
         }
 
-        return walkers.size() == 0;
+        return !running && walkers.size() == 0;
     }
 
     private void checkPos() {
@@ -163,6 +166,14 @@ public abstract class PipeNetWalker {
             checkNeighbour(pipeTile, currentPos, accessSide, tile);
         }
         pos.release();
+    }
+
+    public void stop() {
+        running = false;
+    }
+
+    public boolean isRunning() {
+        return running;
     }
 
     public World getWorld() {
