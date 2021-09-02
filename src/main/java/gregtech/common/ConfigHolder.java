@@ -108,8 +108,13 @@ public class ConfigHolder {
     public static ClientConfig clientConfig = new ClientConfig();
 
     public static class ClientConfig {
+		
         @Config.Comment("Terminal root path. Default: gregtech/terminal")
         public String terminalRootPath = "gregtech/terminal";
+
+        @Config.Comment("Whether to use shader program. Default: true")
+        public boolean useShader = true;
+
     }
 
     public static class VanillaRecipes {
