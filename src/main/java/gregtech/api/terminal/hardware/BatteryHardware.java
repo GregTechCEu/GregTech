@@ -45,7 +45,7 @@ public class BatteryHardware extends Hardware implements IElectricItem {
         listeners.add(chargeListener);
     }
 
-    protected void setCharge(long change) {
+    public void setCharge(long change) {
         getNBT().setLong("charge", change);
         listeners.forEach(l -> l.accept(provider.getItemStack(), change));
     }

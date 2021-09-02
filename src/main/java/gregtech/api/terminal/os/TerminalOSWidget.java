@@ -1,14 +1,16 @@
 package gregtech.api.terminal.os;
 
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IElectricItem;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.api.terminal.hardware.HardwareProvider;
+import gregtech.api.terminal.hardware.BatteryHardware;
 import gregtech.api.terminal.hardware.Hardware;
+import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.menu.TerminalMenuWidget;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class TerminalOSWidget extends AbstractWidgetGroup {
     private IGuiTexture background;
@@ -37,6 +40,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public final BlockPos clickPos;
     public final ItemStack itemStack;
     public final HardwareProvider hardwareProvider;
+    private int tickCounter;
 
     public TerminalOSWidget(int xPosition, int yPosition, int width, int height, ItemStack itemStack) {
         super(new Position(xPosition, yPosition), new Size(width, height));
@@ -138,7 +142,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             if (!application.isBackgroundApp()) {
                 application.setActive(false);
             }
-            if (isClient) {
+            if (isClient && focusApp == application) {
                 application.minimizeWidget(null);
             }
             if(focusApp == application) {
@@ -164,7 +168,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 }
             }
 
-            if (isClient) {
+            if (isClient && focusApp == application) {
                 application.minimizeWidget(desktop::waitToRemoved);
             } else {
                 desktop.waitToRemoved(application);
@@ -259,10 +263,62 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     @Override
+    public void readUpdateInfo(int id, PacketBuffer buffer) {
+        if (id == -1) { // disCharge
+            long charge = buffer.readLong();
+            IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+            if (electricItem instanceof BatteryHardware) {
+                ((BatteryHardware) electricItem).setCharge(charge);
+            }
+            if (charge <= 0) {
+                for (AbstractApplication openedApp : openedApps) {
+                    TerminalRegistry.getAppHardwareDemand(openedApp.getRegistryName()).stream()
+                            .filter(i->i instanceof BatteryHardware).findFirst()
+                            .ifPresent(x -> this.closeApplication(openedApp, true));
+                }
+            }
+        } else {
+            super.readUpdateInfo(id, buffer);
+        }
+    }
+
+    @Override
     public void updateScreen() {
         super.updateScreen();
+        tickCounter++;
         if( background != null) {
             background.updateTick();
+        }
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        tickCounter++;
+        if (tickCounter % 20 == 0) {
+            disCharge();
+        }
+    }
+
+    private void disCharge() {
+        IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (electricItem != null && !TerminalBehaviour.isCreative(itemStack)) {
+            AtomicLong costs = new AtomicLong(0);
+            List<AbstractApplication> charged = new ArrayList<>();
+            for (AbstractApplication openedApp : openedApps) {
+                TerminalRegistry.getAppHardwareDemand(openedApp.getRegistryName()).stream()
+                        .filter(i->i instanceof BatteryHardware).findFirst()
+                        .ifPresent(battery-> {
+                            costs.addAndGet(((BatteryHardware)battery).getCharge());
+                            charged.add(openedApp);
+                        });
+            }
+            if (electricItem.discharge(costs.get(), 999, true, false, false) != costs.get()) {
+                charged.forEach(app->closeApplication(app, false));
+            }
+            if (costs.get() > 0) {
+                writeUpdateInfo(-1, buf->buf.writeLong(electricItem.getCharge()));
+            }
         }
     }
 
