@@ -85,7 +85,7 @@ public class ToolHardHammer extends ToolBase {
 
     @Override
     public void convertBlockDrops(World world, BlockPos blockPos, IBlockState blockState, EntityPlayer player, List<ItemStack> dropList, ItemStack toolStack) {
-        ToolUtility.applyHammerDrops(world.rand, blockState, dropList, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, toolStack), player, RecipeMaps.FORGE_HAMMER_RECIPES);
+        ToolUtility.applyHammerDrops(world.rand, blockState, dropList, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, toolStack), player);
     }
 
 
