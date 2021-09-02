@@ -42,10 +42,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
 
@@ -140,14 +137,16 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         if (worldIn.isRemote) return;
         if (entityIn instanceof EntityLivingBase && entityIn.world.getWorldTime() % 20 == 0L) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
-            FluidPipeNet pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (pipeNet == null) return;
-            TileEntityFluidPipeTickable pipeTile = (TileEntityFluidPipeTickable) PipeGatherer.findFirstMatching(worldIn, pos, pipe -> pipe instanceof TileEntityFluidPipeTickable);
-            if (pipeTile == null || pipeTile.getNodeData().tanks > 1) return;
-            FluidStack fluidStack = pipeTile.getContainedFluid(0);
-            if (fluidStack == null)
-                return; //pipe network is empty
-            int fluidTemperature = fluidStack.getFluid().getTemperature(fluidStack);
+            TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+            List<Integer> temps = new ArrayList<>();
+            for(FluidTank tank : pipe.getFluidTanks()) {
+                if(tank.getFluid() != null && tank.getFluid().amount > 0) {
+                    temps.add(tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+                }
+            }
+            if(temps.size() == 0)
+                return;
+            float fluidTemperature = (float) temps.stream().mapToInt(i -> i).average().getAsDouble();
             boolean wasDamaged = false;
             if (fluidTemperature >= 373) {
                 //100C, temperature of boiling water
