@@ -285,7 +285,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private Recipe findByInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode, boolean exactVoltage) {
         HashSet<Recipe> iteratedRecipes = new HashSet<>();
         HashSet<ItemStackKey> searchedItems = new HashSet<>();
-        HashMap<Integer, HashSet<Recipe>> priorityRecipeMap = new HashMap<>();
+        HashMap<Integer, LinkedList<Recipe>> priorityRecipeMap = new HashMap<>();
         HashMap<Recipe, Integer> promotedTimes = new HashMap<>();
 
         for (ItemStack stack : inputs) {
@@ -312,7 +312,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private Recipe findByFluidInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode, boolean exactVoltage) {
         HashSet<Recipe> iteratedRecipes = new HashSet<>();
         HashSet<FluidKey> searchedFluids = new HashSet<>();
-        Map<Integer, HashSet<Recipe>> priorityRecipeMap = new HashMap<>();
+        Map<Integer, LinkedList<Recipe>> priorityRecipeMap = new HashMap<>();
         HashMap<Recipe, Integer> promotedTimes = new HashMap<>();
 
         for (FluidStack fluidStack : fluidInputs) {
@@ -334,7 +334,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return prioritizedRecipe(priorityRecipeMap,iteratedRecipes,inputs,fluidInputs,matchingMode);
     }
 
-    private Recipe prioritizedRecipe(Map<Integer, HashSet<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes,List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
+    private Recipe prioritizedRecipe(Map<Integer, LinkedList<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes,List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
         for (int i = priorityRecipeMap.size(); i >= 0; i--) {
             if (priorityRecipeMap.containsKey(i)) {
                 for (Recipe tmpRecipe : priorityRecipeMap.get(i)) {
@@ -350,14 +350,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, Map<Integer, HashSet<Recipe>> priorityRecipeMap ) {
+    private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, Map<Integer, LinkedList<Recipe>> priorityRecipeMap ) {
         Integer p = promotedTimes.get(recipe);
         if (p == null) {
             p = 0;
         }
         promotedTimes.put(recipe, p + 1);
         if (priorityRecipeMap.get(p) == null) {
-            priorityRecipeMap.put(p, new HashSet<>());
+            priorityRecipeMap.put(p, new LinkedList<>());
         }
         priorityRecipeMap.get(p).add(recipe);
     }
