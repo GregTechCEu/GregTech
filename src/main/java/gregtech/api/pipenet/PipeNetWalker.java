@@ -23,7 +23,7 @@ import java.util.*;
 public abstract class PipeNetWalker {
 
     private final World world;
-    private final Set<IPipeTile<?, ?>> walked = new HashSet<>();
+    private Set<Long> walked = new HashSet<>();
     private final List<EnumFacing> pipes = new ArrayList<>();
     private List<PipeNetWalker> walkers;
     private final BlockPos.MutableBlockPos currentPos;
@@ -78,7 +78,7 @@ public abstract class PipeNetWalker {
     protected abstract boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour);
 
     public void traversePipeNet() {
-        traversePipeNet(Integer.MAX_VALUE);
+        traversePipeNet(2048);
     }
 
     /**
@@ -94,7 +94,9 @@ public abstract class PipeNetWalker {
         running = true;
         while (running && !walk() && i++ < maxWalks) ;
         running = false;
-        walked.forEach(IPipeTile::resetWalk);
+        walked.clear();
+        if(i >= maxWalks)
+            GTLog.logger.fatal("The walker reached the maximum amount of walks {}", i);
         invalid = true;
     }
 
@@ -111,22 +113,18 @@ public abstract class PipeNetWalker {
         }
 
         if (walkers == null) {
+            GTLog.logger.info(" - creating {} sub walkers", pipes.size());
             walkers = new ArrayList<>();
             for (EnumFacing side : pipes) {
-                walkers.add(Objects.requireNonNull(createSubWalker(world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null"));
+                PipeNetWalker walker = Objects.requireNonNull(createSubWalker(world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null");
+                walker.walked = walked;
+                walkers.add(walker);
             }
         } else {
-            Iterator<PipeNetWalker> iterator = walkers.iterator();
-            while (iterator.hasNext()) {
-                PipeNetWalker walker = iterator.next();
-                if (walker.walk()) {
-                    walked.addAll(walker.walked);
-                    iterator.remove();
-                }
-            }
+            walkers.removeIf(PipeNetWalker::walk);
         }
 
-        return !running && walkers.size() == 0;
+        return !running || walkers.size() == 0;
     }
 
     private void checkPos() {
@@ -142,8 +140,7 @@ public abstract class PipeNetWalker {
                 throw new IllegalStateException("PipeTile was not null last walk, but now is");
         }
         checkPipe(pipeTile, currentPos);
-        pipeTile.markWalked();
-        walked.add(pipeTile);
+        walked.add(pipeTile.getPipePos().toLong());
 
         BlockPos.PooledMutableBlockPos pos = BlockPos.PooledMutableBlockPos.retain();
         // check for surrounding pipes and item handlers
@@ -156,7 +153,7 @@ public abstract class PipeNetWalker {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof IPipeTile) {
                 IPipeTile<?, ?> otherPipe = (IPipeTile<?, ?>) tile;
-                if (otherPipe.isWalked())
+                if (isWalked(otherPipe))
                     continue;
                 if (isValidPipe(pipeTile, otherPipe, currentPos, accessSide)) {
                     pipes.add(accessSide);
@@ -166,6 +163,10 @@ public abstract class PipeNetWalker {
             checkNeighbour(pipeTile, currentPos, accessSide, tile);
         }
         pos.release();
+    }
+
+    public boolean isWalked(IPipeTile<?, ?> pipe) {
+        return walked.contains(pipe.getPipePos().toLong());
     }
 
     public void stop() {

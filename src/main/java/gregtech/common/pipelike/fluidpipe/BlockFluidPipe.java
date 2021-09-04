@@ -176,7 +176,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
                     builder.append(tank.getFluid().getLocalizedName()).append(" * ").append(tank.getFluid().amount).append(", ");
                 }
             }
-            playerIn.sendMessage(new TextComponentString("Pipe capacity: " + pipe.getNodeData().throughput * 2));
+            playerIn.sendMessage(new TextComponentString("Pipe capacity: " + pipe.getCapacityPerTank()));
             playerIn.sendMessage(new TextComponentString("Fluids: " + builder));
         }
         return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
@@ -194,6 +194,8 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         int connections = selfTile.getOpenConnections();
         float selfTHICCness = selfTile.getPipeType().getThickness();
         for (EnumFacing facing : EnumFacing.values()) {
+            if(selfTile.isConnectionOpenAny(facing))
+                continue;
             CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
             if (cover != null) {
                 // adds side to open connections of it isn't already open & has a cover

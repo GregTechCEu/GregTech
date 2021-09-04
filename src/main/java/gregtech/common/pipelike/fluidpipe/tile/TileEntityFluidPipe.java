@@ -26,15 +26,19 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Random;
 
 public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties> {
 
     private WeakReference<FluidPipeNet> currentPipeNet = new WeakReference<>(null);
     private static final Random random = new Random();
-    private PipeTankList tanks;
+    private final EnumMap<EnumFacing, PipeTankList> tanks = new EnumMap<>(EnumFacing.class);
     private FluidTank[] fluidTanks;
     private int currentChannel = -1;
+    private final EnumMap<EnumFacing, Integer> lastInserted = new EnumMap<>(EnumFacing.class);
 
     private final EnumSet<EnumFacing> openConnections = EnumSet.noneOf(EnumFacing.class);
 
@@ -55,9 +59,17 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     @Override
     public <T> T getCapabilityInternal(Capability<T> capability, @Nullable EnumFacing facing) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(getTankList());
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(facing == null ? getTankList() : getTankList(facing));
         }
         return super.getCapabilityInternal(capability, facing);
+    }
+
+    public void didInsertFrom(EnumFacing facing) {
+        lastInserted.put(facing, 20);
+    }
+
+    public EnumMap<EnumFacing, Integer> getLastInserted() {
+        return lastInserted;
     }
 
     protected EnumSet<EnumFacing> getOpenFaces() {
@@ -65,7 +77,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     public int getCapacityPerTank() {
-        return getNodeData().throughput * 2;
+        return getNodeData().throughput * 10;
     }
 
     public void checkNeighbours() {
@@ -77,13 +89,17 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                 IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
                 if (handler != null) {
                     openConnections.add(facing);
-                    if(!(this instanceof TileEntityFluidPipeTickable)) {
+                    if (!(this instanceof TileEntityFluidPipeTickable)) {
                         TileEntityFluidPipeTickable pipe = (TileEntityFluidPipeTickable) setSupportsTicking();
                         pipe.checkNeighbours();
                         return;
                     }
                 }
             }
+        }
+        StringBuilder builder = new StringBuilder();
+        for (EnumFacing facing : openConnections) {
+            builder.append(facing.name().charAt(0)).append(", ");
         }
     }
 
@@ -96,20 +112,30 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return getFluidTanks()[channel].getFluid();
     }
 
+    private void createTanksList() {
+        for (EnumFacing facing : EnumFacing.values()) {
+            tanks.put(facing, new PipeTankList(this, facing, fluidTanks));
+        }
+    }
+
     public FluidTankList getTankList() {
-        if (tanks == null) {
+        return getTankList(EnumFacing.UP);
+    }
+
+    public FluidTankList getTankList(EnumFacing facing) {
+        if (fluidTanks == null) {
             fluidTanks = new FluidTank[getNodeData().tanks];
             Arrays.fill(fluidTanks, new FluidTank(getCapacityPerTank()));
-            tanks = new PipeTankList(this, fluidTanks);
+            createTanksList();
         }
-        return tanks;
+        return tanks.get(facing);
     }
 
     public FluidTank[] getFluidTanks() {
-        if (tanks == null) {
+        if (fluidTanks == null) {
             fluidTanks = new FluidTank[getNodeData().tanks];
             Arrays.fill(fluidTanks, new FluidTank(getCapacityPerTank()));
-            tanks = new PipeTankList(this, fluidTanks);
+            createTanksList();
         }
         return fluidTanks;
     }
@@ -120,6 +146,10 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
             fluids[i] = fluidTanks[i].getFluid();
         }
         return fluids;
+    }
+
+    public int setFluidAuto(FluidStack stack) {
+        return setContainingFluid(stack, findChannel(stack));
     }
 
     public int setContainingFluid(FluidStack stack, int channel) {
@@ -213,7 +243,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         }
         nbt.setTag("Fluids", list);
         NBTTagList faces = new NBTTagList();
-        for(EnumFacing facing : openConnections) {
+        for (EnumFacing facing : openConnections) {
             faces.appendTag(new NBTTagByte((byte) facing.getIndex()));
         }
         nbt.setTag("Faces", faces);
@@ -226,7 +256,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
         fluidTanks = new FluidTank[getNodeData().tanks];
         Arrays.fill(fluidTanks, new FluidTank(getCapacityPerTank()));
-        tanks = new PipeTankList(this, fluidTanks);
+        createTanksList();
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tag = list.getCompoundTagAt(i);
             if (!tag.getBoolean("isNull")) {
@@ -235,7 +265,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         }
         NBTTagList faces = nbt.getTagList("Faces", Constants.NBT.TAG_BYTE);
         for (int i = 0; i < faces.tagCount(); i++) {
-            openConnections.add(EnumFacing.byIndex(((NBTTagByte)faces.get(i)).getByte()));
+            openConnections.add(EnumFacing.byIndex(((NBTTagByte) faces.get(i)).getByte()));
         }
     }
 

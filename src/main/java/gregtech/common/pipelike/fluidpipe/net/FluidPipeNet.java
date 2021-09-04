@@ -4,23 +4,22 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.*;
 
 public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITickable {
 
     private final Set<FluidStack> fluids = new HashSet<>();
-    private Set<FluidStack> dirtyStacks = new HashSet<>();
+    private final Map<FluidStack, BlockPos> dirtyStacks = new HashMap<>();
 
     public FluidPipeNet(WorldPipeNet<FluidPipeProperties, FluidPipeNet> world) {
         super(world);
@@ -29,33 +28,35 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
     @Override
     protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
         super.updateBlockedConnections(nodePos, facing, isBlocked);
-        dirtyStacks.addAll(fluids);
+        for(FluidStack fluid : fluids) {
+            dirtyStacks.put(fluid, nodePos);
+        }
     }
 
-    protected int drain(FluidStack stack) {
+    protected int drain(FluidStack stack, BlockPos pos) {
         if (stack == null || stack.amount <= 0) return 0;
         for (FluidStack stack1 : fluids) {
             if (stack1.isFluidEqual(stack)) {
                 int amount = Math.min(stack.amount, stack1.amount);
                 stack1.amount -= amount;
-                markDirtyPipeNetStack(stack1);
+                markDirtyPipeNetStack(stack1, pos);
                 return amount;
             }
         }
         return 0;
     }
 
-    protected void fill(FluidStack stack) {
+    protected void fill(FluidStack stack, BlockPos pos) {
         if (stack == null || stack.amount <= 0) return;
         for (FluidStack stack1 : fluids) {
             if (stack1.isFluidEqual(stack)) {
                 stack1.amount += stack.amount;
-                markDirtyPipeNetStack(stack1);
+                markDirtyPipeNetStack(stack1, pos);
                 return;
             }
         }
         fluids.add(stack);
-        markDirty(stack);
+        markDirtyPipeNetStack(stack, pos);
     }
 
     @Override
@@ -85,17 +86,18 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
     @Override
     public void update() {
         if (dirtyStacks.size() == 0) return;
-        Iterator<FluidStack> iterator = dirtyStacks.iterator();
+        Iterator<FluidStack> iterator = dirtyStacks.keySet().iterator();
         while (iterator.hasNext()) {
             FluidStack dirtyStack = iterator.next();
             if (dirtyStack.amount <= 0) {
                 iterator.remove();
                 continue;
             }
-            int c = dirtyStack.amount / getAllNodes().size();
-            int m = dirtyStack.amount % getAllNodes().size();
+            List<TileEntityFluidPipe> pipes = FluidNetWalker.getPipesForFluid(getWorldData(), dirtyStacks.get(dirtyStack), dirtyStack);
+            int c = dirtyStack.amount / pipes.size();
+            int m = dirtyStack.amount % pipes.size();
             int overflow = 0;
-            for (BlockPos pos : getAllNodes().keySet()) {
+            for (TileEntityFluidPipe pipe : pipes) {
                 int count = c;
                 if (m > 0) {
                     count++;
@@ -103,9 +105,8 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                 }
                 FluidStack stack = dirtyStack.copy();
                 stack.amount = count;
-                TileEntityFluidPipe tile = (TileEntityFluidPipe) getWorldData().getTileEntity(pos);
-                int channel = tile.findChannel(dirtyStack);
-                overflow += tile.setContainingFluid(stack, channel);
+                int channel = pipe.findChannel(dirtyStack);
+                overflow += pipe.setContainingFluid(stack, channel);
             }
             dirtyStack.amount -= overflow;
             iterator.remove();
@@ -113,82 +114,40 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
         dirtyStacks.clear();
     }
 
-    private void markDirtyPipeNetStack(FluidStack stack) {
+    private void markDirtyPipeNetStack(FluidStack stack, BlockPos pos) {
         if (stack != null && stack.amount > 0) {
-            dirtyStacks.add(stack);
+            dirtyStacks.put(stack, pos);
         }
     }
 
-    public void markDirty(FluidStack stack) {
+    public void markDirty(FluidStack stack, BlockPos pos) {
         if (stack == null || stack.amount <= 0) return;
         for (FluidStack stack1 : this.fluids) {
             if (stack1.isFluidEqual(stack)) {
-                dirtyStacks.add(stack);
+                dirtyStacks.put(stack, pos);
                 return;
             }
         }
     }
 
-    public static class Inventory {
-        private final BlockPos pipePos;
-        private final EnumFacing faceToHandler;
-        private final int distance;
-        private final Set<Object> objectsInPath;
-        private final int minRate;
-        private FluidStack lastTransferredFluid;
-        private final List<TileEntityFluidPipe> holdingPipes;
-
-        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, Set<Object> objectsInPath, int minRate, List<TileEntityFluidPipe> holdingPipes) {
-            this.pipePos = pipePos;
-            this.faceToHandler = facing;
-            this.distance = distance;
-            this.objectsInPath = objectsInPath;
-            this.minRate = minRate;
-            this.holdingPipes = holdingPipes;
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = super.serializeNBT();
+        NBTTagList fluids = new NBTTagList();
+        for(FluidStack fluid : this.fluids) {
+            fluids.appendTag(fluid.writeToNBT(new NBTTagCompound()));
         }
-
-        public void setLastTransferredFluid(FluidStack lastTransferredFluid) {
-            this.lastTransferredFluid = lastTransferredFluid;
-        }
-
-        public FluidStack getLastTransferredFluid() {
-            return lastTransferredFluid;
-        }
-
-        public Set<Object> getObjectsInPath() {
-            return objectsInPath;
-        }
-
-        public int getMinThroughput() {
-            return minRate;
-        }
-
-        public List<TileEntityFluidPipe> getHoldingPipes() {
-            return holdingPipes;
-        }
-
-        public BlockPos getPipePos() {
-            return pipePos;
-        }
-
-        public EnumFacing getFaceToHandler() {
-            return faceToHandler;
-        }
-
-        public int getDistance() {
-            return distance;
-        }
-
-        public BlockPos getHandlerPos() {
-            return pipePos.offset(faceToHandler);
-        }
-
-        public IFluidHandler getHandler(World world) {
-            TileEntity tile = world.getTileEntity(getHandlerPos());
-            if (tile != null)
-                return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, faceToHandler.getOpposite());
-            return null;
-        }
+        nbt.setTag("Fluids", fluids);
+        return nbt;
     }
 
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        super.deserializeNBT(nbt);
+        this.fluids.clear();
+        NBTTagList fluids = nbt.getTagList("Fluids", Constants.NBT.TAG_COMPOUND);
+        for(int i = 0; i < fluids.tagCount(); i++) {
+            this.fluids.add(FluidStack.loadFluidStackFromNBT((NBTTagCompound) fluids.get(i)));
+        }
+    }
 }

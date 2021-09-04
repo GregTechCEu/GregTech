@@ -53,21 +53,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         return wasInDetachedConversionMode;
     }
 
-    @Override
-    public void markWalked() {
-        walked = true;
-    }
-
-    @Override
-    public boolean isWalked() {
-        return walked;
-    }
-
-    @Override
-    public void resetWalk() {
-        walked = false;
-    }
-
     public void setPipeData(BlockPipe<PipeType, NodeDataType, ?> pipeBlock, PipeType pipeType) {
         this.pipeBlock = pipeBlock;
         this.pipeType = pipeType;
