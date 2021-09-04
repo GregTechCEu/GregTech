@@ -20,33 +20,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public interface IMiner {
 
-
-    enum Type {
-        STEAM(320, 9, 0, "", 0),
-        LV(160, 17, 0, "", 0),
-        MV(80, 33, 0, "", 0),
-        HV(40, 49, 0, "", 0),
-        BASIC(16, 3, 3, GTUtility.romanNumeralString(3), 8),
-        LARGE(4, 5, 3, GTUtility.romanNumeralString(3), 16),
-        ADVANCE(1, 7, 3, GTUtility.romanNumeralString(3), 32);
-
-        public final int tick;
-        public final int radius;
-        public final int fortune;
-        public final int drillingFluidConsumePerTick;
-        public final String fortuneString;
-
-
-        Type(int tick, int radius, int fortune, String fortuneString, int drillingFluidConsumePerTick) {
-            this.tick = tick;
-            this.radius = radius;
-            this.fortune = fortune;
-            this.drillingFluidConsumePerTick = drillingFluidConsumePerTick;
-            this.fortuneString = fortuneString;
-        }
-
-    }
-
     short MAX_SPEED = Short.MAX_VALUE;
 
     byte POWER = 5;
@@ -59,13 +32,21 @@ public interface IMiner {
         return DIVIDEND / Math.pow(base, POWER);
     }
 
-    Type getType();
-
     World getWorld();
 
     long getOffsetTimer();
 
-    static LinkedList<BlockPos> getBlocksToMine(IMiner miner, AtomicInteger x, AtomicInteger y, AtomicInteger z, AtomicInteger startX, AtomicInteger startZ, AtomicInteger startY, int aRadius, double tps) {
+    int getTick();
+
+    int getaRadius();
+
+    int getFortune();
+
+    boolean testForMax();
+
+    void initPos();
+
+    static LinkedList<BlockPos> getBlocksToMine(IMiner miner, AtomicInteger x, AtomicInteger y, AtomicInteger z, AtomicInteger startX, AtomicInteger startZ, int aRadius, double tps) {
         LinkedList<BlockPos> blocks = new LinkedList<>();
         int calcAmount = GET_QUOTIENT(tps) < 1 ? 1 : (int) (Math.min(GET_QUOTIENT(tps), Short.MAX_VALUE));
         for (int c = 0; c < calcAmount; ) {
@@ -102,10 +83,10 @@ public interface IMiner {
     }
 
     static double getTPS(World world) {
-        double meanTickTime = mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
-        return meanTickTime;
+        return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     static void applyTieredHammerNoRandomDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, EntityPlayer player, RecipeMap map, int tier) {
         ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
         Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.DEFAULT);

@@ -17,6 +17,7 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.IMiner;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
@@ -27,6 +28,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
@@ -54,7 +56,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SteamMiner extends MetaTileEntity implements IMiner {
 
     private final int inventorySize;
-    public final IMiner.Type type;
     private final ItemStackHandler fluidContainerInventory;
     private boolean needsVenting;
     private boolean ventingStuck;
@@ -72,23 +73,31 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
     private boolean invFull = false;
     private static final Cuboid6 PIPE_CUBOID = new Cuboid6(4 / 16.0, 0.0, 4 / 16.0, 12 / 16.0, 1.0, 12 / 16.0);
 
-    private LinkedList<BlockPos> blockPos = new LinkedList<>();
+    private final LinkedList<BlockPos> blockPos = new LinkedList<>();
     private int aRadius;
+    private int oRadius;
     private int pipeY = 0;
+    private int tick;
+    private int steam;
+    private int fortune;
+    private boolean active = false;
 
-    public SteamMiner(ResourceLocation metaTileEntityId) {
+    public SteamMiner(ResourceLocation metaTileEntityId, int tick, int radius, int steam, int fortune) {
         super(metaTileEntityId);
         this.inventorySize = 4;
-        this.type = IMiner.Type.STEAM;
         this.fluidContainerInventory = new ItemStackHandler(1);
         this.needsVenting = false;
-        aRadius = getType().radius;
+        this.tick = tick;
+        this.aRadius = radius;
+        this.oRadius = radius;
+        this.steam = steam;
+        this.fortune = fortune;
         initializeInventory();
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SteamMiner(metaTileEntityId);
+        return new SteamMiner(metaTileEntityId, getTick(), getaRadius(), getSteam(), getFortune());
     }
 
     @Override
@@ -156,14 +165,16 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.miner.steam.description", getType().radius, getType().tick / 20));
+        tooltip.add(I18n.format("gregtech.machine.miner.steam.description", getoRadius(), getTick() / 20));
     }
 
     public boolean drainSteam() {
-        if (importFluids.getTankAt(0).getFluidAmount() >= 16 && !done && !invFull && !ventingStuck & !testForMax()) {
-            importFluids.getTankAt(0).drain(16, true);
+        if (importFluids.getTankAt(0).getFluidAmount() >= steam && !done && !invFull && !ventingStuck & !testForMax()) {
+            importFluids.getTankAt(0).drain(steam, true);
+            this.active = true;
             return true;
         }
+        this.active = false;
         return false;
     }
 
@@ -173,19 +184,9 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         if (!getWorld().isRemote) {
             if (!drainSteam()) {
                 if (!done && testForMax()) {
-                    setXYZ();
-                    startX.set(getPos().getX() - aRadius);
-                    startZ.set(getPos().getZ() - aRadius);
-                    startY.set(getPos().getY());
-                    tempY.set(getPos().getY() - 1);
-                    mineX.set(getPos().getX() - aRadius);
-                    mineZ.set(getPos().getZ() - aRadius);
-                    mineY.set(getPos().getY() - 1);
+                    initPos();
                 }
-                if (invFull && getOffsetTimer() % 5 == 0) {
-                    pushItemsIntoNearbyHandlers(getFrontFacing());
-                    invFull = false;
-                }
+                resetInv();
                 if (needsVenting) {
                     tryDoVenting();
                     if (ventingStuck) {
@@ -206,14 +207,20 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
             }
 
             if(y.get() > 0) {
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, startY, aRadius, IMiner.getTPS(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getTPS(world)));
             }
 
-            if (getOffsetTimer() % type.tick == 0 && !blockPos.isEmpty()) {
+            if (getOffsetTimer() % tick == 0 && !blockPos.isEmpty()) {
                 BlockPos tempPos = blockPos.getFirst();
                 NonNullList<ItemStack> itemStacks = NonNullList.create();
                 IBlockState blockState = this.getWorld().getBlockState(tempPos);
                 if (blockState != Blocks.AIR.getDefaultState()) {
+                    /*small ores
+                        if orePrefix of block in blockPos is small
+                            applyTieredHammerNoRandomDrops...
+                        else
+                            current code...
+                    */
                     blockState.getBlock().getDrops(itemStacks, world, tempPos, blockState, 0);
                     if (addItemsToItemHandler(exportItems, true, itemStacks)) {
                         addItemsToItemHandler(exportItems, false, itemStacks);
@@ -232,7 +239,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
                 x.set(mineX.get());
                 y.set(mineY.get());
                 z.set(mineZ.get());
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, startY, aRadius, IMiner.getTPS(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getTPS(world)));
                 if (blockPos.isEmpty()) {
                     done = true;
                 }
@@ -291,7 +298,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         textList.add(new TextComponentString(String.format("Radius: %d", aRadius)));
         if (done)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
-        else if (drainSteam())
+        else if (active)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
         else if (invFull)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
@@ -310,14 +317,14 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!drainSteam()) {
-            if (aRadius == getType().radius / 4) {
-                aRadius = getType().radius;
+            if (aRadius == getoRadius() / 4) {
+                aRadius = getoRadius();
             } else {
                 if (playerIn.isSneaking()) {
                     aRadius--;
                 } else {
-                    if (aRadius - 5 < getType().radius / 4) {
-                        aRadius = getType().radius;
+                    if (aRadius - 5 < getoRadius() / 4) {
+                        aRadius = getoRadius();
                     } else
                         aRadius -= 5;
                 }
@@ -332,20 +339,16 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         return true;
     }
 
-    void setXYZ() {
-        x.set(getPos().getX() - aRadius);
-        z.set(getPos().getZ() - aRadius);
-        y.set(getPos().getY() - 1);
-    }
-
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!playerIn.isSneaking()) {
-            super.onRightClick(playerIn, hand, facing, hitResult);
-            invFull = false;
+        if (!playerIn.isSneaking() && this.openGUIOnRightClick()) {
+            if (this.getWorld() != null && !this.getWorld().isRemote) {
+                MetaTileEntityUIFactory.INSTANCE.openUI(this.getHolder(), (EntityPlayerMP) playerIn);
+            }
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     @Override
@@ -377,9 +380,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         this.ventingStuck = ventingStuck;
         if (!this.getWorld().isRemote) {
             this.markDirty();
-            this.writeCustomData(4, (buf) -> {
-                buf.writeBoolean(ventingStuck);
-            });
+            this.writeCustomData(4, (buf) -> buf.writeBoolean(ventingStuck));
         }
     }
 
@@ -391,9 +392,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
 
         if (!this.getWorld().isRemote) {
             this.markDirty();
-            this.writeCustomData(2, (buf) -> {
-                buf.writeBoolean(needsVenting);
-            });
+            this.writeCustomData(2, (buf) -> buf.writeBoolean(needsVenting));
         }
     }
 
@@ -403,18 +402,27 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         BlockPos ventingBlockPos = machinePos.offset(ventingSide);
         IBlockState blockOnPos = this.getWorld().getBlockState(ventingBlockPos);
         if (blockOnPos.getCollisionBoundingBox(this.getWorld(), ventingBlockPos) == Block.NULL_AABB) {
-            this.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ventingBlockPos), EntitySelectors.CAN_AI_TARGET).forEach((entity) -> {
-                entity.attackEntityFrom(DamageSources.getHeatDamage(), 6.0F);
-            });
+            this.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(ventingBlockPos), EntitySelectors.CAN_AI_TARGET).forEach((entity) -> entity.attackEntityFrom(DamageSources.getHeatDamage(), 6.0F));
             WorldServer world = (WorldServer) this.getWorld();
             double posX = (double) machinePos.getX() + 0.5D + (double) ventingSide.getXOffset() * 0.6D;
             double posY = (double) machinePos.getY() + 0.5D + (double) ventingSide.getYOffset() * 0.6D;
             double posZ = (double) machinePos.getZ() + 0.5D + (double) ventingSide.getZOffset() * 0.6D;
-            world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ, 7 + world.rand.nextInt(3), (double) ventingSide.getXOffset() / 2.0D, (double) ventingSide.getYOffset() / 2.0D, (double) ventingSide.getZOffset() / 2.0D, 0.1D, new int[0]);
-            world.playSound((EntityPlayer) null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY, posZ, 7 + world.rand.nextInt(3), (double) ventingSide.getXOffset() / 2.0D, (double) ventingSide.getYOffset() / 2.0D, (double) ventingSide.getZOffset() / 2.0D, 0.1D);
+            world.playSound(null, posX, posY, posZ, SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 1.0F);
             this.setNeedsVenting(false);
         } else if (!this.ventingStuck) {
             this.setVentingStuck(true);
+        }
+    }
+
+    void resetInv() {
+        if (invFull && getOffsetTimer() % 20 == 0) {
+            pushItemsIntoNearbyHandlers(getFrontFacing());
+            NonNullList<ItemStack> testSpace = NonNullList.create();
+            testSpace.add(new ItemStack(Blocks.STONE));
+            if (addItemsToItemHandler(exportItems, true, testSpace)) {
+                invFull = false;
+            }
         }
     }
 
@@ -422,8 +430,36 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         return x.get() == Integer.MAX_VALUE && y.get() == Integer.MAX_VALUE && z.get() == Integer.MAX_VALUE;
     }
 
-    @Override
-    public Type getType() {
-        return Type.STEAM;
+    public void initPos() {
+        x.set(getPos().getX() - aRadius);
+        z.set(getPos().getZ() - aRadius);
+        y.set(getPos().getY() - 1);
+        startX.set(getPos().getX() - aRadius);
+        startZ.set(getPos().getZ() - aRadius);
+        startY.set(getPos().getY());
+        tempY.set(getPos().getY() - 1);
+        mineX.set(getPos().getX() - aRadius);
+        mineZ.set(getPos().getZ() - aRadius);
+        mineY.set(getPos().getY() - 1);
+    }
+
+    public int getTick() {
+        return this.tick;
+    }
+
+    public int getoRadius() {
+        return  this.oRadius;
+    }
+
+    public int getaRadius() {
+        return this.aRadius;
+    }
+
+    public int getSteam() {
+        return this.steam;
+    }
+
+    public int getFortune() {
+        return this.fortune;
     }
 }
