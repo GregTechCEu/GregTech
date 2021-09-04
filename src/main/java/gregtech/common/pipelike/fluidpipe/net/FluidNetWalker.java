@@ -53,21 +53,17 @@ public class FluidNetWalker extends PipeNetWalker {
     protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
         if(!(neighbourPipe instanceof TileEntityFluidPipe))
             return false;
-        GTLog.logger.info("Checking covers");
         ICoverable coverable = currentPipe.getCoverableImplementation();
         CoverBehavior cover = coverable.getCoverAtSide(faceToNeighbour);
         if(cover instanceof CoverFluidFilter) {
-            GTLog.logger.info(" - filter found on self");
             if(!((CoverFluidFilter) cover).testFluidStack(fluid))
                 return false;
         }
         coverable = neighbourPipe.getCoverableImplementation();;
         cover = coverable.getCoverAtSide(faceToNeighbour.getOpposite());
         if(cover instanceof CoverFluidFilter) {
-            GTLog.logger.info(" - filter found on other");
             return ((CoverFluidFilter) cover).testFluidStack(fluid);
         }
-        GTLog.logger.info(" - pass");
         return true;
     }
 }

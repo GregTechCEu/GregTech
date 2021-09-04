@@ -194,8 +194,6 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         int connections = selfTile.getOpenConnections();
         float selfTHICCness = selfTile.getPipeType().getThickness();
         for (EnumFacing facing : EnumFacing.values()) {
-            if(selfTile.isConnectionOpenAny(facing))
-                continue;
             CoverBehavior cover = selfTile.getCoverableImplementation().getCoverAtSide(facing);
             if (cover != null) {
                 // adds side to open connections of it isn't already open & has a cover

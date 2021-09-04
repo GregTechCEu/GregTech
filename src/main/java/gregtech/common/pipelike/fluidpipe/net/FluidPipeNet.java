@@ -105,8 +105,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                 }
                 FluidStack stack = dirtyStack.copy();
                 stack.amount = count;
-                int channel = pipe.findChannel(dirtyStack);
-                overflow += pipe.setContainingFluid(stack, channel);
+                overflow += pipe.setFluidAuto(stack);
             }
             dirtyStack.amount -= overflow;
             iterator.remove();
@@ -135,7 +134,8 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
         NBTTagCompound nbt = super.serializeNBT();
         NBTTagList fluids = new NBTTagList();
         for(FluidStack fluid : this.fluids) {
-            fluids.appendTag(fluid.writeToNBT(new NBTTagCompound()));
+            if(fluid.amount > 0)
+                fluids.appendTag(fluid.writeToNBT(new NBTTagCompound()));
         }
         nbt.setTag("Fluids", fluids);
         return nbt;

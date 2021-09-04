@@ -26,7 +26,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Random;
@@ -103,16 +102,16 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         }
     }
 
-    public int getCurrentChannel() {
-        return currentChannel;
-    }
-
     public FluidStack getContainedFluid(int channel) {
         if (channel < 0) return null;
         return getFluidTanks()[channel].getFluid();
     }
 
     private void createTanksList() {
+        fluidTanks = new FluidTank[getNodeData().tanks];
+        for (int i = 0; i < getNodeData().tanks; i++) {
+            fluidTanks[i] = new FluidTank(getCapacityPerTank());
+        }
         for (EnumFacing facing : EnumFacing.values()) {
             tanks.put(facing, new PipeTankList(this, facing, fluidTanks));
         }
@@ -124,8 +123,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
     public FluidTankList getTankList(EnumFacing facing) {
         if (fluidTanks == null) {
-            fluidTanks = new FluidTank[getNodeData().tanks];
-            Arrays.fill(fluidTanks, new FluidTank(getCapacityPerTank()));
             createTanksList();
         }
         return tanks.get(facing);
@@ -133,8 +130,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
     public FluidTank[] getFluidTanks() {
         if (fluidTanks == null) {
-            fluidTanks = new FluidTank[getNodeData().tanks];
-            Arrays.fill(fluidTanks, new FluidTank(getCapacityPerTank()));
             createTanksList();
         }
         return fluidTanks;
@@ -154,10 +149,14 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
     public int setContainingFluid(FluidStack stack, int channel) {
         if (channel < 0) return stack.amount;
+        if (stack == null || stack.amount <= 0) {
+            getFluidTanks()[channel].setFluid(null);
+            return 0;
+        }
         int originalAmount = stack.amount;
         FluidTank tank = getFluidTanks()[channel];
         stack.amount = Math.min(stack.amount, tank.getCapacity());
-        getFluidTanks()[channel].setFluid(stack);
+        tank.setFluid(stack);
         this.currentChannel = -1;
         return originalAmount - stack.amount;
     }
@@ -172,12 +171,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
             if (fluidStack != null)
                 return false;
         return true;
-    }
-
-    public boolean findAndSetChannel(FluidStack stack) {
-        int c = findChannel(stack);
-        this.currentChannel = c;
-        return c >= 0 && c < fluidTanks.length;
     }
 
     private int findChannelFor(FluidStack stack) {
@@ -235,7 +228,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         for (int i = 0; i < getFluidTanks().length; i++) {
             FluidStack stack1 = getContainedFluid(i);
             NBTTagCompound fluidTag = new NBTTagCompound();
-            if (stack1 == null)
+            if (stack1 == null || stack1.amount <= 0)
                 fluidTag.setBoolean("isNull", true);
             else
                 stack1.writeToNBT(fluidTag);
@@ -254,8 +247,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         NBTTagList list = (NBTTagList) nbt.getTag("Fluids");
-        fluidTanks = new FluidTank[getNodeData().tanks];
-        Arrays.fill(fluidTanks, new FluidTank(getCapacityPerTank()));
         createTanksList();
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound tag = list.getCompoundTagAt(i);
