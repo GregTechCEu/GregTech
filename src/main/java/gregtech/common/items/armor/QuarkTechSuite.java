@@ -1,7 +1,9 @@
-package gregtech.api.items.armor;
+package gregtech.common.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.items.armor.ArmorLogicSuite;
+import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import gregtech.common.items.MetaItems;

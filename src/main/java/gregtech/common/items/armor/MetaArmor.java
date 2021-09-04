@@ -1,4 +1,4 @@
-package gregtech.common.items.Armor;
+package gregtech.common.items.armor;
 
 import gregtech.api.GTValues;
 import gregtech.api.items.armor.*;
@@ -26,7 +26,7 @@ public class MetaArmor extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem
         MetaItems.NANO_MUSCLE_SUITE_CHESTPLATE = addItem(21, "nms.chestplate").setArmorLogic(new NanoMuscleSuite(EntityEquipmentSlot.CHEST, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.UNCOMMON);
         MetaItems.NANO_MUSCLE_SUITE_LEGGINGS = addItem(22, "nms.leggings").setArmorLogic(new NanoMuscleSuite(EntityEquipmentSlot.LEGS, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.UNCOMMON);
         MetaItems.NANO_MUSCLE_SUITE_BOOTS = addItem(23, "nms.boots").setArmorLogic(new NanoMuscleSuite(EntityEquipmentSlot.FEET, energyPerUse, maxCapacity, tier)).setRarity(EnumRarity.UNCOMMON);
-        MetaItems.ADVANCED_NANO_MUSCLE_CHESTPLATE = addItem(30, "nms.advanced_chestplate").setArmorLogic(new AdvancedNanoMuscleSuite(5000, 11400000L * (long) Math.max(1, Math.pow(4, e.voltageTierAdvNanoSuit - 4)), e.voltageTierAdvNanoSuit)).setRarity(EnumRarity.RARE);
+        MetaItems.ADVANCED_NANO_MUSCLE_CHESTPLATE = addItem(30, "nms.advanced_chestplate").setArmorLogic(new AdvancedNanoMuscleSuite(5000, 13000000L * (long) Math.max(1, Math.pow(4, e.voltageTierAdvNanoSuit - 4)), e.voltageTierAdvNanoSuit)).setRarity(EnumRarity.RARE);
 
         energyPerUse = 10000;
         tier = e.voltageTierQuarkTech;

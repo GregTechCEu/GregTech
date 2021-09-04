@@ -11,7 +11,7 @@ import gregtech.api.net.KeysPacket;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.Keybinds;
-import gregtech.common.items.Armor.PowerlessJetpack;
+import gregtech.common.items.armor.PowerlessJetpack;
 import gregtech.common.items.MetaItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;

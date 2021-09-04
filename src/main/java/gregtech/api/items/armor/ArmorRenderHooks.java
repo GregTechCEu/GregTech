@@ -15,6 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
+@SuppressWarnings("unused")
 public class ArmorRenderHooks {
 
     public static boolean shouldNotRenderHeadItem(EntityLivingBase entityLivingBase) {

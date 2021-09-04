@@ -9,7 +9,7 @@ import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
-import gregtech.common.items.Armor.MetaArmor;
+import gregtech.common.items.armor.MetaArmor;
 import gregtech.common.render.FacadeItemModel;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

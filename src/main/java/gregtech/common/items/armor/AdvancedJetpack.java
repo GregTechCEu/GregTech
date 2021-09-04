@@ -1,4 +1,4 @@
-package gregtech.common.items.Armor;
+package gregtech.common.items.armor;
 
 
 import gregtech.api.capability.GregtechCapabilities;

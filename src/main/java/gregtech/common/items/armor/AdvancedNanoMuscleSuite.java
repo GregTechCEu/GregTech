@@ -1,35 +1,34 @@
-package gregtech.api.items.armor;
+package gregtech.common.items.armor;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.items.armor.ArmorMetaItem;
+import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
 import gregtech.common.items.MetaItems;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
-public class AdvancedQuarkTechSuite extends QuarkTechSuite {
+public class AdvancedNanoMuscleSuite extends NanoMuscleSuite {
     private int cachedSlotId = -1;
 
-    public AdvancedQuarkTechSuite(int energyPerUse, long capacity, int tier) {
+    public AdvancedNanoMuscleSuite(int energyPerUse, long capacity, int tier) {
         super(EntityEquipmentSlot.CHEST, energyPerUse, capacity, tier);
     }
 
@@ -42,7 +41,6 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
         byte toggleTimer = data.hasKey("ToggleTimer") ? data.getByte("ToggleTimer") : 0;
         boolean canShare = data.hasKey("CanShare") && data.getBoolean("CanShare");
         boolean result = false;
-        float energyUsageMultiplier = 1.0F;
 
         // Mode toggle
         if (!world.isRemote) {
@@ -60,10 +58,6 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
                 player.sendMessage(new TextComponentTranslation(status));
             }
         }
-
-        // Additional features
-        if (player.onGround) hoverMode = false;
-        if (cont.getCharge() >= energyPerUse) player.extinguish();
 
         // Backpack mechanics
         if (canShare && !world.isRemote) {
@@ -108,8 +102,10 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
             }
         }
 
+        if (player.onGround) hoverMode = false;
+
         // Fly mechanics
-        if (flyEnabled && cont.canUse(energyPerUse)) {
+        if (flyEnabled && cont.canUse(energyPerUse) && !player.isInWater() && !player.isInLava()) {
             if (hoverMode) {
                 if (!ArmorUtils.isKeyDown(player, EnumKey.JUMP) || !ArmorUtils.isKeyDown(player, EnumKey.SHIFT)) {
                     if (player.motionY > 0.1D) {
@@ -133,6 +129,8 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
                     } else {
                         player.motionY = 0.0D;
                     }
+                    ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.6D);
+                    ArmorUtils.playJetpackSound(player);
                 }
 
                 if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
@@ -155,21 +153,12 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
                 result = true;
             } else {
                 if (ArmorUtils.isKeyDown(player, EnumKey.JUMP)) {
-                    if (ArmorUtils.isKeyDown(player, EnumKey.BOOST) && !ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
-                        if (player.motionY <= 1.6D) player.motionY += 0.4D;
-                        energyUsageMultiplier = 1.5F;
-                    } else {
-                        if (player.motionY <= 0.8D) player.motionY += 0.2D;
-                    }
-
+                    if (player.motionY <= 0.8D) player.motionY += 0.2D;
                     if (ArmorUtils.isKeyDown(player, EnumKey.FORWARD)) {
-                        if (ArmorUtils.isKeyDown(player, EnumKey.BOOST)) {
-                            player.moveRelative(0.0F, 0.0F, 1.0F, 0.20F);
-                            energyUsageMultiplier = 1.5F;
-                        } else {
-                            player.moveRelative(0.0F, 0.0F, 1.0F, 0.1F);
-                        }
+                        player.moveRelative(0.0F, 0.0F, 0.85F, 0.1F);
                     }
+                    ArmorUtils.spawnParticle(world, player, EnumParticleTypes.CLOUD, -0.6D);
+                    ArmorUtils.playJetpackSound(player);
                     player.fallDistance = 0.0F;
                     result = true;
                 }
@@ -178,7 +167,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
 
         // Fly discharge
         if (result) {
-            cont.discharge(MathHelper.floor(energyPerUse * energyUsageMultiplier / 4), cont.getTier(), true, false, false);
+            cont.discharge(MathHelper.floor(energyPerUse / 2.0), cont.getTier(), true, false, false);
             ArmorUtils.resetPlayerFloatingTime(player);
         }
 
@@ -197,7 +186,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
     @Override
     public void addInfo(ItemStack itemStack, List<String> lines) {
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
-        String state = "";
+        String state;
         if (data.hasKey("CanShare")) {
             state = data.getBoolean("CanShare") ? I18n.format("metaarmor.hud.status.enabled") : I18n.format("metaarmor.hud.status.disabled");
         } else {
@@ -210,18 +199,20 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
 
     @Override
     public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
-        if (player.getHeldItem(hand).getItem() instanceof ArmorMetaItem<?> && player.isSneaking()) {
-            NBTTagCompound data = GTUtility.getOrCreateNbtCompound(player.getHeldItem(hand));
+        ItemStack armor = player.getHeldItem(hand);
+
+        if (armor.getItem() instanceof ArmorMetaItem && player.isSneaking()) {
+            NBTTagCompound data = GTUtility.getOrCreateNbtCompound(armor);
             boolean canShareEnergy = data.hasKey("CanShare") && data.getBoolean("CanShare");
 
             canShareEnergy = !canShareEnergy;
             String locale = "metaarmor.energy_share." + (canShareEnergy ? "enable" : "disable");
             if (!world.isRemote) player.sendMessage(new TextComponentTranslation(locale));
             data.setBoolean("CanShare", canShareEnergy);
-            return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
-        } else {
-            return super.onRightClick(world, player, hand);
+            return ActionResult.newResult(EnumActionResult.SUCCESS, armor);
         }
+
+        return super.onRightClick(world, player, hand);
     }
 
     @SideOnly(Side.CLIENT)
@@ -244,7 +235,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
 
             if (data.hasKey("FlyMode")) {
                 String status = data.getBoolean("FlyMode") ? "metaarmor.hud.status.enabled" : "metaarmor.hud.status.disabled";
-                this.HUD.newString(I18n.format("metaarmor.hud.gravi_engine", I18n.format(status)));
+                this.HUD.newString(I18n.format("metaarmor.hud.fly_mode", I18n.format(status)));
             }
 
             if (data.hasKey("Hover")) {
@@ -257,27 +248,13 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite {
     }
 
     @Override
-    public ArmorProperties getProperties(EntityLivingBase player, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
-        int damageLimit = Integer.MAX_VALUE;
-        IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        if (energyPerUse > 0) {
-            damageLimit = (int) Math.min(damageLimit, 25.0D * item.getCharge() / energyPerUse);
-        }
-        return new ArmorProperties(8, getDamageAbsorption() * getAbsorption(armor), damageLimit);
-    }
-
-    @Override
-    public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
-        return source != DamageSource.FALL && source != DamageSource.DROWN && source != DamageSource.STARVE;
-    }
-
-    @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-        return "gregtech:textures/armor/advanced_quark_tech_suite_1.png";
+        return "gregtech:textures/armor/advanced_nano_muscle_suite_1.png";
     }
 
     @Override
     public double getDamageAbsorption() {
-        return 1.5D;
+        return 1.0D;
     }
+
 }

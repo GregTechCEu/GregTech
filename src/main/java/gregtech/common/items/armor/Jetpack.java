@@ -1,4 +1,4 @@
-package gregtech.common.items.Armor;
+package gregtech.common.items.armor;
 
 
 import com.google.common.collect.ImmutableMultimap;
