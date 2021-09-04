@@ -8,7 +8,6 @@ import java.util.function.Function;
 
 public class PaddleWidget extends Widget {
     Function<PaddleWidget, Integer> controlSupplier;
-    private float speed;
 
     public PaddleWidget(int x, int y, int width, int height, Function<PaddleWidget, Integer> controlSupplier) {
         super(x, y, width, height);
@@ -29,16 +28,19 @@ public class PaddleWidget extends Widget {
         if (this.getSelfPosition().getY() > 202) {
             this.setSelfPosition(new Position(this.getSelfPosition().getX(), 202));
         }
-        this.addSelfPosition(0, (int) speed);
+        int speed;
         switch (controlSupplier.apply(this)) {
             case 0:
-                speed += 2;
+                speed = 6;
                 break;
             case 1:
-                speed -= 2;
+                speed = -6;
                 break;
+            default:
+                speed = 0;
         }
-        speed /= 1.2;
+        this.addSelfPosition(0, speed);
+
     }
 
     public Rectangle toSelfRectangleBox() {

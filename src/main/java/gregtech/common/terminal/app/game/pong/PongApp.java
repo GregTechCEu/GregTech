@@ -71,11 +71,12 @@ public class PongApp extends AbstractApplication {
     public void score(boolean side) {
         if (side) {
             leftScore++;
-            ball.theta = (float) (5 * Math.PI / 8);
+            ball.theta = (float) Math.PI;
         } else {
             rightScore++;
-            ball.theta = (float) (Math.PI / 8);
+            ball.theta = (float) 0;
         }
+        ball.theta += Math.random() * 0.2;
         ball.setSelfPosition(new Position(333 / 2 - 1, 232 / 2 - 1));
     }
 
@@ -97,14 +98,16 @@ public class PongApp extends AbstractApplication {
             this.score(true); // Left side gains a point
         } else {
             paddles.forEach((paddle) -> solidObjects.add(new Rectangle(paddle.toSelfRectangleBox())));
+            boolean interacted = false;
             for (Rectangle object : solidObjects) {
                 TwoDimensionalRayTracer.TwoDimensionalRayTraceResult result = TwoDimensionalRayTracer.intersectBoxSegment(
                         new Vector2f(ball.getSelfPosition().x, ball.getSelfPosition().y),
-                        new Vector2f((float) (Math.cos(ball.theta) * 12), (float) (Math.sin(ball.theta) * 12)),
+                        new Vector2f((float) (Math.cos(ball.theta) * 6), (float) (Math.sin(ball.theta) * 6)),
                         new Vector2f((float) object.getCenterX(), (float) object.getCenterY()),
                         new Vector2f(4 + object.width / 2, 4 + object.height / 2));
-                int i = 0;
-                while (result != null) {
+                if (result != null && !interacted) {
+                    ball.addSelfPosition((Math.cos(ball.theta) * 6 * result.time), (Math.sin(ball.theta) * 6 * result.time));
+
                     float angleMod = 0;
                     if(result.pos.y < object.getCenterY() - 2) {
                         angleMod -= Math.signum(result.normal.x) * 0.6;
@@ -112,24 +115,27 @@ public class PongApp extends AbstractApplication {
                         angleMod += Math.signum(result.normal.x) * 0.6;
                     }
                     ball.theta = (float) (Math.acos(result.normal.x) * 2 - ball.theta + Math.PI + angleMod) % (2 * Math.PI); // Reflects with a slight angle modification.
-                    if(Math.abs((ball.theta % Math.PI)- Math.PI / 2) < 0.5) {
-                        ball.theta += (Math.random() - 0.5) * 0.9;
-                    } else {
-                        ball.theta += (Math.random() - 0.5) * 0.3;
+
+                    if(ball.theta > Math.PI / 2 - 0.5 && ball.theta < Math.PI / 2 + 0.5) {
+                        if(ball.theta <= Math.PI / 2)
+                            ball.theta = Math.PI / 2 - 0.51;
+                        else
+                            ball.theta = Math.PI / 2 + 0.51;
                     }
-                    result = TwoDimensionalRayTracer.intersectBoxSegment(
-                            ball.getPreciseSelfPosition(),
-                            new Vector2f((float) (Math.cos(ball.theta) * 12), (float) (Math.sin(ball.theta) * 12)),
-                            new Vector2f((float) object.getCenterX(), (float) object.getCenterY()),
-                            new Vector2f(4 + object.width / 2, 4 + object.height / 2));
-                    i++;
-                    if(i > 20)
-                        break; // There's probably no way out of this, just go forwards.
+                    if(ball.theta > 3 * Math.PI / 2 - 0.5 && ball.theta < 3 * Math.PI / 2 + 0.5) {
+                        if(ball.theta < 3 * Math.PI / 2)
+                            ball.theta = 3 * Math.PI / 2 - 0.51;
+                        else
+                            ball.theta = 3 * Math.PI / 2 + 0.51;
+                    }
+                    ball.addSelfPosition((Math.cos(ball.theta) * 8 * (1 - result.time)), (Math.sin(ball.theta) * 8 * (1 - result.time)));
+                    interacted = true;
                 }
             }
+            if(!interacted)
+                ball.addSelfPosition((Math.cos(ball.theta) * 6), (Math.sin(ball.theta) * 6));
             solidObjects.remove(2); solidObjects.remove(2);
         }
-        ball.addSelfPosition((Math.cos(ball.theta) * 6), (Math.sin(ball.theta) * 6));
     }
 
     public int simplePaddleAI(PaddleWidget paddle) {

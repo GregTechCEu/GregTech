@@ -13,7 +13,7 @@ public class BallWidget extends ImageWidget {
 
     public BallWidget(int xPosition, int yPosition) {
         super(xPosition, yPosition, 8, 8, new TextureArea(new ResourceLocation("gregtech:textures/gui/widget/pong_ball.png"), 0, 0, 8, 8));
-        theta = (Math.PI / 2);
+        theta = (Math.random() > 0.5 ? Math.PI : Math.PI / 2) + Math.random() * 0.2;
         xAccurate = xPosition;
         yAccurate = yPosition;
     }
