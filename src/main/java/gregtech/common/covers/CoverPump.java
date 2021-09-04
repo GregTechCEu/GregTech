@@ -48,7 +48,6 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
     protected int transferRate;
     protected PumpMode pumpMode;
     protected ManualImportExportMode manualImportExportMode = ManualImportExportMode.DISABLED;
-    protected DistributionMode distributionMode;
     protected boolean blocksInput;
     protected int fluidLeftToTransferLastSecond;
     private CoverableFluidHandlerWrapper fluidHandlerWrapper;
@@ -63,7 +62,6 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         this.transferRate = mbPerTick;
         this.fluidLeftToTransferLastSecond = transferRate;
         this.pumpMode = PumpMode.EXPORT;
-        this.distributionMode = DistributionMode.INSERT_FIRST;
         this.blocksInput = true;
         this.bucketMode = BucketMode.MILLI_BUCKET;
         this.fluidFilter = new FluidFilterContainer(this);
@@ -86,15 +84,6 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
     public PumpMode getPumpMode() {
         return pumpMode;
-    }
-
-    public DistributionMode getDistributionMode() {
-        return distributionMode;
-    }
-
-    public void setDistributionMode(DistributionMode distributionMode) {
-        this.distributionMode = distributionMode;
-        coverHolder.markDirty();
     }
 
     public void setBucketMode(BucketMode bucketMode) {
@@ -194,15 +183,6 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
             .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
         primaryGroup.addWidget(new ToggleButtonWidget(130, 160, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
-
-        TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
-        TileEntity otherTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
-        if(!(this instanceof CoverFluidRegulator) && coverTile instanceof TileEntityFluidPipe ^ otherTile instanceof TileEntityFluidPipe) {
-            primaryGroup.addWidget(new ToggleButtonWidget(149, 160, 20, 20, GuiTextures.DISTRIBUTION_MODE,
-                    () -> distributionMode == DistributionMode.INSERT_FIRST,
-                    val -> distributionMode = val ? DistributionMode.INSERT_FIRST : DistributionMode.ROUND_ROBIN)
-                    .setTooltipText("cover.conveyor.distribution"));
-        }
               
         this.fluidFilter.initUI(88, primaryGroup::addWidget);
 
@@ -274,7 +254,6 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("TransferRate", transferRate);
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
-        tagCompound.setInteger("DistributionMode", distributionMode.ordinal());
         tagCompound.setBoolean("BlocksInput", blocksInput);
         tagCompound.setBoolean("WorkingAllowed", isWorkingAllowed);
         tagCompound.setInteger("ManualImportExportMode", manualImportExportMode.ordinal());
@@ -286,7 +265,6 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         super.readFromNBT(tagCompound);
         this.transferRate = tagCompound.getInteger("TransferRate");
         this.pumpMode = PumpMode.values()[tagCompound.getInteger("PumpMode")];
-        this.distributionMode = DistributionMode.values()[tagCompound.getInteger("DistributionMode")];
         this.blocksInput = tagCompound.getBoolean("BlocksInput");
         //LEGACY SAVE FORMAT SUPPORT
         if (tagCompound.hasKey("AllowManualIO")) {
