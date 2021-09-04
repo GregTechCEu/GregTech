@@ -251,6 +251,10 @@ public class ConfigHolder {
             @Config.Comment("Whether to enable maintenance or not. Default: false")
             @Config.RequiresMcRestart
             public boolean enableMaintenance = true;
+
+            @Config.Comment("Enable High-Tier solar panels (IV-UV). Default: false")
+            @Config.RequiresMcRestart
+            public boolean enableHighTierSolars = false;
         }
 
         public static class GT6 {

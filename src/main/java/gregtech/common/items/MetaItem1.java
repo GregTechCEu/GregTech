@@ -16,6 +16,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.RandomPotionEffect;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.*;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -319,6 +320,13 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_SOLAR_PANEL_LUV = addItem(338, "cover.solar.panel.luv");
         COVER_SOLAR_PANEL_ZPM = addItem(339, "cover.solar.panel.zpm");
         COVER_SOLAR_PANEL_UV = addItem(340, "cover.solar.panel.uv");
+
+        if (!ConfigHolder.U.GT5u.enableHighTierSolars) {
+            COVER_SOLAR_PANEL_IV.setInvisible();
+            COVER_SOLAR_PANEL_LUV.setInvisible();
+            COVER_SOLAR_PANEL_ZPM.setInvisible();
+            COVER_SOLAR_PANEL_UV.setInvisible();
+        }
 
         // Early Game Brick Related: ID 347-360
         IItemContainerItemProvider selfContainerItemProvider = itemStack -> itemStack;
