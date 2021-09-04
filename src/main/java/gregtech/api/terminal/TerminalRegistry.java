@@ -9,6 +9,7 @@ import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.terminal.app.ThemeSettingApp;
+import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
 import gregtech.common.terminal.app.console.ConsoleApp;
 import gregtech.common.terminal.app.guide.ItemGuideApp;
 import gregtech.common.terminal.app.guide.MultiBlockGuideApp;
@@ -57,7 +58,7 @@ public class TerminalRegistry {
             AppBuilder.create(new RecipeChartApp()).defaultApp(false).build();
         }
         AppBuilder.create(new ConsoleApp()).defaultApp(false).build();
-
+        AppBuilder.create(new BatteryManagerApp()).defaultApp(true).build();
     }
 
     @SideOnly(Side.CLIENT)

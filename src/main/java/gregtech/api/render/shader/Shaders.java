@@ -1,17 +1,31 @@
 package gregtech.api.render.shader;
 
 import codechicken.lib.render.shader.ShaderObject;
+import codechicken.lib.render.shader.ShaderProgram;
 import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.shader.Framebuffer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL30;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import static codechicken.lib.render.shader.ShaderHelper.getStream;
 import static codechicken.lib.render.shader.ShaderHelper.readShader;
 import static codechicken.lib.render.shader.ShaderObject.ShaderType.FRAGMENT;
 import static codechicken.lib.render.shader.ShaderObject.ShaderType.VERTEX;
+import static org.lwjgl.opengl.GL11.glGetInteger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,15 +34,41 @@ import static codechicken.lib.render.shader.ShaderObject.ShaderType.VERTEX;
  * @Date: 2021/08/30
  * @Description: Shaders are magic!!!
  */
+@SideOnly(Side.CLIENT)
 public class Shaders {
+    public static Minecraft mc;
+    private final static Map<ShaderObject, ShaderProgram> FULL_IMAGE_PROGRAMS;
+    public final static Framebuffer BUFFER_A;
+    public final static Framebuffer BUFFER_B;
+
+    public static ShaderObject IMAGE_V;
+    public static ShaderObject IMAGE_F;
+    public static ShaderObject BATTERY;
+    public static ShaderObject BLACK_HOLE;
 
     static {
+        BUFFER_A = new Framebuffer(1080, 1080, false);
+        BUFFER_B = new Framebuffer(1080, 1080, false);
+        BUFFER_A.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
+        BUFFER_B.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
+        mc = Minecraft.getMinecraft();
+        FULL_IMAGE_PROGRAMS = new HashMap<>();
         if (allowedShader()) {
             initShaders();
         }
     }
 
     public static void initShaders() {
+        BATTERY = initShader(BATTERY, FRAGMENT, "battery.frag");
+        IMAGE_V = initShader(IMAGE_V, VERTEX, "image.vert");
+        IMAGE_F = initShader(IMAGE_F, FRAGMENT, "image.frag");
+        BLACK_HOLE = initShader(BLACK_HOLE, FRAGMENT, "blackhole.frag");
+        FULL_IMAGE_PROGRAMS.clear();
+    }
+
+    private static ShaderObject initShader(ShaderObject object, ShaderObject.ShaderType shaderType, String location) {
+        unloadShader(object);
+        return loadShader(shaderType, location);
     }
 
     public static ShaderObject loadShader(ShaderObject.ShaderType shaderType, String location) {
@@ -50,5 +90,42 @@ public class Shaders {
         return OpenGlHelper.shadersSupported && ConfigHolder.U.clientConfig.useShader;
     }
 
+    public static Framebuffer renderFullImageInFBO(Framebuffer fbo, ShaderObject frag, Consumer<ShaderProgram.UniformCache> uniformCache) {
+        int lastID = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
+
+        fbo.framebufferClear();
+        fbo.bindFramebuffer(true);
+
+        ShaderProgram program = FULL_IMAGE_PROGRAMS.get(frag);
+        if (program == null) {
+            program = new ShaderProgram();
+            program.attachShader(IMAGE_V);
+            program.attachShader(frag);
+            FULL_IMAGE_PROGRAMS.put(frag, program);
+        }
+
+        program.useShader(cache->{
+            cache.glUniform2F("u_resolution", fbo.framebufferWidth, fbo.framebufferHeight);
+            if (uniformCache != null) {
+                uniformCache.accept(cache);
+            }
+        });
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+
+        buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        buffer.pos(-1, 1, 0).tex(0, 0).endVertex();
+        buffer.pos(-1, -1, 0).tex(0, 1).endVertex();
+        buffer.pos(1, -1, 0).tex(1, 1).endVertex();
+        buffer.pos(1, 1, 0).tex(1, 0).endVertex();
+        tessellator.draw();
+
+        program.releaseShader();
+        GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
+
+        OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
+        return fbo;
+    }
 
 }

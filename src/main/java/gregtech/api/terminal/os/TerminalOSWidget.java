@@ -301,7 +301,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     private void disCharge() {
-        IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        IElectricItem electricItem = hardwareProvider.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null && !TerminalBehaviour.isCreative(itemStack)) {
             AtomicLong costs = new AtomicLong(0);
             List<AbstractApplication> charged = new ArrayList<>();
