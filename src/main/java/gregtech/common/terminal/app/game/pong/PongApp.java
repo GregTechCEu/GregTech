@@ -118,7 +118,7 @@ public class PongApp extends AbstractApplication {
                         ball.theta += (Math.random() - 0.5) * 0.3;
                     }
                     result = TwoDimensionalRayTracer.intersectBoxSegment(
-                            new Vector2f(ball.getSelfPosition().x, ball.getSelfPosition().y),
+                            ball.getPreciseSelfPosition(),
                             new Vector2f((float) (Math.cos(ball.theta) * 12), (float) (Math.sin(ball.theta) * 12)),
                             new Vector2f((float) object.getCenterX(), (float) object.getCenterY()),
                             new Vector2f(4 + object.width / 2, 4 + object.height / 2));

@@ -4,7 +4,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.util.Position;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.util.vector.Vector2f;
 
 public class BallWidget extends ImageWidget {
     public double theta;
@@ -38,7 +38,7 @@ public class BallWidget extends ImageWidget {
         this.setSelfPosition(new Position((int) xAccurate, (int) yAccurate));
     }
 
-    public Pair<Double, Double> getDoubleSelfPosition() {
-        return Pair.of(xAccurate, yAccurate);
+    public Vector2f getPreciseSelfPosition() {
+        return new Vector2f((float) xAccurate , (float) yAccurate);
     }
 }
