@@ -66,10 +66,11 @@ public abstract class Hardware implements ICapabilityProvider {
     @Nullable
     @Override
     public final <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (!isCreative() && !hasHW()) {
+        T result = getCapability(capability);
+        if (result == null || !isCreative() && !hasHW()) {
             return null;
         }
-        return getCapability(capability);
+        return result;
     }
 
     protected <T> T getCapability(@Nonnull Capability<T> capability) {

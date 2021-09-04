@@ -135,7 +135,7 @@ public class BatteryHardware extends Hardware implements IElectricItem {
 
         @Override
         public int getTier() {
-            return super.getTier();
+            return tier;
         }
 
         @Override

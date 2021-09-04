@@ -35,6 +35,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     private AbstractApplication focusApp;
     public final NBTTagCompound tabletNBT;
     public final List<AbstractApplication> openedApps;
+    public final List<AbstractApplication> installedApps;
     public final TerminalMenuWidget menu;
     public final TerminalDesktopWidget desktop;
     public final BlockPos clickPos;
@@ -45,6 +46,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public TerminalOSWidget(int xPosition, int yPosition, int width, int height, ItemStack itemStack) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.openedApps = new ArrayList<>();
+        this.installedApps = new ArrayList<>();
         this.desktop = new TerminalDesktopWidget(Position.ORIGIN, new Size(333, 232), this);
         this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, 232), this).setBackground(TerminalTheme.COLOR_B_2);
         this.addWidget(desktop);
@@ -67,7 +69,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             }
         }
         if (tabletNBT.hasKey("_click")) {
-            clickPos = NBTUtil.getPosFromTag((NBTTagCompound) tabletNBT.getTag("_click"));
+            clickPos = NBTUtil.getPosFromTag(tabletNBT.getCompoundTag("_click"));
         } else {
             clickPos = null;
         }
@@ -95,6 +97,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
 
     public void installApplication(AbstractApplication application){
         desktop.installApplication(application);
+        installedApps.add(application);
     }
 
     public void openApplication(AbstractApplication application, boolean isClient) {
@@ -309,7 +312,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 TerminalRegistry.getAppHardwareDemand(openedApp.getRegistryName()).stream()
                         .filter(i->i instanceof BatteryHardware).findFirst()
                         .ifPresent(battery-> {
-                            costs.addAndGet(((BatteryHardware)battery).getCharge());
+                            costs.addAndGet(((BatteryHardware)battery).getCharge()*(openedApp.getAppTier() + 1));
                             charged.add(openedApp);
                         });
             }

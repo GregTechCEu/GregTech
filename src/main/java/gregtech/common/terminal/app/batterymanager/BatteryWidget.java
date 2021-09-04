@@ -7,11 +7,9 @@ import gregtech.api.gui.Widget;
 import gregtech.api.render.shader.Shaders;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -22,7 +20,7 @@ import org.lwjgl.opengl.GL11;
  * @Description:
  */
 public class BatteryWidget extends Widget {
-    private TerminalOSWidget os;
+    private final TerminalOSWidget os;
 
     public BatteryWidget(int x, int y, int width, int height, TerminalOSWidget os) {
         super(x, y, width, height);
@@ -43,7 +41,6 @@ public class BatteryWidget extends Widget {
         if (electricItem != null) {
             left = electricItem.getCharge() / (float)electricItem.getMaxCharge();
         }
-        left = (time % 6) / 6 * left;
         if (Shaders.allowedShader()) {
             float progress = left;
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
@@ -64,7 +61,10 @@ public class BatteryWidget extends Widget {
             buffer.pos(x, y, 0.0D).tex(0, 1).endVertex();
             tessellator.draw();
         } else {
+            int b_color = (int)(255 * left) << 16 | (int)(255 * (1-left)) << 8 | 255 << 24;
+            drawBorder(x, y, width, height, TerminalTheme.COLOR_1.getColor(), 2);
+            drawSolidRect(x, y + height - (int)(height * left), width, (int)(height * left), b_color);
         }
-        drawStringSized(String.format("%.2f%%", left * 100), x + width / 2f + 5, y + height / 2f - 5, -1, true, 2, true);
+        drawStringSized(String.format("%.2f%%", left * 100), x + width / 2f + 3, y + height / 2f - 7, -1, true, 2, true);
     }
 }

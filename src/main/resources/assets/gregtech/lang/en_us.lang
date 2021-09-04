@@ -3855,6 +3855,7 @@ gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
 gregtech.terminal.app_name.ore_prospector=Ore Prospector
 gregtech.terminal.app_name.console=GT Console
+gregtech.terminal.app_name.battery=Battery Manager
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
