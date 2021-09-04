@@ -62,12 +62,7 @@ public class Recipe {
 
     private final RecipePropertyStorage recipePropertyStorage;
 
-    private static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.builder()
-            .compareItem(true)
-            .compareCount(true)
-            .compareDamage(true)
-            .compareTag(true)
-            .build();
+    private static final ItemStackHashStrategy hashStrategy = ItemStackHashStrategy.comparingAll();
 
     private final int hashCode;
 

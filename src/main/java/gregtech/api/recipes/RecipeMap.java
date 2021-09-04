@@ -176,7 +176,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                         v.add(recipe);
                         return v;
                     });
-                    recipeItemMap.computeIfAbsent(stackKey, k -> new HashSet<>(1)).add(recipe);
+                    recipeItemMap.computeIfAbsent(stackKey, k -> new HashSet<>()).add(recipe);
                 }
             }
             for (FluidStack fluid : recipe.getFluidInputs()) {
@@ -185,7 +185,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     v.add(recipe);
                     return v;
                 });
-                recipeFluidMap.computeIfAbsent(fluidKey, k -> new HashSet<>(1)).add(recipe);
+                recipeFluidMap.computeIfAbsent(fluidKey, k -> new HashSet<>()).add(recipe);
             }
         } else if (ConfigHolder.debug) {
             GTLog.logger.debug("Recipe: " + recipe.toString() + " is a duplicate and was not added");
@@ -274,18 +274,15 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         if (minInputs > 0 && GTUtility.amountOfNonEmptyStacks(inputs) < minInputs) {
             return null;
         }
-        if (maxInputs > 0) {
-            return findByInputs(voltage, inputs, fluidInputs, matchingMode, exactVoltage);
-        } else {
-            return findByFluidInputs(voltage, inputs, fluidInputs, matchingMode, exactVoltage);
-        }
+        return findByInputsAndFluids(voltage, inputs, fluidInputs, matchingMode, exactVoltage);
     }
 
     @Nullable
-    private Recipe findByInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode, boolean exactVoltage) {
+    private Recipe findByInputsAndFluids(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode, boolean exactVoltage) {
         HashSet<Recipe> iteratedRecipes = new HashSet<>();
         HashSet<ItemStackKey> searchedItems = new HashSet<>();
-        HashMap<Integer, HashSet<Recipe>> priorityRecipeMap = new HashMap<>();
+        HashSet<FluidKey> searchedFluids = new HashSet<>();
+        HashMap<Integer, LinkedList<Recipe>> priorityRecipeMap = new HashMap<>();
         HashMap<Recipe, Integer> promotedTimes = new HashMap<>();
 
         for (ItemStack stack : inputs) {
@@ -304,16 +301,6 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 }
             }
         }
-        return prioritizedRecipe(priorityRecipeMap,iteratedRecipes,inputs,fluidInputs,matchingMode);
-
-    }
-
-    @Nullable
-    private Recipe findByFluidInputs(long voltage, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode, boolean exactVoltage) {
-        HashSet<Recipe> iteratedRecipes = new HashSet<>();
-        HashSet<FluidKey> searchedFluids = new HashSet<>();
-        Map<Integer, HashSet<Recipe>> priorityRecipeMap = new HashMap<>();
-        HashMap<Recipe, Integer> promotedTimes = new HashMap<>();
 
         for (FluidStack fluidStack : fluidInputs) {
             if (fluidStack != null) {
@@ -334,7 +321,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return prioritizedRecipe(priorityRecipeMap,iteratedRecipes,inputs,fluidInputs,matchingMode);
     }
 
-    private Recipe prioritizedRecipe(Map<Integer, HashSet<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes,List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
+    private Recipe prioritizedRecipe(Map<Integer, LinkedList<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes,List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
         for (int i = priorityRecipeMap.size(); i >= 0; i--) {
             if (priorityRecipeMap.containsKey(i)) {
                 for (Recipe tmpRecipe : priorityRecipeMap.get(i)) {
@@ -350,14 +337,14 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, Map<Integer, HashSet<Recipe>> priorityRecipeMap ) {
+    private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, Map<Integer, LinkedList<Recipe>> priorityRecipeMap ) {
         Integer p = promotedTimes.get(recipe);
         if (p == null) {
             p = 0;
         }
         promotedTimes.put(recipe, p + 1);
         if (priorityRecipeMap.get(p) == null) {
-            priorityRecipeMap.put(p, new HashSet<>());
+            priorityRecipeMap.put(p, new LinkedList<>());
         }
         priorityRecipeMap.get(p).add(recipe);
     }

@@ -66,6 +66,7 @@ public class RecipeMapTest {
                 .buildAndRegister();
 
         map.recipeBuilder()
+                .inputs(new ItemStack(Blocks.STONE))
                 .notConsumable(FluidRegistry.WATER)
                 .outputs(new ItemStack(Blocks.STONE))
                 .EUt(1).duration(1)
