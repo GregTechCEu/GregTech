@@ -183,7 +183,7 @@ public class MiscRecipeLoader {
                 .inputs(CARBON_PLATE.getStackForm(6))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
                 .circuitMeta(1)
-                .outputs(NANO_MUSCLE_SUITE_LEGGINS.getStackForm())
+                .outputs(NANO_MUSCLE_SUITE_LEGGINGS.getStackForm())
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(512)
@@ -301,8 +301,8 @@ public class MiscRecipeLoader {
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(PLATE_IRIDIUM_ALLOY.getStackForm(6))
                 .inputs(CONVEYOR_MODULE_EV.getStackForm(2))
-                .inputs(NANO_MUSCLE_SUITE_LEGGINS.getStackForm())
-                .outputs(QUARK_TECH_SUITE_LEGGINS.getStackForm())
+                .inputs(NANO_MUSCLE_SUITE_LEGGINGS.getStackForm())
+                .outputs(QUARK_TECH_SUITE_LEGGINGS.getStackForm())
                 .buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(2400).EUt(1600)
@@ -344,7 +344,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Elite, 4)
                 .inputs(QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
-                .outputs(ADVANCED_QAURK_TECH_SUITE_CHESTPLATE.getStackForm())
+                .outputs(ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(3600).EUt(8192)
@@ -355,7 +355,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Elite, 2)
                 .inputs(ADVANCED_NANO_MUSCLE_CHESTPLATE.getStackForm())
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
-                .outputs(ADVANCED_QAURK_TECH_SUITE_CHESTPLATE.getStackForm())
+                .outputs(ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .buildAndRegister();
         ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(), SEMIFLUID_JETPACK.getStackForm());
 

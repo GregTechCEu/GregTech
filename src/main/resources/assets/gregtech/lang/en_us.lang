@@ -896,39 +896,39 @@ metaitem.voltage_coil.uxv.tooltip=UXV Coil
 metaitem.voltage_coil.max.name=Maximum Voltage Coil
 metaitem.voltage_coil.max.tooltip=Maximum Coil
 
-metaitem.liquid_fuel_jetpack.name=§eLiquid fuel jetpack
-metaitem.impeller_jetpack.name=§eThruster Jetpack
-metaitem.advanced_impeller_jetpack.name=§bAdvanced Thruster Jetpack
-metaitem.battery_pack.lv.name=Battery pack (§eLV§r)
-metaitem.battery_pack.mv.name=Battery pack (§eMV§r)
-metaitem.battery_pack.hv.name=Battery pack (§eHV§r)
+metaitem.liquid_fuel_jetpack.name=Liquid-Fueled Jetpack
+metaitem.impeller_jetpack.name=Thruster Jetpack
+metaitem.advanced_impeller_jetpack.name=Advanced Thruster Jetpack
+metaitem.battery_pack.lv.name=Battery Pack (§eLV§r)
+metaitem.battery_pack.mv.name=Battery Pack (§eMV§r)
+metaitem.battery_pack.hv.name=Battery Pack (§eHV§r)
 
-metaitem.nightvision_goggles.name=§eNightvision Goggles
+metaitem.nightvision_goggles.name=NightVision Goggles
 
-metaitem.nms.chestplate.name=§eNanoMuscle™ Suite Chestplate
-metaitem.nms.leggins.name=§eNanoMuscle™ Suite Leggings
-metaitem.nms.boots.name=§eNanoMuscle™ Suite Boots
-metaitem.nms.helmet.name=§eNanoMuscle™ Suite Helmet
-metaitem.nms.advanced_chestplate.name=§bAdvanced NanoMuscle™ Suite Chestplate
+metaitem.nms.chestplate.name=NanoMuscle™ Suite Chestplate
+metaitem.nms.leggings.name=NanoMuscle™ Suite Leggings
+metaitem.nms.boots.name=NanoMuscle™ Suite Boots
+metaitem.nms.helmet.name=NanoMuscle™ Suite Helmet
+metaitem.nms.advanced_chestplate.name=Advanced NanoMuscle™ Suite Chestplate
 
-metaitem.qts.chestplate.name=§bQuarkTech™ Suite Chestplate
-metaitem.qts.leggins.name=§bQuarkTech™ Suite Leggins
-metaitem.qts.boots.name=§bQuarkTech™ Suite Boots
-metaitem.qts.helmet.name=§bQuarkTech™ Suite Helmet
-metaitem.qts.advanced_chestplate.name=§5Advanced QuarkTech™ Suite Chestplate
+metaitem.qts.chestplate.name=QuarkTech™ Suite Chestplate
+metaitem.qts.leggings.name=QuarkTech™ Suite Leggings
+metaitem.qts.boots.name=QuarkTech™ Suite Boots
+metaitem.qts.helmet.name=QuarkTech™ Suite Helmet
+metaitem.qts.advanced_chestplate.name=Advanced QuarkTech™ Suite Chestplate
 
-metaitem.impeller.mv.name=§ePower Thruster
-metaitem.impeller.hv.name=§bAdvanced Power Thruster
-metaitem.gravitation_engine.name=§5Gravitation Engine Unit
+metaitem.impeller.mv.name=Power Thruster
+metaitem.impeller.hv.name=Advanced Power Thruster
+metaitem.gravitation_engine.name=Gravitation Engine Unit
 
-metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: NightVision enabled
-metaarmor.nms.nightvision.disabled=NanoMuscle™ Suite: NightVision disabled
+metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: NightVision Enabled
+metaarmor.nms.nightvision.disabled=NanoMuscle™ Suite: NightVision Disabled
 
-metaarmor.qts.nightvision.enabled=QuarkTech™ Suite: NightVision enabled
-metaarmor.qts.nightvision.disabled=QuarkTech™ Suite: NightVision disabled
+metaarmor.qts.nightvision.enabled=QuarkTech™ Suite: NightVision Enabled
+metaarmor.qts.nightvision.disabled=QuarkTech™ Suite: NightVision Disabled
 
-metaarmor.jetpack.hover.enable=Jetpack: hover mode enabled
-metaarmor.jetpack.hover.disable=Jetpack: hover mode disabled
+metaarmor.jetpack.hover.enable=Jetpack: Hover Mode Enabled
+metaarmor.jetpack.hover.disable=Jetpack: Hover Mode Disabled
 
 metaarmor.message.nightvision.enabled=§bNightvision: §aOn
 metaarmor.message.nightvision.disabled=§bNightvision: §cOff

@@ -14,6 +14,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
@@ -164,7 +165,7 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         }
 
         public ArmorMetaValueItem setArmorLogic(IArmorLogic armorLogic) {
-            Preconditions.checkNotNull(armorLogic, "Cannot set armorLogic to null");
+            Preconditions.checkNotNull(armorLogic, "Cannot set ArmorLogic to null");
             this.armorLogic = armorLogic;
             this.armorLogic.addToolComponents(this);
             return this;
@@ -179,24 +180,27 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
 
         @Override
         public ArmorMetaValueItem setModelAmount(int modelAmount) {
-            super.setModelAmount(modelAmount);
-            return this;
+            return (ArmorMetaValueItem) super.setModelAmount(modelAmount);
+        }
+
+        @Override
+        public ArmorMetaValueItem setRarity(EnumRarity rarity) {
+            return (ArmorMetaValueItem) super.setRarity(rarity);
         }
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
+    public boolean isEnchantable(@Nonnull ItemStack stack) {
         return true;
     }
 
     @Override
-    public int getItemEnchantability(ItemStack stack) {
-
+    public int getItemEnchantability(@Nonnull ItemStack stack) {
         return 50;
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+    public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
         switch (this.getEquipmentSlot(stack)) {
             case HEAD:
                 return enchantment.type.canEnchantItem(Items.DIAMOND_HELMET);

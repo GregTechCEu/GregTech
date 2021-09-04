@@ -77,7 +77,7 @@ public class AdvancedNanoMuscleSuite extends NanoMuscleSuite {
             for (int i = 0; i < player.inventory.armorInventory.size(); i++) {
                 IElectricItem chargeable = player.inventory.armorInventory.get(i).getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
                 if (chargeable == null) continue;
-                if (player.inventory.armorInventory.get(i).isItemEqual(MetaItems.ADVANCED_QAURK_TECH_SUITE_CHESTPLATE.getStackForm()))
+                if (player.inventory.armorInventory.get(i).isItemEqual(MetaItems.ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm()))
                     continue;
                 if ((chargeable.getCharge() + chargeable.getTransferLimit() * 10) <= chargeable.getMaxCharge() && cont.canUse(chargeable.getTransferLimit() * 10) && world.getWorldTime() % 10 == 0) {
                     long delta = chargeable.charge(chargeable.getTransferLimit() * 10, chargeable.getTier(), true, false);
