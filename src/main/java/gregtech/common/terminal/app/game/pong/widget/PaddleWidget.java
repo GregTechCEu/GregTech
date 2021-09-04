@@ -3,10 +3,6 @@ package gregtech.common.terminal.app.game.pong.widget;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
-import gregtech.api.util.Size;
-import javafx.geometry.Pos;
-import org.lwjgl.util.vector.Vector2f;
-
 import java.awt.*;
 import java.util.function.Function;
 
