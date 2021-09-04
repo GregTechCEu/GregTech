@@ -195,19 +195,6 @@ public abstract class MetaTileEntity implements ICoverable {
         }
     }
 
-    /**
-     * Renders this meta tile entity (Emissive texture)
-     * Note that you shouldn't refer to world-related information in this method, because it
-     * will be called on ItemStacks too
-     *
-     * @param renderState render state (either chunk batched or item)
-     * @param pipeline    default set of pipeline transformations
-     */
-    @SideOnly(Side.CLIENT)
-    public void renderEmissiveMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-
-    }
-
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
         return renderLayer == BlockRenderLayer.CUTOUT_MIPPED;

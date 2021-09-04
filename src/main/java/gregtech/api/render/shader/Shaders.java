@@ -47,7 +47,7 @@ public class Shaders {
     }
 
     public static boolean allowedShader() {
-        return OpenGlHelper.shadersSupported && ConfigHolder.clientConfig.useShader;
+        return OpenGlHelper.shadersSupported && ConfigHolder.U.clientConfig.useShader;
     }
 
 

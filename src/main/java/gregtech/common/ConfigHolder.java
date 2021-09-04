@@ -102,21 +102,6 @@ public class ConfigHolder {
     @Config.Comment("Whether to give the terminal to new players")
     public static boolean spawnTerminal = true;
 
-    @Config.Comment("Client configs for file path, rendering and so on")
-    @Config.Name("Client Options")
-    @Config.RequiresMcRestart
-    public static ClientConfig clientConfig = new ClientConfig();
-
-    public static class ClientConfig {
-		
-        @Config.Comment("Terminal root path. Default: gregtech/terminal")
-        public String terminalRootPath = "gregtech/terminal";
-
-        @Config.Comment("Whether to use shader program. Default: true")
-        public boolean useShader = true;
-
-    }
-
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to make glass related recipes harder. Default: true")
@@ -190,6 +175,11 @@ public class ConfigHolder {
         @Config.Comment("Config category for energy compatibility features")
         @Config.Name("Energy Compatibility Options")
         public EnergyCompatibility energyOptions = new EnergyCompatibility();
+
+        @Config.Comment("Client configs for file path, rendering and so on")
+        @Config.Name("Client Options")
+        @Config.RequiresMcRestart
+        public ClientConfig clientConfig = new ClientConfig();
 
         @Config.Comment("Allow GregTech to add additional loot. Default: true")
         @Config.RequiresMcRestart
@@ -281,6 +271,18 @@ public class ConfigHolder {
             @Config.Comment("GTEU to Forge Energy (RF and alike) ratio. Default: 4 FE to 1 EU")
             @Config.RangeDouble() // to ensure positive number
             public double rfRatio = 4;
+        }
+
+        public static class ClientConfig {
+			
+			@Config.Comment("Terminal root path. Default: gregtech/terminal")
+			public String terminalRootPath = "gregtech/terminal";
+
+            @Config.Comment("Whether to use shader program. Default: true")
+            public boolean useShader = true;
+
+            @Config.Comment("Whether or not to enable Emissive Textures for GregTech Machines. Default: true")
+            public boolean emissiveTextures = true;
         }
     }
 }
