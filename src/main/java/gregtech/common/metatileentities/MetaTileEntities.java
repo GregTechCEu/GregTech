@@ -144,7 +144,7 @@ public class MetaTileEntities {
     public static MetaTileEntityPyrolyseOven PYROLYSE_OVEN;
     public static MetaTileEntityDistillationTower DISTILLATION_TOWER;
     public static MetaTileEntityCrackingUnit CRACKER;
-    public static MetaTileEntityMultiFurnace MULTI_FURNACE;
+    public static MetaTileEntityMultiSmelter MULTI_FURNACE;
     public static MetaTileEntityLargeCombustionEngine LARGE_COMBUSTION_ENGINE;
 
     public static MetaTileEntityLargeTurbine LARGE_STEAM_TURBINE;
@@ -436,7 +436,7 @@ public class MetaTileEntities {
         IMPLOSION_COMPRESSOR = GregTechAPI.registerMetaTileEntity(1003, new MetaTileEntityImplosionCompressor(gregtechId("implosion_compressor")));
         PYROLYSE_OVEN = GregTechAPI.registerMetaTileEntity(1004, new MetaTileEntityPyrolyseOven(gregtechId("pyrolyse_oven")));
         DISTILLATION_TOWER = GregTechAPI.registerMetaTileEntity(1005, new MetaTileEntityDistillationTower(gregtechId("distillation_tower")));
-        MULTI_FURNACE = GregTechAPI.registerMetaTileEntity(1006, new MetaTileEntityMultiFurnace(gregtechId("multi_furnace")));
+        MULTI_FURNACE = GregTechAPI.registerMetaTileEntity(1006, new MetaTileEntityMultiSmelter(gregtechId("multi_furnace")));
         LARGE_COMBUSTION_ENGINE = GregTechAPI.registerMetaTileEntity(1007, new MetaTileEntityLargeCombustionEngine(gregtechId("large_combustion_engine")));
         CRACKER = GregTechAPI.registerMetaTileEntity(1008, new MetaTileEntityCrackingUnit(gregtechId("cracker")));
 

@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
+public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
             MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.EXPORT_ITEMS,
@@ -44,14 +44,14 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
     protected int heatingCoilLevel;
     protected int heatingCoilDiscount;
 
-    public MetaTileEntityMultiFurnace(ResourceLocation metaTileEntityId) {
+    public MetaTileEntityMultiSmelter(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.FURNACE_RECIPES);
-        this.recipeMapWorkable = new MultiFurnaceWorkable(this);
+        this.recipeMapWorkable = new MultiSmelterWorkable(this);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityMultiFurnace(metaTileEntityId);
+        return new MetaTileEntityMultiSmelter(metaTileEntityId);
     }
 
     @Override
@@ -114,9 +114,9 @@ public class MetaTileEntityMultiFurnace extends RecipeMapMultiblockController {
         return true;
     }
 
-    protected class MultiFurnaceWorkable extends MultiblockRecipeLogic {
+    protected class MultiSmelterWorkable extends MultiblockRecipeLogic {
 
-        public MultiFurnaceWorkable(RecipeMapMultiblockController tileEntity) {
+        public MultiSmelterWorkable(RecipeMapMultiblockController tileEntity) {
             super(tileEntity);
         }
 
