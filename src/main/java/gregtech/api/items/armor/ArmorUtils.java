@@ -214,22 +214,23 @@ public class ArmorUtils {
             int windowHeight = new ScaledResolution(mc).getScaledHeight();
             int windowWidth = new ScaledResolution(mc).getScaledWidth();
             int stringWidth = mc.fontRenderer.getStringWidth(stringList.get(index));
-            switch (ConfigHolder.UnofficialOptions.armorHud.hudLocation) {
+            ConfigHolder.UnofficialOptions.ArmorHud configs = ConfigHolder.U.equipment.armorHud;
+            switch (configs.hudLocation) {
                 case 1:
-                    posX = 1 + ConfigHolder.UnofficialOptions.armorHud.hudOffsetX;
-                    posY = 1 + ConfigHolder.UnofficialOptions.armorHud.hudOffsetY + (fontHeight * index);
+                    posX = 1 + configs.hudOffsetX;
+                    posY = 1 + configs.hudOffsetY + (fontHeight * index);
                     break;
                 case 2:
-                    posX = windowWidth - (1 + ConfigHolder.UnofficialOptions.armorHud.hudOffsetX) - stringWidth;
-                    posY = 1 + ConfigHolder.UnofficialOptions.armorHud.hudOffsetY + (fontHeight * index);
+                    posX = windowWidth - (1 + configs.hudOffsetX) - stringWidth;
+                    posY = 1 + configs.hudOffsetY + (fontHeight * index);
                     break;
                 case 3:
-                    posX = 1 + ConfigHolder.UnofficialOptions.armorHud.hudOffsetX;
-                    posY = windowHeight - fontHeight * (stringAmount - index) - 1 - ConfigHolder.UnofficialOptions.armorHud.hudOffsetY;
+                    posX = 1 + configs.hudOffsetX;
+                    posY = windowHeight - fontHeight * (stringAmount - index) - 1 - configs.hudOffsetY;
                     break;
                 case 4:
-                    posX = windowWidth - (1 + ConfigHolder.UnofficialOptions.armorHud.hudOffsetX) - stringWidth;
-                    posY = windowHeight - fontHeight * (stringAmount - index) - 1 - ConfigHolder.UnofficialOptions.armorHud.hudOffsetY;
+                    posX = windowWidth - (1 + ConfigHolder.U.equipment.armorHud.hudOffsetX) - stringWidth;
+                    posY = windowHeight - fontHeight * (stringAmount - index) - 1 - configs.hudOffsetY;
                     break;
                 default:
                     throw new IllegalArgumentException();

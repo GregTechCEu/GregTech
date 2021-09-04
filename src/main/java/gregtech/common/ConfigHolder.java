@@ -169,14 +169,13 @@ public class ConfigHolder {
         @Config.Name("GregTech 6 Options")
         public GT6 GT6 = new GT6();
 
-        @Config.Comment("Config category Armor hud")
-        @Config.Name("Hud Location")
-        public static ArmorHud armorHud = new ArmorHud();
-
-
         @Config.Comment("Config category for energy compatibility features")
         @Config.Name("Energy Compatibility Options")
         public EnergyCompatibility energyOptions = new EnergyCompatibility();
+
+        @Config.Comment({"Configs for Armor and Tools", "Tiers are from ULV-0 to MAX-14"})
+        @Config.Name("Armor Options")
+        public Equipment equipment = new Equipment();
 
         @Config.Comment("Client configs for file path, rendering and so on")
         @Config.Name("Client Options")
@@ -294,9 +293,6 @@ public class ConfigHolder {
 
         }
 
-        @Config.Comment({"Configs for Armor and Tools", "Tiers are from ULV-0 to MAX-14"})
-        public static Equipment equipment = new Equipment();
-
         public static class Equipment {
             @Config.Name("Nightvision Goggles")
             public NightvisionGoggles nightvisionGoggles = new NightvisionGoggles();
@@ -320,6 +316,8 @@ public class ConfigHolder {
             public BatpackMv batpackMv = new BatpackMv();
             @Config.Name("Batpack HV")
             public BatpackHv batpackHv = new BatpackHv();
+            @Config.Comment("Armor HUD Location")
+            public ArmorHud armorHud = new ArmorHud();
         }
 
         public static class NightvisionGoggles {

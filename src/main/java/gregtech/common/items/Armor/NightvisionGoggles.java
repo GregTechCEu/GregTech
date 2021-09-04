@@ -25,7 +25,7 @@ import java.util.List;
 public class NightvisionGoggles extends ArmorLogicSuite {
 
     public NightvisionGoggles() {
-        super(ConfigHolder.UnofficialOptions.equipment.nightvisionGoggles.energyPerUse, ConfigHolder.UnofficialOptions.equipment.nightvisionGoggles.capacity, ConfigHolder.UnofficialOptions.equipment.nightvisionGoggles.voltageTier, EntityEquipmentSlot.HEAD);
+        super(ConfigHolder.U.equipment.nightvisionGoggles.energyPerUse, ConfigHolder.U.equipment.nightvisionGoggles.capacity, ConfigHolder.U.equipment.nightvisionGoggles.voltageTier, EntityEquipmentSlot.HEAD);
     }
 
     public NightvisionGoggles(int energyPerUse, int capacity, int voltageTier, EntityEquipmentSlot slot) {
@@ -73,7 +73,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
                     player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 999999, 0, true, true));
                 }
                 ret = true;
-                item.discharge((energyPerUse / 100), ConfigHolder.UnofficialOptions.equipment.nightvisionGoggles.voltageTier, true, false, false);
+                item.discharge((energyPerUse / 100), ConfigHolder.U.equipment.nightvisionGoggles.voltageTier, true, false, false);
             }
 
             if (!world.isRemote && toggleTimer > 0) {

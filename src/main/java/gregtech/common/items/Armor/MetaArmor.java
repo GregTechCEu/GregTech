@@ -8,7 +8,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 public class MetaArmor extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem> {
     @Override
     public void registerSubItems() {
-        ConfigHolder.UnofficialOptions.Equipment e = ConfigHolder.UnofficialOptions.equipment;
+        ConfigHolder.UnofficialOptions.Equipment e = ConfigHolder.U.equipment;
         MetaItems.NANO_MUSCLE_SUITE_CHESTPLATE = addItem(0, "nms.chestplate").setArmorLogic(new NanoMuscleSuite(EntityEquipmentSlot.CHEST, e.nanoSuit.energyPerUse, e.nanoSuit.capacity));
         MetaItems.NANO_MUSCLE_SUITE_LEGGINS = addItem(1, "nms.leggins").setArmorLogic(new NanoMuscleSuite(EntityEquipmentSlot.LEGS, e.nanoSuit.energyPerUse, e.nanoSuit.capacity));
         MetaItems.NANO_MUSCLE_SUITE_HELMET = addItem(2, "nms.helmet").setArmorLogic(new NanoMuscleSuite(EntityEquipmentSlot.HEAD, e.nanoSuit.energyPerUse, e.nanoSuit.capacity));
