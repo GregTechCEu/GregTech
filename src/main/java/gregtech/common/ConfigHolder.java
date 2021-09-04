@@ -99,9 +99,6 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static int gasTurbineBonusOutput = 6144;
 
-    @Config.Comment("Whether to give the terminal to new players")
-    public static boolean spawnTerminal = true;
-
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to make glass related recipes harder. Default: true")
@@ -163,6 +160,9 @@ public class ConfigHolder {
     }
 
     public static class UnofficialOptions {
+
+        @Config.Comment("Whether to give the terminal to new players")
+        public boolean spawnTerminal = true;
 
         @Config.Comment("Config category for GT5u inspired features.")
         @Config.Name("GregTech 5 Unofficial Options")

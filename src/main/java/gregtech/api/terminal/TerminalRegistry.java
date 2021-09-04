@@ -40,7 +40,7 @@ public class TerminalRegistry {
     public static final RegistrySimple<String, List<List<Object>>> APP_UPGRADE_CONDITIONS = new RegistryDefaulted<>(Collections.emptyList());
     public static final List<String> DEFAULT_APPS = new ArrayList<>();
     @SideOnly(Side.CLIENT)
-    public static final File TERMINAL_PATH = new File(Loader.instance().getConfigDir(), ConfigHolder.clientConfig.terminalRootPath);
+    public static final File TERMINAL_PATH = new File(Loader.instance().getConfigDir(), ConfigHolder.U.clientConfig.terminalRootPath);
 
     public static void init() {
         // register hardware
