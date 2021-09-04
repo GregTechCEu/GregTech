@@ -26,9 +26,8 @@ import java.util.List;
 public class AdvancedNanoMuscleSuite extends NanoMuscleSuite {
     private int cachedSlotId = -1;
 
-
-    public AdvancedNanoMuscleSuite() {
-        super(EntityEquipmentSlot.CHEST, 5000, 11400000);
+    public AdvancedNanoMuscleSuite(int energyPerUse, long capacity, int tier) {
+        super(EntityEquipmentSlot.CHEST, energyPerUse, capacity, tier);
     }
 
     @Override

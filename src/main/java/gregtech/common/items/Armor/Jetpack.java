@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 
 public class Jetpack extends ArmorLogicSuite {
 
-    public Jetpack(int energyPerUse, int capacity, int tier) {
+    public Jetpack(int energyPerUse, long capacity, int tier) {
         super(energyPerUse, capacity, tier, EntityEquipmentSlot.CHEST);
     }
 

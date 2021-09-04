@@ -1,6 +1,5 @@
 package gregtech.common.items.Armor;
 
-
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.items.armor.ArmorLogicSuite;
@@ -25,10 +24,10 @@ import java.util.List;
 public class NightvisionGoggles extends ArmorLogicSuite {
 
     public NightvisionGoggles() {
-        super(ConfigHolder.U.equipment.nightvisionGoggles.energyPerUse, ConfigHolder.U.equipment.nightvisionGoggles.capacity, ConfigHolder.U.equipment.nightvisionGoggles.voltageTier, EntityEquipmentSlot.HEAD);
+        this(3600, 400000L * (long) Math.max(1, Math.pow(4, ConfigHolder.U.equipment.voltageTierNightVision - 2)), ConfigHolder.U.equipment.voltageTierNightVision, EntityEquipmentSlot.HEAD);
     }
 
-    public NightvisionGoggles(int energyPerUse, int capacity, int voltageTier, EntityEquipmentSlot slot) {
+    public NightvisionGoggles(int energyPerUse, long capacity, int voltageTier, EntityEquipmentSlot slot) {
         super(energyPerUse, capacity, voltageTier, slot);
     }
 
@@ -73,7 +72,7 @@ public class NightvisionGoggles extends ArmorLogicSuite {
                     player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 999999, 0, true, true));
                 }
                 ret = true;
-                item.discharge((energyPerUse / 100), ConfigHolder.U.equipment.nightvisionGoggles.voltageTier, true, false, false);
+                item.discharge((energyPerUse / 100), this.tier, true, false, false);
             }
 
             if (!world.isRemote && toggleTimer > 0) {

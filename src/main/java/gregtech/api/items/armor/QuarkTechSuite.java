@@ -1,6 +1,5 @@
 package gregtech.api.items.armor;
 
-
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.util.GTUtility;
@@ -35,7 +34,7 @@ public class QuarkTechSuite extends ArmorLogicSuite {
     protected static final Map<Potion, Integer> potionRemovalCost = new IdentityHashMap<>();
     private float charge = 0.0F;
 
-    public QuarkTechSuite(EntityEquipmentSlot slot, int energyPerUse, int capacity, int tier) {
+    public QuarkTechSuite(EntityEquipmentSlot slot, int energyPerUse, long capacity, int tier) {
         super(energyPerUse, capacity, tier, slot);
         potionRemovalCost.put(MobEffects.POISON, 10000);
         potionRemovalCost.put(MobEffects.WITHER, 25000);

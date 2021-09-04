@@ -1,12 +1,10 @@
 package gregtech.api.items.armor;
 
-
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
-import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -27,8 +25,8 @@ import javax.annotation.Nonnull;
 
 public class NanoMuscleSuite extends ArmorLogicSuite {
 
-    public NanoMuscleSuite(EntityEquipmentSlot slot, int energyPerUse, int capacity) {
-        super(energyPerUse, capacity, ConfigHolder.U.equipment.nanoSuit.voltageTier, slot);
+    public NanoMuscleSuite(EntityEquipmentSlot slot, int energyPerUse, long maxCapacity, int tier) {
+        super(energyPerUse, maxCapacity, tier, slot);
     }
 
     @Override
@@ -52,7 +50,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
                 }
             }
 
-            if (nightvision && !world.isRemote && item.getCharge() >= (energyPerUse / 100)) {
+            if (nightvision && !world.isRemote && item != null && item.getCharge() >= (energyPerUse / 100)) {
                 BlockPos pos = new BlockPos((int) Math.floor(player.posX), (int) Math.floor(player.posY), (int) Math.floor(player.posZ));
                 int skylight = player.getEntityWorld().getLightFromNeighbors(pos);
                 if (skylight > 8) {
@@ -88,8 +86,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
     }
 
     public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
-        if (source == DamageSource.FALL) return true;
-        return false;
+        return source == DamageSource.FALL;
     }
 
     @Override
@@ -97,7 +94,7 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
         IElectricItem container = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         int damageLimit = Integer.MAX_VALUE;
         if (source == DamageSource.FALL && this.getEquipmentSlot(armor) == EntityEquipmentSlot.FEET) {
-            if (energyPerUse > 0) {
+            if (energyPerUse > 0 && container != null) {
                 damageLimit = (int) Math.min(damageLimit, 25.0 * container.getCharge() / energyPerUse);
             }
             return new ArmorProperties(10, (damage < 8.0) ? 1.0 : 0.875, damageLimit);
@@ -113,7 +110,9 @@ public class NanoMuscleSuite extends ArmorLogicSuite {
     @Override
     public void damageArmor(EntityLivingBase entity, ItemStack itemStack, DamageSource source, int damage, EntityEquipmentSlot equipmentSlot) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-        item.discharge(energyPerUse * damage, item.getTier(), true, false, false);
+        if (item != null) {
+            item.discharge((long) energyPerUse * damage, item.getTier(), true, false, false);
+        }
     }
 
     @Override

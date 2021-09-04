@@ -27,12 +27,12 @@ public abstract class ArmorLogicSuite implements ISpecialArmorLogic {
 
     protected final int energyPerUse;
     protected final int tier;
-    protected final int maxCapacity;
+    protected final long maxCapacity;
     protected final EntityEquipmentSlot SLOT;
     @SideOnly(Side.CLIENT)
     protected ArmorUtils.ModularHUD HUD;
 
-    protected ArmorLogicSuite(int energyPerUse, int maxCapacity, int tier, EntityEquipmentSlot slot) {
+    protected ArmorLogicSuite(int energyPerUse, long maxCapacity, int tier, EntityEquipmentSlot slot) {
         this.energyPerUse = energyPerUse;
         this.maxCapacity = maxCapacity;
         this.tier = tier;

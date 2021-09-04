@@ -176,6 +176,12 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
             super.addComponents(stats);
             return this;
         }
+
+        @Override
+        public ArmorMetaValueItem setModelAmount(int modelAmount) {
+            super.setModelAmount(modelAmount);
+            return this;
+        }
     }
 
     @Override

@@ -1,6 +1,5 @@
 package gregtech.common.items.Armor;
 
-
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import gregtech.api.GTValues;
@@ -43,25 +42,26 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PowerlessJetpack implements IArmorLogic {
-    public final int tankCapacity;
-    public final int burnTier;
-    public final static List<FuelRecipe> fuels;
-    public final static List<Fluid> forbiddenFuels;
+
+    public static final List<FuelRecipe> FUELS = RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList();
+    public static final List<Fluid> FUELS_FORBIDDEN = Arrays.asList(Materials.Oil.getFluid(), Materials.SulfuricLightFuel.getFluid());
+
+    public final int tankCapacity = 16000;
+    public final int burnTier = GTValues.MV;
+
     @SideOnly(Side.CLIENT)
     private ArmorUtils.ModularHUD HUD;
 
-    public PowerlessJetpack(int capacity, int burnTier) {
+    public PowerlessJetpack() {
         if (ArmorUtils.SIDE.isClient()) HUD = new ArmorUtils.ModularHUD();
-        this.tankCapacity = capacity;
-        this.burnTier = burnTier;
     }
 
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack stack) {
         IFluidHandlerItem internalTank = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
         FuelRecipe currentRecipe = null;
-        if (internalTank.drain(1, false) != null && !player.isInWater() && !player.isInLava()) {
-            for (FuelRecipe current : fuels) {
+        if (internalTank != null && internalTank.drain(1, false) != null && !player.isInWater() && !player.isInLava()) {
+            for (FuelRecipe current : FUELS) {
                 if (current.getRecipeFluid().isFluidEqual(internalTank.drain(1, false))) {
                     currentRecipe = current;
                     break;
@@ -254,8 +254,8 @@ public class PowerlessJetpack implements IArmorLogic {
             return new FluidHandlerItemStack(itemStack, maxCapacity) {
                 @Override
                 public boolean canFillFluidType(FluidStack fluidStack) {
-                    for (FuelRecipe recipe : fuels)
-                        if (fluidStack.isFluidEqual(recipe.getRecipeFluid()) && !forbiddenFuels.contains(fluidStack.getFluid()))
+                    for (FuelRecipe recipe : FUELS)
+                        if (fluidStack.isFluidEqual(recipe.getRecipeFluid()) && !FUELS_FORBIDDEN.contains(fluidStack.getFluid()))
                             return true;
                     return false;
                 }
@@ -270,11 +270,5 @@ public class PowerlessJetpack implements IArmorLogic {
         @Override
         public void addInformation(ItemStack itemStack, List<String> lines) {
         }
-    }
-
-    static {
-        fuels = RecipeMaps.COMBUSTION_GENERATOR_FUELS.getRecipeList();
-        forbiddenFuels = Arrays.asList(Materials.Oil.getFluid(1).getFluid(),
-                Materials.SulfuricLightFuel.getFluid(1).getFluid());
     }
 }

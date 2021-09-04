@@ -22,7 +22,7 @@ import java.util.List;
 
 public class AdvancedJetpack extends Jetpack {
 
-    public AdvancedJetpack(int energyPerUse, int capacity, int tier) {
+    public AdvancedJetpack(int energyPerUse, long capacity, int tier) {
         super(energyPerUse, capacity, tier);
     }
 

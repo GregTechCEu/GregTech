@@ -1,6 +1,5 @@
 package gregtech.api.items.armor;
 
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.util.GTUtility;
@@ -30,18 +29,18 @@ import java.util.List;
 public class AdvancedQurakTechSuite extends QuarkTechSuite {
     private int cachedSlotId = -1;
 
-    public AdvancedQurakTechSuite() {
-        super(EntityEquipmentSlot.CHEST, 10000, 100000000, GTValues.IV);
+    public AdvancedQurakTechSuite(int energyPerUse, long capacity, int tier) {
+        super(EntityEquipmentSlot.CHEST, energyPerUse, capacity, tier);
     }
 
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack item) {
         IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(item);
-        boolean hoverMode = data.hasKey("Hover") ? data.getBoolean("Hover") : false;
-        boolean flyEnabled = data.hasKey("FlyMode") ? data.getBoolean("FlyMode") : false;
+        boolean hoverMode = data.hasKey("Hover") && data.getBoolean("Hover");
+        boolean flyEnabled = data.hasKey("FlyMode") && data.getBoolean("FlyMode");
         byte toggleTimer = data.hasKey("ToggleTimer") ? data.getByte("ToggleTimer") : 0;
-        boolean canShare = data.hasKey("CanShare") ? data.getBoolean("CanShare") : false;
+        boolean canShare = data.hasKey("CanShare") && data.getBoolean("CanShare");
         boolean result = false;
         float energyUsageMultiplier = 1.0F;
 
@@ -213,7 +212,7 @@ public class AdvancedQurakTechSuite extends QuarkTechSuite {
     public ActionResult<ItemStack> onRightClick(World world, EntityPlayer player, EnumHand hand) {
         if (player.getHeldItem(hand).getItem() instanceof ArmorMetaItem<?> && player.isSneaking()) {
             NBTTagCompound data = GTUtility.getOrCreateNbtCompound(player.getHeldItem(hand));
-            boolean canShareEnergy = data.hasKey("CanShare") ? data.getBoolean("CanShare") : false;
+            boolean canShareEnergy = data.hasKey("CanShare") && data.getBoolean("CanShare");
 
             canShareEnergy = !canShareEnergy;
             String locale = "metaarmor.energy_share." + (canShareEnergy ? "enable" : "disable");
@@ -269,11 +268,7 @@ public class AdvancedQurakTechSuite extends QuarkTechSuite {
 
     @Override
     public boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, EntityEquipmentSlot equipmentSlot) {
-        if (source == DamageSource.FALL || source == DamageSource.DROWN || source == DamageSource.STARVE) {
-            return false;
-        } else {
-            return true;
-        }
+        return source != DamageSource.FALL && source != DamageSource.DROWN && source != DamageSource.STARVE;
     }
 
     @Override
