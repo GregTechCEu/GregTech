@@ -3,7 +3,11 @@ package gregtech.common.terminal.app.game.pong.widget;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
+import gregtech.api.util.Size;
+import javafx.geometry.Pos;
+import org.lwjgl.util.vector.Vector2f;
 
+import java.awt.*;
 import java.util.function.Function;
 
 public class PaddleWidget extends Widget {
@@ -40,4 +44,10 @@ public class PaddleWidget extends Widget {
         }
         speed /= 1.2;
     }
+
+    public Rectangle toSelfRectangleBox() {
+        return new Rectangle(this.getSelfPosition().x - this.toRectangleBox().width / 2, this.getSelfPosition().y - this.toRectangleBox().height / 2,
+                this.toRectangleBox().width, this.toRectangleBox().height);
+    }
+
 }
