@@ -32,7 +32,7 @@ public class CoverSolarPanel extends CoverBehavior implements ITickable {
 
     @Override
     public boolean canAttach() {
-        return coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null) != null && attachedSide == EnumFacing.UP;
+        return attachedSide == EnumFacing.UP && coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.UP) != null;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class CoverSolarPanel extends CoverBehavior implements ITickable {
         World world = coverHolder.getWorld();
         BlockPos blockPos = coverHolder.getPos().up();
         if (canSeeSunClearly(world, blockPos)) {
-            IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
+            IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.UP);
             if (energyContainer != null) {
                 energyContainer.addEnergy(EUt);
             }
