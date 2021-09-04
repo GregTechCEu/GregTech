@@ -25,6 +25,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
      */
     static ItemStackHashStrategy comparingAll() {
         return builder().compareItem(true)
+                .compareCount(true)
                 .compareDamage(true)
                 .compareTag(true)
                 .build();
