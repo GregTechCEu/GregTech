@@ -47,8 +47,8 @@ public class LargeMinerInfo extends MultiblockInfoPage {
 
     @Override
     public String[] getDescription() {
-
-        return new String[]{I18n.format("gregtech.machine.miner.multi.description", largeMiner.type.radius, largeMiner.type.radius, largeMiner.type.fortuneString)};
+        //small ore: return new String[]{I18n.format("gregtech.machine.miner.multi.description", largeMiner.getChunkRadius(), largeMiner.getChunkRadius(), largeMiner.getRomanNumeralString())};
+        return new String[]{I18n.format("gregtech.machine.miner.multi.description", largeMiner.getChunkRadius(), largeMiner.getChunkRadius())};
 
     }
 
