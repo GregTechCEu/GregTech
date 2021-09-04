@@ -1,5 +1,6 @@
 package gregtech.common.items.Armor;
 
+import gregtech.api.GTValues;
 import gregtech.api.items.armor.*;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
@@ -22,9 +23,9 @@ public class MetaArmor extends ArmorMetaItem<ArmorMetaItem<?>.ArmorMetaValueItem
         MetaItems.SEMIFLUID_JETPACK = addItem(8, "liquid_fuel_jetpack").setArmorLogic(new PowerlessJetpack(e.semiFluidJetpack.capacity, e.semiFluidJetpack.voltageTier));
         MetaItems.IMPELLER_JETPACK = addItem(9, "impeller_jetpack").setArmorLogic(new Jetpack(e.impellerJetpack.energyPerUse, e.impellerJetpack.capacity, e.impellerJetpack.voltageTier));
 
-        MetaItems.BATPACK_LV = addItem(10, "battery_pack.lv").setArmorLogic(new BatteryPack(0, e.batpackLv.capacity, e.batpackLv.voltageTier));
-        MetaItems.BATPACK_MV = addItem(11, "battery_pack.mv").setArmorLogic(new BatteryPack(0, e.batpackMv.capacity, e.batpackMv.voltageTier));
-        MetaItems.BATPACK_HV = addItem(12, "battery_pack.hv").setArmorLogic(new BatteryPack(0, e.batpackHv.capacity, e.batpackHv.voltageTier));
+        MetaItems.BATPACK_LV = addItem(10, "battery_pack.lv").setArmorLogic(new BatteryPack(0, e.batpack.capacityLV, GTValues.LV));
+        MetaItems.BATPACK_MV = addItem(11, "battery_pack.mv").setArmorLogic(new BatteryPack(0, e.batpack.capacityMV, GTValues.MV));
+        MetaItems.BATPACK_HV = addItem(12, "battery_pack.hv").setArmorLogic(new BatteryPack(0, e.batpack.capacityHV, GTValues.HV));
 
 
         MetaItems.ADVANCED_QAURK_TECH_SUITE_CHESTPLATE = addItem(13, "qts.advanced_chestplate").setArmorLogic(new AdvancedQurakTechSuite());

@@ -6,6 +6,7 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.input.EnumKey;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -27,7 +28,7 @@ import javax.annotation.Nonnull;
 public class NanoMuscleSuite extends ArmorLogicSuite {
 
     public NanoMuscleSuite(EntityEquipmentSlot slot, int energyPerUse, int capacity) {
-        super(energyPerUse, capacity, GTValues.HV, slot);
+        super(energyPerUse, capacity, ConfigHolder.U.equipment.nanoSuit.voltageTier, slot);
     }
 
     @Override

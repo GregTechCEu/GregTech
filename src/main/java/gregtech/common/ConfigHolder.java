@@ -310,12 +310,9 @@ public class ConfigHolder {
             public AdvImpellerJetpack advImpellerJetpack = new AdvImpellerJetpack();
             @Config.Name("Semifluid Jetpack")
             public SemiFluidJetpack semiFluidJetpack = new SemiFluidJetpack();
-            @Config.Name("Batpack LV")
-            public BatpackLv batpackLv = new BatpackLv();
-            @Config.Name("Batpack MV")
-            public BatpackMv batpackMv = new BatpackMv();
-            @Config.Name("Batpack HV")
-            public BatpackHv batpackHv = new BatpackHv();
+            @Config.Name("BatPacks")
+            @Config.RequiresMcRestart
+            public Batpack batpack = new Batpack();
             @Config.Comment("Armor HUD Location")
             public ArmorHud armorHud = new ArmorHud();
         }
@@ -383,7 +380,7 @@ public class ConfigHolder {
         public static class ImpellerJetpack {
             @Config.RangeInt(min = 0, max = 14)
             @Config.RequiresMcRestart
-            public int voltageTier = 3;
+            public int voltageTier = 2;
             @Config.RangeInt(min = 0)
             @Config.RequiresMcRestart
             public int capacity = 2520000;
@@ -395,7 +392,7 @@ public class ConfigHolder {
         public static class AdvImpellerJetpack {
             @Config.RangeInt(min = 0, max = 14)
             @Config.RequiresMcRestart
-            public int voltageTier = 4;
+            public int voltageTier = 3;
             @Config.RangeInt(min = 0)
             @Config.RequiresMcRestart
             public int capacity = 11400000;
@@ -413,31 +410,15 @@ public class ConfigHolder {
             public int capacity = 12000;
         }
 
-        public static class BatpackLv {
-            @Config.RangeInt(min = 0, max = 14)
-            @Config.RequiresMcRestart
-            public int voltageTier = 1;
+        public static class Batpack {
             @Config.RangeInt(min = 0)
-            @Config.RequiresMcRestart
-            public int capacity = 600000;
-        }
+            public int capacityLV = 600000;
 
-        public static class BatpackMv {
-            @Config.RangeInt(min = 0, max = 14)
-            @Config.RequiresMcRestart
-            public int voltageTier = 2;
             @Config.RangeInt(min = 0)
-            @Config.RequiresMcRestart
-            public int capacity = 2400000;
-        }
+            public int capacityMV = 2400000;
 
-        public static class BatpackHv {
-            @Config.RangeInt(min = 0, max = 14)
-            @Config.RequiresMcRestart
-            public int voltageTier = 3;
             @Config.RangeInt(min = 0)
-            @Config.RequiresMcRestart
-            public int capacity = 9600000;
+            public int capacityHV = 9600000;
         }
     }
 }
