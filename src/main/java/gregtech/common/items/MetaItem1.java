@@ -320,6 +320,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_SOLAR_PANEL_LUV = addItem(338, "cover.solar.panel.luv");
         COVER_SOLAR_PANEL_ZPM = addItem(339, "cover.solar.panel.zpm");
         COVER_SOLAR_PANEL_UV = addItem(340, "cover.solar.panel.uv");
+        // MAX-tier solar panel?
 
         if (!ConfigHolder.U.GT5u.enableHighTierSolars) {
             COVER_SOLAR_PANEL_IV.setInvisible();

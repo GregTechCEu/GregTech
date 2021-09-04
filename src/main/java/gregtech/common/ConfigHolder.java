@@ -252,7 +252,7 @@ public class ConfigHolder {
             @Config.RequiresMcRestart
             public boolean enableMaintenance = true;
 
-            @Config.Comment("Enable High-Tier solar panels (IV-UV). Default: false")
+            @Config.Comment("Enable High-Tier solar panels (IV-UV). They will not have recipes. Default: false")
             @Config.RequiresMcRestart
             public boolean enableHighTierSolars = false;
         }
