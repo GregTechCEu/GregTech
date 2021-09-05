@@ -11,6 +11,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.common.pipelike.cable.net.EnergyNetHandler;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -46,7 +47,9 @@ public class CoverSolarPanel extends CoverBehavior implements ITickable {
         BlockPos blockPos = coverHolder.getPos().up();
         if (canSeeSunClearly(world, blockPos)) {
             IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.UP);
-            if (energyContainer != null) {
+            if (energyContainer instanceof EnergyNetHandler) {
+                energyContainer.acceptEnergyFromNetwork(EnumFacing.UP, EUt, 1);
+            } else if (energyContainer != null) {
                 energyContainer.addEnergy(EUt);
             }
         }

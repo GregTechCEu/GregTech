@@ -11,8 +11,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,7 +34,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
 
         if (!world.isRemote && ++time % 5 == 0) {
-            List<Triple<IFluidHandler, EnumFacing, ICoverable>> handlers = new ArrayList<>();
+            List<IFluidHandler> handlers = new ArrayList<>();
             for (EnumFacing facing : getOpenFaces()) {
                 if (getLastInserted().containsKey(facing))
                     continue;
@@ -44,7 +42,19 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 if (tile == null) continue;
                 IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
                 if (handler != null) {
-                    handlers.add(new ImmutableTriple<>(handler, facing, tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, facing.getOpposite())));
+                    ICoverable coverable = getCoverableImplementation();
+                    CoverBehavior cover = coverable.getCoverAtSide(facing);
+                    if (cover instanceof CoverPump && ((CoverPump) cover).getPumpMode() == CoverPump.PumpMode.IMPORT && ((CoverPump) cover).blocksInput()) {
+                        continue;
+                    }
+                    coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, facing.getOpposite());
+                    if (coverable != null) {
+                        cover = coverable.getCoverAtSide(facing.getOpposite());
+                        if (cover instanceof CoverPump && ((CoverPump) cover).getPumpMode() == CoverPump.PumpMode.EXPORT && ((CoverPump) cover).blocksInput()) {
+                            continue;
+                        }
+                    }
+                    handlers.add(handler);
                 }
             }
             if (handlers.size() == 0) return;
@@ -54,21 +64,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                     int amountToDistribute = (int) Math.ceil(stack.amount / 2.0);
                     int c = amountToDistribute / handlers.size();
                     int m = amountToDistribute % handlers.size();
-                    for (Triple<IFluidHandler, EnumFacing, ICoverable> triple : handlers) {
-                        IFluidHandler handler = triple.getLeft();
-                        ICoverable coverable = getCoverableImplementation();
-                        CoverBehavior cover = coverable.getCoverAtSide(triple.getMiddle());
-                        if (cover instanceof CoverPump && ((CoverPump) cover).getPumpMode() == CoverPump.PumpMode.IMPORT && ((CoverPump) cover).blocksInput()) {
-                            continue;
-                        }
-                        coverable = triple.getRight();
-                        if (coverable != null) {
-                            cover = coverable.getCoverAtSide(triple.getMiddle().getOpposite());
-                            if (cover instanceof CoverPump && ((CoverPump) cover).getPumpMode() == CoverPump.PumpMode.EXPORT && ((CoverPump) cover).blocksInput()) {
-                                continue;
-                            }
-                        }
-
+                    for (IFluidHandler handler : handlers) {
                         int count = c;
                         if (m > 0) {
                             count++;
