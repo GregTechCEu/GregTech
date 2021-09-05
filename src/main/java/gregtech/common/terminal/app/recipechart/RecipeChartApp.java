@@ -38,7 +38,6 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
     public static final TextureArea ICON = TextureArea.fullImage("textures/gui/terminal/recipe_graph/icon.png");
 
     private TabGroup<RGContainer> tabGroup;
-    private Map<RGContainer, String> containers;
 
     public RecipeChartApp() {
         super("recipe_chart", ICON);
@@ -47,7 +46,6 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
     @Override
     public AbstractApplication initApp() {
         if (isClient) {
-            this.containers = new LinkedHashMap<>();
             this.tabGroup = new TabGroup<>(0, 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 60, 10));
             this.tabGroup.setOnTabChanged(this::onPagesChanged);
             this.addWidget(this.tabGroup);
@@ -87,7 +85,6 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
         container.setBackground(TerminalTheme.COLOR_B_3);
         tabGroup.addTab(new IGuiTextureTabInfo(new TextTexture(name, -1).setWidth(54)
                 .setType(tabGroup.getAllTag().isEmpty() ? TextTexture.TextType.ROLL : TextTexture.TextType.HIDE), name), container);
-        containers.put(container, name);
         return container;
     }
 
@@ -114,7 +111,6 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
             if (tabGroup.getAllTag().size() > 1) {
                 TerminalDialogWidget.showConfirmDialog(getOs(), "terminal.recipe_chart.delete", "terminal.component.confirm", r->{
                     if (r) {
-                        containers.remove(tabGroup.getCurrentTag());
                         tabGroup.removeTab(tabGroup.getAllTag().indexOf(tabGroup.getCurrentTag()));
                     }
                 }).setClientSide().open();
@@ -168,10 +164,11 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
     public NBTTagCompound closeApp() { //synced data to server side.
         if (isClient) {
             NBTTagList list = new NBTTagList();
-            for (Map.Entry<RGContainer, String> entry : containers.entrySet()) {
+            for (int i = 0; i < tabGroup.getAllTag().size(); i++) {
+                IGuiTextureTabInfo tabInfo = (IGuiTextureTabInfo) tabGroup.getTabInfo(i);
                 NBTTagCompound container = new NBTTagCompound();
-                container.setString("name", entry.getValue());
-                container.setTag("data", entry.getKey().saveAsNBT());
+                container.setString("name", tabInfo.nameLocale);
+                container.setTag("data", tabGroup.getTabWidget(i).saveAsNBT());
                 list.appendTag(container);
             }
             NBTTagCompound nbt = new NBTTagCompound();

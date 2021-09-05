@@ -61,7 +61,7 @@ public class BatteryWidget extends Widget {
             buffer.pos(x, y, 0.0D).tex(0, 1).endVertex();
             tessellator.draw();
         } else {
-            int b_color = (int)(255 * left) << 16 | (int)(255 * (1-left)) << 8 | 255 << 24;
+            int b_color = (int)(255 * (1 - left)) << 16 | (int)(255 * left) << 8 | 255 << 24;
             drawBorder(x, y, width, height, TerminalTheme.COLOR_1.getColor(), 2);
             drawSolidRect(x, y + height - (int)(height * left), width, (int)(height * left), b_color);
         }

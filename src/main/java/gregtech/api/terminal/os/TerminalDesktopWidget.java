@@ -1,5 +1,6 @@
 package gregtech.api.terminal.os;
 
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
@@ -9,6 +10,7 @@ import gregtech.api.util.Size;
 public class TerminalDesktopWidget extends WidgetGroup {
     private final TerminalOSWidget os;
     private final WidgetGroup appDiv;
+    private boolean blockApp;
 
     public TerminalDesktopWidget(Position position, Size size, TerminalOSWidget os) {
         super(position, size);
@@ -30,6 +32,19 @@ public class TerminalDesktopWidget extends WidgetGroup {
                 .setHoverText(application.getUnlocalizedName());
         button.setClickListener(clickData -> os.openApplication(application, clickData.isClient));
         appDiv.addWidget(button);
+    }
+
+    public void setBlockApp(boolean blockApp) {
+        this.blockApp = blockApp;
+    }
+
+    @Override
+    public void drawInForeground(int mouseX, int mouseY) {
+        for (Widget widget : widgets) {
+            if (widget.isVisible() && !blockApp) {
+                widget.drawInForeground(mouseX, mouseY);
+            }
+        }
     }
 
     public void showDesktop() {

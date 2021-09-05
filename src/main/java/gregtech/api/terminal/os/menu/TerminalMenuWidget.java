@@ -24,7 +24,7 @@ public class TerminalMenuWidget extends WidgetGroup {
     private Interpolator interpolator;
     private IGuiTexture background;
     private final TerminalOSWidget os;
-    private final List<Tuple<IMenuComponent, Widget>> components;
+    private final List<Tuple<IMenuComponent, WidgetGroup>> components;
     public boolean isHide;
 
 
@@ -80,6 +80,7 @@ public class TerminalMenuWidget extends WidgetGroup {
                         if (tuple.getFirst() instanceof Widget && tuple.getFirst() != component){
                             ((Widget) tuple.getFirst()).setActive(false);
                             ((Widget) tuple.getFirst()).setVisible(false);
+                            ((CircleButtonWidget) tuple.getSecond().widgets.get(0)).setFill(0);
                         }
                     });
                     if (component instanceof Widget) {
@@ -125,6 +126,7 @@ public class TerminalMenuWidget extends WidgetGroup {
                         isHide = true;
                     });
             interpolator.start();
+            os.desktop.setBlockApp(false);
         }
     }
 
@@ -139,6 +141,7 @@ public class TerminalMenuWidget extends WidgetGroup {
                         isHide = false;
                     });
             interpolator.start();
+            os.desktop.setBlockApp(true);
         }
     }
 
