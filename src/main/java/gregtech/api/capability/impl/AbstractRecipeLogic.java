@@ -51,6 +51,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected boolean isActive;
     protected boolean workingEnabled = true;
     protected boolean hasNotEnoughEnergy;
+    protected boolean hasNotEnoughEnergyDelayed;
     protected boolean wasActiveAndNeedsUpdate;
     protected boolean isOutputsFull;
     protected boolean invalidInputsForRecipes;
@@ -169,6 +170,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected void updateRecipeProgress() {
         boolean drawEnergy = drawEnergy(recipeEUt);
         if (drawEnergy || (recipeEUt < 0)) {
+            // reset hasNotEnoughEnergy if the recipe has energy
+            this.hasNotEnoughEnergy = false;
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it
             if (++progressTime > maxProgressTime) {
                 completeRecipe();
@@ -387,7 +390,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     }
 
     public boolean isHasNotEnoughEnergy() {
-        return hasNotEnoughEnergy;
+        if (progressTime % 20 == 0) {
+            this.hasNotEnoughEnergyDelayed = hasNotEnoughEnergy;
+        }
+        return hasNotEnoughEnergyDelayed;
     }
 
     @Override
