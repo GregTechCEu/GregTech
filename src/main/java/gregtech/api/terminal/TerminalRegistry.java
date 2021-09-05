@@ -53,12 +53,12 @@ public class TerminalRegistry {
         AppBuilder.create(new TutorialGuideApp()).defaultApp(true).build();
         AppBuilder.create(new GuideEditorApp()).defaultApp(true).build();
         AppBuilder.create(new ThemeSettingApp()).defaultApp(true).build();
-        AppBuilder.create(new OreProspectorApp()).defaultApp(false).battery(2, 1000).build();
+        AppBuilder.create(new OreProspectorApp()).defaultApp(false).battery(GTValues.MV, 1000).build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
-            AppBuilder.create(new RecipeChartApp()).defaultApp(false).battery(1, 100).build();
+            AppBuilder.create(new RecipeChartApp()).defaultApp(false).battery(GTValues.LV, 100).build();
         }
-        AppBuilder.create(new ConsoleApp()).defaultApp(false).battery(1, 500).build();
-        AppBuilder.create(new BatteryManagerApp()).battery(0, 10).defaultApp(true).build();
+        AppBuilder.create(new ConsoleApp()).defaultApp(false).battery(GTValues.LV, 500).build();
+        AppBuilder.create(new BatteryManagerApp()).battery(GTValues.ULV, 10).defaultApp(true).build();
     }
 
     @SideOnly(Side.CLIENT)

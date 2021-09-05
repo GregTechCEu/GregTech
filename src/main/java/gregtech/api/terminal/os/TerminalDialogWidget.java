@@ -106,10 +106,11 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     }
 
     public TerminalDialogWidget addInfo(String info) {
-        this.addWidget(new LabelWidget(WIDTH / 2, HEIGHT / 2, info, -1).setWidth(WIDTH - 10).setYCentered(true).setXCentered(true));
+        this.addWidget(new LabelWidget(WIDTH / 2, HEIGHT / 2, info, -1).setWidth(WIDTH - 16).setYCentered(true).setXCentered(true));
         return this;
     }
 
+    //todo unfinished
     public TerminalDialogWidget addPlayerInventory() {
         IInventory inventoryPlayer = os.getModularUI().entityPlayer.inventory;
         int x = 20;
@@ -219,7 +220,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                     return selected.get().toString();
                 }
                 return "terminal.dialog.no_file_selected";
-            }, true));
+            }, true).setWidth(WIDTH - 16));
         } else {
             dialog.addWidget(new TextFieldWidget(x + WIDTH / 2 - 38, y + HEIGHT / 2 - 10, 76, 20, new ColorRectTexture(0x4f000000), null, null)
                     .setTextResponder(res->{

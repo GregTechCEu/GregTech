@@ -49,6 +49,20 @@ public class TabGroup<T extends AbstractWidgetGroup> extends AbstractWidgetGroup
         addWidget(tabWidget);
     }
 
+    public ITabInfo getTabInfo(int i) {
+        if (i < tabInfos.size()) {
+            return this.tabInfos.get(i);
+        }
+        return null;
+    }
+
+    public T getTabWidget(int i) {
+        if (i < tabWidgets.size()) {
+            return this.tabWidgets.get(i);
+        }
+        return null;
+    }
+
     public void removeTab(int index) {
         this.tabInfos.remove(index);
         T tab = this.tabWidgets.remove(index);
@@ -131,7 +145,7 @@ public class TabGroup<T extends AbstractWidgetGroup> extends AbstractWidgetGroup
         return flag;
     }
 
-    private void setSelectedTab(int tabIndex) {
+    public void setSelectedTab(int tabIndex) {
         int old = selectedTabIndex;
         this.tabWidgets.get(selectedTabIndex).setVisible(false);
         this.tabWidgets.get(selectedTabIndex).setActive(false);

@@ -16,6 +16,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.common.items.behaviors.TerminalBehaviour;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.network.PacketBuffer;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class TerminalOSWidget extends AbstractWidgetGroup {
     private IGuiTexture background;
@@ -102,7 +104,24 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
 
     public void openApplication(AbstractApplication application, boolean isClient) {
         List<Hardware> hwDemand = TerminalRegistry.getAppHardwareDemand(application.getRegistryName());
-        if (hwDemand.stream().anyMatch(demand -> getHardware().stream().noneMatch(hw -> hw.isHardwareAdequate(demand)))) {
+        List<Hardware> unMatch = hwDemand.stream().filter(demand -> getHardware().stream().noneMatch(hw -> hw.isHardwareAdequate(demand))).collect(Collectors.toList());
+        if (unMatch.size() > 0) {
+            if (isClient) {
+                StringBuilder tooltips = new StringBuilder("\n");
+                for (Hardware match : unMatch) {
+                    String info = match.addInformation();
+                    String name = I18n.format(match.getUnlocalizedName());
+                    if (info == null) {
+                        tooltips.append(name);
+                    } else {
+                        tooltips.append(String.format("%s (%s)", name, info));
+                    }
+                    tooltips.append(" ");
+                }
+                TerminalDialogWidget.showInfoDialog(this,
+                        "terminal.component.error",
+                        I18n.format("terminal.os.hw_demand") + tooltips).setClientSide().open();
+            }
             return;
         }
         if (!application.canPlayerUse(gui.entityPlayer)) {

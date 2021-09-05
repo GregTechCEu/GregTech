@@ -31,6 +31,11 @@ public class BatteryHardware extends Hardware implements IElectricItem {
     }
 
     @Override
+    public String addInformation() {
+        return GTValues.VN[getTier()];
+    }
+
+    @Override
     public Hardware createHardware(ItemStack itemStack) {
         return new BatteryHardware();
     }
