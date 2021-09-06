@@ -129,7 +129,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             return;
         }
 
-        timeActive += duration;
+        timeActive += duration * maintenanceHatch.getTimeMultiplier();
         if (minimumMaintenanceTime - timeActive <= 0)
             if (GTValues.RNG.nextFloat() - 0.75f >= 0) {
                 causeMaintenanceProblems();
