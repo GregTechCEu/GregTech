@@ -3724,7 +3724,7 @@ gregtech.machine.maintenance_hatch_full_auto.tooltip=For automatically maintaini
 
 gregtech.maintenance.configurable_duration=Duration: %fx
 gregtech.maintenance.configurable_duration.unchanged_description=Recipes will run at normal speed. Change configuration to update.
-gregtech.maintenance.configurable_duration.changed_description=Recipes will run at %fx speed, applied before overclocking.
+gregtech.maintenance.configurable_duration.changed_description=Recipes will run with %fx duration, applied before overclocking.
 
 gregtech.maintenance.configurable_time=Time: %fx
 gregtech.maintenance.configurable_time.unchanged_description=Maintenance problems will occur at normal rate. Change configuration to update.
