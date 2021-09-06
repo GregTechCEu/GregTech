@@ -23,6 +23,7 @@ import gregtech.api.multiblock.IMaintenance;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTToolTypes;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
+import gregtech.common.inventory.handlers.TapeItemStackHandler;
 import gregtech.common.items.MetaItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -86,7 +87,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(1);
+        return new TapeItemStackHandler(1);
     }
 
     @Override
