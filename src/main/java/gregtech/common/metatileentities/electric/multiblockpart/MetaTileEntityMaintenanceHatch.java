@@ -378,6 +378,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("IsTaped", isTaped);
+        if (isConfigurable) data.setDouble("DurationMultiplier", durationMultiplier.doubleValue());
         return data;
     }
 
@@ -385,18 +386,21 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         isTaped = data.getBoolean("IsTaped");
+        if (isConfigurable) durationMultiplier = BigDecimal.valueOf(data.getDouble("DurationMultiplier"));
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isTaped);
+        if (isConfigurable) buf.writeDouble(durationMultiplier.doubleValue());
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         isTaped = buf.readBoolean();
+        if (isConfigurable) durationMultiplier = BigDecimal.valueOf(buf.readDouble());
     }
 
     @Override
