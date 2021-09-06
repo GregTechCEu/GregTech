@@ -39,19 +39,14 @@ public class Shaders {
     public static Minecraft mc;
     private final static Map<ShaderObject, ShaderProgram> FULL_IMAGE_PROGRAMS;
     public final static Framebuffer BUFFER_A;
-    public final static Framebuffer BUFFER_GUI;
 
     public static ShaderObject IMAGE_V;
     public static ShaderObject IMAGE_F;
-    public static ShaderObject BATTERY;
     public static ShaderObject BLACK_HOLE;
-    public static ShaderObject CIRCUIT;
 
     static {
         BUFFER_A = new Framebuffer(1080, 1080, false);
-        BUFFER_GUI = new Framebuffer(333 * 3, 232 * 3, false);
         BUFFER_A.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
-        BUFFER_GUI.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
         mc = Minecraft.getMinecraft();
         FULL_IMAGE_PROGRAMS = new HashMap<>();
         if (allowedShader()) {
@@ -60,11 +55,9 @@ public class Shaders {
     }
 
     public static void initShaders() {
-        BATTERY = initShader(BATTERY, FRAGMENT, "battery.frag");
         IMAGE_V = initShader(IMAGE_V, VERTEX, "image.vert");
         IMAGE_F = initShader(IMAGE_F, FRAGMENT, "image.frag");
         BLACK_HOLE = initShader(BLACK_HOLE, FRAGMENT, "blackhole.frag");
-        CIRCUIT = initShader(CIRCUIT, FRAGMENT, "circuit.frag");
         FULL_IMAGE_PROGRAMS.clear();
     }
 

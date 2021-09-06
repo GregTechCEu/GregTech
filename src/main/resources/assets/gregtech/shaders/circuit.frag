@@ -1,4 +1,4 @@
-#version 140
+#version 120
 // This content is under the MIT License. Created by Kali in 2015-02-06. https://www.shadertoy.com/view/XlX3Rj.
 
 uniform vec2 u_resolution;
@@ -34,9 +34,9 @@ void formula(vec2 z, float c) {
 }
 
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord )
+void mainImage( out vec4 fragColor, in vec2 fragCoord)
 {
-    vec2 pos = fragCoord.xy / u_resolution.xy - .5;
+    vec2 pos = fragCoord.xy / u_resolution.xy*2.5 - .5;
     pos.x*=u_resolution.x/u_resolution.y;
     vec2 uv=pos;
     float sph = length(uv); sph = sqrt(1. - sph*sph)*1.5;
@@ -45,7 +45,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2 luv=uv;
     float b=a*5.48535;
     uv*=mat2(cos(b),sin(b),-sin(b),cos(b));
-    uv+=vec2(sin(time * u_mouse.x / u_resolution.x / 200),cos(time * u_mouse.y  / u_resolution.y / 50))*8.;
+    uv+=vec2(sin(u_mouse.x / u_resolution.x / 4.),cos(u_mouse.y  / u_resolution.y / 2.))*8.;
     uv*=zoom;
     float pix=.5/u_resolution.x*zoom/sph;
     float dof=max(1.,(10.-mod(time,1.)/.01));
@@ -61,5 +61,5 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 }
 
 void main() {
-    mainImage(gl_FragColor.rbga, gl_FragCoord.xy);
+    mainImage(gl_FragColor.rgba, vec2(gl_TexCoord[0].x * u_resolution.x, gl_TexCoord[0].y * u_resolution.y));
 }

@@ -3,13 +3,17 @@ package gregtech.common.terminal.app.hardwaremanager;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.gui.resources.ResourceHelper;
+import gregtech.api.gui.resources.ShaderTexture;
 import gregtech.api.render.shader.Shaders;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.items.MetaItems;
-import org.lwjgl.opengl.GL11;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class HardwareManagerApp extends AbstractApplication {
+    @SideOnly(Side.CLIENT)
+    private ShaderTexture circuit;
 
     public HardwareManagerApp() {
         super("hardware", new ItemStackTexture(MetaItems.INTEGRATED_CIRCUIT.getStackForm()));
@@ -23,14 +27,16 @@ public class HardwareManagerApp extends AbstractApplication {
         int height = getSize().height;
         float time = (gui.entityPlayer.ticksExisted + partialTicks) / 20f;
         if (Shaders.allowedShader()) {
+            if (circuit == null) {
+                circuit = new ShaderTexture("circuit.frag");
+            }
             ResourceHelper.bindTexture("textures/shaders/font1.png");
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
-            Shaders.renderFullImageInFBO(Shaders.BUFFER_GUI, Shaders.CIRCUIT, uniformCache -> {
+            circuit.draw(x, y, width, height, uniformCache -> {
                 uniformCache.glUniform1F("u_time", time);
-                uniformCache.glUniform2F("u_mouse", (float)(mouseX - x) * 3, (float)(mouseY - y) * 3);
-            }).bindFramebufferTexture();
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            drawTextureRect(x, y, width, height);
+                uniformCache.glUniform2F("u_mouse",
+                        (float)(mouseX - x) * circuit.getResolution(),
+                        (float)(mouseY - y) * circuit.getResolution());
+            });
         } else {
             drawSolidRect(x, y, width, height, TerminalTheme.COLOR_B_2.getColor());
         }

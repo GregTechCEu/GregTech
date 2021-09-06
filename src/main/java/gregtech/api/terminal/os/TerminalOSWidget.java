@@ -161,11 +161,14 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
 
     public void minimizeApplication(AbstractApplication application, boolean isClient) {
         if (application != null) {
-            if (!application.isBackgroundApp()) {
-                application.setActive(false);
-            }
             if (isClient && focusApp == application) {
-                application.minimizeWidget(null);
+                application.minimizeWidget(app->{
+                    if (!application.isBackgroundApp()) {
+                        application.setActive(false);
+                    }
+                });
+            } else if (!application.isBackgroundApp()) {
+                application.setActive(false);
             }
             if(focusApp == application) {
                 focusApp = null;

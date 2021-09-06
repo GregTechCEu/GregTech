@@ -1,4 +1,4 @@
-#version 140
+#version 120
 
 //#extension GL_OES_standard_derivatives : enable
 uniform float u_time;
@@ -23,15 +23,15 @@ vec3 water(vec2 uv, float progress) {
     return ca * (a * .3 + b * .2);
 }
 
-void main()
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
-    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-    vec2 s = (2. * gl_FragCoord.xy - u_resolution.xy) / u_resolution.y;
+    vec2 uv = fragCoord.xy / u_resolution.xy;
+    vec2 s = (2. * fragCoord.xy - u_resolution.xy) / u_resolution.y;
     float m = dot(s, s) - .8;
     float pa = mod(atan(s.y, s.x) + u_time * 1.7, 6.28) - 3.14;
     pa = smoothstep(0., .4, pa * pa);
     float ic = aa(m, 1.);
-    vec3 w = ic * water(gl_FragCoord.xy/u_resolution.xy, progress);
+    vec3 w = ic * water(fragCoord.xy/u_resolution.xy, progress);
     float oc = aa(-m+.11, 1.) * aa(m-.13, 1.);
     vec3 occ = oc * c_ring + oc * (1. - pa) * c_sector * 2.;
     float a = 0.;
@@ -40,5 +40,9 @@ void main()
     } else if (length(w) > 0.1) {
         a = 0.9;
     }
-    gl_FragColor = vec4(w.rgb + occ.rgb, a);
+    fragColor = vec4(w.rgb + occ.rgb, a);
+}
+
+void main() {
+    mainImage(gl_FragColor.rgba, vec2(gl_TexCoord[0].x * u_resolution.x, gl_TexCoord[0].y * u_resolution.y));
 }
