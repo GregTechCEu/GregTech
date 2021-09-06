@@ -312,7 +312,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16);
 
         float chance = GTValues.RNG.nextFloat();
-        if (!isConfigurable && chance < 0.001f) {
+        if (!isConfigurable && chance < 0.000001f) {
             builder.widget(new FixWiringTaskWidget(48, 15, 80, 50)
                     .setOnFinished(this::fixAllMaintenanceProblems)
                     .setCanInteractPredicate(this::isAttachedToMultiBlock));
