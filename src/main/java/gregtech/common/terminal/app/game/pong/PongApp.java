@@ -85,7 +85,7 @@ public class PongApp extends AbstractApplication {
         super.updateScreen();
         timer++;
         if (Keyboard.isKeyDown(Keyboard.KEY_UP) ^ Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-            if(Keyboard.isKeyDown(Keyboard.KEY_UP))
+            if (Keyboard.isKeyDown(Keyboard.KEY_UP))
                 userInput = 1;
             else
                 userInput = 0;
@@ -98,50 +98,57 @@ public class PongApp extends AbstractApplication {
             this.score(true); // Left side gains a point
         } else {
             paddles.forEach((paddle) -> solidObjects.add(new Rectangle(paddle.toSelfRectangleBox())));
-            boolean interacted = false;
-            for (Rectangle object : solidObjects) {
-                TwoDimensionalRayTracer.TwoDimensionalRayTraceResult result = TwoDimensionalRayTracer.intersectBoxSegment(
-                        new Vector2f(ball.getSelfPosition().x, ball.getSelfPosition().y),
-                        new Vector2f((float) (Math.cos(ball.theta) * 6), (float) (Math.sin(ball.theta) * 6)),
-                        new Vector2f((float) object.getCenterX(), (float) object.getCenterY()),
-                        new Vector2f(4 + object.width / 2, 4 + object.height / 2));
-                if (result != null && !interacted) {
-                    ball.addSelfPosition((Math.cos(ball.theta) * 6 * result.time), (Math.sin(ball.theta) * 6 * result.time));
+            int timeLeft = 1;
 
-                    float angleMod = 0;
-                    if(result.pos.y < object.getCenterY() - 2) {
-                        angleMod -= Math.signum(result.normal.x) * 0.6;
-                    } else if (result.pos.x > object.getCenterY() + 2) {
-                        angleMod += Math.signum(result.normal.x) * 0.6;
-                    }
-                    ball.theta = (float) (Math.acos(result.normal.x) * 2 - ball.theta + Math.PI + angleMod) % (2 * Math.PI); // Reflects with a slight angle modification.
-
-                    if(ball.theta > Math.PI / 2 - 0.5 && ball.theta < Math.PI / 2 + 0.5) {
-                        if(ball.theta <= Math.PI / 2)
-                            ball.theta = Math.PI / 2 - 0.51;
-                        else
-                            ball.theta = Math.PI / 2 + 0.51;
-                    }
-                    if(ball.theta > 3 * Math.PI / 2 - 0.5 && ball.theta < 3 * Math.PI / 2 + 0.5) {
-                        if(ball.theta < 3 * Math.PI / 2)
-                            ball.theta = 3 * Math.PI / 2 - 0.51;
-                        else
-                            ball.theta = 3 * Math.PI / 2 + 0.51;
-                    }
-                    ball.addSelfPosition((Math.cos(ball.theta) * 8 * (1 - result.time)), (Math.sin(ball.theta) * 8 * (1 - result.time)));
-                    interacted = true;
+            TwoDimensionalRayTracer.TwoDimensionalRayTraceResult result = TwoDimensionalRayTracer.nearestBoxSegmentCollision(
+                    new Vector2f(ball.getSelfPosition().x, ball.getSelfPosition().y),
+                    new Vector2f((float) (Math.cos(ball.theta) * 6), (float) (Math.sin(ball.theta) * 6)),
+                    solidObjects,
+                    new Vector2f(4, 4));
+            while (result.time != 1 && timeLeft != 0) {
+                float angleMod = 0;
+                if (result.pos.y < result.collidedWith.getCenterY() - 2) {
+                    angleMod -= Math.signum(result.normal.x) * 0.6;
+                } else if (result.pos.x > result.collidedWith.getCenterY() + 2) {
+                    angleMod += Math.signum(result.normal.x) * 0.6;
                 }
+                ball.theta = (float) (Math.acos(result.normal.x) * 2 - ball.theta + Math.PI + angleMod) % (2 * Math.PI); // Reflects with a slight angle modification.
+
+                if (ball.theta > Math.PI / 2 - 0.5 && ball.theta < Math.PI / 2 + 0.5) {
+                    if (ball.theta <= Math.PI / 2)
+                        ball.theta = Math.PI / 2 - 0.51;
+                    else
+                        ball.theta = Math.PI / 2 + 0.51;
+                }
+                if (ball.theta > 3 * Math.PI / 2 - 0.5 && ball.theta < 3 * Math.PI / 2 + 0.5) {
+                    if (ball.theta < 3 * Math.PI / 2)
+                        ball.theta = 3 * Math.PI / 2 - 0.51;
+                    else
+                        ball.theta = 3 * Math.PI / 2 + 0.51;
+                }
+                timeLeft -= result.time * timeLeft;
+                result = TwoDimensionalRayTracer.nearestBoxSegmentCollision(
+                        new Vector2f(ball.getSelfPosition().x, ball.getSelfPosition().y),
+                        new Vector2f((float) (Math.cos(ball.theta) * 8 * timeLeft), (float) (Math.sin(ball.theta) * 8 * timeLeft)),
+                        solidObjects,
+                        new Vector2f(4, 4));
+                // To prevent it getting permanently lodged into something.
+                ball.addSelfPosition((Math.cos(ball.theta) * 6 * (result.time + 0.1) * timeLeft), (Math.sin(ball.theta) * 6 * (result.time + 0.1) * timeLeft));
             }
-            if(!interacted)
-                ball.addSelfPosition((Math.cos(ball.theta) * 6), (Math.sin(ball.theta) * 6));
-            solidObjects.remove(2); solidObjects.remove(2);
+            ball.addSelfPosition((Math.cos(ball.theta) * 6 * timeLeft), (Math.sin(ball.theta) * 6 * timeLeft));
+            solidObjects.remove(2);
+            solidObjects.remove(2);
         }
+        if (ball.getSelfPosition().getY() > 222) {
+            ball.setSelfPosition(new Position(ball.getSelfPosition().getX(), 211));
+        } else if (ball.getSelfPosition().getY() < 10)
+            ball.setSelfPosition(new Position(ball.getSelfPosition().getX(), 21));
     }
 
     public int simplePaddleAI(PaddleWidget paddle) {
-        if(this.timer % 3 == 0)
+        if (this.timer % 3 == 0)
             return -1;
-        if((ball.getSelfPosition().getY() + 2 * paddle.getSelfPosition().getY()) / 3 < paddle.getSelfPosition().getY())
+        if ((ball.getSelfPosition().getY() + 2 * paddle.getSelfPosition().getY()) / 3 < paddle.getSelfPosition().getY())
             return 1;
         else if ((ball.getSelfPosition().getY() + 2 * paddle.getSelfPosition().getY()) / 3 > paddle.getSelfPosition().getY())
             return 0;

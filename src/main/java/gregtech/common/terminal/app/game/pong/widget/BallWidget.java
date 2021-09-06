@@ -35,7 +35,7 @@ public class BallWidget extends ImageWidget {
     public void addSelfPosition(double addX, double addY) {
         xAccurate += addX;
         yAccurate += addY;
-        this.setSelfPosition(new Position((int) xAccurate, (int) yAccurate));
+        super.setSelfPosition(new Position((int) xAccurate, (int) yAccurate));
     }
 
     public Vector2f getPreciseSelfPosition() {
