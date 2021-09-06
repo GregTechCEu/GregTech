@@ -4,6 +4,7 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.gui.GuiTextures;
@@ -20,6 +21,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.multiblock.IMaintenance;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTToolTypes;
+import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
 import gregtech.common.items.MetaItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -307,12 +309,19 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 * 3 + 98)
                 .label(5, 5, getMetaFullName())
-                .widget(new SlotWidget(importItems, 0, 89 - 9, 18 - 1)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY))
-                .widget(new ClickButtonWidget(89 - 9 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
-                        .setButtonTexture(GuiTextures.MAINTENANCE_ICON))
                 .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16);
 
+        float chance = GTValues.RNG.nextFloat();
+        if (!isConfigurable && chance < 0.001f) {
+            builder.widget(new FixWiringTaskWidget(48, 15, 80, 50)
+                    .setOnFinished(this::fixAllMaintenanceProblems)
+                    .setCanInteractPredicate(this::isAttachedToMultiBlock));
+        } else {
+            builder.widget(new SlotWidget(importItems, 0, 89 - 9, 18 - 1)
+                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY))
+                    .widget(new ClickButtonWidget(89 - 9 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
+                            .setButtonTexture(GuiTextures.MAINTENANCE_ICON));
+        }
         if (isConfigurable) {
             builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", getDurationMultiplier()), getDurationColor()))
                     .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", getTimeMultiplier()), getTimeColor()));

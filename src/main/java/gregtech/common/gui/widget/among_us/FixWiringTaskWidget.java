@@ -11,6 +11,7 @@ import net.minecraft.util.math.Vec2f;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class FixWiringTaskWidget extends Widget {
     private final static TextureArea background = TextureArea.fullImage("textures/among_us/task/fix_wiring/electricity_wires_baseback.png");
@@ -23,6 +24,7 @@ public class FixWiringTaskWidget extends Widget {
     private Runnable onFinished;
     private BiPredicate<Integer, ItemStack> hoverItemCheck;
     private int dragged = -1;
+    private Supplier<Boolean> canInteractPredicate = () -> true;
 
     public FixWiringTaskWidget(int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -52,6 +54,11 @@ public class FixWiringTaskWidget extends Widget {
         return this;
     }
 
+    public FixWiringTaskWidget setCanInteractPredicate(Supplier<Boolean> canInteractPredicate) {
+        this.canInteractPredicate = canInteractPredicate;
+        return this;
+    }
+
     public void setColor(int index, int color) {
         this.colors[index] = color;
     }
@@ -61,6 +68,7 @@ public class FixWiringTaskWidget extends Widget {
     }
 
     public int isMouseOverWire(int mouseX, int mouseY, boolean isLeft) {
+        if (!canInteractPredicate.get()) return -1;
         int x = getPosition().x;
         int y = getPosition().y;
         int width = getSize().width;
