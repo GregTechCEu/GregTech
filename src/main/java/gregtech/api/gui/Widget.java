@@ -510,6 +510,18 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
+    public static void drawTextureRect(double x, double y, double width, double height) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        buffer.pos(x, y + height, 0.0D).tex(0, 0).endVertex();
+        buffer.pos(x + width, y + height, 0.0D).tex(1, 0).endVertex();
+        buffer.pos(x + width, y, 0.0D).tex(1, 1).endVertex();
+        buffer.pos(x, y, 0.0D).tex(0, 1).endVertex();
+        tessellator.draw();
+    }
+
+    @SideOnly(Side.CLIENT)
     public static List<Vec2f> genBezierPoints(Vec2f from, Vec2f to, boolean horizontal, float u) {
         Vec2f c1;
         Vec2f c2;

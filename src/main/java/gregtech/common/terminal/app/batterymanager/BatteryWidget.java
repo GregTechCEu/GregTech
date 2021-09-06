@@ -7,18 +7,8 @@ import gregtech.api.gui.Widget;
 import gregtech.api.render.shader.Shaders;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
-/**
- * Created with IntelliJ IDEA.
- *
- * @Author: KilaBash
- * @Date: 2021/09/03
- * @Description:
- */
 public class BatteryWidget extends Widget {
     private final TerminalOSWidget os;
 
@@ -52,14 +42,7 @@ public class BatteryWidget extends Widget {
                 uniformCache.glUniform3F("c_water", 1f * (1 - progress), 1f * progress, 0f);
             }).bindFramebufferTexture();
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder buffer = tessellator.getBuffer();
-            buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-            buffer.pos(x, y + height, 0.0D).tex(0, 0).endVertex();
-            buffer.pos(x + width, y + height, 0.0D).tex(1, 0).endVertex();
-            buffer.pos(x + width, y, 0.0D).tex(1, 1).endVertex();
-            buffer.pos(x, y, 0.0D).tex(0, 1).endVertex();
-            tessellator.draw();
+            drawTextureRect(x, y, width, height);
         } else {
             int b_color = (int)(255 * (1 - left)) << 16 | (int)(255 * left) << 8 | 255 << 24;
             drawBorder(x, y, width, height, TerminalTheme.COLOR_1.getColor(), 2);

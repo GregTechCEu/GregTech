@@ -3863,7 +3863,7 @@ texture.url_texture.fail=Load Failed
 terminal.hw.battery=Battery
 
 terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
-terminal.os.hw_demand=The following hardware is missing:
+terminal.os.hw_demand=Missing mounting hardware:
 
 terminal.menu.close=Close
 terminal.menu.minimize=Minimize

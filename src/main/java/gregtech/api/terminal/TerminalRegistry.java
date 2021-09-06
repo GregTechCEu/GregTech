@@ -16,6 +16,7 @@ import gregtech.common.terminal.app.guide.MultiBlockGuideApp;
 import gregtech.common.terminal.app.guide.SimpleMachineGuideApp;
 import gregtech.common.terminal.app.guide.TutorialGuideApp;
 import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
+import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
 import gregtech.common.terminal.app.prospector.OreProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 import net.minecraft.client.Minecraft;
@@ -59,6 +60,7 @@ public class TerminalRegistry {
         }
         AppBuilder.create(new ConsoleApp()).defaultApp(false).battery(GTValues.LV, 500).build();
         AppBuilder.create(new BatteryManagerApp()).battery(GTValues.ULV, 10).defaultApp(true).build();
+        AppBuilder.create(new HardwareManagerApp()).defaultApp(true).build();
     }
 
     @SideOnly(Side.CLIENT)
