@@ -14,9 +14,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class FixWiringTaskWidget extends Widget {
-    private final static TextureArea background = TextureArea.fullImage("textures/among_us/task/fix_wiring/electricity_wires_baseback.png");
-    private final static TextureArea wire = TextureArea.fullImage("textures/among_us/task/fix_wiring/electricity_wires.png");
-    private final static TextureArea wire_base = TextureArea.fullImage("textures/among_us/task/fix_wiring/electricity_wires_base.png");
+
+    private final static TextureArea background = TextureArea.fullImage("textures/gui/widget/electricity_wires_baseback.png");
+    private final static TextureArea wire = TextureArea.fullImage("textures/gui/widget/electricity_wires.png");
+    private final static TextureArea wire_base = TextureArea.fullImage("textures/gui/widget/electricity_wires_base.png");
     private final int[] colors = new int[4];
     private final boolean[] connect = new boolean[4];
     private final int[] init = new int[4];
