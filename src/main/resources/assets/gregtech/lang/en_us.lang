@@ -3728,7 +3728,7 @@ gregtech.maintenance.configurable_duration.changed_description=Recipes will run 
 
 gregtech.maintenance.configurable_time=Time: %fx
 gregtech.maintenance.configurable_time.unchanged_description=Maintenance problems will occur at normal rate. Change configuration to update.
-gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur %fx more often.
+gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur at %fx the normal rate.
 
 gregtech.machine.muffler_hatch.tooltip=DO NOT OBSTRUCT THE OUTPUT!
 

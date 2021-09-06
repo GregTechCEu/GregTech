@@ -9,6 +9,7 @@ import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.SlotWidget;
@@ -37,11 +38,13 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
-import static gregtech.api.capability.GregtechDataCodes.IS_TAPED;
-import static gregtech.api.capability.GregtechDataCodes.STORE_MAINTENANCE;
+import static gregtech.api.capability.MultiblockDataCodes.*;
 
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
@@ -52,8 +55,13 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     private byte maintenanceProblems = -1;
     private int timeActive = -1;
 
-    private double durationMultiplier = 1.0;
-    private double timeMultiplier = 1.0;
+    private BigDecimal durationMultiplier = BigDecimal.ONE;
+
+    // Some stats used for the Configurable Maintenance Hatch
+    private static final BigDecimal MAX_DURATION_MULTIPLIER = BigDecimal.valueOf(1.2);
+    private static final BigDecimal MIN_DURATION_MULTIPLIER = BigDecimal.valueOf(0.8);
+    private static final BigDecimal DURATION_ACTION_AMOUNT = BigDecimal.valueOf(0.02);
+    private static final Function<Double, Double> TIME_ACTION = (d) -> Math.pow(-d, 3) + 2;
 
     public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, boolean isConfigurable) {
         super(metaTileEntityId, isConfigurable ? 3 : 1);
@@ -275,12 +283,26 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public double getDurationMultiplier() {
-        return durationMultiplier;
+        return durationMultiplier.doubleValue();
     }
 
     @Override
     public double getTimeMultiplier() {
-        return timeMultiplier;
+        return BigDecimal.valueOf(TIME_ACTION.apply(durationMultiplier.doubleValue()))
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
+    }
+
+    private void incInternalMultiplier(Widget.ClickData data) {
+        if (durationMultiplier.compareTo(MAX_DURATION_MULTIPLIER) == 0) return;
+        durationMultiplier = durationMultiplier.add(DURATION_ACTION_AMOUNT);
+        writeCustomData(MAINTENANCE_MULTIPLIER, b -> b.writeDouble(durationMultiplier.doubleValue()));
+    }
+
+    private void decInternalMultiplier(Widget.ClickData data) {
+        if (durationMultiplier.compareTo(MIN_DURATION_MULTIPLIER) == 0) return;
+        durationMultiplier = durationMultiplier.subtract(DURATION_ACTION_AMOUNT);
+        writeCustomData(MAINTENANCE_MULTIPLIER, b -> b.writeDouble(durationMultiplier.doubleValue()));
     }
 
     @Override
@@ -311,20 +333,21 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                 .label(5, 5, getMetaFullName())
                 .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16);
 
-        float chance = GTValues.RNG.nextFloat();
-        if (!isConfigurable && chance < 0.000001f) {
+        if (!isConfigurable && GTValues.FOOLS.get()) {
             builder.widget(new FixWiringTaskWidget(48, 15, 80, 50)
                     .setOnFinished(this::fixAllMaintenanceProblems)
                     .setCanInteractPredicate(this::isAttachedToMultiBlock));
         } else {
-            builder.widget(new SlotWidget(importItems, 0, 89 - 9, 18 - 1)
+            builder.widget(new SlotWidget(importItems, 0, 89 - 10, 18 - 1)
                     .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY))
-                    .widget(new ClickButtonWidget(89 - 9 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
+                    .widget(new ClickButtonWidget(89 - 10 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
                             .setButtonTexture(GuiTextures.MAINTENANCE_ICON));
         }
         if (isConfigurable) {
             builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", getDurationMultiplier()), getDurationColor()))
-                    .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", getTimeMultiplier()), getTimeColor()));
+                    .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", getTimeMultiplier()), getTimeColor()))
+                    .widget(new ClickButtonWidget(9, 18 * 3 + 16 - 18, 12, 12, "-", this::decInternalMultiplier))
+                    .widget(new ClickButtonWidget(9 + 18 * 2, 18 * 3 + 16 - 18, 12, 12, "+", this::incInternalMultiplier));
         }
         return builder.build(getHolder(), entityPlayer);
     }
@@ -385,6 +408,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         } else if (dataId == IS_TAPED) {
             this.isTaped = buf.readBoolean();
             scheduleRenderUpdate();
+            markDirty();
+        } else if (dataId == MAINTENANCE_MULTIPLIER) {
+            this.durationMultiplier = BigDecimal.valueOf(buf.readDouble());
             markDirty();
         }
     }

@@ -4,8 +4,10 @@ import gregtech.api.util.XSTR;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
+import java.time.LocalDate;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Supplier;
 
 /**
  * Made for static imports, this Class is just a Helper.
@@ -116,4 +118,9 @@ public class GTValues {
      * Used to tell if any high-tier machine (UHV+) was registered.
      */
     public static boolean HT = false;
+
+    public static Supplier<Boolean> FOOLS = () -> {
+        String[] yearMonthDay = LocalDate.now().toString().split("-");
+        return yearMonthDay[1].equals("04") && yearMonthDay[2].equals("01");
+    };
 }
