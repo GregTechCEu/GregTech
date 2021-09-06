@@ -43,6 +43,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static gregtech.api.capability.MultiblockDataCodes.*;
 
@@ -344,23 +345,23 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
                             .setButtonTexture(GuiTextures.MAINTENANCE_ICON));
         }
         if (isConfigurable) {
-            builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", getDurationMultiplier()), getDurationColor()))
-                    .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", getTimeMultiplier()), getTimeColor()))
+            builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", this::getDurationMultiplier), getDurationColor()))
+                    .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", this::getTimeMultiplier), getTimeColor()))
                     .widget(new ClickButtonWidget(9, 18 * 3 + 16 - 18, 12, 12, "-", this::decInternalMultiplier))
                     .widget(new ClickButtonWidget(9 + 18 * 2, 18 * 3 + 16 - 18, 12, 12, "+", this::incInternalMultiplier));
         }
         return builder.build(getHolder(), entityPlayer);
     }
 
-    private Consumer<List<ITextComponent>> getTextWidgetText(String type, double multiplier) {
+    private Consumer<List<ITextComponent>> getTextWidgetText(String type, Supplier<Double> multiplier) {
         return (list) -> {
             ITextComponent tooltip;
-            if (multiplier == 1.0) {
+            if (multiplier.get() == 1.0) {
                 tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".unchanged_description");
             } else {
-                tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".changed_description", multiplier);
+                tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".changed_description", multiplier.get());
             }
-            list.add(new TextComponentTranslation("gregtech.maintenance.configurable_" + type, multiplier)
+            list.add(new TextComponentTranslation("gregtech.maintenance.configurable_" + type, multiplier.get())
                     .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
         };
     }
