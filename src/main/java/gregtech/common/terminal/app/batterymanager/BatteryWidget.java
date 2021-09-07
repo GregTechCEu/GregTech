@@ -38,7 +38,7 @@ public class BatteryWidget extends Widget {
             float time = (gui.entityPlayer.ticksExisted + partialTicks) / 20f;
             int color = TerminalTheme.COLOR_F_1.getColor();
             if (battery == null) {
-                battery = new ShaderTexture("battery.frag");
+                battery = ShaderTexture.createShader("battery.frag");
             }
             battery.draw(x, y, width, height, uniformCache -> {
                 uniformCache.glUniform1F("u_time", time);

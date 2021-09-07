@@ -246,7 +246,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     protected TerminalDialogWidget closeDialog(TerminalDialogWidget widget) {
         if (isRemote()) {
             widget.minimizeWidget(desktop::waitToRemoved);
-        } else if(widget.isClient()) {
+        } else if(!widget.isClient()) {
             desktop.waitToRemoved(widget);
         }
         return widget;

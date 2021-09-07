@@ -28,7 +28,7 @@ public class HardwareManagerApp extends AbstractApplication {
         float time = (gui.entityPlayer.ticksExisted + partialTicks) / 20f;
         if (Shaders.allowedShader()) {
             if (circuit == null) {
-                circuit = new ShaderTexture("circuit.frag");
+                circuit = ShaderTexture.createShader("circuit.frag");
             }
             ResourceHelper.bindTexture("textures/shaders/font1.png");
             circuit.draw(x, y, width, height, uniformCache -> {
