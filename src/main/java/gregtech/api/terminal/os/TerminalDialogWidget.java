@@ -55,6 +55,10 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         os.openDialog(this);
     }
 
+    /**
+     * Should be a client side dialog.
+     * This is very important, please make sure the right side.
+     */
     public TerminalDialogWidget setClientSide() {
         this.isClient = true;
         return this;
@@ -163,6 +167,10 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return dialog;
     }
 
+    /**
+     * Show Color Dialog
+     * @return color (rgba)
+     */
     public static TerminalDialogWidget showColorDialog(TerminalOSWidget os, String title, Consumer<Integer> result) {
         TerminalDialogWidget dialog = createEmptyTemplate(os).addTitle(title);
         ColorWidget colorWidget = new ColorWidget(WIDTH / 2 - 60, HEIGHT / 2 - 35, 80, 10);
@@ -179,6 +187,12 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return dialog;
     }
 
+    /**
+     * Show FileDialog
+     * @param dir root directory
+     * @param isSelector select a file or save a file
+     * @param result selected file or (saved)
+     */
     public static TerminalDialogWidget showFileDialog(TerminalOSWidget os, String title, File dir, boolean isSelector, Consumer<File> result) {
         Size size = os.getSize();
         TerminalDialogWidget dialog = new TerminalDialogWidget(os, 0, 0, size.width, size.height)

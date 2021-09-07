@@ -1,8 +1,10 @@
-package gregtech.api.terminal.hardware;
+package gregtech.common.terminal.hardware;
 
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.terminal.hardware.Hardware;
+import gregtech.api.terminal.hardware.IHardwareCapability;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.capabilities.Capability;
 
@@ -19,7 +21,7 @@ import java.util.function.BiConsumer;
  * @Date: 2021/08/28
  * @Description:
  */
-public class BatteryHardware extends Hardware implements IElectricItem {
+public class BatteryHardware extends Hardware implements IElectricItem, IHardwareCapability {
     protected final List<BiConsumer<ItemStack, Long>> listeners = new ArrayList<>();
 
     public BatteryHardware() {

@@ -2,7 +2,7 @@ package gregtech.api.terminal;
 
 import gregtech.api.GTValues;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.api.terminal.hardware.BatteryHardware;
+import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.util.FileUtility;

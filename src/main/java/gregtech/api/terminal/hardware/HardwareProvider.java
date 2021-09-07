@@ -68,8 +68,11 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         if (providers != null) {
-            for (ICapabilityProvider provider : providers.values()) {
-                if (provider.hasCapability(capability, facing)) {
+            for (Map.Entry<String, Hardware> entry : providers.entrySet()) {
+                Hardware provider = entry.getValue();
+                if (provider instanceof IHardwareCapability &&
+                        (hasHardware(entry.getKey()) || TerminalBehaviour.isCreative(getItemStack())) &&
+                        ((IHardwareCapability) provider).hasCapability(capability)) {
                     return true;
                 }
             }
@@ -81,10 +84,12 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
         if (providers != null) {
-            for (ICapabilityProvider provider : providers.values()) {
-                T cap = provider.getCapability(capability, facing);
-                if (cap != null) {
-                    return cap;
+            for (Map.Entry<String, Hardware> entry : providers.entrySet()) {
+                Hardware provider = entry.getValue();
+                if (provider instanceof IHardwareCapability &&
+                        (hasHardware(entry.getKey()) || TerminalBehaviour.isCreative(getItemStack())) &&
+                        ((IHardwareCapability) provider).hasCapability(capability)) {
+                    return ((IHardwareCapability) provider).getCapability(capability);
                 }
             }
         }

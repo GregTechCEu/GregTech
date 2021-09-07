@@ -34,6 +34,9 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         return this;
     }
 
+    /**
+     * App Name
+     */
     public String getRegistryName() {
         return name;
     }
@@ -42,10 +45,17 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         return "gregtech.terminal.app_name." + name;
     }
 
+    /**
+     * App Icon
+     */
     public IGuiTexture getIcon() {
         return icon;
     }
 
+    /**
+     * Will be called when try to open this app. you should return an instance here.
+     * It's probably best not to initialize your app here.
+     */
     public AbstractApplication createAppInstance(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
         try {
             AbstractApplication app = this.getClass().newInstance();
@@ -58,32 +68,57 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         return null;
     }
 
+    /**
+     * init app here. you have access to os, isClient, nbt.
+     */
     public AbstractApplication initApp() {
         return this;
     }
 
+    /**
+     * you should store the persistent data for both side here.
+     * @return nbt data. if its a clientSideApp and the nbt not null, this nbt should be synced to the server side.
+     */
     public NBTTagCompound closeApp() {
         return null;
     }
 
+    /**
+     * Whether the app can run in the background when minimized.
+     */
     public boolean isBackgroundApp() {
         return false;
     }
 
+    /**
+     * If it is a client side app, will block all action packets sent from client.
+     * If the app doesn't require server execution, it better be a client side app.
+     * For details about data synchronization, see {@link #closeApp()}
+     */
     public boolean isClientSideApp() {return false;}
 
     public TerminalOSWidget getOs() {
         return os;
     }
 
+    /**
+     * Add components to menu bar.
+     * @see IMenuComponent
+     */
     public List<IMenuComponent> getMenuComponents() {
         return Collections.emptyList();
     }
 
+    /**
+     * Whether the player can open this app.
+     */
     public boolean canPlayerUse(EntityPlayer player) {
         return true;
     }
 
+    /**
+     * App Current Tier. Creative Terminal(return max tier)
+     */
     public final int getAppTier() {
         if (nbt != null) {
             if (TerminalBehaviour.isCreative(getOs().itemStack)) {
@@ -94,6 +129,9 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         return 0;
     }
 
+    /**
+     * App Max Tier
+     */
     public int getMaxTier() {
         return 0;
     }

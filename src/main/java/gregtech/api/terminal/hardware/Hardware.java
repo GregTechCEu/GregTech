@@ -3,23 +3,17 @@ package gregtech.api.terminal.hardware;
 import gregtech.common.items.behaviors.TerminalBehaviour;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Created with IntelliJ IDEA.
  *
  * @Author: KilaBash
  * @Date: 2021/08/27
- * @Description:
+ * @Description: Hardware
  */
-public abstract class Hardware implements ICapabilityProvider {
+public abstract class Hardware  {
     protected HardwareProvider provider;
 
     public abstract String getRegistryName();
@@ -28,52 +22,47 @@ public abstract class Hardware implements ICapabilityProvider {
         return "terminal.hw." + getRegistryName();
     }
 
+    /***
+     * Check whether the current hardware (this) meets requirement (demand);
+     */
     public boolean isHardwareAdequate(Hardware demand) {
         return this.getClass() == demand.getClass() || this.getRegistryName().equals(demand.getRegistryName());
     }
 
+    /**
+     * Check whether the terminal has the hardware.
+     */
     public final boolean hasHW() {
         return provider.hasHardware(getRegistryName());
     }
 
+    /**
+     * Returns the NBT of the this hardware.
+     */
     public final NBTTagCompound getNBT() {
         return provider.getHardwareNBT(getRegistryName());
     }
 
+    /**
+     * Check whether the terminal is creative mode.
+     */
     public final boolean isCreative(){
         return TerminalBehaviour.isCreative(provider.getItemStack());
     }
 
+    /**
+     * information added in tooltips
+     * @return null->nothing added.
+     */
     @SideOnly(Side.CLIENT)
     public String addInformation() {
         return null;
     }
 
+    /**
+     * Create the hardware instance, NOTE!!! do not check nbt or anything here. Terminal has not been initialized here.
+     * @param itemStack terminal
+     * @return instance
+     */
     protected abstract Hardware createHardware(ItemStack itemStack);
-
-    @Override
-    public final boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        if (!isCreative() && !hasHW()) {
-            return false;
-        }
-        return hasCapability(capability);
-    }
-
-    protected boolean hasCapability(@Nonnull Capability<?> capability) {
-        return false;
-    }
-
-    @Nullable
-    @Override
-    public final <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        T result = getCapability(capability);
-        if (result == null || !isCreative() && !hasHW()) {
-            return null;
-        }
-        return result;
-    }
-
-    protected <T> T getCapability(@Nonnull Capability<T> capability) {
-        return null;
-    }
 }

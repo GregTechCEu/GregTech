@@ -5,7 +5,7 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
-import gregtech.api.terminal.hardware.BatteryHardware;
+import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.behaviors.TerminalBehaviour;

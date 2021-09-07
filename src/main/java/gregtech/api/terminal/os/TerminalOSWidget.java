@@ -8,7 +8,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.api.terminal.hardware.BatteryHardware;
+import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.menu.TerminalMenuWidget;
@@ -185,7 +185,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
 
             if (synced != null && !synced.isEmpty()) {
                 tabletNBT.setTag(appName, synced);
-                if (application.isClientSideApp() && isClient) { //if its a clientSideApp and the nbt not null, meaning this nbt should be synced to the server side.
+                if (application.isClientSideApp() && isClient) {
                     writeClientAction(-2, buffer -> {
                         buffer.writeString(appName);
                         buffer.writeCompoundTag(synced);
