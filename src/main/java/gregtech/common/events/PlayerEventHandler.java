@@ -10,16 +10,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-/**
- * Created with IntelliJ IDEA.
- *
- * @Author: KilaBash
- * @Date: 2021/08/27
- * @Description: reference forestry code
- */
-
 @Mod.EventBusSubscriber
-public class EventHandlerPlayer {
+public class PlayerEventHandler {
     private static final String HAS_TERMINAL = GTValues.MODID + ".terminal";
 
     @SubscribeEvent

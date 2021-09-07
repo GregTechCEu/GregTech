@@ -4,6 +4,7 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.api.gui.resources.ShaderTexture;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.render.shader.Shaders;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.TerminalTheme;
@@ -12,6 +13,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class HardwareManagerApp extends AbstractApplication {
+    @SideOnly(Side.CLIENT)
+    private static final TextureArea CIRCUIT_LINE = TextureArea.fullImage("textures/gui/terminal/hardware_manager/circuit.png");
     @SideOnly(Side.CLIENT)
     private ShaderTexture circuit;
 
@@ -40,6 +43,7 @@ public class HardwareManagerApp extends AbstractApplication {
         } else {
             drawSolidRect(x, y, width, height, TerminalTheme.COLOR_B_2.getColor());
         }
+        CIRCUIT_LINE.draw(x, y, width, height);
         super.hookDrawInBackground(mouseX, mouseY, partialTicks, context);
     }
 }
