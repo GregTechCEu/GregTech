@@ -60,10 +60,15 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     private BigDecimal durationMultiplier = BigDecimal.ONE;
 
     // Some stats used for the Configurable Maintenance Hatch
-    private static final BigDecimal MAX_DURATION_MULTIPLIER = BigDecimal.valueOf(1.2);
-    private static final BigDecimal MIN_DURATION_MULTIPLIER = BigDecimal.valueOf(0.8);
-    private static final BigDecimal DURATION_ACTION_AMOUNT = BigDecimal.valueOf(0.02);
-    private static final Function<Double, Double> TIME_ACTION = (d) -> Math.pow(-d, 3) + 2;
+    private static final BigDecimal MAX_DURATION_MULTIPLIER = BigDecimal.valueOf(1.1);
+    private static final BigDecimal MIN_DURATION_MULTIPLIER = BigDecimal.valueOf(0.9);
+    private static final BigDecimal DURATION_ACTION_AMOUNT = BigDecimal.valueOf(0.01);
+    private static final Function<Double, Double> TIME_ACTION = (d) -> {
+        if (d < 1.0)
+            return -20.0 * d + 21;
+        else
+            return -8.0 * d + 9;
+    };
 
     public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, boolean isConfigurable) {
         super(metaTileEntityId, isConfigurable ? 3 : 1);
