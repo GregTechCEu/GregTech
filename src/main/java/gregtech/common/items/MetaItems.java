@@ -71,7 +71,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROTOR;
 
-    public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[26];
+    public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[27];
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOLT;
@@ -98,6 +98,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_FOIL;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD_LONG;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROTOR;
 
     public static MetaItem<?>.MetaValueItem SPRAY_EMPTY;
 

@@ -204,6 +204,8 @@ metaitem.shape.extruder.foil.name=Extruder Shape (Foil)
 metaitem.shape.extruder.foil.tooltip=Extruder Shape for making Foils from Non-Metals
 metaitem.shape.extruder.rod_long.name=Extruder Shape (Long Rod)
 metaitem.shape.extruder.rod_long.tooltip=Extruder Shape for making Long Rods
+metaitem.shape.extruder.rotor.name=Extruder Shape (Rotor)
+metaitem.shape.extruder.rotor.tooltip=Extruder Shape for making Rotors
 
 metaitem.spray.empty.name=Spray Can (Empty)
 metaitem.spray.empty.tooltip=Can be filled with sprays of various colors

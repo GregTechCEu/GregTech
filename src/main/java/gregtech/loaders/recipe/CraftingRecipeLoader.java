@@ -165,6 +165,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_plate", MetaItems.SHAPE_EXTRUDER_PLATE.getStackForm(), "x  ", " S ", "   ", 'S', MetaItems.SHAPE_EXTRUDER_FOIL.getStackForm());
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_gear_small", MetaItems.SHAPE_EXTRUDER_GEAR_SMALL.getStackForm(), " x ", " S ", "   ", 'S', MetaItems.SHAPE_EXTRUDER_RING.getStackForm());
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_foil", MetaItems.SHAPE_EXTRUDER_FOIL.getStackForm(), "   ", " S ", "  x", 'S', MetaItems.SHAPE_EMPTY.getStackForm());
+        ModHandler.addShapedRecipe("shape/extruder/shape_extruder_rotor", MetaItems.SHAPE_EXTRUDER_ROTOR.getStackForm(), "   ", " S ", "x  ", 'S', MetaItems.SHAPE_EMPTY.getStackForm());
 
         ModHandler.addShapedRecipe("shape/mold/shape_mold_rotor", MetaItems.SHAPE_MOLD_ROTOR.getStackForm(), "  h", " S ", "   ", 'S', MetaItems.SHAPE_EMPTY.getStackForm());
         ModHandler.addShapedRecipe("shape/mold/shape_mold_gear_small", MetaItems.SHAPE_MOLD_GEAR_SMALL.getStackForm(), "   ", "   ", "h S", 'S', MetaItems.SHAPE_EMPTY.getStackForm());
