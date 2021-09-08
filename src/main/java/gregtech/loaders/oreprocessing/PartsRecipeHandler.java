@@ -331,7 +331,7 @@ public class PartsRecipeHandler {
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_ROTOR)
                 .input(ingot, material, 5)
                 .output(rotor, material)
-                .duration((int) material.getAverageMass())
+                .duration((int) material.getAverageMass() * 5)
                 .EUt(material.getBlastTemperature() >= 2800 ? 256 : 64)
                 .buildAndRegister();
     }
