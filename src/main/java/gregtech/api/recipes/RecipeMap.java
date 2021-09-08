@@ -285,35 +285,39 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         HashMap<Integer, LinkedList<Recipe>> priorityRecipeMap = new HashMap<>();
         HashMap<Recipe, Integer> promotedTimes = new HashMap<>();
 
-        for (ItemStack stack : inputs) {
-            if (!stack.isEmpty()) {
-                ItemStackKey itemStackKey = KeySharedStack.getRegisteredStack(stack);
-                if (!searchedItems.contains(itemStackKey) && recipeItemMap.containsKey(itemStackKey)) {
-                    searchedItems.add(itemStackKey);
-                    for (Recipe tmpRecipe : recipeItemMap.get(itemStackKey)) {
-                        if (!exactVoltage && voltage < tmpRecipe.getEUt()) {
-                            continue;
-                        } else if (exactVoltage && voltage != tmpRecipe.getEUt()) {
-                            continue;
+        if (matchingMode != MatchingMode.IGNORE_ITEMS) {
+            for (ItemStack stack : inputs) {
+                if (!stack.isEmpty()) {
+                    ItemStackKey itemStackKey = KeySharedStack.getRegisteredStack(stack);
+                    if (!searchedItems.contains(itemStackKey) && recipeItemMap.containsKey(itemStackKey)) {
+                        searchedItems.add(itemStackKey);
+                        for (Recipe tmpRecipe : recipeItemMap.get(itemStackKey)) {
+                            if (!exactVoltage && voltage < tmpRecipe.getEUt()) {
+                                continue;
+                            } else if (exactVoltage && voltage != tmpRecipe.getEUt()) {
+                                continue;
+                            }
+                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
                         }
-                        calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
                     }
                 }
             }
         }
 
-        for (FluidStack fluidStack : fluidInputs) {
-            if (fluidStack != null) {
-                FluidKey fluidKey = new FluidKey(fluidStack);
-                if (!searchedFluids.contains(fluidKey) && recipeFluidMap.containsKey(fluidKey)) {
-                    searchedFluids.add(fluidKey);
-                    for (Recipe tmpRecipe : recipeFluidMap.get(fluidKey)) {
-                        if (!exactVoltage && voltage < tmpRecipe.getEUt()) {
-                            continue;
-                        } else if (exactVoltage && voltage != tmpRecipe.getEUt()) {
-                            continue;
+        if (matchingMode != MatchingMode.IGNORE_FLUIDS) {
+            for (FluidStack fluidStack : fluidInputs) {
+                if (fluidStack != null) {
+                    FluidKey fluidKey = new FluidKey(fluidStack);
+                    if (!searchedFluids.contains(fluidKey) && recipeFluidMap.containsKey(fluidKey)) {
+                        searchedFluids.add(fluidKey);
+                        for (Recipe tmpRecipe : recipeFluidMap.get(fluidKey)) {
+                            if (!exactVoltage && voltage < tmpRecipe.getEUt()) {
+                                continue;
+                            } else if (exactVoltage && voltage != tmpRecipe.getEUt()) {
+                                continue;
+                            }
+                            calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
                         }
-                        calculateRecipePriority(tmpRecipe, promotedTimes, priorityRecipeMap);
                     }
                 }
             }
