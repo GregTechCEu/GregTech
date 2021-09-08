@@ -217,6 +217,7 @@
 - Fix Solar covers not properly outputting power to GT cables
 - Fix Crowbar action on Powered Rails throwing errors in the log
 - Fix Fluid Regulator "Keep Exact" mode not working
+- Fix worldgen JSONs only using the first dimension listed in `dimension_filter`
 
 ### CraftTweaker
 - Materials can now automatically generate IDs
