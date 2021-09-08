@@ -95,7 +95,8 @@ public class CoverFluidRegulator extends CoverPump {
                 if(destProperties.getContents() != null && destProperties.getContents().isFluidEqual(sourceFluid)) {
                     destFluid = destProperties.getContents();
                     amountToDrainAndFill = Math.min(Math.max(0, keepAmount - destFluid.amount), fluidLeftToTransfer);
-                    // Should we break here? If we do, we will only allow interaction with the first tank found,
+                    break;
+                    // Breaking here will only allow interaction with the first tank found,
                     // which could hit the edge case of having the same fluid in multiple tanks. However, this will be
                     // a rare edge case, because Fluid Handlers are limited by recipe.
                 }
