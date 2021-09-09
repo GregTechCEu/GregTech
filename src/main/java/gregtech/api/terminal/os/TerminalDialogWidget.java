@@ -17,11 +17,16 @@ import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -41,6 +46,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     private final TerminalOSWidget os;
     private IGuiTexture background;
     private boolean isClient;
+    private List<Widget> iNativeWidgets;
 
     private TerminalDialogWidget(TerminalOSWidget os, int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -51,8 +57,12 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return isClient;
     }
 
-    public void open(){
+    public TerminalDialogWidget open(){
         os.openDialog(this);
+        if (iNativeWidgets != null) {
+            iNativeWidgets.forEach(this::addWidget);
+        }
+        return this;
     }
 
     /**
@@ -111,27 +121,6 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
 
     public TerminalDialogWidget addInfo(String info) {
         this.addWidget(new LabelWidget(WIDTH / 2, HEIGHT / 2, info, -1).setWidth(WIDTH - 16).setYCentered(true).setXCentered(true));
-        return this;
-    }
-
-    //todo unfinished
-    public TerminalDialogWidget addPlayerInventory() {
-        IInventory inventoryPlayer = os.getModularUI().entityPlayer.inventory;
-        int x = 20;
-        int y = 20;
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                this.addWidget(new SlotWidget(inventoryPlayer, col + (row + 1) * 9, x + col * 18, y + row * 18, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT)
-                        .setLocationInfo(true, false));
-            }
-        }
-        y+=58;
-        for (int slot = 0; slot < 9; slot++) {
-            this.addWidget(new SlotWidget(inventoryPlayer, slot, x + slot * 18, y, true, true)
-                    .setBackgroundTexture(GuiTextures.SLOT)
-                    .setLocationInfo(true, true));
-        }
         return this;
     }
 
@@ -275,14 +264,76 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return dialog.setClientSide();
     }
 
+    public static TerminalDialogWidget showItemSelector(TerminalOSWidget os, String title, boolean cost, Predicate<ItemStack> filter, Consumer<ItemStack> result) {
+        TerminalDialogWidget dialog = createEmptyTemplate(os).addTitle(title);
+        IInventory inventoryPlayer = os.getModularUI().entityPlayer.inventory;
+        if (dialog.iNativeWidgets == null) {
+            dialog.iNativeWidgets = new ArrayList<>();
+        }
+        int x = 11;
+        int y = 30;
+        final SlotWidget[] selected = {null};
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 9; col++) {
+                boolean pass = filter == null || filter.test(inventoryPlayer.getStackInSlot(col + (row + 1) * 9));
+                SlotWidget slotWidget = new SlotWidget(inventoryPlayer, col + (row + 1) * 9, x + col * 18, y + row * 18, false, false) {
+                    @Override
+                    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+                        super.drawInBackground(mouseX, mouseY, context);
+                        if (selected[0] == this) {
+                            drawBorder(getPosition().x, getPosition().y, getSize().width, getSize().height, -1, 1);
+                        }
+                    }
+
+                    @Override
+                    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+                        if (pass && isMouseOverElement(mouseX, mouseY)) {
+                            if (selected[0] == this) {
+                                selected[0] = null;
+                            } else {
+                                selected[0] = this;
+                            }
+                            writeClientAction(7, buffer -> buffer.writeBoolean(selected[0] == this));
+                        }
+                        return super.mouseClicked(mouseX, mouseY, button);
+                    }
+
+                    @Override
+                    public void handleClientAction(int id, PacketBuffer buffer) {
+                        if (id == 7) {
+                            if (buffer.readBoolean()) {
+                                selected[0] = this;
+                            } else {
+                                selected[0] = null;
+                            }
+                        }
+                        super.readUpdateInfo(id, buffer);
+                    }
+                }.setBackgroundTexture(TerminalTheme.COLOR_B_1).setLocationInfo(true, false);
+                slotWidget.setActive(pass);
+                dialog.iNativeWidgets.add(slotWidget);
+            }
+        }
+        dialog.addConfirmButton(confirm->{
+            if (result != null && confirm && selected[0] != null && !selected[0].getHandle().getStack().isEmpty()) {
+                ItemStack stack = selected[0].getHandle().getStack().copy();
+                if (cost) {
+                    selected[0].getHandle().getStack().setCount(stack.getCount() - 1);
+                }
+                result.accept(stack);
+            }
+        });
+        return dialog;
+    }
+
     @Override
     public void hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        GlStateManager.translate(0,0,1000);
+        GlStateManager.disableDepth();
         if (background != null) {
             background.draw(getPosition().x, getPosition().y, getSize().width, getSize().height);
         }
         super.hookDrawInBackground(mouseX, mouseY, partialTicks, context);
-        GlStateManager.translate(0,0,-1000);
+        GlStateManager.enableDepth();
     }
 
     @Override
@@ -290,9 +341,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
             if (widget.isVisible()) {
-                if (widget instanceof SlotWidget) {
-                    return false;
-                } else if(widget.mouseClicked(mouseX, mouseY, button)){
+                if(widget.mouseClicked(mouseX, mouseY, button)){
                     return true;
                 }
             }

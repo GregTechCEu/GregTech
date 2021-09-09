@@ -27,7 +27,7 @@ public class TextTexture implements IGuiTexture{
         this.type = TextType.NORMAL;
         if (FMLCommonHandler.instance().getSide().isClient()) {
             this.text = I18n.format(text);
-            texts = Collections.singletonList(text);
+            texts = Collections.singletonList(this.text);
         }
     }
 
@@ -72,7 +72,7 @@ public class TextTexture implements IGuiTexture{
                 fontRenderer.drawString(resultText, _x, _y, color, dropShadow);
             }
         } else if (type == TextType.HIDE) {
-            String resultText = texts.get(0) + "..";
+            String resultText = texts.get(0) + (texts.size() > 1 ? ".." : "");
             int textW = fontRenderer.getStringWidth(resultText);
             float _x = (float) (x + (width - textW) / 2f);
             float _y = (float) (y + (height - textH) / 2f);

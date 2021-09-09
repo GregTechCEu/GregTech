@@ -5,10 +5,9 @@ import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
-import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.items.MetaItems;
-import gregtech.common.items.behaviors.TerminalBehaviour;
+import gregtech.common.terminal.hardware.BatteryHardware;
 import net.minecraft.client.resources.I18n;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,19 +36,14 @@ public class BatteryManagerApp extends AbstractApplication {
     private void addBatteryApps() {
         AtomicInteger index = new AtomicInteger();
         for (AbstractApplication installed : getOs().installedApps) {
-            TerminalRegistry.getAppHardwareDemand(installed.getRegistryName()).stream()
+            TerminalRegistry.getAppHardwareDemand(installed.getRegistryName(), getOs().tabletNBT.getCompoundTag(installed.getRegistryName()).getInteger("_tier")).stream()
                     .filter(i->i instanceof BatteryHardware).findFirst()
                     .ifPresent(battery-> {
                         long charge = ((BatteryHardware)battery).getCharge();
-                        charge *= getOs().tabletNBT.getCompoundTag(installed.getRegistryName()).getInteger("_tier") + 1;
-                        if (TerminalBehaviour.isCreative(getOs().itemStack)) {
-                            charge = 0;
-                        }
                         this.addWidget(new RectButtonWidget(180 + (index.get() % 5) * 30, 15 + (index.get() / 5) * 30, 20, 20, 2)
                                 .setIcon(installed.getIcon())
-                                .setHoverText(String.format("%s: %d eu/s",
-                                        I18n.format(installed.getUnlocalizedName()),
-                                        charge))
+                                // warn unsafe call the I18n here.
+                                .setHoverText(String.format("%s: %d eu/s", I18n.format(installed.getUnlocalizedName()), charge))
                                 .setColors(0, TerminalTheme.COLOR_7.getColor(), 0));
                         index.getAndIncrement();
                     });

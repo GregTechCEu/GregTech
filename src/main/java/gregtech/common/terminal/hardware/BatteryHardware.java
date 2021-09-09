@@ -3,9 +3,13 @@ package gregtech.common.terminal.hardware;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.IHardwareCapability;
+import gregtech.common.items.MetaItems;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
@@ -43,8 +47,29 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
     }
 
     @Override
+    public NBTTagCompound acceptItemStack(ItemStack itemStack) {
+        IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (electricItem == null || !electricItem.canProvideChargeExternally() || !electricItem.chargeable()) {
+            return null;
+        }
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setLong("maxCharge", electricItem.getMaxCharge());
+        nbt.setLong("charge", electricItem.getCharge());
+        nbt.setInteger("tier", electricItem.getTier());
+        return nbt;
+    }
+
+    @Override
     public String getRegistryName() {
         return "battery";
+    }
+
+    @Override
+    public IGuiTexture getIcon() {
+        if (!hasHW()) {
+            return super.getIcon();
+        }
+        return new ItemStackTexture(MetaItems.BATTERY_HV_SODIUM.getStackForm());
     }
 
     @Override
@@ -74,6 +99,11 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
     @Override
     public boolean canProvideChargeExternally() {
         return false;
+    }
+
+    @Override
+    public boolean chargeable() {
+        return true;
     }
 
     @Override

@@ -101,7 +101,12 @@ public class SlotWidget extends Widget implements INativeWidget {
                 }
             }
         } else {
+            GlStateManager.disableDepth();
+            GlStateManager.colorMask(true, true, true, false);
             drawSolidRect(getPosition().x + 1, getPosition().y + 1, 16, 16, 0xbf000000);
+            GlStateManager.colorMask(true, true, true, true);
+            GlStateManager.enableDepth();
+            GlStateManager.enableBlend();
         }
     }
 

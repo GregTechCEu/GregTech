@@ -381,6 +381,7 @@ public class MetaItem1 extends StandardMetaItem {
         SCANNER = addItem(465, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, GTValues.LV), new ScannerBehavior(50));
         CLIPBOARD = addItem(466, "clipboard").addComponents(new ClipboardBehavior()).setMaxStackSize(1);
         TERMINAL = addItem(467, "terminal").addComponents(new HardwareProvider(), new TerminalBehaviour());
+        WIRELESS = addItem(468, "wireless");
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");

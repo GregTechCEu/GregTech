@@ -1,8 +1,8 @@
 package gregtech.api.terminal;
 
+import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.util.FileUtility;
@@ -19,48 +19,50 @@ import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
 import gregtech.common.terminal.app.prospector.OreProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
+import gregtech.common.terminal.hardware.BatteryHardware;
+import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
-import net.minecraft.util.registry.RegistryDefaulted;
-import net.minecraft.util.registry.RegistrySimple;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TerminalRegistry {
-    public static final RegistrySimple<String, AbstractApplication> APP_REGISTER = new RegistrySimple<>();
-    public static final RegistrySimple<String, Hardware> HW_REGISTER = new RegistrySimple<>();
-    public static final RegistrySimple<String, List<Hardware>> APP_HW_DEMAND = new RegistryDefaulted<>(Collections.emptyList());
-    public static final RegistrySimple<String, List<List<Object>>> APP_UPGRADE_CONDITIONS = new RegistryDefaulted<>(Collections.emptyList());
-    public static final List<String> DEFAULT_APPS = new ArrayList<>();
+    private static final Map<String, AbstractApplication> APP_REGISTER = new LinkedHashMap<>();
+    private static final Map<String, Hardware> HW_REGISTER = new LinkedHashMap<>();
+    private static final Map<String, List<Hardware>[]> APP_HW_DEMAND = new HashMap<>();
+    private static final Map<String, List<ItemStack>[]> APP_UPGRADE_CONDITIONS = new HashMap<>();
+    private static final List<String> DEFAULT_APPS = new ArrayList<>();
     @SideOnly(Side.CLIENT)
     public static final File TERMINAL_PATH = new File(Loader.instance().getConfigDir(), ConfigHolder.U.clientConfig.terminalRootPath);
 
     public static void init() {
         // register hardware
         registerHardware(new BatteryHardware());
+        registerHardware(new DeviceHardware(1));
+        registerHardware(new DeviceHardware(2));
+        registerHardware(new DeviceHardware(3));
+        registerHardware(new DeviceHardware(4));
         // register applications
-        AppBuilder.create(new SimpleMachineGuideApp()).defaultApp(true).build();
-        AppBuilder.create(new MultiBlockGuideApp()).defaultApp(true).build();
-        AppBuilder.create(new ItemGuideApp()).defaultApp(true).build();
-        AppBuilder.create(new TutorialGuideApp()).defaultApp(true).build();
-        AppBuilder.create(new GuideEditorApp()).defaultApp(true).build();
-        AppBuilder.create(new ThemeSettingApp()).defaultApp(true).build();
-        AppBuilder.create(new OreProspectorApp()).defaultApp(false).battery(GTValues.MV, 1000).build();
+        AppRegistryBuilder.create(new SimpleMachineGuideApp()).defaultApp().build();
+        AppRegistryBuilder.create(new MultiBlockGuideApp()).defaultApp().build();
+        AppRegistryBuilder.create(new ItemGuideApp()).defaultApp().build();
+        AppRegistryBuilder.create(new TutorialGuideApp()).defaultApp().build();
+        AppRegistryBuilder.create(new GuideEditorApp()).defaultApp().build();
+        AppRegistryBuilder.create(new ThemeSettingApp()).defaultApp().build();
+        AppRegistryBuilder.create(new OreProspectorApp()).battery(GTValues.MV, 1000).device(DeviceHardware.DEVICE.SCANNER).build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
-            AppBuilder.create(new RecipeChartApp()).defaultApp(false).battery(GTValues.LV, 100).build();
+            AppRegistryBuilder.create(new RecipeChartApp()).battery(GTValues.LV, 100).build();
         }
-        AppBuilder.create(new ConsoleApp()).defaultApp(false).battery(GTValues.LV, 500).build();
-        AppBuilder.create(new BatteryManagerApp()).battery(GTValues.ULV, 10).defaultApp(true).build();
-        AppBuilder.create(new HardwareManagerApp()).defaultApp(true).build();
+        AppRegistryBuilder.create(new ConsoleApp()).battery(GTValues.LV, 500).device(DeviceHardware.DEVICE.WIRELESS).build();
+        AppRegistryBuilder.create(new BatteryManagerApp()).defaultApp().battery(GTValues.ULV, 10).build();
+        AppRegistryBuilder.create(new HardwareManagerApp()).defaultApp().build();
     }
 
     @SideOnly(Side.CLIENT)
@@ -75,7 +77,7 @@ public class TerminalRegistry {
             GTLog.logger.warn("Duplicate APP registry names exist: {}", name);
             return;
         }
-        APP_REGISTER.putObject(name, application);
+        APP_REGISTER.put(name, application);
     }
 
     public static void registerHardware(Hardware hardware) {
@@ -84,92 +86,119 @@ public class TerminalRegistry {
             GTLog.logger.warn("Duplicate APP registry names exist: {}", name);
             return;
         }
-        HW_REGISTER.putObject(name, hardware);
+        HW_REGISTER.put(name, hardware);
     }
 
-    public static void registerHardwareDemand(String name, boolean isDefaultApp, @Nullable List<Hardware> hardware, @Nullable List<List<Object>> upgrade) {
+    public static void registerHardwareDemand(String name, boolean isDefaultApp, @Nonnull List<Hardware>[] hardware, @Nonnull List<ItemStack>[] upgrade) {
         if (name != null && APP_REGISTER.containsKey(name)) {
             if (isDefaultApp) {
                 DEFAULT_APPS.add(name);
             }
-            if (hardware != null && !hardware.isEmpty()) {
-                APP_HW_DEMAND.putObject(name, hardware);
-            }
-            if (upgrade != null && !upgrade.isEmpty()) {
-                APP_UPGRADE_CONDITIONS.putObject(name, upgrade);
-            }
+            APP_HW_DEMAND.put(name, hardware);
+            APP_UPGRADE_CONDITIONS.put(name, upgrade);
         } else {
             GTLog.logger.error("Not found the app {}", name);
         }
     }
 
     public static List<AbstractApplication> getDefaultApps() {
-        return DEFAULT_APPS.stream().map(APP_REGISTER::getObject).collect(Collectors.toList());
+        return DEFAULT_APPS.stream().map(APP_REGISTER::get).collect(Collectors.toList());
     }
 
-    public static List<AbstractApplication> getAllApps() {
-        return APP_REGISTER.getKeys().stream().map(APP_REGISTER::getObject).collect(Collectors.toList());
+    public static Collection<AbstractApplication> getAllApps() {
+        return APP_REGISTER.values();
     }
 
     public static AbstractApplication getApplication(String name) {
-        return APP_REGISTER.getObject(name);
+        return APP_REGISTER.get(name);
     }
 
-    public static List<Hardware> getAllHardware() {
-        return HW_REGISTER.getKeys().stream().map(HW_REGISTER::getObject).collect(Collectors.toList());
+    public static Collection<Hardware> getAllHardware() {
+        return HW_REGISTER.values();
     }
 
     public static Hardware getHardware(String name) {
-        return HW_REGISTER.getObject(name);
+        return HW_REGISTER.get(name);
     }
 
-    public static List<Hardware> getAppHardwareDemand(String name) {
-        return APP_HW_DEMAND.getObject(name);
+    public static List<Hardware> getAppHardwareDemand(String name, int tier) {
+        return APP_HW_DEMAND.get(name)[tier] != null ? APP_HW_DEMAND.get(name)[tier] : Collections.emptyList();
     }
 
-    public static List<List<Object>> getAppHardwareUpgradeConditions(String name) {
-        return APP_UPGRADE_CONDITIONS.getObject(name);
+    public static List<ItemStack> getAppHardwareUpgradeConditions(String name, int tier) {
+        return APP_UPGRADE_CONDITIONS.get(name)[tier] != null ? APP_UPGRADE_CONDITIONS.get(name)[tier] : Collections.emptyList();
     }
 
-    private static class AppBuilder {
+    private static class AppRegistryBuilder {
         AbstractApplication app;
         boolean isDefaultApp;
-        List<Hardware> hardware;
-        List<List<Object>> upgrade;
+        ImmutableList.Builder<Hardware>[] hardware;
+        ImmutableList.Builder<ItemStack>[] upgrade;
 
-        public static AppBuilder create(AbstractApplication app){
-            AppBuilder builder = new AppBuilder();
+        public static AppRegistryBuilder create(AbstractApplication app){
+            AppRegistryBuilder builder = new AppRegistryBuilder();
             builder.app = app;
-            builder.hardware = new ArrayList<>();
-            builder.upgrade = new ArrayList<>(Collections.nCopies(app.getMaxTier(), null));
+            builder.hardware = new ImmutableList.Builder[app.getMaxTier() + 1];
+            builder.upgrade = new ImmutableList.Builder[app.getMaxTier() + 1];
             return builder;
         }
 
-        public AppBuilder defaultApp(boolean isDefaultApp){
-            this.isDefaultApp = isDefaultApp;
+        public AppRegistryBuilder defaultApp(){
+            this.isDefaultApp = true;
             return this;
         }
 
-        public AppBuilder battery(int tier, long cost) {
-            this.hardware.add(new BatteryHardware.BatteryDemand(tier, cost));
+        public AppRegistryBuilder battery(int batteryTier, long cost) {
+            Hardware hw = new BatteryHardware.BatteryDemand(batteryTier, cost);
+            for (int i = 0; i <= app.getMaxTier(); i++) {
+                this.hardware(i, hw);
+            }
             return this;
         }
 
-        public AppBuilder hardware(Hardware... hardware) {
-            this.hardware.addAll(Arrays.asList(hardware));
+        public AppRegistryBuilder battery(int tier, int batteryTier, long cost) {
+            this.hardware(tier, new BatteryHardware.BatteryDemand(batteryTier, cost));
             return this;
         }
 
-        public AppBuilder upgrade(int tier, List<Object> objects) {
-            if (tier < upgrade.size()) {
-                upgrade.set(tier, objects);
+        public AppRegistryBuilder device(DeviceHardware.DEVICE... device) {
+            Hardware[] hw = Arrays.stream(device).map(DeviceHardware.DeviceDemand::new).toArray(Hardware[]::new);
+            for (int i = 0; i <= app.getMaxTier(); i++) {
+                this.hardware(i, hw);
+            }
+            return this;
+        }
+
+        public AppRegistryBuilder device(int tier, DeviceHardware.DEVICE... device) {
+            this.hardware(tier, Arrays.stream(device).map(DeviceHardware.DeviceDemand::new).toArray(Hardware[]::new));
+            return this;
+        }
+
+        public AppRegistryBuilder hardware(int tier, Hardware... hardware) {
+            if (tier < this.hardware.length) {
+                if (this.hardware[tier] == null) {
+                    this.hardware[tier] = ImmutableList.builder();
+                }
+                this.hardware[tier].add(hardware);
+            }
+            return this;
+        }
+
+        public AppRegistryBuilder upgrade(int tier, ItemStack... upgrade) {
+            if (tier < this.upgrade.length) {
+                if (this.upgrade[tier] == null) {
+                    this.upgrade[tier] = ImmutableList.builder();
+                }
+                this.upgrade[tier].add(upgrade);
             }
             return this;
         }
 
         public void build() {
             TerminalRegistry.registerApp(app);
-            TerminalRegistry.registerHardwareDemand(app.getRegistryName(), isDefaultApp, hardware, upgrade);
+            TerminalRegistry.registerHardwareDemand(app.getRegistryName(), isDefaultApp,
+                    Arrays.stream(hardware).map(builder->builder == null ? null : builder.build()).toArray(List[]::new),
+                    Arrays.stream(upgrade).map(builder->builder == null ? null : builder.build()).toArray(List[]::new));
         }
     }
 }

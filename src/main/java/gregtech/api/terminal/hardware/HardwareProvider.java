@@ -25,35 +25,51 @@ import java.util.stream.Collectors;
 public class HardwareProvider implements ICapabilityProvider, IItemCapabilityProvider {
     private Map<String, Hardware> providers;
     private ItemStack itemStack;
+    private NBTTagCompound tag;
 
 
     public HardwareProvider() {
 
     }
 
+    public Map<String, Hardware> getProviders() {
+        return providers;
+    }
+
     public ItemStack getItemStack() {
         return itemStack;
+    }
+
+    public NBTTagCompound getOrCreateHardwareCompound() {
+        if (tag == null) {
+            NBTTagCompound terminal = itemStack.getOrCreateSubCompound("terminal");
+            if (!terminal.hasKey("_hw")) {
+                terminal.setTag("_hw", new NBTTagCompound());
+            }
+            tag = terminal.getCompoundTag("_hw");
+        }
+        return tag;
     }
 
     public List<Hardware> getHardware() {
         if (TerminalBehaviour.isCreative(itemStack)) {
             return new ArrayList<>(providers.values());
         }
-        return itemStack.getOrCreateSubCompound("terminal").getCompoundTag("_hw").getKeySet().stream().map(providers::get).filter(Objects::nonNull).collect(Collectors.toList());
+        return getOrCreateHardwareCompound().getKeySet().stream().map(providers::get).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     public boolean hasHardware(String name) {
-        return itemStack.getOrCreateSubCompound("terminal").getCompoundTag("_hw").hasKey(name);
+        return TerminalBehaviour.isCreative(getItemStack()) || getOrCreateHardwareCompound().hasKey(name);
     }
 
     public NBTTagCompound getHardwareNBT(String name) {
-        return itemStack.getOrCreateSubCompound("terminal").getCompoundTag("_hw").getCompoundTag(name);
+        return getOrCreateHardwareCompound().getCompoundTag(name);
     }
 
     @Override
     public ICapabilityProvider createProvider(ItemStack itemStack) {
         HardwareProvider provider = new HardwareProvider();
-        provider.providers = new HashMap<>();
+        provider.providers = new LinkedHashMap<>();
         provider.itemStack = itemStack;
         for (Hardware hardware : TerminalRegistry.getAllHardware()) {
             Hardware instance = hardware.createHardware(itemStack);
@@ -71,7 +87,7 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
             for (Map.Entry<String, Hardware> entry : providers.entrySet()) {
                 Hardware provider = entry.getValue();
                 if (provider instanceof IHardwareCapability &&
-                        (hasHardware(entry.getKey()) || TerminalBehaviour.isCreative(getItemStack())) &&
+                        hasHardware(entry.getKey()) &&
                         ((IHardwareCapability) provider).hasCapability(capability)) {
                     return true;
                 }
@@ -87,7 +103,7 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
             for (Map.Entry<String, Hardware> entry : providers.entrySet()) {
                 Hardware provider = entry.getValue();
                 if (provider instanceof IHardwareCapability &&
-                        (hasHardware(entry.getKey()) || TerminalBehaviour.isCreative(getItemStack())) &&
+                        hasHardware(entry.getKey()) &&
                         ((IHardwareCapability) provider).hasCapability(capability)) {
                     return ((IHardwareCapability) provider).getCapability(capability);
                 }

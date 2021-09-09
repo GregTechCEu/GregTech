@@ -2005,6 +2005,8 @@ metaitem.terminal.tooltip=Sharp tools make good work
 metaitem.terminal.tooltip.creative=§bCreative Mode
 metaitem.terminal.tooltip.hardware=§aHardware: %d
 
+metaitem.wireless.name=Wireless Transmitter
+
 tile.casing.ulv=ULV Machine Casing
 tile.casing.lv=LV Machine Casing
 tile.casing.mv=MV Machine Casing
@@ -3856,11 +3858,13 @@ gregtech.terminal.app_name.recipe_chart=Recipe Chart
 gregtech.terminal.app_name.ore_prospector=Ore Prospector
 gregtech.terminal.app_name.console=GT Console
 gregtech.terminal.app_name.battery=Battery Manager
+gregtech.terminal.app_name.hardware=Hardware Manager
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
 
 terminal.hw.battery=Battery
+terminal.hw.device=Device %d
 
 terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
 terminal.os.hw_demand=Missing mounting hardware:
@@ -3931,3 +3935,7 @@ terminal.console.gui=Open machine gui
 terminal.console.maintenance=Fix all problems
 terminal.console.venting=set as venting
 terminal.console.controllable=set working enable
+
+terminal.hardware.select=Mounting hardware
+terminal.hardware.remove=Remove hardware
+

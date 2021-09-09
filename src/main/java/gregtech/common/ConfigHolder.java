@@ -275,10 +275,10 @@ public class ConfigHolder {
 
         public static class ClientConfig {
 			
-            @Config.Comment("Terminal root path. Default: gregtech/terminal")
+            @Config.Comment("Terminal root path. Default: (config/)gregtech/terminal")
             public String terminalRootPath = "gregtech/terminal";
 
-            @Config.Comment("Whether to use shader program. Default: true")
+            @Config.Comment("Whether to use shader programs. Default: true")
             public boolean useShader = true;
 
             @Config.Comment("Resolution level for fragment shaders. The higher the resolution, the better the quality (restricted by the resolution of your screen), the greater the burden of the graphics card. Default: 2")

@@ -14,6 +14,8 @@ public interface IElectricItem {
      */
     boolean canProvideChargeExternally();
 
+    boolean chargeable();
+
     /**
      * Adds charge listener to this electric item
      *

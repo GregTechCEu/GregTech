@@ -67,9 +67,9 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
             for (Hardware hw : hardware) {
                 String info = hw.addInformation();
                 if (info == null) {
-                    lines.add(I18n.format(hw.getUnlocalizedName()));
+                    lines.add(hw.getLocalizedName());
                 } else {
-                    lines.add(String.format("%s (%s)", I18n.format(hw.getUnlocalizedName()), info));
+                    lines.add(String.format("%s (%s)", hw.getLocalizedName(), info));
                 }
             }
         }

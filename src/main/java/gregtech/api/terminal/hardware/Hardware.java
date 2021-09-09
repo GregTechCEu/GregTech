@@ -1,6 +1,10 @@
 package gregtech.api.terminal.hardware;
 
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.common.items.behaviors.TerminalBehaviour;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
@@ -18,11 +22,17 @@ public abstract class Hardware  {
 
     public abstract String getRegistryName();
 
-    public final String getUnlocalizedName() {
-        return "terminal.hw." + getRegistryName();
+    @SideOnly(Side.CLIENT)
+    public String getLocalizedName() {
+        return I18n.format("terminal.hw." + getRegistryName());
     }
 
-    /***
+    @SideOnly(Side.CLIENT)
+    public IGuiTexture getIcon() {
+        return GuiTextures.ICON_REMOVE;
+    }
+
+    /**
      * Check whether the current hardware (this) meets requirement (demand);
      */
     public boolean isHardwareAdequate(Hardware demand) {
@@ -30,7 +40,7 @@ public abstract class Hardware  {
     }
 
     /**
-     * Check whether the terminal has the hardware.
+     * Check whether the terminal has this hardware.
      */
     public final boolean hasHW() {
         return provider.hasHardware(getRegistryName());
@@ -44,14 +54,14 @@ public abstract class Hardware  {
     }
 
     /**
-     * Check whether the terminal is creative mode.
+     * Check whether the terminal is in creative mode.
      */
     public final boolean isCreative(){
         return TerminalBehaviour.isCreative(provider.getItemStack());
     }
 
     /**
-     * information added in tooltips
+     * information added to tooltips
      * @return null->nothing added.
      */
     @SideOnly(Side.CLIENT)
@@ -65,4 +75,10 @@ public abstract class Hardware  {
      * @return instance
      */
     protected abstract Hardware createHardware(ItemStack itemStack);
+
+    /**
+     * Use the item to install this hardware.
+     * @return The NBT of the hardware is returned if the item is valid, otherwise NULL is returned
+     */
+    public abstract NBTTagCompound acceptItemStack(ItemStack itemStack);
 }

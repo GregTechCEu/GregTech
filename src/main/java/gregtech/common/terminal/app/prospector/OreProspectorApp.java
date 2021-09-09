@@ -28,7 +28,7 @@ public class OreProspectorApp extends AbstractApplication implements
 
     @Override
     public AbstractApplication initApp() {
-        int chunkRadius = 7;
+        int chunkRadius = getAppTier() + 1;
         int offset = (232 - 32 * 7 + 16) / 2;
         this.addWidget(new ImageWidget(0, 0, 333, 232, TerminalTheme.COLOR_B_2));
         if (isClient) {
@@ -37,9 +37,14 @@ public class OreProspectorApp extends AbstractApplication implements
             this.widgetOreList = new WidgetOreList(32 * chunkRadius - 16, offset, 333 - 32 * chunkRadius  + 16, 232 - 2 * offset);
             this.addWidget(this.widgetOreList);
         }
-        this.widgetProspectingMap = new WidgetProspectingMap(0, offset, chunkRadius, this.widgetOreList, 0, 1);
+        this.widgetProspectingMap = new WidgetProspectingMap((7 - chunkRadius) * 16, offset + (7 - chunkRadius) * 16, chunkRadius, this.widgetOreList, 0, 1);
         this.addWidget(1, this.widgetProspectingMap);
         return this;
+    }
+
+    @Override
+    public int getMaxTier() {
+        return 6;
     }
 
     @Override

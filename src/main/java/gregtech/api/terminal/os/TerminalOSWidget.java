@@ -103,26 +103,28 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public void openApplication(AbstractApplication application, boolean isClient) {
-        List<Hardware> hwDemand = TerminalRegistry.getAppHardwareDemand(application.getRegistryName());
-        List<Hardware> unMatch = hwDemand.stream().filter(demand -> getHardware().stream().noneMatch(hw -> hw.isHardwareAdequate(demand))).collect(Collectors.toList());
-        if (unMatch.size() > 0) {
-            if (isClient) {
-                StringBuilder tooltips = new StringBuilder("\n");
-                for (Hardware match : unMatch) {
-                    String info = match.addInformation();
-                    String name = I18n.format(match.getUnlocalizedName());
-                    if (info == null) {
-                        tooltips.append(name);
-                    } else {
-                        tooltips.append(String.format("%s (%s)", name, info));
+        if (!TerminalBehaviour.isCreative(itemStack)) {
+            List<Hardware> hwDemand = TerminalRegistry.getAppHardwareDemand(application.getRegistryName(), application.getAppTier());
+            List<Hardware> unMatch = hwDemand.stream().filter(demand -> getHardware().stream().noneMatch(hw -> hw.isHardwareAdequate(demand))).collect(Collectors.toList());
+            if (unMatch.size() > 0) {
+                if (isClient) {
+                    StringBuilder tooltips = new StringBuilder("\n");
+                    for (Hardware match : unMatch) {
+                        String info = match.addInformation();
+                        String name = match.getLocalizedName();
+                        if (info == null) {
+                            tooltips.append(name);
+                        } else {
+                            tooltips.append(String.format("%s (%s)", name, info));
+                        }
+                        tooltips.append(" ");
                     }
-                    tooltips.append(" ");
+                    TerminalDialogWidget.showInfoDialog(this,
+                            "terminal.component.error",
+                            I18n.format("terminal.os.hw_demand") + tooltips).setClientSide().open();
                 }
-                TerminalDialogWidget.showInfoDialog(this,
-                        "terminal.component.error",
-                        I18n.format("terminal.os.hw_demand") + tooltips).setClientSide().open();
+                return;
             }
-            return;
         }
         if (!application.canPlayerUse(gui.entityPlayer)) {
             return;
@@ -297,7 +299,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             }
             if (charge <= 0) {
                 for (AbstractApplication openedApp : openedApps) {
-                    TerminalRegistry.getAppHardwareDemand(openedApp.getRegistryName()).stream()
+                    TerminalRegistry.getAppHardwareDemand(openedApp.getRegistryName(), openedApp.getAppTier()).stream()
                             .filter(i->i instanceof BatteryHardware).findFirst()
                             .ifPresent(x -> this.closeApplication(openedApp, true));
                 }
@@ -331,10 +333,10 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             AtomicLong costs = new AtomicLong(0);
             List<AbstractApplication> charged = new ArrayList<>();
             for (AbstractApplication openedApp : openedApps) {
-                TerminalRegistry.getAppHardwareDemand(openedApp.getRegistryName()).stream()
+                TerminalRegistry.getAppHardwareDemand(openedApp.getRegistryName(), openedApp.getAppTier()).stream()
                         .filter(i->i instanceof BatteryHardware).findFirst()
                         .ifPresent(battery-> {
-                            costs.addAndGet(((BatteryHardware)battery).getCharge()*(openedApp.getAppTier() + 1));
+                            costs.addAndGet(((BatteryHardware)battery).getCharge());
                             charged.add(openedApp);
                         });
             }
