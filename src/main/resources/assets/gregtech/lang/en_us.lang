@@ -3606,6 +3606,13 @@ gregtech.machine.fluid_hatch.import.max.name=MAX Input Hatch
 
 gregtech.machine.fluid_hatch.export.tooltip=Fluid Output for Multiblocks
 
+gregtech.machine.fluid_hatch.import_4x.name=Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.name=Nonuple Input Hatch
+gregtech.machine.fluid_hatch.export_4x.name=Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.name=Nonuple Output Hatch
+gregtech.machine.multi_fluid_hatch_universal.tooltip.1=Capacity: §b16000mB§7 per tank.
+gregtech.machine.multi_fluid_hatch_universal.tooltip.2=Tank Count: §b%d
+
 gregtech.machine.fluid_hatch.export.ulv.name=ULV Output Hatch
 gregtech.machine.fluid_hatch.export.lv.name=LV Output Hatch
 gregtech.machine.fluid_hatch.export.mv.name=MV Output Hatch

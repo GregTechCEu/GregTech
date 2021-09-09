@@ -161,6 +161,8 @@ public class Textures {
     public static final SimpleOverlayRenderer INFINITE_WATER = new SimpleOverlayRenderer("cover/overlay_infinite_water", true);
     public static final SimpleOverlayRenderer PIPE_OUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_out");
     public static final SimpleOverlayRenderer PIPE_IN_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_in");
+    public static final SimpleOverlayRenderer PIPE_4X_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_4x");
+    public static final SimpleOverlayRenderer PIPE_9X_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_9x");
 
     // todo should we do emissive for these auto-output overlays?
     public static final SimpleOverlayRenderer FLUID_OUTPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_fluid_output");
