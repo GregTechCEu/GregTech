@@ -4,7 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.NotifiableFluidTankList;
+import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.TankWidget;
@@ -49,9 +49,9 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart 
     protected void initializeInventory() {
         FluidTank[] fluidsHandlers = new FluidTank[(int) Math.pow(this.getTier(), 2)];
         for (int i = 0; i <fluidsHandlers.length; i++) {
-            fluidsHandlers[i] = new FluidTank(TANK_SIZE);
+            fluidsHandlers[i] = new NotifiableFluidTank(TANK_SIZE, this, isExportHatch);
         }
-        this.fluidTanks = new NotifiableFluidTankList(false, this, isExportHatch, fluidsHandlers);
+        this.fluidTanks = new FluidTankList(false, fluidsHandlers);
         this.fluidInventory = fluidTanks;
         super.initializeInventory();
     }
@@ -119,6 +119,25 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart 
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
         abilityList.addAll(isExportHatch ? this.exportFluids.getFluidTanks() : this.importFluids.getFluidTanks());
+    }
+
+    @Override
+    public void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+        FluidTankList handlers;
+        if (isExportHatch) {
+            handlers = getExportFluids();
+        } else {
+            handlers = getImportFluids();
+        }
+        if (handlers != null) {
+            for (IFluidTank fluidTank : handlers) {
+                if (fluidTank instanceof NotifiableFluidTank) {
+                    NotifiableFluidTank handler = (NotifiableFluidTank) fluidTank;
+                    handler.setNotifiableMetaTileEntity(metaTileEntity);
+                    handler.addToNotifiedList(this, handler, isExportHatch);
+                }
+            }
+        }
     }
 
     @Override
