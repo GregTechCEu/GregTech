@@ -173,13 +173,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     @Override
     protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
         super.handleDisplayClick(componentData, clickData);
-        isDistinct = !isDistinct;
-        //mark busses as changed on distinct toggle
-        if (isDistinct) {
-            this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
-        } else {
-            this.notifiedItemInputList.add(this.inputInventory);
-        }
+        toggleDistinct();
     }
 
     @Override
@@ -234,5 +228,16 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     public boolean isDistinct() {
         return isDistinct;
+    }
+
+    protected void toggleDistinct() {
+        isDistinct = !isDistinct;
+        recipeMapWorkable.onDistinctChanged();
+        //mark buses as changed on distinct toggle
+        if (isDistinct) {
+            this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+        } else {
+            this.notifiedItemInputList.add(this.inputInventory);
+        }
     }
 }

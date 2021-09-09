@@ -49,6 +49,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         setActive(false); // this marks dirty for us
     }
 
+    public void onDistinctChanged() {
+        this.lastRecipeIndex = 0;
+    }
+
     public IEnergyContainer getEnergyContainer() {
         RecipeMapMultiblockController controller = (RecipeMapMultiblockController) metaTileEntity;
         return controller.getEnergyContainer();
