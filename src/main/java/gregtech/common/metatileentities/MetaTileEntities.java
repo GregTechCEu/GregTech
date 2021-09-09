@@ -123,6 +123,8 @@ public class MetaTileEntities {
     public static final MetaTileEntityItemBus[] ITEM_EXPORT_BUS = new MetaTileEntityItemBus[GTValues.UHV + 1];
     public static final MetaTileEntityFluidHatch[] FLUID_IMPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
     public static final MetaTileEntityFluidHatch[] FLUID_EXPORT_HATCH = new MetaTileEntityFluidHatch[GTValues.UHV + 1];
+    public static final MetaTileEntityMultiFluidHatch[] MULTI_FLUID_IMPORT_HATCH = new MetaTileEntityMultiFluidHatch[2];
+    public static final MetaTileEntityMultiFluidHatch[] MULTI_FLUID_EXPORT_HATCH = new MetaTileEntityMultiFluidHatch[2];
     public static final MetaTileEntityEnergyHatch[] ENERGY_INPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
     public static final MetaTileEntityAdjustableEnergyHatch[] ENERGY_INPUT_HATCH_ADJUSTABLE = new MetaTileEntityAdjustableEnergyHatch[GTValues.V.length];
     public static final MetaTileEntityEnergyHatch[] ENERGY_OUTPUT_HATCH = new MetaTileEntityEnergyHatch[GTValues.V.length];
@@ -490,6 +492,12 @@ public class MetaTileEntities {
         GregTechAPI.registerMetaTileEntity(1165 + 9, ITEM_EXPORT_BUS[9]);
         GregTechAPI.registerMetaTileEntity(1180 + 9, FLUID_IMPORT_HATCH[9]);
         GregTechAPI.registerMetaTileEntity(1195 + 9, FLUID_EXPORT_HATCH[9]);
+
+        // Multi-Fluid Hatches
+        MULTI_FLUID_IMPORT_HATCH[0] = GregTechAPI.registerMetaTileEntity(1190, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_4x"), 2, false));
+        MULTI_FLUID_IMPORT_HATCH[1] = GregTechAPI.registerMetaTileEntity(1191, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.import_9x"), 3, false));
+        MULTI_FLUID_EXPORT_HATCH[0] = GregTechAPI.registerMetaTileEntity(1205, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_4x"), 2, true));
+        MULTI_FLUID_EXPORT_HATCH[1] = GregTechAPI.registerMetaTileEntity(1206, new MetaTileEntityMultiFluidHatch(gregtechId("fluid_hatch.export_9x"), 3, true));
 
         // Energy Input/Output Hatches, IDs 1210-1269
         endPos = GTValues.HT ? ENERGY_INPUT_HATCH.length - 1 : Math.min(ENERGY_INPUT_HATCH.length - 1, GTValues.UV + 1);

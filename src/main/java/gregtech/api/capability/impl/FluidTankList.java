@@ -95,8 +95,10 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
                 totalFilled += filledAmount;
                 resource.amount -= filledAmount;
                 //if filling multiple tanks is not allowed, or resource is empty, return now
-                if (!allowSameFluidFill || resource.amount == 0)
+                if (!allowSameFluidFill || resource.amount == 0) {
+                    if (doFill && totalFilled > 0) onContentsChanged();
                     return totalFilled;
+                }
             }
         }
         //otherwise, try to fill empty tanks
@@ -105,10 +107,13 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
                 int filledAmount = handler.fill(resource, doFill);
                 totalFilled += filledAmount;
                 resource.amount -= filledAmount;
-                if (!allowSameFluidFill || resource.amount == 0)
+                if (!allowSameFluidFill || resource.amount == 0) {
+                    if (doFill && totalFilled > 0) onContentsChanged();
                     return totalFilled;
+                }
             }
         }
+        if (doFill && totalFilled > 0) onContentsChanged();
         return totalFilled;
     }
 
@@ -135,6 +140,7 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
             resource.amount -= drain.amount;
             if (resource.amount == 0) break;
         }
+        if (doDrain && totalDrained != null && totalDrained.amount > 0) onContentsChanged();
         return totalDrained;
     }
 
@@ -162,7 +168,11 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
             }
             if (maxDrain <= 0) break;
         }
+        if (doDrain && totalDrained != null && totalDrained.amount > 0) onContentsChanged();
         return totalDrained;
+    }
+
+    protected void onContentsChanged() {
     }
 
     @Override
