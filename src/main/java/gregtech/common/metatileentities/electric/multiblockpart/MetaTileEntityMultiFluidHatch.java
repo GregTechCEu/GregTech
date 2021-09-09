@@ -72,21 +72,26 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart 
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         if (shouldRenderOverlay()) {
-            SimpleOverlayRenderer renderer = isExportHatch ? Textures.PIPE_OUT_OVERLAY : Textures.PIPE_IN_OVERLAY;
+            SimpleOverlayRenderer renderer = getTier() == 2 ? Textures.PIPE_4X_OVERLAY : Textures.PIPE_9X_OVERLAY;
             renderer.renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     @Override
     public ICubeRenderer getBaseTexture() {
-        MultiblockControllerBase controller = this.getController();
-        if(controller != null)
-            return controller.getBaseTexture(this);
-
-        if (this.getTier() == 3)
-            return Textures.VOLTAGE_CASINGS[5];
-        else
-            return Textures.VOLTAGE_CASINGS[3];
+        MultiblockControllerBase controller = getController();
+        if (controller != null) {
+            this.hatchTexture = controller.getBaseTexture(this);
+        }
+        if (controller == null && this.hatchTexture != null) {
+            return this.hatchTexture;
+        }
+        if (controller == null) {
+            this.setPaintingColor(DEFAULT_PAINTING_COLOR);
+            return Textures.VOLTAGE_CASINGS[getTier() == 2 ? 3 : 5];
+        }
+        this.setPaintingColor(0xFFFFFF);
+        return controller.getBaseTexture(this);
     }
 
     @Override
