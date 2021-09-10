@@ -30,10 +30,17 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     private TreeListWidget<String, T> tree;
     private TreeNode<String, T> ROOT;
     private Map<T, JsonObject> jsonObjectMap;
+    private final IGuiTexture icon;
     public GuideApp(String name, IGuiTexture icon) {
-        super(name, icon);
+        super(name);
+        this.icon = icon;
         ROOT = new TreeNode<>(0, "root");
         jsonObjectMap = new HashMap<>();
+    }
+
+    @Override
+    public IGuiTexture getIcon() {
+        return icon;
     }
 
     @Override

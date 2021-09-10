@@ -10,7 +10,7 @@ import gregtech.api.util.Size;
 public class TerminalDesktopWidget extends WidgetGroup {
     private final TerminalOSWidget os;
     private final WidgetGroup appDiv;
-    private boolean blockApp;
+    private int blockApp;
 
     public TerminalDesktopWidget(Position position, Size size, TerminalOSWidget os) {
         super(position, size);
@@ -26,7 +26,7 @@ public class TerminalDesktopWidget extends WidgetGroup {
         int y = (index / 7) * (3 * r) + 40;
         CircleButtonWidget button = new CircleButtonWidget(x,y)
                 .setColors(TerminalTheme.COLOR_B_2.getColor(),
-                        TerminalTheme.COLOR_F_1.getColor(),
+                        application.getThemeColor(),
                         TerminalTheme.COLOR_B_2.getColor())
                 .setIcon(application.getIcon())
                 .setHoverText(application.getUnlocalizedName());
@@ -35,13 +35,17 @@ public class TerminalDesktopWidget extends WidgetGroup {
     }
 
     public void setBlockApp(boolean blockApp) {
-        this.blockApp = blockApp;
+        if (blockApp) {
+            this.blockApp++;
+        } else {
+            this.blockApp--;
+        }
     }
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         for (Widget widget : widgets) {
-            if (widget.isVisible() && !blockApp) {
+            if (widget.isVisible() && !(blockApp > 0 && widget instanceof AbstractApplication)) {
                 widget.drawInForeground(mouseX, mouseY);
             }
         }

@@ -1,7 +1,6 @@
 package gregtech.common.terminal.app.console;
 
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;
@@ -10,10 +9,9 @@ import gregtech.common.terminal.app.console.widget.MachineConsoleWidget;
 import gregtech.common.terminal.app.console.widget.MachineSceneWidget;
 
 public class ConsoleApp extends AbstractApplication {
-    public static final TextureArea ICON = TextureArea.fullImage("textures/gui/terminal/console/icon.png");
 
     public ConsoleApp() {
-        super("console", ICON);
+        super("console");
     }
 
     @Override

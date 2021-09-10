@@ -5,7 +5,6 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
 import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.TabGroup;
 import gregtech.api.gui.widgets.tab.IGuiTextureTabInfo;
 import gregtech.api.gui.widgets.tab.ITabInfo;
@@ -30,17 +29,18 @@ import net.minecraftforge.common.util.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RecipeChartApp extends AbstractApplication implements IRecipeTransferHandlerWidget {
-    public static final TextureArea ICON = TextureArea.fullImage("textures/gui/terminal/recipe_graph/icon.png");
-
     private TabGroup<RGContainer> tabGroup;
 
     public RecipeChartApp() {
-        super("recipe_chart", ICON);
+        super("recipe_chart");
+    }
+
+    @Override
+    public int getThemeColor() {
+        return 0xff008001;
     }
 
     @Override
@@ -196,5 +196,10 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
             }
         }
         return "please select a node.";
+    }
+
+    @Override
+    public int getMaxTier() {
+        return 3;
     }
 }

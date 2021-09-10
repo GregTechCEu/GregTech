@@ -13,19 +13,20 @@ import gregtech.api.terminal.gui.widgets.ColorWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.gui.widgets.SelectorWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
-import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
-import java.io.File;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class ThemeSettingApp extends AbstractApplication {
     public ThemeSettingApp() {
-        super("theme_settings", GuiTextures.GREGTECH_LOGO);
+        super("theme_settings");
+    }
+
+    @Override
+    public IGuiTexture getIcon() {
+        return GuiTextures.GREGTECH_LOGO;
     }
 
     private WidgetGroup textureGroup;

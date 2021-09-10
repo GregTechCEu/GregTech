@@ -54,7 +54,7 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
         }
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setLong("maxCharge", electricItem.getMaxCharge());
-        nbt.setLong("charge", electricItem.getCharge());
+        nbt.setLong("charge", electricItem.getCharge() / 2);
         nbt.setInteger("tier", electricItem.getTier());
         return nbt;
     }

@@ -35,20 +35,19 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     private static final IGuiTexture DIALOG_BACKGROUND = TextureArea.fullImage("textures/gui/terminal/terminal_dialog.png");
     private static final IGuiTexture OK_NORMAL = TextureArea.fullImage("textures/gui/terminal/icon/ok_normal.png");
     private static final IGuiTexture OK_HOVER = TextureArea.fullImage("textures/gui/terminal/icon/ok_hover.png");
-    private static final IGuiTexture OK_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/ok_disable.png");
+//    private static final IGuiTexture OK_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/ok_disable.png");
     private static final IGuiTexture CANCEL_NORMAL = TextureArea.fullImage("textures/gui/terminal/icon/cancel_normal.png");
     private static final IGuiTexture CANCEL_HOVER = TextureArea.fullImage("textures/gui/terminal/icon/cancel_hover.png");
-    private static final IGuiTexture CANCEL_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/cancel_disable.png");
+//    private static final IGuiTexture CANCEL_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/cancel_disable.png");
     private static final int HEIGHT = 128;
     private static final int WIDTH = 184;
 
-    protected Interpolator interpolator;
     private final TerminalOSWidget os;
     private IGuiTexture background;
     private boolean isClient;
     private List<Widget> iNativeWidgets;
 
-    private TerminalDialogWidget(TerminalOSWidget os, int x, int y, int width, int height) {
+    public TerminalDialogWidget(TerminalOSWidget os, int x, int y, int width, int height) {
         super(x, y, width, height);
         this.os = os;
     }
@@ -57,12 +56,18 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return isClient;
     }
 
-    public TerminalDialogWidget open(){
+    public TerminalDialogWidget open() {
         os.openDialog(this);
         if (iNativeWidgets != null) {
             iNativeWidgets.forEach(this::addWidget);
         }
+        os.desktop.setBlockApp(true);
         return this;
+    }
+
+    public void close() {
+        os.closeDialog(this);
+        os.desktop.setBlockApp(false);
     }
 
     /**
@@ -82,7 +87,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     public TerminalDialogWidget addOkButton(Runnable callback) {
         addWidget(new CircleButtonWidget(WIDTH / 2, HEIGHT - 22, 12, 0, 24)
                 .setClickListener(cd -> {
-                    os.closeDialog(this);
+                    close();
                     if (callback != null)
                         callback.run();
                 })
@@ -95,7 +100,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     public TerminalDialogWidget addConfirmButton(Consumer<Boolean> result) {
         addWidget(new CircleButtonWidget(WIDTH / 2 - 30, HEIGHT - 22, 12, 0, 24)
                 .setClickListener(cd -> {
-                    os.closeDialog(this);
+                    close();
                     if (result != null)
                         result.accept(true);
                 })
@@ -104,7 +109,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 .setHoverIcon(OK_HOVER));
         addWidget(new CircleButtonWidget(WIDTH / 2 + 30, HEIGHT - 22, 12, 0, 24)
                 .setClickListener(cd -> {
-                    os.closeDialog(this);
+                    close();
                     if (result != null)
                         result.accept(false);
                 })
@@ -353,5 +358,26 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
         if (isClient) return;
         super.writeClientAction(id, packetBufferWriter);
+    }
+
+    @Override
+    public void handleClientAction(int id, PacketBuffer buffer) {
+        if (id == -1) { // esc close
+            if (buffer.readBoolean()) {
+                close();
+            }
+        } else {
+            super.handleClientAction(id, buffer);
+        }
+    }
+
+    @Override
+    public boolean keyTyped(char charTyped, int keyCode) {
+        if (keyCode == 1 && super.interpolator == null) {
+            writeClientAction(-1, buffer -> buffer.writeBoolean(true));
+            close();
+            return true;
+        }
+        return super.keyTyped(charTyped, keyCode);
     }
 }

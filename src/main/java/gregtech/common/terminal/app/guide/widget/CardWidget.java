@@ -75,33 +75,7 @@ public class CardWidget extends GuideWidget{
             int y = getPosition().y;
             int width = getSize().width;
             int height = getSize().height;
-            drawGradientRect(x + 5, y + height, width - 5, 5, 0x4f000000, 0, false);
-            drawGradientRect(x + width, y + 5, 5, height - 5, 0x4f000000, 0, true);
-
-            float startAlpha = (float) (0x4f) / 255.0F;
-            GlStateManager.disableTexture2D();
-            GlStateManager.enableBlend();
-            GlStateManager.disableAlpha();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder buffer = tessellator.getBuffer();
-            buffer.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
-            x += width;
-            y += height;
-            width = 5;
-            height = 5;
-            buffer.pos(x, y, 0).color(0, 0, 0, startAlpha).endVertex();
-            buffer.pos(x, y + height, 0).color(0, 0, 0, 0).endVertex();
-            buffer.pos(x + width, y + height, 0).color(0, 0, 0, 0).endVertex();
-
-            buffer.pos(x, y, 0).color(0, 0, 0, startAlpha).endVertex();
-            buffer.pos(x + width, y + height, 0).color(0, 0, 0, 0).endVertex();
-            buffer.pos(x + width, y, 0).color(0, 0, 0, 0).endVertex();
-            tessellator.draw();
-            GlStateManager.shadeModel(GL11.GL_FLAT);
-            GlStateManager.enableAlpha();
-            GlStateManager.enableTexture2D();
+            drawRectShadow(x, y, width, height, 5);
         }
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
     }

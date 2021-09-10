@@ -30,6 +30,9 @@ public class TerminalMenuWidget extends WidgetGroup {
 
     public TerminalMenuWidget(Position position, Size size, TerminalOSWidget os) {
         super(position, size);
+        addSelfPosition( -size.width, 0);
+        setVisible(false);
+        isHide = true;
         this.os = os;
         components = new ArrayList<>();
         this.addWidget(new CircleButtonWidget(5, 10, 4, 1, 0)
@@ -168,6 +171,7 @@ public class TerminalMenuWidget extends WidgetGroup {
         if (!super.mouseClicked(mouseX, mouseY, button)) {
             if (!isMouseOverElement(mouseX, mouseY) && !isHide) {
                 hideMenu();
+                return true;
             }
             return false;
         }

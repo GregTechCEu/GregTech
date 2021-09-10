@@ -366,22 +366,22 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     boolean waitShutdown;
     @Override
     public boolean keyTyped(char charTyped, int keyCode) {
+        if (waitShutdown) {
+            shutdown();
+            return true;
+        }
         if (super.keyTyped(charTyped, keyCode)) {
             return true;
         }
         if (keyCode == 1) { // hook esc
-            if (waitShutdown) {
-                shutdown();
-            } else {
-                waitShutdown = true;
-                TerminalDialogWidget.showConfirmDialog(this, "terminal.component.warning", "terminal.os.shutdown_confirm", result->{
-                    if (result) {
-                        shutdown();
-                    } else {
-                        waitShutdown = false;
-                    }
-                }).setClientSide().open();
-            }
+            waitShutdown = true;
+            TerminalDialogWidget.showConfirmDialog(this, "terminal.component.warning", "terminal.os.shutdown_confirm", result->{
+                if (result) {
+                    shutdown();
+                } else {
+                    waitShutdown = false;
+                }
+            }).setClientSide().open();
             return true;
         }
         waitShutdown = false;

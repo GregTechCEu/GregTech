@@ -3859,6 +3859,20 @@ gregtech.terminal.app_name.ore_prospector=Ore Prospector
 gregtech.terminal.app_name.console=GT Console
 gregtech.terminal.app_name.battery=Battery Manager
 gregtech.terminal.app_name.hardware=Hardware Manager
+gregtech.terminal.app_name.store=App Store
+
+terminal.app_name.description=No description.
+terminal.items.description=A guide book about items.
+terminal.machines.description=A guide book about gt machines.
+terminal.multiblocks.description=A guide book about multi-blocks.
+terminal.tutorials.description=Introduces all kinds of things, CT integration, tips, tutorials and more.
+terminal.theme_settings.description=Set theme colors and wallpaper of the GTOS here.
+terminal.guide_editor.description=An interactive guide page editor that allows you to create guide pages easily.
+terminal.recipe_chart.description=A tool for analyzing recipe chains, with which you can easily build a recipe graph and even calculate the ingredients needed like JEC.
+terminal.ore_prospector.description=Hate the scanner toy? Don't want to run around looking for ores? Come and look at it.
+terminal.console.description=A tool to help you free your inventory, it's time to say goodbye to wrench, screwdriver, hammer, and crowbar.
+terminal.battery.description=Battery manager, visually analyzing your app's energy consumption.
+terminal.hardware.description=Hardware Manager, masterpieces of elegance and precision. How can a tablet be without hardware?
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed

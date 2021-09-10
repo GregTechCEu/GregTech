@@ -1,26 +1,21 @@
 package gregtech.common.terminal.app.guideeditor;
 
 import gregtech.api.gui.GuiTextures;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.terminal.app.AbstractApplication;
+import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.common.terminal.app.guideeditor.widget.GuideConfigEditor;
 import gregtech.common.terminal.app.guideeditor.widget.GuidePageEditorWidget;
 import gregtech.common.terminal.component.ClickComponent;
-import gregtech.api.terminal.os.menu.IMenuComponent;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class GuideEditorApp extends AbstractApplication {
-    public static final TextureArea ICON = TextureArea.fullImage("textures/gui/terminal/guide_editor/icon.png");
-
 
     private GuideConfigEditor configEditor;
 
-
     public GuideEditorApp() {
-        super("guide_editor", ICON);
+        super("guide_editor");
     }
 
     @Override

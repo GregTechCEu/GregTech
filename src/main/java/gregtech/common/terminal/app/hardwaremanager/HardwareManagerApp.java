@@ -1,10 +1,7 @@
 package gregtech.common.terminal.app.hardwaremanager;
 
 import gregtech.api.gui.IRenderContext;
-import gregtech.api.gui.resources.ItemStackTexture;
-import gregtech.api.gui.resources.ResourceHelper;
-import gregtech.api.gui.resources.ShaderTexture;
-import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.gui.resources.*;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.render.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
@@ -28,7 +25,12 @@ public class HardwareManagerApp extends AbstractApplication {
     private WidgetGroup apps;
 
     public HardwareManagerApp() {
-        super("hardware", new ItemStackTexture(MetaItems.INTEGRATED_CIRCUIT.getStackForm()));
+        super("hardware");
+    }
+
+    @Override
+    public IGuiTexture getIcon() {
+        return new ItemStackTexture(MetaItems.INTEGRATED_CIRCUIT.getStackForm());
     }
 
     @Override
@@ -72,7 +74,7 @@ public class HardwareManagerApp extends AbstractApplication {
             if (circuit == null) {
                 circuit = ShaderTexture.createShader("circuit.frag");
             }
-            ResourceHelper.bindTexture("textures/shaders/font1.png");
+            ResourceHelper.bindTexture("textures/gui/terminal/terminal_background.png");
             circuit.draw(x, y, width, height, uniformCache -> {
                 uniformCache.glUniform1F("u_time", time);
                 uniformCache.glUniform2F("u_mouse",

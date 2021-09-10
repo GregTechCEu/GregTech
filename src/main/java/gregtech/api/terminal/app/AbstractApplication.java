@@ -1,6 +1,7 @@
 package gregtech.api.terminal.app;
 
 import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.IMenuComponent;
@@ -8,9 +9,12 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.items.behaviors.TerminalBehaviour;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,20 +22,31 @@ import java.util.function.Consumer;
 
 public abstract class AbstractApplication extends AnimaWidgetGroup {
     protected final String name;
-    protected final IGuiTexture icon;
     protected TerminalOSWidget os;
     protected boolean isClient;
     protected NBTTagCompound nbt;
 
-    public AbstractApplication(String name, IGuiTexture icon) {
+    public AbstractApplication(String name) {
         super(Position.ORIGIN, new Size(333, 232));
         this.name = name;
-        this.icon = icon;
     }
 
     public AbstractApplication setOs(TerminalOSWidget os) {
         this.os = os;
         return this;
+    }
+
+    /**
+     * App theme color
+     */
+    public int getThemeColor() {
+        return name.hashCode() | 0xff000000;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public String getDescription() {
+        String key = "terminal." + getRegistryName() + ".description";
+        return I18n.hasKey(key) ? I18n.format(key) : I18n.format("terminal.app_name.description");
     }
 
     /**
@@ -49,7 +64,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
      * App Icon
      */
     public IGuiTexture getIcon() {
-        return icon;
+        return TextureArea.fullImage("textures/gui/terminal/" + getRegistryName() + "/icon.png");
     }
 
     /**

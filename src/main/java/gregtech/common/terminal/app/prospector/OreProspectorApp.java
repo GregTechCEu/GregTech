@@ -1,16 +1,15 @@
 package gregtech.common.terminal.app.prospector;
 
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.ClickComponent;
 import gregtech.common.terminal.component.SearchComponent;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +22,12 @@ public class OreProspectorApp extends AbstractApplication implements
     WidgetProspectingMap widgetProspectingMap;
 
     public OreProspectorApp() {
-        super("ore_prospector", GuiTextures.SCANNER_OVERLAY);
+        super("ore_prospector");
+    }
+
+    @Override
+    public IGuiTexture getIcon() {
+        return GuiTextures.SCANNER_OVERLAY;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package gregtech.common.terminal.app.batterymanager;
 
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.terminal.TerminalRegistry;
@@ -14,7 +15,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class BatteryManagerApp extends AbstractApplication {
     public BatteryManagerApp() {
-        super("battery", new ItemStackTexture(MetaItems.BATTERY_HV_SODIUM.getStackForm()));
+        super("battery");
+    }
+
+    @Override
+    public IGuiTexture getIcon() {
+        return new ItemStackTexture(MetaItems.BATTERY_HV_SODIUM.getStackForm());
     }
 
     @Override

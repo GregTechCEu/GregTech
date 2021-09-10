@@ -2,13 +2,16 @@ package gregtech.api.terminal;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
+import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
+import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.ThemeSettingApp;
+import gregtech.common.terminal.app.appstore.AppStoreApp;
 import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
 import gregtech.common.terminal.app.console.ConsoleApp;
 import gregtech.common.terminal.app.guide.ItemGuideApp;
@@ -47,8 +50,6 @@ public class TerminalRegistry {
         registerHardware(new BatteryHardware());
         registerHardware(new DeviceHardware(1));
         registerHardware(new DeviceHardware(2));
-        registerHardware(new DeviceHardware(3));
-        registerHardware(new DeviceHardware(4));
         // register applications
         AppRegistryBuilder.create(new SimpleMachineGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new MultiBlockGuideApp()).defaultApp().build();
@@ -56,13 +57,22 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new TutorialGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new GuideEditorApp()).defaultApp().build();
         AppRegistryBuilder.create(new ThemeSettingApp()).defaultApp().build();
-        AppRegistryBuilder.create(new OreProspectorApp()).battery(GTValues.MV, 1000).device(DeviceHardware.DEVICE.SCANNER).build();
+        AppRegistryBuilder.create(new OreProspectorApp()).battery(GTValues.MV, 1000)
+                .upgrade(MetaItems.COIN_DOGE.getStackForm())
+                .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
+                .device(DeviceHardware.DEVICE.SCANNER).build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
-            AppRegistryBuilder.create(new RecipeChartApp()).battery(GTValues.LV, 100).build();
+            AppRegistryBuilder.create(new RecipeChartApp()).battery(GTValues.LV, 100)
+                    .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
+                    .upgrade(1, MetaItems.COIN_DOGE.getStackForm(20))
+                    .upgrade(2, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
+                    .upgrade(3, MetaItems.COIN_DOGE.getStackForm(40), MetaItems.COIN_CHOCOLATE.getStackForm(10), MetaItems.COIN_GOLD_ANCIENT.getStackForm())
+                    .build();
         }
         AppRegistryBuilder.create(new ConsoleApp()).battery(GTValues.LV, 500).device(DeviceHardware.DEVICE.WIRELESS).build();
         AppRegistryBuilder.create(new BatteryManagerApp()).defaultApp().battery(GTValues.ULV, 10).build();
         AppRegistryBuilder.create(new HardwareManagerApp()).defaultApp().build();
+        AppRegistryBuilder.create(new AppStoreApp()).defaultApp().build();
     }
 
     @SideOnly(Side.CLIENT)
@@ -174,21 +184,32 @@ public class TerminalRegistry {
             return this;
         }
 
+        public AppRegistryBuilder hardware(Hardware... hardware) {
+            for (int i = 0; i <= app.getMaxTier(); i++) {
+                this.hardware(i, hardware);
+            }
+            return this;
+        }
+
         public AppRegistryBuilder hardware(int tier, Hardware... hardware) {
             if (tier < this.hardware.length) {
-                if (this.hardware[tier] == null) {
-                    this.hardware[tier] = ImmutableList.builder();
-                }
+                this.hardware[tier] = ImmutableList.builder();
                 this.hardware[tier].add(hardware);
+            }
+            return this;
+        }
+
+        public AppRegistryBuilder upgrade(ItemStack... upgrade) {
+            ItemStack[] up = Arrays.stream(upgrade).toArray(ItemStack[]::new);
+            for (int i = 0; i <= app.getMaxTier(); i++) {
+                this.upgrade(i, up);
             }
             return this;
         }
 
         public AppRegistryBuilder upgrade(int tier, ItemStack... upgrade) {
             if (tier < this.upgrade.length) {
-                if (this.upgrade[tier] == null) {
-                    this.upgrade[tier] = ImmutableList.builder();
-                }
+                this.upgrade[tier] = ImmutableList.builder();
                 this.upgrade[tier].add(upgrade);
             }
             return this;
