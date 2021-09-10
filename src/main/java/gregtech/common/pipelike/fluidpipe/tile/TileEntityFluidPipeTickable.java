@@ -61,7 +61,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
             for (FluidTank tank : getFluidTanks()) {
                 FluidStack stack = tank.getFluid();
                 if (stack != null && stack.amount > 0) {
-                    int amountToDistribute = (int) Math.ceil(stack.amount / 2.0);
+                    int amountToDistribute = Math.min(stack.amount, getCapacityPerTank() / 2);
                     int c = amountToDistribute / handlers.size();
                     int m = amountToDistribute % handlers.size();
                     for (IFluidHandler handler : handlers) {

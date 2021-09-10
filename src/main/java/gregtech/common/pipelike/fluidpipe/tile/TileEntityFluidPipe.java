@@ -75,6 +75,9 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return openConnections;
     }
 
+    /**
+     * Formula: rate * frequency (5) * 2
+     */
     public int getCapacityPerTank() {
         return getNodeData().throughput * 10;
     }
