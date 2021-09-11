@@ -17,6 +17,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.*;
@@ -29,9 +31,9 @@ import java.util.concurrent.Callable;
  * @Date: 2021/08/31
  * @Description: ParticleManger register, spawn, efficient rendering, update our custom particles.
  */
-
-public enum GTParticleManager {
-    INSTANCE;
+@SideOnly(Side.CLIENT)
+public class GTParticleManager {
+    public final static GTParticleManager INSTANCE = new GTParticleManager();
 
     private static World currentWorld = null;
     private static ParticleManager particleManager = Minecraft.getMinecraft().effectRenderer;

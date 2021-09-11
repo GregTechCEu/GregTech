@@ -281,6 +281,9 @@ public class ConfigHolder {
             @Config.Comment("Whether to use shader programs. Default: true")
             public boolean useShader = true;
 
+            @Config.Comment("Whether to hook depth texture. It has no effect on performance, But if there is a problem with rendering, try disabling it. Default: true")
+            public boolean hookDepthTexture = true;
+
             @Config.Comment("Resolution level for fragment shaders. The higher the resolution, the better the quality (restricted by the resolution of your screen), the greater the burden of the graphics card. Default: 2")
             @Config.RangeDouble(min = 0, max = 5)
             public double resolution = 2;

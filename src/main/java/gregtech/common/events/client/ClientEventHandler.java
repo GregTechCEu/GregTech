@@ -1,6 +1,7 @@
 package gregtech.common.events.client;
 
 import gregtech.api.entities.particle.GTParticleManager;
+import gregtech.api.render.DepthTextureHook;
 import gregtech.common.ConfigHolder;
 import gregtech.common.render.WrenchOverlayRenderer;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
@@ -19,6 +20,11 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
         WrenchOverlayRenderer.onDrawBlockHighlight(event);
+    }
+
+    @SubscribeEvent
+    public static void onPreWorldRender(TickEvent.RenderTickEvent event) {
+        DepthTextureHook.onPreWorldRender(event);
     }
 
     @SubscribeEvent
