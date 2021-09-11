@@ -200,7 +200,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         if(!(this instanceof CoverFluidRegulator) && coverTile instanceof TileEntityFluidPipe ^ otherTile instanceof TileEntityFluidPipe) {
             primaryGroup.addWidget(new ToggleButtonWidget(149, 160, 20, 20, GuiTextures.DISTRIBUTION_MODE,
                     () -> distributionMode == DistributionMode.INSERT_FIRST,
-                    val -> distributionMode = val ? DistributionMode.INSERT_FIRST : DistributionMode.ROUND_ROBIN)
+                    val -> distributionMode = val ? DistributionMode.INSERT_FIRST : DistributionMode.ROUND_ROBIN_PRIO)
                     .setTooltipText("cover.conveyor.distribution"));
         }
               

@@ -4,6 +4,7 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
+import gregtech.api.util.GTUtility;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -12,10 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
 
@@ -25,10 +23,10 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         super(world);
     }
 
-    public List<Inventory> getNetData(BlockPos pipePos) {
+    public List<Inventory> getNetData(BlockPos pipePos, EnumFacing facing) {
         List<Inventory> data = NET_DATA.get(pipePos);
         if (data == null) {
-            data = ItemNetWalker.createNetData(this, getWorldData(), pipePos);
+            data = ItemNetWalker.createNetData(this, getWorldData(), pipePos, facing);
             data.sort(Comparator.comparingInt(inv -> inv.properties.priority));
             NET_DATA.put(pipePos, data);
         }
@@ -68,6 +66,7 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         private final EnumFacing faceToHandler;
         private final int distance;
         private final ItemPipeProperties properties;
+        private int insertMark = 0;
 
         public Inventory(BlockPos pipePos, EnumFacing facing, int distance, ItemPipeProperties properties) {
             this.pipePos = pipePos;
@@ -101,6 +100,18 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
             if (tile != null)
                 return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, faceToHandler.getOpposite());
             return null;
+        }
+
+        public int getInsertMark() {
+            return insertMark;
+        }
+
+        public void incrementMark() {
+            insertMark++;
+        }
+
+        public void resetMark() {
+            insertMark = 0;
         }
     }
 }

@@ -63,7 +63,7 @@ public class FluidNetHandler implements IFluidHandler {
 
         CoverPump pump = (CoverPump) (pipePump ? pipeCover : tileCover);
         if (pump.getPumpMode() == (pipePump ? CoverPump.PumpMode.IMPORT : CoverPump.PumpMode.EXPORT) &&
-                pump.getDistributionMode() == DistributionMode.ROUND_ROBIN) {
+                pump.getDistributionMode() == DistributionMode.ROUND_ROBIN_PRIO) {
             return insertRoundRobin(resource, doFill);
         }
 
