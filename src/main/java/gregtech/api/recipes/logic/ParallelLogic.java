@@ -3,6 +3,7 @@ package gregtech.api.recipes.logic;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.*;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -24,10 +25,10 @@ public class ParallelLogic {
      * @param parallelAmount The hard limit on the amount of parallel Recipes that can be performed
      * @return A Recipe that has had all factors scaled by the number of parallel operations
      */
-    protected Recipe multiplyRecipe(Recipe recipe, RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int parallelAmount) {
+    public static Tuple<Recipe, Integer> multiplyRecipe(Recipe recipe, RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int parallelAmount) {
 
         if(parallelAmount == 1) {
-            return recipe;
+            return new Tuple<>(recipe, parallelAmount);
         }
 
         // Find all the items in the combined Item Input inventories and create oversized ItemStacks
@@ -56,7 +57,7 @@ public class ParallelLogic {
         List<FluidStack> outputFluids = new ArrayList<>();
 
         // Populate the various holders of the multiplied Recipe
-        this.multiplyInputsAndOutputs(newRecipeInputs, newFluidInputs, outputItems, outputFluids, recipe, minMultiplier);
+        multiplyInputsAndOutputs(newRecipeInputs, newFluidInputs, outputItems, outputFluids, recipe, minMultiplier);
 
         // Build the new Recipe with multiplied components
         RecipeBuilder<?> newRecipe = recipeMap.recipeBuilder()
@@ -71,7 +72,7 @@ public class ParallelLogic {
         copyChancedItemOutputs(newRecipe, recipe, minMultiplier);
 
         // Return the multiplied Recipe
-        return newRecipe.build().getResult();
+        return new Tuple<>(newRecipe.build().getResult(), minMultiplier);
     }
 
     /**
@@ -148,7 +149,7 @@ public class ParallelLogic {
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Items
      */
-    protected int getMinRatioItem(Set<ItemStack> countIngredients, Recipe recipe, int parallelAmount) {
+    protected static int getMinRatioItem(Set<ItemStack> countIngredients, Recipe recipe, int parallelAmount) {
 
         int minMultiplier = Integer.MAX_VALUE;
 
@@ -235,7 +236,7 @@ public class ParallelLogic {
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Fluids
      */
-    protected int getMinRatioFluid(Set<FluidStack> countFluid, Recipe recipe, int parallelAmount) {
+    protected static int getMinRatioFluid(Set<FluidStack> countFluid, Recipe recipe, int parallelAmount) {
 
         int minMultiplier = Integer.MAX_VALUE;
 
@@ -279,7 +280,7 @@ public class ParallelLogic {
         return fluidCopy;
     }
 
-    protected void multiplyInputsAndOutputs(List<CountableIngredient> newRecipeInputs,
+    protected static void multiplyInputsAndOutputs(List<CountableIngredient> newRecipeInputs,
                                             List<FluidStack> newFluidInputs,
                                             List<ItemStack> outputItems,
                                             List<FluidStack> outputFluids,

@@ -380,4 +380,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             return abilityPartPredicate(MultiblockAbility.MAINTENANCE_HATCH).or(statePredicate(allowedAlternatives));
         } else return statePredicate(allowedAlternatives);
     }
+
+    public int getParallelLimit() {
+        return 1;
+    }
 }
