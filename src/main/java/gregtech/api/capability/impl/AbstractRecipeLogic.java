@@ -6,9 +6,11 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
@@ -16,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -43,6 +46,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected int progressTime;
     protected int maxProgressTime;
     protected int recipeEUt;
+    protected int parallelRecipesPerformed = 1;
     protected List<FluidStack> fluidOutputs;
     protected NonNullList<ItemStack> itemOutputs;
     protected final Random random = new Random();
@@ -209,8 +213,24 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.invalidInputsForRecipes = (currentRecipe == null);
 
         // proceed if we have a usable recipe.
-        if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory))
-            setupRecipe(currentRecipe);
+        if (currentRecipe != null) {
+
+            //Check if the recipe needs to be multiplied due to parallel logic
+            if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
+                Tuple<Recipe, Integer> multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+
+                // Multiply the recipe if we can
+                if(multipliedRecipe != null) {
+                    currentRecipe = multipliedRecipe.getFirst();
+                    this.parallelRecipesPerformed = multipliedRecipe.getSecond();
+                }
+            }
+
+            if(setupAndConsumeRecipeInputs(currentRecipe, importInventory)) {
+                setupRecipe(currentRecipe);
+            }
+
+        }
         // Inputs have been inspected.
         metaTileEntity.getNotifiedItemInputList().clear();
         metaTileEntity.getNotifiedFluidInputList().clear();
@@ -250,15 +270,37 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
      * @return - true if the recipe is successful, false if the recipe is not successful
      */
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
-        int[] resultOverclock = calculateOverclock(recipe.getEUt(), recipe.getDuration());
-        int totalEUt = resultOverclock[0] * resultOverclock[1];
+
+        //Format: EU/t, Duration
+        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration());
+        int totalEUt = resultOverclock[0] * resultOverclock[1] * this.parallelRecipesPerformed;
+
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler importFluids = getInputTank();
         IMultipleTankHandler exportFluids = getOutputTank();
-        if (!(totalEUt >= 0 ? getEnergyStored() >= (totalEUt > getEnergyCapacity() / 2 ? resultOverclock[0] : totalEUt) :
-            (getEnergyStored() - resultOverclock[0] <= getEnergyCapacity()))) {
+
+        boolean enoughPower;
+        //RIP Ternary
+        if(totalEUt >= 0) {
+            int capacity;
+            if(totalEUt > getEnergyCapacity() / 2) {
+                capacity = resultOverclock[0];
+            }
+            else {
+                capacity = totalEUt;
+            }
+
+            enoughPower = getEnergyStored() >= capacity;
+        }
+        else {
+            int power = resultOverclock[0] * this.parallelRecipesPerformed;
+            enoughPower = getEnergyStored() - (long) power <= getEnergyCapacity();
+        }
+
+        if(!enoughPower) {
             return false;
         }
+
         if (!MetaTileEntity.addItemsToItemHandler(exportInventory, true, recipe.getAllItemOutputs(exportInventory.getSlots()))) {
             this.isOutputsFull = true;
             return false;
@@ -269,10 +311,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         }
         this.isOutputsFull = false;
         return recipe.matches(true, importInventory, importFluids);
-    }
-
-    protected int[] calculateOverclock(int EUt, int duration) {
-        return calculateOverclock(EUt, this.overclockPolicy.getAsLong(), duration);
     }
 
     protected int[] calculateOverclock(int EUt, long voltage, int duration) {
@@ -320,10 +358,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     }
 
     protected void setupRecipe(Recipe recipe) {
-        int[] resultOverclock = calculateOverclock(recipe.getEUt(), recipe.getDuration());
+        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration());
         this.progressTime = 1;
         setMaxProgress(resultOverclock[1]);
-        this.recipeEUt = resultOverclock[0];
+        this.recipeEUt = resultOverclock[0] * this.parallelRecipesPerformed;
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
         int tier = getMachineTierForRecipe(recipe);
         this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, tier));
@@ -348,6 +386,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.itemOutputs = null;
         this.hasNotEnoughEnergy = false;
         this.wasActiveAndNeedsUpdate = true;
+        this.parallelRecipesPerformed = 1;
     }
 
     public double getProgressPercent() {

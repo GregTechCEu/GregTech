@@ -130,9 +130,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected void trySearchNewRecipe() {
-            if (((RecipeMapMultiblockController) metaTileEntity).getNumMaintenanceProblems() > 5)
-                return;
+        protected void trySearchNewRecipeCombined() {
 
             long maxVoltage = getMaxVoltage();
             Recipe currentRecipe = null;

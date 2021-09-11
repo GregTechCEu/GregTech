@@ -8,7 +8,9 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.common.ConfigHolder;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.ArrayList;
@@ -109,12 +111,20 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             }
         }
 
+        trySearchNewRecipeCombined();
+    }
+
+    /**
+     * Put into place so multiblocks can override {@link AbstractRecipeLogic#trySearchNewRecipe()} without having to deal with
+     * the maintenance and distinct logic in {@link MultiblockRecipeLogic#trySearchNewRecipe()}
+     */
+    protected void trySearchNewRecipeCombined() {
         super.trySearchNewRecipe();
     }
 
     protected void trySearchNewRecipeDistinct() {
         long maxVoltage = getMaxVoltage();
-        Recipe currentRecipe = null;
+        Recipe currentRecipe;
         List<IItemHandlerModifiable> importInventory = getInputBuses();
         IMultipleTankHandler importFluids = getInputTank();
 
@@ -132,6 +142,18 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         // This guarantees that if we get a recipe cache hit, our efficiency is no different from other machines
         if (previousRecipe != null && previousRecipe.matches(false, importInventory.get(lastRecipeIndex), importFluids)) {
             currentRecipe = previousRecipe;
+
+            // Perform Parallel Logic
+            if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
+                Tuple<Recipe, Integer> multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory.get(lastRecipeIndex), importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+
+                // Multiply the recipe if we can
+                if(multipliedRecipe != null) {
+                    currentRecipe = multipliedRecipe.getFirst();
+                    this.parallelRecipesPerformed = multipliedRecipe.getSecond();
+                }
+            }
+
             // If a valid recipe is found, immediately attempt to return it to prevent inventory scanning
             if (setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(lastRecipeIndex))) {
                 setupRecipe(currentRecipe);
@@ -158,6 +180,19 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             // Cache the current recipe, if one is found
             if (currentRecipe != null) {
                 this.previousRecipe = currentRecipe;
+
+                // Perform Parallel Logic
+                if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
+                    Tuple<Recipe, Integer> multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, bus, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+
+                    // Multiply the recipe if we can
+                    if(multipliedRecipe != null) {
+                        currentRecipe = multipliedRecipe.getFirst();
+                        this.parallelRecipesPerformed = multipliedRecipe.getSecond();
+                    }
+
+                }
+
                 if (setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(i))) {
                     lastRecipeIndex = i;
                     setupRecipe(currentRecipe);
