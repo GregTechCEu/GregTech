@@ -3,6 +3,7 @@ package gregtech.api.terminal;
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
 import gregtech.api.items.metaitem.MetaItem;
+import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.util.GuideJsonLoader;
@@ -58,7 +59,7 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new GuideEditorApp()).defaultApp().build();
         AppRegistryBuilder.create(new ThemeSettingApp()).defaultApp().build();
         AppRegistryBuilder.create(new OreProspectorApp()).battery(GTValues.MV, 1000)
-                .upgrade(MetaItems.COIN_DOGE.getStackForm())
+                .upgrade(MetaItems.COIN_DOGE.getStackForm(10))
                 .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
                 .device(DeviceHardware.DEVICE.SCANNER).build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {

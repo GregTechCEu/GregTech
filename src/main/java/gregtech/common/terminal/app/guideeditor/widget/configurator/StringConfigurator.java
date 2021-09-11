@@ -30,6 +30,9 @@ public class StringConfigurator extends ConfiguratorWidget<String>{
         textFieldWidget = new TextFieldWidget(0, 15, 76, 20, TerminalTheme.COLOR_B_2, null, null)
                 .setMaxStringLength(Integer.MAX_VALUE)
                 .setValidator(s->true);
+        if (config.has(name) && config.get(name).isJsonPrimitive()) {
+            textFieldWidget.setCurrentString(config.get(name).getAsString());
+        }
         this.addWidget(textFieldWidget);
     }
 

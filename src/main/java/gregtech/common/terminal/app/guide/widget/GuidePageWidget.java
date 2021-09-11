@@ -151,7 +151,7 @@ public class GuidePageWidget extends DraggableScrollableWidgetGroup {
     protected int getStreamBottom() {
         if (stream!= null && stream.size() > 0) {
             Widget widget = stream.get(stream.size() - 1);
-            return widget.getSize().height + widget.getSelfPosition().y;
+            return widget.getSize().height + widget.getSelfPosition().y + scrollYOffset;
         } else {
             return title.getSize().height + 10;
         }

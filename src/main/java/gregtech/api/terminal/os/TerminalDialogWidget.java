@@ -206,7 +206,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         dialog.addWidget(new ImageWidget(x, y, WIDTH, HEIGHT, DIALOG_BACKGROUND));
         dialog.addWidget(new CircleButtonWidget(x + WIDTH / 2 - 30, y + HEIGHT - 22, 12, 0, 24)
                 .setClickListener(cd -> {
-                    os.closeDialog(dialog);
+                    dialog.close();
                     if (result != null)
                         result.accept(selected.get());
                 })
@@ -215,7 +215,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 .setHoverIcon(OK_HOVER));
         dialog.addWidget(new CircleButtonWidget(x + WIDTH / 2 + 30, y + HEIGHT - 22, 12, 0, 24)
                 .setClickListener(cd -> {
-                    os.closeDialog(dialog);
+                    dialog.close();
                     if (result != null)
                         result.accept(null);
                 })
