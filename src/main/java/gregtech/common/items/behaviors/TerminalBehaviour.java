@@ -90,7 +90,7 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
     }
 
     public static boolean isCreative(ItemStack itemStack) {
-        return itemStack.getOrCreateSubCompound("terminal").getBoolean("_creative");
+        return itemStack != null && itemStack.getOrCreateSubCompound("terminal").getBoolean("_creative");
     }
 
     @Override

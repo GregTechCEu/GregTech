@@ -43,7 +43,7 @@ public abstract class Hardware  {
      * Check whether the terminal has this hardware.
      */
     public final boolean hasHW() {
-        return provider.hasHardware(getRegistryName());
+        return provider != null && provider.hasHardware(getRegistryName());
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class Hardware  {
      * Check whether the terminal is in creative mode.
      */
     public final boolean isCreative(){
-        return TerminalBehaviour.isCreative(provider.getItemStack());
+        return provider != null && TerminalBehaviour.isCreative(provider.getItemStack());
     }
 
     /**

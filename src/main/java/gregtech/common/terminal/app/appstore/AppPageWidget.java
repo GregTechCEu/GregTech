@@ -22,8 +22,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
+import net.minecraftforge.common.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AppPageWidget extends TerminalDialogWidget {
     private final AbstractApplication application;
@@ -38,31 +43,35 @@ public class AppPageWidget extends TerminalDialogWidget {
         this.store = store;
         String name = this.application.getRegistryName();
         int stage = application.getMaxTier() + 1;
-        int color = application.getThemeColor();
-        int lightColor = color & 0x00ffffff | ((0x6f) << 24);
+
         int dur = 323 / (stage + 1);
         buttons = new CircleButtonWidget[stage];
         for (int i = 0; i < stage; i++) {
             int tier = i;
             // upgrade button
             buttons[i] = new CircleButtonWidget(dur + dur * i, 110, 6, 2, 0)
-                    .setColors(0, lightColor, color)
-                    .setHoverText("Tier " + (i + 1))
                     .setClickListener(cd->buttonClicked(tier));
             this.addWidget(buttons[i]);
         }
         if (store.getOs().isRemote()) {
             // profile
+            int color = application.getThemeColor();
+            int lightColor = color & 0x00ffffff | ((0x6f) << 24);
             IGuiTexture profile;
-            if (ResourceHelper.isResourceExist("textures/gui/terminal/" + application.getRegistryName() + "/profile.png")) {
-                profile = TextureArea.fullImage("textures/gui/terminal/" + application.getRegistryName() + "/profile.png");
+            if (ResourceHelper.isResourceExist("textures/gui/terminal/" + name + "/profile.png")) {
+                profile = TextureArea.fullImage("textures/gui/terminal/" + name + "/profile.png");
             } else {
                 profile = application.getIcon();
             }
             this.addWidget(new ImageWidget(10, 15, 80, 80, profile));
 
-
             for (int i = 0; i < stage; i++) {
+                List<String> demand = TerminalRegistry.getAppHardwareDemand(name, i)
+                        .stream()
+                        .map(hw-> hw.getLocalizedName() + "(" + hw.addInformation() + ")")
+                        .collect(Collectors.toList());
+                demand.add(0, "terminal." + name + ".tier." + i);
+                buttons[i].setColors(0, lightColor, color).setHoverText(demand.toArray(new String[0]));
                 List<ItemStack> conditions = TerminalRegistry.getAppHardwareUpgradeConditions(name, i);
                 // line
                 if (conditions.size() > 0) {
@@ -88,14 +97,101 @@ public class AppPageWidget extends TerminalDialogWidget {
         } else {
             lastTier = Math.min(os.tabletNBT.getCompoundTag(application.getRegistryName()).getInteger("_tier"), application.getMaxTier());
         }
-        if (lastTier != tier) {
-            if (lastTier == -1) {
-                os.installApplication(application);
+        String name = application.getRegistryName();
+        if (tier > lastTier) {
+            boolean match = true; // inventory match
+            List<ItemStack> requirements = new ArrayList<>();
+            ItemStack missStack = null;
+            if (!gui.entityPlayer.isCreative()) {
+                for (int i = lastTier + 1; i <= tier; i++) {
+                    for (ItemStack condition : TerminalRegistry.getAppHardwareUpgradeConditions(name, i)) {
+                        boolean miss = true;
+                        for (ItemStack requirement : requirements) {
+                            if (requirement.isItemEqual(condition)) {
+                                requirement.setCount(requirement.getCount() + condition.getCount());
+                                miss = false;
+                                break;
+                            }
+                        }
+                        if (miss) {
+                            requirements.add(condition.copy());
+                        }
+                    }
+                }
+                for (ItemStack requirement : requirements) {
+                    int left = requirement.getCount();
+                    for (ItemStack hold : gui.entityPlayer.inventory.mainInventory) {
+                        if (requirement.isItemEqual(hold)) {
+                            if (hold.getCount() < left) {
+                                left -= hold.getCount();
+                            } else {
+                                left = 0;
+                            }
+                            if (left == 0) {
+                                break;
+                            }
+                        }
+                    }
+                    if (left > 0) {
+                        missStack = requirement.copy();
+                        missStack.setCount(left);
+                        match = false;
+                        break;
+                    }
+                }
             }
-            NBTTagCompound tag = os.tabletNBT.getCompoundTag(application.getRegistryName());
-            tag.setInteger("_tier", tier);
-            os.tabletNBT.setTag(application.getRegistryName(), tag);
+
+
+            if (match) {
+                if (!gui.entityPlayer.isCreative()) { // cost
+                    TerminalDialogWidget.showConfirmDialog(store.getOs(), "terminal.dialog.notice", "terminal.store.match", res->{
+                        if (res) {
+                            for (ItemStack requirement : requirements) {
+                                int left = requirement.getCount();
+                                for (ItemStack hold : gui.entityPlayer.inventory.mainInventory) {
+                                    if (requirement.isItemEqual(hold)) {
+                                        if (hold.getCount() <= left) {
+                                            hold.setCount(0);
+                                            left -= hold.getCount();
+                                        } else {
+                                            hold.setCount(hold.getCount() - left);
+                                            left = 0;
+                                        }
+                                        if (left == 0) {
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            updateTerminalAppTier(tier, lastTier);
+                        }
+                    }).open();
+                } else {
+                    updateTerminalAppTier(tier, lastTier);
+                }
+            } else {
+                if (isRemote()) {
+                    TerminalDialogWidget.showInfoDialog(store.getOs(),
+                            "terminal.dialog.notice",
+                            I18n.format("terminal.store.miss", missStack.getDisplayName(), missStack.getCount()))
+                            .setClientSide().open();
+                }
+            }
         }
+    }
+
+    private void updateTerminalAppTier(int tier, int lastTier) {
+        TerminalOSWidget os = store.getOs();
+        if (lastTier == -1) { // update terminal
+            NBTTagList installed = os.tabletNBT.getTagList("_installed", Constants.NBT.TAG_STRING);
+            installed.appendTag(new NBTTagString(application.getRegistryName()));
+            os.tabletNBT.setTag("_installed", installed);
+            os.installApplication(application);
+        }
+        NBTTagCompound tag = os.tabletNBT.getCompoundTag(application.getRegistryName());
+        tag.setInteger("_tier", tier);
+        os.tabletNBT.setTag(application.getRegistryName(), tag);
+        lineWidth = 0;
     }
 
     @Override
@@ -175,9 +271,9 @@ public class AppPageWidget extends TerminalDialogWidget {
         FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
         List<String> description = fr.listFormattedStringToWidth(application.getDescription(), 210);
         int fColor = store.darkMode ? -1 : 0xff333333;
-        fr.drawString(I18n.format(application.getUnlocalizedName()), x + 100, y + 14, fColor, store.darkMode);
+        drawStringSized(I18n.format(application.getUnlocalizedName()), x + 100, y + 14, fColor, store.darkMode, 2, false);
         for (int i = 0; i < description.size(); i++) {
-            fr.drawString(description.get(i), x + 100, y + 25 + i * fr.FONT_HEIGHT, fColor, store.darkMode);
+            fr.drawString(description.get(i), x + 100, y + 35 + i * fr.FONT_HEIGHT, fColor, store.darkMode);
         }
 
         drawBorder(x + 10, y + 15, 80, 80, store.darkMode ? -1 : 0xff333333, 2);

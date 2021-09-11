@@ -26,7 +26,7 @@ public class DeviceHardware extends Hardware {
     @SideOnly(Side.CLIENT)
     @Override
     public String getLocalizedName() {
-        return I18n.format("terminal.hw.device", slot);
+        return I18n.format("terminal.hw.device") + " " + slot;
     }
 
     @Override
@@ -79,7 +79,10 @@ public class DeviceHardware extends Hardware {
 
     public enum DEVICE{
         SCANNER(MetaItems.SCANNER),
-        WIRELESS(MetaItems.WIRELESS);
+        WIRELESS(MetaItems.WIRELESS),
+
+        // SOLAR
+        SOLAR_LV(MetaItems.COVER_SOLAR_PANEL_LV);
 
         public static final DEVICE[] VALUES;
 
@@ -103,6 +106,11 @@ public class DeviceHardware extends Hardware {
         public DeviceDemand(DEVICE device) {
             super(0);
             this.device = device;
+        }
+
+        @Override
+        public String getLocalizedName() {
+            return I18n.format("terminal.hw.device");
         }
 
         @Override

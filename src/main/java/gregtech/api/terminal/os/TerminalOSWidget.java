@@ -16,6 +16,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.common.items.behaviors.TerminalBehaviour;
+import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
@@ -97,14 +98,19 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         return hardwareProvider.getHardware();
     }
 
+    public <T extends Hardware> List<T> getHardware(Class<T> clazz) {
+        return getHardware().stream().filter(hw->hw.getClass() == clazz).map(hw->(T)hw).collect(Collectors.toList());
+    }
+
     public void installApplication(AbstractApplication application){
         desktop.installApplication(application);
         installedApps.add(application);
     }
 
     public void openApplication(AbstractApplication application, boolean isClient) {
+        NBTTagCompound nbt = tabletNBT.getCompoundTag(application.getRegistryName());
         if (!TerminalBehaviour.isCreative(itemStack)) {
-            List<Hardware> hwDemand = TerminalRegistry.getAppHardwareDemand(application.getRegistryName(), application.getAppTier());
+            List<Hardware> hwDemand = TerminalRegistry.getAppHardwareDemand(application.getRegistryName(), Math.min(nbt.getInteger("_tier"), application.getMaxTier()));
             List<Hardware> unMatch = hwDemand.stream().filter(demand -> getHardware().stream().noneMatch(hw -> hw.isHardwareAdequate(demand))).collect(Collectors.toList());
             if (unMatch.size() > 0) {
                 if (isClient) {
@@ -138,7 +144,6 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 return;
             }
         }
-        NBTTagCompound nbt = tabletNBT.getCompoundTag(application.getRegistryName());
         AbstractApplication app = application.createAppInstance(this, isClient, nbt);
         if (app != null) {
             app.setOs(this).initApp();
@@ -340,10 +345,17 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                             charged.add(openedApp);
                         });
             }
-            if (electricItem.discharge(costs.get(), 999, true, false, false) != costs.get()) {
-                charged.forEach(app->closeApplication(app, false));
+            for (DeviceHardware hardware : getHardware(DeviceHardware.class)) {
+                if (hardware.getDevice() == DeviceHardware.DEVICE.SOLAR_LV) {
+                    costs.addAndGet(-200);
+                }
             }
-            if (costs.get() > 0) {
+            if (costs.get() > 0 && electricItem.discharge(costs.get(), 999, true, false, false) != costs.get()) {
+                charged.forEach(app->closeApplication(app, false));
+            } else if (costs.get() < 0) {
+                costs.set(electricItem.charge(-costs.get(), 999, true, false));
+            }
+            if (costs.get() != 0) {
                 writeUpdateInfo(-1, buf->buf.writeLong(electricItem.getCharge()));
             }
         }

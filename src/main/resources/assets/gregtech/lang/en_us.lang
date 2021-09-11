@@ -3866,19 +3866,12 @@ terminal.items.description=A guide book about items.
 terminal.machines.description=A guide book about gt machines.
 terminal.multiblocks.description=A guide book about multi-blocks.
 terminal.tutorials.description=Introduces all kinds of things, CT integration, tips, tutorials and more.
-terminal.theme_settings.description=Set theme colors and wallpaper of the GTOS here.
-terminal.guide_editor.description=An interactive guide page editor that allows you to create guide pages easily.
-terminal.recipe_chart.description=A tool for analyzing recipe chains, with which you can easily build a recipe graph and even calculate the ingredients needed like JEC.
-terminal.ore_prospector.description=Hate the scanner toy? Don't want to run around looking for ores? Come and look at it.
-terminal.console.description=A tool to help you free your inventory, it's time to say goodbye to wrench, screwdriver, hammer, and crowbar.
-terminal.battery.description=Battery manager, visually analyzing your app's energy consumption.
-terminal.hardware.description=Hardware Manager, masterpieces of elegance and precision. How can a tablet be without hardware?
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
 
 terminal.hw.battery=Battery
-terminal.hw.device=Device %d
+terminal.hw.device=Device
 
 terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
 terminal.os.hw_demand=Missing mounting hardware:
@@ -3904,6 +3897,7 @@ terminal.dialog.error_path=error file path:
 terminal.dialog.no_file_selected=No file selected.
 terminal.dialog.folder=Open Folder
 
+terminal.guide_editor.description=An interactive guide page editor that allows you to create guide pages easily.
 terminal.guide_editor.up=Up
 terminal.guide_editor.down=Down
 terminal.guide_editor.remove=Remove
@@ -3916,11 +3910,13 @@ terminal.guide_editor.page_config=Page Config
 terminal.guide_editor.widgets_box=Widgets Box
 terminal.guide_editor.widget_config=Widget Config
 
+terminal.theme_settings.description=Set theme colors and wallpaper of the GTOS here.
 terminal.theme_settings.color=Theme Color Settings
 terminal.theme_settings.wallpaper=Wallpaper Settings
 terminal.theme_settings.select=Select
 terminal.theme_settings.image=Image File
 
+terminal.recipe_chart.description=A tool for analyzing recipe chains, with which you can easily build a recipe graph and even calculate the ingredients needed like JEC.
 terminal.recipe_chart.limit=Page limit.
 terminal.recipe_chart.delete=Delete Page
 terminal.recipe_chart.add_slot=Add Root Slot
@@ -3931,12 +3927,26 @@ terminal.recipe_chart.visible=Visible
 terminal.recipe_chart.jei=JEI Focus
 terminal.recipe_chart.tier=Tier:
 terminal.recipe_chart.ratio=Weight
+terminal.recipe_chart.tier.0=cache of 5 pages
+terminal.recipe_chart.tier.1=cache of 6 pages
+terminal.recipe_chart.tier.2=cache of 7 pages
+terminal.recipe_chart.tier.3=cache of 8 pages
 
 terminal.prospector.vis_mode=dark mode
 terminal.prospector.list=All Resources
 terminal.prospector.ore=Ore statistics
 terminal.prospector.fluid=Fluid statistics
 
+terminal.ore_prospector.description=Hate the scanner toy? Don't want to run around looking for ores? Come and look at it.
+terminal.ore_prospector.tier.0=radius size 1
+terminal.ore_prospector.tier.1=radius size 2
+terminal.ore_prospector.tier.2=radius size 3
+terminal.ore_prospector.tier.3=radius size 4
+terminal.ore_prospector.tier.4=radius size 5
+terminal.ore_prospector.tier.5=radius size 6
+terminal.ore_prospector.tier.6=radius size 7
+
+terminal.console.description=A tool to help you free your inventory, it's time to say goodbye to wrench, screwdriver, hammer, and crowbar.
 terminal.console.notice=Please right click the machine when opening the terminal.
 terminal.console.front=Set as front
 terminal.console.items=set as items output
@@ -3950,6 +3960,15 @@ terminal.console.maintenance=Fix all problems
 terminal.console.venting=set as venting
 terminal.console.controllable=set working enable
 
+terminal.hardware.description=Hardware Manager, masterpieces of elegance and precision. How can a tablet be without hardware?
 terminal.hardware.select=Mounting hardware
 terminal.hardware.remove=Remove hardware
+
+terminal.battery.description=Battery manager, visually analyzing your app's energy consumption.
+
+terminal.store.description=App store, check out what you got? Install and upgrade the app.
+terminal.store.match=Detect that inventory meets demand, whether to (install)upgrade?
+terminal.store.miss=Require %s (%d).
+
+
 

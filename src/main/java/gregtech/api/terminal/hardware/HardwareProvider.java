@@ -59,7 +59,7 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
     }
 
     public boolean hasHardware(String name) {
-        return TerminalBehaviour.isCreative(getItemStack()) || getOrCreateHardwareCompound().hasKey(name);
+        return itemStack != null && (TerminalBehaviour.isCreative(getItemStack()) || getOrCreateHardwareCompound().hasKey(name));
     }
 
     public NBTTagCompound getHardwareNBT(String name) {
