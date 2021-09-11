@@ -1,7 +1,6 @@
 package gregtech.api.gui;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.gui.widgets.WidgetUIAccess;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -28,8 +27,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -47,6 +48,7 @@ public abstract class Widget {
     private transient Position position;
     private transient Size size;
     private transient boolean isVisible;
+    private transient BooleanSupplier visibilitySupplier;
     private transient boolean isActive;
 
     public Widget(Position selfPosition, Size size) {
@@ -112,11 +114,16 @@ public abstract class Widget {
     }
 
     public boolean isVisible() {
-        return isVisible;
+        return visibilitySupplier != null ? visibilitySupplier.getAsBoolean() : isVisible;
     }
 
     public void setVisible(boolean visible) {
         isVisible = visible;
+    }
+
+    public Widget setVisibilitySupplier(BooleanSupplier supplier) {
+        visibilitySupplier = supplier;
+        return this;
     }
 
     public boolean isActive() {
@@ -145,7 +152,7 @@ public abstract class Widget {
     }
 
     public boolean isMouseOverElement(int mouseX, int mouseY, boolean correctPositionOnMouseWheelMoveEvent) {
-        mouseX = correctPositionOnMouseWheelMoveEvent ? mouseX + this.gui.getGuiLeft(): mouseX;
+        mouseX = correctPositionOnMouseWheelMoveEvent ? mouseX + this.gui.getGuiLeft() : mouseX;
         return isMouseOverElement(mouseX, mouseY);
     }
 
@@ -426,13 +433,13 @@ public abstract class Widget {
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();
-        GlStateManager.color(1,1,1,1);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     @SideOnly(Side.CLIENT)
     public static void drawSector(float x, float y, float r, int color, int segments, int from, int to) {
         if (from > to || from < 0 || color == 0) return;
-        if(to > segments) to = segments;
+        if (to > segments) to = segments;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         GlStateManager.enableBlend();
@@ -447,7 +454,7 @@ public abstract class Widget {
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();
-        GlStateManager.color(1,1,1,1);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     public static void drawTorus(float x, float y, float outer, float inner, int color, int segments, int from, int to) {
@@ -459,13 +466,13 @@ public abstract class Widget {
         setColor(color);
         bufferbuilder.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION);
         for (int i = from; i <= to; i++) {
-            float angle = ( i / (float)segments ) * 3.14159f * 2.0f;
-            bufferbuilder.pos( x + inner * Math.cos(-angle), y + inner * Math.sin(-angle), 0).endVertex();
-            bufferbuilder.pos( x + outer * Math.cos(-angle), y + outer * Math.sin(-angle), 0).endVertex();
+            float angle = (i / (float) segments) * 3.14159f * 2.0f;
+            bufferbuilder.pos(x + inner * Math.cos(-angle), y + inner * Math.sin(-angle), 0).endVertex();
+            bufferbuilder.pos(x + outer * Math.cos(-angle), y + outer * Math.sin(-angle), 0).endVertex();
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();
-        GlStateManager.color(1,1,1,1);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     @SideOnly(Side.CLIENT)
@@ -520,7 +527,7 @@ public abstract class Widget {
             c1 = new Vec2f(from.x, (from.y + to.y) / 2);
             c2 = new Vec2f(to.x, (from.y + to.y) / 2);
         }
-        Vec2f[] controlPoint = new Vec2f[]{from,c1,c2,to};
+        Vec2f[] controlPoint = new Vec2f[]{from, c1, c2, to};
         int n = controlPoint.length - 1;
         int i, r;
         List<Vec2f> bezierPoints = new ArrayList<>();
