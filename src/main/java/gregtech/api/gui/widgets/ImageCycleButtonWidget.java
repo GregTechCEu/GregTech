@@ -28,10 +28,10 @@ public class ImageCycleButtonWidget extends Widget {
 
     protected TextureArea buttonTexture;
     private int textColor = 0xFFFFFF;
-    private IntSupplier currentOptionSupplier;
-    private IntConsumer setOptionExecutor;
-    private int optionCount;
-    private final int RIGHT_MOUSE = 1;
+    private final IntSupplier currentOptionSupplier;
+    private final IntConsumer setOptionExecutor;
+    private final int optionCount;
+    private static final int RIGHT_MOUSE = 1;
     protected int currentOption;
     protected String tooltipHoverString;
     protected long hoverStartTime = -1L;
@@ -46,12 +46,12 @@ public class ImageCycleButtonWidget extends Widget {
     }
 
 
-    public ImageCycleButtonWidget(int xPosition, int yPosition, int width, int height, TextureArea buttonTexture, int optionCount, BooleanSupplier supplier, BooleanConsumer updater) {
+    public ImageCycleButtonWidget(int xPosition, int yPosition, int width, int height, TextureArea buttonTexture, BooleanSupplier supplier, BooleanConsumer updater) {
         super(new Position(xPosition, yPosition), new Size(width, height));
         this.buttonTexture = buttonTexture;
         this.currentOptionSupplier = () -> supplier.getAsBoolean() ? 1 : 0;
         this.setOptionExecutor = (value) -> updater.apply(value >= 1);
-        this.optionCount = optionCount;
+        this.optionCount = 2;
     }
 
     public ImageCycleButtonWidget setTooltipHoverString(String hoverString) {

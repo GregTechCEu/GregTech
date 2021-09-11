@@ -458,11 +458,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
 
         TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
         TileEntity otherTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
-        if (!(this instanceof CoverRoboticArm) && coverTile instanceof TileEntityItemPipe ^ otherTile instanceof TileEntityItemPipe) {
-            primaryGroup.addWidget(new ToggleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE,
-                    () -> distributionMode == DistributionMode.INSERT_FIRST,
-                    val -> distributionMode = val ? DistributionMode.INSERT_FIRST : DistributionMode.ROUND_ROBIN)
-                    .setTooltipText("cover.conveyor.distribution"));
+        if (coverTile instanceof TileEntityItemPipe ^ otherTile instanceof TileEntityItemPipe) {
+            primaryGroup.addWidget(new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
+                    () -> distributionMode.ordinal(),
+                    val -> distributionMode = DistributionMode.values()[val])
+                    .setTooltipHoverString("cover.conveyor.distribution"));
         }
 
         this.itemFilterContainer.initUI(70, primaryGroup::addWidget);
