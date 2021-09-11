@@ -1,12 +1,10 @@
 package gregtech.api.metatileentity;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.gui.IUIHolder;
-import gregtech.api.util.GTControlledRegistry;
 import gregtech.api.util.GTLog;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,8 +21,6 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder {
 
@@ -87,13 +83,8 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         super.readFromNBT(compound);
         if (compound.hasKey("MetaId", NBT.TAG_STRING)) {
             String metaTileEntityIdRaw = compound.getString("MetaId");
-            ResourceLocation metaTileEntityId;
-            if (metaTileEntityIdRaw.indexOf(':') == -1) {
-                metaTileEntityId = convertMetaTileEntityId(metaTileEntityIdRaw);
-            } else {
-                metaTileEntityId = new ResourceLocation(metaTileEntityIdRaw);
-            }
-            MetaTileEntity sampleMetaTileEntity = metaTileEntityId == null ? null : GregTechAPI.META_TILE_ENTITY_REGISTRY.getObject(metaTileEntityId);
+            ResourceLocation metaTileEntityId = new ResourceLocation(metaTileEntityIdRaw);
+            MetaTileEntity sampleMetaTileEntity = GregTechAPI.META_TILE_ENTITY_REGISTRY.getObject(metaTileEntityId);
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
                 this.metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(this);
@@ -103,31 +94,6 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
                 GTLog.logger.error("Failed to load MetaTileEntity with invalid ID " + metaTileEntityIdRaw);
             }
         }
-    }
-
-    private static List<String> registeredModIDs = null;
-
-    private static ResourceLocation convertMetaTileEntityId(String metaTileEntityIdOld) {
-        ResourceLocation gregtechId = new ResourceLocation(GTValues.MODID, metaTileEntityIdOld);
-        GTControlledRegistry<ResourceLocation, MetaTileEntity> registry = GregTechAPI.META_TILE_ENTITY_REGISTRY;
-        if (registry.containsKey(gregtechId)) {
-            return gregtechId; //remap to gregtech meta tile entities first
-        }
-        //try to lookup by different registry IDs
-        if (registeredModIDs == null) {
-            registeredModIDs = registry.getKeys().stream()
-                    .map(ResourceLocation::getNamespace)
-                    .distinct().collect(Collectors.toList());
-            registeredModIDs.remove(GTValues.MODID);
-        }
-        for (String registryModId : registeredModIDs) {
-            ResourceLocation probableId = new ResourceLocation(registryModId, metaTileEntityIdOld);
-            if (registry.containsKey(probableId)) {
-                return probableId;
-            }
-        }
-        GTLog.logger.error("Failed to convert old MetaTileEntity string ID " + metaTileEntityIdOld);
-        return null;
     }
 
     @Nonnull
