@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL30;
@@ -43,6 +44,7 @@ public class Shaders {
     public static ShaderObject IMAGE_V;
     public static ShaderObject IMAGE_F;
     public static ShaderObject BLACK_HOLE;
+    public static ShaderObject SCANNING;
 
     static {
         BUFFER_A = new Framebuffer(1080, 1080, false);
@@ -58,6 +60,7 @@ public class Shaders {
         IMAGE_V = initShader(IMAGE_V, VERTEX, "image.vert");
         IMAGE_F = initShader(IMAGE_F, FRAGMENT, "image.frag");
         BLACK_HOLE = initShader(BLACK_HOLE, FRAGMENT, "blackhole.frag");
+        SCANNING = initShader(SCANNING, FRAGMENT, "scanning.frag");
         FULL_IMAGE_PROGRAMS.clear();
     }
 
@@ -88,7 +91,6 @@ public class Shaders {
     public static Framebuffer renderFullImageInFBO(Framebuffer fbo, ShaderObject frag, Consumer<ShaderProgram.UniformCache> uniformCache) {
         int lastID = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
 
-        fbo.framebufferClear();
         fbo.bindFramebuffer(true);
 
         ShaderProgram program = FULL_IMAGE_PROGRAMS.get(frag);

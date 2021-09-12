@@ -6,6 +6,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -30,11 +33,11 @@ public class DepthTextureHook {
     private static boolean useDefaultFBO = true;
 
     private static boolean shouldRenderDepthTexture() {
-        return ConfigHolder.U.clientConfig.hookDepthTexture;
+        return ConfigHolder.U.clientConfig.hookDepthTexture && OpenGlHelper.isFramebufferEnabled();
     }
 
-    public static void onPreWorldRender(final TickEvent.RenderTickEvent event) {
-        if (shouldRenderDepthTexture() && event.phase == TickEvent.Phase.START && Minecraft.getMinecraft().world != null && OpenGlHelper.isFramebufferEnabled()) {
+    public static void onPreWorldRender(TickEvent.RenderTickEvent event) {
+        if (event.phase == TickEvent.Phase.START && Minecraft.getMinecraft().world != null && shouldRenderDepthTexture()) {
             if (useDefaultFBO && GL11.glGetError() != 0) { // if we can't use the vanilla fbo.... okay, why not create our own fbo?
                 useDefaultFBO = false;
                 if (framebufferDepthTexture != 0) {
@@ -45,6 +48,21 @@ public class DepthTextureHook {
             if (framebufferDepthTexture == 0) {
                 createDepthTexture();
             }
+        }
+    }
+
+    public static void renderWorld(RenderWorldLastEvent event) { // re-render world in our own fbo.
+        Minecraft mc = Minecraft.getMinecraft();
+        Entity viewer = mc.getRenderViewEntity();
+        if (DepthTextureHook.framebufferDepthTexture != 0 && mc.world != null && viewer != null && !DepthTextureHook.useDefaultFBO) {
+            int lastFBO = GlStateManager.glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
+            OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, framebufferObject);
+            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+            GlStateManager.disableTexture2D();
+            mc.renderGlobal.renderBlockLayer(BlockRenderLayer.SOLID, event.getPartialTicks(), 0, viewer);
+            mc.renderGlobal.renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, event.getPartialTicks(), 0, viewer);
+            GlStateManager.enableTexture2D();
+            OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastFBO);
         }
     }
 
@@ -76,7 +94,10 @@ public class DepthTextureHook {
         GlStateManager.bindTexture(0);
 
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, framebufferObject); // bind buffer then bind depth texture
-        OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, stencil ? GL30.GL_DEPTH_STENCIL_ATTACHMENT : OpenGlHelper.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, framebufferDepthTexture, 0);
+        OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER,
+                stencil ? GL30.GL_DEPTH_STENCIL_ATTACHMENT : OpenGlHelper.GL_DEPTH_ATTACHMENT,
+                GL11.GL_TEXTURE_2D,
+                framebufferDepthTexture, 0);
 
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastFBO);
     }
@@ -99,6 +120,30 @@ public class DepthTextureHook {
             TextureUtil.deleteTexture(framebufferDepthTexture);
             framebufferObject = 0;
             framebufferDepthTexture = 0;
+        }
+    }
+
+    public static void bindDepthTexture() {
+        if (useDefaultFBO) {
+            Framebuffer framebuffer = Minecraft.getMinecraft().getFramebuffer();
+            if (framebuffer.isStencilEnabled()) {
+                OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, framebuffer.depthBuffer);
+                OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, framebuffer.depthBuffer);
+            } else {
+                OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, framebuffer.depthBuffer);
+            }
+        }
+        GlStateManager.bindTexture(framebufferDepthTexture);
+    }
+
+    public static void unBindDepthTexture() {
+        GlStateManager.bindTexture(0);
+        if (useDefaultFBO) {
+            if (Minecraft.getMinecraft().getFramebuffer().isStencilEnabled()) {
+                OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL11.GL_TEXTURE_2D, framebufferDepthTexture, 0);
+            } else {
+                OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, framebufferDepthTexture, 0);
+            }
         }
     }
 }

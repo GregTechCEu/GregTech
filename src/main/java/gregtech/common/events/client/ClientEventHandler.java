@@ -2,6 +2,7 @@ package gregtech.common.events.client;
 
 import gregtech.api.entities.particle.GTParticleManager;
 import gregtech.api.render.DepthTextureHook;
+import gregtech.api.render.WorldProspectorRenderer;
 import gregtech.common.ConfigHolder;
 import gregtech.common.render.WrenchOverlayRenderer;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
@@ -34,7 +35,9 @@ public class ClientEventHandler {
 
     @SubscribeEvent
     public static void onRenderWorldLast(RenderWorldLastEvent event) {
+        DepthTextureHook.renderWorld(event);
         GTParticleManager.renderWorld(event);
+        WorldProspectorRenderer.renderWorld(event);
     }
 
     @SubscribeEvent
