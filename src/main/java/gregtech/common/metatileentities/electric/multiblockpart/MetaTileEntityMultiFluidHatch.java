@@ -3,8 +3,10 @@ package gregtech.common.metatileentities.electric.multiblockpart;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTank;
+import gregtech.api.capability.impl.NotifiableFluidTankFromList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.TankWidget;
@@ -26,6 +28,7 @@ import net.minecraftforge.fluids.IFluidTank;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
 
@@ -49,7 +52,12 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart 
     protected void initializeInventory() {
         FluidTank[] fluidsHandlers = new FluidTank[(int) Math.pow(this.getTier(), 2)];
         for (int i = 0; i <fluidsHandlers.length; i++) {
-            fluidsHandlers[i] = new NotifiableFluidTank(TANK_SIZE, this, isExportHatch);
+            fluidsHandlers[i] = new NotifiableFluidTankFromList(TANK_SIZE, this, isExportHatch, i) {
+                @Override
+                public Supplier<IMultipleTankHandler> getFluidTankList() {
+                    return () -> MetaTileEntityMultiFluidHatch.this.fluidTanks;
+                }
+            };
         }
         this.fluidTanks = new FluidTankList(false, fluidsHandlers);
         this.fluidInventory = fluidTanks;

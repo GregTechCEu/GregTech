@@ -1,6 +1,8 @@
 package gregtech.api.gui.widgets;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
+import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.capability.impl.NotifiableFluidTankFromList;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
@@ -298,6 +300,15 @@ public class TankWidget extends Widget implements IIngredientSlot {
                 FluidActionResult result = FluidUtil.tryEmptyContainer(currentStack,
                         (IFluidHandler) fluidTank, Integer.MAX_VALUE, null, false);
                 if (!result.isSuccess()) break;
+                // If this tank is from a List, only do emptying if it can both fit and is not causing multiple fluids in the container
+                if (fluidTank instanceof NotifiableFluidTankFromList) {
+                    NotifiableFluidTankFromList tankFromList = (NotifiableFluidTankFromList) fluidTank;
+                    if (!tankFromList.getFluidTankList().get().allowSameFluidFill()) {
+                        FluidStack filledStack = currentStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).drain(Integer.MAX_VALUE, false);
+                        int fillIndex = tankFromList.getFluidTankList().get().getIndexOfFluid(filledStack);
+                        if (fillIndex != tankFromList.getIndex() && fillIndex != -1) break;
+                    }
+                }
                 ItemStack remainingStack = result.getResult();
                 if (!remainingStack.isEmpty() && !player.inventory.addItemStackToInventory(remainingStack))
                     break; //do not continue if we can't add resulting container into inventory

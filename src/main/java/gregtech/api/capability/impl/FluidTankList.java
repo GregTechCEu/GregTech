@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
@@ -203,5 +204,20 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
     protected void validateTankIndex(int tank) {
         if (tank < 0 || tank >= fluidTanks.size())
             throw new RuntimeException("Tank " + tank + " not in valid range - (0," + fluidTanks.size() + "]");
+    }
+
+    public int getIndexOfFluid(FluidStack fluidStack) {
+        for (int i = 0; i < fluidTanks.size(); i++) {
+            FluidStack tankStack = fluidTanks.get(i).getFluid();
+            if (tankStack != null && tankStack.isFluidEqual(fluidStack)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public boolean allowSameFluidFill() {
+        return allowSameFluidFill;
     }
 }
