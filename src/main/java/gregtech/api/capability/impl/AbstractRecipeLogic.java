@@ -52,6 +52,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected boolean workingEnabled = true;
     protected boolean hasNotEnoughEnergy;
     protected boolean hasNotEnoughEnergyDelayed;
+    protected boolean hadEnergyProblem;
     protected boolean wasActiveAndNeedsUpdate;
     protected boolean isOutputsFull;
     protected boolean invalidInputsForRecipes;
@@ -180,6 +181,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             //only set hasNotEnoughEnergy if this recipe is consuming recipe
             //generators always have enough energy
             this.hasNotEnoughEnergy = true;
+            this.hadEnergyProblem = true;
             //if current progress value is greater than 2, decrement it by 2
             if (progressTime >= 2) {
                 if (ConfigHolder.insufficientEnergySupplyWipesRecipeProgress) {
@@ -338,6 +340,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.fluidOutputs = null;
         this.itemOutputs = null;
         this.hasNotEnoughEnergy = false;
+        this.hadEnergyProblem = false;
         this.wasActiveAndNeedsUpdate = true;
     }
 
@@ -394,6 +397,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             this.hasNotEnoughEnergyDelayed = hasNotEnoughEnergy;
         }
         return hasNotEnoughEnergyDelayed;
+    }
+
+    public boolean hadEnergyProblem() {
+        return hadEnergyProblem;
     }
 
     @Override

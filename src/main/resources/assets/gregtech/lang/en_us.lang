@@ -3799,6 +3799,7 @@ gregtech.multiblock.work_paused=Work Paused.
 gregtech.multiblock.running=Running perfectly.
 gregtech.multiblock.idling=Idling.
 gregtech.multiblock.not_enough_energy=WARNING: Machine needs more energy.
+gregtech.multiblock.had_energy_problem=WARNING: Machine had an energy problem during this recipe.
 gregtech.multiblock.progress=Progress: %s%%
 gregtech.multiblock.invalid_structure=Invalid structure.
 gregtech.multiblock.invalid_structure.tooltip=This block is a controller of the multiblock structure. For building help, see structure template in JEI.

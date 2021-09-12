@@ -329,6 +329,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.CHARGER_OVERLAY))
                 .widget(new ImageWidget(79, 42 + yOffset, 18, 18, GuiTextures.INDICATOR_NO_ENERGY)
                         .setPredicate(workable::isHasNotEnoughEnergy))
+                .widget(new ImageWidget(99, 62 + yOffset, 18, 18, GuiTextures.INDICATOR_ENERGY_PROBLEM)
+                        .setPredicate(workable::hadEnergyProblem))
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, yOffset);
 
         int leftButtonStartX = 7;
