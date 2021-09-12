@@ -48,6 +48,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         fluidOutputs = null;
         itemOutputs = null;
         lastRecipeIndex = 0;
+        parallelRecipesPerformed = 1;
         setActive(false); // this marks dirty for us
     }
 
