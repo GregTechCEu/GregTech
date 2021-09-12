@@ -164,7 +164,7 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart 
                         .setAlwaysShowFull(true));
             }
         }
-        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 8, 18 + 18 * rowSize + 12);
+        builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 + 18 * rowSize + 12);
         return builder.build(getHolder(), entityPlayer);
     }
 }
