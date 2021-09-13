@@ -15,6 +15,7 @@ import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.InventoryUtils;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
@@ -183,7 +184,24 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             metaTileEntity.getNotifiedItemInputList().clear();
         }
 
-       /* @Override
+        @Override
+        protected void setupRecipe(Recipe recipe) {
+            int[] resultOverclock = calculateOverclock(recipe.getEUt(), getMaxVoltage(), recipe.getDuration());
+            this.progressTime = 1;
+            setMaxProgress(resultOverclock[1]);
+            this.recipeEUt = resultOverclock[0];
+            this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
+            int tier = getMachineTierForRecipe(recipe);
+            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, tier));
+            if (this.wasActiveAndNeedsUpdate) {
+                this.wasActiveAndNeedsUpdate = false;
+            } else {
+                this.setActive(true);
+            }
+
+        }
+
+        /* @Override
         protected Recipe findRecipe(long maxVoltage,
                                     IItemHandlerModifiable inputs,
                                     IMultipleTankHandler fluidInputs, MatchingMode mode) {
