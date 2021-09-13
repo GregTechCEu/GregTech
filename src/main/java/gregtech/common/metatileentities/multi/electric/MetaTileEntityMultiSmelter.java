@@ -10,10 +10,8 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
-import gregtech.api.recipes.CountableIngredient;
-import gregtech.api.recipes.MatchingMode;
-import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.*;
+import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
@@ -24,6 +22,7 @@ import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -110,6 +109,16 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     @Override
+    public int getParallelLimit() {
+        return this.heatingCoilLevel * 32;
+    }
+
+    @Override
+    public boolean getLenientParallel() {
+        return true;
+    }
+
+    @Override
     public boolean hasMufflerMechanics() {
         return true;
     }
@@ -127,6 +136,10 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             Recipe currentRecipe = null;
             IItemHandlerModifiable importInventory = getInputInventory();
             IMultipleTankHandler importFluids = getInputTank();
+            IItemHandlerModifiable exportInventory = getOutputInventory();
+            IMultipleTankHandler exportFluids = getOutputTank();
+            Tuple<RecipeBuilder<?>, Integer> multipliedRecipe;
+            RecipeBuilder<?> tempBuilder;
 
             //inverse of logic in normal AbstractRecipeLogic
             //for MultiSmelter, we can reuse previous recipe if inputs didn't change
@@ -145,13 +158,32 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 // replace old recipe with new one
                 this.previousRecipe = currentRecipe;
             // proceed if we have a usable recipe.
-            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory))
-                setupRecipe(currentRecipe);
+            if (currentRecipe != null) {
+
+                multipliedRecipe = ParallelLogic.multiplyRecipeLenient(currentRecipe, this.recipeMap, importInventory, importFluids, exportInventory, exportFluids, getParallelLimit());
+
+                if(multipliedRecipe != null) {
+                    tempBuilder = multipliedRecipe.getFirst();
+
+                    tempBuilder.EUt(Math.max(1, 16 / heatingCoilDiscount));
+                    tempBuilder.duration((int) Math.max(1.0, 256 * (multipliedRecipe.getSecond() / (getParallelLimit() * 1.0))));
+
+                    currentRecipe = tempBuilder.build().getResult();
+
+                    this.parallelRecipesPerformed = multipliedRecipe.getSecond();
+
+                }
+
+                if(setupAndConsumeRecipeInputs(currentRecipe, importInventory)) {
+                    setupRecipe(currentRecipe);
+                }
+            }
+
             // Inputs have been inspected.
             metaTileEntity.getNotifiedItemInputList().clear();
         }
 
-        @Override
+       /* @Override
         protected Recipe findRecipe(long maxVoltage,
                                     IItemHandlerModifiable inputs,
                                     IMultipleTankHandler fluidInputs, MatchingMode mode) {
@@ -160,9 +192,9 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             final ArrayList<CountableIngredient> recipeInputs = new ArrayList<>();
             final ArrayList<ItemStack> recipeOutputs = new ArrayList<>();
 
-            /* Iterate over the input items looking for more things to add until we run either out of input items
-             * or we have exceeded the number of items permissible from the smelting bonus
-             */
+            // Iterate over the input items looking for more things to add until we run either out of input items
+            // or we have exceeded the number of items permissible from the smelting bonus
+
             boolean matchedRecipe = false;
             boolean canFitOutputs = true;
 
@@ -194,9 +226,9 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 int itemsLeftUntilMax = (maxItemsLimit - currentItemsEngaged);
                 if (itemsLeftUntilMax >= inputIngredient.getCount()) {
 
-                    /* Choose the lesser of the number of possible crafts in this ingredient's stack, or the number of
-                     * items remaining to reach the coil bonus's max smelted items.
-                     */
+                    // Choose the lesser of the number of possible crafts in this ingredient's stack, or the number of
+                     // items remaining to reach the coil bonus's max smelted items.
+                     //
                     int craftsPossible = currentInputItem.getCount() / inputIngredient.getCount();
                     int craftsUntilMax = itemsLeftUntilMax / inputIngredient.getCount();
                     int recipeMultiplier = Math.min(craftsPossible, craftsUntilMax);
@@ -249,7 +281,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
          * @param outputStack     an ItemStack representing the output item of a recipe
          * @param overclockAmount the number of times that {@code outputStack}'s quantity should
          *                        be multiplied by for the desired total
-         */
+         ///
         private void computeOutputItemStacks(Collection<ItemStack> recipeOutputs,
                                              ItemStack outputStack,
                                              int overclockAmount) {
@@ -280,7 +312,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                     recipeOutputs.add(partial);
                 }
             }
-        }
+        } */
 
     }
 

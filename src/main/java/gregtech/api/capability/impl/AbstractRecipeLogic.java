@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.util.GTUtility;
@@ -196,6 +197,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         Recipe currentRecipe = null;
         IItemHandlerModifiable importInventory = getInputInventory();
         IMultipleTankHandler importFluids = getInputTank();
+        IItemHandlerModifiable exportInventory = getOutputInventory();
+        IMultipleTankHandler exportFluids = getOutputTank();
+        Tuple<RecipeBuilder<?>, Integer> multipliedRecipe;
 
         // see if the last recipe we used still works
         if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids))
@@ -215,11 +219,16 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
             //Check if the recipe needs to be multiplied due to parallel logic
             if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
-                Tuple<Recipe, Integer> multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+                if(((MultiblockWithDisplayBase) this.metaTileEntity).getLenientParallel()) {
+                    multipliedRecipe = ParallelLogic.multiplyRecipeLenient(currentRecipe, this.recipeMap, importInventory, importFluids, exportInventory, exportFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+                }
+                else {
+                    multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+                }
 
                 // Multiply the recipe if we can
                 if(multipliedRecipe != null) {
-                    currentRecipe = multipliedRecipe.getFirst();
+                    currentRecipe = multipliedRecipe.getFirst().build().getResult();
                     this.parallelRecipesPerformed = multipliedRecipe.getSecond();
                 }
             }
@@ -270,8 +279,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
 
         //Format: EU/t, Duration
-        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration());
-        int totalEUt = resultOverclock[0] * resultOverclock[1] * this.parallelRecipesPerformed;
+        // Multiply the duration by the number of parallel recipes performed pre overclock
+        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration() * this.parallelRecipesPerformed);
+        int totalEUt = resultOverclock[0] * resultOverclock[1]; //* this.parallelRecipesPerformed;
 
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler importFluids = getInputTank();
@@ -291,7 +301,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             enoughPower = getEnergyStored() >= capacity;
         }
         else {
-            int power = resultOverclock[0] * this.parallelRecipesPerformed;
+            int power = resultOverclock[0]; //* this.parallelRecipesPerformed;
             enoughPower = getEnergyStored() - (long) power <= getEnergyCapacity();
         }
 

@@ -7,6 +7,7 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.logic.ParallelLogic;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -126,6 +127,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         Recipe currentRecipe;
         List<IItemHandlerModifiable> importInventory = getInputBuses();
         IMultipleTankHandler importFluids = getInputTank();
+        IItemHandlerModifiable exportInventory = getOutputInventory();
+        IMultipleTankHandler exportFluids = getOutputTank();
+        Tuple<RecipeBuilder<?>, Integer> multipliedRecipe;
+
 
         //if fluids changed, iterate all input busses again
         if (metaTileEntity.getNotifiedFluidInputList().size() > 0) {
@@ -144,11 +149,16 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
             // Perform Parallel Logic
             if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
-                Tuple<Recipe, Integer> multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory.get(lastRecipeIndex), importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+                if(((MultiblockWithDisplayBase) this.metaTileEntity).getLenientParallel()) {
+                    multipliedRecipe = ParallelLogic.multiplyRecipeLenient(currentRecipe, this.recipeMap, importInventory.get(lastRecipeIndex), importFluids, exportInventory, exportFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+                }
+                else {
+                    multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory.get(lastRecipeIndex), importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+                }
 
                 // Multiply the recipe if we can
                 if(multipliedRecipe != null) {
-                    currentRecipe = multipliedRecipe.getFirst();
+                    currentRecipe = multipliedRecipe.getFirst().build().getResult();
                     this.parallelRecipesPerformed = multipliedRecipe.getSecond();
                 }
             }
@@ -182,11 +192,16 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
                 // Perform Parallel Logic
                 if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
-                    Tuple<Recipe, Integer> multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, bus, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+                    if(((MultiblockWithDisplayBase) this.metaTileEntity).getLenientParallel()) {
+                        multipliedRecipe = ParallelLogic.multiplyRecipeLenient(currentRecipe, this.recipeMap, bus, importFluids, exportInventory, exportFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+                    }
+                    else {
+                        multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, bus, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+                    }
 
                     // Multiply the recipe if we can
                     if(multipliedRecipe != null) {
-                        currentRecipe = multipliedRecipe.getFirst();
+                        currentRecipe = multipliedRecipe.getFirst().build().getResult();
                         this.parallelRecipesPerformed = multipliedRecipe.getSecond();
                     }
 
