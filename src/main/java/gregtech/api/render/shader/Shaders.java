@@ -12,11 +12,15 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL30;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +43,6 @@ import static org.lwjgl.opengl.GL11.glGetInteger;
 public class Shaders {
     public static Minecraft mc;
     private final static Map<ShaderObject, ShaderProgram> FULL_IMAGE_PROGRAMS;
-    public final static Framebuffer BUFFER_A;
 
     public static ShaderObject IMAGE_V;
     public static ShaderObject IMAGE_F;
@@ -47,8 +50,6 @@ public class Shaders {
     public static ShaderObject SCANNING;
 
     static {
-        BUFFER_A = new Framebuffer(1080, 1080, false);
-        BUFFER_A.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
         mc = Minecraft.getMinecraft();
         FULL_IMAGE_PROGRAMS = new HashMap<>();
         if (allowedShader()) {
@@ -89,6 +90,7 @@ public class Shaders {
     }
 
     public static Framebuffer renderFullImageInFBO(Framebuffer fbo, ShaderObject frag, Consumer<ShaderProgram.UniformCache> uniformCache) {
+        if (fbo == null || frag == null) return fbo;
         int lastID = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
 
         fbo.bindFramebuffer(true);
@@ -123,6 +125,31 @@ public class Shaders {
 
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
         return fbo;
+    }
+
+    public static class ShaderCommand extends CommandBase {
+
+        @Override
+        @Nonnull
+        public String getName() {
+            return "gt_rs";
+        }
+
+        @Override
+        @Nonnull
+        public String getUsage(@Nonnull ICommandSender sender) {
+            return "reload GTCEus' shaders";
+        }
+
+        @Override
+        public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) {
+            if (allowedShader()) {
+                initShaders();
+                sender.sendMessage(new TextComponentString("reload all shaders"));
+            } else {
+                sender.sendMessage(new TextComponentString("disable shaders"));
+            }
+        }
     }
 
 }

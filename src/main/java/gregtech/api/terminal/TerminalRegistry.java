@@ -13,6 +13,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.ThemeSettingApp;
 import gregtech.common.terminal.app.appstore.AppStoreApp;
+import gregtech.common.terminal.app.ar.MultiBlockPreviewARApp;
 import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
 import gregtech.common.terminal.app.console.ConsoleApp;
 import gregtech.common.terminal.app.guide.ItemGuideApp;
@@ -74,6 +75,7 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new BatteryManagerApp()).defaultApp().battery(GTValues.ULV, 10).build();
         AppRegistryBuilder.create(new HardwareManagerApp()).defaultApp().build();
         AppRegistryBuilder.create(new AppStoreApp()).defaultApp().build();
+        AppRegistryBuilder.create(new MultiBlockPreviewARApp()).defaultApp().build();
     }
 
     @SideOnly(Side.CLIENT)

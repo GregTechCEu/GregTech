@@ -187,7 +187,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return BlockPos::hashCode;
     }
 
-    protected void checkStructurePattern() {
+    public void checkStructurePattern() {
         EnumFacing facing = getFrontFacing().getOpposite();
         PatternMatchContext context = structurePattern.checkPatternAt(getWorld(), getPos(), facing);
         if (context != null && !structureFormed) {

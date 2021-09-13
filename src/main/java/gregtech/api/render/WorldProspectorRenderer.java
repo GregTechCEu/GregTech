@@ -1,7 +1,6 @@
 package gregtech.api.render;
 
 import gregtech.api.render.shader.Shaders;
-import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;

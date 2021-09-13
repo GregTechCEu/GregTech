@@ -56,6 +56,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         this.addWidget(menu);
         this.itemStack = itemStack;
         this.tabletNBT = itemStack.getOrCreateSubCompound("terminal");
+        this.tabletNBT.removeTag("_ar");
         this.hardwareProvider = itemStack.getCapability(GregtechCapabilities.CAPABILITY_HARDWARE_PROVIDER, null);
         if (TerminalBehaviour.isCreative(itemStack)) {
             TerminalRegistry.getAllApps().forEach(this::installApplication);
@@ -225,7 +226,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     @SideOnly(Side.CLIENT)
-    private void shutdown() {
+    public void shutdown() {
         NBTTagCompound nbt = new NBTTagCompound();
         for (AbstractApplication openedApp : openedApps) {
             String appName = openedApp.getRegistryName();

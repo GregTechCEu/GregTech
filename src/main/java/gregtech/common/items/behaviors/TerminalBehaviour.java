@@ -27,7 +27,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubItemHandler {
-    private static final TextureArea TERMINAL_FRAME = TextureArea.fullImage("textures/gui/terminal/terminal_frame.png");
+    public static final TextureArea TERMINAL_FRAME = TextureArea.fullImage("textures/gui/terminal/terminal_frame.png");
 
     @Override
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
