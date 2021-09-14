@@ -78,9 +78,20 @@ public abstract class MultiblockInfoPage {
         }
         for (MetaTileEntityMufflerHatch mufflerHatch : MetaTileEntities.MUFFLER_HATCH) {
             addBlockTooltip(mufflerHatch.getStackForm(), defaultText);
+            addBlockTooltip(mufflerHatch.getStackForm(),
+                    new TextComponentTranslation("gregtech.multiblock.preview.max_limit",
+                            1).setStyle(new Style().setColor(TextFormatting.RED)));
+
         }
+
         addBlockTooltip(MetaTileEntities.MAINTENANCE_HATCH.getStackForm(), maintenanceText);
         addBlockTooltip(MetaTileEntities.AUTO_MAINTENANCE_HATCH.getStackForm(), maintenanceText);
+        addBlockTooltip(MetaTileEntities.MAINTENANCE_HATCH.getStackForm(),
+                new TextComponentTranslation("gregtech.multiblock.preview.max_limit",
+                        1).setStyle(new Style().setColor(TextFormatting.RED)));
+        addBlockTooltip(MetaTileEntities.AUTO_MAINTENANCE_HATCH.getStackForm(),
+                new TextComponentTranslation("gregtech.multiblock.preview.max_limit",
+                        1).setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
     /**

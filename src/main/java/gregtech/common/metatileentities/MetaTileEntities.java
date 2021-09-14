@@ -135,6 +135,7 @@ public class MetaTileEntities {
     public static MetaTileEntityMaintenanceHatch MAINTENANCE_HATCH;
     public static MetaTileEntityAutoMaintenanceHatch AUTO_MAINTENANCE_HATCH;
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV]; // LV-UV
+    public static MetaTileEntityMachineHatch MACHINE_HATCH;
 
     //MULTIBLOCKS SECTION
     public static MetaTileEntityPrimitiveBlastFurnace PRIMITIVE_BLAST_FURNACE;
@@ -147,6 +148,7 @@ public class MetaTileEntities {
     public static MetaTileEntityCrackingUnit CRACKER;
     public static MetaTileEntityMultiSmelter MULTI_FURNACE;
     public static MetaTileEntityLargeCombustionEngine LARGE_COMBUSTION_ENGINE;
+    public static MetaTileEntityProcessingArray PROCESSING_ARRAY;
 
     public static MetaTileEntityLargeTurbine LARGE_STEAM_TURBINE;
     public static MetaTileEntityLargeTurbine LARGE_GAS_TURBINE;
@@ -463,6 +465,7 @@ public class MetaTileEntities {
 
         STEAM_OVEN = GregTechAPI.registerMetaTileEntity(1023, new MetaTileEntitySteamOven(gregtechId("steam_oven")));
         STEAM_GRINDER = GregTechAPI.registerMetaTileEntity(1024, new MetaTileEntitySteamGrinder(gregtechId("steam_grinder")));
+        PROCESSING_ARRAY = GregTechAPI.registerMetaTileEntity(1025, new MetaTileEntityProcessingArray(gregtechId("processing_array")));
 
         // MISC MTE's START: IDs 1150-2000
 
@@ -690,7 +693,9 @@ public class MetaTileEntities {
             GregTechAPI.registerMetaTileEntity(1656 + i, MUFFLER_HATCH[i]);
         }
 
-        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));
+        MACHINE_HATCH = GregTechAPI.registerMetaTileEntity(1666, new MetaTileEntityMachineHatch(gregtechId("machine_hatch")));
+
+        CLIPBOARD_TILE = GregTechAPI.registerMetaTileEntity(1667, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
         /*
          * FOR ADDON DEVELOPERS:

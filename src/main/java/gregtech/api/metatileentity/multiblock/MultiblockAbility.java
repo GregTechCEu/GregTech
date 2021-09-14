@@ -3,6 +3,7 @@ package gregtech.api.metatileentity.multiblock;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.IMufflerHatch;
+import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMachineHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -29,4 +30,6 @@ public class MultiblockAbility<T> {
 
     public static final MultiblockAbility<IMaintenanceHatch> MAINTENANCE_HATCH = new MultiblockAbility<>();
     public static final MultiblockAbility<IMufflerHatch> MUFFLER_HATCH = new MultiblockAbility<>();
+
+    public static final MultiblockAbility<MetaTileEntityMachineHatch> MACHINE_HATCH = new MultiblockAbility<>();
 }

@@ -83,6 +83,10 @@ public class ConfigHolder {
     @Config.Name("Nano Saber Options")
     public static NanoSaberConfiguration nanoSaberConfiguration = new NanoSaberConfiguration();
 
+    @Config.Comment("Category that contains config options for Multiblocks")
+    @Config.Name("Multiblock Config Options")
+    public static MultiblockConfiguration multiblockConfiguration = new MultiblockConfiguration();
+
     @Config.Comment("Sets the bonus EU output of Steam Turbines. Default: 6144")
     @Config.RequiresMcRestart
     public static int steamTurbineBonusOutput = 6144;
@@ -153,6 +157,14 @@ public class ConfigHolder {
         @Config.Comment("The EU/t consumption of the NanoSaber. Default: 64")
         @Config.RequiresMcRestart
         public int energyConsumption = 64;
+    }
+
+    public static class MultiblockConfiguration {
+
+        @Config.Comment({"Blacklist of machines for the Processing Array.",
+                "Add the unlocalized Recipe Map name to blacklist the machine."})
+        @Config.Name("Processing Array Machine Blacklist")
+        public String[] processingArrayBlacklist = new String[0];
     }
 
     public static class UnofficialOptions {

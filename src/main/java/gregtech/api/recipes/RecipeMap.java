@@ -105,6 +105,22 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return RECIPE_MAP_REGISTRY.get(unlocalizedName);
     }
 
+    public static RecipeMap<?> findRecipeMapByItemStack(ItemStack stack) {
+
+        if(stack == null) {
+            return null;
+        }
+
+        String unlocalizedName = stack.getItem().getUnlocalizedNameInefficiently(stack);
+
+        String trimmedName = unlocalizedName.substring(0, unlocalizedName.lastIndexOf("."));
+        trimmedName = trimmedName.substring(trimmedName.lastIndexOf(".") + 1);
+
+        return getByName(trimmedName);
+
+    }
+
+
     public static IChanceFunction getChanceFunction() {
         return chanceFunction;
     }
