@@ -5,6 +5,7 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -158,6 +159,18 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         setController(null);
+        if (this.importItems instanceof INotifiableHandler) {
+            ((INotifiableHandler) importItems).removeNotifiableMetaTileEntity(controllerBase);
+        }
+        if (this.exportItems instanceof INotifiableHandler) {
+            ((INotifiableHandler) exportItems).removeNotifiableMetaTileEntity(controllerBase);
+        }
+        if (this.importFluids instanceof INotifiableHandler) {
+            ((INotifiableHandler) fluidInventory).removeNotifiableMetaTileEntity(controllerBase);
+        }
+        if (this.exportFluids instanceof INotifiableHandler) {
+            ((INotifiableHandler) fluidInventory).removeNotifiableMetaTileEntity(controllerBase);
+        }
     }
 
     @Override

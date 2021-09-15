@@ -132,7 +132,7 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockPart imple
             handler = (NotifiableFluidTank) getImportFluids().getTankAt(0);
         }
         if (handler != null) {
-            handler.setNotifiableMetaTileEntity(metaTileEntity);
+            handler.addNotifiableMetaTileEntity(metaTileEntity);
             handler.addToNotifiedList(this, handler, isExportHatch);
         }
     }

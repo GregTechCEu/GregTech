@@ -98,7 +98,7 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
             handler = (NotifiableItemStackHandler) getImportItems();
         }
         if (handler != null) {
-            handler.setNotifiableMetaTileEntity(metaTileEntity);
+            handler.addNotifiableMetaTileEntity(metaTileEntity);
             handler.addToNotifiedList(this, handler, isExportHatch);
         }
     }
