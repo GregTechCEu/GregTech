@@ -112,10 +112,22 @@ public class Material implements Comparable<Material> {
     }
 
     @ZenMethod
-    public void addFlag(MaterialFlag... flags) {
+    public void addFlags(MaterialFlag... flags) {
         if (MaterialRegistry.isFrozen())
             throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
         this.flags.addFlags(flags).verify(this);
+    }
+
+    @ZenMethod
+    public void addFlags(String... names) {
+        if (MaterialRegistry.isFrozen())
+            throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
+
+        for (String name : names) {
+            MaterialFlag flag = MaterialFlag.getByName(name.toLowerCase());
+            if (flag != null)
+                this.flags.addFlags(flag).verify(this);
+        }
     }
 
     public boolean hasFlag(MaterialFlag flag) {
