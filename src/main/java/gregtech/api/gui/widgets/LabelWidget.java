@@ -11,7 +11,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -99,7 +98,7 @@ public class LabelWidget extends Widget {
         int height = fontRenderer.FONT_HEIGHT * texts.size();
         for (int i = 0; i < texts.size(); i++) {
             String resultText = texts.get(i);
-            int width = fontRenderer.getStringWidth(resultText);;
+            int width = fontRenderer.getStringWidth(resultText);
             float x = pos.x - (xCentered ? width / 2f : 0);
             float y = pos.y - (yCentered ? height / 2f : 0) + i * fontRenderer.FONT_HEIGHT;
             fontRenderer.drawString(resultText, x, y, color, dropShadow);

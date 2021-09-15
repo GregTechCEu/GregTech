@@ -4,7 +4,6 @@ import codechicken.lib.vec.Rotation;
 import codechicken.lib.vec.Transformation;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
-import com.google.gson.JsonObject;
 import gregtech.api.GTValues;
 import gregtech.api.util.Position;
 import gregtech.api.util.PositionedRect;

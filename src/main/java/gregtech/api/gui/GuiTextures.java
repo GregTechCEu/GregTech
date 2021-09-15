@@ -1,7 +1,6 @@
 package gregtech.api.gui;
 
 import gregtech.api.gui.resources.AdoptableTextureArea;
-import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
 

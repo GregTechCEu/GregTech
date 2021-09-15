@@ -10,8 +10,6 @@ import java.io.IOException;
 
 import static codechicken.lib.render.shader.ShaderHelper.getStream;
 import static codechicken.lib.render.shader.ShaderHelper.readShader;
-import static codechicken.lib.render.shader.ShaderObject.ShaderType.FRAGMENT;
-import static codechicken.lib.render.shader.ShaderObject.ShaderType.VERTEX;
 
 /**
  * Created with IntelliJ IDEA.

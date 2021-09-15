@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static gregtech.api.unification.material.Materials.*;
-import static gregtech.api.unification.material.Materials.Epoxy;
 import static org.junit.Assert.*;
 
 public class RecipeMapTest {

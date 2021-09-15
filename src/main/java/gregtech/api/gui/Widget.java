@@ -1,7 +1,6 @@
 package gregtech.api.gui;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.gui.widgets.WidgetUIAccess;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;

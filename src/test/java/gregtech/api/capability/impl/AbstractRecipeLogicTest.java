@@ -8,7 +8,6 @@ import gregtech.api.render.*;
 import gregtech.api.util.world.DummyWorld;
 import net.minecraft.init.*;
 import net.minecraft.item.*;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.junit.*;

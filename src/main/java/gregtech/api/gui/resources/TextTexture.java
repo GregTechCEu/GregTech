@@ -3,7 +3,6 @@ package gregtech.api.gui.resources;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class TextTexture implements IGuiTexture{
     public final String text;

@@ -5,7 +5,6 @@ import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Component;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.ConfigHolder;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
