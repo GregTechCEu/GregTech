@@ -142,34 +142,22 @@ public class EventHandlers {
             final ItemStack FLUIDJET = MetaItems.SEMIFLUID_JETPACK.getStackForm();
 
 
-            if (jet.isItemEqual(JET) || (jet.isItemEqual(ADJET) || (jet.isItemEqual(FLUIDJET))) || armor.isItemEqual(QUARK) || armor.isItemEqual(NANO)) {
-            } else {
+            if (!(jet.isItemEqual(JET) || jet.isItemEqual(ADJET) || (jet.isItemEqual(FLUIDJET)) || armor.isItemEqual(QUARK) || armor.isItemEqual(NANO))) {
                 return;
             }
             if (jet.isItemEqual(FLUIDJET)) {
                 event.setCanceled(true);
             } else {
-                if(jet != null) {
-                    ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
-                    ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-                    IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                    if (item == null) return;
-                    int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
-                    if (item.getCharge() >= energyCost) {
-                        item.discharge(energyCost, item.getTier(), true, false, false);
-                        event.setCanceled(true);
-                    }
-                }
-                else {
-                    ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) jet.getItem()).getItem(jet);
-                    ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-                    IElectricItem item = jet.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                    if (item == null) return;
-                    int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
-                    if (item.getCharge() >= energyCost) {
-                        item.discharge(energyCost, item.getTier(), true, false, false);
-                        event.setCanceled(true);
-                    }
+                ItemStack armorPiece = jet.isEmpty() ? armor : jet;
+
+                ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armorPiece.getItem()).getItem(armorPiece);
+                ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
+                IElectricItem item = armorPiece.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                if (item == null) return;
+                int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
+                if (item.getCharge() >= energyCost) {
+                    item.discharge(energyCost, item.getTier(), true, false, false);
+                    event.setCanceled(true);
                 }
             }
         }
