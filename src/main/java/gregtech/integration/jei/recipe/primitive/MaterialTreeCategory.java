@@ -119,6 +119,7 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
         registerArrow(guiHelper, "u7r75u5", 78, 12);
         registerArrow(guiHelper, "u7r87d15r4", 92, 18);
         registerArrow(guiHelper, "u7r87u8r4", 92, 17);
+        registerArrow(guiHelper, "r3u62r29", 32, 65);
     }
 
     @Override
@@ -206,6 +207,9 @@ public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, 
         drawArrow(minecraft, "r7", 47, 123, itemExists.get(5) && itemExists.get(10));
         // ingot -> plate
         drawArrow(minecraft, "r3d26r4", 47, 125, itemExists.get(5) && itemExists.get(11));
+        // ingot -> wireFine (if no wireGtSingle)
+        drawArrow(minecraft, "r3u62r29", 47, 61, !itemExists.get(8) &&
+                itemExists.get(5) && itemExists.get(12));
         // block -> plate
         drawArrow(minecraft, "r7", 47, 158, itemExists.get(7) && itemExists.get(11));
         // wireGtSingle -> cableGtSingle
