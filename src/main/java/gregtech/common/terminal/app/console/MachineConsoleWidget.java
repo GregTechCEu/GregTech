@@ -1,4 +1,4 @@
-package gregtech.common.terminal.app.console.widget;
+package gregtech.common.terminal.app.console;
 
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;

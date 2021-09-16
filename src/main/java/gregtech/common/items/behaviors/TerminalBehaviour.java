@@ -17,6 +17,7 @@ import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTUtil;
@@ -33,7 +34,7 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
         ItemStack itemStack = player.getHeldItem(hand);
         itemStack.getOrCreateSubCompound("terminal").removeTag("_click");
-        if (pos != null && world.getTileEntity(pos) instanceof MetaTileEntityHolder) {
+        if (pos != null) {
             itemStack.getOrCreateSubCompound("terminal").setTag("_click", NBTUtil.createPosTag(pos));
             if (!world.isRemote) {
                 PlayerInventoryHolder holder = new PlayerInventoryHolder(player, hand);
@@ -95,7 +96,7 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
 
     @Override
     public String getItemSubType(ItemStack itemStack) {
-        return "";
+        return itemStack.getOrCreateSubCompound("terminal").getBoolean("_creative") ? "creative" : "normal";
     }
 
     @Override

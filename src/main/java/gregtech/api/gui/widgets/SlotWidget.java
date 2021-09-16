@@ -116,7 +116,7 @@ public class SlotWidget extends Widget implements INativeWidget {
             gui.needNativeClick = true;
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return false;
     }
 
     @Override

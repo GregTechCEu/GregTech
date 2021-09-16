@@ -1,4 +1,4 @@
-package gregtech.common.terminal.app.console.widget;
+package gregtech.api.terminal.gui.widgets;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
@@ -11,19 +11,16 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.render.scene.FBOWorldSceneRenderer;
 import gregtech.api.render.scene.WorldSceneRenderer;
-import gregtech.api.terminal.gui.widgets.RectButtonWidget;
-import gregtech.api.terminal.gui.widgets.ScrollBarWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.RenderUtil;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -56,6 +53,7 @@ public class MachineSceneWidget extends WidgetGroup {
     private float rotationYaw = 45;
     private float rotationPitch;
     private float zoom = 5;
+    private float maxZoom = 10;
     private float alpha = 1f;
     private boolean blendColor = true;
     private Set<BlockPos> cores;
@@ -67,6 +65,12 @@ public class MachineSceneWidget extends WidgetGroup {
     protected MetaTileEntity mte;
     protected final BlockPos pos;
 
+    public MachineSceneWidget(int x, int y, int width, int height, MetaTileEntity mte) {
+        this(x, y, width, height, mte.getPos());
+        this.mte = mte;
+        updateScene();
+    }
+
     public MachineSceneWidget(int x, int y, int width, int height, BlockPos pos) {
         super(x, y, width, height);
         this.pos = pos;
@@ -77,6 +81,26 @@ public class MachineSceneWidget extends WidgetGroup {
                 .setValueSupplier(true, ()->blendColor)
                 .setColors(TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_F_1.getColor(), 0)
                 .setIcon(new TextTexture("ALPHA", -1)));
+        if (worldSceneRenderer != null) {
+            worldSceneRenderer.releaseFBO();
+            worldSceneRenderer = null;
+        }
+    }
+
+    public void setMaxZoom(float maxZoom) {
+        this.maxZoom = maxZoom;
+    }
+
+    public Set<BlockPos> getCores() {
+        return cores;
+    }
+
+    public Set<BlockPos> getAround() {
+        return around;
+    }
+
+    public FBOWorldSceneRenderer getWorldSceneRenderer() {
+        return worldSceneRenderer;
     }
 
     public MachineSceneWidget setOnSelected(BiConsumer<BlockPos, EnumFacing> onSelected) {
@@ -101,11 +125,19 @@ public class MachineSceneWidget extends WidgetGroup {
             Vec3d eyePos = new Vec3d(renderer.getEyePos().x, renderer.getEyePos().y, renderer.getEyePos().z);
             hitPos.scale(2); // Double view range to ensure pos can be seen.
             Vec3d endPos = new Vec3d((hitPos.x - eyePos.x), (hitPos.y - eyePos.y), (hitPos.z - eyePos.z));
+            double min = Float.MAX_VALUE;
             for (BlockPos core : cores) {
-                RayTraceResult hit = world.getBlockState(core).collisionRayTrace(world, core, eyePos, endPos);
+                IBlockState blockState = world.getBlockState(core);
+                if (blockState.getBlock() == Blocks.AIR) {
+                    continue;
+                }
+                RayTraceResult hit = blockState.collisionRayTrace(world, core, eyePos, endPos);
                 if (hit != null && hit.typeOfHit != RayTraceResult.Type.MISS) {
-                    hoverPosFace = new WorldSceneRenderer.BlockPosFace(hit.getBlockPos(), hit.sideHit);
-                    break;
+                    double dist = eyePos.distanceTo(new Vec3d(hit.getBlockPos()));
+                    if (dist < min) {
+                        min = dist;
+                        hoverPosFace = new WorldSceneRenderer.BlockPosFace(hit.getBlockPos(), hit.sideHit);
+                    }
                 }
             }
         }
@@ -145,67 +177,72 @@ public class MachineSceneWidget extends WidgetGroup {
             TileEntity tileEntity = world.getTileEntity(pos);
             if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() != null) {
                 mte = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
-                if (worldSceneRenderer != null) {
-                    worldSceneRenderer.releaseFBO();
-                }
-                worldSceneRenderer = new FBOWorldSceneRenderer(world, 1080, 1080);
-                worldSceneRenderer.setAfterWorldRender(this::renderBlockOverLay);
-                cores = new HashSet<>();
-                around = new HashSet<>();
-                cores.add(pos);
-                if (mte instanceof MultiblockControllerBase) {
-                    List<BlockPos> validPos = new ArrayList<>();
-                    PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern
-                            .checkPatternAt(world, pos, mte.getFrontFacing().getOpposite(), validPos);
-                    if (context != null) {
-                        Set<IMultiblockPart> parts = context.getOrCreate("MultiblockParts", HashSet::new);
-                        for (IMultiblockPart part : parts) {
-                            if (part instanceof MetaTileEntity) {
-                                cores.add(((MetaTileEntity) part).getPos());
-                            }
-                        }
-                        for (EnumFacing facing : EnumFacing.VALUES) {
-                            cores.forEach(pos->around.add(pos.offset(facing)));
-                        }
-                        int minX = Integer.MAX_VALUE;
-                        int minY = Integer.MAX_VALUE;
-                        int minZ = Integer.MAX_VALUE;
-                        int maxX = Integer.MIN_VALUE;
-                        int maxY = Integer.MIN_VALUE;
-                        int maxZ = Integer.MIN_VALUE;
-                        for (BlockPos vPos : validPos) {
-                            around.add(vPos);
-                            minX = Math.min(minX, vPos.getX());
-                            minY = Math.min(minY, vPos.getY());
-                            minZ = Math.min(minZ, vPos.getZ());
-                            maxX = Math.max(maxX, vPos.getX());
-                            maxY = Math.max(maxY, vPos.getY());
-                            maxZ = Math.max(maxZ, vPos.getZ());
-                        }
-                        around.removeAll(cores);
-                        center = new Vector3f((minX + maxX) / 2f, (minY + maxY) / 2f, (minZ + maxZ) / 2f);
-                    } else {
-                        for (EnumFacing facing : EnumFacing.VALUES) {
-                            around.add(pos.offset(facing));
-                        }
-                        center = new Vector3f(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
-                    }
-                } else {
-                    for (EnumFacing facing : EnumFacing.VALUES) {
-                        around.add(pos.offset(facing));
-                    }
-                    center = new Vector3f(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
-                }
-                worldSceneRenderer.addRenderedBlocks(cores, null);
-                worldSceneRenderer.addRenderedBlocks(around, this::aroundBlocksRenderHook);
-                worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+                updateScene();
             }
-        }
-        if (!mte.isValid()) {
+        } else if (!mte.isValid()) {
             worldSceneRenderer.releaseFBO();
             worldSceneRenderer = null;
             mte = null;
         }
+    }
+
+    private void updateScene() {
+        if (!mte.isValid()) return;
+        World world = mte.getWorld();
+        if (worldSceneRenderer != null) {
+            worldSceneRenderer.releaseFBO();
+        }
+        worldSceneRenderer = new FBOWorldSceneRenderer(world, 1080, 1080);
+        worldSceneRenderer.setAfterWorldRender(this::renderBlockOverLay);
+        cores = new HashSet<>();
+        around = new HashSet<>();
+        cores.add(pos);
+        if (mte instanceof MultiblockControllerBase) {
+            List<BlockPos> validPos = new ArrayList<>();
+            PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern
+                    .checkPatternAt(world, pos, mte.getFrontFacing().getOpposite(), validPos);
+            if (context != null) {
+                Set<IMultiblockPart> parts = context.getOrCreate("MultiblockParts", HashSet::new);
+                for (IMultiblockPart part : parts) {
+                    if (part instanceof MetaTileEntity) {
+                        cores.add(((MetaTileEntity) part).getPos());
+                    }
+                }
+                for (EnumFacing facing : EnumFacing.VALUES) {
+                    cores.forEach(pos->around.add(pos.offset(facing)));
+                }
+                int minX = Integer.MAX_VALUE;
+                int minY = Integer.MAX_VALUE;
+                int minZ = Integer.MAX_VALUE;
+                int maxX = Integer.MIN_VALUE;
+                int maxY = Integer.MIN_VALUE;
+                int maxZ = Integer.MIN_VALUE;
+                for (BlockPos vPos : validPos) {
+                    around.add(vPos);
+                    minX = Math.min(minX, vPos.getX());
+                    minY = Math.min(minY, vPos.getY());
+                    minZ = Math.min(minZ, vPos.getZ());
+                    maxX = Math.max(maxX, vPos.getX());
+                    maxY = Math.max(maxY, vPos.getY());
+                    maxZ = Math.max(maxZ, vPos.getZ());
+                }
+                around.removeAll(cores);
+                center = new Vector3f((minX + maxX) / 2f, (minY + maxY) / 2f, (minZ + maxZ) / 2f);
+            } else {
+                for (EnumFacing facing : EnumFacing.VALUES) {
+                    around.add(pos.offset(facing));
+                }
+                center = new Vector3f(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
+            }
+        } else {
+            for (EnumFacing facing : EnumFacing.VALUES) {
+                around.add(pos.offset(facing));
+            }
+            center = new Vector3f(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
+        }
+        worldSceneRenderer.addRenderedBlocks(cores, null);
+        worldSceneRenderer.addRenderedBlocks(around, this::aroundBlocksRenderHook);
+        worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
     }
 
     private void aroundBlocksRenderHook(boolean isTESR, int pass, BlockRenderLayer layer) {
@@ -220,11 +257,6 @@ public class MachineSceneWidget extends WidgetGroup {
             GlStateManager.blendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
         }
         GL14.glBlendColor(1, 1, 1, alpha);
-    }
-
-    @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
     }
 
     @Override
@@ -251,8 +283,10 @@ public class MachineSceneWidget extends WidgetGroup {
     @Override
     public boolean mouseWheelMove(int mouseX, int mouseY, int wheelDelta) {
         if (isMouseOverElement(mouseX, mouseY)) {
-            zoom = (float) MathHelper.clamp(zoom + (wheelDelta < 0 ? 0.5 : -0.5), 3, 10);
-            worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+            zoom = (float) MathHelper.clamp(zoom + (wheelDelta < 0 ? 0.5 : -0.5), 3, maxZoom);
+            if (worldSceneRenderer != null) {
+                worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+            }
         }
         return super.mouseWheelMove(mouseX, mouseY, wheelDelta);
     }
@@ -265,7 +299,9 @@ public class MachineSceneWidget extends WidgetGroup {
             rotationYaw = (float) MathHelper.clamp(rotationYaw + (mouseY - lastMouseY), -89.9, 89.9);
             lastMouseY = mouseY;
             lastMouseX = mouseX;
-            worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+            if (worldSceneRenderer != null) {
+                worldSceneRenderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+            }
             return true;
         }
         return super.mouseDragged(mouseX, mouseY, button, timeDragged);

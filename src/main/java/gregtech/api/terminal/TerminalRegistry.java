@@ -2,8 +2,6 @@ package gregtech.api.terminal;
 
 import com.google.common.collect.ImmutableList;
 import gregtech.api.GTValues;
-import gregtech.api.items.metaitem.MetaItem;
-import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.util.GuideJsonLoader;
@@ -13,7 +11,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.ThemeSettingApp;
 import gregtech.common.terminal.app.appstore.AppStoreApp;
-import gregtech.common.terminal.app.ar.MultiBlockPreviewARApp;
+import gregtech.common.terminal.app.multiblockhelper.MultiBlockPreviewARApp;
 import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
 import gregtech.common.terminal.app.console.ConsoleApp;
 import gregtech.common.terminal.app.guide.ItemGuideApp;
@@ -64,6 +62,10 @@ public class TerminalRegistry {
                 .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
                 .device(DeviceHardware.DEVICE.SCANNER).build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
+            AppRegistryBuilder.create(new MultiBlockPreviewARApp()).battery(GTValues.LV, 512)
+                    .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
+                    .upgrade(1, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
+                    .build();
             AppRegistryBuilder.create(new RecipeChartApp()).battery(GTValues.LV, 100)
                     .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
                     .upgrade(1, MetaItems.COIN_DOGE.getStackForm(20))
@@ -75,7 +77,6 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new BatteryManagerApp()).defaultApp().battery(GTValues.ULV, 10).build();
         AppRegistryBuilder.create(new HardwareManagerApp()).defaultApp().build();
         AppRegistryBuilder.create(new AppStoreApp()).defaultApp().build();
-        AppRegistryBuilder.create(new MultiBlockPreviewARApp()).defaultApp().build();
     }
 
     @SideOnly(Side.CLIENT)

@@ -2,8 +2,11 @@ package gregtech.api.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.fml.relauncher.Side;
@@ -11,6 +14,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 @SideOnly(Side.CLIENT)
@@ -185,6 +191,70 @@ public class RenderUtil {
                 break;
             default:
                 break;
+        }
+    }
+
+    public static void renderHighLightedBlocksOutline(BufferBuilder buffer, float mx, float my, float mz, float r, float g, float b, float a) {
+        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx + 1, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my + 1, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz + 1).color(r, g, b, a).endVertex();
+        buffer.pos(mx + 1, my + 1, mz + 1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my + 1, mz + 1).color(r, g, b, a).endVertex();
+        buffer.pos(mx + 1, my + 1, mz + 1).color(r, g, b, a).endVertex();
+        buffer.pos(mx + 1, my, mz + 1).color(r, g, b, a).endVertex();
+        buffer.pos(mx + 1, my + 1, mz + 1).color(r, g, b, a).endVertex();
+        buffer.pos(mx + 1, my + 1, mz).color(r, g, b, a).endVertex();
+
+        buffer.pos(mx, my + 1, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my + 1, mz + 1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my + 1, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx + 1, my + 1, mz).color(r, g, b, a).endVertex();
+
+        buffer.pos(mx + 1, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx + 1, my, mz + 1).color(r, g, b, a).endVertex();
+        buffer.pos(mx + 1, my, mz).color(r, g, b, a).endVertex();
+        buffer.pos(mx + 1, my + 1, mz).color(r, g, b, a).endVertex();
+
+        buffer.pos(mx, my, mz + 1).color(r, g, b, a).endVertex();
+        buffer.pos(mx + 1, my, mz + 1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my, mz + 1).color(r, g, b, a).endVertex();
+        buffer.pos(mx, my + 1, mz + 1).color(r, g, b, a).endVertex();
+    }
+
+    private static final Map<TextureAtlasSprite, Integer> textureMap = new HashMap<>();
+
+    public static void bindTextureAtlasSprite(TextureAtlasSprite textureAtlasSprite) {
+        if (textureAtlasSprite == null) {
+            return;
+        }
+        if (textureMap.containsKey(textureAtlasSprite)) {
+            GlStateManager.bindTexture(textureMap.get(textureAtlasSprite));
+            return;
+        }
+
+        int glTextureId = -1;
+
+        final int iconWidth = textureAtlasSprite.getIconWidth();
+        final int iconHeight = textureAtlasSprite.getIconHeight();
+        final int frameCount = textureAtlasSprite.getFrameCount();
+        if (iconWidth <= 0 || iconHeight <= 0 || frameCount <= 0) {
+            return;
+        }
+
+        BufferedImage bufferedImage = new BufferedImage(iconWidth, iconHeight * frameCount, BufferedImage.TYPE_4BYTE_ABGR);
+        for (int i = 0; i < frameCount; i++) {
+            int[][] frameTextureData = textureAtlasSprite.getFrameTextureData(i);
+            int[] largestMipMapTextureData = frameTextureData[0];
+            bufferedImage.setRGB(0, i * iconHeight, iconWidth, iconHeight, largestMipMapTextureData, 0, iconWidth);
+        }
+        glTextureId = TextureUtil.glGenTextures();
+        if (glTextureId != -1) {
+            TextureUtil.uploadTextureImageAllocate(glTextureId, bufferedImage, false, false);
+            textureMap.put(textureAtlasSprite, glTextureId);
+            GlStateManager.bindTexture(textureMap.get(textureAtlasSprite));
         }
     }
 }

@@ -1,15 +1,29 @@
-package gregtech.common.terminal.app.ar;
+package gregtech.common.terminal.app.multiblockhelper;
 
 import gregtech.api.block.machines.BlockMachine;
+import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.IRenderContext;
+import gregtech.api.gui.resources.ColorRectTexture;
+import gregtech.api.gui.resources.ShaderTexture;
+import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
+import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.render.scene.WorldSceneRenderer;
+import gregtech.api.render.shader.Shaders;
 import gregtech.api.terminal.app.ARApplication;
 import gregtech.api.terminal.app.AbstractApplication;
+import gregtech.api.terminal.gui.widgets.MachineSceneWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
+import gregtech.api.terminal.os.TerminalDialogWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.RelativeDirection;
+import gregtech.api.util.RenderUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.integration.jei.GTJeiPlugin;
 import gregtech.integration.jei.multiblock.MultiblockInfoRecipeWrapper;
 import mezz.jei.api.IRecipeRegistry;
@@ -43,6 +57,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,15 +70,125 @@ import java.util.stream.Collectors;
  * @Description:
  */
 public class MultiBlockPreviewARApp extends ARApplication {
+    @SideOnly(Side.CLIENT)
+    int lastMouseX;
+    @SideOnly(Side.CLIENT)
+    int lastMouseY;
+    @SideOnly(Side.CLIENT)
+    float partialTicks;
 
     public MultiBlockPreviewARApp() {
         super("multiblock_ar");
     }
 
     @Override
-    public AbstractApplication initApp() {
-        addWidget(new RectButtonWidget(100, 100, 50, 20).setClickListener(clickData -> openAR()));
+    public AbstractApplication initApp() { // 232 333
+        int bW = 120;
+        int bH = 120;
+
+        addWidget(new ImageWidget(10, 10, 313, 212, new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor())));
+        addWidget(new ImageWidget(333 / 2, 20, 1, 222 - 40, new ColorRectTexture(-1)));
+
+        addWidget(new LabelWidget(10 + 313 / 4, 35, "terminal.multiblock_ar.ar.title", -1).setXCentered(true).setYCentered(true));
+        addWidget(new RectButtonWidget(10 + (313 / 2 - bW) / 2, 50, bW, bH)
+                .setIcon(TextureArea.fullImage("textures/gui/terminal/multiblock_ar/profile.png"))
+                .setColors(-1, 0xff00ff00, 0)
+                .setHoverText("terminal.multiblock_ar.ar.hover")
+                .setClickListener(clickData -> openAR()));
+
+        addWidget(new LabelWidget(333 / 2 + 313 / 4, 35, "terminal.multiblock_ar.builder.title", getAppTier() == 0 ? 0xffff0000 : -1).setXCentered(true).setYCentered(true));
+        addWidget(new RectButtonWidget(333 / 2 + (313 / 2 - bW) / 2, 50, bW, bH)
+                .setIcon(this::drawBuilderButton)
+                .setColors(getAppTier() == 0 ? 0xffff0000 : -1, getAppTier() == 0 ? 0xffff0000 : 0xff00ff00, 0)
+                .setHoverText(getAppTier() > 0 ? "terminal.multiblock_ar.builder.hover" : "terminal.multiblock_ar.unlock")
+                .setClickListener(clickData -> buildMode()));
         return this;
+    }
+
+    private void drawBuilderButton(double x, double y, int width, int height) {
+        if (Shaders.allowedShader()) {
+            float time =(gui.entityPlayer.ticksExisted + partialTicks) / 20f;
+
+            MultiblockControllerBase controllerBase = getController();
+            int color = controllerBase == null ? -1 : controllerBase.getPaintingColorForRendering();
+
+            if (controllerBase != null) {
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
+                GlStateManager.enableTexture2D();
+                RenderUtil.bindTextureAtlasSprite(controllerBase.getFrontDefaultTexture());
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE1);
+                GlStateManager.enableTexture2D();
+                RenderUtil.bindTextureAtlasSprite(controllerBase.getBaseTexture(null).getParticleSprite());
+            }
+            ShaderTexture.createShader("showcube.frag").draw(x, y, width, height, uniformCache -> {
+                uniformCache.glUniform1I("faceTexture", 0);
+                uniformCache.glUniform1I("baseTexture", 1);
+                uniformCache.glUniform1F("u_time", time);
+                uniformCache.glUniform3F("f_color", (color >> 16 & 255) / 255.0F, (color >> 8 & 255) / 255.0F, (color & 255) / 255.0F);
+                uniformCache.glUniformBoolean("block", controllerBase != null);
+                if (isMouseOver((int)x, (int)y, width, height, lastMouseX, lastMouseY)) {
+                    uniformCache.glUniform2F("u_mouse",
+                            (float) (((lastMouseX - x) / 2 + width / 3)  * ConfigHolder.U.clientConfig.resolution),
+                            (float) (height / 2 * ConfigHolder.U.clientConfig.resolution));
+                }
+            });
+
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE1);
+            GlStateManager.bindTexture(0);
+
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
+            GlStateManager.bindTexture(0);
+
+        } else {
+            GuiTextures.MULTIBLOCK_CATEGORY.draw(x, y, width, height);
+        }
+    }
+
+    @Override
+    public int getMaxTier() {
+        return 1;
+    }
+
+    private MultiblockControllerBase getController() {
+        if (os.clickPos != null) {
+            TileEntity te = gui.entityPlayer.world.getTileEntity(os.clickPos);
+            if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).getMetaTileEntity() instanceof MultiblockControllerBase) {
+                return (MultiblockControllerBase) ((MetaTileEntityHolder) te).getMetaTileEntity();
+            }
+        }
+        return null;
+    }
+
+    private void buildMode() {
+        if (getAppTier() == 0) {
+            TerminalDialogWidget.showInfoDialog(getOs(), "terminal.dialog.notice", "terminal.multiblock_ar.unlock").open();
+        } else if (getController() != null){
+            widgets.forEach(this::waitToRemoved);
+            MultiblockControllerBase controllerBase = getController();
+            MachineBuilderWidget builderWidget = new MachineBuilderWidget(200, 16, 133, 200, controllerBase);
+            this.addWidget(builderWidget);
+            builderWidget.addPlayerInventory();
+            if (isClient) {
+                MachineSceneWidget sceneWidget  = new MachineSceneWidget(0, 16, 200, 200, controllerBase);
+                builderWidget.setSceneWidget(sceneWidget);
+                this.addWidget(0, sceneWidget);
+                this.addWidget(new ImageWidget(0, 0, 333, 16, GuiTextures.UI_FRAME_SIDE_UP));
+                this.addWidget(new ImageWidget(0, 216, 333, 16, GuiTextures.UI_FRAME_SIDE_DOWN));
+            } else {
+                this.addWidget(0, new WidgetGroup()); // placeholder
+            }
+        } else {
+            TerminalDialogWidget.showInfoDialog(getOs(), "terminal.dialog.notice", "terminal.console.notice").open();
+        }
+    }
+
+    @Override
+    protected void hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
+        this.partialTicks = partialTicks;
+        super.hookDrawInBackground(mouseX, mouseY, partialTicks, context);
+
     }
 
     @SideOnly(Side.CLIENT)
@@ -234,7 +359,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
         }
     }
 
-    private static WorldSceneRenderer getWorldSceneRenderer(MultiblockControllerBase controllerBase) {
+    public static WorldSceneRenderer getWorldSceneRenderer(MultiblockControllerBase controllerBase) {
         IRecipeRegistry rr = GTJeiPlugin.jeiRuntime.getRecipeRegistry();
         IFocus<ItemStack> focus = rr.createFocus(IFocus.Mode.INPUT, controllerBase.getStackForm());
         return rr.getRecipeCategories(focus)

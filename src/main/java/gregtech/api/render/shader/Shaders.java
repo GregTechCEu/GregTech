@@ -3,6 +3,7 @@ package gregtech.api.render.shader;
 import codechicken.lib.render.shader.ShaderObject;
 import codechicken.lib.render.shader.ShaderProgram;
 import gregtech.api.GTValues;
+import gregtech.api.gui.resources.ShaderTexture;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
@@ -73,7 +74,7 @@ public class Shaders {
     public static ShaderObject loadShader(ShaderObject.ShaderType shaderType, String location) {
         try {
             return new ShaderObject(shaderType, readShader(getStream(String.format("/assets/%s/shaders/%s", GTValues.MODID, location)))).compileShader();
-        } catch (IOException exception) {
+        } catch (Exception exception) {
             GTLog.logger.error("error while loading shader {}", location, exception);
         }
         return null;
@@ -145,6 +146,7 @@ public class Shaders {
         public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) {
             if (allowedShader()) {
                 initShaders();
+                ShaderTexture.clear();
                 sender.sendMessage(new TextComponentString("reload all shaders"));
             } else {
                 sender.sendMessage(new TextComponentString("disable shaders"));

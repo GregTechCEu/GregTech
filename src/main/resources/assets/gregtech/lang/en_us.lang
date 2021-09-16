@@ -3860,6 +3860,7 @@ gregtech.terminal.app_name.console=GT Console
 gregtech.terminal.app_name.battery=Battery Manager
 gregtech.terminal.app_name.hardware=Hardware Manager
 gregtech.terminal.app_name.store=App Store
+gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
 
 terminal.app_name.description=No description.
 terminal.items.description=A guide book about items.
@@ -3970,5 +3971,13 @@ terminal.store.description=App store, check out what you got? Install and upgrad
 terminal.store.match=Detect that inventory meets demand, whether to (install)upgrade?
 terminal.store.miss=Require %s (%d).
 
-
+terminal.multiblock_ar.description=Remember the §aFree Wrench§r?  Unfortunately, it it's gone.  It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
+terminal.multiblock_ar.unlock=Unlock this mode after the upgrade
+terminal.multiblock_ar.ar.hover=Open AR camera to help you build multi-block structure
+terminal.multiblock_ar.builder.hover=3D Builder
+terminal.multiblock_ar.ar.title=Basic function
+terminal.multiblock_ar.builder.title=Paid function
+terminal.multiblock_ar.builder.auto=Automatic Build
+terminal.multiblock_ar.builder.place=Place block
+terminal.multiblock_ar.builder.debug=Debug
 
