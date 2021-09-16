@@ -11,6 +11,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
@@ -89,17 +90,31 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
         abilityList.add(isExportHatch ? this.exportItems : this.importItems);
     }
 
-    @Override
-    public void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+    private NotifiableItemStackHandler getHatchHandler(){
         NotifiableItemStackHandler handler = null;
         if (isExportHatch && getExportItems() instanceof NotifiableItemStackHandler) {
             handler = (NotifiableItemStackHandler) getExportItems();
         } else if (!isExportHatch && getImportItems() instanceof NotifiableItemStackHandler) {
             handler = (NotifiableItemStackHandler) getImportItems();
         }
+        return handler;
+    }
+
+    @Override
+    public void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+        NotifiableItemStackHandler handler = getHatchHandler();
         if (handler != null) {
             handler.addNotifiableMetaTileEntity(metaTileEntity);
             handler.addToNotifiedList(this, handler, isExportHatch);
+        }
+    }
+
+    @Override
+    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+        super.removeFromMultiBlock(controllerBase);
+        NotifiableItemStackHandler handler = getHatchHandler();
+        if (handler != null) {
+            handler.removeNotifiableMetaTileEntity(controllerBase);
         }
     }
 

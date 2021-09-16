@@ -159,18 +159,6 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     @Override
     public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
         setController(null);
-        if (this.importItems instanceof INotifiableHandler) {
-            ((INotifiableHandler) importItems).removeNotifiableMetaTileEntity(controllerBase);
-        }
-        if (this.exportItems instanceof INotifiableHandler) {
-            ((INotifiableHandler) exportItems).removeNotifiableMetaTileEntity(controllerBase);
-        }
-        if (this.importFluids instanceof INotifiableHandler) {
-            ((INotifiableHandler) fluidInventory).removeNotifiableMetaTileEntity(controllerBase);
-        }
-        if (this.exportFluids instanceof INotifiableHandler) {
-            ((INotifiableHandler) fluidInventory).removeNotifiableMetaTileEntity(controllerBase);
-        }
     }
 
     @Override
