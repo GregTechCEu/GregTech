@@ -54,8 +54,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
 
-    private static final int inputTankCapacity = ConfigHolder.U.GT5u.useCustomMachineTankSizes ? ConfigHolder.U.GT5u.customMachineTankSizes[0] : 64000;
-    private static final int outputTankCapacity = ConfigHolder.U.GT5u.useCustomMachineTankSizes ? ConfigHolder.U.GT5u.customMachineTankSizes[1] : 64000;
+    private static final int inputTankCapacity = ConfigHolder.U.GT5u.customMachineTankSizes[0];
+    private static final int outputTankCapacity = ConfigHolder.U.GT5u.customMachineTankSizes[1];
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
     public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier) {

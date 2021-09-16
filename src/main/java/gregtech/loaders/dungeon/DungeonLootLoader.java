@@ -13,11 +13,11 @@ import net.minecraft.world.storage.loot.LootTableList;
 public class DungeonLootLoader {
 
     public static void init() {
-        if (ConfigHolder.UnofficialOptions.addLoot || ConfigHolder.increaseDungeonLoot) {
+        if (ConfigHolder.addLoot || ConfigHolder.increaseDungeonLoot) {
             GTLog.logger.info("Registering dungeon loot...");
             ChestGenHooks.init();
         }
-        if (ConfigHolder.UnofficialOptions.addLoot) {
+        if (ConfigHolder.addLoot) {
             ChestGenHooks.addItem(LootTableList.CHESTS_SPAWN_BONUS_CHEST, MetaItems.BOTTLE_PURPLE_DRINK.getStackForm(), 8, 16, 2);
 
             ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON, MetaItems.BOTTLE_PURPLE_DRINK.getStackForm(), 8, 16, 40);

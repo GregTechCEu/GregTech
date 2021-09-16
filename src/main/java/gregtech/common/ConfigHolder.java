@@ -16,6 +16,10 @@ public class ConfigHolder {
     @Config.Comment("Whether to increase number of rolls for dungeon chests. Increases dungeon loot drastically. Default: true")
     public static boolean increaseDungeonLoot = true;
 
+    @Config.Comment("Allow GregTech to add additional Gregtech items as loot in various structures. Default: true")
+    @Config.RequiresMcRestart
+    public static boolean addLoot = true;
+
     @Config.Comment("Whether to hide facades of all blocks in JEI and creative search menu. Default: true")
     @Config.RequiresMcRestart
     public static boolean hideFacadesInJEI = true;
@@ -37,8 +41,8 @@ public class ConfigHolder {
     @Config.Comment("Whether veins should be generated in center of chunk. Default: false")
     public static boolean generateVeinsInCenterOfChunk = false;
 
-    @Config.Comment("Whether to disable vanilla ores generation in world. Default: false")
-    public static boolean disableVanillaOres = false;
+    @Config.Comment("Whether to disable vanilla ores generation in world. Default: true")
+    public static boolean disableVanillaOres = true;
 
     @Config.Comment("Whether to disable rubber tree world generation. Default: false")
     @Config.RequiresMcRestart
@@ -115,17 +119,14 @@ public class ConfigHolder {
         @Config.Comment("Whether to make redstone related recipes harder. Default: false")
         public boolean hardRedstoneRecipes = false;
 
-        @Config.Comment("Recipes for items like iron doors, trapdoors, pressure plates, cauldrons, hoppers, and iron bars require iron plates, sticks, and more. Default: true")
+        @Config.Comment("Recipes for items like iron doors, trapdoors, buckets, pressure plates, cauldrons, hoppers, and iron bars require iron plates, sticks, and more. Default: true")
         public boolean hardIronRecipes = true;
 
         @Config.Comment("Whether to make miscellaneous recipes harder. Default: false")
         public boolean hardMiscRecipes = false;
 
-        @Config.Comment("Whether to make flint and steel recipe require a steel of iron. Default: true.")
+        @Config.Comment("Whether to make flint and steel recipe require steel parts. Default: true.")
         public boolean flintAndSteelRequireSteel = true;
-
-        @Config.Comment("Whether to make the iron bucket recipe harder by requiring a hammer and plates. Default: true")
-        public boolean bucketRequirePlatesAndHammer = true;
 
         @Config.Comment("Whether to make vanilla tools and armor recipes harder. Excludes flint and steel, and buckets. Default: false")
         public boolean hardToolArmorRecipes = false;
@@ -178,15 +179,11 @@ public class ConfigHolder {
         @Config.RequiresMcRestart
         public ClientConfig clientConfig = new ClientConfig();
 
-        @Config.Comment("Allow GregTech to add additional loot. Default: true")
-        @Config.RequiresMcRestart
-        public static boolean addLoot = true;
-
         @Config.Comment("Divisor for Recipe Duration per Overclock. Default: 2.0")
         @Config.RangeDouble(min = 2.0, max = 3.0)
         public double overclockDivisor = 2.0;
 
-        @Config.Comment("Whether to enable that Steam Multiblocks use Steel instead of Bronze. Default: false")
+        @Config.Comment("Whether Steam Multiblocks should use Steel instead of Bronze. Default: false")
         @Config.RequiresMcRestart
         public boolean steelSteamMultiblocks = false;
 
@@ -196,14 +193,10 @@ public class ConfigHolder {
 
         public static class GT5U {
 
-            @Config.Comment("This config requires 'B:Use custom machine tank sizes' = true to take effect. Changes the input tank size to the first value, and out tank size to the second value for nearly every single block machine. Units are millibuckets. Default: {64000, 64000}")
+            @Config.Comment("Changes the size of input and output tanks in nearly all single block machine. The first value will be used for the input tank size, the second for the output tank size. Units are millibuckets. Default: {64000, 64000}")
             @Config.RangeInt(min = 1)
             @Config.RequiresMcRestart
             public int[] customMachineTankSizes = new int[]{64000, 64000};
-
-            @Config.Comment("This config enables the customization of nearly every single block machine's input and output fluid tank sizes. Default: false")
-            @Config.RequiresMcRestart
-            public boolean useCustomMachineTankSizes = false;
 
             @Config.Comment("Require Wrench to break machines? Default: false")
             public boolean requireWrenchForMachines = false;
@@ -278,16 +271,6 @@ public class ConfigHolder {
             public boolean emissiveTextures = true;
         }
 
-        public static class ArmorHud {
-            @Config.Comment({"Sets HUD location", "1 - left-upper corner", "2 - right-upper corner", "3 - left-bottom corner", "4 - right-bottom corner"})
-            public byte hudLocation = 1;
-            @Config.Comment("Horizontal offset of HUD [0 ~ 100)")
-            public byte hudOffsetX = 0;
-            @Config.Comment("Vertical offset of HUD [0 ~ 100)")
-            public byte hudOffsetY = 0;
-
-        }
-
         public static class Equipment {
             @Config.Comment("NightVision Goggles Voltage Tier. Default: 2 (LV)")
             @Config.RangeInt(min = 0, max = 14)
@@ -337,5 +320,16 @@ public class ConfigHolder {
             @Config.RangeInt(min = 1)
             public int capacityHV = 9600000;
         }
+
+        public static class ArmorHud {
+            @Config.Comment({"Sets HUD location", "1 - left-upper corner", "2 - right-upper corner", "3 - left-bottom corner", "4 - right-bottom corner"})
+            public byte hudLocation = 1;
+            @Config.Comment("Horizontal offset of HUD [0 ~ 100)")
+            public byte hudOffsetX = 0;
+            @Config.Comment("Vertical offset of HUD [0 ~ 100)")
+            public byte hudOffsetY = 0;
+
+        }
+
     }
 }
