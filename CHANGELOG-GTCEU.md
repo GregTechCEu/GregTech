@@ -158,6 +158,9 @@
     - Can be applied to Pickaxes, and will automatically crush ores when mined
     - Will output their "normal" amount by default (1 crushed ore for most, but more for some, like Redstone)
     - When combined with Fortune, can output up to their Macerated amount
+- Quadruple and Nonuple Input/Output Hatches added, holding either 4 or 9 fluids each, and 16B per fluid
+    - Fluids in them are forced to be "unique," for example Water cannot occupy 2 slots of either an Input or Output version
+    - Can be used in any multiblock, EXCEPT the Output hatches cannot be used in the Distillation Tower
 - TODO Maintenance/Muffler
 
 ### Major Recipe Changes
