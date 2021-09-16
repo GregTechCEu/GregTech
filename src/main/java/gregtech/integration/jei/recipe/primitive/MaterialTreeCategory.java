@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.ArrayList;
 
-public class MaterialTreeCategory extends PrimitiveRecipeCategory<MaterialTree, MaterialTree> {
+public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, MaterialTree> {
 
     protected String materialName;
     protected String materialFormula;

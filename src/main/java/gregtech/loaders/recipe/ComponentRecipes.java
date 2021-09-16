@@ -9,7 +9,6 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.items.MetaItems;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +18,6 @@ import static gregtech.common.items.MetaItems.FLUID_REGULATORS;
 import static gregtech.common.items.MetaItems.PUMPS;
 
 public class ComponentRecipes {
-
-    private static final FluidStack[] pumpFluids = {Materials.Rubber.getFluid(L), Materials.StyreneButadieneRubber.getFluid((L * 3) / 4), Materials.SiliconeRubber.getFluid(L / 2)};
 
     public static void register() {
 

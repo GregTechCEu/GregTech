@@ -61,7 +61,6 @@ public class WoodMachineRecipes {
             }
 
 
-            //todo prevent rubber wood from making jungle slabs
             CUTTER_RECIPES.recipeBuilder().inputs(stack)
                     .fluidInputs(Lubricant.getFluid(1))
                     .outputs(GTUtility.copyAmount((int) (originalOutput * 1.5), plankStack), OreDictUnifier.get(dust, Wood, 2))

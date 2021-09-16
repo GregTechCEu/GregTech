@@ -325,12 +325,12 @@ public class MiscRecipeLoader {
                 .inputs(NANO_MUSCLE_SUITE_HELMET.getStackForm())
                 .outputs(QUARK_TECH_SUITE_HELMET.getStackForm())
                 .buildAndRegister();
-//TODO add superconductors when added
+
         ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(1800).EUt(7100)
                 .inputs(FIELD_GENERATOR_IV.getStackForm())
                 .inputs(FIELD_GENERATOR_EV.getStackForm(2))
                 .input(circuit, Master, 4)
-                // .input(wireGtSingle, IVSuperconductor, 4)
+                .input(wireGtSingle, SamariumIronArsenicOxide, 4)
                 .inputs(POWER_INTEGRATED_CIRCUIT.getStackForm(4))
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
                 .outputs(GRAVITATION_ENGINE.getStackForm())
@@ -338,7 +338,7 @@ public class MiscRecipeLoader {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(3600).EUt(8192)
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(16))
-                // .input(wireGtSingle, IVSuperconductor, 8)
+                .input(wireGtSingle, SamariumIronArsenicOxide, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
                 .inputs(PLATE_IRIDIUM_ALLOY.getStackForm(12))
                 .input(circuit, Elite, 4)
@@ -349,7 +349,7 @@ public class MiscRecipeLoader {
 
         ASSEMBLY_LINE_RECIPES.recipeBuilder().duration(3600).EUt(8192)
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(8))
-                // .input(wireGtSingle, IVSuperconductor, 8)
+                .input(wireGtSingle, SamariumIronArsenicOxide, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
                 .inputs(PLATE_IRIDIUM_ALLOY.getStackForm(16))
                 .input(circuit, Elite, 2)
@@ -357,7 +357,6 @@ public class MiscRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
                 .outputs(ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .buildAndRegister();
-        ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(), SEMIFLUID_JETPACK.getStackForm());
 
     }
 }

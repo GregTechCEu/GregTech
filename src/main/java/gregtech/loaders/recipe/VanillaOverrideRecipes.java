@@ -576,7 +576,7 @@ public class VanillaOverrideRecipes {
      * Replaces Vanilla Enchantment Table recipe
      * Replaces Vanilla Jukebox recipe
      * Replaces Vanilla Note Block recipe
-     * Replaces Vanilla Furance
+     * Replaces Vanilla Furnace
      * - Removes Vanilla TNT recipe
      * - Removes Vanilla Golden Apple Recipe
      * - Removes Vanilla Ender Eye Recipe
@@ -691,8 +691,7 @@ public class VanillaOverrideRecipes {
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:polished_diorite"));
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:polished_andesite"));
 
-        //todo this doesn't work
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.CLAY_BALL));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.CLAY_BALL, 1, GTValues.W));
     }
 
     /**

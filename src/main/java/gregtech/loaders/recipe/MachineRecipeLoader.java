@@ -925,5 +925,9 @@ public class MachineRecipeLoader {
         ModHandler.addShapelessRecipe("tank_nbt_stainless_steel", MetaTileEntities.STAINLESS_STEEL_TANK.getStackForm(), MetaTileEntities.STAINLESS_STEEL_TANK.getStackForm());
         ModHandler.addShapelessRecipe("tank_nbt_titanium", MetaTileEntities.TITANIUM_TANK.getStackForm(), MetaTileEntities.TITANIUM_TANK.getStackForm());
         ModHandler.addShapelessRecipe("tank_nbt_tungstensteel", MetaTileEntities.TUNGSTENSTEEL_TANK.getStackForm(), MetaTileEntities.TUNGSTENSTEEL_TANK.getStackForm());
+
+        //Jetpacks
+        ModHandler.addShapelessRecipe("fluid_jetpack_clear", SEMIFLUID_JETPACK.getStackForm(), SEMIFLUID_JETPACK.getStackForm());
+
     }
 }
