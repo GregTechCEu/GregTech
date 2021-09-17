@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 public abstract class AnimaWidgetGroup extends WidgetGroup {
     @SideOnly(Side.CLIENT)
     protected Interpolator interpolator;
-    @SideOnly(Side.CLIENT)
     protected float scale = 1;
 
     public AnimaWidgetGroup(Position position, Size size) {

@@ -6,6 +6,7 @@ import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.ModifyGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.FileUtility;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.awt.*;
 import java.io.File;
@@ -32,24 +33,26 @@ public class TerminalTheme {
     public static final ModifyGuiTexture WALL_PAPER = new ModifyGuiTexture(TextureArea.fullImage("textures/gui/terminal/terminal_background.png"));
 
     static {
-        JsonElement element = FileUtility.loadJson(new File(TERMINAL_PATH, FILE_PATH));
-        if (element == null || !element.isJsonObject()) {
-            saveConfig();
-        } else {
-            JsonObject config = element.getAsJsonObject();
-            if (config.has("COLOR_1")) { COLOR_1.setColor(config.get("COLOR_1").getAsInt()); }
-            if (config.has("COLOR_2")) { COLOR_2.setColor(config.get("COLOR_2").getAsInt()); }
-            if (config.has("COLOR_3")) { COLOR_3.setColor(config.get("COLOR_3").getAsInt()); }
-            if (config.has("COLOR_4")) { COLOR_4.setColor(config.get("COLOR_4").getAsInt()); }
-            if (config.has("COLOR_5")) { COLOR_5.setColor(config.get("COLOR_5").getAsInt()); }
-            if (config.has("COLOR_6")) { COLOR_6.setColor(config.get("COLOR_6").getAsInt()); }
-            if (config.has("COLOR_7")) { COLOR_7.setColor(config.get("COLOR_7").getAsInt()); }
-            if (config.has("COLOR_F_1")) { COLOR_F_1.setColor(config.get("COLOR_F_1").getAsInt()); }
-            if (config.has("COLOR_F_2")) { COLOR_F_2.setColor(config.get("COLOR_F_2").getAsInt()); }
-            if (config.has("COLOR_B_1")) { COLOR_B_1.setColor(config.get("COLOR_B_1").getAsInt()); }
-            if (config.has("COLOR_B_2")) { COLOR_B_2.setColor(config.get("COLOR_B_2").getAsInt()); }
-            if (config.has("COLOR_B_3")) { COLOR_B_3.setColor(config.get("COLOR_B_3").getAsInt()); }
-            if (config.has("WALL_PAPER")) { WALL_PAPER.loadConfig(config.get("WALL_PAPER").getAsJsonObject()); }
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            JsonElement element = FileUtility.loadJson(new File(TERMINAL_PATH, FILE_PATH));
+            if (element == null || !element.isJsonObject()) {
+                saveConfig();
+            } else {
+                JsonObject config = element.getAsJsonObject();
+                if (config.has("COLOR_1")) { COLOR_1.setColor(config.get("COLOR_1").getAsInt()); }
+                if (config.has("COLOR_2")) { COLOR_2.setColor(config.get("COLOR_2").getAsInt()); }
+                if (config.has("COLOR_3")) { COLOR_3.setColor(config.get("COLOR_3").getAsInt()); }
+                if (config.has("COLOR_4")) { COLOR_4.setColor(config.get("COLOR_4").getAsInt()); }
+                if (config.has("COLOR_5")) { COLOR_5.setColor(config.get("COLOR_5").getAsInt()); }
+                if (config.has("COLOR_6")) { COLOR_6.setColor(config.get("COLOR_6").getAsInt()); }
+                if (config.has("COLOR_7")) { COLOR_7.setColor(config.get("COLOR_7").getAsInt()); }
+                if (config.has("COLOR_F_1")) { COLOR_F_1.setColor(config.get("COLOR_F_1").getAsInt()); }
+                if (config.has("COLOR_F_2")) { COLOR_F_2.setColor(config.get("COLOR_F_2").getAsInt()); }
+                if (config.has("COLOR_B_1")) { COLOR_B_1.setColor(config.get("COLOR_B_1").getAsInt()); }
+                if (config.has("COLOR_B_2")) { COLOR_B_2.setColor(config.get("COLOR_B_2").getAsInt()); }
+                if (config.has("COLOR_B_3")) { COLOR_B_3.setColor(config.get("COLOR_B_3").getAsInt()); }
+                if (config.has("WALL_PAPER")) { WALL_PAPER.loadConfig(config.get("WALL_PAPER").getAsJsonObject()); }
+            }
         }
     }
 

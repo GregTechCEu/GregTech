@@ -188,19 +188,26 @@ public class MultiBlockPreviewARApp extends ARApplication {
     //////////////////////////////////////AR/////////////////////////////////////////
 
     @SideOnly(Side.CLIENT)
-    private static final Map<MultiblockControllerBase, WorldSceneRenderer> controllerList = new HashMap<>();
+    private static Map<MultiblockControllerBase, WorldSceneRenderer> controllerList;
     @SideOnly(Side.CLIENT)
-    private static final Set<MultiblockControllerBase> found = new HashSet<>();
+    private static Set<MultiblockControllerBase> found;
     @SideOnly(Side.CLIENT)
     private static BlockPos lastPos;
 
+    @Override
+    public void onAROpened() {
+        controllerList = new HashMap<>();
+        found = new HashSet<>();
+    }
 
+    @SideOnly(Side.CLIENT)
     private boolean inRange(BlockPos playerPos, BlockPos controllerPos) {
         return Math.abs(playerPos.getX() - controllerPos.getX()) < 30 &&
                 Math.abs(playerPos.getY() - controllerPos.getY()) < 30 &&
                 Math.abs(playerPos.getZ() - controllerPos.getZ()) < 30;
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void tickAR(EntityPlayer player) {
         World world = player.world;
@@ -240,6 +247,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
     public void drawARScreen(RenderWorldLastEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
@@ -269,6 +277,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
         GlStateManager.color(1F, 1F, 1F, 0F);
     }
 
+    @SideOnly(Side.CLIENT)
     private static void renderControllerInList(MultiblockControllerBase controllerBase, WorldSceneRenderer worldSceneRenderer) {
         BlockPos mbpPos = controllerBase.getPos();
         EnumFacing frontFacing, previewFacing;
@@ -355,6 +364,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public static WorldSceneRenderer getWorldSceneRenderer(MultiblockControllerBase controllerBase) {
         IRecipeRegistry rr = GTJeiPlugin.jeiRuntime.getRecipeRegistry();
         IFocus<ItemStack> focus = rr.createFocus(IFocus.Mode.INPUT, controllerBase.getStackForm());
@@ -370,6 +380,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
                 .orElse(null);
     }
 
+    @SideOnly(Side.CLIENT)
     private static class TargetBlockAccess implements IBlockAccess {
 
         private final IBlockAccess delegate;

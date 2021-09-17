@@ -48,17 +48,25 @@ public class BlockConcrete extends StoneBlock<BlockConcrete.ConcreteVariant> {
 
     }
 
-    private static MovementInput manualInputCheck;
+//    private static MovementInput manualInputCheck;
 
     @Override
     public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn) {
-        if (manualInputCheck == null) {
-            manualInputCheck = new MovementInputFromOptions(Minecraft.getMinecraft().gameSettings);
-        }
+//        if (manualInputCheck == null) {
+//            manualInputCheck = new MovementInputFromOptions(Minecraft.getMinecraft().gameSettings);
+//        }
+//        IBlockState below = entityIn.getEntityWorld().getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
+//        if (below.getBlock() instanceof BlockConcrete) {
+//            manualInputCheck.updatePlayerMoveState();
+//            if ((manualInputCheck.moveForward != 0 || manualInputCheck.moveStrafe != 0) && !entityIn.isInWater()) {
+//                entityIn.motionX *= 1.6;
+//                entityIn.motionZ *= 1.6;
+//            }
+//        }
+
         IBlockState below = entityIn.getEntityWorld().getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
         if (below.getBlock() instanceof BlockConcrete) {
-            manualInputCheck.updatePlayerMoveState();
-            if ((manualInputCheck.moveForward != 0 || manualInputCheck.moveStrafe != 0) && !entityIn.isInWater()) {
+            if (!entityIn.isInWater()) {
                 entityIn.motionX *= 1.6;
                 entityIn.motionZ *= 1.6;
             }

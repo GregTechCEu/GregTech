@@ -17,7 +17,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class HardwareManagerApp extends AbstractApplication {
-    @SideOnly(Side.CLIENT)
     private static final TextureArea CIRCUIT_LINE = TextureArea.fullImage("textures/gui/terminal/hardware_manager/circuit.png");
     @SideOnly(Side.CLIENT)
     private ShaderTexture circuit;

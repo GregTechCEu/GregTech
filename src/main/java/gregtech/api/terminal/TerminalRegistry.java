@@ -28,6 +28,7 @@ import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,7 +45,13 @@ public class TerminalRegistry {
     private static final Map<String, List<ItemStack>[]> APP_UPGRADE_CONDITIONS = new HashMap<>();
     private static final List<String> DEFAULT_APPS = new ArrayList<>();
     @SideOnly(Side.CLIENT)
-    public static final File TERMINAL_PATH = new File(Loader.instance().getConfigDir(), ConfigHolder.U.clientConfig.terminalRootPath);
+    public static File TERMINAL_PATH;
+
+    static {
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            TERMINAL_PATH = new File(Loader.instance().getConfigDir(), ConfigHolder.U.clientConfig.terminalRootPath);
+        }
+    }
 
     public static void init() {
         // register hardware

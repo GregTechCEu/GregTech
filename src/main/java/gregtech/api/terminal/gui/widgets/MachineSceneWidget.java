@@ -41,7 +41,6 @@ import java.util.function.BiConsumer;
  * @Date: 2021/08/23/19:21
  * @Description:
  */
-@SideOnly(Side.CLIENT)
 public class MachineSceneWidget extends WidgetGroup {
     private static FBOWorldSceneRenderer worldSceneRenderer;
     private boolean dragging;
