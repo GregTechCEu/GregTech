@@ -1,6 +1,7 @@
 package gregtech.common.terminal.app.multiblockhelper;
 
 import gregtech.api.GregTechAPI;
+import gregtech.api.GregTechRegistries;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.gui.GuiTextures;
@@ -338,7 +339,7 @@ public class MachineBuilderWidget extends WidgetGroup {
                 world.setBlockState(blockInfo.pos, state);
                 TileEntity holder = world.getTileEntity(blockInfo.pos);
                 if (holder instanceof MetaTileEntityHolder) {
-                    MetaTileEntity sampleMetaTileEntity = GregTechAPI.META_TILE_ENTITY_REGISTRY.getObjectById(stack.getItemDamage());
+                    MetaTileEntity sampleMetaTileEntity = GregTechRegistries.MTE_REGISTRY.getObjectById(stack.getItemDamage());
                     if (sampleMetaTileEntity != null) {
                         MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) holder).setMetaTileEntity(sampleMetaTileEntity);
                         if (stack.hasTagCompound()) {
