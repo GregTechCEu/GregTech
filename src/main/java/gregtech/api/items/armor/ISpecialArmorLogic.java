@@ -17,7 +17,7 @@ public interface ISpecialArmorLogic extends IArmorLogic {
 
     /**
      * Retrieves the modifiers to be used when calculating armor damage.
-     *
+     * <p>
      * Armor will higher priority will have damage applied to them before
      * lower priority ones. If there are multiple pieces of armor with the
      * same priority, damage will be distributed between them based on there
@@ -36,7 +36,7 @@ public interface ISpecialArmorLogic extends IArmorLogic {
      * Simple check to see if the armor should interact with "Unblockable" damage
      * sources. A fair number of vanilla damage sources have this tag, such as
      * Anvils, Falling, Fire, and Magic.
-     *
+     * <p>
      * Returning true here means that the armor is able to meaningfully respond
      * to this damage source. Otherwise, no interaction is allowed.
      */

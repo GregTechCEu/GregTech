@@ -463,7 +463,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
     @Override
     public int getItemEnchantability(ItemStack stack) {
-        return getToolMaterial(stack).getProperty(PropertyKey.TOOL).toolEnchantability;
+        return getToolMaterial(stack).getProperty(PropertyKey.TOOL).getToolEnchantability();
     }
 
     @Override
@@ -487,7 +487,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
                 materialDurability = toolTag.getInteger("MaxDurability");
             } else if (toolMaterial != null) {
                 ToolProperty prop = toolMaterial.getProperty(PropertyKey.TOOL);
-                if (prop != null) materialDurability = prop.toolDurability;
+                if (prop != null) materialDurability = prop.getToolDurability();
                 else return 0;
             }
             float multiplier = toolStats.getMaxDurabilityMultiplier(itemStack);
@@ -507,7 +507,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
                 toolSpeed = toolTag.getFloat("DigSpeed");
             } else if (toolMaterial != null) {
                 ToolProperty prop = toolMaterial.getProperty(PropertyKey.TOOL);
-                if (prop != null) toolSpeed = prop.toolSpeed;
+                if (prop != null) toolSpeed = prop.getToolSpeed();
                 else return 0;
             }
             float multiplier = toolStats.getDigSpeedMultiplier(itemStack);
@@ -549,7 +549,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
                 attackDamage = toolTag.getInteger("HarvestLevel");
             } else if (toolMaterial != null) {
                 ToolProperty prop = toolMaterial.getProperty(PropertyKey.TOOL);
-                if (prop != null) attackDamage = prop.toolAttackDamage;
+                if (prop != null) attackDamage = prop.getToolAttackDamage();
                 else return 0;
             }
             float baseAttackDamage = toolStats.getBaseDamage(itemStack);

@@ -75,9 +75,9 @@ public class DynamiteEntity extends EntityThrowable {
             }
 
             this.inGround = false;
-            this.motionX *= (double) (this.rand.nextFloat() * 0.2F);
-            this.motionY *= (double) (this.rand.nextFloat() * 0.2F);
-            this.motionZ *= (double) (this.rand.nextFloat() * 0.2F);
+            this.motionX *= this.rand.nextFloat() * 0.2F;
+            this.motionY *= this.rand.nextFloat() * 0.2F;
+            this.motionZ *= this.rand.nextFloat() * 0.2F;
         }
 
         Vec3d vec3d = new Vec3d(this.posX, this.posY, this.posZ);
@@ -128,12 +128,12 @@ public class DynamiteEntity extends EntityThrowable {
             f1 = 0.8F;
         }
 
-        this.motionX *= (double) f1;
-        this.motionY *= (double) f1;
-        this.motionZ *= (double) f1;
+        this.motionX *= f1;
+        this.motionY *= f1;
+        this.motionZ *= f1;
 
         if (!this.hasNoGravity()) {
-            this.motionY -= (double) f2;
+            this.motionY -= f2;
         }
 
         this.setPosition(this.posX, this.posY, this.posZ);

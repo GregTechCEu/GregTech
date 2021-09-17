@@ -17,6 +17,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.RandomPotionEffect;
+import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.*;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -40,15 +41,15 @@ public class MetaItem1 extends StandardMetaItem {
         CREDIT_CUPRONICKEL = addItem(1, "credit.cupronickel").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Cupronickel, GTValues.M / 4)));
         CREDIT_SILVER = addItem(2, "credit.silver").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Silver, GTValues.M / 4))).setRarity(EnumRarity.UNCOMMON);
         CREDIT_GOLD = addItem(3, "credit.gold").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4))).setRarity(EnumRarity.UNCOMMON);
-        CREDIT_PLATINUM = addItem(4, "credit.platinum").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
-        CREDIT_OSMIUM = addItem(5, "credit.osmium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmium, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
-        CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Naquadah, GTValues.M / 4))).setRarity(EnumRarity.RARE);
-        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Neutronium, GTValues.M / 4))).setRarity(EnumRarity.RARE);
+        CREDIT_PLATINUM = addItem(4, "credit.platinum").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, GTValues.M / 4))).setRarity(EnumRarity.RARE);
+        CREDIT_OSMIUM = addItem(5, "credit.osmium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmium, GTValues.M / 4))).setRarity(EnumRarity.RARE);
+        CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Naquadah, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
+        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Neutronium, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
 
         COIN_GOLD_ANCIENT = addItem(8, "coin.gold.ancient").
                 setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4))).setRarity(EnumRarity.RARE);
         COIN_DOGE = addItem(9, "coin.doge")
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Brass, GTValues.M / 4))).setRarity(EnumRarity.RARE);
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Brass, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
         COIN_CHOCOLATE = addItem(10, "coin.chocolate")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4)))
                 .addComponents(new FoodStats(1, 0.1F, false, true, OreDictUnifier.get(OrePrefix.foil, Materials.Gold), new RandomPotionEffect(MobEffects.SPEED, 200, 1, 10)));
@@ -97,6 +98,7 @@ public class MetaItem1 extends StandardMetaItem {
         SHAPE_EXTRUDERS[23] = SHAPE_EXTRUDER_FOIL = addItem(54, "shape.extruder.foil").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
         SHAPE_EXTRUDERS[24] = SHAPE_EXTRUDER_GEAR_SMALL = addItem(55, "shape.extruder.gear_small").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
         SHAPE_EXTRUDERS[25] = SHAPE_EXTRUDER_ROD_LONG = addItem(56, "shape.extruder.rod_long").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
+        SHAPE_EXTRUDERS[26] = SHAPE_EXTRUDER_ROTOR = addItem(57, "shape.extruder.rotor").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 4)));
 
         // Spray Cans: ID 61-77
         SPRAY_EMPTY = addItem(61, "spray.empty")
@@ -166,7 +168,7 @@ public class MetaItem1 extends StandardMetaItem {
                 .addComponents(new LighterBehaviour(100)).setMaxStackSize(1);
         TOOL_LIGHTER_PLATINUM = addItem(92, "tool.lighter.platinum")
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, GTValues.M * 2)))
-                .addComponents(new LighterBehaviour(1000)).setMaxStackSize(1);
+                .addComponents(new LighterBehaviour(1000)).setMaxStackSize(1).setRarity(EnumRarity.UNCOMMON);
 
         BOTTLE_PURPLE_DRINK = addItem(93, "bottle.purple.drink").addComponents(new FoodStats(8, 0.2F, true, true, new ItemStack(Items.GLASS_BOTTLE), new RandomPotionEffect(MobEffects.HASTE, 800, 1, 90)));
 
@@ -313,15 +315,34 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_SOLAR_PANEL = addItem(331, "cover.solar.panel");
         COVER_SOLAR_PANEL_ULV = addItem(332, "cover.solar.panel.ulv");
         COVER_SOLAR_PANEL_LV = addItem(333, "cover.solar.panel.lv");
+        COVER_SOLAR_PANEL_MV = addItem(334, "cover.solar.panel.mv");
+        COVER_SOLAR_PANEL_HV = addItem(335, "cover.solar.panel.hv");
+        COVER_SOLAR_PANEL_EV = addItem(336, "cover.solar.panel.ev");
+        COVER_SOLAR_PANEL_IV = addItem(337, "cover.solar.panel.iv");
+        COVER_SOLAR_PANEL_LUV = addItem(338, "cover.solar.panel.luv");
+        COVER_SOLAR_PANEL_ZPM = addItem(339, "cover.solar.panel.zpm");
+        COVER_SOLAR_PANEL_UV = addItem(340, "cover.solar.panel.uv");
+        // MAX-tier solar panel?
+
+        if (!ConfigHolder.U.GT5u.enableHighTierSolars) {
+            COVER_SOLAR_PANEL_IV.setInvisible();
+            COVER_SOLAR_PANEL_LUV.setInvisible();
+            COVER_SOLAR_PANEL_ZPM.setInvisible();
+            COVER_SOLAR_PANEL_UV.setInvisible();
+        }
 
         // Early Game Brick Related: ID 347-360
         IItemContainerItemProvider selfContainerItemProvider = itemStack -> itemStack;
         WOODEN_FORM_EMPTY = addItem(347, "wooden_form.empty");
         WOODEN_FORM_BRICK = addItem(348, "wooden_form.brick").addComponents(selfContainerItemProvider);
         COMPRESSED_CLAY = addItem(349, "compressed.clay");
-        COMPRESSED_FIRECLAY = addItem(350, "compressed.fireclay");
-        FIRECLAY_BRICK = addItem(351, "brick.fireclay");
-        COKE_OVEN_BRICK = addItem(352, "brick.coke");
+        COMPRESSED_COKE_CLAY = addItem(350, "compressed.coke_clay");
+        COMPRESSED_FIRECLAY = addItem(351, "compressed.fireclay");
+        FIRECLAY_BRICK = addItem(352, "brick.fireclay");
+        COKE_OVEN_BRICK = addItem(353, "brick.coke");
+
+        if (!ConfigHolder.vanillaRecipes.hardMiscRecipes)
+            COMPRESSED_CLAY.setInvisible();
 
         // Boules: ID 361-370
         SILICON_BOULE = addItem(361, "boule.silicon");
@@ -566,5 +587,10 @@ public class MetaItem1 extends StandardMetaItem {
 
         ZERO_POINT_MODULE = addItem(752, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, false)).setModelAmount(8);
         ULTIMATE_BATTERY = addItem(753, "max.battery").addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.MAX)).setUnificationData(OrePrefix.battery, Tier.Maximum).setModelAmount(8);
+
+        IMPELLER_MV = addItem(776, "impeller.mv").setRarity(EnumRarity.UNCOMMON);
+        IMPELLER_HV = addItem(777, "impeller.hv").setRarity(EnumRarity.RARE);
+        GRAVITATION_ENGINE = addItem(778, "gravitation_engine").setRarity(EnumRarity.EPIC);
     }
+
 }

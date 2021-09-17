@@ -96,7 +96,6 @@ public class MaterialRecipeHandler {
                     ModHandler.addSmeltingRecipe(new UnificationEntry(dustPrefix, mat), ingotStack);
                 } else {
                     int duration = Math.max(1, (int) (mat.getAverageMass() * blastTemp / 50L));
-                    ModHandler.removeFurnaceSmelting(new UnificationEntry(OrePrefix.ingot, mat));
 
                     BlastRecipeBuilder ingotSmeltingBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
                             .input(dustPrefix, mat)

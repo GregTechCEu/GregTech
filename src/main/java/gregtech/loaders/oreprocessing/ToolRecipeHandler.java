@@ -204,20 +204,18 @@ public class ToolRecipeHandler {
     }
 
     public static void processPlate(OrePrefix platePrefix, Material material, ToolProperty property) {
-        if (ConfigHolder.U.registerRecipesForMiningHammers) {
-            ModHandler.addShapedRecipe(String.format("mining_hammer_%s", material.toString()),
-                    MetaItems.MINING_HAMMER.getStackForm(material),
-                    "PIP", "IBI", "fRh",
-                    'I', new UnificationEntry(OrePrefix.ingot, material),
-                    'B', new UnificationEntry(OrePrefix.block, material),
-                    'P', new UnificationEntry(OrePrefix.plate, material),
-                    'R', new UnificationEntry(OrePrefix.stick, Materials.Iron));
-        }
+        ModHandler.addShapedRecipe(String.format("mining_hammer_%s", material.toString()),
+                MetaItems.MINING_HAMMER.getStackForm(material),
+                "PIP", "IBI", "fRh",
+                'I', new UnificationEntry(OrePrefix.ingot, material),
+                'B', new UnificationEntry(OrePrefix.block, material),
+                'P', new UnificationEntry(OrePrefix.plate, material),
+                'R', new UnificationEntry(OrePrefix.stick, Materials.Iron));
     }
 
 
     public static void processDrillHead(OrePrefix drillHead, Material material, ToolProperty property) {
-        if (ConfigHolder.U.registerRecipesForHighTierDrills) {
+        if (ConfigHolder.U.GT5u.enableHighTierDrills) {
             processSimpleElectricToolHead(drillHead, material, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV, MetaItems.DRILL_EV, MetaItems.DRILL_IV});
         } else {
             processSimpleElectricToolHead(drillHead, material, new MetaToolValueItem[]{MetaItems.DRILL_LV, MetaItems.DRILL_MV, MetaItems.DRILL_HV});

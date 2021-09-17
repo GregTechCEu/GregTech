@@ -11,8 +11,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.Collections;
 import java.util.List;
 
-import static gregtech.api.gui.impl.ModularUIGui.*;
-
 public class TextTexture implements IGuiTexture{
     public String text;
     public int color;
@@ -86,7 +84,7 @@ public class TextTexture implements IGuiTexture{
             fontRenderer.drawString(resultText, _x, _y, color, dropShadow);
         }
 
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     public enum TextType{

@@ -16,11 +16,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
+/**
+ * Recommended to use this with {@link NotifiableFluidTankFromList} to ensure
+ * proper behavior of the "allowSameFluidFill" setting, but not required.
+ */
 public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTSerializable<NBTTagCompound> {
 
     protected final List<IFluidTank> fluidTanks;
     protected IFluidTankProperties[] properties;
-    protected final boolean allowSameFluidFill;
+    private final boolean allowSameFluidFill;
     private IFluidTankProperties[] fluidTankProperties;
 
     public FluidTankList(boolean allowSameFluidFill, IFluidTank... fluidTanks) {
@@ -95,7 +99,7 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
                 totalFilled += filledAmount;
                 resource.amount -= filledAmount;
                 //if filling multiple tanks is not allowed, or resource is empty, return now
-                if (!allowSameFluidFill || resource.amount == 0)
+                if (!allowSameFluidFill() || resource.amount == 0)
                     return totalFilled;
             }
         }
@@ -105,7 +109,7 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
                 int filledAmount = handler.fill(resource, doFill);
                 totalFilled += filledAmount;
                 resource.amount -= filledAmount;
-                if (!allowSameFluidFill || resource.amount == 0)
+                if (!allowSameFluidFill() || resource.amount == 0)
                     return totalFilled;
             }
         }
@@ -203,5 +207,21 @@ public class FluidTankList implements IFluidHandler, IMultipleTankHandler, INBTS
     protected void validateTankIndex(int tank) {
         if (tank < 0 || tank >= fluidTanks.size())
             throw new RuntimeException("Tank " + tank + " not in valid range - (0," + fluidTanks.size() + "]");
+    }
+
+    @Override
+    public int getIndexOfFluid(FluidStack fluidStack) {
+        for (int i = 0; i < fluidTanks.size(); i++) {
+            FluidStack tankStack = fluidTanks.get(i).getFluid();
+            if (tankStack != null && tankStack.isFluidEqual(fluidStack)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public boolean allowSameFluidFill() {
+        return allowSameFluidFill;
     }
 }

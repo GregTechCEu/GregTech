@@ -1,12 +1,8 @@
 package gregtech.api.gui.ingredient;
 
 import gregtech.api.gui.impl.ModularUIContainer;
-import mezz.jei.api.gui.IGuiIngredient;
 import mezz.jei.api.gui.IRecipeLayout;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
-import java.util.Map;
 
 public interface IRecipeTransferHandlerWidget {
 

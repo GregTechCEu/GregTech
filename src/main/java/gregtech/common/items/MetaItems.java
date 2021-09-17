@@ -1,6 +1,7 @@
 package gregtech.common.items;
 
 import com.google.common.base.CaseFormat;
+import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.materialitem.MetaPrefixItem;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.MetaItem.MetaValueItem;
@@ -8,6 +9,7 @@ import gregtech.api.items.metaitem.MetaOreDictItem;
 import gregtech.api.items.toolitem.ToolMetaItem;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
+import gregtech.common.items.armor.MetaArmor;
 import gregtech.common.render.FacadeItemModel;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -44,6 +46,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COIN_CHOCOLATE;
 
     public static MetaItem<?>.MetaValueItem COMPRESSED_CLAY;
+    public static MetaItem<?>.MetaValueItem COMPRESSED_COKE_CLAY;
     public static MetaItem<?>.MetaValueItem COMPRESSED_FIRECLAY;
     public static MetaItem<?>.MetaValueItem FIRECLAY_BRICK;
     public static MetaItem<?>.MetaValueItem COKE_OVEN_BRICK;
@@ -68,7 +71,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROTOR;
 
-    public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[26];
+    public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[27];
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOLT;
@@ -95,6 +98,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_FOIL;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD_LONG;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROTOR;
 
     public static MetaItem<?>.MetaValueItem SPRAY_EMPTY;
 
@@ -406,6 +410,13 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ULV;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_LV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_MV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_HV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_EV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_IV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_LUV;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ZPM;
+    public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_UV;
 
     public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT;
 
@@ -493,6 +504,33 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem CLIPBOARD;
 
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NIGHTVISION_GOGGLES;
+
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_CHESTPLATE;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_LEGGINGS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_BOOTS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem NANO_MUSCLE_SUITE_HELMET;
+
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_CHESTPLATE;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_LEGGINGS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_BOOTS;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem QUARK_TECH_SUITE_HELMET;
+
+    public static ArmorMetaItem<?>.ArmorMetaValueItem SEMIFLUID_JETPACK;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem IMPELLER_JETPACK;
+
+    public static ArmorMetaItem<?>.ArmorMetaValueItem BATPACK_LV;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem BATPACK_MV;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem BATPACK_HV;
+
+    public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_IMPELLER_JETPACK;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_NANO_MUSCLE_CHESTPLATE;
+    public static ArmorMetaItem<?>.ArmorMetaValueItem ADVANCED_QUARK_TECH_SUITE_CHESTPLATE;
+
+    public static MetaItem<?>.MetaValueItem IMPELLER_MV;
+    public static MetaItem<?>.MetaValueItem IMPELLER_HV;
+    public static MetaItem<?>.MetaValueItem GRAVITATION_ENGINE;
+
     private static final List<OrePrefix> orePrefixes = new ArrayList<OrePrefix>() {{
         add(OrePrefix.dust);
         add(OrePrefix.dustSmall);
@@ -552,6 +590,8 @@ public final class MetaItems {
         tool.setRegistryName("meta_tool");
         MetaOreDictItem oreDictItem = new MetaOreDictItem((short) 0);
         oreDictItem.setRegistryName("meta_oredict_item");
+        MetaArmor armor = new MetaArmor();
+        armor.setRegistryName("gt_armor");
         for (OrePrefix prefix : orePrefixes) {
             String regName = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, prefix.name());
             MetaPrefixItem metaOrePrefix = new MetaPrefixItem(prefix);

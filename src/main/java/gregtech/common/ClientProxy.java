@@ -16,6 +16,7 @@ import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
+import gregtech.api.util.input.KeyBinds;
 import gregtech.common.blocks.*;
 import gregtech.common.covers.facade.FacadeRenderer;
 import gregtech.common.items.MetaItems;
@@ -105,6 +106,7 @@ public class ClientProxy extends CommonProxy {
 
     public void onPreLoad() {
         super.onPreLoad();
+        KeyBinds.initBinds();
         MetaTileEntityRenderer.preInit();
         CableRenderer.preInit();
         FluidPipeRenderer.preInit();
@@ -113,10 +115,12 @@ public class ClientProxy extends CommonProxy {
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
         MinecraftForge.EVENT_BUS.register(ToolRenderHandler.INSTANCE);
+
     }
 
     @Override
     public void onLoad() {
+        KeyBinds.registerClient();
         super.onLoad();
         if (ConfigHolder.debug) {
             ClientCommandHandler.instance.registerCommand(new Shaders.ShaderCommand());

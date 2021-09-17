@@ -25,7 +25,7 @@ public abstract class MetaTileEntityMultiblockPart extends MetaTileEntity implem
     private final int tier;
     private BlockPos controllerPos;
     private MultiblockControllerBase controllerTile;
-    private ICubeRenderer hatchTexture = null;
+    protected ICubeRenderer hatchTexture = null;
 
     public MetaTileEntityMultiblockPart(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId);

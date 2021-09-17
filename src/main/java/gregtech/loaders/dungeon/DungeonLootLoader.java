@@ -13,11 +13,11 @@ import net.minecraft.world.storage.loot.LootTableList;
 public class DungeonLootLoader {
 
     public static void init() {
-        if (ConfigHolder.UnofficialOptions.addLoot || ConfigHolder.increaseDungeonLoot) {
+        if (ConfigHolder.addLoot || ConfigHolder.increaseDungeonLoot) {
             GTLog.logger.info("Registering dungeon loot...");
             ChestGenHooks.init();
         }
-        if (ConfigHolder.UnofficialOptions.addLoot) {
+        if (ConfigHolder.addLoot) {
             ChestGenHooks.addItem(LootTableList.CHESTS_SPAWN_BONUS_CHEST, MetaItems.BOTTLE_PURPLE_DRINK.getStackForm(), 8, 16, 2);
 
             ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON, MetaItems.BOTTLE_PURPLE_DRINK.getStackForm(), 8, 16, 40);
@@ -36,7 +36,7 @@ public class DungeonLootLoader {
             ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON, OreDictUnifier.get(OrePrefix.gem, Materials.GarnetRed, 1), 1, 6, 10);
             ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON, OreDictUnifier.get(OrePrefix.gem, Materials.GarnetYellow, 1), 1, 6, 10);
             ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON, OreDictUnifier.get(OrePrefix.dust, Materials.Aluminium, 1), 1, 6, 10);
-            ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON, OreDictUnifier.get(OrePrefix.dust, Materials.Neodymium, 1), 1, 6, 10);
+            ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON, OreDictUnifier.get(OrePrefix.dust, Materials.Neodymium, 1), 1, 2, 10);
             ChestGenHooks.addItem(LootTableList.CHESTS_SIMPLE_DUNGEON, OreDictUnifier.get(OrePrefix.dust, Materials.Chrome, 1), 1, 3, 10);
 
             ChestGenHooks.addItem(LootTableList.CHESTS_DESERT_PYRAMID, OreDictUnifier.get(OrePrefix.ingot, Materials.Silver, 1), 4, 16, 6);
@@ -77,7 +77,7 @@ public class DungeonLootLoader {
             ChestGenHooks.addItem(LootTableList.CHESTS_ABANDONED_MINESHAFT, OreDictUnifier.get(OrePrefix.toolHeadShovel, Materials.Vinteum, 1), 1, 2, 2);
 
             ChestGenHooks.addItem(LootTableList.CHESTS_VILLAGE_BLACKSMITH, OreDictUnifier.get(OrePrefix.dust, Materials.Chrome, 1), 1, 4, 3);
-            ChestGenHooks.addItem(LootTableList.CHESTS_VILLAGE_BLACKSMITH, OreDictUnifier.get(OrePrefix.dust, Materials.Neodymium, 1), 2, 8, 3);
+            ChestGenHooks.addItem(LootTableList.CHESTS_VILLAGE_BLACKSMITH, OreDictUnifier.get(OrePrefix.dust, Materials.Neodymium, 1), 1, 3, 3);
             ChestGenHooks.addItem(LootTableList.CHESTS_VILLAGE_BLACKSMITH, OreDictUnifier.get(OrePrefix.ingot, Materials.Manganese, 1), 2, 8, 6);
             ChestGenHooks.addItem(LootTableList.CHESTS_VILLAGE_BLACKSMITH, OreDictUnifier.get(OrePrefix.ingot, Materials.Steel, 1), 4, 12, 6);
             ChestGenHooks.addItem(LootTableList.CHESTS_VILLAGE_BLACKSMITH, OreDictUnifier.get(OrePrefix.ingot, Materials.Bronze, 1), 4, 12, 6);

@@ -4,6 +4,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
+import static gregtech.api.GTValues.L;
 import static gregtech.api.recipes.RecipeMaps.ASSEMBLER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
@@ -259,6 +260,15 @@ public class AssemblerRecipeLoader {
                 .input(wireFine, FluxedElectrum, 16)
                 .circuitMeta(1)
                 .outputs(VOLTAGE_COIL_UV.getStackForm())
+                .buildAndRegister();
+
+        // Neutron Reflector
+        ASSEMBLER_RECIPES.recipeBuilder().duration(4000).EUt(120)
+                .input(PLATE_IRIDIUM_ALLOY)
+                .input(plateDouble, Beryllium, 16)
+                .input(plateDouble, TungstenCarbide, 2)
+                .fluidInputs(TinAlloy.getFluid(L * 32))
+                .output(NEUTRON_REFLECTOR)
                 .buildAndRegister();
     }
 }

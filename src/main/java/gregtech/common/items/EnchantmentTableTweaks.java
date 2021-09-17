@@ -8,10 +8,7 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.SlotDelegate;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ContainerEnchantment;
 import net.minecraft.inventory.IInventory;
@@ -24,12 +21,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+
 @EventBusSubscriber(modid = GTValues.MODID)
 public class EnchantmentTableTweaks {
 
     @SubscribeEvent
     public static void onContainerOpen(PlayerContainerEvent.Open event) {
-        onContainerOpen(event.getEntityPlayer(), event.getContainer());
+        onContainerOpen(event.getContainer());
     }
 
     @SubscribeEvent
@@ -37,12 +36,11 @@ public class EnchantmentTableTweaks {
     public static void onGuiOpen(GuiOpenEvent event) {
         if (event.getGui() instanceof GuiContainer) {
             GuiContainer guiContainer = (GuiContainer) event.getGui();
-            EntityPlayerSP playerSP = Minecraft.getMinecraft().player;
-            onContainerOpen(playerSP, guiContainer.inventorySlots);
+            onContainerOpen(guiContainer.inventorySlots);
         }
     }
 
-    private static void onContainerOpen(EntityPlayer player, Container container) {
+    private static void onContainerOpen(Container container) {
         if (container instanceof ContainerEnchantment) {
             //wrap in try-catch because such kind of tweaks is subject to breaking
             //don't let it crash game if some mod borked it
@@ -89,7 +87,7 @@ public class EnchantmentTableTweaks {
         }
 
         @Override
-        public boolean isItemValid(ItemStack stack) {
+        public boolean isItemValid(@Nonnull ItemStack stack) {
             return super.isItemValid(stack) || isValidForEnchantment(stack);
         }
     }

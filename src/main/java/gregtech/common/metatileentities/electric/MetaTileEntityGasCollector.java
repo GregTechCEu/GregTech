@@ -87,7 +87,7 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
             this.invalidInputsForRecipes = (currentRecipe == null);
 
             // proceed if we have a usable recipe.
-            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))
+            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory))
                 setupRecipe(currentRecipe);
             // Inputs have been inspected.
             metaTileEntity.getNotifiedItemInputList().clear();

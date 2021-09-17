@@ -4,9 +4,10 @@ import java.util.Objects;
 
 public class FluidPipeProperties implements IMaterialProperty<FluidPipeProperties> {
 
-    public final int maxFluidTemperature;
-    public final int throughput;
-    public final boolean gasProof;
+    // TODO These need to be made private, and done through getters/setters
+    public int maxFluidTemperature;
+    public int throughput;
+    public boolean gasProof;
     public final int tanks;
 
     public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof) {

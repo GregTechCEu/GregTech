@@ -70,4 +70,9 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
     public boolean hasMufflerMechanics() {
         return true;
     }
+
+    @Override
+    public boolean canBeDistinct() {
+        return true;
+    }
 }

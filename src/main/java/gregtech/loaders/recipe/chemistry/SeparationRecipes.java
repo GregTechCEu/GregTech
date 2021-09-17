@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregLog;
 import gregtech.common.items.MetaItems;
@@ -86,23 +85,20 @@ public class SeparationRecipes {
                 .outputs(new ItemStack(Items.SLIME_BALL))
                 .buildAndRegister();
 
+        for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {
+            if (item instanceof ItemFood) {
+                ItemFood itemFood = (ItemFood) item;
+                Collection<ItemStack> subItems = ModHandler.getAllSubItems(new ItemStack(item, 1, GTValues.W));
+                for (ItemStack itemStack : subItems) {
+                    int healAmount = itemFood.getHealAmount(itemStack);
+                    float saturationModifier = itemFood.getSaturationModifier(itemStack);
+                    if (healAmount > 0) {
+                        FluidStack outputStack = Methane.getFluid(Math.round(9 * healAmount * (1.0f + saturationModifier)));
 
-        if (ConfigHolder.addFoodMethaneRecipes) {
-            for (Item item : ForgeRegistries.ITEMS.getValuesCollection()) {
-                if (item instanceof ItemFood) {
-                    ItemFood itemFood = (ItemFood) item;
-                    Collection<ItemStack> subItems = ModHandler.getAllSubItems(new ItemStack(item, 1, GTValues.W));
-                    for (ItemStack itemStack : subItems) {
-                        int healAmount = itemFood.getHealAmount(itemStack);
-                        float saturationModifier = itemFood.getSaturationModifier(itemStack);
-                        if (healAmount > 0) {
-                            FluidStack outputStack = Methane.getFluid(Math.round(9 * healAmount * (1.0f + saturationModifier)));
-
-                            CENTRIFUGE_RECIPES.recipeBuilder().duration(144).EUt(5)
-                                    .inputs(itemStack)
-                                    .fluidOutputs(outputStack)
-                                    .buildAndRegister();
-                        }
+                        CENTRIFUGE_RECIPES.recipeBuilder().duration(144).EUt(5)
+                                .inputs(itemStack)
+                                .fluidOutputs(outputStack)
+                                .buildAndRegister();
                     }
                 }
             }

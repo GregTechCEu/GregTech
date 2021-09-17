@@ -337,36 +337,6 @@ public class ReactorRecipes {
                 .duration(80).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
-                .fluidInputs(Air.getFluid(1000))
-                .fluidInputs(Styrene.getFluid(144))
-                .fluidOutputs(Polystyrene.getFluid(144))
-                .duration(160).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
-                .fluidInputs(Oxygen.getFluid(1000))
-                .fluidInputs(Styrene.getFluid(144))
-                .fluidOutputs(Polystyrene.getFluid(216))
-                .duration(160).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
-                .fluidInputs(Air.getFluid(7500))
-                .fluidInputs(Styrene.getFluid(2160))
-                .fluidInputs(TitaniumTetrachloride.getFluid(100))
-                .fluidOutputs(Polystyrene.getFluid(3240))
-                .duration(800).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
-                .fluidInputs(Oxygen.getFluid(7500))
-                .fluidInputs(Styrene.getFluid(2160))
-                .fluidInputs(TitaniumTetrachloride.getFluid(100))
-                .fluidOutputs(Polystyrene.getFluid(4320))
-                .duration(800).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(3))
                 .fluidInputs(Oxygen.getFluid(1000))
                 .fluidInputs(HydrochloricAcid.getFluid(1000))
@@ -971,13 +941,6 @@ public class ReactorRecipes {
                 .duration(500).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, Sulfur)
-                .fluidInputs(Water.getFluid(4000))
-                .fluidOutputs(SulfuricAcid.getFluid(1000))
-                .fluidOutputs(Hydrogen.getFluid(6000))
-                .duration(1150).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
                 .input(crushedPurified, Chalcopyrite)
                 .fluidInputs(NitricAcid.getFluid(1000))
                 .output(dustTiny, PlatinumGroupSludge)
@@ -1063,13 +1026,6 @@ public class ReactorRecipes {
                 .fluidInputs(SulfuricAcid.getFluid(250))
                 .outputs(new ItemStack(Blocks.TNT))
                 .duration(200).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input(dust, SodiumBisulfate, 7)
-                .fluidInputs(Water.getFluid(1000))
-                .output(dust, SodiumHydroxide, 3)
-                .fluidOutputs(SulfuricAcid.getFluid(1000))
-                .duration(60).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(dust, SodiumHydroxide, 6)

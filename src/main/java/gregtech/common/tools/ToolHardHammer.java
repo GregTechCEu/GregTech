@@ -1,11 +1,11 @@
 package gregtech.common.tools;
 
 import com.google.common.collect.ImmutableSet;
+import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.RecipeMaps;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,7 +26,7 @@ public class ToolHardHammer extends ToolBase {
 
     @Override
     public boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment) {
-        return enchantment.type.canEnchantItem(Items.IRON_PICKAXE);
+        return enchantment != EnchantmentHardHammer.INSTANCE && enchantment.type.canEnchantItem(Items.IRON_PICKAXE);
     }
 
     @Override
@@ -88,10 +88,8 @@ public class ToolHardHammer extends ToolBase {
         ToolUtility.applyHammerDrops(world.rand, blockState, dropList, EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, toolStack), player);
     }
 
-    @Override
-    public void addInformation(ItemStack stack, List<String> lines, boolean isAdvanced) {
-        lines.add(I18n.format("metaitem.tool.tooltip.hammer.extra_drop"));
-    }
+
+
 
     @Override
     public Set<String> getToolClasses(ItemStack stack) {

@@ -4,7 +4,7 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
-import gregtech.integration.jei.recipe.primitive.PrimitiveRecipeCategory;
+import gregtech.integration.jei.recipe.primitive.BasicRecipeCategory;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 import static gregtech.api.GTValues.MODID_AR;
 import static gregtech.api.GTValues.isModLoaded;
 
-public class GTOreCategory extends PrimitiveRecipeCategory<GTOreInfo, GTOreInfo> {
+public class GTOreCategory extends BasicRecipeCategory<GTOreInfo, GTOreInfo> {
 
     protected final IDrawable slot;
     protected OreDepositDefinition definition;

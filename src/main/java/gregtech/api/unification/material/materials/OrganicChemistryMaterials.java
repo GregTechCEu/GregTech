@@ -18,12 +18,7 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1, Silicon, 1)
                 .build();
 
-        Polystyrene = new Material.Builder(1001, "polystyrene")
-                .ingot().fluid()
-                .color(0xBEB4AA)
-                .flags(DISABLE_DECOMPOSITION, GENERATE_FOIL, NO_SMASHING)
-                .components(Carbon, 8, Hydrogen, 8)
-                .build();
+        // Free ID 1001
 
         RawRubber = new Material.Builder(1002, "raw_rubber")
                 .dust()
@@ -113,12 +108,7 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 21, Hydrogen, 25, Chlorine, 1, Oxygen, 5)
                 .build();
 
-        Polysiloxane = new Material.Builder(1014, "polysiloxane")
-                .ingot(1).fluid()
-                .color(0xDCDCDC)
-                .flags(STD_METAL, FLAMMABLE, NO_SMASHING, DISABLE_DECOMPOSITION)
-                .components(Carbon, 1, Hydrogen, 1, Silicon, 2, Oxygen, 1)
-                .build();
+        // Free ID 1014
 
         Polycaprolactam = new Material.Builder(1015, "polycaprolactam")
                 .ingot(1).fluid()

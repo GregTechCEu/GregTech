@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 // TODO Make this not take an explicit ID and Name
 public class MaterialFlag {
 
+    private static final Set<MaterialFlag> FLAG_REGISTRY = new HashSet<>();
+
     private final int id;
     private final String name;
 
@@ -20,6 +22,7 @@ public class MaterialFlag {
         this.id = id;
         this.name = name;
         this.requiredFlags = requiredFlags;
+        FLAG_REGISTRY.add(this);
     }
 
     @Override
@@ -42,6 +45,10 @@ public class MaterialFlag {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    public static MaterialFlag getByName(String name) {
+        return FLAG_REGISTRY.stream().filter(f -> f.toString().equals(name)).findFirst().orElse(null);
     }
 
     public static class Builder {

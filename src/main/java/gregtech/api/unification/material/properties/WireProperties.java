@@ -4,10 +4,11 @@ import java.util.Objects;
 
 public class WireProperties implements IMaterialProperty<WireProperties> {
 
-    public final int voltage;
-    public final int amperage;
-    public final int lossPerBlock;
-    public final boolean isSuperconductor;
+    // TODO these need to be private and handled with getters/setters
+    public int voltage;
+    public int amperage;
+    public int lossPerBlock;
+    public boolean isSuperconductor;
 
     public WireProperties(int voltage, int baseAmperage, int lossPerBlock) {
         this(voltage, baseAmperage, lossPerBlock, false);

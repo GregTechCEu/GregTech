@@ -1,7 +1,5 @@
 package gregtech.api.unification.material.properties;
 
-//@ZenClass("mods.gregtech.material.GemMaterial")
-//@ZenRegister
 public class GemProperty implements IMaterialProperty<GemProperty> {
 
     @Override

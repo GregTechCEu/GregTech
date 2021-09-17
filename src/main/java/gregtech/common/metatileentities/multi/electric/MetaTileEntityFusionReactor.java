@@ -231,12 +231,12 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
+        protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
             long heatDiff = recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) - heat;
             if (heatDiff <= 0) {
-                return super.setupAndConsumeRecipeInputs(recipe);
+                return super.setupAndConsumeRecipeInputs(recipe, importInventory);
             }
-            if (energyContainer.getEnergyStored() < heatDiff || !super.setupAndConsumeRecipeInputs(recipe)) {
+            if (energyContainer.getEnergyStored() < heatDiff || !super.setupAndConsumeRecipeInputs(recipe, importInventory)) {
                 return false;
             }
             energyContainer.removeEnergy(heatDiff);

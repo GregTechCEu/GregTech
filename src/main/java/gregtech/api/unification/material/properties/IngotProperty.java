@@ -4,8 +4,6 @@ import gregtech.api.unification.material.Material;
 
 import javax.annotation.Nullable;
 
-//@ZenClass("mods.gregtech.material.IngotMaterial")
-//@ZenRegister
 public class IngotProperty implements IMaterialProperty<IngotProperty> {
 
     /**
