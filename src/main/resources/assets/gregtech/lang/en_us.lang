@@ -2006,6 +2006,7 @@ metaitem.terminal.tooltip.creative=§bCreative Mode
 metaitem.terminal.tooltip.hardware=§aHardware: %d
 
 metaitem.wireless.name=Wireless Transmitter
+metaitem.camera.name=Camera
 
 tile.casing.ulv=ULV Machine Casing
 tile.casing.lv=LV Machine Casing
@@ -3861,8 +3862,10 @@ gregtech.terminal.app_name.battery=Battery Manager
 gregtech.terminal.app_name.hardware=Hardware Manager
 gregtech.terminal.app_name.store=App Store
 gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
+gregtech.terminal.app_name.world_prospector=World Prospector
 
 terminal.app_name.description=No description.
+terminal.app_name.tier=Tier %d
 terminal.items.description=A guide book about items.
 terminal.machines.description=A guide book about gt machines.
 terminal.multiblocks.description=A guide book about multi-blocks.
@@ -3971,13 +3974,21 @@ terminal.store.description=App store, check out what you got? Install and upgrad
 terminal.store.match=Detect that inventory meets demand, whether to (install)upgrade?
 terminal.store.miss=Require %s (%d).
 
-terminal.multiblock_ar.description=Remember the §aFree Wrench§r?  Unfortunately, it it's gone.  It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
+terminal.ar.open=Open AR
+
+terminal.multiblock_ar.description=Remember the §cFree Wrench§r?  Unfortunately, it it's gone.  It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
+terminal.multiblock_ar.tier.0=AR Camera
+terminal.multiblock_ar.tier.1=3D Builder
 terminal.multiblock_ar.unlock=Unlock this mode after the upgrade
-terminal.multiblock_ar.ar.hover=Open AR camera to help you build multi-block structure
 terminal.multiblock_ar.builder.hover=3D Builder
-terminal.multiblock_ar.ar.title=Basic function
-terminal.multiblock_ar.builder.title=Paid function
 terminal.multiblock_ar.builder.auto=Automatic Build
 terminal.multiblock_ar.builder.place=Place block
 terminal.multiblock_ar.builder.debug=Debug
 
+terminal.world_prospector.description="I wish I had X-ray vision."\n"Sir, I'm sorry, but we don't sell superpowers. You should trust the science."
+terminal.world_prospector.tier.0=Radius 15m (1 slot)
+terminal.world_prospector.tier.1=Radius 30m (2 slot)
+terminal.world_prospector.tier.2=Radius 60m (4 slot)
+terminal.world_prospector.radius=Radius %sm
+terminal.world_prospector.reference=Select a reference
+terminal.world_prospector.color=Select box color

@@ -57,12 +57,7 @@ public class AppPageWidget extends TerminalDialogWidget {
             // profile
             int color = application.getThemeColor();
             int lightColor = color & 0x00ffffff | ((0x6f) << 24);
-            IGuiTexture profile;
-            if (ResourceHelper.isResourceExist("textures/gui/terminal/" + name + "/profile.png")) {
-                profile = TextureArea.fullImage("textures/gui/terminal/" + name + "/profile.png");
-            } else {
-                profile = application.getIcon();
-            }
+            IGuiTexture profile = application.getProfile();
             this.addWidget(new ImageWidget(10, 15, 80, 80, profile));
 
             for (int i = 0; i < stage; i++) {
@@ -70,7 +65,7 @@ public class AppPageWidget extends TerminalDialogWidget {
                         .stream()
                         .map(hw-> hw.getLocalizedName() + "(" + hw.addInformation() + ")")
                         .collect(Collectors.toList());
-                demand.add(0, "terminal." + name + ".tier." + i);
+                demand.add(0, application.getTierInformation(i));
                 buttons[i].setColors(0, lightColor, color).setHoverText(demand.toArray(new String[0]));
                 List<ItemStack> conditions = TerminalRegistry.getAppHardwareUpgradeConditions(name, i);
                 // line

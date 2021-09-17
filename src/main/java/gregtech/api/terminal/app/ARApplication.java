@@ -1,7 +1,8 @@
 package gregtech.api.terminal.app;
 
+import gregtech.common.items.behaviors.TerminalBehaviour;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -20,14 +21,29 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * (If you need data from NBT, dont forget to write nbt when closeApp {@link #closeApp()})
  */
 public abstract class ARApplication extends AbstractApplication{
-    protected NBTTagCompound nbtTag;
+    protected ItemStack heldStack;
 
     public ARApplication(String name) {
         super(name);
     }
 
-    public final void setNBTDuringAROpened(NBTTagCompound nbtTag) {
-        this.nbtTag = nbtTag;
+    @Override
+    public int getAppTier() {
+        if (nbt != null) {
+            if (os != null) {
+                return super.getAppTier();
+            } else if (TerminalBehaviour.isCreative(heldStack)) {
+                return getMaxTier();
+            }
+            return Math.min(nbt.getInteger("_tier"), getMaxTier());
+        }
+        return 0;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public final void setAROpened(ItemStack heldStack) {
+        this.heldStack = heldStack;
+        this.nbt = heldStack.getOrCreateSubCompound("terminal").getCompoundTag(getRegistryName());
     }
 
     @Override
@@ -49,11 +65,28 @@ public abstract class ARApplication extends AbstractApplication{
     }
 
     /**
+     * this will be fired every time you first switch selected slot to the held terminal.
+     */
+    @SideOnly(Side.CLIENT)
+    public void onAROpened() {
+
+    }
+
+    /**
+     * this will be fired when switch the current slot (terminal) to other slots or open this terminal.
+     */
+    @SideOnly(Side.CLIENT)
+    public void onARClosed() {
+        nbt = null;
+        heldStack = null;
+    }
+
+    /**
      * Be careful! do not try to use non-static field or call a non-static function here.
      * This method is called with the registered instance. {@link gregtech.api.terminal.TerminalRegistry#registerApp(AbstractApplication)}
      */
     @SideOnly(Side.CLIENT)
-    public void tickAR(EntityPlayer tickEvent) {
+    public void tickAR(EntityPlayer player) {
     }
 
     /**

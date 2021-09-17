@@ -1,6 +1,7 @@
 package gregtech.api.terminal.app;
 
 import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
 import gregtech.api.terminal.os.TerminalOSWidget;
@@ -43,12 +44,6 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         return name.hashCode() | 0xff000000;
     }
 
-    @SideOnly(Side.CLIENT)
-    public String getDescription() {
-        String key = "terminal." + getRegistryName() + ".description";
-        return I18n.hasKey(key) ? I18n.format(key) : I18n.format("terminal.app_name.description");
-    }
-
     /**
      * App Name
      */
@@ -64,12 +59,57 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
      * App Icon
      */
     public IGuiTexture getIcon() {
-        return TextureArea.fullImage("textures/gui/terminal/" + getRegistryName() + "/icon.png");
+        return TextureArea.fullImage("textures/gui/terminal/" + name + "/icon.png");
+    }
+
+    /**
+     * App Description
+     */
+    @SideOnly(Side.CLIENT)
+    public String getDescription() {
+        if (I18n.hasKey("terminal." + getRegistryName() + ".description")) {
+            return I18n.format("terminal." + getRegistryName() + ".description");
+        }
+        return I18n.format("terminal.app_name.description");
+    }
+
+    /**
+     * App Profile
+     */
+    @SideOnly(Side.CLIENT)
+    public IGuiTexture getProfile() {
+        if (ResourceHelper.isResourceExist("textures/gui/terminal/" + name + "/profile.png")) {
+            return TextureArea.fullImage("textures/gui/terminal/" + name + "/profile.png");
+        }
+        return getIcon();
+    }
+
+    /**
+     * App Banner
+     */
+    @SideOnly(Side.CLIENT)
+    public IGuiTexture getBanner() {
+        if (ResourceHelper.isResourceExist("textures/gui/terminal/" + name + "/banner.png")) {
+            return TextureArea.fullImage("textures/gui/terminal/" + name + "/banner.png");
+        }
+        return null;
+    }
+
+    /**
+     * App Information for each tier
+     */
+    @SideOnly(Side.CLIENT)
+    public String getTierInformation(int tier) {
+        if (I18n.hasKey("terminal." + name + ".tier." + tier)) {
+            return I18n.format("terminal." + name + ".tier." + tier);
+        }
+        return I18n.format("terminal.app_name.tier", tier);
     }
 
     /**
      * Will be called when try to open this app. you should return an instance here.
-     * It's probably best not to initialize your app here.
+     * Due to INative's poor synchronization, do not add the INativeWidget {@link gregtech.api.gui.INativeWidget} here.
+     * Instead, It's probably best not to initialize your app here. initialize should in initApp {@link #initApp()}
      */
     public AbstractApplication createAppInstance(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
         try {
@@ -134,7 +174,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     /**
      * App Current Tier. Creative Terminal(return max tier)
      */
-    public final int getAppTier() {
+    public int getAppTier() {
         if (nbt != null) {
             if (TerminalBehaviour.isCreative(getOs().itemStack)) {
                 return getMaxTier();

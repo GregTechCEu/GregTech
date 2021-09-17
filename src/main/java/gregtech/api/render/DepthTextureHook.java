@@ -31,28 +31,34 @@ public class DepthTextureHook {
     public static int framebufferObject;
     public static int framebufferDepthTexture;
     private static boolean useDefaultFBO = true;
+    private static boolean lastBind;
     private static int lastWidth, lastHeight;
 
     private static boolean shouldRenderDepthTexture() {
-        return ConfigHolder.U.clientConfig.hookDepthTexture && OpenGlHelper.isFramebufferEnabled();
+        return lastBind && ConfigHolder.U.clientConfig.hookDepthTexture && OpenGlHelper.isFramebufferEnabled();
     }
 
     public static void onPreWorldRender(TickEvent.RenderTickEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (event.phase == TickEvent.Phase.START && mc.world != null && shouldRenderDepthTexture()) {
-            if (useDefaultFBO && GL11.glGetError() != 0) { // if we can't use the vanilla fbo.... okay, why not create our own fbo?
-                useDefaultFBO = false;
-                if (framebufferDepthTexture != 0) {
+        if (event.phase == TickEvent.Phase.START && mc.world != null) {
+            if (shouldRenderDepthTexture()) {
+                if (useDefaultFBO && GL11.glGetError() != 0) { // if we can't use the vanilla fbo.... okay, why not create our own fbo?
+                    useDefaultFBO = false;
+                    if (framebufferDepthTexture != 0) {
+                        disposeDepthTexture();
+                        createDepthTexture();
+                    }
+                }
+                if (framebufferDepthTexture == 0) {
+                    createDepthTexture();
+                } else if (lastWidth != mc.getFramebuffer().framebufferWidth || lastHeight != mc.getFramebuffer().framebufferHeight) {
                     disposeDepthTexture();
                     createDepthTexture();
                 }
-            }
-            if (framebufferDepthTexture == 0) {
-                createDepthTexture();
-            } else if (lastWidth != mc.getFramebuffer().framebufferWidth || lastHeight != mc.getFramebuffer().framebufferHeight) {
+            } else {
                 disposeDepthTexture();
-                createDepthTexture();
             }
+            lastBind = false;
         }
     }
 
@@ -132,7 +138,8 @@ public class DepthTextureHook {
     }
 
     public static void bindDepthTexture() {
-        if (useDefaultFBO) {
+        lastBind = true;
+        if (useDefaultFBO && framebufferDepthTexture != 0) {
             Framebuffer framebuffer = Minecraft.getMinecraft().getFramebuffer();
             if (framebuffer.isStencilEnabled()) {
                 OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, framebuffer.depthBuffer);

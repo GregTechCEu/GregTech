@@ -50,9 +50,7 @@ public class AppCardWidget extends AnimaWidgetGroup {
                         .setWidth(65)));
         if (os.isRemote()) {
             offset = Math.abs(GTValues.RNG.nextInt()) % 200;
-            if (ResourceHelper.isResourceExist("textures/gui/terminal/" + application.getRegistryName() + "/banner.png")) {
-                banner = TextureArea.fullImage("textures/gui/terminal/" + application.getRegistryName() + "/banner.png");
-            }
+            banner = application.getBanner();
         }
         String state;
         int bg;

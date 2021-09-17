@@ -62,13 +62,6 @@ import org.lwjgl.opengl.GL13;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Created with IntelliJ IDEA.
- *
- * @Author: KilaBash
- * @Date: 2021/09/13
- * @Description:
- */
 public class MultiBlockPreviewARApp extends ARApplication {
     @SideOnly(Side.CLIENT)
     int lastMouseX;
@@ -89,14 +82,14 @@ public class MultiBlockPreviewARApp extends ARApplication {
         addWidget(new ImageWidget(10, 10, 313, 212, new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor())));
         addWidget(new ImageWidget(333 / 2, 20, 1, 222 - 40, new ColorRectTexture(-1)));
 
-        addWidget(new LabelWidget(10 + 313 / 4, 35, "terminal.multiblock_ar.ar.title", -1).setXCentered(true).setYCentered(true));
+        addWidget(new LabelWidget(10 + 313 / 4, 35, "terminal.multiblock_ar.tier.0", -1).setXCentered(true).setYCentered(true));
         addWidget(new RectButtonWidget(10 + (313 / 2 - bW) / 2, 50, bW, bH)
                 .setIcon(TextureArea.fullImage("textures/gui/terminal/multiblock_ar/profile.png"))
                 .setColors(-1, 0xff00ff00, 0)
-                .setHoverText("terminal.multiblock_ar.ar.hover")
+                .setHoverText("terminal.ar.open")
                 .setClickListener(clickData -> openAR()));
 
-        addWidget(new LabelWidget(333 / 2 + 313 / 4, 35, "terminal.multiblock_ar.builder.title", getAppTier() == 0 ? 0xffff0000 : -1).setXCentered(true).setYCentered(true));
+        addWidget(new LabelWidget(333 / 2 + 313 / 4, 35, "terminal.multiblock_ar.tier.1", getAppTier() == 0 ? 0xffff0000 : -1).setXCentered(true).setYCentered(true));
         addWidget(new RectButtonWidget(333 / 2 + (313 / 2 - bW) / 2, 50, bW, bH)
                 .setIcon(this::drawBuilderButton)
                 .setColors(getAppTier() == 0 ? 0xffff0000 : -1, getAppTier() == 0 ? 0xffff0000 : 0xff00ff00, 0)
@@ -191,10 +184,13 @@ public class MultiBlockPreviewARApp extends ARApplication {
 
     }
 
+
+    //////////////////////////////////////AR/////////////////////////////////////////
+
     @SideOnly(Side.CLIENT)
     private static final Map<MultiblockControllerBase, WorldSceneRenderer> controllerList = new HashMap<>();
     @SideOnly(Side.CLIENT)
-    private static final Set<MultiblockControllerBase> find = new HashSet<>();
+    private static final Set<MultiblockControllerBase> found = new HashSet<>();
     @SideOnly(Side.CLIENT)
     private static BlockPos lastPos;
 
@@ -217,7 +213,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
                     iterator.remove();
                 }
             }
-            for (MultiblockControllerBase controllerBase : find) {
+            for (MultiblockControllerBase controllerBase : found) {
                 if (!controllerList.containsKey(controllerBase)) {
                     WorldSceneRenderer worldSceneRenderer = getWorldSceneRenderer(controllerBase);
                     if (worldSceneRenderer != null) {
@@ -225,7 +221,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
                     }
                 }
             }
-            find.clear();
+            found.clear();
             lastPos = player.getPosition();
         }
         if (lastPos == null) {
@@ -238,7 +234,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
             TileEntity tileEntity = world.getTileEntity(lastPos.add(x, y, z));
             if (tileEntity instanceof MetaTileEntityHolder) {
                 if (((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MultiblockControllerBase) {
-                    find.add((MultiblockControllerBase) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity());
+                    found.add((MultiblockControllerBase) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity());
                 }
             }
         }

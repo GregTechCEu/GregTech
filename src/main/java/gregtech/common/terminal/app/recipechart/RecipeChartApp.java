@@ -46,7 +46,7 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
     @Override
     public AbstractApplication initApp() {
         if (isClient) {
-            this.tabGroup = new TabGroup<>(0, 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 60, 10));
+            this.tabGroup = new TabGroup<>(0, 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 333 / getMaxPages(), 10));
             this.tabGroup.setOnTabChanged(this::onPagesChanged);
             this.addWidget(this.tabGroup);
             NBTTagCompound nbt = null;
@@ -83,7 +83,7 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
         name = name.isEmpty()? "default" : name;
         RGContainer container = new RGContainer(0, 0, 333, 222, getOs());
         container.setBackground(TerminalTheme.COLOR_B_3);
-        tabGroup.addTab(new IGuiTextureTabInfo(new TextTexture(name, -1).setWidth(54)
+        tabGroup.addTab(new IGuiTextureTabInfo(new TextTexture(name, -1).setWidth(333 / getMaxPages() - 5)
                 .setType(tabGroup.getAllTag().isEmpty() ? TextTexture.TextType.ROLL : TextTexture.TextType.HIDE), name), container);
         return container;
     }

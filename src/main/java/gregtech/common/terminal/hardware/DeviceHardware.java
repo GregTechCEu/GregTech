@@ -80,6 +80,7 @@ public class DeviceHardware extends Hardware {
     public enum DEVICE{
         SCANNER(MetaItems.SCANNER),
         WIRELESS(MetaItems.WIRELESS),
+        CAMERA(MetaItems.CAMERA),
 
         // SOLAR
         SOLAR_LV(MetaItems.COVER_SOLAR_PANEL_LV);

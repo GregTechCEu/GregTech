@@ -194,36 +194,6 @@ public class RenderUtil {
         }
     }
 
-    public static void renderHighLightedBlocksOutline(BufferBuilder buffer, float mx, float my, float mz, float r, float g, float b, float a) {
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my + 1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my + 1, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx, my + 1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my + 1, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my + 1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx + 1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my + 1, mz + 1).color(r, g, b, a).endVertex();
-    }
-
     private static final Map<TextureAtlasSprite, Integer> textureMap = new HashMap<>();
 
     public static void bindTextureAtlasSprite(TextureAtlasSprite textureAtlasSprite) {

@@ -22,6 +22,7 @@ import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
 import gregtech.common.terminal.app.prospector.OreProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
+import gregtech.common.terminal.app.worldprospector.WorldProspectorARApp;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.Minecraft;
@@ -50,6 +51,7 @@ public class TerminalRegistry {
         registerHardware(new BatteryHardware());
         registerHardware(new DeviceHardware(1));
         registerHardware(new DeviceHardware(2));
+        registerHardware(new DeviceHardware(3));
         // register applications
         AppRegistryBuilder.create(new SimpleMachineGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new MultiBlockGuideApp()).defaultApp().build();
@@ -57,26 +59,40 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new TutorialGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new GuideEditorApp()).defaultApp().build();
         AppRegistryBuilder.create(new ThemeSettingApp()).defaultApp().build();
-        AppRegistryBuilder.create(new OreProspectorApp()).battery(GTValues.MV, 1000)
+        AppRegistryBuilder.create(new OreProspectorApp())
+                .battery(GTValues.MV, 1000)
                 .upgrade(MetaItems.COIN_DOGE.getStackForm(10))
                 .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
-                .device(DeviceHardware.DEVICE.SCANNER).build();
+                .device(DeviceHardware.DEVICE.SCANNER)
+                .build();
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
-            AppRegistryBuilder.create(new MultiBlockPreviewARApp()).battery(GTValues.LV, 512)
+            AppRegistryBuilder.create(new MultiBlockPreviewARApp())
+                    .battery(GTValues.LV, 512)
+                    .device(DeviceHardware.DEVICE.CAMERA)
                     .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
                     .upgrade(1, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
                     .build();
-            AppRegistryBuilder.create(new RecipeChartApp()).battery(GTValues.LV, 100)
+            AppRegistryBuilder.create(new RecipeChartApp())
+                    .battery(GTValues.LV, 100)
                     .upgrade(0, MetaItems.COIN_DOGE.getStackForm(10))
                     .upgrade(1, MetaItems.COIN_DOGE.getStackForm(20))
                     .upgrade(2, MetaItems.COIN_DOGE.getStackForm(30), MetaItems.COIN_CHOCOLATE.getStackForm(10))
                     .upgrade(3, MetaItems.COIN_DOGE.getStackForm(40), MetaItems.COIN_CHOCOLATE.getStackForm(10), MetaItems.COIN_GOLD_ANCIENT.getStackForm())
                     .build();
         }
-        AppRegistryBuilder.create(new ConsoleApp()).battery(GTValues.LV, 500).device(DeviceHardware.DEVICE.WIRELESS).build();
-        AppRegistryBuilder.create(new BatteryManagerApp()).defaultApp().battery(GTValues.ULV, 10).build();
+        AppRegistryBuilder.create(new ConsoleApp())
+                .battery(GTValues.LV, 500)
+                .device(DeviceHardware.DEVICE.WIRELESS)
+                .build();
+        AppRegistryBuilder.create(new BatteryManagerApp()).defaultApp()
+                .battery(GTValues.ULV, 10)
+                .build();
         AppRegistryBuilder.create(new HardwareManagerApp()).defaultApp().build();
         AppRegistryBuilder.create(new AppStoreApp()).defaultApp().build();
+        AppRegistryBuilder.create(new WorldProspectorARApp())
+                .battery(GTValues.LV, 233)
+                .device(DeviceHardware.DEVICE.CAMERA)
+                .build();
     }
 
     @SideOnly(Side.CLIENT)

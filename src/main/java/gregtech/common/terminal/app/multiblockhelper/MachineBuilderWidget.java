@@ -20,7 +20,7 @@ import gregtech.api.terminal.gui.widgets.MachineSceneWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.RenderUtil;
+import gregtech.api.util.RenderBufferHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -218,7 +218,9 @@ public class MachineBuilderWidget extends WidgetGroup {
         buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
 
         for (BlockPos pos : highLightBlocks) {
-            RenderUtil.renderHighLightedBlocksOutline(buffer, pos.getX(), pos.getY(), pos.getZ(), 1.0f, 0.0f, 0.0f, 1.0f);
+            RenderBufferHelper.renderCubeFrame(buffer,
+                    pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1,pos.getY() + 1, pos.getZ() + 1,
+                    1, 0, 0, 1);
         }
 
         tessellator.draw();

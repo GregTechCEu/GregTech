@@ -62,7 +62,10 @@ public class TerminalARRenderer {
         if (event.phase == TickEvent.Phase.END) {
             EntityPlayer player = Minecraft.getMinecraft().player;
             if (player == null) {
-                APP = null;
+                if (APP != null) {
+                    APP.onARClosed();
+                    APP = null;
+                }
                 return;
             }
             HELD_HAND = EnumHand.MAIN_HAND;
@@ -75,14 +78,21 @@ public class TerminalARRenderer {
                 AbstractApplication app = TerminalRegistry.getApplication(tag.getString("_ar"));
                 if (app instanceof ARApplication) {
                     if (APP != app) {
+                        if (APP != null) {
+                            APP.onARClosed();
+                        }
                         APP = (ARApplication) app;
-                        APP.setNBTDuringAROpened(tag.getCompoundTag(tag.getString("_ar")));
+                        APP.setAROpened(player.getHeldItem(HELD_HAND));
+                        APP.onAROpened();
                     }
                     APP.tickAR(player);
                     return;
                 }
             }
-            APP = null;
+            if (APP != null) {
+                APP.onARClosed();
+                APP = null;
+            }
         }
     }
 

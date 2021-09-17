@@ -147,9 +147,9 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
         AbstractApplication app = application.createAppInstance(this, isClient, nbt);
         if (app != null) {
+            desktop.addWidget(app);
             app.setOs(this).initApp();
             openedApps.add(app);
-            desktop.addWidget(app);
             maximizeApplication(app, isClient);
         }
     }
