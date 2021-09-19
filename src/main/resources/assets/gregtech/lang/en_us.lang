@@ -964,6 +964,7 @@ metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
 metaarmor.energy_share.tooltip.guide=To change mode shift-right click when holding item
 
+gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 
 cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
@@ -996,7 +997,7 @@ cover.smart_item_filter.matching_mode.ignore_fluid=Ignore Fluids
 cover.smart_item_filter.matching_mode.description=§eDefault§r - Will match recipes on both items/fluids criteria assuming you aren't providing any fluid. /n§eIgnore Fluids§r - Will match recipes only on items criteria.
 
 cover.conveyor.title=Conveyor Cover Settings (%s)
-cover.conveyor.transfer_rate=%s items/sec
+cover.conveyor.transfer_rate=§7items/sec
 cover.conveyor.mode.export=Mode: Export
 cover.conveyor.mode.import=Mode: Import
 cover.conveyor.distribution.enabled=Item distribution mode for item pipes/n§bInsert First

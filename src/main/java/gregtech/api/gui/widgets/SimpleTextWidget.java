@@ -27,6 +27,7 @@ public class SimpleTextWidget extends Widget {
     protected boolean isCentered = true;
     protected boolean clientWidget;
     protected boolean isShadow;
+    protected float scale = 1;
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
         this(xPosition, yPosition, formatLocale, color, textSupplier, false);
@@ -51,6 +52,11 @@ public class SimpleTextWidget extends Widget {
 
     public SimpleTextWidget setCenter(boolean isCentered) {
         this.isCentered = isCentered;
+        return this;
+    }
+
+    public SimpleTextWidget setScale(float scale) {
+        this.scale = scale;
         return this;
     }
 
@@ -81,9 +87,8 @@ public class SimpleTextWidget extends Widget {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         String text = formatLocale.isEmpty() ? (I18n.hasKey(lastText) ? I18n.format(lastText) : lastText) : I18n.format(formatLocale, lastText);
         Position position = getPosition();
-        fontRenderer.drawString(text,
-            isCentered ? position.x - fontRenderer.getStringWidth(text) / 2 : position.x,
-            isCentered ? position.y - fontRenderer.FONT_HEIGHT / 2 : position.y, color, isShadow);
+        drawText(text, isCentered ? position.x - (fontRenderer.getStringWidth(text) / 2f) * scale : position.x,
+                isCentered ? position.y - (fontRenderer.FONT_HEIGHT / 2f) * scale : position.y, scale, color, isShadow);
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 

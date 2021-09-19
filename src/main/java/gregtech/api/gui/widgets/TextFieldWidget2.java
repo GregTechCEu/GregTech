@@ -12,25 +12,30 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class TextFieldWidget2 extends Widget {
 
+    private final int maxLength;
     private String text;
     private String localisedPostFix;
     private final Supplier<String> supplier;
     private final Consumer<String> setter;
     private List<Character> allowedChars;
-    private Predicate<String> validator = s -> true;
+    private Function<String, String> validator = s -> s;
+    private boolean initialised = false;
     private boolean centered;
     private int textColor = 0xFFFFFF;
     private int markedColor = 0x2F72A8;
     private boolean postFixRight = false;
+    private float scale = 1;
 
     private boolean focused;
     private int cursorPos;
@@ -40,7 +45,12 @@ public class TextFieldWidget2 extends Widget {
     private boolean drawCursor = true;
 
     public TextFieldWidget2(int x, int y, int width, int height, Supplier<String> supplier, Consumer<String> setter) {
+        this(x, y, width, height, 32, supplier, setter);
+    }
+
+    public TextFieldWidget2(int x, int y, int width, int height, int maxLength, Supplier<String> supplier, Consumer<String> setter) {
         super(x, y, width, height);
+        this.maxLength = maxLength;
         this.supplier = supplier;
         this.setter = setter;
         this.text = supplier.get();
@@ -59,9 +69,15 @@ public class TextFieldWidget2 extends Widget {
             cursorTime = 0;
             drawCursor = !drawCursor;
         }
-        if (!focused && !text.equals(supplier.get())) {
-            text = supplier.get();
-            writeUpdateInfo(-1, buf -> buf.writeString(text));
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        String t = supplier.get();
+        if (!initialised || (!focused && !text.equals(t))) {
+            text = t;
+            writeUpdateInfo(-2, buf -> buf.writeString(text));
+            initialised = true;
         }
     }
 
@@ -69,9 +85,9 @@ public class TextFieldWidget2 extends Widget {
         if (centered) {
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
             int w = getSize().width;
-            int textW = fontRenderer.getStringWidth(text);
+            float textW = fontRenderer.getStringWidth(text) * scale;
             if (localisedPostFix != null && !localisedPostFix.isEmpty())
-                textW += 3 + fontRenderer.getStringWidth(localisedPostFix);
+                textW += 3 + fontRenderer.getStringWidth(localisedPostFix) * scale;
             return (int) (w / 2f - textW / 2f + getPosition().x);
         }
         return getPosition().x + 1;
@@ -83,37 +99,48 @@ public class TextFieldWidget2 extends Widget {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         int y = getPosition().y;
         int textX = getTextX();
+        GlStateManager.disableBlend();
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(scale, scale, 0);
+        float scaleFactor = 1 / scale;
+        y *= scaleFactor;
         if (cursorPos != cursorPos2) {
             // render marked text background
-            int startX = fontRenderer.getStringWidth(text.substring(0, Math.min(cursorPos, cursorPos2))) + textX;
+            float startX = fontRenderer.getStringWidth(text.substring(0, Math.min(cursorPos, cursorPos2))) * scale + textX;
             String marked = getSelectedText();
-            int width = fontRenderer.getStringWidth(marked);
-            drawSelectionBox(startX, y, width);
+            float width = fontRenderer.getStringWidth(marked);
+            drawSelectionBox(startX * scaleFactor, y, width);
         }
-        fontRenderer.drawString(text, textX, y, textColor);
+        fontRenderer.drawString(text, (int) (textX * scaleFactor), y, textColor);
         if (localisedPostFix != null && !localisedPostFix.isEmpty()) {
             // render postfix
             int x = postFixRight && !centered ?
                     getPosition().x + getSize().width - (fontRenderer.getStringWidth(localisedPostFix) + 1) :
                     textX + fontRenderer.getStringWidth(text) + 3;
+            x *= scaleFactor;
             fontRenderer.drawString(localisedPostFix, x, y, textColor);
         }
         if (focused && drawCursor) {
             // render cursor
             String sub = text.substring(0, cursorPos);
-            int x = fontRenderer.getStringWidth(sub) + textX;
+            float x = fontRenderer.getStringWidth(sub) * scale + textX;
+            x *= scaleFactor;
             drawCursor(x, y);
         }
+        GlStateManager.popMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.color(1, 1, 1, 1f);
     }
 
+    @SideOnly(Side.CLIENT)
     private void drawCursor(float x, float y) {
         x -= 0.9f;
         y -= 1;
-        float endX = x + 0.5f;
+        float endX = x + 0.5f * (1 / scale);
         float endY = y + 9;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
-        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.color(1, 1, 1, 1f);
         GlStateManager.disableTexture2D();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
         bufferbuilder.pos(x, endY, 0.0D).endVertex();
@@ -125,8 +152,9 @@ public class TextFieldWidget2 extends Widget {
         GlStateManager.enableTexture2D();
     }
 
-    private void drawSelectionBox(int x, float y, int width) {
-        int endX = x + width;
+    @SideOnly(Side.CLIENT)
+    private void drawSelectionBox(float x, float y, float width) {
+        float endX = x + width;
         y -= 1;
         float endY = y + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
         float red = (float) (markedColor >> 16 & 255) / 255.0F;
@@ -155,12 +183,12 @@ public class TextFieldWidget2 extends Widget {
         if (isMouseOverElement(mouseX, mouseY)) {
             focused = true;
             int base = mouseX - getTextX();
-            int x = 1;
+            float x = 1;
             int i = 0;
             while (x < base) {
                 if (i == text.length())
                     break;
-                x += Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i)) + 1;
+                x += (Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i)) + 1) * scale;
                 i++;
             }
             cursorPos = i;
@@ -183,7 +211,7 @@ public class TextFieldWidget2 extends Widget {
             while (x < base) {
                 if (i == text.length())
                     break;
-                x += Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i)) + 1;
+                x += (Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i)) + 1) * scale;
                 i++;
             }
             cursorPos2 = i;
@@ -216,29 +244,13 @@ public class TextFieldWidget2 extends Widget {
                 return true;
             } else if (GuiScreen.isKeyComboCtrlV(keyCode)) {
                 String clip = GuiScreen.getClipboardString();
-                if (allowedChars != null) {
-                    for (int i = 0; i < clip.length(); i++) {
-                        if (!allowedChars.contains(clip.charAt(i)))
-                            return true;
-                    }
-                }
-                int min = Math.min(cursorPos, cursorPos2);
-                int max = Math.max(cursorPos, cursorPos2);
-                String t1 = text.substring(0, min);
-                String t2 = text.substring(max);
-                this.text = t1 + clip + t2;
-                cursorPos = t1.length() + clip.length();
-                cursorPos2 = cursorPos;
+                if (text.length() + clip.length() > maxLength || !isAllowed(clip))
+                    return true;
+                replaceMarkedText(clip);
                 return true;
             } else if (GuiScreen.isKeyComboCtrlX(keyCode)) {
                 GuiScreen.setClipboardString(this.getSelectedText());
-                int min = Math.min(cursorPos, cursorPos2);
-                int max = Math.max(cursorPos, cursorPos2);
-                String t1 = text.substring(0, min);
-                String t2 = text.substring(max);
-                cursorPos = min;
-                cursorPos2 = min;
-                text = t1 + t2;
+                replaceMarkedText(null);
                 return true;
             }
             if (keyCode == Keyboard.KEY_LEFT && cursorPos > 0) {
@@ -285,13 +297,7 @@ public class TextFieldWidget2 extends Widget {
             }
             if (keyCode == Keyboard.KEY_BACK && text.length() > 0) {
                 if (cursorPos != cursorPos2) {
-                    int min = Math.min(cursorPos, cursorPos2);
-                    int max = Math.max(cursorPos, cursorPos2);
-                    String t1 = text.substring(0, min);
-                    String t2 = text.substring(max);
-                    cursorPos = min;
-                    cursorPos2 = min;
-                    text = t1 + t2;
+                    replaceMarkedText(null);
                 } else if (cursorPos > 0) {
                     String t1 = text.substring(0, cursorPos - 1);
                     String t2 = text.substring(cursorPos);
@@ -301,7 +307,9 @@ public class TextFieldWidget2 extends Widget {
                 }
                 return true;
             }
-            if (allowedChars == null || allowedChars.contains(charTyped)) {
+            if (isAllowed(charTyped)) {
+                if (text.length() == maxLength)
+                    return true;
                 String t1 = text.substring(0, cursorPos);
                 String t2 = text.substring(cursorPos);
                 t1 += charTyped;
@@ -314,27 +322,65 @@ public class TextFieldWidget2 extends Widget {
         return focused;
     }
 
+    private boolean isAllowed(char c) {
+        return allowedChars == null || allowedChars.contains(c);
+    }
+
+    private boolean isAllowed(String t) {
+        if (allowedChars == null)
+            return true;
+        for (int i = 0; i < t.length(); i++) {
+            if (!allowedChars.contains(t.charAt(i)))
+                return false;
+        }
+        return true;
+    }
+
+    private void replaceMarkedText(String replacement) {
+        int min = Math.min(cursorPos, cursorPos2);
+        int max = Math.max(cursorPos, cursorPos2);
+        String t1 = text.substring(0, min);
+        String t2 = text.substring(max);
+        if (replacement == null)
+            cursorPos = min;
+        else
+            cursorPos = max;
+        cursorPos2 = cursorPos;
+        if (replacement == null)
+            text = t1 + t2;
+        else
+            text = t1 + replacement + t2;
+    }
+
     public String getText() {
         return text;
     }
 
     private void unFocus() {
+        if (!focused) return;
         cursorPos2 = cursorPos;
-        if (supplier.get().equals(text) || !validator.test(text)) {
-            text = supplier.get();
-            focused = false;
-            return;
-        }
+        text = validator.apply(text);
         setter.accept(text);
         focused = false;
-        writeUpdateInfo(-1, buf -> buf.writeString(text));
+        writeClientAction(-1, buf -> {
+            buf.writeString(text);
+        });
+    }
+
+    @Override
+    public void handleClientAction(int id, PacketBuffer buffer) {
+        if (id == -1) {
+            text = buffer.readString(maxLength);
+            setter.accept(text);
+        }
     }
 
     @Override
     public void readUpdateInfo(int id, PacketBuffer buffer) {
-        if (id == -1) {
-            text = buffer.readString(32);
+        if (id == -2) {
+            text = buffer.readString(maxLength);
             setter.accept(text);
+            initialised = true;
         }
     }
 
@@ -361,7 +407,7 @@ public class TextFieldWidget2 extends Widget {
      *
      * @param validator determines whether the entered string is valid. Returns true by default
      */
-    public TextFieldWidget2 setValidator(Predicate<String> validator) {
+    public TextFieldWidget2 setValidator(Function<String, String> validator) {
         this.validator = validator;
         return this;
     }
@@ -381,14 +427,12 @@ public class TextFieldWidget2 extends Widget {
         }
         setValidator(val -> {
             if (val.isEmpty()) {
-                text = String.valueOf(min);
-                return false;
+                return String.valueOf(min);
             }
             for (int i = 0; i < val.length(); i++) {
                 char c = val.charAt(i);
                 if (c == '-' && (min >= 0 || i != 0)) {
-                    text = String.valueOf(min);
-                    return false;
+                    return String.valueOf(min);
                 }
 
             }
@@ -396,18 +440,15 @@ public class TextFieldWidget2 extends Widget {
             try {
                 num = Integer.parseInt(val);
             } catch (NumberFormatException ignored) {
-                text = String.valueOf(max);
-                return true;
+                return String.valueOf(max);
             }
             if (num < min) {
-                text = String.valueOf(min);
-                return true;
+                return String.valueOf(min);
             }
             if (num > max) {
-                text = String.valueOf(max);
-                return true;
+                return String.valueOf(max);
             }
-            return true;
+            return val;
         });
         return this;
     }
@@ -444,6 +485,16 @@ public class TextFieldWidget2 extends Widget {
      */
     public TextFieldWidget2 bindPostFixToRight(boolean postFixRight) {
         this.postFixRight = postFixRight;
+        return this;
+    }
+
+    /**
+     * Will scale the text, the marked background and the cursor. f.e. 0.5 is half the size
+     *
+     * @param scale scale factor
+     */
+    public TextFieldWidget2 setScale(float scale) {
+        this.scale = scale;
         return this;
     }
 }
