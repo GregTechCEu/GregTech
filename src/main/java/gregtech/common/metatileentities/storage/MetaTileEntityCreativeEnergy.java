@@ -9,29 +9,28 @@ import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.TextFieldWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Function;
 
 public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEnergyContainer {
 
@@ -84,33 +83,22 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                         voltage = 0;
                 }));
         builder.label(7, 32, "Voltage");
-        builder.widget(new TextFieldWidget(7, 44, 156, 20, true, () -> String.valueOf(voltage), value -> {
-            if(!value.isEmpty()) {
+        builder.widget(new ImageWidget(7, 44, 156, 20, GuiTextures.DISPLAY));
+        builder.widget(new TextFieldWidget2(9, 50, 152, 16, () -> String.valueOf(voltage), value -> {
+            if (!value.isEmpty()) {
                 voltage = Long.parseLong(value);
                 setTier = 0;
             }
-        }).setValidator(value -> {
-            for (int i = 0; i < value.length(); i++) {
-                char c = value.charAt(i);
-                if (!ALLOWED_CHARS.contains(c))
-                    return false;
-            }
-            return true;
-        }));
+        }).setAllowedChars("0123456789").setValidator(getTextFieldValidator()));
+
         builder.label(7, 74, "Amperage");
         builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = amps-- == -1 ? 0 : amps--));
-        builder.widget(new TextFieldWidget(29, 87, 118, 20, true, () -> String.valueOf(amps), value -> {
-            if(!value.isEmpty()) {
+        builder.widget(new ImageWidget(29, 87, 118, 20, GuiTextures.DISPLAY));
+        builder.widget(new TextFieldWidget2(31, 93, 114, 16, () -> String.valueOf(amps), value -> {
+            if (!value.isEmpty()) {
                 amps = Integer.parseInt(value);
             }
-        }).setValidator(value -> {
-            for (int i = 0; i < value.length(); i++) {
-                char c = value.charAt(i);
-                if (!ALLOWED_CHARS.contains(c))
-                    return false;
-            }
-            return true;
-        }));
+        }).setAllowedChars("0123456789").setValidator(getTextFieldValidator()));
         builder.widget(new ClickButtonWidget(149, 87, 20, 20, "+", data -> amps++));
 
         builder.widget(new CycleButtonWidget(7, 139, 162, 20, () -> active, value -> active = value, "Not active", "Active"));
@@ -203,6 +191,25 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     @Override
     public long getOutputAmperage() {
         return amps;
+    }
+
+    public Function<String, String> getTextFieldValidator() {
+        long min = 0, max = Long.MAX_VALUE;
+        return val -> {
+            if (val.isEmpty()) {
+                return String.valueOf(min);
+            }
+            long num;
+            try {
+                num = Long.parseLong(val);
+            } catch (NumberFormatException ignored) {
+                return String.valueOf(max);
+            }
+            if (num < min) {
+                return String.valueOf(min);
+            }
+            return val;
+        };
     }
 
 }
