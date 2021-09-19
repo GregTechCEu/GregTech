@@ -2,43 +2,59 @@ package gregtech.common.terminal.app.game.maze.widget;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+import gregtech.api.util.Position;
+import gregtech.api.util.Size;
 import net.minecraft.util.math.Vec2f;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static gregtech.common.terminal.app.game.maze.MazeApp.MAZE_SIZE;
+
 public class MazeWidget extends Widget {
 
-    boolean[][] topWalls = new boolean[11][11];
-    boolean[][] leftWalls = new boolean[11][11];
-    boolean[][] includedSpots = new boolean[11][11];
+    boolean[][] topWalls = new boolean[MAZE_SIZE][MAZE_SIZE];
+    boolean[][] leftWalls = new boolean[MAZE_SIZE][MAZE_SIZE];
+    boolean[][] includedSpots;
+    private int squaresChecked;
 
     public MazeWidget() {
-        super(333 / 2 - 55, 232 / 2 - 55, 110, 110);
+        super(333 / 2 - (MAZE_SIZE * 5), 232 / 2 - (MAZE_SIZE * 5), MAZE_SIZE * 10, MAZE_SIZE * 10);
         initMaze();
     }
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         // Draw outer lines
-        drawLines(createBorder(), 0xFFFFFFFF, 0xFFFFFFFF, 4);
+        createBorder();
         // Draw inner lines
         createInternalLines();
     }
 
-    public List<Vec2f> createBorder() {
-        List<Vec2f> result = new ArrayList<>();
-        result.add(new Vec2f(getPosition().x, getPosition().y));
-        result.add(new Vec2f(this.getSize().width + getPosition().x, getPosition().y));
-        result.add(new Vec2f(this.getSize().width + getPosition().x, this.getSize().height + getPosition().y));
-        result.add(new Vec2f(getPosition().x, this.getSize().height + getPosition().y));
-        result.add(new Vec2f(getPosition().x, getPosition().y)); // Do this again so it's a connected square
-        return result;
+    public void recalculateSize() {
+        this.setSelfPosition(new Position(333 / 2 - (MAZE_SIZE * 5), 232 / 2 - (MAZE_SIZE * 5)));
+        this.setSize(new Size(MAZE_SIZE * 10, MAZE_SIZE * 10));
+        topWalls = new boolean[MAZE_SIZE][MAZE_SIZE];
+        leftWalls = new boolean[MAZE_SIZE][MAZE_SIZE];
+
+    }
+
+    public void createBorder() {
+        List<Vec2f> lineBuffer = new ArrayList<>();
+        lineBuffer.add(new Vec2f(getPosition().x + 10, getPosition().y));
+        lineBuffer.add(new Vec2f(this.getSize().width + getPosition().x, getPosition().y));
+        lineBuffer.add(new Vec2f(this.getSize().width + getPosition().x, this.getSize().height + getPosition().y + 2)); // Corrects for line width misalignment
+        drawLines(lineBuffer, 0xFFFFFFFF, 0xFFFFFFFF, 4);
+        lineBuffer.clear();
+        lineBuffer.add(new Vec2f(this.getSize().width + getPosition().x - 10, this.getSize().height + getPosition().y));
+        lineBuffer.add(new Vec2f(getPosition().x, this.getSize().height + getPosition().y));
+        lineBuffer.add(new Vec2f(getPosition().x, getPosition().y - 2));
+        drawLines(lineBuffer, 0xFFFFFFFF, 0xFFFFFFFF, 4);
     }
 
     public boolean isThereWallAt(int x, int y, boolean onTops) {
-        if (x > 10 || y > 10)
+        if (x >= MAZE_SIZE || y >= MAZE_SIZE)
             return true;
         if (x < 0 || y < 0)
             return true;
@@ -52,8 +68,8 @@ public class MazeWidget extends Widget {
     }
 
     public void createInternalLines() {
-        for (int i = 0; i < 11; i++) {
-            for (int j = 0; j < 11; j++) {
+        for (int i = 0; i < MAZE_SIZE; i++) {
+            for (int j = 0; j < MAZE_SIZE; j++) {
                 List<Vec2f> list = new ArrayList<>();
                 if (j != 0 && isThereWallAt(i, j, true)) {
                     list.add(new Vec2f(getPosition().x + 10 * i, getPosition().y + 10 * j));
@@ -71,37 +87,41 @@ public class MazeWidget extends Widget {
     }
 
     public void initMaze() {
-        for (int i = 0; i < 11; i++) { // Fill array with walls so that they can be carved out
-            for (int j = 0; j < 11; j++) {
+        includedSpots = new boolean[MAZE_SIZE][MAZE_SIZE];
+        for (int i = 0; i < MAZE_SIZE; i++) { // Fill array with walls so that they can be carved out
+            for (int j = 0; j < MAZE_SIZE; j++) {
                 leftWalls[i][j] = true;
                 topWalls[i][j] = true;
             }
         }
 
-        includedSpots[5][5] = true; // The center is where the player starts
+        includedSpots[(int) (Math.random() * MAZE_SIZE)][(int) (Math.random() * MAZE_SIZE)] = true; // Can seed our particular maze
         // Improves maze randomization.
         List<Integer> positions = new ArrayList<>();
-        for(int i = 0; i < 11 * 11; i++) {
+        for(int i = 0; i < MAZE_SIZE * MAZE_SIZE; i++) {
             positions.add(i);
         }
         Collections.shuffle(positions);
 
         for (int position : positions) {
-            if (!includedSpots[position / 11][position % 11]) {
-                createPath(position / 11, position % 11, new boolean[11][11]);
+            if (!includedSpots[position / MAZE_SIZE][position % MAZE_SIZE]) {
+                do {
+                    resetStuckCounter();
+                } while (!this.createPath(position / MAZE_SIZE, position % MAZE_SIZE, new boolean[MAZE_SIZE][MAZE_SIZE]));
             }
         }
     }
 
     // Wilson random walk maze generation
     public boolean createPath(int x, int y, boolean[][] walkedPaths) {
-        if(walkedPaths[x][y]) {
+        squaresChecked++;
+        if(squaresChecked > 20000) // Probably stuck.
             return false;
-        }
-        if(includedSpots[x][y]) {
+        if(walkedPaths[x][y])
+            return false;
+        if(this.includedSpots[x][y])
             return true;
-        }
-        includedSpots[x][y] = true;
+        this.includedSpots[x][y] = true;
         walkedPaths[x][y] = true;
         // Find unoccupied directions
         // Left 0
@@ -110,7 +130,7 @@ public class MazeWidget extends Widget {
             directions.add(0);
         }
         // Right 1
-        if (x != 10 && !walkedPaths[x + 1][y]) {
+        if (x != MAZE_SIZE - 1 && !walkedPaths[x + 1][y]) {
             directions.add(1);
         }
         // Up 2
@@ -118,7 +138,7 @@ public class MazeWidget extends Widget {
             directions.add(2);
         }
         // Down 3
-        if (y != 10 && !walkedPaths[x][y + 1]) {
+        if (y != MAZE_SIZE - 1 && !walkedPaths[x][y + 1]) {
             directions.add(3);
         }
         Collections.shuffle(directions);
@@ -154,8 +174,12 @@ public class MazeWidget extends Widget {
             }
         }
         // Reset current position
-        includedSpots[x][y] = false;
+        this.includedSpots[x][y] = false;
         walkedPaths[x][y] = false;
         return false;
+    }
+
+    public void resetStuckCounter() {
+        squaresChecked = 0;
     }
 }
