@@ -62,6 +62,7 @@ public class MazeApp extends AbstractApplication {
                 app.setGamestate(1);
                 app.setMazesSolved(0);
                 MAZE_SIZE = 9;
+                speed = 25;
                 app.resetGame();
             })).setShouldClientCallback(true).setVisibilitySupplier(() -> app.getGamestate() == 3));
 
@@ -147,8 +148,10 @@ public class MazeApp extends AbstractApplication {
         // Did the player reach the end?
         if (player.posX == MAZE_SIZE - 1 && player.posY == MAZE_SIZE - 1 && direction == 3) {
             mazesSolved++;
+            speed *= 0.95;
             if (mazesSolved % 4 == 0) {
                 MAZE_SIZE += 2;
+                speed *= 1.07;
             }
             resetGame();
             return;
@@ -209,7 +212,6 @@ public class MazeApp extends AbstractApplication {
         movementStore.clear();
         timer = 0;
         lastPlayerInput = -5;
-        speed *= 0.95;
         enemy.setGridPosition(-100, -100);
     }
 
