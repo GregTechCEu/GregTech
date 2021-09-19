@@ -5,7 +5,6 @@ import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Component;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.ConfigHolder;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -552,14 +551,6 @@ public class CircuitRecipes {
                 .output(GRAVI_STAR)
                 .buildAndRegister();
 
-        // Neutron Reflector TODO Move out of here
-        ASSEMBLER_RECIPES.recipeBuilder().duration(4000).EUt(120)
-                .input(PLATE_IRIDIUM_ALLOY)
-                .input(plateDouble, Beryllium, 16)
-                .input(plateDouble, TungstenCarbide, 2)
-                .fluidInputs(TinAlloy.getFluid(L * 32))
-                .output(NEUTRON_REFLECTOR)
-                .buildAndRegister();
     }
 
     private static void boardRecipes() {

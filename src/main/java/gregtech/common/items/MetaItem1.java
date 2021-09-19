@@ -8,6 +8,7 @@ import gregtech.api.items.metaitem.FoodStats;
 import gregtech.api.items.metaitem.StandardMetaItem;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
+import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.MarkerMaterials.Component;
@@ -400,7 +401,9 @@ public class MetaItem1 extends StandardMetaItem {
         // Free ID 464
         SCANNER = addItem(465, "scanner").addComponents(ElectricStats.createElectricItem(200_000L, GTValues.LV), new ScannerBehavior(50));
         CLIPBOARD = addItem(466, "clipboard").addComponents(new ClipboardBehavior()).setMaxStackSize(1);
-        TERMINAL = addItem(467, "terminal").addComponents(new TerminalBehaviour());
+        TERMINAL = addItem(467, "terminal").addComponents(new HardwareProvider(), new TerminalBehaviour()).setMaxStackSize(1);
+        WIRELESS = addItem(468, "wireless");
+        CAMERA = addItem(469, "camera");
 
         // Misc Crafting Items: ID 491-515
         ENERGIUM_DUST = addItem(491, "energium_dust");

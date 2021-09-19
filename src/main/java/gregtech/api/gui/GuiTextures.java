@@ -1,7 +1,6 @@
 package gregtech.api.gui;
 
 import gregtech.api.gui.resources.AdoptableTextureArea;
-import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.SizedTextureArea;
 import gregtech.api.gui.resources.TextureArea;
 
@@ -38,6 +37,7 @@ public class GuiTextures {
     public static final TextureArea BUTTON_OVERCLOCK = TextureArea.fullImage("textures/gui/widget/button_overclock.png");
     public static final TextureArea BUTTON_RIGHT = TextureArea.fullImage("textures/gui/widget/right.png");
     public static final TextureArea BUTTON_SWITCH_VIEW = TextureArea.fullImage("textures/gui/widget/button_switch_view.png");
+    public static final TextureArea BUTTON_WORKING_ENABLE = TextureArea.fullImage("textures/gui/widget/button_working_enable.png");
     public static final TextureArea CLIPBOARD_BUTTON = TextureArea.fullImage("textures/gui/widget/clipboard_button.png");
     public static final SizedTextureArea CLIPBOARD_TEXT_BOX = AdoptableTextureArea.fullImage("textures/gui/widget/clipboard_text_box.png", 9, 18, 1, 1);
     public static final TextureArea DISTRIBUTION_MODE = TextureArea.fullImage("textures/gui/widget/button_distribution_mode.png");
@@ -203,5 +203,7 @@ public class GuiTextures {
     public final static TextureArea ICON_LOCATION = TextureArea.fullImage("textures/gui/terminal/icon/guide_hover.png");
     public final static TextureArea ICON_VISIBLE = TextureArea.fullImage("textures/gui/terminal/icon/appearance_hover.png");
     public final static TextureArea ICON_CALCULATOR = TextureArea.fullImage("textures/gui/terminal/icon/other/calculator_hover.png");
+    public final static TextureArea UI_FRAME_SIDE_UP = TextureArea.fullImage("textures/gui/terminal/frame_side_up.png");
+    public final static TextureArea UI_FRAME_SIDE_DOWN = TextureArea.fullImage("textures/gui/terminal/frame_side_down.png");
 
 }

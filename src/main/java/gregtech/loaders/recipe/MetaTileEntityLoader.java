@@ -199,6 +199,8 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("fluid_import_hatch_zpm", MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.ZPM].getStackForm(), "G", "M", 'M', MetaTileEntities.HULL[GTValues.ZPM].getStackForm(), 'G', new ItemStack(Blocks.GLASS));
         ModHandler.addShapedRecipe("fluid_import_hatch_uv", MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.UV].getStackForm(), "G", "M", 'M', MetaTileEntities.HULL[GTValues.UV].getStackForm(), 'G', new ItemStack(Blocks.GLASS));
         ModHandler.addShapedRecipe("fluid_import_hatch_max", MetaTileEntities.FLUID_IMPORT_HATCH[GTValues.UHV].getStackForm(), "G", "M", 'M', MetaTileEntities.HULL[GTValues.MAX].getStackForm(), 'G', new ItemStack(Blocks.GLASS));
+        ModHandler.addShapedRecipe("fluid_import_hatch_4x", MetaTileEntities.MULTI_FLUID_IMPORT_HATCH[0].getStackForm(), "P", "M", 'M', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'P', new UnificationEntry(OrePrefix.pipeQuadrupleFluid, Materials.Titanium));
+        ModHandler.addShapedRecipe("fluid_import_hatch_9x", MetaTileEntities.MULTI_FLUID_IMPORT_HATCH[1].getStackForm(), "P", "M", 'M', MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'P', new UnificationEntry(OrePrefix.pipeNonupleFluid, Materials.TungstenSteel));
 
         ModHandler.addShapedRecipe("fluid_export_hatch_ulv", MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.ULV].getStackForm(), "M", "G", 'M', MetaTileEntities.HULL[GTValues.ULV].getStackForm(), 'G', new ItemStack(Blocks.GLASS, 1));
         ModHandler.addShapedRecipe("fluid_export_hatch_lv", MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.LV].getStackForm(), "M", "G", 'M', MetaTileEntities.HULL[GTValues.LV].getStackForm(), 'G', new ItemStack(Blocks.GLASS, 1));
@@ -210,6 +212,8 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("fluid_export_hatch_zpm", MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.ZPM].getStackForm(), "M", "G", 'M', MetaTileEntities.HULL[GTValues.ZPM].getStackForm(), 'G', new ItemStack(Blocks.GLASS));
         ModHandler.addShapedRecipe("fluid_export_hatch_uv", MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.UV].getStackForm(), "M", "G", 'M', MetaTileEntities.HULL[GTValues.UV].getStackForm(), 'G', new ItemStack(Blocks.GLASS));
         ModHandler.addShapedRecipe("fluid_export_hatch_max", MetaTileEntities.FLUID_EXPORT_HATCH[GTValues.UHV].getStackForm(), "M", "G", 'M', MetaTileEntities.HULL[GTValues.MAX].getStackForm(), 'G', new ItemStack(Blocks.GLASS));
+        ModHandler.addShapedRecipe("fluid_export_hatch_4x", MetaTileEntities.MULTI_FLUID_EXPORT_HATCH[0].getStackForm(), "M", "P", 'M', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'P', new UnificationEntry(OrePrefix.pipeQuadrupleFluid, Materials.Titanium));
+        ModHandler.addShapedRecipe("fluid_export_hatch_9x", MetaTileEntities.MULTI_FLUID_EXPORT_HATCH[1].getStackForm(), "M", "P", 'M', MetaTileEntities.HULL[GTValues.IV].getStackForm(), 'P', new UnificationEntry(OrePrefix.pipeNonupleFluid, Materials.TungstenSteel));
 
         ModHandler.addShapedRecipe("item_import_bus_ulv", MetaTileEntities.ITEM_IMPORT_BUS[GTValues.ULV].getStackForm(), "C", "M", 'M', MetaTileEntities.HULL[GTValues.ULV].getStackForm(), 'C', OreDictNames.chestWood);
         ModHandler.addShapedRecipe("item_import_bus_lv", MetaTileEntities.ITEM_IMPORT_BUS[GTValues.LV].getStackForm(), "C", "M", 'M', MetaTileEntities.HULL[GTValues.LV].getStackForm(), 'C', OreDictNames.chestWood);

@@ -1,22 +1,24 @@
 package gregtech.api.util;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.GuiIngameForge;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nullable;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
+@SideOnly(Side.CLIENT)
 public class RenderUtil {
 
     private static final Stack<int[]> scissorFrameStack = new Stack<>();
@@ -94,5 +96,134 @@ public class RenderUtil {
         int s = r.getScaleFactor();
         int translatedY = r.getScaledHeight() - y - h;
         GL11.glScissor(x * s, translatedY * s, w * s, h * s);
+    }
+
+    /***
+     * used to render pixels in stencil mask. (e.g. Restrict rendering results to be displayed only in Monitor Screens)
+     * if you want to do the similar things in Gui(2D) not World(3D), plz consider using the {@link #useScissor(int, int, int, int, Runnable)}
+     * that you don't need to draw mask to build a rect mask easily.
+     * @param mask draw mask
+     * @param renderInMask rendering in the mask
+     * @param shouldRenderMask should mask be rendered too
+     */
+    public static void useStencil(Runnable mask, Runnable renderInMask, boolean shouldRenderMask) {
+        GL11.glStencilMask(0xFF);
+        GL11.glClearStencil(0);
+        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
+
+        GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
+
+        if (!shouldRenderMask) {
+            GL11.glColorMask(false, false, false, false);
+            GL11.glDepthMask(false);
+        }
+
+        mask.run();
+
+        if (!shouldRenderMask) {
+            GL11.glColorMask(true, true, true, true);
+            GL11.glDepthMask(true);
+        }
+
+        GL11.glStencilMask(0x00);
+        GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
+        GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+
+        renderInMask.run();
+
+        GL11.glDisable(GL11.GL_STENCIL_TEST);
+    }
+
+    public static void useLightMap(float x, float y, Runnable codeBlock){
+        /* hack the lightmap */
+        GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+        net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+        float lastBrightnessX = OpenGlHelper.lastBrightnessX;
+        float lastBrightnessY = OpenGlHelper.lastBrightnessY;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, x, y);
+        if (codeBlock != null) {
+            codeBlock.run();
+        }
+        /* restore the lightmap  */
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
+        net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
+        GL11.glPopAttrib();
+    }
+
+    public static void moveToFace(double x, double y, double z, EnumFacing face) {
+        GlStateManager.translate(x + 0.5 + face.getXOffset() * 0.5, y + 0.5 + face.getYOffset() * 0.5, z + 0.5 + face.getZOffset() * 0.5);
+    }
+
+    public static void rotateToFace(EnumFacing face, @Nullable EnumFacing spin) {
+        int angle = spin == EnumFacing.EAST ? 90 : spin == EnumFacing.SOUTH ? 180 : spin == EnumFacing.WEST ? -90 : 0;
+        switch (face) {
+            case UP:
+                GlStateManager.scale(1.0f, -1.0f, 1.0f);
+                GlStateManager.rotate(90.0f, 1.0f, 0.0f, 0.0f);
+                GlStateManager.rotate(angle, 0, 0, 1);
+                break;
+            case DOWN:
+                GlStateManager.scale(1.0f, -1.0f, 1.0f);
+                GlStateManager.rotate(-90.0f, 1.0f, 0.0f, 0.0f);
+                GlStateManager.rotate(spin == EnumFacing.EAST ? 90 : spin == EnumFacing.NORTH ? 180 : spin == EnumFacing.WEST ? -90 : 0, 0, 0, 1);
+                break;
+            case EAST:
+                GlStateManager.scale(-1.0f, -1.0f, -1.0f);
+                GlStateManager.rotate(-90.0f, 0.0f, 1.0f, 0.0f);
+                GlStateManager.rotate(angle, 0, 0, 1);
+                break;
+            case WEST:
+                GlStateManager.scale(-1.0f, -1.0f, -1.0f);
+                GlStateManager.rotate(90.0f, 0.0f, 1.0f, 0.0f);
+                GlStateManager.rotate(angle, 0, 0, 1);
+                break;
+            case NORTH:
+                GlStateManager.scale(-1.0f, -1.0f, -1.0f);
+                GlStateManager.rotate(angle, 0, 0, 1);
+                break;
+            case SOUTH:
+                GlStateManager.scale(-1.0f, -1.0f, -1.0f);
+                GlStateManager.rotate(180.0f, 0.0f, 1.0f, 0.0f);
+                GlStateManager.rotate(angle, 0, 0, 1);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private static final Map<TextureAtlasSprite, Integer> textureMap = new HashMap<>();
+
+    public static void bindTextureAtlasSprite(TextureAtlasSprite textureAtlasSprite) {
+        if (textureAtlasSprite == null) {
+            return;
+        }
+        if (textureMap.containsKey(textureAtlasSprite)) {
+            GlStateManager.bindTexture(textureMap.get(textureAtlasSprite));
+            return;
+        }
+
+        int glTextureId = -1;
+
+        final int iconWidth = textureAtlasSprite.getIconWidth();
+        final int iconHeight = textureAtlasSprite.getIconHeight();
+        final int frameCount = textureAtlasSprite.getFrameCount();
+        if (iconWidth <= 0 || iconHeight <= 0 || frameCount <= 0) {
+            return;
+        }
+
+        BufferedImage bufferedImage = new BufferedImage(iconWidth, iconHeight * frameCount, BufferedImage.TYPE_4BYTE_ABGR);
+        for (int i = 0; i < frameCount; i++) {
+            int[][] frameTextureData = textureAtlasSprite.getFrameTextureData(i);
+            int[] largestMipMapTextureData = frameTextureData[0];
+            bufferedImage.setRGB(0, i * iconHeight, iconWidth, iconHeight, largestMipMapTextureData, 0, iconWidth);
+        }
+        glTextureId = TextureUtil.glGenTextures();
+        if (glTextureId != -1) {
+            TextureUtil.uploadTextureImageAllocate(glTextureId, bufferedImage, false, false);
+            textureMap.put(textureAtlasSprite, glTextureId);
+            GlStateManager.bindTexture(textureMap.get(textureAtlasSprite));
+        }
     }
 }

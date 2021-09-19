@@ -39,7 +39,7 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
                 })
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                new Color(255, 255, 255, 0).getRGB()));
+                        TerminalTheme.COLOR_B_1.getColor()));
         slots = new ArrayList<>();
         if (!config.get(name).isJsonNull()) {
             Gson gson = new Gson();
@@ -61,7 +61,7 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
         group.addWidget(new RectButtonWidget(20, 0, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(data -> {
                     itemStackInfo.count = Math.max(0, itemStackInfo.count - (data.isShiftClick ? 10 : 1));
                     updateValue();
@@ -70,7 +70,7 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
         group.addWidget(new RectButtonWidget(76, 0, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(data -> {
                     itemStackInfo.count = Math.max(0, itemStackInfo.count + (data.isShiftClick ? 10 : 1));
                     updateValue();
@@ -81,7 +81,7 @@ public class ItemStackConfigurator extends ConfiguratorWidget<List<SlotListWidge
         group.addWidget(new RectButtonWidget(96, 0, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(data -> {
                     container.waitToRemoved(group);
                     slots.remove(itemStackInfo);

@@ -178,7 +178,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems() : 0;
 
         int[] overclock = super.calculateOverclock(EUt, voltage, duration);
-        overclock[1] = (int) (duration * (1 + 0.1 * numMaintenanceProblems));
+        overclock[1] = (int) (overclock[1] * (1 + 0.1 * numMaintenanceProblems));
 
         return overclock;
     }

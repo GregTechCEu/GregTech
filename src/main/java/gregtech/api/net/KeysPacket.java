@@ -3,7 +3,7 @@ package gregtech.api.net;
 
 import gregtech.api.util.input.EnumKey;
 import gregtech.api.util.input.Key;
-import gregtech.api.util.input.Keybinds;
+import gregtech.api.util.input.KeyBinds;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
@@ -35,7 +35,7 @@ public class KeysPacket implements IMessage {
     @Override
     public void fromBytes(ByteBuf buf) {
         keys = new ArrayList<>();
-        for (int i = 0; i < Keybinds.REGISTERY.size(); i++) {
+        for (int i = 0; i < KeyBinds.REGISTRY.size(); i++) {
             int id = buf.readByte();
             Key current = new Key(EnumKey.getKeyByID(id));
             current.state = buf.readBoolean();

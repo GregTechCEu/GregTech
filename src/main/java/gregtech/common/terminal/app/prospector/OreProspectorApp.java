@@ -1,16 +1,15 @@
 package gregtech.common.terminal.app.prospector;
 
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.ClickComponent;
 import gregtech.common.terminal.component.SearchComponent;
-import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,22 +22,33 @@ public class OreProspectorApp extends AbstractApplication implements
     WidgetProspectingMap widgetProspectingMap;
 
     public OreProspectorApp() {
-        super("ore_prospector", GuiTextures.SCANNER_OVERLAY);
+        super("ore_prospector");
     }
 
     @Override
-    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) { //333, 232
-        OreProspectorApp app = new OreProspectorApp();
-        app.addWidget(new ImageWidget(0, 0, 333, 232, TerminalTheme.COLOR_B_2));
-        int chunkRadius = 7;
+    public IGuiTexture getIcon() {
+        return GuiTextures.SCANNER_OVERLAY;
+    }
+
+    @Override
+    public AbstractApplication initApp() {
+        int chunkRadius = getAppTier() + 1;
         int offset = (232 - 32 * 7 + 16) / 2;
+        this.addWidget(new ImageWidget(0, 0, 333, 232, TerminalTheme.COLOR_B_2));
         if (isClient) {
-            app.widgetOreList = new WidgetOreList(32 * chunkRadius - 16, offset, 333 - 32 * chunkRadius  + 16, 232 - 2 * offset);
-            app.addWidget(app.widgetOreList);
+            this.addWidget(new ImageWidget(0, 0, 333, offset, GuiTextures.UI_FRAME_SIDE_UP));
+            this.addWidget(new ImageWidget(0, 232 - offset, 333, offset, GuiTextures.UI_FRAME_SIDE_DOWN));
+            this.widgetOreList = new WidgetOreList(32 * chunkRadius - 16, offset, 333 - 32 * chunkRadius  + 16, 232 - 2 * offset);
+            this.addWidget(this.widgetOreList);
         }
-        app.widgetProspectingMap = new WidgetProspectingMap(0, offset, chunkRadius, app.widgetOreList, 0, 1);
-        app.addWidget(1, app.widgetProspectingMap);
-        return app;
+        this.widgetProspectingMap = new WidgetProspectingMap((7 - chunkRadius) * 16, offset + (7 - chunkRadius) * 16, chunkRadius, this.widgetOreList, 0, 1);
+        this.addWidget(1, this.widgetProspectingMap);
+        return this;
+    }
+
+    @Override
+    public int getMaxTier() {
+        return 6;
     }
 
     @Override

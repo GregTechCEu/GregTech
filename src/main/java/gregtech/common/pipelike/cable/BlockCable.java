@@ -18,7 +18,6 @@ import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
 import gregtech.common.pipelike.cable.tile.TileEntityCableTickable;
-import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.render.CableRenderer;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.block.Block;

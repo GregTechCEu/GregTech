@@ -315,7 +315,7 @@ public class VanillaStandardRecipes {
         LASER_ENGRAVER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.PURPUR_BLOCK))
                 .notConsumable(craftingLens, MarkerMaterials.Color.White)
-                .outputs(new ItemStack(Blocks.PURPUR_PILLAR, 1, 1))
+                .outputs(new ItemStack(Blocks.PURPUR_PILLAR, 1))
                 .duration(50).EUt(16).buildAndRegister();
     }
 

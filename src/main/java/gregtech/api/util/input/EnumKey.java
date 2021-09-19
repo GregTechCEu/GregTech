@@ -5,6 +5,7 @@ import org.lwjgl.input.Keyboard;
 import javax.annotation.Nullable;
 
 public enum EnumKey {
+
     MENU("ALT Menu", Keyboard.KEY_LMENU, Key.KEYS_CATEGORY),
     MODE_SWITCH("Mode Switch", Keyboard.KEY_M, Key.KEYS_CATEGORY),
     FORWARD(null, 0, null),
@@ -41,5 +42,4 @@ public enum EnumKey {
     public int getID() {
         return this.ID;
     }
-
 }

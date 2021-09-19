@@ -1,17 +1,12 @@
 package gregtech.api.enchants;
 
 import gregtech.api.GTValues;
-import gregtech.common.ConfigHolder;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
-
-import java.util.List;
-
 
 public class EnchantmentHardHammer extends Enchantment {
     public static final EnchantmentHardHammer INSTANCE = new EnchantmentHardHammer();

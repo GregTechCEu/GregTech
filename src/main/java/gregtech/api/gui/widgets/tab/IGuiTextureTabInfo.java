@@ -11,8 +11,8 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import static gregtech.api.gui.impl.ModularUIGui.*;
 
 public class IGuiTextureTabInfo implements ITabInfo {
-    private final IGuiTexture texture;
-    private final String nameLocale;
+    public final IGuiTexture texture;
+    public final String nameLocale;
 
     public IGuiTextureTabInfo(IGuiTexture texture, String nameLocale) {
         this.texture = texture;

@@ -11,10 +11,10 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.*;
 
+public class KeyBinds {
 
-public class Keybinds {
-    // Just registery of all used keys
-    public static final List<Key> REGISTERY = new ArrayList<>();
+    // Registry of all used keys
+    public static final List<Key> REGISTRY = new ArrayList<>();
     // Logical server-sided variable, where is state of any keys from players
     public static final Map<EntityPlayer, List<Key>> PLAYER_KEYS = new HashMap<>();
 
@@ -34,7 +34,7 @@ public class Keybinds {
 
     @SideOnly(Side.CLIENT)
     public static void registerClient() {
-        for (Key key : REGISTERY) {
+        for (Key key : REGISTRY) {
             if (!ArrayUtils.contains(Minecraft.getMinecraft().gameSettings.keyBindings, key.getBind()))
                 ClientRegistry.registerKeyBinding(key.getBind());
         }
@@ -43,9 +43,9 @@ public class Keybinds {
     public static void register() {
         for (EnumKey type : EnumKey.values()) {
             if (ArmorUtils.SIDE.isClient()) {
-                REGISTERY.add(new Key(type, bindings.get(type.getID())));
+                REGISTRY.add(new Key(type, bindings.get(type.getID())));
             } else {
-                REGISTERY.add(new Key(type));
+                REGISTRY.add(new Key(type));
             }
         }
     }

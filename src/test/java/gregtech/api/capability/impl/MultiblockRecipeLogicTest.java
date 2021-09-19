@@ -14,6 +14,7 @@ import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.world.DummyWorld;
+import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityFluidHatch;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityItemBus;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
@@ -33,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
 
 public class MultiblockRecipeLogicTest {
 
@@ -74,7 +74,7 @@ public class MultiblockRecipeLogicTest {
                 .buildAndRegister();
 
         RecipeMapMultiblockController mbt =
-                GregTechAPI.registerMetaTileEntity(511,
+                MetaTileEntities.registerMetaTileEntity(511,
                         new MetaTileEntityElectricBlastFurnace(
                                 // super function calls the world, which equal null in test
                                 new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
@@ -313,7 +313,7 @@ public class MultiblockRecipeLogicTest {
                 .buildAndRegister();
 
         RecipeMapMultiblockController mbt =
-                GregTechAPI.registerMetaTileEntity(512,
+                MetaTileEntities.registerMetaTileEntity(512,
                         new MetaTileEntityElectricBlastFurnace(
                                 // super function calls the world, which equal null in test
                                 new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {

@@ -1,25 +1,25 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
-import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
-import net.minecraft.client.Minecraft;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.net.KeysPacket;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.util.input.Key;
-import gregtech.api.util.input.Keybinds;
-import gregtech.common.items.armor.PowerlessJetpack;
+import gregtech.api.util.input.KeyBinds;
 import gregtech.common.items.MetaItems;
+import gregtech.common.items.armor.PowerlessJetpack;
+import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
+import gregtech.common.tools.ToolUtility;
+import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityZombie;
-import gregtech.api.enchants.EnchantmentHardHammer;
-import gregtech.common.tools.ToolUtility;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -27,15 +27,15 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -118,14 +118,14 @@ public class EventHandlers {
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
         if (ArmorUtils.SIDE.isClient()) {
             boolean needNewPacket = false;
-            for (Key key : Keybinds.REGISTERY) {
+            for (Key key : KeyBinds.REGISTRY) {
                 boolean keyState = key.getBind().isKeyDown();
                 if (key.state != keyState) {
                     key.state = keyState;
                     needNewPacket = true;
                 }
             }
-            if (needNewPacket) NetworkHandler.INSTANCE.sendToServer(new KeysPacket(Keybinds.REGISTERY));
+            if (needNewPacket) NetworkHandler.INSTANCE.sendToServer(new KeysPacket(KeyBinds.REGISTRY));
         }
     }
 
@@ -142,34 +142,22 @@ public class EventHandlers {
             final ItemStack FLUIDJET = MetaItems.SEMIFLUID_JETPACK.getStackForm();
 
 
-            if (jet.isItemEqual(JET) || (jet.isItemEqual(ADJET) || (jet.isItemEqual(FLUIDJET))) || armor.isItemEqual(QUARK) || armor.isItemEqual(NANO)) {
-            } else {
+            if (!(jet.isItemEqual(JET) || jet.isItemEqual(ADJET) || (jet.isItemEqual(FLUIDJET)) || armor.isItemEqual(QUARK) || armor.isItemEqual(NANO))) {
                 return;
             }
             if (jet.isItemEqual(FLUIDJET)) {
                 event.setCanceled(true);
             } else {
-                if(jet != null) {
-                    ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armor.getItem()).getItem(armor);
-                    ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-                    IElectricItem item = armor.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                    if (item == null) return;
-                    int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
-                    if (item.getCharge() >= energyCost) {
-                        item.discharge(energyCost, item.getTier(), true, false, false);
-                        event.setCanceled(true);
-                    }
-                }
-                else {
-                    ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) jet.getItem()).getItem(jet);
-                    ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
-                    IElectricItem item = jet.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
-                    if (item == null) return;
-                    int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
-                    if (item.getCharge() >= energyCost) {
-                        item.discharge(energyCost, item.getTier(), true, false, false);
-                        event.setCanceled(true);
-                    }
+                ItemStack armorPiece = jet.isEmpty() ? armor : jet;
+
+                ArmorMetaItem<?>.ArmorMetaValueItem armorMetaValue = ((ArmorMetaItem<?>) armorPiece.getItem()).getItem(armorPiece);
+                ArmorLogicSuite armorLogic = (ArmorLogicSuite) armorMetaValue.getArmorLogic();
+                IElectricItem item = armorPiece.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                if (item == null) return;
+                int energyCost = (armorLogic.getEnergyPerUse() * Math.round(event.getDistance()));
+                if (item.getCharge() >= energyCost) {
+                    item.discharge(energyCost, item.getTier(), true, false, false);
+                    event.setCanceled(true);
                 }
             }
         }

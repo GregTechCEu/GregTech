@@ -1,14 +1,17 @@
 package gregtech.integration.jei.multiblock;
 
-import codechicken.lib.raytracer.CuboidRayTraceResult;
-import codechicken.lib.raytracer.IndexedCuboid6;
+import codechicken.lib.render.BlockRenderer;
+import codechicken.lib.render.CCRenderState;
+import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Vector3;
+import codechicken.lib.vec.Translation;
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.render.scene.SceneRenderCallback;
+import gregtech.api.render.scene.ImmediateWorldSceneRenderer;
+import gregtech.api.render.scene.TrackedDummyWorld;
 import gregtech.api.render.scene.WorldSceneRenderer;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.GTUtility;
@@ -25,6 +28,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.ITooltipFlag.TooltipFlags;
@@ -34,22 +39,25 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.Vector3f;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
-public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderCallback {
+public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private static final int MAX_PARTS = 20;
     private static final int PARTS_HEIGHT = 36;
     private final int SLOT_SIZE = 18;
@@ -78,10 +86,10 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     private int currentRendererPage = 0;
     private int lastMouseX;
     private int lastMouseY;
-    private float panX;
-    private float panY;
+    private Vector3f center;
     private float rotationYaw;
     private float rotationPitch;
+    private float maxZoom;
     private float zoom;
 
     private GuiButton buttonPreviousPattern;
@@ -136,14 +144,20 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
         this.buttonPreviousPattern.enabled = false;
         this.buttonNextPattern.enabled = patterns.length > 1;
 
-        this.panX = 0.0f;
-        this.panY = 0.0f;
-        this.zoom = infoPage.getDefaultZoom();
-        this.rotationYaw = -45.0f;
-        this.rotationPitch = 0.0f;
-        this.currentRendererPage = 0;
-
-        setNextLayer(-1);
+        if (Mouse.getEventDWheel() == 0) {
+            this.maxZoom = infoPage.getDefaultZoom() * 15;
+            this.zoom = this.maxZoom;
+            this.rotationYaw = 20.0f;
+            this.rotationPitch = 135.0f;
+            this.currentRendererPage = 0;
+            setNextLayer(-1);
+        } else {
+            zoom = (float) MathHelper.clamp(zoom + (Mouse.getEventDWheel() < 0 ? 0.5 : -0.5), 3, maxZoom);
+            setNextLayer(getLayerIndex());
+        }
+        if (center != null) {
+            getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+        }
         updateParts();
     }
 
@@ -157,7 +171,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
 
     private void toggleNextLayer() {
         WorldSceneRenderer renderer = getCurrentRenderer();
-        int height = (int) renderer.getSize().getY() - 1;
+        int height = (int) ((TrackedDummyWorld)renderer.world).getSize().getY() - 1;
         if (++this.layerIndex > height) {
             //if current layer index is more than max height, reset it
             //to display all layers
@@ -169,6 +183,19 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
     private void setNextLayer(int newLayer) {
         this.layerIndex = newLayer;
         this.nextLayerButton.displayString = "L:" + (layerIndex == -1 ? "A" : Integer.toString(layerIndex + 1));
+        WorldSceneRenderer renderer = getCurrentRenderer();
+        if (renderer != null) {
+            TrackedDummyWorld world = ((TrackedDummyWorld)renderer.world);
+            renderer.renderedBlocksMap.clear();
+            int minY = (int) world.getMinPos().getY();
+            Collection<BlockPos> renderBlocks;
+            if (newLayer == -1) {
+                renderBlocks = world.renderedBlocks;
+            } else {
+                renderBlocks = world.renderedBlocks.stream().filter(pos->pos.getY() - minY == newLayer).collect(Collectors.toSet());
+            }
+            renderer.addRenderedBlocks(renderBlocks, null);
+        }
     }
 
     private void switchRenderPage(int amount) {
@@ -199,47 +226,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
             itemStackGroup.set(i, (ItemStack) null);
     }
 
-    private boolean shouldDisplayBlock(BlockPos pos) {
-        if (getLayerIndex() == -1)
-            return true;
-        WorldSceneRenderer renderer = getCurrentRenderer();
-        int minHeight = (int) renderer.world.getMinPos().getY();
-        int relativeHeight = pos.getY() - minHeight;
-        return relativeHeight == getLayerIndex();
-    }
-
-    @Override
-    public void preRenderScene(WorldSceneRenderer renderer) {
-        Vector3f size = renderer.getSize();
-        Vector3f minPos = renderer.world.getMinPos();
-        minPos = new Vector3f(minPos);
-        minPos.add(new Vector3f(0.0f, -1.0f, 0.5f));
-
-        GlStateManager.scale(zoom, zoom, zoom);
-        GlStateManager.translate(panX, panY, 0);
-        GlStateManager.translate(-minPos.x, -minPos.y, -minPos.z);
-        Vector3 centerPosition = new Vector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f);
-        GlStateManager.translate(centerPosition.x, centerPosition.y, centerPosition.z);
-        GlStateManager.scale(2.0, 2.0, 2.0);
-        GlStateManager.translate(-centerPosition.x, -centerPosition.y, -centerPosition.z);
-        GlStateManager.translate(minPos.x, minPos.y, minPos.z);
-
-        GlStateManager.translate(centerPosition.x, centerPosition.y, centerPosition.z);
-        GlStateManager.rotate(rotationYaw, 0.0f, 1.0f, 0.0f);
-        GlStateManager.rotate(rotationPitch, 0.0f, 0.0f, 1.0f);
-        GlStateManager.translate(-centerPosition.x, -centerPosition.y, -centerPosition.z);
-
-        if (layerIndex >= 0) {
-            GlStateManager.translate(0.0, -layerIndex + 1, 0.0);
-        }
-    }
-
     @Override
     public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         WorldSceneRenderer renderer = getCurrentRenderer();
         int sceneHeight = recipeHeight - PARTS_HEIGHT;
 
-        renderer.render(recipeLayout.getPosX(), recipeLayout.getPosY(), recipeWidth, sceneHeight, 0xC6C6C6);
+        renderer.render(recipeLayout.getPosX(), recipeLayout.getPosY(), recipeWidth, sceneHeight, Mouse.getX(), Mouse.getY());
         drawMultiblockName(recipeWidth);
 
         //reset colors (so any elements render after this point are not dark)
@@ -260,39 +252,29 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
         drawHoveringInformationText(minecraft, infoPage.informationText(), mouseX, mouseY);
 
         this.tooltipBlockStack = null;
-        BlockPos pos = renderer.getLastHitBlock();
+        RayTraceResult rayTraceResult = renderer.getLastTraceResult();
         boolean insideView = mouseX >= 0 && mouseY >= 0 &&
                 mouseX < recipeWidth && mouseY < sceneHeight;
         boolean leftClickHeld = Mouse.isButtonDown(0);
         boolean rightClickHeld = Mouse.isButtonDown(1);
-        boolean isHoldingShift = Keyboard.isKeyDown(Keyboard.KEY_LSHIFT);
-
         if (insideView) {
             if (leftClickHeld) {
-                if (isHoldingShift) {
-                    int mouseDeltaY = mouseY - lastMouseY;
-                    this.rotationPitch += mouseDeltaY * 2.0f;
-                } else {
-                    int mouseDeltaX = mouseX - lastMouseX;
-                    this.rotationYaw += mouseDeltaX * 2.0f;
-                }
+                rotationPitch += mouseX - lastMouseX + 360;
+                rotationPitch = rotationPitch % 360;
+                rotationYaw = (float) MathHelper.clamp(rotationYaw + (mouseY - lastMouseY), -89.9, 89.9);
             } else if (rightClickHeld) {
                 int mouseDeltaY = mouseY - lastMouseY;
-                if (isHoldingShift) {
-                    this.zoom *= Math.pow(1.05d, -mouseDeltaY);
-                } else {
-                    int mouseDeltaX = mouseX - lastMouseX;
-                    this.panX -= mouseDeltaX / 2.0f;
-                    this.panY -= mouseDeltaY / 2.0f;
+                if (Math.abs(mouseDeltaY) > 1) {
+                    this.zoom = (float) MathHelper.clamp(zoom + (mouseDeltaY > 0 ? 0.5 : -0.5), 3, maxZoom);
                 }
             }
+            renderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
         }
 
-        if (!(leftClickHeld || rightClickHeld) && pos != null && !renderer.world.isAirBlock(pos)) {
-            IBlockState blockState = renderer.world.getBlockState(pos);
-            RayTraceResult result = new CuboidRayTraceResult(new Vector3(0.5, 0.5, 0.5).add(pos), pos, EnumFacing.UP, new IndexedCuboid6(null, Cuboid6.full), 1.0);
-            ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, result, renderer.world, pos, minecraft.player);
-            if (!itemStack.isEmpty()) {
+        if (!(leftClickHeld || rightClickHeld) && rayTraceResult != null && !renderer.world.isAirBlock(rayTraceResult.getBlockPos())) {
+            IBlockState blockState = renderer.world.getBlockState(rayTraceResult.getBlockPos());
+            ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world, rayTraceResult.getBlockPos(), minecraft.player);
+            if (itemStack != null && !itemStack.isEmpty()) {
                 this.tooltipBlockStack = itemStack;
             }
         }
@@ -437,12 +419,19 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
                 }
             }
         }
-        WorldSceneRenderer worldSceneRenderer = new WorldSceneRenderer(blockMap);
-        worldSceneRenderer.world.updateEntities();
+        TrackedDummyWorld world = new TrackedDummyWorld();
+        ImmediateWorldSceneRenderer worldSceneRenderer = new ImmediateWorldSceneRenderer(world);
+        worldSceneRenderer.setClearColor(0xC6C6C6);
+        world.addBlocks(blockMap);
+        Vector3f size = world.getSize();
+        Vector3f minPos = world.getMinPos();
+        center = new Vector3f(minPos.x + size.x / 2, minPos.y + size.y / 2, minPos.z + size.z / 2);
         HashMap<ItemStackKey, PartInfo> partsMap = new HashMap<>();
         gatherBlockDrops(worldSceneRenderer.world, blockMap, blockDrops, partsMap);
-        worldSceneRenderer.setRenderCallback(this);
-        worldSceneRenderer.setRenderFilter(this::shouldDisplayBlock);
+        worldSceneRenderer.addRenderedBlocks(world.renderedBlocks, null);
+        worldSceneRenderer.setOnLookingAt(this::renderBlockOverLay);
+        worldSceneRenderer.world.updateEntities();
+        world.setRenderFilter(pos->worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c->c.contains(pos)));
         ArrayList<PartInfo> partInfos = new ArrayList<>(partsMap.values());
         partInfos.sort((one, two) -> {
             if (one.isController) return -1;
@@ -457,6 +446,28 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper, SceneRenderC
             parts.add(partInfo.getItemStack());
         }
         return new MBPattern(worldSceneRenderer, parts);
+    }
+
+    @SideOnly(Side.CLIENT)
+    private void renderBlockOverLay(RayTraceResult rayTraceResult) {
+        BlockPos pos = rayTraceResult.getBlockPos();
+        Tessellator tessellator = Tessellator.getInstance();
+        GlStateManager.disableTexture2D();
+        CCRenderState renderState = CCRenderState.instance();
+        renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR, tessellator.getBuffer());
+        ColourMultiplier multiplier = new ColourMultiplier(0);
+        renderState.setPipeline(new Translation(pos), multiplier);
+        BlockRenderer.BlockFace blockFace = new BlockRenderer.BlockFace();
+        renderState.setModel(blockFace);
+        for (EnumFacing renderSide : EnumFacing.VALUES) {
+            float diffuse = LightUtil.diffuseLight(renderSide);
+            int color = (int) (255 * diffuse);
+            multiplier.colour = RenderUtil.packColor(color, color, color, 100);
+            blockFace.loadCuboidFace(Cuboid6.full, renderSide.getIndex());
+            renderState.render();
+        }
+        renderState.draw();
+        GlStateManager.enableTexture2D();
     }
 
 }

@@ -5,15 +5,16 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.ingredient.IRecipeTransferHandlerWidget;
 import gregtech.api.gui.resources.TextTexture;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.TabGroup;
 import gregtech.api.gui.widgets.tab.IGuiTextureTabInfo;
+import gregtech.api.gui.widgets.tab.ITabInfo;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.CustomTabListRenderer;
 import gregtech.api.terminal.os.TerminalDialogWidget;
-import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.terminal.os.menu.IMenuComponent;
+import gregtech.api.util.GTLog;
 import gregtech.common.terminal.app.recipechart.widget.RGContainer;
 import gregtech.common.terminal.app.recipechart.widget.RGNode;
 import gregtech.common.terminal.component.ClickComponent;
@@ -28,54 +29,74 @@ import net.minecraftforge.common.util.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RecipeChartApp extends AbstractApplication implements IRecipeTransferHandlerWidget {
-    public static final TextureArea ICON = TextureArea.fullImage("textures/gui/terminal/recipe_graph/icon.png");
-
     private TabGroup<RGContainer> tabGroup;
-    private Map<RGContainer, String> containers;
 
     public RecipeChartApp() {
-        super("recipe_chart", ICON);
+        super("recipe_chart");
     }
 
     @Override
-    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
-        RecipeChartApp app = new RecipeChartApp();
+    public int getThemeColor() {
+        return 0xff008001;
+    }
+
+    @Override
+    public AbstractApplication initApp() {
         if (isClient) {
-            app.setOs(os);
-            app.containers = new LinkedHashMap<>();
-            app.tabGroup = new TabGroup<>(0, 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 60, 10));
-            app.addWidget(app.tabGroup);
-            if (nbt.isEmpty()) {
-                app.addTab("default");
+            this.tabGroup = new TabGroup<>(0, 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 333 / getMaxPages(), 10));
+            this.tabGroup.setOnTabChanged(this::onPagesChanged);
+            this.addWidget(this.tabGroup);
+            NBTTagCompound nbt = null;
+            try {
+                nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, "config/recipe_chart.nbt"));
+            } catch (IOException e) {
+                GTLog.logger.error("error while loading snapshots for recipe chart", e);
+            }
+            if (nbt == null || nbt.isEmpty()) {
+                this.addTab("default");
             } else {
                 for (NBTBase l : nbt.getTagList("list", Constants.NBT.TAG_COMPOUND)) {
                     NBTTagCompound container = (NBTTagCompound) l;
-                    app.addTab(container.getString("name")).loadFromNBT((NBTTagCompound) container.getTag("data"));
+                    this.addTab(container.getString("name")).loadFromNBT((NBTTagCompound) container.getTag("data"));
                 }
+                tabGroup.setSelectedTab(nbt.getInteger("focus"));
             }
         }
-        return app;
+        return this;
+    }
+
+    private void onPagesChanged(int oldPage, int newPage) {
+        ITabInfo tabInfo = tabGroup.getTabInfo(newPage);
+        if (tabInfo instanceof IGuiTextureTabInfo && ((IGuiTextureTabInfo) tabInfo).texture instanceof TextTexture) {
+            ((TextTexture) ((IGuiTextureTabInfo) tabInfo).texture).setType(TextTexture.TextType.ROLL);
+        }
+        tabInfo = tabGroup.getTabInfo(oldPage);
+        if (tabInfo instanceof IGuiTextureTabInfo && ((IGuiTextureTabInfo) tabInfo).texture instanceof TextTexture) {
+            ((TextTexture) ((IGuiTextureTabInfo) tabInfo).texture).setType(TextTexture.TextType.HIDE);
+        }
     }
 
     private RGContainer addTab(String name) {
         name = name.isEmpty()? "default" : name;
         RGContainer container = new RGContainer(0, 0, 333, 222, getOs());
         container.setBackground(TerminalTheme.COLOR_B_3);
-        tabGroup.addTab(new IGuiTextureTabInfo(new TextTexture(name, -1), name), container);
-        containers.put(container, name);
+        tabGroup.addTab(new IGuiTextureTabInfo(new TextTexture(name, -1).setWidth(333 / getMaxPages() - 5)
+                .setType(tabGroup.getAllTag().isEmpty() ? TextTexture.TextType.ROLL : TextTexture.TextType.HIDE), name), container);
         return container;
+    }
+
+    public int getMaxPages() {
+        return getAppTier() + 5;
     }
 
     @Override
     public List<IMenuComponent> getMenuComponents() {
         ClickComponent newPage = new ClickComponent().setIcon(GuiTextures.ICON_NEW_PAGE).setHoverText("terminal.component.new_page").setClickConsumer(cd->{
             if (tabGroup == null) return;
-            if (tabGroup.getAllTag().size() < 5) {
+            if (tabGroup.getAllTag().size() < getMaxPages()) {
                 TerminalDialogWidget.showTextFieldDialog(getOs(), "terminal.component.page_name", s -> true, s -> {
                     if (s != null) {
                         addTab(s);
@@ -90,7 +111,6 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
             if (tabGroup.getAllTag().size() > 1) {
                 TerminalDialogWidget.showConfirmDialog(getOs(), "terminal.recipe_chart.delete", "terminal.component.confirm", r->{
                     if (r) {
-                        containers.remove(tabGroup.getCurrentTag());
                         tabGroup.removeTab(tabGroup.getAllTag().indexOf(tabGroup.getCurrentTag()));
                     }
                 }).setClientSide().open();
@@ -106,8 +126,8 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
         });
         ClickComponent importPage = new ClickComponent().setIcon(GuiTextures.ICON_LOAD).setHoverText("terminal.component.load_file").setClickConsumer(cd->{
             if (tabGroup == null) return;
-            if (tabGroup.getAllTag().size() < 5) {
-                File file = new File("terminal\\recipe_chart");
+            if (tabGroup.getAllTag().size() < getMaxPages()) {
+                File file = new File(TerminalRegistry.TERMINAL_PATH, "recipe_chart");
                 TerminalDialogWidget.showFileDialog(getOs(), "terminal.component.load_file", file, true, result->{
                     if (result != null && result.isFile()) {
                         try {
@@ -125,7 +145,7 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
         ClickComponent exportPage = new ClickComponent().setIcon(GuiTextures.ICON_SAVE).setHoverText("terminal.component.save_file").setClickConsumer(cd->{
             if (tabGroup == null) return;
             if (tabGroup.getCurrentTag() != null) {
-                File file = new File("terminal\\recipe_chart");
+                File file = new File(TerminalRegistry.TERMINAL_PATH, "recipe_chart");
                 TerminalDialogWidget.showFileDialog(getOs(), "terminal.component.save_file", file, false, result->{
                     if (result != null) {
                         try {
@@ -141,19 +161,26 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
     }
 
     @Override
-    public NBTTagCompound closeApp(boolean isClient, NBTTagCompound nbt) { //synced data to server side.
+    public NBTTagCompound closeApp() { //synced data to server side.
         if (isClient) {
             NBTTagList list = new NBTTagList();
-            for (Map.Entry<RGContainer, String> entry : containers.entrySet()) {
+            for (int i = 0; i < tabGroup.getAllTag().size(); i++) {
+                IGuiTextureTabInfo tabInfo = (IGuiTextureTabInfo) tabGroup.getTabInfo(i);
                 NBTTagCompound container = new NBTTagCompound();
-                container.setString("name", entry.getValue());
-                container.setTag("data", entry.getKey().saveAsNBT());
+                container.setString("name", tabInfo.nameLocale);
+                container.setTag("data", tabGroup.getTabWidget(i).saveAsNBT());
                 list.appendTag(container);
             }
+            NBTTagCompound nbt = new NBTTagCompound();
             nbt.setTag("list", list);
-            return nbt;
+            nbt.setInteger("focus", tabGroup.getAllTag().indexOf(tabGroup.getCurrentTag()));
+            try {
+                CompressedStreamTools.safeWrite(nbt, new File(TerminalRegistry.TERMINAL_PATH, "config/recipe_chart.nbt"));
+            } catch (IOException e) {
+                GTLog.logger.error("error while saving snapshots for recipe chart", e);
+            }
         }
-        return super.closeApp(false, nbt);
+        return super.closeApp();
     }
 
     @Override
@@ -169,5 +196,10 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
             }
         }
         return "please select a node.";
+    }
+
+    @Override
+    public int getMaxTier() {
+        return 3;
     }
 }

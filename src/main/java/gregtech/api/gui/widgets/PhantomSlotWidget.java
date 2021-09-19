@@ -25,6 +25,15 @@ public class PhantomSlotWidget extends SlotWidget implements IGhostIngredientTar
     }
 
     @Override
+    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        if (isMouseOverElement(mouseX, mouseY) && gui != null) {
+            gui.needNativeClick = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public ItemStack slotClick(int dragType, ClickType clickTypeIn, EntityPlayer player) {
         ItemStack stackHeld = player.inventory.getItemStack();
         return SlotUtil.slotClickPhantom(slotReference, dragType, clickTypeIn, stackHeld);

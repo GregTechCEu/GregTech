@@ -19,10 +19,7 @@ import net.minecraftforge.fluids.FluidStack;
 import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @ZenClass("mods.gregtech.material.Material")
 @ZenRegister
@@ -111,11 +108,18 @@ public class Material implements Comparable<Material> {
         MaterialRegistry.register(this);
     }
 
-    @ZenMethod
-    public void addFlag(MaterialFlag... flags) {
+    public void addFlags(MaterialFlag... flags) {
         if (MaterialRegistry.isFrozen())
             throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
         this.flags.addFlags(flags).verify(this);
+    }
+
+    @ZenMethod
+    public void addFlags(String... names) {
+        addFlags(Arrays.stream(names)
+                .map(MaterialFlag::getByName)
+                .filter(Objects::nonNull)
+                .toArray(MaterialFlag[]::new));
     }
 
     public boolean hasFlag(MaterialFlag flag) {

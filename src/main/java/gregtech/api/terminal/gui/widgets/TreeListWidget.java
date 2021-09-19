@@ -179,10 +179,12 @@ public class TreeListWidget<K, T> extends Widget {
                             list.add(index + 1 + j, node.getChildren().get(j));
                         }
                     }
-                    index = i + 1;
+                    index++;
                     dim++;
                     flag = true;
                     break;
+                } else {
+                    index++;
                 }
             }
             if (!flag) return null;

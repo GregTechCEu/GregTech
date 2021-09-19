@@ -6,7 +6,7 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.input.EnumKey;
 import gregtech.api.util.input.Key;
-import gregtech.api.util.input.Keybinds;
+import gregtech.api.util.input.KeyBinds;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -135,10 +135,10 @@ public class ArmorUtils {
      */
     public static boolean isKeyDown(EntityPlayer player, EnumKey type) {
         if (SIDE.isClient()) {
-            return Keybinds.REGISTERY.get(type.getID()).state;
+            return KeyBinds.REGISTRY.get(type.getID()).state;
         } else {
-            if (Keybinds.PLAYER_KEYS.get(player) == null) return false;
-            List<Key> playerKeys = Keybinds.PLAYER_KEYS.get(player);
+            if (KeyBinds.PLAYER_KEYS.get(player) == null) return false;
+            List<Key> playerKeys = KeyBinds.PLAYER_KEYS.get(player);
             if (playerKeys.isEmpty()) return false;
             return playerKeys.get(type.getID()).state;
         }

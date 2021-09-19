@@ -9,14 +9,13 @@ import gregtech.api.recipes.crafttweaker.MetaItemBracketHandler;
 import gregtech.api.recipes.recipeproperties.BlastTemperatureProperty;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.terminal.TerminalRegistry;
-import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.DustProperty;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTLog;
-import gregtech.common.advancement.GTTriggers;
 import gregtech.api.util.advancement.GTTrigger;
+import gregtech.common.advancement.GTTriggers;
 import gregtech.common.blocks.*;
 import gregtech.common.blocks.wood.BlockGregLeaves;
 import gregtech.common.blocks.wood.BlockGregLog;
@@ -297,6 +296,5 @@ public class CommonProxy {
     public void onPostLoad() {
         WoodMachineRecipes.postInit();
         TerminalRegistry.init();
-        new GuideJsonLoader().onResourceManagerReload(null);
     }
 }

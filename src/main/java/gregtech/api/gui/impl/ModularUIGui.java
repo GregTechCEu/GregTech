@@ -130,18 +130,6 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     }
 
     @Deprecated
-    public void drawSlotContents(Slot slot) {
-        GlStateManager.enableDepth();
-        RenderHelper.enableGUIStandardItemLighting();
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        drawSlot(slot);
-        GlStateManager.enableDepth();
-        GlStateManager.enableBlend();
-        GlStateManager.disableLighting();
-    }
-
-    @Deprecated
     public void renderSlotOverlay(Slot slot) {
         GlStateManager.disableDepth();
         int slotX = slot.xPos;
@@ -240,10 +228,14 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
             Widget widget = modularUI.guiWidgets.get(i);
             if(widget.isVisible() && widget.isActive() && widget.mouseClicked(mouseX, mouseY, mouseButton)) {
+                if (getModularUI().needNativeClick) {
+                    super.mouseClicked(mouseX, mouseY, mouseButton);
+                    getModularUI().needNativeClick = false;
+                }
                 return;
             }
         }
-        super.mouseClicked(mouseX, mouseY, mouseButton);
+//        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
@@ -251,6 +243,10 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
             Widget widget = modularUI.guiWidgets.get(i);
             if(widget.isVisible() && widget.isActive() && widget.mouseDragged(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)) {
+                if (getModularUI().needNativeClick) {
+                    super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+                    getModularUI().needNativeClick = false;
+                }
                 return;
             }
         }
@@ -262,10 +258,14 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         for (int i = modularUI.guiWidgets.size() - 1; i >= 0; i--) {
             Widget widget = modularUI.guiWidgets.get(i);
             if(widget.isVisible() && widget.isActive() && widget.mouseReleased(mouseX, mouseY, state)) {
+                if (getModularUI().needNativeClick) {
+                    super.mouseReleased(mouseX, mouseY, state);
+                    getModularUI().needNativeClick = false;
+                }
                 return;
             }
         }
-        super.mouseReleased(mouseX, mouseY, state);
+//        super.mouseReleased(mouseX, mouseY, state);
     }
 
     @Override

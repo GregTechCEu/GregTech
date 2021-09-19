@@ -439,6 +439,8 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem NANO_SABER;
     public static MetaItem<?>.MetaValueItem SCANNER;
+    public static MetaItem<?>.MetaValueItem WIRELESS;
+    public static MetaItem<?>.MetaValueItem CAMERA;
     public static MetaItem<?>.MetaValueItem TERMINAL;
 
     public static final MetaItem<?>.MetaValueItem[] DYE_ONLY_ITEMS = new MetaItem.MetaValueItem[EnumDyeColor.values().length];

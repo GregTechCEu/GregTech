@@ -441,8 +441,8 @@ public class RGNode extends WidgetGroup implements IDraggable {
     public NBTTagCompound serializeNodeNBT() {
         //head
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setInteger("x", getSelfPosition().x);
-        nbt.setInteger("y", getSelfPosition().y);
+        nbt.setInteger("x", getSelfPosition().x + container.getScrollXOffset());
+        nbt.setInteger("y", getSelfPosition().y + container.getScrollYOffset());
         nbt.setByte("type", head instanceof ItemStack ? (byte)1 : head instanceof FluidStack ? (byte)2 : 0);
         if (head instanceof ItemStack) {
             nbt.setTag("nbt", ((ItemStack) head).serializeNBT());

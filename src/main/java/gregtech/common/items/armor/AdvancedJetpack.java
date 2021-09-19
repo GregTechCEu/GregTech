@@ -29,6 +29,9 @@ public class AdvancedJetpack extends Jetpack {
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack item) {
         IElectricItem cont = item.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if(cont == null) {
+            return;
+        }
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(item);
         boolean hoverMode = data.hasKey("Hover") && data.getBoolean("Hover");
         boolean flyEnabled = data.hasKey("FlyMode") && data.getBoolean("FlyMode");

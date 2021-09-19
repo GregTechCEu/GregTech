@@ -566,6 +566,10 @@ public class VanillaOverrideRecipes {
                 'R', new UnificationEntry(OrePrefix.ring, Materials.Iron),
                 'P', new UnificationEntry(OrePrefix.plate, Materials.Iron)
         );
+
+        ModHandler.addShapedRecipe("iron_bucket", new ItemStack(Items.BUCKET), "XhX", " X ", 'X', new UnificationEntry(OrePrefix.plate, Materials.Iron));
+        ModHandler.removeRecipeByName(new ResourceLocation("minecraft:bucket"));
+
     }
 
     /**
@@ -576,7 +580,7 @@ public class VanillaOverrideRecipes {
      * Replaces Vanilla Enchantment Table recipe
      * Replaces Vanilla Jukebox recipe
      * Replaces Vanilla Note Block recipe
-     * Replaces Vanilla Furance
+     * Replaces Vanilla Furnace
      * - Removes Vanilla TNT recipe
      * - Removes Vanilla Golden Apple Recipe
      * - Removes Vanilla Ender Eye Recipe
@@ -691,8 +695,7 @@ public class VanillaOverrideRecipes {
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:polished_diorite"));
         ModHandler.removeRecipeByName(new ResourceLocation("minecraft:polished_andesite"));
 
-        //todo this doesn't work
-        ModHandler.removeFurnaceSmelting(new ItemStack(Items.CLAY_BALL));
+        ModHandler.removeFurnaceSmelting(new ItemStack(Items.CLAY_BALL, 1, GTValues.W));
     }
 
     /**
@@ -706,11 +709,6 @@ public class VanillaOverrideRecipes {
                     'F', new ItemStack(Items.FLINT, 1),
                     'S', new UnificationEntry(OrePrefix.springSmall, Materials.Steel)
             );
-        }
-
-        if (ConfigHolder.vanillaRecipes.bucketRequirePlatesAndHammer) {
-            ModHandler.addShapedRecipe("iron_bucket", new ItemStack(Items.BUCKET), "XhX", " X ", 'X', new UnificationEntry(OrePrefix.plate, Materials.Iron));
-            ModHandler.removeRecipeByName(new ResourceLocation("minecraft:bucket"));
         }
 
         if (!ConfigHolder.vanillaRecipes.hardToolArmorRecipes)

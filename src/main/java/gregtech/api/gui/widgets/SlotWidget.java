@@ -27,8 +27,6 @@ import javax.annotation.Nonnull;
 public class SlotWidget extends Widget implements INativeWidget {
 
     protected final Slot slotReference;
-    protected boolean isEnabled = true;
-
     protected final boolean canTakeItems;
     protected final boolean canPutItems;
     protected SlotLocationInfo locationInfo = new SlotLocationInfo(false, false);
@@ -65,42 +63,74 @@ public class SlotWidget extends Widget implements INativeWidget {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        if (isEnabled()) {
-            Position pos = getPosition();
-            Size size = getSize();
-            if (backgroundTexture != null) {
-                for (IGuiTexture backgroundTexture : this.backgroundTexture) {
-                    backgroundTexture.draw(pos.x, pos.y, size.width, size.height);
-                }
-            }
-            RenderHelper.enableGUIStandardItemLighting();
-            GlStateManager.pushMatrix();
-            RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
-            itemRender.renderItemAndEffectIntoGUI(slotReference.getStack(), pos.x + 1, pos.y + 1);
-            itemRender.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, slotReference.getStack(), pos.x + 1, pos.y + 1, null);
-            GlStateManager.enableAlpha();
-            GlStateManager.popMatrix();
-            RenderHelper.disableStandardItemLighting();
+    public void drawInForeground(int mouseX, int mouseY) {
+        if (isMouseOverElement(mouseX, mouseY) && isActive()) {
+            ((ISlotWidget) slotReference).setHover(true);
+        } else {
+            ((ISlotWidget) slotReference).setHover(false);
         }
     }
 
     @Override
-    public void drawInForeground(int mouseX, int mouseY) {
-        if (slotReference instanceof ISlotWidget) {
-            if (isMouseOverElement(mouseX, mouseY)) {
-                ((ISlotWidget) slotReference).setHover(true);
-                GlStateManager.disableDepth();
-                GlStateManager.colorMask(true, true, true, false);
-                drawSolidRect(getPosition().x + 1, getPosition().y + 1, 16, 16, -2130706433);
-                GlStateManager.colorMask(true, true, true, true);
-                GlStateManager.enableDepth();
-                GlStateManager.enableBlend();
-            } else {
-                ((ISlotWidget) slotReference).setHover(false);
+    @SideOnly(Side.CLIENT)
+    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+        Position pos = getPosition();
+        Size size = getSize();
+        if (backgroundTexture != null) {
+            for (IGuiTexture backgroundTexture : this.backgroundTexture) {
+                backgroundTexture.draw(pos.x, pos.y, size.width, size.height);
             }
         }
+        RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.pushMatrix();
+        RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
+        itemRender.renderItemAndEffectIntoGUI(slotReference.getStack(), pos.x + 1, pos.y + 1);
+        itemRender.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, slotReference.getStack(), pos.x + 1, pos.y + 1, null);
+        GlStateManager.enableAlpha();
+        GlStateManager.popMatrix();
+        RenderHelper.disableStandardItemLighting();
+        if (isActive()) {
+            if (slotReference instanceof ISlotWidget) {
+                if (isMouseOverElement(mouseX, mouseY)) {
+                    GlStateManager.disableDepth();
+                    GlStateManager.colorMask(true, true, true, false);
+                    drawSolidRect(getPosition().x + 1, getPosition().y + 1, 16, 16, -2130706433);
+                    GlStateManager.colorMask(true, true, true, true);
+                    GlStateManager.enableDepth();
+                    GlStateManager.enableBlend();
+                }
+            }
+        } else {
+            GlStateManager.disableDepth();
+            GlStateManager.colorMask(true, true, true, false);
+            drawSolidRect(getPosition().x + 1, getPosition().y + 1, 16, 16, 0xbf000000);
+            GlStateManager.colorMask(true, true, true, true);
+            GlStateManager.enableDepth();
+            GlStateManager.enableBlend();
+        }
+    }
+
+    @Override
+    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        if (canTakeItems && isMouseOverElement(mouseX, mouseY) && gui != null) {
+            gui.needNativeClick = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(int mouseX, int mouseY, int button) {
+        if (isMouseOverElement(mouseX, mouseY) && gui != null) {
+            gui.needNativeClick = true;
+            return true;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
+        return super.mouseDragged(mouseX, mouseY, button, timeDragged);
     }
 
     @Override
@@ -115,15 +145,6 @@ public class SlotWidget extends Widget implements INativeWidget {
     public SlotWidget setChangeListener(Runnable changeListener) {
         this.changeListener = changeListener;
         return this;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
-
-    @Override
-    public void detectAndSendChanges() {
     }
 
     public SlotWidget(IItemHandlerModifiable itemHandler, int slotIndex, int xPosition, int yPosition) {
@@ -162,7 +183,7 @@ public class SlotWidget extends Widget implements INativeWidget {
     }
 
     public boolean isEnabled() {
-        return this.isEnabled;
+        return this.isActive() && isVisible();
     }
 
     @Override
