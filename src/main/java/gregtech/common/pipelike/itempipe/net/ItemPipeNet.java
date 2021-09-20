@@ -66,7 +66,6 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
         private final EnumFacing faceToHandler;
         private final int distance;
         private final ItemPipeProperties properties;
-        private int insertMark = 0;
 
         public Inventory(BlockPos pipePos, EnumFacing facing, int distance, ItemPipeProperties properties) {
             this.pipePos = pipePos;
@@ -100,18 +99,6 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
             if (tile != null)
                 return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, faceToHandler.getOpposite());
             return null;
-        }
-
-        public int getInsertMark() {
-            return insertMark;
-        }
-
-        public void incrementMark() {
-            insertMark++;
-        }
-
-        public void resetMark() {
-            insertMark = 0;
         }
     }
 }
