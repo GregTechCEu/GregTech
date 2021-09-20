@@ -1,10 +1,7 @@
 package gregtech.api.unification.material.properties;
 
-import crafttweaker.api.enchantments.IEnchantment;
-import gregtech.api.GTValues;
 import gregtech.api.enchants.EnchantmentData;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraftforge.fml.common.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,39 +13,34 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
      * <p>
      * Default:
      */
-    //@ZenProperty
-    public final float toolSpeed;
+    private float toolSpeed;
 
     /**
      * Attack damage of tools made from this Material
      * <p>
      * Default:
      */
-    //@ZenProperty
-    public final float toolAttackDamage;
+    private float toolAttackDamage;
 
     /**
      * Durability of tools made from this Material.
      * <p>
      * Default:
      */
-    //@ZenProperty
-    public final int toolDurability;
+    private int toolDurability;
 
     /**
      * Enchantability of tools made from this Material.
      * <p>
      * Default:
      */
-    //@ZenProperty
-    public final int toolEnchantability;
+    private int toolEnchantability;
 
     /**
      * Enchantment to be applied to tools made from this Material.
      * <p>
      * Default: none.
      */
-    //@ZenProperty
     public final List<EnchantmentData> toolEnchantments = new ArrayList<>();
 
     public ToolProperty(float toolSpeed, float toolAttackDamage, int toolDurability, int toolEnchantability) {
@@ -65,6 +57,42 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
         this(1.0f, 1.0f, 100, 10);
     }
 
+    public float getToolSpeed() {
+        return toolSpeed;
+    }
+
+    public void setToolSpeed(float toolSpeed) {
+        if (toolSpeed <= 0) throw new IllegalArgumentException("Tool Speed must be greater than zero!");
+        this.toolSpeed = toolSpeed;
+    }
+
+    public float getToolAttackDamage() {
+        return toolAttackDamage;
+    }
+
+    public void setToolAttackDamage(float toolAttackDamage) {
+        if (toolAttackDamage <= 0) throw new IllegalArgumentException("Tool Attack Damage must be greater than zero!");
+        this.toolAttackDamage = toolAttackDamage;
+    }
+
+    public int getToolDurability() {
+        return toolDurability;
+    }
+
+    public void setToolDurability(int toolDurability) {
+        if (toolDurability <= 0) throw new IllegalArgumentException("Tool Durability must be greater than zero!");
+        this.toolDurability = toolDurability;
+    }
+
+    public int getToolEnchantability() {
+        return toolEnchantability;
+    }
+
+    public void setToolEnchantability(int toolEnchantability) {
+        if (toolEnchantability <= 0) throw new IllegalArgumentException("Tool Enchantability must be greater than zero!");
+        this.toolEnchantability = toolEnchantability;
+    }
+
     @Override
     public void verifyProperty(MaterialProperties properties) {
         if (!properties.hasProperty(PropertyKey.GEM)) properties.ensureSet(PropertyKey.INGOT, true);
@@ -72,12 +100,5 @@ public class ToolProperty implements IMaterialProperty<ToolProperty> {
 
     public void addEnchantmentForTools(Enchantment enchantment, int level) {
         toolEnchantments.add(new EnchantmentData(enchantment, level));
-    }
-
-    //@ZenMethod("addToolEnchantment")
-    @Optional.Method(modid = GTValues.MODID_CT)
-    public void ctAddEnchantmentForTools(IEnchantment enchantment) {
-        Enchantment enchantmentType = (Enchantment) enchantment.getDefinition().getInternal();
-        toolEnchantments.add(new EnchantmentData(enchantmentType, enchantment.getLevel()));
     }
 }

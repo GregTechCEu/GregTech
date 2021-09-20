@@ -19,6 +19,19 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
     }
 
     /**
+     * Generates an ItemStackHash configured to compare every aspect of ItemStacks.
+     *
+     * @return the ItemStackHashStrategy as described above.
+     */
+    static ItemStackHashStrategy comparingAll() {
+        return builder().compareItem(true)
+                .compareCount(true)
+                .compareDamage(true)
+                .compareTag(true)
+                .build();
+    }
+
+    /**
      * Generates an ItemStackHash configured to compare every aspect of ItemStacks except the number
      * of items in the stack.
      *

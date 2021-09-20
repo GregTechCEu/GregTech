@@ -16,8 +16,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -34,16 +32,14 @@ import java.util.concurrent.Callable;
  * @Description: ParticleManger register, spawn, efficient rendering, update our custom particles.
  */
 @SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(Side.CLIENT)
 public class GTParticleManager {
-    public static GTParticleManager instance = new GTParticleManager();
+    public final static GTParticleManager INSTANCE = new GTParticleManager();
+
     private static World currentWorld = null;
     private static ParticleManager particleManager = Minecraft.getMinecraft().effectRenderer;
 
     private final Map<IGTParticleHandler, ArrayDeque<GTParticle>[]> renderQueue = new HashMap<>();
     private final Queue<Tuple<IGTParticleHandler, GTParticle>> newParticleQueue = new ArrayDeque<>();
-
-    private GTParticleManager() { }
 
     public void addEffect(Particle... particles) {
         if (particleManager == null) {
@@ -59,9 +55,7 @@ public class GTParticleManager {
     }
 
     public void updateEffects() {
-        for (int i = 0; i < 4; ++i) {
-            updateEffectLayer(i);
-        }
+        updateEffectLayer();
         if (!newParticleQueue.isEmpty()) {
             for (Tuple<IGTParticleHandler, GTParticle> handlerParticle = newParticleQueue.poll(); handlerParticle != null; handlerParticle = newParticleQueue.poll()) {
                 IGTParticleHandler handler = handlerParticle.getFirst();
@@ -79,19 +73,27 @@ public class GTParticleManager {
         }
     }
 
-    private void updateEffectLayer(int layer) {
+    private void updateEffectLayer() {
+        if (renderQueue.isEmpty()) return;
+        boolean empty = true;
         for (ArrayDeque<GTParticle>[] array : renderQueue.values()) {
-            ArrayDeque<GTParticle> queue = array[layer];
-            if (!queue.isEmpty()) {
-                Iterator<GTParticle> iterator = queue.iterator();
-                while (iterator.hasNext()) {
-                    Particle particle = iterator.next();
-                    tickParticle(particle);
-                    if (!particle.isAlive()) {
-                        iterator.remove();
+            for (int layer = 0; layer < 4; ++layer) {
+                ArrayDeque<GTParticle> queue = array[layer];
+                if (!queue.isEmpty()) {
+                    empty = false;
+                    Iterator<GTParticle> iterator = queue.iterator();
+                    while (iterator.hasNext()) {
+                        Particle particle = iterator.next();
+                        tickParticle(particle);
+                        if (!particle.isAlive()) {
+                            iterator.remove();
+                        }
                     }
                 }
             }
+        }
+        if (empty) {
+            renderQueue.clear();
         }
     }
 
@@ -123,6 +125,7 @@ public class GTParticleManager {
     }
 
     public void renderParticles(Entity entityIn, float partialTicks) {
+        if (renderQueue.isEmpty()) return;
         float rotationX = ActiveRenderInfo.getRotationX();
         float rotationZ = ActiveRenderInfo.getRotationZ();
         float rotationYZ = ActiveRenderInfo.getRotationYZ();
@@ -140,8 +143,6 @@ public class GTParticleManager {
         GlStateManager.disableLighting();
 
         renderGlParticlesInLayer(tessellator, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
-
-
 
         GlStateManager.depthMask(true);
         GlStateManager.disableBlend();
@@ -185,7 +186,6 @@ public class GTParticleManager {
         return " GLFX: " + g;
     }
 
-    @SubscribeEvent
     public static void clientTick(TickEvent.ClientTickEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
         if (event.phase != TickEvent.Phase.END || mc.isGamePaused()) {
@@ -194,24 +194,22 @@ public class GTParticleManager {
 
         if (currentWorld != mc.world) {
             currentWorld = mc.world;
-            instance.clearAllEffects();
+            INSTANCE.clearAllEffects();
         }
 
         if (mc.world != null) {
-            instance.updateEffects();
+            INSTANCE.updateEffects();
         }
     }
 
-    @SubscribeEvent
     public static void renderWorld(RenderWorldLastEvent event) {
-        instance.renderParticles(Minecraft.getMinecraft().player, event.getPartialTicks());
+        INSTANCE.renderParticles(Minecraft.getMinecraft().player, event.getPartialTicks());
     }
 
-    @SubscribeEvent
     public static void debugOverlay(RenderGameOverlayEvent.Text event) {
-        if (event.getLeft().size() >= 5 && instance != null) {
+        if (event.getLeft().size() >= 5) {
             String particleTxt = event.getLeft().get(4);
-            particleTxt += "." + TextFormatting.GOLD + " BC-P: " + instance.getStatistics();
+            particleTxt += "." + TextFormatting.GOLD + " BC-P: " + INSTANCE.getStatistics();
             event.getLeft().set(4, particleTxt);
         }
     }

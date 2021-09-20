@@ -8,7 +8,6 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.util.RenderUtil;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import net.minecraft.block.Block;

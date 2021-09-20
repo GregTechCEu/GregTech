@@ -26,25 +26,25 @@ public class NumberConfigurator extends ConfiguratorWidget<Integer>{
         this.addWidget(new RectButtonWidget(0, y, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(data -> adjustTransferRate(data.isShiftClick ? -100 : -10))
                 .setIcon(new TextTexture("-10", -1)));
         this.addWidget(new RectButtonWidget(96, y, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(data -> adjustTransferRate(data.isShiftClick ? +100 : +10))
                 .setIcon(new TextTexture("+10", -1)));
         this.addWidget(new RectButtonWidget(20, y, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(data -> adjustTransferRate(data.isShiftClick ? -5 : -1))
                 .setIcon(new TextTexture("-1", -1)));
         this.addWidget(new RectButtonWidget(76, y, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(data -> adjustTransferRate(data.isShiftClick ? +5 : +1))
                 .setIcon(new TextTexture("+1", -1)));
         this.addWidget(new ImageWidget(40, y, 36, 20, TerminalTheme.COLOR_B_2));

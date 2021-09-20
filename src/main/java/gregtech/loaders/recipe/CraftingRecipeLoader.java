@@ -10,6 +10,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.GTLog;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockTransparentCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.wood.BlockGregLog.LogVariant;
@@ -56,9 +57,15 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("plank_to_wooden_shape", MetaItems.WOODEN_FORM_EMPTY.getStackForm(), "   ", " X ", "s  ", 'X', new UnificationEntry(OrePrefix.plank, Materials.Wood));
         ModHandler.addShapedRecipe("wooden_shape_brick", MetaItems.WOODEN_FORM_BRICK.getStackForm(), "k ", " X", 'X', MetaItems.WOODEN_FORM_EMPTY.getStackForm());
-        ModHandler.addShapedRecipe("compressed_clay", MetaItems.COMPRESSED_CLAY.getStackForm(8), "XXX", "XYX", "XXX", 'Y', MetaItems.WOODEN_FORM_BRICK.getStackForm(), 'X', Items.CLAY_BALL);
+
+        if (ConfigHolder.vanillaRecipes.hardMiscRecipes) {
+            ModHandler.addShapelessRecipe("compressed_clay", MetaItems.COMPRESSED_CLAY.getStackForm(), MetaItems.WOODEN_FORM_BRICK.getStackForm(), new ItemStack(Items.CLAY_BALL));
+            ModHandler.addSmeltingRecipe(MetaItems.COMPRESSED_CLAY.getStackForm(), new ItemStack(Items.BRICK));
+        }
+
+        ModHandler.addShapedRecipe("compressed_coke_clay", MetaItems.COMPRESSED_COKE_CLAY.getStackForm(3), "XXX", "SYS", "SSS", 'Y', MetaItems.WOODEN_FORM_BRICK.getStackForm(), 'X', new ItemStack(Items.CLAY_BALL), 'S', "sand");
         ModHandler.addShapelessRecipe("fireclay_dust", OreDictUnifier.get(OrePrefix.dust, Materials.Fireclay, 2), new UnificationEntry(OrePrefix.dust, Materials.Brick), new UnificationEntry(OrePrefix.dust, Materials.Clay));
-        ModHandler.addSmeltingRecipe(MetaItems.COMPRESSED_CLAY.getStackForm(), MetaItems.COKE_OVEN_BRICK.getStackForm());
+        ModHandler.addSmeltingRecipe(MetaItems.COMPRESSED_COKE_CLAY.getStackForm(), MetaItems.COKE_OVEN_BRICK.getStackForm());
         ModHandler.addSmeltingRecipe(MetaItems.COMPRESSED_FIRECLAY.getStackForm(), MetaItems.FIRECLAY_BRICK.getStackForm());
 
         ModHandler.addSmeltingRecipe(new UnificationEntry(OrePrefix.nugget, Materials.Iron), OreDictUnifier.get(OrePrefix.nugget, Materials.WroughtIron));
@@ -158,6 +165,7 @@ public class CraftingRecipeLoader {
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_plate", MetaItems.SHAPE_EXTRUDER_PLATE.getStackForm(), "x  ", " S ", "   ", 'S', MetaItems.SHAPE_EXTRUDER_FOIL.getStackForm());
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_gear_small", MetaItems.SHAPE_EXTRUDER_GEAR_SMALL.getStackForm(), " x ", " S ", "   ", 'S', MetaItems.SHAPE_EXTRUDER_RING.getStackForm());
         ModHandler.addShapedRecipe("shape/extruder/shape_extruder_foil", MetaItems.SHAPE_EXTRUDER_FOIL.getStackForm(), "   ", " S ", "  x", 'S', MetaItems.SHAPE_EMPTY.getStackForm());
+        ModHandler.addShapedRecipe("shape/extruder/shape_extruder_rotor", MetaItems.SHAPE_EXTRUDER_ROTOR.getStackForm(), "   ", " S ", "x  ", 'S', MetaItems.SHAPE_EMPTY.getStackForm());
 
         ModHandler.addShapedRecipe("shape/mold/shape_mold_rotor", MetaItems.SHAPE_MOLD_ROTOR.getStackForm(), "  h", " S ", "   ", 'S', MetaItems.SHAPE_EMPTY.getStackForm());
         ModHandler.addShapedRecipe("shape/mold/shape_mold_gear_small", MetaItems.SHAPE_MOLD_GEAR_SMALL.getStackForm(), "   ", "   ", "h S", 'S', MetaItems.SHAPE_EMPTY.getStackForm());

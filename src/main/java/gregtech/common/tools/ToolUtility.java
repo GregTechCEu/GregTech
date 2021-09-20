@@ -1,11 +1,10 @@
 package gregtech.common.tools;
 
 import codechicken.lib.raytracer.RayTracer;
-import gregtech.api.recipes.MatchingMode;
-import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.TaskScheduler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCrops;
@@ -24,7 +23,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.util.FakePlayer;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -96,22 +94,21 @@ public class ToolUtility {
     }
 
     public static void applyHammerDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, EntityPlayer player) {
-        ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
-        Recipe recipe = RecipeMaps.FORGE_HAMMER_RECIPES.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.DEFAULT);
-        if (recipe != null && !recipe.getOutputs().isEmpty()) {
+        MaterialStack input = OreDictUnifier.getMaterial(new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState)));
+        if (input != null && input.material.hasProperty(PropertyKey.ORE) && !(player instanceof FakePlayer)) {
             drops.clear();
-            for (ItemStack outputStack : recipe.getResultItemOutputs(Integer.MAX_VALUE, random, 0)) {
-                outputStack = outputStack.copy();
-                if (!(player instanceof FakePlayer) && OreDictUnifier.getPrefix(outputStack) == OrePrefix.crushed) {
-                    int growAmount = Math.round(outputStack.getCount() * random.nextFloat());
-                    if (fortuneLevel > 0) {
-                        int i = Math.max(0, random.nextInt(fortuneLevel + 2) - 1);
-                        growAmount += outputStack.getCount() * i;
-                    }
-                    outputStack.grow(growAmount);
-                }
-                drops.add(outputStack);
+            ItemStack output = OreDictUnifier.get(OrePrefix.crushed, input.material);
+
+            if(fortuneLevel > 0){
+                if(fortuneLevel > 3) fortuneLevel = 3;
+                output.setCount((input.material.getProperty((PropertyKey.ORE)).getOreMultiplier()) * Math.max(1, random.nextInt(fortuneLevel + 2) - 1));
+                if (output.getCount() == 0) output.setCount(1);
             }
+            else{
+                output.setCount(input.material.getProperty((PropertyKey.ORE)).getOreMultiplier());
+            }
+            drops.add(output);
+
         }
     }
 

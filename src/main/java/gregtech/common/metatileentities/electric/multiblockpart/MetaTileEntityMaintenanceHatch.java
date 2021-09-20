@@ -248,7 +248,7 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     /**
      * Fixes every maintenance problem of the controller
      */
-    private void fixAllMaintenanceProblems() {
+    public void fixAllMaintenanceProblems() {
         if (this.getController() instanceof IMaintenance)
             for (int i = 0; i < 6; i++) ((IMaintenance) this.getController()).setMaintenanceFixed(i);
     }

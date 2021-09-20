@@ -2,9 +2,12 @@ package gregtech.api.util;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import gregtech.GregTechMod;
 import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistrySimple;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.registries.GameData;
 
 import javax.annotation.Nonnull;
@@ -16,8 +19,8 @@ import java.util.Map;
 // ForgeGradle bug (https://github.com/MinecraftForge/ForgeGradle/issues/498) it gives compile errors in CI environment
 public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
 
-    private boolean frozen = false;
-    private final int maxId;
+    protected boolean frozen = true;
+    protected final int maxId;
 
     public GTControlledRegistry(int maxId) {
         this.maxId = maxId;
@@ -28,11 +31,26 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
         return frozen;
     }
 
-    public void freezeRegistry() {
+    public void freeze() {
         if (frozen) {
             throw new IllegalStateException("Registry is already frozen!");
         }
+        ModContainer container = Loader.instance().activeModContainer();
+        if (container == null || container.getMod() != GregTechMod.instance) {
+            return;
+        }
         this.frozen = true;
+    }
+
+    public void unfreeze() {
+        if (!frozen) {
+            throw new IllegalStateException("Registry is already unfrozen!");
+        }
+        ModContainer container = Loader.instance().activeModContainer();
+        if (container == null || container.getMod() != GregTechMod.instance) {
+            return;
+        }
+        this.frozen = false;
     }
 
     public void register(int id, K key, V value) {
@@ -40,8 +58,7 @@ public class GTControlledRegistry<K, V> extends RegistrySimple<K, V> {
             throw new IndexOutOfBoundsException("Id is out of range: " + id);
         }
         if (key instanceof ResourceLocation) {
-            //check ResourceLocation key and log warning if it differs from the active ModID
-            key = (K) GameData.checkPrefix(key.toString());
+            key = (K) GameData.checkPrefix(key.toString(), false);
         }
 
         super.putObject(key, value);

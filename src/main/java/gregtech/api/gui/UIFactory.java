@@ -1,18 +1,17 @@
 package gregtech.api.gui;
 
+import gregtech.api.GregTechRegistries;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.impl.ModularUIGui;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.PacketUIOpen;
 import gregtech.api.net.PacketUIWidgetUpdate;
-import gregtech.api.util.GTControlledRegistry;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
@@ -23,14 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implement and register to {@link #FACTORY_REGISTRY} to be able to create and open ModularUI's
+ * Implement and register on the {@link GregTechRegistries.RegisterEvent<UIFactory>} event to be able to create and open ModularUI's
  * createUITemplate should return equal gui both on server and client side, or sync will break!
  *
  * @param <E> UI holder type
  */
 public abstract class UIFactory<E extends IUIHolder> {
-
-    public static final GTControlledRegistry<ResourceLocation, UIFactory<?>> FACTORY_REGISTRY = new GTControlledRegistry<>(Short.MAX_VALUE);
 
     public final void openUI(E holder, EntityPlayerMP player) {
         if (player instanceof FakePlayer) {
@@ -45,7 +42,7 @@ public abstract class UIFactory<E extends IUIHolder> {
 
         PacketBuffer serializedHolder = new PacketBuffer(Unpooled.buffer());
         writeHolderToSyncData(serializedHolder, holder);
-        int uiFactoryId = FACTORY_REGISTRY.getIDForObject(this);
+        int uiFactoryId = GregTechRegistries.UI_FACTORY_REGISTRY.getIDForObject(this);
 
         ModularUIContainer container = new ModularUIContainer(uiTemplate);
         container.windowId = currentWindowId;

@@ -8,7 +8,7 @@
     },
     "icon": {
       "item": "gregtech:machine",
-      "data": 1451
+      "data": 1211
     }
   },
   "criteria": {
@@ -18,7 +18,7 @@
         "items": [
           {
             "item": "gregtech:machine",
-            "data": 1451
+            "data": 1211
           }
         ]
       }

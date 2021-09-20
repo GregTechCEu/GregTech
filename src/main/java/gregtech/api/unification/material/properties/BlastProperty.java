@@ -10,7 +10,7 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
      * If a Material with this Property has a Fluid, its temperature
      * will be set to this if it is the default Fluid temperature.
      */
-    private final int blastTemperature;
+    private int blastTemperature;
 
     public BlastProperty(int blastTemperature) {
         this.blastTemperature = blastTemperature;
@@ -25,6 +25,11 @@ public class BlastProperty implements IMaterialProperty<BlastProperty> {
 
     public int getBlastTemperature() {
         return blastTemperature;
+    }
+
+    public void setBlastTemperature(int blastTemp) {
+        if (blastTemp <= 0) throw new IllegalArgumentException("Blast Temperature must be greater than zero!");
+        this.blastTemperature = blastTemp;
     }
 
     @Override

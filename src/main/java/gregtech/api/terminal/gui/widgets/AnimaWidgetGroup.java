@@ -7,12 +7,15 @@ import gregtech.api.util.Size;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.function.Consumer;
 
 public abstract class AnimaWidgetGroup extends WidgetGroup {
+    @SideOnly(Side.CLIENT)
     protected Interpolator interpolator;
-    protected float scale;
+    protected float scale = 1;
 
     public AnimaWidgetGroup(Position position, Size size) {
         super(position, size);
@@ -30,6 +33,7 @@ public abstract class AnimaWidgetGroup extends WidgetGroup {
         super.updateScreen();
     }
 
+    @SideOnly(Side.CLIENT)
     public void maximizeWidget(Consumer<AnimaWidgetGroup> callback) {
         this.scale = 0;
         setVisible(true);
@@ -44,6 +48,7 @@ public abstract class AnimaWidgetGroup extends WidgetGroup {
         interpolator.start();
     }
 
+    @SideOnly(Side.CLIENT)
     public void minimizeWidget(Consumer<AnimaWidgetGroup> callback) {
         this.scale = 1;
         interpolator = new Interpolator(1, 0, 10, Eases.EaseLinear,
@@ -58,10 +63,12 @@ public abstract class AnimaWidgetGroup extends WidgetGroup {
         interpolator.start();
     }
 
+    @SideOnly(Side.CLIENT)
     protected void hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
 
+    @SideOnly(Side.CLIENT)
     protected void hookDrawInForeground(int mouseX, int mouseY) {
         super.drawInForeground(mouseX, mouseY);
     }

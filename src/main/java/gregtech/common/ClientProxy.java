@@ -8,12 +8,15 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
 import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.ToolRenderHandler;
+import gregtech.api.render.shader.Shaders;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
+import gregtech.api.util.input.KeyBinds;
 import gregtech.common.blocks.*;
 import gregtech.common.covers.facade.FacadeRenderer;
 import gregtech.common.items.MetaItems;
@@ -41,6 +44,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -102,6 +106,7 @@ public class ClientProxy extends CommonProxy {
 
     public void onPreLoad() {
         super.onPreLoad();
+        KeyBinds.initBinds();
         MetaTileEntityRenderer.preInit();
         CableRenderer.preInit();
         FluidPipeRenderer.preInit();
@@ -110,17 +115,23 @@ public class ClientProxy extends CommonProxy {
         MetaEntities.initRenderers();
         TextureUtils.addIconRegister(MetaFluids::registerSprites);
         MinecraftForge.EVENT_BUS.register(ToolRenderHandler.INSTANCE);
+
     }
 
     @Override
     public void onLoad() {
+        KeyBinds.registerClient();
         super.onLoad();
+        if (ConfigHolder.debug) {
+            ClientCommandHandler.instance.registerCommand(new Shaders.ShaderCommand());
+        }
         registerColors();
     }
 
     @Override
     public void onPostLoad() {
         super.onPostLoad();
+        TerminalRegistry.initTerminalFiles();
         ResourceUtils.registerReloadListener(ToolRenderHandler.INSTANCE);
         ModCompatibility.initCompat();
         FacadeRenderer.init();

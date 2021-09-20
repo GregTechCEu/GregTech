@@ -6,9 +6,9 @@ import gregtech.api.recipes.*;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.render.*;
 import gregtech.api.util.world.DummyWorld;
+import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.*;
 import net.minecraft.item.*;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.junit.*;
@@ -41,7 +41,7 @@ public class AbstractRecipeLogicTest {
                 false);
 
         MetaTileEntity at =
-                GregTechAPI.registerMetaTileEntity(190,
+                MetaTileEntities.registerMetaTileEntity(190,
                         new SimpleMachineMetaTileEntity(
                                 new ResourceLocation(GTValues.MODID, "chemical_reactor.lv"),
                                 map,

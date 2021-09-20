@@ -7,6 +7,8 @@ import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.tab.IGuiTextureTabInfo;
+import gregtech.api.terminal.TerminalRegistry;
+import gregtech.api.util.FileUtility;
 import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
 import gregtech.common.terminal.app.guide.widget.IGuideWidget;
 import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
@@ -16,7 +18,6 @@ import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.TextEditorWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
-import gregtech.api.terminal.util.FileUtils;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 
@@ -145,7 +146,7 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
         }
     }
 
-    public void newPage(ClickData data) {
+    public void newPage() {
         TerminalDialogWidget.showConfirmDialog(app.getOs(), "terminal.component.new_page", "terminal.component.confirm", res->{
             if (res) {
                 pageEditor.loadJsonConfig("{\"section\":\"default\",\"title\":\"Template\",\"stream\":[],\"fixed\":[]}");
@@ -155,13 +156,13 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
         }).setClientSide().open();
     }
 
-    public void loadJson(ClickData data) {
+    public void loadJson() {
         if (pageEditor != null) {
-            File file = new File("terminal\\guide_editor");
+            File file = new File(TerminalRegistry.TERMINAL_PATH,"guide");
             TerminalDialogWidget.showFileDialog(app.getOs(), "terminal.component.load_file", file, true, result->{
                if (result != null && result.isFile()) {
                    try {
-                       JsonObject config = Objects.requireNonNull(FileUtils.loadJson(result)).getAsJsonObject();
+                       JsonObject config = Objects.requireNonNull(FileUtility.loadJson(result)).getAsJsonObject();
                        pageEditor.loadJsonConfig(config);
                        getPageEditor().setSection(config.get("section").getAsString());
                        updateTitle(config.get("title").getAsString());
@@ -173,12 +174,12 @@ public class GuideConfigEditor extends TabGroup<AbstractWidgetGroup> {
         }
     }
 
-    public void saveJson(ClickData data) {
+    public void saveJson() {
         if(pageEditor != null) {
-            File file = new File("terminal\\guide_editor");
+            File file = new File(TerminalRegistry.TERMINAL_PATH,"guide");
             TerminalDialogWidget.showFileDialog(app.getOs(), "terminal.component.save_file", file, false, result->{
                 if (result != null) {
-                    if(!FileUtils.saveJson(result, pageEditor.getJsonConfig())) {
+                    if(!FileUtility.saveJson(result, pageEditor.getJsonConfig())) {
                         TerminalDialogWidget.showInfoDialog(app.getOs(), "terminal.component.error", "terminal.component.save_file.error").setClientSide().open();
                     }
                 }

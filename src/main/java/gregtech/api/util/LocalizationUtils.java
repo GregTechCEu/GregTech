@@ -15,8 +15,9 @@ public class LocalizationUtils {
      *  <li>`LocalisationUtils` is only for cases where some kind of translation is required on the server and there is no client/player in context.</li>
      *  <li>`LocalisationUtils` is "best effort" and will probably only work properly with en-us.</li>
      * </ul>
+     *
      * @param localisationKey the localisation key passed to the underlying format function
-     * @param substitutions the substitutions passed to the underlying format function
+     * @param substitutions   the substitutions passed to the underlying format function
      * @return the localized string.
      */
     public static String format(String localisationKey, Object... substitutions) {
@@ -36,6 +37,7 @@ public class LocalizationUtils {
      *  <li>`LocalisationUtils` is only for cases where some kind of translation is required on the server and there is no client/player in context.</li>
      *  <li>`LocalisationUtils` is "best effort" and will probably only work properly with en-us.</li>
      * </ul>
+     *
      * @param localisationKey the localisation key passed to the underlying hasKey function
      * @return a boolean indicating if the given localisation key has localisations
      */

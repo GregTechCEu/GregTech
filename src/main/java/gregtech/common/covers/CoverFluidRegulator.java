@@ -85,19 +85,30 @@ public class CoverFluidRegulator extends CoverPump {
             FluidStack sourceFluid = tankProperties.getContents();
             if (sourceFluid == null || sourceFluid.amount == 0 || !fluidFilter.test(sourceFluid)) continue;
             sourceFluid.amount = keepAmount;
-            FluidStack destFluid = destHandler.drain(sourceFluid, false);
-            int amountToDrainAndFill;
-            //no fluid in destination
-            if (destFluid == null) {
-                amountToDrainAndFill = Math.min(keepAmount, fluidLeftToTransfer);
-                //if the amount of fluid in the destination is sufficient or the destinations fluid isnt equal to the sources
-                //how to check if destHandler is full?
-            } else if (destFluid.amount >= keepAmount || !destFluid.isFluidEqual(sourceFluid)) {
-                continue;
-            } else {
-                //if keepAmount is larger than the transferLimit we will have to stock it over several ticks (seconds?)
-                amountToDrainAndFill = Math.min(keepAmount - destFluid.amount, fluidLeftToTransfer);
+            FluidStack destFluid = null;
+
+            // Initialize the amount here, in case no fluid is found in destination inventory
+            int amountToDrainAndFill = Math.min(keepAmount, fluidLeftToTransfer);
+
+            // Check all tanks in the destination inventory
+            for(IFluidTankProperties destProperties : destHandler.getTankProperties()) {
+                if(destProperties.getContents() != null && destProperties.getContents().isFluidEqual(sourceFluid)) {
+                    destFluid = destProperties.getContents();
+                    amountToDrainAndFill = Math.min(Math.max(0, keepAmount - destFluid.amount), fluidLeftToTransfer);
+                    break;
+                    // Breaking here will only allow interaction with the first tank found,
+                    // which could hit the edge case of having the same fluid in multiple tanks. However, this will be
+                    // a rare edge case, because Fluid Handlers are limited by recipe.
+                }
             }
+
+            // If the Destination Fluid is still null at this point, the tanks in the target inventory are empty
+
+            // Check if there is already too much fluid in the destination fluid inventory
+            if(destFluid != null && (destFluid.amount >= keepAmount || !destFluid.isFluidEqual(sourceFluid))) {
+                continue;
+            }
+
             sourceFluid.amount = amountToDrainAndFill;
             if (GTFluidUtils.transferExactFluidStack(sourceHandler, destHandler, sourceFluid.copy())) {
                 fluidLeftToTransfer -= sourceFluid.amount;

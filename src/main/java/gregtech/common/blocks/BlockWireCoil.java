@@ -57,13 +57,13 @@ public class BlockWireCoil extends VariantBlock<BlockWireCoil.CoilType> {
 
         CUPRONICKEL("cupronickel", 1800, 1, 1, Materials.Cupronickel),
         KANTHAL("kanthal", 2700, 2, 1, Materials.Kanthal),
-        NICHROME("nichrome", 3600, 4, 1, Materials.Nichrome),
-        TUNGSTENSTEEL("tungstensteel", 4500, 8, 1, Materials.TungstenSteel),
-        HSS_G("hss_g", 5400, 8, 2, Materials.HSSG),
-        NAQUADAH("naquadah", 7200, 16, 1, Materials.Naquadah),
-        NAQUADAH_ALLOY("naquadah_alloy", 9001, 16, 2, Materials.NaquadahAlloy),
-        FLUXED_ELECTRUM("fluxed_electrum", 10800, 16, 4, Materials.FluxedElectrum),
-        DIAMERICIUM_TITANIUM("diamericium_titanium", 12600, 16, 8, Materials.DiamericiumTitanium);
+        NICHROME("nichrome", 3600, 2, 2, Materials.Nichrome),
+        TUNGSTENSTEEL("tungstensteel", 4500, 4, 2, Materials.TungstenSteel),
+        HSS_G("hss_g", 5400, 4, 4, Materials.HSSG),
+        NAQUADAH("naquadah", 7200, 8, 4, Materials.Naquadah),
+        NAQUADAH_ALLOY("naquadah_alloy", 9001, 8, 8, Materials.NaquadahAlloy),
+        FLUXED_ELECTRUM("fluxed_electrum", 10800, 16, 8, Materials.FluxedElectrum),
+        DIAMERICIUM_TITANIUM("diamericium_titanium", 12600, 16, 16, Materials.DiamericiumTitanium);
 
         private final String name;
         //electric blast furnace properties

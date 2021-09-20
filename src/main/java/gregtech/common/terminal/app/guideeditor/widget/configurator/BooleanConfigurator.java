@@ -29,7 +29,7 @@ public class BooleanConfigurator extends ConfiguratorWidget<Boolean>{
                 })
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setIcon(new ColorRectTexture(new Color(0, 0, 0, 74).getRGB())));
     }
 }

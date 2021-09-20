@@ -351,7 +351,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
             return null;
         }
         else if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSide()) ? outputItemInventory : itemInventory;
+            IItemHandler itemHandler = (side == getOutputFacing() && !isAllowInputFromOutputSideItems()) ? outputItemInventory : itemInventory;
             if (itemHandler.getSlots() > 0) {
                 return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(itemHandler);
             }
@@ -379,8 +379,13 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     }
 
     @Override
-    public boolean isAllowInputFromOutputSide() {
+    public boolean isAllowInputFromOutputSideItems() {
         return allowInputFromOutputSide;
+    }
+
+    @Override
+    public boolean isAllowInputFromOutputSideFluids() {
+        return false;
     }
 
     @Override
@@ -393,7 +398,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         EnumFacing hitFacing = ICoverable.determineGridSideHit(hitResult);
         if (facing == getOutputFacing() || (hitFacing == getOutputFacing() && playerIn.isSneaking())) {
             if (!getWorld().isRemote) {
-                if (isAllowInputFromOutputSide()) {
+                if (isAllowInputFromOutputSideItems()) {
                     setAllowInputFromOutputSide(false);
                     playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.basic.input_from_output_side.disallow"));
                 } else {

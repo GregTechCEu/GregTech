@@ -68,6 +68,26 @@ public class Materials {
          * Register info for cyclical references
          */
         MaterialFlagAddition.register();
+
+        /*
+         * FOR ADDON DEVELOPERS:
+         *
+         * GTCEu will not take more than 3000 IDs. Anything past ID 2999
+         * is considered FAIR GAME, take whatever you like.
+         *
+         * If you would like to reserve IDs, feel free to reach out to the
+         * development team and claim a range of IDs! We will mark any
+         * claimed ranges below this comment. Max value is 32767.
+         *
+         * - Gregicality: 3000-19999
+         * - FREE RANGE 20000-20999
+         * - HtmlTech: 21000-21499
+         * - GregTech Food Option: 21500-21599
+         * - PCM's Ore Addon: 21600-23599
+         * - MechTech: 23600-23999
+         * - FREE RANGE 24000-31999
+         * - Reserved for CraftTweaker: 32000-32767
+         */
     }
 
     public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();
@@ -429,7 +449,6 @@ public class Materials {
      * Organic chemistry
      */
     public static Material SiliconeRubber;
-    public static Material Polystyrene;
     public static Material RawRubber;
     public static Material RawStyreneButadieneRubber;
     public static Material StyreneButadieneRubber;
@@ -442,7 +461,6 @@ public class Materials {
     public static Material Polydimethylsiloxane;
     public static Material Polyethylene;
     public static Material Epoxy;
-    public static Material Polysiloxane;
     public static Material Polycaprolactam;
     public static Material Polytetrafluoroethylene;
     public static Material Sugar;
@@ -678,6 +696,4 @@ public class Materials {
     public static Material HSSE;
     public static Material HSSS;
     public static Material FluxedElectrum;
-
-    // TODO Superconductor here at ID 387. Assigned in MarkerMaterials:98
 }

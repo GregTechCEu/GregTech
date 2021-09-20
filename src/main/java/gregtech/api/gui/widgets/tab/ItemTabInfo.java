@@ -2,7 +2,6 @@ package gregtech.api.gui.widgets.tab;
 
 import com.google.common.collect.Lists;
 import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.TextureArea;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;

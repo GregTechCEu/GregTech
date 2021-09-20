@@ -57,10 +57,12 @@ public class DistillationTowerInfo extends MultiblockInfoPage {
     protected void generateBlockTooltips() {
         super.generateBlockTooltips();
         ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.preview.limit_per_layer", 1).setStyle(new Style().setColor(TextFormatting.DARK_RED));
-        ITextComponent inputTooltip = new TextComponentTranslation("gregtech.multiblock.preview.only_location", I18n.format("gregtech.multiblock.preview.location.b_c")).setStyle(new Style().setColor(TextFormatting.DARK_RED));
+        ITextComponent inputTooltip = new TextComponentTranslation("gregtech.multiblock.preview.only_location", I18n.format("gregtech.multiblock.preview.location.b_l")).setStyle(new Style().setColor(TextFormatting.DARK_RED));
+        ITextComponent outputTooltip = new TextComponentTranslation("gregtech.multiblock.preview.distillation_multi_fluid").setStyle(new Style().setColor(TextFormatting.RED));
 
         for (int i = 0; i < GTValues.UHV + 1; i++) {
             addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(), tooltip);
+            addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(), outputTooltip);
             addBlockTooltip(MetaTileEntities.FLUID_IMPORT_HATCH[i].getStackForm(), inputTooltip);
         }
     }

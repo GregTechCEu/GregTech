@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nonnull;
 
-public class OreByProductCategory extends PrimitiveRecipeCategory<OreByProduct, OreByProduct> {
+public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreByProduct> {
 
     protected final IDrawable slot;
     protected final IDrawable arrowBackground;

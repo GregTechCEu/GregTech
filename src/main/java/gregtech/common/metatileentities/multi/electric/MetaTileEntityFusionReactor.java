@@ -20,6 +20,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.common.blocks.BlockFusionCoil;
 import gregtech.common.blocks.BlockMachineCasing;
@@ -194,9 +195,8 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
     }
 
     @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        this.getBaseTexture(null).render(renderState, translation, pipeline);
-        Textures.FUSION_REACTOR_OVERLAY.render(renderState, translation, pipeline, this.getFrontFacing(), this.recipeMapWorkable.isActive());
+    protected OrientedOverlayRenderer getFrontOverlay() {
+        return Textures.FUSION_REACTOR_OVERLAY;
     }
 
     @Override
@@ -231,12 +231,12 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
+        protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
             long heatDiff = recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) - heat;
             if (heatDiff <= 0) {
-                return super.setupAndConsumeRecipeInputs(recipe);
+                return super.setupAndConsumeRecipeInputs(recipe, importInventory);
             }
-            if (energyContainer.getEnergyStored() < heatDiff || !super.setupAndConsumeRecipeInputs(recipe)) {
+            if (energyContainer.getEnergyStored() < heatDiff || !super.setupAndConsumeRecipeInputs(recipe, importInventory)) {
                 return false;
             }
             energyContainer.removeEnergy(heatDiff);

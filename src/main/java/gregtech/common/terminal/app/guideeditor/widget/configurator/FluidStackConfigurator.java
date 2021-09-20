@@ -34,7 +34,7 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
                 })
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                new Color(255, 255, 255, 0).getRGB()));
+                        TerminalTheme.COLOR_B_1.getColor()));
         tanks = new ArrayList<>();
         if (!config.get(name).isJsonNull()) {
             Gson gson = new Gson();
@@ -57,7 +57,7 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
         group.addWidget(new RectButtonWidget(20, 0, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(data -> {
                     fluidStackInfo.amount = Math.max(0, fluidStackInfo.amount - (data.isShiftClick ? data.isCtrlClick ? 1000 : 10 : data.isCtrlClick? 100: 1));
                     updateValue();
@@ -67,7 +67,7 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
         group.addWidget(new RectButtonWidget(76, 0, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(data -> {
                     fluidStackInfo.amount = Math.max(0, fluidStackInfo.amount + (data.isShiftClick ? data.isCtrlClick ? 1000 : 10 : data.isCtrlClick? 100: 1));
                     updateValue();
@@ -79,7 +79,7 @@ public class FluidStackConfigurator extends ConfiguratorWidget<List<TankListWidg
         group.addWidget(new RectButtonWidget(96, 0, 20, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(data -> {
                     container.waitToRemoved(group);
                     tanks.remove(fluidStackInfo);

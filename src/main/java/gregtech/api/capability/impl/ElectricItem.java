@@ -97,6 +97,11 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
     }
 
     @Override
+    public boolean chargeable() {
+        return chargeable;
+    }
+
+    @Override
     public long charge(long amount, int chargerTier, boolean ignoreTransferLimit, boolean simulate) {
         if (itemStack.getCount() != 1) {
             return 0L;

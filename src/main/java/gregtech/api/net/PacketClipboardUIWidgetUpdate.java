@@ -1,11 +1,7 @@
 package gregtech.api.net;
 
-import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.function.Consumer;
 

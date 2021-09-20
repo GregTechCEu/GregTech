@@ -1,5 +1,6 @@
 package gregtech.api.capability;
 
+import gregtech.api.capability.impl.AbstractRecipeLogic;
 import gregtech.api.cover.ICoverable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
@@ -17,5 +18,8 @@ public class GregtechTileCapabilities {
 
     @CapabilityInject(IActiveOutputSide.class)
     public static Capability<IActiveOutputSide> CAPABILITY_ACTIVE_OUTPUT_SIDE = null;
+
+    @CapabilityInject(AbstractRecipeLogic.class)
+    public static Capability<AbstractRecipeLogic> CAPABILITY_RECIPE_LOGIC = null;
 
 }

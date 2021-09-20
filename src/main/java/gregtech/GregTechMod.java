@@ -5,24 +5,26 @@ import crafttweaker.CraftTweakerAPI;
 import gregtech.api.GTValues;
 import gregtech.api.capability.SimpleCapabilityManager;
 import gregtech.api.cover.CoverBehaviorUIFactory;
+import gregtech.api.cover.CoverDefinition;
+import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.model.ResourcePackHook;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.terminal.util.GuideJsonLoader;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.IMaterialHandler;
+import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.AnnotatedMaterialHandlerLoader;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
+import gregtech.api.util.input.KeyBinds;
 import gregtech.api.worldgen.config.WorldGenRegistry;
-import gregtech.common.CommonProxy;
-import gregtech.common.ConfigHolder;
-import gregtech.common.MetaEntities;
-import gregtech.common.MetaFluids;
+import gregtech.common.*;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.modelfactories.BlockCompressedFactory;
 import gregtech.common.blocks.modelfactories.BlockFrameFactory;
@@ -37,10 +39,9 @@ import gregtech.common.worldgen.WorldGenAbandonedBase;
 import gregtech.common.worldgen.WorldGenRubberTree;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import gregtech.loaders.recipe.component.AnnotatedComponentHandlerLoader;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.LoaderException;
@@ -52,6 +53,8 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import static gregtech.api.GregTechRegistries.*;
 
 @Mod(modid = GTValues.MODID,
         name = "GregTech",
@@ -66,7 +69,6 @@ public class GregTechMod {
             BlockOreFactory.init();
             BlockCompressedFactory.init();
             BlockFrameFactory.init();
-            ((SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new GuideJsonLoader());
         }
     }
 
@@ -78,26 +80,43 @@ public class GregTechMod {
 
     @Mod.EventHandler
     public void onPreInit(FMLPreInitializationEvent event) {
-        GTLog.init(event.getModLog());
         NetworkHandler.init();
+        GTLog.init(event.getModLog());
+
+        /* Start UI Factory Registration */
+        UI_FACTORY_REGISTRY.unfreeze();
+        GTLog.logger.info("Registering GTCEu UI Factories");
         MetaTileEntityUIFactory.INSTANCE.init();
         PlayerInventoryUIFactory.INSTANCE.init();
         CoverBehaviorUIFactory.INSTANCE.init();
+        GTLog.logger.info("Registering addon UI Factories");
+        MinecraftForge.EVENT_BUS.post(new RegisterEvent<>(UI_FACTORY_REGISTRY, UIFactory.class));
+        UI_FACTORY_REGISTRY.freeze();
+        /* End UI Factory Registration */
+
         SimpleCapabilityManager.init();
 
+        // TODO Update this to new registration method
+        /* Start Material Registration */
         //first, register primary materials and run material handlers
+        MaterialRegistry.MATERIAL_REGISTRY.unfreeze();
         Materials.register();
         AnnotatedMaterialHandlerLoader.discoverAndLoadAnnotatedMaterialHandlers(event.getAsmData());
         IMaterialHandler.runMaterialHandlers();
+
+        // Finalize GT materials (for now) so CT can access them by registry lookup
+        MaterialRegistry.finalizeMaterials(false);
 
         //then, run CraftTweaker early material registration scripts
         if (GTValues.isModLoaded(GTValues.MODID_CT)) {
             GTLog.logger.info("Running early CraftTweaker initialization scripts...");
             runEarlyCraftTweakerScripts();
+            MinecraftForge.EVENT_BUS.register(this);
         }
 
         //freeze material registry before processing items, blocks and fluids
-        MaterialRegistry.freeze();
+        MaterialRegistry.finalizeMaterials(true);
+        /* End Material Registration */
 
         OreDictUnifier.init();
         NBTUtil.registerSerializers();
@@ -105,13 +124,23 @@ public class GregTechMod {
         MetaBlocks.init();
         MetaItems.init();
         MetaFluids.init();
+
+        /* Start MetaTileEntity Registration */
+        MTE_REGISTRY.unfreeze();
+        GTLog.logger.info("Registering GTCEu Meta Tile Entities");
         MetaTileEntities.init();
+        GTLog.logger.info("Registering addon Meta Tile Entities");
+        MinecraftForge.EVENT_BUS.post(new RegisterEvent<>(MTE_REGISTRY, MetaTileEntity.class));
+        MTE_REGISTRY.freeze();
+        /* End MetaTileEntity Registration */
+
         MetaEntities.init();
 
         // discover annotated crafting component handlers
         AnnotatedComponentHandlerLoader.discoverAndLoadAnnotatedComponentHandlers(event.getAsmData());
 
         proxy.onPreLoad();
+        KeyBinds.register();
     }
 
     @Mod.EventHandler
@@ -131,7 +160,6 @@ public class GregTechMod {
                 GTLog.logger.fatal("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
         }
-        RecipeMap.sortMaps();
 
         if (GTValues.isModLoaded(GTValues.MODID_TOP)) {
             GTLog.logger.info("TheOneProbe found. Enabling integration...");
@@ -146,7 +174,14 @@ public class GregTechMod {
 
         LootTableHelper.initialize();
         FilterTypeRegistry.init();
+
+        /* Start Cover Definition Registration */
+        COVER_REGISTRY.unfreeze();
         CoverBehaviors.init();
+        MinecraftForge.EVENT_BUS.post(new RegisterEvent<>(COVER_REGISTRY, CoverDefinition.class));
+        COVER_REGISTRY.freeze();
+        /* End Cover Definition Registration */
+
         DungeonLootLoader.init();
     }
 

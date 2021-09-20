@@ -6,12 +6,6 @@ import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
-import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.Widget;
-import gregtech.api.gui.impl.FakeModularGui;
-import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.GregFakePlayer;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -20,12 +14,11 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -39,13 +32,18 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
 
     private static final List<EnumFacing> rotations = Arrays.asList(EnumFacing.NORTH, EnumFacing.WEST, EnumFacing.SOUTH, EnumFacing.EAST);
 
-    private static HashMap<Cuboid6, TextureAtlasSprite> boxTextureMap = new HashMap<>();
+    @SideOnly(Side.CLIENT)
+    private static HashMap<Cuboid6, TextureAtlasSprite> boxTextureMap;
 
     @SideOnly(Side.CLIENT)
-    private TextureAtlasSprite[] textures = new TextureAtlasSprite[3];
+    private TextureAtlasSprite[] textures;
 
 
     public ClipboardRenderer() {
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            boxTextureMap = new HashMap<>();
+            textures = new TextureAtlasSprite[3];
+        }
         Textures.iconRegisters.add(this);
     }
 
@@ -88,7 +86,7 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
         GlStateManager.scale(0.875, 0.875, 0.875);
 
         if (clipboard.guiCache != null) {
-            Pair<Double, Double> result = clipboard.checkLookingAt();
+            Pair<Double, Double> result = clipboard.checkLookingAt(Minecraft.getMinecraft().player);
             if (result == null) {
                 clipboard.guiCache.drawScreen(0, 0, partialTicks);
             } else {

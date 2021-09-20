@@ -41,10 +41,10 @@ public class OrientedOverlayRenderer implements IIconRegister {
     private final boolean hasEmissive;
 
     @SideOnly(Side.CLIENT)
-    private Map<OverlayFace, ActivePredicate> sprites;
+    public Map<OverlayFace, ActivePredicate> sprites;
 
     @SideOnly(Side.CLIENT)
-    private static class ActivePredicate {
+    public static class ActivePredicate {
 
         private final TextureAtlasSprite normalSprite;
         private final TextureAtlasSprite activeSprite;

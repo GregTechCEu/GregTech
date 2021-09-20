@@ -72,7 +72,7 @@ public class HigherDegreeMaterials {
                 .build();
 
         GarnetSand = new Material.Builder(2515, "garnet_sand")
-                .dust(1)
+                .dust(1).ore()
                 .color(0xC86400).iconSet(SAND)
                 .components(GarnetRed, 1, GarnetYellow, 1)
                 .build();

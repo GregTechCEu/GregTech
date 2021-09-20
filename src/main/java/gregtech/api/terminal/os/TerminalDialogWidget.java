@@ -17,11 +17,16 @@ import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -30,19 +35,19 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     private static final IGuiTexture DIALOG_BACKGROUND = TextureArea.fullImage("textures/gui/terminal/terminal_dialog.png");
     private static final IGuiTexture OK_NORMAL = TextureArea.fullImage("textures/gui/terminal/icon/ok_normal.png");
     private static final IGuiTexture OK_HOVER = TextureArea.fullImage("textures/gui/terminal/icon/ok_hover.png");
-    private static final IGuiTexture OK_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/ok_disable.png");
+//    private static final IGuiTexture OK_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/ok_disable.png");
     private static final IGuiTexture CANCEL_NORMAL = TextureArea.fullImage("textures/gui/terminal/icon/cancel_normal.png");
     private static final IGuiTexture CANCEL_HOVER = TextureArea.fullImage("textures/gui/terminal/icon/cancel_hover.png");
-    private static final IGuiTexture CANCEL_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/cancel_disable.png");
+//    private static final IGuiTexture CANCEL_DISABLE = TextureArea.fullImage("textures/gui/terminal/icon/cancel_disable.png");
     private static final int HEIGHT = 128;
     private static final int WIDTH = 184;
 
-    protected Interpolator interpolator;
     private final TerminalOSWidget os;
     private IGuiTexture background;
     private boolean isClient;
+    private List<Widget> iNativeWidgets;
 
-    private TerminalDialogWidget(TerminalOSWidget os, int x, int y, int width, int height) {
+    public TerminalDialogWidget(TerminalOSWidget os, int x, int y, int width, int height) {
         super(x, y, width, height);
         this.os = os;
     }
@@ -51,10 +56,24 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return isClient;
     }
 
-    public void open(){
+    public TerminalDialogWidget open() {
         os.openDialog(this);
+        if (iNativeWidgets != null) {
+            iNativeWidgets.forEach(this::addWidget);
+        }
+        os.desktop.setBlockApp(true);
+        return this;
     }
 
+    public void close() {
+        os.closeDialog(this);
+        os.desktop.setBlockApp(false);
+    }
+
+    /**
+     * Should be a client side dialog.
+     * This is very important, please make sure the right side.
+     */
     public TerminalDialogWidget setClientSide() {
         this.isClient = true;
         return this;
@@ -65,9 +84,13 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return this;
     }
 
-    public TerminalDialogWidget addOkButton() {
+    public TerminalDialogWidget addOkButton(Runnable callback) {
         addWidget(new CircleButtonWidget(WIDTH / 2, HEIGHT - 22, 12, 0, 24)
-                .setClickListener(cd -> os.closeDialog(this))
+                .setClickListener(cd -> {
+                    close();
+                    if (callback != null)
+                        callback.run();
+                })
                 .setColors(0, 0, 0)
                 .setIcon(OK_NORMAL)
                 .setHoverIcon(OK_HOVER));
@@ -77,7 +100,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     public TerminalDialogWidget addConfirmButton(Consumer<Boolean> result) {
         addWidget(new CircleButtonWidget(WIDTH / 2 - 30, HEIGHT - 22, 12, 0, 24)
                 .setClickListener(cd -> {
-                    os.closeDialog(this);
+                    close();
                     if (result != null)
                         result.accept(true);
                 })
@@ -86,7 +109,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 .setHoverIcon(OK_HOVER));
         addWidget(new CircleButtonWidget(WIDTH / 2 + 30, HEIGHT - 22, 12, 0, 24)
                 .setClickListener(cd -> {
-                    os.closeDialog(this);
+                    close();
                     if (result != null)
                         result.accept(false);
                 })
@@ -102,27 +125,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     }
 
     public TerminalDialogWidget addInfo(String info) {
-        this.addWidget(new LabelWidget(WIDTH / 2, HEIGHT / 2, info, -1).setWidth(WIDTH - 10).setYCentered(true).setXCentered(true));
-        return this;
-    }
-
-    public TerminalDialogWidget addPlayerInventory() {
-        IInventory inventoryPlayer = os.getModularUI().entityPlayer.inventory;
-        int x = 20;
-        int y = 20;
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                this.addWidget(new SlotWidget(inventoryPlayer, col + (row + 1) * 9, x + col * 18, y + row * 18, true, true)
-                        .setBackgroundTexture(GuiTextures.SLOT)
-                        .setLocationInfo(true, false));
-            }
-        }
-        y+=58;
-        for (int slot = 0; slot < 9; slot++) {
-            this.addWidget(new SlotWidget(inventoryPlayer, slot, x + slot * 18, y, true, true)
-                    .setBackgroundTexture(GuiTextures.SLOT)
-                    .setLocationInfo(true, true));
-        }
+        this.addWidget(new LabelWidget(WIDTH / 2, HEIGHT / 2, info, -1).setWidth(WIDTH - 16).setYCentered(true).setXCentered(true));
         return this;
     }
 
@@ -131,8 +134,12 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return new TerminalDialogWidget(os, (size.width - WIDTH) / 2, (size.height - HEIGHT) / 2, WIDTH, HEIGHT).setBackground(DIALOG_BACKGROUND);
     }
 
+    public static TerminalDialogWidget showInfoDialog(TerminalOSWidget os, String title, String info, Runnable callback) {
+        return createEmptyTemplate(os).addTitle(title).addInfo(info).addOkButton(callback);
+    }
+
     public static TerminalDialogWidget showInfoDialog(TerminalOSWidget os, String title, String info) {
-        return createEmptyTemplate(os).addTitle(title).addInfo(info).addOkButton();
+        return createEmptyTemplate(os).addTitle(title).addInfo(info).addOkButton(null);
     }
 
     public static TerminalDialogWidget showConfirmDialog(TerminalOSWidget os, String title, String info, Consumer<Boolean> result) {
@@ -154,6 +161,10 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return dialog;
     }
 
+    /**
+     * Show Color Dialog
+     * @return color (rgba)
+     */
     public static TerminalDialogWidget showColorDialog(TerminalOSWidget os, String title, Consumer<Integer> result) {
         TerminalDialogWidget dialog = createEmptyTemplate(os).addTitle(title);
         ColorWidget colorWidget = new ColorWidget(WIDTH / 2 - 60, HEIGHT / 2 - 35, 80, 10);
@@ -170,13 +181,19 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return dialog;
     }
 
+    /**
+     * Show FileDialog
+     * @param dir root directory
+     * @param isSelector select a file or save a file
+     * @param result selected file or (saved)
+     */
     public static TerminalDialogWidget showFileDialog(TerminalOSWidget os, String title, File dir, boolean isSelector, Consumer<File> result) {
         Size size = os.getSize();
         TerminalDialogWidget dialog = new TerminalDialogWidget(os, 0, 0, size.width, size.height)
                 .setBackground(new ColorRectTexture(0x4f000000));
         if (!dir.isDirectory()) {
             if (!dir.mkdirs()) {
-                return dialog.addInfo(I18n.format("terminal.dialog.error_path") + dir.getPath()).addOkButton();
+                return dialog.addInfo(I18n.format("terminal.dialog.error_path") + dir.getPath()).addOkButton(null);
             }
         }
         AtomicReference<File> selected = new AtomicReference<>();
@@ -189,7 +206,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         dialog.addWidget(new ImageWidget(x, y, WIDTH, HEIGHT, DIALOG_BACKGROUND));
         dialog.addWidget(new CircleButtonWidget(x + WIDTH / 2 - 30, y + HEIGHT - 22, 12, 0, 24)
                 .setClickListener(cd -> {
-                    os.closeDialog(dialog);
+                    dialog.close();
                     if (result != null)
                         result.accept(selected.get());
                 })
@@ -198,7 +215,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 .setHoverIcon(OK_HOVER));
         dialog.addWidget(new CircleButtonWidget(x + WIDTH / 2 + 30, y + HEIGHT - 22, 12, 0, 24)
                 .setClickListener(cd -> {
-                    os.closeDialog(dialog);
+                    dialog.close();
                     if (result != null)
                         result.accept(null);
                 })
@@ -211,7 +228,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                     return selected.get().toString();
                 }
                 return "terminal.dialog.no_file_selected";
-            }, true));
+            }, true).setWidth(WIDTH - 16));
         } else {
             dialog.addWidget(new TextFieldWidget(x + WIDTH / 2 - 38, y + HEIGHT / 2 - 10, 76, 20, new ColorRectTexture(0x4f000000), null, null)
                     .setTextResponder(res->{
@@ -252,14 +269,76 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         return dialog.setClientSide();
     }
 
+    public static TerminalDialogWidget showItemSelector(TerminalOSWidget os, String title, boolean cost, Predicate<ItemStack> filter, Consumer<ItemStack> result) {
+        TerminalDialogWidget dialog = createEmptyTemplate(os).addTitle(title);
+        IInventory inventoryPlayer = os.getModularUI().entityPlayer.inventory;
+        if (dialog.iNativeWidgets == null) {
+            dialog.iNativeWidgets = new ArrayList<>();
+        }
+        int x = 11;
+        int y = 30;
+        final SlotWidget[] selected = {null};
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 9; col++) {
+                boolean pass = filter == null || filter.test(inventoryPlayer.getStackInSlot(col + (row + 1) * 9));
+                SlotWidget slotWidget = new SlotWidget(inventoryPlayer, col + (row + 1) * 9, x + col * 18, y + row * 18, false, false) {
+                    @Override
+                    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+                        super.drawInBackground(mouseX, mouseY, context);
+                        if (selected[0] == this) {
+                            drawBorder(getPosition().x, getPosition().y, getSize().width, getSize().height, -1, 1);
+                        }
+                    }
+
+                    @Override
+                    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+                        if (pass && isMouseOverElement(mouseX, mouseY)) {
+                            if (selected[0] == this) {
+                                selected[0] = null;
+                            } else {
+                                selected[0] = this;
+                            }
+                            writeClientAction(7, buffer -> buffer.writeBoolean(selected[0] == this));
+                        }
+                        return super.mouseClicked(mouseX, mouseY, button);
+                    }
+
+                    @Override
+                    public void handleClientAction(int id, PacketBuffer buffer) {
+                        if (id == 7) {
+                            if (buffer.readBoolean()) {
+                                selected[0] = this;
+                            } else {
+                                selected[0] = null;
+                            }
+                        }
+                        super.readUpdateInfo(id, buffer);
+                    }
+                }.setBackgroundTexture(TerminalTheme.COLOR_B_1).setLocationInfo(true, false);
+                slotWidget.setActive(pass);
+                dialog.iNativeWidgets.add(slotWidget);
+            }
+        }
+        dialog.addConfirmButton(confirm->{
+            if (result != null && confirm && selected[0] != null && !selected[0].getHandle().getStack().isEmpty()) {
+                ItemStack stack = selected[0].getHandle().getStack().copy();
+                if (cost) {
+                    selected[0].getHandle().getStack().setCount(stack.getCount() - 1);
+                }
+                result.accept(stack);
+            }
+        });
+        return dialog;
+    }
+
     @Override
     public void hookDrawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        GlStateManager.translate(0,0,1000);
+        GlStateManager.disableDepth();
         if (background != null) {
             background.draw(getPosition().x, getPosition().y, getSize().width, getSize().height);
         }
         super.hookDrawInBackground(mouseX, mouseY, partialTicks, context);
-        GlStateManager.translate(0,0,-1000);
+        GlStateManager.enableDepth();
     }
 
     @Override
@@ -267,9 +346,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         for (int i = widgets.size() - 1; i >= 0; i--) {
             Widget widget = widgets.get(i);
             if (widget.isVisible()) {
-                if (widget instanceof SlotWidget) {
-                    return false;
-                } else if(widget.mouseClicked(mouseX, mouseY, button)){
+                if(widget.mouseClicked(mouseX, mouseY, button)){
                     return true;
                 }
             }
@@ -281,5 +358,26 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
         if (isClient) return;
         super.writeClientAction(id, packetBufferWriter);
+    }
+
+    @Override
+    public void handleClientAction(int id, PacketBuffer buffer) {
+        if (id == -1) { // esc close
+            if (buffer.readBoolean()) {
+                close();
+            }
+        } else {
+            super.handleClientAction(id, buffer);
+        }
+    }
+
+    @Override
+    public boolean keyTyped(char charTyped, int keyCode) {
+        if (keyCode == 1 && super.interpolator == null) {
+            writeClientAction(-1, buffer -> buffer.writeBoolean(true));
+            close();
+            return true;
+        }
+        return super.keyTyped(charTyped, keyCode);
     }
 }

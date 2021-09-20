@@ -1,6 +1,5 @@
 package gregtech.api.items.gui;
 
-import com.google.common.base.Preconditions;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
 import net.minecraft.entity.player.EntityPlayer;

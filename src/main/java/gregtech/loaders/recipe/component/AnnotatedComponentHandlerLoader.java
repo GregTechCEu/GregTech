@@ -14,7 +14,7 @@ public class AnnotatedComponentHandlerLoader {
     public static void discoverAndLoadAnnotatedComponentHandlers(ASMDataTable asmDataTable) {
         Set<ASMData> annotations = asmDataTable.getAll(IComponentHandler.RegisterComponentHandler.class.getName());
         int componentHandlersRegistered = 0;
-        for (ASMData annotationData :annotations) {
+        for (ASMData annotationData : annotations) {
             String componentHandlerClassName = annotationData.getClassName();
             Class<?> componentHandlerClass;
             try {

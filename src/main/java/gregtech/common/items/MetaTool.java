@@ -8,6 +8,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
+import gregtech.common.ConfigHolder;
 import gregtech.common.tools.*;
 import gregtech.common.tools.largedrills.ToolDrills;
 import net.minecraft.init.Enchantments;
@@ -133,6 +134,11 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
                 .setFullRepairCost(4)
                 .addOreDict(ToolDictNames.craftingToolMiningDrill)
                 .addComponents(ElectricStats.createElectricItem(25600000L, 5L));
+
+        if (!ConfigHolder.U.GT5u.enableHighTierDrills) {
+            DRILL_EV.setInvisible();
+            DRILL_IV.setInvisible();
+        }
 
         MINING_HAMMER = addItem(35, "tool.mining_hammer").setToolStats(new ToolMiningHammer())
                 .setFullRepairCost(14);

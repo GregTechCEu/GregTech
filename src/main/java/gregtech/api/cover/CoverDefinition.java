@@ -1,31 +1,24 @@
 package gregtech.api.cover;
 
-import gregtech.api.util.GTControlledRegistry;
+import gregtech.api.GregTechRegistries;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.function.BiFunction;
 
-public final class CoverDefinition extends IForgeRegistryEntry.Impl {
-
-    public static final GTControlledRegistry<ResourceLocation, CoverDefinition> registry = new GTControlledRegistry<>(Integer.MAX_VALUE);
+public final class CoverDefinition {
 
     public static CoverDefinition getCoverById(ResourceLocation id) {
-        return registry.getObject(id);
+        return GregTechRegistries.COVER_REGISTRY.getObject(id);
     }
 
     public static CoverDefinition getCoverByNetworkId(int networkId) {
-        return registry.getObjectById(networkId);
+        return GregTechRegistries.COVER_REGISTRY.getObjectById(networkId);
     }
 
     public static int getNetworkIdForCover(CoverDefinition definition) {
-        return registry.getIDForObject(definition);
-    }
-
-    public static void registerCover(int id, CoverDefinition coverDefinition) {
-        registry.register(id, coverDefinition.coverId, coverDefinition);
+        return GregTechRegistries.COVER_REGISTRY.getIDForObject(definition);
     }
 
     private final ResourceLocation coverId;

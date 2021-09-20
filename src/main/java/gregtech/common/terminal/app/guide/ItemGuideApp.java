@@ -76,7 +76,6 @@ public class ItemGuideApp extends GuideApp<ItemGuideApp.GuideItem> {
                 for (MetaItem<?> metaItem : MetaItem.getMetaItems()) {
                     MetaItem<?>.MetaValueItem metaValueItem = metaItem.getAllItems().stream().filter(m -> m.unlocalizedName.equals(metaItemId)).findFirst().orElse(null);
                     if (metaValueItem != null) return new GuideItem(metaValueItem);
-                    ;
                 }
             }
             return null;

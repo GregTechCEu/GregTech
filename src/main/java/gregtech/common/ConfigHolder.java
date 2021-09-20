@@ -16,6 +16,10 @@ public class ConfigHolder {
     @Config.Comment("Whether to increase number of rolls for dungeon chests. Increases dungeon loot drastically. Default: true")
     public static boolean increaseDungeonLoot = true;
 
+    @Config.Comment("Allow GregTech to add additional Gregtech items as loot in various structures. Default: true")
+    @Config.RequiresMcRestart
+    public static boolean addLoot = true;
+
     @Config.Comment("Whether to hide facades of all blocks in JEI and creative search menu. Default: true")
     @Config.RequiresMcRestart
     public static boolean hideFacadesInJEI = true;
@@ -37,8 +41,8 @@ public class ConfigHolder {
     @Config.Comment("Whether veins should be generated in center of chunk. Default: false")
     public static boolean generateVeinsInCenterOfChunk = false;
 
-    @Config.Comment("Whether to disable vanilla ores generation in world. Default: false")
-    public static boolean disableVanillaOres = false;
+    @Config.Comment("Whether to disable vanilla ores generation in world. Default: true")
+    public static boolean disableVanillaOres = true;
 
     @Config.Comment("Whether to disable rubber tree world generation. Default: false")
     @Config.RequiresMcRestart
@@ -73,10 +77,6 @@ public class ConfigHolder {
     @Config.Comment("Setting this to true makes GTCE ignore error and invalid recipes that would otherwise cause crash. Default: true")
     @Config.RequiresMcRestart
     public static boolean ignoreErrorOrInvalidRecipes = true;
-
-    @Config.Comment("Setting this to false causes GTCE to not register additional methane recipes for foods in the centrifuge. Default: true")
-    @Config.RequiresMcRestart
-    public static boolean addFoodMethaneRecipes = true;
 
     @Config.Comment("Category that contains configs for changing vanilla recipes")
     @Config.Name("Vanilla Recipe Options")
@@ -119,17 +119,14 @@ public class ConfigHolder {
         @Config.Comment("Whether to make redstone related recipes harder. Default: false")
         public boolean hardRedstoneRecipes = false;
 
-        @Config.Comment("Recipes for items like iron doors, trapdoors, pressure plates, cauldrons, hoppers, and iron bars require iron plates, sticks, and more. Default: true")
+        @Config.Comment("Recipes for items like iron doors, trapdoors, buckets, pressure plates, cauldrons, hoppers, and iron bars require iron plates, sticks, and more. Default: true")
         public boolean hardIronRecipes = true;
 
         @Config.Comment("Whether to make miscellaneous recipes harder. Default: false")
         public boolean hardMiscRecipes = false;
 
-        @Config.Comment("Whether to make flint and steel recipe require a steel of iron. Default: true.")
+        @Config.Comment("Whether to make flint and steel recipe require steel parts. Default: true.")
         public boolean flintAndSteelRequireSteel = true;
-
-        @Config.Comment("Whether to make the iron bucket recipe harder by requiring a hammer and plates. Default: true")
-        public boolean bucketRequirePlatesAndHammer = true;
 
         @Config.Comment("Whether to make vanilla tools and armor recipes harder. Excludes flint and steel, and buckets. Default: false")
         public boolean hardToolArmorRecipes = false;
@@ -161,6 +158,9 @@ public class ConfigHolder {
 
     public static class UnofficialOptions {
 
+        @Config.Comment("Whether to give the terminal to new players")
+        public boolean spawnTerminal = true;
+
         @Config.Comment("Config category for GT5u inspired features.")
         @Config.Name("GregTech 5 Unofficial Options")
         public GT5U GT5u = new GT5U();
@@ -173,28 +173,20 @@ public class ConfigHolder {
         @Config.Name("Energy Compatibility Options")
         public EnergyCompatibility energyOptions = new EnergyCompatibility();
 
+        @Config.Comment({"Configs for Armor and Tools", "Tiers are from ULV-0 to MAX-14"})
+        @Config.Name("Armor Options")
+        public Equipment equipment = new Equipment();
+
         @Config.Comment("Client configs for file path, rendering and so on")
         @Config.Name("Client Options")
         @Config.RequiresMcRestart
         public ClientConfig clientConfig = new ClientConfig();
 
-        @Config.Comment("Allow GregTech to add additional loot. Default: true")
-        @Config.RequiresMcRestart
-        public static boolean addLoot = true;
-
-        @Config.Comment("Should recipes for EV and IV Drills be enabled, which may cause large amounts of lag when used on some low-end devices? Default: true")
-        @Config.RequiresMcRestart
-        public boolean registerRecipesForHighTierDrills = true;
-
-        @Config.Comment("Should recipes for Mining Hammers be enabled? Default: true")
-        @Config.RequiresMcRestart
-        public boolean registerRecipesForMiningHammers = true;
-
         @Config.Comment("Divisor for Recipe Duration per Overclock. Default: 2.0")
         @Config.RangeDouble(min = 2.0, max = 3.0)
         public double overclockDivisor = 2.0;
 
-        @Config.Comment("Whether to enable that Steam Multiblocks use Steel instead of Bronze. Default: false")
+        @Config.Comment("Whether Steam Multiblocks should use Steel instead of Bronze. Default: false")
         @Config.RequiresMcRestart
         public boolean steelSteamMultiblocks = false;
 
@@ -204,14 +196,10 @@ public class ConfigHolder {
 
         public static class GT5U {
 
-            @Config.Comment("This config requires 'B:Use custom machine tank sizes' = true to take effect. Changes the input tank size to the first value, and out tank size to the second value for nearly every single block machine. Units are millibuckets. Default: {64000, 64000}")
+            @Config.Comment("Changes the size of input and output tanks in nearly all single block machine. The first value will be used for the input tank size, the second for the output tank size. Units are millibuckets. Default: {64000, 64000}")
             @Config.RangeInt(min = 1)
             @Config.RequiresMcRestart
             public int[] customMachineTankSizes = new int[]{64000, 64000};
-
-            @Config.Comment("This config enables the customization of nearly every single block machine's input and output fluid tank sizes. Default: false")
-            @Config.RequiresMcRestart
-            public boolean useCustomMachineTankSizes = false;
 
             @Config.Comment("Require Wrench to break machines? Default: false")
             public boolean requireWrenchForMachines = false;
@@ -219,10 +207,6 @@ public class ConfigHolder {
             @Config.Comment("Change the recipe of rods to result in 1 stick and 2 small piles of dusts. Default: false")
             @Config.RequiresMcRestart
             public boolean harderRods = false;
-
-            @Config.Comment("Whether or not to use polymers instead of rare metals for Carbon Fibers. REMOVES THE CHANCED OUTPUT! Default: false")
-            @Config.RequiresMcRestart
-            public boolean polymerCarbonFiber = false;
 
             @Config.Comment("The default color to overlay onto machines. \n16777215 (0xFFFFFF in decimal) is no coloring (default), and 13819135 (0xD2DCFF in decimal) is the classic blue from GT5. THIS IS SERVER SIDE!!!")
             @Config.RequiresMcRestart
@@ -233,7 +217,6 @@ public class ConfigHolder {
             public int defaultInsulationColor = 0x777777;
 
             @Config.Comment("Enable temperature based bonuses for the Electric Blast Furnace. Default: true")
-            @Config.RequiresMcRestart
             public boolean ebfTemperatureBonuses = true;
 
             @Config.Comment("Enable more challenging recipes for Electric Blast Furnace Coils. Default: true")
@@ -247,6 +230,18 @@ public class ConfigHolder {
             @Config.Comment("Whether to enable maintenance or not. Default: false")
             @Config.RequiresMcRestart
             public boolean enableMaintenance = true;
+
+            @Config.Comment("Enable High-Tier solar panels (IV-UV). They will not have recipes. Default: false")
+            @Config.RequiresMcRestart
+            public boolean enableHighTierSolars = false;
+
+            @Config.Comment("Should EV and IV Drills be enabled, which may cause large amounts of lag when used on some low-end devices? Default: true")
+            @Config.RequiresMcRestart
+            public boolean enableHighTierDrills = true;
+
+            @Config.Comment("Enable World Accelerators, which accelerate ticks. Default: true")
+            @Config.RequiresMcRestart
+            public boolean enableWorldAccelerators = true;
         }
 
         public static class GT6 {
@@ -271,12 +266,83 @@ public class ConfigHolder {
         }
 
         public static class ClientConfig {
+			
+            @Config.Comment("Terminal root path. Default: (config/)gregtech/terminal")
+            public String terminalRootPath = "gregtech/terminal";
 
-            @Config.Comment("Whether to use shader program. Default: true")
+            @Config.Comment("Whether to use shader programs. Default: true")
             public boolean useShader = true;
+
+            @Config.Comment("Whether to hook depth texture. It has no effect on performance, But if there is a problem with rendering, try disabling it. Default: true")
+            public boolean hookDepthTexture = true;
+
+            @Config.Comment("Resolution level for fragment shaders. The higher the resolution, the better the quality (restricted by the resolution of your screen), the greater the burden of the graphics card. Default: 2")
+            @Config.RangeDouble(min = 0, max = 5)
+            public double resolution = 2;
 
             @Config.Comment("Whether or not to enable Emissive Textures for GregTech Machines. Default: true")
             public boolean emissiveTextures = true;
         }
+
+        public static class Equipment {
+            @Config.Comment("NightVision Goggles Voltage Tier. Default: 2 (LV)")
+            @Config.RangeInt(min = 0, max = 14)
+            public int voltageTierNightVision = 2;
+
+            @Config.Comment("NanoSuit Voltage Tier. Default: 3 (MV)")
+            @Config.RangeInt(min = 0, max = 14)
+            public int voltageTierNanoSuit = 3;
+
+            @Config.Comment("Advanced NanoSuit Chestplate Voltage Tier. Default: 4 (EV)")
+            @Config.RangeInt(min = 0, max = 14)
+            public int voltageTierAdvNanoSuit = 4;
+
+            @Config.Comment("QuarkTech Suit Voltage Tier. Default: 5 (IV)")
+            @Config.RangeInt(min = 0, max = 14)
+            public int voltageTierQuarkTech = 5;
+
+            @Config.Comment("Advanced QuarkTech Suit Chestplate Voltage Tier. Default: 5 (IV)")
+            @Config.RangeInt(min = 0, max = 14)
+            public int voltageTierAdvQuarkTech = 5;
+
+            @Config.Comment("Impeller Jetpack Voltage Tier. Default: 2 (MV)")
+            @Config.RangeInt(min = 0, max = 14)
+            public int voltageTierImpeller = 2;
+
+            @Config.Comment("Advanced Impeller Jetpack Voltage Tier. Default: 3 (HV)")
+            @Config.RangeInt(min = 0, max = 14)
+            public int voltageTierAdvImpeller = 3;
+
+            @Config.Name("BatPack Options")
+            public BatPack batpack = new BatPack();
+
+            @Config.Comment("Armor HUD Location")
+            public ArmorHud armorHud = new ArmorHud();
+        }
+
+        public static class BatPack {
+            @Config.Comment("Total LV BatPack capacity. Default: 600,000")
+            @Config.RangeInt(min = 1)
+            public int capacityLV = 600000;
+
+            @Config.Comment("Total MV BatPack capacity. Default: 2,400,000")
+            @Config.RangeInt(min = 1)
+            public int capacityMV = 2400000;
+
+            @Config.Comment("Total HV BatPack capacity. Default: 9,600,000")
+            @Config.RangeInt(min = 1)
+            public int capacityHV = 9600000;
+        }
+
+        public static class ArmorHud {
+            @Config.Comment({"Sets HUD location", "1 - left-upper corner", "2 - right-upper corner", "3 - left-bottom corner", "4 - right-bottom corner"})
+            public byte hudLocation = 1;
+            @Config.Comment("Horizontal offset of HUD [0 ~ 100)")
+            public byte hudOffsetX = 0;
+            @Config.Comment("Vertical offset of HUD [0 ~ 100)")
+            public byte hudOffsetY = 0;
+
+        }
+
     }
 }

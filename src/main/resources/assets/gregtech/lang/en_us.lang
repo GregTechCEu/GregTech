@@ -204,6 +204,8 @@ metaitem.shape.extruder.foil.name=Extruder Shape (Foil)
 metaitem.shape.extruder.foil.tooltip=Extruder Shape for making Foils from Non-Metals
 metaitem.shape.extruder.rod_long.name=Extruder Shape (Long Rod)
 metaitem.shape.extruder.rod_long.tooltip=Extruder Shape for making Long Rods
+metaitem.shape.extruder.rotor.name=Extruder Shape (Rotor)
+metaitem.shape.extruder.rotor.tooltip=Extruder Shape for making Rotors
 
 metaitem.spray.empty.name=Spray Can (Empty)
 metaitem.spray.empty.tooltip=Can be filled with sprays of various colors
@@ -740,6 +742,20 @@ metaitem.cover.solar.panel.ulv.name=Solar Panel (8V)
 metaitem.cover.solar.panel.ulv.tooltip=8 Volt Solar Panel
 metaitem.cover.solar.panel.lv.name=Solar Panel (LV)
 metaitem.cover.solar.panel.lv.tooltip=Low Voltage Solar Panel
+metaitem.cover.solar.panel.mv.name=Solar Panel (MV)
+metaitem.cover.solar.panel.mv.tooltip=Medium Voltage Solar Panel
+metaitem.cover.solar.panel.hv.name=Solar Panel (HV)
+metaitem.cover.solar.panel.hv.tooltip=High Voltage Solar Panel
+metaitem.cover.solar.panel.ev.name=Solar Panel (EV)
+metaitem.cover.solar.panel.ev.tooltip=Extreme Voltage Solar Panel
+metaitem.cover.solar.panel.iv.name=Solar Panel (IV)
+metaitem.cover.solar.panel.iv.tooltip=Insane Voltage Solar Panel
+metaitem.cover.solar.panel.luv.name=Solar Panel (LuV)
+metaitem.cover.solar.panel.luv.tooltip=Ludicrous Voltage Solar Panel
+metaitem.cover.solar.panel.zpm.name=Solar Panel (ZPM)
+metaitem.cover.solar.panel.zpm.tooltip=Zero Point Module Solar Panel
+metaitem.cover.solar.panel.uv.name=Solar Panel (UV)
+metaitem.cover.solar.panel.uv.tooltip=Ultimate Voltage Solar Panel
 
 metaitem.cover.infinite_water.name=Infinite Water Cover
 metaitem.cover.infinite_water.tooltip=Creates 16 Buckets of Water every second (as Cover)
@@ -777,8 +793,9 @@ metaitem.tool_parts_box.tooltip=Contains some tool parts/nRight click to open
 metaitem.foam_sprayer.name=Foam Sprayer
 metaitem.foam_sprayer.tooltip=Sprays Construction Foam/nUse on a frame to foam connected frames/nUse iron metal to create reinforced stone/nFoam can be colored
 metaitem.energium_dust.name=Energium Dust
-metaitem.compressed.fireclay.name=Compressed Fireclay
 metaitem.compressed.clay.name=Compressed Clay
+metaitem.compressed.fireclay.name=Compressed Fireclay
+metaitem.compressed.coke_clay.name=Compressed Coke Clay
 metaitem.brick.fireclay.name=Firebrick
 metaitem.brick.fireclay.tooltip=Heat resistant
 metaitem.brick.coke.name=Coke Oven Brick
@@ -863,7 +880,6 @@ metaitem.tool.tooltip.attack_damage=§fAttack damage: §9%,.1f
 metaitem.tool.tooltip.mining_speed=§fMining speed: §6%,.1f
 metaitem.tool.tooltip.durability=§fDurability: §a%,d / %,d
 metaitem.tool.tooltip.rotor.efficiency=Turbine Efficiency: §9%,d%%
-metaitem.tool.tooltip.hammer.extra_drop=Has a chance to drop double crushed ores
 
 metaitem.voltage_coil.ulv.name=Ultra Low Voltage Coil
 metaitem.voltage_coil.ulv.tooltip=Primitive Coil
@@ -895,6 +911,59 @@ metaitem.voltage_coil.uxv.name=Extended Mega Ultimate Voltage Coil
 metaitem.voltage_coil.uxv.tooltip=UXV Coil
 metaitem.voltage_coil.max.name=Maximum Voltage Coil
 metaitem.voltage_coil.max.tooltip=Maximum Coil
+
+metaitem.liquid_fuel_jetpack.name=Liquid-Fueled Jetpack
+metaitem.impeller_jetpack.name=Thruster Jetpack
+metaitem.advanced_impeller_jetpack.name=Advanced Thruster Jetpack
+metaitem.battery_pack.lv.name=Battery Pack (§eLV§r)
+metaitem.battery_pack.mv.name=Battery Pack (§eMV§r)
+metaitem.battery_pack.hv.name=Battery Pack (§eHV§r)
+
+metaitem.nightvision_goggles.name=NightVision Goggles
+
+metaitem.nms.chestplate.name=NanoMuscle™ Suite Chestplate
+metaitem.nms.leggings.name=NanoMuscle™ Suite Leggings
+metaitem.nms.boots.name=NanoMuscle™ Suite Boots
+metaitem.nms.helmet.name=NanoMuscle™ Suite Helmet
+metaitem.nms.advanced_chestplate.name=Advanced NanoMuscle™ Suite Chestplate
+
+metaitem.qts.chestplate.name=QuarkTech™ Suite Chestplate
+metaitem.qts.leggings.name=QuarkTech™ Suite Leggings
+metaitem.qts.boots.name=QuarkTech™ Suite Boots
+metaitem.qts.helmet.name=QuarkTech™ Suite Helmet
+metaitem.qts.advanced_chestplate.name=Advanced QuarkTech™ Suite Chestplate
+
+metaitem.impeller.mv.name=Power Thruster
+metaitem.impeller.hv.name=Advanced Power Thruster
+metaitem.gravitation_engine.name=Gravitation Engine Unit
+
+metaarmor.nms.nightvision.enabled=NanoMuscle™ Suite: NightVision Enabled
+metaarmor.nms.nightvision.disabled=NanoMuscle™ Suite: NightVision Disabled
+
+metaarmor.qts.nightvision.enabled=QuarkTech™ Suite: NightVision Enabled
+metaarmor.qts.nightvision.disabled=QuarkTech™ Suite: NightVision Disabled
+
+metaarmor.jetpack.hover.enable=Jetpack: Hover Mode Enabled
+metaarmor.jetpack.hover.disable=Jetpack: Hover Mode Disabled
+
+metaarmor.message.nightvision.enabled=§bNightVision: §aOn
+metaarmor.message.nightvision.disabled=§bNightVision: §cOff
+metaarmor.message.nightvision.error=§cNot enough power!
+
+metaarmor.hud.status.enabled=§aON
+metaarmor.hud.status.disabled=§cOFF
+metaarmor.hud.energy_lvl=Energy level: %s
+metaarmor.hud.fuel_lvl=Fuel level: %s
+metaarmor.hud.hover_mode=Hover mode: %s
+mataarmor.hud.supply_mode=Supply mode: %s
+metaarmor.hud.fly_mode=Fly mode: %s
+metaarmor.hud.gravi_engine=GraviEngine: %s
+
+metaarmor.energy_share.enable=Energy Supply: Gadgets charging enabled
+metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
+metaarmor.energy_share.tooltip=Supply mode: %s
+metaarmor.energy_share.tooltip.guide=To change mode shift-right click when holding item
+
 
 cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
@@ -1334,7 +1403,6 @@ material.obsidian=Obsidian
 material.phosphate=Phosphate
 material.pig_iron=Pig Iron
 material.plastic=Polyethylene (PE)
-material.polysiloxane=Polysiloxane
 material.polycaprolactam=Polycaprolactam
 material.polytetrafluoroethylene=Polytetrafluoroethylene (PTFE)
 material.powellite=Powellite
@@ -1396,7 +1464,6 @@ material.silicone_rubber=Silicone Rubber
 material.polydimethylsiloxane=Polydimethylsiloxane
 material.dimethyldichlorosilane=Dimethyldichlorosilane
 material.styrene=Styrene
-material.polystyrene=Polystyrene
 material.butadiene=Butadiene
 material.raw_styrene_butadiene_rubber=Raw Styrene-Butadiene Rubber
 material.styrene_butadiene_rubber=Styrene-Butadiene Rubber
@@ -1742,10 +1809,6 @@ item.reinforced_epoxy_resin.nugget=Fiber-Reinforced Epoxy Resin Chip
 item.reinforced_epoxy_resin.plateDense=Dense Fiber-Reinforced Epoxy Resin Sheet
 item.reinforced_epoxy_resin.plate=Fiber-Reinforced Epoxy Resin Sheet
 item.reinforced_epoxy_resin.foil=Thin Fiber-Reinforced Epoxy Resin Sheet
-item.polysiloxane.dustTiny=Tiny Pile of Polysiloxane Pulp
-item.polysiloxane.dustSmall=Small Pile of Polysiloxane Pulp
-item.polysiloxane.dust=Polysiloxane Pulp
-item.polysiloxane.plate=Polysiloxane Sheet
 item.polycaprolactam.dustTiny=Tiny Pile of Polycaprolactam Pulp
 item.polycaprolactam.dustSmall=Small Pile of Polycaprolactam Pulp
 item.polycaprolactam.dust=Polycaprolactam Pulp
@@ -1975,7 +2038,7 @@ behavior.plunger.description=Use to clear 1000 L out of a machine's output tank.
 behavior.toggle_energy_consumer.tooltip=Use to toggle mode
 
 enchantment.damage.endermen=Disjunction
-enchantment.damage.radioactivity=Radioactivity
+enchantment.hard.hammer=Hammering
 
 tile.gt.seal.name=Sealed Block
 tile.gt.foam.name=Foam
@@ -2001,7 +2064,12 @@ behavior.scanner.analyzing_complete=Analyzing complete!
 behavior.scanner.not_enough_energy=Analyzing failed: Not Enough Energy!
 
 metaitem.terminal.name=Terminal
-metaitem.terminal.tooltip=Hope it will help you
+metaitem.terminal.tooltip=Sharp tools make good work
+metaitem.terminal.tooltip.creative=§bCreative Mode
+metaitem.terminal.tooltip.hardware=§aHardware: %d
+
+metaitem.wireless.name=Wireless Transmitter
+metaitem.camera.name=Camera
 
 tile.casing.ulv=ULV Machine Casing
 tile.casing.lv=LV Machine Casing
@@ -2133,6 +2201,9 @@ gregtech.machine.drum.aluminium.name=Aluminium Drum
 gregtech.machine.drum.stainless_steel.name=Stainless Steel Drum
 gregtech.machine.drum.titanium.name=Titanium Drum
 gregtech.machine.drum.tungstensteel.name=Tungstensteel Drum
+
+gregtech.machine.drum.enable_output=Will drain Fluid to vertically adjacent Tanks
+gregtech.machine.drum.disable_output=Will not drain Fluid
 
 # Crates
 gregtech.machine.crate.wood.name=Wooden Crate
@@ -3212,7 +3283,26 @@ gregtech.machine.fisher.hv.name=Advanced Fisher II
 gregtech.machine.fisher.ev.name=Advanced Fisher III
 gregtech.machine.fisher.tooltip=Costs string to fish. Consumes one string each time.
 gregtech.machine.fisher.speed=Catches something every %,d ticks
-gregtech.machine.fisher.requirement=Requires a square of water with size of %,d blocks directly below.
+gregtech.machine.fisher.requirement=Requires a %,dx%,d centered square of water directly below.
+
+# World Accelerator
+gregtech.machine.world_accelerator.lv.name=Basic World Accelerator
+gregtech.machine.world_accelerator.mv.name=Advanced World Accelerator
+gregtech.machine.world_accelerator.hv.name=Advanced World Accelerator II
+gregtech.machine.world_accelerator.ev.name=Advanced World Accelerator III
+gregtech.machine.world_accelerator.iv.name=Elite World Accelerator
+gregtech.machine.world_accelerator.luv.name=Elite World Accelerator II
+gregtech.machine.world_accelerator.zpm.name=Elite World Accelerator III
+gregtech.machine.world_accelerator.uv.name=Elite World Accelerator IV
+gregtech.machine.world_accelerator.uhv.name=High-Tech World Accelerator
+gregtech.machine.world_accelerator.uev.name=High-Tech World Accelerator II
+gregtech.machine.world_accelerator.uiv.name=High-Tech World Accelerator III
+gregtech.machine.world_accelerator.umv.name=High-Tech World Accelerator IV
+gregtech.machine.world_accelerator.uxv.name=Ultimate World Accelerator
+gregtech.machine.world_accelerator.description=Increase tick updates per tick. 2 modes: Tile Entity or Random Tick. Use a Screwdriver to change modes.
+gregtech.machine.world_accelerator.area=On Tile Entity mode, only adjacent blocks are sped up. On Random Tick, it is %dx%d blocks radius.
+gregtech.machine.world_accelerator.mode_tile=Tile Entity Mode
+gregtech.machine.world_accelerator.mode_entity=Entity Mode
 
 # General machinery
 gregtech.machine.basic.input_from_output_side.allow=Allow Input from Output Side
@@ -3521,6 +3611,13 @@ gregtech.machine.fluid_hatch.import.max.name=MAX Input Hatch
 
 gregtech.machine.fluid_hatch.export.tooltip=Fluid Output for Multiblocks
 
+gregtech.machine.fluid_hatch.import_4x.name=Quadruple Input Hatch
+gregtech.machine.fluid_hatch.import_9x.name=Nonuple Input Hatch
+gregtech.machine.fluid_hatch.export_4x.name=Quadruple Output Hatch
+gregtech.machine.fluid_hatch.export_9x.name=Nonuple Output Hatch
+gregtech.machine.multi_fluid_hatch_universal.tooltip.1=Capacity: §b16000mB§7 per tank.
+gregtech.machine.multi_fluid_hatch_universal.tooltip.2=Tank Count: §b%d
+
 gregtech.machine.fluid_hatch.export.ulv.name=ULV Output Hatch
 gregtech.machine.fluid_hatch.export.lv.name=LV Output Hatch
 gregtech.machine.fluid_hatch.export.mv.name=MV Output Hatch
@@ -3749,6 +3846,10 @@ gregtech.multiblock.universal.problem.wire_cutter=%s§7Wires burned out. (§aWir
 gregtech.multiblock.universal.problem.crowbar=%s§7That doesn't belong there. (§aCrowbar§7)
 gregtech.multiblock.universal.muffler_obstructed=Muffler Hatch is Obstructed!
 gregtech.multiblock.universal.muffler_obstructed.tooltip=Muffler Hatch must have a block of airspace in front of it.
+gregtech.multiblock.universal.distinct=Distinct Buses:
+gregtech.multiblock.universal.distinct.no=No
+gregtech.multiblock.universal.distinct.yes=Yes
+gregtech.multiblock.universal.distinct.info=If enabled, each Item Input Bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
 
 gregtech.multiblock.preview.tilt=Shift+LMB to tilt
 gregtech.multiblock.preview.zoom=Shift+RMB to zoom
@@ -3762,9 +3863,11 @@ gregtech.multiblock.preview.limit_per_layer=Only %d per layer
 gregtech.multiblock.preview.only=Only %s allowed
 gregtech.multiblock.preview.only_location=Only allowed at %s
 gregtech.multiblock.preview.location.b_c=Bottom Center
+gregtech.multiblock.preview.location.b_l=Bottom Layer
 gregtech.multiblock.preview.location.t_c=Top Center
 gregtech.multiblock.preview.primitive_pump.hatch=Only Pump Hatch, ULV Hatch, or LV Hatch allowed
 gregtech.multiblock.preview.location_end=Very End
+gregtech.multiblock.preview.distillation_multi_fluid=Quadruple/Nonuple Output Hatches not allowed
 
 gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
@@ -3856,11 +3959,28 @@ gregtech.terminal.app_name.pong=Pong
 gregtech.terminal.app_name.maze=Theseus's Escape
 
 
+gregtech.terminal.app_name.console=GT Console
+gregtech.terminal.app_name.battery=Battery Manager
+gregtech.terminal.app_name.hardware=Hardware Manager
+gregtech.terminal.app_name.store=App Store
+gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
+gregtech.terminal.app_name.world_prospector=World Prospector
+
+terminal.app_name.description=No description.
+terminal.app_name.tier=Tier %d
+terminal.items.description=A guide book about items.
+terminal.machines.description=A guide book about gt machines.
+terminal.multiblocks.description=A guide book about multi-blocks.
+terminal.tutorials.description=Introduces all kinds of things, CT integration, tips, tutorials and more.
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
 
+terminal.hw.battery=Battery
+terminal.hw.device=Device
+
 terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
+terminal.os.hw_demand=Missing mounting hardware:
 
 terminal.menu.close=Close
 terminal.menu.minimize=Minimize
@@ -3876,11 +3996,14 @@ terminal.component.confirm=Are you sure?
 terminal.component.error=ERROR
 terminal.component.warning=WARNING
 terminal.component.searching=searching
+terminal.component.reload=reload resource
 
+terminal.dialog.notice=NOTICE
 terminal.dialog.error_path=error file path:
 terminal.dialog.no_file_selected=No file selected.
 terminal.dialog.folder=Open Folder
 
+terminal.guide_editor.description=An interactive guide page editor that allows you to create guide pages easily.
 terminal.guide_editor.up=Up
 terminal.guide_editor.down=Down
 terminal.guide_editor.remove=Remove
@@ -3893,11 +4016,13 @@ terminal.guide_editor.page_config=Page Config
 terminal.guide_editor.widgets_box=Widgets Box
 terminal.guide_editor.widget_config=Widget Config
 
+terminal.theme_settings.description=Set theme colors and wallpaper of the GTOS here.
 terminal.theme_settings.color=Theme Color Settings
 terminal.theme_settings.wallpaper=Wallpaper Settings
 terminal.theme_settings.select=Select
 terminal.theme_settings.image=Image File
 
+terminal.recipe_chart.description=A tool for analyzing recipe chains, with which you can easily build a recipe graph and even calculate the ingredients needed like JEC.
 terminal.recipe_chart.limit=Page limit.
 terminal.recipe_chart.delete=Delete Page
 terminal.recipe_chart.add_slot=Add Root Slot
@@ -3907,9 +4032,65 @@ terminal.recipe_chart.drag=Drag ingredients here.
 terminal.recipe_chart.visible=Visible
 terminal.recipe_chart.jei=JEI Focus
 terminal.recipe_chart.tier=Tier:
-terminal.recipe_chart.ratio=Ratio
+terminal.recipe_chart.ratio=Weight
+terminal.recipe_chart.tier.0=cache of 5 pages
+terminal.recipe_chart.tier.1=cache of 6 pages
+terminal.recipe_chart.tier.2=cache of 7 pages
+terminal.recipe_chart.tier.3=cache of 8 pages
 
 terminal.prospector.vis_mode=dark mode
 terminal.prospector.list=All Resources
 terminal.prospector.ore=Ore statistics
 terminal.prospector.fluid=Fluid statistics
+
+terminal.ore_prospector.description=Hate the scanner toy? Don't want to run around looking for ores? Come and look at it.
+terminal.ore_prospector.tier.0=radius size 1
+terminal.ore_prospector.tier.1=radius size 2
+terminal.ore_prospector.tier.2=radius size 3
+terminal.ore_prospector.tier.3=radius size 4
+terminal.ore_prospector.tier.4=radius size 5
+terminal.ore_prospector.tier.5=radius size 6
+terminal.ore_prospector.tier.6=radius size 7
+
+terminal.console.description=A tool to help you free your inventory, it's time to say goodbye to wrench, screwdriver, hammer, and crowbar.
+terminal.console.notice=Please right click the machine when opening the terminal.
+terminal.console.front=Set as front
+terminal.console.items=set as items output
+terminal.console.fluids=set as fluids output
+terminal.console.auto_output=allow auto output
+terminal.console.input=allow input from output
+terminal.console.cover_rs=signal: %s
+terminal.console.cover_gui=Gui
+terminal.console.gui=Open machine gui
+terminal.console.maintenance=Fix all problems
+terminal.console.venting=set as venting
+terminal.console.controllable=set working enable
+
+terminal.hardware.description=Hardware Manager, masterpieces of elegance and precision. How can a tablet be without hardware?
+terminal.hardware.select=Mounting hardware
+terminal.hardware.remove=Remove hardware
+
+terminal.battery.description=Battery manager, visually analyzing your app's energy consumption.
+
+terminal.store.description=App store, check out what you got? Install and upgrade the app.
+terminal.store.match=Detect that inventory meets demand, whether to (install)upgrade?
+terminal.store.miss=Require %s (%d).
+
+terminal.ar.open=Open AR
+
+terminal.multiblock_ar.description=Remember the §cFree Wrench§r?  Unfortunately, it it's gone.  It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
+terminal.multiblock_ar.tier.0=AR Camera
+terminal.multiblock_ar.tier.1=3D Builder
+terminal.multiblock_ar.unlock=Unlock this mode after the upgrade
+terminal.multiblock_ar.builder.hover=3D Builder
+terminal.multiblock_ar.builder.auto=Automatic Build
+terminal.multiblock_ar.builder.place=Place block
+terminal.multiblock_ar.builder.debug=Debug
+
+terminal.world_prospector.description="I wish I had X-ray vision."\n"Sir, I'm sorry, but we don't sell superpowers. You should trust the science."
+terminal.world_prospector.tier.0=Radius 15m (1 slot)
+terminal.world_prospector.tier.1=Radius 30m (2 slot)
+terminal.world_prospector.tier.2=Radius 60m (4 slot)
+terminal.world_prospector.radius=Radius %sm
+terminal.world_prospector.reference=Select a reference
+terminal.world_prospector.color=Select box color
