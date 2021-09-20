@@ -88,6 +88,8 @@ public class IncrementButtonWidget extends Widget {
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         String text = String.valueOf(clickValue);
+        if(clickValue >= 0)
+            text = "+" + text;
         drawText(text,
                 position.x + size.width / 2f - (fontRenderer.getStringWidth(text) / 2f) * textScale,
                 position.y + size.height / 2f - (fontRenderer.FONT_HEIGHT / 2f) * textScale, textScale, 0xFFFFFF);

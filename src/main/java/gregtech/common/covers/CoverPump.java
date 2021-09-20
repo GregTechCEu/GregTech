@@ -181,7 +181,6 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle(), GTValues.VN[tier]));
 
         primaryGroup.addWidget(new ImageWidget(44, 20, 62, 20, GuiTextures.DISPLAY));
-        //primaryGroup.addWidget(new SimpleTextWidget(70, 49, "cover.pump.transfer_rate", 0xFFFFFF, () -> bucketMode == BucketMode.BUCKET ? Integer.toString(transferRate / 1000) : Integer.toString(transferRate)));
 
         primaryGroup.addWidget(new IncrementButtonWidget(136, 20, 30, 20, 1, 10, 100, 1000, this::adjustTransferRate)
                 .setDefaultTooltip()

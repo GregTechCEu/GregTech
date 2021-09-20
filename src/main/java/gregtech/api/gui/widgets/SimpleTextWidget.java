@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -102,19 +101,19 @@ public class SimpleTextWidget extends Widget {
         String text = formatLocale.isEmpty() ? (I18n.hasKey(lastText) ? I18n.format(lastText) : lastText) : I18n.format(formatLocale, lastText);
         List<String> texts;
         if (this.width > 0) {
-            texts = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(text, width * (1 / scale));
+            texts = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(text, (int) (width * (1 / scale)));
         } else {
             texts = Collections.singletonList(text);
         }
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         Position pos = getPosition();
-        int height = fontRenderer.FONT_HEIGHT * scale * texts.size();
+        float height = fontRenderer.FONT_HEIGHT * scale * texts.size();
         for (int i = 0; i < texts.size(); i++) {
             String resultText = texts.get(i);
-            int width = fontRenderer.getStringWidth(resultText);;
+            float width = fontRenderer.getStringWidth(resultText) * scale;
             float x = pos.x - (isCentered ? width / 2f : 0);
             float y = pos.y - (isCentered ? height / 2f : 0) + i * fontRenderer.FONT_HEIGHT;
-            drawText(resultText, x, y, scale, color, isShadow)
+            drawText(resultText, x, y, scale, color, isShadow);
         }
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }

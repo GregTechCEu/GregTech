@@ -194,19 +194,18 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     }
 
     public Function<String, String> getTextFieldValidator() {
-        long min = 0, max = Long.MAX_VALUE;
         return val -> {
             if (val.isEmpty()) {
-                return String.valueOf(min);
+                return "0";
             }
             long num;
             try {
                 num = Long.parseLong(val);
             } catch (NumberFormatException ignored) {
-                return String.valueOf(max);
+                return "0";
             }
-            if (num < min) {
-                return String.valueOf(min);
+            if (num < 0) {
+                return "0";
             }
             return val;
         };
