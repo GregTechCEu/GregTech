@@ -83,7 +83,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
                 .where('c', statePredicate(getCoilState()))
                 .where('O', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS)))
                 .where('E', statePredicate(getCasingState()).or(tilePredicate((state, tile) -> {
-                    for (int i = tier; i < GTValues.UV; i++) {
+                    for (int i = tier; i < GTValues.UV + 1; i++) {
                         if (tile.metaTileEntityId.equals(MetaTileEntities.ENERGY_INPUT_HATCH[i].metaTileEntityId))
                             return true;
                     }
