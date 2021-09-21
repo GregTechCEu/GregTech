@@ -3972,6 +3972,8 @@ terminal.items.description=A guide book about items.
 terminal.machines.description=A guide book about gt machines.
 terminal.multiblocks.description=A guide book about multi-blocks.
 terminal.tutorials.description=Introduces all kinds of things, CT integration, tips, tutorials and more.
+terminal.pong.description=A classic pong game, if you're really that bored of waiting for that tungstensteel.
+terminal.maze.description=A GTOS exclusive game finding you racing through an endless labyrinth to survive the Minotaur!
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed

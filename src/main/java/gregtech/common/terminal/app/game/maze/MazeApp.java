@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MazeApp extends AbstractApplication {
-    public static final TextureArea ICON = TextureArea.fullImage("textures/gui/terminal/maze/icon.png");
     private int gamestate = 0;
     private PlayerWidget player;
     private EnemyWidget enemy;
@@ -31,11 +30,10 @@ public class MazeApp extends AbstractApplication {
     private List<Integer> movementStore = new ArrayList<>();
 
     public MazeApp() {
-        super("maze", ICON);
+        super("maze");
     }
 
-    @Override
-    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
+    public AbstractApplication createAppInstance(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
         MazeApp app = new MazeApp();
         if (isClient) {
             app.setOs(os);
@@ -108,7 +106,7 @@ public class MazeApp extends AbstractApplication {
                     attemptMovePlayer(3); // Down
             }
             timer++;
-            if (enemy.posX < 0 && timer % (speed * 8) < 1) {
+            if (enemy.posX < 0 && timer % (speed * MAZE_SIZE - 1) < 1) {
                 enemy.setGridPosition(0, 0);
             } else if (timer % speed < 1) {
                 moveEnemy();

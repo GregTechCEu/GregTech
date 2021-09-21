@@ -68,9 +68,13 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new TutorialGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new GuideEditorApp()).defaultApp().build();
         AppRegistryBuilder.create(new ThemeSettingApp()).defaultApp().build();
-        AppRegistryBuilder.create(new PongApp()).defaultApp().build();
-        AppRegistryBuilder.create(new MazeApp()).defaultApp().build();
 
+        AppRegistryBuilder.create(new PongApp())
+                .battery(GTValues.LV, 75)
+                .build();
+        AppRegistryBuilder.create(new MazeApp())
+                .battery(GTValues.LV, 150)
+                .build();
         AppRegistryBuilder.create(new OreProspectorApp())
                 .battery(GTValues.MV, 1000)
                 .upgrade(MetaItems.COIN_DOGE.getStackForm(10))

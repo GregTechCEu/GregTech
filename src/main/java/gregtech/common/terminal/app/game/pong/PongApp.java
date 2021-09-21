@@ -32,11 +32,11 @@ public class PongApp extends AbstractApplication {
     private int timer = 0;
 
     public PongApp() {
-        super("pong", ICON);
+        super("pong");
     }
 
     @Override
-    public AbstractApplication createApp(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
+    public AbstractApplication createAppInstance(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
         PongApp app = new PongApp();
         if (isClient) {
             app.setOs(os);
