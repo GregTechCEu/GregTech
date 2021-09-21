@@ -3868,6 +3868,7 @@ gregtech.multiblock.preview.location.t_c=Top Center
 gregtech.multiblock.preview.primitive_pump.hatch=Only Pump Hatch, ULV Hatch, or LV Hatch allowed
 gregtech.multiblock.preview.location_end=Very End
 gregtech.multiblock.preview.distillation_multi_fluid=Quadruple/Nonuple Output Hatches not allowed
+gregtech.multiblock.preview.clear_amount=Must have a clear %dx%dx%d space in front
 
 gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
