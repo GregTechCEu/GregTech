@@ -4,6 +4,7 @@ import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.SimpleTextWidget;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.TerminalOSWidget;
@@ -13,6 +14,7 @@ import gregtech.common.terminal.app.game.maze.widget.MazeWidget;
 import gregtech.common.terminal.app.game.maze.widget.PlayerWidget;
 import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.input.Keyboard;
+import scala.swing.event.Key;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ public class MazeApp extends AbstractApplication {
     private int lastPlayerInput = -2;
     public static int MAZE_SIZE = 9;
     private List<Integer> movementStore = new ArrayList<>();
+    private boolean lastPausePress;
 
     public MazeApp() {
         super("maze");
@@ -39,6 +42,7 @@ public class MazeApp extends AbstractApplication {
             app.setOs(os);
             app.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
             // Gamestate 0: Title
+            app.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Theseus's Escape", 0xFFFFFFFF).setXCentered(true).setVisibilitySupplier(() -> app.getGamestate() == 0));
             app.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 30, 30, "Play",
                     (clickData -> {
                         app.setGamestate(1);
@@ -50,9 +54,10 @@ public class MazeApp extends AbstractApplication {
             app.setPlayer((PlayerWidget) new PlayerWidget(0, 0, app).setVisibilitySupplier(() -> app.getGamestate() >= 1));
             app.setEnemy((EnemyWidget) new EnemyWidget(-100, -100, app).setVisibilitySupplier(() -> app.getGamestate() >= 1));
             // Gamestate 2: Pause
-
+            app.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, new ColorRectTexture(0xFF000000)).setVisibilitySupplier(() -> app.getGamestate() > 1));
+            app.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 50, 20, "Continue", (clickData) -> app.setGamestate(1)).setVisibilitySupplier(() -> app.getGamestate() == 2));
+            app.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Game Paused", 0xFFFFFFFF).setXCentered(true).setVisibilitySupplier(() -> app.getGamestate() == 2));
             // Gamestate 3: Death
-            app.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, new ColorRectTexture(0x99000000)).setVisibilitySupplier(() -> app.getGamestate() == 3));
             app.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 40, "", 0xFFFFFFFF, () -> "Oh no! You were eaten by the Minotaur!", true).setVisibilitySupplier(() -> app.getGamestate() == 3));
             app.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "", 0xFFFFFFFF, () -> "You got through " + app.getMazesSolved() + " mazes before losing.", true).setVisibilitySupplier(() -> app.getGamestate() == 3));
             app.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 16, "", 0xFFFFFFFF, () -> "Try again?", true).setVisibilitySupplier(() -> app.getGamestate() == 3));
@@ -93,6 +98,10 @@ public class MazeApp extends AbstractApplication {
     public void updateScreen() {
         super.updateScreen();
         if (gamestate == 1) {
+            if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
+                gamestate = 2;
+                lastPausePress = true;
+            }
             if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) ^ Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LEFT))
                     attemptMovePlayer(0); // Left
@@ -114,6 +123,12 @@ public class MazeApp extends AbstractApplication {
             if (enemy.posX == player.posX && enemy.posY == player.posY) {
                 gamestate = 3;
             }
+        }
+        if (gamestate == 2) {
+            if(!Keyboard.isKeyDown(Keyboard.KEY_P))
+                lastPausePress = false;
+            if(Keyboard.isKeyDown(Keyboard.KEY_P) && !lastPausePress)
+                gamestate = 1;
         }
     }
 
