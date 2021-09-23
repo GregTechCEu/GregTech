@@ -36,18 +36,16 @@ public class PongApp extends AbstractApplication {
     }
 
     @Override
-    public AbstractApplication createAppInstance(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
-        PongApp app = new PongApp();
-        if (isClient) {
-            app.setOs(os);
-            app.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
-            app.addWidget(new ImageWidget(333 / 2 - 4, 5, 6, 232 - 10, new ColorRectTexture(0xAAAAAAAA)));
-            app.setBall(new BallWidget(333 / 2 - 1, 232 / 2 - 1));
-            app.addWidget(new SimpleTextWidget(50, 20, "", 0xAAAAAA, () -> String.valueOf(app.getScore(true)), true));
-            app.addWidget(new SimpleTextWidget(283, 20, "", 0xAAAAAA, () -> String.valueOf(app.getScore(false)), true));
-            app.initPaddles();
+    public AbstractApplication initApp() {
+        if(isClient) {
+            this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
+            this.addWidget(new ImageWidget(333 / 2 - 4, 5, 6, 232 - 10, new ColorRectTexture(0xAAAAAAAA)));
+            this.setBall(new BallWidget(333 / 2 - 1, 232 / 2 - 1));
+            this.addWidget(new SimpleTextWidget(50, 20, "", 0xAAAAAA, () -> String.valueOf(this.getScore(true)), true));
+            this.addWidget(new SimpleTextWidget(283, 20, "", 0xAAAAAA, () -> String.valueOf(this.getScore(false)), true));
+            this.initPaddles();
         }
-        return app;
+        return this;
     }
 
     @Override

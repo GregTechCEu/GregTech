@@ -36,42 +36,39 @@ public class MazeApp extends AbstractApplication {
         super("maze");
     }
 
-    public AbstractApplication createAppInstance(TerminalOSWidget os, boolean isClient, NBTTagCompound nbt) {
-        MazeApp app = new MazeApp();
+    public AbstractApplication initApp() {
         if (isClient) {
-            app.setOs(os);
-            app.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
+            this.setOs(os);
+            this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
             // Gamestate 0: Title
-            app.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Theseus's Escape", 0xFFFFFFFF).setXCentered(true).setVisibilitySupplier(() -> app.getGamestate() == 0));
-            app.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 30, 30, "Play",
+            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Theseus's Escape", 0xFFFFFFFF).setXCentered(true).setVisibilitySupplier(() -> this.getGamestate() == 0));
+            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 30, 30, "Play",
                     (clickData -> {
-                        app.setGamestate(1);
-                        app.resetGame();
+                        this.setGamestate(1);
+                        this.resetGame();
                     }))
-                    .setShouldClientCallback(true).setVisibilitySupplier(() -> app.getGamestate() == 0));
+                    .setShouldClientCallback(true).setVisibilitySupplier(() -> this.getGamestate() == 0));
             // Gamestate 1: Play
-            app.setMaze((MazeWidget) new MazeWidget().setVisibilitySupplier(() -> app.getGamestate() >= 1));
-            app.setPlayer((PlayerWidget) new PlayerWidget(0, 0, app).setVisibilitySupplier(() -> app.getGamestate() >= 1));
-            app.setEnemy((EnemyWidget) new EnemyWidget(-100, -100, app).setVisibilitySupplier(() -> app.getGamestate() >= 1));
+            this.setMaze((MazeWidget) new MazeWidget().setVisibilitySupplier(() -> this.getGamestate() >= 1));
+            this.setPlayer((PlayerWidget) new PlayerWidget(0, 0, this).setVisibilitySupplier(() -> this.getGamestate() >= 1));
+            this.setEnemy((EnemyWidget) new EnemyWidget(-100, -100, this).setVisibilitySupplier(() -> this.getGamestate() >= 1));
             // Gamestate 2: Pause
-            app.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, new ColorRectTexture(0xFF000000)).setVisibilitySupplier(() -> app.getGamestate() > 1));
-            app.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 50, 20, "Continue", (clickData) -> app.setGamestate(1)).setVisibilitySupplier(() -> app.getGamestate() == 2));
-            app.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Game Paused", 0xFFFFFFFF).setXCentered(true).setVisibilitySupplier(() -> app.getGamestate() == 2));
+            this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, new ColorRectTexture(0xFF000000)).setVisibilitySupplier(() -> this.getGamestate() > 1));
+            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 50, 20, "Continue", (clickData) -> this.setGamestate(1)).setVisibilitySupplier(() -> this.getGamestate() == 2));
+            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Game Paused", 0xFFFFFFFF).setXCentered(true).setVisibilitySupplier(() -> this.getGamestate() == 2));
             // Gamestate 3: Death
-            app.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 40, "", 0xFFFFFFFF, () -> "Oh no! You were eaten by the Minotaur!", true).setVisibilitySupplier(() -> app.getGamestate() == 3));
-            app.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "", 0xFFFFFFFF, () -> "You got through " + app.getMazesSolved() + " mazes before losing.", true).setVisibilitySupplier(() -> app.getGamestate() == 3));
-            app.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 16, "", 0xFFFFFFFF, () -> "Try again?", true).setVisibilitySupplier(() -> app.getGamestate() == 3));
-            app.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 + 10, 40, 20, "Retry", (clickData -> {
-                app.setGamestate(1);
-                app.setMazesSolved(0);
+            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 40, "", 0xFFFFFFFF, () -> "Oh no! You were eaten by the Minotaur!", true).setVisibilitySupplier(() -> this.getGamestate() == 3));
+            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "", 0xFFFFFFFF, () -> "You got through " + this.getMazesSolved() + " mazes before losing.", true).setVisibilitySupplier(() -> this.getGamestate() == 3));
+            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 16, "", 0xFFFFFFFF, () -> "Try again?", true).setVisibilitySupplier(() -> this.getGamestate() == 3));
+            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 + 10, 40, 20, "Retry", (clickData -> {
+                this.setGamestate(1);
+                this.setMazesSolved(0);
                 MAZE_SIZE = 9;
                 speed = 25;
-                app.resetGame();
-            })).setShouldClientCallback(true).setVisibilitySupplier(() -> app.getGamestate() == 3));
-
-
+                this.resetGame();
+            })).setShouldClientCallback(true).setVisibilitySupplier(() -> this.getGamestate() == 3));
         }
-        return app;
+        return this;
     }
 
     public void setPlayer(PlayerWidget player) {
