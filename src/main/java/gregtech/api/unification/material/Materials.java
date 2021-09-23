@@ -565,8 +565,6 @@ public class Materials {
     public static Material LightFuel;
     public static Material HeavyFuel;
     public static Material LPG;
-    public static Material Honey;
-    public static Material Juice;
     public static Material RawGrowthMedium;
     public static Material SterileGrowthMedium;
     public static Material Oil;
