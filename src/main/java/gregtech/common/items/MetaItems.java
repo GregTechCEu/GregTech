@@ -462,7 +462,6 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem SCREWDRIVER;
     public static ToolMetaItem<?>.MetaToolValueItem MORTAR;
     public static ToolMetaItem<?>.MetaToolValueItem WIRE_CUTTER;
-    public static ToolMetaItem<?>.MetaToolValueItem SCOOP;
     public static ToolMetaItem<?>.MetaToolValueItem BRANCH_CUTTER;
     public static ToolMetaItem<?>.MetaToolValueItem UNIVERSAL_SPADE;
     public static ToolMetaItem<?>.MetaToolValueItem KNIFE;
