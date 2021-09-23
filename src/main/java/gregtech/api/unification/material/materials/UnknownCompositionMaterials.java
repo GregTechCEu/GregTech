@@ -156,11 +156,9 @@ public class UnknownCompositionMaterials {
         LPG = new Material.Builder(1574, "lpg")
                 .fluid(FluidType.GAS).build();
 
-        Honey = new Material.Builder(1575, "honey")
-                .fluid().build();
+        //Free ID 1575
 
-        Juice = new Material.Builder(1576, "juice")
-                .fluid().color(0xA8C972).build();
+        //Free ID 1576
 
         RawGrowthMedium = new Material.Builder(1577, "raw_growth_medium")
                 .fluid().color(0xA47351).build();
