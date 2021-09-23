@@ -543,7 +543,6 @@ metaitem.tool.screwdriver.name=%s螺丝刀
 metaitem.tool.screwdriver.tooltip=/n右击覆盖板以配置它
 metaitem.tool.mortar.name=%s研钵
 metaitem.tool.wire_cutter.name=%s剪线钳
-metaitem.tool.scoop.name=%s捕虫网
 metaitem.tool.branch_cutter.name=%s剪枝器
 metaitem.tool.universal_spade.name=%s万用铲
 metaitem.tool.knife.name=%s刀
@@ -2037,7 +2036,6 @@ itemGroup.gregtech.main=主体
 itemGroup.gregtech.materials=材料
 itemGroup.gregtech.ores=矿石
 
-behaviour.scoop=左键以捕捉蝴蝶
 behaviour.softhammer=用以开启与关闭机器
 behaviour.wrench=右键以旋转方块
 behaviour.boor.by=by %s

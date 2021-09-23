@@ -821,7 +821,6 @@ metaitem.tool.screwdriver.name=%s Screwdriver
 metaitem.tool.screwdriver.tooltip=Adjusts Covers and Machines
 metaitem.tool.mortar.name=%s Mortar
 metaitem.tool.wire_cutter.name=%s Wire Cutter
-metaitem.tool.scoop.name=%s Scoop
 metaitem.tool.branch_cutter.name=%s Branch Cutter
 metaitem.tool.universal_spade.name=%s Universal Spade
 metaitem.tool.knife.name=%s Knife
@@ -3506,7 +3505,6 @@ gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.name=The Fina
 gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.desc=Craft a Diamericium Titanium Heating Coil.
 
 
-behaviour.scoop=Catches Butterflies on Leftclick
 behaviour.softhammer=Activates and Deactivates Machines
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
