@@ -62,6 +62,12 @@ public class GrowthMediumRecipes {
                 .fluidOutputs(EnrichedBacterialSludge.getFluid(1000))
                 .buildAndRegister();
 
+        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
+                .input(dustTiny, Naquadria)
+                .fluidInputs(BacterialSludge.getFluid(1000))
+                .fluidOutputs(EnrichedBacterialSludge.getFluid(2000))
+                .buildAndRegister();
+
         // Mutagen
         DISTILLERY_RECIPES.recipeBuilder().EUt(1920).duration(40)
                 .fluidInputs(EnrichedBacterialSludge.getFluid(10))
