@@ -200,8 +200,7 @@ public class UnknownCompositionMaterials {
         EnrichedBacterialSludge = new Material.Builder(1586, "enriched_bacterial_sludge")
                 .fluid().color(0x7FFF00).build();
 
-        FermentedBacterialSludge = new Material.Builder(1587, "fermented_bacterial_sludge")
-                .fluid().color(0x32CD32).build();
+        // free id: 1587
 
         Mutagen = new Material.Builder(1588, "mutagen")
                 .fluid().color(0x00FF7F).build();
