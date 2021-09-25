@@ -52,7 +52,7 @@ public class CTRecipe {
     }
 
     @ZenGetter("chancedOutputs")
-    public List<ChancedEntry> getChancedOutputsFix() {
+    public List<ChancedEntry> getChancedOutputs() {
         ArrayList<ChancedEntry> result = new ArrayList<>();
         this.backingRecipe.getChancedOutputs().forEach(chanceEntry ->
                 result.add(new ChancedEntry(new MCItemStack(chanceEntry.getItemStack()), chanceEntry.getChance(), chanceEntry.getBoostPerTier())));
