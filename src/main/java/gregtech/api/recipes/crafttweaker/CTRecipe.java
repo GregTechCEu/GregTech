@@ -51,18 +51,12 @@ public class CTRecipe {
                 .collect(Collectors.toList());
     }
 
-    @ZenGetter("changedOutputs")
-    public List<ChancedEntry> getChancedOutputs() {
+    @ZenGetter("chancedOutputs")
+    public List<ChancedEntry> getChancedOutputsFix() {
         ArrayList<ChancedEntry> result = new ArrayList<>();
         this.backingRecipe.getChancedOutputs().forEach(chanceEntry ->
                 result.add(new ChancedEntry(new MCItemStack(chanceEntry.getItemStack()), chanceEntry.getChance(), chanceEntry.getBoostPerTier())));
         return result;
-    }
-
-    //Typo Fix
-    @ZenGetter("chancedOutputs")
-    public List<ChancedEntry> getChancedOutputsFix() {
-        return getChancedOutputs();
     }
 
     @ZenGetter("fluidInputs")
