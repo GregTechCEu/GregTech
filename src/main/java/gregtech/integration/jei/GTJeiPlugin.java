@@ -57,7 +57,7 @@ public class GTJeiPlugin implements IModPlugin {
     public static IJeiRuntime jeiRuntime;
 
     @Override
-    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+    public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
         GTJeiPlugin.jeiRuntime = jeiRuntime;
     }
 
