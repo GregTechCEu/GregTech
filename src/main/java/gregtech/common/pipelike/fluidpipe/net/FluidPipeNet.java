@@ -3,6 +3,7 @@ package gregtech.common.pipelike.fluidpipe.net;
 import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
+import gregtech.api.recipes.FluidKey;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
@@ -20,9 +21,22 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
 
     private final Set<FluidStack> fluids = new HashSet<>();
     private final Map<FluidStack, BlockPos> dirtyStacks = new HashMap<>();
+    private final Map<FluidStack, List<TileEntityFluidPipe>> requestedPipes = new HashMap<>();
 
     public FluidPipeNet(WorldPipeNet<FluidPipeProperties, FluidPipeNet> world) {
         super(world);
+    }
+
+    public void requestFluid(TileEntityFluidPipe pipe, FluidStack stack1) {
+        FluidStack stack = stack1.copy();
+        stack.amount = 1;
+        List<TileEntityFluidPipe> pipes = requestedPipes.get(stack);
+        if(pipes == null)
+            pipes = new ArrayList<>();
+        else if(pipes.contains(pipe))
+            return;
+        pipes.add(pipe);
+        requestedPipes.put(stack, pipes);
     }
 
     @Override
@@ -43,7 +57,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                 return amount;
             }
         }
-        return 0;
+        throw new IllegalStateException("Tried to drain not existend fluid from net");
     }
 
     protected void fill(FluidStack stack, BlockPos pos) {
@@ -51,10 +65,12 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
         for (FluidStack stack1 : fluids) {
             if (stack1.isFluidEqual(stack)) {
                 stack1.amount += stack.amount;
+                GTLog.logger.info("Adding {} to {}", stack.amount, stack1.getLocalizedName());
                 markDirtyPipeNetStack(stack1, pos);
                 return;
             }
         }
+        GTLog.logger.info("Inserting new fluid {} * {}", stack.getLocalizedName(), stack.amount);
         fluids.add(stack);
         markDirtyPipeNetStack(stack, pos);
     }
@@ -85,36 +101,68 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
 
     @Override
     public void update() {
-        if (dirtyStacks.size() == 0) return;
-        Iterator<FluidStack> iterator = dirtyStacks.keySet().iterator();
-        while (iterator.hasNext()) {
-            FluidStack dirtyStack = iterator.next();
-            if (dirtyStack.amount <= 0) {
-                iterator.remove();
-                continue;
-            }
-            List<TileEntityFluidPipe> pipes = FluidNetWalker.getPipesForFluid(getWorldData(), dirtyStacks.get(dirtyStack), dirtyStack);
-            int c = dirtyStack.amount / pipes.size();
-            int m = dirtyStack.amount % pipes.size();
-            int overflow = 0;
-            for (TileEntityFluidPipe pipe : pipes) {
-                int count = c;
-                if (m > 0) {
-                    count++;
+        for(Map.Entry<FluidStack, List<TileEntityFluidPipe>> entry : requestedPipes.entrySet()) {
+            FluidStack stack = entry.getKey();
+            List<TileEntityFluidPipe> pipes = entry.getValue();
+            FluidNetWalker walker = FluidNetWalker.countFluid(getWorldData(), pipes.get(0).getPos(), stack);
+            GTLog.logger.info("Found {} * {} in {} pipes", stack.getLocalizedName(), walker.getCount(), walker.getPipes().size());
+            int c = walker.getCount() / pipes.size();
+            int m = walker.getCount() % pipes.size();
+            int inserted = 0;
+            for(TileEntityFluidPipe pipe : pipes) {
+                FluidStack toInsert = stack.copy();
+                toInsert.amount = c;
+                if(m > 0) {
+                    toInsert.amount++;
                     m--;
                 }
-                FluidStack stack = dirtyStack.copy();
-                stack.amount = count;
-                overflow += pipe.setFluidAuto(stack);
+                int i = pipe.distribute(toInsert);
+                inserted += i;
+                GTLog.logger.info(" - inserting {}, inserted {}", toInsert.amount, i);
             }
-            dirtyStack.amount -= overflow;
-            iterator.remove();
+            GTLog.logger.info(" - inserted {}", inserted);
+            FluidStack toDrain = stack.copy();
+            toDrain.amount = inserted;
+            for(TileEntityFluidPipe pipe : walker.getPipes()) {
+                FluidStack drained = pipe.getTankList().drain(toDrain, true);
+                if(drained != null)
+                    toDrain.amount -= drained.amount;
+            }
         }
-        dirtyStacks.clear();
-    }
+        requestedPipes.clear();
 
+        if(dirtyStacks.size() > 0) {
+            GTLog.logger.info("Redistributing fluids");
+            Iterator<FluidStack> iterator = dirtyStacks.keySet().iterator();
+            while (iterator.hasNext()) {
+                FluidStack dirtyStack = iterator.next();
+                if (dirtyStack.amount <= 0) {
+                    iterator.remove();
+                    continue;
+                }
+                List<TileEntityFluidPipe> pipes = FluidNetWalker.getPipesForFluid(getWorldData(), dirtyStacks.get(dirtyStack), dirtyStack);
+                int c = dirtyStack.amount / pipes.size();
+                int m = dirtyStack.amount % pipes.size();
+                int overflow = 0;
+                for (TileEntityFluidPipe pipe : pipes) {
+                    int count = c;
+                    if (m > 0) {
+                        count++;
+                        m--;
+                    }
+                    FluidStack stack = dirtyStack.copy();
+                    stack.amount = count;
+                    overflow += pipe.setFluidAuto(stack);
+                }
+                dirtyStack.amount -= overflow;
+                iterator.remove();
+            }
+            dirtyStacks.clear();
+        }
+    }
     private void markDirtyPipeNetStack(FluidStack stack, BlockPos pos) {
         if (stack != null && stack.amount > 0) {
+            GTLog.logger.info("Marking stack {} * {} dirty", stack.getLocalizedName(), stack.amount);
             dirtyStacks.put(stack, pos);
         }
     }

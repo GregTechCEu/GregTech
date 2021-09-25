@@ -77,8 +77,16 @@ public abstract class PipeNetWalker {
      */
     protected abstract boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour);
 
+    /**
+     * Called when a sub walker is done walking
+     *
+     * @param subWalker the finished sub walker
+     */
+    protected void onRemoveSubWalker(PipeNetWalker subWalker) {
+    }
+
     public void traversePipeNet() {
-        traversePipeNet(2048);
+        traversePipeNet(32768);
     }
 
     /**
@@ -95,7 +103,7 @@ public abstract class PipeNetWalker {
         while (running && !walk() && i++ < maxWalks) ;
         running = false;
         walked.clear();
-        if(i >= maxWalks)
+        if (i >= maxWalks)
             GTLog.logger.fatal("The walker reached the maximum amount of walks {}", i);
         invalid = true;
     }
@@ -113,7 +121,6 @@ public abstract class PipeNetWalker {
         }
 
         if (walkers == null) {
-            GTLog.logger.info(" - creating {} sub walkers", pipes.size());
             walkers = new ArrayList<>();
             for (EnumFacing side : pipes) {
                 PipeNetWalker walker = Objects.requireNonNull(createSubWalker(world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null");
@@ -121,7 +128,14 @@ public abstract class PipeNetWalker {
                 walkers.add(walker);
             }
         } else {
-            walkers.removeIf(PipeNetWalker::walk);
+            Iterator<PipeNetWalker> iterator = walkers.iterator();
+            while (iterator.hasNext()) {
+                PipeNetWalker walker = iterator.next();
+                if (walker.walk()) {
+                    iterator.remove();
+                    onRemoveSubWalker(walker);
+                }
+            }
         }
 
         return !running || walkers.size() == 0;

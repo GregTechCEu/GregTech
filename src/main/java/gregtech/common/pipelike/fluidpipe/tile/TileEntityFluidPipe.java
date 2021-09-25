@@ -1,8 +1,12 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.common.covers.CoverPump;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
@@ -26,9 +30,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Random;
+import java.util.*;
 
 public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties> {
 
@@ -38,6 +40,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     private FluidTank[] fluidTanks;
     private int currentChannel = -1;
     private final EnumMap<EnumFacing, Integer> lastInserted = new EnumMap<>(EnumFacing.class);
+    protected static final int FREQUENCY = 5;
 
     private final EnumSet<EnumFacing> openConnections = EnumSet.noneOf(EnumFacing.class);
 
@@ -75,11 +78,58 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return openConnections;
     }
 
-    /**
-     * Formula: rate * frequency (5) * 2
-     */
+    public int distribute(FluidStack stack) {
+        if (stack == null || stack.amount <= 0) return 0;
+        List<IFluidHandler> handlers = getNeighbourHandlers();
+        if (handlers.size() == 0) return 0;
+        int amountToDistribute = stack.amount;//getCapacityPerTank() / 2;
+        int c = amountToDistribute / handlers.size();
+        int m = amountToDistribute % handlers.size();
+        int inserted = 0;
+        for (IFluidHandler handler : handlers) {
+            FluidStack stackToFill = stack.copy();
+            stackToFill.amount = c;
+            if (m > 0) {
+                stackToFill.amount++;
+                m--;
+            }
+            inserted += handler.fill(stackToFill, true);
+        }
+        FluidStack toDrain = stack.copy();
+        toDrain.amount = inserted;
+        getTankList().drain(toDrain, true);
+        return inserted;
+    }
+
+    public List<IFluidHandler> getNeighbourHandlers() {
+        List<IFluidHandler> handlers = new ArrayList<>();
+        for (EnumFacing facing : getOpenFaces()) {
+            if (getLastInserted().containsKey(facing))
+                continue;
+            TileEntity tile = getWorld().getTileEntity(pos.offset(facing));
+            if (tile == null) continue;
+            IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, facing.getOpposite());
+            if (handler != null) {
+                ICoverable coverable = getCoverableImplementation();
+                CoverBehavior cover = coverable.getCoverAtSide(facing);
+                if (cover instanceof CoverPump && ((CoverPump) cover).getPumpMode() == CoverPump.PumpMode.IMPORT && ((CoverPump) cover).blocksInput()) {
+                    continue;
+                }
+                coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, facing.getOpposite());
+                if (coverable != null) {
+                    cover = coverable.getCoverAtSide(facing.getOpposite());
+                    if (cover instanceof CoverPump && ((CoverPump) cover).getPumpMode() == CoverPump.PumpMode.EXPORT && ((CoverPump) cover).blocksInput()) {
+                        continue;
+                    }
+                }
+                handlers.add(handler);
+            }
+        }
+        return handlers;
+    }
+
     public int getCapacityPerTank() {
-        return getNodeData().throughput * 10;
+        return getNodeData().throughput * 2 * FREQUENCY;
     }
 
     public void checkNeighbours() {
@@ -110,6 +160,10 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return getFluidTanks()[channel].getFluid();
     }
 
+    public FluidStack findFluid(FluidStack stack) {
+        return getContainedFluid(findChannel(stack));
+    }
+
     private void createTanksList() {
         fluidTanks = new FluidTank[getNodeData().tanks];
         for (int i = 0; i < getNodeData().tanks; i++) {
@@ -120,8 +174,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         }
     }
 
-    public FluidTankList getTankList() {
-        return getTankList(EnumFacing.UP);
+    public PipeTankList getTankList() {
+        return (PipeTankList) getTankList(EnumFacing.UP);
     }
 
     public FluidTankList getTankList(EnumFacing facing) {
@@ -156,12 +210,24 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
             getFluidTanks()[channel].setFluid(null);
             return 0;
         }
+        FluidStack currentStack = getContainedFluid(channel);
+        if (currentStack == null || currentStack.amount <= 0) {
+            checkAndDestroy(stack);
+        }
         int originalAmount = stack.amount;
         FluidTank tank = getFluidTanks()[channel];
         stack.amount = Math.min(stack.amount, tank.getCapacity());
         tank.setFluid(stack);
         this.currentChannel = -1;
         return originalAmount - stack.amount;
+    }
+
+    public void checkAndDestroy(FluidStack stack) {
+        boolean burning = getNodeData().maxFluidTemperature < stack.getFluid().getTemperature(stack);
+        boolean leaking = getNodeData().gasProof && stack.getFluid().isGaseous(stack);
+        if (burning || leaking) {
+            destroyPipe(burning, leaking);
+        }
     }
 
     private void emptyTank(int channel) {

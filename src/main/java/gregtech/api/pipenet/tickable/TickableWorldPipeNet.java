@@ -15,6 +15,7 @@ public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeD
 
     private final Map<T, List<ChunkPos>> loadedChunksByPipeNet = new HashMap<>();
     private final Set<T> tickingPipeNets = new HashSet<>();
+    private final Set<T> removeLater = new HashSet<>();
 
     public TickableWorldPipeNet(String name) {
         super(name);
@@ -31,6 +32,10 @@ public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeD
     public void update() {
         if (getWorld().getTotalWorldTime() % getUpdateRate() == 0L) {
             tickingPipeNets.forEach(net -> net.update());
+        }
+        if(removeLater.size() > 0) {
+            removeLater.forEach(tickingPipeNets::remove);
+            removeLater.clear();
         }
     }
 
@@ -101,7 +106,7 @@ public abstract class TickableWorldPipeNet<NodeDataType, T extends PipeNet<NodeD
 
     private void removeFromTicking(T pipeNet) {
         this.loadedChunksByPipeNet.remove(pipeNet);
-        this.tickingPipeNets.remove(pipeNet);
+        this.removeLater.add(pipeNet);
     }
 
     private List<ChunkPos> getOrCreateChunkListForPipeNet(T pipeNet) {

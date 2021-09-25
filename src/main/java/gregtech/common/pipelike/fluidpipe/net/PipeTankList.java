@@ -29,11 +29,7 @@ public class PipeTankList extends FluidTankList {
             pipe.didInsertFrom(facing);
             pipe.getFluidPipeNet().fill(stack, pipe.getPos());
             if(wasEmpty) {
-                boolean burning = pipe.getNodeData().maxFluidTemperature < resource.getFluid().getTemperature(resource);
-                boolean leaking = !pipe.getNodeData().gasProof && resource.getFluid().isGaseous(resource);
-                if(burning || leaking) {
-                    pipe.destroyPipe(burning, leaking);
-                }
+                pipe.checkAndDestroy(resource);
             }
         }
         return filled;
