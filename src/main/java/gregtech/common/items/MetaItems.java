@@ -46,6 +46,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COIN_CHOCOLATE;
 
     public static MetaItem<?>.MetaValueItem COMPRESSED_CLAY;
+    public static MetaItem<?>.MetaValueItem COMPRESSED_COKE_CLAY;
     public static MetaItem<?>.MetaValueItem COMPRESSED_FIRECLAY;
     public static MetaItem<?>.MetaValueItem FIRECLAY_BRICK;
     public static MetaItem<?>.MetaValueItem COKE_OVEN_BRICK;
@@ -70,7 +71,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_MOLD_ROTOR;
 
-    public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[26];
+    public static final MetaItem<?>.MetaValueItem[] SHAPE_EXTRUDERS = new MetaValueItem[27];
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_PLATE;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_BOLT;
@@ -97,6 +98,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_FOIL;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_GEAR_SMALL;
     public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROD_LONG;
+    public static MetaItem<?>.MetaValueItem SHAPE_EXTRUDER_ROTOR;
 
     public static MetaItem<?>.MetaValueItem SPRAY_EMPTY;
 
@@ -437,6 +439,8 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem NANO_SABER;
     public static MetaItem<?>.MetaValueItem SCANNER;
+    public static MetaItem<?>.MetaValueItem WIRELESS;
+    public static MetaItem<?>.MetaValueItem CAMERA;
     public static MetaItem<?>.MetaValueItem TERMINAL;
 
     public static final MetaItem<?>.MetaValueItem[] DYE_ONLY_ITEMS = new MetaItem.MetaValueItem[EnumDyeColor.values().length];
@@ -458,7 +462,6 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem SCREWDRIVER;
     public static ToolMetaItem<?>.MetaToolValueItem MORTAR;
     public static ToolMetaItem<?>.MetaToolValueItem WIRE_CUTTER;
-    public static ToolMetaItem<?>.MetaToolValueItem SCOOP;
     public static ToolMetaItem<?>.MetaToolValueItem BRANCH_CUTTER;
     public static ToolMetaItem<?>.MetaToolValueItem UNIVERSAL_SPADE;
     public static ToolMetaItem<?>.MetaToolValueItem KNIFE;

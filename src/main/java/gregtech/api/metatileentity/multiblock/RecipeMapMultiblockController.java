@@ -12,11 +12,15 @@ import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
+import gregtech.api.gui.Widget;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -41,6 +45,8 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected IMultipleTankHandler inputFluidInventory;
     protected IMultipleTankHandler outputFluidInventory;
     protected IEnergyContainer energyContainer;
+
+    private boolean isDistinct = false;
 
     public RecipeMapMultiblockController(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap) {
         super(metaTileEntityId);
@@ -136,6 +142,17 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 
+            if(canBeDistinct()) {
+                ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.universal.distinct");
+                buttonText.appendText(" ");
+                ITextComponent button = AdvancedTextWidget.withButton(isDistinct() ?
+                        new TextComponentTranslation("gregtech.multiblock.universal.distinct.yes").setStyle(new Style().setColor(TextFormatting.GREEN)) :
+                        new TextComponentTranslation("gregtech.multiblock.universal.distinct.no").setStyle(new Style().setColor(TextFormatting.RED)), "distinct");
+                AdvancedTextWidget.withHoverTextTranslate(button, "gregtech.multiblock.universal.distinct.info");
+                buttonText.appendSibling(button);
+                textList.add(buttonText);
+            }
+
             if (!recipeMapWorkable.isWorkingEnabled()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
 
@@ -154,18 +171,21 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     @Override
+    protected void handleDisplayClick(String componentData, Widget.ClickData clickData) {
+        super.handleDisplayClick(componentData, clickData);
+        toggleDistinct();
+    }
+
+    @Override
     protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
         boolean canForm = super.checkStructureComponents(parts, abilities);
         if (!canForm)
             return false;
 
         //basically check minimal requirements for inputs count
-        //noinspection SuspiciousMethodCalls
         int itemInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_ITEMS, Collections.emptyList())
                 .stream().map(it -> (IItemHandler) it).mapToInt(IItemHandler::getSlots).sum();
-        //noinspection SuspiciousMethodCalls
         int fluidInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
-        //noinspection SuspiciousMethodCalls
         return itemInputsCount >= recipeMap.getMinInputs() &&
                 fluidInputsCount >= recipeMap.getMinFluidInputs() &&
                 abilities.containsKey(MultiblockAbility.INPUT_ENERGY);
@@ -175,5 +195,49 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive());
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound data) {
+        super.writeToNBT(data);
+        data.setBoolean("isDistinct", isDistinct);
+        return data;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound data) {
+        super.readFromNBT(data);
+        isDistinct = data.getBoolean("isDistinct");
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer buf) {
+        super.writeInitialSyncData(buf);
+        buf.writeBoolean(isDistinct);
+    }
+
+    @Override
+    public void receiveInitialSyncData(PacketBuffer buf) {
+        super.receiveInitialSyncData(buf);
+        isDistinct = buf.readBoolean();
+    }
+
+    public boolean canBeDistinct() {
+        return false;
+    }
+
+    public boolean isDistinct() {
+        return isDistinct;
+    }
+
+    protected void toggleDistinct() {
+        isDistinct = !isDistinct;
+        recipeMapWorkable.onDistinctChanged();
+        //mark buses as changed on distinct toggle
+        if (isDistinct) {
+            this.notifiedItemInputList.addAll(this.getAbilities(MultiblockAbility.IMPORT_ITEMS));
+        } else {
+            this.notifiedItemInputList.add(this.inputInventory);
+        }
     }
 }

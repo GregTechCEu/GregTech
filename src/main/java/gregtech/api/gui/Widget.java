@@ -1,7 +1,6 @@
 package gregtech.api.gui;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.gui.widgets.WidgetUIAccess;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
@@ -22,6 +21,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -29,8 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Widget is functional element of ModularUI
@@ -275,11 +273,11 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    public void drawBorder(int x, int y, int width, int height, int stroke, int stroke_width) {
-        drawGradientRect(x - stroke_width, y - stroke_width, width + 2 * stroke_width, stroke_width, stroke, stroke);
-        drawGradientRect(x - stroke_width, y + height, width + 2 * stroke_width, stroke_width, stroke, stroke);
-        drawGradientRect(x - stroke_width, y - stroke_width, stroke_width, height + 2 * stroke_width, stroke, stroke);
-        drawGradientRect(x + width, y - stroke_width, stroke_width, height + 2 * stroke_width, stroke, stroke);
+    public static void drawBorder(int x, int y, int width, int height, int color, int border) {
+        drawSolidRect(x - border, y - border, width + 2 * border, border, color);
+        drawSolidRect(x - border, y + height, width + 2 * border, border, color);
+        drawSolidRect(x - border, y, border, height, color);
+        drawSolidRect(x + width, y, border, height, color);
     }
 
     @SideOnly(Side.CLIENT)
@@ -291,18 +289,18 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
-    public void drawStringSized(String text, double x, double y, int color, boolean dropShadow, float scale, boolean center) {
+    public static void drawStringSized(String text, double x, double y, int color, boolean dropShadow, float scale, boolean center) {
         GlStateManager.pushMatrix();
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         double scaledTextWidth = center ? fontRenderer.getStringWidth(text) * scale : 0.0;
-        GlStateManager.translate(x + scaledTextWidth / 2.0, y, 0.0f);
+        GlStateManager.translate(x - scaledTextWidth / 2.0, y, 0.0f);
         GlStateManager.scale(scale, scale, scale);
         fontRenderer.drawString(text, 0, 0, color, dropShadow);
         GlStateManager.popMatrix();
     }
 
     @SideOnly(Side.CLIENT)
-    public void drawStringFixedCorner(String text, double x, double y, int color, boolean dropShadow, float scale) {
+    public static void drawStringFixedCorner(String text, double x, double y, int color, boolean dropShadow, float scale) {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         double scaledWidth = fontRenderer.getStringWidth(text) * scale;
         double scaledHeight = fontRenderer.FONT_HEIGHT * scale;
@@ -360,6 +358,35 @@ public abstract class Widget {
         Gui.drawRect(x, y, x + width, y + height, color);
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
         GlStateManager.enableBlend();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawRectShadow(int x, int y, int width, int height, int distance) {
+        drawGradientRect(x + distance, y + height, width - distance, distance, 0x4f000000, 0, false);
+        drawGradientRect(x + width, y + distance, distance, height - distance, 0x4f000000, 0, true);
+
+        float startAlpha = (float) (0x4f) / 255.0F;
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
+        x += width;
+        y += height;
+        buffer.pos(x, y, 0).color(0, 0, 0, startAlpha).endVertex();
+        buffer.pos(x, y + distance, 0).color(0, 0, 0, 0).endVertex();
+        buffer.pos(x + distance, y + distance, 0).color(0, 0, 0, 0).endVertex();
+
+        buffer.pos(x, y, 0).color(0, 0, 0, startAlpha).endVertex();
+        buffer.pos(x + distance, y + distance, 0).color(0, 0, 0, 0).endVertex();
+        buffer.pos(x + distance, y, 0).color(0, 0, 0, 0).endVertex();
+        tessellator.draw();
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
     }
 
     @SideOnly(Side.CLIENT)
@@ -510,6 +537,18 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
+    public static void drawTextureRect(double x, double y, double width, double height) {
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        buffer.pos(x, y + height, 0.0D).tex(0, 0).endVertex();
+        buffer.pos(x + width, y + height, 0.0D).tex(1, 0).endVertex();
+        buffer.pos(x + width, y, 0.0D).tex(1, 1).endVertex();
+        buffer.pos(x, y, 0.0D).tex(0, 1).endVertex();
+        tessellator.draw();
+    }
+
+    @SideOnly(Side.CLIENT)
     public static List<Vec2f> genBezierPoints(Vec2f from, Vec2f to, boolean horizontal, float u) {
         Vec2f c1;
         Vec2f c2;
@@ -554,7 +593,7 @@ public abstract class Widget {
         return Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL);
     }
 
-    protected boolean isRemote() {
+    public boolean isRemote() {
         return gui.holder.isRemote();
     }
 
@@ -598,25 +637,4 @@ public abstract class Widget {
         }
     }
 
-    public static class ClientSideField<T> {
-        @SideOnly(Side.CLIENT)
-        private T fieldValue;
-
-        public ClientSideField(Supplier<T> initializer) {
-            if (isClientSide()) {
-                this.fieldValue = initializer.get();
-            }
-        }
-
-        public void useOnClient(Consumer<T> callback) {
-            if (isClientSide()) {
-                callback.accept(fieldValue);
-            }
-        }
-
-        @SideOnly(Side.CLIENT)
-        public T get() {
-            return fieldValue;
-        }
-    }
 }

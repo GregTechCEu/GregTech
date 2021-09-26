@@ -27,7 +27,7 @@ public class MaterialRegistry {
         DEFERRED_REGISTRY.forEach(MaterialRegistry::finalizeRegistry);
         DEFERRED_REGISTRY.forEach(MaterialRegistry::postVerify);
         DEFERRED_REGISTRY = shouldFreeze ? null : new ArrayList<>(); // destroy the deferred registry
-        if (shouldFreeze) MATERIAL_REGISTRY.freezeRegistry();
+        if (shouldFreeze) MATERIAL_REGISTRY.freeze();
     }
 
     public static boolean isFrozen() {

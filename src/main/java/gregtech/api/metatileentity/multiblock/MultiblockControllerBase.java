@@ -30,6 +30,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -42,7 +44,7 @@ import java.util.function.Predicate;
 
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
 
-    protected BlockPattern structurePattern;
+    public BlockPattern structurePattern;
 
     private final Map<MultiblockAbility<Object>, List<Object>> multiblockAbilities = new HashMap<>();
     private final List<IMultiblockPart> multiblockParts = new ArrayList<>();
@@ -95,6 +97,11 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Nonnull
     protected OrientedOverlayRenderer getFrontOverlay() {
         return Textures.MULTIBLOCK_WORKABLE_OVERLAY;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite getFrontDefaultTexture() {
+        return getFrontOverlay().sprites.get(OrientedOverlayRenderer.OverlayFace.FRONT).getSprite(false);
     }
 
     public int getLightValueForPart(IMultiblockPart sourcePart) {
@@ -187,7 +194,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         return BlockPos::hashCode;
     }
 
-    protected void checkStructurePattern() {
+    public void checkStructurePattern() {
         EnumFacing facing = getFrontFacing().getOpposite();
         PatternMatchContext context = structurePattern.checkPatternAt(getWorld(), getPos(), facing);
         if (context != null && !structureFormed) {

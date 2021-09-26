@@ -1,6 +1,7 @@
 package gregtech.common.covers;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechRegistries;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
@@ -88,7 +89,7 @@ public class CoverBehaviors {
 
     public static void registerBehavior(int coverNetworkId, ResourceLocation coverId, MetaValueItem placerItem, BiFunction<ICoverable, EnumFacing, CoverBehavior> behaviorCreator) {
         CoverDefinition coverDefinition = new CoverDefinition(coverId, behaviorCreator, placerItem.getStackForm());
-        CoverDefinition.registerCover(coverNetworkId, coverDefinition);
+        GregTechRegistries.COVER_REGISTRY.register(coverNetworkId, coverId, coverDefinition);
         placerItem.addComponents(new CoverPlaceBehavior(coverDefinition));
     }
 }

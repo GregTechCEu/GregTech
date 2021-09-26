@@ -7,7 +7,7 @@ import crafttweaker.api.item.IItemStack;
 import crafttweaker.mc1120.item.MCItemStack;
 import crafttweaker.zenscript.IBracketHandler;
 import gregtech.api.GTValues;
-import gregtech.api.GregTechAPI;
+import gregtech.api.GregTechRegistries;
 import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraft.util.ResourceLocation;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
@@ -31,7 +31,7 @@ public class MetaTileEntityBracketHandler implements IBracketHandler {
 
     public static IItemStack getMetaTileEntityItem(String name) {
         String[] resultName = splitObjectName(name);
-        MetaTileEntity metaTileEntity = GregTechAPI.META_TILE_ENTITY_REGISTRY.getObject(new ResourceLocation(resultName[0], resultName[1]));
+        MetaTileEntity metaTileEntity = GregTechRegistries.MTE_REGISTRY.getObject(new ResourceLocation(resultName[0], resultName[1]));
         return metaTileEntity == null ? null : new MCItemStack(metaTileEntity.getStackForm());
     }
 

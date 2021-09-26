@@ -1,6 +1,7 @@
 package gregtech.api.metatileentity;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechRegistries;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.UIFactory;
 import net.minecraft.client.Minecraft;
@@ -21,7 +22,7 @@ public class MetaTileEntityUIFactory extends UIFactory<MetaTileEntityHolder> {
     }
 
     public void init() {
-        UIFactory.FACTORY_REGISTRY.register(0, new ResourceLocation(GTValues.MODID, "meta_tile_entity_factory"), this);
+        GregTechRegistries.UI_FACTORY_REGISTRY.register(0, new ResourceLocation(GTValues.MODID, "meta_tile_entity_factory"), this);
     }
 
     @Override

@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -20,6 +17,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.common.blocks.BlockFusionCoil;
 import gregtech.common.blocks.BlockMachineCasing;
@@ -32,6 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -84,7 +83,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
                 .where('c', statePredicate(getCoilState()))
                 .where('O', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS)))
                 .where('E', statePredicate(getCasingState()).or(tilePredicate((state, tile) -> {
-                    for (int i = tier; i < GTValues.V.length; i++) {
+                    for (int i = tier; i < GTValues.UV + 1; i++) {
                         if (tile.metaTileEntityId.equals(MetaTileEntities.ENERGY_INPUT_HATCH[i].metaTileEntityId))
                             return true;
                     }
@@ -193,10 +192,10 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
         textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
     }
 
+    @Nonnull
     @Override
-    public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
-        this.getBaseTexture(null).render(renderState, translation, pipeline);
-        Textures.FUSION_REACTOR_OVERLAY.render(renderState, translation, pipeline, this.getFrontFacing(), this.recipeMapWorkable.isActive());
+    protected OrientedOverlayRenderer getFrontOverlay() {
+        return Textures.FUSION_REACTOR_OVERLAY;
     }
 
     @Override
@@ -231,12 +230,12 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
+        protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
             long heatDiff = recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) - heat;
             if (heatDiff <= 0) {
-                return super.setupAndConsumeRecipeInputs(recipe);
+                return super.setupAndConsumeRecipeInputs(recipe, importInventory);
             }
-            if (energyContainer.getEnergyStored() < heatDiff || !super.setupAndConsumeRecipeInputs(recipe)) {
+            if (energyContainer.getEnergyStored() < heatDiff || !super.setupAndConsumeRecipeInputs(recipe, importInventory)) {
                 return false;
             }
             energyContainer.removeEnergy(heatDiff);

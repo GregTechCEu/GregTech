@@ -43,7 +43,7 @@ public class CachedRecipeData {
         }
         ForgeHooks.setCraftingPlayer(player);
         InventoryCrafting deepCopy = InventoryUtils.deepCopyInventoryCrafting(inventory);
-        NonNullList<ItemStack> remainingItems = recipe.getRemainingItems(deepCopy);
+        NonNullList<ItemStack> remainingItems = recipe.getRemainingItems(deepCopy); // todo right here is where tools get damaged (in UI)
         ForgeHooks.setCraftingPlayer(null);
         for (ItemStack itemStack : remainingItems) {
             itemStack = itemStack.copy();

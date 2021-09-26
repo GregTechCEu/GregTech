@@ -24,12 +24,15 @@ public class StringConfigurator extends ConfiguratorWidget<String>{
         this.addWidget(new RectButtonWidget(76, 15, 40, 20)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(),
                         TerminalTheme.COLOR_1.getColor(),
-                        new Color(255, 255, 255, 0).getRGB())
+                        TerminalTheme.COLOR_B_1.getColor())
                 .setClickListener(data -> updateString())
                 .setIcon(new TextTexture("terminal.guide_editor.update", -1)));
         textFieldWidget = new TextFieldWidget(0, 15, 76, 20, TerminalTheme.COLOR_B_2, null, null)
                 .setMaxStringLength(Integer.MAX_VALUE)
                 .setValidator(s->true);
+        if (config.has(name) && config.get(name).isJsonPrimitive()) {
+            textFieldWidget.setCurrentString(config.get(name).getAsString());
+        }
         this.addWidget(textFieldWidget);
     }
 

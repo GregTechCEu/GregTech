@@ -147,7 +147,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 // replace old recipe with new one
                 this.previousRecipe = currentRecipe;
             // proceed if we have a usable recipe.
-            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe))
+            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory))
                 setupRecipe(currentRecipe);
             // Inputs have been inspected.
             metaTileEntity.getNotifiedItemInputList().clear();

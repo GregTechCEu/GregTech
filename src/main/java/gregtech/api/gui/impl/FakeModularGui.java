@@ -3,7 +3,6 @@ package gregtech.api.gui.impl;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
-import gregtech.api.util.RenderUtil;
 import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

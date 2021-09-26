@@ -35,6 +35,7 @@ public final class ModularUI implements ISizeProvider {
     private final ImmutableList<Runnable> uiCloseCallback;
 
     public boolean isJEIHandled;
+    public boolean needNativeClick;
 
     /**
      * UIHolder of this modular UI

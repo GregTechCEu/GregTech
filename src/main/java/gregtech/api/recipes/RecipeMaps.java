@@ -6,14 +6,8 @@ import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.machines.*;
-import gregtech.api.recipes.recipes.CokeOvenRecipe;
-import gregtech.api.recipes.recipes.PrimitiveBlastFurnaceRecipe;
 import stanhebben.zenscript.annotations.ZenClass;
-import stanhebben.zenscript.annotations.ZenMethod;
 import stanhebben.zenscript.annotations.ZenProperty;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @ZenClass("mods.gregtech.recipe.RecipeMaps")
 @ZenRegister

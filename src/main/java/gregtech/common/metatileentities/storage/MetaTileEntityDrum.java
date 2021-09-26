@@ -12,7 +12,6 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.util.FluidTooltipUtil;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.WatchedFluidTank;
@@ -26,6 +25,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -46,9 +46,11 @@ import java.util.List;
 import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
 
 public class MetaTileEntityDrum extends MetaTileEntity {
+
     private final int tankSize;
     private final Material material;
     private SyncFluidTank fluidTank;
+    private boolean isAutoOutput = false;
 
     public MetaTileEntityDrum(ResourceLocation metaTileEntityId, Material material, int tankSize) {
         super(metaTileEntityId);
@@ -194,12 +196,48 @@ public class MetaTileEntityDrum extends MetaTileEntity {
                 }
             }
             fluidTank.setFluid(fluidStack);
+        } else if (dataId == 560) {
+            this.isAutoOutput = buf.readBoolean();
+            getHolder().scheduleChunkForRenderUpdate();
+        }
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        if (!getWorld().isRemote) {
+            if (isAutoOutput && getOffsetTimer() % 5 == 0) {
+                pushFluidsIntoNearbyHandlers(EnumFacing.DOWN);
+            }
         }
     }
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         return getWorld().isRemote || (FluidUtil.interactWithFluidHandler(playerIn, hand, fluidTank) && !playerIn.isSneaking());
+    }
+
+    @Override
+    public boolean onWrenchClick(EntityPlayer playerIn, EnumHand hand, EnumFacing wrenchSide, CuboidRayTraceResult hitResult) {
+        if (!playerIn.isSneaking()) {
+            if (getWorld().isRemote) {
+                scheduleRenderUpdate();
+                return true;
+            }
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.drum." + (isAutoOutput ? "disable" : "enable") + "_output"));
+            toggleOutput();
+            return true;
+        }
+        return super.onWrenchClick(playerIn, hand, wrenchSide, hitResult);
+    }
+
+    private void toggleOutput() {
+        isAutoOutput = !isAutoOutput;
+        if (!getWorld().isRemote) {
+            getHolder().notifyBlockUpdate();
+            writeCustomData(560, buf -> buf.writeBoolean(isAutoOutput));
+            markDirty();
+        }
     }
 
     @Override
@@ -224,6 +262,9 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         } else {
             ColourMultiplier multiplier = new ColourMultiplier(ColourRGBA.multiply(GTUtility.convertRGBtoOpaqueRGBA_CL(material.getMaterialRGB()), GTUtility.convertRGBtoOpaqueRGBA_CL(getPaintingColorForRendering())));
             Textures.DRUM.render(renderState, translation, ArrayUtils.add(pipeline, multiplier), getFrontFacing());
+        }
+        if (isAutoOutput) {
+            Textures.STEAM_VENT_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
         }
     }
 

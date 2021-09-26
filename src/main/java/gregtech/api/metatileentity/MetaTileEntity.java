@@ -10,6 +10,7 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
+import gregtech.api.GregTechRegistries;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.FluidHandlerProxy;
@@ -331,6 +332,10 @@ public abstract class MetaTileEntity implements ICoverable {
      */
     protected abstract ModularUI createUI(EntityPlayer entityPlayer);
 
+    public ModularUI getModularUI(EntityPlayer entityPlayer) {
+        return createUI(entityPlayer);
+    }
+
     public final void onCoverLeftClick(EntityPlayer playerIn, CuboidRayTraceResult result) {
         CoverBehavior coverBehavior = getCoverAtSide(result.sideHit);
         if (coverBehavior == null || !coverBehavior.onLeftClick(playerIn, result)) {
@@ -644,7 +649,7 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
     public final ItemStack getStackForm(int amount) {
-        int metaTileEntityIntId = GregTechAPI.META_TILE_ENTITY_REGISTRY.getIdByObjectName(metaTileEntityId);
+        int metaTileEntityIntId = GregTechRegistries.MTE_REGISTRY.getIdByObjectName(metaTileEntityId);
         return new ItemStack(GregTechAPI.MACHINE, amount, metaTileEntityIntId);
     }
 
@@ -840,6 +845,8 @@ public abstract class MetaTileEntity implements ICoverable {
         }
         return originalCapability;
     }
+
+
 
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_COVERABLE) {

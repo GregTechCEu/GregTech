@@ -10,6 +10,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 import static gregtech.api.gui.impl.ModularUIGui.*;
@@ -27,6 +30,8 @@ public class SimpleTextWidget extends Widget {
     protected boolean isCentered = true;
     protected boolean clientWidget;
     protected boolean isShadow;
+    protected int width;
+    protected boolean dropShadow;
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, int color, Supplier<String> textSupplier) {
         this(xPosition, yPosition, formatLocale, color, textSupplier, false);
@@ -38,6 +43,16 @@ public class SimpleTextWidget extends Widget {
         this.formatLocale = formatLocale;
         this.textSupplier = textSupplier;
         this.clientWidget = clientWidget;
+    }
+
+    public SimpleTextWidget setDropShadow(boolean dropShadow) {
+        this.dropShadow = dropShadow;
+        return this;
+    }
+
+    public SimpleTextWidget setWidth(int width) {
+        this.width = width;
+        return this;
     }
 
     public SimpleTextWidget(int xPosition, int yPosition, String formatLocale, Supplier<String> textSupplier) {
@@ -78,12 +93,23 @@ public class SimpleTextWidget extends Widget {
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
-        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         String text = formatLocale.isEmpty() ? (I18n.hasKey(lastText) ? I18n.format(lastText) : lastText) : I18n.format(formatLocale, lastText);
-        Position position = getPosition();
-        fontRenderer.drawString(text,
-            isCentered ? position.x - fontRenderer.getStringWidth(text) / 2 : position.x,
-            isCentered ? position.y - fontRenderer.FONT_HEIGHT / 2 : position.y, color, isShadow);
+        List<String> texts;
+        if (this.width > 0) {
+            texts = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(text, width);
+        } else {
+            texts = Collections.singletonList(text);
+        }
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        Position pos = getPosition();
+        int height = fontRenderer.FONT_HEIGHT * texts.size();
+        for (int i = 0; i < texts.size(); i++) {
+            String resultText = texts.get(i);
+            int width = fontRenderer.getStringWidth(resultText);;
+            float x = pos.x - (isCentered ? width / 2f : 0);
+            float y = pos.y - (isCentered ? height / 2f : 0) + i * fontRenderer.FONT_HEIGHT;
+            fontRenderer.drawString(resultText, x, y, color, false);
+        }
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 

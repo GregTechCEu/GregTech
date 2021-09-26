@@ -4,8 +4,6 @@ import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 
-import java.util.ArrayList;
-
 public class WidgetGroup extends AbstractWidgetGroup {
 
     public WidgetGroup() {

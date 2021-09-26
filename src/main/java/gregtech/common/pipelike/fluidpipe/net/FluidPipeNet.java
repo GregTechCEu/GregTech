@@ -7,6 +7,7 @@ import gregtech.api.recipes.FluidKey;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;

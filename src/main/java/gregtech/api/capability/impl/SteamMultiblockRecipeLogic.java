@@ -15,7 +15,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
@@ -107,10 +106,10 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected boolean setupAndConsumeRecipeInputs(Recipe recipe) {
+    protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
         RecipeMapSteamMultiblockController controller = (RecipeMapSteamMultiblockController) metaTileEntity;
         if (controller.checkRecipe(recipe, false) &&
-                super.setupAndConsumeRecipeInputs(recipe)) {
+                super.setupAndConsumeRecipeInputs(recipe, importInventory)) {
             controller.checkRecipe(recipe, true);
             return true;
         } else return false;

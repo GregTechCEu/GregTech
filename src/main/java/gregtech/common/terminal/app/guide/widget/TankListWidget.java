@@ -47,7 +47,7 @@ public class TankListWidget extends GuideWidgetGroup {
                 if (i < size) {
                     FluidStack fluidStack = fluid_list.get(i).getInstance();
                     TankWidget widget = new TankWidget(new FluidTank(fluidStack, fluid_list.get(i).amount), xPos + x * 18, y * 18, 18, 18);
-                    widget.setBackgroundTexture(background).setAlwaysShowFull(true);
+                    widget.setBackgroundTexture(background).setAlwaysShowFull(true).setClient();
                     this.addWidget(widget);
                 }
             }

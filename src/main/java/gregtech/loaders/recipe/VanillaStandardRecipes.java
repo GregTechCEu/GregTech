@@ -315,7 +315,7 @@ public class VanillaStandardRecipes {
         LASER_ENGRAVER_RECIPES.recipeBuilder()
                 .inputs(new ItemStack(Blocks.PURPUR_BLOCK))
                 .notConsumable(craftingLens, MarkerMaterials.Color.White)
-                .outputs(new ItemStack(Blocks.PURPUR_PILLAR, 1, 1))
+                .outputs(new ItemStack(Blocks.PURPUR_PILLAR, 1))
                 .duration(50).EUt(16).buildAndRegister();
     }
 
@@ -811,6 +811,12 @@ public class VanillaStandardRecipes {
                 .input(dust, Materials.Netherrack)
                 .notConsumable(MetaItems.SHAPE_MOLD_INGOT)
                 .outputs(new ItemStack(Items.NETHERBRICK))
+                .duration(200).EUt(2).buildAndRegister();
+
+        ALLOY_SMELTER_RECIPES.recipeBuilder()
+                .inputs(new ItemStack(Items.CLAY_BALL))
+                .notConsumable(MetaItems.SHAPE_MOLD_INGOT)
+                .outputs(new ItemStack(Items.BRICK))
                 .duration(200).EUt(2).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder()

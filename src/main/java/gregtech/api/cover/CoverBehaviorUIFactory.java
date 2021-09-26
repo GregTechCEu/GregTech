@@ -1,6 +1,7 @@
 package gregtech.api.cover;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechRegistries;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.UIFactory;
@@ -20,7 +21,7 @@ public class CoverBehaviorUIFactory extends UIFactory<CoverBehavior> {
     }
 
     public void init() {
-        UIFactory.FACTORY_REGISTRY.register(2, new ResourceLocation(GTValues.MODID, "cover_behavior_factory"), this);
+        GregTechRegistries.UI_FACTORY_REGISTRY.register(2, new ResourceLocation(GTValues.MODID, "cover_behavior_factory"), this);
     }
 
     @Override

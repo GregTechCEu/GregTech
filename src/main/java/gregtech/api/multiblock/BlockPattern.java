@@ -1,38 +1,40 @@
 package gregtech.api.multiblock;
 
+import codechicken.lib.vec.Vector3;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gregtech.api.util.IntRange;
 import gregtech.api.util.RelativeDirection;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class BlockPattern {
 
-    private final Predicate<BlockWorldState>[][][] blockMatches; //[z][y][x]
-    private final TIntObjectMap<Predicate<PatternMatchContext>> layerMatchers = new TIntObjectHashMap<>();
-    private final Predicate<PatternMatchContext>[] validators;
-    private final int fingerLength; //z size
-    private final int thumbLength; //y size
-    private final int palmLength; //x size
-    private final RelativeDirection[] structureDir;
-    private final int[][] aisleRepetitions;
-    private final Pair<Predicate<BlockWorldState>, IntRange>[] countMatches;
+    public final Predicate<BlockWorldState>[][][] blockMatches; //[z][y][x]
+    public final TIntObjectMap<Predicate<PatternMatchContext>> layerMatchers = new TIntObjectHashMap<>();
+    public final Predicate<PatternMatchContext>[] validators;
+    public final int fingerLength; //z size
+    public final int thumbLength; //y size
+    public final int palmLength; //x size
+    public final RelativeDirection[] structureDir;
+    public final int[][] aisleRepetitions;
+    public final Pair<Predicate<BlockWorldState>, IntRange>[] countMatches;
 
     // x, y, z, minZ, maxZ
     private int[] centerOffset = null;
 
-    private final BlockWorldState worldState = new BlockWorldState();
-    private final MutableBlockPos blockPos = new MutableBlockPos();
-    private final PatternMatchContext matchContext = new PatternMatchContext();
-    private final PatternMatchContext layerContext = new PatternMatchContext();
+    public final BlockWorldState worldState = new BlockWorldState();
+    public final MutableBlockPos blockPos = new MutableBlockPos();
+    public final PatternMatchContext matchContext = new PatternMatchContext();
+    public final PatternMatchContext layerContext = new PatternMatchContext();
 
     public BlockPattern(Predicate<BlockWorldState>[][][] predicatesIn,
                         List<Pair<Predicate<BlockWorldState>, IntRange>> countMatches,
@@ -95,6 +97,10 @@ public class BlockPattern {
     }
 
     public PatternMatchContext checkPatternAt(World world, BlockPos centerPos, EnumFacing facing) {
+        return checkPatternAt(world, centerPos, facing, null);
+    }
+
+    public PatternMatchContext checkPatternAt(World world, BlockPos centerPos, EnumFacing facing, List<BlockPos> validPos) {
         int[] countMatchesCache = new int[countMatches.length];
         boolean findFirstAisle = false;
         int minZ = -centerOffset[4];
@@ -123,12 +129,17 @@ public class BlockPattern {
                                     r = c = 0;
                                     z = minZ++;
                                     matchContext.reset();
+                                    if (validPos != null) {
+                                        validPos.clear();
+                                    }
                                     findFirstAisle = false;
                                 }
                             } else {
                                 z++;//continue searching for the first aisle
                             }
                             continue loop;
+                        } else if (validPos != null && worldState.getBlockState().getBlock() != Blocks.AIR) {
+                            validPos.add(new BlockPos(worldState.getPos()));
                         }
                         for (int i = 0; i < countMatchesCache.length; i++) {
                             if (countMatches[i].getLeft().test(worldState)) {
@@ -197,5 +208,27 @@ public class BlockPattern {
             }
         }
         return pos.setPos(c1[0], c1[1], c1[2]);
+    }
+
+    public static BlockPos getActualPos(EnumFacing ref, EnumFacing facing, EnumFacing spin, int x, int y, int z) {
+        Vector3 vector3 = new Vector3(x, y, z);
+        double degree = Math.PI/2 * (spin == EnumFacing.EAST? 1: spin == EnumFacing.SOUTH? 2: spin == EnumFacing.WEST? -1:0);
+        if (ref != facing) {
+            if (facing.getAxis() != EnumFacing.Axis.Y) {
+                vector3.rotate(Math.PI/2 * ((4 + facing.getHorizontalIndex() - ref.getHorizontalIndex()) % 4), new Vector3(0, -1, 0));
+            } else {
+                vector3.rotate(-Math.PI/2 * facing.getYOffset(), new Vector3(-ref.rotateY().getXOffset(), 0, -ref.rotateY().getZOffset()));
+                degree = facing.getYOffset() * Math.PI/2 * ((4 + spin.getHorizontalIndex() - (facing.getYOffset() > 0 ? ref.getOpposite() : ref).getHorizontalIndex()) % 4);
+            }
+        }
+        vector3.rotate(degree, new Vector3(-facing.getXOffset(), -facing.getYOffset(), -facing.getZOffset()));
+        return new BlockPos(Math.round(vector3.x), Math.round(vector3.y), Math.round(vector3.z));
+    }
+
+    public static EnumFacing getActualFrontFacing(EnumFacing ref, EnumFacing facing, EnumFacing spin, EnumFacing frontFacing) {
+        BlockPos pos = getActualPos(ref, facing, spin, frontFacing.getXOffset(), frontFacing.getYOffset(), frontFacing.getZOffset());
+        return pos.getX() < 0 ? EnumFacing.WEST : pos.getX() > 0 ? EnumFacing.EAST
+                : pos.getY() < 0 ? EnumFacing.DOWN : pos.getY() > 0 ? EnumFacing.UP
+                : pos.getZ() < 0 ? EnumFacing.NORTH : EnumFacing.SOUTH;
     }
 }

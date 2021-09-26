@@ -24,12 +24,15 @@ public class TerminalMenuWidget extends WidgetGroup {
     private Interpolator interpolator;
     private IGuiTexture background;
     private final TerminalOSWidget os;
-    private final List<Tuple<IMenuComponent, Widget>> components;
+    private final List<Tuple<IMenuComponent, WidgetGroup>> components;
     public boolean isHide;
 
 
     public TerminalMenuWidget(Position position, Size size, TerminalOSWidget os) {
         super(position, size);
+        addSelfPosition( -size.width, 0);
+        setVisible(false);
+        isHide = true;
         this.os = os;
         components = new ArrayList<>();
         this.addWidget(new CircleButtonWidget(5, 10, 4, 1, 0)
@@ -58,11 +61,11 @@ public class TerminalMenuWidget extends WidgetGroup {
     }
 
     public void close(ClickData clickData) {
-        os.closeApplication(os.focusApp, clickData.isClient);
+        os.closeApplication(os.getFocusApp(), clickData.isClient);
     }
 
     public void minimize(ClickData clickData) {
-        os.minimizeApplication(os.focusApp, clickData.isClient);
+        os.minimizeApplication(os.getFocusApp(), clickData.isClient);
     }
 
     public void maximize(ClickData clickData) { }
@@ -80,6 +83,7 @@ public class TerminalMenuWidget extends WidgetGroup {
                         if (tuple.getFirst() instanceof Widget && tuple.getFirst() != component){
                             ((Widget) tuple.getFirst()).setActive(false);
                             ((Widget) tuple.getFirst()).setVisible(false);
+                            ((CircleButtonWidget) tuple.getSecond().widgets.get(0)).setFill(0);
                         }
                     });
                     if (component instanceof Widget) {
@@ -125,6 +129,7 @@ public class TerminalMenuWidget extends WidgetGroup {
                         isHide = true;
                     });
             interpolator.start();
+            os.desktop.setBlockApp(false);
         }
     }
 
@@ -139,6 +144,7 @@ public class TerminalMenuWidget extends WidgetGroup {
                         isHide = false;
                     });
             interpolator.start();
+            os.desktop.setBlockApp(true);
         }
     }
 
@@ -165,6 +171,7 @@ public class TerminalMenuWidget extends WidgetGroup {
         if (!super.mouseClicked(mouseX, mouseY, button)) {
             if (!isMouseOverElement(mouseX, mouseY) && !isHide) {
                 hideMenu();
+                return true;
             }
             return false;
         }

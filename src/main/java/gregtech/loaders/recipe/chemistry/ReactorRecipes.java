@@ -337,36 +337,6 @@ public class ReactorRecipes {
                 .duration(80).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
-                .fluidInputs(Air.getFluid(1000))
-                .fluidInputs(Styrene.getFluid(144))
-                .fluidOutputs(Polystyrene.getFluid(144))
-                .duration(160).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
-                .fluidInputs(Oxygen.getFluid(1000))
-                .fluidInputs(Styrene.getFluid(144))
-                .fluidOutputs(Polystyrene.getFluid(216))
-                .duration(160).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
-                .fluidInputs(Air.getFluid(7500))
-                .fluidInputs(Styrene.getFluid(2160))
-                .fluidInputs(TitaniumTetrachloride.getFluid(100))
-                .fluidOutputs(Polystyrene.getFluid(3240))
-                .duration(800).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(2))
-                .fluidInputs(Oxygen.getFluid(7500))
-                .fluidInputs(Styrene.getFluid(2160))
-                .fluidInputs(TitaniumTetrachloride.getFluid(100))
-                .fluidOutputs(Polystyrene.getFluid(4320))
-                .duration(800).EUt(30).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
                 .notConsumable(new IntCircuitIngredient(3))
                 .fluidInputs(Oxygen.getFluid(1000))
                 .fluidInputs(HydrochloricAcid.getFluid(1000))

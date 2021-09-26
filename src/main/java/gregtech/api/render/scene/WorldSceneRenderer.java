@@ -1,151 +1,349 @@
 package gregtech.api.render.scene;
 
-import codechicken.lib.render.BlockRenderer.BlockFace;
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.ColourMultiplier;
-import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.Translation;
+import codechicken.lib.vec.Vector3;
 import gregtech.api.gui.resources.RenderUtil;
-import gregtech.api.util.BlockInfo;
-import gregtech.api.util.world.DummyWorld;
+import gregtech.api.util.Position;
+import gregtech.api.util.PositionedRect;
+import gregtech.api.util.Size;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.pipeline.LightUtil;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.vecmath.Vector3f;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Predicate;
+import java.util.*;
+import java.util.function.Consumer;
 
-public class WorldSceneRenderer {
+/**
+ * Created with IntelliJ IDEA.
+ *
+ * @Author: KilaBash
+ * @Date: 2021/08/23
+ * @Description: Abstract class, and extend a lot of features compared with the original one.
+ */
+public abstract class WorldSceneRenderer {
+    protected static final FloatBuffer MODELVIEW_MATRIX_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+    protected static final FloatBuffer PROJECTION_MATRIX_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+    protected static final IntBuffer VIEWPORT_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
+    protected static final FloatBuffer PIXEL_DEPTH_BUFFER = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+    protected static final FloatBuffer OBJECT_POS_BUFFER = ByteBuffer.allocateDirect(3 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
 
-    private static final FloatBuffer MODELVIEW_MATRIX_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-    private static final FloatBuffer PROJECTION_MATRIX_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-    private static final IntBuffer VIEWPORT_BUFFER = ByteBuffer.allocateDirect(16 * 4).order(ByteOrder.nativeOrder()).asIntBuffer();
-    private static final FloatBuffer PIXEL_DEPTH_BUFFER = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asFloatBuffer();
-    private static final FloatBuffer OBJECT_POS_BUFFER = ByteBuffer.allocateDirect(3 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+    public final World world;
+    public final Map<Collection<BlockPos>, ISceneRenderHook> renderedBlocksMap;
+    private Consumer<WorldSceneRenderer> beforeRender;
+    private Consumer<WorldSceneRenderer> afterRender;
+    private Consumer<RayTraceResult> onLookingAt;
+    private int clearColor;
+    private RayTraceResult lastTraceResult;
+    private Vector3f eyePos = new Vector3f(0, 0, 10f);
+    private Vector3f lookAt = new Vector3f(0, 0, 0);
+    private Vector3f worldUp = new Vector3f(0, 1, 0);
 
-    public final TrackedDummyWorld world = new TrackedDummyWorld();
-    private final List<BlockPos> renderedBlocks = new ArrayList<>();
-    private SceneRenderCallback renderCallback;
-    private Predicate<BlockPos> renderFilter;
-    private BlockPos lastHitBlock;
+    public WorldSceneRenderer(World world) {
+        this.world = world;
+        renderedBlocksMap = new LinkedHashMap<>();
+    }
 
-    public WorldSceneRenderer(Map<BlockPos, BlockInfo> renderedBlocks) {
-        for (Entry<BlockPos, BlockInfo> renderEntry : renderedBlocks.entrySet()) {
-            BlockPos pos = renderEntry.getKey();
-            BlockInfo blockInfo = renderEntry.getValue();
-            if (blockInfo.getBlockState().getBlock() == Blocks.AIR)
-                continue; //do not render air blocks
-            this.renderedBlocks.add(pos);
-            blockInfo.apply(world, pos);
+    public WorldSceneRenderer setBeforeWorldRender(Consumer<WorldSceneRenderer> callback) {
+        this.beforeRender = callback;
+        return this;
+    }
+
+    public WorldSceneRenderer setAfterWorldRender(Consumer<WorldSceneRenderer> callback) {
+        this.afterRender = callback;
+        return this;
+    }
+
+    public WorldSceneRenderer addRenderedBlocks(Collection<BlockPos> blocks, ISceneRenderHook renderHook) {
+        if (blocks != null) {
+            this.renderedBlocksMap.put(blocks, renderHook);
         }
+        return this;
     }
 
-    public void setRenderCallback(SceneRenderCallback callback) {
-        this.renderCallback = callback;
+    public WorldSceneRenderer setOnLookingAt(Consumer<RayTraceResult> onLookingAt) {
+        this.onLookingAt = onLookingAt;
+        return this;
     }
 
-    public void setRenderFilter(Predicate<BlockPos> filter) {
-        this.renderFilter = filter;
+    public void setClearColor(int clearColor) {
+        this.clearColor = clearColor;
     }
 
-    public Vector3f getSize() {
-        return world.getSize();
+    public RayTraceResult getLastTraceResult() {
+        return lastTraceResult;
     }
 
-    public BlockPos getLastHitBlock() {
-        return lastHitBlock;
-    }
-
-    /**
-     * Renders scene on given coordinates with given width and height, and RGB background color
-     * Note that this will ignore any transformations applied currently to projection/view matrix,
-     * so specified coordinates are scaled MC gui coordinates.
-     * It will return matrices of projection and view in previous state after rendering
-     */
-    public void render(int x, int y, int width, int height, int backgroundColor) {
-        Vec2f mousePosition = setupCamera(x, y, width, height, backgroundColor);
-        if (renderCallback != null) {
-            renderCallback.preRenderScene(this);
-        }
-        Minecraft minecraft = Minecraft.getMinecraft();
-        minecraft.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        BlockRendererDispatcher dispatcher = minecraft.getBlockRendererDispatcher();
-        BlockRenderLayer oldRenderLayer = MinecraftForgeClient.getRenderLayer();
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-
-        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        for (BlockPos pos : renderedBlocks) {
-            if (renderFilter != null && !renderFilter.test(pos))
-                continue; //do not render if position is skipped
-            IBlockState blockState = world.getBlockState(pos);
-            for (BlockRenderLayer renderLayer : BlockRenderLayer.values()) {
-                if (!blockState.getBlock().canRenderInLayer(blockState, renderLayer)) continue;
-                ForgeHooksClient.setRenderLayer(renderLayer);
-                dispatcher.renderBlock(blockState, pos, world, bufferBuilder);
+    public void render(float x, float y, float width, float height, int mouseX, int mouseY) {
+        // setupCamera
+        PositionedRect positionedRect = getPositionedRect((int)x, (int)y, (int)width, (int)height);
+        setupCamera(positionedRect);
+        // render TrackedDummyWorld
+        drawWorld();
+        // check lookingAt
+        this.lastTraceResult = null;
+        if (onLookingAt != null && mouseX > positionedRect.position.x && mouseX < positionedRect.position.x + positionedRect.size.width
+                && mouseY > positionedRect.position.y && mouseY < positionedRect.position.y + positionedRect.size.height) {
+            Vector3f hitPos = unProject(mouseX, mouseY);
+            RayTraceResult result = rayTrace(hitPos);
+            if (result != null) {
+                this.lastTraceResult = null;
+                this.lastTraceResult = result;
+                onLookingAt.accept(result);
             }
         }
-        tessellator.draw();
-        ForgeHooksClient.setRenderLayer(oldRenderLayer);
-
-        if (mousePosition != null) {
-            this.lastHitBlock = handleMouseHit(mousePosition);
-        } else {
-            this.lastHitBlock = null;
-        }
-
-        if (lastHitBlock != null) {
-            GlStateManager.disableTexture2D();
-            CCRenderState renderState = CCRenderState.instance();
-            renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR, tessellator.getBuffer());
-            ColourMultiplier multiplier = new ColourMultiplier(0);
-            renderState.setPipeline(new Translation(lastHitBlock), multiplier);
-            BlockFace blockFace = new BlockFace();
-            renderState.setModel(blockFace);
-            for (EnumFacing renderSide : EnumFacing.VALUES) {
-                float diffuse = LightUtil.diffuseLight(renderSide);
-                int color = (int) (255 * diffuse);
-                multiplier.colour = RenderUtil.packColor(color, color, color, 100);
-                blockFace.loadCuboidFace(Cuboid6.full, renderSide.getIndex());
-                renderState.render();
-            }
-            renderState.draw();
-            GlStateManager.enableTexture2D();
-        }
-
+        // resetCamera
         resetCamera();
     }
 
-    private BlockPos handleMouseHit(Vec2f mousePosition) {
+    public Vector3f getEyePos() {
+        return eyePos;
+    }
+
+    public Vector3f getLookAt() {
+        return lookAt;
+    }
+
+    public Vector3f getWorldUp() {
+        return worldUp;
+    }
+
+    public void setCameraLookAt(Vector3f eyePos, Vector3f lookAt, Vector3f worldUp) {
+        this.eyePos = eyePos;
+        this.lookAt = lookAt;
+        this.worldUp = worldUp;
+    }
+
+    public void setCameraLookAt(Vector3f lookAt, double radius, double rotationPitch, double rotationYaw) {
+        this.lookAt = lookAt;
+        Vector3 vecX = new Vector3(Math.cos(rotationPitch), 0, Math.sin(rotationPitch));
+        Vector3 vecY = new Vector3(0, Math.tan(rotationYaw) * vecX.mag(),0);
+        Vector3 pos = vecX.copy().add(vecY).normalize().multiply(radius);
+        this.eyePos = pos.add(lookAt.x, lookAt.y, lookAt.z).vector3f();
+    }
+
+    protected PositionedRect getPositionedRect(int x, int y, int width, int height) {
+        return new PositionedRect(new Position(x, y), new Size(width, height));
+    }
+
+    protected void setupCamera(PositionedRect positionedRect) {
+        int x = positionedRect.getPosition().x;
+        int y = positionedRect.getPosition().y;
+        int width = positionedRect.getSize().width;
+        int height = positionedRect.getSize().height;
+
+        GlStateManager.pushAttrib();
+
+        Minecraft.getMinecraft().entityRenderer.disableLightmap();
+        GlStateManager.disableLighting();
+        GlStateManager.enableDepth();
+        GlStateManager.enableBlend();
+
+        //setup viewport and clear GL buffers
+        GlStateManager.viewport(x, y, width, height);
+
+        clearView(x, y, width, height);
+
+        //setup projection matrix to perspective
+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
+        GlStateManager.pushMatrix();
+        GlStateManager.loadIdentity();
+
+        float aspectRatio = width / (height * 1.0f);
+        GLU.gluPerspective(60.0f, aspectRatio, 0.1f, 10000.0f);
+
+        //setup modelview matrix
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManager.pushMatrix();
+        GlStateManager.loadIdentity();
+        GLU.gluLookAt(eyePos.x, eyePos.y, eyePos.z, lookAt.x, lookAt.y, lookAt.z, worldUp.x, worldUp.y, worldUp.z);
+    }
+
+    protected void clearView(int x, int y, int width, int height) {
+        RenderUtil.setGlClearColorFromInt(clearColor, clearColor >> 24);
+        GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+    }
+
+    protected void resetCamera() {
+        //reset viewport
+        Minecraft minecraft = Minecraft.getMinecraft();
+        GlStateManager.viewport(0, 0, minecraft.displayWidth, minecraft.displayHeight);
+
+        //reset projection matrix
+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
+        GlStateManager.popMatrix();
+
+        //reset modelview matrix
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManager.popMatrix();
+
+        Minecraft.getMinecraft().entityRenderer.enableLightmap();
+
+        //reset attributes
+        GlStateManager.popAttrib();
+    }
+
+    protected void drawWorld() {
+        if (beforeRender != null) {
+            beforeRender.accept(this);
+        }
+
+        Minecraft mc = Minecraft.getMinecraft();
+        GlStateManager.enableCull();
+        GlStateManager.enableRescaleNormal();
+        RenderHelper.disableStandardItemLighting();
+        mc.entityRenderer.disableLightmap();
+        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        BlockRenderLayer oldRenderLayer = MinecraftForgeClient.getRenderLayer();
+        GlStateManager.disableLighting();
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableAlpha();
+
+        try { // render block in each layer
+            for (BlockRenderLayer layer : BlockRenderLayer.values()) {
+                ForgeHooksClient.setRenderLayer(layer);
+                int pass = layer == BlockRenderLayer.TRANSLUCENT ? 1 : 0;
+
+                renderedBlocksMap.forEach((renderedBlocks, hook)->{
+                    if (hook != null) {
+                        hook.apply(false, pass, layer);
+                    } else {
+                        setDefaultPassRenderState(pass);
+                    }
+
+                    BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+                    buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+                    BlockRendererDispatcher blockrendererdispatcher = mc.getBlockRendererDispatcher();
+
+                    for (BlockPos pos : renderedBlocks) {
+                        IBlockState state = world.getBlockState(pos);
+                        Block block = state.getBlock();
+                        if (block == Blocks.AIR) continue;
+                        state = state.getActualState(world, pos);
+                        if (block.canRenderInLayer(state, layer)) {
+                            blockrendererdispatcher.renderBlock(state, pos, world, buffer);
+                        }
+                    }
+
+                    Tessellator.getInstance().draw();
+                    Tessellator.getInstance().getBuffer().setTranslation(0, 0, 0);
+                });
+            }
+        } finally {
+            ForgeHooksClient.setRenderLayer(oldRenderLayer);
+        }
+
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.enableLighting();
+
+        // render TESR
+        for (int pass = 0; pass < 2; pass++) {
+            ForgeHooksClient.setRenderPass(pass);
+            int finalPass = pass;
+            renderedBlocksMap.forEach((renderedBlocks, hook)->{
+                if (hook != null) {
+                    hook.apply(true, finalPass, null);
+                } else {
+                    setDefaultPassRenderState(finalPass);
+                }
+                for (BlockPos pos : renderedBlocks) {
+                    TileEntity tile = world.getTileEntity(pos);
+                    if (tile != null) {
+                        if (tile.shouldRenderInPass(finalPass)) {
+                            TileEntityRendererDispatcher.instance.render(tile, pos.getX(), pos.getY(), pos.getZ(), 0);
+                        }
+                    }
+                }
+            });
+        }
+        ForgeHooksClient.setRenderPass(-1);
+        GlStateManager.enableDepth();
+        GlStateManager.disableBlend();
+        GlStateManager.depthMask(true);
+
+        if (afterRender != null) {
+            afterRender.accept(this);
+        }
+    }
+
+    public static void setDefaultPassRenderState(int pass) {
+        GlStateManager.color(1, 1, 1, 1);
+        if (pass == 0) { // SOLID
+            GlStateManager.enableDepth();
+            GlStateManager.disableBlend();
+            GlStateManager.depthMask(true);
+        } else { // TRANSLUCENT
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.depthMask(false);
+        }
+    }
+
+    public RayTraceResult rayTrace(Vector3f hitPos) {
+        Vec3d startPos = new Vec3d(this.eyePos.x, this.eyePos.y, this.eyePos.z);
+        hitPos.scale(2); // Double view range to ensure pos can be seen.
+        Vec3d endPos = new Vec3d((hitPos.x - startPos.x), (hitPos.y - startPos.y), (hitPos.z - startPos.z));
+        return this.world.rayTraceBlocks(startPos, endPos);
+    }
+
+    public Vector3f project(BlockPos pos) {
+        //read current rendering parameters
+        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, MODELVIEW_MATRIX_BUFFER);
+        GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, PROJECTION_MATRIX_BUFFER);
+        GL11.glGetInteger(GL11.GL_VIEWPORT, VIEWPORT_BUFFER);
+
+        //rewind buffers after write by OpenGL glGet calls
+        MODELVIEW_MATRIX_BUFFER.rewind();
+        PROJECTION_MATRIX_BUFFER.rewind();
+        VIEWPORT_BUFFER.rewind();
+
+        //call gluProject with retrieved parameters
+        GLU.gluProject(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, MODELVIEW_MATRIX_BUFFER, PROJECTION_MATRIX_BUFFER, VIEWPORT_BUFFER, OBJECT_POS_BUFFER);
+
+        //rewind buffers after read by gluProject
+        VIEWPORT_BUFFER.rewind();
+        PROJECTION_MATRIX_BUFFER.rewind();
+        MODELVIEW_MATRIX_BUFFER.rewind();
+
+        //rewind buffer after write by gluProject
+        OBJECT_POS_BUFFER.rewind();
+
+        //obtain position in Screen
+        float winX = OBJECT_POS_BUFFER.get();
+        float winY = OBJECT_POS_BUFFER.get();
+        float winZ = OBJECT_POS_BUFFER.get();
+
+        //rewind buffer after read
+        OBJECT_POS_BUFFER.rewind();
+
+        return new Vector3f(winX, winY, winZ);
+    }
+
+    public Vector3f unProject(int mouseX, int mouseY) {
         //read depth of pixel under mouse
-        GL11.glReadPixels((int) mousePosition.x, (int) mousePosition.y, 1, 1,
-                GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, PIXEL_DEPTH_BUFFER);
+        GL11.glReadPixels(mouseX, mouseY, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, PIXEL_DEPTH_BUFFER);
 
         //rewind buffer after write by glReadPixels
         PIXEL_DEPTH_BUFFER.rewind();
@@ -167,8 +365,7 @@ public class WorldSceneRenderer {
         VIEWPORT_BUFFER.rewind();
 
         //call gluUnProject with retrieved parameters
-        GLU.gluUnProject(mousePosition.x, mousePosition.y, pixelDepth,
-                MODELVIEW_MATRIX_BUFFER, PROJECTION_MATRIX_BUFFER, VIEWPORT_BUFFER, OBJECT_POS_BUFFER);
+        GLU.gluUnProject(mouseX, mouseY, pixelDepth, MODELVIEW_MATRIX_BUFFER, PROJECTION_MATRIX_BUFFER, VIEWPORT_BUFFER, OBJECT_POS_BUFFER);
 
         //rewind buffers after read by gluUnProject
         VIEWPORT_BUFFER.rewind();
@@ -186,149 +383,63 @@ public class WorldSceneRenderer {
         //rewind buffer after read
         OBJECT_POS_BUFFER.rewind();
 
-        //if we didn't hit anything, just return null
-        //also return null if hit is too far from us
-        if (posY < -100.0f) {
-            return null; //stop execution at that point
-        }
-
-        BlockPos pos = new BlockPos(posX, posY, posZ);
-        if (world.isAirBlock(pos)) {
-            //if block is air, then search for nearest adjacent block
-            //this can happen under extreme rotation angles
-            for (EnumFacing offset : EnumFacing.VALUES) {
-                BlockPos relative = pos.offset(offset);
-                if (world.isAirBlock(relative)) continue;
-                pos = relative;
-                break;
-            }
-        }
-        if (world.isAirBlock(pos)) {
-            //if we didn't found any other block, return null
-            return null;
-        }
-        return pos;
+        return new Vector3f(posX, posY, posZ);
     }
 
-    public static Vec2f setupCamera(int x, int y, int width, int height, int skyColor) {
-        Minecraft mc = Minecraft.getMinecraft();
-        ScaledResolution resolution = new ScaledResolution(mc);
-
-        GL11.glPushAttrib(GL11.GL_TRANSFORM_BIT);
-        mc.entityRenderer.disableLightmap();
-        GlStateManager.disableLighting();
+    /***
+     * For better performance, You'd better handle the event {@link #setOnLookingAt(Consumer)} or {@link #getLastTraceResult()}
+     * @param mouseX xPos in Texture
+     * @param mouseY yPos in Texture
+     * @return RayTraceResult Hit
+     */
+    protected RayTraceResult screenPos2BlockPosFace(int mouseX, int mouseY, int x, int y, int width, int height) {
+        // render a frame
         GlStateManager.enableDepth();
-        GlStateManager.enableBlend();
+        setupCamera(getPositionedRect(x, y, width, height));
 
-        //compute window size from scaled width & height
-        int windowWidth = (int) (width / (resolution.getScaledWidth() * 1.0) * mc.displayWidth);
-        int windowHeight = (int) (height / (resolution.getScaledHeight() * 1.0) * mc.displayHeight);
+        drawWorld();
 
-        //translate gui coordinates to window's ones (y is inverted)
-        int windowX = (int) (x / (resolution.getScaledWidth() * 1.0) * mc.displayWidth);
-        int windowY = mc.displayHeight - (int) (y / (resolution.getScaledHeight() * 1.0) * mc.displayHeight) - windowHeight;
+        Vector3f hitPos = unProject(mouseX, mouseY);
+        RayTraceResult result = rayTrace(hitPos);
 
-        int mouseX = Mouse.getX();
-        int mouseY = Mouse.getY();
-        Vec2f mousePosition = null;
-        //compute mouse position only if inside viewport
-        if (mouseX >= windowX && mouseY >= windowY && mouseX - windowX < windowWidth && mouseY - windowY < windowHeight) {
-            mousePosition = new Vec2f(mouseX, mouseY);
-        }
+        resetCamera();
 
-        //setup viewport and clear GL buffers
-        GlStateManager.viewport(windowX, windowY, windowWidth, windowHeight);
-
-        if (skyColor >= 0) {
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
-            GL11.glScissor(windowX, windowY, windowWidth, windowHeight);
-            RenderUtil.setGlClearColorFromInt(skyColor, 255);
-            GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        }
-
-        //setup projection matrix to perspective
-        GlStateManager.matrixMode(GL11.GL_PROJECTION);
-        GlStateManager.pushMatrix();
-        GlStateManager.loadIdentity();
-
-        float aspectRatio = width / (height * 1.0f);
-        GLU.gluPerspective(60.0f, aspectRatio, 0.1f, 10000.0f);
-
-        //setup modelview matrix
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        GlStateManager.pushMatrix();
-        GlStateManager.loadIdentity();
-        GLU.gluLookAt(0.0f, 0.0f, -10.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-
-        return mousePosition;
+        return result;
     }
 
-    public static void resetCamera() {
-        //reset viewport
-        Minecraft minecraft = Minecraft.getMinecraft();
-        GlStateManager.viewport(0, 0, minecraft.displayWidth, minecraft.displayHeight);
+    /***
+     * For better performance, You'd better do project in {@link #setAfterWorldRender(Consumer)}
+     * @param pos BlockPos
+     * @param depth should pass Depth Test
+     * @return x, y, z
+     */
+    protected Vector3f blockPos2ScreenPos(BlockPos pos, boolean depth, int x, int y, int width, int height){
+        // render a frame
+        GlStateManager.enableDepth();
+        setupCamera(getPositionedRect(x, y, width, height));
 
-        //reset projection matrix
-        GlStateManager.matrixMode(GL11.GL_PROJECTION);
-        GlStateManager.popMatrix();
+        drawWorld();
+        Vector3f winPos = project(pos);
 
-        //reset modelview matrix
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        GlStateManager.popMatrix();
+        resetCamera();
 
-        //Re-enable disabled states
-        GlStateManager.disableBlend();
-        GlStateManager.disableDepth();
-
-        //Reset Attributes
-        GL11.glPopAttrib();
+        return winPos;
     }
 
-    public class TrackedDummyWorld extends DummyWorld {
+    public static class BlockPosFace extends BlockPos {
+        public final EnumFacing facing;
 
-        private final Vector3f minPos = new Vector3f(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
-        private final Vector3f maxPos = new Vector3f(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE);
+        public BlockPosFace(BlockPos pos, EnumFacing facing) {
+            super(pos);
+            this.facing = facing;
+        }
 
         @Override
-        public boolean setBlockState(@Nonnull BlockPos pos, IBlockState newState, int flags) {
-            if (newState.getBlock() == Blocks.AIR) {
-                renderedBlocks.remove(pos);
-            } else {
-                renderedBlocks.add(pos);
+        public boolean equals(@Nullable Object bp) {
+            if (bp instanceof BlockPosFace) {
+                return super.equals(bp) && ((BlockPosFace) bp).facing == facing;
             }
-            minPos.setX(Math.min(minPos.getX(), pos.getX()));
-            minPos.setY(Math.min(minPos.getY(), pos.getY()));
-            minPos.setZ(Math.min(minPos.getZ(), pos.getZ()));
-            maxPos.setX(Math.max(maxPos.getX(), pos.getX()));
-            maxPos.setY(Math.max(maxPos.getY(), pos.getY()));
-            maxPos.setZ(Math.max(maxPos.getZ(), pos.getZ()));
-            return super.setBlockState(pos, newState, flags);
-        }
-
-        @Nonnull
-        @Override
-        public IBlockState getBlockState(@Nonnull BlockPos pos) {
-            if (renderFilter != null && !renderFilter.test(pos))
-                return Blocks.AIR.getDefaultState(); //return air if not rendering this block
-            return super.getBlockState(pos);
-        }
-
-        public Vector3f getSize() {
-            Vector3f result = new Vector3f();
-            result.setX(maxPos.getX() - minPos.getX() + 1);
-            result.setY(maxPos.getY() - minPos.getY() + 1);
-            result.setZ(maxPos.getZ() - minPos.getZ() + 1);
-            return result;
-        }
-
-        public Vector3f getMinPos() {
-            return minPos;
-        }
-
-        public Vector3f getMaxPos() {
-            return maxPos;
+            return false;
         }
     }
-
 }

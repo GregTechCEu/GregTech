@@ -11,14 +11,16 @@ import net.minecraft.network.PacketBuffer;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class CircleButtonWidget extends Widget {
     protected int border;
     protected int hoverTick;
     protected boolean isHover;
-    protected String hoverText;
+    protected String[] hoverText;
     protected IGuiTexture icon;
     protected IGuiTexture hover;
     protected final int iconSize;
@@ -44,7 +46,7 @@ public class CircleButtonWidget extends Widget {
         return this;
     }
 
-    public CircleButtonWidget setHoverText(String hoverText) {
+    public CircleButtonWidget setHoverText(String... hoverText) {
         this.hoverText = hoverText;
         return this;
     }
@@ -117,8 +119,8 @@ public class CircleButtonWidget extends Widget {
 
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
-        if (hoverText != null && this.isMouseOverElement(mouseX, mouseY)) {
-           this.drawHoveringText(ItemStack.EMPTY, Collections.singletonList(I18n.format(hoverText)), 300, mouseX, mouseY);
+        if (hoverText != null && hoverText.length > 0 && this.isMouseOverElement(mouseX, mouseY)) {
+           this.drawHoveringText(ItemStack.EMPTY, Arrays.stream(hoverText).map(I18n::format).collect(Collectors.toList()), 300, mouseX, mouseY);
         }
     }
 

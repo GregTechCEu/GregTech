@@ -7,7 +7,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Vector3;
-import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGui;
@@ -39,6 +38,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -240,8 +241,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         return Pair.of(CLIPBOARD_RENDERER.getParticleTexture(), 0xFFFFFF);
     }
 
-    public Pair<Double, Double> checkLookingAt() {
-        EntityPlayer player = Minecraft.getMinecraft().player;
+    public Pair<Double, Double> checkLookingAt(EntityPlayer player) {
         if (this.getWorld() != null && player != null) {
             Vec3d startVec = getStartVec(player);
             Vec3d endVec = getEndVec(player);
@@ -387,7 +387,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     @Override
     public void onLeftClick(EntityPlayer player, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (this.getWorld().isRemote) return;
-        Pair<Double, Double> clickCoords = this.checkLookingAt();
+        Pair<Double, Double> clickCoords = this.checkLookingAt(player);
         if (this.guiContainerCache != null && guiContainerCache.modularUI != null) {
             int width = guiContainerCache.modularUI.getWidth();
             int height = guiContainerCache.modularUI.getHeight();

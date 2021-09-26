@@ -169,7 +169,6 @@ public class MetaFluids {
 
         //alternative names for forestry fluids
         setAlternativeFluidName(Materials.Ethanol, FluidType.NORMAL, "bio.ethanol");
-        setAlternativeFluidName(Materials.Honey, FluidType.NORMAL, "for.honey");
         setAlternativeFluidName(Materials.SeedOil, FluidType.NORMAL, "seed.oil");
         setAlternativeFluidName(Materials.Ice, FluidType.NORMAL, "fluid.ice");
         setAlternativeFluidName(Materials.Diesel, FluidType.NORMAL, "fuel");
@@ -208,7 +207,6 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.SeedOil, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Oil, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Diesel, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Honey, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Biomass, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Ethanol, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.SulfuricAcid, FluidType.NORMAL);

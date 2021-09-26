@@ -110,7 +110,7 @@
 - Cable Loss reworked:
     - Lossless wires will now no longer damage you
     - Cables will always have lossy wires, unless they are "Superconductors"
-    - Superconductors are available at every tier, and are available only wires to reduce clutter
+    - Superconductors are available at every tier, and are available only wires to reduce clutter (also are different from 5u, should be more reasonable to make)
 - High-Amp Energy Hatches added (can be configured with a Screwdriver, with amperages: 2, 4, 8, 16)
 - High-Amp Transformers added (can be configured with a Screwdriver, with ranges: 1->4, 2->8, 4->16, 16->64)
 - Diodes Added, which allow energy flow in one direction and restrict amperage (can be configured with a Screwdriver, with amperages: 1, 2, 4, 8, 16)
@@ -129,6 +129,39 @@
 - Distillation Tower Fluid Input Hatch can be placed on any block on the bottom layer. Energy Input Hatch can be placed on any block in the structure
 - Added Buffers, which can hold both a small amount of a few types of each Items and Fluids, meant for use in machine automation
 - Crafting Station now highlights missing items in saved recipes in red
+- New batteries added for EV-UV tiers, in addition to the GTCE and SoG batteries
+- Batteries overall were buffed in terms of their energy capacity
+- Batteries now have tooltips indicating their total charge time, and their time remaining based on current charge
+- New JEI Page for Materials, showing all their possible "types" (gear, plate, ingot, dust, etc.) in a pretty graph
+- Clipboard added, functionally identical to Bibliocraft's version
+    - Can be kept as an Item, and updated with right-click
+    - Can be placed as a Block, and can read the notes and click various buttons (checkboxes, scroll to new pages)
+- Covers can now be accessed by Shift-Right-Click on the face where the cover is located. Screwdriver still needed to use the Machine Grid
+- Rubber Wood now has a new Texture, and makes its own Plank type. Hopefully it is good for building!
+- Concrete now provides the player with a Speed Boost when walked on
+- Added Rock Breakers
+    - Available at all tiers, including Steam and Steel Steam
+    - Must have a Water source block and a Lava source block horizontally adjacent to the machine to run
+    - Can be used to infinitely create Cobblestone, Stone, Granite, Andesite, and Diorite for free
+    - Can create Obsidian from Redstone
+- Chanced output items now display their chance as a hovered text in JEI
+- Added Emissive Textures
+    - Can be disabled with a config (but why would you want to?)
+    - Most machines "emit light" when active, and some when inactive
+    - The light "emitted" is not real light, but instead a glow that can be seen in complete darkness, so no lighting updates caused
+    - Some covers and other things also are emissive
+- Added Jetpacks, Nano Armor, QuarkTech Armor (Quantum), and BatPacks
+- Add Solar Panel covers to all tiers
+    - By default, only up to EV are enabled, rest can be added with a config (but no recipes will be generated)
+- Drums can now be hit with a Wrench to automatically drain their fluids downwards to adjacent tanks
+- Add new enchantment, "Hammering"
+    - Can be applied to Pickaxes, and will automatically crush ores when mined
+    - Will output their "normal" amount by default (1 crushed ore for most, but more for some, like Redstone)
+    - When combined with Fortune, can output up to their Macerated amount
+- Quadruple and Nonuple Input/Output Hatches added, holding either 4 or 9 fluids each, and 16B per fluid
+    - Fluids in them are forced to be "unique," for example Water cannot occupy 2 slots of either an Input or Output version
+    - Can be used in any multiblock, EXCEPT the Output hatches cannot be used in the Distillation Tower
+- TODO Maintenance/Muffler
 
 ### Major Recipe Changes
 - Many, many new recipes for Vanilla items and blocks, with various configs to toggle
@@ -151,6 +184,11 @@
 - Config to disable in-world Concrete Powder -> Concrete conversion
 - Indium now outputs 1 Small Dust each recipe instead of 1 Tiny Dust
 - High Octane Gasoline (HOG) and Nitrobenzene were added as more power options (as well as normal Gasoline)
+- Energium recipe was changed to be the 5u-style (previously was 9 Ruby + 9 Redstone -> 9 Energium, now is 4 + 5 -> 9)
+- Some gem dusts can now be processed with an Acid to get additional output over direct electrolysis
+- Forge Hammer recipes across the board are now 2x faster
+- Bricks/Coke Bricks/Fireclay Bricks reworked
+- Foil, Small Gear, Long Rod, and Rotor Extruder Shapes added
 
 ### Bug Fixes
 - Electric Tools now properly use power over durability
@@ -174,6 +212,15 @@
 - Cables and Wires now properly respect amperage on the line
 - Machines (and other Energy-acceptors) now no longer accept their maximum amount of amps per side, instead its per container
 - Cables will no longer burn improper parts of the network, and now is only the overamped/overvolted portion
+- Ore config JSONs should now work better with dimensions added by other mods
+- Fix JEI recipes showing some items as a chanced output when they are not chanced
+- Fix Large Turbine blade texture missing a blade in one frame
+- Fix Wood Drums accepting hot fluids like Lava
+- Fix lag caused by GT Lighters
+- Fix Solar covers not properly outputting power to GT cables
+- Fix Crowbar action on Powered Rails throwing errors in the log
+- Fix Fluid Regulator "Keep Exact" mode not working
+- Fix worldgen JSONs only using the first dimension listed in `dimension_filter`
 
 ### CraftTweaker
 - Materials can now automatically generate IDs
@@ -192,15 +239,29 @@
 - Energy Field Projector was removed
 - Re-breather was removed
 
+### Performance Improvements
+- GT Machines will now cause no lag when idling, full inventory or not. Detailed info:
+    - Previously GT machines would scan their item/fluid inventories each tick to attempt to run. Now they will only try to run when the inventory actually changes
+    - Rough performance test by Spark, using 20 Multi-Smelters with a full input bus and full output buses:
+        - OLD: ~4% TPS used
+        - NEW: 0% TPS used
+- Recipe lookup times were drastically improved. Detailed info:
+    - Previously, recipe lookup was done by iterating over a List until a match was found. Now it does it by hashed keys based on inputs
+    - Rough performance test by Spark, using 128 UV Macerators macerating Cobblestone:
+        - OLD: ~22.5% TPS used
+        - NEW: ~2.7% TPS used
+
 ### Misc Changes
 - Many Material colors and IconSets (their overall appearance) have been updated
 - Machine UIs were updated to be much cleaner, new progress bars, slot icons, better layouts
 - Electrolyzer and Centrifuge now show all 12 slots at once
+- "Primitive" multiblocks now behave a bit better, and look nicer in the GUIs
+- New config to disable GTCE loot generation in MC loot tables
 
 ### Internal Changes
 - UHV - UXV Tiers are supported natively by GTCEu for addons to take advantage of
 - `Elements` is no longer an Enum
-- Machines can now be indestructable and Wither Proof, if properly set in the Class
+- Machines can now be indestructible and Wither Proof, if properly set in the Class
 - Material ID limit was raised from 1,000 to 32,767
     - GTCEu uses 1-2,999
     - Gregicality/SoG uses 3,000-19,999
@@ -214,3 +275,6 @@
     - Allow recipes to be run without power
     - (by default) Initialize inventory for items and fluids to the Controller instead of Multiblock Parts (overridable)
     - Hide the EU/t and Total EU info from the JEI page
+- Recipe removal methods for Vanilla will now log failures if `ConfigHolder.debug` is enabled
+- Recipe removal methods for GT added, located in `GTRecipeHandler`
+- `MetaTileEntityMultiFurnace` was renamed to `MetaTileEntityMultiSmelter`

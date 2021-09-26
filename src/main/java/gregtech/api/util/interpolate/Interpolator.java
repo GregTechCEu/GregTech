@@ -1,10 +1,6 @@
 package gregtech.api.util.interpolate;
 
-import crafttweaker.IAction;
-import gregtech.api.util.function.BooleanConsumer;
 import net.minecraft.util.ITickable;
-import scala.Function;
-import scala.swing.Action;
 
 import java.util.function.Consumer;
 

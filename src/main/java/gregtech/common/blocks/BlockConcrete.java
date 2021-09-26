@@ -4,15 +4,12 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.MovementInputFromOptions;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nonnull;
 
@@ -51,17 +48,25 @@ public class BlockConcrete extends StoneBlock<BlockConcrete.ConcreteVariant> {
 
     }
 
-    private static MovementInput manualInputCheck;
+//    private static MovementInput manualInputCheck;
 
     @Override
     public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn) {
-        if (manualInputCheck == null) {
-            manualInputCheck = new MovementInputFromOptions(Minecraft.getMinecraft().gameSettings);
-        }
+//        if (manualInputCheck == null) {
+//            manualInputCheck = new MovementInputFromOptions(Minecraft.getMinecraft().gameSettings);
+//        }
+//        IBlockState below = entityIn.getEntityWorld().getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
+//        if (below.getBlock() instanceof BlockConcrete) {
+//            manualInputCheck.updatePlayerMoveState();
+//            if ((manualInputCheck.moveForward != 0 || manualInputCheck.moveStrafe != 0) && !entityIn.isInWater()) {
+//                entityIn.motionX *= 1.6;
+//                entityIn.motionZ *= 1.6;
+//            }
+//        }
+
         IBlockState below = entityIn.getEntityWorld().getBlockState(new BlockPos(entityIn.posX, entityIn.posY - (1 / 16D), entityIn.posZ));
         if (below.getBlock() instanceof BlockConcrete) {
-            manualInputCheck.updatePlayerMoveState();
-            if ((manualInputCheck.moveForward != 0 || manualInputCheck.moveStrafe != 0) && !entityIn.isInWater()) {
+            if (!entityIn.isInWater()) {
                 entityIn.motionX *= 1.6;
                 entityIn.motionZ *= 1.6;
             }

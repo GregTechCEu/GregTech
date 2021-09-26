@@ -5,7 +5,6 @@ import gregtech.api.unification.material.MarkerMaterials.Color;
 import gregtech.api.unification.material.MarkerMaterials.Component;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.common.ConfigHolder;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -441,49 +440,29 @@ public class CircuitRecipes {
                 .buildAndRegister();
 
         // Carbon Fibers
-        if (ConfigHolder.U.GT5u.polymerCarbonFiber) {
-            AUTOCLAVE_RECIPES.recipeBuilder().duration(37).EUt(30)
-                    .input(dust, Carbon, 4)
-                    .fluidInputs(Polyethylene.getFluid(36))
-                    .output(CARBON_FIBERS)
-                    .buildAndRegister();
+        AUTOCLAVE_RECIPES.recipeBuilder().duration(37).EUt(30)
+                .input(dust, Carbon, 4)
+                .fluidInputs(Polyethylene.getFluid(36))
+                .output(CARBON_FIBERS)
+                .buildAndRegister();
 
-            AUTOCLAVE_RECIPES.recipeBuilder().duration(37).EUt(120)
-                    .input(dust, Carbon, 4)
-                    .fluidInputs(Polytetrafluoroethylene.getFluid(18))
-                    .output(CARBON_FIBERS, 2)
-                    .buildAndRegister();
+        AUTOCLAVE_RECIPES.recipeBuilder().duration(37).EUt(120)
+                .input(dust, Carbon, 4)
+                .fluidInputs(Polytetrafluoroethylene.getFluid(18))
+                .output(CARBON_FIBERS, 2)
+                .buildAndRegister();
 
-            AUTOCLAVE_RECIPES.recipeBuilder().duration(37).EUt(480)
-                    .input(dust, Carbon, 4)
-                    .fluidInputs(Epoxy.getFluid(9))
-                    .output(CARBON_FIBERS, 4)
-                    .buildAndRegister();
+        AUTOCLAVE_RECIPES.recipeBuilder().duration(37).EUt(480)
+                .input(dust, Carbon, 4)
+                .fluidInputs(Epoxy.getFluid(9))
+                .output(CARBON_FIBERS, 4)
+                .buildAndRegister();
 
-            AUTOCLAVE_RECIPES.recipeBuilder().duration(37).EUt(1920)
-                    .input(dust, Carbon, 8)
-                    .fluidInputs(Polybenzimidazole.getFluid(9))
-                    .output(CARBON_FIBERS, 16)
-                    .buildAndRegister();
-        } else {
-            AUTOCLAVE_RECIPES.recipeBuilder().duration(37).EUt(30)
-                    .input(dust, Carbon, 4)
-                    .fluidInputs(Palladium.getFluid(1))
-                    .chancedOutput(CARBON_FIBERS, 2, 9000, 1000)
-                    .buildAndRegister();
-
-            AUTOCLAVE_RECIPES.recipeBuilder().duration(37).EUt(30)
-                    .input(dust, Carbon, 4)
-                    .fluidInputs(Platinum.getFluid(1))
-                    .chancedOutput(CARBON_FIBERS, 2, 5000, 5000)
-                    .buildAndRegister();
-
-            AUTOCLAVE_RECIPES.recipeBuilder().duration(37).EUt(30)
-                    .input(dust, Carbon, 4)
-                    .fluidInputs(Lutetium.getFluid(1))
-                    .chancedOutput(CARBON_FIBERS, 2, 3333, 3334)
-                    .buildAndRegister();
-        }
+        AUTOCLAVE_RECIPES.recipeBuilder().duration(37).EUt(1920)
+                .input(dust, Carbon, 8)
+                .fluidInputs(Polybenzimidazole.getFluid(9))
+                .output(CARBON_FIBERS, 16)
+                .buildAndRegister();
 
         // Crystal Circuit Components
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(256).EUt(480)
@@ -572,14 +551,6 @@ public class CircuitRecipes {
                 .output(GRAVI_STAR)
                 .buildAndRegister();
 
-        // Neutron Reflector TODO Move out of here
-        ASSEMBLER_RECIPES.recipeBuilder().duration(4000).EUt(120)
-                .input(PLATE_IRIDIUM_ALLOY)
-                .input(plateDouble, Beryllium, 16)
-                .input(plateDouble, TungstenCarbide, 2)
-                .fluidInputs(TinAlloy.getFluid(L * 32))
-                .output(NEUTRON_REFLECTOR)
-                .buildAndRegister();
     }
 
     private static void boardRecipes() {
@@ -811,11 +782,6 @@ public class CircuitRecipes {
                 .buildAndRegister();
 
         // Wetware Board
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(160).EUt(16)
-                .notConsumable(SHAPE_MOLD_CYLINDER)
-                .fluidInputs(Polystyrene.getFluid(L / 4))
-                .output(PETRI_DISH)
-                .buildAndRegister();
 
         FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(160).EUt(16)
                 .notConsumable(SHAPE_MOLD_CYLINDER)

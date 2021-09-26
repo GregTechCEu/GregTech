@@ -8,6 +8,7 @@ import net.minecraft.network.PacketBuffer;
 import org.lwjgl.input.Mouse;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class RectButtonWidget extends CircleButtonWidget{
@@ -32,6 +33,17 @@ public class RectButtonWidget extends CircleButtonWidget{
     public RectButtonWidget setToggleButton(IGuiTexture pressedIcon, BiConsumer<ClickData, Boolean> onPressed) {
         this.pressedIcon = pressedIcon;
         this.onPressed = onPressed;
+        return this;
+    }
+
+    public RectButtonWidget setToggleButton(IGuiTexture pressedIcon, Consumer<Boolean> onPressed) {
+        this.pressedIcon = pressedIcon;
+        this.onPressed = onPressed != null ? (c, p)-> onPressed.accept(p) : null;
+        return this;
+    }
+
+    public RectButtonWidget setInitValue(boolean isPressed) {
+        this.isPressed = isPressed;
         return this;
     }
 
@@ -73,11 +85,13 @@ public class RectButtonWidget extends CircleButtonWidget{
         } else {
             if (isMouseOverElement(mouseX, mouseY)) {
                 isPressed = !isPressed;
-                ClickData clickData = new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown(), false);
-                writeClientAction(1, buffer -> {
-                    clickData.writeToBuf(buffer);
-                    buffer.writeBoolean(isPressed);
-                });
+                if (!isClient) {
+                    ClickData clickData = new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown(), false);
+                    writeClientAction(1, buffer -> {
+                        clickData.writeToBuf(buffer);
+                        buffer.writeBoolean(isPressed);
+                    });
+                }
                 playButtonClickSound();
                 onPressed.accept(new ClickData(Mouse.getEventButton(), isShiftDown(), isCtrlDown(), true), isPressed);
                 return true;
@@ -94,9 +108,7 @@ public class RectButtonWidget extends CircleButtonWidget{
             if (id == 1) {
                 ClickData clickData = ClickData.readFromBuf(buffer);
                 isPressed = buffer.readBoolean();
-                if (onPressCallback != null) {
-                    onPressed.accept(clickData, isPressed);
-                }
+                onPressed.accept(clickData, isPressed);
             }
         }
     }
@@ -108,7 +120,7 @@ public class RectButtonWidget extends CircleButtonWidget{
         int width = this.getSize().width;
         int height = this.getSize().height;
 
-        drawSolidRect(x, y, width, height, colors[0]);
+        drawBorder(x + border, y + border, width - 2 * border, height - 2 * border, colors[0], border);
         isHover = this.isMouseOverElement(mouseX, mouseY);
         if (isHover || hoverTick != 0) {
             float per = Math. min ((hoverTick + partialTicks) / 8, 1);
