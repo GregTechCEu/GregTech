@@ -391,7 +391,7 @@ public class ElementMaterials {
                 .color(0x8C648C)
                 .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_DENSE, GENERATE_ROTOR, GENERATE_SPRING, GENERATE_SPRING_SMALL)
                 .element(Elements.Pb)
-                .cableProperties(GTValues.V[1], 2, 2)
+                .cableProperties(GTValues.V[0], 2, 2)
                 .fluidPipeProperties(1200, 15, true)
                 .build();
 
@@ -895,7 +895,7 @@ public class ElementMaterials {
         Naquadah = new Material.Builder(124, "naquadah")
                 .ingot(4).fluid().ore()
                 .color(0x323232).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_FOIL, GENERATE_SPRING)
+                .flags(EXT_METAL, GENERATE_FOIL, GENERATE_SPRING, GENERATE_FINE_WIRE)
                 .element(Elements.Nq)
                 .toolStats(6.0f, 4.0f, 1280, 21)
                 .cableProperties(GTValues.V[7], 2, 2)
@@ -932,7 +932,7 @@ public class ElementMaterials {
         Tritanium = new Material.Builder(128, "tritanium")
                 .ingot(6).fluid()
                 .color(0x600000).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_FRAME, GENERATE_ROUND)
+                .flags(EXT_METAL, GENERATE_FRAME, GENERATE_ROUND, GENERATE_RING)
                 .element(Elements.Tr)
                 .toolStats(20.0f, 6.0f, 10240, 21)
                 .build();

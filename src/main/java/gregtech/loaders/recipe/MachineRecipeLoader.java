@@ -58,6 +58,7 @@ public class MachineRecipeLoader {
         AssemblyLineLoader.init();
         AssemblerRecipeLoader.init();
         ComponentRecipes.register();
+        ComponentRecipesHighTier.register();
         MiscRecipeLoader.init();
         BatteryRecipes.init();
 

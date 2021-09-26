@@ -117,7 +117,7 @@ public class HigherDegreeMaterials {
         HSSS = new Material.Builder(2520, "hsss")
                 .ingot(4).fluid()
                 .color(0x660033).iconSet(METALLIC)
-                .flags(EXT2_METAL, GENERATE_SMALL_GEAR)
+                .flags(EXT2_METAL, GENERATE_SMALL_GEAR, GENERATE_RING)
                 .components(HSSG, 6, Iridium, 2, Osmium, 1)
                 .toolStats(15.0f, 7.0f, 3000, 21)
                 .blastTemp(5000)

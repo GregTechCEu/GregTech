@@ -10,8 +10,6 @@ import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 
-import static gregtech.api.GTValues.L;
-
 public class AssemblyLineLoader {
     public static void init() {
 
@@ -40,25 +38,6 @@ public class AssemblyLineLoader {
         RecipeMaps.FUSION_RECIPES.recipeBuilder().fluidInputs(Materials.Silver.getFluid(16), Materials.Lithium.getFluid(16)).fluidOutputs(Materials.Indium.getFluid(16)).duration(32).EUt(24576).EUToStart(380000000).buildAndRegister();
         RecipeMaps.FUSION_RECIPES.recipeBuilder().fluidInputs(Materials.NaquadahEnriched.getFluid(15), Materials.Radon.getFluid(125)).fluidOutputs(Materials.Naquadria.getFluid(3)).duration(64).EUt(49152).EUToStart(400000000).buildAndRegister();
         RecipeMaps.FUSION_RECIPES.recipeBuilder().fluidInputs(Materials.Lanthanum.getFluid(16), Materials.Silicon.getFluid(16)).fluidOutputs(Materials.Lutetium.getFluid(16)).duration(16).EUt(8192).EUToStart(80000000).buildAndRegister();
-
-        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(OrePrefix.stickLong, Materials.NeodymiumMagnetic)
-                .input(OrePrefix.stickLong, Materials.HSSG, 2)
-                .input(OrePrefix.ring, Materials.HSSG, 4)
-                .input(OrePrefix.round, Materials.HSSG, 16)
-                .input(OrePrefix.wireFine, Materials.AnnealedCopper, 64)
-                .input(OrePrefix.wireFine, Materials.AnnealedCopper, 64)
-                .input(OrePrefix.wireFine, Materials.AnnealedCopper, 64)
-                .input(OrePrefix.wireFine, Materials.AnnealedCopper, 64)
-                .input(OrePrefix.cableGtSingle, Materials.YttriumBariumCuprate, 2)
-                .fluidInputs(Materials.SolderingAlloy.getFluid(L))
-                .fluidInputs(Materials.Lubricant.getFluid(250))
-                .outputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm())
-                .duration(600).EUt(10240)
-                .buildAndRegister();
-
-        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder().inputs(OreDictUnifier.get(OrePrefix.stickLong, Materials.NeodymiumMagnetic, 2), OreDictUnifier.get(OrePrefix.stickLong, Materials.HSSE, 4), OreDictUnifier.get(OrePrefix.ring, Materials.HSSE, 4), OreDictUnifier.get(OrePrefix.round, Materials.HSSE, 16), OreDictUnifier.get(OrePrefix.wireFine, Materials.Platinum, 64), OreDictUnifier.get(OrePrefix.wireFine, Materials.Platinum, 64), OreDictUnifier.get(OrePrefix.wireFine, Materials.Platinum, 64), OreDictUnifier.get(OrePrefix.wireFine, Materials.Platinum, 64), OreDictUnifier.get(OrePrefix.cableGtDouble, Materials.VanadiumGallium, 2)).fluidInputs(Materials.SolderingAlloy.getFluid(288), Materials.Lubricant.getFluid(750)).outputs(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm()).duration(600).EUt(40960).buildAndRegister();
-        RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder().inputs(OreDictUnifier.get(OrePrefix.block, Materials.NeodymiumMagnetic, 1), OreDictUnifier.get(OrePrefix.stickLong, Materials.Neutronium, 4), OreDictUnifier.get(OrePrefix.ring, Materials.Neutronium, 4), OreDictUnifier.get(OrePrefix.round, Materials.Neutronium, 16), OreDictUnifier.get(OrePrefix.wireGtSingle, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 64), OreDictUnifier.get(OrePrefix.wireGtSingle, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 64), OreDictUnifier.get(OrePrefix.wireGtSingle, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 64), OreDictUnifier.get(OrePrefix.wireGtSingle, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 64), OreDictUnifier.get(OrePrefix.cableGtQuadruple, Materials.NiobiumTitanium, 2)).fluidInputs(Materials.SolderingAlloy.getFluid(1296), Materials.Lubricant.getFluid(2000)).outputs(MetaItems.ELECTRIC_MOTOR_UV.getStackForm()).duration(600).EUt(163840).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder().inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm(), OreDictUnifier.get(OrePrefix.plate, Materials.HSSG, 2), OreDictUnifier.get(OrePrefix.pipeSmallFluid, Materials.Naquadah, 2), OreDictUnifier.get(OrePrefix.screw, Materials.HSSG, 8), OreDictUnifier.get(OrePrefix.ring, Materials.SiliconeRubber, 4), OreDictUnifier.get(OrePrefix.rotor, Materials.HSSG, 2), OreDictUnifier.get(OrePrefix.cableGtSingle, Materials.YttriumBariumCuprate, 2)).fluidInputs(Materials.SolderingAlloy.getFluid(144), Materials.Lubricant.getFluid(250)).outputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm()).duration(600).EUt(15360).buildAndRegister();
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder().inputs(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm(), OreDictUnifier.get(OrePrefix.plate, Materials.HSSE, 2), OreDictUnifier.get(OrePrefix.pipeNormalFluid, Materials.Naquadah, 2), OreDictUnifier.get(OrePrefix.screw, Materials.HSSE, 8), OreDictUnifier.get(OrePrefix.ring, Materials.SiliconeRubber, 16), OreDictUnifier.get(OrePrefix.rotor, Materials.HSSE, 2), OreDictUnifier.get(OrePrefix.cableGtDouble, Materials.VanadiumGallium, 2)).fluidInputs(Materials.SolderingAlloy.getFluid(288), Materials.Lubricant.getFluid(750)).outputs(MetaItems.ELECTRIC_PUMP_ZPM.getStackForm()).duration(600).EUt(61440).buildAndRegister();
