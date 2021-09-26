@@ -35,6 +35,7 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
     private boolean isActive;
     private boolean workingEnabled = true;
     private boolean wasActiveAndNeedsUpdate = false;
+    protected boolean invalidInputsForRecipes;
 
     public FuelRecipeLogic(MetaTileEntity metaTileEntity, FuelRecipeMap recipeMap, Supplier<IEnergyContainer> energyContainer, Supplier<IMultipleTankHandler> fluidTank, long maxVoltage) {
         super(metaTileEntity);
@@ -108,20 +109,43 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
         return null;
     }
 
+    protected boolean hasNotifiedInputs() {
+        return metaTileEntity.getNotifiedFluidInputList().size() > 0;
+    }
+
+    protected boolean canWorkWithInputs() {
+        // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
+        if (this.invalidInputsForRecipes && !hasNotifiedInputs()) return false;
+        else {
+            this.invalidInputsForRecipes = false;
+        }
+        return true;
+    }
+
     @Override
     public void update() {
-        if (getMetaTileEntity().getWorld().isRemote) return;
+        if (getMetaTileEntity().getWorld().isRemote) {
+            return;
+        }
+
         if (workingEnabled) {
             if (recipeDurationLeft > 0) {
-                if (energyContainer.get().getEnergyCanBeInserted() >=
-                        recipeOutputVoltage || shouldVoidExcessiveEnergy()) {
+                //Check for if the full energy amount can be added to the output container, or if the energy should be voided
+                //In addition, checks if the recipe should be canceled for any reason
+                //TODO, should isObstructed() wipe the remaining recipeDuration?
+                //TODO, should isObstructed be called not every tick, to prevent scanning free space every tick? getOffsetTimer % 10?
+                if ((energyContainer.get().getEnergyCanBeInserted() >= recipeOutputVoltage || shouldVoidExcessiveEnergy()) && !isObstructed()) {
                     energyContainer.get().addEnergy(recipeOutputVoltage);
+                    //If the recipe has finished, mark the machine as needing to be updated
                     if (--this.recipeDurationLeft == 0) {
                         this.wasActiveAndNeedsUpdate = true;
                     }
                 }
+               /* else if(isObstructed()) {
+                    this.recipeDurationLeft = 0;
+                } */
             }
-            if (recipeDurationLeft == 0 && isReadyForRecipes()) {
+            if (recipeDurationLeft == 0 && isReadyForRecipes() && canWorkWithInputs()) {
                 tryAcquireNewRecipe();
             }
         }
@@ -131,23 +155,46 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
         }
     }
 
+    /**
+     * Whether the multiblock can begin searching for new recipes once a recipe is completed.
+     * This is called only when the multiblock begins searching for new recipes, not during the recipe progression.
+     * This method will also cancel searching for recipes if there are too many maintenance issues.
+     *
+     * @return {@code true} if the multiblock should search for a new recipe
+     */
     protected boolean isReadyForRecipes() {
-        return true;
+        if (metaTileEntity instanceof MultiblockWithDisplayBase) {
+
+            MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
+
+            // do not run recipes when there are more than 5 maintenance problems
+            if (controller.hasMaintenanceMechanics() && controller.getNumMaintenanceProblems() > 5) {
+                return false;
+            }
+        }
+
+        return !isObstructed();
+    }
+
+    /**
+     * Whether the multiblock should cancel its recipe for any reason.
+     * This will be checked every update tick, unlike {@link FuelRecipeLogic#isReadyForRecipes()}
+     * Some examples of usage would be if a rotor or air intake is obstructed.
+     *
+     * @return {@code true} if the multiblock should cancel its recipe for any reason
+     */
+    protected boolean isObstructed() {
+        return false;
     }
 
     protected boolean shouldVoidExcessiveEnergy() {
         return false;
     }
 
+    /**
+     * Search the combined Fluid Inventory to find a valid fluid for running the power generation recipe.
+     */
     private void tryAcquireNewRecipe() {
-        if (metaTileEntity instanceof MultiblockWithDisplayBase) {
-
-            MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-
-            // do not run recipes when there are more than 5 maintenance problems
-            if (controller.hasMaintenanceMechanics() && controller.getNumMaintenanceProblems() > 5)
-                return;
-        }
 
         IMultipleTankHandler fluidTanks = this.fluidTank.get();
         for (IFluidTank fluidTank : fluidTanks) {
@@ -164,11 +211,13 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
                             if (controller.hasMufflerMechanics())
                                 controller.outputRecoveryItems();
 
-                            // increase total on time
+                            // increase total multiblock active time
+                            //TODO, does this correctly account for current maintenance issues scaling the recipe duration in calculateRecipeDuration?
                             controller.calculateMaintenance(previousRecipe.getDuration());
                         }
                     }
 
+                    //TODO, should we clear the notified inputs list here, or where it is currently?
                     break; //recipe is found and ready to use
                 }
             }
@@ -181,9 +230,9 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
 
     private int tryAcquireNewRecipe(FluidStack fluidStack) {
         FuelRecipe currentRecipe;
-        if (previousRecipe != null && previousRecipe.matches(getMaxVoltage(), fluidStack)) {
+        if (this.previousRecipe != null && this.previousRecipe.matches(getMaxVoltage(), fluidStack)) {
             //if previous recipe still matches inputs, try to use it
-            currentRecipe = previousRecipe;
+            currentRecipe = this.previousRecipe;
         } else {
             //else, try searching new recipe for given inputs
             currentRecipe = recipeMap.findRecipe(getMaxVoltage(), fluidStack);
@@ -192,9 +241,16 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
                 this.previousRecipe = currentRecipe;
             }
         }
+
+        //TODO, should this be done here, as it is called in the middle of a loop over valid fluid tanks?
+        this.invalidInputsForRecipes = (currentRecipe == null);
+
+        //Check if we have found a valid recipe
         if (currentRecipe != null && checkRecipe(currentRecipe)) {
             int fuelAmountToUse = calculateFuelAmount(currentRecipe);
+            //Check if we have the required amount of fuel, and optionally boosters
             if (fluidStack.amount >= fuelAmountToUse) {
+                //Initialize the required variables. This is basically setupRecipe in AbstractRecipeLogic, just condensed
                 this.recipeDurationLeft = calculateRecipeDuration(currentRecipe);
                 this.recipeOutputVoltage = startRecipe(currentRecipe, fuelAmountToUse, recipeDurationLeft);
                 if (wasActiveAndNeedsUpdate) {
@@ -202,9 +258,11 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
                 } else {
                     setActive(true);
                 }
+                metaTileEntity.getNotifiedFluidInputList().clear();
                 return fuelAmountToUse;
             }
         }
+        metaTileEntity.getNotifiedFluidInputList().clear();
         return 0;
     }
 
