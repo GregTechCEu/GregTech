@@ -24,7 +24,7 @@ public class ComponentRecipesHighTier {
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .outputs(MetaItems.FIELD_GENERATOR_LUV.getStackForm())
-                .duration(600).EUt(10240).buildAndRegister();
+                .duration(600).EUt(5760).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.frameGt, Materials.HSSS)
@@ -38,7 +38,7 @@ public class ComponentRecipesHighTier {
                 .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .outputs(MetaItems.FIELD_GENERATOR_ZPM.getStackForm())
-                .duration(600).EUt(40960).buildAndRegister();
+                .duration(600).EUt(23040).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.frameGt, Materials.Tritanium)
@@ -52,7 +52,7 @@ public class ComponentRecipesHighTier {
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .outputs(MetaItems.FIELD_GENERATOR_UV.getStackForm())
-                .duration(600).EUt(163840).buildAndRegister();
+                .duration(600).EUt(92160).buildAndRegister();
 
         // Robot Arms Start --------------------------------------------------------------------------------------------
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
@@ -66,7 +66,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(250))
                 .outputs(MetaItems.ROBOT_ARM_LUV.getStackForm())
-                .duration(600).EUt(10240).buildAndRegister();
+                .duration(600).EUt(5760).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.stickLong, Materials.HSSS, 2)
@@ -79,7 +79,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(500))
                 .outputs(MetaItems.ROBOT_ARM_ZPM.getStackForm())
-                .duration(600).EUt(40960).buildAndRegister();
+                .duration(600).EUt(23040).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.stickLong, Materials.Tritanium, 2)
@@ -92,7 +92,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(1000))
                 .outputs(MetaItems.ROBOT_ARM_UV.getStackForm())
-                .duration(600).EUt(163840).buildAndRegister();
+                .duration(600).EUt(92160).buildAndRegister();
 
 
         // Motors Start ------------------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(250))
                 .outputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm())
-                .duration(600).EUt(10240).buildAndRegister();
+                .duration(600).EUt(5760).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.stickLong, Materials.SamariumMagnetic)
@@ -124,7 +124,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(500))
                 .outputs(MetaItems.ELECTRIC_MOTOR_ZPM.getStackForm())
-                .duration(600).EUt(40960).buildAndRegister();
+                .duration(600).EUt(23040).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.stickLong, Materials.SamariumMagnetic)
@@ -139,7 +139,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(1000))
                 .outputs(MetaItems.ELECTRIC_MOTOR_UV.getStackForm())
-                .duration(600).EUt(163840).buildAndRegister();
+                .duration(600).EUt(92160).buildAndRegister();
 
         // Sensors Start------------------------------------------------------------------------------------------------
 
@@ -155,7 +155,7 @@ public class ComponentRecipesHighTier {
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .outputs(MetaItems.SENSOR_LUV.getStackForm())
-                .duration(600).EUt(10240).buildAndRegister();
+                .duration(600).EUt(5760).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.frameGt, Materials.HSSS)
@@ -169,7 +169,7 @@ public class ComponentRecipesHighTier {
                 .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .outputs(MetaItems.SENSOR_ZPM.getStackForm())
-                .duration(600).EUt(40960).buildAndRegister();
+                .duration(600).EUt(23040).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.frameGt, Materials.Tritanium)
@@ -183,7 +183,7 @@ public class ComponentRecipesHighTier {
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .outputs(MetaItems.SENSOR_UV.getStackForm())
-                .duration(600).EUt(163840).buildAndRegister();
+                .duration(600).EUt(92160).buildAndRegister();
 
         // Emitters Start-----------------------------------------------------------------------------------------------
 
@@ -199,7 +199,7 @@ public class ComponentRecipesHighTier {
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .outputs(MetaItems.EMITTER_LUV.getStackForm())
-                .duration(600).EUt(10240).buildAndRegister();
+                .duration(600).EUt(5760).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.frameGt, Materials.HSSS)
@@ -213,7 +213,7 @@ public class ComponentRecipesHighTier {
                 .input(OrePrefix.cableGtSingle, Materials.VanadiumGallium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .outputs(MetaItems.EMITTER_ZPM.getStackForm())
-                .duration(600).EUt(40960).buildAndRegister();
+                .duration(600).EUt(23040).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.frameGt, Materials.Tritanium)
@@ -227,7 +227,7 @@ public class ComponentRecipesHighTier {
                 .input(OrePrefix.cableGtSingle, Materials.NaquadahAlloy, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .outputs(MetaItems.EMITTER_UV.getStackForm())
-                .duration(600).EUt(163840).buildAndRegister();
+                .duration(600).EUt(92160).buildAndRegister();
 
         // Pistons Start------------------------------------------------------------------------------------------------
 
@@ -241,7 +241,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(250))
                 .outputs(MetaItems.ELECTRIC_PISTON_LUV.getStackForm())
-                .duration(600).EUt(10240).buildAndRegister();
+                .duration(600).EUt(5760).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.HSSS, 2)
@@ -253,7 +253,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(500))
                 .outputs(MetaItems.ELECTRIC_PISTON_ZPM.getStackForm())
-                .duration(600).EUt(40960).buildAndRegister();
+                .duration(600).EUt(23040).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.Tritanium, 2)
@@ -265,7 +265,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(1000))
                 .outputs(MetaItems.ELECTRIC_PISTON_UV.getStackForm())
-                .duration(600).EUt(163840).buildAndRegister();
+                .duration(600).EUt(92160).buildAndRegister();
 
         // Conveyors Start----------------------------------------------------------------------------------------------
 
@@ -279,7 +279,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.StyreneButadieneRubber.getFluid(GTValues.L * 8))
                 .fluidInputs(Materials.Lubricant.getFluid(250))
                 .outputs(MetaItems.CONVEYOR_MODULE_LUV.getStackForm())
-                .duration(600).EUt(10240).buildAndRegister();
+                .duration(600).EUt(5760).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.gearSmall, Materials.HSSS, 2)
@@ -291,7 +291,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L * 8))
                 .fluidInputs(Materials.Lubricant.getFluid(500))
                 .outputs(MetaItems.CONVEYOR_MODULE_ZPM.getStackForm())
-                .duration(600).EUt(40960).buildAndRegister();
+                .duration(600).EUt(23040).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.gearSmall, Materials.Tritanium, 2)
@@ -303,7 +303,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.Polybenzimidazole.getFluid(GTValues.L * 8))
                 .fluidInputs(Materials.Lubricant.getFluid(1000))
                 .outputs(MetaItems.CONVEYOR_MODULE_UV.getStackForm())
-                .duration(600).EUt(163840).buildAndRegister();
+                .duration(600).EUt(92160).buildAndRegister();
 
         //Pumps Start --------------------------------------------------------------------------------------------------
 
@@ -317,7 +317,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SiliconeRubber.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(250))
                 .outputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm())
-                .duration(600).EUt(10240).buildAndRegister();
+                .duration(600).EUt(5760).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.HSSS, 2)
@@ -329,7 +329,7 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SiliconeRubber.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(500))
                 .outputs(MetaItems.ELECTRIC_PUMP_ZPM.getStackForm())
-                .duration(600).EUt(40960).buildAndRegister();
+                .duration(600).EUt(23040).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.Tritanium, 2)
@@ -341,6 +341,6 @@ public class ComponentRecipesHighTier {
                 .fluidInputs(Materials.SiliconeRubber.getFluid(GTValues.L))
                 .fluidInputs(Materials.Lubricant.getFluid(1000))
                 .outputs(MetaItems.ELECTRIC_PUMP_UV.getStackForm())
-                .duration(600).EUt(163840).buildAndRegister();
+                .duration(600).EUt(92160).buildAndRegister();
     }
 }
