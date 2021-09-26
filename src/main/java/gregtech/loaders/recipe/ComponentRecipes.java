@@ -25,12 +25,12 @@ public class ComponentRecipes {
         ModHandler.addShapedRecipe("field_generator/field_generator_lv", MetaItems.FIELD_GENERATOR_LV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtSingle, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'G', new UnificationEntry(OrePrefix.gem, Materials.EnderPearl), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic));
         ModHandler.addShapedRecipe("field_generator/field_generator_mv", MetaItems.FIELD_GENERATOR_MV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtDouble, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium), 'G', new UnificationEntry(OrePrefix.gem, Materials.EnderEye), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Good));
         ModHandler.addShapedRecipe("field_generator/field_generator_hv", MetaItems.FIELD_GENERATOR_HV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel), 'G', MetaItems.QUANTUM_EYE.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced));
-        ModHandler.addShapedRecipe("field_generator/field_generator_ev", MetaItems.FIELD_GENERATOR_EV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Titanium), 'G', new UnificationEntry(OrePrefix.gem, Materials.NetherStar), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Extreme));
-        ModHandler.addShapedRecipe("field_generator/field_generator_iv", MetaItems.FIELD_GENERATOR_IV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel), 'G', MetaItems.QUANTUM_STAR.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Elite));
+        ModHandler.addShapedRecipe("field_generator/field_generator_ev", MetaItems.FIELD_GENERATOR_EV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plateDouble, Materials.Titanium), 'G', new UnificationEntry(OrePrefix.gem, Materials.NetherStar), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Extreme));
+        ModHandler.addShapedRecipe("field_generator/field_generator_iv", MetaItems.FIELD_GENERATOR_IV.getStackForm(), "WPW", "XGX", "WPW", 'W', new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Osmium), 'P', new UnificationEntry(OrePrefix.plateDouble, Materials.TungstenSteel), 'G', MetaItems.QUANTUM_STAR.getStackForm(), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Elite));
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.gem, Materials.EnderPearl)
-                .input(OrePrefix.plate, Materials.Steel)
+                .input(OrePrefix.plate, Materials.Steel, 2)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Basic, 2)
                 .fluidInputs(Materials.Osmium.getFluid(L * 2))
                 .outputs(MetaItems.FIELD_GENERATOR_LV.getStackForm())
@@ -38,7 +38,7 @@ public class ComponentRecipes {
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.gem, Materials.EnderEye)
-                .input(OrePrefix.plate, Materials.Aluminium)
+                .input(OrePrefix.plate, Materials.Aluminium, 2)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Good, 2)
                 .fluidInputs(Materials.Osmium.getFluid(L * 4))
                 .outputs(MetaItems.FIELD_GENERATOR_MV.getStackForm())
@@ -46,7 +46,7 @@ public class ComponentRecipes {
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(MetaItems.QUANTUM_EYE.getStackForm())
-                .input(OrePrefix.plate, Materials.StainlessSteel)
+                .input(OrePrefix.plate, Materials.StainlessSteel, 2)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Advanced, 2)
                 .fluidInputs(Materials.Osmium.getFluid(L * 8))
                 .outputs(MetaItems.FIELD_GENERATOR_HV.getStackForm())
@@ -54,7 +54,7 @@ public class ComponentRecipes {
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.gem, Materials.NetherStar)
-                .input(OrePrefix.plate, Materials.Titanium)
+                .input(OrePrefix.plateDouble, Materials.Titanium, 2)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Extreme, 2)
                 .fluidInputs(Materials.Osmium.getFluid(L * 8))
                 .outputs(MetaItems.FIELD_GENERATOR_EV.getStackForm())
@@ -62,7 +62,7 @@ public class ComponentRecipes {
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(MetaItems.QUANTUM_STAR.getStackForm())
-                .input(OrePrefix.plate, Materials.TungstenSteel)
+                .input(OrePrefix.plateDouble, Materials.TungstenSteel, 2)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Elite, 2)
                 .fluidInputs(Materials.Osmium.getFluid(L * 8))
                 .outputs(MetaItems.FIELD_GENERATOR_IV.getStackForm())
@@ -228,11 +228,11 @@ public class ComponentRecipes {
 
 
         //Emitters Start------------------------------------------------------------------------------------------------
-        ModHandler.addShapedRecipe("emitter/emitter_lv", MetaItems.EMITTER_LV.getStackForm(), "RRX", "CGR", "XCR", 'R', new UnificationEntry(OrePrefix.stick, Materials.Brass), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin), 'G', new UnificationEntry(OrePrefix.gem, Materials.Quartzite), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic));
-        ModHandler.addShapedRecipe("emitter/emitter_mv", MetaItems.EMITTER_MV.getStackForm(), "RRX", "CGR", "XCR", 'R', new UnificationEntry(OrePrefix.stick, Materials.Electrum), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper), 'G', new UnificationEntry(OrePrefix.gem, Materials.NetherQuartz), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Good));
-        ModHandler.addShapedRecipe("emitter/emitter_hv", MetaItems.EMITTER_HV.getStackForm(), "RRX", "CGR", "XCR", 'R', new UnificationEntry(OrePrefix.stick, Materials.Chrome), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold), 'G', new UnificationEntry(OrePrefix.gem, Materials.Emerald), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced));
-        ModHandler.addShapedRecipe("emitter/emitter_ev", MetaItems.EMITTER_EV.getStackForm(), "RRX", "CGR", "XCR", 'R', new UnificationEntry(OrePrefix.stick, Materials.Platinum), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium), 'G', new UnificationEntry(OrePrefix.gem, Materials.EnderPearl), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Extreme));
-        ModHandler.addShapedRecipe("emitter/emitter_iv", MetaItems.EMITTER_IV.getStackForm(), "RRX", "CGR", "XCR", 'R', new UnificationEntry(OrePrefix.stick, Materials.Iridium), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tungsten), 'G', new UnificationEntry(OrePrefix.gem, Materials.EnderEye), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Elite));
+        ModHandler.addShapedRecipe("emitter/emitter_lv", MetaItems.EMITTER_LV.getStackForm(), "CRX", "RGR", "XRC", 'R', new UnificationEntry(OrePrefix.stick, Materials.Brass), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin), 'G', new UnificationEntry(OrePrefix.gem, Materials.Quartzite), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic));
+        ModHandler.addShapedRecipe("emitter/emitter_mv", MetaItems.EMITTER_MV.getStackForm(), "CRX", "RGR", "XRC", 'R', new UnificationEntry(OrePrefix.stick, Materials.Electrum), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper), 'G', new UnificationEntry(OrePrefix.gem, Materials.NetherQuartz), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Good));
+        ModHandler.addShapedRecipe("emitter/emitter_hv", MetaItems.EMITTER_HV.getStackForm(), "CRX", "RGR", "XRC", 'R', new UnificationEntry(OrePrefix.stick, Materials.Chrome), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold), 'G', new UnificationEntry(OrePrefix.gem, Materials.Emerald), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Advanced));
+        ModHandler.addShapedRecipe("emitter/emitter_ev", MetaItems.EMITTER_EV.getStackForm(), "CRX", "RGR", "XRC", 'R', new UnificationEntry(OrePrefix.stick, Materials.Platinum), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium), 'G', new UnificationEntry(OrePrefix.gem, Materials.EnderPearl), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Extreme));
+        ModHandler.addShapedRecipe("emitter/emitter_iv", MetaItems.EMITTER_IV.getStackForm(), "CRX", "RGR", "XRC", 'R', new UnificationEntry(OrePrefix.stick, Materials.Iridium), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tungsten), 'G', new UnificationEntry(OrePrefix.gem, Materials.EnderEye), 'X', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Elite));
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.stick, Materials.Brass, 4)

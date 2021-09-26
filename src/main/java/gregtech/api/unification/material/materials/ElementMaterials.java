@@ -32,7 +32,7 @@ public class ElementMaterials {
         Americium = new Material.Builder(3, "americium")
                 .ingot(3).fluid()
                 .color(0xC8C8C8).iconSet(METALLIC)
-                .flags(STD_METAL, GENERATE_ROD, GENERATE_LONG_ROD)
+                .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Am)
                 .itemPipeProperties(64, 64)
                 .build();
@@ -915,7 +915,7 @@ public class ElementMaterials {
         Naquadria = new Material.Builder(126, "naquadria")
                 .ingot(3).fluid()
                 .color(0x1E1E1E).iconSet(SHINY)
-                .flags(EXT_METAL, GENERATE_FOIL, GENERATE_GEAR, GENERATE_DENSE)
+                .flags(EXT_METAL, GENERATE_FOIL, GENERATE_GEAR, GENERATE_DENSE, GENERATE_FINE_WIRE)
                 .element(Elements.Nq2)
                 .blastTemp(9000)
                 .build();
@@ -932,7 +932,7 @@ public class ElementMaterials {
         Tritanium = new Material.Builder(128, "tritanium")
                 .ingot(6).fluid()
                 .color(0x600000).iconSet(METALLIC)
-                .flags(EXT_METAL, GENERATE_FRAME, GENERATE_ROUND, GENERATE_RING)
+                .flags(EXT2_METAL, GENERATE_FRAME, GENERATE_RING, GENERATE_SPRING, GENERATE_SMALL_GEAR, GENERATE_ROTOR)
                 .element(Elements.Tr)
                 .toolStats(20.0f, 6.0f, 10240, 21)
                 .build();
