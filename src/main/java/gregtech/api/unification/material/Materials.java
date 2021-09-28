@@ -317,6 +317,7 @@ public class Materials {
     public static Material Pyrolusite;
     public static Material Pyrope;
     public static Material RockSalt;
+    public static Material RuthenianIridium;
     public static Material Rubber;
     public static Material Ruby;
     public static Material Salt;

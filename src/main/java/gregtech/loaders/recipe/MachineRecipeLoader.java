@@ -584,7 +584,7 @@ public class MachineRecipeLoader {
         BLAST_RECIPES.recipeBuilder().duration(200).EUt(120).input(dust, Copper).fluidInputs(Oxygen.getFluid(1000)).output(ingot, AnnealedCopper).blastFurnaceTemp(1200).notConsumable(new IntCircuitIngredient(1)).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(500).EUt(120).input(ingot, Copper).fluidInputs(Oxygen.getFluid(1000)).output(ingot, AnnealedCopper).blastFurnaceTemp(1200).notConsumable(new IntCircuitIngredient(1)).buildAndRegister();
         BLAST_RECIPES.recipeBuilder().duration(200).EUt(1920).input(dust, Osmiridium).fluidInputs(Helium.getFluid(1000)).output(ingotHot, Osmiridium).blastFurnaceTemp(2900).buildAndRegister();
-        BLAST_RECIPES.recipeBuilder().duration(500).EUt(30720).input(ingot, Naquadah).input(ingot, Osmiridium).fluidInputs(Argon.getFluid(1000)).output(ingotHot, NaquadahAlloy, 2).blastFurnaceTemp(NaquadahAlloy.getBlastTemperature()).buildAndRegister();
+        BLAST_RECIPES.recipeBuilder().duration(500).EUt(30720).input(dust, NaquadahAlloy).fluidInputs(Argon.getFluid(1000)).output(ingotHot, NaquadahAlloy).blastFurnaceTemp(NaquadahAlloy.getBlastTemperature()).buildAndRegister();
 
         registerBlastFurnaceMetallurgyRecipes();
     }

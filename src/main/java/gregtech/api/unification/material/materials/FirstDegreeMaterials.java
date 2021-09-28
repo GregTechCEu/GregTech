@@ -460,7 +460,13 @@ public class FirstDegreeMaterials {
                 .components(Potassium, 1, Chlorine, 1)
                 .build();
 
-        // FREE ID 310
+        RuthenianIridium = new Material.Builder(310, "ruthenian_iridium")
+                .ingot(3)
+                .color(0xA4A4A4).iconSet(BRIGHT)
+                .flags(GENERATE_FINE_WIRE)
+                .components(Ruthenium, 2, Iridium, 1)
+                .blastTemp(4500)
+                .build();
 
         Ruby = new Material.Builder(311, "ruby")
                 .gem().ore()
