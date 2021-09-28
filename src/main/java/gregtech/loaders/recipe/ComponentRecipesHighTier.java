@@ -13,8 +13,8 @@ public class ComponentRecipesHighTier {
 
         // Field Generators Start --------------------------------------------------------------------------------------
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(OrePrefix.frameGt, Materials.HSSE)
-                .input(OrePrefix.plate, Materials.HSSE, 4)
+                .input(OrePrefix.frameGt, Materials.HSSG)
+                .input(OrePrefix.plate, Materials.HSSG, 4)
                 .inputs(MetaItems.QUANTUM_STAR.getStackForm())
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Master)
                 .input(OrePrefix.wireFine, Materials.Osmium, 32)
@@ -56,9 +56,9 @@ public class ComponentRecipesHighTier {
 
         // Robot Arms Start --------------------------------------------------------------------------------------------
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(OrePrefix.stickLong, Materials.HSSE, 2)
-                .input(OrePrefix.gearSmall, Materials.HSSE)
-                .input(OrePrefix.spring, Materials.HSSE)
+                .input(OrePrefix.stickLong, Materials.HSSG, 2)
+                .input(OrePrefix.gearSmall, Materials.HSSG)
+                .input(OrePrefix.spring, Materials.HSSG)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Master)
                 .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm(2))
                 .inputs(MetaItems.ELECTRIC_PISTON_LUV.getStackForm())
@@ -98,9 +98,9 @@ public class ComponentRecipesHighTier {
         // Motors Start ------------------------------------------------------------------------------------------------
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
                 .input(OrePrefix.stickLong, Materials.SamariumMagnetic)
-                .input(OrePrefix.stickLong, Materials.HSSE)
-                .input(OrePrefix.ring, Materials.HSSE, 4)
-                .input(OrePrefix.round, Materials.HSSE, 8)
+                .input(OrePrefix.stickLong, Materials.HSSG)
+                .input(OrePrefix.ring, Materials.HSSG, 4)
+                .input(OrePrefix.round, Materials.HSSG, 8)
                 .input(OrePrefix.wireFine, Materials.RuthenianIridium, 16)
                 .input(OrePrefix.wireFine, Materials.RuthenianIridium, 16)
                 .input(OrePrefix.wireFine, Materials.RuthenianIridium, 16)
@@ -144,7 +144,7 @@ public class ComponentRecipesHighTier {
         // Sensors Start------------------------------------------------------------------------------------------------
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(OrePrefix.frameGt, Materials.HSSE)
+                .input(OrePrefix.frameGt, Materials.HSSG)
                 .input(OrePrefix.stickLong, Materials.Rhodium)
                 .inputs(MetaItems.QUANTUM_EYE.getStackForm())
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Master)
@@ -188,7 +188,7 @@ public class ComponentRecipesHighTier {
         // Emitters Start-----------------------------------------------------------------------------------------------
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(OrePrefix.frameGt, Materials.HSSE)
+                .input(OrePrefix.frameGt, Materials.HSSG)
                 .input(OrePrefix.plate, Materials.Rhodium)
                 .inputs(MetaItems.QUANTUM_STAR.getStackForm())
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Master, 2)
@@ -232,10 +232,10 @@ public class ComponentRecipesHighTier {
         // Pistons Start------------------------------------------------------------------------------------------------
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.HSSE, 2)
-                .input(OrePrefix.stickLong, Materials.HSSE)
-                .input(OrePrefix.gear, Materials.HSSE)
-                .input(OrePrefix.spring, Materials.HSSE)
+                .input(OrePrefix.plate, Materials.HSSG, 2)
+                .input(OrePrefix.stickLong, Materials.HSSG)
+                .input(OrePrefix.gear, Materials.HSSG)
+                .input(OrePrefix.spring, Materials.HSSG)
                 .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm())
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                 .fluidInputs(Materials.SolderingAlloy.getFluid(GTValues.L))
@@ -270,10 +270,10 @@ public class ComponentRecipesHighTier {
         // Conveyors Start----------------------------------------------------------------------------------------------
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(OrePrefix.gearSmall, Materials.HSSE, 2)
-                .input(OrePrefix.ring, Materials.HSSE, 2)
-                .input(OrePrefix.screw, Materials.HSSE, 4)
-                .input(OrePrefix.round, Materials.HSSE, 16)
+                .input(OrePrefix.gearSmall, Materials.HSSG, 2)
+                .input(OrePrefix.ring, Materials.HSSG, 2)
+                .input(OrePrefix.screw, Materials.HSSG, 4)
+                .input(OrePrefix.round, Materials.HSSG, 16)
                 .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm(2))
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                 .fluidInputs(Materials.StyreneButadieneRubber.getFluid(GTValues.L * 8))
@@ -308,10 +308,10 @@ public class ComponentRecipesHighTier {
         //Pumps Start --------------------------------------------------------------------------------------------------
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .input(OrePrefix.plate, Materials.HSSE, 2)
+                .input(OrePrefix.plate, Materials.HSSG, 2)
                 .input(OrePrefix.pipeNormalFluid, Materials.NiobiumTitanium)
-                .input(OrePrefix.rotor, Materials.HSSE)
-                .input(OrePrefix.screw, Materials.HSSE, 4)
+                .input(OrePrefix.rotor, Materials.HSSG)
+                .input(OrePrefix.screw, Materials.HSSG, 4)
                 .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm())
                 .input(OrePrefix.cableGtSingle, Materials.NiobiumTitanium, 2)
                 .fluidInputs(Materials.SiliconeRubber.getFluid(GTValues.L))
