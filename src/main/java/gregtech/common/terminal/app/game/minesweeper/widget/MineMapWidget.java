@@ -2,16 +2,37 @@ package gregtech.common.terminal.app.game.minesweeper.widget;
 
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
+import gregtech.api.gui.resources.TextureArea;
+import net.minecraft.util.ResourceLocation;
 
 public class MineMapWidget extends Widget {
 
-    int mineCount;
-    int width;
-    int height;
-    boolean[][] mines;
-    boolean[][] flags;
-    boolean[][] checkedSpaces;
-    int[][] generatedNumbers;
+    private static final TextureArea COVERED = new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/covered.png"), 0, 0, 1, 1);
+    private static final TextureArea FLAG = new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/flag.png"), 0, 0, 1, 1);
+    private static final TextureArea BOMB = new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/bomb.png"), 0, 0, 1, 1);
+
+    private static final TextureArea[] NUMBERS = {
+            new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/blank.png"), 0, 0, 1, 1),
+            new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/1.png"), 0, 0, 1, 1),
+            new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/2.png"), 0, 0, 1, 1),
+            new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/3.png"), 0, 0, 1, 1),
+            new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/4.png"), 0, 0, 1, 1),
+            new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/5.png"), 0, 0, 1, 1),
+            new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/6.png"), 0, 0, 1, 1),
+            new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/7.png"), 0, 0, 1, 1),
+            new TextureArea(new ResourceLocation("gregtech:textures/gui/terminal/minesweeper/8.png"), 0, 0, 1, 1)
+    };
+
+    public int mineCount;
+    public int flagsPlaced;
+    private int width;
+    private int height;
+    private boolean isPrepared;
+    private boolean[][] mines;
+    private boolean[][] flags;
+    private boolean[][] checkedSpaces;
+    private int[][] generatedNumbers;
+    private boolean isLost = false;
 
     public MineMapWidget(int width, int height, int mineCount) {
         super(333 / 2 - width * 8, 232 / 2 - height * 8, width * 16, height * 16);
@@ -26,28 +47,58 @@ public class MineMapWidget extends Widget {
     }
 
     public void initMines(int startX, int startY) {
-        for(int minesPlaced = 0; minesPlaced < mineCount; minesPlaced++) {
-            int x = (int) (Math.random() * width);
-            int y = (int) (Math.random() * height);
-
-            // The weird part to the right is making sure the player doesn't start on a numbered tile
-            while (!mines[x][y] && (startX < x + 2 && startX > x - 2) && (startY < y + 2 && startY > y - 2)) {
-                x = (int) (Math.random() * width);
-                y = (int) (Math.random() * height);
+        int minesPlaced = 0;
+        while (minesPlaced < mineCount) {
+            for (; minesPlaced < mineCount; minesPlaced++) {
+                placeMine(startX, startY);
             }
-            mines[x][y] = true;
 
-            // Add to surrounding numbers for the mine
-            for(int i = -1; i < 2; i++) {
-                for (int j = -1; j < 2; j++) {
-                    try {
-                        generatedNumbers[x + i][y + j]++;
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        // Lol don't do anything this is expected
+            // Are there any sections that we can't figure out what's inside?
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    boolean isTrapped = true;
+                    // The weird ternaries here are making sure to not cause overflows
+                    for (int xMod = i == 0 ? 0 : -1; xMod < (i == width - 1 ? 1 : 2); xMod++) {
+                        for (int yMod = j == 0 ? 0 : -1; yMod < (j == height - 1 ? 1 : 2); yMod++) {
+                            isTrapped &= mines[i + xMod][j + yMod];
+                        }
+                    }
+                    if (isTrapped) {
+                        // Yes, so just take out the middle
+                        mines[i][j] = false;
+                        minesPlaced--;
                     }
                 }
             }
         }
+
+
+        // Add to surrounding numbers for the mine
+        // The weird ternaries here are making sure to not cause overflows
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if(mines[x][y]) {
+                    for (int xMod = x == 0 ? 0 : -1; xMod < (x == width - 1 ? 1 : 2); xMod++) {
+                        for (int yMod = y == 0 ? 0 : -1; yMod < (y == height - 1 ? 1 : 2); yMod++) {
+                            generatedNumbers[x + xMod][y + yMod]++;
+                        }
+                    }
+                }
+            }
+        }
+        isPrepared = true;
+    }
+
+    private void placeMine(int startX, int startY) {
+        int x = (int) (Math.random() * width);
+        int y = (int) (Math.random() * height);
+
+        // The weird part to the right is making sure the player doesn't start on a numbered tile
+        while (!mines[x][y] && (startX < x + 3 && startX > x - 3) && (startY < y + 3 && startY > y - 3)) {
+            x = (int) (Math.random() * width);
+            y = (int) (Math.random() * height);
+        }
+        mines[x][y] = true;
     }
 
     @Override
@@ -55,31 +106,74 @@ public class MineMapWidget extends Widget {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 if (!checkedSpaces[i][j]) {
-                    // Draw uncovered tile
-                } else if (!mines[i][j]) {
-                    if (generatedNumbers[i][j] > 0) {
-                        // Draw number
-                    } else {
-                        // Draw blank
-                    }
-                } else {
-                    // Draw mine
-                }
+                    if (flags[i][j])
+                        FLAG.draw(i * 16 + getPosition().getX(), j * 16 + getPosition().getY(), 16, 16);
+                    else
+                        COVERED.draw(i * 16 + getPosition().getX(), j * 16 + getPosition().getY(), 16, 16);
+                } else if (!mines[i][j])
+                        NUMBERS[generatedNumbers[i][j]].draw(i * 16 + getPosition().getX(), j * 16 + getPosition().getY(), 16, 16);
+                else
+                    BOMB.draw(i * 16 + getPosition().getX(), j * 16 + getPosition().getY(), 16, 16);
             }
         }
     }
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        int gridX = mouseX / 16;
-        int gridY = mouseY / 16;
-
-        if (button == 0 && !flags[gridX][gridY]) {
-            checkedSpaces[gridX][gridY] = true;
-        } else if (button == 1) {
-            flags[gridX][gridY] = !flags[gridX][gridY];
+        int gridX = (mouseX - getPosition().getX()) / 16;
+        int gridY = (mouseY - getPosition().getY()) / 16;
+        if (gridX >= width || gridY >= height) {
+            return false;
         }
 
-        return false;
+
+        if (button == 0 && !flags[gridX][gridY]) {
+            if (!isPrepared)
+                initMines(gridX, gridY);
+            if (generatedNumbers[gridX][gridY] == 0)
+                uncoverSafeTiles(gridX, gridY);
+            else
+                checkedSpaces[gridX][gridY] = true;
+            if (mines[gridX][gridY])
+                isLost = true;
+        } else if (button == 1) {
+            flags[gridX][gridY] = !flags[gridX][gridY];
+            if (flags[gridX][gridY])
+                flagsPlaced++;
+            else
+                flagsPlaced--;
+        }
+
+        return true;
+    }
+
+    private void uncoverSafeTiles(int x, int y) {
+        checkedSpaces[x][y] = true;
+        if(generatedNumbers[x][y] != 0)
+            return;
+        // Weird ternaries again for preventing ArrayIndexOutOfBounds exceptions
+        for (int xMod = x == 0 ? 0 : -1; xMod < (x == width - 1 ? 1 : 2); xMod++) {
+            for (int yMod = y == 0 ? 0 : -1; yMod < (y == height - 1 ? 1 : 2); yMod++) {
+                if (!checkedSpaces[x + xMod][y + yMod])
+                    uncoverSafeTiles(x + xMod, y + yMod);
+            }
+        }
+    }
+
+    public boolean hasLost() {
+        return isLost;
+    }
+
+    public boolean hasWon() {
+        if (!isPrepared || mines != flags)
+            return false;
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (checkedSpaces[i][j] == mines[i][j]) { // If there is an unchecked safe square, or an uncovered bomb...
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
