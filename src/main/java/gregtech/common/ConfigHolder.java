@@ -196,11 +196,6 @@ public class ConfigHolder {
 
         public static class GT5U {
 
-            @Config.Comment("Changes the size of input and output tanks in nearly all single block machine. The first value will be used for the input tank size, the second for the output tank size. Units are millibuckets. Default: {64000, 64000}")
-            @Config.RangeInt(min = 1)
-            @Config.RequiresMcRestart
-            public int[] customMachineTankSizes = new int[]{64000, 64000};
-
             @Config.Comment("Require Wrench to break machines? Default: false")
             public boolean requireWrenchForMachines = false;
 

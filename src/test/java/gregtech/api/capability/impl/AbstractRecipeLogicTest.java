@@ -1,17 +1,22 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.*;
-import gregtech.api.metatileentity.*;
-import gregtech.api.recipes.*;
-import gregtech.api.recipes.builders.*;
-import gregtech.api.render.*;
+import gregtech.api.GTValues;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
+import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
+import gregtech.api.recipes.Recipe;
+import gregtech.api.recipes.RecipeMap;
+import gregtech.api.recipes.builders.SimpleRecipeBuilder;
+import gregtech.api.render.Textures;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
-import net.minecraft.init.*;
-import net.minecraft.item.*;
-import net.minecraft.util.*;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Bootstrap;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import org.junit.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -46,7 +51,8 @@ public class AbstractRecipeLogicTest {
                                 new ResourceLocation(GTValues.MODID, "chemical_reactor.lv"),
                                 map,
                                 Textures.CHEMICAL_REACTOR_OVERLAY,
-                                1));
+                                1,
+                                true));
 
         MetaTileEntity atte = new MetaTileEntityHolder().setMetaTileEntity(at);
         atte.getHolder().setWorld(world);
