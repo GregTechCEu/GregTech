@@ -89,7 +89,6 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private Vector3f center;
     private float rotationYaw;
     private float rotationPitch;
-    private float maxZoom;
     private float zoom;
 
     private GuiButton buttonPreviousPattern;
@@ -145,14 +144,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         this.buttonNextPattern.enabled = patterns.length > 1;
 
         if (Mouse.getEventDWheel() == 0) {
-            this.maxZoom = infoPage.getDefaultZoom() * 15;
-            this.zoom = this.maxZoom;
+            this.zoom = infoPage.getDefaultZoom() * 15;
             this.rotationYaw = 20.0f;
             this.rotationPitch = 135.0f;
             this.currentRendererPage = 0;
             setNextLayer(-1);
         } else {
-            zoom = (float) MathHelper.clamp(zoom + (Mouse.getEventDWheel() < 0 ? 0.5 : -0.5), 3, maxZoom);
+            zoom = (float) MathHelper.clamp(zoom + (Mouse.getEventDWheel() < 0 ? 0.5 : -0.5), 3, 999);
             setNextLayer(getLayerIndex());
         }
         if (center != null) {
@@ -265,7 +263,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             } else if (rightClickHeld) {
                 int mouseDeltaY = mouseY - lastMouseY;
                 if (Math.abs(mouseDeltaY) > 1) {
-                    this.zoom = (float) MathHelper.clamp(zoom + (mouseDeltaY > 0 ? 0.5 : -0.5), 3, maxZoom);
+                    this.zoom = (float) MathHelper.clamp(zoom + (mouseDeltaY > 0 ? 0.5 : -0.5), 3, 999);
                 }
             }
             renderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
