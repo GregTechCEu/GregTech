@@ -24,11 +24,8 @@ import java.util.List;
 
 public class MetaTileEntitySteamItemBus extends MetaTileEntityItemBus implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
-    private final boolean isExportHatch;
-
     public MetaTileEntitySteamItemBus(ResourceLocation metaTileEntityId, boolean isExportHatch) {
         super(metaTileEntityId, 1, isExportHatch);
-        this.isExportHatch = isExportHatch;
         initializeInventory();
         this.setPaintingColor(0xFFFFFF);
     }

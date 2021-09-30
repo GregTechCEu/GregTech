@@ -11,7 +11,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
@@ -26,14 +25,12 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
+public class MetaTileEntityItemBus extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IItemHandlerModifiable> {
 
     private static final int[] INVENTORY_SIZES = {1, 4, 9, 16, 25, 36, 49};
-    private final boolean isExportHatch;
 
     public MetaTileEntityItemBus(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
-        super(metaTileEntityId, tier);
-        this.isExportHatch = isExportHatch;
+        super(metaTileEntityId, tier, isExportHatch);
         initializeInventory();
     }
 
@@ -88,34 +85,6 @@ public class MetaTileEntityItemBus extends MetaTileEntityMultiblockPart implemen
     @Override
     public void registerAbilities(List<IItemHandlerModifiable> abilityList) {
         abilityList.add(isExportHatch ? this.exportItems : this.importItems);
-    }
-
-    private NotifiableItemStackHandler getHatchHandler(){
-        NotifiableItemStackHandler handler = null;
-        if (isExportHatch && getExportItems() instanceof NotifiableItemStackHandler) {
-            handler = (NotifiableItemStackHandler) getExportItems();
-        } else if (!isExportHatch && getImportItems() instanceof NotifiableItemStackHandler) {
-            handler = (NotifiableItemStackHandler) getImportItems();
-        }
-        return handler;
-    }
-
-    @Override
-    public void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-        NotifiableItemStackHandler handler = getHatchHandler();
-        if (handler != null) {
-            handler.addNotifiableMetaTileEntity(metaTileEntity);
-            handler.addToNotifiedList(this, handler, isExportHatch);
-        }
-    }
-
-    @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
-        super.removeFromMultiBlock(controllerBase);
-        NotifiableItemStackHandler handler = getHatchHandler();
-        if (handler != null) {
-            handler.removeNotifiableMetaTileEntity(controllerBase);
-        }
     }
 
     @Override

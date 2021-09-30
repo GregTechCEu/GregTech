@@ -15,7 +15,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.render.SimpleOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.capability.impl.NotifiableFluidTank;
@@ -34,17 +33,15 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
+public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int INITIAL_INVENTORY_SIZE = 8000;
     private final ItemStackHandler containerInventory;
     private final FluidTank fluidTank;
-    private final boolean isExportHatch;
 
     public MetaTileEntityFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
-        super(metaTileEntityId, tier);
+        super(metaTileEntityId, tier, isExportHatch);
         this.containerInventory = new ItemStackHandler(2);
-        this.isExportHatch = isExportHatch;
         this.fluidTank = new NotifiableFluidTank(getInventorySize(), this, isExportHatch);
         initializeInventory();
     }
@@ -122,32 +119,6 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockPart imple
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
         abilityList.addAll(isExportHatch ? this.exportFluids.getFluidTanks() : this.importFluids.getFluidTanks());
-    }
-
-    private NotifiableFluidTank getHatchHandler() {
-        NotifiableFluidTank handler = null;
-        if (this.fluidTank instanceof NotifiableFluidTank) {
-            handler = (NotifiableFluidTank) this.fluidTank;
-        }
-        return handler;
-    }
-
-    @Override
-    public void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-        NotifiableFluidTank handler = getHatchHandler();
-        if (handler != null) {
-            handler.addNotifiableMetaTileEntity(metaTileEntity);
-            handler.addToNotifiedList(this, handler, isExportHatch);
-        }
-    }
-
-    @Override
-    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
-        super.removeFromMultiBlock(controllerBase);
-        NotifiableFluidTank handler = getHatchHandler();
-        if (handler != null) {
-            handler.removeNotifiableMetaTileEntity(controllerBase);
-        }
     }
 
     @Override
