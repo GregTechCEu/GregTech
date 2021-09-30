@@ -130,20 +130,39 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart 
         abilityList.addAll(isExportHatch ? this.exportFluids.getFluidTanks() : this.importFluids.getFluidTanks());
     }
 
-    @Override
-    public void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+    private FluidTankList getHatchHandler(){
         FluidTankList handlers;
         if (isExportHatch) {
             handlers = getExportFluids();
         } else {
             handlers = getImportFluids();
         }
+        return handlers;
+    }
+
+    @Override
+    public void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+        FluidTankList handlers = getHatchHandler();
         if (handlers != null) {
             for (IFluidTank fluidTank : handlers) {
                 if (fluidTank instanceof NotifiableFluidTank) {
                     NotifiableFluidTank handler = (NotifiableFluidTank) fluidTank;
-                    handler.setNotifiableMetaTileEntity(metaTileEntity);
+                    handler.addNotifiableMetaTileEntity(metaTileEntity);
                     handler.addToNotifiedList(this, handler, isExportHatch);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void removeFromMultiBlock(MultiblockControllerBase controllerBase) {
+        super.removeFromMultiBlock(controllerBase);
+        FluidTankList handlers = getHatchHandler();
+        if (handlers != null) {
+            for (IFluidTank fluidTank : handlers) {
+                if (fluidTank instanceof NotifiableFluidTank) {
+                    NotifiableFluidTank handler = (NotifiableFluidTank) fluidTank;
+                    handler.removeNotifiableMetaTileEntity(controllerBase);
                 }
             }
         }
