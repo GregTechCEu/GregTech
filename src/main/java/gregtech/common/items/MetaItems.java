@@ -382,6 +382,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_UHV;
 
     public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_DIAMOND;
+    public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_TUNGSTEN;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_TUNGSTEN;
 
