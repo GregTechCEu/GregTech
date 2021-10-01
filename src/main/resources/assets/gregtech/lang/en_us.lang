@@ -4064,6 +4064,7 @@ terminal.console.controllable=set working enable
 terminal.hardware.description=Hardware Manager, masterpieces of elegance and precision. How can a tablet be without hardware?
 terminal.hardware.select=Mounting hardware
 terminal.hardware.remove=Remove hardware
+terminal.hardware.tip.remove=§4right-click remove the hardware
 
 terminal.battery.description=Battery manager, visually analyzing your app's energy consumption.
 
@@ -4073,7 +4074,7 @@ terminal.store.miss=Require %s (%d).
 
 terminal.ar.open=Open AR
 
-terminal.multiblock_ar.description=Remember the §cFree Wrench§r?  Unfortunately, it it's gone.  It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
+terminal.multiblock_ar.description=Remember the §cFree Wrench§r?  Unfortunately, it it's gone. It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
 terminal.multiblock_ar.tier.0=AR Camera
 terminal.multiblock_ar.tier.1=3D Builder
 terminal.multiblock_ar.unlock=Unlock this mode after the upgrade
