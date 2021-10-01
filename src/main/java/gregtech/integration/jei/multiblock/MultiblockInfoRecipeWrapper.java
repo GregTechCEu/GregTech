@@ -203,6 +203,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             this.currentRendererPage = newIndex;
             this.buttonNextPattern.enabled = newIndex < maxIndex;
             this.buttonPreviousPattern.enabled = newIndex > 0;
+            setNextLayer(-1);
             updateParts();
         }
     }
