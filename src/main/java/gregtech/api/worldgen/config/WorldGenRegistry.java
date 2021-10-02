@@ -106,51 +106,71 @@ public class WorldGenRegistry {
         }
     }
 
+    /**
+     * Handles the setup of ore generation files in the config folder.
+     * Either creates the default files and reads them, or reads any modified files made by users
+     *
+     * After reading all json worldgen files in the folder, they are initialized, creating vein definitions
+     *
+     * @throws IOException
+     */
     public void reinitializeRegisteredVeins() throws IOException {
         GTLog.logger.info("Reloading ore generation files from config...");
         registeredDefinitions.clear();
         oreVeinCache.clear();
         Path configPath = Loader.instance().getConfigDir().toPath().resolve(GTValues.MODID);
+        // The Path for the file used to name dimensions for the JEI ore gen page
         Path dimensionsFile = configPath.resolve("dimensions.json");
+        // The folder where worldgen definitions are stored
         Path worldgenRootPath = configPath.resolve("worldgen");
-        Path jarFileExtractLockOld = configPath.resolve(".worldgen_extracted");
-        Path jarFileExtractLock = configPath.resolve("worldgen_extracted");
+        // Lock file used to determine if the worldgen files need to be regenerated
+        // This is used to ensure modifications to ore gen in modpacks are not overwritten
+        Path jarFileExtractLock = configPath.resolve("worldgen_extracted.txt");
         if (!Files.exists(worldgenRootPath)) {
             Files.createDirectories(worldgenRootPath);
         }
 
+        // Checks if the dimension file exists. If not, creates the file and extracts the defaults from the mod jar
         if (!Files.exists(dimensionsFile)) {
             Files.createFile(dimensionsFile);
             extractJarVeinDefinitions(configPath, dimensionsFile);
         }
 
         //attempt extraction if file extraction lock is absent or worldgen root directory is empty
-        if ((!Files.exists(jarFileExtractLock) && !Files.exists(jarFileExtractLockOld)) || !Files.list(worldgenRootPath).findFirst().isPresent()) {
+        if (!Files.exists(jarFileExtractLock) || !Files.list(worldgenRootPath).findFirst().isPresent()) {
             if (!Files.exists(jarFileExtractLock)) {
                 //create extraction lock only if it doesn't exist
                 Files.createFile(jarFileExtractLock);
             }
+            // Populate the config folder with the defaults from the mod jar
             extractJarVeinDefinitions(configPath, worldgenRootPath);
         }
 
+        // Read the dimensions name from the dimensions file
         gatherNamedDimensions(dimensionsFile);
 
+        // Gather the worldgen files from the various folders in the config
         List<Path> worldgenFiles = Files.walk(worldgenRootPath)
                 .filter(path -> path.toString().endsWith(".json"))
                 .filter(Files::isRegularFile)
                 .collect(Collectors.toList());
 
         for (Path worldgenDefinition : worldgenFiles) {
+
+            // Tries to extract the json worldgen definition from the file
             JsonObject element = FileUtility.tryExtractFromFile(worldgenDefinition);
             if (element == null) {
                 break;
             }
 
+            // Finds the file name to create the Definition with
             String depositName = worldgenRootPath.relativize(worldgenDefinition).toString();
 
             try {
+                // Creates the deposit definition and initializes various components based on the json entries in the file
                 OreDepositDefinition deposit = new OreDepositDefinition(depositName);
                 deposit.initializeFromConfig(element);
+                // Adds the registered definition to the list of all registered definitions
                 registeredDefinitions.add(deposit);
             } catch (RuntimeException exception) {
                 GTLog.logger.error("Failed to parse worldgen definition {} on path {}", depositName, worldgenDefinition, exception);
@@ -159,12 +179,22 @@ public class WorldGenRegistry {
         GTLog.logger.info("Loaded {} worldgen definitions", registeredDefinitions.size());
     }
 
+    /**
+     * Extracts files from the Gregtech jar and places them in the specified location
+     *
+     * @param configPath The path of the config root for the Gregtech mod
+     * @param targetPath The path of the target location where the files will be initialized
+     * @throws IOException
+     */
     private static void extractJarVeinDefinitions(Path configPath, Path targetPath) throws IOException {
+        // The path of the worldgen folder in the config folder
         Path worldgenRootPath = configPath.resolve("worldgen");
+        // The path of the named dimensions file in the config folder
         Path dimensionsRootPath = configPath.resolve("dimensions.json");
         FileSystem zipFileSystem = null;
         try {
             URI sampleUri = WorldGenRegistry.class.getResource("/assets/gregtech/.gtassetsroot").toURI();
+            // The Path for representing the worldgen folder in the assets folder in the Gregtech resources folder in the jar
             Path worldgenJarRootPath;
             if (sampleUri.getScheme().equals("jar") || sampleUri.getScheme().equals("zip")) {
                 zipFileSystem = FileSystems.newFileSystem(sampleUri, Collections.emptyMap());
@@ -175,20 +205,27 @@ public class WorldGenRegistry {
                 throw new IllegalStateException("Unable to locate absolute path to worldgen root directory: " + sampleUri);
             }
 
+            // Attempts to extract the worldgen definition jsons
             if (targetPath.compareTo(worldgenRootPath) == 0) {
                 GTLog.logger.info("Attempting extraction of standard worldgen definitions from {} to {}",
                         worldgenJarRootPath, worldgenRootPath);
+                // Find all the default worldgen files in the assets folder
                 List<Path> jarFiles = Files.walk(worldgenJarRootPath)
                         .filter(Files::isRegularFile)
                         .filter(jarPath -> !(jarPath.compareTo(worldgenJarRootPath.resolve("dimensions.json")) == 0))
+                        .filter(jarPath -> !(jarPath.compareTo(worldgenJarRootPath.resolve("worldgen_extracted.txt")) == 0))
                         .collect(Collectors.toList());
+
+                // Replaces or creates the default worldgen files
                 for (Path jarFile : jarFiles) {
                     Path worldgenPath = worldgenRootPath.resolve(worldgenJarRootPath.relativize(jarFile).toString());
                     Files.createDirectories(worldgenPath.getParent());
                     Files.copy(jarFile, worldgenPath, StandardCopyOption.REPLACE_EXISTING);
                 }
                 GTLog.logger.info("Extracted {} builtin worldgen definitions into worldgen folder", jarFiles.size());
-            } else if (targetPath.compareTo(dimensionsRootPath) == 0) {
+            }
+            // Attempts to extract the named dimensions json folder
+            else if (targetPath.compareTo(dimensionsRootPath) == 0) {
                 GTLog.logger.info("Attempting extraction of standard dimension definitions from {} to {}",
                         worldgenJarRootPath, dimensionsRootPath);
 
@@ -211,6 +248,11 @@ public class WorldGenRegistry {
         }
     }
 
+    /**
+     * Gathers the designated named dimensions from the designated json file
+     *
+     * @param dimensionsFile The Path to the dimensions.json file
+     */
     private void gatherNamedDimensions(Path dimensionsFile) {
         JsonObject element = FileUtility.tryExtractFromFile(dimensionsFile);
         if (element == null) {
