@@ -1,7 +1,7 @@
 package gregtech.integration.jei;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechRegistries;
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.AbstractRecipeLogic;
@@ -16,7 +16,6 @@ import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.machines.RecipeMapFurnace;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.worldgen.config.OreDepositDefinition;
 import gregtech.api.worldgen.config.WorldGenRegistry;
@@ -57,7 +56,7 @@ public class GTJeiPlugin implements IModPlugin {
     public static IJeiRuntime jeiRuntime;
 
     @Override
-    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+    public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
         GTJeiPlugin.jeiRuntime = jeiRuntime;
     }
 
@@ -120,8 +119,8 @@ public class GTJeiPlugin implements IModPlugin {
         }
 
         List<SteamMetaTileEntity> deferredCatalysts = new ArrayList<>();
-        for (ResourceLocation metaTileEntityId : GregTechRegistries.MTE_REGISTRY.getKeys()) {
-            MetaTileEntity metaTileEntity = GregTechRegistries.MTE_REGISTRY.getObject(metaTileEntityId);
+        for (ResourceLocation metaTileEntityId : GregTechAPI.MTE_REGISTRY.getKeys()) {
+            MetaTileEntity metaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
             assert metaTileEntity != null;
             if (metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null) != null) {
                 IControllable workableCapability = metaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
@@ -161,7 +160,7 @@ public class GTJeiPlugin implements IModPlugin {
 
         //TODO, add Electromagnetic Separator to the Ore Byproduct page
         List<OreByProduct> oreByproductList = new CopyOnWriteArrayList<>();
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+        for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             if (material.hasProperty(PropertyKey.ORE)) {
                 final OreByProduct oreByProduct = new OreByProduct(material);
                 if (oreByProduct.hasByProducts())
@@ -193,7 +192,7 @@ public class GTJeiPlugin implements IModPlugin {
 
         //Material Tree
         List<MaterialTree> materialTreeList = new CopyOnWriteArrayList<>();
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+        for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             if (material.hasProperty(PropertyKey.DUST)) {
                 materialTreeList.add(new MaterialTree(material));
             }

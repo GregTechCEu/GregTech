@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.Element;
 import gregtech.api.unification.Elements;
 import gregtech.api.unification.material.info.MaterialFlag;
@@ -105,11 +106,11 @@ public class Material implements Comparable<Material> {
     }
 
     protected void registerMaterial(Material material) {
-        MaterialRegistry.register(this);
+        GregTechAPI.MATERIAL_REGISTRY.register(this);
     }
 
     public void addFlags(MaterialFlag... flags) {
-        if (MaterialRegistry.isFrozen())
+        if (GregTechAPI.MATERIAL_REGISTRY.isFrozen())
             throw new IllegalStateException("Cannot add flag to material when registry is frozen!");
         this.flags.addFlags(flags).verify(this);
     }
@@ -336,7 +337,7 @@ public class Material implements Comparable<Material> {
     }
 
     public <T extends IMaterialProperty<T>> void setProperty(PropertyKey<T> key, IMaterialProperty<T> property) {
-        if (MaterialRegistry.isFrozen()) {
+        if (GregTechAPI.MATERIAL_REGISTRY.isFrozen()) {
             throw new IllegalStateException("Cannot add properties to a Material when registry is frozen!");
         }
         properties.setProperty(key, property);
@@ -351,12 +352,12 @@ public class Material implements Comparable<Material> {
         return hasProperty(PropertyKey.FLUID);
     }
 
-    protected void verifyMaterial() {
+    public void verifyMaterial() {
         properties.verify();
         flags.verify(this);
     }
 
-    protected void postVerify() {
+    public void postVerify() {
         this.chemicalFormula = calculateChemicalFormula();
         calculateDecompositionType();
     }

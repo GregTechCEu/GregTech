@@ -9,6 +9,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class FluidStackTextRenderer extends FluidStackRenderer {
@@ -17,7 +18,7 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
     }
 
     @Override
-    public void render(Minecraft minecraft, final int xPosition, final int yPosition, @Nullable FluidStack fluidStack) {
+    public void render(@Nonnull Minecraft minecraft, final int xPosition, final int yPosition, @Nullable FluidStack fluidStack) {
         if (fluidStack == null)
             return;
 

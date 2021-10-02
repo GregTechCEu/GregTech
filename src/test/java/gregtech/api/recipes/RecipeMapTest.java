@@ -1,8 +1,8 @@
 package gregtech.api.recipes;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.common.MetaFluids;
@@ -28,7 +28,7 @@ public class RecipeMapTest {
         GTLog.init(LogManager.getLogger(GTValues.MODID)); // yes this was necessary
         Bootstrap.register();
         Materials.register();
-        MaterialRegistry.finalizeMaterials(false);
+        GregTechAPI.MATERIAL_REGISTRY.flush();
         MetaFluids.init();
     }
 

@@ -34,6 +34,7 @@ public class CraftingComponent {
     public static Component ROTOR;
     public static Component SENSOR;
     public static Component GRINDER;
+    public static Component SAWBLADE;
     public static Component DIAMOND;
     public static Component PISTON;
     public static Component EMITTER;
@@ -277,6 +278,18 @@ public class CraftingComponent {
                 {4, OreDictNames.craftingGrinder},
                 {5, MetaItems.COMPONENT_GRINDER_TUNGSTEN.getStackForm()},
                 {GTValues.FALLBACK, MetaItems.COMPONENT_GRINDER_TUNGSTEN.getStackForm()},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
+        SAWBLADE = new Component(Stream.of(new Object[][]{
+
+                {0, OreDictNames.craftingSawBlade},
+                {1, OreDictNames.craftingSawBlade},
+                {2, OreDictNames.craftingSawBlade},
+                {3, OreDictNames.craftingSawBlade},
+                {4, OreDictNames.craftingSawBlade},
+                {5, MetaItems.COMPONENT_SAW_BLADE_TUNGSTEN.getStackForm()},
+                {GTValues.FALLBACK, MetaItems.COMPONENT_SAW_BLADE_TUNGSTEN.getStackForm()},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

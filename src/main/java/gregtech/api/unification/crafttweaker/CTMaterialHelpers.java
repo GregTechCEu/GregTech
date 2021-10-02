@@ -2,8 +2,8 @@ package gregtech.api.unification.crafttweaker;
 
 import com.google.common.collect.ImmutableList;
 import crafttweaker.CraftTweakerAPI;
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.stack.MaterialStack;
 
 import java.util.Arrays;
@@ -25,7 +25,7 @@ public class CTMaterialHelpers {
     }
 
     protected static Material[] validateMaterialNames(String methodName, String... names) {
-        Material[] materials = Arrays.stream(names).map(MaterialRegistry::get).toArray(Material[]::new);
+        Material[] materials = Arrays.stream(names).map(GregTechAPI.MaterialRegistry::get).toArray(Material[]::new);
         if (Arrays.stream(materials).anyMatch(Objects::isNull)) {
             logNullMaterial(methodName);
             return null;
@@ -34,13 +34,13 @@ public class CTMaterialHelpers {
     }
 
     protected static Material validateMaterialName(String name) {
-        Material m = MaterialRegistry.get(name);
+        Material m = GregTechAPI.MaterialRegistry.get(name);
         if (m == null) logBadMaterialName(name);
         return m;
     }
 
     protected static boolean checkFrozen(String description) {
-        if (MaterialRegistry.isFrozen()) {
+        if (GregTechAPI.MATERIAL_REGISTRY.isFrozen()) {
             CraftTweakerAPI.logError("Cannot " + description + " now, must be done in a file labeled with \"#loader gregtech\"");
             return true;
         } return false;

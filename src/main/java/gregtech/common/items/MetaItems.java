@@ -382,6 +382,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem WETWARE_MAINFRAME_UHV;
 
     public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_DIAMOND;
+    public static MetaItem<?>.MetaValueItem COMPONENT_SAW_BLADE_TUNGSTEN;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_DIAMOND;
     public static MetaItem<?>.MetaValueItem COMPONENT_GRINDER_TUNGSTEN;
 
@@ -462,7 +463,6 @@ public final class MetaItems {
     public static ToolMetaItem<?>.MetaToolValueItem SCREWDRIVER;
     public static ToolMetaItem<?>.MetaToolValueItem MORTAR;
     public static ToolMetaItem<?>.MetaToolValueItem WIRE_CUTTER;
-    public static ToolMetaItem<?>.MetaToolValueItem SCOOP;
     public static ToolMetaItem<?>.MetaToolValueItem BRANCH_CUTTER;
     public static ToolMetaItem<?>.MetaToolValueItem UNIVERSAL_SPADE;
     public static ToolMetaItem<?>.MetaToolValueItem KNIFE;

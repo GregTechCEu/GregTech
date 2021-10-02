@@ -1,8 +1,8 @@
 package gregtech.common;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.material.properties.FluidProperty;
@@ -169,7 +169,6 @@ public class MetaFluids {
 
         //alternative names for forestry fluids
         setAlternativeFluidName(Materials.Ethanol, FluidType.NORMAL, "bio.ethanol");
-        setAlternativeFluidName(Materials.Honey, FluidType.NORMAL, "for.honey");
         setAlternativeFluidName(Materials.SeedOil, FluidType.NORMAL, "seed.oil");
         setAlternativeFluidName(Materials.Ice, FluidType.NORMAL, "fluid.ice");
         setAlternativeFluidName(Materials.Diesel, FluidType.NORMAL, "fuel");
@@ -208,7 +207,6 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.SeedOil, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Oil, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Diesel, FluidType.NORMAL);
-        setMaterialFluidTexture(Materials.Honey, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Biomass, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Ethanol, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.SulfuricAcid, FluidType.NORMAL);
@@ -220,7 +218,7 @@ public class MetaFluids {
         setMaterialFluidTexture(Materials.NaturalGas, FluidType.NORMAL);
         setMaterialFluidTexture(Materials.Blaze, FluidType.NORMAL);
 
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+        for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
             FluidProperty fluidProperty = material.getProperty(PropertyKey.FLUID);
 
             if (fluidProperty != null && fluidProperty.getFluid() == null) {

@@ -688,7 +688,8 @@ metaitem.neutron_reflector.name=Iridium Neutron Reflector
 metaitem.neutron_reflector.tooltip=Indestructible
 metaitem.duct_tape.name=BrainTech Aerospace Advanced Reinforced Duct Tape FAL-84
 
-metaitem.component.sawblade.diamond.name=Diamond Sawblade
+metaitem.component.sawblade.diamond.name=Diamond Saw Blade
+metaitem.component.sawblade.tungsten.name=Tungsten Saw Blade
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
 metaitem.component.grinder.tungsten.name=Tungsten Grinding Head
 
@@ -821,7 +822,6 @@ metaitem.tool.screwdriver.name=%s Screwdriver
 metaitem.tool.screwdriver.tooltip=Adjusts Covers and Machines
 metaitem.tool.mortar.name=%s Mortar
 metaitem.tool.wire_cutter.name=%s Wire Cutter
-metaitem.tool.scoop.name=%s Scoop
 metaitem.tool.branch_cutter.name=%s Branch Cutter
 metaitem.tool.universal_spade.name=%s Universal Spade
 metaitem.tool.knife.name=%s Knife
@@ -1411,6 +1411,7 @@ material.pyrite=Pyrite
 material.pyrolusite=Pyrolusite
 material.pyrope=Pyrope
 material.rock_salt=Rock Salt
+material.ruthenian_iridium=Ruthenian Iridium
 material.rubber=Rubber
 material.raw_rubber=Raw Rubber
 material.ruby=Ruby
@@ -1699,7 +1700,6 @@ material.diamericium_titanium=Diamericium Titanium
 material.fluxed_electrum=Fluxed Electrum
 
 material.milk=Milk
-material.honey=Honey
 material.cocoa=Cocoa
 material.wheat=Wheat
 material.meat=Mince Meat
@@ -3506,7 +3506,6 @@ gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.name=The Fina
 gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.desc=Craft a Diamericium Titanium Heating Coil.
 
 
-behaviour.scoop=Catches Butterflies on Leftclick
 behaviour.softhammer=Activates and Deactivates Machines
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s

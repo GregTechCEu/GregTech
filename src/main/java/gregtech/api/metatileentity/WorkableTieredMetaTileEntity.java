@@ -22,16 +22,21 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity {
 
     protected final RecipeLogicEnergy workable;
     protected final OrientedOverlayRenderer renderer;
 
-    public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier) {
+    private final Function<Integer, Integer> tankScalingFunction;
+
+    public WorkableTieredMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier,
+                                        Function<Integer, Integer> tankScalingFunction) {
         super(metaTileEntityId, tier);
         this.renderer = renderer;
         this.workable = createWorkable(recipeMap);
+        this.tankScalingFunction = tankScalingFunction;
         initializeInventory();
         reinitializeEnergyContainer();
     }
@@ -85,7 +90,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         if (workable == null) return new FluidTankList(false);
         FilteredFluidHandler[] fluidImports = new FilteredFluidHandler[workable.recipeMap.getMaxFluidInputs()];
         for (int i = 0; i < fluidImports.length; i++) {
-            NotifiableFilteredFluidHandler filteredFluidHandler = new NotifiableFilteredFluidHandler(getInputTankCapacity(i), this, false);
+            NotifiableFilteredFluidHandler filteredFluidHandler = new NotifiableFilteredFluidHandler(this.tankScalingFunction.apply(this.getTier()), this, false);
             filteredFluidHandler.setFillPredicate(this::canInputFluid);
             fluidImports[i] = filteredFluidHandler;
         }
@@ -97,7 +102,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         if (workable == null) return new FluidTankList(false);
         FluidTank[] fluidExports = new FluidTank[workable.recipeMap.getMaxFluidOutputs()];
         for (int i = 0; i < fluidExports.length; i++) {
-            fluidExports[i] = new NotifiableFluidTank(getOutputTankCapacity(i), this, true);
+            fluidExports[i] = new NotifiableFluidTank(this.tankScalingFunction.apply(this.getTier()), this, true);
         }
         return new FluidTankList(false, fluidExports);
     }
@@ -128,18 +133,15 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
         }
     }
 
-    protected int getInputTankCapacity(int index) {
-        return 64000;
-    }
-
-    protected int getOutputTankCapacity(int index) {
-        return 64000;
-    }
-
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.universal.tooltip.fluid_storage_capacity", this.tankScalingFunction.apply(getTier())));
+    }
+
+    public Function<Integer, Integer> getTankScalingFunction() {
+        return tankScalingFunction;
     }
 }

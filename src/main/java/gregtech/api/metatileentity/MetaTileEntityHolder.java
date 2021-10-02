@@ -1,7 +1,7 @@
 package gregtech.api.metatileentity;
 
 import com.google.common.base.Preconditions;
-import gregtech.api.GregTechRegistries;
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.gui.IUIHolder;
@@ -48,7 +48,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
             writeCustomData(-1, buffer -> {
-                buffer.writeVarInt(GregTechRegistries.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
+                buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
                 metaTileEntity.writeInitialSyncData(buffer);
             });
             //just to update neighbours so cables and other things will work properly
@@ -84,7 +84,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         if (compound.hasKey("MetaId", NBT.TAG_STRING)) {
             String metaTileEntityIdRaw = compound.getString("MetaId");
             ResourceLocation metaTileEntityId = new ResourceLocation(metaTileEntityIdRaw);
-            MetaTileEntity sampleMetaTileEntity = GregTechRegistries.MTE_REGISTRY.getObject(metaTileEntityId);
+            MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObject(metaTileEntityId);
             NBTTagCompound metaTileEntityData = compound.getCompoundTag("MetaTileEntity");
             if (sampleMetaTileEntity != null) {
                 this.metaTileEntity = sampleMetaTileEntity.createMetaTileEntity(this);
@@ -140,7 +140,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     public void writeInitialSyncData(PacketBuffer buf) {
         if (metaTileEntity != null) {
             buf.writeBoolean(true);
-            buf.writeVarInt(GregTechRegistries.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
+            buf.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
             metaTileEntity.writeInitialSyncData(buf);
         } else buf.writeBoolean(false);
     }
@@ -149,7 +149,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     public void receiveInitialSyncData(PacketBuffer buf) {
         if (buf.readBoolean()) {
             int metaTileEntityId = buf.readVarInt();
-            setMetaTileEntity(GregTechRegistries.MTE_REGISTRY.getObjectById(metaTileEntityId));
+            setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
             this.metaTileEntity.receiveInitialSyncData(buf);
             scheduleChunkForRenderUpdate();
             this.needToUpdateLightning = true;
@@ -160,7 +160,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
     public void receiveCustomData(int discriminator, PacketBuffer buffer) {
         if (discriminator == -1) {
             int metaTileEntityId = buffer.readVarInt();
-            setMetaTileEntity(GregTechRegistries.MTE_REGISTRY.getObjectById(metaTileEntityId));
+            setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
             this.metaTileEntity.receiveInitialSyncData(buffer);
             scheduleChunkForRenderUpdate();
             this.needToUpdateLightning = true;
