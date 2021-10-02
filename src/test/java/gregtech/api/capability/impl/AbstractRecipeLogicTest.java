@@ -1,9 +1,5 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.*;
-import gregtech.api.metatileentity.*;
-import gregtech.api.recipes.*;
-import gregtech.api.recipes.builders.*;
 import gregtech.api.GTValues;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -54,7 +50,7 @@ public class AbstractRecipeLogicTest {
                                 new ResourceLocation(GTValues.MODID, "chemical_reactor.lv"),
                                 map,
                                 null,
-                                1));
+                                1, false));
         MetaTileEntity atte = new MetaTileEntityHolder().setMetaTileEntity(at);
         atte.getHolder().setWorld(world);
         map.recipeBuilder()
