@@ -92,7 +92,7 @@ public class TerminalRegistry {
                 .device(DeviceHardware.DEVICE.WIRELESS)
                 .build();
         AppRegistryBuilder.create(new BatteryManagerApp()).defaultApp()
-                .battery(GTValues.ULV, 10)
+                .battery(GTValues.ULV, 0)
                 .build();
         AppRegistryBuilder.create(new HardwareManagerApp()).defaultApp().build();
         AppRegistryBuilder.create(new AppStoreApp()).defaultApp().build();

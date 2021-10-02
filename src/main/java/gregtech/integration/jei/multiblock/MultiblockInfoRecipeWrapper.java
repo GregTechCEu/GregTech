@@ -121,6 +121,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         return infoPage;
     }
 
+    private static MultiblockInfoRecipeWrapper lastWrapper;
+
     public void setRecipeLayout(RecipeLayout layout, IGuiHelper guiHelper) {
         this.recipeLayout = layout;
 
@@ -129,21 +131,22 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
         IDrawable border = layout.getRecipeCategory().getBackground();
         preparePlaceForParts(border.getHeight());
-        this.buttons.clear();
-        this.nextLayerButton = new GuiButton(0, border.getWidth() - (ICON_SIZE + RIGHT_PADDING), 70, ICON_SIZE, ICON_SIZE, "");
-        this.buttonPreviousPattern = new GuiButton(0, border.getWidth() - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, "<");
-        this.buttonNextPattern = new GuiButton(0, border.getWidth() - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, ">");
-        this.buttons.put(nextLayerButton, this::toggleNextLayer);
-        this.buttons.put(buttonPreviousPattern, () -> switchRenderPage(-1));
-        this.buttons.put(buttonNextPattern, () -> switchRenderPage(1));
+        if (Mouse.getEventDWheel() == 0 || lastWrapper != this) {
+            lastWrapper = this;
+            this.buttons.clear();
+            this.nextLayerButton = new GuiButton(0, border.getWidth() - (ICON_SIZE + RIGHT_PADDING), 70, ICON_SIZE, ICON_SIZE, "");
+            this.buttonPreviousPattern = new GuiButton(0, border.getWidth() - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, "<");
+            this.buttonNextPattern = new GuiButton(0, border.getWidth() - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, ">");
+            this.buttons.put(nextLayerButton, this::toggleNextLayer);
+            this.buttons.put(buttonPreviousPattern, () -> switchRenderPage(-1));
+            this.buttons.put(buttonNextPattern, () -> switchRenderPage(1));
 
-        boolean isPagesDisabled = patterns.length == 1;
-        this.buttonPreviousPattern.visible = !isPagesDisabled;
-        this.buttonNextPattern.visible = !isPagesDisabled;
-        this.buttonPreviousPattern.enabled = false;
-        this.buttonNextPattern.enabled = patterns.length > 1;
+            boolean isPagesDisabled = patterns.length == 1;
+            this.buttonPreviousPattern.visible = !isPagesDisabled;
+            this.buttonNextPattern.visible = !isPagesDisabled;
+            this.buttonPreviousPattern.enabled = false;
+            this.buttonNextPattern.enabled = patterns.length > 1;
 
-        if (Mouse.getEventDWheel() == 0) {
             this.zoom = infoPage.getDefaultZoom() * 15;
             this.rotationYaw = 20.0f;
             this.rotationPitch = 135.0f;
@@ -205,6 +208,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             this.buttonPreviousPattern.enabled = newIndex > 0;
             setNextLayer(-1);
             updateParts();
+            getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
         }
     }
 
@@ -254,6 +258,14 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                 mouseX < recipeWidth && mouseY < sceneHeight;
         boolean leftClickHeld = Mouse.isButtonDown(0);
         boolean rightClickHeld = Mouse.isButtonDown(1);
+        if (insideView) {
+            for (GuiButton button : buttons.keySet()) {
+                if (button.isMouseOver()) {
+                    insideView = false;
+                    break;
+                }
+            }
+        }
         if (insideView) {
             if (leftClickHeld) {
                 rotationPitch += mouseX - lastMouseX + 360;
