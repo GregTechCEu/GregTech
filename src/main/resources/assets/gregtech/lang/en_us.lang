@@ -3849,11 +3849,8 @@ gregtech.multiblock.universal.distinct.no=No
 gregtech.multiblock.universal.distinct.yes=Yes
 gregtech.multiblock.universal.distinct.info=If enabled, each Item Input Bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
 
-gregtech.multiblock.preview.tilt=Shift+LMB to tilt
-gregtech.multiblock.preview.zoom=Shift+RMB to zoom
-gregtech.multiblock.preview.pan=LMB+Drag to pan
-gregtech.multiblock.preview.move=RMB+Drag to move
-gregtech.multiblock.preview.reset=Scroll Mousewheel to reset
+gregtech.multiblock.preview.zoom=Use mousewheel or Shift+RMB to zoom
+gregtech.multiblock.preview.rotate=Click and drag to rotate
 gregtech.multiblock.preview.any_hatch=Any tier hatch can be used to form the structure
 gregtech.multiblock.preview.any_hatch_maintenance=Any type of maintenance hatch can be used to form the structure
 gregtech.multiblock.preview.limit=Minimum Limit: %d
