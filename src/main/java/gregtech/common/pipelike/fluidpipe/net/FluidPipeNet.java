@@ -3,11 +3,8 @@ package gregtech.common.pipelike.fluidpipe.net;
 import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.api.recipes.FluidKey;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
-import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
@@ -32,9 +29,9 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
         FluidStack stack = stack1.copy();
         stack.amount = 1;
         List<TileEntityFluidPipe> pipes = requestedPipes.get(stack);
-        if(pipes == null)
+        if (pipes == null)
             pipes = new ArrayList<>();
-        else if(pipes.contains(pipe))
+        else if (pipes.contains(pipe))
             return;
         pipes.add(pipe);
         requestedPipes.put(stack, pipes);
@@ -43,7 +40,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
     @Override
     protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
         super.updateBlockedConnections(nodePos, facing, isBlocked);
-        for(FluidStack fluid : fluids) {
+        for (FluidStack fluid : fluids) {
             dirtyStacks.put(fluid, nodePos);
         }
     }
@@ -66,12 +63,10 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
         for (FluidStack stack1 : fluids) {
             if (stack1.isFluidEqual(stack)) {
                 stack1.amount += stack.amount;
-                GTLog.logger.info("Adding {} to {}", stack.amount, stack1.getLocalizedName());
                 markDirtyPipeNetStack(stack1, pos);
                 return;
             }
         }
-        GTLog.logger.info("Inserting new fluid {} * {}", stack.getLocalizedName(), stack.amount);
         fluids.add(stack);
         markDirtyPipeNetStack(stack, pos);
     }
@@ -102,38 +97,34 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
 
     @Override
     public void update() {
-        for(Map.Entry<FluidStack, List<TileEntityFluidPipe>> entry : requestedPipes.entrySet()) {
+        for (Map.Entry<FluidStack, List<TileEntityFluidPipe>> entry : requestedPipes.entrySet()) {
             FluidStack stack = entry.getKey();
             List<TileEntityFluidPipe> pipes = entry.getValue();
             FluidNetWalker walker = FluidNetWalker.countFluid(getWorldData(), pipes.get(0).getPos(), stack);
-            GTLog.logger.info("Found {} * {} in {} pipes", stack.getLocalizedName(), walker.getCount(), walker.getPipes().size());
             int c = walker.getCount() / pipes.size();
             int m = walker.getCount() % pipes.size();
             int inserted = 0;
-            for(TileEntityFluidPipe pipe : pipes) {
+            for (TileEntityFluidPipe pipe : pipes) {
                 FluidStack toInsert = stack.copy();
                 toInsert.amount = c;
-                if(m > 0) {
+                if (m > 0) {
                     toInsert.amount++;
                     m--;
                 }
                 int i = pipe.distribute(toInsert);
                 inserted += i;
-                GTLog.logger.info(" - inserting {}, inserted {}", toInsert.amount, i);
             }
-            GTLog.logger.info(" - inserted {}", inserted);
             FluidStack toDrain = stack.copy();
             toDrain.amount = inserted;
-            for(TileEntityFluidPipe pipe : walker.getPipes()) {
+            for (TileEntityFluidPipe pipe : walker.getPipes()) {
                 FluidStack drained = pipe.getTankList().drain(toDrain, true);
-                if(drained != null)
+                if (drained != null)
                     toDrain.amount -= drained.amount;
             }
         }
         requestedPipes.clear();
 
-        if(dirtyStacks.size() > 0) {
-            GTLog.logger.info("Redistributing fluids");
+        if (dirtyStacks.size() > 0) {
             Iterator<FluidStack> iterator = dirtyStacks.keySet().iterator();
             while (iterator.hasNext()) {
                 FluidStack dirtyStack = iterator.next();
@@ -142,6 +133,10 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                     continue;
                 }
                 List<TileEntityFluidPipe> pipes = FluidNetWalker.getPipesForFluid(getWorldData(), dirtyStacks.get(dirtyStack), dirtyStack);
+                if (pipes.size() == 0) {
+                    iterator.remove();
+                    continue;
+                }
                 int c = dirtyStack.amount / pipes.size();
                 int m = dirtyStack.amount % pipes.size();
                 int overflow = 0;
@@ -161,9 +156,9 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
             dirtyStacks.clear();
         }
     }
+
     private void markDirtyPipeNetStack(FluidStack stack, BlockPos pos) {
         if (stack != null && stack.amount > 0) {
-            GTLog.logger.info("Marking stack {} * {} dirty", stack.getLocalizedName(), stack.amount);
             dirtyStacks.put(stack, pos);
         }
     }
@@ -182,8 +177,8 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
     public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = super.serializeNBT();
         NBTTagList fluids = new NBTTagList();
-        for(FluidStack fluid : this.fluids) {
-            if(fluid.amount > 0)
+        for (FluidStack fluid : this.fluids) {
+            if (fluid.amount > 0)
                 fluids.appendTag(fluid.writeToNBT(new NBTTagCompound()));
         }
         nbt.setTag("Fluids", fluids);
@@ -195,7 +190,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
         super.deserializeNBT(nbt);
         this.fluids.clear();
         NBTTagList fluids = nbt.getTagList("Fluids", Constants.NBT.TAG_COMPOUND);
-        for(int i = 0; i < fluids.tagCount(); i++) {
+        for (int i = 0; i < fluids.tagCount(); i++) {
             this.fluids.add(FluidStack.loadFluidStackFromNBT((NBTTagCompound) fluids.get(i)));
         }
     }

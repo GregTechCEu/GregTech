@@ -29,7 +29,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     private TIntIntMap openConnectionsMap = new TIntIntHashMap();
     private int openConnections = 0;
-    private boolean walked = false;
 
     protected int insulationColor = DEFAULT_COVER_COLOR;
     protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
@@ -42,11 +41,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public TileEntityPipeBase() {
         openConnectionsMap.put(AttachmentType.PIPE.ordinal(), 0);
         recomputeBlockedConnections();
-    }
-
-    public void setDetachedConversionMode(boolean detachedConversionMode) {
-        this.detachedConversionMode = detachedConversionMode;
-        this.wasInDetachedConversionMode = true;
     }
 
     public boolean wasInDetachedConversionMode() {
@@ -274,7 +268,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             return defaultValue;
         }
         if (coverBehavior == null && facing != null) {
-            //boolean isBlocked = (getBlockedConnections() & 1 << facing.getIndex()) > 0;
             return isConnectionOpenAny(facing) ? defaultValue : null;
         }
         if (coverBehavior != null) {

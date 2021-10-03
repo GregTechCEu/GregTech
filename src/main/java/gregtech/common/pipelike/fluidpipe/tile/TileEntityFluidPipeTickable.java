@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
-import gregtech.api.util.GTLog;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.fluids.FluidStack;
@@ -12,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements ITickable {
-
-    private long time = 0;
 
     @Override
     public void update() {
@@ -35,7 +32,6 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                 if (stack != null && stack.amount > 0) {
                     int amountToDistribute = getCapacityPerTank() / 2;
                     if (stack.amount < amountToDistribute) {
-                        GTLog.logger.info("Not enough fluid. Requesting...");
                         getFluidPipeNet().requestFluid(this, stack);
                         continue;
                     }

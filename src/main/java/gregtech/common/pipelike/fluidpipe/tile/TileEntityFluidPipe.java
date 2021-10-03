@@ -38,7 +38,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     private static final Random random = new Random();
     private final EnumMap<EnumFacing, PipeTankList> tanks = new EnumMap<>(EnumFacing.class);
     private FluidTank[] fluidTanks;
-    private int currentChannel = -1;
     private final EnumMap<EnumFacing, Integer> lastInserted = new EnumMap<>(EnumFacing.class);
     protected static final int FREQUENCY = 5;
 
@@ -149,10 +148,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                 }
             }
         }
-        StringBuilder builder = new StringBuilder();
-        for (EnumFacing facing : openConnections) {
-            builder.append(facing.name().charAt(0)).append(", ");
-        }
     }
 
     public FluidStack getContainedFluid(int channel) {
@@ -218,7 +213,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         FluidTank tank = getFluidTanks()[channel];
         stack.amount = Math.min(stack.amount, tank.getCapacity());
         tank.setFluid(stack);
-        this.currentChannel = -1;
         return originalAmount - stack.amount;
     }
 
@@ -240,15 +234,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
             if (fluidStack != null)
                 return false;
         return true;
-    }
-
-    private int findChannelFor(FluidStack stack) {
-        for (int i = 0; i < fluidTanks.length; i++) {
-            FluidStack channelStack = getContainedFluid(i);
-            if (channelStack.isFluidEqual(stack))
-                return i;
-        }
-        return -1;
     }
 
     /**

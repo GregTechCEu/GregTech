@@ -3,7 +3,6 @@ package gregtech.common.pipelike.fluidpipe;
 import com.google.common.base.Preconditions;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.damagesources.DamageSources;
-import gregtech.api.pipenet.PipeGatherer;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tickable.TickableWorldPipeNetEventHandler;
 import gregtech.api.pipenet.tile.IPipeTile;
@@ -12,7 +11,6 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.advancement.GTTriggers;
-import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
@@ -23,18 +21,14 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -113,15 +107,15 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
         if (!worldIn.isRemote) {
             TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
-            if(pipe != null)
+            if (pipe != null)
                 pipe.checkNeighbours();
         }
     }
 
     @Override
     public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
-        if(selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe) {
-            if(((TileEntityFluidPipe) selfTile).areTanksEmpty() || ((TileEntityFluidPipe) sideTile).areTanksEmpty())
+        if (selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe) {
+            if (((TileEntityFluidPipe) selfTile).areTanksEmpty() || ((TileEntityFluidPipe) sideTile).areTanksEmpty())
                 return true;
         }
         return false;
@@ -139,12 +133,12 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
             List<Integer> temps = new ArrayList<>();
-            for(FluidTank tank : pipe.getFluidTanks()) {
-                if(tank.getFluid() != null && tank.getFluid().amount > 0) {
+            for (FluidTank tank : pipe.getFluidTanks()) {
+                if (tank.getFluid() != null && tank.getFluid().amount > 0) {
                     temps.add(tank.getFluid().getFluid().getTemperature(tank.getFluid()));
                 }
             }
-            if(temps.size() == 0)
+            if (temps.size() == 0)
                 return;
             float fluidTemperature = (float) temps.stream().mapToInt(i -> i).average().getAsDouble();
             boolean wasDamaged = false;
@@ -164,22 +158,6 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
                 GTTriggers.FLUID_PIPE_DEATH.trigger((EntityPlayerMP) entityLiving);
             }
         }
-    }
-
-    @Override
-    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if(!worldIn.isRemote) {
-            TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
-            StringBuilder builder = new StringBuilder();
-            for(FluidTank tank : pipe.getFluidTanks()) {
-                if(tank.getFluid() != null) {
-                    builder.append(tank.getFluid().getLocalizedName()).append(" * ").append(tank.getFluid().amount).append(", ");
-                }
-            }
-            playerIn.sendMessage(new TextComponentString("Pipe capacity: " + pipe.getCapacityPerTank()));
-            playerIn.sendMessage(new TextComponentString("Fluids: " + builder));
-        }
-        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
     }
 
     @Override
