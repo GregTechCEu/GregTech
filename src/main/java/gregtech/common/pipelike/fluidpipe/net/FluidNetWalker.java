@@ -4,8 +4,6 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.PipeNetWalker;
 import gregtech.api.pipenet.tile.IPipeTile;
-import gregtech.api.recipes.FluidKey;
-import gregtech.api.util.GTLog;
 import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.tileentity.TileEntity;
@@ -62,7 +60,7 @@ public class FluidNetWalker extends PipeNetWalker {
             pipes.add(pipe);
         else {
             FluidStack stack = pipe.findFluid(fluid);
-            if(stack != null && stack.amount > 0) {
+            if (stack != null && stack.amount > 0) {
                 count += stack.amount;
                 pipes.add(pipe);
             }
@@ -84,7 +82,6 @@ public class FluidNetWalker extends PipeNetWalker {
                 return false;
         }
         coverable = neighbourPipe.getCoverableImplementation();
-        ;
         cover = coverable.getCoverAtSide(faceToNeighbour.getOpposite());
         if (cover instanceof CoverFluidFilter) {
             return ((CoverFluidFilter) cover).testFluidStack(fluid);

@@ -22,8 +22,9 @@ import java.util.*;
  */
 public abstract class PipeNetWalker {
 
+    private PipeNetWalker root;
     private final World world;
-    private Set<Long> walked = new HashSet<>();
+    private final Set<Long> walked = new HashSet<>();
     private final List<EnumFacing> pipes = new ArrayList<>();
     private List<PipeNetWalker> walkers;
     private final BlockPos.MutableBlockPos currentPos;
@@ -35,6 +36,7 @@ public abstract class PipeNetWalker {
         this.world = Objects.requireNonNull(world);
         this.walkedBlocks = walkedBlocks;
         this.currentPos = new BlockPos.MutableBlockPos(Objects.requireNonNull(sourcePipe));
+        this.root = this;
     }
 
     /**
@@ -58,7 +60,6 @@ public abstract class PipeNetWalker {
 
     /**
      * Checks the neighbour of the current pos
-     * neighbourTile is NEVER an instance of {@link IPipeTile}
      *
      * @param pipePos         current pos
      * @param faceToNeighbour face to neighbour
@@ -102,43 +103,41 @@ public abstract class PipeNetWalker {
         running = true;
         while (running && !walk() && i++ < maxWalks) ;
         running = false;
-        walked.clear();
+        root.walked.clear();
         if (i >= maxWalks)
             GTLog.logger.fatal("The walker reached the maximum amount of walks {}", i);
         invalid = true;
     }
 
     private boolean walk() {
-        if (walkers == null)
+        if (walkers == null) {
             checkPos();
 
-        if (pipes.size() == 0)
-            return true;
-        if (pipes.size() == 1) {
-            currentPos.move(pipes.get(0));
-            walkedBlocks++;
-            return false;
-        }
+            if (pipes.size() == 0)
+                return true;
+            if (pipes.size() == 1) {
+                currentPos.move(pipes.get(0));
+                walkedBlocks++;
+                return !isRunning();
+            }
 
-        if (walkers == null) {
             walkers = new ArrayList<>();
             for (EnumFacing side : pipes) {
                 PipeNetWalker walker = Objects.requireNonNull(createSubWalker(world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null");
-                walker.walked = walked;
+                walker.root = root;
                 walkers.add(walker);
             }
-        } else {
-            Iterator<PipeNetWalker> iterator = walkers.iterator();
-            while (iterator.hasNext()) {
-                PipeNetWalker walker = iterator.next();
-                if (walker.walk()) {
-                    iterator.remove();
-                    onRemoveSubWalker(walker);
-                }
+        }
+        Iterator<PipeNetWalker> iterator = walkers.iterator();
+        while (iterator.hasNext()) {
+            PipeNetWalker walker = iterator.next();
+            if (walker.walk()) {
+                onRemoveSubWalker(walker);
+                iterator.remove();
             }
         }
 
-        return !running || walkers.size() == 0;
+        return !isRunning() || walkers.size() == 0;
     }
 
     private void checkPos() {
@@ -154,7 +153,7 @@ public abstract class PipeNetWalker {
                 throw new IllegalStateException("PipeTile was not null last walk, but now is");
         }
         checkPipe(pipeTile, currentPos);
-        walked.add(pipeTile.getPipePos().toLong());
+        root.walked.add(pipeTile.getPipePos().toLong());
 
         BlockPos.PooledMutableBlockPos pos = BlockPos.PooledMutableBlockPos.retain();
         // check for surrounding pipes and item handlers
@@ -179,16 +178,19 @@ public abstract class PipeNetWalker {
         pos.release();
     }
 
-    public boolean isWalked(IPipeTile<?, ?> pipe) {
-        return walked.contains(pipe.getPipePos().toLong());
+    protected boolean isWalked(IPipeTile<?, ?> pipe) {
+        return root.walked.contains(pipe.getPipePos().toLong());
     }
 
+    /**
+     * Will cause the root walker to stop after the next walk
+     */
     public void stop() {
-        running = false;
+        root.running = false;
     }
 
     public boolean isRunning() {
-        return running;
+        return root.running;
     }
 
     public World getWorld() {
@@ -201,5 +203,9 @@ public abstract class PipeNetWalker {
 
     public int getWalkedBlocks() {
         return walkedBlocks;
+    }
+
+    public boolean isRoot() {
+        return this.root == this;
     }
 }
