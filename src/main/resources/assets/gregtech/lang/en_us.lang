@@ -3849,7 +3849,7 @@ gregtech.multiblock.universal.distinct.no=No
 gregtech.multiblock.universal.distinct.yes=Yes
 gregtech.multiblock.universal.distinct.info=If enabled, each Item Input Bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
 
-gregtech.multiblock.preview.zoom=Use mousewheel or Shift+RMB to zoom
+gregtech.multiblock.preview.zoom=Use mousewheel or right-click+Drag to zoom
 gregtech.multiblock.preview.rotate=Click and drag to rotate
 gregtech.multiblock.preview.any_hatch=Any tier hatch can be used to form the structure
 gregtech.multiblock.preview.any_hatch_maintenance=Any type of maintenance hatch can be used to form the structure
@@ -4071,7 +4071,7 @@ terminal.store.miss=Require %s (%d).
 
 terminal.ar.open=Open AR
 
-terminal.multiblock_ar.description=Remember the §cFree Wrench§r?  Unfortunately, it it's gone. It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
+terminal.multiblock_ar.description=Remember the §cFreedom Wrench§r?  Unfortunately, it it's gone. It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
 terminal.multiblock_ar.tier.0=AR Camera
 terminal.multiblock_ar.tier.1=3D Builder
 terminal.multiblock_ar.unlock=Unlock this mode after the upgrade
