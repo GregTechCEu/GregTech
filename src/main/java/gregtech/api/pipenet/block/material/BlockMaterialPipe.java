@@ -1,5 +1,6 @@
 package gregtech.api.pipenet.block.material;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.block.BlockPipe;
@@ -7,7 +8,6 @@ import gregtech.api.pipenet.block.IPipeType;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.ore.OrePrefix;
 import net.minecraft.item.ItemStack;
 
@@ -40,12 +40,12 @@ public abstract class BlockMaterialPipe<PipeType extends Enum<PipeType> & IPipeT
 
     public ItemStack getItem(Material material) {
         if (material == null) return ItemStack.EMPTY;
-        int materialId = MaterialRegistry.MATERIAL_REGISTRY.getIDForObject(material);
+        int materialId = GregTechAPI.MATERIAL_REGISTRY.getIDForObject(material);
         return new ItemStack(this, 1, materialId);
     }
 
     public Material getItemMaterial(ItemStack itemStack) {
-        return MaterialRegistry.MATERIAL_REGISTRY.getObjectById(itemStack.getMetadata());
+        return GregTechAPI.MATERIAL_REGISTRY.getObjectById(itemStack.getMetadata());
     }
 
     @Override

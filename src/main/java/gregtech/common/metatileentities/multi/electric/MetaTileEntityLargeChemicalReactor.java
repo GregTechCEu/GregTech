@@ -57,7 +57,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
                 .where('X', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
                 .where('P', statePredicate(getPipeCasingState()))
                 .where('K', statePredicate(MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL)))
-                .where('C', statePredicate(MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL)).or(statePredicate(getCasingState())))
+                .where('C', statePredicate(MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL)).or(statePredicate(getCasingState())).or(abilityPartPredicate(ALLOWED_ABILITIES)))
                 .build();
     }
 

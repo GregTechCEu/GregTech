@@ -11,7 +11,7 @@ public enum OreDictNames {
     craftingFurnace,
     craftingBook,
 
-    craftingDiamondBlade,
+    craftingSawBlade,
     craftingDuctTape,
     craftingGrinder,
     craftingPiston,

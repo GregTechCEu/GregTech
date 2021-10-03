@@ -4,8 +4,8 @@ import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.BracketHandler;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.zenscript.IBracketHandler;
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import stanhebben.zenscript.compiler.IEnvironmentGlobal;
 import stanhebben.zenscript.expression.ExpressionCallStatic;
 import stanhebben.zenscript.expression.ExpressionString;
@@ -17,6 +17,7 @@ import java.util.List;
 
 @BracketHandler
 @ZenRegister
+@SuppressWarnings("unused")
 public class MaterialBracketHandler implements IBracketHandler {
 
     private final IJavaMethod method;
@@ -26,7 +27,7 @@ public class MaterialBracketHandler implements IBracketHandler {
     }
 
     public static Material getMaterial(String name) {
-        return name == null ? null : MaterialRegistry.get(name);
+        return name == null ? null : GregTechAPI.MaterialRegistry.get(name);
     }
 
     @Override

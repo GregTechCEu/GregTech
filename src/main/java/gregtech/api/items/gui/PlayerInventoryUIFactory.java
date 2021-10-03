@@ -1,7 +1,7 @@
 package gregtech.api.items.gui;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechRegistries;
+import gregtech.api.GregTechAPI;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.metaitem.MetaItem;
@@ -27,7 +27,7 @@ public class PlayerInventoryUIFactory extends UIFactory<PlayerInventoryHolder> {
     }
 
     public void init() {
-        GregTechRegistries.UI_FACTORY_REGISTRY.register(1, new ResourceLocation(GTValues.MODID, "player_inventory_factory"), this);
+        GregTechAPI.UI_FACTORY_REGISTRY.register(1, new ResourceLocation(GTValues.MODID, "player_inventory_factory"), this);
     }
 
     @Override

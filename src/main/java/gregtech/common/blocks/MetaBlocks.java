@@ -9,7 +9,6 @@ import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.MetaTileEntityTESR;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.unification.material.properties.PropertyKey;
@@ -193,7 +192,7 @@ public class MetaBlocks {
                         && !OrePrefix.block.isIgnored(material),
                 MetaBlocks::createCompressedBlock);
 
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY) {
+        for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
 
             if (material.hasProperty(PropertyKey.ORE))
                 createOreBlock(material);
@@ -246,7 +245,7 @@ public class MetaBlocks {
 
         Map<Integer, Material[]> blocksToGenerate = new TreeMap<>();
 
-        for (Material material : MaterialRegistry.MATERIAL_REGISTRY)
+        for (Material material : GregTechAPI.MATERIAL_REGISTRY)
             if (materialPredicate.test(material)) {
                 int id = material.getId();
                 int metaBlockID = id / 16;

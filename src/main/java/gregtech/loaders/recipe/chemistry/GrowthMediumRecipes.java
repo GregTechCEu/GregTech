@@ -35,94 +35,50 @@ public class GrowthMediumRecipes {
                 .fluidOutputs(Biomass.getFluid(750))
                 .buildAndRegister();
 
-        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
-                .input(BIO_CHAFF)
-                .fluidInputs(DistilledWater.getFluid(750))
-                .fluidOutputs(Biomass.getFluid(750))
-                .buildAndRegister();
-
         // Bacteria
-        MIXER_RECIPES.recipeBuilder().EUt(480).duration(300)
+        BREWING_RECIPES.recipeBuilder().EUt(480).duration(300)
                 .input(BIO_CHAFF, 4)
-                .fluidInputs(DistilledWater.getFluid(4000))
-                .notConsumable(new IntCircuitIngredient(1))
-                .fluidOutputs(Bacteria.getFluid(2000))
-                .buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder().EUt(1920).duration(300)
-                .input(dust, Vinteum)
-                .fluidInputs(DistilledWater.getFluid(8000))
-                .notConsumable(new IntCircuitIngredient(1))
-                .fluidOutputs(Bacteria.getFluid(4000))
-                .buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder().EUt(7680).duration(300)
-                .input(dustTiny, Naquadria)
-                .fluidInputs(DistilledWater.getFluid(16000))
-                .notConsumable(new IntCircuitIngredient(1))
-                .fluidOutputs(Bacteria.getFluid(8000))
+                .fluidInputs(DistilledWater.getFluid(1000))
+                .fluidOutputs(Bacteria.getFluid(1000))
                 .buildAndRegister();
 
         // Bacterial Sludge
-        MIXER_RECIPES.recipeBuilder().EUt(1920).duration(600)
-                .input(dust, Endstone, 16)
-                .fluidInputs(DistilledWater.getFluid(4000))
-                .notConsumable(new IntCircuitIngredient(2))
+        CHEMICAL_RECIPES.recipeBuilder().EUt(1920).duration(600)
+                .fluidInputs(Biomass.getFluid(1000))
+                .fluidInputs(Bacteria.getFluid(1000))
                 .fluidOutputs(BacterialSludge.getFluid(1000))
-                .buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder().EUt(7680).duration(600)
-                .input(dust, Vinteum)
-                .fluidInputs(DistilledWater.getFluid(8000))
-                .notConsumable(new IntCircuitIngredient(2))
-                .fluidOutputs(BacterialSludge.getFluid(2000))
-                .buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder().EUt(30720).duration(600)
-                .input(dustTiny, Naquadria)
-                .fluidInputs(DistilledWater.getFluid(16000))
-                .notConsumable(new IntCircuitIngredient(2))
-                .fluidOutputs(BacterialSludge.getFluid(4000))
                 .buildAndRegister();
 
         // Enriched Bacterial Sludge
         BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
                 .input(dust, Uranium238)
-                .fluidInputs(BacterialSludge.getFluid(750))
-                .fluidOutputs(EnrichedBacterialSludge.getFluid(750))
+                .fluidInputs(BacterialSludge.getFluid(1000))
+                .fluidOutputs(EnrichedBacterialSludge.getFluid(1000))
                 .buildAndRegister();
 
         BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
                 .input(dustTiny, Uranium235)
-                .fluidInputs(BacterialSludge.getFluid(750))
-                .fluidOutputs(EnrichedBacterialSludge.getFluid(750))
+                .fluidInputs(BacterialSludge.getFluid(1000))
+                .fluidOutputs(EnrichedBacterialSludge.getFluid(1000))
                 .buildAndRegister();
 
-        // Fermented Bacterial Sludge
-        FERMENTING_RECIPES.recipeBuilder().EUt(2).duration(2400)
-                .fluidInputs(EnrichedBacterialSludge.getFluid(750))
-                .fluidOutputs(FermentedBacterialSludge.getFluid(75))
+        BREWING_RECIPES.recipeBuilder().EUt(4).duration(128)
+                .input(dustTiny, Naquadria)
+                .fluidInputs(BacterialSludge.getFluid(1000))
+                .fluidOutputs(EnrichedBacterialSludge.getFluid(2000))
                 .buildAndRegister();
 
         // Mutagen
-        DISTILLERY_RECIPES.recipeBuilder().EUt(1920).duration(60)
-                .fluidInputs(FermentedBacterialSludge.getFluid(10))
-                .notConsumable(new IntCircuitIngredient(3))
+        DISTILLERY_RECIPES.recipeBuilder().EUt(1920).duration(40)
+                .fluidInputs(EnrichedBacterialSludge.getFluid(10))
+                .circuitMeta(1)
                 .fluidOutputs(Mutagen.getFluid(1))
                 .buildAndRegister();
 
-        MIXER_RECIPES.recipeBuilder().EUt(7680).duration(1200)
-                .input(dust, Vinteum, 4)
-                .fluidInputs(DistilledWater.getFluid(4000))
-                .notConsumable(new IntCircuitIngredient(4))
-                .fluidOutputs(Mutagen.getFluid(1000))
-                .buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder().EUt(30720).duration(1200)
-                .input(dustTiny, Naquadria)
-                .fluidInputs(DistilledWater.getFluid(8000))
-                .notConsumable(new IntCircuitIngredient(4))
-                .fluidOutputs(Mutagen.getFluid(2000))
+        DISTILLERY_RECIPES.recipeBuilder().EUt(7680).duration(100)
+                .fluidInputs(EnrichedBacterialSludge.getFluid(1000))
+                .circuitMeta(2)
+                .fluidOutputs(Mutagen.getFluid(100))
                 .buildAndRegister();
 
         // Collagen
@@ -143,7 +99,7 @@ public class GrowthMediumRecipes {
                 .buildAndRegister();
 
         // Gelatin
-        CHEMICAL_RECIPES.recipeBuilder().EUt(480).duration(1600)
+        MIXER_RECIPES.recipeBuilder().EUt(480).duration(1600)
                 .input(dust, Collagen, 4)
                 .fluidInputs(PhosphoricAcid.getFluid(1000))
                 .fluidInputs(Water.getFluid(3000))
@@ -169,24 +125,6 @@ public class GrowthMediumRecipes {
                 .input(dust, Salt, 4)
                 .input(dust, Calcium, 4)
                 .input(dust, Agar, 4)
-                .fluidInputs(Bacteria.getFluid(4000))
-                .fluidOutputs(RawGrowthMedium.getFluid(1000))
-                .buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder().EUt(30720).duration(1200)
-                .input(dust, Meat, 8)
-                .input(dust, Salt, 8)
-                .input(dust, Calcium, 8)
-                .input(dust, Agar, 4)
-                .fluidInputs(BacterialSludge.getFluid(4000))
-                .fluidOutputs(RawGrowthMedium.getFluid(2000))
-                .buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder().EUt(122880).duration(1200)
-                .input(dust, Meat, 12)
-                .input(dust, Salt, 12)
-                .input(dust, Calcium, 12)
-                .input(dust, Agar, 4)
                 .fluidInputs(Mutagen.getFluid(4000))
                 .fluidOutputs(RawGrowthMedium.getFluid(4000))
                 .buildAndRegister();
@@ -201,7 +139,7 @@ public class GrowthMediumRecipes {
         // Stem Cells
         CHEMICAL_RECIPES.recipeBuilder().EUt(30720).duration(300)
                 .input(dust, Osmiridium)
-                .input(dust, Vinteum, 2)
+                .fluidInputs(Bacteria.getFluid(500))
                 .fluidInputs(SterileGrowthMedium.getFluid(500))
                 .output(STEM_CELLS, 32)
                 .fluidOutputs(BacterialSludge.getFluid(500))

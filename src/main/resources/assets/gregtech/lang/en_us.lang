@@ -688,7 +688,8 @@ metaitem.neutron_reflector.name=Iridium Neutron Reflector
 metaitem.neutron_reflector.tooltip=Indestructible
 metaitem.duct_tape.name=BrainTech Aerospace Advanced Reinforced Duct Tape FAL-84
 
-metaitem.component.sawblade.diamond.name=Diamond Sawblade
+metaitem.component.sawblade.diamond.name=Diamond Saw Blade
+metaitem.component.sawblade.tungsten.name=Tungsten Saw Blade
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
 metaitem.component.grinder.tungsten.name=Tungsten Grinding Head
 
@@ -897,7 +898,7 @@ metaitem.voltage_coil.luv.tooltip=Master Coil
 metaitem.voltage_coil.zpm.name=ZPM Voltage Coil
 metaitem.voltage_coil.zpm.tooltip=Ultimate Coil
 metaitem.voltage_coil.uv.name=Ultimate Voltage Coil
-metaitem.voltage_coil.uv.tooltip=Superconductor Coil
+metaitem.voltage_coil.uv.tooltip=Super Coil
 metaitem.voltage_coil.uhv.name=Highly Ultimate Voltage Coil
 metaitem.voltage_coil.uhv.tooltip=Infinite Coil
 metaitem.voltage_coil.uev.name=Extremely Ultimate Voltage Coil
@@ -905,9 +906,9 @@ metaitem.voltage_coil.uev.tooltip=Ultra Coil
 metaitem.voltage_coil.uiv.name=Insanely Ultimate Voltage Coil
 metaitem.voltage_coil.uiv.tooltip=Insane Coil
 metaitem.voltage_coil.umv.name=Mega Ultimate Voltage Coil
-metaitem.voltage_coil.umv.tooltip=UMV Coil
+metaitem.voltage_coil.umv.tooltip=Epic Coil
 metaitem.voltage_coil.uxv.name=Extended Mega Ultimate Voltage Coil
-metaitem.voltage_coil.uxv.tooltip=UXV Coil
+metaitem.voltage_coil.uxv.tooltip=Legendary Coil
 metaitem.voltage_coil.max.name=Maximum Voltage Coil
 metaitem.voltage_coil.max.tooltip=Maximum Coil
 
@@ -1682,8 +1683,13 @@ material.data=Data
 material.elite=Elite
 material.master=Master
 material.ultimate=Ultimate
-material.superconductor=Superconductor
+material.super=Super
 material.infinite=Infinite
+material.ultra=Ultra
+material.insane=Insane
+material.epic=Epic
+material.legendary=Legendary
+material.maximum=Maximum
 
 material.uuamplifier=UU-Amplifier
 material.uumatter=UU-Matter
@@ -2036,8 +2042,10 @@ behaviour.lighter.uses=Remaining uses: %,d
 behavior.plunger.description=Use to clear 1000 L out of a machine's output tank./nUse while sneaking to clear 1000 L out of a machine's input tank./nInput tank clearing works only on GT machines!
 behavior.toggle_energy_consumer.tooltip=Use to toggle mode
 
-enchantment.damage.endermen=Disjunction
-enchantment.hard.hammer=Hammering
+enchantment.damage.disjunction=Disjunction
+enchantment.gregtech.disjunction.desc=Applies Weakness and Slowness to Ender-related mobs.
+enchantment.hard_hammer=Hammering
+enchantment.gregtech.hard_hammer.desc=Breaks blocks as if they were mined with a GregTech Hammer.
 
 tile.gt.seal.name=Sealed Block
 tile.gt.foam.name=Foam

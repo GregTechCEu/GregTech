@@ -111,7 +111,7 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
             if (!ignoreTransferLimit) {
                 amount = Math.min(amount, getTransferLimit());
             }
-            long charged = amount > canReceive ? canReceive : amount;
+            long charged = Math.min(amount, canReceive);
             if (!simulate) {
                 setCharge(getCharge() + charged);
             }
@@ -130,7 +130,7 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
                 amount = Math.min(amount, getTransferLimit());
             }
             long charge = getCharge();
-            long discharged = amount > charge ? charge : amount;
+            long discharged = Math.min(amount, charge);
             if (!simulate) {
                 setCharge(charge - discharged);
             }

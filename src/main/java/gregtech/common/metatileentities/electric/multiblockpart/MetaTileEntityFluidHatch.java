@@ -153,10 +153,10 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockPart imple
         builder.dynamicLabel(11, 30, tankWidget::getFormattedFluidAmount, 0xFFFFFF);
         builder.dynamicLabel(11, 40, tankWidget::getFluidLocalizedName, 0xFFFFFF);
         return builder.label(6, 6, title)
-                .widget(new FluidContainerSlotWidget(containerInventory, 0, 90, 17, false)
+                .widget(new FluidContainerSlotWidget(containerInventory, 0, 90, 16, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.IN_SLOT_OVERLAY))
                 .widget(new ImageWidget(91, 36, 14, 15, GuiTextures.TANK_ICON))
-                .widget(new SlotWidget(containerInventory, 1, 90, 54, true, false)
+                .widget(new SlotWidget(containerInventory, 1, 90, 53, true, false)
                         .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.OUT_SLOT_OVERLAY))
                 .bindPlayerInventory(entityPlayer.inventory);
     }

@@ -1,8 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.pipeline.IVertexOperation;
-import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
@@ -33,6 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.*;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -85,7 +83,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
                 .where('c', statePredicate(getCoilState()))
                 .where('O', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS)))
                 .where('E', statePredicate(getCasingState()).or(tilePredicate((state, tile) -> {
-                    for (int i = tier; i < GTValues.V.length; i++) {
+                    for (int i = tier; i < GTValues.UV + 1; i++) {
                         if (tile.metaTileEntityId.equals(MetaTileEntities.ENERGY_INPUT_HATCH[i].metaTileEntityId))
                             return true;
                     }
@@ -194,6 +192,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
         textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
     }
 
+    @Nonnull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
         return Textures.FUSION_REACTOR_OVERLAY;

@@ -43,8 +43,9 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
         return metaValueItem == null ? new DummyArmorLogic() : metaValueItem.getArmorLogic();
     }
 
+    @Nonnull
     @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
+    public Multimap<String, AttributeModifier> getAttributeModifiers(@Nonnull EntityEquipmentSlot slot, @Nonnull ItemStack stack) {
         Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
         IArmorLogic armorLogic = getArmorLogic(stack);
         multimap.putAll(armorLogic.getAttributeModifiers(slot, stack));
@@ -85,13 +86,13 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
     }
 
     @Override
-    public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
+    public void onArmorTick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull ItemStack itemStack) {
         IArmorLogic armorLogic = getArmorLogic(itemStack);
         armorLogic.onArmorTick(world, player, itemStack);
     }
 
     @Override
-    public boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity) {
+    public boolean isValidArmor(@Nonnull ItemStack stack, @Nonnull EntityEquipmentSlot armorType, @Nonnull Entity entity) {
         IArmorLogic armorLogic = getArmorLogic(stack);
         return super.isValidArmor(stack, armorType, entity) &&
                 armorLogic.isValidArmor(stack, entity, armorType);
@@ -99,14 +100,14 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
 
     @Nullable
     @Override
-    public EntityEquipmentSlot getEquipmentSlot(ItemStack stack) {
+    public EntityEquipmentSlot getEquipmentSlot(@Nonnull ItemStack stack) {
         IArmorLogic armorLogic = getArmorLogic(stack);
         return armorLogic.getEquipmentSlot(stack);
     }
 
     @Nullable
     @Override
-    public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
+    public String getArmorTexture(@Nonnull ItemStack stack, @Nonnull Entity entity, @Nonnull EntityEquipmentSlot slot, @Nonnull String type) {
         IArmorLogic armorLogic = getArmorLogic(stack);
         return armorLogic.getArmorTexture(stack, entity, slot, type);
     }
@@ -114,7 +115,7 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
     @Nullable
     @Override
     @SideOnly(Side.CLIENT)
-    public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot, ModelBiped _default) {
+    public ModelBiped getArmorModel(@Nonnull EntityLivingBase entityLiving, @Nonnull ItemStack itemStack, @Nonnull EntityEquipmentSlot armorSlot, @Nonnull ModelBiped _default) {
         IArmorLogic armorLogic = getArmorLogic(itemStack);
         return armorLogic.getArmorModel(entityLiving, itemStack, armorSlot, _default);
     }
@@ -132,7 +133,7 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
     }
 
     @Override
-    public void renderHelmetOverlay(ItemStack stack, EntityPlayer player, ScaledResolution resolution, float partialTicks) {
+    public void renderHelmetOverlay(@Nonnull ItemStack stack, @Nonnull EntityPlayer player, @Nonnull ScaledResolution resolution, float partialTicks) {
         IArmorLogic armorLogic = getArmorLogic(stack);
         armorLogic.renderHelmetOverlay(stack, player, resolution, partialTicks);
     }
@@ -201,7 +202,12 @@ public class ArmorMetaItem<T extends ArmorMetaItem<?>.ArmorMetaValueItem> extend
 
     @Override
     public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack, @Nonnull Enchantment enchantment) {
-        switch (this.getEquipmentSlot(stack)) {
+        EntityEquipmentSlot slot = this.getEquipmentSlot(stack);
+        if(slot == null) {
+            return false;
+        }
+
+        switch (slot) {
             case HEAD:
                 return enchantment.type.canEnchantItem(Items.DIAMOND_HELMET);
             case CHEST:

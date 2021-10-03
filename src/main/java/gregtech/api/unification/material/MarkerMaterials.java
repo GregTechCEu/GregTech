@@ -91,13 +91,13 @@ public class MarkerMaterials {
         public static final Material Elite = new MarkerMaterial("elite");
         public static final Material Master = new MarkerMaterial("master");
         public static final Material Ultimate = new MarkerMaterial("ultimate");
-        public static final Material Superconductor = new MarkerMaterial("superconductor");
+        public static final Material Super = new MarkerMaterial("super");
         public static final Material Infinite = new MarkerMaterial("infinite");
 
         public static Material Ultra = new MarkerMaterial("ultra");
         public static Material Insane = new MarkerMaterial("insane");
-        public static Material UMVCircuit = new MarkerMaterial("umv");
-        public static Material UXVCircuit = new MarkerMaterial("uxv");
+        public static Material Epic = new MarkerMaterial("epic");
+        public static Material Legendary = new MarkerMaterial("legendary");
         public static Material Maximum = new MarkerMaterial("maximum");
     }
 

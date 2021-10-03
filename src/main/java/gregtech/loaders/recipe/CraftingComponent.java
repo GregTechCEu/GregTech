@@ -34,6 +34,7 @@ public class CraftingComponent {
     public static Component ROTOR;
     public static Component SENSOR;
     public static Component GRINDER;
+    public static Component SAWBLADE;
     public static Component DIAMOND;
     public static Component PISTON;
     public static Component EMITTER;
@@ -65,12 +66,12 @@ public class CraftingComponent {
                 {5, new UnificationEntry(OrePrefix.circuit, Tier.Elite)},
                 {6, new UnificationEntry(OrePrefix.circuit, Tier.Master)},
                 {7, new UnificationEntry(OrePrefix.circuit, Tier.Ultimate)},
-                {8, new UnificationEntry(OrePrefix.circuit, Tier.Superconductor)},
+                {8, new UnificationEntry(OrePrefix.circuit, Tier.Super)},
                 {9, new UnificationEntry(OrePrefix.circuit, Tier.Infinite)},
                 {10, new UnificationEntry(OrePrefix.circuit, Tier.Ultra)},
                 {11, new UnificationEntry(OrePrefix.circuit, Tier.Insane)},
-                {12, new UnificationEntry(OrePrefix.circuit, Tier.UMVCircuit)},
-                {13, new UnificationEntry(OrePrefix.circuit, Tier.UXVCircuit)},
+                {12, new UnificationEntry(OrePrefix.circuit, Tier.Epic)},
+                {13, new UnificationEntry(OrePrefix.circuit, Tier.Legendary)},
                 {14, new UnificationEntry(OrePrefix.circuit, Tier.Maximum)}
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
@@ -84,12 +85,12 @@ public class CraftingComponent {
                 {4, new UnificationEntry(OrePrefix.circuit, Tier.Elite)},
                 {5, new UnificationEntry(OrePrefix.circuit, Tier.Master)},
                 {6, new UnificationEntry(OrePrefix.circuit, Tier.Ultimate)},
-                {7, new UnificationEntry(OrePrefix.circuit, Tier.Superconductor)},
+                {7, new UnificationEntry(OrePrefix.circuit, Tier.Super)},
                 {8, new UnificationEntry(OrePrefix.circuit, Tier.Infinite)},
                 {9, new UnificationEntry(OrePrefix.circuit, Tier.Ultra)},
                 {10, new UnificationEntry(OrePrefix.circuit, Tier.Insane)},
-                {11, new UnificationEntry(OrePrefix.circuit, Tier.UMVCircuit)},
-                {12, new UnificationEntry(OrePrefix.circuit, Tier.UXVCircuit)},
+                {11, new UnificationEntry(OrePrefix.circuit, Tier.Epic)},
+                {12, new UnificationEntry(OrePrefix.circuit, Tier.Legendary)},
                 {13, new UnificationEntry(OrePrefix.circuit, Tier.Maximum)}
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
@@ -118,7 +119,7 @@ public class CraftingComponent {
                 {6, new UnificationEntry(OrePrefix.cableGtSingle, Materials.NiobiumTitanium)},
                 {7, new UnificationEntry(OrePrefix.cableGtSingle, Materials.Naquadah)},
                 {8, new UnificationEntry(OrePrefix.cableGtSingle, Materials.NaquadahAlloy)},
-                {9, new UnificationEntry(OrePrefix.wireGtSingle, Tier.Superconductor)},
+                {9, new UnificationEntry(OrePrefix.wireGtSingle, Materials.RutheniumTriniumAmericiumNeutronate)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -146,7 +147,7 @@ public class CraftingComponent {
                 {5, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.Platinum)},
                 {6, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.NiobiumTitanium)},
                 {7, new UnificationEntry(OrePrefix.cableGtQuadruple, Materials.NaquadahAlloy)},
-                {8, new UnificationEntry(OrePrefix.wireGtQuadruple, Tier.Superconductor)},
+                {8, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.RutheniumTriniumAmericiumNeutronate)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
@@ -280,6 +281,18 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
+        SAWBLADE = new Component(Stream.of(new Object[][]{
+
+                {0, OreDictNames.craftingSawBlade},
+                {1, OreDictNames.craftingSawBlade},
+                {2, OreDictNames.craftingSawBlade},
+                {3, OreDictNames.craftingSawBlade},
+                {4, OreDictNames.craftingSawBlade},
+                {5, MetaItems.COMPONENT_SAW_BLADE_TUNGSTEN.getStackForm()},
+                {GTValues.FALLBACK, MetaItems.COMPONENT_SAW_BLADE_TUNGSTEN.getStackForm()},
+
+        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
+
         DIAMOND = new Component(Stream.of(new Object[][]{
 
                 {GTValues.FALLBACK, new UnificationEntry(OrePrefix.gem, Materials.Diamond)},
@@ -372,12 +385,12 @@ public class CraftingComponent {
                 {0, new UnificationEntry(OrePrefix.wireGtSingle, Materials.Tin)},
                 {1, new UnificationEntry(OrePrefix.wireGtDouble, Materials.Tin)},
                 {2, new UnificationEntry(OrePrefix.wireGtDouble, Materials.Copper)},
-                {3, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Copper)},
-                {4, new UnificationEntry(OrePrefix.wireGtOctal, Materials.AnnealedCopper)},
-                {5, new UnificationEntry(OrePrefix.wireGtOctal, Materials.AnnealedCopper)},
-                {6, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.YttriumBariumCuprate)},
-                {7, new UnificationEntry(OrePrefix.wireGtOctal, Tier.Superconductor)},
-                {8, new UnificationEntry(OrePrefix.wireGtHex, Tier.Superconductor)},
+                {3, new UnificationEntry(OrePrefix.wireGtDouble, Materials.Silver)},
+                {4, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Steel)},
+                {5, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.Graphene)},
+                {6, new UnificationEntry(OrePrefix.wireGtQuadruple, Materials.NiobiumNitride)},
+                {7, new UnificationEntry(OrePrefix.wireGtOctal, Materials.VanadiumGallium)},
+                {8, new UnificationEntry(OrePrefix.wireGtOctal, Materials.YttriumBariumCuprate)},
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

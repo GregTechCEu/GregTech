@@ -167,7 +167,7 @@ public class LootTableHelper {
      * shuffles items by changing their order and splitting stacks
      */
     private static void shuffleItems(List<ItemStack> stacks, int slotCount, Random rand) {
-        List<ItemStack> list = Lists.<ItemStack>newArrayList();
+        List<ItemStack> list = Lists.newArrayList();
         Iterator<ItemStack> iterator = stacks.iterator();
 
         while (iterator.hasNext()) {

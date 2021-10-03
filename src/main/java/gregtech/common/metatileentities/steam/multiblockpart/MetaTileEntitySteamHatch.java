@@ -113,8 +113,8 @@ public class MetaTileEntitySteamHatch extends MetaTileEntityMultiblockPart imple
             blockPos.setPos(this.getPos()).move(nearbyFacing);
             TileEntity tileEntity = this.getWorld().getTileEntity(blockPos);
             if (tileEntity != null) {
-                IFluidHandler fluidHandler = (IFluidHandler) tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
-                IFluidHandler myFluidHandler = (IFluidHandler) this.getCoverCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing);
+                IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing.getOpposite());
+                IFluidHandler myFluidHandler = this.getCoverCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, nearbyFacing);
                 if (fluidHandler != null && myFluidHandler != null && ModHandler.isSteam(fluidHandler.drain(1, false))) {
                     GTFluidUtils.transferFluids(fluidHandler, myFluidHandler, 2147483647);
                 }

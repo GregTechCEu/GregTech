@@ -8,6 +8,8 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 
+import javax.annotation.Nonnull;
+
 public class EnchantmentHardHammer extends Enchantment {
     public static final EnchantmentHardHammer INSTANCE = new EnchantmentHardHammer();
 
@@ -16,8 +18,8 @@ public class EnchantmentHardHammer extends Enchantment {
     }
 
     public void register(RegistryEvent.Register<Enchantment> event) {
-        this.setRegistryName(new ResourceLocation(GTValues.MODID, "HardHammer"));
-        setName("hard.hammer");
+        this.setRegistryName(new ResourceLocation(GTValues.MODID, "hard_hammer"));
+        setName("hard_hammer");
         event.getRegistry().register(this);
     }
 
@@ -37,7 +39,7 @@ public class EnchantmentHardHammer extends Enchantment {
 
 
     @Override
-    protected boolean canApplyTogether(Enchantment ench) {
+    protected boolean canApplyTogether(@Nonnull Enchantment ench) {
             return ench != Enchantments.SILK_TOUCH && super.canApplyTogether(ench);
     }
 }
