@@ -53,6 +53,7 @@ public class WorldGenRegistry {
 
     private final List<OreDepositDefinition> registeredVeinDefinitions = new ArrayList<>();
     private final List<BedrockFluidDepositDefinition> registeredBedrockVeinDefinitions = new ArrayList<>();
+    private final List<OreDepositDefinition> addonRegisteredDefinitions = new ArrayList<>();
     private final Map<String, OreDepositDefinition> definitionMap = new HashMap<>();
     private List<OreDepositDefinition> removedDefinitions = new ArrayList<>();
     private final Map<WorldProvider, WorldOreVeinCache> oreVeinCache = new WeakHashMap<>();
@@ -222,8 +223,25 @@ public class WorldGenRegistry {
                 GTLog.logger.error("Failed to parse worldgen definition {} on path {}", depositName, worldgenDefinition, exception);
             }
         }
+
+        for(OreDepositDefinition definition : addonRegisteredDefinitions) {
+
+            JsonObject element = FileUtility.tryExtractFromFile(worldgenRootPath.resolve(definition.getDepositName()));
+
+            if(element == null) {
+                GTLog.logger.error("Addon mod tried to register bad ore definition at {}", definition.getDepositName());
+                addonRegisteredDefinitions.remove(definition);
+                break; //break or continue?
+            }
+
+            definition.initializeFromConfig(element);
+            definitionMap.put(definition.getDepositName(), definition);
+
+        }
+
         GTLog.logger.info("Loaded {} bedrock worldgen definitions", registeredBedrockVeinDefinitions.size());
         GTLog.logger.info("Loaded {} total worldgen definitions", registeredVeinDefinitions.size() + registeredBedrockVeinDefinitions.size());
+        GTLog.logger.info("Loaded {} worldgen definitions from addon mods", addonRegisteredDefinitions.size());
 
         //After initializing default GTCE worldgen or added veins, load attempts to remove worldgen from addon mods
         if(!removedDefinitions.isEmpty()) {
@@ -351,7 +369,6 @@ public class WorldGenRegistry {
             catch (IOException exception) {
                 GTLog.logger.error("Failed to remove oregen file at {}", definition.getDepositName());
             }
-
         }
     }
 
@@ -408,6 +425,7 @@ public class WorldGenRegistry {
         if(!definitionMap.containsKey(definition.getDepositName())) {
             registeredVeinDefinitions.add(definition);
             definitionMap.put(definition.getDepositName(), definition);
+            addonRegisteredDefinitions.add(definition);
         }
         else {
             GTLog.logger.error("Failed to add ore vein definition at {}. Definition already exists", definition.getDepositName());
