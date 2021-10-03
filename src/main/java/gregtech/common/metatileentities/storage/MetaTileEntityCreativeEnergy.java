@@ -40,8 +40,6 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     private int setTier = 0;
     private boolean active = false;
 
-    private final List<Character> ALLOWED_CHARS = Lists.newArrayList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-
     public MetaTileEntityCreativeEnergy() {
         super(new ResourceLocation(GTValues.MODID, "infinite_energy"));
     }
@@ -77,10 +75,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         ModularUI.Builder builder = ModularUI.defaultBuilder()
                 .widget(new CycleButtonWidget(7, 7, 30, 20, GTValues.VN, () -> setTier, tier -> {
                     setTier = tier;
-                    if (tier > 0)
-                        voltage = GTValues.V[setTier - 1];
-                    else
-                        voltage = 0;
+                    voltage = GTValues.V[setTier];
                 }));
         builder.label(7, 32, "Voltage");
         builder.widget(new ImageWidget(7, 44, 156, 20, GuiTextures.DISPLAY));
