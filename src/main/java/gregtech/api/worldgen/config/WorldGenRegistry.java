@@ -53,6 +53,8 @@ public class WorldGenRegistry {
 
     private final List<OreDepositDefinition> registeredVeinDefinitions = new ArrayList<>();
     private final List<BedrockFluidDepositDefinition> registeredBedrockVeinDefinitions = new ArrayList<>();
+    private final Map<String, OreDepositDefinition> definitionMap = new HashMap<>();
+    private List<OreDepositDefinition> removedDefinitions = new ArrayList<>();
     private final Map<WorldProvider, WorldOreVeinCache> oreVeinCache = new WeakHashMap<>();
 
     private class WorldOreVeinCache {
@@ -185,6 +187,7 @@ public class WorldGenRegistry {
                 deposit.initializeFromConfig(element);
                 // Adds the registered definition to the list of all registered definitions
                 registeredVeinDefinitions.add(deposit);
+                definitionMap.put(depositName, deposit);
             } catch (RuntimeException exception) {
                 GTLog.logger.error("Failed to parse worldgen definition {} on path {}", depositName, worldgenDefinition, exception);
             }
@@ -221,6 +224,11 @@ public class WorldGenRegistry {
         }
         GTLog.logger.info("Loaded {} bedrock worldgen definitions", registeredBedrockVeinDefinitions.size());
         GTLog.logger.info("Loaded {} total worldgen definitions", registeredVeinDefinitions.size() + registeredBedrockVeinDefinitions.size());
+
+        //After initializing default GTCE worldgen or added veins, load attempts to remove worldgen from addon mods
+        if(!removedDefinitions.isEmpty()) {
+            removeExistingFiles(worldgenRootPath);
+        }
     }
 
     /**
@@ -329,6 +337,24 @@ public class WorldGenRegistry {
         }
     }
 
+    private void removeExistingFiles(Path configRoot){
+
+        for(OreDepositDefinition definition : removedDefinitions) {
+            Path filePath = configRoot.resolve(Paths.get(definition.getDepositName()));
+
+            try {
+                if(Files.exists(filePath)) {
+                    Files.delete(filePath);
+                    GTLog.logger.info("Removed oregen file at {}", definition.getDepositName());
+                }
+            }
+            catch (IOException exception) {
+                GTLog.logger.error("Failed to remove oregen file at {}", definition.getDepositName());
+            }
+
+        }
+    }
+
     /**
      * Gathers the designated named dimensions from the designated json file
      *
@@ -350,6 +376,43 @@ public class WorldGenRegistry {
         }
     }
 
+    /**
+     * Called to remove veins from the list of registered vein definitions
+     * Can fail if called on default veins when the veins have been modified by modpack makers
+     *
+     * After removing all desired veins, call {@link WorldGenRegistry#reinitializeRegisteredVeins()} to delete the existing files
+     *
+     * @param definitionPath A String of the Path of the vein to be removed, starting from the worldgen folder, with no leading separator
+     */
+    public void removeVeinDefinitions(String definitionPath) {
+        if(definitionMap.containsKey(definitionPath)) {
+            OreDepositDefinition removedDefinition = definitionMap.get(definitionPath);
+            registeredVeinDefinitions.remove(removedDefinition);
+            definitionMap.remove(definitionPath);
+            removedDefinitions.add(removedDefinition);
+        }
+    }
+
+    /**
+     * Adds the provided OreDepositionDefinition to the list and Map of registered definitions
+     * Will not create an entry if a file already exists for the provided definition
+     *
+     * After adding all veins, call {@link WorldGenRegistry#reinitializeRegisteredVeins()} to initialize the new veins
+     * Or, register veins before {@link WorldGenRegistry#initializeRegistry()} is called, and the veins will be loaded with the
+     * default veins
+     *
+     * @param definition The OreDepositDefinition to add to the list of registered veins
+     */
+    @SuppressWarnings("unused")
+    public void addVeinDefinitions(OreDepositDefinition definition) {
+        if(!definitionMap.containsKey(definition.getDepositName())) {
+            registeredVeinDefinitions.add(definition);
+            definitionMap.put(definition.getDepositName(), definition);
+        }
+        else {
+            GTLog.logger.error("Failed to add ore vein definition at {}. Definition already exists", definition.getDepositName());
+        }
+    }
 
     public void registerShapeGenerator(String identifier, Supplier<ShapeGenerator> shapeGeneratorSupplier) {
         if (shapeGeneratorRegistry.containsKey(identifier))
