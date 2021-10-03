@@ -194,11 +194,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
     protected void trySearchNewRecipe() {
         long maxVoltage = getMaxVoltage();
-        Recipe currentRecipe = null;
+        Recipe currentRecipe;
         IItemHandlerModifiable importInventory = getInputInventory();
         IMultipleTankHandler importFluids = getInputTank();
-        IItemHandlerModifiable exportInventory = getOutputInventory();
-        IMultipleTankHandler exportFluids = getOutputTank();
         Tuple<RecipeBuilder<?>, Integer> multipliedRecipe;
 
         // see if the last recipe we used still works
@@ -219,12 +217,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
             //Check if the recipe needs to be multiplied due to parallel logic
             if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
-                if(((MultiblockWithDisplayBase) this.metaTileEntity).getLenientParallel()) {
-                    multipliedRecipe = ParallelLogic.multiplyRecipeLenient(currentRecipe, this.recipeMap, importInventory, importFluids, exportInventory, exportFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
-                }
-                else {
-                    multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
-                }
+                multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
 
                 // Multiply the recipe if we can
                 if(multipliedRecipe != null) {

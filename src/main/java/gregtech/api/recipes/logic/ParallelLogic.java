@@ -3,7 +3,6 @@ package gregtech.api.recipes.logic;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.*;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
-import gregtech.api.util.InventoryUtils;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.api.util.StreamUtils;
 import it.unimi.dsi.fastutil.Hash;
@@ -107,78 +106,6 @@ public class ParallelLogic {
         return new Tuple<>(newRecipe, minMultiplier);
     }
 
-    public static Tuple<RecipeBuilder<?>, Integer> multiplyRecipeLenient(Recipe recipe, RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs,
-                                           IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelAmount) {
-
-        RecipeBuilder<?> newRecipe = recipeMap.recipeBuilder()
-                .inputsIngredients(recipe.getInputs())
-                .fluidInputs(recipe.getFluidInputs())
-                .outputs(recipe.getOutputs())
-                .fluidOutputs(recipe.getFluidOutputs())
-                .EUt(recipe.getEUt())
-                .duration(recipe.getDuration());
-
-        copyChancedItemOutputs(newRecipe, recipe, 1);
-
-        for(Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
-            newRecipe.applyProperty(property.getKey().getKey(), property.getValue());
-        }
-
-        if(parallelAmount == 1) {
-            return new Tuple<>(newRecipe, parallelAmount);
-        }
-
-        // Find all the items in the combined Item Input inventories and create oversized ItemStacks
-        Set<ItemStack> ingredientStacks = findAllItemsInInputs(inputs);
-
-        // Find all the fluids in the combined Fluid Input inventories and create oversized FluidStacks
-        Set<FluidStack> fluidStacks = findAllFluidsInInputs(fluidInputs);
-
-        // Find the maximum number of recipes that can be performed from the items in the item input inventories
-        int itemMultiplier = getMinRatioItemWithOutputInventory(ingredientStacks, recipe, parallelAmount, outputs);
-        // Find the maximum number of recipes that be be performed from the items in the fluid input inventories
-        int fluidMultiplier = getMinRatioFluidWithOutputTanks(fluidStacks, recipe, parallelAmount, fluidOutputs);
-
-        // Find the maximum number of recipes that can be performed from all available inputs
-        int minMultiplier = Math.min(itemMultiplier, fluidMultiplier);
-
-        // No fluids or items were found in the input inventories that match the recipe's inputs
-        if(minMultiplier == Integer.MAX_VALUE || minMultiplier == 0) {
-            return null;
-        }
-
-        // Create holders for the various parts of the new multiplied Recipe
-        List<CountableIngredient> newRecipeInputs = new ArrayList<>();
-        List<FluidStack> newFluidInputs = new ArrayList<>();
-        List<ItemStack> outputItems = new ArrayList<>();
-        List<FluidStack> outputFluids = new ArrayList<>();
-
-        // Populate the various holders of the multiplied Recipe
-        multiplyInputsAndOutputs(newRecipeInputs, newFluidInputs, outputItems, outputFluids, recipe, minMultiplier);
-
-        // Build the new Recipe with multiplied components
-        newRecipe.clearInputs();
-        newRecipe.inputsIngredients(newRecipeInputs);
-        newRecipe.clearFluidInputs();
-        newRecipe.fluidInputs(newFluidInputs);
-        newRecipe.clearOutputs();
-        newRecipe.outputs(outputItems);
-        newRecipe.clearFluidOutputs();
-        newRecipe.fluidOutputs(outputFluids);
-        newRecipe.EUt(recipe.getEUt());
-        newRecipe.duration(recipe.getDuration());
-
-        // Add the chanced outputs to the multiplied recipe
-        newRecipe.clearChancedOutput();
-        copyChancedItemOutputs(newRecipe, recipe, minMultiplier);
-
-        // Return the multiplied Recipe
-        return new Tuple<>(newRecipe, minMultiplier);
-
-
-    }
-
-
     /**
      * Copies the chanced outputs of a Recipe and expands them for the number of parallel recipes performed
      *
@@ -274,67 +201,6 @@ public class ParallelLogic {
         return minMultiplier;
     }
 
-    // TODO make this much better and not as laggy
-    protected static int getMinRatioItemWithOutputInventory(Set<ItemStack> countIngredients, Recipe recipe, int parallelAmount, IItemHandlerModifiable output) {
-        int minMultiplier = Integer.MAX_VALUE;
-
-        List<ItemStack> singleRecipeInputs = new ArrayList<>();
-
-        // Iterate through the recipe inputs
-        for(CountableIngredient recipeInputs : recipe.getInputs()) {
-
-            // Skip not consumed inputs
-            if(recipeInputs.getCount() == 0) {
-                continue;
-            }
-
-            // For every stack in the ingredients gathered from the input bus. This is most likely going to be oversized stacks
-            for(ItemStack wholeItemStack : countIngredients) {
-
-                if(recipeInputs.getIngredient().apply(wholeItemStack)) {
-                    ItemStack newStack = wholeItemStack.copy();
-                    newStack.setCount(recipeInputs.getCount());
-                    singleRecipeInputs.add(newStack);
-                    //The ratio will either be set by the parallel limit, or the oversized stack divided by the amount of inputs the recipe takes
-                    int ratio = Math.min(parallelAmount, wholeItemStack.getCount() / recipeInputs.getCount());
-                    //Find the maximum number of recipes that can be performed by decrementing the ratio, which is limited
-                    //by the number of machines (as absolute max), or the amount of ingredients in the input bus
-                    if(ratio < minMultiplier) {
-                        minMultiplier = ratio;
-                    }
-                    break;
-                }
-            }
-        }
-
-        if(minMultiplier == Integer.MAX_VALUE) {
-            return minMultiplier;
-        }
-
-        List<ItemStack> recipeInputsCopy = singleRecipeInputs;
-
-        while(minMultiplier > 0) {
-
-            for(ItemStack stack : singleRecipeInputs) {
-                stack.setCount(stack.getCount() * minMultiplier);
-            }
-
-            if(!InventoryUtils.simulateItemStackMerge(singleRecipeInputs, output)) {
-                minMultiplier--;
-            }
-            else {
-                break;
-            }
-
-            singleRecipeInputs = recipeInputsCopy;
-
-        }
-
-
-        return minMultiplier;
-
-    }
-
     /**
      * Finds all unique Fluids in the combined Fluid Input inventory, and combines them into a {@link Set} of oversized {@link FluidStack}s
      * Skips Empty Fluid Tanks
@@ -421,66 +287,6 @@ public class ParallelLogic {
         }
 
         return minMultiplier;
-    }
-
-    // TODO make this much better and not as laggy
-    protected static int getMinRatioFluidWithOutputTanks(Set<FluidStack> countFluid, Recipe recipe, int parallelAmount, IMultipleTankHandler outputTanks) {
-        int minMultiplier = Integer.MAX_VALUE;
-
-        List<FluidStack> singleRecipeFluids = new ArrayList<>();
-
-        // Iterate through the fluid inputs in the recipe
-        for (FluidStack fs : recipe.getFluidInputs()) {
-
-            // Skip Not consumed Fluid inputs
-            if (fs.amount == 0) {
-                continue;
-            }
-
-            singleRecipeFluids.add(fs.copy());
-
-            // Iterate through the fluids in the input hatches. This will likely be oversized stacks
-            for (FluidStack inputStack : countFluid) {
-
-                if (fs.isFluidEqual(inputStack)) {
-                    //The ratio will either be set by the parallel limit, or the oversized stack divided by the amount of inputs the recipe takes
-                    int ratio = Math.min(parallelAmount, inputStack.amount / fs.amount);
-
-                    //Find the maximum number of recipes that can be performed by decrementing the ratio, which is limited
-                    //by the number of machines (as absolute max), or the amount of ingredients in the input bus
-                    if (ratio < minMultiplier) {
-                        minMultiplier = ratio;
-                    }
-                    break;
-                }
-            }
-        }
-
-        if(minMultiplier == Integer.MAX_VALUE) {
-            return minMultiplier;
-        }
-
-        List<FluidStack> fluidInputsCopy = singleRecipeFluids;
-
-        while(minMultiplier > 0) {
-
-            for(FluidStack fs : singleRecipeFluids) {
-                fs.amount = fs.amount * minMultiplier;
-            }
-
-            if(!InventoryUtils.simulateFluidStackMerge(singleRecipeFluids, outputTanks)) {
-                minMultiplier--;
-            }
-            else {
-                break;
-            }
-
-            singleRecipeFluids = fluidInputsCopy;
-
-        }
-
-        return minMultiplier;
-
     }
 
     protected static ItemStack copyItemStackWithCount(ItemStack itemStack, int count) {
