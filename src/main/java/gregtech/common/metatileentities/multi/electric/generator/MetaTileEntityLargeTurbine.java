@@ -193,6 +193,6 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
 
     @Override
     public boolean isStructureObstructed() {
-        return isRotorFaceFree();
+        return !isRotorFaceFree();
     }
 }
