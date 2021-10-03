@@ -114,7 +114,7 @@ public class ItemNetHandler implements IItemHandler {
         int remaining = stack.getCount();
         int count = stack.getCount();
         int c = count / destinations;
-        int m = count % destinations;
+        int m = c == 0 ? count % destinations : 0;
         int i = -1;
         while (handlerIterator.hasNext()) {
             i++;
@@ -355,19 +355,10 @@ public class ItemNetHandler implements IItemHandler {
         if(facings == null)
             return false;
         char c = facing.name().charAt(0);
-        for(int i = 0; i < facings.length(); i++) {
+        for(int i = 0, n = facings.length(); i < n; i++) {
             if(c == facings.charAt(i))
                 return true;
         }
         return false;
     }
-
-    /*private static class Handler extends ItemPipeNet.Inventory {
-        private final IItemHandler handler;
-
-        private Handler(IItemHandler handler, ItemPipeNet.Inventory inventory) {
-            super(inventory.getPipePos(), inventory.getFaceToHandler(), inventory.getDistance(), inventory.getProperties());
-            this.handler = handler;
-        }
-    }*/
 }
