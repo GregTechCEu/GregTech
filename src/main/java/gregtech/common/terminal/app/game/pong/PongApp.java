@@ -21,13 +21,12 @@ import java.util.List;
 
 
 public class PongApp extends AbstractApplication {
-    public static final TextureArea ICON = TextureArea.fullImage("textures/gui/terminal/pong/icon.png");
 
     private BallWidget ball;
     private int leftScore;
     private int rightScore;
-    private List<PaddleWidget> paddles = new ArrayList<>();
-    private List<Rectangle> solidObjects = new ArrayList<>();
+    private List<PaddleWidget> paddles;
+    private List<Rectangle> solidObjects;
     private int userInput = -1;
     private int timer = 0;
 
@@ -38,6 +37,8 @@ public class PongApp extends AbstractApplication {
     @Override
     public AbstractApplication initApp() {
         if(isClient) {
+            paddles = new ArrayList<>();
+            solidObjects = new ArrayList<>();
             this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
             this.addWidget(new ImageWidget(333 / 2 - 4, 5, 6, 232 - 10, new ColorRectTexture(0xAAAAAAAA)));
             this.setBall(new BallWidget(333 / 2 - 1, 232 / 2 - 1));

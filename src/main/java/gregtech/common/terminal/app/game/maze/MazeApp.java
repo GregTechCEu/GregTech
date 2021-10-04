@@ -54,15 +54,15 @@ public class MazeApp extends AbstractApplication {
                         this.setGameState(1);
                         this.resetGame();
                     })).setShouldClientCallback(true), 0);
-            // Gamestate 1: Play
+            // GameState 1: Play
             this.setMaze(new MazeWidget());
             this.setPlayer(new PlayerWidget(0, 0, this));
             this.setEnemy(new EnemyWidget(-100, -100, this));
-            // Gamestate 2: Pause
+            // GameState 2: Pause
             this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, new ColorRectTexture(0xFF000000)), 2, 3);
             this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 50, 20, "Continue", (clickData) -> this.setGameState(1)).setShouldClientCallback(true), 2);
             this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Game Paused", 0xFFFFFFFF).setXCentered(true), 2);
-            // Gamestate 3: Death
+            // GameState 3: Death
             this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 40, "", 0xFFFFFFFF, () -> "Oh no! You were eaten by the Minotaur!", true), 3);
             this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "", 0xFFFFFFFF, () -> "You got through " + this.getMazesSolved() + " mazes before losing.", true), 3);
             this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 16, "", 0xFFFFFFFF, () -> "Try again?", true), 3);
