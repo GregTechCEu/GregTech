@@ -196,6 +196,9 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
      */
     private void tryAcquireNewRecipe() {
 
+        // Set this here to avoid it being updated multiple time in the loop through the fluid tanks.
+        // It will get reset if a valid recipe is found
+        this.invalidInputsForRecipes = true;
         IMultipleTankHandler fluidTanks = this.fluidTank.get();
         for (IFluidTank fluidTank : fluidTanks) {
             FluidStack tankContents = fluidTank.getFluid();
@@ -217,11 +220,15 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
                         }
                     }
 
-                    //TODO, should we clear the notified inputs list here, or where it is currently?
+                    // If we have successfully found a recipe, update the variable before leaving the loop
+                    this.invalidInputsForRecipes = false;
                     break; //recipe is found and ready to use
                 }
             }
         }
+
+        // Clear notified Fluid input list, either after successfully recipe, or failure to find a recipe
+        metaTileEntity.getNotifiedFluidInputList().clear();
     }
 
     public boolean isActive() {
@@ -242,9 +249,6 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
             }
         }
 
-        //TODO, should this be done here, as it is called in the middle of a loop over valid fluid tanks?
-        this.invalidInputsForRecipes = (currentRecipe == null);
-
         //Check if we have found a valid recipe
         if (currentRecipe != null && checkRecipe(currentRecipe)) {
             int fuelAmountToUse = calculateFuelAmount(currentRecipe);
@@ -258,11 +262,9 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
                 } else {
                     setActive(true);
                 }
-                metaTileEntity.getNotifiedFluidInputList().clear();
                 return fuelAmountToUse;
             }
         }
-        metaTileEntity.getNotifiedFluidInputList().clear();
         return 0;
     }
 
