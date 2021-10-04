@@ -2,6 +2,7 @@ package gregtech.integration.jei.recipe;
 
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
+import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.recipeproperties.PrimitiveProperty;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
@@ -26,9 +27,11 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     private static final int LINE_HEIGHT = 10;
 
     private final Int2ObjectMap<ChanceEntry> chanceOutput = new Int2ObjectOpenHashMap<>();
+    private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
 
-    public GTRecipeWrapper(Recipe recipe) {
+    public GTRecipeWrapper(RecipeMap<?> recipeMap, Recipe recipe) {
+        this.recipeMap = recipeMap;
         this.recipe = recipe;
     }
 
@@ -38,7 +41,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void getIngredients(@Nonnull IIngredients ingredients) {
-        int currentSlot = 0;
+        int currentSlot = recipeMap.getMaxInputs();
 
         // Inputs
         if (!recipe.getInputs().isEmpty()) {
@@ -48,7 +51,6 @@ public class GTRecipeWrapper implements IRecipeWrapper {
                     .map(is -> GTUtility.copyAmount(ci.getCount() == 0 ? 1 : ci.getCount(), is))
                     .collect(Collectors.toList())));
             ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);
-            currentSlot = recipe.getInputs().size();
         }
 
         // Fluid Inputs
