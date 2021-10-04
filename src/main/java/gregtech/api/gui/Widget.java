@@ -28,11 +28,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import org.lwjgl.opengl.GL11;
 
 /**
  * Widget is functional element of ModularUI
@@ -49,7 +45,6 @@ public abstract class Widget {
     private transient Position position;
     private transient Size size;
     private transient boolean isVisible;
-    private transient BooleanSupplier visibilitySupplier;
     private transient boolean isActive;
 
     public Widget(Position selfPosition, Size size) {
@@ -115,16 +110,11 @@ public abstract class Widget {
     }
 
     public boolean isVisible() {
-        return visibilitySupplier != null ? visibilitySupplier.getAsBoolean() : isVisible;
+        return isVisible;
     }
 
     public void setVisible(boolean visible) {
         isVisible = visible;
-    }
-
-    public Widget setVisibilitySupplier(BooleanSupplier supplier) {
-        visibilitySupplier = supplier;
-        return this;
     }
 
     public boolean isActive() {

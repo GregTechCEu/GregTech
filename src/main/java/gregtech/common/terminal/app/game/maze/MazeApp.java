@@ -1,26 +1,25 @@
 package gregtech.common.terminal.app.game.maze;
 
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.ColorRectTexture;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.SimpleTextWidget;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.terminal.app.game.maze.widget.EnemyWidget;
 import gregtech.common.terminal.app.game.maze.widget.MazeWidget;
 import gregtech.common.terminal.app.game.maze.widget.PlayerWidget;
-import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.input.Keyboard;
-import scala.swing.event.Key;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MazeApp extends AbstractApplication {
-    private int gamestate = 0;
+    private int gameState = 0;
     private PlayerWidget player;
     private EnemyWidget enemy;
     private MazeWidget maze;
@@ -29,8 +28,10 @@ public class MazeApp extends AbstractApplication {
     private float speed = 25;
     private int lastPlayerInput = -2;
     public static int MAZE_SIZE = 9;
-    private List<Integer> movementStore = new ArrayList<>();
+    private List<Integer> movementStore;
     private boolean lastPausePress;
+
+    private List<Widget>[] FSM;
 
     public MazeApp() {
         super("maze");
@@ -38,52 +39,65 @@ public class MazeApp extends AbstractApplication {
 
     public AbstractApplication initApp() {
         if (isClient) {
+            movementStore = new ArrayList<>();
+            FSM = new List[4];
+            FSM[0] = new LinkedList<>();
+            FSM[1] = new LinkedList<>();
+            FSM[2] = new LinkedList<>();
+            FSM[3] = new LinkedList<>();
             this.setOs(os);
             this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
-            // Gamestate 0: Title
-            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Theseus's Escape", 0xFFFFFFFF).setXCentered(true).setVisibilitySupplier(() -> this.getGamestate() == 0));
+            // enemy 0: Title
+            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Theseus's Escape", 0xFFFFFFFF), 0);
             this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 30, 30, "Play",
                     (clickData -> {
-                        this.setGamestate(1);
+                        this.setGameState(1);
                         this.resetGame();
-                    }))
-                    .setShouldClientCallback(true).setVisibilitySupplier(() -> this.getGamestate() == 0));
+                    })).setShouldClientCallback(true), 0);
             // Gamestate 1: Play
-            this.setMaze((MazeWidget) new MazeWidget().setVisibilitySupplier(() -> this.getGamestate() >= 1));
-            this.setPlayer((PlayerWidget) new PlayerWidget(0, 0, this).setVisibilitySupplier(() -> this.getGamestate() >= 1));
-            this.setEnemy((EnemyWidget) new EnemyWidget(-100, -100, this).setVisibilitySupplier(() -> this.getGamestate() >= 1));
+            this.setMaze(new MazeWidget());
+            this.setPlayer(new PlayerWidget(0, 0, this));
+            this.setEnemy(new EnemyWidget(-100, -100, this));
             // Gamestate 2: Pause
-            this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, new ColorRectTexture(0xFF000000)).setVisibilitySupplier(() -> this.getGamestate() > 1));
-            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 50, 20, "Continue", (clickData) -> this.setGamestate(1)).setVisibilitySupplier(() -> this.getGamestate() == 2));
-            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Game Paused", 0xFFFFFFFF).setXCentered(true).setVisibilitySupplier(() -> this.getGamestate() == 2));
+            this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, new ColorRectTexture(0xFF000000)), 2, 3);
+            this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 - 10, 50, 20, "Continue", (clickData) -> this.setGameState(1)).setShouldClientCallback(true), 2);
+            this.addWidget(new LabelWidget(333 / 2, 222 / 2 - 50, "Game Paused", 0xFFFFFFFF).setXCentered(true), 2);
             // Gamestate 3: Death
-            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 40, "", 0xFFFFFFFF, () -> "Oh no! You were eaten by the Minotaur!", true).setVisibilitySupplier(() -> this.getGamestate() == 3));
-            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "", 0xFFFFFFFF, () -> "You got through " + this.getMazesSolved() + " mazes before losing.", true).setVisibilitySupplier(() -> this.getGamestate() == 3));
-            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 16, "", 0xFFFFFFFF, () -> "Try again?", true).setVisibilitySupplier(() -> this.getGamestate() == 3));
+            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 40, "", 0xFFFFFFFF, () -> "Oh no! You were eaten by the Minotaur!", true), 3);
+            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 28, "", 0xFFFFFFFF, () -> "You got through " + this.getMazesSolved() + " mazes before losing.", true), 3);
+            this.addWidget(new SimpleTextWidget(333 / 2, 232 / 2 - 16, "", 0xFFFFFFFF, () -> "Try again?", true), 3);
             this.addWidget(new ClickButtonWidget(323 / 2 - 10, 222 / 2 + 10, 40, 20, "Retry", (clickData -> {
-                this.setGamestate(1);
+                this.setGameState(1);
                 this.setMazesSolved(0);
                 MAZE_SIZE = 9;
                 speed = 25;
                 this.resetGame();
-            })).setShouldClientCallback(true).setVisibilitySupplier(() -> this.getGamestate() == 3));
+            })).setShouldClientCallback(true), 3);
         }
         return this;
     }
 
+    public void addWidget(Widget widget, int... visibleStates) {
+        this.addWidget(widget);
+        for (int state : visibleStates) {
+            FSM[state].add(widget);
+        }
+        widget.setVisible(Arrays.stream(visibleStates).allMatch(state->state==gameState));
+    }
+
     public void setPlayer(PlayerWidget player) {
         this.player = player;
-        this.addWidget(player);
+        this.addWidget(player, 1, 2, 3);
     }
 
     public void setMaze(MazeWidget maze) {
         this.maze = maze;
-        this.addWidget(maze);
+        this.addWidget(maze, 1, 2, 3);
     }
 
     public void setEnemy(EnemyWidget enemy) {
         this.enemy = enemy;
-        this.addWidget(enemy);
+        this.addWidget(enemy, 1, 2, 3);
     }
 
     @Override
@@ -94,9 +108,10 @@ public class MazeApp extends AbstractApplication {
     @Override
     public void updateScreen() {
         super.updateScreen();
-        if (gamestate == 1) {
+        int lastState = gameState;
+        if (gameState == 1) {
             if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
-                gamestate = 2;
+                gameState = 2;
                 lastPausePress = true;
             }
             if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) ^ Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
@@ -118,23 +133,31 @@ public class MazeApp extends AbstractApplication {
                 moveEnemy();
             }
             if (enemy.posX == player.posX && enemy.posY == player.posY) {
-                gamestate = 3;
+                gameState = 3;
             }
         }
-        if (gamestate == 2) {
+        if (gameState == 2) {
             if(!Keyboard.isKeyDown(Keyboard.KEY_P))
                 lastPausePress = false;
             if(Keyboard.isKeyDown(Keyboard.KEY_P) && !lastPausePress)
-                gamestate = 1;
+                gameState = 1;
+        }
+        if (gameState != lastState) {
+            FSM[lastState].forEach(widget -> widget.setVisible(false));
+            FSM[gameState].forEach(widget -> widget.setVisible(true));
         }
     }
 
-    public int getGamestate() {
-        return gamestate;
+    public int getGameState() {
+        return gameState;
     }
 
-    public void setGamestate(int gamestate) {
-        this.gamestate = gamestate;
+    public void setGameState(int gameState) {
+        if (gameState != this.gameState) {
+            FSM[this.gameState].forEach(widget -> widget.setVisible(false));
+            FSM[gameState].forEach(widget -> widget.setVisible(true));
+        }
+        this.gameState = gameState;
     }
 
     public int getRenderX(int posX) {
