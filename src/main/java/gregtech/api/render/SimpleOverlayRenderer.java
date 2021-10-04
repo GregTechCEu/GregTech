@@ -9,6 +9,7 @@ import gregtech.api.GTValues;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -55,6 +56,9 @@ public class SimpleOverlayRenderer implements IIconRegister {
             if (ConfigHolder.U.clientConfig.emissiveTextures) {
                 IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
                 Textures.renderFace(renderState, translation, lightPipeline, side, bounds, spriteEmissive);
+                if (ConfigHolder.U.clientConfig.emissiveTexturesBloom && renderState.getBuffer().getVertexFormat() == DefaultVertexFormats.BLOCK) {
+                    Textures.renderFaceBloom(translation, lightPipeline, side, bounds, spriteEmissive);
+                }
             } else Textures.renderFace(renderState, translation, pipeline, side, bounds, spriteEmissive);
         }
     }

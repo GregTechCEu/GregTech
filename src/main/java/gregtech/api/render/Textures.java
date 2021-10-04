@@ -10,12 +10,14 @@ import codechicken.lib.vec.TransformationList;
 import codechicken.lib.vec.uv.IconTransformation;
 import codechicken.lib.vec.uv.UVTransformationList;
 import gregtech.api.GTValues;
+import gregtech.api.render.shader.postprocessing.BloomEffect;
 import gregtech.api.util.GTLog;
 import gregtech.common.render.CrateRenderer;
 import gregtech.common.render.DrumRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
@@ -233,5 +235,11 @@ public class Textures {
         renderState.setPipeline(blockFace, 0, blockFace.verts.length,
                 ArrayUtils.addAll(ops, new TransformationList(translation), uvList));
         renderState.render();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void renderFaceBloom(Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
+        Matrix4 offset = translation.copy().translate(face.getXOffset() * 0.01, face.getYOffset() * 0.01, face.getZOffset() * 0.01);
+        MetaTileEntityRenderer.addCCLBloomPipeline(renderState -> renderFace(renderState, offset, ops, face, bounds, sprite));
     }
 }

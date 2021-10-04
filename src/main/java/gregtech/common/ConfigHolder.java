@@ -277,6 +277,9 @@ public class ConfigHolder {
 
             @Config.Comment("Whether or not to enable Emissive Textures for GregTech Machines. Default: true")
             public boolean emissiveTextures = true;
+
+            @Config.Comment("Whether or not to enable Emissive Textures with bloom effect. Default: true")
+            public boolean emissiveTexturesBloom = true;
         }
 
         public static class Equipment {

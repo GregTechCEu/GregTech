@@ -9,6 +9,7 @@ import gregtech.api.GTValues;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -85,6 +86,17 @@ public class SimpleOrientedCubeRenderer implements IIconRegister {
 
             Textures.renderFace(renderState, translation, lightPipeline, frontFacing.rotateY(), bounds, spritesEmissive[CubeSide.LEFT.ordinal()]);
             Textures.renderFace(renderState, translation, lightPipeline, frontFacing.rotateYCCW(), bounds, spritesEmissive[CubeSide.RIGHT.ordinal()]);
+
+            if (ConfigHolder.U.clientConfig.emissiveTexturesBloom && renderState.getBuffer().getVertexFormat() == DefaultVertexFormats.BLOCK) {
+                Textures.renderFaceBloom(translation, lightPipeline, EnumFacing.UP, bounds, spritesEmissive[CubeSide.TOP.ordinal()]);
+                Textures.renderFaceBloom(translation, lightPipeline, EnumFacing.DOWN, bounds, spritesEmissive[CubeSide.BOTTOM.ordinal()]);
+
+                Textures.renderFaceBloom(translation, lightPipeline, frontFacing, bounds, spritesEmissive[CubeSide.FRONT.ordinal()]);
+                Textures.renderFaceBloom(translation, lightPipeline, frontFacing.getOpposite(), bounds, spritesEmissive[CubeSide.BACK.ordinal()]);
+
+                Textures.renderFaceBloom(translation, lightPipeline, frontFacing.rotateY(), bounds, spritesEmissive[CubeSide.LEFT.ordinal()]);
+                Textures.renderFaceBloom(translation, lightPipeline, frontFacing.rotateYCCW(), bounds, spritesEmissive[CubeSide.RIGHT.ordinal()]);
+            }
         }
     }
 }

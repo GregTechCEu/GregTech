@@ -46,8 +46,12 @@ public class Shaders {
 
     public static ShaderObject IMAGE_V;
     public static ShaderObject IMAGE_F;
-    public static ShaderObject BLACK_HOLE;
+//    public static ShaderObject BLACK_HOLE;
     public static ShaderObject SCANNING;
+
+    public static ShaderObject BLOOM_BUFFER_A;
+    public static ShaderObject BLOOM_BUFFER_B;
+    public static ShaderObject BLOOM_BUFFER_C;
 
     static {
         mc = Minecraft.getMinecraft();
@@ -60,8 +64,11 @@ public class Shaders {
     public static void initShaders() {
         IMAGE_V = initShader(IMAGE_V, VERTEX, "image.vert");
         IMAGE_F = initShader(IMAGE_F, FRAGMENT, "image.frag");
-        BLACK_HOLE = initShader(BLACK_HOLE, FRAGMENT, "blackhole.frag");
+//        BLACK_HOLE = initShader(BLACK_HOLE, FRAGMENT, "blackhole.frag");
         SCANNING = initShader(SCANNING, FRAGMENT, "scanning.frag");
+        BLOOM_BUFFER_A = initShader(BLOOM_BUFFER_A, FRAGMENT, "bloom_buffer_a.frag");
+        BLOOM_BUFFER_B = initShader(BLOOM_BUFFER_B, FRAGMENT, "bloom_buffer_b.frag");
+        BLOOM_BUFFER_C = initShader(BLOOM_BUFFER_C, FRAGMENT, "bloom_buffer_c.frag");
         FULL_IMAGE_PROGRAMS.clear();
     }
 

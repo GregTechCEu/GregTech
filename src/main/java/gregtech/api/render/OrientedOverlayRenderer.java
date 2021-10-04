@@ -9,6 +9,7 @@ import gregtech.api.GTValues;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -125,6 +126,9 @@ public class OrientedOverlayRenderer implements IIconRegister {
                     if (ConfigHolder.U.clientConfig.emissiveTextures) {
                         IVertexOperation[] lightPipeline = ArrayUtils.add(ops, new LightMapOperation(240, 240));
                         Textures.renderFace(renderState, translation, lightPipeline, renderSide, bounds, emissiveSprite);
+                        if (ConfigHolder.U.clientConfig.emissiveTexturesBloom && renderState.getBuffer().getVertexFormat() == DefaultVertexFormats.BLOCK) {
+                            Textures.renderFaceBloom(translation, lightPipeline, renderSide, bounds, emissiveSprite);
+                        }
                     } else {
                         // have to still render both overlays or else textures will be broken
                         Textures.renderFace(renderState, translation, ops, renderSide, bounds, emissiveSprite);

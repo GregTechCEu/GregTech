@@ -41,6 +41,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -49,6 +50,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
@@ -106,6 +108,8 @@ public class ClientProxy extends CommonProxy {
 
     public void onPreLoad() {
         super.onPreLoad();
+        BlockRenderLayer layer = EnumHelper.addEnum(BlockRenderLayer.class, "HDR", new Class[]{String.class}, "Hdr");
+
         KeyBinds.initBinds();
         MetaTileEntityRenderer.preInit();
         CableRenderer.preInit();
