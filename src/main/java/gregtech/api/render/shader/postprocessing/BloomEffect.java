@@ -1,22 +1,26 @@
 package gregtech.api.render.shader.postprocessing;
 
-import codechicken.lib.render.shader.ShaderProgram;
-import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.shader.Shaders;
 import gregtech.api.util.RenderUtil;
+import gregtech.common.ConfigHolder;
+import gregtech.common.asm.hooks.BloomRenderLayerHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL30;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.lwjgl.opengl.GL11.glGetInteger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,7 +35,9 @@ public class BloomEffect {
     private static final Framebuffer BUFFER_A;
     private static final Framebuffer BUFFER_B;
     private static final Framebuffer BUFFER_C;
-    private static final List<IPostRender> PIPELINE = new LinkedList<>();
+    private static final List<IPostRender> PIPELINE;
+    private static final Minecraft MC;
+
     static {
         Framebuffer fbo = Minecraft.getMinecraft().getFramebuffer();
         int lastWidth = fbo.framebufferWidth;
@@ -45,6 +51,9 @@ public class BloomEffect {
         BUFFER_B.setFramebufferColor(0,0,0,0);
         BUFFER_C.setFramebufferColor(0,0,0,0);
         RenderUtil.hookDepthBuffer(BUFFER_PRE, fbo);
+        PIPELINE = new LinkedList<>();
+        MC = Minecraft.getMinecraft();
+
     }
 
     public static void renderBloom(IPostRender renderer) {
@@ -54,12 +63,11 @@ public class BloomEffect {
     }
 
     private static void drawBloomScene(float partialTicks) {
-        Minecraft mc = Minecraft.getMinecraft();
-        Entity entity = mc.getRenderViewEntity();
-        if (entity == null) return;
-        final double posX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks;
-        final double posY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks;
-        final double posZ = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks;
+        Entity entity = MC.getRenderViewEntity();
+        if (PIPELINE.isEmpty() || entity == null) return;
+        double posX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks;
+        double posY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks;
+        double posZ = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks;
 
         GlStateManager.depthMask(false);
         GlStateManager.pushMatrix();
@@ -71,14 +79,18 @@ public class BloomEffect {
         }
         PIPELINE.clear();
 
-        MetaTileEntityRenderer.renderBloom();
-
         GlStateManager.popMatrix();
         GlStateManager.depthMask(true);
     }
 
-    public static void renderWorldLastEvent(RenderWorldLastEvent event) {
-        Framebuffer fbo = Minecraft.getMinecraft().getFramebuffer();
+    public static void renderBloomLayer(RenderGlobal renderglobal, float partialTicks, int pass, Entity entity) {
+        if (!ConfigHolder.U.clientConfig.emissiveTexturesBloom) {
+            renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
+            return;
+        }
+
+        int lastID = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
+        Framebuffer fbo = MC.getFramebuffer();
         if (BUFFER_PRE.framebufferWidth != fbo.framebufferWidth || BUFFER_PRE.framebufferHeight != fbo.framebufferHeight) {
             int lastWidth = fbo.framebufferWidth;
             int lastHeight = fbo.framebufferHeight;
@@ -93,9 +105,13 @@ public class BloomEffect {
         BUFFER_B.framebufferClear();
         BUFFER_C.framebufferClear();
         BUFFER_PRE.bindFramebuffer(true);
-        drawBloomScene(event.getPartialTicks());
 
-        ShaderProgram
+        GlStateManager.depthMask(true);
+
+        renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
+        drawBloomScene(partialTicks);
+
+        GlStateManager.depthMask(false);
 
         BUFFER_PRE.bindFramebufferTexture();
         Shaders.renderFullImageInFBO(BUFFER_A, Shaders.BLOOM_BUFFER_A, null).bindFramebufferTexture();
@@ -139,7 +155,12 @@ public class BloomEffect {
         BUFFER_PRE.bindFramebufferTexture();
         Shaders.renderFullImageInFBO(fbo, Shaders.IMAGE_F, null);
 
-        GlStateManager.depthMask(true);
+        OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
+
+
+        GlStateManager.enableBlend();
+        MC.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        GlStateManager.shadeModel(7425);
     }
 
 }

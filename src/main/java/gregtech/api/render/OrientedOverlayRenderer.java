@@ -125,10 +125,7 @@ public class OrientedOverlayRenderer implements IIconRegister {
                 if (emissiveSprite != null) {
                     if (ConfigHolder.U.clientConfig.emissiveTextures) {
                         IVertexOperation[] lightPipeline = ArrayUtils.add(ops, new LightMapOperation(240, 240));
-                        Textures.renderFace(renderState, translation, lightPipeline, renderSide, bounds, emissiveSprite);
-                        if (ConfigHolder.U.clientConfig.emissiveTexturesBloom && renderState.getBuffer().getVertexFormat() == DefaultVertexFormats.BLOCK) {
-                            Textures.renderFaceBloom(translation, lightPipeline, renderSide, bounds, emissiveSprite);
-                        }
+                        Textures.renderFaceBloom(renderState, translation, lightPipeline, renderSide, bounds, emissiveSprite);
                     } else {
                         // have to still render both overlays or else textures will be broken
                         Textures.renderFace(renderState, translation, ops, renderSide, bounds, emissiveSprite);

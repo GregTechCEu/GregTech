@@ -55,10 +55,7 @@ public class SimpleCubeRenderer implements ICubeRenderer, IIconRegister {
         if (spriteEmissive != null) {
             if (ConfigHolder.U.clientConfig.emissiveTextures) {
                 IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
-                Textures.renderFace(renderState, translation, lightPipeline, side, bounds, spriteEmissive);
-                if (ConfigHolder.U.clientConfig.emissiveTexturesBloom && renderState.getBuffer().getVertexFormat() == DefaultVertexFormats.BLOCK) {
-                    Textures.renderFaceBloom(translation, lightPipeline, side, bounds, spriteEmissive);
-                }
+                Textures.renderFaceBloom(renderState, translation, lightPipeline, side, bounds, spriteEmissive);
             } else Textures.renderFace(renderState, translation, pipeline, side, bounds, spriteEmissive);
         }
     }

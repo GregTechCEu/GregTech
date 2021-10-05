@@ -78,25 +78,14 @@ public class SimpleOrientedCubeRenderer implements IIconRegister {
             IVertexOperation[] lightPipeline = ConfigHolder.U.clientConfig.emissiveTextures ?
                     ArrayUtils.add(ops, new LightMapOperation(240, 240)) : ops;
 
-            Textures.renderFace(renderState, translation, lightPipeline, EnumFacing.UP, bounds, spritesEmissive[CubeSide.TOP.ordinal()]);
-            Textures.renderFace(renderState, translation, lightPipeline, EnumFacing.DOWN, bounds, spritesEmissive[CubeSide.BOTTOM.ordinal()]);
+            Textures.renderFaceBloom(renderState, translation, lightPipeline, EnumFacing.UP, bounds, spritesEmissive[CubeSide.TOP.ordinal()]);
+            Textures.renderFaceBloom(renderState, translation, lightPipeline, EnumFacing.DOWN, bounds, spritesEmissive[CubeSide.BOTTOM.ordinal()]);
 
-            Textures.renderFace(renderState, translation, lightPipeline, frontFacing, bounds, spritesEmissive[CubeSide.FRONT.ordinal()]);
-            Textures.renderFace(renderState, translation, lightPipeline, frontFacing.getOpposite(), bounds, spritesEmissive[CubeSide.BACK.ordinal()]);
+            Textures.renderFaceBloom(renderState, translation, lightPipeline, frontFacing, bounds, spritesEmissive[CubeSide.FRONT.ordinal()]);
+            Textures.renderFaceBloom(renderState, translation, lightPipeline, frontFacing.getOpposite(), bounds, spritesEmissive[CubeSide.BACK.ordinal()]);
 
-            Textures.renderFace(renderState, translation, lightPipeline, frontFacing.rotateY(), bounds, spritesEmissive[CubeSide.LEFT.ordinal()]);
-            Textures.renderFace(renderState, translation, lightPipeline, frontFacing.rotateYCCW(), bounds, spritesEmissive[CubeSide.RIGHT.ordinal()]);
-
-            if (ConfigHolder.U.clientConfig.emissiveTexturesBloom && renderState.getBuffer().getVertexFormat() == DefaultVertexFormats.BLOCK) {
-                Textures.renderFaceBloom(translation, lightPipeline, EnumFacing.UP, bounds, spritesEmissive[CubeSide.TOP.ordinal()]);
-                Textures.renderFaceBloom(translation, lightPipeline, EnumFacing.DOWN, bounds, spritesEmissive[CubeSide.BOTTOM.ordinal()]);
-
-                Textures.renderFaceBloom(translation, lightPipeline, frontFacing, bounds, spritesEmissive[CubeSide.FRONT.ordinal()]);
-                Textures.renderFaceBloom(translation, lightPipeline, frontFacing.getOpposite(), bounds, spritesEmissive[CubeSide.BACK.ordinal()]);
-
-                Textures.renderFaceBloom(translation, lightPipeline, frontFacing.rotateY(), bounds, spritesEmissive[CubeSide.LEFT.ordinal()]);
-                Textures.renderFaceBloom(translation, lightPipeline, frontFacing.rotateYCCW(), bounds, spritesEmissive[CubeSide.RIGHT.ordinal()]);
-            }
+            Textures.renderFaceBloom(renderState, translation, lightPipeline, frontFacing.rotateY(), bounds, spritesEmissive[CubeSide.LEFT.ordinal()]);
+            Textures.renderFaceBloom(renderState, translation, lightPipeline, frontFacing.rotateYCCW(), bounds, spritesEmissive[CubeSide.RIGHT.ordinal()]);
         }
     }
 }

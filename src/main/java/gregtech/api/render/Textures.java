@@ -10,14 +10,14 @@ import codechicken.lib.vec.TransformationList;
 import codechicken.lib.vec.uv.IconTransformation;
 import codechicken.lib.vec.uv.UVTransformationList;
 import gregtech.api.GTValues;
-import gregtech.api.render.shader.postprocessing.BloomEffect;
 import gregtech.api.util.GTLog;
+import gregtech.common.asm.hooks.BloomRenderLayerHooks;
 import gregtech.common.render.CrateRenderer;
 import gregtech.common.render.DrumRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
@@ -226,6 +226,12 @@ public class Textures {
 
     @SideOnly(Side.CLIENT)
     public static void renderFace(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
+        if (MinecraftForgeClient.getRenderLayer() != BloomRenderLayerHooks.BLOOM) {
+            renderFaceIgnoreLayer(renderState, translation, ops, face, bounds, sprite);
+        }
+    }
+
+    private static void renderFaceIgnoreLayer(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
         BlockFace blockFace = blockFaces.get();
         blockFace.loadCuboidFace(bounds, face.getIndex());
         UVTransformationList uvList = new UVTransformationList(new IconTransformation(sprite));
@@ -238,8 +244,9 @@ public class Textures {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void renderFaceBloom(Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
-        Matrix4 offset = translation.copy().translate(face.getXOffset() * 0.01, face.getYOffset() * 0.01, face.getZOffset() * 0.01);
-        MetaTileEntityRenderer.addCCLBloomPipeline(renderState -> renderFace(renderState, offset, ops, face, bounds, sprite));
+    public static void renderFaceBloom(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
+        if (MinecraftForgeClient.getRenderLayer() == null || MinecraftForgeClient.getRenderLayer() == BloomRenderLayerHooks.BLOOM) {
+            renderFaceIgnoreLayer(renderState, translation, ops, face, bounds, sprite);
+        }
     }
 }

@@ -16,16 +16,15 @@ import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.block.machines.MachineItemBlock;
-import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.IRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.render.shader.postprocessing.IPostCCLRender;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -50,7 +49,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 @SideOnly(Side.CLIENT)
 public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
@@ -99,7 +99,6 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         GlStateManager.disableBlend();
     }
 
-    private static MetaTileEntity RENDER_MTE;
 
     @Override
     public boolean renderBlock(IBlockAccess world, BlockPos pos, IBlockState state, BufferBuilder buffer) {
@@ -114,12 +113,9 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         Matrix4 translation = new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ());
         BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
         if (metaTileEntity.canRenderInLayer(renderLayer)) {
-            RENDER_MTE = metaTileEntity;
-            BLOOM_MTE.getOrDefault(RENDER_MTE, Collections.EMPTY_LIST).clear();
             renderState.lightMatrix.locate(world, pos);
             IVertexOperation[] pipeline = new IVertexOperation[]{renderState.lightMatrix};
             metaTileEntity.renderMetaTileEntity(renderState, translation.copy(), pipeline);
-            RENDER_MTE = null;
         }
         Matrix4 coverTranslation = new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ());
         metaTileEntity.renderCovers(renderState, coverTranslation, renderLayer);
@@ -134,52 +130,6 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
             }
         }
         return true;
-    }
-
-    private static final Map<MetaTileEntity, List<IPostCCLRender>> BLOOM_MTE = new HashMap<>();
-
-    public static void addCCLBloomPipeline(IPostCCLRender renderer) {
-        if (RENDER_MTE != null && renderer != null) {
-            if (!BLOOM_MTE.containsKey(RENDER_MTE)) {
-                BLOOM_MTE.put(RENDER_MTE, new LinkedList<>());
-            }
-            BLOOM_MTE.get(RENDER_MTE).add(renderer);
-        }
-    }
-
-    public static void renderBloom() {
-        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-        ResourceHelper.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        RenderHelper.disableStandardItemLighting();
-
-        GlStateManager.enableTexture2D();
-        GlStateManager.enableBlend();
-        if (Minecraft.isAmbientOcclusionEnabled()) {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        } else {
-            GlStateManager.shadeModel(GL11.GL_FLAT);
-        }
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-
-        CCRenderState renderState = CCRenderState.instance();
-        renderState.reset();
-        renderState.bind(buffer);
-
-        Iterator<Map.Entry<MetaTileEntity, List<IPostCCLRender>>> iter = BLOOM_MTE.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<MetaTileEntity, List<IPostCCLRender>> entry = iter.next();
-            if (entry.getKey().isValid()) {
-                renderState.lightMatrix.locate(entry.getKey().getWorld(), entry.getKey().getPos());
-                for (IPostCCLRender render : entry.getValue()) {
-                    render.render(renderState);
-                }
-            } else {
-                iter.remove();
-            }
-        }
-
-        renderState.draw();
-        RenderHelper.enableStandardItemLighting();
     }
 
     @Override
