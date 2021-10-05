@@ -760,6 +760,8 @@ metaitem.cover.solar.panel.uv.tooltip=Ultimate Voltage Solar Panel
 
 metaitem.cover.infinite_water.name=Infinite Water Cover
 metaitem.cover.infinite_water.tooltip=Creates 16 Buckets of Water every second (as Cover)
+metaitem.cover.ender_fluid_link.name=Ender Fluid Link Cover
+metaitem.cover.ender_fluid_link.tooltip=Link your fluid tanks to the Ender! (as Cover)
 
 metaitem.gelled_toluene.name=Gelled Toluene
 metaitem.gelled_toluene.tooltip=Raw Explosive
@@ -1040,6 +1042,8 @@ cover.machine_controller.mode.cover_south=Control Cover (South)
 cover.machine_controller.mode.cover_north=Control Cover (North)
 cover.machine_controller.mode.cover_east=Control Cover (East)
 cover.machine_controller.mode.cover_west=Control Cover (West)
+
+cover.ender_fluid_link.title=Ender Fluid Link
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore
