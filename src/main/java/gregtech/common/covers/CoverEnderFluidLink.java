@@ -94,7 +94,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
                         CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode))
                 .widget(new TankWidget(this.linkedTank, 90, 20, 18, 18)
                 .setContainerClicking(true, true)
-                .setBackgroundTexture(GuiTextures.FLUID_SLOT))
+                .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true))
                 .bindPlayerInventory(player.inventory)
         .build(this, player);
     }
