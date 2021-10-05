@@ -6,7 +6,9 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.covers.CoverPump;
+import gregtech.common.covers.FluidFilterMode;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.PipeTankList;
@@ -27,10 +29,12 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeType, FluidPipeProperties> {
 
@@ -39,6 +43,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     private final EnumMap<EnumFacing, PipeTankList> tanks = new EnumMap<>(EnumFacing.class);
     private FluidTank[] fluidTanks;
     private final EnumMap<EnumFacing, Integer> lastInserted = new EnumMap<>(EnumFacing.class);
+    private List<Pair<IFluidHandler, Predicate<FluidStack>>> neighbourCache = new ArrayList<>();
     protected static final int FREQUENCY = 5;
 
     private final EnumSet<EnumFacing> openConnections = EnumSet.noneOf(EnumFacing.class);
@@ -79,29 +84,34 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
     public int distribute(FluidStack stack) {
         if (stack == null || stack.amount <= 0) return 0;
-        List<IFluidHandler> handlers = getNeighbourHandlers();
+        List<Pair<IFluidHandler, Predicate<FluidStack>>> handlers = getNeighbourCache();
         if (handlers.size() == 0) return 0;
-        int amountToDistribute = stack.amount;//getCapacityPerTank() / 2;
+        int amountToDistribute = stack.amount;
         int c = amountToDistribute / handlers.size();
         int m = amountToDistribute % handlers.size();
         int inserted = 0;
-        for (IFluidHandler handler : handlers) {
+        for (Pair<IFluidHandler, Predicate<FluidStack>> pair : handlers) {
+            if (!pair.getValue().test(stack))
+                continue;
             FluidStack stackToFill = stack.copy();
             stackToFill.amount = c;
             if (m > 0) {
                 stackToFill.amount++;
                 m--;
             }
-            inserted += handler.fill(stackToFill, true);
+            inserted += pair.getKey().fill(stackToFill, true);
         }
         FluidStack toDrain = stack.copy();
         toDrain.amount = inserted;
-        getTankList().drain(toDrain, true);
         return inserted;
     }
 
-    public List<IFluidHandler> getNeighbourHandlers() {
-        List<IFluidHandler> handlers = new ArrayList<>();
+    public List<Pair<IFluidHandler, Predicate<FluidStack>>> getNeighbourCache() {
+        return neighbourCache;
+    }
+
+    public List<Pair<IFluidHandler, Predicate<FluidStack>>> getNeighbourHandlers() {
+        List<Pair<IFluidHandler, Predicate<FluidStack>>> handlers = new ArrayList<>();
         for (EnumFacing facing : getOpenFaces()) {
             if (getLastInserted().containsKey(facing))
                 continue;
@@ -111,8 +121,13 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
             if (handler != null) {
                 ICoverable coverable = getCoverableImplementation();
                 CoverBehavior cover = coverable.getCoverAtSide(facing);
+                Predicate<FluidStack> filter = fluid -> true;
                 if (cover instanceof CoverPump && ((CoverPump) cover).getPumpMode() == CoverPump.PumpMode.IMPORT && ((CoverPump) cover).blocksInput()) {
                     continue;
+                } else if (cover instanceof CoverFluidFilter) {
+                    CoverFluidFilter fluidFilter = (CoverFluidFilter) cover;
+                    if (fluidFilter.getFilterMode() == FluidFilterMode.FILTER_DRAIN || fluidFilter.getFilterMode() == FluidFilterMode.FILTER_BOTH)
+                        filter = fluidFilter::testFluidStack;
                 }
                 coverable = tile.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, facing.getOpposite());
                 if (coverable != null) {
@@ -121,9 +136,10 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                         continue;
                     }
                 }
-                handlers.add(handler);
+                handlers.add(Pair.of(handler, filter));
             }
         }
+        neighbourCache = handlers;
         return handlers;
     }
 

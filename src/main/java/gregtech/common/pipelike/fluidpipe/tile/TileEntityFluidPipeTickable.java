@@ -5,10 +5,12 @@ import net.minecraft.util.ITickable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements ITickable {
 
@@ -25,11 +27,14 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
 
         if (!world.isRemote && world.getTotalWorldTime() % FREQUENCY == 0) {
-            List<IFluidHandler> handlers = getNeighbourHandlers();
+            List<Pair<IFluidHandler, Predicate<FluidStack>>> handlers = getNeighbourHandlers();
             if (handlers.size() == 0) return;
             for (FluidTank tank : getFluidTanks()) {
                 FluidStack stack = tank.getFluid();
                 if (stack != null && stack.amount > 0) {
+                    handlers.removeIf(pair -> !pair.getValue().test(stack) || pair.getKey().fill(stack, false) <= 0);
+                    if (handlers.size() == 0)
+                        continue;
                     int amountToDistribute = getCapacityPerTank() / 2;
                     if (stack.amount < amountToDistribute) {
                         getFluidPipeNet().requestFluid(this, stack);
@@ -38,14 +43,14 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                     int c = amountToDistribute / handlers.size();
                     int m = amountToDistribute % handlers.size();
                     int inserted = 0;
-                    for (IFluidHandler handler : handlers) {
+                    for (Pair<IFluidHandler, Predicate<FluidStack>> pair : handlers) {
                         FluidStack stackToFill = stack.copy();
                         stackToFill.amount = c;
                         if (m > 0) {
                             stackToFill.amount++;
                             m--;
                         }
-                        inserted += handler.fill(stackToFill, true);
+                        inserted += pair.getKey().fill(stackToFill, true);
                     }
                     FluidStack toDrain = stack.copy();
                     toDrain.amount = inserted;

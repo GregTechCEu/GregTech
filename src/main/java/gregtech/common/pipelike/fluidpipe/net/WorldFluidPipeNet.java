@@ -1,6 +1,5 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
-import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.pipenet.tickable.TickableWorldPipeNet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import net.minecraft.world.World;
