@@ -1,8 +1,8 @@
 #version 130
 
-#define colorRange 50.0
+#define colorRange 24.0
 
-uniform sampler2D buffer_a;
+//uniform sampler2D buffer_a;
 uniform sampler2D buffer_b;
 
 in vec2 textureCoords;
@@ -32,8 +32,9 @@ vec3 getBloom(vec2 uv){
 }
 
 void main(){
-    vec3 color = pow(texture(buffer_a, textureCoords).rgb * colorRange, vec3(2.2));
-    color = pow(color, vec3(2.2));
+//    vec3 color = pow(texture(buffer_a, textureCoords).rgb * colorRange, vec3(2.2));
+//    color = pow(color, vec3(2.2));
+    vec3 color = vec3(0.);
     color += pow(getBloom(textureCoords), vec3(2.2));
     color = pow(color, vec3(1.0 / 2.2));
 

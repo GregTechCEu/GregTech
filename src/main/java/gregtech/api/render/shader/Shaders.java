@@ -52,6 +52,9 @@ public class Shaders {
     public static ShaderObject BLOOM_BUFFER_A;
     public static ShaderObject BLOOM_BUFFER_B;
     public static ShaderObject BLOOM_BUFFER_C;
+    public static ShaderObject BLOOM_COMBINE;
+
+    public static ShaderObject BLUR;
 
     static {
         mc = Minecraft.getMinecraft();
@@ -69,6 +72,8 @@ public class Shaders {
         BLOOM_BUFFER_A = initShader(BLOOM_BUFFER_A, FRAGMENT, "bloom_buffer_a.frag");
         BLOOM_BUFFER_B = initShader(BLOOM_BUFFER_B, FRAGMENT, "bloom_buffer_b.frag");
         BLOOM_BUFFER_C = initShader(BLOOM_BUFFER_C, FRAGMENT, "bloom_buffer_c.frag");
+        BLOOM_COMBINE = initShader(BLOOM_COMBINE, FRAGMENT, "bloom_combine.frag");
+        BLUR = initShader(BLUR, FRAGMENT, "blur.frag");
         FULL_IMAGE_PROGRAMS.clear();
     }
 

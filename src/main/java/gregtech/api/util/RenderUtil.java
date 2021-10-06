@@ -229,6 +229,13 @@ public class RenderUtil {
         }
     }
 
+    public static Framebuffer updateFBOSize(Framebuffer fbo, int width, int height) {
+        if (fbo.framebufferWidth != width || fbo.framebufferHeight != height) {
+            fbo.createBindFramebuffer(width, height);
+        }
+        return fbo;
+    }
+
     public static void hookDepthBuffer(Framebuffer fbo, Framebuffer shared) {
         //Hook DepthBuffer
         fbo.setFramebufferFilter(9728);

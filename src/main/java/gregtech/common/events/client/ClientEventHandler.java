@@ -2,9 +2,7 @@ package gregtech.common.events.client;
 
 import gregtech.api.render.DepthTextureHook;
 import gregtech.api.render.TerminalARRenderer;
-import gregtech.api.render.shader.postprocessing.BloomEffect;
 import gregtech.common.render.WrenchOverlayRenderer;
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
