@@ -102,7 +102,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
             List<TileEntityFluidPipe> pipes = entry.getValue();
             FluidNetWalker walker = FluidNetWalker.countFluid(getWorldData(), pipes.get(0).getPos(), stack);
             int c = walker.getCount() / pipes.size();
-            int m = walker.getCount() % pipes.size();
+            int m = c == 0 ? walker.getCount() % pipes.size() : 0;
             int inserted = 0;
             for (TileEntityFluidPipe pipe : pipes) {
                 FluidStack toInsert = stack.copy();
