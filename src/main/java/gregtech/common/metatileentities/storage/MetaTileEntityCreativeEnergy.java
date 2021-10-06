@@ -84,7 +84,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                 voltage = Long.parseLong(value);
                 setTier = 0;
             }
-        }).setAllowedChars("0123456789").setValidator(getTextFieldValidator()));
+        }).setAllowedChars("0123456789").setMaxLength(19).setValidator(getTextFieldValidator()));
 
         builder.label(7, 74, "Amperage");
         builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = amps-- == -1 ? 0 : amps--));
@@ -93,7 +93,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
             if (!value.isEmpty()) {
                 amps = Integer.parseInt(value);
             }
-        }).setAllowedChars("0123456789").setValidator(getTextFieldValidator()));
+        }).setAllowedChars("0123456789").setMaxLength(19).setValidator(getTextFieldValidator()));
         builder.widget(new ClickButtonWidget(149, 87, 20, 20, "+", data -> amps++));
 
         builder.widget(new CycleButtonWidget(7, 139, 162, 20, () -> active, value -> active = value, "Not active", "Active"));

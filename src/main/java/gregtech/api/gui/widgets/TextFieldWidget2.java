@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 
 public class TextFieldWidget2 extends Widget {
 
-    private final int maxLength;
     private String text;
     private String localisedPostFix;
     private final Supplier<String> supplier;
@@ -35,6 +34,7 @@ public class TextFieldWidget2 extends Widget {
     private int textColor = 0xFFFFFF;
     private int markedColor = 0x2F72A8;
     private boolean postFixRight = false;
+    private int maxLength = 32;
     private float scale = 1;
 
     private boolean focused;
@@ -45,12 +45,7 @@ public class TextFieldWidget2 extends Widget {
     private boolean drawCursor = true;
 
     public TextFieldWidget2(int x, int y, int width, int height, Supplier<String> supplier, Consumer<String> setter) {
-        this(x, y, width, height, 32, supplier, setter);
-    }
-
-    public TextFieldWidget2(int x, int y, int width, int height, int maxLength, Supplier<String> supplier, Consumer<String> setter) {
         super(x, y, width, height);
-        this.maxLength = maxLength;
         this.supplier = supplier;
         this.setter = setter;
         this.text = supplier.get();
@@ -138,9 +133,15 @@ public class TextFieldWidget2 extends Widget {
         y -= 1;
         float endX = x + 0.5f * (1 / scale);
         float endY = y + 9;
+        float red = (float) (textColor >> 16 & 255) / 255.0F;
+        float green = (float) (textColor >> 8 & 255) / 255.0F;
+        float blue = (float) (textColor & 255) / 255.0F;
+        float alpha = (float) (textColor >> 24 & 255) / 255.0F;
+        if (alpha == 0)
+            alpha = 1f;
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferbuilder = tessellator.getBuffer();
-        GlStateManager.color(1, 1, 1, 1f);
+        GlStateManager.color(red, green, blue, alpha);
         GlStateManager.disableTexture2D();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION);
         bufferbuilder.pos(x, endY, 0.0D).endVertex();
@@ -202,7 +203,7 @@ public class TextFieldWidget2 extends Widget {
     public boolean mouseDragged(int mouseX, int mouseY, int button, long timeDragged) {
         if (focused && button == 0) {
             if (mouseX < getPosition().x) {
-                cursorPos2 = 0;
+                cursorPos = 0;
                 return true;
             }
             int base = mouseX - (getTextX());
@@ -214,7 +215,7 @@ public class TextFieldWidget2 extends Widget {
                 x += (Minecraft.getMinecraft().fontRenderer.getCharWidth(text.charAt(i)) + 1) * scale;
                 i++;
             }
-            cursorPos2 = i;
+            cursorPos = i;
         }
         return focused;
     }
@@ -255,7 +256,7 @@ public class TextFieldWidget2 extends Widget {
             }
             if (keyCode == Keyboard.KEY_LEFT && cursorPos > 0) {
                 int amount = 1;
-                int pos = isShiftDown() ? cursorPos2 : cursorPos;
+                int pos = cursorPos;
                 if (isCtrlDown()) {
                     for (int i = pos - 1; i >= 0; i--) {
                         if (i == 0 || text.charAt(i) == ' ') {
@@ -264,19 +265,17 @@ public class TextFieldWidget2 extends Widget {
                         }
                     }
                 }
-                cursorPos2 -= amount;
-                if (cursorPos2 < 0)
-                    cursorPos2 = 0;
+                cursorPos -= amount;
+                if (cursorPos < 0)
+                    cursorPos = 0;
                 if (!isShiftDown()) {
-                    cursorPos -= amount;
-                    if (cursorPos < 0)
-                        cursorPos = 0;
+                    cursorPos2 = cursorPos;
                 }
                 return true;
             }
             if (keyCode == Keyboard.KEY_RIGHT && cursorPos < text.length()) {
                 int amount = 1;
-                int pos = isShiftDown() ? cursorPos2 : cursorPos;
+                int pos = cursorPos;
                 if (isCtrlDown()) {
                     for (int i = pos + 1; i < text.length(); i++) {
                         if (i == text.length() - 1 || text.charAt(i) == ' ') {
@@ -285,13 +284,11 @@ public class TextFieldWidget2 extends Widget {
                         }
                     }
                 }
-                cursorPos2 += amount;
-                if (cursorPos2 > text.length())
-                    cursorPos2 = text.length();
+                cursorPos += amount;
+                if (cursorPos > text.length())
+                    cursorPos = text.length();
                 if (!isShiftDown()) {
-                    cursorPos += amount;
-                    if (cursorPos > text.length())
-                        cursorPos = text.length();
+                    cursorPos2 = cursorPos;
                 }
                 return true;
             }
@@ -303,13 +300,11 @@ public class TextFieldWidget2 extends Widget {
                     String t2 = text.substring(cursorPos);
                     text = t1 + t2;
                     cursorPos--;
-                    cursorPos2--;
+                    cursorPos2 = cursorPos;
                 }
                 return true;
             }
-            if (isAllowed(charTyped)) {
-                if (text.length() == maxLength)
-                    return true;
+            if (text.length() < maxLength && isAllowed(charTyped)) {
                 String t1 = text.substring(0, cursorPos);
                 String t2 = text.substring(cursorPos);
                 t1 += charTyped;
@@ -341,10 +336,12 @@ public class TextFieldWidget2 extends Widget {
         int max = Math.max(cursorPos, cursorPos2);
         String t1 = text.substring(0, min);
         String t2 = text.substring(max);
-        if (replacement == null)
-            cursorPos = min;
-        else
+        if(replacement != null) {
+            if(t1.length() + t2.length() + replacement.length() > maxLength)
+                return;
             cursorPos = max;
+        } else
+            cursorPos = min;
         cursorPos2 = cursorPos;
         if (replacement == null)
             text = t1 + t2;
@@ -495,6 +492,11 @@ public class TextFieldWidget2 extends Widget {
      */
     public TextFieldWidget2 setScale(float scale) {
         this.scale = scale;
+        return this;
+    }
+
+    public TextFieldWidget2 setMaxLength(int maxLength) {
+        this.maxLength = maxLength;
         return this;
     }
 }

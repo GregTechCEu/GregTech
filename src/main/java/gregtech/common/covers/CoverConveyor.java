@@ -456,6 +456,7 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
                         setTransferRate(Integer.parseInt(val));
                 })
                         .setNumbersOnly(1, maxItemTransferRate)
+                        .setMaxLength(4)
                         .setPostFix("cover.conveyor.transfer_rate")
         );
 
@@ -469,10 +470,11 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
         TileEntity otherTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
         if (coverTile instanceof TileEntityItemPipe ^ otherTile instanceof TileEntityItemPipe) {
-            primaryGroup.addWidget(new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
+            final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
                     () -> distributionMode.ordinal(),
                     val -> distributionMode = DistributionMode.values()[val])
-                    .setTooltipHoverString("cover.conveyor.distribution"));
+                    .setTooltipHoverString(getDistributionMode()::getName);
+            primaryGroup.addWidget(distributionModeButton);
         }
 
         this.itemFilterContainer.initUI(70, primaryGroup::addWidget);

@@ -214,6 +214,7 @@ public class CoverFluidRegulator extends CoverPump {
         })
                 .setCentered(true)
                 .setAllowedChars("0123456789")
+                .setMaxLength(10)
                 .setValidator(getTextFieldValidator(() -> transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE))
                 .setScale(0.6f));
 

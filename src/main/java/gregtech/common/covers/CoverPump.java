@@ -198,6 +198,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         })
                 .setCentered(true)
                 .setAllowedChars("0123456789")
+                .setMaxLength(8)
                 .setValidator(getTextFieldValidator(() -> bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate));
         primaryGroup.addWidget(textField);
 

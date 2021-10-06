@@ -100,6 +100,7 @@ public class ItemFilterContainer implements INBTSerializable<NBTTagCompound> {
                         setTransferStackSize(Integer.parseInt(val));
                 })
                         .setAllowedChars("0123456789")
+                        .setMaxLength(4)
                         .setValidator(getTextFieldValidator(() -> Integer.MAX_VALUE))
                         .setScale(0.9f)
         );
