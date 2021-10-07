@@ -119,8 +119,9 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
             renderState.lightMatrix.locate(world, pos);
             IVertexOperation[] pipeline = new IVertexOperation[]{renderState.lightMatrix};
             metaTileEntity.renderMetaTileEntity(renderState, translation.copy(), pipeline);
-            metaTileEntity.renderCovers(renderState, translation.copy(), renderLayer);
         }
+
+        metaTileEntity.renderCovers(renderState, translation.copy(), renderLayer);
 
         if (metaTileEntity.isFragile() && renderLayer == BlockRenderLayer.CUTOUT) {
             TextureMap textureMap = Minecraft.getMinecraft().getTextureMapBlocks();

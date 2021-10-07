@@ -11,6 +11,7 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.render.SimpleSidedCubeRenderer.RenderSide;
 import gregtech.api.render.Textures;
+import gregtech.common.asm.hooks.BloomRenderLayerHooks;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -177,7 +178,7 @@ public abstract class CoverBehavior implements IUIHolder {
 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT;
+        return renderLayer == BlockRenderLayer.CUTOUT || renderLayer == BloomRenderLayerHooks.BLOOM;
     }
 
     @SideOnly(Side.CLIENT)
