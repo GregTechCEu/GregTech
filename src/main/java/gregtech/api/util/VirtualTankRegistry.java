@@ -27,18 +27,35 @@ public class VirtualTankRegistry extends WorldSavedData {
         super(DATA_ID);
     }
 
+    // for some reason, MapStorage throws an error if this constructor is not present
+    @SuppressWarnings("unused")
+    public VirtualTankRegistry(String name) {
+        super(name);
+    }
+
+    /**
+     * Retrieves a tank from the registry
+     * @param key The name of the tank
+     * @return The tank object
+     */
     public static IFluidTank getTank(String key) {
         return tankMap.get(key);
     }
 
     /**
      * @return the internal Map of tanks.
-     * Do not use to modify the map
+     * Do not use to modify the map!
      */
     public static Map<String, IFluidTank> getTankMap() {
         return tankMap;
     }
 
+    /**
+     * Retrieves a tank from the registry, creating it if it does not exist
+     * @param key The name of the tank
+     * @param capacity The initial capacity of the tank
+     * @return The tank object
+     */
     public static IFluidTank getTankCreate(String key, int capacity) {
         if (!tankMap.containsKey(key)) {
             addTank(key, capacity);
@@ -46,10 +63,20 @@ public class VirtualTankRegistry extends WorldSavedData {
         return getTank(key);
     }
 
+    /**
+     * Retrieves a tank from the registry, creating it with {@link #DEFAULT_CAPACITY the default capacity} if it does not exist
+     * @param key The name of the tank
+     * @return The tank object
+     */
     public static IFluidTank getTankCreate(String key) {
         return getTankCreate(key, DEFAULT_CAPACITY);
     }
 
+    /**
+     * Adds a tank to the registry
+     * @param key The name of the tank
+     * @param capacity The initial capacity of the tank
+     */
     public static void addTank(String key, int capacity) {
         if(tankMap.containsKey(key)) {
             GTLog.logger.warn("Overwriting virtual tank " + key + ", this might cause fluid loss!");
@@ -57,10 +84,18 @@ public class VirtualTankRegistry extends WorldSavedData {
         tankMap.put(key, new VirtualTank(capacity));
     }
 
+    /**
+     * Adds a tank to the registry with {@link #DEFAULT_CAPACITY the default capacity}
+     * @param key The name of the tank
+     */
     public static void addTank(String key) {
         addTank(key, DEFAULT_CAPACITY);
     }
 
+    /**
+     * Adds a reference to the specified tank in the reference counter.
+     * @param key The name of the tank
+     */
     public static void addRef(String key) {
         if (tankMap.containsKey(key)) {
             if (refmap.containsKey(key)) {
@@ -73,6 +108,11 @@ public class VirtualTankRegistry extends WorldSavedData {
         }
     }
 
+    /**
+     * Removes a reference to the specified tank in the reference counter
+     * @param key The name of the tank
+     * @param doCull Whether to remove the tank if it has no references and contains no fluid
+     */
     public static void delRef(String key, boolean doCull) {
         if (tankMap.containsKey(key)) {
             if (refmap.containsKey(key)) {
@@ -96,6 +136,10 @@ public class VirtualTankRegistry extends WorldSavedData {
         delRef(key, true);
     }
 
+    /**
+     * @param key The name of the tank
+     * @return The number of counted references to the specified tank or -1 if it does not exist or is not tracked
+     */
     public static int getRefs(String key) {
         if (tankMap.containsKey(key) && refmap.containsKey(key)) {
             return refmap.get(key);
@@ -137,6 +181,7 @@ public class VirtualTankRegistry extends WorldSavedData {
 
     public static void initializeStorage(World world) {
         MapStorage storage = world.getMapStorage();
+        assert storage != null;
         VirtualTankRegistry instance = (VirtualTankRegistry) storage.getOrLoadData(VirtualTankRegistry.class, DATA_ID);
 
         if (instance == null) {
