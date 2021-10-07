@@ -22,6 +22,14 @@ public class VirtualTankRegistry {
         return tankMap.get(key);
     }
 
+    /**
+     * @return the internal Map of tanks.
+     * Do not use to modify the map
+     */
+    public static Map<String, IFluidTank> getTankMap() {
+        return tankMap;
+    }
+
     public static IFluidTank getTankCreate(String key, int capacity) {
         if (!tankMap.containsKey(key)) {
             addTank(key, capacity);

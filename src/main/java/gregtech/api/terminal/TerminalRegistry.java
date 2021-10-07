@@ -10,6 +10,7 @@ import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.ThemeSettingApp;
+import gregtech.common.terminal.app.VirtualTankApp;
 import gregtech.common.terminal.app.appstore.AppStoreApp;
 import gregtech.common.terminal.app.multiblockhelper.MultiBlockPreviewARApp;
 import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
@@ -100,6 +101,7 @@ public class TerminalRegistry {
                 .battery(GTValues.LV, 233)
                 .device(DeviceHardware.DEVICE.CAMERA)
                 .build();
+        AppRegistryBuilder.create(new VirtualTankApp()).defaultApp().build();
     }
 
     @SideOnly(Side.CLIENT)

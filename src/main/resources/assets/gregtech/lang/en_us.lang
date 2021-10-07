@@ -3972,6 +3972,7 @@ gregtech.terminal.app_name.hardware=Hardware Manager
 gregtech.terminal.app_name.store=App Store
 gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
 gregtech.terminal.app_name.world_prospector=World Prospector
+gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 
 terminal.app_name.description=No description.
 terminal.app_name.tier=Tier %d
@@ -4101,3 +4102,6 @@ terminal.world_prospector.tier.2=Radius 60m (4 slot)
 terminal.world_prospector.radius=Radius %sm
 terminal.world_prospector.reference=Select a reference
 terminal.world_prospector.color=Select box color
+
+terminal.vtank_viewer.title=Virtual Tank Viewer
+terminal.vtank_viewer.refresh=Refresh tank index
