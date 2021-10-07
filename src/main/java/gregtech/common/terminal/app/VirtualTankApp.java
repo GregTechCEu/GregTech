@@ -11,6 +11,7 @@ import gregtech.api.util.VirtualTankRegistry;
 import net.minecraftforge.fluids.IFluidTank;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class VirtualTankApp extends AbstractApplication {
 
@@ -36,7 +37,7 @@ public class VirtualTankApp extends AbstractApplication {
         tankMap = VirtualTankRegistry.getTankMap();
         widgetGroup.clearAllWidgets();
         int cy = 0;
-        for (String key : tankMap.keySet()) {
+        for (String key : tankMap.keySet().stream().sorted().collect(Collectors.toList())) {
             widgetGroup.addWidget(new TankWidget(tankMap.get(key), 5, cy, 18, 18)
                     .setAlwaysShowFull(true)
                     .setBackgroundTexture(GuiTextures.FLUID_SLOT));

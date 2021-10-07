@@ -1,5 +1,10 @@
 package gregtech.api.util;
 
+import gregtech.api.GTValues;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
+import net.minecraft.world.storage.MapStorage;
+import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
@@ -10,13 +15,17 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-//todo save tanks to world data
-public class VirtualTankRegistry {
+public class VirtualTankRegistry extends WorldSavedData {
 
     private static final int DEFAULT_CAPACITY = Integer.MAX_VALUE;
+    private static final String DATA_ID = GTValues.MODID + ".vtank_data";
 
     protected static Map<String, IFluidTank> tankMap = new HashMap<>();
     protected static Map<String, Integer> refmap = new HashMap<>();
+
+    public VirtualTankRegistry() {
+        super(DATA_ID);
+    }
 
     public static IFluidTank getTank(String key) {
         return tankMap.get(key);
@@ -92,6 +101,48 @@ public class VirtualTankRegistry {
             return refmap.get(key);
         }
         return -1;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        for (String key : nbt.getKeySet()) {
+            NBTTagCompound tankCompound = nbt.getCompoundTag(key);
+            tankMap.put(key, new VirtualTank(tankCompound.getInteger("Capacity")));
+            if (!tankMap.containsKey("Empty")){
+                tankMap.get(key).fill(FluidStack.loadFluidStackFromNBT(tankCompound), true);
+            }
+        }
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        tankMap.forEach( (key, tank) -> {
+            NBTTagCompound tankCompound = new NBTTagCompound();
+            tankCompound.setInteger("Capacity", tank.getCapacity());
+            if (tank.getFluid() != null) {
+                tank.getFluid().writeToNBT(tankCompound);
+            } else {
+                tankCompound.setString("Empty", "");
+            }
+            compound.setTag(key, tankCompound);
+        });
+        return compound;
+    }
+
+    @Override
+    public boolean isDirty() {
+        // can't think of a good way to mark dirty other than always
+        return true;
+    }
+
+    public static void initializeStorage(World world) {
+        MapStorage storage = world.getMapStorage();
+        VirtualTankRegistry instance = (VirtualTankRegistry) storage.getOrLoadData(VirtualTankRegistry.class, DATA_ID);
+
+        if (instance == null) {
+            instance = new VirtualTankRegistry();
+            storage.setData(DATA_ID, instance);
+        }
     }
 
     private static class VirtualTank implements IFluidTank, IFluidHandler {
