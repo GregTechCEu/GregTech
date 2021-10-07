@@ -181,7 +181,6 @@ public class VirtualTankRegistry extends WorldSavedData {
 
     public static void initializeStorage(World world) {
         MapStorage storage = world.getMapStorage();
-        assert storage != null;
         VirtualTankRegistry instance = (VirtualTankRegistry) storage.getOrLoadData(VirtualTankRegistry.class, DATA_ID);
 
         if (instance == null) {
