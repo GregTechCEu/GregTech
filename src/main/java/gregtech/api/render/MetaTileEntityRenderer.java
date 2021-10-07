@@ -106,7 +106,10 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         if (metaTileEntity == null) {
             return false;
         }
-
+        // side mask to avoid unnecessary side be rendered
+        for (EnumFacing side : EnumFacing.VALUES) {
+            Textures.SIDE_MASK[side.ordinal()] = state.shouldSideBeRendered(world, pos, side);
+        }
         CCRenderState renderState = CCRenderState.instance();
         renderState.reset();
         renderState.bind(buffer);
@@ -116,9 +119,8 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
             renderState.lightMatrix.locate(world, pos);
             IVertexOperation[] pipeline = new IVertexOperation[]{renderState.lightMatrix};
             metaTileEntity.renderMetaTileEntity(renderState, translation.copy(), pipeline);
+            metaTileEntity.renderCovers(renderState, translation.copy(), renderLayer);
         }
-        Matrix4 coverTranslation = new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ());
-        metaTileEntity.renderCovers(renderState, coverTranslation, renderLayer);
 
         if (metaTileEntity.isFragile() && renderLayer == BlockRenderLayer.CUTOUT) {
             TextureMap textureMap = Minecraft.getMinecraft().getTextureMapBlocks();
@@ -129,6 +131,7 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
                 Textures.renderFace(renderState, translation, new IVertexOperation[0], face, Cuboid6.full, atlasSprite);
             }
         }
+        Textures.resetSideMask();
         return true;
     }
 

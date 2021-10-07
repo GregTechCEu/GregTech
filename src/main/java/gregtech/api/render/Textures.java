@@ -18,11 +18,13 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static gregtech.api.render.OrientedOverlayRenderer.OverlayFace.*;
@@ -209,10 +211,17 @@ public class Textures {
     public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY_FULL_AUTO = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance_full_auto", true);
     public static final SimpleOverlayRenderer MUFFLER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_muffler");
 
+    @SideOnly(Side.CLIENT)
+    public static boolean[] SIDE_MASK;
+
     static {
         for (int i = 0; i < VOLTAGE_CASINGS.length; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             VOLTAGE_CASINGS[i] = new SimpleSidedCubeRenderer("casings/voltage/" + voltageName);
+        }
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            SIDE_MASK = new boolean[EnumFacing.VALUES.length];
+            resetSideMask();
         }
     }
 
@@ -225,13 +234,49 @@ public class Textures {
     }
 
     @SideOnly(Side.CLIENT)
+    public static void resetSideMask(){
+        Arrays.fill(SIDE_MASK, true);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static boolean shouldSideBeRendered(EnumFacing face, Cuboid6 bounds) {
+        if (!SIDE_MASK[face.ordinal()]) { // check if the side is unnecessary be rendered
+            if (bounds == Cuboid6.full) {
+                return false;
+            }
+            switch(face) {
+                case DOWN:
+                    if (bounds.min.y <= 0) return false;
+                    break;
+                case UP:
+                    if (bounds.max.y >= 1) return false;
+                    break;
+                case NORTH:
+                    if (bounds.min.z <= 0) return false;
+                    break;
+                case SOUTH:
+                    if (bounds.max.z >= 1) return false;
+                    break;
+                case WEST:
+                    if (bounds.min.x <= 0) return false;
+                    break;
+                case EAST:
+                    if (bounds.max.x >= 1) return false;
+                    break;
+            }
+        }
+        return true;
+    }
+
+    @SideOnly(Side.CLIENT)
     public static void renderFace(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
-        if (MinecraftForgeClient.getRenderLayer() != BloomRenderLayerHooks.BLOOM) {
-            renderFaceIgnoreLayer(renderState, translation, ops, face, bounds, sprite);
+        if (MinecraftForgeClient.getRenderLayer() != BloomRenderLayerHooks.BLOOM && shouldSideBeRendered(face, bounds)) {
+            renderFaceRaw(renderState, translation, ops, face, bounds, sprite);
         }
     }
 
-    private static void renderFaceIgnoreLayer(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
+    @SideOnly(Side.CLIENT)
+    public static void renderFaceRaw(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
         BlockFace blockFace = blockFaces.get();
         blockFace.loadCuboidFace(bounds, face.getIndex());
         UVTransformationList uvList = new UVTransformationList(new IconTransformation(sprite));
@@ -245,8 +290,8 @@ public class Textures {
 
     @SideOnly(Side.CLIENT)
     public static void renderFaceBloom(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
-        if (MinecraftForgeClient.getRenderLayer() == null || MinecraftForgeClient.getRenderLayer() == BloomRenderLayerHooks.BLOOM) {
-            renderFaceIgnoreLayer(renderState, translation, ops, face, bounds, sprite);
+        if ((MinecraftForgeClient.getRenderLayer() == null || MinecraftForgeClient.getRenderLayer() == BloomRenderLayerHooks.BLOOM) && shouldSideBeRendered(face, bounds)) {
+            renderFaceRaw(renderState, translation, ops, face, bounds, sprite);
         }
     }
 }
