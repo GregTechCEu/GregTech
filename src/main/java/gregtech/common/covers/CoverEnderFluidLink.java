@@ -12,15 +12,13 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.render.Textures;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.VirtualTankRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -37,7 +35,12 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         pumpMode = CoverPump.PumpMode.IMPORT;
         //todo argb?
         color = 0xFFFFFF;
-        this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate("EFLink#" + Integer.toHexString(color).toUpperCase()));
+        this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName()));
+        VirtualTankRegistry.addRef(makeTankName());
+    }
+
+    private String makeTankName() {
+        return "EFLink#" + Integer.toHexString(color).toUpperCase();
     }
 
     @Override
@@ -59,18 +62,22 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     @Override
-    public void update() {
-        tranferFluids();
+    public void onRemoved() {
+        VirtualTankRegistry.delRef(makeTankName());
     }
 
-    protected int tranferFluids() {
+    @Override
+    public void update() {
+        transferFluids();
+    }
+
+    protected void transferFluids() {
         IFluidHandler fluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
         if (pumpMode == CoverPump.PumpMode.IMPORT) {
-            return GTFluidUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE);
+            GTFluidUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE);
         } else if (pumpMode == CoverPump.PumpMode.EXPORT) {
-            return GTFluidUtils.transferFluids(linkedTank, fluidHandler, TRANSFER_RATE);
+            GTFluidUtils.transferFluids(linkedTank, fluidHandler, TRANSFER_RATE);
         }
-        return 0;
     }
 
     public void setPumpMode(CoverPump.PumpMode pumpMode) {
@@ -93,20 +100,37 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
                 .widget(new CycleButtonWidget(10, 63, 75, 18,
                         CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode))
                 .widget(new TankWidget(this.linkedTank, 90, 20, 18, 18)
-                .setContainerClicking(true, true)
-                .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true))
+                        .setContainerClicking(true, true)
+                        .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true))
                 .bindPlayerInventory(player.inventory)
         .build(this, player);
     }
 
     public void updateColor(String str) {
+        VirtualTankRegistry.delRef(makeTankName());
         this.color = Integer.parseInt(str.toUpperCase(), 16);
         updateTankLink();
     }
 
     public void updateTankLink() {
-        this.linkedTank.changeTank(VirtualTankRegistry.getTankCreate("EFLink#" + Integer.toHexString(color).toUpperCase()));
-        //linkedTank.fill(new FluidStack(Materials.Epichlorohydrin.getFluid(), color), true);
+        this.linkedTank.changeTank(VirtualTankRegistry.getTankCreate(makeTankName()));
+        VirtualTankRegistry.addRef(makeTankName());
         coverHolder.markDirty();
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+        tagCompound.setInteger("Frequency", color);
+        tagCompound.setInteger("PumpMode", pumpMode.ordinal());
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+        VirtualTankRegistry.delRef(makeTankName());
+        this.color = tagCompound.getInteger("Frequency");
+        this.pumpMode = CoverPump.PumpMode.values()[tagCompound.getInteger("PumpMode")];
+        updateTankLink();
     }
 }

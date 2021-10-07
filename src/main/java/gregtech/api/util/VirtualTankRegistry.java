@@ -16,6 +16,7 @@ public class VirtualTankRegistry {
     private static final int DEFAULT_CAPACITY = Integer.MAX_VALUE;
 
     protected static Map<String, IFluidTank> tankMap = new HashMap<>();
+    protected static Map<String, Integer> refmap = new HashMap<>();
 
     public static IFluidTank getTank(String key) {
         return tankMap.get(key);
@@ -41,6 +42,48 @@ public class VirtualTankRegistry {
 
     public static void addTank(String key) {
         addTank(key, DEFAULT_CAPACITY);
+    }
+
+    public static void addRef(String key) {
+        if (tankMap.containsKey(key)) {
+            if (refmap.containsKey(key)) {
+                refmap.put(key, refmap.get(key) + 1);
+            } else {
+                refmap.put(key, 1);
+            }
+        } else {
+            GTLog.logger.warn("Attempted to add reference to virtual tank " + key + ", which does not exist in the tank map!");
+        }
+    }
+
+    public static void delRef(String key, boolean doCull) {
+        if (tankMap.containsKey(key)) {
+            if (refmap.containsKey(key)) {
+                refmap.put(key, refmap.get(key) - 1);
+                if (doCull && refmap.get(key) <= 0 && tankMap.get(key).getFluidAmount() <= 0) {
+                    tankMap.remove(key);
+                    refmap.remove(key);
+                }
+            } else {
+                GTLog.logger.warn("Attempted to delete reference to virtual tank " + key + ", which does not exist in the reference map!");
+            }
+        } else {
+            GTLog.logger.warn("Attempted to delete reference to virtual tank " + key + ", which does not exist in the tank map!");
+        }
+    }
+
+    /**
+     * Equivalent to {@link #delRef(String, boolean) delRef(key, true)}
+     */
+    public static void delRef(String key) {
+        delRef(key, true);
+    }
+
+    public static int getRefs(String key) {
+        if (tankMap.containsKey(key) && refmap.containsKey(key)) {
+            return refmap.get(key);
+        }
+        return -1;
     }
 
     private static class VirtualTank implements IFluidTank, IFluidHandler {
@@ -85,7 +128,6 @@ public class VirtualTankRegistry {
 
         @Override
         public int fill(FluidStack fluidStack, boolean doFill) {
-            //GTLog.logger.info("fluid fill " + fluidStack.getLocalizedName() + "/" + fluidStack.amount);
             if (fluidStack == null || fluidStack.amount <= 0 || (this.fluid != null && !fluidStack.isFluidEqual(this.fluid)))
                 return 0;
 
