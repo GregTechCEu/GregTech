@@ -1,12 +1,14 @@
 package gregtech.common.terminal.app;
 
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.VirtualTankRegistry;
 import net.minecraftforge.fluids.IFluidTank;
 
@@ -24,6 +26,7 @@ public class VirtualTankApp extends AbstractApplication {
 
     @Override
     public AbstractApplication initApp() {
+        this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
         this.addWidget(new LabelWidget(0, 0, "terminal.vtank_viewer.title", -1));
         this.addWidget(new RectButtonWidget(200, 0, 100, 18, 3)
         .setClickListener(this::onRefreshClick));

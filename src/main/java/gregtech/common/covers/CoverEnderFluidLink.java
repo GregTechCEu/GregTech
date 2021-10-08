@@ -36,7 +36,9 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         //todo argb?
         color = 0xFFFFFF;
         this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName()));
-        VirtualTankRegistry.addRef(makeTankName());
+        if (coverHolder.getWorld() == null || !isRemote()) {
+            VirtualTankRegistry.addRef(makeTankName());
+        }
     }
 
     private String makeTankName() {
@@ -89,6 +91,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         return pumpMode;
     }
 
+    //todo filter
     @Override
     public ModularUI createUI(EntityPlayer player) {
         return ModularUI.defaultBuilder()
@@ -97,11 +100,11 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
                         () -> Integer.toHexString(color).toUpperCase(), this::updateColor, 6)
                         //todo allow empty string somehow?
                         .setValidator(str -> str.matches("[0-9a-fA-F]+")))
-                .widget(new CycleButtonWidget(10, 63, 75, 18,
-                        CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode))
-                .widget(new TankWidget(this.linkedTank, 90, 20, 18, 18)
+                .widget(new TankWidget(this.linkedTank, 131, 25, 18, 18)
                         .setContainerClicking(true, true)
                         .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true))
+                .widget(new CycleButtonWidget(10, 63, 75, 18,
+                        CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode))
                 .bindPlayerInventory(player.inventory)
         .build(this, player);
     }
