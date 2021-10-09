@@ -34,8 +34,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     public CoverEnderFluidLink(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         pumpMode = CoverPump.PumpMode.IMPORT;
-        //todo argb?
-        color = 0xFFFFFF;
+        color = 0xFFFFFFFF;
         this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName()));
         VirtualTankRegistry.addRef(makeTankName());
     }
@@ -95,8 +94,10 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     public ModularUI createUI(EntityPlayer player) {
         return ModularUI.defaultBuilder()
                 .widget(new LabelWidget(10, 5, "cover.ender_fluid_link.title"))
-                .widget(new TextFieldWidget(10, 20, 72, 18, true,
-                        () -> Integer.toHexString(color).toUpperCase(), this::updateColor, 6)
+                .widget(new SyncableColorRectWidget(27, 25, 18, 18, () -> color)
+                        .setBorderWidth(1))
+                .widget(new TextFieldWidget(51, 20, 72, 18, true,
+                        this::getColorStr, this::updateColor, 8)
                         //todo allow empty string somehow?
                         .setValidator(str -> str.matches("[0-9a-fA-F]+")))
                 .widget(new TankWidget(this.linkedTank, 131, 25, 18, 18)
@@ -108,10 +109,19 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         .build(this, player);
     }
 
-    public void updateColor(String str) {
+    private void updateColor(String str) {
         VirtualTankRegistry.delRef(makeTankName());
-        this.color = Integer.parseInt(str.toUpperCase(), 16);
+        // stupid java not having actual unsigned ints
+        long tmp = Long.parseLong(str, 16);
+        if (tmp > 0x7FFFFFFF) {
+                tmp -= 0x100000000L;
+        }
+        this.color = (int) tmp;
         updateTankLink();
+    }
+
+    private String getColorStr() {
+        return Integer.toHexString(this.color).toUpperCase();
     }
 
     public void updateTankLink() {
@@ -145,6 +155,8 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     public void readInitialSyncData(PacketBuffer packetBuffer) {
         VirtualTankRegistry.delRef(makeTankName());
         this.color = packetBuffer.readInt();
+        // should never be null
+        this.linkedTank.changeTank(VirtualTankRegistry.getTank(makeTankName()));
         // do not addRef here, client-side covers should not count towards ref count
     }
 }
