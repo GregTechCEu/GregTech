@@ -18,6 +18,7 @@ import gregtech.api.util.VirtualTankRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -36,9 +37,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         //todo argb?
         color = 0xFFFFFF;
         this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName()));
-        if (coverHolder.getWorld() == null || !isRemote()) {
-            VirtualTankRegistry.addRef(makeTankName());
-        }
+        VirtualTankRegistry.addRef(makeTankName());
     }
 
     private String makeTankName() {
@@ -135,5 +134,17 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         this.color = tagCompound.getInteger("Frequency");
         this.pumpMode = CoverPump.PumpMode.values()[tagCompound.getInteger("PumpMode")];
         updateTankLink();
+    }
+
+    @Override
+    public void writeInitialSyncData(PacketBuffer packetBuffer) {
+        packetBuffer.writeInt(this.color);
+    }
+
+    @Override
+    public void readInitialSyncData(PacketBuffer packetBuffer) {
+        VirtualTankRegistry.delRef(makeTankName());
+        this.color = packetBuffer.readInt();
+        // do not addRef here, client-side covers should not count towards ref count
     }
 }
