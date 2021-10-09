@@ -1044,6 +1044,8 @@ cover.machine_controller.mode.cover_east=Control Cover (East)
 cover.machine_controller.mode.cover_west=Control Cover (West)
 
 cover.ender_fluid_link.title=Ender Fluid Link
+cover.ender_fluid_link.iomode.enabled=I/O Enabled
+cover.ender_fluid_link.iomode.disabled=I/O Disabled
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore

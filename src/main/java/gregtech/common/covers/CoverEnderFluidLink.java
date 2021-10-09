@@ -5,38 +5,48 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.render.Textures;
 import gregtech.api.util.FluidTankSwitchShim;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.VirtualTankRegistry;
+import gregtech.common.covers.filter.FluidFilterContainer;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, ITickable {
+public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
     private final int TRANSFER_RATE = 8000; // mB/t
 
     protected CoverPump.PumpMode pumpMode;
     private int color;
+    private boolean workingEnabled = true;
+    private boolean ioEnabled;
     private final FluidTankSwitchShim linkedTank;
+    protected final FluidFilterContainer fluidFilter;
 
     public CoverEnderFluidLink(ICoverable coverHolder, EnumFacing attachedSide) {
         super(coverHolder, attachedSide);
         pumpMode = CoverPump.PumpMode.IMPORT;
+        ioEnabled = false;
         color = 0xFFFFFFFF;
         this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName()));
         VirtualTankRegistry.addRef(makeTankName());
+        fluidFilter = new FluidFilterContainer(this);
     }
 
     private String makeTankName() {
@@ -64,19 +74,26 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     @Override
     public void onRemoved() {
         VirtualTankRegistry.delRef(makeTankName());
+        NonNullList<ItemStack> drops = NonNullList.create();
+        MetaTileEntity.clearInventory(drops, fluidFilter.getFilterInventory());
+        for (ItemStack itemStack : drops) {
+            Block.spawnAsEntity(coverHolder.getWorld(), coverHolder.getPos(), itemStack);
+        }
     }
 
     @Override
     public void update() {
-        transferFluids();
+        if (workingEnabled && ioEnabled) {
+            transferFluids();
+        }
     }
 
     protected void transferFluids() {
         IFluidHandler fluidHandler = coverHolder.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, attachedSide);
         if (pumpMode == CoverPump.PumpMode.IMPORT) {
-            GTFluidUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE);
+            GTFluidUtils.transferFluids(fluidHandler, linkedTank, TRANSFER_RATE, fluidFilter::testFluidStack);
         } else if (pumpMode == CoverPump.PumpMode.EXPORT) {
-            GTFluidUtils.transferFluids(linkedTank, fluidHandler, TRANSFER_RATE);
+            GTFluidUtils.transferFluids(linkedTank, fluidHandler, TRANSFER_RATE, fluidFilter::testFluidStack);
         }
     }
 
@@ -89,24 +106,29 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         return pumpMode;
     }
 
-    //todo filter
     @Override
     public ModularUI createUI(EntityPlayer player) {
-        return ModularUI.defaultBuilder()
-                .widget(new LabelWidget(10, 5, "cover.ender_fluid_link.title"))
-                .widget(new SyncableColorRectWidget(27, 25, 18, 18, () -> color)
-                        .setBorderWidth(1))
-                .widget(new TextFieldWidget(51, 20, 72, 18, true,
-                        this::getColorStr, this::updateColor, 8)
-                        //todo allow empty string somehow?
-                        .setValidator(str -> str.matches("[0-9a-fA-F]+")))
-                .widget(new TankWidget(this.linkedTank, 131, 25, 18, 18)
-                        .setContainerClicking(true, true)
-                        .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true))
-                .widget(new CycleButtonWidget(10, 63, 75, 18,
-                        CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode))
-                .bindPlayerInventory(player.inventory)
-        .build(this, player);
+        WidgetGroup widgetGroup = new WidgetGroup();
+        widgetGroup.addWidget(new LabelWidget(10, 5, "cover.ender_fluid_link.title"));
+        widgetGroup.addWidget(new SyncableColorRectWidget(27, 18, 18, 18, () -> color)
+                .setBorderWidth(1)
+                .drawCheckerboard(4, 4));
+        widgetGroup.addWidget(new TextFieldWidget(51, 13, 72, 18, true,
+                this::getColorStr, this::updateColor, 8)
+                //todo allow empty string somehow?
+                .setValidator(str -> str.matches("[0-9a-fA-F]+")));
+        widgetGroup.addWidget(new TankWidget(this.linkedTank, 131, 18, 18, 18)
+                .setContainerClicking(true, true)
+                .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true));
+        widgetGroup.addWidget(new CycleButtonWidget(10, 42, 75, 18,
+                CoverPump.PumpMode.class, this::getPumpMode, this::setPumpMode));
+        widgetGroup.addWidget(new CycleButtonWidget(92, 42, 75, 18,
+                this::isIoEnabled, this::setIoEnabled, "cover.ender_fluid_link.iomode.disabled", "cover.ender_fluid_link.iomode.enabled"));
+        this.fluidFilter.initUI(65, widgetGroup::addWidget);
+        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 221)
+                .widget(widgetGroup)
+                .bindPlayerInventory(player.inventory, 139)
+                .build(this, player);
     }
 
     private void updateColor(String str) {
@@ -135,6 +157,9 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         super.writeToNBT(tagCompound);
         tagCompound.setInteger("Frequency", color);
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
+        tagCompound.setBoolean("WorkingAllowed", workingEnabled);
+        tagCompound.setBoolean("IOAllowed", ioEnabled);
+        tagCompound.setTag("Filter", fluidFilter.serializeNBT());
     }
 
     @Override
@@ -143,6 +168,9 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         VirtualTankRegistry.delRef(makeTankName());
         this.color = tagCompound.getInteger("Frequency");
         this.pumpMode = CoverPump.PumpMode.values()[tagCompound.getInteger("PumpMode")];
+        this.workingEnabled = tagCompound.getBoolean("WorkingAllowed");
+        this.ioEnabled = tagCompound.getBoolean("IOAllowed");
+        this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         updateTankLink();
     }
 
@@ -158,5 +186,23 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         // should never be null
         this.linkedTank.changeTank(VirtualTankRegistry.getTank(makeTankName()));
         // do not addRef here, client-side covers should not count towards ref count
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return workingEnabled;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isActivationAllowed) {
+        this.workingEnabled = isActivationAllowed;
+    }
+
+    private boolean isIoEnabled() {
+        return ioEnabled;
+    }
+
+    private void setIoEnabled(boolean ioEnabled) {
+        this.ioEnabled = ioEnabled;
     }
 }
