@@ -115,7 +115,6 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
                 .drawCheckerboard(4, 4));
         widgetGroup.addWidget(new TextFieldWidget(51, 13, 72, 18, true,
                 this::getColorStr, this::updateColor, 8)
-                //todo allow empty string somehow?
                 .setValidator(str -> str.matches("[0-9a-fA-F]+")));
         widgetGroup.addWidget(new TankWidget(this.linkedTank, 131, 18, 18, 18)
                 .setContainerClicking(true, true)
@@ -136,7 +135,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         // stupid java not having actual unsigned ints
         long tmp = Long.parseLong(str, 16);
         if (tmp > 0x7FFFFFFF) {
-                tmp -= 0x100000000L;
+            tmp -= 0x100000000L;
         }
         this.color = (int) tmp;
         updateTankLink();

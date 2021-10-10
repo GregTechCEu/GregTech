@@ -54,7 +54,7 @@ public class RenderUtil {
         if (contents.amount > 0 && scaledAmount < 1) {
             scaledAmount = 1;
         }
-        if (scaledAmount > heightT) {
+        if (scaledAmount > heightT || contents.amount == tankCapacity) {
             scaledAmount = heightT;
         }
         GlStateManager.enableBlend();
