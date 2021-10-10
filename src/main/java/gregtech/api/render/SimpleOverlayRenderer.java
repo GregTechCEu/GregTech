@@ -6,6 +6,7 @@ import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -21,7 +22,6 @@ import javax.annotation.Nullable;
 public class SimpleOverlayRenderer implements IIconRegister {
 
     private final String basePath;
-    private final boolean hasEmissive;
 
     @SideOnly(Side.CLIENT)
     private TextureAtlasSprite sprite;
@@ -31,12 +31,7 @@ public class SimpleOverlayRenderer implements IIconRegister {
     private TextureAtlasSprite spriteEmissive;
 
     public SimpleOverlayRenderer(String basePath) {
-        this(basePath, false);
-    }
-
-    public SimpleOverlayRenderer(String basePath, boolean hasEmissive) {
         this.basePath = basePath;
-        this.hasEmissive = hasEmissive;
         Textures.iconRegisters.add(this);
     }
 
@@ -44,8 +39,9 @@ public class SimpleOverlayRenderer implements IIconRegister {
     @SideOnly(Side.CLIENT)
     public void registerIcons(TextureMap textureMap) {
         this.sprite = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/" + basePath));
-        if (hasEmissive) {
-            this.spriteEmissive = textureMap.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/" + basePath + "_emissive"));
+        ResourceLocation emissiveLocation = new ResourceLocation(GTValues.MODID, "blocks/" + basePath + "_emissive");
+        if (ResourceHelper.isTextureExist(emissiveLocation)) {
+            this.spriteEmissive = textureMap.registerSprite(emissiveLocation);
         }
     }
 

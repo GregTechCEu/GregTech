@@ -106,10 +106,7 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         if (metaTileEntity == null) {
             return false;
         }
-        // side mask to avoid unnecessary side be rendered
-        for (EnumFacing side : EnumFacing.VALUES) {
-            Textures.SIDE_MASK[side.ordinal()] = state.shouldSideBeRendered(world, pos, side);
-        }
+        Textures.setSideMask(world, pos, state);
         CCRenderState renderState = CCRenderState.instance();
         renderState.reset();
         renderState.bind(buffer);
