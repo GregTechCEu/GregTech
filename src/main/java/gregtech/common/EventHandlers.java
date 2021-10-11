@@ -169,4 +169,9 @@ public class EventHandlers {
     public static void onWorldLoadEvent(WorldEvent.Load event) {
         VirtualTankRegistry.initializeStorage(event.getWorld());
     }
+
+    @SubscribeEvent
+    public static void onWorldUnloadEvent(WorldEvent.Unload event) {
+        VirtualTankRegistry.clearMaps();
+    }
 }

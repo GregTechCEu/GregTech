@@ -431,7 +431,7 @@ public abstract class MetaTileEntity implements ICoverable {
         return coverBehaviors[side.getIndex()];
     }
 
-    public boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition) {
+    public boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition, EntityPlayer player) {
         Preconditions.checkNotNull(side, "side");
         Preconditions.checkNotNull(coverDefinition, "coverDefinition");
         CoverBehavior coverBehavior = coverDefinition.createCoverBehavior(this, side);
@@ -442,7 +442,7 @@ public abstract class MetaTileEntity implements ICoverable {
             removeCover(side);
         }
         this.coverBehaviors[side.getIndex()] = coverBehavior;
-        coverBehavior.onAttached(itemStack);
+        coverBehavior.onAttached(itemStack, player);
         writeCustomData(-5, buffer -> {
             buffer.writeByte(side.getIndex());
             buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));

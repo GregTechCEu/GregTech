@@ -114,6 +114,10 @@ public abstract class CoverBehavior implements IUIHolder {
     public void onAttached(ItemStack itemStack) {
     }
 
+    public void onAttached(ItemStack itemStack, EntityPlayer player) {
+        onAttached(itemStack);
+    }
+
     public boolean shouldCoverInteractWithOutputside() {
         return false;
     }

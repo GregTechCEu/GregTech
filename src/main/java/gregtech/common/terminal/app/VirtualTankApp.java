@@ -13,13 +13,14 @@ import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.VirtualTankRegistry;
 import net.minecraftforge.fluids.IFluidTank;
 
+import java.util.Comparator;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class VirtualTankApp extends AbstractApplication {
 
     private WidgetGroup widgetGroup;
-    private Map<String, IFluidTank> tankMap;
 
     public VirtualTankApp() {
         super("vtank_viewer");
@@ -43,20 +44,25 @@ public class VirtualTankApp extends AbstractApplication {
     }
 
     private void refresh() {
-        tankMap = VirtualTankRegistry.getTankMap();
+        Map<UUID, Map<String, IFluidTank>> tankMap = VirtualTankRegistry.getTankMap();
         widgetGroup.clearAllWidgets();
         int cy = 0;
-        for (String key : tankMap.keySet().stream().sorted().collect(Collectors.toList())) {
-            widgetGroup.addWidget(new TankWidget(tankMap.get(key), 5, cy, 18, 18)
-                    .setAlwaysShowFull(true)
-                    .setBackgroundTexture(GuiTextures.FLUID_SLOT));
-            widgetGroup.addWidget(new LabelWidget(33, cy + 5, key, -1)
-                    .setWidth(180));
-            widgetGroup.addWidget(new LabelWidget(216, cy + 5, "terminal.vtank_viewer.refs", -1,
-                    // since for gameplay usage, -1 and 0 refs are equivalent, and -1 could be a bit confusing
-                    new Object[]{Math.max(VirtualTankRegistry.getRefs(key), 0)})
-                    .setWidth(101));
-            cy += 23;
+        for (UUID uuid : tankMap.keySet().stream().sorted(Comparator.nullsLast(UUID::compareTo)).collect(Collectors.toList())) {
+            for (String key : tankMap.get(uuid).keySet().stream().sorted().collect(Collectors.toList())) {
+                if (uuid != null) {
+                    widgetGroup.addWidget(new ImageWidget(0, cy, 8, 8, GuiTextures.LOCK));
+                }
+                widgetGroup.addWidget(new TankWidget(tankMap.get(uuid).get(key), 5, cy, 18, 18)
+                        .setAlwaysShowFull(true)
+                        .setBackgroundTexture(GuiTextures.FLUID_SLOT));
+                widgetGroup.addWidget(new LabelWidget(33, cy + 5, key, -1)
+                        .setWidth(180));
+                widgetGroup.addWidget(new LabelWidget(216, cy + 5, "terminal.vtank_viewer.refs", -1,
+                        // since for gameplay usage, -1 and 0 refs are equivalent, and -1 could be a bit confusing
+                        new Object[]{Math.max(VirtualTankRegistry.getRefs(key, uuid), 0)})
+                        .setWidth(101));
+                cy += 23;
+            }
         }
     }
 

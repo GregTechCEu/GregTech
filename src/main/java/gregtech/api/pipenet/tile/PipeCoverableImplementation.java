@@ -7,6 +7,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.BlockPipe;
 import gregtech.api.util.GTUtility;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -45,7 +46,7 @@ public class PipeCoverableImplementation implements ICoverable {
         }
     }
 
-    public final boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition) {
+    public final boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition, EntityPlayer player) {
         if (side == null || coverDefinition == null) {
             return false;
         }
@@ -57,13 +58,13 @@ public class PipeCoverableImplementation implements ICoverable {
         boolean requiresTicking = coverBehavior instanceof ITickable;
         if (requiresTicking && !holder.supportsTicking()) {
             IPipeTile<?, ?> newHolderTile = holder.setSupportsTicking();
-            return newHolderTile.getCoverableImplementation().placeCoverOnSide(side, itemStack, coverDefinition);
+            return newHolderTile.getCoverableImplementation().placeCoverOnSide(side, itemStack, coverDefinition, player);
         }
         if (coverBehaviors[side.getIndex()] != null) {
             removeCover(side);
         }
         this.coverBehaviors[side.getIndex()] = coverBehavior;
-        coverBehavior.onAttached(itemStack);
+        coverBehavior.onAttached(itemStack, player);
         writeCustomData(1, buffer -> {
             buffer.writeByte(side.getIndex());
             buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));

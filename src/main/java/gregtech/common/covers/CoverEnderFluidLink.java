@@ -28,12 +28,16 @@ import net.minecraft.util.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import java.util.UUID;
+
 public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
     private final int TRANSFER_RATE = 8000; // mB/t
 
     protected CoverPump.PumpMode pumpMode;
     private int color;
+    private UUID playerUUID;
+    private boolean isPrivate;
     private boolean workingEnabled = true;
     private boolean ioEnabled;
     private final FluidTankSwitchShim linkedTank;
@@ -43,14 +47,20 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         super(coverHolder, attachedSide);
         pumpMode = CoverPump.PumpMode.IMPORT;
         ioEnabled = false;
+        isPrivate = false;
+        playerUUID = null;
         color = 0xFFFFFFFF;
-        this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName()));
-        VirtualTankRegistry.addRef(makeTankName());
+        this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName(), null));
+        VirtualTankRegistry.addRef(makeTankName(), null);
         fluidFilter = new FluidFilterContainer(this);
     }
 
     private String makeTankName() {
         return "EFLink#" + Integer.toHexString(color).toUpperCase();
+    }
+
+    private UUID getTankUUID() {
+        return isPrivate ? playerUUID : null;
     }
 
     @Override
@@ -72,8 +82,16 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     @Override
+    public void onAttached(ItemStack itemStack, EntityPlayer player) {
+        super.onAttached(itemStack, player);
+        if (player != null) {
+            this.playerUUID = player.getUniqueID();
+        }
+    }
+
+    @Override
     public void onRemoved() {
-        VirtualTankRegistry.delRef(makeTankName());
+        VirtualTankRegistry.delRef(makeTankName(), getTankUUID());
         NonNullList<ItemStack> drops = NonNullList.create();
         MetaTileEntity.clearInventory(drops, fluidFilter.getFilterInventory());
         for (ItemStack itemStack : drops) {
@@ -110,13 +128,15 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup widgetGroup = new WidgetGroup();
         widgetGroup.addWidget(new LabelWidget(10, 5, "cover.ender_fluid_link.title"));
-        widgetGroup.addWidget(new SyncableColorRectWidget(27, 18, 18, 18, () -> color)
+        widgetGroup.addWidget(new ToggleButtonWidget(12, 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
+                this::isPrivate, this::setPrivate));
+        widgetGroup.addWidget(new SyncableColorRectWidget(35, 18, 18, 18, () -> color)
                 .setBorderWidth(1)
                 .drawCheckerboard(4, 4));
-        widgetGroup.addWidget(new TextFieldWidget(51, 13, 72, 18, true,
+        widgetGroup.addWidget(new TextFieldWidget(59, 13, 58, 18, true,
                 this::getColorStr, this::updateColor, 8)
                 .setValidator(str -> str.matches("[0-9a-fA-F]+")));
-        widgetGroup.addWidget(new TankWidget(this.linkedTank, 131, 18, 18, 18)
+        widgetGroup.addWidget(new TankWidget(this.linkedTank, 123, 18, 18, 18)
                 .setContainerClicking(true, true)
                 .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true));
         widgetGroup.addWidget(new CycleButtonWidget(10, 42, 75, 18,
@@ -131,7 +151,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     private void updateColor(String str) {
-        VirtualTankRegistry.delRef(makeTankName());
+        VirtualTankRegistry.delRef(makeTankName(), getTankUUID());
         // stupid java not having actual unsigned ints
         long tmp = Long.parseLong(str, 16);
         if (tmp > 0x7FFFFFFF) {
@@ -146,8 +166,8 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     public void updateTankLink() {
-        this.linkedTank.changeTank(VirtualTankRegistry.getTankCreate(makeTankName()));
-        VirtualTankRegistry.addRef(makeTankName());
+        this.linkedTank.changeTank(VirtualTankRegistry.getTankCreate(makeTankName(), getTankUUID()));
+        VirtualTankRegistry.addRef(makeTankName(), getTankUUID());
         coverHolder.markDirty();
     }
 
@@ -158,17 +178,21 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         tagCompound.setInteger("PumpMode", pumpMode.ordinal());
         tagCompound.setBoolean("WorkingAllowed", workingEnabled);
         tagCompound.setBoolean("IOAllowed", ioEnabled);
+        tagCompound.setBoolean("Private", isPrivate);
+        tagCompound.setString("PlacedUUID", playerUUID.toString());
         tagCompound.setTag("Filter", fluidFilter.serializeNBT());
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        VirtualTankRegistry.delRef(makeTankName());
+        VirtualTankRegistry.delRef(makeTankName(), getTankUUID());
         this.color = tagCompound.getInteger("Frequency");
         this.pumpMode = CoverPump.PumpMode.values()[tagCompound.getInteger("PumpMode")];
         this.workingEnabled = tagCompound.getBoolean("WorkingAllowed");
         this.ioEnabled = tagCompound.getBoolean("IOAllowed");
+        this.isPrivate = tagCompound.getBoolean("Private");
+        this.playerUUID = UUID.fromString(tagCompound.getString("PlacedUUID"));
         this.fluidFilter.deserializeNBT(tagCompound.getCompoundTag("Filter"));
         updateTankLink();
     }
@@ -180,10 +204,10 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
-        VirtualTankRegistry.delRef(makeTankName());
+        VirtualTankRegistry.delRef(makeTankName(), getTankUUID());
         this.color = packetBuffer.readInt();
         // should never be null
-        this.linkedTank.changeTank(VirtualTankRegistry.getTank(makeTankName()));
+        //this.linkedTank.changeTank(VirtualTankRegistry.getTank(makeTankName(), getTankUUID()));
         // do not addRef here, client-side covers should not count towards ref count
     }
 
@@ -203,5 +227,15 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     private void setIoEnabled(boolean ioEnabled) {
         this.ioEnabled = ioEnabled;
+    }
+
+    private boolean isPrivate() {
+        return isPrivate;
+    }
+
+    private void setPrivate(boolean isPrivate) {
+        VirtualTankRegistry.delRef(makeTankName(), getTankUUID());
+        this.isPrivate = isPrivate;
+        updateTankLink();
     }
 }

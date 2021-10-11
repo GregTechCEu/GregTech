@@ -14,14 +14,15 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class VirtualTankRegistry extends WorldSavedData {
 
     private static final int DEFAULT_CAPACITY = Integer.MAX_VALUE;
     private static final String DATA_ID = GTValues.MODID + ".vtank_data";
 
-    protected static Map<String, IFluidTank> tankMap = new HashMap<>();
-    protected static Map<String, Integer> refmap = new HashMap<>();
+    protected static Map<UUID, Map<String, IFluidTank>> tankMap = new HashMap<>();
+    protected static Map<UUID, Map<String, Integer>> refmap = new HashMap<>();
 
     public VirtualTankRegistry() {
         super(DATA_ID);
@@ -36,139 +37,191 @@ public class VirtualTankRegistry extends WorldSavedData {
     /**
      * Retrieves a tank from the registry
      * @param key The name of the tank
+     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      * @return The tank object
      */
-    public static IFluidTank getTank(String key) {
-        return tankMap.get(key);
+    public static IFluidTank getTank(String key, UUID uuid) {
+        return tankMap.get(uuid).get(key);
     }
 
     /**
      * @return the internal Map of tanks.
      * Do not use to modify the map!
      */
-    public static Map<String, IFluidTank> getTankMap() {
+    public static Map<UUID, Map<String, IFluidTank>> getTankMap() {
         return tankMap;
     }
 
     /**
      * Retrieves a tank from the registry, creating it if it does not exist
      * @param key The name of the tank
+     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      * @param capacity The initial capacity of the tank
      * @return The tank object
      */
-    public static IFluidTank getTankCreate(String key, int capacity) {
-        if (!tankMap.containsKey(key)) {
-            addTank(key, capacity);
+    public static IFluidTank getTankCreate(String key, UUID uuid, int capacity) {
+        if (!tankMap.containsKey(uuid) || !tankMap.get(uuid).containsKey(key)) {
+            addTank(key, uuid, capacity);
         }
-        return getTank(key);
+        return getTank(key, uuid);
     }
 
     /**
      * Retrieves a tank from the registry, creating it with {@link #DEFAULT_CAPACITY the default capacity} if it does not exist
      * @param key The name of the tank
+     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      * @return The tank object
      */
-    public static IFluidTank getTankCreate(String key) {
-        return getTankCreate(key, DEFAULT_CAPACITY);
+    public static IFluidTank getTankCreate(String key, UUID uuid) {
+        return getTankCreate(key, uuid, DEFAULT_CAPACITY);
     }
 
     /**
      * Adds a tank to the registry
      * @param key The name of the tank
+     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      * @param capacity The initial capacity of the tank
      */
-    public static void addTank(String key, int capacity) {
-        if(tankMap.containsKey(key)) {
-            GTLog.logger.warn("Overwriting virtual tank " + key + ", this might cause fluid loss!");
+    public static void addTank(String key, UUID uuid, int capacity) {
+        if(tankMap.containsKey(uuid) && tankMap.get(uuid).containsKey(key)) {
+            GTLog.logger.warn("Overwriting virtual tank " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", this might cause fluid loss!");
+        } else if (!tankMap.containsKey(uuid)) {
+            tankMap.put(uuid, new HashMap<>());
         }
-        tankMap.put(key, new VirtualTank(capacity));
+        tankMap.get(uuid).put(key, new VirtualTank(capacity));
     }
 
     /**
      * Adds a tank to the registry with {@link #DEFAULT_CAPACITY the default capacity}
      * @param key The name of the tank
+     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      */
-    public static void addTank(String key) {
-        addTank(key, DEFAULT_CAPACITY);
+    public static void addTank(String key, UUID uuid) {
+        addTank(key, uuid, DEFAULT_CAPACITY);
     }
 
     /**
      * Adds a reference to the specified tank in the reference counter.
      * @param key The name of the tank
+     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      */
-    public static void addRef(String key) {
-        if (tankMap.containsKey(key)) {
-            if (refmap.containsKey(key)) {
-                refmap.put(key, refmap.get(key) + 1);
+    public static void addRef(String key, UUID uuid) {
+        if (tankMap.containsKey(uuid) && tankMap.get(uuid).containsKey(key)) {
+            if (refmap.containsKey(uuid) && refmap.get(uuid).containsKey(key)) {
+                refmap.get(uuid).put(key, refmap.get(uuid).get(key) + 1);
             } else {
-                refmap.put(key, 1);
+                if (!refmap.containsKey(uuid)) {
+                    refmap.put(uuid, new HashMap<>());
+                }
+                refmap.get(uuid).put(key, 1);
             }
         } else {
-            GTLog.logger.warn("Attempted to add reference to virtual tank " + key + ", which does not exist in the tank map!");
+            GTLog.logger.warn("Attempted to add reference to virtual tank " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", which does not exist in the tank map!");
         }
     }
 
     /**
      * Removes a reference to the specified tank in the reference counter
      * @param key The name of the tank
+     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
      * @param doCull Whether to remove the tank if it has no references and contains no fluid
      */
-    public static void delRef(String key, boolean doCull) {
-        if (tankMap.containsKey(key)) {
-            if (refmap.containsKey(key)) {
-                refmap.put(key, refmap.get(key) - 1);
-                if (doCull && refmap.get(key) <= 0 && tankMap.get(key).getFluidAmount() <= 0) {
-                    tankMap.remove(key);
-                    refmap.remove(key);
+    public static void delRef(String key, UUID uuid, boolean doCull) {
+        if (tankMap.containsKey(uuid) && tankMap.get(uuid).containsKey(key)) {
+            if (refmap.containsKey(uuid) && refmap.get(uuid).containsKey(key)) {
+                refmap.get(uuid).put(key, refmap.get(uuid).get(key) - 1);
+                if (doCull && refmap.get(uuid).get(key) <= 0 && tankMap.get(uuid).get(key).getFluidAmount() <= 0) {
+                    tankMap.get(uuid).remove(key);
+                    refmap.get(uuid).remove(key);
+                    if (tankMap.get(uuid).size() <= 0) {
+                        tankMap.remove(uuid);
+                    }
+                    if (refmap.get(uuid).size() <= 0) {
+                        refmap.remove(uuid);
+                    }
                 }
             } else {
-                GTLog.logger.warn("Attempted to delete reference to virtual tank " + key + ", which does not exist in the reference map!");
+                GTLog.logger.warn("Attempted to delete reference to virtual tank " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", which does not exist in the reference map!");
             }
         } else {
-            GTLog.logger.warn("Attempted to delete reference to virtual tank " + key + ", which does not exist in the tank map!");
+            GTLog.logger.warn("Attempted to delete reference to virtual tank " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", which does not exist in the tank map!");
         }
     }
 
     /**
-     * Equivalent to {@link #delRef(String, boolean) delRef(key, true)}
+     * Equivalent to {@link #delRef(String, UUID, boolean) delRef(key, uuid, true)}
      */
-    public static void delRef(String key) {
-        delRef(key, true);
+    public static void delRef(String key, UUID uuid) {
+        delRef(key, uuid, true);
     }
 
     /**
      * @param key The name of the tank
      * @return The number of counted references to the specified tank or -1 if it does not exist or is not tracked
      */
-    public static int getRefs(String key) {
-        if (tankMap.containsKey(key) && refmap.containsKey(key)) {
-            return refmap.get(key);
+    public static int getRefs(String key, UUID uuid) {
+        if (tankMap.containsKey(uuid) && refmap.containsKey(uuid) && tankMap.get(uuid).containsKey(key) && refmap.get(uuid).containsKey(key)) {
+            return refmap.get(uuid).get(key);
         }
         return -1;
     }
 
+    /**
+     * To be called on world unload event
+     */
+    public static void clearMaps() {
+        refmap.clear();
+        //tankMap.clear();
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
-        for (String key : nbt.getKeySet()) {
-            NBTTagCompound tankCompound = nbt.getCompoundTag(key);
-            tankMap.put(key, new VirtualTank(tankCompound.getInteger("Capacity")));
-            if (!tankMap.containsKey("Empty")){
-                tankMap.get(key).fill(FluidStack.loadFluidStackFromNBT(tankCompound), true);
+        if (nbt.hasKey("Public")) {
+            NBTTagCompound publicTanks = nbt.getCompoundTag("Public");
+            for (String key : publicTanks.getKeySet()) {
+                NBTTagCompound tankCompound = publicTanks.getCompoundTag(key);
+                VirtualTankRegistry.addTank(key, null, tankCompound.getInteger("Capacity"));
+                if (!tankCompound.hasKey("Empty")) {
+                    VirtualTankRegistry.getTank(key, null).fill(FluidStack.loadFluidStackFromNBT(tankCompound), true);
+                }
+            }
+        }
+        if (nbt.hasKey("Private")) {
+            NBTTagCompound privateTankUUIDs = nbt.getCompoundTag("Private");
+            for (String uuidStr : privateTankUUIDs.getKeySet()) {
+                UUID uuid = UUID.fromString(uuidStr);
+                NBTTagCompound privateTanks = privateTankUUIDs.getCompoundTag(uuidStr);
+                for (String key : privateTanks.getKeySet()) {
+                    NBTTagCompound tankCompound = privateTanks.getCompoundTag(key);
+                    VirtualTankRegistry.addTank(key, uuid, tankCompound.getInteger("Capacity"));
+                    if (!tankCompound.hasKey("Empty")) {
+                        VirtualTankRegistry.getTank(key, uuid).fill(FluidStack.loadFluidStackFromNBT(tankCompound), true);
+                    }
+                }
             }
         }
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        tankMap.forEach( (key, tank) -> {
-            NBTTagCompound tankCompound = new NBTTagCompound();
-            tankCompound.setInteger("Capacity", tank.getCapacity());
-            if (tank.getFluid() != null) {
-                tank.getFluid().writeToNBT(tankCompound);
+        compound.setTag("Private", new NBTTagCompound());
+        tankMap.forEach( (uuid, map) -> {
+            NBTTagCompound mapCompound = new NBTTagCompound();
+            map.forEach( (key, tank) -> {
+                NBTTagCompound tankCompound = new NBTTagCompound();
+                tankCompound.setInteger("Capacity", tank.getCapacity());
+                if (tank.getFluid() != null) {
+                    tank.getFluid().writeToNBT(tankCompound);
+                } else {
+                    tankCompound.setString("Empty", "");
+                }
+                mapCompound.setTag(key, tankCompound);
+            });
+            if (uuid == null) {
+                compound.setTag("Public", mapCompound);
             } else {
-                tankCompound.setString("Empty", "");
+                compound.getCompoundTag("Private").setTag(uuid.toString(), mapCompound);
             }
-            compound.setTag(key, tankCompound);
         });
         return compound;
     }
@@ -179,6 +232,9 @@ public class VirtualTankRegistry extends WorldSavedData {
         return true;
     }
 
+    /**
+     * To be called on world load event
+     */
     public static void initializeStorage(World world) {
         MapStorage storage = world.getMapStorage();
         VirtualTankRegistry instance = (VirtualTankRegistry) storage.getOrLoadData(VirtualTankRegistry.class, DATA_ID);
@@ -268,7 +324,7 @@ public class VirtualTankRegistry extends WorldSavedData {
             return drainedFluid;
         }
 
-        private class VirtualTankProperties implements IFluidTankProperties {
+        private static class VirtualTankProperties implements IFluidTankProperties {
 
             protected final VirtualTank tank;
 
