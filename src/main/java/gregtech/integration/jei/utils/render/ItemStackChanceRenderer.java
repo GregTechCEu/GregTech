@@ -7,6 +7,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class ItemStackChanceRenderer extends ItemStackRenderer {
@@ -17,7 +18,7 @@ public class ItemStackChanceRenderer extends ItemStackRenderer {
     }
 
     @Override
-    public void render(Minecraft minecraft, int xPosition, int yPosition, @Nullable ItemStack ingredient) {
+    public void render(@Nonnull Minecraft minecraft, int xPosition, int yPosition, @Nullable ItemStack ingredient) {
         super.render(minecraft, xPosition, yPosition, ingredient);
 
         if (this.chance != null) {

@@ -330,7 +330,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         super.receiveInitialSyncData(buf);
         try {
             NBTTagCompound clipboardNBT = buf.readCompoundTag();
-            if (clipboardNBT != new NBTTagCompound() && clipboardNBT != null) {
+            if (clipboardNBT != null && !clipboardNBT.equals(new NBTTagCompound())) {
                 ItemStack clipboard = this.getClipboard();
                 clipboard.setTagCompound(clipboardNBT);
                 this.setClipboard(clipboard);

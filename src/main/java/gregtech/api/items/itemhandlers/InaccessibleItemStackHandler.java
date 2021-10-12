@@ -16,7 +16,7 @@ public class InaccessibleItemStackHandler extends ItemStackHandler {
         return ItemStack.EMPTY;
     }
 
-    public void setStackInSlot(int slot, ItemStack stack) {
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         this.stacks.set(slot, stack);
     }
 }

@@ -700,16 +700,14 @@ public class GTUtility {
     public static int getRedstonePower(World world, BlockPos blockPos, EnumFacing side) {
         BlockPos offsetPos = blockPos.offset(side);
         int worldPower = world.getRedstonePower(offsetPos, side);
-        if (worldPower >= 15) {
-            return worldPower;
-        } else {
+        if (worldPower < 15) {
             IBlockState offsetState = world.getBlockState(offsetPos);
             if (offsetState.getBlock() instanceof BlockRedstoneWire) {
                 int wirePower = offsetState.getValue(BlockRedstoneWire.POWER);
                 return Math.max(worldPower, wirePower);
             }
-            return worldPower;
         }
+        return worldPower;
     }
 
     public static Comparator<ItemStack> createItemStackComparator() {

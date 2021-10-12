@@ -232,13 +232,6 @@ public class OrePrefix {
     public static final OrePrefix circuit = new OrePrefix("circuit", -1, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix component = new OrePrefix("component", -1, null, null, ENABLE_UNIFICATION, null);
 
-    // Used for Gregification Addon TODO Don't do these here post De-Enum
-
-    // Myst Ag Compat
-    public static final OrePrefix seed = new OrePrefix("seed", -1, null, MaterialIconType.seed, ENABLE_UNIFICATION, null);
-    public static final OrePrefix crop = new OrePrefix("crop", -1, null, MaterialIconType.crop, ENABLE_UNIFICATION, null);
-    public static final OrePrefix essence = new OrePrefix("essence", -1, null, MaterialIconType.essence, ENABLE_UNIFICATION, null);
-
     public static final String DUST_REGULAR = "dustRegular";
 
     public static class Flags {
