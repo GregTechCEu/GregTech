@@ -164,14 +164,14 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         this.hasNoWater = false;
         this.isActive = false;
         this.throttlePercentage = 100;
-        replaceFireboxAsActive(false);
+        replaceFireboxAsActive(true);
     }
 
     @Override
     public void onRemoval() {
         super.onRemoval();
         if (!getWorld().isRemote && isStructureFormed()) {
-            replaceFireboxAsActive(false);
+            replaceFireboxAsActive(true);
         }
     }
 

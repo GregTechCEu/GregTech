@@ -12,7 +12,6 @@ import codechicken.lib.vec.uv.UVTransformationList;
 import gregtech.api.GTValues;
 import gregtech.api.util.GTLog;
 import gregtech.common.asm.hooks.BloomRenderLayerHooks;
-import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.render.CrateRenderer;
 import gregtech.common.render.DrumRenderer;
 import net.minecraft.block.state.IBlockState;
@@ -155,7 +154,6 @@ public class Textures {
     public static final OrientedOverlayRenderer STEAM_TURBINE_OVERLAY = new OrientedOverlayRenderer("generators/steam_turbine", SIDE);
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator", FRONT, BACK, SIDE);
     public static final OrientedOverlayRenderer WORLD_ACCELERATOR_TE_OVERLAY = new OrientedOverlayRenderer("machines/world_accelerator_te", FRONT, BACK, SIDE);
-    public static final OrientedOverlayRenderer BLOCK_FIREBOX_CASING_OVERLAY[] = new OrientedOverlayRenderer[BlockFireboxCasing.FireboxCasingType.values().length];
 
 
     // Simple Overlay Renderers
@@ -173,11 +171,9 @@ public class Textures {
     public static final SimpleOverlayRenderer PIPE_4X_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_4x");
     public static final SimpleOverlayRenderer PIPE_9X_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_pipe_9x");
 
-    // todo should we do emissive for these auto-output overlays?
     public static final SimpleOverlayRenderer FLUID_OUTPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_fluid_output");
     public static final SimpleOverlayRenderer ITEM_OUTPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_item_output");
 
-    // todo should we do emissive for these hatch overlays?
     public static final SimpleOverlayRenderer FLUID_HATCH_OUTPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_fluid_hatch_output");
     public static final SimpleOverlayRenderer FLUID_HATCH_INPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_fluid_hatch_input");
     public static final SimpleOverlayRenderer ITEM_HATCH_OUTPUT_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_item_hatch_output");
@@ -223,10 +219,6 @@ public class Textures {
         for (int i = 0; i < VOLTAGE_CASINGS.length; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             VOLTAGE_CASINGS[i] = new SimpleSidedCubeRenderer("casings/voltage/" + voltageName);
-        }
-        BlockFireboxCasing.FireboxCasingType[] types = BlockFireboxCasing.FireboxCasingType.values();
-        for (int i = 0; i < BLOCK_FIREBOX_CASING_OVERLAY.length; i++) {
-            BLOCK_FIREBOX_CASING_OVERLAY[i] = new OrientedOverlayRenderer(String.format("casings/firebox/%s", types[i].getName()), FRONT, BACK, SIDE);
         }
         if (FMLCommonHandler.instance().getSide().isClient()) {
             SIDE_MASK = new boolean[EnumFacing.VALUES.length];

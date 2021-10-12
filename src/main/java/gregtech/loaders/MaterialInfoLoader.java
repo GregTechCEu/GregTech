@@ -8,6 +8,7 @@ import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
+import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -60,7 +61,7 @@ public class MaterialInfoLoader {
                             new MaterialStack(Materials.Naquadria, OrePrefix.foil.materialAmount * 8),
                             new MaterialStack(Materials.NaquadahAlloy, OrePrefix.ingot.materialAmount))
             );
-            OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL.getItemVariant(CoilType.DIAMERICIUM_TITANIUM),
+            OreDictUnifier.registerOre(MetaBlocks.WIRE_COIL2.getItemVariant(CoilType2.DIAMERICIUM_TITANIUM),
                     new ItemMaterialInfo(new MaterialStack(Materials.DiamericiumTitanium, OrePrefix.wireGtDouble.materialAmount * 8),
                             new MaterialStack(Materials.Trinium, OrePrefix.foil.materialAmount * 8),
                             new MaterialStack(Materials.Neutronium, OrePrefix.ingot.materialAmount))
@@ -70,6 +71,12 @@ public class MaterialInfoLoader {
             for (CoilType coilType : CoilType.values()) {
                 if (coilType.getMaterial().hasProperty(PropertyKey.DUST)) {
                     ItemStack outputStack = MetaBlocks.WIRE_COIL.getItemVariant(coilType);
+                    OreDictUnifier.registerOre(outputStack, new ItemMaterialInfo(new MaterialStack(coilType.getMaterial(), OrePrefix.wireGtDouble.materialAmount * 8)));
+                }
+            }
+            for (CoilType2 coilType : CoilType2.values()) {
+                if (coilType.getMaterial().hasProperty(PropertyKey.DUST)) {
+                    ItemStack outputStack = MetaBlocks.WIRE_COIL2.getItemVariant(coilType);
                     OreDictUnifier.registerOre(outputStack, new ItemMaterialInfo(new MaterialStack(coilType.getMaterial(), OrePrefix.wireGtDouble.materialAmount * 8)));
                 }
             }

@@ -1,0 +1,11 @@
+{
+    "ctm": {
+        "ctm_version": 1,
+        "type": "normal",
+        "layer": "BLOOM",
+        "textures": [],
+        "extra": {
+            "light": 15
+        }
+    }
+}

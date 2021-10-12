@@ -10,7 +10,6 @@ import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -49,7 +48,7 @@ public class SimpleCubeRenderer implements ICubeRenderer, IIconRegister {
     public void renderSided(EnumFacing side, Matrix4 translation, Cuboid6 bounds, CCRenderState renderState, IVertexOperation[] pipeline) {
         Textures.renderFace(renderState, translation, pipeline, side, bounds, sprite);
         if (spriteEmissive != null) {
-            if (ConfigHolder.U.clientConfig.emissiveTextures) {
+            if (ConfigHolder.U.clientConfig.machinesEemissiveTextures) {
                 IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
                 Textures.renderFaceBloom(renderState, translation, lightPipeline, side, bounds, spriteEmissive);
             } else Textures.renderFace(renderState, translation, pipeline, side, bounds, spriteEmissive);

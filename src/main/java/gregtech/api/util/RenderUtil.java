@@ -229,11 +229,12 @@ public class RenderUtil {
         }
     }
 
-    public static Framebuffer updateFBOSize(Framebuffer fbo, int width, int height) {
+    public static boolean updateFBOSize(Framebuffer fbo, int width, int height) {
         if (fbo.framebufferWidth != width || fbo.framebufferHeight != height) {
             fbo.createBindFramebuffer(width, height);
+            return true;
         }
-        return fbo;
+        return false;
     }
 
     public static void hookDepthBuffer(Framebuffer fbo, Framebuffer shared) {

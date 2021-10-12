@@ -43,7 +43,7 @@ public class BloomRenderLayerHooks {
     public static int renderBloomBlockLayer(RenderGlobal renderglobal, BlockRenderLayer blockRenderLayer, double partialTicks, int pass, Entity entity) {
         Minecraft mc = Minecraft.getMinecraft();
         mc.profiler.endStartSection("BTLayer");
-        if (!ConfigHolder.U.clientConfig.emissiveTexturesBloom) {
+        if (!ConfigHolder.U.clientConfig.shader.bloom.emissiveTexturesBloom) {
             GlStateManager.depthMask(true);
             renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
             GlStateManager.depthMask(false);
@@ -88,7 +88,21 @@ public class BloomRenderLayerHooks {
         mc.profiler.endStartSection("bloom");
 
         // render bloom effect to fbo
-        BloomEffect.render(BLOOM_FBO, fbo);
+        switch (ConfigHolder.U.clientConfig.shader.bloom.bloomStyle) {
+            case 0:
+                BloomEffect.renderLOG(BLOOM_FBO, fbo, ConfigHolder.U.clientConfig.shader.bloom.intensive);
+                break;
+            case 2:
+                BloomEffect.renderUnity(BLOOM_FBO, fbo, ConfigHolder.U.clientConfig.shader.bloom.intensive);
+                break;
+            case 1:
+                BloomEffect.renderUnReal(BLOOM_FBO, fbo, ConfigHolder.U.clientConfig.shader.bloom.intensive);
+                break;
+            default:
+                GlStateManager.depthMask(false);
+                GlStateManager.disableBlend();
+                return result;
+        }
 
         GlStateManager.depthMask(false);
 

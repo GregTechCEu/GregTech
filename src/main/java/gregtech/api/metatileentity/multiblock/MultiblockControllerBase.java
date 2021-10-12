@@ -17,6 +17,7 @@ import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.common.blocks.VariantActiveBlock;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -144,7 +145,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     }
 
     public static Predicate<BlockWorldState> statePredicate(IBlockState... allowedStates) {
-        return blockWorldState -> ArrayUtils.contains(allowedStates, blockWorldState.getBlockState());
+        return blockWorldState -> ArrayUtils.contains(allowedStates, blockWorldState.getBlockState().getBlock() instanceof VariantActiveBlock ? blockWorldState.getBlockState().withProperty(VariantActiveBlock.ACTIVE, false) : blockWorldState.getBlockState());
     }
 
     public static Predicate<BlockWorldState> blockPredicate(Block... block) {

@@ -49,12 +49,20 @@ public class Shaders {
 //    public static ShaderObject BLACK_HOLE;
     public static ShaderObject SCANNING;
 
-    public static ShaderObject BLOOM_BUFFER_A;
-    public static ShaderObject BLOOM_BUFFER_B;
-    public static ShaderObject BLOOM_BUFFER_C;
     public static ShaderObject BLOOM_COMBINE;
 
     public static ShaderObject BLUR;
+
+    // Unity
+    public static ShaderObject DOWN_SAMPLING;
+    public static ShaderObject UP_SAMPLING;
+
+    // Unreal
+    public static ShaderObject S_BLUR;
+    public static ShaderObject COMPOSITE;
+
+
+
 
     static {
         mc = Minecraft.getMinecraft();
@@ -69,11 +77,12 @@ public class Shaders {
         IMAGE_F = initShader(IMAGE_F, FRAGMENT, "image.frag");
 //        BLACK_HOLE = initShader(BLACK_HOLE, FRAGMENT, "blackhole.frag");
         SCANNING = initShader(SCANNING, FRAGMENT, "scanning.frag");
-        BLOOM_BUFFER_A = initShader(BLOOM_BUFFER_A, FRAGMENT, "bloom_buffer_a.frag");
-        BLOOM_BUFFER_B = initShader(BLOOM_BUFFER_B, FRAGMENT, "bloom_buffer_b.frag");
-        BLOOM_BUFFER_C = initShader(BLOOM_BUFFER_C, FRAGMENT, "bloom_buffer_c.frag");
         BLOOM_COMBINE = initShader(BLOOM_COMBINE, FRAGMENT, "bloom_combine.frag");
         BLUR = initShader(BLUR, FRAGMENT, "blur.frag");
+        DOWN_SAMPLING = initShader(DOWN_SAMPLING, FRAGMENT, "down_sampling.frag");
+        UP_SAMPLING = initShader(UP_SAMPLING, FRAGMENT, "up_sampling.frag");
+        S_BLUR = initShader(S_BLUR, FRAGMENT, "seperable_blur.frag");
+        COMPOSITE = initShader(COMPOSITE, FRAGMENT, "composite.frag");
         FULL_IMAGE_PROGRAMS.clear();
     }
 
@@ -98,11 +107,11 @@ public class Shaders {
     }
 
     public static boolean allowedShader() {
-        return OpenGlHelper.shadersSupported && ConfigHolder.U.clientConfig.useShader;
+        return OpenGlHelper.shadersSupported && ConfigHolder.U.clientConfig.shader.useShader;
     }
 
     public static Framebuffer renderFullImageInFBO(Framebuffer fbo, ShaderObject frag, Consumer<ShaderProgram.UniformCache> uniformCache) {
-        if (fbo == null || frag == null) return fbo;
+        if (fbo == null || frag == null || !allowedShader()) return fbo;
         int lastID = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
 
         fbo.bindFramebuffer(true);

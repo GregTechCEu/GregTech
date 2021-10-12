@@ -18,6 +18,7 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
+import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -96,6 +97,13 @@ public class MetaTileEntityLoader {
             for (CoilType coilType : CoilType.values()) {
                 if (coilType.getMaterial() != null) {
                     ItemStack outputStack = MetaBlocks.WIRE_COIL.getItemVariant(coilType);
+                    ModHandler.addShapedRecipe(String.format("heating_coil_%s", coilType.getName()), outputStack, "XXX", "XwX", "XXX", 'X',
+                            new UnificationEntry(OrePrefix.wireGtDouble, coilType.getMaterial()));
+                }
+            }
+            for (CoilType2 coilType : CoilType2.values()) {
+                if (coilType.getMaterial() != null) {
+                    ItemStack outputStack = MetaBlocks.WIRE_COIL2.getItemVariant(coilType);
                     ModHandler.addShapedRecipe(String.format("heating_coil_%s", coilType.getName()), outputStack, "XXX", "XwX", "XXX", 'X',
                             new UnificationEntry(OrePrefix.wireGtDouble, coilType.getMaterial()));
                 }

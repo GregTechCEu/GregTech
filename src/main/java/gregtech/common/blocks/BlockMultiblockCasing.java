@@ -10,7 +10,7 @@ import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
 
-public class BlockMultiblockCasing extends VariantBlock<BlockMultiblockCasing.MultiblockCasingType> {
+public class BlockMultiblockCasing extends VariantActiveBlock<BlockMultiblockCasing.MultiblockCasingType> {
 
     public BlockMultiblockCasing() {
         super(Material.IRON);
