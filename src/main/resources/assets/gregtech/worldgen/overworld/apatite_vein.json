@@ -25,6 +25,10 @@
         {
           "weight": 40,
           "value": "ore:tricalcium_phosphate"
+        },
+        {
+          "weight": 15,
+          "value": "ore:phosphate"
         }
       ]
     }
