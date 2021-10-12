@@ -25,7 +25,7 @@ public class ItemStackChanceRenderer extends ItemStackRenderer {
             GlStateManager.pushMatrix();
             GlStateManager.scale(0.5, 0.5, 1);
             // z hackery to render the text above the item
-            GlStateManager.translate(0, 0, 151);
+            GlStateManager.translate(0, 0, 160);
 
             String s = (this.chance.getChance() / 100) + "%";
             if (this.chance.getBoostPerTier() > 0)
