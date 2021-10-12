@@ -199,13 +199,15 @@ public class BloomEffect {
 
         for (int i = BUFFERS_D.length - 1; i >= 0; i--) {
             GlStateManager.setActiveTexture(GL13.GL_TEXTURE0 + i);
+            GlStateManager.disableTexture2D();
             GlStateManager.bindTexture(0);
         }
 
+        GlStateManager.enableTexture2D();
+        blend(BUFFERS_D[0], backgroundFBO, 1);
+
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, lastOP);
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, lastOP2);
-
-        blend(BUFFERS_D[0], backgroundFBO, 1);
     }
 
 }

@@ -92,10 +92,10 @@ public class BloomRenderLayerHooks {
             case 0:
                 BloomEffect.renderLOG(BLOOM_FBO, fbo, ConfigHolder.U.clientConfig.shader.bloom.intensive);
                 break;
-            case 2:
+            case 1:
                 BloomEffect.renderUnity(BLOOM_FBO, fbo, ConfigHolder.U.clientConfig.shader.bloom.intensive);
                 break;
-            case 1:
+            case 2:
                 BloomEffect.renderUnReal(BLOOM_FBO, fbo, ConfigHolder.U.clientConfig.shader.bloom.intensive);
                 break;
             default:
