@@ -4,7 +4,7 @@
   "max_height": 40,
   "min_height": 10,
   "dimension_filter": [
-    "is_nether"
+    "name:the_end"
   ],
   "vein_populator": {
     "type": "surface_rock",
