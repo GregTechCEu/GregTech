@@ -29,6 +29,11 @@ public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
     }
 
     @Override
+    public int getPackedLightmapCoords(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return state.getValue(ACTIVE) ? 240 << 16 | 240 : super.getPackedLightmapCoords(state, source, pos);
+    }
+
+    @Override
     public boolean canCreatureSpawn(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nonnull SpawnPlacementType type) {
         return false;
     }

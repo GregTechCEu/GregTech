@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL30;
 
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.glGetInteger;
 
 /**
@@ -63,6 +64,7 @@ public class BloomRenderLayerHooks {
                 BLOOM_FBO.createBindFramebuffer(fbo.framebufferWidth, fbo.framebufferHeight);
             }
             RenderUtil.hookDepthBuffer(BLOOM_FBO, fbo);
+            BLOOM_FBO.setFramebufferFilter(GL_LINEAR);
         }
 
         BLOOM_FBO.framebufferClear();
@@ -90,13 +92,13 @@ public class BloomRenderLayerHooks {
         // render bloom effect to fbo
         switch (ConfigHolder.U.clientConfig.shader.bloom.bloomStyle) {
             case 0:
-                BloomEffect.renderLOG(BLOOM_FBO, fbo, ConfigHolder.U.clientConfig.shader.bloom.intensive);
+                BloomEffect.renderLOG(BLOOM_FBO, fbo, (float) ConfigHolder.U.clientConfig.shader.bloom.strength);
                 break;
             case 1:
-                BloomEffect.renderUnity(BLOOM_FBO, fbo, ConfigHolder.U.clientConfig.shader.bloom.intensive);
+                BloomEffect.renderUnity(BLOOM_FBO, fbo, (float) ConfigHolder.U.clientConfig.shader.bloom.strength);
                 break;
             case 2:
-                BloomEffect.renderUnReal(BLOOM_FBO, fbo, ConfigHolder.U.clientConfig.shader.bloom.intensive);
+                BloomEffect.renderUnReal(BLOOM_FBO, fbo, (float) ConfigHolder.U.clientConfig.shader.bloom.strength);
                 break;
             default:
                 GlStateManager.depthMask(false);

@@ -16,32 +16,29 @@ public class BloomEffect {
     private static Framebuffer[] BUFFERS_D;
     private static Framebuffer[] BUFFERS_U;
 
-    public static void renderLOG(Framebuffer highLightFBO, Framebuffer backgroundFBO, float intensive) {
+    public static void renderLOG(Framebuffer highLightFBO, Framebuffer backgroundFBO, float strength) {
         PingPongBuffer.updateSize(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
         BlurEffect.updateSize(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
         highLightFBO.bindFramebufferTexture();
-        blend(BlurEffect.renderBlur1((float) 1), backgroundFBO, intensive);
+        blend(BlurEffect.renderBlur1((float) 1), backgroundFBO, strength);
     }
 
-    private static void blend(Framebuffer bloom, Framebuffer backgroundFBO, float intensive) {
+    private static void blend(Framebuffer bloom, Framebuffer backgroundFBO, float strength) {
         // bind main fbo
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
         GlStateManager.enableTexture2D();
         backgroundFBO.bindFramebufferTexture();
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+
         // bind blur fbo
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE1);
         GlStateManager.enableTexture2D();
         bloom.bindFramebufferTexture();
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
 
         // blend shader
         Shaders.renderFullImageInFBO(PingPongBuffer.swap(), Shaders.BLOOM_COMBINE, uniformCache -> {
             uniformCache.glUniform1I("buffer_a", 0);
             uniformCache.glUniform1I("buffer_b", 1);
-            uniformCache.glUniform1F("intensive", intensive);
+            uniformCache.glUniform1F("intensive", strength);
         });
 
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE1);
@@ -71,8 +68,10 @@ public class BloomEffect {
             for (int i = 0; i < ConfigHolder.U.clientConfig.shader.bloom.nMips; i++) {
                 BUFFERS_D[i] = new Framebuffer(resX, resY, false);
                 BUFFERS_U[i] = new Framebuffer(resX, resY, false);
-                BUFFERS_D[i] .setFramebufferColor(0, 0, 0, 0);
-                BUFFERS_U[i] .setFramebufferColor(0, 0, 0, 0);
+                BUFFERS_D[i].setFramebufferColor(0, 0, 0, 0);
+                BUFFERS_U[i].setFramebufferColor(0, 0, 0, 0);
+                BUFFERS_D[i].setFramebufferFilter(GL11.GL_LINEAR);
+                BUFFERS_U[i].setFramebufferFilter(GL11.GL_LINEAR);
                 resX /= 2;
                 resY /= 2;
             }
@@ -82,6 +81,8 @@ public class BloomEffect {
             for (int i = 0; i < ConfigHolder.U.clientConfig.shader.bloom.nMips; i++) {
                 RenderUtil.updateFBOSize(BUFFERS_D[i], resX, resY);
                 RenderUtil.updateFBOSize(BUFFERS_U[i], resX, resY);
+                BUFFERS_D[i].setFramebufferFilter(GL11.GL_LINEAR);
+                BUFFERS_U[i].setFramebufferFilter(GL11.GL_LINEAR);
                 resX /= 2;
                 resY /= 2;
             }
@@ -93,13 +94,8 @@ public class BloomEffect {
         PingPongBuffer.updateSize(lastWidth, lastHeight);
     }
 
-    public static void renderUnity(Framebuffer highLightFBO, Framebuffer backgroundFBO, float intensive) {
+    public static void renderUnity(Framebuffer highLightFBO, Framebuffer backgroundFBO, float strength) {
         cleanUP(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
-
-        int lastOP = GL11.glGetTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER);
-        int lastOP2 = GL11.glGetTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
 
         renderDownSampling(highLightFBO, BUFFERS_D[0]);
         for (int i = 0; i < BUFFERS_D.length - 1; i++) {
@@ -118,10 +114,7 @@ public class BloomEffect {
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
         GlStateManager.bindTexture(0);
 
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, lastOP);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, lastOP2);
-
-        blend(PingPongBuffer.getCurrentBuffer(false), backgroundFBO, intensive / 3);
+        blend(PingPongBuffer.getCurrentBuffer(false), backgroundFBO, strength);
     }
 
     private static void renderDownSampling(Framebuffer U, Framebuffer D) {
@@ -130,18 +123,13 @@ public class BloomEffect {
     }
 
     private static void renderUpSampling(Framebuffer U, Framebuffer D, Framebuffer T) {
-        // bind main fbo
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
         GlStateManager.enableTexture2D();
         U.bindFramebufferTexture();
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-        // bind blur fbo
+
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE1);
         GlStateManager.enableTexture2D();
         D.bindFramebufferTexture();
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
 
         Shaders.renderFullImageInFBO(T, Shaders.UP_SAMPLING, uniformCache -> {
             uniformCache.glUniform1I("upTexture", 0);
@@ -150,13 +138,8 @@ public class BloomEffect {
         });
     }
 
-    public static void renderUnReal(Framebuffer highLightFBO, Framebuffer backgroundFBO, float intensive) {
+    public static void renderUnReal(Framebuffer highLightFBO, Framebuffer backgroundFBO, float strength) {
         cleanUP(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
-
-        int lastOP = GL11.glGetTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER);
-        int lastOP2 = GL11.glGetTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
 
         // blur all mips
         int[] kernelSizeArray = new int[]{3, 5, 7, 9, 11};
@@ -183,8 +166,6 @@ public class BloomEffect {
             GlStateManager.setActiveTexture(GL13.GL_TEXTURE0 + i);
             GlStateManager.enableTexture2D();
             BUFFERS_U[i].bindFramebufferTexture();
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         }
 
         Shaders.renderFullImageInFBO(BUFFERS_D[0], Shaders.COMPOSITE, uniformCache -> {
@@ -193,21 +174,16 @@ public class BloomEffect {
             uniformCache.glUniform1I("blurTexture3", 2);
             uniformCache.glUniform1I("blurTexture4", 3);
             uniformCache.glUniform1I("blurTexture5", 4);
-            uniformCache.glUniform1F("bloomStrength", intensive - 1);
+            uniformCache.glUniform1F("bloomStrength", strength);
             uniformCache.glUniform1F("bloomRadius", 1);
         });
 
         for (int i = BUFFERS_D.length - 1; i >= 0; i--) {
             GlStateManager.setActiveTexture(GL13.GL_TEXTURE0 + i);
-            GlStateManager.disableTexture2D();
             GlStateManager.bindTexture(0);
         }
 
-        GlStateManager.enableTexture2D();
         blend(BUFFERS_D[0], backgroundFBO, 1);
-
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, lastOP);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, lastOP2);
     }
 
 }

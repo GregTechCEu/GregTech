@@ -34,5 +34,5 @@ void main(void) {
     out_colour += texture(upTexture, textureCoords + textel.zy) * 2.0;
     out_colour += texture(upTexture, textureCoords + textel.yx);
 
-    out_colour = vec4(out_colour.rgb / 16. + texture(downTexture, textureCoords).rgb, 1.);
+    out_colour = vec4(out_colour.rgb * 0.8 / 16. + texture(downTexture, textureCoords).rgb * 0.8, 1.);
 }

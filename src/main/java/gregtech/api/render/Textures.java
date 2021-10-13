@@ -60,13 +60,13 @@ public class Textures {
     public static final SimpleCubeRenderer ROBUST_TUNGSTENSTEEL_CASING = new SimpleCubeRenderer("casings/solid/machine_casing_robust_tungstensteel");
     public static final SimpleCubeRenderer INERT_PTFE_CASING = new SimpleCubeRenderer("casings/solid/machine_casing_inert_ptfe");
     public static final SimpleCubeRenderer BRONZE_FIREBOX = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_bronze");
-    public static final SimpleCubeRenderer BRONZE_FIREBOX_ACTIVE = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_bronze_active");
+    public static final SimpleCubeRenderer BRONZE_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_bronze_active");
     public static final SimpleCubeRenderer STEEL_FIREBOX = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_steel");
-    public static final SimpleCubeRenderer STEEL_FIREBOX_ACTIVE = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_steel_active");
+    public static final SimpleCubeRenderer STEEL_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_steel_active");
     public static final SimpleCubeRenderer TITANIUM_FIREBOX = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_titanium");
-    public static final SimpleCubeRenderer TITANIUM_FIREBOX_ACTIVE = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_titanium_active");
+    public static final SimpleCubeRenderer TITANIUM_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_titanium_active");
     public static final SimpleCubeRenderer TUNGSTENSTEEL_FIREBOX = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_tungstensteel");
-    public static final SimpleCubeRenderer TUNGSTENSTEEL_FIREBOX_ACTIVE = new SimpleCubeRenderer("casings/firebox/machine_casing_firebox_tungstensteel_active");
+    public static final SimpleCubeRenderer TUNGSTENSTEEL_FIREBOX_ACTIVE = new FullBrightnessSimpleCubeRenderer("casings/firebox/machine_casing_firebox_tungstensteel_active");
     public static final SimpleCubeRenderer FUSION_TEXTURE = new SimpleCubeRenderer("casings/fusion/machine_casing_fusion_glass");
     public static final SimpleCubeRenderer ACTIVE_FUSION_TEXTURE = new SimpleCubeRenderer("casings/fusion/machine_casing_fusion_glass_yellow");
 

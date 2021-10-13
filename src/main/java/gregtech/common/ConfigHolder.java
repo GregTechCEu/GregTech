@@ -295,16 +295,16 @@ public class ConfigHolder {
             public boolean emissiveTexturesBloom = true;
 
             @Config.Comment("Bloom Algorithm: 0-Simple Gaussian Blur Bloom(Fast). 1-Unity Bloom. 2-Unreal Bloom")
-            @Config.RangeInt(min = 0, max = 1)
+            @Config.RangeInt(min = 0, max = 2)
             public int bloomStyle = 1;
 
             @Config.Comment("Mipmap Size. (2-5)=>(fast-slow)=>(low quality-high quality)")
             @Config.RangeInt(min = 2, max = 5)
             public int nMips = 5;
 
-            @Config.Comment("Bloom Intensive")
-            @Config.RangeInt(min = 0)
-            public int intensive = 3;
+            @Config.Comment("Bloom Strength")
+            @Config.RangeDouble(min = 0)
+            public double strength = 2;
 
             @Config.Comment("Blur Step (bloom range)")
             @Config.RangeDouble(min = 0)

@@ -25,24 +25,27 @@ public class BlurEffect {
             BLUR_H2.setFramebufferColor(0, 0, 0, 0);
             BLUR_W.setFramebufferColor(0, 0, 0, 0);
             BLUR_W2.setFramebufferColor(0, 0, 0, 0);
+            BLUR_H.setFramebufferFilter(GL11.GL_LINEAR);
+            BLUR_H2.setFramebufferFilter(GL11.GL_LINEAR);
+            BLUR_W.setFramebufferFilter(GL11.GL_LINEAR);
+            BLUR_W2.setFramebufferFilter(GL11.GL_LINEAR);
         } else if (RenderUtil.updateFBOSize(BLUR_H, lastWidth / 8, lastHeight / 8)){
             RenderUtil.updateFBOSize(BLUR_H2, lastWidth / 4, lastHeight / 4);
             RenderUtil.updateFBOSize(BLUR_W, lastWidth / 8, lastHeight / 8);
             RenderUtil.updateFBOSize(BLUR_W2, lastWidth / 4, lastHeight / 4);
+            BLUR_H.setFramebufferFilter(GL11.GL_LINEAR);
+            BLUR_H2.setFramebufferFilter(GL11.GL_LINEAR);
+            BLUR_W.setFramebufferFilter(GL11.GL_LINEAR);
+            BLUR_W2.setFramebufferFilter(GL11.GL_LINEAR);
         }
         PingPongBuffer.updateSize(lastWidth, lastHeight);
     }
 
     public static Framebuffer renderBlur1(float step) {
-        int lastOP = GL11.glGetTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-
         Shaders.renderFullImageInFBO(BLUR_H2, Shaders.BLUR, uniformCache -> uniformCache.glUniform2F("blurDir", 0, step)).bindFramebufferTexture();
         Shaders.renderFullImageInFBO(BLUR_W2, Shaders.BLUR, uniformCache -> uniformCache.glUniform2F("blurDir", step, 0)).bindFramebufferTexture();
         Shaders.renderFullImageInFBO(BLUR_H, Shaders.BLUR, uniformCache -> uniformCache.glUniform2F("blurDir", 0, step)).bindFramebufferTexture();
         Shaders.renderFullImageInFBO(BLUR_W, Shaders.BLUR, uniformCache -> uniformCache.glUniform2F("blurDir", step, 0)).bindFramebufferTexture();
-
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, lastOP);
         return BLUR_W;
     }
 
