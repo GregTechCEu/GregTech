@@ -463,7 +463,7 @@ public class FirstDegreeMaterials {
         RuthenianIridium = new Material.Builder(310, "ruthenian_iridium")
                 .ingot(3)
                 .color(0xA4A4A4).iconSet(BRIGHT)
-                .flags(GENERATE_FINE_WIRE)
+                .flags(GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Ruthenium, 2, Iridium, 1)
                 .blastTemp(4500)
                 .build();

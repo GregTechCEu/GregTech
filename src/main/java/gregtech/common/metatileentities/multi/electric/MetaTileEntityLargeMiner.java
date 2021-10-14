@@ -29,6 +29,7 @@ import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Material;
 import gregtech.api.util.GTUtility;
@@ -58,13 +59,14 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gregtech.api.unification.material.Materials.DrillingFluid;
 
-public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements IMiner { //todo implement maintenance and soft hammering
+public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements IMiner { //todo implement soft hammering
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.INPUT_ENERGY};
 
@@ -85,7 +87,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private boolean isActive = false;
     private boolean done = false;
     private boolean silkTouch = false;
-    protected boolean wasActiveAndNeedsUpdate;
     private boolean chunkMode = false;
 
     private final LinkedList<BlockPos> blockPos = new LinkedList<>();
@@ -94,11 +95,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private boolean invFull = false;
     private final int tier;
     private int overclockAmount;
-    private int chunkRadius;
-    private int tick;
-    private int drillingFluidConsumePerTick;
-    private int fortune;
-    private String romanNumeralString;
+    private final int chunkRadius;
+    private final int tick;
+    private final int drillingFluidConsumePerTick;
+    private final int fortune;
+    private final String romanNumeralString;
 
     private static final Cuboid6 PIPE_CUBOID = new Cuboid6(4 / 16.0, 0.0, 4 / 16.0, 12 / 16.0, 1.0, 12 / 16.0);
 
@@ -120,7 +121,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public void invalidateStructure() {
         super.invalidateStructure();
-        resetTileAbilities();
         if (isActive)
             setActive(false);
     }
@@ -187,11 +187,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getTPS(world)));
             }
 
-            //MAINTENANCE IMPLEMENTATION:
-            // if (getOffsetTimer() % (this.getNumProblems() > 0 ? type.tick * 2L : type.tick) == 0 && !blockPos.isEmpty()) {
-            // int a = 0;
-            //    while (a < (this.getNumProblems() > 0 ? 1 : overclockAmount); ) {
-
             if (getOffsetTimer() % getTick() == 0 && !blockPos.isEmpty()) {
                 int a = 0;
                 while (a < overclockAmount && !blockPos.isEmpty()) {
@@ -205,14 +200,13 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                             else
                                 current code...
                         */
-                        if (!silkTouch) {
+                        if (!silkTouch)
                             IMiner.applyTieredHammerNoRandomDrops(world.rand, blockState, itemStacks, 3, null, RecipeMaps.MACERATOR_RECIPES, getVoltageTier());
-                        } else {
+                        else
                             itemStacks.add(new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState)));
-                        }
                         if (addItemsToItemHandler(outputInventory, true, itemStacks)) {
                             addItemsToItemHandler(outputInventory, false, itemStacks);
-                            world.setBlockState(tempPos, Blocks.AIR.getDefaultState());
+                            world.setBlockState(tempPos, Blocks.COBBLESTONE.getDefaultState());
                             mineX.set(tempPos.getX());
                             mineZ.set(tempPos.getZ());
                             mineY.set(tempPos.getY());
@@ -250,13 +244,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     protected BlockPattern createStructurePattern() {
         return material == null ? null : FactoryBlockPattern.start()
                 .aisle("CCC", "#F#", "#F#", "#F#", "###", "###", "###")
-                .aisle("CPC", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
+                .aisle("CCC", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
                 .aisle("CSC", "#F#", "#F#", "#F#", "###", "###", "###")
                 .setAmountAtLeast('L', 3)
                 .where('S', selfPredicate())
                 .where('L', statePredicate(getCasingState()))
                 .where('C', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-                .where('P', statePredicate(getCasingState()))
                 .where('F', statePredicate(MetaBlocks.FRAMES.get(getMaterial()).getDefaultState()))
                 .where('#', blockWorldState -> true)
                 .build();
@@ -276,27 +269,23 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         //small ore: tooltip.add(I18n.format("gregtech.machine.miner.multi.description", getaRadius() / 16, getaRadius() / 16, getRomanNumeralString()));
         tooltip.add(I18n.format("gregtech.machine.miner.multi.description", getaRadius() / 16, getaRadius() / 16));
-        tooltip.add(I18n.format("gregtech.machine.miner.fluid_usage", getDrillingFluidConsumePerTick(), I18n.format(DrillingFluid.getFluid(0).getUnlocalizedName())));
-        tooltip.add(I18n.format("gregtech.machine.miner.overclock", GTValues.VN[getTier() < 6 ? getTier() + 1 : 14]));
+        tooltip.add(I18n.format("gregtech.machine.miner.fluid_usage", getDrillingFluidConsumePerTick(), I18n.format(DrillingFluid.getFluid().getUnlocalizedName())));
+        tooltip.add(I18n.format("gregtech.machine.miner.overclock", GTValues.VN[getTier()], GTValues.VN[getTier() < GTValues.LuV ? getTier() + 1 : GTValues.ZPM]));
     }
 
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         if (this.isStructureFormed()) {
-
             if (energyContainer != null && energyContainer.getEnergyCapacity() > 0) {
                 long maxVoltage = energyContainer.getInputVoltage();
                 String voltageName = GTValues.VN[GTUtility.getTierByVoltage(maxVoltage)];
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 
-            textList.add(new TextComponentString(String.format("sX: %d", x.get() == Integer.MAX_VALUE ? 0 : x.get())));
-            textList.add(new TextComponentString(String.format("sY: %d", y.get() == Integer.MAX_VALUE ? 0 : y.get())));
-            textList.add(new TextComponentString(String.format("sZ: %d", z.get() == Integer.MAX_VALUE ? 0 : z.get())));
-            textList.add(new TextComponentString(String.format("mX: %d", mineX.get())));
-            textList.add(new TextComponentString(String.format("mY: %d", mineY.get())));
-            textList.add(new TextComponentString(String.format("mZ: %d", mineZ.get())));
+            textList.add(new TextComponentString(String.format("sX: %d      mX: %d", x.get() == Integer.MAX_VALUE ? 0 : x.get(), mineX.get())));
+            textList.add(new TextComponentString(String.format("sY: %d      mY: %d", y.get() == Integer.MAX_VALUE ? 0 : y.get(), mineY.get())));
+            textList.add(new TextComponentString(String.format("sZ: %d      mZ: %d", z.get() == Integer.MAX_VALUE ? 0 : z.get(), mineZ.get())));
             textList.add(new TextComponentString(String.format("Chunk Radius: %d", aRadius / 16)));
             if (done)
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
@@ -403,11 +392,21 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        Textures.MULTIBLOCK_WORKABLE_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
+        this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), this.isActive());
         for (int i = 0; i < pipeY; i++) {
             translation.translate(0.0, -1.0, 0.0);
             Textures.SOLID_STEEL_CASING.render(renderState, translation, pipeline, PIPE_CUBOID);
         }
+    }
+
+    @Nonnull
+    @Override
+    protected OrientedOverlayRenderer getFrontOverlay() {
+        if (getTier() == 5)
+            return Textures.LARGE_MINER_OVERLAY_ADVANCED;
+        if (getTier() == 6)
+            return Textures.LARGE_MINER_OVERLAY_ADVANCED_2;
+        return Textures.LARGE_MINER_OVERLAY_BASIC;
     }
 
     protected void setActive(boolean active) {
@@ -436,7 +435,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     public int getVoltageTier() {
-        int voltageCap = getTier() == 4 ? 5 : getTier() == 5 ? 6 : 14;
+        int voltageCap = getTier() == GTValues.EV ? GTValues.IV : getTier() == GTValues.IV ? GTValues.LuV : GTValues.ZPM;
         int inputVoltage = GTUtility.getTierByVoltage(energyContainer.getInputVoltage());
 
         if (inputVoltage < getTier())
@@ -450,7 +449,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     protected ModularUI createUI(EntityPlayer entityPlayer) {
 
         ModularUI.Builder builder = ModularUI.extendedBuilder();
-        builder.image(7, 4, 145, 121, GuiTextures.DISPLAY);
+        builder.image(7, 4, 145, 128, GuiTextures.DISPLAY);
         builder.label(11, 9, this.getMetaFullName(), 16777215);
         builder.widget((new AdvancedTextWidget(11, 19, this::addDisplayText,
                 16777215)).setMaxWidthLimit(139).setClickHandler(this::handleDisplayClick));
@@ -500,7 +499,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!isActive) {
-
             if (aRadius - 16 == 0)
                 aRadius = getChunkRadius() * 16;
             else
@@ -509,11 +507,17 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             x.set(Integer.MAX_VALUE);
             y.set(Integer.MAX_VALUE);
             z.set(Integer.MAX_VALUE);
-            playerIn.sendStatusMessage(new TextComponentTranslation(String.format("gregtech.multiblock.large_miner.radius", aRadius)), false);
+            if (!getWorld().isRemote)
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", aRadius), false);
         } else {
             playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.errorradius"), false);
         }
         return true;
+    }
+
+    @Override
+    public boolean hasMaintenanceMechanics() {
+        return false;
     }
 
     public boolean testForMax() {
