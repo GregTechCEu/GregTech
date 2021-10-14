@@ -43,6 +43,7 @@ public class GuiTextures {
     public static final SizedTextureArea CLIPBOARD_TEXT_BOX = AdoptableTextureArea.fullImage("textures/gui/widget/clipboard_text_box.png", 9, 18, 1, 1);
     public static final TextureArea DISTRIBUTION_MODE = TextureArea.fullImage("textures/gui/widget/button_distribution_mode.png");
     public static final TextureArea LOCK = TextureArea.fullImage("textures/gui/widget/lock.png");
+    public static final TextureArea LOCK_WHITE = TextureArea.fullImage("textures/gui/widget/lock_white.png");
     public static final TextureArea SWITCH = TextureArea.fullImage("textures/gui/widget/switch.png");
     public static final TextureArea SWITCH_HORIZONTAL = TextureArea.fullImage("textures/gui/widget/switch_horizontal.png");
     public static final SizedTextureArea VANILLA_BUTTON = SizedTextureArea.fullImage("textures/gui/widget/vanilla_button.png", 200, 40);

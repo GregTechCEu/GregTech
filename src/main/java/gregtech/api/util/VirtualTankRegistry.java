@@ -167,11 +167,11 @@ public class VirtualTankRegistry extends WorldSavedData {
     }
 
     /**
-     * To be called on world unload event
+     * To be called on server stopped event
      */
     public static void clearMaps() {
         refmap.clear();
-        //tankMap.clear();
+        tankMap.clear();
     }
 
     @Override

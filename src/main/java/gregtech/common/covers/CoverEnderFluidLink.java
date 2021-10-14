@@ -200,15 +200,17 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     @Override
     public void writeInitialSyncData(PacketBuffer packetBuffer) {
         packetBuffer.writeInt(this.color);
+        packetBuffer.writeString(this.playerUUID == null ? "null" : this.playerUUID.toString());
     }
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
         VirtualTankRegistry.delRef(makeTankName(), getTankUUID());
         this.color = packetBuffer.readInt();
-        // should never be null
-        //this.linkedTank.changeTank(VirtualTankRegistry.getTank(makeTankName(), getTankUUID()));
-        // do not addRef here, client-side covers should not count towards ref count
+        //does client even need uuid info? just in case
+        String uuidStr = packetBuffer.readString(36);
+        this.playerUUID = uuidStr.equals("null") ? null : UUID.fromString(uuidStr);
+        //client does not need the actual tank reference, the default one will do just fine
     }
 
     @Override

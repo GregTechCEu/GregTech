@@ -48,20 +48,22 @@ public class VirtualTankApp extends AbstractApplication {
         widgetGroup.clearAllWidgets();
         int cy = 0;
         for (UUID uuid : tankMap.keySet().stream().sorted(Comparator.nullsLast(UUID::compareTo)).collect(Collectors.toList())) {
-            for (String key : tankMap.get(uuid).keySet().stream().sorted().collect(Collectors.toList())) {
-                if (uuid != null) {
-                    widgetGroup.addWidget(new ImageWidget(0, cy, 8, 8, GuiTextures.LOCK));
+            if (uuid == null || uuid == gui.entityPlayer.getUniqueID()) {
+                for (String key : tankMap.get(uuid).keySet().stream().sorted().collect(Collectors.toList())) {
+                    if (uuid != null) {
+                        widgetGroup.addWidget(new ImageWidget(0, cy + 4, 8, 8, GuiTextures.LOCK_WHITE));
+                    }
+                    widgetGroup.addWidget(new TankWidget(tankMap.get(uuid).get(key), 8, cy, 18, 18)
+                            .setAlwaysShowFull(true)
+                            .setBackgroundTexture(GuiTextures.FLUID_SLOT));
+                    widgetGroup.addWidget(new LabelWidget(36, cy + 5, key, -1)
+                            .setWidth(180));
+                    widgetGroup.addWidget(new LabelWidget(213, cy + 5, "terminal.vtank_viewer.refs", -1,
+                            // since for gameplay usage, -1 and 0 refs are equivalent, and -1 could be a bit confusing
+                            new Object[]{Math.max(VirtualTankRegistry.getRefs(key, uuid), 0)})
+                            .setWidth(101));
+                    cy += 23;
                 }
-                widgetGroup.addWidget(new TankWidget(tankMap.get(uuid).get(key), 5, cy, 18, 18)
-                        .setAlwaysShowFull(true)
-                        .setBackgroundTexture(GuiTextures.FLUID_SLOT));
-                widgetGroup.addWidget(new LabelWidget(33, cy + 5, key, -1)
-                        .setWidth(180));
-                widgetGroup.addWidget(new LabelWidget(216, cy + 5, "terminal.vtank_viewer.refs", -1,
-                        // since for gameplay usage, -1 and 0 refs are equivalent, and -1 could be a bit confusing
-                        new Object[]{Math.max(VirtualTankRegistry.getRefs(key, uuid), 0)})
-                        .setWidth(101));
-                cy += 23;
             }
         }
     }
