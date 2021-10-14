@@ -631,10 +631,47 @@ public class MetaTileEntityMachineRecipeLoader {
                 .outputs(ENERGY_OUTPUT_HATCH_ADJUSTABLE[GTValues.UV].getStackForm())
                 .duration(100).EUt(524288).buildAndRegister();
 
+        // Maintenance Hatch
+
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .inputs(HULL[GTValues.LV].getStackForm())
                 .circuitMeta(1)
                 .outputs(MAINTENANCE_HATCH.getStackForm())
                 .duration(100).EUt(30).buildAndRegister();
+
+        // Multiblock Miners
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(HULL[GTValues.EV].getStackForm())
+                .input(OrePrefix.frameGt, Materials.Titanium, 4)
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Extreme, 4)
+                .inputs(MetaItems.ELECTRIC_MOTOR_EV.getStackForm(4))
+                .inputs(MetaItems.ELECTRIC_PUMP_EV.getStackForm(4))
+                .inputs(MetaItems.CONVEYOR_MODULE_EV.getStackForm(4))
+                .input(OrePrefix.gear, Materials.Tungsten, 2)
+                .outputs(MetaTileEntities.BASIC_LARGE_MINER.getStackForm())
+                .duration(400).EUt(1920).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(HULL[GTValues.IV].getStackForm())
+                .input(OrePrefix.frameGt, Materials.TungstenSteel, 4)
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Elite, 4)
+                .inputs(MetaItems.ELECTRIC_MOTOR_IV.getStackForm(4))
+                .inputs(MetaItems.ELECTRIC_PUMP_IV.getStackForm(4))
+                .inputs(MetaItems.CONVEYOR_MODULE_IV.getStackForm(4))
+                .input(OrePrefix.gear, Materials.Ultimet, 2)
+                .outputs(MetaTileEntities.LARGE_MINER.getStackForm())
+                .duration(400).EUt(7680).buildAndRegister();
+
+        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                .inputs(HULL[GTValues.LuV].getStackForm())
+                .input(OrePrefix.frameGt, Materials.HSSS, 4)
+                .input(OrePrefix.circuit, MarkerMaterials.Tier.Master, 4)
+                .inputs(MetaItems.ELECTRIC_MOTOR_LUV.getStackForm(4))
+                .inputs(MetaItems.ELECTRIC_PUMP_LUV.getStackForm(4))
+                .inputs(MetaItems.CONVEYOR_MODULE_LUV.getStackForm(4))
+                .input(OrePrefix.gear, Materials.RuthenianIridium, 2)
+                .outputs(MetaTileEntities.ADVANCED_LARGE_MINER.getStackForm())
+                .duration(400).EUt(30720).buildAndRegister();
     }
 }

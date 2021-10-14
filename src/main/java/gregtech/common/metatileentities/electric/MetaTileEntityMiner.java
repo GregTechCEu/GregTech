@@ -59,12 +59,12 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
 
     private final LinkedList<BlockPos> blockPos = new LinkedList<>();
     private int aRadius;
-    private int oRadius;
+    private final int oRadius;
     private int pipeY = 0;
-    private int tick;
-    private int tier;
+    private final int tick;
+    private final int tier;
     private boolean isActive = false;
-    private int fortune;
+    private final int fortune;
 
     public MetaTileEntityMiner(ResourceLocation metaTileEntityId, int tier, int tick, int radius, int fortune) {
         super(metaTileEntityId, tier);
@@ -116,29 +116,28 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         int rowSize = (int) Math.sqrt(inventorySize);
-
         ModularUI.Builder builder;
 
         if (getTier() == 3) {
-            builder = new ModularUI.Builder(GuiTextures.BORDERED_BACKGROUND, 195, 176);
-            builder.bindPlayerInventory(entityPlayer.inventory, 94);
+            builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 195, 176);
+            builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 16, 94);
 
             for (int y = 0; y < rowSize; y++) {
                 for (int x = 0; x < rowSize; x++) {
                     int index = y * rowSize + x;
-                    builder.widget(new SlotWidget(exportItems, index, 153 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
+                    builder.widget(new SlotWidget(exportItems, index, 151 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
                             .setBackgroundTexture(GuiTextures.SLOT));
                 }
             }
 
         } else {
-            builder = new ModularUI.Builder(GuiTextures.BORDERED_BACKGROUND, 195, 176);
+            builder = new ModularUI.Builder(GuiTextures.BACKGROUND, 195, 176);
             builder.bindPlayerInventory(entityPlayer.inventory, 94);
 
             for (int y = 0; y < rowSize; y++) {
                 for (int x = 0; x < rowSize; x++) {
                     int index = y * rowSize + x;
-                    builder.widget(new SlotWidget(exportItems, index, 143 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
+                    builder.widget(new SlotWidget(exportItems, index, 142 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
                             .setBackgroundTexture(GuiTextures.SLOT));
                 }
             }
@@ -159,12 +158,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
-        if (getTier() == 1)
-            tooltip.add(I18n.format("gregtech.machine.miner.description.lv", getoRadius(), getTick() / 20, getEnergyPerTick()));
-        else if (getTier() == 2)
-            tooltip.add(I18n.format("gregtech.machine.miner.description.mv", getoRadius(), getTick() / 20, getEnergyPerTick()));
-        else if (getTier() == 3)
-            tooltip.add(I18n.format("gregtech.machine.miner.description.hv", getoRadius(), getTick() / 20, getEnergyPerTick()));
+        tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
+        tooltip.add(I18n.format("gregtech.machine.miner.description", getoRadius(), getTick() / 20, getEnergyPerTick()));
     }
 
     public boolean drainEnergy() {
@@ -222,7 +217,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
                     blockState.getBlock().getDrops(itemStacks, world, tempPos, blockState, 0);
                     if (addItemsToItemHandler(exportItems, true, itemStacks)) {
                         addItemsToItemHandler(exportItems, false, itemStacks);
-                        world.destroyBlock(tempPos, false);
+                        world.setBlockState(tempPos, Blocks.COBBLESTONE.getDefaultState());
                         mineX.set(tempPos.getX());
                         mineZ.set(tempPos.getZ());
                         mineY.set(tempPos.getY());
@@ -328,7 +323,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
             if (aRadius == getoRadius() / 4) {
                 aRadius = getoRadius();
             } else {
-                if (playerIn.isSneaking()) {
+                if (!playerIn.isSneaking()) {
                     aRadius--;
                 } else {
                     if (aRadius - 5 < getoRadius() / 4) {
@@ -340,7 +335,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
             x.set(Integer.MAX_VALUE);
             y.set(Integer.MAX_VALUE);
             z.set(Integer.MAX_VALUE);
-            playerIn.sendStatusMessage(new TextComponentTranslation(String.format("gregtech.multiblock.large_miner.radius", aRadius)), false);
+            if (!getWorld().isRemote)
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", aRadius), false);
         } else {
             playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.errorradius"), false);
         }
@@ -352,12 +348,14 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeInt(pipeY);
+        buf.writeBoolean(isActive);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         this.pipeY = buf.readInt();
+        this.isActive = buf.readBoolean();
     }
 
     @Override

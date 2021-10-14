@@ -75,11 +75,11 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
 
     private final LinkedList<BlockPos> blockPos = new LinkedList<>();
     private int aRadius;
-    private int oRadius;
+    private final int oRadius;
     private int pipeY = 0;
-    private int tick;
-    private int steam;
-    private int fortune;
+    private final int tick;
+    private final int steam;
+    private final int fortune;
     private boolean active = false;
 
     public SteamMiner(ResourceLocation metaTileEntityId, int tick, int radius, int steam, int fortune) {
@@ -128,7 +128,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
             } else
                 Textures.STEAM_MINER_OVERLAY.renderSided(renderSide, renderState, translation, coloredPipeline);
         }
-        Textures.PIPE_OUT_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
+        Textures.STEAM_VENT_OVERLAY.renderSided(EnumFacing.UP, renderState, translation, pipeline);
         Textures.PIPE_IN_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
         for (int i = 0; i < pipeY; i++) {
             translation.translate(0.0, -1.0, 0.0);
@@ -146,7 +146,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         for (int y = 0; y < rowSize; y++) {
             for (int x = 0; x < rowSize; x++) {
                 int index = y * rowSize + x;
-                builder.widget(new SlotWidget(exportItems, index, 143 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
+                builder.widget(new SlotWidget(exportItems, index, 142 - rowSize * 9 + x * 18, 18 + y * 18, true, false)
                         .setBackgroundTexture(GuiTextures.BRONZE_SLOT));
             }
         }
@@ -165,7 +165,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.miner.steam.description", getoRadius(), getTick() / 20));
+        tooltip.add(I18n.format("gregtech.machine.steam_miner.description", getoRadius(), getTick() / 20));
     }
 
     public boolean drainSteam() {
@@ -224,7 +224,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
                     blockState.getBlock().getDrops(itemStacks, world, tempPos, blockState, 0);
                     if (addItemsToItemHandler(exportItems, true, itemStacks)) {
                         addItemsToItemHandler(exportItems, false, itemStacks);
-                        world.destroyBlock(tempPos, false);
+                        world.setBlockState(tempPos, Blocks.COBBLESTONE.getDefaultState());
                         mineX.set(tempPos.getX());
                         mineZ.set(tempPos.getZ());
                         mineY.set(tempPos.getY());
@@ -312,31 +312,6 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         textList.add(new TextComponentString(String.format("mX: %d", mineX.get())));
         textList.add(new TextComponentString(String.format("mY: %d", mineY.get())));
         textList.add(new TextComponentString(String.format("mZ: %d", mineZ.get())));
-    }
-
-    @Override
-    public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!drainSteam()) {
-            if (aRadius == getoRadius() / 4) {
-                aRadius = getoRadius();
-            } else {
-                if (playerIn.isSneaking()) {
-                    aRadius--;
-                } else {
-                    if (aRadius - 5 < getoRadius() / 4) {
-                        aRadius = getoRadius();
-                    } else
-                        aRadius -= 5;
-                }
-            }
-            x.set(Integer.MAX_VALUE);
-            y.set(Integer.MAX_VALUE);
-            z.set(Integer.MAX_VALUE);
-            playerIn.sendStatusMessage(new TextComponentTranslation(String.format("gregtech.multiblock.large_miner.radius", aRadius)), false);
-        } else {
-            playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.errorradius"), false);
-        }
-        return true;
     }
 
     @Override
@@ -448,7 +423,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
     }
 
     public int getoRadius() {
-        return  this.oRadius;
+        return this.oRadius;
     }
 
     public int getaRadius() {
