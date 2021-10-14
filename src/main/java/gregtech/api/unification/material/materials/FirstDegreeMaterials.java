@@ -89,7 +89,7 @@ public class FirstDegreeMaterials {
         Bronze = new Material.Builder(260, "bronze")
                 .ingot().fluid()
                 .color(0xFF8000).iconSet(METALLIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_FRAME)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_FRAME, GENERATE_SMALL_GEAR)
                 .components(Tin, 1, Copper, 3)
                 .toolStats(6.0f, 2.5f, 192, 21)
                 .fluidPipeProperties(1696, 20, true)
