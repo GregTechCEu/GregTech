@@ -3942,8 +3942,8 @@ gregtech.multiblock.large_miner.working=Working...
 gregtech.multiblock.large_miner.invfull=Inventory Full!
 gregtech.multiblock.large_miner.needspower=Needs Power!
 gregtech.multiblock.large_miner.vent=Venting Blocked!
-gregtech.multiblock.large_miner.steam=Needs Steam
-gregtech.multiblock.large_miner.radius=Horizontal Radius: %d Blocks
+gregtech.multiblock.large_miner.steam=Needs Steam!
+gregtech.multiblock.large_miner.radius=Radius: %d Blocks
 gregtech.multiblock.large_miner.errorradius=Cannot change radius while working!
 gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 

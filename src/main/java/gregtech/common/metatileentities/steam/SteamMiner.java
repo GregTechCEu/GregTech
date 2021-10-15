@@ -7,6 +7,8 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.damagesources.DamageSources;
@@ -41,6 +43,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -53,7 +56,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class SteamMiner extends MetaTileEntity implements IMiner {
+public class SteamMiner extends MetaTileEntity implements IMiner, IControllable {
 
     private final int inventorySize;
     private final ItemStackHandler fluidContainerInventory;
@@ -80,7 +83,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
     private final int tick;
     private final int steam;
     private final int fortune;
-    private boolean active = false;
+    private boolean isActive = true;
 
     public SteamMiner(ResourceLocation metaTileEntityId, int tick, int radius, int steam, int fortune) {
         super(metaTileEntityId);
@@ -152,11 +155,11 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         }
         builder.bindPlayerInventory(entityPlayer.inventory, GuiTextures.BRONZE_SLOT, 10);
 
-        builder.image(7, 16, 105, 65, GuiTextures.BRONZE_DISPLAY)
+        builder.image(7, 16, 105, 75, GuiTextures.BRONZE_DISPLAY)
                 .label(10, 5, getMetaFullName());
-        builder.widget(new AdvancedTextWidget(10, 23, this::addDisplayText, 0xFFFFFF)
+        builder.widget(new AdvancedTextWidget(10, 19, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(84));
-        builder.widget(new AdvancedTextWidget(70, 23, this::addDisplayText2, 0xFFFFFF)
+        builder.widget(new AdvancedTextWidget(70, 19, this::addDisplayText2, 0xFFFFFF)
                 .setMaxWidthLimit(84));
 
 
@@ -168,13 +171,12 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         tooltip.add(I18n.format("gregtech.machine.steam_miner.description", getWorkingArea(), getWorkingArea(), getTick() / 20));
     }
 
-    public boolean drainSteam() {
+    public boolean drainEnergy(boolean simulate) {
         if (importFluids.getTankAt(0).getFluidAmount() >= steam && !done && !invFull && !ventingStuck & !testForMax()) {
-            importFluids.getTankAt(0).drain(steam, true);
-            this.active = true;
+            if (!simulate)
+                importFluids.getTankAt(0).drain(steam, true);
             return true;
         }
-        this.active = false;
         return false;
     }
 
@@ -182,22 +184,23 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            if (!drainSteam()) {
-                if (!done && testForMax()) {
+            if (!isActive)
+                return;
+
+            if (!drainEnergy(false)) {
+                if (!done && testForMax())
                     initPos();
-                }
+
                 resetInv();
                 if (needsVenting) {
                     tryDoVenting();
-                    if (ventingStuck) {
+                    if (ventingStuck)
                         return;
-                    }
                 }
                 return;
             }
 
             WorldServer world = (WorldServer) this.getWorld();
-
             if (mineY.get() < tempY.get()) {
                 world.destroyBlock(new BlockPos(getPos().getX(), tempY.get(), getPos().getZ()), false);
                 tempY.decrementAndGet();
@@ -298,13 +301,15 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
         textList.add(new TextComponentString(String.format("Radius: %d", aRadius)));
         if (done)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
-        else if (active)
+        else if (isActive)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
-        else if (invFull)
+        else
+            textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
+        if (invFull)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
         else if (ventingStuck)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.vent").setStyle(new Style().setColor(TextFormatting.RED)));
-        else
+        if (!drainEnergy(true))
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.steam").setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
@@ -323,6 +328,14 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
             return true;
         } else {
             return false;
+        }
+    }
+
+    protected void setActive(boolean active) {
+        this.isActive = active;
+        markDirty();
+        if (!getWorld().isRemote) {
+            writeCustomData(1, buf -> buf.writeBoolean(active));
         }
     }
 
@@ -440,5 +453,23 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
 
     public int getFortune() {
         return this.fortune;
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return this.isActive;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isActivationAllowed) {
+        setActive(isActivationAllowed);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+        return super.getCapability(capability, side);
     }
 }

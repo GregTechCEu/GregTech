@@ -6,8 +6,9 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
@@ -54,10 +55,10 @@ import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -66,7 +67,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static gregtech.api.unification.material.Materials.DrillingFluid;
 
-public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements IMiner { //todo implement soft hammering
+public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements IMiner, IControllable {
 
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.INPUT_ENERGY};
 
@@ -84,7 +85,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private IEnergyContainer energyContainer;
     private IMultipleTankHandler importFluidHandler;
     protected IItemHandlerModifiable outputInventory;
-    private boolean isActive = false;
+    private boolean isActive = true;
     private boolean done = false;
     private boolean silkTouch = false;
     private boolean chunkMode = false;
@@ -138,20 +139,21 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.overclockAmount = (int) Math.pow(2, getVoltageTier() - this.tier);
     }
 
-    private void resetTileAbilities() {
-        this.importFluidHandler = new FluidTankList(true);
-        this.outputInventory = new ItemStackHandler(0);
-        this.energyContainer = new EnergyContainerList(Lists.newArrayList());
+    public boolean drainEnergy(boolean simulate) {
+        if (energyContainer.getEnergyStored() >= getMaxVoltage() && !invFull && !testForMax()) {
+            if (!simulate)
+                energyContainer.removeEnergy(GTValues.VA[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())]);
+            return true;
+        }
+        return false;
     }
 
-    public boolean drainEnergy() {
-        if (energyContainer.getInputVoltage() < getMaxVoltage())
-            return false;
+    public boolean drainFluid(boolean simulate) {
         FluidStack drillingFluid = DrillingFluid.getFluid(this.drillingFluidConsumePerTick * overclockAmount);
         FluidStack canDrain = importFluidHandler.drain(drillingFluid, false);
-        if (energyContainer.getEnergyStored() >= getMaxVoltage() && canDrain != null && canDrain.amount == this.drillingFluidConsumePerTick && !invFull && !testForMax()) {
-            energyContainer.removeEnergy(energyContainer.getInputVoltage());
-            importFluidHandler.drain(drillingFluid, true);
+        if (canDrain != null && canDrain.amount == this.drillingFluidConsumePerTick) {
+            if (!simulate)
+                importFluidHandler.drain(drillingFluid, true);
             return true;
         }
         return false;
@@ -160,21 +162,17 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     protected void updateFormedValid() {
         if (!getWorld().isRemote) {
-            if (done || !drainEnergy()) {
-                if (isActive)
-                    setActive(false);
-                if (!done && testForMax()) {
+            if (!isActive())
+                return;
+
+            if (done || !drainEnergy(false) || !drainFluid(false)) {
+                if (!done && testForMax())
                     initPos();
-                }
                 resetInv();
                 return;
             }
 
-            if (!isActive)
-                setActive(true);
-
             WorldServer world = (WorldServer) this.getWorld();
-
             if (mineY.get() < tempY.get()) {
                 world.destroyBlock(new BlockPos(getPos().getX(), tempY.get(), getPos().getZ()), false);
                 tempY.decrementAndGet();
@@ -183,9 +181,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 markDirty();
             }
 
-            if(y.get() > 0) {
+            if (y.get() > 0)
                 blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getTPS(world)));
-            }
 
             if (getOffsetTimer() % getTick() == 0 && !blockPos.isEmpty()) {
                 int a = 0;
@@ -294,11 +291,13 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
             else if (isActive)
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
-            else if (invFull)
-                textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
-            else if (!(importFluidHandler.drain(DrillingFluid.getFluid(getDrillingFluidConsumePerTick()), false) != null && (Objects.requireNonNull(importFluidHandler.drain(DrillingFluid.getFluid(getDrillingFluidConsumePerTick()), false))).amount == getDrillingFluidConsumePerTick()))
-                textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.needsfluid").setStyle(new Style().setColor(TextFormatting.RED)));
             else
+                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
+            if (invFull)
+                textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
+            if (!drainFluid(true))
+                textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.needsfluid").setStyle(new Style().setColor(TextFormatting.RED)));
+            if (!drainEnergy(true))
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
         }
 
@@ -412,6 +411,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         return Textures.LARGE_MINER_OVERLAY_BASIC;
     }
 
+    @Override
+    public boolean isActive() {
+        return super.isActive() && this.isActive;
+    }
+
     protected void setActive(boolean active) {
         this.isActive = active;
         markDirty();
@@ -434,7 +438,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     public long getMaxVoltage() {
-        return GTValues.V[getVoltageTier()];
+        return GTValues.V[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())];
     }
 
     public int getVoltageTier() {
@@ -597,5 +601,23 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     public String getRomanNumeralString() {
         return this.romanNumeralString;
+    }
+
+    @Override
+    public boolean isWorkingEnabled() {
+        return this.isActive;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isActivationAllowed) {
+        setActive(isActivationAllowed);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+        return super.getCapability(capability, side);
     }
 }

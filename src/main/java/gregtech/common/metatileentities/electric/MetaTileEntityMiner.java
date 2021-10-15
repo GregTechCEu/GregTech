@@ -6,6 +6,8 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechTileCapabilities;
+import gregtech.api.capability.IControllable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
@@ -29,6 +31,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -39,7 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner {
+public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner, IControllable {
 
     private final int inventorySize;
     private final long energyPerTick;
@@ -62,14 +65,12 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
     private final int oRadius;
     private int pipeY = 0;
     private final int tick;
-    private final int tier;
-    private boolean isActive = false;
+    private boolean isActive = true;
     private final int fortune;
 
     public MetaTileEntityMiner(ResourceLocation metaTileEntityId, int tier, int tick, int radius, int fortune) {
         super(metaTileEntityId, tier);
         this.inventorySize = (tier + 1) * (tier + 1);
-        this.tier = tier;
         this.energyPerTick = GTValues.V[tier - 1];
         this.oRadius = radius;
         this.aRadius = radius;
@@ -145,9 +146,9 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
 
         builder.image(7, 16, 105, 75, GuiTextures.DISPLAY)
                 .label(10, 5, getMetaFullName());
-        builder.widget(new AdvancedTextWidget(10, 23, this::addDisplayText, 0xFFFFFF)
+        builder.widget(new AdvancedTextWidget(10, 19, this::addDisplayText, 0xFFFFFF)
                 .setMaxWidthLimit(84));
-        builder.widget(new AdvancedTextWidget(70, 23, this::addDisplayText2, 0xFFFFFF)
+        builder.widget(new AdvancedTextWidget(70, 19, this::addDisplayText2, 0xFFFFFF)
                 .setMaxWidthLimit(84));
 
 
@@ -162,35 +163,30 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
         tooltip.add(I18n.format("gregtech.machine.miner.usage", getWorkingArea(), getWorkingArea(), getTick() / 20, getEnergyPerTick()));
     }
 
-    public boolean drainEnergy() {
+    public boolean drainEnergy(boolean simulate) {
         if (energyContainer.getEnergyStored() >= energyPerTick && !done && !invFull && !testForMax()) {
-            energyContainer.removeEnergy(energyPerTick);
+            if (!simulate)
+                energyContainer.removeEnergy(energyPerTick);
             return true;
         }
         return false;
     }
 
-
     @Override
     public void update() {
         super.update();
         if (!getWorld().isRemote) {
-            if (!drainEnergy()) {
-                if(isActive)
-                    setActive(false);
-                if (!done && testForMax()) {
+            if (!isActive)
+                return;
+
+            if (!drainEnergy(false)) {
+                if (!done && testForMax())
                     initPos();
-                }
                 resetInv();
                 return;
             }
 
-            if(!isActive)
-                setActive(true);
-
             WorldServer world = (WorldServer) this.getWorld();
-
-
             if (mineY.get() < tempY.get()) {
                 world.destroyBlock(new BlockPos(getPos().getX(), tempY.get(), getPos().getZ()), false);
                 tempY.decrementAndGet();
@@ -292,9 +288,11 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (isActive)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
-        else if (invFull)
-            textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
         else
+            textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
+        if (invFull)
+            textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
+        if (!drainEnergy(true))
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
     }
 
@@ -319,7 +317,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!drainEnergy()) {
+        if (!drainEnergy(true)) {
             if (aRadius == getoRadius() / 4) {
                 aRadius = getoRadius();
             } else {
@@ -406,10 +404,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
         return x.get() == Integer.MAX_VALUE && y.get() == Integer.MAX_VALUE && z.get() == Integer.MAX_VALUE;
     }
 
-    public int getTier() {
-        return this.tier;
-    }
-
     public int getTick() {
         return this.tick;
     }
@@ -434,4 +428,21 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
         return this.energyPerTick;
     }
 
+    @Override
+    public boolean isWorkingEnabled() {
+        return this.isActive;
+    }
+
+    @Override
+    public void setWorkingEnabled(boolean isActivationAllowed) {
+        setActive(isActivationAllowed);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing side) {
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+        return super.getCapability(capability, side);
+    }
 }
