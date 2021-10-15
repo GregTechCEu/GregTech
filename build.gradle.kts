@@ -7,17 +7,20 @@ import java.util.*
 buildscript {
     repositories {
         mavenCentral()
+        /*
         maven {
             name = "jitpack"
             setUrl("https://jitpack.io")
         }
+         */
         maven {
             name = "forge"
             setUrl("https://maven.minecraftforge.net/")
         }
     }
     dependencies {
-        classpath("com.github.GregTechCE:ForgeGradle:FG_2.3-SNAPSHOT")
+        // classpath("com.github.GregTechCE:ForgeGradle:FG_2.3-SNAPSHOT")
+        classpath("net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT")
         classpath("org.eclipse.jgit:org.eclipse.jgit:5.8.0.202006091008-r")
         classpath("org.apache.commons:commons-lang3:3.12.0")
     }
