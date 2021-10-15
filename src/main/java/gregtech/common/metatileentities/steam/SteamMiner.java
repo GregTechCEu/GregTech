@@ -165,7 +165,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
-        tooltip.add(I18n.format("gregtech.machine.steam_miner.description", getoRadius(), getTick() / 20));
+        tooltip.add(I18n.format("gregtech.machine.steam_miner.description", getWorkingArea(), getWorkingArea(), getTick() / 20));
     }
 
     public boolean drainSteam() {
@@ -424,6 +424,10 @@ public class SteamMiner extends MetaTileEntity implements IMiner {
 
     public int getoRadius() {
         return this.oRadius;
+    }
+
+    private int getWorkingArea() {
+        return this.oRadius * 2 + 1;
     }
 
     public int getaRadius() {

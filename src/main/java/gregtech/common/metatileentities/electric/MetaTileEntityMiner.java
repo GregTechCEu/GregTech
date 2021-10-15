@@ -159,7 +159,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
         tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", energyContainer.getInputVoltage(), GTValues.VN[getTier()]));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.miner.description", getoRadius(), getTick() / 20, getEnergyPerTick()));
+        tooltip.add(I18n.format("gregtech.machine.miner.usage", getWorkingArea(), getWorkingArea(), getTick() / 20, getEnergyPerTick()));
     }
 
     public boolean drainEnergy() {
@@ -415,7 +415,11 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner 
     }
 
     public int getoRadius() {
-        return  this.oRadius;
+        return this.oRadius;
+    }
+
+    public int getWorkingArea() {
+        return this.oRadius * 2 + 1;
     }
 
     public int getaRadius() {

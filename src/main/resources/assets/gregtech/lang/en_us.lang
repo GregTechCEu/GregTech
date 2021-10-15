@@ -2351,7 +2351,7 @@ gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
 gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava adjancent
 gregtech.machine.steam_miner.name=Steam Miner
 gregtech.machine.steam_miner.tooltip=Mines ores below the miner ONLY!
-gregtech.machine.steam_miner.description=Horizontal Radius: §b%d§7 blocks. §b%ds§7 per block. Uses §b16mB/t§7 of steam.
+gregtech.machine.steam_miner.description=Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b16mB/t§7 of steam.
 
 # Generators
 gregtech.machine.combustion_generator.lv.name=Basic Combustion Generator
@@ -3576,15 +3576,15 @@ gregtech.machine.miner.lv.name=Basic Miner
 gregtech.machine.miner.mv.name=Advanced Miner
 gregtech.machine.miner.hv.name=Advanced Miner II
 gregtech.machine.miner.tooltip=Mines ores below the miner ONLY! Use screwdriver to configure radius.
-gregtech.machine.miner.description=Max Horizontal Radius: §b%d§7 blocks. §b%ds§7 per block. Uses §b%d§7 EU/t.
+gregtech.machine.miner.usage=Max Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b%d§7 EU/t.
 
 gregtech.machine.large_miner.ev.name=Basic Large Miner
 gregtech.machine.large_miner.iv.name=Advanced Large Miner
 gregtech.machine.large_miner.luv.name=Advanced Large Miner II
-#Small ores lang: gregtech.machine.miner.multi.description=Mines all ores under the miner in an area of up to §b%dx%d§7 Chunks. Gives §b3x§7 crushed ore. Mines small ores with §bFortune %s§7. Configurable silk touch and chunk mode options. Use screwdriver to configure radius.
-gregtech.machine.miner.multi.description=Mines all ores below the miner in an area of up to §b%dx%d§7 Chunks. Gives §b3x§7 crushed ore. Configurable silk touch and chunk mode options. Use screwdriver to configure radius.
-#Small ores lang: gregtech.machine.miner.description.TIER=Max Horizontal Radius: §b%d§7 blocks. §b%ds§7 per block. Uses §b%d§7 EU/t. Small ore Fortune §b%d§7.
-
+gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Boundary Modes.
+gregtech.machine.miner.multi.tooltip=Max Working Area: §b%dx%d§7 chunks.
+gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator.
+#Small ores lang: gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
 gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
 gregtech.machine.miner.overclock=Requires §e%s§7 power. Overclocks up to §e%s§7.
 
