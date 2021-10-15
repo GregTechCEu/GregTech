@@ -6,6 +6,7 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.ClassNode;
 
 public class GTCETransformer implements IClassTransformer, Opcodes {
 
@@ -56,6 +57,14 @@ public class GTCETransformer implements IClassTransformer, Opcodes {
                 ClassReader classReader = new ClassReader(basicClass);
                 ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                 classReader.accept(new TargetClassVisitor(classWriter, EntityRendererVisitor.TARGET_METHOD, EntityRendererVisitor::new), 0);
+                return classWriter.toByteArray();
+            }
+            case BlockVisitor.TARGET_CLASS_NAME:{
+                ClassReader classReader = new ClassReader(basicClass);
+                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                ClassNode classNode = new ClassNode();
+                classReader.accept(classNode, 0);
+                BlockVisitor.handleClassNode(classNode).accept(classWriter);
                 return classWriter.toByteArray();
             }
         }

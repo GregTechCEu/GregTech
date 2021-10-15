@@ -3,6 +3,7 @@
         "ctm_version": 1,
         "type": "CTM",
         "layer": "BLOOM",
+        "gregtech": true,
         "textures": [
             "gregtech:blocks/casings/coils/machine_coil_bloom_ctm"
         ],
