@@ -311,6 +311,8 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_DRAIN = addItem(308, "cover.drain");
         COVER_SHUTTER = addItem(309, "cover.shutter");
         COVER_INFINITE_WATER = addItem(310, "cover.infinite_water");
+        COVER_DIGITAL_INTERFACE = addItem(311, "cover.digital");
+
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
         // Solar Panels: ID 331-346
