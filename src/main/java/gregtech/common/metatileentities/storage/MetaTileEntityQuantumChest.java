@@ -48,6 +48,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_ITEMS;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
+
 public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide {
 
 
@@ -282,7 +285,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
         this.outputFacing = outputFacing;
         if (!getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
-            writeCustomData(100, buf -> buf.writeByte(outputFacing.getIndex()));
+            writeCustomData(UPDATE_OUTPUT_FACING, buf -> buf.writeByte(outputFacing.getIndex()));
             markDirty();
         }
     }
@@ -325,10 +328,10 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 100) {
+        if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == 101) {
+        } else if (dataId == UPDATE_AUTO_OUTPUT_ITEMS) {
             this.autoOutputItems = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
         }
@@ -337,7 +340,7 @@ public class MetaTileEntityQuantumChest extends MetaTileEntity implements ITiere
     public void setAutoOutputItems(boolean autoOutputItems) {
         this.autoOutputItems = autoOutputItems;
         if (!getWorld().isRemote) {
-            writeCustomData(101, buf -> buf.writeBoolean(autoOutputItems));
+            writeCustomData(UPDATE_AUTO_OUTPUT_ITEMS, buf -> buf.writeBoolean(autoOutputItems));
             markDirty();
         }
     }

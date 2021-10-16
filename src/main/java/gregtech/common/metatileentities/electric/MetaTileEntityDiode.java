@@ -30,6 +30,8 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.AMP_INDEX;
+
 public class MetaTileEntityDiode extends TieredMetaTileEntity {
 
     private static final String AMP_NBT_KEY = "amp_mode";
@@ -75,7 +77,7 @@ public class MetaTileEntityDiode extends TieredMetaTileEntity {
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 101) {
+        if (dataId == AMP_INDEX) {
             this.amps = buf.readInt();
         }
     }
@@ -84,7 +86,7 @@ public class MetaTileEntityDiode extends TieredMetaTileEntity {
         amps = amps == 16 ? 1 : amps << 1;
         if (!getWorld().isRemote) {
             reinitializeEnergyContainer();
-            writeCustomData(101, b -> b.writeInt(amps));
+            writeCustomData(AMP_INDEX, b -> b.writeInt(amps));
             getHolder().notifyBlockUpdate();
             markDirty();
         }

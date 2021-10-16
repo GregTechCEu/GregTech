@@ -35,6 +35,9 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static gregtech.api.capability.GregtechDataCodes.IS_ACTIVE;
+import static gregtech.api.capability.GregtechDataCodes.SYNC_TILE_MODE;
+
 public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity implements IControllable {
 
     private static Class<?> clazz;
@@ -177,7 +180,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
         tileMode = inverted;
         if (!getWorld().isRemote) {
             reinitializeEnergyContainer();
-            writeCustomData(100, b -> b.writeBoolean(tileMode));
+            writeCustomData(SYNC_TILE_MODE, b -> b.writeBoolean(tileMode));
             getHolder().notifyBlockUpdate();
             markDirty();
         }
@@ -219,11 +222,11 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 1) {
+        if (dataId == IS_ACTIVE) {
             this.isActive = buf.readBoolean();
             scheduleRenderUpdate();
         }
-        if (dataId == 100) {
+        if (dataId == SYNC_TILE_MODE) {
             this.tileMode = buf.readBoolean();
             scheduleRenderUpdate();
         }
@@ -233,7 +236,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
         this.isActive = active;
         markDirty();
         if (!getWorld().isRemote) {
-            writeCustomData(1, buf -> buf.writeBoolean(active));
+            writeCustomData(IS_ACTIVE, buf -> buf.writeBoolean(active));
         }
     }
 

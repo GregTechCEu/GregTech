@@ -45,6 +45,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_AUTO_OUTPUT_FLUIDS;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
+
 public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITieredMetaTileEntity, IActiveOutputSide {
 
 
@@ -255,10 +258,10 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 100) {
+        if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == 102) {
+        } else if (dataId == UPDATE_AUTO_OUTPUT_FLUIDS) {
             this.autoOutputFluids = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
         }
@@ -280,7 +283,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
         this.outputFacing = outputFacing;
         if (!getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
-            writeCustomData(100, buf -> buf.writeByte(outputFacing.getIndex()));
+            writeCustomData(UPDATE_OUTPUT_FACING, buf -> buf.writeByte(outputFacing.getIndex()));
             markDirty();
         }
     }
@@ -346,7 +349,7 @@ public class MetaTileEntityQuantumTank extends MetaTileEntity implements ITiered
     public void setAutoOutputFluids(boolean autoOutputFluids) {
         this.autoOutputFluids = autoOutputFluids;
         if (!getWorld().isRemote) {
-            writeCustomData(102, buf -> buf.writeBoolean(autoOutputFluids));
+            writeCustomData(UPDATE_AUTO_OUTPUT_FLUIDS, buf -> buf.writeBoolean(autoOutputFluids));
             markDirty();
         }
     }

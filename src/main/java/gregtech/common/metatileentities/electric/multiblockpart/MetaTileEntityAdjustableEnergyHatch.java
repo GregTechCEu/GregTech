@@ -29,6 +29,8 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.AMP_INDEX;
+
 public class MetaTileEntityAdjustableEnergyHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IEnergyContainer> {
 
     private static final int[] ampRange = {2, 4, 8, 16};
@@ -107,7 +109,7 @@ public class MetaTileEntityAdjustableEnergyHatch extends MetaTileEntityMultibloc
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 101) {
+        if (dataId == AMP_INDEX) {
             this.ampIndex = buf.readInt();
             scheduleRenderUpdate();
         }
@@ -117,7 +119,7 @@ public class MetaTileEntityAdjustableEnergyHatch extends MetaTileEntityMultibloc
         this.ampIndex = (this.ampIndex + 1) % ampRange.length;
         if (!getWorld().isRemote) {
             reinitializeEnergyContainer();
-            writeCustomData(101, b -> b.writeInt(ampIndex));
+            writeCustomData(AMP_INDEX, b -> b.writeInt(ampIndex));
             getHolder().notifyBlockUpdate();
             markDirty();
         }

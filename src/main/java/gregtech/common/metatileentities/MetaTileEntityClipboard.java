@@ -21,7 +21,6 @@ import gregtech.api.util.GregFakePlayer;
 import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import gregtech.common.items.behaviors.ClipboardBehavior;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,8 +37,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -48,6 +45,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static codechicken.lib.raytracer.RayTracer.*;
+import static gregtech.api.capability.GregtechDataCodes.*;
 import static gregtech.api.render.Textures.CLIPBOARD_RENDERER;
 import static gregtech.common.items.MetaItems.CLIPBOARD;
 
@@ -158,7 +156,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             FakeModularUIContainerClipboard fakeModularUIContainer = new FakeModularUIContainerClipboard(ui, this);
             this.guiContainerCache = fakeModularUIContainer;
             this.guiCache = new FakeModularGui(ui, fakeModularUIContainer);
-            this.writeCustomData(1, buffer -> { });
+            this.writeCustomData(CREATE_FAKE_UI, buffer -> { });
         } catch (Exception e) {
             GTLog.logger.error(e);
         }
@@ -343,16 +341,16 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 0) {
+        if (dataId == UPDATE_UI) {
             int windowID = buf.readVarInt();
             int widgetID = buf.readVarInt();
             if (guiCache != null)
                 guiCache.handleWidgetUpdate(windowID, widgetID, buf);
             this.scheduleRenderUpdate();
-        } else if (dataId == 1) {
+        } else if (dataId == CREATE_FAKE_UI) {
             createFakeGui();
             this.scheduleRenderUpdate();
-        } else if (dataId == 2) {
+        } else if (dataId == MOUSE_POSITION) {
             int mouseX = buf.readVarInt();
             int mouseY = buf.readVarInt();
             if (guiCache != null && guiContainerCache != null) {
@@ -395,7 +393,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
             int mouseX = (int) ((clickCoords.getLeft() / scale));
             int mouseY = (int) ((clickCoords.getRight() / scale));
             if (0 <= mouseX && mouseX <= width && 0 <= mouseY && mouseY <= height) {
-                this.writeCustomData(2, buf -> {
+                this.writeCustomData(MOUSE_POSITION, buf -> {
                     buf.writeVarInt(mouseX);
                     buf.writeVarInt(mouseY);
                 });
