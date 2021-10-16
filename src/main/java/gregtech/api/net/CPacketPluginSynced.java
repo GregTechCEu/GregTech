@@ -23,7 +23,7 @@ public class CPacketPluginSynced implements NetworkHandler.Packet {
         this.payloadWriter = payloadWriter;
     }
 
-    private CPacketPluginSynced(MonitorPluginBaseBehavior plugin, PacketBuffer buf) {
+    CPacketPluginSynced(MonitorPluginBaseBehavior plugin, PacketBuffer buf) {
         this(plugin, buf.readVarInt(), null);
         this.buf = buf;
     }

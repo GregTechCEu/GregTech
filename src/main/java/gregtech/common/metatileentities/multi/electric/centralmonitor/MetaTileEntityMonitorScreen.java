@@ -1,17 +1,11 @@
 package gregtech.common.metatileentities.multi.electric.centralmonitor;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
-import gregicadditions.client.ClientHandler;
-import gregicadditions.client.renderer.RenderHelper;
-import gregicadditions.covers.CoverDigitalInterface;
-import gregicadditions.item.behaviors.monitorPlugin.ProxyHolderPluginBehavior;
-import gregicadditions.machines.GATileEntities;
-import gregicadditions.utils.BlockPatternChecker;
-import gregicadditions.utils.Tuple;
-import gregicadditions.widgets.WidgetARGB;
-import gregicadditions.widgets.monitor.WidgetCoverList;
-import gregicadditions.widgets.monitor.WidgetMonitorScreen;
-import gregicadditions.widgets.monitor.WidgetPluginConfig;
+import gregtech.api.render.Textures;
+import gregtech.api.util.BlockPatternChecker;
+import gregtech.api.util.RenderUtil;
+import gregtech.common.covers.CoverDigitalInterface;
+import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
@@ -24,6 +18,11 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
+import gregtech.common.gui.widget.WidgetARGB;
+import gregtech.common.gui.widget.monitor.WidgetCoverList;
+import gregtech.common.gui.widget.monitor.WidgetMonitorScreen;
+import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
+import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMultiblockPart;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -79,7 +78,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         CoverDigitalInterface last_cover = this.getCoverFromPosSide(coverPos);
         CoverDigitalInterface now_cover = this.getCoverFromPosSide(cover);
         if (this.mode == mode) {
-            if (Objects.equals(cover, coverPos) && last_cover == null && cover == null || last_cover != null && last_cover == now_cover){
+            if (Objects.equals(cover, coverPos) && last_cover == null && cover == null || last_cover != null && last_cover == now_cover) {
                 return;
             }
         }
@@ -105,7 +104,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     public void setConfig(int slot, float scale, int color) {
-        if ((this.scale == scale || scale < 1 || scale > 8) && (this.slot == slot || slot < 0) && this.frameColor == color) return;
+        if ((this.scale == scale || scale < 1 || scale > 8) && (this.slot == slot || slot < 0) && this.frameColor == color)
+            return;
         this.slot = slot;
         this.scale = scale;
         this.frameColor = color;
@@ -116,18 +116,18 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     public CoverDigitalInterface getCoverFromPosSide(Tuple<BlockPos, EnumFacing> posFacing) {
         if (posFacing == null) return null;
         ICoverable mte = null;
-        MetaTileEntityHolder holder = getHolderFromPos(posFacing.getKey());
+        MetaTileEntityHolder holder = getHolderFromPos(posFacing.getFirst());
         if (holder == null) {
-            TileEntity te = this.getWorld() == null || posFacing.getKey() == null? null:this.getWorld().getTileEntity(posFacing.getKey());
+            TileEntity te = this.getWorld() == null || posFacing.getFirst() == null ? null : this.getWorld().getTileEntity(posFacing.getFirst());
             if (te instanceof TileEntityPipeBase) {
                 mte = ((TileEntityPipeBase<?, ?>) te).getCoverableImplementation();
             }
         } else {
             mte = holder.getMetaTileEntity();
         }
-        if(mte != null){
-            CoverBehavior cover = mte.getCoverAtSide(posFacing.getValue());
-            if (cover instanceof CoverDigitalInterface){
+        if (mte != null) {
+            CoverBehavior cover = mte.getCoverAtSide(posFacing.getSecond());
+            if (cover instanceof CoverDigitalInterface) {
                 return (CoverDigitalInterface) cover;
             }
         }
@@ -135,7 +135,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     public MetaTileEntityHolder getHolderFromPos(BlockPos pos) {
-        TileEntity te = this.getWorld() == null || pos == null? null:this.getWorld().getTileEntity(pos);
+        TileEntity te = this.getWorld() == null || pos == null ? null : this.getWorld().getTileEntity(pos);
         if (te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).isValid()) {
             return (MetaTileEntityHolder) te;
         }
@@ -153,8 +153,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     private void writeSync(PacketBuffer buf) {
         buf.writeBoolean(this.coverPos != null);
         if (this.coverPos != null) {
-            buf.writeBlockPos(coverPos.getKey());
-            buf.writeByte(coverPos.getValue().getIndex());
+            buf.writeBlockPos(coverPos.getFirst());
+            buf.writeByte(coverPos.getSecond().getIndex());
         }
         buf.writeByte(this.mode.ordinal());
         buf.writeVarInt(this.slot);
@@ -186,7 +186,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     private void updateProxyPlugin() {
         if (this.plugin instanceof ProxyHolderPluginBehavior) {
             if (this.mode == CoverDigitalInterface.MODE.PROXY && coverPos != null) {
-                ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(coverPos.getKey());
+                ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(coverPos.getFirst());
             } else {
                 ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(null);
             }
@@ -223,7 +223,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         if (controller != null) {
             EnumFacing spin = BlockPatternChecker.getSpin(controller);
             EnumFacing facing = controller.getFrontFacing();
-            int height = ((MetaTileEntityCentralMonitor)this.getController()).height;
+            int height = ((MetaTileEntityCentralMonitor) this.getController()).height;
             switch (facing.getAxis()) {
                 case Y:
                     if (spin.getAxis() == EnumFacing.Axis.X)
@@ -247,7 +247,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     public boolean isActive() {
         if (this.coverPos != null && this.mode != CoverDigitalInterface.MODE.PROXY) {
-            CoverDigitalInterface cover = coverTMP != null? coverTMP : this.getCoverFromPosSide(this.coverPos);
+            CoverDigitalInterface cover = coverTMP != null ? coverTMP : this.getCoverFromPosSide(this.coverPos);
             if (cover != null) {
                 if (cover.isProxy()) {
                     coverTMP = cover;
@@ -284,7 +284,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public void update() {
         super.update();
-        if(plugin != null && this.getController() != null && this.isActive()) {
+        if (plugin != null && this.getController() != null && this.isActive()) {
             plugin.update();
         }
     }
@@ -293,7 +293,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     public void renderScreen(float partialTicks, RayTraceResult rayTraceResult) {
         EnumFacing side = getController().getFrontFacing();
         GlStateManager.translate((scale - 1) * 0.5, (scale - 1) * 0.5, 0);
-        GlStateManager.scale(this.scale,this.scale,1);
+        GlStateManager.scale(this.scale, this.scale, 1);
 
         if (plugin != null) {
             plugin.renderPlugin(partialTicks, rayTraceResult);
@@ -301,9 +301,9 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
         if (coverTMP != null) {
             boolean flag = true;
-            if(checkLookingAt(rayTraceResult) != null && plugin == null && this.mode != CoverDigitalInterface.MODE.PROXY) {
+            if (checkLookingAt(rayTraceResult) != null && plugin == null && this.mode != CoverDigitalInterface.MODE.PROXY) {
                 EntityPlayer player = Minecraft.getMinecraft().player;
-                if(coverTMP.renderSneakingLookAt(rayTraceResult.getBlockPos(), side, slot, partialTicks)) {
+                if (coverTMP.renderSneakingLookAt(rayTraceResult.getBlockPos(), side, slot, partialTicks)) {
                     flag = false;
                 }
             }
@@ -322,22 +322,22 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                     }
                     String name = itemStack.getDisplayName();
                     // render machine
-                    RenderHelper.renderItemOverLay(-2.6f, -2.65f, 0.003f,1/100f, itemStack);
+                    RenderUtil.renderItemOverLay(-2.6f, -2.65f, 0.003f, 1 / 100f, itemStack);
                     // render name
-                    RenderHelper.renderText(0, -3.5f/16, 0, 1.0f / 200, 0XFFFFFFFF, name, true);
+                    RenderUtil.renderText(0, -3.5f / 16, 0, 1.0f / 200, 0XFFFFFFFF, name, true);
                 }
 
             }
             // render frame
-            RenderHelper.renderRect(-7f/16, -7f/16, 14f/16, 0.01f,0.003f, frameColor);
-            RenderHelper.renderRect(-7f/16, -4f/16 - 0.01f, 14f/16, 0.01f,0.003f, frameColor);
-            RenderHelper.renderRect(-7f/16, -7f/16 + 0.01f, 0.01f, 3f/16 - 0.02f,0.003f, frameColor);
-            RenderHelper.renderRect(7f/16 - 0.01f, -7f/16 + 0.01f, 0.01f, 3f/16 - 0.02f,0.003f, frameColor);
+            RenderUtil.renderRect(-7f / 16, -7f / 16, 14f / 16, 0.01f, 0.003f, frameColor);
+            RenderUtil.renderRect(-7f / 16, -4f / 16 - 0.01f, 14f / 16, 0.01f, 0.003f, frameColor);
+            RenderUtil.renderRect(-7f / 16, -7f / 16 + 0.01f, 0.01f, 3f / 16 - 0.02f, 0.003f, frameColor);
+            RenderUtil.renderRect(7f / 16 - 0.01f, -7f / 16 + 0.01f, 0.01f, 3f / 16 - 0.02f, 0.003f, frameColor);
 
-            RenderHelper.renderRect(-7f/16, -3f/16, 14f/16, 0.01f,0.003f, frameColor);
-            RenderHelper.renderRect(-7f/16, 7f/16 - 0.01f, 14f/16, 0.01f,0.003f, frameColor);
-            RenderHelper.renderRect(-7f/16, -3f/16 + 0.01f, 0.01f, 10f/16 - 0.02f,0.003f, frameColor);
-            RenderHelper.renderRect(7f/16 - 0.01f, -3f/16 + 0.01f, 0.01f, 10f/16 - 0.02f,0.003f, frameColor);
+            RenderUtil.renderRect(-7f / 16, -3f / 16, 14f / 16, 0.01f, 0.003f, frameColor);
+            RenderUtil.renderRect(-7f / 16, 7f / 16 - 0.01f, 14f / 16, 0.01f, 0.003f, frameColor);
+            RenderUtil.renderRect(-7f / 16, -3f / 16 + 0.01f, 0.01f, 10f / 16 - 0.02f, 0.003f, frameColor);
+            RenderUtil.renderRect(7f / 16 - 0.01f, -3f / 16 + 0.01f, 0.01f, 10f / 16 - 0.02f, 0.003f, frameColor);
         }
     }
 
@@ -373,9 +373,9 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if(dataId == 1) {
+        if (dataId == 1) {
             readSync(buf);
-        } else if(dataId == 2) { //plugin
+        } else if (dataId == 2) { //plugin
             if (plugin != null) {
                 plugin.readPluginData(buf.readVarInt(), buf);
             }
@@ -398,8 +398,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         if (this.coverPos != null) {
-            data.setTag("coverPos", NBTUtil.createPosTag(this.coverPos.getKey()));
-            data.setByte("coverSide", (byte) this.coverPos.getValue().getIndex());
+            data.setTag("coverPos", NBTUtil.createPosTag(this.coverPos.getFirst()));
+            data.setByte("coverSide", (byte) this.coverPos.getSecond().getIndex());
         }
         data.setByte("mode", (byte) this.mode.ordinal());
         data.setFloat("scale", this.scale);
@@ -412,10 +412,10 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
-        this.frameColor = data.hasKey("color")? data.getInteger("color") : 0XFF00Ff00;
-        this.scale = data.hasKey("scale")? data.getFloat("scale") : 1;
-        this.slot = data.hasKey("slot")? data.getInteger("slot") : 0;
-        this.mode = CoverDigitalInterface.MODE.VALUES[data.hasKey("mode")? data.getByte("mode") : 0];
+        this.frameColor = data.hasKey("color") ? data.getInteger("color") : 0XFF00Ff00;
+        this.scale = data.hasKey("scale") ? data.getFloat("scale") : 1;
+        this.slot = data.hasKey("slot") ? data.getInteger("slot") : 0;
+        this.mode = CoverDigitalInterface.MODE.VALUES[data.hasKey("mode") ? data.getByte("mode") : 0];
         this.inventory.deserializeNBT(data.getCompoundTag("Inventory"));
         if (data.hasKey("coverPos") && data.hasKey("coverSide")) {
             BlockPos pos = NBTUtil.getPosFromTag(data.getCompoundTag("coverPos"));
@@ -435,7 +435,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     protected void initializeInventory() {
         super.initializeInventory();
-        this.inventory = new ItemStackHandler(){
+        this.inventory = new ItemStackHandler() {
             @Override
             public int getSlotLimit(int slot) {
                 return 1;
@@ -450,7 +450,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             @Nonnull
             @Override
             public ItemStack extractItem(int slot, int amount, boolean simulate) {
-                if(!getWorld().isRemote && !getStackInSlot(slot).isEmpty() && !simulate) {
+                if (!getWorld().isRemote && !getStackInSlot(slot).isEmpty() && !simulate) {
                     unloadPlugin();
                     writeCustomData(3, packetBuffer -> {
                         packetBuffer.writeItemStack(ItemStack.EMPTY);
@@ -485,7 +485,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             CoverBehavior coverBehavior = getCoverFromPosSide(this.coverPos);
-            if (coverBehavior != null && coverBehavior.coverHolder!= null) {
+            if (coverBehavior != null && coverBehavior.coverHolder != null) {
                 return coverBehavior.coverHolder.getCapability(capability, coverBehavior.attachedSide);
             }
         }
@@ -504,35 +504,35 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             int width = 330;
             int height = 260;
             ToggleButtonWidget[] buttons = new ToggleButtonWidget[5];
-            buttons[0] = new ToggleButtonWidget(width - 135, 25, 20, 20, ClientHandler.BUTTON_FLUID, ()->this.mode == CoverDigitalInterface.MODE.FLUID, (isPressed)->{
+            buttons[0] = new ToggleButtonWidget(width - 135, 25, 20, 20, Textures.BUTTON_FLUID, () -> this.mode == CoverDigitalInterface.MODE.FLUID, (isPressed) -> {
                 if (isPressed) setMode(CoverDigitalInterface.MODE.FLUID);
             }).setTooltipText("metaitem.cover.digital.mode.fluid");
-            buttons[1] = new ToggleButtonWidget(width - 115, 25, 20, 20, ClientHandler.BUTTON_ITEM, ()->this.mode == CoverDigitalInterface.MODE.ITEM, (isPressed)->{
+            buttons[1] = new ToggleButtonWidget(width - 115, 25, 20, 20, Textures.BUTTON_ITEM, () -> this.mode == CoverDigitalInterface.MODE.ITEM, (isPressed) -> {
                 if (isPressed) setMode(CoverDigitalInterface.MODE.ITEM);
             }).setTooltipText("metaitem.cover.digital.mode.item");
-            buttons[2] = new ToggleButtonWidget(width - 95, 25, 20, 20, ClientHandler.BUTTON_ENERGY, ()->this.mode == CoverDigitalInterface.MODE.ENERGY, (isPressed)->{
+            buttons[2] = new ToggleButtonWidget(width - 95, 25, 20, 20, Textures.BUTTON_ENERGY, () -> this.mode == CoverDigitalInterface.MODE.ENERGY, (isPressed) -> {
                 if (isPressed) setMode(CoverDigitalInterface.MODE.ENERGY);
             }).setTooltipText("metaitem.cover.digital.mode.energy");
-            buttons[3] = new ToggleButtonWidget(width - 75, 25, 20, 20, ClientHandler.BUTTON_MACHINE, ()->this.mode == CoverDigitalInterface.MODE.MACHINE, (isPressed)->{
+            buttons[3] = new ToggleButtonWidget(width - 75, 25, 20, 20, Textures.BUTTON_MACHINE, () -> this.mode == CoverDigitalInterface.MODE.MACHINE, (isPressed) -> {
                 if (isPressed) setMode(CoverDigitalInterface.MODE.MACHINE);
             }).setTooltipText("metaitem.cover.digital.mode.machine");
-            buttons[4] = new ToggleButtonWidget(width - 35, 25, 20, 20, ClientHandler.BUTTON_INTERFACE, ()->this.mode == CoverDigitalInterface.MODE.PROXY, (isPressed)->{
+            buttons[4] = new ToggleButtonWidget(width - 35, 25, 20, 20, Textures.BUTTON_INTERFACE, () -> this.mode == CoverDigitalInterface.MODE.PROXY, (isPressed) -> {
                 if (isPressed) setMode(CoverDigitalInterface.MODE.PROXY);
             }).setTooltipText("metaitem.cover.digital.mode.proxy");
             List<CoverDigitalInterface> covers = new ArrayList<>();
-            ((MetaTileEntityCentralMonitor) controller).covers.forEach(coverPos->{
+            ((MetaTileEntityCentralMonitor) controller).covers.forEach(coverPos -> {
                 covers.add(getCoverFromPosSide(coverPos));
             });
             WidgetPluginConfig pluginWidget = new WidgetPluginConfig();
             WidgetPluginConfig mainGroup = new WidgetPluginConfig().setSize(width, height);
             mainGroup.widget(new LabelWidget(15, 55, "monitor.gui.title.scale", 0xFFFFFFFF))
-                    .widget(new ClickButtonWidget(50, 50, 20, 20, "-1", (data) -> setConfig(this.slot, ((float)Math.round((scale - (data.isShiftClick? 1.0f:0.1f))*10)/10), this.frameColor)))
-                    .widget(new ClickButtonWidget(130, 50, 20, 20, "+1", (data) -> setConfig(this.slot, ((float)Math.round((scale + (data.isShiftClick? 1.0f:0.1f))*10)/10), this.frameColor)))
+                    .widget(new ClickButtonWidget(50, 50, 20, 20, "-1", (data) -> setConfig(this.slot, ((float) Math.round((scale - (data.isShiftClick ? 1.0f : 0.1f)) * 10) / 10), this.frameColor)))
+                    .widget(new ClickButtonWidget(130, 50, 20, 20, "+1", (data) -> setConfig(this.slot, ((float) Math.round((scale + (data.isShiftClick ? 1.0f : 0.1f)) * 10) / 10), this.frameColor)))
                     .widget(new ImageWidget(70, 50, 60, 20, GuiTextures.DISPLAY))
                     .widget(new SimpleTextWidget(100, 60, "", 16777215, () -> Float.toString(scale)))
 
                     .widget(new LabelWidget(15, 85, "monitor.gui.title.argb", 0xFFFFFFFF))
-                    .widget(new WidgetARGB(50, 80, 20, this.frameColor, (color)->setConfig(this.slot, this.scale, color)))
+                    .widget(new WidgetARGB(50, 80, 20, this.frameColor, (color) -> setConfig(this.slot, this.scale, color)))
 
                     .widget(new LabelWidget(15, 110, "monitor.gui.title.slot", 0xFFFFFFFF))
                     .widget(new ClickButtonWidget(50, 105, 20, 20, "-1", (data) -> setConfig(this.slot - 1, this.scale, this.frameColor)))
@@ -543,10 +543,10 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                     .widget(new LabelWidget(15, 135, "monitor.gui.title.plugin", 0xFFFFFFFF))
                     .widget(new SlotWidget(inventory, 0, 50, 130, true, true)
                             .setBackgroundTexture(GuiTextures.SLOT)
-                            .setChangeListener(()->{
+                            .setChangeListener(() -> {
                                 if (this.getWorld() != null && !this.getWorld().isRemote) {
                                     MonitorPluginBaseBehavior behavior = MonitorPluginBaseBehavior.getBehavior(inventory.getStackInSlot(0));
-                                    if(behavior == null) {
+                                    if (behavior == null) {
                                         unloadPlugin();
                                     } else {
                                         loadPlugin(behavior);
@@ -556,7 +556,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                                     });
                                 }
                             }))
-                    .widget(new ClickButtonWidget(80, 130, 40, 20, "monitor.gui.title.config", (data)->{
+                    .widget(new ClickButtonWidget(80, 130, 40, 20, "monitor.gui.title.config", (data) -> {
                         if (plugin != null && mainGroup.isVisible()) {
                             plugin.customUI(pluginWidget, this.getHolder(), entityPlayer);
                             mainGroup.setVisible(false);
@@ -592,14 +592,13 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                     .widget(mainGroup)
                     .widget(new WidgetMonitorScreen(330, 0, 150, this))
                     .widget(new LabelWidget(15, 13, "gtadditions.machine.monitor_screen.name", 0XFFFFFFFF))
-                    .widget(new ClickButtonWidget(15, 25, 40, 20, "monitor.gui.title.back", data->{
-                        if (mainGroup.isVisible() && ((MetaTileEntityCentralMonitor)controller).isActive() && controller.isValid()) {
+                    .widget(new ClickButtonWidget(15, 25, 40, 20, "monitor.gui.title.back", data -> {
+                        if (mainGroup.isVisible() && ((MetaTileEntityCentralMonitor) controller).isActive() && controller.isValid()) {
                             MetaTileEntityUIFactory.INSTANCE.openUI(controller.getHolder(), (EntityPlayerMP) entityPlayer);
-                        }
-                        else if (!mainGroup.isVisible()) {
+                        } else if (!mainGroup.isVisible()) {
                             pluginWidget.removePluginWidget();
                             mainGroup.setVisible(true);
-                            if(plugin != null) {
+                            if (plugin != null) {
                                 plugin.markAsDirty();
                             }
                         }
@@ -610,14 +609,14 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                             if (!mainGroup.isVisible()) {
                                 pluginWidget.removePluginWidget();
                                 mainGroup.setVisible(true);
-                                if(plugin != null) {
+                                if (plugin != null) {
                                     plugin.markAsDirty();
                                 }
                             }
                         }
                     })
-                    .bindCloseListener(()->{
-                        if(plugin != null) {
+                    .bindCloseListener(() -> {
+                        if (plugin != null) {
                             plugin.markAsDirty();
                         }
                     })
@@ -635,7 +634,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         if (this.getWorld().isRemote) return true;
         CoverDigitalInterface coverBehavior = getCoverFromPosSide(this.coverPos);
         if (isRight) {
-            if (coverBehavior != null && coverBehavior.isProxy() && coverBehavior.coverHolder!= null && this.mode != CoverDigitalInterface.MODE.PROXY) {
+            if (coverBehavior != null && coverBehavior.isProxy() && coverBehavior.coverHolder != null && this.mode != CoverDigitalInterface.MODE.PROXY) {
                 if (playerIn.isSneaking() && playerIn.getHeldItemMainhand().isEmpty() && this.plugin == null) {
                     if (1f / 16 < x && x < 4f / 16 && 1f / 16 < y && y < 4f / 16) {
                         this.setConfig(this.slot - 1, this.scale, this.frameColor);
@@ -645,10 +644,10 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                         return true;
                     }
                 }
-                if(coverBehavior.modeRightClick(playerIn, hand, this.mode, this.slot) == EnumActionResult.PASS) {
+                if (coverBehavior.modeRightClick(playerIn, hand, this.mode, this.slot) == EnumActionResult.PASS) {
                     if (!playerIn.isSneaking() && this.openGUIOnRightClick()) {
                         TileEntity te = coverBehavior.getCoveredTE();
-                        if(te != null) {
+                        if (te != null) {
                             BlockPos pos = te.getPos();
                             IBlockState state = te.getWorld().getBlockState(pos);
                             state.getBlock().onBlockActivated(coverBehavior.coverHolder.getWorld(), pos, state, playerIn, hand, coverBehavior.getCoveredFacing(), 0.5f, 0.5f, 0.5f);
@@ -661,7 +660,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                 return true;
             }
         } else {
-            if (coverBehavior != null && coverBehavior.isProxy() && coverBehavior.coverHolder!= null && this.mode != CoverDigitalInterface.MODE.PROXY) {
+            if (coverBehavior != null && coverBehavior.isProxy() && coverBehavior.coverHolder != null && this.mode != CoverDigitalInterface.MODE.PROXY) {
                 return coverBehavior.modeLeftClick(playerIn, this.mode, this.slot);
             }
         }
@@ -680,13 +679,13 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         if (spin == EnumFacing.NORTH) {
             x = 1 - dX;
             y = 1 - dY;
-            if(rayTraceResult.sideHit.getYOffset() < 0) {
+            if (rayTraceResult.sideHit.getYOffset() < 0) {
                 y = 1 - y;
             }
         } else if (spin == EnumFacing.SOUTH) {
             x = dX;
             y = dY;
-            if(rayTraceResult.sideHit.getYOffset() < 0) {
+            if (rayTraceResult.sideHit.getYOffset() < 0) {
                 y = 1 - y;
             }
         } else if (spin == EnumFacing.EAST) {
@@ -695,7 +694,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             if (rayTraceResult.sideHit.getXOffset() < 0 || rayTraceResult.sideHit.getZOffset() > 0) {
                 x = 1 - x;
                 y = 1 - y;
-            } else if(rayTraceResult.sideHit.getYOffset() < 0) {
+            } else if (rayTraceResult.sideHit.getYOffset() < 0) {
                 y = 1 - y;
             }
         } else {
@@ -704,12 +703,12 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             if (rayTraceResult.sideHit.getXOffset() < 0 || rayTraceResult.sideHit.getZOffset() > 0) {
                 x = 1 - x;
                 y = 1 - y;
-            }else if(rayTraceResult.sideHit.getYOffset() < 0) {
+            } else if (rayTraceResult.sideHit.getYOffset() < 0) {
                 y = 1 - y;
             }
         }
         if (rayTraceResult.sideHit == EnumFacing.WEST || rayTraceResult.sideHit == EnumFacing.SOUTH) {
-            x = 1- x;
+            x = 1 - x;
         } else if (rayTraceResult.sideHit == EnumFacing.UP) {
             x = 1 - x;
             y = 1 - y;
@@ -721,7 +720,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         boolean flag = false;
         if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && this.getController() != null) {
             double[] pos = handleRayTraceResult(rayTraceResult, BlockPatternChecker.getSpin(this.getController()));
-            MetaTileEntityMonitorScreen[][] screens = ((MetaTileEntityCentralMonitor)this.getController()).screens;
+            MetaTileEntityMonitorScreen[][] screens = ((MetaTileEntityCentralMonitor) this.getController()).screens;
             int mX = this.getX(), mY = this.getY();
             int max = Math.max(mX, mY);
             for (int i = 0; i <= max && mX - i >= 0; i++) {
@@ -746,14 +745,14 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         if (this.getWorld() != null) {
             MultiblockControllerBase controller = this.getController();
             if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && controller != null && rayTraceResult.sideHit == controller.getFrontFacing()) {
-                int i = -1,j = -1;
+                int i = -1, j = -1;
                 TileEntity tileEntity = this.getWorld().getTileEntity(rayTraceResult.getBlockPos());
-                if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen){
+                if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
                     MetaTileEntityMonitorScreen screenHit = (MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
                     if (controller == screenHit.getController()) {
                         i = ((MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity()).getX() - this.getX();
                         j = ((MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity()).getY() - this.getY();
-                        double[] pos =  handleRayTraceResult(rayTraceResult, BlockPatternChecker.getSpin(controller));
+                        double[] pos = handleRayTraceResult(rayTraceResult, BlockPatternChecker.getSpin(controller));
                         if ((i >= 0 && j >= 0)) {
                             pos[0] = (pos[0] + i) / this.scale;
                             pos[1] = (pos[1] + j) / this.scale;
@@ -769,8 +768,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!(!playerIn.isSneaking() && playerIn.getHeldItemMainhand().hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, (EnumFacing)null))
-        && !GATileEntities.MONITOR_SCREEN.getStackForm().isItemEqual(playerIn.getHeldItemMainhand())) {
+        if (!(!playerIn.isSneaking() && playerIn.getHeldItemMainhand().hasCapability(GregtechCapabilities.CAPABILITY_SCREWDRIVER, (EnumFacing) null))
+                && !MetaTileEntities.MONITOR_SCREEN.getStackForm().isItemEqual(playerIn.getHeldItemMainhand())) {
             if (playerIn.world.getTotalWorldTime() - lastClickTime < 2 &&
                     playerIn.getPersistentID().equals(lastClickUUID)) {
                 return true;
@@ -790,7 +789,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!playerIn.isSneaking() && this.getWorld() != null && !this.getWorld().isRemote) {
-            MetaTileEntityUIFactory.INSTANCE.openUI(this.getHolder(), (EntityPlayerMP)playerIn);
+            MetaTileEntityUIFactory.INSTANCE.openUI(this.getHolder(), (EntityPlayerMP) playerIn);
             return true;
         } else {
             return false;

@@ -3,13 +3,6 @@ package gregtech.common.metatileentities.multi.electric.centralmonitor;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregicadditions.GAConfig;
-import gregicadditions.client.ClientHandler;
-import gregicadditions.client.renderer.RenderHelper;
-import gregicadditions.covers.CoverDigitalInterface;
-import gregicadditions.utils.BlockPatternChecker;
-import gregicadditions.utils.Tuple;
-import gregicadditions.widgets.monitor.WidgetScreenGrid;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.cover.CoverBehavior;
@@ -31,8 +24,13 @@ import gregtech.api.pipenet.tile.AttachmentType;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.Textures;
+import gregtech.api.util.BlockPatternChecker;
+import gregtech.api.util.RenderUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.covers.CoverDigitalInterface;
+import gregtech.common.gui.widget.monitor.WidgetScreenGrid;
 import gregtech.common.pipelike.cable.net.EnergyNet;
 import gregtech.common.pipelike.cable.net.WorldENet;
 import gregtech.common.pipelike.cable.tile.TileEntityCable;
@@ -47,6 +45,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -64,10 +63,10 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gregtech.api.multiblock.BlockPattern.RelativeDirection.*;
+import static gregtech.api.util.RelativeDirection.*;
 
 public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase implements IRenderMetaTileEntity {
-    private final static long ENERGY_COST = -GAConfig.multis.centralMonitor.euCost;
+    private final static long ENERGY_COST = -ConfigHolder.centralMonitorEuCost;
     public final static int MAX_HEIGHT = 9;
     public final static int MAX_WIDTH = 14;
     // run-time data
@@ -138,7 +137,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             }
             for (EnumFacing facing : EnumFacing.VALUES) {
                 TileEntity tileEntity = world.getTileEntity(pos.offset(facing));
-                if (tileEntity instanceof MetaTileEntityHolder && !((TileEntityPipeBase<?,?>) tileEntityCable).isConnectionBlocked(AttachmentType.PIPE, facing)) {
+                if (tileEntity instanceof MetaTileEntityHolder && ((TileEntityPipeBase<?,?>) tileEntityCable).isConnectionOpen(AttachmentType.PIPE, facing)) {
                     MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
                     if (metaTileEntity != null) {
                         CoverBehavior cover = metaTileEntity.getCoverAtSide(facing.getOpposite());
@@ -170,8 +169,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         }
         buf.writeInt(covers.size());
         for (Tuple<BlockPos, EnumFacing> cover : covers){
-            buf.writeBlockPos(cover.getKey());
-            buf.writeByte(cover.getValue().getIndex());
+            buf.writeBlockPos(cover.getFirst());
+            buf.writeByte(cover.getSecond().getIndex());
         }
     }
 
@@ -236,7 +235,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
         Textures.SCREEN.renderSided(getFrontFacing(), renderState, translation, pipeline);
-        ClientHandler.COVER_INTERFACE_PROXY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
+        Textures.COVER_INTERFACE_PROXY.renderSided(getFrontFacing().getOpposite(), renderState, translation, pipeline);
     }
 
     @Override
@@ -426,11 +425,11 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     public void renderMetaTileEntityDynamic(double x, double y, double z, float partialTicks) {
         if (!this.isStructureFormed()) return;
         EnumFacing spin = BlockPatternChecker.getSpin(this);
-        RenderHelper.useStencil(()->{
+        RenderUtil.useStencil(()->{
             GlStateManager.pushMatrix();
-            RenderHelper.moveToFace(x, y, z, this.frontFacing);
-            RenderHelper.rotateToFace(this.frontFacing, spin);
-            RenderHelper.renderRect(0.5f, -0.5f - (height - 2), width, height, 0.001f, 0xFF000000);
+            RenderUtil.moveToFace(x, y, z, this.frontFacing);
+            RenderUtil.rotateToFace(this.frontFacing, spin);
+            RenderUtil.renderRect(0.5f, -0.5f - (height - 2), width, height, 0.001f, 0xFF000000);
             GlStateManager.popMatrix();
         }, ()->{
             if (isActive) {
@@ -453,8 +452,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                                 BlockPos pos = screen.getPos();
                                 BlockPos pos2 = this.getPos();
                                 GlStateManager.pushMatrix();
-                                RenderHelper.moveToFace(x + pos.getX() - pos2.getX(), y + pos.getY() - pos2.getY(), z + pos.getZ() - pos2.getZ(), this.frontFacing);
-                                RenderHelper.rotateToFace(this.frontFacing, spin);
+                                RenderUtil.moveToFace(x + pos.getX() - pos2.getX(), y + pos.getY() - pos2.getY(), z + pos.getZ() - pos2.getZ(), this.frontFacing);
+                                RenderUtil.rotateToFace(this.frontFacing, spin);
                                 screen.renderScreen(partialTicks, rayTraceResult);
                                 GlStateManager.popMatrix();
                             }

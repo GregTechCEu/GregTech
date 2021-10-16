@@ -18,6 +18,8 @@ import gregtech.common.metatileentities.electric.multiblockpart.*;
 import gregtech.common.metatileentities.multi.*;
 import gregtech.common.metatileentities.multi.MetaTileEntityLargeBoiler.BoilerType;
 import gregtech.common.metatileentities.multi.electric.*;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine.TurbineType;
@@ -211,6 +213,9 @@ public class MetaTileEntities {
     public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
 
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
+    public static MetaTileEntityMonitorScreen MONITOR_SCREEN;
+    public static MetaTileEntityCentralMonitor CENTRAL_MONITOR;
+
 
     public static void init() {
         GTLog.logger.info("Registering MetaTileEntities");

@@ -1,5 +1,6 @@
 package gregtech.api.items.behavior;
 
+import gregtech.api.net.CPacketPluginSynced;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.api.gui.GuiTextures;

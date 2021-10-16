@@ -1,7 +1,5 @@
 package gregtech.common.gui.widget.monitor;
 
-import gregicadditions.client.renderer.WorldRenderEventRenderer;
-import gregicadditions.covers.CoverDigitalInterface;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.LabelWidget;
@@ -12,6 +10,8 @@ import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.common.covers.CoverDigitalInterface;
+import gregtech.common.render.WorldRenderEventRenderer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -173,7 +173,7 @@ public class WidgetCoverList extends ScrollableListWidget {
                 if (widget instanceof WidgetGroup) {
                     Widget widget1 = ((WidgetGroup) widget).getContainedWidgets(true).get(0);
                     SlotWidget slotWidget = (SlotWidget) widget1;
-                    slotWidget.setEnabled(widget.getPosition().y >= this.getPosition().y - 9 && widget.getPosition().y <= this.getPosition().y + this.getSize().height - 9);
+                    slotWidget.setActive(widget.getPosition().y >= this.getPosition().y - 9 && widget.getPosition().y <= this.getPosition().y + this.getSize().height - 9);
                 }
             });
             if (selected != null) {

@@ -6,9 +6,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
-import gregicadditions.client.ClientHandler;
-import gregicadditions.client.renderer.RenderHelper;
-import gregicadditions.widgets.WidgetOreList;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
@@ -26,7 +23,10 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.tile.PipeCoverableImplementation;
+import gregtech.api.render.Textures;
 import gregtech.api.util.Position;
+import gregtech.api.util.RenderUtil;
+import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -133,7 +133,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
     private int progress = 0;
     private int maxProgress = 0;
     private boolean isActive = true;
-    private boolean isWorkingEnable = false;
+    private boolean isWorkingEnabled = false;
     private long lastClickTime;
     private UUID lastClickUUID;
     // persistent data
@@ -307,7 +307,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         packetBuffer.writeInt(progress);
         packetBuffer.writeInt(maxProgress);
         packetBuffer.writeBoolean(isActive);
-        packetBuffer.writeBoolean(isWorkingEnable);
+        packetBuffer.writeBoolean(isWorkingEnabled);
     }
 
     @Override
@@ -331,7 +331,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         progress = packetBuffer.readInt();
         maxProgress = packetBuffer.readInt();
         isActive = packetBuffer.readBoolean();
-        isWorkingEnable = packetBuffer.readBoolean();
+        isWorkingEnabled = packetBuffer.readBoolean();
     }
 
     @Override
@@ -444,7 +444,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         IWorkable workable = this.getMachineCapability();
         if (mode == MODE.MACHINE && workable != null) {
             if (playerIn.isSneaking()) {
-                workable.setWorkingEnabled(!isWorkingEnable);
+                workable.setWorkingEnabled(!isWorkingEnabled);
                 return EnumActionResult.SUCCESS;
             }
         }
@@ -487,23 +487,23 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         WidgetGroup primaryGroup = new WidgetGroup(new Position(0, 10));
         primaryGroup.addWidget(new LabelWidget(10, 5, "metaitem.cover.digital.name", 0));
         ToggleButtonWidget[] buttons = new ToggleButtonWidget[5];
-        buttons[0] = new ToggleButtonWidget(40, 20, 20, 20, ClientHandler.BUTTON_FLUID, () -> this.mode == MODE.FLUID, (pressed) -> {
+        buttons[0] = new ToggleButtonWidget(40, 20, 20, 20, Textures.BUTTON_FLUID, () -> this.mode == MODE.FLUID, (pressed) -> {
             if (pressed) setMode(MODE.FLUID);
         }).setTooltipText("metaitem.cover.digital.mode.fluid");
         ;
-        buttons[1] = new ToggleButtonWidget(60, 20, 20, 20, ClientHandler.BUTTON_ITEM, () -> this.mode == MODE.ITEM, (pressed) -> {
+        buttons[1] = new ToggleButtonWidget(60, 20, 20, 20, Textures.BUTTON_ITEM, () -> this.mode == MODE.ITEM, (pressed) -> {
             if (pressed) setMode(MODE.ITEM);
         }).setTooltipText("metaitem.cover.digital.mode.item");
         ;
-        buttons[2] = new ToggleButtonWidget(80, 20, 20, 20, ClientHandler.BUTTON_ENERGY, () -> this.mode == MODE.ENERGY, (pressed) -> {
+        buttons[2] = new ToggleButtonWidget(80, 20, 20, 20, Textures.BUTTON_ENERGY, () -> this.mode == MODE.ENERGY, (pressed) -> {
             if (pressed) setMode(MODE.ENERGY);
         }).setTooltipText("metaitem.cover.digital.mode.energy");
         ;
-        buttons[3] = new ToggleButtonWidget(100, 20, 20, 20, ClientHandler.BUTTON_MACHINE, () -> this.mode == MODE.MACHINE, (pressed) -> {
+        buttons[3] = new ToggleButtonWidget(100, 20, 20, 20, Textures.BUTTON_MACHINE, () -> this.mode == MODE.MACHINE, (pressed) -> {
             if (pressed) setMode(MODE.MACHINE);
         }).setTooltipText("metaitem.cover.digital.mode.machine");
         ;
-        buttons[4] = new ToggleButtonWidget(140, 20, 20, 20, ClientHandler.BUTTON_INTERFACE, () -> this.mode == MODE.PROXY, (pressed) -> {
+        buttons[4] = new ToggleButtonWidget(140, 20, 20, 20, Textures.BUTTON_INTERFACE, () -> this.mode == MODE.PROXY, (pressed) -> {
             if (pressed) setMode(MODE.PROXY);
         }).setTooltipText("metaitem.cover.digital.mode.proxy");
         ;
@@ -619,7 +619,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
                         packetBuffer.writeLong(energyCapability);
                     });
                 }
-                if (this.coverHolder.getTimer() % 20 == 0) { //per second
+                if (this.coverHolder.getOffsetTimer() % 20 == 0) { //per second
                     writeUpdateData(5, packetBuffer -> {
                         packetBuffer.writeLong(energyInputPerDur);
                         packetBuffer.writeLong(energyOutputPerDur);
@@ -642,10 +642,10 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
                 int maxProgress = workable.getMaxProgress();
                 boolean isActive = workable.isActive();
                 boolean isWorkingEnable = workable.isWorkingEnabled();
-                if (isActive != this.isActive || isWorkingEnable != this.isWorkingEnable || this.progress != progress || this.maxProgress != maxProgress) {
+                if (isActive != this.isActive || isWorkingEnable != this.isWorkingEnabled || this.progress != progress || this.maxProgress != maxProgress) {
                     this.progress = progress;
                     this.maxProgress = maxProgress;
-                    this.isWorkingEnable = isWorkingEnable;
+                    this.isWorkingEnabled = isWorkingEnable;
                     this.isActive = isActive;
                     writeUpdateData(6, packetBuffer -> {
                         packetBuffer.writeInt(progress);
@@ -654,7 +654,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
                         packetBuffer.writeBoolean(isWorkingEnable);
                     });
                 }
-                if (this.coverHolder.getTimer() % 20 == 0) {
+                if (this.coverHolder.getOffsetTimer() % 20 == 0) {
                     IEnergyContainer energyContainer = this.getEnergyCapability();
                     if (energyContainer != null) {
                         if (energyStored != energyContainer.getEnergyStored() || energyCapability != energyContainer.getEnergyCapacity()) {
@@ -856,11 +856,11 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
             this.maxProgress = packetBuffer.readInt();
             this.isActive = packetBuffer.readBoolean();
             boolean isWorkingEnable = packetBuffer.readBoolean();
-            if (this.isWorkingEnable != isWorkingEnable && this.mode == MODE.MACHINE) {
-                this.isWorkingEnable = isWorkingEnable;
+            if (this.isWorkingEnabled != isWorkingEnable && this.mode == MODE.MACHINE) {
+                this.isWorkingEnabled = isWorkingEnable;
                 this.coverHolder.scheduleRenderUpdate();
             }
-            this.isWorkingEnable = isWorkingEnable;
+            this.isWorkingEnabled = isWorkingEnable;
         }
     }
 
@@ -913,19 +913,19 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
             translation.apply(rotation);
         }
         if (mode == MODE.PROXY) {
-            ClientHandler.COVER_INTERFACE_PROXY.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderHelper.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_PROXY.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
         } else if (mode == MODE.FLUID) {
-            ClientHandler.COVER_INTERFACE_FLUID.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderHelper.adjustTrans(translation, this.attachedSide, 1));
-            ClientHandler.COVER_INTERFACE_FLUID_GLASS.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderHelper.adjustTrans(translation, this.attachedSide, 3));
+            Textures.COVER_INTERFACE_FLUID.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_FLUID_GLASS.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 3));
         } else if (mode == MODE.ITEM) {
-            ClientHandler.COVER_INTERFACE_ITEM.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderHelper.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_ITEM.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
         } else if (mode == MODE.ENERGY) {
-            ClientHandler.COVER_INTERFACE_ENERGY.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderHelper.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_ENERGY.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
         } else if (mode == MODE.MACHINE) {
-            if (isWorkingEnable) {
-                ClientHandler.COVER_INTERFACE_MACHINE_ON.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderHelper.adjustTrans(translation, this.attachedSide, 1));
+            if (isWorkingEnabled) {
+                Textures.COVER_INTERFACE_MACHINE_ON.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
             } else {
-                ClientHandler.COVER_INTERFACE_MACHINE_OFF.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderHelper.adjustTrans(translation, this.attachedSide, 1));
+                Textures.COVER_INTERFACE_MACHINE_OFF.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
             }
         }
     }
@@ -946,8 +946,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
 
-        RenderHelper.moveToFace(x, y, z, this.attachedSide);
-        RenderHelper.rotateToFace(this.attachedSide, this.spin);
+        RenderUtil.moveToFace(x, y, z, this.attachedSide);
+        RenderUtil.rotateToFace(this.attachedSide, this.spin);
 
         if (!renderSneakingLookAt(this.coverHolder.getPos(), this.attachedSide, this.slot, partialTicks)) {
             renderMode(this.mode, this.slot, partialTicks);
@@ -971,11 +971,11 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         if (player != null && player.isSneaking() && player.getHeldItemMainhand().isEmpty()) {
             RayTraceResult rayTraceResult = player.rayTrace(Minecraft.getMinecraft().playerController.getBlockReachDistance(), partialTicks);
             if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && rayTraceResult.sideHit == side && rayTraceResult.getBlockPos().equals(blockPos)) {
-                RenderHelper.renderRect(-7f / 16, -7f / 16, 3f / 16, 3f / 16, 0.002f, 0XFF838583);
-                RenderHelper.renderRect(4f / 16, -7f / 16, 3f / 16, 3f / 16, 0.002f, 0XFF838583);
-                RenderHelper.renderText(-5.5f / 16, -5.5F / 16, 0, 1.0f / 70, 0XFFFFFFFF, "<", true);
-                RenderHelper.renderText(5.7f / 16, -5.5F / 16, 0, 1.0f / 70, 0XFFFFFFFF, ">", true);
-                RenderHelper.renderText(0, -5.5F / 16, 0, 1.0f / 120, 0XFFFFFFFF, "Slot: " + slot, true);
+                RenderUtil.renderRect(-7f / 16, -7f / 16, 3f / 16, 3f / 16, 0.002f, 0XFF838583);
+                RenderUtil.renderRect(4f / 16, -7f / 16, 3f / 16, 3f / 16, 0.002f, 0XFF838583);
+                RenderUtil.renderText(-5.5f / 16, -5.5F / 16, 0, 1.0f / 70, 0XFFFFFFFF, "<", true);
+                RenderUtil.renderText(5.7f / 16, -5.5F / 16, 0, 1.0f / 70, 0XFFFFFFFF, ">", true);
+                RenderUtil.renderText(0, -5.5F / 16, 0, 1.0f / 120, 0XFFFFFFFF, "Slot: " + slot, true);
                 TileEntity te = getCoveredTE();
                 if (te != null) {
                     ItemStack itemStack;
@@ -986,9 +986,9 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
                         itemStack = te.getBlockType().getPickBlock(te.getWorld().getBlockState(pos), new RayTraceResult(new Vec3d(0.5, 0.5, 0.5), getCoveredFacing(), pos), te.getWorld(), pos, Minecraft.getMinecraft().player);
                     }
                     String name = itemStack.getDisplayName();
-                    RenderHelper.renderRect(-7f / 16, -4f / 16, 14f / 16, 1f / 16, 0.002f, 0XFF000000);
-                    RenderHelper.renderText(0, -3.5F / 16, 0, 1.0f / 200, 0XFFFFFFFF, name, true);
-                    RenderHelper.renderItemOverLay(-8f / 16, -5f / 16, 0.002f, 1f / 32, itemStack);
+                    RenderUtil.renderRect(-7f / 16, -4f / 16, 14f / 16, 1f / 16, 0.002f, 0XFF000000);
+                    RenderUtil.renderText(0, -3.5F / 16, 0, 1.0f / 200, 0XFFFFFFFF, name, true);
+                    RenderUtil.renderItemOverLay(-8f / 16, -5f / 16, 0.002f, 1f / 32, itemStack);
                 }
                 return true;
             }
@@ -1011,9 +1011,9 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
 
     @SideOnly(Side.CLIENT)
     private void renderMachineMode(float partialTicks) {
-        int color = energyCapability > 10 * energyStored ? 0XFFFF2F39 : isWorkingEnable ? 0XFF00FF00 : 0XFFFF662E;
+        int color = energyCapability > 10 * energyStored ? 0XFFFF2F39 : isWorkingEnabled ? 0XFF00FF00 : 0XFFFF662E;
         if (isActive && maxProgress != 0) {
-            float offset = ((this.coverHolder.getTimer() % 20 + partialTicks) * 0.875f / 20);
+            float offset = ((this.coverHolder.getOffsetTimer() % 20 + partialTicks) * 0.875f / 20);
             float start = Math.max(-0.4375f, -0.875f + 2 * offset);
             float width = Math.min(0.4375f, -0.4375f + 2 * offset) - start;
             int startAlpha = 0X00;
@@ -1023,17 +1023,17 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
             } else if (start > 0.4375) {
                 endAlpha = (int) (510 - 255 / 0.4375 * offset);
             }
-            RenderHelper.renderRect(-7f / 16, -7f / 16, progress * 14f / (maxProgress * 16), 3f / 16, 0.002f, 0XFFFF5F44);
-            RenderHelper.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(progress * 100 / maxProgress, MODE.MACHINE), true);
-            RenderHelper.renderGradientRect(start, -4f / 16, width, 1f / 16, 0.002f, (color & 0X00FFFFFF) | (startAlpha << 24), (color & 0X00FFFFFF) | (endAlpha << 24), true);
+            RenderUtil.renderRect(-7f / 16, -7f / 16, progress * 14f / (maxProgress * 16), 3f / 16, 0.002f, 0XFFFF5F44);
+            RenderUtil.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(progress * 100 / maxProgress, MODE.MACHINE), true);
+            RenderUtil.renderGradientRect(start, -4f / 16, width, 1f / 16, 0.002f, (color & 0X00FFFFFF) | (startAlpha << 24), (color & 0X00FFFFFF) | (endAlpha << 24), true);
         } else {
-            RenderHelper.renderRect(-7f / 16, -4f / 16, 14f / 16, 1f / 16, 0.002f, color);
+            RenderUtil.renderRect(-7f / 16, -4f / 16, 14f / 16, 1f / 16, 0.002f, color);
         }
         if (this.isProxy()) {
-            if (isWorkingEnable) {
-                RenderHelper.renderTextureArea(ClientHandler.COVER_INTERFACE_MACHINE_ON_PROXY, -7f / 16, 1f / 16, 14f / 16, 3f / 16, 0.002f);
+            if (isWorkingEnabled) {
+                RenderUtil.renderTextureArea(Textures.COVER_INTERFACE_MACHINE_ON_PROXY, -7f / 16, 1f / 16, 14f / 16, 3f / 16, 0.002f);
             } else {
-                RenderHelper.renderTextureArea(ClientHandler.COVER_INTERFACE_MACHINE_OFF_PROXY, -7f / 16, -1f / 16, 14f / 16, 5f / 16, 0.002f);
+                RenderUtil.renderTextureArea(Textures.COVER_INTERFACE_MACHINE_OFF_PROXY, -7f / 16, -1f / 16, 14f / 16, 5f / 16, 0.002f);
             }
         }
     }
@@ -1048,25 +1048,25 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         for (long d : outputEnergyList) {
             max = Math.max(max, d);
         }
-        RenderHelper.renderLineChart(inputEnergyList, max, -5.5f / 16, 5.5f / 16, 12f / 16, 6f / 16, 0.005f, 0XFF03FF00);
-        RenderHelper.renderLineChart(outputEnergyList, max, -5.5f / 16, 5.5f / 16, 12f / 16, 6f / 16, 0.005f, 0XFFFF2F39);
-        RenderHelper.renderText(-5.7f / 16, -2.3f / 16, 0, 1.0f / 270, 0XFF03FF00, "EU I: " + energyInputPerDur + "EU/s", false);
-        RenderHelper.renderText(-5.7f / 16, -1.6f / 16, 0, 1.0f / 270, 0XFFFF0000, "EU O: " + energyOutputPerDur + "EU/s", false);
-        RenderHelper.renderRect(-7f / 16, -7f / 16, energyStored * 14f / (energyCapability * 16), 3f / 16, 0.002f, 0XFFFFD817);
-        RenderHelper.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(energyStored, MODE.ENERGY), true);
+        RenderUtil.renderLineChart(inputEnergyList, max, -5.5f / 16, 5.5f / 16, 12f / 16, 6f / 16, 0.005f, 0XFF03FF00);
+        RenderUtil.renderLineChart(outputEnergyList, max, -5.5f / 16, 5.5f / 16, 12f / 16, 6f / 16, 0.005f, 0XFFFF2F39);
+        RenderUtil.renderText(-5.7f / 16, -2.3f / 16, 0, 1.0f / 270, 0XFF03FF00, "EU I: " + energyInputPerDur + "EU/s", false);
+        RenderUtil.renderText(-5.7f / 16, -1.6f / 16, 0, 1.0f / 270, 0XFFFF0000, "EU O: " + energyOutputPerDur + "EU/s", false);
+        RenderUtil.renderRect(-7f / 16, -7f / 16, energyStored * 14f / (energyCapability * 16), 3f / 16, 0.002f, 0XFFFFD817);
+        RenderUtil.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(energyStored, MODE.ENERGY), true);
     }
 
     @SideOnly(Side.CLIENT)
     private void renderItemMode(int slot) {
         ItemStack itemStack = items[slot];
         if (!itemStack.isEmpty()) {
-            RenderHelper.renderItemOverLay(-8f / 16, -5f / 16, 0, 1f / 32, itemStack);
+            RenderUtil.renderItemOverLay(-8f / 16, -5f / 16, 0, 1f / 32, itemStack);
             if (maxItemCapability != 0) {
-                RenderHelper.renderRect(-7f / 16, -7f / 16, Math.max(itemStack.getCount() * 14f / (maxItemCapability * 16), 0.001f), 3f / 16, 0.002f, 0XFF25B9FF);
+                RenderUtil.renderRect(-7f / 16, -7f / 16, Math.max(itemStack.getCount() * 14f / (maxItemCapability * 16), 0.001f), 3f / 16, 0.002f, 0XFF25B9FF);
             } else {
-                RenderHelper.renderRect(-7f / 16, -7f / 16, Math.max(itemStack.getCount() * 14f / (itemStack.getMaxStackSize() * 16), 0.001f), 3f / 16, 0.002f, 0XFF25B9FF);
+                RenderUtil.renderRect(-7f / 16, -7f / 16, Math.max(itemStack.getCount() * 14f / (itemStack.getMaxStackSize() * 16), 0.001f), 3f / 16, 0.002f, 0XFF25B9FF);
             }
-            RenderHelper.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(itemStack.getCount(), MODE.ITEM), true);
+            RenderUtil.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), 0XFFFFFFFF, readAmountOrCountOrEnergy(itemStack.getCount(), MODE.ITEM), true);
 
         }
     }
@@ -1076,11 +1076,11 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         FluidStack fluidStack = fluids[slot].getContents();
         assert fluidStack != null;
         float height = 10f / 16 * Math.max(fluidStack.amount * 1.0f / fluids[slot].getCapacity(), 0.001f);
-        RenderHelper.renderFluidOverLay(-7f / 16, 0.4375f - height, 14f / 16, height, 0.002f, fluidStack, 0.8f);
+        RenderUtil.renderFluidOverLay(-7f / 16, 0.4375f - height, 14f / 16, height, 0.002f, fluidStack, 0.8f);
         int fluidColor = WidgetOreList.getFluidColor(fluidStack.getFluid());
         int textColor = ((fluidColor & 0xff) + ((fluidColor >> 8) & 0xff) + ((fluidColor >> 16) & 0xff)) / 3 > (255 / 2) ? 0X0 : 0XFFFFFFFF;
-        RenderHelper.renderRect(-7f / 16, -7f / 16, 14f / 16, 3f / 16, 0.002f, fluidColor | (255 << 24));
-        RenderHelper.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), textColor, readAmountOrCountOrEnergy(fluidStack.amount, MODE.FLUID), true);
+        RenderUtil.renderRect(-7f / 16, -7f / 16, 14f / 16, 3f / 16, 0.002f, fluidColor | (255 << 24));
+        RenderUtil.renderText(0, -5.5F / 16, 0, 1.0f / (isProxy() ? 110 : 70), textColor, readAmountOrCountOrEnergy(fluidStack.amount, MODE.FLUID), true);
     }
 
     static String[][] units = {

@@ -21,6 +21,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.render.Textures;
+import gregtech.api.util.BlockPatternChecker;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
@@ -826,6 +827,8 @@ public abstract class MetaTileEntity implements ICoverable {
         } else if (dataId == UPDATE_IS_FRAGILE) {
             this.isFragile = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
+        } else if (dataId == -9) {
+            BlockPatternChecker.setSpin(this, EnumFacing.VALUES[buf.readByte()]);
         }
     }
 

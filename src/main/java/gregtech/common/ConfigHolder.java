@@ -99,6 +99,13 @@ public class ConfigHolder {
     @Config.RequiresMcRestart
     public static int gasTurbineBonusOutput = 6144;
 
+    @Config.Comment("The EU drain per tick for each screen.")
+    @Config.Name("CentralMonitor cost")
+    @Config.RangeInt(min = 0)
+    @Config.RequiresMcRestart
+    public static int centralMonitorEuCost = 50;
+
+
     public static class VanillaRecipes {
 
         @Config.Comment("Whether to make glass related recipes harder. Default: true")

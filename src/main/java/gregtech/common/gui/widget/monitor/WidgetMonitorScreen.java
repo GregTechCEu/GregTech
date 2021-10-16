@@ -1,11 +1,11 @@
 package gregtech.common.gui.widget.monitor;
 
-import gregicadditions.client.renderer.RenderHelper;
-import gregicadditions.machines.multi.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.util.Position;
+import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import net.minecraft.client.renderer.GlStateManager;
 
 public class WidgetMonitorScreen extends Widget {
@@ -20,8 +20,8 @@ public class WidgetMonitorScreen extends Widget {
     public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
         Position position = this.getPosition();
         Size size = this.getSize();
-        RenderHelper.renderRect(position.x, position.y, size.width, size.height, 0, 0XFF7B7A7C);
-        RenderHelper.renderRect(position.x + 2, position.y + 2, size.width - 4, size.height - 4, 0, 0XFF000000);
+        RenderUtil.renderRect(position.x, position.y, size.width, size.height, 0, 0XFF7B7A7C);
+        RenderUtil.renderRect(position.x + 2, position.y + 2, size.width - 4, size.height - 4, 0, 0XFF000000);
 
         if (screen != null && screen.isActive()) {
             GlStateManager.pushMatrix();

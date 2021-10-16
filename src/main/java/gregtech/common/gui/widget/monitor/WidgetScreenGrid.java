@@ -1,12 +1,12 @@
 package gregtech.common.gui.widget.monitor;
 
-import gregicadditions.client.renderer.RenderHelper;
-import gregicadditions.machines.multi.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.util.Position;
+import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -66,7 +66,7 @@ public class WidgetScreenGrid extends Widget {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(x + (width / 2), y + (height / 2), 100);
                 GlStateManager.scale(width, height, 1);
-                RenderHelper.renderRect(-0.5f, -0.5f, this.monitorScreen.scale, this.monitorScreen.scale, 0, 0XFF000000);
+                RenderUtil.renderRect(-0.5f, -0.5f, this.monitorScreen.scale, this.monitorScreen.scale, 0, 0XFF000000);
                 monitorScreen.renderScreen(0, null);
                 GlStateManager.popMatrix();
             }
