@@ -1,5 +1,6 @@
 package gregtech.integration.jei.recipe;
 
+import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.Recipe.ChanceEntry;
 import gregtech.api.recipes.RecipeMap;
@@ -8,6 +9,8 @@ import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.util.GTUtility;
 import gregtech.integration.jei.utils.JEIHelpers;
+import it.unimi.dsi.fastutil.ints.Int2BooleanMap;
+import it.unimi.dsi.fastutil.ints.Int2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import mezz.jei.api.ingredients.IIngredients;
@@ -27,6 +30,8 @@ public class GTRecipeWrapper implements IRecipeWrapper {
     private static final int LINE_HEIGHT = 10;
 
     private final Int2ObjectMap<ChanceEntry> chanceOutput = new Int2ObjectOpenHashMap<>();
+    private final Int2BooleanMap notConsumedItemInput = new Int2BooleanOpenHashMap();
+    private final Int2BooleanMap notConsumedFluidInput = new Int2BooleanOpenHashMap();
     private final RecipeMap<?> recipeMap;
     private final Recipe recipe;
 
@@ -41,35 +46,43 @@ public class GTRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void getIngredients(@Nonnull IIngredients ingredients) {
-        int currentSlot = recipeMap.getMaxInputs();
+        int currentItemSlot = 0;
+        int currentFluidSlot = 0;
 
         // Inputs
         if (!recipe.getInputs().isEmpty()) {
             List<List<ItemStack>> matchingInputs = new ArrayList<>(recipe.getInputs().size());
-            recipe.getInputs().forEach(ci -> matchingInputs.add(Arrays.stream(ci.getIngredient().getMatchingStacks())
-                    .sorted(OreDictUnifier.getItemStackComparator())
-                    .map(is -> GTUtility.copyAmount(ci.getCount() == 0 ? 1 : ci.getCount(), is))
-                    .collect(Collectors.toList())));
+            for (CountableIngredient ci : recipe.getInputs()) {
+                matchingInputs.add(Arrays.stream(ci.getIngredient().getMatchingStacks())
+                        .sorted(OreDictUnifier.getItemStackComparator())
+                        .map(is -> GTUtility.copyAmount(ci.getCount() == 0 ? 1 : ci.getCount(), is))
+                        .collect(Collectors.toList()));
+                notConsumedItemInput.put(currentItemSlot++, ci.getCount() == 0);
+            }
             ingredients.setInputLists(VanillaTypes.ITEM, matchingInputs);
         }
+        currentItemSlot = recipeMap.getMaxInputs();
 
         // Fluid Inputs
         if (!recipe.getFluidInputs().isEmpty()) {
             ingredients.setInputs(VanillaTypes.FLUID, recipe.getFluidInputs().stream()
                     .map(fs -> GTUtility.copyAmount(fs.amount == 0 ? 1 : fs.amount, fs))
                     .collect(Collectors.toList()));
+            for (FluidStack fs : recipe.getFluidInputs()) {
+                notConsumedFluidInput.put(currentFluidSlot++, fs.amount == 0);
+            }
         }
 
         // Outputs
         if (!recipe.getOutputs().isEmpty() || !recipe.getChancedOutputs().isEmpty()) {
             List<ItemStack> recipeOutputs = recipe.getOutputs()
                     .stream().map(ItemStack::copy).collect(Collectors.toList());
-            currentSlot += recipeOutputs.size();
+            currentItemSlot += recipeOutputs.size();
 
             List<ChanceEntry> chancedOutputs = recipe.getChancedOutputs();
             chancedOutputs.sort(Comparator.comparingInt(entry -> entry == null ? 0 : entry.getChance()));
             for (ChanceEntry chancedEntry : chancedOutputs) {
-                chanceOutput.put(currentSlot++, chancedEntry);
+                chanceOutput.put(currentItemSlot++, chancedEntry);
                 recipeOutputs.add(chancedEntry.getItemStack());
             }
             ingredients.setOutputs(VanillaTypes.ITEM, recipeOutputs);
@@ -113,6 +126,14 @@ public class GTRecipeWrapper implements IRecipeWrapper {
 
     public Int2ObjectMap<ChanceEntry> getChanceOutputMap() {
         return chanceOutput;
+    }
+
+    public Int2BooleanMap getNotConsumedItemInputs() {
+        return notConsumedItemInput;
+    }
+
+    public Int2BooleanMap getNotConsumedFluidInputs() {
+        return notConsumedFluidInput;
     }
 
     private int getPropertyListHeight() {

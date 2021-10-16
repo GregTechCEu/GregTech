@@ -10,11 +10,18 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ItemStackChanceRenderer extends ItemStackRenderer {
+public class ItemStackTextRenderer extends ItemStackRenderer {
     private final ChanceEntry chance;
+    private final boolean notConsumed;
 
-    public ItemStackChanceRenderer(ChanceEntry chance) {
+    public ItemStackTextRenderer(ChanceEntry chance) {
         this.chance = chance;
+        this.notConsumed = false;
+    }
+
+    public ItemStackTextRenderer(boolean notConsumed) {
+        this.chance = null;
+        this.notConsumed = notConsumed;
     }
 
     @Override
@@ -34,6 +41,19 @@ public class ItemStackChanceRenderer extends ItemStackRenderer {
 
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
             fontRenderer.drawStringWithShadow(s, (xPosition + 6) * 2 - fontRenderer.getStringWidth(s) + 19, (yPosition + 1) * 2, 0xFFFF00);
+
+            GlStateManager.popMatrix();
+            GlStateManager.enableBlend();
+        }
+        else if (this.notConsumed) {
+            GlStateManager.disableBlend();
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(0.5, 0.5, 1);
+            // z hackery to render the text above the item
+            GlStateManager.translate(0, 0, 160);
+
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+            fontRenderer.drawStringWithShadow("#", (xPosition + 6) * 2 - fontRenderer.getStringWidth("#") + 19, (yPosition + 1) * 2, 0xFFFF00);
 
             GlStateManager.popMatrix();
             GlStateManager.enableBlend();
