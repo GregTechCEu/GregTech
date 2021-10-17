@@ -32,8 +32,8 @@
           "value": "ore:asbestos"
         },
         {
-          "weight": 10,
-          "value": "ore:diatomite"
+          "weight": 15,
+          "value": "ore:trona"
         }
       ]
     }
