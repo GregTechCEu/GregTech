@@ -2,7 +2,7 @@
   "weight": 60,
   "density": 0.3,
   "max_height": 40,
-  "min_height": 10,
+  "min_height": 15,
   "vein_populator": {
     "type": "surface_rock",
     "material": "almandine"
