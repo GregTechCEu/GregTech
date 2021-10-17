@@ -21,6 +21,10 @@
         {
           "weight": 100,
           "value": "ore:coal"
+        },
+        {
+          "weight": 20,
+          "value": "ore:graphite"
         }
       ]
     }
