@@ -50,8 +50,7 @@ public class BedrockFluidVeinHandler {
                 int weight = Math.abs(query % totalWeight);
                 for (Map.Entry<BedrockFluidDepositDefinition, Integer> entry : veinList.entrySet()) {
                     int veinWeight = entry.getValue() + entry.getKey().getBiomeWeightModifier().apply(biome);
-                    if (veinWeight != 0 && entry.getKey().getDimensionFilter().test(world.provider) &&
-                            entry.getKey().getBiomeWeightModifier().apply(biome) != 0) {
+                    if (veinWeight != 0 && entry.getKey().getDimensionFilter().test(world.provider)) {
                         weight -= veinWeight;
                         if (weight < 0) {
                             definition = entry.getKey();
