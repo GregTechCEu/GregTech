@@ -1,6 +1,6 @@
 {
-  "weight": 15,
-  "density": 0.5,
+  "weight": 20,
+  "density": 0.7,
   "max_height": 40,
   "min_height": 20,
   "dimension_filter": [
@@ -14,7 +14,7 @@
     "type": "ellipsoid",
     "radius": [
       10,
-      12
+      15
     ]
   },
   "filler": {
