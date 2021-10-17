@@ -231,7 +231,7 @@ public class WorldGenRegistry {
             if(element == null) {
                 GTLog.logger.error("Addon mod tried to register bad ore definition at {}", definition.getDepositName());
                 addonRegisteredDefinitions.remove(definition);
-                break; //break or continue?
+                continue;
             }
 
             definition.initializeFromConfig(element);
