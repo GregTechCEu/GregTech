@@ -15,7 +15,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class BedrockFluidVeinHandler {
 
@@ -43,17 +42,17 @@ public class BedrockFluidVeinHandler {
         if (worldEntry == null) {
             BedrockFluidDepositDefinition definition = null;
 
-            Random r = world.getChunk(chunkX / veinChunkSize, chunkZ / veinChunkSize).getRandomWithSeed(90210);
-            int query = r.nextInt();
+            int query = world.getChunk(chunkX / veinChunkSize, chunkZ / veinChunkSize).getRandomWithSeed(90210).nextInt();
 
             Biome biome = world.getBiomeForCoordsBody(new BlockPos(chunkX << 4, 64, chunkZ << 4));
             int totalWeight = getTotalWeight(world.provider, biome);
-            if (totalWeight > 0) {
+            if (totalWeight != 0) {
                 int weight = Math.abs(query % totalWeight);
                 for (Map.Entry<BedrockFluidDepositDefinition, Integer> entry : veinList.entrySet()) {
-                    if (entry.getKey().getDimensionFilter().test(world.provider) && (entry.getKey().getWeight() != 0 ||
-                        entry.getKey().getBiomeWeightModifier().apply(biome) != 0)) {
-                        weight -= entry.getValue();
+                    int veinWeight = entry.getValue() + entry.getKey().getBiomeWeightModifier().apply(biome);
+                    if (veinWeight != 0 && entry.getKey().getDimensionFilter().test(world.provider) &&
+                            entry.getKey().getBiomeWeightModifier().apply(biome) != 0) {
+                        weight -= veinWeight;
                         if (weight < 0) {
                             definition = entry.getKey();
                             break;
@@ -185,7 +184,8 @@ public class BedrockFluidVeinHandler {
         int totalWeight = 0;
         for (Map.Entry<BedrockFluidDepositDefinition, Integer> entry : veinList.entrySet()) {
             if (entry.getKey().getDimensionFilter().test(provider))
-                totalWeight += entry.getKey().getWeight() + entry.getKey().getBiomeWeightModifier().apply(biome);
+                totalWeight += entry.getKey().getBiomeWeightModifier().apply(biome);
+            totalWeight += entry.getKey().getWeight();
         }
 
         // make sure the vein can generate if no biome weighting is added
