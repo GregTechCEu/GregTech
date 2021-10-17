@@ -8,6 +8,7 @@ import gregtech.api.unification.material.info.MaterialIconType;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.common.terminal.app.prospector.ProspectingTexture;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.Gui;
@@ -102,12 +103,11 @@ public class WidgetProspectingMap extends Widget {
                     }
                     break;
                 case 1:
-                    // TODO UNDERGROUND OIL IN THE FUTURE
-//                    PumpjackHandler.OilWorldInfo fStack = PumpjackHandler.getOilWorldInfo(world, chunk.x, chunk.z);
-//                    if (fStack != null && fStack.getType() != null) {
-//                        packet.addBlock(0, 2, 0, fStack.current + "");
-//                        packet.addBlock(0, 1, 0, fStack.getType().fluid);
-//                    }
+                    BedrockFluidVeinHandler.FluidVeinWorldEntry fStack = BedrockFluidVeinHandler.getFluidVeinWorldEntry(world, chunk.x, chunk.z);
+                    if (fStack != null && fStack.getVein() != null) {
+                        packet.addBlock(0, 2, 0, fStack.current + "");
+                        packet.addBlock(0, 1, 0, fStack.getVein().getStoredFluid().getName());
+                    }
                     break;
                 default:
                     break;

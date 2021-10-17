@@ -51,15 +51,18 @@ public class WorldGenRegistry {
     private final Map<String, Supplier<IVeinPopulator>> veinPopulatorRegistry = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private final Map<Integer, String> namedDimensions = new HashMap<>();
 
-    private final List<OreDepositDefinition> registeredDefinitions = new ArrayList<>();
+    private final List<OreDepositDefinition> registeredVeinDefinitions = new ArrayList<>();
     private final Map<WorldProvider, WorldOreVeinCache> oreVeinCache = new WeakHashMap<>();
+
+    private final List<BedrockFluidDepositDefinition> registeredBedrockFluidVeinDefinitions = new ArrayList<>();
+    private final Map<WorldProvider, WorldFluidVeinCache> fluidVeinCache = new WeakHashMap<>();
 
     private class WorldOreVeinCache {
         private final List<OreDepositDefinition> worldVeins;
         private final Map<Biome, List<Entry<Integer, OreDepositDefinition>>> biomeVeins = new HashMap<>();
 
         public WorldOreVeinCache(WorldProvider worldProvider) {
-            this.worldVeins = registeredDefinitions.stream()
+            this.worldVeins = registeredVeinDefinitions.stream()
                     .filter(definition -> definition.getDimensionFilter().test(worldProvider))
                     .collect(Collectors.toList());
         }
@@ -68,6 +71,28 @@ public class WorldGenRegistry {
             if (biomeVeins.containsKey(biome))
                 return biomeVeins.get(biome);
             List<Entry<Integer, OreDepositDefinition>> result = worldVeins.stream()
+                    .map(vein -> new SimpleEntry<>(vein.getWeight() + vein.getBiomeWeightModifier().apply(biome), vein))
+                    .filter(entry -> entry.getKey() > 0)
+                    .collect(Collectors.toList());
+            biomeVeins.put(biome, result);
+            return result;
+        }
+    }
+
+    private class WorldFluidVeinCache {
+        private final List<BedrockFluidDepositDefinition> worldVeins;
+        private final Map<Biome, List<Entry<Integer, BedrockFluidDepositDefinition>>> biomeVeins = new HashMap<>();
+
+        public WorldFluidVeinCache(WorldProvider worldProvider) {
+            this.worldVeins = registeredBedrockFluidVeinDefinitions.stream()
+                    .filter(definition -> definition.getDimensionFilter().test(worldProvider))
+                    .collect(Collectors.toList());
+        }
+
+        private List<Entry<Integer, BedrockFluidDepositDefinition>> getBiomeEntry(Biome biome) {
+            if (biomeVeins.containsKey(biome))
+                return biomeVeins.get(biome);
+            List<Entry<Integer, BedrockFluidDepositDefinition>> result = worldVeins.stream()
                     .map(vein -> new SimpleEntry<>(vein.getWeight() + vein.getBiomeWeightModifier().apply(biome), vein))
                     .filter(entry -> entry.getKey() > 0)
                     .collect(Collectors.toList());
@@ -116,7 +141,7 @@ public class WorldGenRegistry {
      */
     public void reinitializeRegisteredVeins() throws IOException {
         GTLog.logger.info("Reloading ore generation files from config...");
-        registeredDefinitions.clear();
+        registeredVeinDefinitions.clear();
         oreVeinCache.clear();
         Path configPath = Loader.instance().getConfigDir().toPath().resolve(GTValues.MODID);
         // The Path for the file used to name dimensions for the JEI ore gen page
@@ -172,12 +197,12 @@ public class WorldGenRegistry {
                 OreDepositDefinition deposit = new OreDepositDefinition(depositName);
                 deposit.initializeFromConfig(element);
                 // Adds the registered definition to the list of all registered definitions
-                registeredDefinitions.add(deposit);
+                registeredVeinDefinitions.add(deposit);
             } catch (RuntimeException exception) {
                 GTLog.logger.error("Failed to parse worldgen definition {} on path {}", depositName, worldgenDefinition, exception);
             }
         }
-        GTLog.logger.info("Loaded {} worldgen definitions", registeredDefinitions.size());
+        GTLog.logger.info("Loaded {} worldgen definitions", registeredVeinDefinitions.size());
     }
 
     /**
@@ -329,7 +354,7 @@ public class WorldGenRegistry {
 
     @ZenGetter("oreDeposits")
     public static List<OreDepositDefinition> getOreDeposits() {
-        return Collections.unmodifiableList(INSTANCE.registeredDefinitions);
+        return Collections.unmodifiableList(INSTANCE.registeredVeinDefinitions);
     }
 
     public static Map<Integer, String> getNamedDimensions() {

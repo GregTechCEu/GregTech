@@ -42,7 +42,7 @@ public class OreProspectorApp extends AbstractApplication implements
             this.widgetOreList = new WidgetOreList(32 * chunkRadius - 16, offset, 333 - 32 * chunkRadius + 16, 232 - 2 * offset);
             this.addWidget(this.widgetOreList);
         }
-        this.widgetProspectingMap = new WidgetProspectingMap((7 - chunkRadius) * 16, offset + (7 - chunkRadius) * 16, chunkRadius, this.widgetOreList, 0, 1);
+        this.widgetProspectingMap = new WidgetProspectingMap((7 - chunkRadius) * 16, offset + (7 - chunkRadius) * 16, chunkRadius, this.widgetOreList, 1, 1);
         this.addWidget(1, this.widgetProspectingMap);
         loadLocalConfig(nbt -> this.widgetProspectingMap.setDarkMode(nbt.getBoolean("dark")));
         return this;

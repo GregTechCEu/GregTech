@@ -19,8 +19,12 @@ import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBinds;
+import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import gregtech.api.worldgen.config.WorldGenRegistry;
-import gregtech.common.*;
+import gregtech.common.CommonProxy;
+import gregtech.common.ConfigHolder;
+import gregtech.common.MetaEntities;
+import gregtech.common.MetaFluids;
 import gregtech.core.hooks.BloomRenderLayerHooks;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.modelfactories.BlockCompressedFactory;
@@ -39,9 +43,15 @@ import gregtech.loaders.dungeon.DungeonLootLoader;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.*;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.LoaderException;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional.Method;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static gregtech.api.GregTechAPI.*;
@@ -183,6 +193,12 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onPostInit(FMLPostInitializationEvent event) {
         proxy.onPostLoad();
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        BedrockFluidVeinHandler.recalculateChances(true);
+
     }
 
     @Mod.EventHandler
