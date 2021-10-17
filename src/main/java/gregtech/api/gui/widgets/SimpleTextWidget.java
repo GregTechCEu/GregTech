@@ -105,7 +105,7 @@ public class SimpleTextWidget extends Widget {
         int height = fontRenderer.FONT_HEIGHT * texts.size();
         for (int i = 0; i < texts.size(); i++) {
             String resultText = texts.get(i);
-            int width = fontRenderer.getStringWidth(resultText);;
+            int width = fontRenderer.getStringWidth(resultText);
             float x = pos.x - (isCentered ? width / 2f : 0);
             float y = pos.y - (isCentered ? height / 2f : 0) + i * fontRenderer.FONT_HEIGHT;
             fontRenderer.drawString(resultText, x, y, color, false);

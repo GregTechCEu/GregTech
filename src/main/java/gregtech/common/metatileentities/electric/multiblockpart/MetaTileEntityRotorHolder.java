@@ -37,6 +37,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.IS_ROTOR_LOOPING;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_ROTOR_COLOR;
+
 public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<MetaTileEntityRotorHolder> {
 
     private static final int NORMAL_MAXIMUM_SPEED = 6000;
@@ -195,7 +198,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         this.currentRotorSpeed = MathHelper.clamp(currentRotorSpeed + incrementSpeed, 0, maxRotorSpeed);
         this.isRotorLooping = currentRotorSpeed > 0;
         if (isRotorLooping != lastIsLooping && !getWorld().isRemote) {
-            writeCustomData(200, writer -> writer.writeBoolean(isRotorLooping));
+            writeCustomData(IS_ROTOR_LOOPING, writer -> writer.writeBoolean(isRotorLooping));
             markDirty();
         }
     }
@@ -204,7 +207,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
         int lastHasRotor = rotorColor;
         this.rotorColor = hasRotor1;
         if (rotorColor != lastHasRotor && (getWorld() != null && !getWorld().isRemote)) {
-            writeCustomData(201, writer -> writer.writeInt(rotorColor));
+            writeCustomData(UPDATE_ROTOR_COLOR, writer -> writer.writeInt(rotorColor));
             markDirty();
         }
     }
@@ -212,10 +215,10 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 200) {
+        if (dataId == IS_ROTOR_LOOPING) {
             this.isRotorLooping = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == 201) {
+        } else if (dataId == UPDATE_ROTOR_COLOR) {
             this.rotorColor = buf.readInt();
             getHolder().scheduleChunkForRenderUpdate();
         }

@@ -13,8 +13,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class FluidStackTextRenderer extends FluidStackRenderer {
+    private boolean notConsumed;
+
     public FluidStackTextRenderer(int capacityMb, boolean showCapacity, int width, int height, @Nullable IDrawable overlay) {
         super(capacityMb, showCapacity, width, height, overlay);
+        this.notConsumed = false;
+    }
+
+    public FluidStackTextRenderer setNotConsumed(boolean notConsumed) {
+        this.notConsumed = notConsumed;
+        return this;
     }
 
     @Override
@@ -33,6 +41,11 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
         fontRenderer.drawStringWithShadow(s, (xPosition + 6) * 2 - fontRenderer.getStringWidth(s) + 19, (yPosition + 11) * 2, 0xFFFFFF);
+
+        if (notConsumed) {
+            fontRenderer.drawStringWithShadow("NC", (xPosition + 6) * 2 - fontRenderer.getStringWidth("NC") + 19, (yPosition + 1) * 2, 0xFFFFFF);
+        }
+
         GlStateManager.popMatrix();
 
         GlStateManager.enableBlend();

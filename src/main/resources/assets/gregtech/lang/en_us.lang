@@ -1590,7 +1590,6 @@ material.wood_sealed=Sealed Wood
 material.glass=Glass
 material.perlite=Perlite
 material.borax=Borax
-material.lignite=Lignite Coal
 material.olivine=Olivine
 material.opal=Opal
 material.amethyst=Amethyst
@@ -3863,11 +3862,8 @@ gregtech.multiblock.universal.distinct.no=No
 gregtech.multiblock.universal.distinct.yes=Yes
 gregtech.multiblock.universal.distinct.info=If enabled, each Item Input Bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
 
-gregtech.multiblock.preview.tilt=Shift+LMB to tilt
-gregtech.multiblock.preview.zoom=Shift+RMB to zoom
-gregtech.multiblock.preview.pan=LMB+Drag to pan
-gregtech.multiblock.preview.move=RMB+Drag to move
-gregtech.multiblock.preview.reset=Scroll Mousewheel to reset
+gregtech.multiblock.preview.zoom=Use mousewheel or right-click+Drag to zoom
+gregtech.multiblock.preview.rotate=Click and drag to rotate
 gregtech.multiblock.preview.any_hatch=Any tier hatch can be used to form the structure
 gregtech.multiblock.preview.any_hatch_maintenance=Any type of maintenance hatch can be used to form the structure
 gregtech.multiblock.preview.limit=Minimum Limit: %d
@@ -3968,6 +3964,11 @@ gregtech.terminal.app_name.theme_settings=Theme Settings
 gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
 gregtech.terminal.app_name.ore_prospector=Ore Prospector
+gregtech.terminal.app_name.pong=Pong
+gregtech.terminal.app_name.minesweeper=Minesweeper
+gregtech.terminal.app_name.maze=Theseus's Escape
+
+
 gregtech.terminal.app_name.console=GT Console
 gregtech.terminal.app_name.battery=Battery Manager
 gregtech.terminal.app_name.hardware=Hardware Manager
@@ -3982,6 +3983,9 @@ terminal.items.description=A guide book about items.
 terminal.machines.description=A guide book about gt machines.
 terminal.multiblocks.description=A guide book about multi-blocks.
 terminal.tutorials.description=Introduces all kinds of things, CT integration, tips, tutorials and more.
+terminal.pong.description=A classic pong game, if you're really that bored of waiting for that tungstensteel.
+terminal.minesweeper.description=A classic minesweeper game, if you're in class.
+terminal.maze.description=A GTOS exclusive game finding you racing through an endless labyrinth to survive the Minotaur!
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
@@ -4079,6 +4083,7 @@ terminal.console.controllable=set working enable
 terminal.hardware.description=Hardware Manager, masterpieces of elegance and precision. How can a tablet be without hardware?
 terminal.hardware.select=Mounting hardware
 terminal.hardware.remove=Remove hardware
+terminal.hardware.tip.remove=§4right-click remove the hardware
 
 terminal.battery.description=Battery manager, visually analyzing your app's energy consumption.
 
@@ -4088,7 +4093,7 @@ terminal.store.miss=Require %s (%d).
 
 terminal.ar.open=Open AR
 
-terminal.multiblock_ar.description=Remember the §cFree Wrench§r?  Unfortunately, it it's gone.  It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
+terminal.multiblock_ar.description=Remember the §cFreedom Wrench§r?  Unfortunately, it it's gone. It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
 terminal.multiblock_ar.tier.0=AR Camera
 terminal.multiblock_ar.tier.1=3D Builder
 terminal.multiblock_ar.unlock=Unlock this mode after the upgrade

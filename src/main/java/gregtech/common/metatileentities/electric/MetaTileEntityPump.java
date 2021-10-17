@@ -48,6 +48,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.PUMP_HEAD_LEVEL;
+
 public class MetaTileEntityPump extends TieredMetaTileEntity {
 
     private static final Cuboid6 PIPE_CUBOID = new Cuboid6(6 / 16.0, 0.0, 6 / 16.0, 10 / 16.0, 1.0, 10 / 16.0);
@@ -101,7 +103,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 200) {
+        if (dataId == PUMP_HEAD_LEVEL) {
             this.pumpHeadY = buf.readVarInt();
             scheduleRenderUpdate();
         }
@@ -193,7 +195,7 @@ public class MetaTileEntityPump extends TieredMetaTileEntity {
                 }
 
                 // Always recheck next time
-                writeCustomData(200, b -> b.writeVarInt(pumpHeadY));
+                writeCustomData(PUMP_HEAD_LEVEL, b -> b.writeVarInt(pumpHeadY));
                 markDirty();
                 //schedule queue rebuild because we changed our position and no fluid is available
                 this.initializedQueue = false;

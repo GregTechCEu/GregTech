@@ -35,7 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static gregtech.api.capability.MultiblockDataCodes.STORE_TAPED;
+import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
 
 public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance {
 

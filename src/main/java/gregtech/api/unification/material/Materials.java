@@ -618,7 +618,6 @@ public class Materials {
     public static Material Glass;
     public static Material Perlite;
     public static Material Borax;
-    public static Material Lignite;
     public static Material Olivine;
     public static Material Opal;
     public static Material Amethyst;

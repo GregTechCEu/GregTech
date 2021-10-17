@@ -16,7 +16,7 @@ jobs:
     - name: Clone Repository
       shell: bash
       run: |
-        /usr/bin/git clone https://github.com/Irgendwer01/GregTech.git ./
+        /usr/bin/git clone https://github.com/Gregicality/GregTech.git ./
     - name: Declare some variables
       id: vars
       shell: bash

@@ -45,6 +45,9 @@ public class QuarkTechSuite extends ArmorLogicSuite {
     @Override
     public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
         IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if(item == null) {
+            return;
+        }
         NBTTagCompound data = GTUtility.getOrCreateNbtCompound(itemStack);
         byte toggleTimer = data.getByte("toggleTimer");
         boolean ret = false;

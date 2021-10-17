@@ -7,17 +7,25 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ItemStackChanceRenderer extends ItemStackRenderer {
+public class ItemStackTextRenderer extends ItemStackRenderer {
     private final ChanceEntry chance;
+    private final boolean notConsumed;
 
-    public ItemStackChanceRenderer(ChanceEntry chance) {
+    public ItemStackTextRenderer(ChanceEntry chance) {
         this.chance = chance;
+        this.notConsumed = false;
+    }
+
+    public ItemStackTextRenderer(boolean notConsumed) {
+        this.chance = null;
+        this.notConsumed = notConsumed;
     }
 
     @Override
-    public void render(Minecraft minecraft, int xPosition, int yPosition, @Nullable ItemStack ingredient) {
+    public void render(@Nonnull Minecraft minecraft, int xPosition, int yPosition, @Nullable ItemStack ingredient) {
         super.render(minecraft, xPosition, yPosition, ingredient);
 
         if (this.chance != null) {
@@ -25,7 +33,7 @@ public class ItemStackChanceRenderer extends ItemStackRenderer {
             GlStateManager.pushMatrix();
             GlStateManager.scale(0.5, 0.5, 1);
             // z hackery to render the text above the item
-            GlStateManager.translate(0, 0, 151);
+            GlStateManager.translate(0, 0, 160);
 
             String s = (this.chance.getChance() / 100) + "%";
             if (this.chance.getBoostPerTier() > 0)
@@ -33,6 +41,19 @@ public class ItemStackChanceRenderer extends ItemStackRenderer {
 
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
             fontRenderer.drawStringWithShadow(s, (xPosition + 6) * 2 - fontRenderer.getStringWidth(s) + 19, (yPosition + 1) * 2, 0xFFFF00);
+
+            GlStateManager.popMatrix();
+            GlStateManager.enableBlend();
+        }
+        else if (this.notConsumed) {
+            GlStateManager.disableBlend();
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(0.5, 0.5, 1);
+            // z hackery to render the text above the item
+            GlStateManager.translate(0, 0, 160);
+
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+            fontRenderer.drawStringWithShadow("NC", (xPosition + 6) * 2 - fontRenderer.getStringWidth("NC") + 19, (yPosition + 1) * 2, 0xFFFF00);
 
             GlStateManager.popMatrix();
             GlStateManager.enableBlend();

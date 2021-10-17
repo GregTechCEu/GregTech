@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.*;
 import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
 
 public class MetaTileEntityDrum extends MetaTileEntity {
@@ -186,7 +187,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == -200) {
+        if (dataId == SYNC_FLUID_CONTENT) {
             FluidStack fluidStack = null;
             if (buf.readBoolean()) {
                 try {
@@ -196,7 +197,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
                 }
             }
             fluidTank.setFluid(fluidStack);
-        } else if (dataId == 560) {
+        } else if (dataId == UPDATE_AUTO_OUTPUT) {
             this.isAutoOutput = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
         }
@@ -235,7 +236,7 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         isAutoOutput = !isAutoOutput;
         if (!getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
-            writeCustomData(560, buf -> buf.writeBoolean(isAutoOutput));
+            writeCustomData(UPDATE_AUTO_OUTPUT, buf -> buf.writeBoolean(isAutoOutput));
             markDirty();
         }
     }
@@ -330,9 +331,9 @@ public class MetaTileEntityDrum extends MetaTileEntity {
         private void onContentsChangedOnServer(FluidStack newFluid, FluidStack oldFluidStack) {
 
             if (newFluid != null && newFluid.isFluidEqual(oldFluidStack)) {
-                writeCustomData(-201, buf -> buf.writeInt(newFluid.amount));
+                writeCustomData(SYNC_FLUID_AMOUNT, buf -> buf.writeInt(newFluid.amount));
             } else {
-                writeCustomData(-200, buf -> {
+                writeCustomData(SYNC_FLUID_CONTENT, buf -> {
                     buf.writeBoolean(newFluid != null);
                     if (newFluid != null) {
                         NBTTagCompound tagCompound = new NBTTagCompound();
