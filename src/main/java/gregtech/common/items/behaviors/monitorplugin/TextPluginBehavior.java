@@ -1,10 +1,11 @@
 package gregtech.common.items.behaviors.monitorplugin;
 
-import gregicadditions.client.renderer.RenderHelper;
-import gregicadditions.widgets.WidgetARGB;
-import gregicadditions.widgets.monitor.WidgetPluginConfig;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.widgets.TextFieldWidget;
+import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
+import gregtech.api.util.RenderUtil;
+import gregtech.common.gui.widget.WidgetARGB;
+import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -78,7 +79,7 @@ public class TextPluginBehavior extends MonitorPluginBaseBehavior {
     @Override
     public void renderPlugin(float partialTicks, RayTraceResult rayTraceResult) {
         for (int i = 0; i < texts.length; i++) {
-            RenderHelper.renderText(-0.5f, -0.4625f + i / 16f, 0.002f, 1/128f, colors[i], texts[i], false);
+            RenderUtil.renderText(-0.5f, -0.4625f + i / 16f, 0.002f, 1/128f, colors[i], texts[i], false);
         }
     }
 

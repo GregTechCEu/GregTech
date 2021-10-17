@@ -62,7 +62,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
     @SideOnly(Side.CLIENT)
     private PluginWorldSceneRenderer worldSceneRenderer;
     @SideOnly(Side.CLIENT)
-    private Map<BlockPos, Pair<Vector3f, List<MetaTileEntityMonitorScreen>>> connections;
+    private Map<BlockPos, Pair<List<MetaTileEntityMonitorScreen>, Vector3f>> connections;
     @SideOnly(Side.CLIENT)
     private BlockPos minPos;
     @SideOnly(Side.CLIENT)
@@ -197,8 +197,8 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                                 MetaTileEntity met = ((FakeGuiPluginBehavior) screen.plugin).getRealMTE();
                                 if (met != null) {
                                     BlockPos pos = met.getPos().subtract(minPos);
-                                    Tuple<Vector3f, List<MetaTileEntityMonitorScreen>> tuple = connections.getOrDefault(pos, new Tuple<>(null, new ArrayList<>()));
-                                    tuple.getSecond().add(screen);
+                                    Pair<List<MetaTileEntityMonitorScreen>, Vector3f> tuple = connections.getOrDefault(pos, Pair.of(new ArrayList<>(), null));
+                                    tuple.getLeft().add(screen);
                                     connections.put(pos, tuple);
                                 }
                             }
@@ -398,9 +398,9 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                 GlStateManager.scale(1 / this.screen.scale, 1 / this.screen.scale, 1);
                 int sW = PluginWorldSceneRenderer.getWidth();
                 int sH = PluginWorldSceneRenderer.getHeight();
-                for (Pair<Vector3f, List<MetaTileEntityMonitorScreen>> tuple : connections.values()) {
-                    Vector3f origin = tuple.getKey();
-                    List<MetaTileEntityMonitorScreen> screens = tuple.getValue();
+                for (Pair<List<MetaTileEntityMonitorScreen>, Vector3f> tuple : connections.values()) {
+                    Vector3f origin = tuple.getRight();
+                    List<MetaTileEntityMonitorScreen> screens = tuple.getLeft();
                     if (origin != null) {
                         float oX = (origin.x / sW - 0.025f) * this.screen.scale;
                         float oY = (1 - origin.y / sH) * this.screen.scale;
