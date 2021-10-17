@@ -13,8 +13,8 @@
   "generator": {
     "type": "ellipsoid",
     "radius": [
-      20,
-      20
+      14,
+      18
     ]
   },
   "filler": {
@@ -27,7 +27,7 @@
           "value": "ore:naquadah"
         },
         {
-          "weight": 10,
+          "weight": 20,
           "value": "ore:naquadah_enriched"
         }
       ]

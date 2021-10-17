@@ -14,7 +14,7 @@
     "type": "ellipsoid",
     "radius": [
       12,
-      12
+      15
     ]
   },
   "filler": {
