@@ -53,7 +53,7 @@ public class ItemStackTextRenderer extends ItemStackRenderer {
             GlStateManager.translate(0, 0, 160);
 
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-            fontRenderer.drawStringWithShadow("#", (xPosition + 6) * 2 - fontRenderer.getStringWidth("#") + 19, (yPosition + 1) * 2, 0xFFFF00);
+            fontRenderer.drawStringWithShadow("NC", (xPosition + 6) * 2 - fontRenderer.getStringWidth("NC") + 19, (yPosition + 1) * 2, 0xFFFF00);
 
             GlStateManager.popMatrix();
             GlStateManager.enableBlend();

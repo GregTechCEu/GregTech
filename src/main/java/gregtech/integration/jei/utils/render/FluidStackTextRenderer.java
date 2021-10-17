@@ -43,7 +43,7 @@ public class FluidStackTextRenderer extends FluidStackRenderer {
         fontRenderer.drawStringWithShadow(s, (xPosition + 6) * 2 - fontRenderer.getStringWidth(s) + 19, (yPosition + 11) * 2, 0xFFFFFF);
 
         if (notConsumed) {
-            fontRenderer.drawStringWithShadow("#", (xPosition + 6) * 2 - fontRenderer.getStringWidth("#") + 19, (yPosition + 1) * 2, 0xFFFFFF);
+            fontRenderer.drawStringWithShadow("NC", (xPosition + 6) * 2 - fontRenderer.getStringWidth("NC") + 19, (yPosition + 1) * 2, 0xFFFFFF);
         }
 
         GlStateManager.popMatrix();
