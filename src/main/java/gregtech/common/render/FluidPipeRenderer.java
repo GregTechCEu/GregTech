@@ -84,9 +84,9 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
     public void registerIcons(TextureMap map) {
         for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
             EnumMap<FluidPipeType, PipeTextureInfo> pipeTypeMap = new EnumMap<>(FluidPipeType.class);
+            ResourceLocation sideLocation = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_side");
             for (FluidPipeType fluidPipeType : FluidPipeType.values()) {
                 ResourceLocation inLocation = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_" + fluidPipeType.name + "_in");
-                ResourceLocation sideLocation = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_" + fluidPipeType.name + "_side");
 
                 TextureAtlasSprite inTexture = map.registerSprite(inLocation);
                 TextureAtlasSprite sideTexture = map.registerSprite(sideLocation);

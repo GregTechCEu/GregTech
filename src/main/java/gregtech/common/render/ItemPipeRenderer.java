@@ -85,9 +85,9 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         restrictiveOverlay = map.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_restrictive"));
         for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
             EnumMap<ItemPipeType, PipeTextureInfo> pipeTypeMap = new EnumMap<>(ItemPipeType.class);
+            ResourceLocation sideLocation = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_side");
             for (ItemPipeType itemPipeType : ItemPipeType.values()) {
                 ResourceLocation inLocation = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_" + itemPipeType.name + "_in");
-                ResourceLocation sideLocation = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_" + itemPipeType.name + "_side");
 
                 TextureAtlasSprite inTexture = map.registerSprite(inLocation);
                 TextureAtlasSprite sideTexture = map.registerSprite(sideLocation);
