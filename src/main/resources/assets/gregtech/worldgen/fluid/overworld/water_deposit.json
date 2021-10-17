@@ -1,0 +1,10 @@
+{
+  "weight": 15,
+  "name": "Overworld Water Deposit",
+  "min_rate": 500,
+  "max_rate": 2000,
+  "depletion_amount": 1,
+  "depletion_chance": 5,
+  "depleted_production_rate": 100,
+  "fluid": "water"
+}

@@ -1,0 +1,10 @@
+{
+  "weight": 20,
+  "name": "Overworld Raw Oil Deposit",
+  "min_rate": 100,
+  "max_rate": 625,
+  "depletion_amount": 1,
+  "depletion_chance": 5,
+  "depleted_production_rate": 50,
+  "fluid": "oil_medium"
+}
