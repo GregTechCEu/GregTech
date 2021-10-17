@@ -65,7 +65,7 @@ public class BedrockFluidVeinHandler {
             int capacity = 0;
 
             if (definition != null) { //todo scale capacity to be not 100% random
-                capacity = GTUtility.getRandomIntXSTR(definition.getMinimumProductionRate()) + definition.getMaximumProductionRate();
+                capacity = GTUtility.getRandomIntXSTR(definition.getMaximumProductionRate()) + definition.getMinimumProductionRate();
             }
 
             worldEntry = new FluidVeinWorldEntry();
@@ -128,7 +128,7 @@ public class BedrockFluidVeinHandler {
         FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
         if (info == null)
             return 0;
-        return info.getVein().getDepletedRate();
+        return info.getVein().getDepletedProductionRate();
     }
 
     /**
@@ -184,6 +184,11 @@ public class BedrockFluidVeinHandler {
             if (entry.getKey().getDimensionFilter().test(provider))
                 totalWeight += entry.getKey().getWeight() + entry.getKey().getBiomeWeightModifier().apply(biome);
         }
+
+        // make sure the vein can generate if no biome weighting is added
+        if (totalWeight == 0)
+            totalWeight = 1;
+
         dimMap.put(biomeID, totalWeight);
         return totalWeight;
     }

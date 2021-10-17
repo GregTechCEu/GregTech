@@ -5,6 +5,7 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.world.IBiome;
 import gregtech.api.GTValues;
+import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.DimensionManager;
@@ -29,9 +30,9 @@ public class BedrockFluidDepositDefinition {
     private String assignedName; // Name for JEI display
     private String description; // Description for JEI display
     private final int[] productionRates = new int[]{0, Integer.MAX_VALUE}; // the [minimum, maximum] production rate
-    private int consumptionRate; // amount of fluid the vein gets drained by
+    private int depletionRate; // amount of fluid the vein gets drained by
     private int depletionChance; // the chance [0, 100] that the vein will deplete by 1
-    private int depletedRate; // production rate after the vein is depleted
+    private int depletedProductionRate; // production rate after the vein is depleted
 
     private Fluid storedFluid; // the fluid which the vein contains
 
@@ -46,30 +47,20 @@ public class BedrockFluidDepositDefinition {
 
     public void initializeFromConfig(JsonObject configRoot) {
         this.weight = configRoot.get("weight").getAsInt();
+        this.productionRates[0] = configRoot.get("min_rate").getAsInt();
+        this.productionRates[1] = configRoot.get("max_rate").getAsInt();
+        this.depletionRate = configRoot.get("depletion_rate").getAsInt();
+        this.depletionChance = configRoot.get("depletion_chance").getAsInt();
+        Fluid fluid = FluidRegistry.getFluid(configRoot.get("fluid").getAsString());
+        this.storedFluid = fluid != null ? fluid : DEFAULT_VEIN_FLUID;
         if (configRoot.has("name")) {
             this.assignedName = configRoot.get("name").getAsString();
         }
         if (configRoot.has("description")) {
             this.description = configRoot.get("description").getAsString();
         }
-        if (configRoot.has("min_rate")) {
-            this.productionRates[0] = configRoot.get("min_rate").getAsInt();
-        }
-        if (configRoot.has("max_rate")) {
-            this.productionRates[1] = configRoot.get("max_rate").getAsInt();
-        }
-        if (configRoot.has("drain")) {
-            this.consumptionRate = configRoot.get("drain").getAsInt();
-        }
-        if (configRoot.has("depletion_chance")) {
-            this.depletionChance = configRoot.get("depletion_chance").getAsInt();
-        }
-        if (configRoot.has("depleted_rate")) {
-            this.depletedRate = configRoot.get("depleted_rate").getAsInt();
-        }
-        if (configRoot.has("fluid")) {
-            Fluid fluid = FluidRegistry.getFluid(configRoot.get("fluid").getAsString());
-            this.storedFluid = fluid != null ? fluid : DEFAULT_VEIN_FLUID;
+        if (configRoot.has("depleted_production_rate")) {
+            this.depletedProductionRate = configRoot.get("depleted_production_rate").getAsInt();
         }
         if (configRoot.has("biome_modifier")) {
             this.biomeWeightModifier = WorldConfigUtils.createBiomeWeightModifier(configRoot.get("biome_modifier"));
@@ -77,6 +68,7 @@ public class BedrockFluidDepositDefinition {
         if (configRoot.has("dimension_filter")) {
             this.dimensionFilter = WorldConfigUtils.createWorldPredicate(configRoot.get("dimension_filter"));
         }
+        BedrockFluidVeinHandler.addFluidDeposit(this);
     }
 
     //This is the file name
@@ -116,8 +108,8 @@ public class BedrockFluidDepositDefinition {
     }
 
     @ZenGetter
-    public int getDrainRate() {
-        return consumptionRate;
+    public int getDepletionRate() {
+        return depletionRate;
     }
 
     @ZenGetter
@@ -126,8 +118,8 @@ public class BedrockFluidDepositDefinition {
     }
 
     @ZenGetter
-    public int getDepletedRate() {
-        return depletedRate;
+    public int getDepletedProductionRate() {
+        return depletedProductionRate;
     }
 
     @ZenGetter
