@@ -151,10 +151,13 @@ public class BedrockFluidVeinHandler {
         // attempt to deplete the vein
         // ciel(chance) - chance * 100 = % to get depleted
         // if random value < % chance, deplete by 1
-        int rawChance = definition.getDepletionChance();
-        int chanceToDecrease = (int) (100 * (Math.ceil(rawChance) - rawChance));
-        if (GTUtility.getRandomIntXSTR(100) < chanceToDecrease)
-            info.current = Math.max(0, info.current - 1);
+//        int rawChance = definition.getDepletionChance();
+//        int chanceToDecrease = (int) (100 * (Math.ceil(rawChance) - rawChance));
+//        if (GTUtility.getRandomIntXSTR(100) < chanceToDecrease)
+
+        // alternative depletion algorithm: 1 in vein's chance to deplete by vein's depletion amount
+        if (GTUtility.getRandomIntXSTR(definition.getDepletionChance()) == 1)
+            info.current = Math.max(0, info.current - definition.getDepletionAmount());
 
         BedrockFluidVeinSaveData.setDirty();
     }

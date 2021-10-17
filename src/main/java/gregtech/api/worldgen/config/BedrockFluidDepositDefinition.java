@@ -29,8 +29,8 @@ public class BedrockFluidDepositDefinition {
     private int weight; // Weight the vein will appear
     private String assignedName; // Name for JEI display
     private String description; // Description for JEI display
-    private final int[] productionRates = new int[]{0, Integer.MAX_VALUE}; // the [minimum, maximum] production rate
-    private int depletionRate; // amount of fluid the vein gets drained by
+    private final int[] productionRates = new int[]{0, Integer.MAX_VALUE}; // the [minimum, maximum) production rate
+    private int depletionAmount; // amount of fluid the vein gets drained by
     private int depletionChance; // the chance [0, 100] that the vein will deplete by 1
     private int depletedProductionRate; // production rate after the vein is depleted
 
@@ -49,7 +49,7 @@ public class BedrockFluidDepositDefinition {
         this.weight = configRoot.get("weight").getAsInt();
         this.productionRates[0] = configRoot.get("min_rate").getAsInt();
         this.productionRates[1] = configRoot.get("max_rate").getAsInt();
-        this.depletionRate = configRoot.get("depletion_rate").getAsInt();
+        this.depletionAmount = configRoot.get("depletion_amount").getAsInt();
         this.depletionChance = configRoot.get("depletion_chance").getAsInt();
         Fluid fluid = FluidRegistry.getFluid(configRoot.get("fluid").getAsString());
         this.storedFluid = fluid != null ? fluid : DEFAULT_VEIN_FLUID;
@@ -108,8 +108,8 @@ public class BedrockFluidDepositDefinition {
     }
 
     @ZenGetter
-    public int getDepletionRate() {
-        return depletionRate;
+    public int getDepletionAmount() {
+        return depletionAmount;
     }
 
     @ZenGetter
