@@ -3,7 +3,6 @@ package gregtech.api.gui.impl;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
-import gregtech.common.gui.impl.FakeModularUIContainerClipboard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -24,11 +23,11 @@ import static gregtech.api.gui.impl.ModularUIGui.*;
 @SideOnly(Side.CLIENT)
 public class FakeModularGui implements IRenderContext {
     public final ModularUI modularUI;
-    public FakeModularUIContainerClipboard container;
+    public FakeModularGuiContainer container;
     protected Minecraft mc;
     protected FontRenderer fr;
 
-    public FakeModularGui(ModularUI modularUI, FakeModularUIContainerClipboard fakeModularUIContainer){
+    public FakeModularGui(ModularUI modularUI, FakeModularGuiContainer fakeModularUIContainer){
         this.modularUI = modularUI;
         this.container = fakeModularUIContainer;
         this.modularUI.updateScreenSize(this.modularUI.getWidth(), this.modularUI.getHeight());
