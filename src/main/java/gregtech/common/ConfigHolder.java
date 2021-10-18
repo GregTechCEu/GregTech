@@ -237,6 +237,10 @@ public class ConfigHolder {
             @Config.Comment("Enable World Accelerators, which accelerate ticks. Default: true")
             @Config.RequiresMcRestart
             public boolean enableWorldAccelerators = true;
+
+            @Config.Comment("Allow GT machines to be affected by World Accelerators. Default: false")
+            @Config.RequiresMcRestart
+            public boolean accelerateGTMachines = false;
         }
 
         public static class GT6 {

@@ -12,6 +12,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
 import gregtech.api.render.Textures;
+import gregtech.common.ConfigHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -41,13 +42,16 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
 
     private static Class<?> cofhTileClass;
 
-    private static boolean isTileNightmare(TileEntity tile) {
+    private static boolean considerTile(TileEntity tile) {
+        if (!ConfigHolder.U.GT5u.accelerateGTMachines && tile instanceof MetaTileEntityHolder) {
+            return false;
+        }
         if (cofhTileClass == null) {
             try {
-                cofhTileClass = Class.forName("cofh.core.block.TileCore");
+                cofhTileClass = Class.forName("cofh.thermalexpansion.block.device.TileDeviceBase");
             } catch (Exception ignored) {}
         }
-        return cofhTileClass != null && cofhTileClass.isInstance(tile);
+        return cofhTileClass == null || !cofhTileClass.isInstance(tile);
     }
 
     private final long energyPerTick;
@@ -116,7 +120,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
                 if (isTEMode()) {
                     for (EnumFacing neighbourFace : EnumFacing.VALUES) {
                         TileEntity neighbourTile = world.getTileEntity(currentPos.offset(neighbourFace));
-                        if (neighbourTile instanceof ITickable && !neighbourTile.isInvalid() && !isTileNightmare(neighbourTile)) {
+                        if (neighbourTile instanceof ITickable && !neighbourTile.isInvalid() && considerTile(neighbourTile)) {
                             ITickable neighbourTickTile = (ITickable) neighbourTile;
                             for (int i = 0; i < speed; i++) {
                                 neighbourTickTile.update();
