@@ -216,7 +216,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     public int setContainingFluid(FluidStack stack, int channel) {
-        if (channel < 0) return stack.amount;
+        if (channel < 0)
+            return stack == null ? 0 : stack.amount;
         if (stack == null || stack.amount <= 0) {
             getFluidTanks()[channel].setFluid(null);
             return 0;
@@ -234,7 +235,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
 
     public void checkAndDestroy(FluidStack stack) {
         boolean burning = getNodeData().maxFluidTemperature < stack.getFluid().getTemperature(stack);
-        boolean leaking = getNodeData().gasProof && stack.getFluid().isGaseous(stack);
+        boolean leaking = !getNodeData().gasProof && stack.getFluid().isGaseous(stack);
         if (burning || leaking) {
             destroyPipe(burning, leaking);
         }
