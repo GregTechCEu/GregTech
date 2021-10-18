@@ -16,7 +16,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
-import java.util.Optional;
 
 import static gregtech.api.gui.impl.ModularUIGui.*;
 
@@ -41,7 +40,7 @@ public class FakeModularGui implements IRenderContext {
 
     public void handleWidgetUpdate(int windowId, int widgetId, PacketBuffer updateData) {
         if (windowId == container.windowId) {
-            Widget widget = modularUI.guiWidgets.get(Optional.of(widgetId));
+            Widget widget = modularUI.guiWidgets.get(widgetId);
             int updateId = updateData.readVarInt();
             if (widget != null) {
                 widget.readUpdateInfo(updateId, updateData);
