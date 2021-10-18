@@ -71,6 +71,7 @@ public class CycleButtonWidget extends Widget {
         return this;
     }
 
+    @SuppressWarnings("unused")
     public CycleButtonWidget setTextColor(int textColor) {
         this.textColor = textColor;
         return this;

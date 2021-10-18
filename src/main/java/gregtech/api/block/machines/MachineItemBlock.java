@@ -1,7 +1,7 @@
 package gregtech.api.block.machines;
 
 import gregtech.api.GTValues;
-import gregtech.api.GregTechRegistries;
+import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.ITieredMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import net.minecraft.block.state.IBlockState;
@@ -32,7 +32,7 @@ public class MachineItemBlock extends ItemBlock {
     }
 
     public static MetaTileEntity getMetaTileEntity(ItemStack itemStack) {
-        return GregTechRegistries.MTE_REGISTRY.getObjectById(itemStack.getItemDamage());
+        return GregTechAPI.MTE_REGISTRY.getObjectById(itemStack.getItemDamage());
     }
 
     @Nonnull

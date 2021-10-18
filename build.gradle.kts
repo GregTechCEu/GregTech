@@ -7,17 +7,20 @@ import java.util.*
 buildscript {
     repositories {
         mavenCentral()
+        /*
         maven {
             name = "jitpack"
             setUrl("https://jitpack.io")
         }
+         */
         maven {
             name = "forge"
             setUrl("https://maven.minecraftforge.net/")
         }
     }
     dependencies {
-        classpath("com.github.GregTechCE:ForgeGradle:FG_2.3-SNAPSHOT")
+        // classpath("com.github.GregTechCE:ForgeGradle:FG_2.3-SNAPSHOT")
+        classpath("net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT")
         classpath("org.eclipse.jgit:org.eclipse.jgit:5.8.0.202006091008-r")
         classpath("org.apache.commons:commons-lang3:3.12.0")
     }
@@ -43,7 +46,6 @@ val mcFullVersion = "$mcVersion-${config["forge.version"]}"
 val shortVersion = mcVersion.substring(0, mcVersion.lastIndexOf("."))
 val strippedVersion = shortVersion.replace(".", "") + "0"
 
-val forestryVersion = config["forestry.version"] as String
 val chickenasmVersion = config["chickenasm.version"] as String
 val cclVersion = config["ccl.version"] as String
 val crafttweakerVersion = config["crafttweaker.version"] as String
@@ -72,10 +74,6 @@ minecraft {
 }
 
 repositories {
-    maven {
-        name = "ic2, forestry"
-        setUrl("http://maven.ic2.player.to/")
-    }
     maven { //JEI
         name = "Progwml6 maven"
         setUrl("http://dvs1.progwml6.com/files/maven/")
@@ -107,9 +105,6 @@ repositories {
 }
 
 dependencies {
-    "deobfProvided"("net.sengir.forestry:forestry_$mcVersion:$forestryVersion") {
-        isTransitive = false
-    }
     "deobfCompile"("codechicken:ChickenASM:$shortVersion-$chickenasmVersion")
     "deobfCompile"("codechicken-lib-1-8:CodeChickenLib-$mcVersion:$cclVersion:universal")
     "deobfCompile"("CraftTweaker2:CraftTweaker2-MC$strippedVersion-Main:$crafttweakerVersion")

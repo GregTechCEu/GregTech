@@ -366,12 +366,7 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 1, Hydrogen, 4, Oxygen, 1)
                 .build();
 
-        SaltWater = new Material.Builder(1053, "salt_water")
-                .fluid()
-                .color(0x0000C8)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Salt, 1, Water, 1)
-                .build();
+        // FREE ID 1053
 
         Ethanol = new Material.Builder(1054, "ethanol")
                 .fluid()

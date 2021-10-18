@@ -21,6 +21,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.ArrayList;
@@ -123,7 +124,7 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
     }
 
     @Override
-    public void setRecipe(IRecipeLayout recipeLayout, MaterialTree recipeWrapper, IIngredients ingredients) {
+    public void setRecipe(IRecipeLayout recipeLayout, @Nonnull MaterialTree recipeWrapper, IIngredients ingredients) {
         // place and check existence of items
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
         List<List<ItemStack>> itemInputs = ingredients.getInputs(VanillaTypes.ITEM);
@@ -154,8 +155,9 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
         materialAvgN = I18n.format("gregtech.jei.materials.average_neutrons", recipeWrapper.getAvgN());
     }
 
+    @Nonnull
     @Override
-    public IRecipeWrapper getRecipeWrapper(MaterialTree recipe) {
+    public IRecipeWrapper getRecipeWrapper(@Nonnull MaterialTree recipe) {
         return recipe;
     }
 
@@ -166,7 +168,7 @@ public class MaterialTreeCategory extends BasicRecipeCategory<MaterialTree, Mate
     }
 
     @Override
-    public void drawExtras(Minecraft minecraft) {
+    public void drawExtras(@Nonnull Minecraft minecraft) {
         // item slot rendering
         for (int i = 0; i < ITEM_LOCATIONS.size(); i += 2) {
             if (itemExists.get(i / 2))

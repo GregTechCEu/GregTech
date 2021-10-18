@@ -54,7 +54,7 @@ public class OreByProductCategory extends BasicRecipeCategory<OreByProduct, OreB
     }
 
     @Override
-    public void drawExtras(Minecraft minecraft) {
+    public void drawExtras(@Nonnull Minecraft minecraft) {
         this.slot.draw(minecraft, 22, 29);
         this.arrowBackground.draw(minecraft, 44, 28);
         this.arrowAnimation.draw(minecraft, 44, 28);

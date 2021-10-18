@@ -31,6 +31,8 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.SYNC_TILE_MODE;
+
 public class MetaTileEntityTransformer extends TieredMetaTileEntity {
 
     private boolean isTransformUp;
@@ -73,7 +75,7 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 100) {
+        if (dataId == SYNC_TILE_MODE) {
             this.isTransformUp = buf.readBoolean();
             scheduleRenderUpdate();
         }
@@ -87,7 +89,7 @@ public class MetaTileEntityTransformer extends TieredMetaTileEntity {
         isTransformUp = inverted;
         if (!getWorld().isRemote) {
             reinitializeEnergyContainer();
-            writeCustomData(100, b -> b.writeBoolean(isTransformUp));
+            writeCustomData(SYNC_TILE_MODE, b -> b.writeBoolean(isTransformUp));
             getHolder().notifyBlockUpdate();
             markDirty();
         }

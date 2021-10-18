@@ -1,7 +1,7 @@
 package gregtech.common.blocks.surfacerock;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -64,11 +64,11 @@ public class TileEntitySurfaceRock extends TileEntity {
     @Override
     public void readFromNBT(@Nonnull NBTTagCompound compound) {
         super.readFromNBT(compound);
-        Material material = MaterialRegistry.MATERIAL_REGISTRY.getObject(compound.getString("Material"));
+        Material material = GregTechAPI.MATERIAL_REGISTRY.getObject(compound.getString("Material"));
         this.material = material == null ? Materials.Aluminium : material;
 
         for (NBTBase undergroundMaterialNBTBase : compound.getTagList("UndergroundMaterials", NBT.TAG_STRING)) {
-            undergroundMaterials.add(MaterialRegistry.MATERIAL_REGISTRY.getObject(((NBTTagString) undergroundMaterialNBTBase).getString()));
+            undergroundMaterials.add(GregTechAPI.MATERIAL_REGISTRY.getObject(((NBTTagString) undergroundMaterialNBTBase).getString()));
         }
     }
 
@@ -76,10 +76,10 @@ public class TileEntitySurfaceRock extends TileEntity {
     @Override
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setString("Material", MaterialRegistry.MATERIAL_REGISTRY.getNameForObject(material));
+        compound.setString("Material", GregTechAPI.MATERIAL_REGISTRY.getNameForObject(material));
         NBTTagList tagList = new NBTTagList();
         this.undergroundMaterials.forEach(it ->
-                tagList.appendTag(new NBTTagString(MaterialRegistry.MATERIAL_REGISTRY.getNameForObject(it))));
+                tagList.appendTag(new NBTTagString(GregTechAPI.MATERIAL_REGISTRY.getNameForObject(it))));
         compound.setTag("UndergroundMaterials", tagList);
         return compound;
     }

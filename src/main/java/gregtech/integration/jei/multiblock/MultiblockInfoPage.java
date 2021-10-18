@@ -43,9 +43,7 @@ public abstract class MultiblockInfoPage {
     }
 
     public List<String> informationText() {
-
-        return Stream.of("gregtech.multiblock.preview.tilt", "gregtech.multiblock.preview.zoom",
-                "gregtech.multiblock.preview.pan", "gregtech.multiblock.preview.move", "gregtech.multiblock.preview.reset")
+        return Stream.of("gregtech.multiblock.preview.zoom", "gregtech.multiblock.preview.rotate")
                 .map(I18n::format)
                 .collect(Collectors.toList());
     }

@@ -16,7 +16,7 @@ import gregtech.api.gui.widgets.*;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
-import gregtech.common.ConfigHolder;
+import gregtech.api.util.GTUtility;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -39,6 +39,9 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Function;
+
+import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide {
 
@@ -56,24 +59,22 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
 
-    private static final int inputTankCapacity = ConfigHolder.U.GT5u.customMachineTankSizes[0];
-    private static final int outputTankCapacity = ConfigHolder.U.GT5u.customMachineTankSizes[1];
     private static final int FONT_HEIGHT = 9; // Minecraft's FontRenderer FONT_HEIGHT value
 
-    public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier) {
-        this(metaTileEntityId, recipeMap, renderer, tier, true);
+    public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier, boolean hasFrontFacing) {
+        this(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, GTUtility.defaultTankSizeFunction);
     }
 
-    public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier, boolean hasFrontFacing) {
-        super(metaTileEntityId, recipeMap, renderer, tier);
+    public SimpleMachineMetaTileEntity(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier, boolean hasFrontFacing,
+                                       Function<Integer, Integer> tankScalingFunction) {
+        super(metaTileEntityId, recipeMap, renderer, tier, tankScalingFunction);
         this.hasFrontFacing = hasFrontFacing;
         this.chargerInventory = new ItemStackHandler(1);
-
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SimpleMachineMetaTileEntity(metaTileEntityId, workable.recipeMap, renderer, getTier(), hasFrontFacing);
+        return new SimpleMachineMetaTileEntity(metaTileEntityId, workable.recipeMap, renderer, getTier(), hasFrontFacing, getTankScalingFunction());
     }
 
     @Override
@@ -255,14 +256,14 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 100) {
+        if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacingItems = EnumFacing.VALUES[buf.readByte()];
             this.outputFacingFluids = EnumFacing.VALUES[buf.readByte()];
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == 101) {
+        } else if (dataId == UPDATE_AUTO_OUTPUT_ITEMS) {
             this.autoOutputItems = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == 102) {
+        } else if (dataId == UPDATE_AUTO_OUTPUT_FLUIDS) {
             this.autoOutputFluids = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
         }
@@ -281,7 +282,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         this.outputFacingFluids = outputFacing;
         if (!getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
-            writeCustomData(100, buf -> {
+            writeCustomData(UPDATE_OUTPUT_FACING, buf -> {
                 buf.writeByte(outputFacingItems.getIndex());
                 buf.writeByte(outputFacingFluids.getIndex());
             });
@@ -293,7 +294,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         this.outputFacingItems = outputFacing;
         if (!getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
-            writeCustomData(100, buf -> {
+            writeCustomData(UPDATE_OUTPUT_FACING, buf -> {
                 buf.writeByte(outputFacingItems.getIndex());
                 buf.writeByte(outputFacingFluids.getIndex());
             });
@@ -305,7 +306,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         this.outputFacingFluids = outputFacing;
         if (!getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
-            writeCustomData(100, buf -> {
+            writeCustomData(UPDATE_OUTPUT_FACING, buf -> {
                 buf.writeByte(outputFacingItems.getIndex());
                 buf.writeByte(outputFacingFluids.getIndex());
             });
@@ -316,7 +317,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void setAutoOutputItems(boolean autoOutputItems) {
         this.autoOutputItems = autoOutputItems;
         if (!getWorld().isRemote) {
-            writeCustomData(101, buf -> buf.writeBoolean(autoOutputItems));
+            writeCustomData(UPDATE_AUTO_OUTPUT_ITEMS, buf -> buf.writeBoolean(autoOutputItems));
             markDirty();
         }
     }
@@ -324,7 +325,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void setAutoOutputFluids(boolean autoOutputFluids) {
         this.autoOutputFluids = autoOutputFluids;
         if (!getWorld().isRemote) {
-            writeCustomData(102, buf -> buf.writeBoolean(autoOutputFluids));
+            writeCustomData(UPDATE_AUTO_OUTPUT_FLUIDS, buf -> buf.writeBoolean(autoOutputFluids));
             markDirty();
         }
     }
@@ -442,15 +443,5 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         super.addInformation(stack, player, tooltip, advanced);
         String key = this.metaTileEntityId.getPath().split("\\.")[0];
         tooltip.add(1, I18n.format(String.format("gregtech.machine.%s.tooltip", key)));
-    }
-
-    @Override
-    protected int getInputTankCapacity(int index) {
-        return inputTankCapacity;
-    }
-
-    @Override
-    protected int getOutputTankCapacity(int index) {
-        return outputTankCapacity;
     }
 }

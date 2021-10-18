@@ -8,7 +8,6 @@ import codechicken.lib.raytracer.RayTracer;
 import codechicken.lib.vec.Cuboid6;
 import com.google.common.collect.Lists;
 import gregtech.api.GregTechAPI;
-import gregtech.api.GregTechRegistries;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.tool.IScrewdriverItem;
@@ -235,7 +234,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
     @Override
     public void onBlockPlacedBy(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, ItemStack stack) {
         MetaTileEntityHolder holder = (MetaTileEntityHolder) worldIn.getTileEntity(pos);
-        MetaTileEntity sampleMetaTileEntity = GregTechRegistries.MTE_REGISTRY.getObjectById(stack.getItemDamage());
+        MetaTileEntity sampleMetaTileEntity = GregTechAPI.MTE_REGISTRY.getObjectById(stack.getItemDamage());
         if (holder != null && sampleMetaTileEntity != null) {
             MetaTileEntity metaTileEntity = holder.setMetaTileEntity(sampleMetaTileEntity);
             if (stack.hasTagCompound()) {
@@ -450,7 +449,7 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
 
     @Override
     public void getSubBlocks(@Nonnull CreativeTabs tab, @Nonnull NonNullList<ItemStack> items) {
-        for (MetaTileEntity metaTileEntity : GregTechRegistries.MTE_REGISTRY) {
+        for (MetaTileEntity metaTileEntity : GregTechAPI.MTE_REGISTRY) {
             metaTileEntity.getSubItems(tab, items);
         }
     }

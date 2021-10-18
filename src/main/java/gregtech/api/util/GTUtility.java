@@ -700,16 +700,14 @@ public class GTUtility {
     public static int getRedstonePower(World world, BlockPos blockPos, EnumFacing side) {
         BlockPos offsetPos = blockPos.offset(side);
         int worldPower = world.getRedstonePower(offsetPos, side);
-        if (worldPower >= 15) {
-            return worldPower;
-        } else {
+        if (worldPower < 15) {
             IBlockState offsetState = world.getBlockState(offsetPos);
             if (offsetState.getBlock() instanceof BlockRedstoneWire) {
                 int wirePower = offsetState.getValue(BlockRedstoneWire.POWER);
                 return Math.max(worldPower, wirePower);
             }
-            return worldPower;
         }
+        return worldPower;
     }
 
     public static Comparator<ItemStack> createItemStackComparator() {
@@ -911,4 +909,34 @@ public class GTUtility {
         }
         return rotatedAABB;
     }
+
+    /**
+     * Default function for tank sizes, takes a tier input and returns the corresponding size
+     */
+    public static final Function<Integer, Integer> defaultTankSizeFunction = tier -> {
+        if (tier <= GTValues.LV)
+            return 8000;
+        if (tier == GTValues.MV)
+            return 12000;
+        if (tier == GTValues.HV)
+            return 16000;
+        if (tier == GTValues.EV)
+            return 32000;
+        // IV+
+        return 64000;
+    };
+
+    /**
+     * Alternative function for tank sizes, takes a tier input and returns the corresponding size
+     *
+     * This function scales the same as the default function except it stops scaling past HV
+     */
+    public static final Function<Integer, Integer> hvCappedTankSizeFunction = tier -> {
+        if (tier <= GTValues.LV)
+            return 8000;
+        if (tier == GTValues.MV)
+            return 12000;
+        // HV+
+        return 16000;
+    };
 }

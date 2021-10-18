@@ -29,6 +29,8 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.AMP_INDEX;
+
 public class MetaTileEntityAdjustableTransformer extends MetaTileEntityTransformer {
 
     private static final int[] hiAmpsRange = {1, 2, 4, 16};
@@ -74,7 +76,7 @@ public class MetaTileEntityAdjustableTransformer extends MetaTileEntityTransform
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 101) {
+        if (dataId == AMP_INDEX) {
             this.ampIndex = buf.readInt();
             scheduleRenderUpdate();
         }
@@ -84,7 +86,7 @@ public class MetaTileEntityAdjustableTransformer extends MetaTileEntityTransform
         this.ampIndex = (this.ampIndex + 1) % hiAmpsRange.length;
         if (!getWorld().isRemote) {
             reinitializeEnergyContainer();
-            writeCustomData(101, b -> b.writeInt(ampIndex));
+            writeCustomData(AMP_INDEX, b -> b.writeInt(ampIndex));
             getHolder().notifyBlockUpdate();
             markDirty();
         }

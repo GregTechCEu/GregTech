@@ -55,7 +55,7 @@ public class UnknownCompositionMaterials {
                 .fluid().color(0x0E2950).build();
 
         SeedOil = new Material.Builder(1514, "seed_oil")
-                .fluid().color(0xC4FF00).build();
+                .fluid().color(0xFFFFFF).build();
 
         DrillingFluid = new Material.Builder(1515, "drilling_fluid")
                 .fluid().color(0xFFFFAA).build();
@@ -156,11 +156,9 @@ public class UnknownCompositionMaterials {
         LPG = new Material.Builder(1574, "lpg")
                 .fluid(FluidType.GAS).build();
 
-        Honey = new Material.Builder(1575, "honey")
-                .fluid().build();
+        //Free ID 1575
 
-        Juice = new Material.Builder(1576, "juice")
-                .fluid().color(0xA8C972).build();
+        //Free ID 1576
 
         RawGrowthMedium = new Material.Builder(1577, "raw_growth_medium")
                 .fluid().color(0xA47351).build();
@@ -200,8 +198,7 @@ public class UnknownCompositionMaterials {
         EnrichedBacterialSludge = new Material.Builder(1586, "enriched_bacterial_sludge")
                 .fluid().color(0x7FFF00).build();
 
-        FermentedBacterialSludge = new Material.Builder(1587, "fermented_bacterial_sludge")
-                .fluid().color(0x32CD32).build();
+        // free id: 1587
 
         Mutagen = new Material.Builder(1588, "mutagen")
                 .fluid().color(0x00FF7F).build();

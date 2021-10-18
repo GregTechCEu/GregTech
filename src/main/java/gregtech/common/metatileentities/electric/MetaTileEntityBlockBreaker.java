@@ -41,6 +41,8 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_OUTPUT_FACING;
+
 public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
 
     private EnumFacing outputFacing;
@@ -178,7 +180,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 100) {
+        if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacing = EnumFacing.VALUES[buf.readByte()];
             getHolder().scheduleChunkForRenderUpdate();
         }
@@ -199,7 +201,7 @@ public class MetaTileEntityBlockBreaker extends TieredMetaTileEntity {
         this.outputFacing = outputFacing;
         if (!getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
-            writeCustomData(100, buf -> buf.writeByte(outputFacing.getIndex()));
+            writeCustomData(UPDATE_OUTPUT_FACING, buf -> buf.writeByte(outputFacing.getIndex()));
             markDirty();
         }
     }

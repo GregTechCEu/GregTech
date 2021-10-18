@@ -40,6 +40,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
+
 public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
 
     private final TIntList connectedCrystalsIds = new TIntArrayList();
@@ -104,7 +106,7 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
         if (this.isActive != isActive) {
             this.isActive = isActive;
             if (!getWorld().isRemote) {
-                writeCustomData(100, w -> w.writeBoolean(isActive));
+                writeCustomData(IS_WORKING, w -> w.writeBoolean(isActive));
             }
         }
     }
@@ -112,7 +114,7 @@ public class MetaTileEntityMagicEnergyAbsorber extends TieredMetaTileEntity {
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 100) {
+        if (dataId == IS_WORKING) {
             this.isActive = buf.readBoolean();
         }
     }

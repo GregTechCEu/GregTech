@@ -162,12 +162,6 @@ public class ToolRecipeHandler {
                     "hDS", "DSD", "SDf",
                     'S', new UnificationEntry(OrePrefix.stick, material),
                     'D', new UnificationEntry(OrePrefix.dye, MarkerMaterials.Color.COLORS.get(EnumDyeColor.BLUE)));
-
-            ModHandler.addShapedRecipe(String.format("scoop_%s", material.toString()),
-                    MetaItems.SCOOP.getStackForm(material),
-                    "SWS", "SSS", "xSh",
-                    'S', new UnificationEntry(OrePrefix.stick, material),
-                    'W', new ItemStack(Blocks.WOOL, 1, GTValues.W));
         }
 
         if (material.hasFlag(GENERATE_PLATE)) {

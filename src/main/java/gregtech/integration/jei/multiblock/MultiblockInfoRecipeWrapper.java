@@ -28,6 +28,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
@@ -44,7 +45,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -89,7 +89,6 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private Vector3f center;
     private float rotationYaw;
     private float rotationPitch;
-    private float maxZoom;
     private float zoom;
 
     private GuiButton buttonPreviousPattern;
@@ -122,6 +121,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         return infoPage;
     }
 
+    private static MultiblockInfoRecipeWrapper lastWrapper;
+
     public void setRecipeLayout(RecipeLayout layout, IGuiHelper guiHelper) {
         this.recipeLayout = layout;
 
@@ -130,29 +131,29 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
         IDrawable border = layout.getRecipeCategory().getBackground();
         preparePlaceForParts(border.getHeight());
-        this.buttons.clear();
-        this.nextLayerButton = new GuiButton(0, border.getWidth() - (ICON_SIZE + RIGHT_PADDING), 70, ICON_SIZE, ICON_SIZE, "");
-        this.buttonPreviousPattern = new GuiButton(0, border.getWidth() - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, "<");
-        this.buttonNextPattern = new GuiButton(0, border.getWidth() - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, ">");
-        this.buttons.put(nextLayerButton, this::toggleNextLayer);
-        this.buttons.put(buttonPreviousPattern, () -> switchRenderPage(-1));
-        this.buttons.put(buttonNextPattern, () -> switchRenderPage(1));
+        if (Mouse.getEventDWheel() == 0 || lastWrapper != this) {
+            lastWrapper = this;
+            this.buttons.clear();
+            this.nextLayerButton = new GuiButton(0, border.getWidth() - (ICON_SIZE + RIGHT_PADDING), 70, ICON_SIZE, ICON_SIZE, "");
+            this.buttonPreviousPattern = new GuiButton(0, border.getWidth() - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, "<");
+            this.buttonNextPattern = new GuiButton(0, border.getWidth() - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, ">");
+            this.buttons.put(nextLayerButton, this::toggleNextLayer);
+            this.buttons.put(buttonPreviousPattern, () -> switchRenderPage(-1));
+            this.buttons.put(buttonNextPattern, () -> switchRenderPage(1));
 
-        boolean isPagesDisabled = patterns.length == 1;
-        this.buttonPreviousPattern.visible = !isPagesDisabled;
-        this.buttonNextPattern.visible = !isPagesDisabled;
-        this.buttonPreviousPattern.enabled = false;
-        this.buttonNextPattern.enabled = patterns.length > 1;
+            boolean isPagesDisabled = patterns.length == 1;
+            this.buttonPreviousPattern.visible = !isPagesDisabled;
+            this.buttonNextPattern.visible = !isPagesDisabled;
+            this.buttonPreviousPattern.enabled = false;
+            this.buttonNextPattern.enabled = patterns.length > 1;
 
-        if (Mouse.getEventDWheel() == 0) {
-            this.maxZoom = infoPage.getDefaultZoom() * 15;
-            this.zoom = this.maxZoom;
+            this.zoom = infoPage.getDefaultZoom() * 15;
             this.rotationYaw = 20.0f;
             this.rotationPitch = 135.0f;
             this.currentRendererPage = 0;
             setNextLayer(-1);
         } else {
-            zoom = (float) MathHelper.clamp(zoom + (Mouse.getEventDWheel() < 0 ? 0.5 : -0.5), 3, maxZoom);
+            zoom = (float) MathHelper.clamp(zoom + (Mouse.getEventDWheel() < 0 ? 0.5 : -0.5), 3, 999);
             setNextLayer(getLayerIndex());
         }
         if (center != null) {
@@ -205,7 +206,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             this.currentRendererPage = newIndex;
             this.buttonNextPattern.enabled = newIndex < maxIndex;
             this.buttonPreviousPattern.enabled = newIndex > 0;
+            setNextLayer(-1);
             updateParts();
+            getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
         }
     }
 
@@ -249,14 +252,20 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             button.drawButton(minecraft, mouseX, mouseY, 0.0f);
         }
 
-        drawHoveringInformationText(minecraft, infoPage.informationText(), mouseX, mouseY);
-
         this.tooltipBlockStack = null;
         RayTraceResult rayTraceResult = renderer.getLastTraceResult();
         boolean insideView = mouseX >= 0 && mouseY >= 0 &&
                 mouseX < recipeWidth && mouseY < sceneHeight;
         boolean leftClickHeld = Mouse.isButtonDown(0);
         boolean rightClickHeld = Mouse.isButtonDown(1);
+        if (insideView) {
+            for (GuiButton button : buttons.keySet()) {
+                if (button.isMouseOver()) {
+                    insideView = false;
+                    break;
+                }
+            }
+        }
         if (insideView) {
             if (leftClickHeld) {
                 rotationPitch += mouseX - lastMouseX + 360;
@@ -265,13 +274,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             } else if (rightClickHeld) {
                 int mouseDeltaY = mouseY - lastMouseY;
                 if (Math.abs(mouseDeltaY) > 1) {
-                    this.zoom = (float) MathHelper.clamp(zoom + (mouseDeltaY > 0 ? 0.5 : -0.5), 3, maxZoom);
+                    this.zoom = (float) MathHelper.clamp(zoom + (mouseDeltaY > 0 ? 0.5 : -0.5), 3, 999);
                 }
             }
             renderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
         }
 
-        if (!(leftClickHeld || rightClickHeld) && rayTraceResult != null && !renderer.world.isAirBlock(rayTraceResult.getBlockPos())) {
+        if (!drawHoveringInformationText(minecraft, infoPage.informationText(), mouseX, mouseY) && !(leftClickHeld || rightClickHeld) && rayTraceResult != null && !renderer.world.isAirBlock(rayTraceResult.getBlockPos())) {
             IBlockState blockState = renderer.world.getBlockState(rayTraceResult.getBlockPos());
             ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world, rayTraceResult.getBlockPos(), minecraft.player);
             if (itemStack != null && !itemStack.isEmpty()) {
@@ -281,10 +290,14 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
 
         this.lastMouseX = mouseX;
         this.lastMouseY = mouseY;
+
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.disableLighting();
+        RenderHelper.disableStandardItemLighting();
     }
 
     @SideOnly(Side.CLIENT)
-    protected void drawHoveringInformationText(Minecraft minecraft, List<String> tooltip, int mouseX, int mouseY) {
+    protected boolean drawHoveringInformationText(Minecraft minecraft, List<String> tooltip, int mouseX, int mouseY) {
         int minX = recipeLayout.getRecipeCategory().getBackground().getWidth();
         int[] yRange = new int[]{49, 69};
         int[] xRange = new int[]{minX - (ICON_SIZE + RIGHT_PADDING), minX - RIGHT_PADDING};
@@ -292,7 +305,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         if (isMouseWithinRange(yRange, xRange, mouseY, mouseX)) {
             GuiUtils.drawHoveringText(tooltip, mouseX, mouseY,
                     176, 176, -1, minecraft.fontRenderer);
+            return true;
         }
+        return false;
     }
 
     private boolean isMouseWithinRange(int[] yRange, int[] xRange, int mouseY, int mouseX) {
@@ -451,6 +466,10 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     @SideOnly(Side.CLIENT)
     private void renderBlockOverLay(RayTraceResult rayTraceResult) {
         BlockPos pos = rayTraceResult.getBlockPos();
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+
         Tessellator tessellator = Tessellator.getInstance();
         GlStateManager.disableTexture2D();
         CCRenderState renderState = CCRenderState.instance();
@@ -460,14 +479,16 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         BlockRenderer.BlockFace blockFace = new BlockRenderer.BlockFace();
         renderState.setModel(blockFace);
         for (EnumFacing renderSide : EnumFacing.VALUES) {
-            float diffuse = LightUtil.diffuseLight(renderSide);
-            int color = (int) (255 * diffuse);
-            multiplier.colour = RenderUtil.packColor(color, color, color, 100);
+            multiplier.colour = RenderUtil.packColor(255, 0, 0, 255);
             blockFace.loadCuboidFace(Cuboid6.full, renderSide.getIndex());
             renderState.render();
         }
         renderState.draw();
         GlStateManager.enableTexture2D();
+
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableDepth();
     }
 
 }

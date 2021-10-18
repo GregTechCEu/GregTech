@@ -317,6 +317,7 @@ public class Materials {
     public static Material Pyrolusite;
     public static Material Pyrope;
     public static Material RockSalt;
+    public static Material RuthenianIridium;
     public static Material Rubber;
     public static Material Ruby;
     public static Material Salt;
@@ -499,7 +500,6 @@ public class Materials {
     public static Material Acetone;
     public static Material Glycerol;
     public static Material Methanol;
-    public static Material SaltWater;
     public static Material Ethanol;
     public static Material Toluene;
     public static Material DiphenylIsophtalate;
@@ -565,8 +565,6 @@ public class Materials {
     public static Material LightFuel;
     public static Material HeavyFuel;
     public static Material LPG;
-    public static Material Honey;
-    public static Material Juice;
     public static Material RawGrowthMedium;
     public static Material SterileGrowthMedium;
     public static Material Oil;
@@ -577,7 +575,6 @@ public class Materials {
     public static Material Bacteria;
     public static Material BacterialSludge;
     public static Material EnrichedBacterialSludge;
-    public static Material FermentedBacterialSludge;
     public static Material Mutagen;
     public static Material GelatinMixture;
     public static Material RawGasoline;
@@ -620,7 +617,6 @@ public class Materials {
     public static Material Glass;
     public static Material Perlite;
     public static Material Borax;
-    public static Material Lignite;
     public static Material Olivine;
     public static Material Opal;
     public static Material Amethyst;
@@ -673,6 +669,7 @@ public class Materials {
     public static Material EnderAir;
     public static Material LiquidEnderAir;
     public static Material AquaRegia;
+    public static Material SaltWater;
 
     /**
      * Third Degree Materials

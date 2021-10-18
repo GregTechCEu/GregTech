@@ -13,6 +13,10 @@ import gregtech.integration.jei.multiblock.MultiblockShapeInfo;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
 
@@ -46,4 +50,13 @@ public class LargeCombustionEngineInfo extends MultiblockInfoPage {
     public String[] getDescription() {
         return new String[]{I18n.format("gregtech.multiblock.large_combustion_engine.description")};
     }
+
+    @Override
+    protected void generateBlockTooltips() {
+        super.generateBlockTooltips();
+
+        ITextComponent tooltip = new TextComponentTranslation("gregtech.multiblock.preview.clear_amount", 1, 1, 1).setStyle(new Style().setColor(TextFormatting.DARK_RED));
+        addBlockTooltip(MetaBlocks.MULTIBLOCK_CASING.getItemVariant(BlockMultiblockCasing.MultiblockCasingType.ENGINE_INTAKE_CASING), tooltip);
+    }
+
 }

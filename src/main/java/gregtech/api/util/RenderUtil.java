@@ -50,15 +50,15 @@ public class RenderUtil {
 
         boolean pushedFrame = false;
         if (x <= parentX + parentWidth && y <= parentY + parentHeight) {
-            int newX = x >= parentX ? x : parentX;
-            int newY = y >= parentY ? y : parentY;
+            int newX = Math.max(x, parentX);
+            int newY = Math.max(y, parentY);
             int newWidth = width - (newX - x);
             int newHeight = height - (newY - y);
             if (newWidth > 0 && newHeight > 0) {
                 int maxWidth = parentWidth - (x - parentX);
                 int maxHeight = parentHeight - (y - parentY);
-                newWidth = maxWidth > newWidth ? newWidth : maxWidth;
-                newHeight = maxHeight > newHeight ? newHeight : maxHeight;
+                newWidth = Math.min(maxWidth, newWidth);
+                newHeight = Math.min(maxHeight, newHeight);
                 applyScissor(newX, newY, newWidth, newHeight);
                 //finally, push applied scissor on top of scissor stack
                 if (scissorFrameStack.isEmpty()) {

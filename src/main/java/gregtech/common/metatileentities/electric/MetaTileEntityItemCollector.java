@@ -39,6 +39,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
+
 public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
 
     private static final int[] INVENTORY_SIZES = {4, 9, 16, 25, 25};
@@ -93,7 +95,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 100) {
+        if (dataId == IS_WORKING) {
             this.isWorking = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
         }
@@ -127,7 +129,7 @@ public class MetaTileEntityItemCollector extends TieredMetaTileEntity {
 
         if (isWorkingNow != isWorking) {
             this.isWorking = isWorkingNow;
-            writeCustomData(100, buffer -> buffer.writeBoolean(isWorkingNow));
+            writeCustomData(IS_WORKING, buffer -> buffer.writeBoolean(isWorkingNow));
         }
     }
 

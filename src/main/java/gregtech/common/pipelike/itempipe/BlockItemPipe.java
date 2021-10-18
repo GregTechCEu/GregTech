@@ -1,12 +1,12 @@
 package gregtech.common.pipelike.itempipe;
 
 import com.google.common.base.Preconditions;
+import gregtech.api.GregTechAPI;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
@@ -47,7 +47,7 @@ public class BlockItemPipe extends BlockMaterialPipe<ItemPipeType, ItemPipePrope
     public void addPipeMaterial(Material material, ItemPipeProperties properties) {
         Preconditions.checkNotNull(material, "material");
         Preconditions.checkNotNull(properties, "itemPipeProperties");
-        Preconditions.checkArgument(MaterialRegistry.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
+        Preconditions.checkArgument(GregTechAPI.MATERIAL_REGISTRY.getNameForObject(material) != null, "material is not registered");
         this.enabledMaterials.put(material, properties);
     }
 

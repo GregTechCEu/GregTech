@@ -23,11 +23,11 @@ public final class MarkerMaterial extends Material {
     }
 
     @Override
-    protected void verifyMaterial() {
+    public void verifyMaterial() {
     }
 
     @Override
-    protected void postVerify() {
+    public void postVerify() {
     }
 
     @Override

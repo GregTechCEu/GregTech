@@ -23,6 +23,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static gregtech.api.capability.GregtechDataCodes.*;
+
 public class PipeCoverableImplementation implements ICoverable {
 
     private final IPipeTile<?, ?> holder;
@@ -64,7 +66,7 @@ public class PipeCoverableImplementation implements ICoverable {
         }
         this.coverBehaviors[side.getIndex()] = coverBehavior;
         coverBehavior.onAttached(itemStack);
-        writeCustomData(1, buffer -> {
+        writeCustomData(COVER_ATTACHED_PIPE, buffer -> {
             buffer.writeByte(side.getIndex());
             buffer.writeVarInt(CoverDefinition.getNetworkIdForCover(coverDefinition));
             coverBehavior.writeInitialSyncData(buffer);
@@ -91,7 +93,7 @@ public class PipeCoverableImplementation implements ICoverable {
         for (ItemStack dropStack : drops) {
             Block.spawnAsEntity(getWorld(), getPos(), dropStack);
         }
-        writeCustomData(2, buffer -> buffer.writeByte(side.getIndex()));
+        writeCustomData(COVER_REMOVED_PIPE, buffer -> buffer.writeByte(side.getIndex()));
         BlockPipe blockPipe = holder.getPipeBlock();
         holder.setConnectionBlocked(AttachmentType.COVER, side, true, false);
         holder.setConnectionBlocked(AttachmentType.PIPE, side, !blockPipe.canConnect(holder, side), false);
@@ -223,7 +225,7 @@ public class PipeCoverableImplementation implements ICoverable {
 
     @Override
     public void writeCoverData(CoverBehavior behavior, int id, Consumer<PacketBuffer> writer) {
-        writeCustomData(0, buffer -> {
+        writeCustomData(UPDATE_COVER_DATA_PIPE, buffer -> {
             buffer.writeByte(behavior.attachedSide.getIndex());
             buffer.writeVarInt(id);
             writer.accept(buffer);
@@ -238,6 +240,7 @@ public class PipeCoverableImplementation implements ICoverable {
                 buf.writeVarInt(coverId);
                 coverBehavior.writeInitialSyncData(buf);
             } else {
+                // -1 means no cover attached
                 buf.writeVarInt(-1);
             }
         }
@@ -260,7 +263,7 @@ public class PipeCoverableImplementation implements ICoverable {
     }
 
     public void readCustomData(int dataId, PacketBuffer buf) {
-        if (dataId == 1) {
+        if (dataId == COVER_ATTACHED_PIPE) {
             //cover placement event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
             int coverId = buf.readVarInt();
@@ -269,12 +272,12 @@ public class PipeCoverableImplementation implements ICoverable {
             this.coverBehaviors[placementSide.getIndex()] = coverBehavior;
             coverBehavior.readInitialSyncData(buf);
             holder.scheduleChunkForRenderUpdate();
-        } else if (dataId == 2) {
+        } else if (dataId == COVER_REMOVED_PIPE) {
             //cover removed event
             EnumFacing placementSide = EnumFacing.VALUES[buf.readByte()];
             this.coverBehaviors[placementSide.getIndex()] = null;
             holder.scheduleChunkForRenderUpdate();
-        } else if (dataId == 0) {
+        } else if (dataId == UPDATE_COVER_DATA_PIPE) {
             //cover custom data received
             EnumFacing coverSide = EnumFacing.VALUES[buf.readByte()];
             CoverBehavior coverBehavior = getCoverAtSide(coverSide);

@@ -24,6 +24,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
+import static gregtech.api.capability.GregtechDataCodes.*;
+
 public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> extends SyncedTileEntityBase implements IPipeTile<PipeType, NodeDataType> {
 
     private TIntIntMap openConnectionsMap = new TIntIntHashMap();
@@ -71,7 +73,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
         this.pipeBlock = pipeBlock;
         this.pipeType = pipeType;
         if (!getWorld().isRemote) {
-            writeCustomData(-4, this::writePipeProperties);
+            writeCustomData(UPDATE_PIPE_TYPE, this::writePipeProperties);
         }
     }
 
@@ -156,7 +158,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             if (!detachedConversionMode) {
                 getPipeBlock().getWorldPipeNet(getWorld()).updateMark(getPos(), getCableMark());
             }
-            writeCustomData(-1, buffer -> buffer.writeInt(insulationColor));
+            writeCustomData(UPDATE_INSULATION_COLOR, buffer -> buffer.writeInt(insulationColor));
             markDirty();
         }
     }
@@ -186,7 +188,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             if (!detachedConversionMode) {
                 updateSideBlockedConnection(side);
             }
-            writeCustomData(-2, buffer -> {
+            writeCustomData(UPDATE_CONNECTIONS, buffer -> {
                 buffer.writeVarInt(at);
                 buffer.writeVarInt(openConnections);
             });
@@ -374,16 +376,16 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public void receiveCustomData(int discriminator, PacketBuffer buf) {
-        if (discriminator == -1) {
+        if (discriminator == UPDATE_INSULATION_COLOR) {
             this.insulationColor = buf.readInt();
             scheduleChunkForRenderUpdate();
-        } else if (discriminator == -2) {
+        } else if (discriminator == UPDATE_CONNECTIONS) {
             this.openConnectionsMap.put(buf.readVarInt(), buf.readVarInt());
             recomputeBlockedConnections();
             scheduleChunkForRenderUpdate();
-        } else if (discriminator == -3) {
+        } else if (discriminator == SYNC_COVER_IMPLEMENTATION) {
             this.coverableImplementation.readCustomData(buf.readVarInt(), buf);
-        } else if (discriminator == -4) {
+        } else if (discriminator == UPDATE_PIPE_TYPE) {
             readPipeProperties(buf);
             scheduleChunkForRenderUpdate();
         }
@@ -391,7 +393,7 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     @Override
     public void writeCoverCustomData(int id, Consumer<PacketBuffer> writer) {
-        writeCustomData(-3, buffer -> {
+        writeCustomData(SYNC_COVER_IMPLEMENTATION, buffer -> {
             buffer.writeVarInt(id);
             writer.accept(buffer);
         });

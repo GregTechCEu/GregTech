@@ -688,7 +688,8 @@ metaitem.neutron_reflector.name=Iridium Neutron Reflector
 metaitem.neutron_reflector.tooltip=Indestructible
 metaitem.duct_tape.name=BrainTech Aerospace Advanced Reinforced Duct Tape FAL-84
 
-metaitem.component.sawblade.diamond.name=Diamond Sawblade
+metaitem.component.sawblade.diamond.name=Diamond Saw Blade
+metaitem.component.sawblade.tungsten.name=Tungsten Saw Blade
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
 metaitem.component.grinder.tungsten.name=Tungsten Grinding Head
 
@@ -821,7 +822,6 @@ metaitem.tool.screwdriver.name=%s Screwdriver
 metaitem.tool.screwdriver.tooltip=Adjusts Covers and Machines
 metaitem.tool.mortar.name=%s Mortar
 metaitem.tool.wire_cutter.name=%s Wire Cutter
-metaitem.tool.scoop.name=%s Scoop
 metaitem.tool.branch_cutter.name=%s Branch Cutter
 metaitem.tool.universal_spade.name=%s Universal Spade
 metaitem.tool.knife.name=%s Knife
@@ -898,7 +898,7 @@ metaitem.voltage_coil.luv.tooltip=Master Coil
 metaitem.voltage_coil.zpm.name=ZPM Voltage Coil
 metaitem.voltage_coil.zpm.tooltip=Ultimate Coil
 metaitem.voltage_coil.uv.name=Ultimate Voltage Coil
-metaitem.voltage_coil.uv.tooltip=Superconductor Coil
+metaitem.voltage_coil.uv.tooltip=Super Coil
 metaitem.voltage_coil.uhv.name=Highly Ultimate Voltage Coil
 metaitem.voltage_coil.uhv.tooltip=Infinite Coil
 metaitem.voltage_coil.uev.name=Extremely Ultimate Voltage Coil
@@ -906,9 +906,9 @@ metaitem.voltage_coil.uev.tooltip=Ultra Coil
 metaitem.voltage_coil.uiv.name=Insanely Ultimate Voltage Coil
 metaitem.voltage_coil.uiv.tooltip=Insane Coil
 metaitem.voltage_coil.umv.name=Mega Ultimate Voltage Coil
-metaitem.voltage_coil.umv.tooltip=UMV Coil
+metaitem.voltage_coil.umv.tooltip=Epic Coil
 metaitem.voltage_coil.uxv.name=Extended Mega Ultimate Voltage Coil
-metaitem.voltage_coil.uxv.tooltip=UXV Coil
+metaitem.voltage_coil.uxv.tooltip=Legendary Coil
 metaitem.voltage_coil.max.name=Maximum Voltage Coil
 metaitem.voltage_coil.max.tooltip=Maximum Coil
 
@@ -1413,6 +1413,7 @@ material.pyrite=Pyrite
 material.pyrolusite=Pyrolusite
 material.pyrope=Pyrope
 material.rock_salt=Rock Salt
+material.ruthenian_iridium=Ruthenian Iridium
 material.rubber=Rubber
 material.raw_rubber=Raw Rubber
 material.ruby=Ruby
@@ -1585,7 +1586,6 @@ material.wood_sealed=Sealed Wood
 material.glass=Glass
 material.perlite=Perlite
 material.borax=Borax
-material.lignite=Lignite Coal
 material.olivine=Olivine
 material.opal=Opal
 material.amethyst=Amethyst
@@ -1684,8 +1684,13 @@ material.data=Data
 material.elite=Elite
 material.master=Master
 material.ultimate=Ultimate
-material.superconductor=Superconductor
+material.super=Super
 material.infinite=Infinite
+material.ultra=Ultra
+material.insane=Insane
+material.epic=Epic
+material.legendary=Legendary
+material.maximum=Maximum
 
 material.uuamplifier=UU-Amplifier
 material.uumatter=UU-Matter
@@ -1701,7 +1706,6 @@ material.diamericium_titanium=Diamericium Titanium
 material.fluxed_electrum=Fluxed Electrum
 
 material.milk=Milk
-material.honey=Honey
 material.cocoa=Cocoa
 material.wheat=Wheat
 material.meat=Mince Meat
@@ -2039,8 +2043,10 @@ behaviour.lighter.uses=Remaining uses: %,d
 behavior.plunger.description=Use to clear 1000 L out of a machine's output tank./nUse while sneaking to clear 1000 L out of a machine's input tank./nInput tank clearing works only on GT machines!
 behavior.toggle_energy_consumer.tooltip=Use to toggle mode
 
-enchantment.damage.endermen=Disjunction
-enchantment.hard.hammer=Hammering
+enchantment.damage.disjunction=Disjunction
+enchantment.gregtech.disjunction.desc=Applies Weakness and Slowness to Ender-related mobs.
+enchantment.hard_hammer=Hammering
+enchantment.gregtech.hard_hammer.desc=Breaks blocks as if they were mined with a GregTech Hammer.
 
 tile.gt.seal.name=Sealed Block
 tile.gt.foam.name=Foam
@@ -3508,7 +3514,6 @@ gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.name=The Fina
 gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.desc=Craft a Diamericium Titanium Heating Coil.
 
 
-behaviour.scoop=Catches Butterflies on Leftclick
 behaviour.softhammer=Activates and Deactivates Machines
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
@@ -3853,11 +3858,8 @@ gregtech.multiblock.universal.distinct.no=No
 gregtech.multiblock.universal.distinct.yes=Yes
 gregtech.multiblock.universal.distinct.info=If enabled, each Item Input Bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
 
-gregtech.multiblock.preview.tilt=Shift+LMB to tilt
-gregtech.multiblock.preview.zoom=Shift+RMB to zoom
-gregtech.multiblock.preview.pan=LMB+Drag to pan
-gregtech.multiblock.preview.move=RMB+Drag to move
-gregtech.multiblock.preview.reset=Scroll Mousewheel to reset
+gregtech.multiblock.preview.zoom=Use mousewheel or right-click+Drag to zoom
+gregtech.multiblock.preview.rotate=Click and drag to rotate
 gregtech.multiblock.preview.any_hatch=Any tier hatch can be used to form the structure
 gregtech.multiblock.preview.any_hatch_maintenance=Any type of maintenance hatch can be used to form the structure
 gregtech.multiblock.preview.limit=Minimum Limit: %d
@@ -3870,6 +3872,7 @@ gregtech.multiblock.preview.location.t_c=Top Center
 gregtech.multiblock.preview.primitive_pump.hatch=Only Pump Hatch, ULV Hatch, or LV Hatch allowed
 gregtech.multiblock.preview.location_end=Very End
 gregtech.multiblock.preview.distillation_multi_fluid=Quadruple/Nonuple Output Hatches not allowed
+gregtech.multiblock.preview.clear_amount=Must have a clear %dx%dx%d space in front
 
 gregtech.multiblock.blast_furnace.max_temperature=Max Temperature: %sK
 gregtech.multiblock.multi_furnace.heating_coil_level=Heating Coil Level: %s
@@ -3957,6 +3960,11 @@ gregtech.terminal.app_name.theme_settings=Theme Settings
 gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
 gregtech.terminal.app_name.ore_prospector=Ore Prospector
+gregtech.terminal.app_name.pong=Pong
+gregtech.terminal.app_name.minesweeper=Minesweeper
+gregtech.terminal.app_name.maze=Theseus's Escape
+
+
 gregtech.terminal.app_name.console=GT Console
 gregtech.terminal.app_name.battery=Battery Manager
 gregtech.terminal.app_name.hardware=Hardware Manager
@@ -3970,6 +3978,9 @@ terminal.items.description=A guide book about items.
 terminal.machines.description=A guide book about gt machines.
 terminal.multiblocks.description=A guide book about multi-blocks.
 terminal.tutorials.description=Introduces all kinds of things, CT integration, tips, tutorials and more.
+terminal.pong.description=A classic pong game, if you're really that bored of waiting for that tungstensteel.
+terminal.minesweeper.description=A classic minesweeper game, if you're in class.
+terminal.maze.description=A GTOS exclusive game finding you racing through an endless labyrinth to survive the Minotaur!
 
 texture.modify_gui_texture.missing=Missing Texture
 texture.url_texture.fail=Load Failed
@@ -4067,6 +4078,7 @@ terminal.console.controllable=set working enable
 terminal.hardware.description=Hardware Manager, masterpieces of elegance and precision. How can a tablet be without hardware?
 terminal.hardware.select=Mounting hardware
 terminal.hardware.remove=Remove hardware
+terminal.hardware.tip.remove=§4right-click remove the hardware
 
 terminal.battery.description=Battery manager, visually analyzing your app's energy consumption.
 
@@ -4076,7 +4088,7 @@ terminal.store.miss=Require %s (%d).
 
 terminal.ar.open=Open AR
 
-terminal.multiblock_ar.description=Remember the §cFree Wrench§r?  Unfortunately, it it's gone.  It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
+terminal.multiblock_ar.description=Remember the §cFreedom Wrench§r?  Unfortunately, it it's gone. It doesn't matter, we have a new technology now. This app can also help you build your multi-block machine.
 terminal.multiblock_ar.tier.0=AR Camera
 terminal.multiblock_ar.tier.1=3D Builder
 terminal.multiblock_ar.unlock=Unlock this mode after the upgrade

@@ -2,7 +2,7 @@ package gregtech.api.net;
 
 import codechicken.lib.vec.Vector3;
 import gregtech.api.GTValues;
-import gregtech.api.GregTechRegistries;
+import gregtech.api.GregTechAPI;
 import gregtech.api.block.ICustomParticleBlock;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.UIFactory;
@@ -247,7 +247,7 @@ public class NetworkHandler {
     @SideOnly(Side.CLIENT)
     private static void initClient() {
         registerClientExecutor(PacketUIOpen.class, (packet, handler) -> {
-            UIFactory<?> uiFactory = GregTechRegistries.UI_FACTORY_REGISTRY.getObjectById(packet.uiFactoryId);
+            UIFactory<?> uiFactory = GregTechAPI.UI_FACTORY_REGISTRY.getObjectById(packet.uiFactoryId);
             if (uiFactory == null) {
                 GTLog.logger.warn("Couldn't find UI Factory with id '{}'", packet.uiFactoryId);
             } else {

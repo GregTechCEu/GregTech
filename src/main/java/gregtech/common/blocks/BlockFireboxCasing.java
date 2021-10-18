@@ -32,12 +32,14 @@ public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
         return state.getValue(ACTIVE) ? 15 : 0;
     }
 
+    @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
         super.createBlockState();
         return new BlockStateContainer(this, VARIANT, ACTIVE);
     }
 
+    @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return super.getStateFromMeta(meta % 8).withProperty(ACTIVE, meta / 8 >= 1);
@@ -49,7 +51,7 @@ public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
     }
 
     @Override
-    public int damageDropped(IBlockState state) {
+    public int damageDropped(@Nonnull IBlockState state) {
         return super.getMetaFromState(state);
     }
 

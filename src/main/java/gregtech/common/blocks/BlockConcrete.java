@@ -51,7 +51,7 @@ public class BlockConcrete extends StoneBlock<BlockConcrete.ConcreteVariant> {
 //    private static MovementInput manualInputCheck;
 
     @Override
-    public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn) {
+    public void onEntityWalk(@Nonnull World worldIn, @Nonnull BlockPos pos, Entity entityIn) {
 //        if (manualInputCheck == null) {
 //            manualInputCheck = new MovementInputFromOptions(Minecraft.getMinecraft().gameSettings);
 //        }

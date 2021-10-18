@@ -8,18 +8,12 @@ import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
-import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.model.ResourcePackHook;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.IMaterialHandler;
-import gregtech.api.unification.material.Material;
-import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.AnnotatedMaterialHandlerLoader;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
 import gregtech.api.util.input.KeyBinds;
@@ -39,22 +33,18 @@ import gregtech.common.worldgen.WorldGenAbandonedBase;
 import gregtech.common.worldgen.WorldGenRubberTree;
 import gregtech.integration.theoneprobe.TheOneProbeCompatibility;
 import gregtech.loaders.dungeon.DungeonLootLoader;
-import gregtech.loaders.recipe.component.AnnotatedComponentHandlerLoader;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.LoaderException;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.Optional.Method;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import static gregtech.api.GregTechRegistries.*;
+import static gregtech.api.GregTechAPI.*;
 
 @Mod(modid = GTValues.MODID,
         name = "GregTech",
@@ -96,26 +86,28 @@ public class GregTechMod {
 
         SimpleCapabilityManager.init();
 
-        // TODO Update this to new registration method
         /* Start Material Registration */
-        //first, register primary materials and run material handlers
-        MaterialRegistry.MATERIAL_REGISTRY.unfreeze();
+
+        // First, register CEu Materials
+        MATERIAL_REGISTRY.unfreeze();
+        GTLog.logger.info("Registering GTCEu Materials");
         Materials.register();
-        AnnotatedMaterialHandlerLoader.discoverAndLoadAnnotatedMaterialHandlers(event.getAsmData());
-        IMaterialHandler.runMaterialHandlers();
+        MATERIAL_REGISTRY.flush();
 
-        // Finalize GT materials (for now) so CT can access them by registry lookup
-        MaterialRegistry.finalizeMaterials(false);
+        // Then, register addon Materials
+        GTLog.logger.info("Registering addon Materials");
+        MinecraftForge.EVENT_BUS.post(new MaterialEvent());
+        MATERIAL_REGISTRY.flush();
 
-        //then, run CraftTweaker early material registration scripts
+        // Then, run CraftTweaker Material registration scripts
         if (GTValues.isModLoaded(GTValues.MODID_CT)) {
             GTLog.logger.info("Running early CraftTweaker initialization scripts...");
             runEarlyCraftTweakerScripts();
             MinecraftForge.EVENT_BUS.register(this);
         }
 
-        //freeze material registry before processing items, blocks and fluids
-        MaterialRegistry.finalizeMaterials(true);
+        // Freeze Material Registry before processing Items, Blocks, and Fluids
+        MATERIAL_REGISTRY.freeze();
         /* End Material Registration */
 
         OreDictUnifier.init();
@@ -129,15 +121,10 @@ public class GregTechMod {
         MTE_REGISTRY.unfreeze();
         GTLog.logger.info("Registering GTCEu Meta Tile Entities");
         MetaTileEntities.init();
-        GTLog.logger.info("Registering addon Meta Tile Entities");
-        MinecraftForge.EVENT_BUS.post(new RegisterEvent<>(MTE_REGISTRY, MetaTileEntity.class));
-        MTE_REGISTRY.freeze();
-        /* End MetaTileEntity Registration */
+        /* End CEu MetaTileEntity Registration */
+        /* Addons not done via an Event due to how much must be initialized for MTEs to register */
 
         MetaEntities.init();
-
-        // discover annotated crafting component handlers
-        AnnotatedComponentHandlerLoader.discoverAndLoadAnnotatedComponentHandlers(event.getAsmData());
 
         proxy.onPreLoad();
         KeyBinds.register();
@@ -145,6 +132,7 @@ public class GregTechMod {
 
     @Mod.EventHandler
     public void onInit(FMLInitializationEvent event) {
+        MTE_REGISTRY.freeze(); // freeze once addon preInit is finished
         proxy.onLoad();
         if (RecipeMap.isFoundInvalidRecipe()) {
             GTLog.logger.fatal("Seems like invalid recipe was found.");
@@ -156,7 +144,7 @@ public class GregTechMod {
                 GTLog.logger.fatal("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
                 GTLog.logger.fatal("Ignoring invalid recipes and continuing loading");
                 GTLog.logger.fatal("Some things may lack recipes or have invalid ones, proceed at your own risk");
-                GTLog.logger.fatal("Report to GTCE github to get more help and fix the problem");
+                GTLog.logger.fatal("Report to GTCEu GitHub to get more help and fix the problem");
                 GTLog.logger.fatal("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             }
         }

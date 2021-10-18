@@ -364,11 +364,26 @@ public class MixerRecipes {
                 .output(dust, HSSS, 9)
                 .buildAndRegister();
 
+        MIXER_RECIPES.recipeBuilder().duration(350).EUt(2500)
+                .input(dust, Ruthenium, 2)
+                .input(dust, Iridium)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, RuthenianIridium, 3)
+                .buildAndRegister();
+
         MIXER_RECIPES.recipeBuilder().duration(300).EUt(1920)
                 .input(dust, Osmium)
                 .input(dust, Iridium, 3)
                 .notConsumable(new IntCircuitIngredient(1))
                 .output(dust, Osmiridium, 4)
+                .buildAndRegister();
+
+        MIXER_RECIPES.recipeBuilder().duration(400).EUt(7680)
+                .input(dust, Naquadah, 2)
+                .input(dust, Osmiridium)
+                .input(dust, Trinium)
+                .notConsumable(new IntCircuitIngredient(1))
+                .output(dust, NaquadahAlloy, 4)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(100).EUt(480)

@@ -32,8 +32,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static gregtech.api.capability.MultiblockDataCodes.IS_TAPED;
-import static gregtech.api.capability.MultiblockDataCodes.STORE_MAINTENANCE;
+import static gregtech.api.capability.GregtechDataCodes.IS_TAPED;
+import static gregtech.api.capability.GregtechDataCodes.STORE_MAINTENANCE;
 
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 

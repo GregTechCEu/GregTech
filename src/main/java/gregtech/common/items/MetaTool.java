@@ -86,10 +86,6 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
                 .addOreDict(ToolDictNames.craftingToolWireCutter)
                 .addComponents(new CutterItemStat());
 
-        SCOOP = addItem(14, "tool.scoop").setToolStats(new ToolScoop())
-                .setFullRepairCost(3)
-                .addOreDict(ToolDictNames.craftingToolScoop);
-
         BRANCH_CUTTER = addItem(15, "tool.branch_cutter").setToolStats(new ToolBranchCutter())
                 .setFullRepairCost(5.125)
                 .addOreDict(ToolDictNames.craftingToolBranchCutter);

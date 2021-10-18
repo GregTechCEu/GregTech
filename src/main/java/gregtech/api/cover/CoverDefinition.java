@@ -1,6 +1,6 @@
 package gregtech.api.cover;
 
-import gregtech.api.GregTechRegistries;
+import gregtech.api.GregTechAPI;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -10,15 +10,15 @@ import java.util.function.BiFunction;
 public final class CoverDefinition {
 
     public static CoverDefinition getCoverById(ResourceLocation id) {
-        return GregTechRegistries.COVER_REGISTRY.getObject(id);
+        return GregTechAPI.COVER_REGISTRY.getObject(id);
     }
 
     public static CoverDefinition getCoverByNetworkId(int networkId) {
-        return GregTechRegistries.COVER_REGISTRY.getObjectById(networkId);
+        return GregTechAPI.COVER_REGISTRY.getObjectById(networkId);
     }
 
     public static int getNetworkIdForCover(CoverDefinition definition) {
-        return GregTechRegistries.COVER_REGISTRY.getIDForObject(definition);
+        return GregTechAPI.COVER_REGISTRY.getIDForObject(definition);
     }
 
     private final ResourceLocation coverId;

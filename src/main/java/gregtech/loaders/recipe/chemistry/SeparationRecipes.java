@@ -333,7 +333,7 @@ public class SeparationRecipes {
                 .input(dust, Sphalerite, 2)
                 .output(dust, Zinc)
                 .output(dust, Sulfur)
-                .chancedOutput(dustTiny, Gallium, 2500, 1000)
+                .chancedOutput(dustSmall, Gallium, 2000, 1000)
                 .duration(200).EUt(30).buildAndRegister();
 
         ELECTROLYZER_RECIPES.recipeBuilder()
