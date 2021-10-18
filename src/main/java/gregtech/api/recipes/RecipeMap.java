@@ -446,20 +446,23 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     protected static int[] determineSlotsGrid(int itemInputsCount) {
-        int itemSlotsToLeft = 0;
-        int itemSlotsToDown = 0;
+        int itemSlotsToLeft;
+        int itemSlotsToDown;
         double sqrt = Math.sqrt(itemInputsCount);
-        if (sqrt % 1 == 0) { //check if square root is integer
-            //case for 1, 4, 9 slots - it's square inputs (the most common case)
+        //if the number of input has an integer root
+        //return it.
+        if (sqrt % 1 == 0) {
             itemSlotsToLeft = itemSlotsToDown = (int) sqrt;
-        } else if (itemInputsCount % 3 == 0) {
-            //case for 3 and 6 slots - 3 by horizontal and i / 3 by vertical (common case too)
-            itemSlotsToDown = itemInputsCount / 3;
-            itemSlotsToLeft = 3;
-        } else if (itemInputsCount % 2 == 0) {
-            //case for 2 inputs - 2 by horizontal and i / 3 by vertical (for 2 slots)
-            itemSlotsToDown = itemInputsCount / 2;
-            itemSlotsToLeft = 2;
+        } else {
+            //if we couldn't fit all into a perfect square,
+            //increase the amount of slots to the left
+            itemSlotsToLeft = (int) Math.ceil(sqrt);
+            itemSlotsToDown = itemSlotsToLeft - 1;
+            //if we still can't fit all the slots in a grid,
+            //increase the amount of slots on the bottom
+            if (itemInputsCount > itemSlotsToLeft * itemSlotsToDown) {
+                itemSlotsToDown = itemSlotsToLeft;
+            }
         }
         return new int[]{itemSlotsToLeft, itemSlotsToDown};
     }
