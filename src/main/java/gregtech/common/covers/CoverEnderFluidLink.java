@@ -8,6 +8,7 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBehavior;
+import gregtech.api.cover.CoverBehaviorUIFactory;
 import gregtech.api.cover.CoverWithUI;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
@@ -42,6 +43,8 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     private boolean isPrivate;
     private boolean workingEnabled = true;
     private boolean ioEnabled;
+    private String tempColorStr;
+    private boolean isColorTemp;
     private final FluidTankSwitchShim linkedTank;
     protected final FluidFilterContainer fluidFilter;
 
@@ -57,7 +60,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     private String makeTankName() {
-        return "EFLink#" + getColorStr();
+        return "EFLink#" + Integer.toHexString(this.color).toUpperCase();
     }
 
     private UUID getTankUUID() {
@@ -125,6 +128,12 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     @Override
+    public void openUI(EntityPlayerMP player) {
+        CoverBehaviorUIFactory.INSTANCE.openUI(this, player);
+        isColorTemp = false;
+    }
+
+    @Override
     public ModularUI createUI(EntityPlayer player) {
         WidgetGroup widgetGroup = new WidgetGroup();
         widgetGroup.addWidget(new LabelWidget(10, 5, "cover.ender_fluid_link.title"));
@@ -134,9 +143,9 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         widgetGroup.addWidget(new SyncableColorRectWidget(35, 18, 18, 18, () -> color)
                 .setBorderWidth(1)
                 .drawCheckerboard(4, 4));
-        widgetGroup.addWidget(new TextFieldWidget(59, 13, 58, 18, true,
+        widgetGroup.addWidget(new TextFieldWidget(58, 13, 58, 18, true,
                 this::getColorStr, this::updateColor, 8)
-                .setValidator(str -> str.matches("[0-9a-fA-F]+")));
+                .setValidator(str -> str.matches("[0-9a-fA-F]*")));
         widgetGroup.addWidget(new TankWidget(this.linkedTank, 123, 18, 18, 18)
                 .setContainerClicking(true, true)
                 .setBackgroundTexture(GuiTextures.FLUID_SLOT).setAlwaysShowFull(true));
@@ -152,17 +161,23 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     private void updateColor(String str) {
-        // stupid java not having actual unsigned ints
-        long tmp = Long.parseLong(str, 16);
-        if (tmp > 0x7FFFFFFF) {
-            tmp -= 0x100000000L;
+        if (str.length() == 8) {
+            isColorTemp = false;
+            // stupid java not having actual unsigned ints
+            long tmp = Long.parseLong(str, 16);
+            if (tmp > 0x7FFFFFFF) {
+                tmp -= 0x100000000L;
+            }
+            this.color = (int) tmp;
+            updateTankLink();
+        } else {
+            tempColorStr = str;
+            isColorTemp = true;
         }
-        this.color = (int) tmp;
-        updateTankLink();
     }
 
     private String getColorStr() {
-        return Integer.toHexString(this.color).toUpperCase();
+        return isColorTemp ? tempColorStr : Integer.toHexString(this.color).toUpperCase();
     }
 
     public void updateTankLink() {

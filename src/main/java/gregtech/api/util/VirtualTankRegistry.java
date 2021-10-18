@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public class VirtualTankRegistry extends WorldSavedData {
 
-    private static final int DEFAULT_CAPACITY = Integer.MAX_VALUE;
+    private static final int DEFAULT_CAPACITY = 64000; //64B
     private static final String DATA_ID = GTValues.MODID + ".vtank_data";
 
     protected static Map<UUID, Map<String, IFluidTank>> tankMap = new HashMap<>();
