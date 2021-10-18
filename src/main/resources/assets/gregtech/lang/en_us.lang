@@ -1046,6 +1046,8 @@ cover.machine_controller.mode.cover_west=Control Cover (West)
 cover.ender_fluid_link.title=Ender Fluid Link
 cover.ender_fluid_link.iomode.enabled=I/O Enabled
 cover.ender_fluid_link.iomode.disabled=I/O Disabled
+cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPrivate mode uses the player who originally placed the cover
+cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore

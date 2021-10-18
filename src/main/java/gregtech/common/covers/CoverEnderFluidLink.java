@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
@@ -25,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.*;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -56,7 +58,7 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     private String makeTankName() {
-        return "EFLink#" + Integer.toHexString(color).toUpperCase();
+        return "EFLink#" + getColorStr();
     }
 
     private UUID getTankUUID() {
@@ -129,7 +131,8 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         WidgetGroup widgetGroup = new WidgetGroup();
         widgetGroup.addWidget(new LabelWidget(10, 5, "cover.ender_fluid_link.title"));
         widgetGroup.addWidget(new ToggleButtonWidget(12, 18, 18, 18, GuiTextures.BUTTON_PUBLIC_PRIVATE,
-                this::isPrivate, this::setPrivate));
+                this::isPrivate, this::setPrivate)
+                .setTooltipText("cover.ender_fluid_link.private.tooltip"));
         widgetGroup.addWidget(new SyncableColorRectWidget(35, 18, 18, 18, () -> color)
                 .setBorderWidth(1)
                 .drawCheckerboard(4, 4));
@@ -221,6 +224,16 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     @Override
     public void setWorkingEnabled(boolean isActivationAllowed) {
         this.workingEnabled = isActivationAllowed;
+    }
+
+    public <T> T getCapability(Capability<T> capability, T defaultValue) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(linkedTank);
+        }
+        if (capability == GregtechTileCapabilities.CAPABILITY_CONTROLLABLE) {
+            return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
+        }
+        return defaultValue;
     }
 
     private boolean isIoEnabled() {
