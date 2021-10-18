@@ -58,10 +58,6 @@ public class VirtualTankApp extends AbstractApplication {
                             .setBackgroundTexture(GuiTextures.FLUID_SLOT));
                     widgetGroup.addWidget(new LabelWidget(36, cy + 5, key, -1)
                             .setWidth(180));
-                    widgetGroup.addWidget(new LabelWidget(213, cy + 5, "terminal.vtank_viewer.refs", -1,
-                            // since for gameplay usage, -1 and 0 refs are equivalent, and -1 could be a bit confusing
-                            new Object[]{Math.max(VirtualTankRegistry.getRefs(key, uuid), 0)})
-                            .setWidth(101));
                     cy += 23;
                 }
             }

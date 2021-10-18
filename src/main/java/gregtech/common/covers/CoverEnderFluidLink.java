@@ -53,7 +53,6 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
         playerUUID = null;
         color = 0xFFFFFFFF;
         this.linkedTank = new FluidTankSwitchShim(VirtualTankRegistry.getTankCreate(makeTankName(), null));
-        VirtualTankRegistry.addRef(makeTankName(), null);
         fluidFilter = new FluidFilterContainer(this);
     }
 
@@ -93,7 +92,6 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     @Override
     public void onRemoved() {
-        VirtualTankRegistry.delRef(makeTankName(), getTankUUID());
         NonNullList<ItemStack> drops = NonNullList.create();
         MetaTileEntity.clearInventory(drops, fluidFilter.getFilterInventory());
         for (ItemStack itemStack : drops) {
@@ -154,7 +152,6 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     private void updateColor(String str) {
-        VirtualTankRegistry.delRef(makeTankName(), getTankUUID());
         // stupid java not having actual unsigned ints
         long tmp = Long.parseLong(str, 16);
         if (tmp > 0x7FFFFFFF) {
@@ -170,7 +167,6 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     public void updateTankLink() {
         this.linkedTank.changeTank(VirtualTankRegistry.getTankCreate(makeTankName(), getTankUUID()));
-        VirtualTankRegistry.addRef(makeTankName(), getTankUUID());
         coverHolder.markDirty();
     }
 
@@ -189,7 +185,6 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        VirtualTankRegistry.delRef(makeTankName(), getTankUUID());
         this.color = tagCompound.getInteger("Frequency");
         this.pumpMode = CoverPump.PumpMode.values()[tagCompound.getInteger("PumpMode")];
         this.workingEnabled = tagCompound.getBoolean("WorkingAllowed");
@@ -208,7 +203,6 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
 
     @Override
     public void readInitialSyncData(PacketBuffer packetBuffer) {
-        VirtualTankRegistry.delRef(makeTankName(), getTankUUID());
         this.color = packetBuffer.readInt();
         //does client even need uuid info? just in case
         String uuidStr = packetBuffer.readString(36);
@@ -249,7 +243,6 @@ public class CoverEnderFluidLink extends CoverBehavior implements CoverWithUI, I
     }
 
     private void setPrivate(boolean isPrivate) {
-        VirtualTankRegistry.delRef(makeTankName(), getTankUUID());
         this.isPrivate = isPrivate;
         updateTankLink();
     }

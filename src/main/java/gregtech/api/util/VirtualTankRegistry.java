@@ -22,7 +22,6 @@ public class VirtualTankRegistry extends WorldSavedData {
     private static final String DATA_ID = GTValues.MODID + ".vtank_data";
 
     protected static Map<UUID, Map<String, IFluidTank>> tankMap = new HashMap<>();
-    protected static Map<UUID, Map<String, Integer>> refmap = new HashMap<>();
 
     public VirtualTankRegistry() {
         super(DATA_ID);
@@ -101,76 +100,9 @@ public class VirtualTankRegistry extends WorldSavedData {
     }
 
     /**
-     * Adds a reference to the specified tank in the reference counter.
-     * @param key The name of the tank
-     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
-     */
-    public static void addRef(String key, UUID uuid) {
-        if (tankMap.containsKey(uuid) && tankMap.get(uuid).containsKey(key)) {
-            if (refmap.containsKey(uuid) && refmap.get(uuid).containsKey(key)) {
-                refmap.get(uuid).put(key, refmap.get(uuid).get(key) + 1);
-            } else {
-                if (!refmap.containsKey(uuid)) {
-                    refmap.put(uuid, new HashMap<>());
-                }
-                refmap.get(uuid).put(key, 1);
-            }
-        } else {
-            GTLog.logger.warn("Attempted to add reference to virtual tank " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", which does not exist in the tank map!");
-        }
-    }
-
-    /**
-     * Removes a reference to the specified tank in the reference counter
-     * @param key The name of the tank
-     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
-     * @param doCull Whether to remove the tank if it has no references and contains no fluid
-     */
-    public static void delRef(String key, UUID uuid, boolean doCull) {
-        if (tankMap.containsKey(uuid) && tankMap.get(uuid).containsKey(key)) {
-            if (refmap.containsKey(uuid) && refmap.get(uuid).containsKey(key)) {
-                refmap.get(uuid).put(key, refmap.get(uuid).get(key) - 1);
-                if (doCull && refmap.get(uuid).get(key) <= 0 && tankMap.get(uuid).get(key).getFluidAmount() <= 0) {
-                    tankMap.get(uuid).remove(key);
-                    refmap.get(uuid).remove(key);
-                    if (tankMap.get(uuid).size() <= 0) {
-                        tankMap.remove(uuid);
-                    }
-                    if (refmap.get(uuid).size() <= 0) {
-                        refmap.remove(uuid);
-                    }
-                }
-            } else {
-                GTLog.logger.warn("Attempted to delete reference to virtual tank " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", which does not exist in the reference map!");
-            }
-        } else {
-            GTLog.logger.warn("Attempted to delete reference to virtual tank " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", which does not exist in the tank map!");
-        }
-    }
-
-    /**
-     * Equivalent to {@link #delRef(String, UUID, boolean) delRef(key, uuid, true)}
-     */
-    public static void delRef(String key, UUID uuid) {
-        delRef(key, uuid, true);
-    }
-
-    /**
-     * @param key The name of the tank
-     * @return The number of counted references to the specified tank or -1 if it does not exist or is not tracked
-     */
-    public static int getRefs(String key, UUID uuid) {
-        if (tankMap.containsKey(uuid) && refmap.containsKey(uuid) && tankMap.get(uuid).containsKey(key) && refmap.get(uuid).containsKey(key)) {
-            return refmap.get(uuid).get(key);
-        }
-        return -1;
-    }
-
-    /**
      * To be called on server stopped event
      */
     public static void clearMaps() {
-        refmap.clear();
         tankMap.clear();
     }
 
@@ -208,19 +140,23 @@ public class VirtualTankRegistry extends WorldSavedData {
         tankMap.forEach( (uuid, map) -> {
             NBTTagCompound mapCompound = new NBTTagCompound();
             map.forEach( (key, tank) -> {
-                NBTTagCompound tankCompound = new NBTTagCompound();
-                tankCompound.setInteger("Capacity", tank.getCapacity());
-                if (tank.getFluid() != null) {
-                    tank.getFluid().writeToNBT(tankCompound);
-                } else {
-                    tankCompound.setString("Empty", "");
+                if (tank.getFluid() != null || tank.getCapacity() != DEFAULT_CAPACITY) {
+                    NBTTagCompound tankCompound = new NBTTagCompound();
+                    tankCompound.setInteger("Capacity", tank.getCapacity());
+                    if (tank.getFluid() != null) {
+                        tank.getFluid().writeToNBT(tankCompound);
+                    } else {
+                        tankCompound.setString("Empty", "");
+                    }
+                    mapCompound.setTag(key, tankCompound);
                 }
-                mapCompound.setTag(key, tankCompound);
             });
-            if (uuid == null) {
-                compound.setTag("Public", mapCompound);
-            } else {
-                compound.getCompoundTag("Private").setTag(uuid.toString(), mapCompound);
+            if (mapCompound.getSize() > 0) {
+                if (uuid == null) {
+                    compound.setTag("Public", mapCompound);
+                } else {
+                    compound.getCompoundTag("Private").setTag(uuid.toString(), mapCompound);
+                }
             }
         });
         return compound;
