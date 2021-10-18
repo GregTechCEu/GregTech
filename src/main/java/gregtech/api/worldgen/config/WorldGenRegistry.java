@@ -179,6 +179,7 @@ public class WorldGenRegistry {
             }
             // Populate the config folder with the defaults from the mod jar
             extractJarVeinDefinitions(configPath, veinPath);
+            extractJarVeinDefinitions(configPath, bedrockVeinPath);
         }
 
         // Read the dimensions name from the dimensions file
@@ -254,6 +255,10 @@ public class WorldGenRegistry {
     private static void extractJarVeinDefinitions(Path configPath, Path targetPath) throws IOException {
         // The path of the worldgen folder in the config folder
         Path worldgenRootPath = configPath.resolve("worldgen");
+        // The path of the physical vein folder in the config folder
+        Path oreVeinRootPath = worldgenRootPath.resolve("vein");
+        // The path of the bedrock fluid vein folder in the config folder
+        Path bedrockFluidVeinRootPath = worldgenRootPath.resolve("fluid");
         // The path of the named dimensions file in the config folder
         Path dimensionsRootPath = configPath.resolve("dimensions.json");
         // THe path of the lock file in the config folder
@@ -263,33 +268,55 @@ public class WorldGenRegistry {
             URI sampleUri = WorldGenRegistry.class.getResource("/assets/gregtech/.gtassetsroot").toURI();
             // The Path for representing the worldgen folder in the assets folder in the Gregtech resources folder in the jar
             Path worldgenJarRootPath;
+            // The Path for representing the vein folder in the vein folder in the assets folder in the Gregtech resources folder in the jar
+            Path oreVeinJarRootPath;
+            // The Path for representing the fluid folder in the vein folder in the assets folder in the Gregtech resources folder in the jar
+            Path bedrockFluidJarRootPath;
             if (sampleUri.getScheme().equals("jar") || sampleUri.getScheme().equals("zip")) {
                 zipFileSystem = FileSystems.newFileSystem(sampleUri, Collections.emptyMap());
                 worldgenJarRootPath = zipFileSystem.getPath("/assets/gregtech/worldgen");
+                oreVeinJarRootPath = zipFileSystem.getPath("/assets/gregtech/worldgen/vein");
+                bedrockFluidJarRootPath = zipFileSystem.getPath("/assets/gregtech/worldgen/fluid");
             } else if (sampleUri.getScheme().equals("file")) {
                 worldgenJarRootPath = Paths.get(WorldGenRegistry.class.getResource("/assets/gregtech/worldgen").toURI());
+                oreVeinJarRootPath = Paths.get(WorldGenRegistry.class.getResource("/assets/gregtech/worldgen/vein").toURI());
+                bedrockFluidJarRootPath = Paths.get(WorldGenRegistry.class.getResource("/assets/gregtech/worldgen/fluid").toURI());
             } else {
                 throw new IllegalStateException("Unable to locate absolute path to worldgen root directory: " + sampleUri);
             }
 
             // Attempts to extract the worldgen definition jsons
-            if (targetPath.compareTo(worldgenRootPath) == 0) {
+            if (targetPath.compareTo(oreVeinRootPath) == 0) {
                 GTLog.logger.info("Attempting extraction of standard worldgen definitions from {} to {}",
-                        worldgenJarRootPath, worldgenRootPath);
+                        oreVeinJarRootPath, oreVeinRootPath);
                 // Find all the default worldgen files in the assets folder
-                List<Path> jarFiles = Files.walk(worldgenJarRootPath)
+                List<Path> jarFiles = Files.walk(oreVeinJarRootPath)
                         .filter(Files::isRegularFile)
-                        .filter(jarPath -> !(jarPath.compareTo(worldgenJarRootPath.resolve("dimensions.json")) == 0))
-                        .filter(jarPath -> !(jarPath.compareTo(worldgenJarRootPath.resolve("worldgen_extracted.txt")) == 0))
                         .collect(Collectors.toList());
 
                 // Replaces or creates the default worldgen files
                 for (Path jarFile : jarFiles) {
-                    Path worldgenPath = worldgenRootPath.resolve(worldgenJarRootPath.relativize(jarFile).toString());
+                    Path worldgenPath = oreVeinRootPath.resolve(oreVeinJarRootPath.relativize(jarFile).toString());
                     Files.createDirectories(worldgenPath.getParent());
                     Files.copy(jarFile, worldgenPath, StandardCopyOption.REPLACE_EXISTING);
                 }
-                GTLog.logger.info("Extracted {} builtin worldgen definitions into worldgen folder", jarFiles.size());
+                GTLog.logger.info("Extracted {} builtin worldgen vein definitions into vein folder", jarFiles.size());
+            } else
+            if (targetPath.compareTo(bedrockFluidVeinRootPath) == 0) {
+                GTLog.logger.info("Attempting extraction of standard worldgen definitions from {} to {}",
+                        bedrockFluidJarRootPath, bedrockFluidVeinRootPath);
+                // Find all the default worldgen files in the assets folder
+                List<Path> jarFiles = Files.walk(bedrockFluidJarRootPath)
+                        .filter(Files::isRegularFile)
+                        .collect(Collectors.toList());
+
+                // Replaces or creates the default worldgen files
+                for (Path jarFile : jarFiles) {
+                    Path worldgenPath = bedrockFluidVeinRootPath.resolve(bedrockFluidJarRootPath.relativize(jarFile).toString());
+                    Files.createDirectories(worldgenPath.getParent());
+                    Files.copy(jarFile, worldgenPath, StandardCopyOption.REPLACE_EXISTING);
+                }
+                GTLog.logger.info("Extracted {} builtin worldgen bedrock fluid definitions into fluid folder", jarFiles.size());
             }
             // Attempts to extract the named dimensions json folder
             else if (targetPath.compareTo(dimensionsRootPath) == 0) {
