@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  *
  * @Author: KilaBash
  * @Date: 2021/09/13
- * @Description: Application for AP.
+ * @Description: Application for AR.
  * When AR is running, {@link #tickAR(EntityPlayer)} and {@link #drawARScreen(RenderWorldLastEvent)} will be called when you hold the terminal in one of your hands.
  * Therefore, at most one AR app is active on the terminal at any one time. And when you open the terminal GUI it automatically closes the currently running AR.
  * You have access to the app's NBT of the handheld terminal when the AR is active, to load configs, init and so on.

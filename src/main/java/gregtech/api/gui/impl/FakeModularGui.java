@@ -59,6 +59,8 @@ public class FakeModularGui implements IRenderContext {
 
         GlStateManager.translate(-scale * halfW, -scale * halfH, 0.01);
         GlStateManager.scale(scale, scale, 1);
+        modularUI.backgroundPath.draw(0, 0, modularUI.getWidth(), modularUI.getHeight());
+        GlStateManager.translate(0, 0, -0.01);
         GlStateManager.depthMask(false);
 
         drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);

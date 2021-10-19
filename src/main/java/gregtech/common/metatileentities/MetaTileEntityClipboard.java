@@ -88,7 +88,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
-//        CLIPBOARD_RENDERER.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
+        CLIPBOARD_RENDERER.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
         if (this.getClipboard() != null)
             CLIPBOARD_RENDERER.renderGUI(translation.m03, translation.m13, translation.m23, this.getFrontFacing(), this, partialTicks);
     }
