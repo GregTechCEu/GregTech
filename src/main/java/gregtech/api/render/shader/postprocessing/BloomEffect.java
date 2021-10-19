@@ -87,10 +87,6 @@ public class BloomEffect {
                 resY /= 2;
             }
         }
-        for (int i = 0; i < BUFFERS_D.length; i++) {
-            BUFFERS_D[i].framebufferClear();
-            BUFFERS_U[i].framebufferClear();
-        }
         PingPongBuffer.updateSize(lastWidth, lastHeight);
     }
 

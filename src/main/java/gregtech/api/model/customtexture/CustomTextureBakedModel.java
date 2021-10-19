@@ -25,18 +25,13 @@ public class CustomTextureBakedModel implements IBakedModel {
     private final CustomTextureModel model;
     private final IBakedModel parent;
 
-    private static final Cache<CustomTextureBakedModel.State, CustomTextureBakedModel> modelcache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).maximumSize(5000).build();
+    public static final Cache<CustomTextureBakedModel.State, CustomTextureBakedModel> MODEL_CACHE = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).maximumSize(5000).build();
 
     protected final ListMultimap<BlockRenderLayer, BakedQuad> genQuads = MultimapBuilder.enumKeys(BlockRenderLayer.class).arrayListValues().build();
     protected final Table<BlockRenderLayer, EnumFacing, List<BakedQuad>> faceQuads = Tables.newCustomTable(Maps.newEnumMap(BlockRenderLayer.class), () -> Maps.newEnumMap(EnumFacing.class));
 
     private final EnumMap<EnumFacing, ImmutableList<BakedQuad>> noLayerCache = new EnumMap<>(EnumFacing.class);
     private ImmutableList<BakedQuad> noSideNoLayerCache;
-
-    public static void invalidateCaches()
-    {
-        modelcache.invalidateAll();
-    }
 
     public CustomTextureBakedModel(CustomTextureModel model, IBakedModel parent){
         this.model = model;
@@ -127,7 +122,7 @@ public class CustomTextureBakedModel implements IBakedModel {
         BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
         CustomTextureBakedModel baked;
         try {
-            baked = modelcache.get(new State(state, parent), () -> createModel(state, model, rand));
+            baked = MODEL_CACHE.get(new State(state, parent), () -> createModel(state, model, rand));
             List<BakedQuad> ret;
             if (side != null && layer != null) {
                 ret = baked.faceQuads.get(layer, side);

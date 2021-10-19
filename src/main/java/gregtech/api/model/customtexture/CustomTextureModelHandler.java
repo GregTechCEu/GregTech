@@ -113,7 +113,7 @@ public enum CustomTextureModelHandler implements IResourceManagerReloadListener 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
         metadataCache.clear();
-        CustomTextureBakedModel.invalidateCaches();;
+        CustomTextureBakedModel.MODEL_CACHE.cleanUp();
         wrappedModels.clear();
     }
 }

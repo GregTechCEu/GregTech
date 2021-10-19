@@ -51,7 +51,7 @@ import static codechicken.lib.raytracer.RayTracer.*;
 import static gregtech.api.render.Textures.CLIPBOARD_RENDERER;
 import static gregtech.common.items.MetaItems.CLIPBOARD;
 
-public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMetaTileEntity, IFastRenderMetaTileEntity {
+public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRenderMetaTileEntity {
     private static final AxisAlignedBB CLIPBOARD_AABB = new AxisAlignedBB(2.75 / 16.0, 0.0, 0.0, 13.25 / 16.0, 1.0, 0.4 / 16.0);
     public static final float scale = 1;
     public FakeModularGui guiCache;
@@ -85,15 +85,12 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
         return 0;
     }
 
-    @Override
-    public void renderMetaTileEntityDynamic(double x, double y, double z, float partialTicks) {
-        if (this.getClipboard() != null)
-            CLIPBOARD_RENDERER.renderGUI(x, y, z, this.getFrontFacing(), this, partialTicks);
-    }
 
     @Override
     public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
-        CLIPBOARD_RENDERER.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
+//        CLIPBOARD_RENDERER.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
+        if (this.getClipboard() != null)
+            CLIPBOARD_RENDERER.renderGUI(translation.m03, translation.m13, translation.m23, this.getFrontFacing(), this, partialTicks);
     }
 
     public AxisAlignedBB getRenderBoundingBox() {

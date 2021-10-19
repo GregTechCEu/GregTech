@@ -17,7 +17,6 @@ import gregtech.api.GTValues;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
-import gregtech.api.metatileentity.IRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
@@ -93,9 +92,6 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         }
         metaTileEntity.setRenderContextStack(null);
         renderState.draw();
-        if (metaTileEntity instanceof IRenderMetaTileEntity) {
-            ((IRenderMetaTileEntity) metaTileEntity).renderMetaTileEntityDynamic(0.0, 0.0, 0.0, 0.0f);
-        }
         GlStateManager.disableBlend();
     }
 
