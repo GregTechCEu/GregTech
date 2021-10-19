@@ -396,6 +396,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
                 int slotIndex = i * itemSlotsToLeft + j;
+                if (slotIndex >= itemInputsCount) break;
                 int x = startInputsX + 18 * j;
                 int y = startInputsY + 18 * i;
                 addSlot(builder, x, y, slotIndex, itemHandler, fluidHandler, invertFluids, isOutputs);
@@ -453,7 +454,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         //return it.
         if (sqrt % 1 == 0) {
             itemSlotsToLeft = itemSlotsToDown = (int) sqrt;
-        } else {
+        } else if (itemInputsCount == 3) {
+            itemSlotsToLeft = 3;
+            itemSlotsToDown = 1;
+        }
+        else {
             //if we couldn't fit all into a perfect square,
             //increase the amount of slots to the left
             itemSlotsToLeft = (int) Math.ceil(sqrt);
