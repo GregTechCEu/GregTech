@@ -1,7 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
 import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
@@ -88,7 +87,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         if (handlers.size() == 0) return 0;
         int amountToDistribute = stack.amount;
         int c = amountToDistribute / handlers.size();
-        int m = amountToDistribute % handlers.size();
+        int m = c == 0 ? amountToDistribute % handlers.size() : 0;
         int inserted = 0;
         for (Pair<IFluidHandler, Predicate<FluidStack>> pair : handlers) {
             if (!pair.getValue().test(stack))
@@ -99,7 +98,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
                 stackToFill.amount++;
                 m--;
             }
-            inserted += pair.getKey().fill(stackToFill, true);
+            int i = pair.getKey().fill(stackToFill, true);
+            inserted += i;
         }
         FluidStack toDrain = stack.copy();
         toDrain.amount = inserted;
@@ -186,10 +186,10 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     public PipeTankList getTankList() {
-        return (PipeTankList) getTankList(EnumFacing.UP);
+        return getTankList(EnumFacing.UP);
     }
 
-    public FluidTankList getTankList(EnumFacing facing) {
+    public PipeTankList getTankList(EnumFacing facing) {
         if (fluidTanks == null) {
             createTanksList();
         }
@@ -211,26 +211,31 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return fluids;
     }
 
-    public int setFluidAuto(FluidStack stack) {
-        return setContainingFluid(stack, findChannel(stack));
+    public int setFluidAuto(FluidStack stack, boolean fill) {
+        return setContainingFluid(stack, findChannel(stack), fill);
     }
 
-    public int setContainingFluid(FluidStack stack, int channel) {
+    public int setContainingFluid(FluidStack stack, int channel, boolean fill) {
         if (channel < 0)
             return stack == null ? 0 : stack.amount;
         if (stack == null || stack.amount <= 0) {
             getFluidTanks()[channel].setFluid(null);
             return 0;
         }
-        FluidStack currentStack = getContainedFluid(channel);
+        FluidTank tank = getFluidTanks()[channel];
+        FluidStack currentStack = tank.getFluid();
         if (currentStack == null || currentStack.amount <= 0) {
             checkAndDestroy(stack);
+        } else if (fill) {
+            int toFill = stack.amount;
+            if (toFill + currentStack.amount > tank.getCapacity())
+                toFill = tank.getCapacity() - currentStack.amount;
+            currentStack.amount += toFill;
+            return toFill;
         }
-        int originalAmount = stack.amount;
-        FluidTank tank = getFluidTanks()[channel];
         stack.amount = Math.min(stack.amount, tank.getCapacity());
         tank.setFluid(stack);
-        return originalAmount - stack.amount;
+        return stack.amount;
     }
 
     public void checkAndDestroy(FluidStack stack) {

@@ -4,6 +4,7 @@ import gregtech.api.pipenet.Node;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -47,28 +48,47 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
 
     protected int drain(FluidStack stack, BlockPos pos) {
         if (stack == null || stack.amount <= 0) return 0;
-        for (FluidStack stack1 : fluids) {
+        Iterator<FluidStack> iterator = fluids.iterator();
+        while (iterator.hasNext()) {
+            FluidStack stack1 = iterator.next();
             if (stack1.isFluidEqual(stack)) {
                 int amount = Math.min(stack.amount, stack1.amount);
                 stack1.amount -= amount;
-                markDirtyPipeNetStack(stack1, pos);
+                if (stack1.amount <= 0)
+                    iterator.remove();
+                else
+                    dirtyStacks.put(stack1, pos);
+                GTLog.logger.info("Drained {} * {} from net", stack.getLocalizedName(), amount);
                 return amount;
             }
         }
-        throw new IllegalStateException("Tried to drain not existend fluid from net");
+        GTLog.logger.error("Tried draining {} * {} but is not in the net", stack.getFluid().getName(), stack.amount);
+        return 0;
     }
 
     protected void fill(FluidStack stack, BlockPos pos) {
         if (stack == null || stack.amount <= 0) return;
         for (FluidStack stack1 : fluids) {
             if (stack1.isFluidEqual(stack)) {
+                GTLog.logger.info("Filling {} * {} to net", stack.getLocalizedName(), stack.amount);
                 stack1.amount += stack.amount;
-                markDirtyPipeNetStack(stack1, pos);
+                dirtyStacks.put(stack1, pos);
                 return;
             }
         }
+        GTLog.logger.info("Filling new fluid {} * {} to net", stack.getLocalizedName(), stack.amount);
         fluids.add(stack);
-        markDirtyPipeNetStack(stack, pos);
+        dirtyStacks.put(stack, pos);
+    }
+
+    private void recountFluids() {
+        Iterator<FluidStack> iterator = fluids.iterator();
+        while (iterator.hasNext()) {
+            FluidStack fluid = iterator.next();
+            fluid.amount = FluidNetWalker.countFluid(getWorldData(), getAllNodes().keySet().iterator().next(), fluid, true).getCount();
+            if (fluid.amount <= 0)
+                iterator.remove();
+        }
     }
 
     @Override
@@ -76,6 +96,8 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
         super.transferNodeData(transferredNodes, parentNet1);
         FluidPipeNet parentNet = (FluidPipeNet) parentNet1;
         fluids.addAll(parentNet.fluids);
+        recountFluids();
+        parentNet.recountFluids();
     }
 
     @Override
@@ -97,77 +119,98 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
 
     @Override
     public void update() {
-        for (Map.Entry<FluidStack, List<TileEntityFluidPipe>> entry : requestedPipes.entrySet()) {
-            FluidStack stack = entry.getKey();
-            List<TileEntityFluidPipe> pipes = entry.getValue();
-            FluidNetWalker walker = FluidNetWalker.countFluid(getWorldData(), pipes.get(0).getPos(), stack);
-            int c = walker.getCount() / pipes.size();
-            int m = c == 0 ? walker.getCount() % pipes.size() : 0;
-            int inserted = 0;
-            for (TileEntityFluidPipe pipe : pipes) {
-                FluidStack toInsert = stack.copy();
-                toInsert.amount = c;
-                if (m > 0) {
-                    toInsert.amount++;
-                    m--;
-                }
-                int i = pipe.distribute(toInsert);
-                inserted += i;
-            }
-            FluidStack toDrain = stack.copy();
-            toDrain.amount = inserted;
-            for (TileEntityFluidPipe pipe : walker.getPipes()) {
-                FluidStack drained = pipe.getTankList().drain(toDrain, true);
-                if (drained != null)
-                    toDrain.amount -= drained.amount;
-            }
-        }
-        requestedPipes.clear();
-
-        if (dirtyStacks.size() > 0) {
-            Iterator<FluidStack> iterator = dirtyStacks.keySet().iterator();
-            while (iterator.hasNext()) {
-                FluidStack dirtyStack = iterator.next();
-                if (dirtyStack.amount <= 0) {
-                    iterator.remove();
-                    continue;
-                }
-                List<TileEntityFluidPipe> pipes = FluidNetWalker.getPipesForFluid(getWorldData(), dirtyStacks.get(dirtyStack), dirtyStack);
-                if (pipes.size() == 0) {
-                    iterator.remove();
-                    continue;
-                }
-                int c = dirtyStack.amount / pipes.size();
-                int m = dirtyStack.amount % pipes.size();
-                int overflow = 0;
+        if (getWorldData() != null) {
+            for (Map.Entry<FluidStack, List<TileEntityFluidPipe>> entry : requestedPipes.entrySet()) {
+                FluidStack stack = entry.getKey();
+                List<TileEntityFluidPipe> pipes = entry.getValue();
+                FluidNetWalker walker = FluidNetWalker.countFluid(getWorldData(), pipes.get(0).getPos(), stack, false);
+                int c = walker.getCount() / pipes.size();
+                int m = c == 0 ? walker.getCount() % pipes.size() : 0;
+                GTLog.logger.info("Distributing {} * {} to {} pipes", stack.getLocalizedName(), walker.getCount(), pipes.size());
+                int inserted = 0;
                 for (TileEntityFluidPipe pipe : pipes) {
-                    int count = c;
+                    FluidStack toInsert = stack.copy();
+                    toInsert.amount = c;
                     if (m > 0) {
-                        count++;
+                        toInsert.amount++;
                         m--;
                     }
-                    FluidStack stack = dirtyStack.copy();
-                    stack.amount = count;
-                    overflow += pipe.setFluidAuto(stack);
+                    int i = pipe.distribute(toInsert);
+                    inserted += i;
                 }
-                dirtyStack.amount -= overflow;
-                iterator.remove();
+                if (inserted > 0) {
+                    FluidStack toDrain = stack.copy();
+                    toDrain.amount = inserted;
+                    for (TileEntityFluidPipe pipe : walker.getPipes()) {
+                        if (toDrain.amount <= 0)
+                            break;
+                        FluidStack drained = pipe.getTankList().drain(toDrain, true);
+                        if (drained != null)
+                            toDrain.amount -= drained.amount;
+                    }
+                    GTLog.logger.info("Inserted {}, Drained {}", inserted, inserted - toDrain.amount);
+                }
             }
-            dirtyStacks.clear();
+            requestedPipes.clear();
+            if (dirtyStacks.size() > 0) {
+                GTLog.logger.info("{} dirty stacks in net", dirtyStacks.size());
+                Iterator<FluidStack> iterator = dirtyStacks.keySet().iterator();
+                while (iterator.hasNext()) {
+                    FluidStack dirtyStack = iterator.next();
+                    if (dirtyStack.amount <= 0) {
+                        iterator.remove();
+                        continue;
+                    }
+                    GTLog.logger.info("Evening out {} * {}", dirtyStack.getLocalizedName(), dirtyStack.amount);
+                    List<TileEntityFluidPipe> pipes = FluidNetWalker.getPipesForFluid(getWorldData(), dirtyStacks.get(dirtyStack), dirtyStack);
+                    if (pipes.size() == 0) {
+                        iterator.remove();
+                        continue;
+                    }
+                    GTLog.logger.info("Distributing to {} pipes", pipes.size());
+                    int amount = dirtyStack.amount;
+                    int round = 0;
+                    while (amount > 0 && pipes.size() > 0) {
+                        int c = amount / pipes.size();
+                        int m = amount % pipes.size();
+
+                        Iterator<TileEntityFluidPipe> pipeIterator = pipes.iterator();
+                        while (pipeIterator.hasNext()) {
+                            TileEntityFluidPipe pipe = pipeIterator.next();
+                            int count = c;
+                            if (m > 0) {
+                                count++;
+                                m--;
+                            }
+                            FluidStack stack = dirtyStack.copy();
+                            stack.amount = count;
+                            int set = pipe.setFluidAuto(stack, round > 0);
+                            if (count > set)
+                                pipeIterator.remove();
+                            amount -= set;
+                        }
+                        round++;
+                    }
+                    dirtyStack.amount -= amount;
+                    iterator.remove();
+                }
+                dirtyStacks.clear();
+            }
         }
     }
 
     private void markDirtyPipeNetStack(FluidStack stack, BlockPos pos) {
-        if (stack != null && stack.amount > 0) {
-            dirtyStacks.put(stack, pos);
-        }
+        if (stack == null)
+            throw new NullPointerException("FluidStack can't be null");
+        dirtyStacks.put(stack, pos);
     }
 
     public void markDirty(FluidStack stack, BlockPos pos) {
-        if (stack == null || stack.amount <= 0) return;
+        if (stack == null)
+            throw new NullPointerException("FluidStack can't be null");
         for (FluidStack stack1 : this.fluids) {
             if (stack1.isFluidEqual(stack)) {
-                dirtyStacks.put(stack, pos);
+                dirtyStacks.put(stack1, pos);
                 return;
             }
         }

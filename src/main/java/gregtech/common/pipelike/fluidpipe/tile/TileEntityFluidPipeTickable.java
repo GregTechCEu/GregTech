@@ -41,7 +41,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                         continue;
                     }
                     int c = amountToDistribute / handlers.size();
-                    int m = amountToDistribute % handlers.size();
+                    int m = c == 0 ? amountToDistribute % handlers.size() : 0;
                     int inserted = 0;
                     for (Pair<IFluidHandler, Predicate<FluidStack>> pair : handlers) {
                         FluidStack stackToFill = stack.copy();

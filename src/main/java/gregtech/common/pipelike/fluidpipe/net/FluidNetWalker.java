@@ -18,8 +18,9 @@ import java.util.List;
 
 public class FluidNetWalker extends PipeNetWalker {
 
-    public static FluidNetWalker countFluid(World world, BlockPos pos, FluidStack fluid) {
+    public static FluidNetWalker countFluid(World world, BlockPos pos, FluidStack fluid, boolean ignoreFilter) {
         FluidNetWalker walker = new FluidNetWalker(Mode.COUNT, world, pos, 1, fluid);
+        walker.ignoreFilter = ignoreFilter;
         walker.traversePipeNet();
         return walker;
     }
@@ -34,6 +35,7 @@ public class FluidNetWalker extends PipeNetWalker {
     private List<TileEntityFluidPipe> pipes = new ArrayList<>();
     private final FluidStack fluid;
     private int count;
+    private boolean ignoreFilter = false;
 
     protected FluidNetWalker(Mode mode, World world, BlockPos sourcePipe, int walkedBlocks, FluidStack fluid) {
         super(world, sourcePipe, walkedBlocks);
@@ -45,6 +47,7 @@ public class FluidNetWalker extends PipeNetWalker {
     protected PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks) {
         FluidNetWalker walker = new FluidNetWalker(mode, world, nextPos, walkedBlocks, fluid);
         walker.pipes = pipes;
+        walker.ignoreFilter = ignoreFilter;
         return walker;
     }
 
@@ -75,6 +78,8 @@ public class FluidNetWalker extends PipeNetWalker {
     protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
         if (!(neighbourPipe instanceof TileEntityFluidPipe))
             return false;
+        if(ignoreFilter)
+            return true;
         ICoverable coverable = currentPipe.getCoverableImplementation();
         CoverBehavior cover = coverable.getCoverAtSide(faceToNeighbour);
         if (cover instanceof CoverFluidFilter) {
