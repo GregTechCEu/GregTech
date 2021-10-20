@@ -56,6 +56,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
@@ -74,7 +75,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     private long lastUpdate;
     private WeakReference<EnergyNet> currentEnergyNet;
     private List<BlockPos> activeNodes;
-    public List<Tuple<BlockPos, EnumFacing>> covers;
+    public List<Pair<BlockPos, EnumFacing>> covers;
     @SideOnly(Side.CLIENT)
     public List<BlockPos> parts;
     public MetaTileEntityMonitorScreen[][] screens;
@@ -128,7 +129,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     private boolean checkCovers() {
         updateNodes();
-        List<Tuple<BlockPos, EnumFacing>> checkCovers = new ArrayList<>();
+        List<Pair<BlockPos, EnumFacing>> checkCovers = new ArrayList<>();
         World world = this.getWorld();
         for (BlockPos pos : activeNodes) {
             TileEntity tileEntityCable = world.getTileEntity(pos);
@@ -142,14 +143,14 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                     if (metaTileEntity != null) {
                         CoverBehavior cover = metaTileEntity.getCoverAtSide(facing.getOpposite());
                         if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
-                            checkCovers.add(new Tuple<>(metaTileEntity.getPos(), cover.attachedSide));
+                            checkCovers.add(Pair.of(metaTileEntity.getPos(), cover.attachedSide));
                         }
                     }
                 } else {
                     CoverBehavior cover = ((TileEntityPipeBase<?,?>) tileEntityCable).getCoverableImplementation().getCoverAtSide(facing);
                     if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
                         if(((CoverDigitalInterface) cover).getCoveredTE() != null) {
-                            checkCovers.add(new Tuple<>(tileEntityCable.getPos(), cover.attachedSide));
+                            checkCovers.add(Pair.of(tileEntityCable.getPos(), cover.attachedSide));
                         }
                     }
                 }
@@ -168,9 +169,9 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             return;
         }
         buf.writeInt(covers.size());
-        for (Tuple<BlockPos, EnumFacing> cover : covers){
-            buf.writeBlockPos(cover.getFirst());
-            buf.writeByte(cover.getSecond().getIndex());
+        for (Pair<BlockPos, EnumFacing> cover : covers){
+            buf.writeBlockPos(cover.getLeft());
+            buf.writeByte(cover.getRight().getIndex());
         }
     }
 
@@ -178,7 +179,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         covers = new ArrayList<>();
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {
-            covers.add(new Tuple<>(buf.readBlockPos(), EnumFacing.byIndex(buf.readByte())));
+            covers.add(Pair.of(buf.readBlockPos(), EnumFacing.byIndex(buf.readByte())));
         }
     }
 
@@ -193,7 +194,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     private void readParts(PacketBuffer buf) {
         parts = new ArrayList<>();
-        clearScreans();
+        clearScreens();
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {
             parts.add(buf.readBlockPos());
@@ -220,7 +221,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         return isStructureFormed() && isActive;
     }
 
-    private void clearScreans() {
+    private void clearScreens() {
         if (screens != null) {
             for (MetaTileEntityMonitorScreen[] screen : screens) {
                 for (MetaTileEntityMonitorScreen s : screen) {
@@ -299,7 +300,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             this.isActive = buf.readBoolean();
         } else if (id == 400) {
             if (!this.isStructureFormed()) {
-                clearScreans();
+                clearScreens();
             }
         }
     }
@@ -424,11 +425,10 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     @SideOnly(Side.CLIENT)
     public void renderMetaTileEntityDynamic(double x, double y, double z, float partialTicks) {
         if (!this.isStructureFormed()) return;
-        EnumFacing spin = BlockPatternChecker.getSpin(this);
         RenderUtil.useStencil(()->{
             GlStateManager.pushMatrix();
             RenderUtil.moveToFace(x, y, z, this.frontFacing);
-            RenderUtil.rotateToFace(this.frontFacing, spin);
+            RenderUtil.rotateToFace(this.frontFacing, EnumFacing.NORTH);
             RenderUtil.renderRect(0.5f, -0.5f - (height - 2), width, height, 0.001f, 0xFF000000);
             GlStateManager.popMatrix();
         }, ()->{
@@ -453,7 +453,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                                 BlockPos pos2 = this.getPos();
                                 GlStateManager.pushMatrix();
                                 RenderUtil.moveToFace(x + pos.getX() - pos2.getX(), y + pos.getY() - pos2.getY(), z + pos.getZ() - pos2.getZ(), this.frontFacing);
-                                RenderUtil.rotateToFace(this.frontFacing, spin);
+                                RenderUtil.rotateToFace(this.frontFacing, EnumFacing.NORTH);
                                 screen.renderScreen(partialTicks, rayTraceResult);
                                 GlStateManager.popMatrix();
                             }
@@ -462,7 +462,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 }
 
                 if (size != parts.size()) {
-                    clearScreans();
+                    clearScreens();
                     for (BlockPos pos : parts) {
                         TileEntity tileEntity = getWorld().getTileEntity(pos);
                         if(tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
@@ -471,7 +471,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                             int sx = screen.getX(), sy = screen.getY();
                             if (sx < 0 || sx >= width || sy < 0 || sy >= height) {
                                 parts.clear();
-                                clearScreans();
+                                clearScreens();
                                 break;
                             }
                             screens[sx][sy] = screen;
@@ -490,27 +490,8 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
 
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
-        BlockPos sp = null;
-        BlockPos ep = null;
-        EnumFacing spin = BlockPatternChecker.getSpin(this);
-        if (frontFacing.getAxis() == EnumFacing.Axis.Y) {
-            sp = this.getPos().offset(spin, -2);
-            ep = sp.offset(spin, height + 1).offset(spin.rotateY(), (width + 2) * frontFacing.getYOffset());
-        } else {
-            if (spin == EnumFacing.NORTH) {
-                sp = this.getPos().offset(EnumFacing.DOWN, 2);
-                ep = sp.offset(EnumFacing.UP, height + 1).offset(this.frontFacing.rotateY(),  - width - 2);
-            } else if (spin == EnumFacing.SOUTH) {
-                sp = this.getPos().offset(EnumFacing.UP, 2);
-                ep = sp.offset(EnumFacing.DOWN, height + 1).offset(this.frontFacing.rotateY(), width + 2);
-            } else if (spin == EnumFacing.WEST) {
-                sp = this.getPos().offset(frontFacing.rotateY(), -2);
-                ep = sp.offset(frontFacing.rotateY(), height + 1).offset(EnumFacing.UP, width + 2);
-            } else {
-                sp = this.getPos().offset(frontFacing.rotateY(), 2);
-                ep = sp.offset(frontFacing.rotateY(), -height - 1).offset(EnumFacing.DOWN, width + 2);
-            }
-        }
+        BlockPos sp = this.getPos().offset(EnumFacing.DOWN);
+        BlockPos ep = sp.offset(this.frontFacing.rotateY(), -width - 2).offset(EnumFacing.UP, height);
         return new AxisAlignedBB(sp, ep);
     }
 
@@ -559,5 +540,10 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         tooltip.add(I18n.format("gtadditions.multiblock.central_monitor.tooltip.2", MAX_WIDTH, MAX_HEIGHT));
         tooltip.add(I18n.format("gtadditions.multiblock.central_monitor.tooltip.3"));
         tooltip.add(I18n.format("gtadditions.multiblock.central_monitor.tooltip.4", -ENERGY_COST));
+    }
+
+    @Override
+    public boolean hasMaintenanceMechanics() {
+        return false;
     }
 }

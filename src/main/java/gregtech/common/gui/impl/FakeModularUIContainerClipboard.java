@@ -1,11 +1,9 @@
 package gregtech.common.gui.impl;
 
 import com.google.common.collect.Lists;
-import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGuiContainer;
-import gregtech.api.gui.widgets.WidgetUIAccess;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.PacketClipboardUIWidgetUpdate;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
@@ -51,12 +49,37 @@ public class FakeModularUIContainerClipboard extends FakeModularGuiContainer {
         }
     }
 
+    public void handleClientAction(PacketBuffer buffer) {
+        int windowId = buffer.readVarInt();
+        if (windowId == this.windowId) {
+            Widget widget = modularUI.guiWidgets.get(buffer.readVarInt());
+            if (widget != null) {
+                widget.handleClientAction(buffer.readVarInt(), buffer);
+            }
+        }
+    }
+
     @Override
     public boolean detectSyncedPacket(PacketBuffer buffer) {
         return this.windowId == buffer.readVarInt();
     }
 
     public void detectAndSendChanges() {
+        List<Tuple<Integer, ItemStack>> toUpdate = new ArrayList<>();
+        for (int i = 0; i < this.inventorySlots.size(); ++i) {
+            ItemStack real = this.inventorySlots.get(i).getStack();
+            ItemStack fake = this.inventoryItemStacks.get(i);
+
+            if (!ItemStack.areItemStacksEqual(fake, real)) {
+                boolean clientStackChanged = !ItemStack.areItemStacksEqualUsingNBTShareTag(fake, real);
+                fake = real.isEmpty() ? ItemStack.EMPTY : real.copy();
+                this.inventoryItemStacks.set(i, fake);
+
+                if (clientStackChanged) {
+                    toUpdate.add(new Tuple<>(i, fake));
+                }
+            }
+        }
         modularUI.guiWidgets.values().forEach(Widget::detectAndSendChanges);
     }
 

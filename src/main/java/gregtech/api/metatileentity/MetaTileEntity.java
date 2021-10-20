@@ -495,10 +495,6 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
     public boolean canPlaceCoverOnSide(EnumFacing side) {
-        if (hasFrontFacing() && side == getFrontFacing()) {
-            //covers cannot be placed on this side
-            return false;
-        }
         ArrayList<IndexedCuboid6> collisionList = new ArrayList<>();
         addCollisionBoundingBox(collisionList);
         //noinspection RedundantIfStatement
@@ -827,8 +823,6 @@ public abstract class MetaTileEntity implements ICoverable {
         } else if (dataId == UPDATE_IS_FRAGILE) {
             this.isFragile = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == -9) {
-            BlockPatternChecker.setSpin(this, EnumFacing.VALUES[buf.readByte()]);
         }
     }
 

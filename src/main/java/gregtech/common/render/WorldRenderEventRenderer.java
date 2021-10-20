@@ -158,15 +158,6 @@ public class WorldRenderEventRenderer {
             long durTimeMillis = mbpEndTime;
             reset();
             mbpEndTime = System.currentTimeMillis() + durTimeMillis;
-            if (renderMode == 2) {
-                BlockPos error = BlockPatternChecker.getPatternErrorPos(controllerBase);
-                if (error != null) {
-                    renderBlockBoxHighLight(error, durTimeMillis);
-                }
-                mbpEndTime = 0;
-                controllerBase = null;
-                return;
-            }
             worldSceneRenderer = JEIOptional.getWorldSceneRenderer(controllerBase);
             if(worldSceneRenderer == null) {
                 reset();
@@ -219,7 +210,7 @@ public class WorldRenderEventRenderer {
             EnumFacing facing = controllerBase.getFrontFacing();
             EnumFacing spin = EnumFacing.NORTH;
             BlockPatternChecker checker = new BlockPatternChecker();
-            checker.updateAllValue(ObfuscationReflectionHelper.getPrivateValue(MultiblockControllerBase.class, controllerBase, "structurePattern"));
+            checker.updateAllValue(controllerBase.structurePattern);
             RelativeDirection[] structureDir = checker.structureDir;
 
             if (structureDir == null) {
@@ -230,9 +221,7 @@ public class WorldRenderEventRenderer {
                 }
                 return;
             }
-            spin = BlockPatternChecker.getSpin(controllerBase);
-
-            frontFacing = facing.getYOffset() == 0 ? facing : facing.getYOffset() < 0 ? spin : spin.getOpposite();
+            frontFacing = facing.getYOffset() == 0 ? facing : facing.getYOffset() < 0 ? EnumFacing.EAST : EnumFacing.WEST;
 
             Rotation rotatePreviewBy = Rotation.values()[(4 + frontFacing.getHorizontalIndex() - previewFacing.getHorizontalIndex()) % 4];
 
@@ -323,11 +312,6 @@ public class WorldRenderEventRenderer {
             if (time > mbpEndTime) {
                 reset();
                 layer = -1;
-                controllerBase = null;
-                return;
-            }
-            if (renderMode == 2) {
-                mbpPos = BlockPatternChecker.getPatternErrorPos(controllerBase);
                 controllerBase = null;
                 return;
             }

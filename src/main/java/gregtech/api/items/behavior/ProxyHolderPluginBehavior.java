@@ -37,4 +37,8 @@ public abstract class ProxyHolderPluginBehavior extends MonitorPluginBaseBehavio
     }
 
     protected abstract void onHolderChanged(MetaTileEntityHolder lastHolder);
+
+    public MetaTileEntityHolder getHolder() {
+        return holder;
+    }
 }

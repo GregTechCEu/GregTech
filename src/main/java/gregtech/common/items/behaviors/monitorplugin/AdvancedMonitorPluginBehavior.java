@@ -11,6 +11,7 @@ import gregtech.api.gui.PluginWorldSceneRenderer;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
+import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
@@ -94,7 +95,6 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                 MetaTileEntityHolder newHolder = new MetaTileEntityHolder();
                 newHolder.setMetaTileEntity(holder.getMetaTileEntity().createMetaTileEntity(newHolder));
                 newHolder.getMetaTileEntity().setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
-                BlockPatternChecker.setSpin(newHolder.getMetaTileEntity(), BlockPatternChecker.getSpin(holder.getMetaTileEntity()));
                 renderedBlocks.put(pos.subtract(minPos), new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), newHolder));
             } else {
                 renderedBlocks.put(pos.subtract(minPos), new BlockInfo(world.getBlockState(pos)));
@@ -193,7 +193,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                     connections.clear();
                     for (MetaTileEntityMonitorScreen[] monitorScreens : ((MetaTileEntityCentralMonitor) this.screen.getController()).screens) {
                         for (MetaTileEntityMonitorScreen screen : monitorScreens) {
-                            if (screen != null && screen.plugin instanceof FakeGuiPluginBehavior && ((FakeGuiPluginBehavior) screen.plugin).holder == this.holder) {
+                            if (screen != null && screen.plugin instanceof FakeGuiPluginBehavior && ((FakeGuiPluginBehavior) screen.plugin).getHolder() == this.holder) {
                                 MetaTileEntity met = ((FakeGuiPluginBehavior) screen.plugin).getRealMTE();
                                 if (met != null) {
                                     BlockPos pos = met.getPos().subtract(minPos);

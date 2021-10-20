@@ -1,15 +1,11 @@
 package gregtech.common.gui.impl;
 
-import com.google.common.collect.Lists;
-import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGuiContainer;
 import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.Tuple;
 
 import java.util.ArrayList;
@@ -24,7 +20,6 @@ public class FakeModularUIPluginContainer extends FakeModularGuiContainer {
     public FakeModularUIPluginContainer(ModularUI modularUI, FakeGuiPluginBehavior pluginBehavior) {
         super(modularUI);
         this.behavior = pluginBehavior;
-
     }
 
     @Override

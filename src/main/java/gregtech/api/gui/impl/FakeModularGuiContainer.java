@@ -5,14 +5,11 @@ import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.WidgetUIAccess;
-import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.Tuple;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 

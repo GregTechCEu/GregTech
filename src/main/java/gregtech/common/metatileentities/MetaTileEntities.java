@@ -472,6 +472,8 @@ public class MetaTileEntities {
 
         STEAM_OVEN = registerMetaTileEntity(1023, new MetaTileEntitySteamOven(gregtechId("steam_oven")));
         STEAM_GRINDER = registerMetaTileEntity(1024, new MetaTileEntitySteamGrinder(gregtechId("steam_grinder")));
+        CENTRAL_MONITOR = registerMetaTileEntity(1025, new MetaTileEntityCentralMonitor(gregtechId("central_monitor")));
+
 
         // MISC MTE's START: IDs 1150-2000
 
@@ -706,6 +708,8 @@ public class MetaTileEntities {
         }
 
         CLIPBOARD_TILE = registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));
+
+        MONITOR_SCREEN = registerMetaTileEntity(1667, new MetaTileEntityMonitorScreen(gregtechId("monitor_screen")));
 
         /*
          * FOR ADDON DEVELOPERS:

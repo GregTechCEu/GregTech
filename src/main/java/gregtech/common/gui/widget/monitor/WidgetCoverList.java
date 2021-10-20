@@ -38,7 +38,7 @@ public class WidgetCoverList extends ScrollableListWidget {
         super(xPosition, yPosition, width, slotSize * 18);
         widgetMap = new HashMap<>();
         this.onSelected = onSelected;
-        for (CoverDigitalInterface cover: covers) {
+        for (CoverDigitalInterface cover : covers) {
             ItemStack itemStack = cover.coverHolder.getStackForm();
             BlockPos pos = cover.coverHolder.getPos();
             if (cover.coverHolder instanceof PipeCoverableImplementation) {
@@ -87,14 +87,14 @@ public class WidgetCoverList extends ScrollableListWidget {
                 List<Widget> children = ((WidgetGroup) widget).getContainedWidgets(true);
                 if (children.get(0).isMouseOverElement(mouseX, mouseY)) {
                     try {
-                        String posString = ObfuscationReflectionHelper.getPrivateValue(LabelWidget.class, (LabelWidget)children.get(1),"text");
+                        String posString = ObfuscationReflectionHelper.getPrivateValue(LabelWidget.class, (LabelWidget) children.get(1), "text");
                         String[] posSplit = posString.split("[,() ]");
                         WorldRenderEventRenderer.renderBlockBoxHighLight(
                                 new BlockPos(Integer.parseInt(posSplit[1]), Integer.parseInt(posSplit[3])
                                         , Integer.parseInt(posSplit[5])), 5000);
                         Minecraft.getMinecraft().player.closeScreen();
                         Minecraft.getMinecraft().player.sendMessage(new TextComponentString(
-                                ((SlotWidget)children.get(0)).getHandle().getStack().getDisplayName() +
+                                ((SlotWidget) children.get(0)).getHandle().getStack().getDisplayName() +
                                         ": "
                                         + posString
                         ));
@@ -108,7 +108,7 @@ public class WidgetCoverList extends ScrollableListWidget {
                 } else {
                     this.selected = (WidgetGroup) widget;
                 }
-                writeClientAction(2, buf->{
+                writeClientAction(2, buf -> {
                     if (this.selected == null) {
                         buf.writeInt(-1);
                     } else {
@@ -167,7 +167,7 @@ public class WidgetCoverList extends ScrollableListWidget {
     }
 
     @Override
-    public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
+    public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
         RenderUtil.useScissor(this.getPosition().x, this.getPosition().y, this.getSize().width, this.getSize().height, () -> {
             widgets.forEach(widget -> {
                 if (widget instanceof WidgetGroup) {
@@ -179,7 +179,7 @@ public class WidgetCoverList extends ScrollableListWidget {
             if (selected != null) {
                 Gui.drawRect(selected.getPosition().x, selected.getPosition().y, selected.getPosition().x + this.getSize().width - this.scrollPaneWidth, selected.getPosition().y + selected.getSize().height, 0x4BFFFFFF);
             }
-            super.drawInBackground(mouseX, mouseY, context);
+            super.drawInBackground(mouseX, mouseY, partialTicks, context);
         });
     }
 

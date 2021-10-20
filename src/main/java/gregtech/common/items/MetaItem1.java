@@ -19,6 +19,10 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.RandomPotionEffect;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.*;
+import gregtech.common.items.behaviors.monitorplugin.AdvancedMonitorPluginBehavior;
+import gregtech.common.items.behaviors.monitorplugin.FakeGuiPluginBehavior;
+import gregtech.common.items.behaviors.monitorplugin.OnlinePicPluginBehavior;
+import gregtech.common.items.behaviors.monitorplugin.TextPluginBehavior;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
@@ -595,6 +599,14 @@ public class MetaItem1 extends StandardMetaItem {
         IMPELLER_MV = addItem(776, "impeller.mv").setRarity(EnumRarity.UNCOMMON);
         IMPELLER_HV = addItem(777, "impeller.hv").setRarity(EnumRarity.RARE);
         GRAVITATION_ENGINE = addItem(778, "gravitation_engine").setRarity(EnumRarity.EPIC);
+
+        // Plugins: 780-799
+        PLUGIN_ADVANCED_MONITOR = addItem(780, "plugin.advanced_monitor").addComponents(new AdvancedMonitorPluginBehavior());
+        PLUGIN_FAKE_GUI = addItem(781, "plugin.fake_gui").addComponents(new FakeGuiPluginBehavior());
+        PLUGIN_ONLINE_PIC = addItem(782, "plugin.online_pic").addComponents(new OnlinePicPluginBehavior());
+        PLUGIN_TEXT = addItem(783, "plugin.text").addComponents(new TextPluginBehavior());
+        COVER_DIGITAL_INTERFACE = addItem(784, "cover.digital");
+
     }
 
 }

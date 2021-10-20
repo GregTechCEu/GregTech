@@ -57,6 +57,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("primitive_water_pump", new MultiblockInfoRecipeWrapper(new PrimitivePumpInfo()));
         put("steam_grinder", new MultiblockInfoRecipeWrapper(new SteamGrinderInfo()));
         put("steam_oven", new MultiblockInfoRecipeWrapper(new SteamOvenInfo()));
+        put("central_monitor", new MultiblockInfoRecipeWrapper(new CentralMonitorInfo()));
     }};
 
     public static void registerRecipes(IModRegistry registry) {

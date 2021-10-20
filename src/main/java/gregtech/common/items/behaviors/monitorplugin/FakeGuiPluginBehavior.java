@@ -8,6 +8,7 @@ import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGui;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
+import gregtech.api.items.behavior.ProxyHolderPluginBehavior;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
