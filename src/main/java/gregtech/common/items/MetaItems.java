@@ -426,6 +426,9 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem PLUGIN_FAKE_GUI;
     public static MetaItem<?>.MetaValueItem PLUGIN_ADVANCED_MONITOR;
 
+    public static MetaItem<?>.MetaValueItem COLOURED_LEDS;
+    public static MetaItem<?>.MetaValueItem DISPLAY;
+
     public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT;
 
     public static MetaItem<?>.MetaValueItem FOAM_SPRAYER;

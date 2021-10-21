@@ -605,7 +605,9 @@ public class MetaItem1 extends StandardMetaItem {
         PLUGIN_FAKE_GUI = addItem(781, "plugin.fake_gui").addComponents(new FakeGuiPluginBehavior());
         PLUGIN_ONLINE_PIC = addItem(782, "plugin.online_pic").addComponents(new OnlinePicPluginBehavior());
         PLUGIN_TEXT = addItem(783, "plugin.text").addComponents(new TextPluginBehavior());
-        COVER_DIGITAL_INTERFACE = addItem(784, "cover.digital");
+
+        COLOURED_LEDS = addItem(800, "coloured.leds");
+        DISPLAY = addItem(801, "display");
 
     }
 

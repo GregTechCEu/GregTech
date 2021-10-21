@@ -242,16 +242,16 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
         super.addDisplayText(textList);
-        textList.add(new TextComponentTranslation("gtadditions.multiblock.central_monitor.height", this.height));
+        textList.add(new TextComponentTranslation("gregtech.multiblock.central_monitor.height", this.height));
         if (!isStructureFormed()) {
-            ITextComponent buttonText = new TextComponentTranslation("gtadditions.multiblock.central_monitor.height_modify");
+            ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.central_monitor.height_modify");
             buttonText.appendText(" ");
             buttonText.appendSibling(AdvancedTextWidget.withButton(new TextComponentString("[-]"), "sub"));
             buttonText.appendText(" ");
             buttonText.appendSibling(AdvancedTextWidget.withButton(new TextComponentString("[+]"), "add"));
             textList.add(buttonText);
         } else {
-            textList.add(new TextComponentTranslation("gtadditions.multiblock.central_monitor.width", this.width));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.central_monitor.width", this.width));
             textList.add(new TextComponentTranslation("metaitem.tool.prospect.low_power"));
         }
     }
@@ -536,10 +536,10 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gtadditions.multiblock.central_monitor.tooltip.1"));
-        tooltip.add(I18n.format("gtadditions.multiblock.central_monitor.tooltip.2", MAX_WIDTH, MAX_HEIGHT));
-        tooltip.add(I18n.format("gtadditions.multiblock.central_monitor.tooltip.3"));
-        tooltip.add(I18n.format("gtadditions.multiblock.central_monitor.tooltip.4", -ENERGY_COST));
+        tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.1"));
+        tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.2", MAX_WIDTH, MAX_HEIGHT));
+        tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.3"));
+        tooltip.add(I18n.format("gregtech.multiblock.central_monitor.tooltip.4", -ENERGY_COST));
     }
 
     @Override

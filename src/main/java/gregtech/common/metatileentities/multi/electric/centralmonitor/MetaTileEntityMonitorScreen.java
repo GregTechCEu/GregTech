@@ -560,7 +560,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                     .widget(pluginWidget)
                     .widget(mainGroup)
                     .widget(new WidgetMonitorScreen(330, 0, 150, this))
-                    .widget(new LabelWidget(15, 13, "gtadditions.machine.monitor_screen.name", 0XFFFFFFFF))
+                    .widget(new LabelWidget(15, 13, "gregtech.machine.monitor_screen.name", 0XFFFFFFFF))
                     .widget(new ClickButtonWidget(15, 25, 40, 20, "monitor.gui.title.back", data -> {
                         if (mainGroup.isVisible() && ((MetaTileEntityCentralMonitor) controller).isActive() && controller.isValid()) {
                             MetaTileEntityUIFactory.INSTANCE.openUI(controller.getHolder(), (EntityPlayerMP) entityPlayer);
@@ -748,8 +748,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         super.addInformation(stack, player, tooltip, advanced);
-        tooltip.add(I18n.format("gtadditions.multiblock.monitor_screen.tooltip.1"));
-        tooltip.add(I18n.format("gtadditions.multiblock.monitor_screen.tooltip.2"));
-        tooltip.add(I18n.format("gtadditions.multiblock.monitor_screen.tooltip.3"));
+        tooltip.add(I18n.format("gregtech.multiblock.monitor_screen.tooltip.1"));
+        tooltip.add(I18n.format("gregtech.multiblock.monitor_screen.tooltip.2"));
+        tooltip.add(I18n.format("gregtech.multiblock.monitor_screen.tooltip.3"));
     }
 }

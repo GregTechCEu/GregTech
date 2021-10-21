@@ -761,6 +761,9 @@ metaitem.cover.solar.panel.uv.tooltip=Ultimate Voltage Solar Panel
 metaitem.cover.infinite_water.name=Infinite Water Cover
 metaitem.cover.infinite_water.tooltip=Creates 16 Buckets of Water every second (as Cover)
 
+metaitem.cover.drain=Drain Cover
+
+
 metaitem.gelled_toluene.name=Gelled Toluene
 metaitem.gelled_toluene.tooltip=Raw Explosive
 
@@ -2076,6 +2079,16 @@ metaitem.terminal.tooltip.hardware=§aHardware: %d
 
 metaitem.wireless.name=Wireless Transmitter
 metaitem.camera.name=Camera
+
+metaitem.plugin.tooltips.1=Plugins can be added to the screen for more functionality.
+metaitem.plugin.proxy.tooltips.1=(Please adjust to proxy mode in the screen)
+metaitem.plugin.text.name=Text Plugin
+metaitem.plugin.online_pic.name=Online Picture Plugin
+metaitem.plugin.fake_gui.name=GUI Proxy Plugin
+metaitem.plugin.advanced_monitor.name=Advanced Monitor Proxy Plugin
+metaitem.cover.digital.name=Digital Interface Cover
+metaitem.coloured.leds.name=Coloured LEDs
+metaitem.display.name=Display
 
 tile.casing.ulv=ULV Machine Casing
 tile.casing.lv=LV Machine Casing
@@ -3568,6 +3581,22 @@ gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
 
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
+gregtech.machine.central_monitor.name=Central Monitor
+gregtech.multiblock.central_monitor.height=Screen Height:
+gregtech.multiblock.central_monitor.width=Screen Width: %d
+gregtech.multiblock.central_monitor.height_modify=Modify Height: %d
+gregtech.multiblock.central_monitor.tooltip.1=This is a screen that monitors machines proxied by the Digital Interface Cover. You can easily monitor the Fluids, Items, Energy, and States of machines proxied in Energy Network.
+gregtech.multiblock.central_monitor.tooltip.2=You can build the central monitor screen from 3X2 to %dX%d (width X height).
+gregtech.multiblock.central_monitor.tooltip.3=The default height is 3. You can adjust the screen height in the GUI before the structure is formed.
+gregtech.multiblock.central_monitor.tooltip.4=Energy consumption: %d EU/s for each screen.
+gregtech.multiblock.monitor_screen.tooltip.1=The GUI can be opened with a right-click of a screwdriver.
+gregtech.multiblock.monitor_screen.tooltip.2=The proxy mode of Digital Interface Cover can delegate machines' capabilities and GUI. (Yes, you can connect pipes directly on the screen.)
+gregtech.multiblock.monitor_screen.tooltip.3=The screen also supports plugins.
+
+
+gregtech.machine.monitor_screen.name=Monitor Screen
+
+
 # Multiblock Tooltips
 gregtech.machine.primitive_blast_furnace.bronze.tooltip=Structure: 3x3x4 (WxLxH) The entire structure is made out of Primitive Bricks (32 in total)./nFirst Layer is a 3x3 square./nSecond, third, and fourth layers are hollow, without the middle block./nThis block goes on the middle of any side in the second layer./nThe sides of Blast Furnaces can be shared, if the side does not have a controller./n
 gregtech.machine.multiblock.universal.controller_information=Controller block for the §e%s§7.
@@ -4102,3 +4131,12 @@ terminal.world_prospector.tier.2=Radius 60m (4 slot)
 terminal.world_prospector.radius=Radius %sm
 terminal.world_prospector.reference=Select a reference
 terminal.world_prospector.color=Select box color
+
+metaitem.cover.digital.title.mode=Mode:
+metaitem.cover.digital.title.spin=Spin:
+monitor.gui.title.back=Back
+monitor.gui.title.scale=Scale:
+monitor.gui.title.argb=ARGB:
+monitor.gui.title.slot=Slot:
+monitor.gui.title.plugin=Plugin:
+monitor.gui.title.config=Config

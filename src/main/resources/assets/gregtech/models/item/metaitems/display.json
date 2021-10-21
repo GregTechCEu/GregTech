@@ -1,6 +1,7 @@
+
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "gregtech:items/metaitems/plugin.text"
+    "layer0": "gregtech:items/metaitems/display"
   }
 }

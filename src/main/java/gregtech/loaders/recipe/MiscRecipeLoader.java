@@ -3,6 +3,7 @@ package gregtech.loaders.recipe;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -15,6 +16,8 @@ import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import static gregtech.api.GTValues.L;
 import static gregtech.api.recipes.RecipeMaps.*;
@@ -358,5 +361,82 @@ public class MiscRecipeLoader {
                 .outputs(ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .buildAndRegister();
 
+        ASSEMBLER_RECIPES.recipeBuilder().duration(200).EUt(300)
+                .inputs(DIODE.getStackForm(32))
+                .input(dust, Glass, 1)
+                .input(dye, MarkerMaterials.Color.Red, 1)
+                .input(dye, MarkerMaterials.Color.Green, 1)
+                .input(dye, MarkerMaterials.Color.Blue, 1)
+                .input(wireFine, Aluminium, 8)
+                .fluidInputs(SolderingAlloy.getFluid(72))
+                .outputs(COLOURED_LEDS.getStackForm(32))
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(160).EUt(300)
+                .inputs(SMD_DIODE.getStackForm(16))
+                .input(dust, Glass, 1)
+                .input(dye, MarkerMaterials.Color.Red, 1)
+                .input(dye, MarkerMaterials.Color.Green, 1)
+                .input(dye, MarkerMaterials.Color.Blue, 1)
+                .input(wireFine, Aluminium, 8)
+                .fluidInputs(SolderingAlloy.getFluid(72))
+                .outputs(COLOURED_LEDS.getStackForm(32))
+                .buildAndRegister();
+        CIRCUIT_ASSEMBLER_RECIPES.recipeBuilder().duration(120).EUt(300)
+                .inputs(COLOURED_LEDS.getStackForm(4))
+                .inputs(PLASTIC_BOARD.getStackForm())
+                .input(wireFine, Aluminium, 4)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(DISPLAY.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(480)
+                .inputs(DISPLAY.getStackForm())
+                .inputs((ItemStack) CraftingComponent.HULL.getIngredient(3))
+                .input(wireFine, AnnealedCopper, 8)
+                .fluidInputs(SolderingAlloy.getFluid(288))
+                .outputs(MetaTileEntities.MONITOR_SCREEN.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(500)
+                .inputs(DISPLAY.getStackForm())
+                .inputs((ItemStack) CraftingComponent.HULL.getIngredient(3))
+                .input(circuit, MarkerMaterials.Tier.Advanced, 2)
+                .fluidInputs(SolderingAlloy.getFluid(432))
+                .outputs(MetaTileEntities.CENTRAL_MONITOR.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(500)
+                .inputs(DISPLAY.getStackForm())
+                .input(plate, StainlessSteel)
+                .input(circuit, MarkerMaterials.Tier.Advanced)
+                .input(screw, StainlessSteel, 4)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(COVER_DIGITAL_INTERFACE.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+                .inputs(DISPLAY.getStackForm())
+                .input(circuit, MarkerMaterials.Tier.Basic)
+                .input(wireFine, Copper, 2)
+                .fluidInputs(SolderingAlloy.getFluid(72))
+                .outputs(PLUGIN_TEXT.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+                .inputs(DISPLAY.getStackForm())
+                .input(circuit, MarkerMaterials.Tier.Basic)
+                .input(wireFine, Iron, 2)
+                .fluidInputs(SolderingAlloy.getFluid(72))
+                .outputs(PLUGIN_ONLINE_PIC.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+                .inputs(DISPLAY.getStackForm())
+                .input(circuit, MarkerMaterials.Tier.Basic)
+                .input(wireFine, Gold, 2)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(PLUGIN_FAKE_GUI.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
+                .inputs(DISPLAY.getStackForm())
+                .input(circuit, MarkerMaterials.Tier.Advanced)
+                .input(wireFine, Aluminium, 2)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(PLUGIN_ADVANCED_MONITOR.getStackForm())
+                .buildAndRegister();
     }
 }
