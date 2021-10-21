@@ -76,7 +76,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IRenderMe
                 guiCache.updateScreen();
         } else {
             if(!receivesData)
-                this.writeCustomData(3, buffer -> { });
+                this.writeCustomData(DETECT_UPDATE_RECEIVED, buffer -> { }); // Doesn't do anything, just helps start updates quickly
             if (guiContainerCache != null)
                 guiContainerCache.detectAndSendChanges();
         }
