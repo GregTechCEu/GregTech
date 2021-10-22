@@ -132,19 +132,19 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
         if (workingEnabled) {
             if (recipeDurationLeft > 0) {
                 //Check for if the full energy amount can be added to the output container, or if the energy should be voided
-                //In addition, checks if the recipe should be canceled for any reason
-                //TODO, should isObstructed() wipe the remaining recipeDuration?
-                //TODO, should isObstructed be called not every tick, to prevent scanning free space every tick? getOffsetTimer % 10?
-                if ((energyContainer.get().getEnergyCanBeInserted() >= recipeOutputVoltage || shouldVoidExcessiveEnergy()) && !isObstructed()) {
+                //In addition, checks if the recipe should be canceled for any reason (Once per second)
+                if ((energyContainer.get().getEnergyCanBeInserted() >= recipeOutputVoltage || shouldVoidExcessiveEnergy())
+                        && (metaTileEntity.getOffsetTimer() % 20 == 0 && !isObstructed())) {
                     energyContainer.get().addEnergy(recipeOutputVoltage);
                     //If the recipe has finished, mark the machine as needing to be updated
                     if (--this.recipeDurationLeft == 0) {
                         this.wasActiveAndNeedsUpdate = true;
                     }
                 }
-               /* else if(isObstructed()) {
+               else if(isObstructed()) {
                     this.recipeDurationLeft = 0;
-                } */
+                    this.wasActiveAndNeedsUpdate = true;
+                }
             }
             if (recipeDurationLeft == 0 && isReadyForRecipes() && canWorkWithInputs()) {
                 tryAcquireNewRecipe();
@@ -179,7 +179,7 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
 
     /**
      * Whether the multiblock should cancel its recipe for any reason.
-     * This will be checked every update tick, unlike {@link FuelRecipeLogic#isReadyForRecipes()}
+     * This will be checked every 20 update ticks, unlike {@link FuelRecipeLogic#isReadyForRecipes()}
      * Some examples of usage would be if a rotor or air intake is obstructed.
      *
      * @return {@code true} if the multiblock should cancel its recipe for any reason
