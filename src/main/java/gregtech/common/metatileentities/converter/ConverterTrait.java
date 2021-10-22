@@ -52,10 +52,6 @@ public class ConverterTrait extends MTETrait {
         storedEU = 0;
     }
 
-    protected void invertMode() {
-        feToEu = !feToEu;
-    }
-
     protected void setMode(boolean feToEu) {
         this.feToEu = feToEu;
     }

@@ -3105,12 +3105,12 @@ gregtech.machine.battery_buffer.max.16.name=MAX Voltage Battery Buffer
 
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
-gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dV (%d)§7 -> §a%dA %dV (%d)
-gregtech.machine.transformer.message_transform_down=Transforming Down, In: %dV %dA, Out: %dV %dA
-gregtech.machine.transformer.tooltip_transform_up=Transform Up: §a%dA %dV (%d)§7 -> §a%dA %dV (%d)
-gregtech.machine.transformer.message_transform_up=Transforming Up, In: %dV %dA, Out: %dV %dA
+gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dEU (%d)§7 -> §a%dA %dEU (%d)
+gregtech.machine.transformer.message_transform_down=Transforming Down, In: %dEU %dA, Out: %dEU %dA
+gregtech.machine.transformer.tooltip_transform_up=Transform Up: §a%dA %dEU (%d)§7 -> §a%dA %dEU (%d)
+gregtech.machine.transformer.message_transform_up=Transforming Up, In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer_adjustable.tooltip_tool_usage=Use Screwdriver to cycle amperage (Starts as 4 Amps)
-gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %dV %dA, Lo-Amp to %dV %dA
+gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %dEU %dA, Lo-Amp to %dEU %dA
 
 gregtech.machine.transformer.ulv.name=Ultra Low Voltage Transformer
 gregtech.machine.transformer.lv.name=Low Voltage Transformer
@@ -3233,8 +3233,11 @@ gregtech.machine.energy_converter.uxv.4.name=UXV Energy Converter (4A)
 gregtech.machine.energy_converter.uxv.9.name=UXV Energy Converter (9A)
 gregtech.machine.energy_converter.uxv.16.name=UXV Energy Converter (16A)
 
-gregtech.machine.energy_converter.tooltip.1=Converts Forge Energy to and from EU
-gregtech.machine.energy_converter.tooltip.2=Use Soft Hammer to invert
+gregtech.machine.energy_converter.tooltip_tool_usage=Use Soft Hammer to invert (Starts as FE Converter)
+gregtech.machine.energy_converter.tooltip_conversion_fe=Forge Conversion: §a%dFE§7 -> §a%dA %dEU (%d)
+gregtech.machine.energy_converter.message_conversion_fe=Converting Forge Energy, In: %dFE, Out: %dA %dEU
+gregtech.machine.energy_converter.tooltip_conversion_eu=EU Conversion: §a%dA %dEU (%d)§7 -> §a%dFE
+gregtech.machine.energy_converter.message_conversion_eu=Converting EU, In: %dA %dEU, Out: %dFE
 
 # Pumps
 gregtech.machine.pump.tooltip_range=Pumping Area: %,dx%,d

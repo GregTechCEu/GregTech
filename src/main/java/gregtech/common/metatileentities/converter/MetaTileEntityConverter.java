@@ -15,6 +15,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
 import gregtech.api.util.PipelineUtil;
+import gregtech.common.ConfigHolder;
+import gregtech.common.tools.DamageValues;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +25,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -33,6 +36,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+
+import static gregtech.api.capability.GregtechDataCodes.SYNC_TILE_MODE;
 
 public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMetaTileEntity {
 
@@ -59,26 +64,45 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
 
     @Override
     public boolean onRightClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        ItemStack stack = playerIn.getHeldItem(hand);
-        if(!stack.isEmpty()) {
-            ISoftHammerItem softHammer = stack.getCapability(GregtechCapabilities.CAPABILITY_MALLET, null);
-            if(softHammer != null && softHammer.damageItem(1, false)) {
-                if(!getWorld().isRemote) {
-                    converterTrait.invertMode();
-                    writeCustomData(-9, buf -> buf.writeBoolean(converterTrait.isFeToEu()));
-                    notifyBlockUpdate();
-                    markDirty();
-                }
+        ItemStack itemStack = playerIn.getHeldItem(hand);
+        if (!itemStack.isEmpty() && itemStack.hasCapability(GregtechCapabilities.CAPABILITY_MALLET, null)) {
+            ISoftHammerItem softHammerItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_MALLET, null);
+
+            if (getWorld().isRemote) {
+                scheduleRenderUpdate();
                 return true;
             }
+
+            if (!softHammerItem.damageItem(DamageValues.DAMAGE_FOR_SOFT_HAMMER, false))
+                return false;
+
+            if (converterTrait.isFeToEu()) {
+                setConversionMode(false);
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_eu",
+                        converterTrait.getBaseAmps(), converterTrait.getVoltage(), (long) (ConfigHolder.U.energyOptions.euToFeRatio * converterTrait.getVoltage() * converterTrait.getBaseAmps())));
+            } else {
+                setConversionMode(true);
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.machine.energy_converter.message_conversion_fe",
+                        (long) (ConfigHolder.U.energyOptions.feToEuRatio * converterTrait.getVoltage() * converterTrait.getBaseAmps()), converterTrait.getBaseAmps(), converterTrait.getVoltage()));
+            }
+            return true;
         }
 
         return super.onRightClick(playerIn, hand, facing, hitResult);
     }
 
+    public void setConversionMode(boolean inverted) {
+        converterTrait.setMode(inverted);
+        if (!getWorld().isRemote) {
+            writeCustomData(SYNC_TILE_MODE, b -> b.writeBoolean(converterTrait.isFeToEu()));
+            getHolder().notifyBlockUpdate();
+            markDirty();
+        }
+    }
+
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
-        if(dataId == -9) {
+        if(dataId == SYNC_TILE_MODE) {
             converterTrait.setMode(buf.readBoolean());
             getHolder().scheduleChunkForRenderUpdate();
         }
@@ -106,16 +130,16 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         Textures.VOLTAGE_CASINGS[getTier()].render(renderState, translation, pipeline);
         if (converterTrait.isFeToEu()) {
-            for(EnumFacing facing : EnumFacing.values()) {
-                if(facing == frontFacing)
-                    Textures.ENERGY_OUT.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
-                else
+            for (EnumFacing facing : EnumFacing.values()) {
+                if (facing == frontFacing)
                     Textures.CONVERTER_FE_IN.renderSided(facing, renderState, translation, pipeline);
+                else
+                    Textures.ENERGY_OUT.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
             }
         } else {
-            for(EnumFacing facing : EnumFacing.values()) {
-                if(facing == frontFacing)
-                    Textures.CONVERTER_FE_IN.renderSided(facing, renderState, translation, pipeline);
+            for (EnumFacing facing : EnumFacing.values()) {
+                if (facing == frontFacing)
+                    Textures.CONVERTER_FE_OUT.renderSided(facing, renderState, translation, pipeline);
                 else
                     Textures.ENERGY_IN.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
             }
@@ -192,16 +216,10 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         long voltage = converterTrait.getVoltage();
         long amps = converterTrait.getBaseAmps();
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip.1"));
-        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip.2"));
-        if(converterTrait.isFeToEu()) {
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_out", voltage, GTValues.VN[tier]));
-            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_out", amps));
-        } else {
-            tooltip.add(I18n.format("gregtech.universal.tooltip.voltage_in", voltage, GTValues.VN[tier]));
-            tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in", amps));
-        }
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_tool_usage"));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", converterTrait.getEnergyEUContainer().getEnergyCapacity()));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_fe", (long) (ConfigHolder.U.energyOptions.feToEuRatio * voltage * amps), amps, voltage, GTValues.VN[tier]));
+        tooltip.add(I18n.format("gregtech.machine.energy_converter.tooltip_conversion_eu", amps, voltage, GTValues.VN[tier], (long) (ConfigHolder.U.energyOptions.euToFeRatio * voltage * amps)));
     }
 
 

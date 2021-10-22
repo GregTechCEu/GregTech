@@ -211,7 +211,7 @@ public class MetaTileEntities {
 
     public static MetaTileEntityCreativeEnergy CREATIVE_ENERGY;
 
-    public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[13][4];
+    public static MetaTileEntityConverter[][] ENERGY_CONVERTER = new MetaTileEntityConverter[GTValues.V.length - 1][4];
 
     public static MetaTileEntityClipboard CLIPBOARD_TILE;
 
@@ -695,7 +695,7 @@ public class MetaTileEntities {
         MAINTENANCE_HATCH = registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch")));
         AUTO_MAINTENANCE_HATCH = registerMetaTileEntity(1655, new MetaTileEntityAutoMaintenanceHatch(gregtechId("maintenance_hatch_full_auto")));
 
-        // Muffler Hatches, IDs 1656-
+        // Muffler Hatches, IDs 1656-1665
         for (int i = 0; i < MUFFLER_HATCH.length; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
             MUFFLER_HATCH[i] = new MetaTileEntityMufflerHatch(gregtechId("muffler_hatch." + voltageName), i + 1);
@@ -706,9 +706,10 @@ public class MetaTileEntities {
         CLIPBOARD_TILE = registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));
 
         // ENERGY CONVERTER, IDs 1667-1718
-        for(int i = 0; i < 13; i++) {
+        endPos = GTValues.HT ? ENERGY_CONVERTER.length - 1 : Math.min(ENERGY_CONVERTER.length - 1, GTValues.UV);
+        for(int i = 0; i < endPos; i++) {
             String vn = GTValues.VN[i + 1].toLowerCase();
-            for(int j = 0; j < 4; j++) {
+            for(int j = 0; j < ENERGY_CONVERTER[i].length; j++) {
                 int amps = (j+1) * (j+1);
                 String id = "energy_converter." + vn + "." + amps;
                 ENERGY_CONVERTER[i][j] = registerMetaTileEntity(1667 + j + i * 4, new MetaTileEntityConverter(gregtechId(id), i+1, amps));
