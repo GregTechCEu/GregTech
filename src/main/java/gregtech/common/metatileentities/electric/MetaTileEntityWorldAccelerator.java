@@ -138,13 +138,13 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
                         }
                         if (world.isBlockLoaded(pos)) {
                             for (int i = 0; i < speed; i++) {
-                                if (GTValues.RNG.nextInt(100) == 0) { // Fixme: RNG related to tier?
+                                if (GTValues.RNG.nextInt(getTier() / 100) == 0) {
                                     // Rongmario:
                                     // randomTick instead of updateTick since some modders can mistake where to put their code.
                                     // Fresh IBlockState before every randomTick, this could easily change after every randomTick call
                                     IBlockState state = world.getBlockState(pos);
                                     Block block = state.getBlock();
-                                    if (block.getTickRandomly()) { // Fixme: Do we allow liquids to be tick accelerated?
+                                    if (block.getTickRandomly()) {
                                         block.randomTick(world, pos.toImmutable(), state, world.rand);
                                     }
                                 }
