@@ -5,6 +5,7 @@ import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.multiblock.IMaintenance;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.recipes.FuelRecipe;
 import gregtech.api.util.GTUtility;
@@ -163,9 +164,9 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
      * @return {@code true} if the multiblock should search for a new recipe
      */
     protected boolean isReadyForRecipes() {
-        if (metaTileEntity instanceof MultiblockWithDisplayBase) {
+        if (metaTileEntity instanceof IMaintenance) {
 
-            MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
+            IMaintenance controller = (IMaintenance) metaTileEntity;
 
             // do not run recipes when there are more than 5 maintenance problems
             if (controller.hasMaintenanceMechanics() && controller.getNumMaintenanceProblems() > 5) {
@@ -215,7 +216,6 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
                                 controller.outputRecoveryItems();
 
                             // increase total multiblock active time
-                            //TODO, does this correctly account for current maintenance issues scaling the recipe duration in calculateRecipeDuration?
                             controller.calculateMaintenance(previousRecipe.getDuration());
                         }
                     }
@@ -227,7 +227,7 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
             }
         }
 
-        // Clear notified Fluid input list, either after successfully recipe, or failure to find a recipe
+        // Clear notified Fluid input list, either after successfully finding a recipe, or failure to find a recipe
         metaTileEntity.getNotifiedFluidInputList().clear();
     }
 

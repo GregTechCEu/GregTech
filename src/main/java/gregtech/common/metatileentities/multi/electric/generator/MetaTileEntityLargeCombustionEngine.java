@@ -65,7 +65,7 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.oxygen_amount", oxygenAmount));
             textList.add(new TextComponentTranslation(oxygenAmount >= 2 ? "gregtech.multiblock.large_combustion_engine.oxygen_boosted" : "gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost"));
 
-            if(((LargeCombustionEngineWorkableHandler) workableHandler).isObstructed()) {
+            if(isStructureObstructed()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed")
                         .setStyle(new Style().setColor(TextFormatting.RED)));
             }
