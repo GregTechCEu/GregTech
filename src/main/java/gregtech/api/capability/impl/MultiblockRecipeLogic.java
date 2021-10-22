@@ -183,7 +183,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (displayBase != null && ConfigHolder.U.GT5u.enableMaintenance) {
             IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             double durationMultiplier = hatch.getDurationMultiplier();
-            if (numMaintenanceProblems == 0 || durationMultiplier != 1.0) {
+            if (durationMultiplier != 1.0) {
                 overclock = super.calculateOverclock(EUt, voltage, (int) Math.round(duration * durationMultiplier));
             }
         }
