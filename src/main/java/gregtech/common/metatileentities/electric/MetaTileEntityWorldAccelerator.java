@@ -116,8 +116,8 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
                 World world = getWorld();
                 BlockPos currentPos = getPos();
                 lastTick = currentTick;
-                energyContainer.removeEnergy(energyPerTick);
                 if (isTEMode()) {
+                    energyContainer.removeEnergy(energyPerTick);
                     for (EnumFacing neighbourFace : EnumFacing.VALUES) {
                         TileEntity neighbourTile = world.getTileEntity(currentPos.offset(neighbourFace));
                         if (neighbourTile instanceof ITickable && !neighbourTile.isInvalid() && considerTile(neighbourTile)) {
@@ -128,6 +128,7 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
                         }
                     }
                 } else {
+                    energyContainer.removeEnergy(energyPerTick / 2);
                     if (range == null) {
                         int area = getTier() * 2;
                         range = () -> BlockPos.getAllInBoxMutable(currentPos.add(-area, -area, -area), currentPos.add(area, area, area));
