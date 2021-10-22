@@ -117,7 +117,7 @@ public class PipeTankList implements IFluidHandler {
             current.amount -= drained.amount;
             if (current.amount <= 0)
                 tanks[channel].setFluid(null);
-            pipe.getFluidPipeNet().drain(drained, pipe.getPos());
+            pipe.getFluidPipeNet().drain(drained, pipe.getPos(), false);
         }
         return drained;
     }

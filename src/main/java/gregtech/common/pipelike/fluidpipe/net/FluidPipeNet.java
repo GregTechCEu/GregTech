@@ -38,15 +38,19 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
         requestedPipes.put(stack, pipes);
     }
 
-    @Override
-    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
-        super.updateBlockedConnections(nodePos, facing, isBlocked);
+    public void markDirty(BlockPos pos) {
         for (FluidStack fluid : fluids) {
-            dirtyStacks.put(fluid, nodePos);
+            dirtyStacks.put(fluid, pos);
         }
     }
 
-    protected int drain(FluidStack stack, BlockPos pos) {
+    @Override
+    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
+        super.updateBlockedConnections(nodePos, facing, isBlocked);
+        markDirty(nodePos);
+    }
+
+    public int drain(FluidStack stack, BlockPos pos, boolean silent) {
         if (stack == null || stack.amount <= 0) return 0;
         Iterator<FluidStack> iterator = fluids.iterator();
         while (iterator.hasNext()) {
@@ -56,7 +60,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
                 stack1.amount -= amount;
                 if (stack1.amount <= 0)
                     iterator.remove();
-                else
+                else if(!silent)
                     dirtyStacks.put(stack1, pos);
                 GTLog.logger.info("Drained {} * {} from net", stack.getLocalizedName(), amount);
                 return amount;
@@ -66,7 +70,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
         return 0;
     }
 
-    protected void fill(FluidStack stack, BlockPos pos) {
+    public void fill(FluidStack stack, BlockPos pos) {
         if (stack == null || stack.amount <= 0) return;
         for (FluidStack stack1 : fluids) {
             if (stack1.isFluidEqual(stack)) {

@@ -11,6 +11,7 @@ import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.MaterialRegistry;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.advancement.GTTriggers;
+import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.net.WorldFluidPipeNet;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipeTickable;
@@ -29,6 +30,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -94,11 +96,68 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
+    public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand) {
+        super.updateTick(worldIn, pos, state, rand);
+        TileEntityFluidPipe pipeTile = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+        if (pipeTile != null && !worldIn.isRemote) {
+            pipeTile.getFluidPipeNet().markDirty(pos);
+        }
+    }
+
+    @Override
     public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
         TileEntityFluidPipe pipeTile = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
         if (pipeTile != null && !worldIn.isRemote) {
             pipeTile.checkNeighbours();
+        }
+    }
+
+    @Override
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        FluidPipeNet net = getWorldPipeNet(worldIn).getNetFromPos(pos);
+        TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+        List<FluidStack> stacks = new ArrayList<>();
+        for(FluidTank tank : pipe.getFluidTanks()) {
+            FluidStack stack = tank.getFluid();
+            if(stack != null && stack.amount > 0) {
+                stacks.add(stack);
+            }
+        }
+        super.breakBlock(worldIn, pos, state);
+        stacks.forEach(stack -> net.drain(stack, pos, true));
+        Map<FluidPipeNet, TileEntityFluidPipe> nets = new HashMap<>();
+        for(EnumFacing facing : EnumFacing.values()) {
+            BlockPos pos1 = pos.offset(facing);
+            TileEntity tile = worldIn.getTileEntity(pos1);
+            if(tile instanceof TileEntityFluidPipe) {
+                nets.put(((TileEntityFluidPipe) tile).getFluidPipeNet(), (TileEntityFluidPipe) tile);
+            }
+        }
+        for(FluidStack stack : stacks) {
+            int n = 0;
+            for(Map.Entry<FluidPipeNet, TileEntityFluidPipe> entry : nets.entrySet()) {
+                if(entry.getValue().findChannel(stack) >= 0)
+                    n++;
+            }
+            if(n == 0)
+                continue;
+
+            final int c = stack.amount / n;
+            int m = stack.amount % n;
+
+            for(Map.Entry<FluidPipeNet, TileEntityFluidPipe> entry : nets.entrySet()) {
+                if(entry.getValue().findChannel(stack) < 0)
+                    continue;
+                int count = c;
+                if(m > 0) {
+                    count++;
+                    m--;
+                }
+                FluidStack copy = stack.copy();
+                copy.amount = count;
+                entry.getKey().fill(copy, entry.getValue().getPos());
+            }
         }
     }
 
@@ -115,8 +174,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
         if (selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe) {
-            if (((TileEntityFluidPipe) selfTile).areTanksEmpty() || ((TileEntityFluidPipe) sideTile).areTanksEmpty())
-                return true;
+            return ((TileEntityFluidPipe) selfTile).areTanksEmpty() || ((TileEntityFluidPipe) sideTile).areTanksEmpty();
         }
         return false;
     }

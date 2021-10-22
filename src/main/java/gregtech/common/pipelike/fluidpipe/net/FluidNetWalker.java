@@ -76,7 +76,7 @@ public class FluidNetWalker extends PipeNetWalker {
 
     @Override
     protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
-        if (!(neighbourPipe instanceof TileEntityFluidPipe))
+        if (!(neighbourPipe instanceof TileEntityFluidPipe) || ((TileEntityFluidPipe) neighbourPipe).isInvalid())
             return false;
         if(ignoreFilter)
             return true;
