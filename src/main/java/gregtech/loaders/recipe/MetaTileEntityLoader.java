@@ -313,14 +313,8 @@ public class MetaTileEntityLoader {
         }
         for (int j = 0; j < 4; j++) {
             MetaTileEntityConverter converter = MetaTileEntities.ENERGY_CONVERTER[7][j];
-            ModHandler.addShapedRecipe(converter.metaTileEntityId.getPath(), converter.getStackForm(), "WCW", " M ", "WTW", 'M', MetaTileEntities.HULL[8].getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Superconductor), 'W', new UnificationEntry(cableSizes[j], Materials.NaquadahAlloy), 'T', OreDictNames.chestWood);
+            ModHandler.addShapedRecipe(converter.metaTileEntityId.getPath(), converter.getStackForm(), "WCW", " M ", "WTW", 'M', MetaTileEntities.HULL[8].getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Super), 'W', new UnificationEntry(cableSizes[j], Materials.NaquadahAlloy), 'T', OreDictNames.chestWood);
         }
-
-        List<ItemStack> batteries = new ArrayList<ItemStack>() {{
-            add(ConfigHolder.U.GT5u.enableZPMandUVBats ? MetaItems.ENERGY_LAPOTRONIC_MODULE.getStackForm() : MetaItems.ENERGY_LAPOTRONIC_ORB2.getStackForm());
-            add(ConfigHolder.U.GT5u.enableZPMandUVBats ? MetaItems.ENERGY_LAPOTRONIC_CLUSTER.getStackForm() : MetaItems.ULTIMATE_BATTERY.getStackForm());
-            add(MetaItems.ULTIMATE_BATTERY.getStackForm());
-        }};
 
         ModHandler.addShapedRecipe("charger_ulv", MetaTileEntities.CHARGER[GTValues.ULV].getStackForm(), "WTW", "WMW", "BCB", 'M', MetaTileEntities.HULL[GTValues.ULV].getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtHex, Materials.Lead), 'T', OreDictNames.chestWood, 'B', MetaItems.BATTERY_ULV_TANTALUM, 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Primitive));
         ModHandler.addShapedRecipe("charger_lv", MetaTileEntities.CHARGER[GTValues.LV].getStackForm(), "WTW", "WMW", "BCB", 'M', MetaTileEntities.HULL[GTValues.LV].getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtHex, Materials.Tin), 'T', OreDictNames.chestWood, 'B', MetaItems.BATTERY_LV_LITHIUM, 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic));
