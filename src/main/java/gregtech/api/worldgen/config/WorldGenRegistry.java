@@ -54,7 +54,6 @@ public class WorldGenRegistry {
     private final List<OreDepositDefinition> registeredVeinDefinitions = new ArrayList<>();
     private final List<BedrockFluidDepositDefinition> registeredBedrockVeinDefinitions = new ArrayList<>();
     private final List<OreDepositDefinition> addonRegisteredDefinitions = new ArrayList<>();
-    private final Map<String, OreDepositDefinition> definitionMap = new HashMap<>();
     private List<OreDepositDefinition> removedDefinitions = new ArrayList<>();
     private final Map<WorldProvider, WorldOreVeinCache> oreVeinCache = new WeakHashMap<>();
 
@@ -188,7 +187,6 @@ public class WorldGenRegistry {
                 deposit.initializeFromConfig(element);
                 // Adds the registered definition to the list of all registered definitions
                 registeredVeinDefinitions.add(deposit);
-                definitionMap.put(depositName, deposit);
             } catch (RuntimeException exception) {
                 GTLog.logger.error("Failed to parse worldgen definition {} on path {}", depositName, worldgenDefinition, exception);
             }
@@ -234,8 +232,13 @@ public class WorldGenRegistry {
                 continue;
             }
 
-            definition.initializeFromConfig(element);
-            definitionMap.put(definition.getDepositName(), definition);
+            try {
+                definition.initializeFromConfig(element);
+                registeredVeinDefinitions.add(definition);
+            }
+            catch (RuntimeException exception) {
+                GTLog.logger.error("Failed to parse addon worldgen definition {}", definition.getDepositName(), exception);
+            }
 
         }
 
@@ -399,14 +402,13 @@ public class WorldGenRegistry {
      *
      * After removing all desired veins, call {@link WorldGenRegistry#reinitializeRegisteredVeins()} to delete the existing files
      *
-     * @param definitionPath A String of the Path of the vein to be removed, starting from the worldgen folder, with no leading separator
+     * @param definition The {@link OreDepositDefinition} to remove
      */
-    public void removeVeinDefinitions(String definitionPath) {
-        if(definitionMap.containsKey(definitionPath)) {
-            OreDepositDefinition removedDefinition = definitionMap.get(definitionPath);
-            registeredVeinDefinitions.remove(removedDefinition);
-            definitionMap.remove(definitionPath);
-            removedDefinitions.add(removedDefinition);
+    @SuppressWarnings("unused")
+    public void removeVeinDefinitions(OreDepositDefinition definition) {
+        if(registeredVeinDefinitions.contains(definition)) {
+            registeredVeinDefinitions.remove(definition);
+            removedDefinitions.add(definition);
         }
     }
 
@@ -422,9 +424,7 @@ public class WorldGenRegistry {
      */
     @SuppressWarnings("unused")
     public void addVeinDefinitions(OreDepositDefinition definition) {
-        if(!definitionMap.containsKey(definition.getDepositName())) {
-            registeredVeinDefinitions.add(definition);
-            definitionMap.put(definition.getDepositName(), definition);
+        if(registeredVeinDefinitions.contains(definition)) {
             addonRegisteredDefinitions.add(definition);
         }
         else {
