@@ -1,5 +1,6 @@
 package gregtech.common.pipelike.fluidpipe.tile;
 
+import gregtech.common.pipelike.fluidpipe.net.FluidPipeNet;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.fluids.FluidStack;
@@ -7,6 +8,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,19 +29,17 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
         }
 
         if (!world.isRemote && world.getTotalWorldTime() % FREQUENCY == 0) {
-            List<Pair<IFluidHandler, Predicate<FluidStack>>> handlers = getNeighbourHandlers();
-            if (handlers.size() == 0) return;
+            FluidPipeNet net = getFluidPipeNet();
+            List<Pair<IFluidHandler, Predicate<FluidStack>>> handlersO = getNeighbourHandlers();
+            if (handlersO.size() == 0) return;
             for (FluidTank tank : getFluidTanks()) {
-                FluidStack stack = tank.getFluid();
+                FluidStack stack = net.getFluidStack(tank.getFluid());
                 if (stack != null && stack.amount > 0) {
+                    List<Pair<IFluidHandler, Predicate<FluidStack>>> handlers = new ArrayList<>(handlersO);
                     handlers.removeIf(pair -> !pair.getValue().test(stack) || pair.getKey().fill(stack, false) <= 0);
                     if (handlers.size() == 0)
                         continue;
-                    int amountToDistribute = getCapacityPerTank() / 2;
-                    if (stack.amount < amountToDistribute) {
-                        getFluidPipeNet().requestFluid(this, stack);
-                        continue;
-                    }
+                    int amountToDistribute = Math.min(stack.amount, getCapacityPerTank() / 2);
                     int c = amountToDistribute / handlers.size();
                     int m = c == 0 ? amountToDistribute % handlers.size() : 0;
                     int inserted = 0;
@@ -54,7 +54,7 @@ public class TileEntityFluidPipeTickable extends TileEntityFluidPipe implements 
                     }
                     FluidStack toDrain = stack.copy();
                     toDrain.amount = inserted;
-                    getTankList().drain(toDrain, true);
+                    net.drain(toDrain, getPos(), false, true);
                 }
             }
         }

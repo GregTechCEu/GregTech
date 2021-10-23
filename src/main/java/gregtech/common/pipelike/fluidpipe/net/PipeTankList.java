@@ -51,46 +51,10 @@ public class PipeTankList implements IFluidHandler {
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
-        if (resource == null || resource.amount <= 0)
+        if (resource == null || resource.amount <= 0 || findChannel(resource) < 0)
             return 0;
-        boolean wasEmpty = doFill && pipe.getContainedFluid(pipe.findChannel(resource)) == null;
-        int filled = fillInternal(resource, doFill);
-        if (filled > 0)
-            log("Filled {} * {} into multipipe, sim {}", resource.getLocalizedName(), filled, !doFill);
-        if (filled > 0 && doFill) {
-            FluidStack stack = resource.copy();
-            stack.amount = filled;
-            pipe.didInsertFrom(facing);
-            pipe.getFluidPipeNet().fill(stack, pipe.getPos());
-            if (wasEmpty) {
-                pipe.checkAndDestroy(resource);
-            }
-        }
-        return filled;
-    }
-
-    private int fillInternal(FluidStack stack, boolean doFill) {
-        int channel = findChannel(stack);
-        if (channel < 0)
-            return 0;
-        FluidTank tank = tanks[channel];
-        FluidStack current = tank.getFluid();
-        FluidStack copy = stack.copy();
-        if (current == null) {
-            copy.amount = Math.min(stack.amount, tank.getCapacity());
-            if (doFill)
-                tank.setFluid(copy);
-            return copy.amount;
-        }
-        int filled = Math.min(stack.amount, tank.getCapacity() - current.amount);
-        if (doFill)
-            current.amount += filled;
-        return filled;
-    }
-
-    private void log(String s, Object... o) {
-        if (getTankProperties().length > 1)
-            GTLog.logger.info(s, o);
+        pipe.didInsertFrom(facing);
+        return pipe.getFluidPipeNet().fill(resource, pipe.getPos(), doFill);
     }
 
     @Nullable
@@ -105,20 +69,8 @@ public class PipeTankList implements IFluidHandler {
     public FluidStack drain(FluidStack resource, boolean doDrain) {
         if (resource == null || resource.amount <= 0)
             return null;
-        int channel = findChannel(resource);
-        if (channel < 0)
-            return null;
-        FluidStack current = tanks[channel].getFluid();
-        if (current == null)
-            return null;
-        FluidStack drained = current.copy();
-        drained.amount = Math.min(current.amount, resource.amount);
-        if (doDrain) {
-            current.amount -= drained.amount;
-            if (current.amount <= 0)
-                tanks[channel].setFluid(null);
-            pipe.getFluidPipeNet().drain(drained, pipe.getPos(), false);
-        }
+        FluidStack drained = resource.copy();
+        drained.amount = pipe.getFluidPipeNet().drain(resource, pipe.getPos(), false, doDrain);
         return drained;
     }
 }

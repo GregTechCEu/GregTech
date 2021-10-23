@@ -31,6 +31,13 @@ public class FluidNetWalker extends PipeNetWalker {
         return walker.pipes;
     }
 
+    public static int getTotalCapacity(World world, BlockPos pos) {
+        FluidNetWalker walker = new FluidNetWalker(Mode.COUNT_CAPACITY, world, pos, 1, null);
+        walker.ignoreFilter = true;
+        walker.traversePipeNet();
+        return walker.count;
+    }
+
     private final Mode mode;
     private List<TileEntityFluidPipe> pipes = new ArrayList<>();
     private final FluidStack fluid;
@@ -59,7 +66,9 @@ public class FluidNetWalker extends PipeNetWalker {
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) pipeTile;
-        if (mode == Mode.GET_PIPES)
+        if (mode == Mode.COUNT_CAPACITY) {
+            count += pipe.getCapacityPerTank();
+        } else if (mode == Mode.GET_PIPES)
             pipes.add(pipe);
         else {
             FluidStack stack = pipe.findFluid(fluid);
@@ -78,7 +87,7 @@ public class FluidNetWalker extends PipeNetWalker {
     protected boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour) {
         if (!(neighbourPipe instanceof TileEntityFluidPipe) || ((TileEntityFluidPipe) neighbourPipe).isInvalid())
             return false;
-        if(ignoreFilter)
+        if (ignoreFilter)
             return true;
         ICoverable coverable = currentPipe.getCoverableImplementation();
         CoverBehavior cover = coverable.getCoverAtSide(faceToNeighbour);
@@ -103,6 +112,6 @@ public class FluidNetWalker extends PipeNetWalker {
     }
 
     enum Mode {
-        COUNT, GET_PIPES
+        COUNT, GET_PIPES, COUNT_CAPACITY
     }
 }

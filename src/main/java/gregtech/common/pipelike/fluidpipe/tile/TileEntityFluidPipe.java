@@ -81,31 +81,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         return openConnections;
     }
 
-    public int distribute(FluidStack stack) {
-        if (stack == null || stack.amount <= 0) return 0;
-        List<Pair<IFluidHandler, Predicate<FluidStack>>> handlers = getNeighbourCache();
-        if (handlers.size() == 0) return 0;
-        int amountToDistribute = stack.amount;
-        int c = amountToDistribute / handlers.size();
-        int m = c == 0 ? amountToDistribute % handlers.size() : 0;
-        int inserted = 0;
-        for (Pair<IFluidHandler, Predicate<FluidStack>> pair : handlers) {
-            if (!pair.getValue().test(stack))
-                continue;
-            FluidStack stackToFill = stack.copy();
-            stackToFill.amount = c;
-            if (m > 0) {
-                stackToFill.amount++;
-                m--;
-            }
-            int i = pair.getKey().fill(stackToFill, true);
-            inserted += i;
-        }
-        FluidStack toDrain = stack.copy();
-        toDrain.amount = inserted;
-        return inserted;
-    }
-
     public List<Pair<IFluidHandler, Predicate<FluidStack>>> getNeighbourCache() {
         return neighbourCache;
     }

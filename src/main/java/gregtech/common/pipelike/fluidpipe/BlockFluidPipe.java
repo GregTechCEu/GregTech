@@ -125,7 +125,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             }
         }
         super.breakBlock(worldIn, pos, state);
-        stacks.forEach(stack -> net.drain(stack, pos, true));
+        stacks.forEach(stack -> net.drain(stack, pos, true, true));
         Map<FluidPipeNet, TileEntityFluidPipe> nets = new HashMap<>();
         for(EnumFacing facing : EnumFacing.values()) {
             BlockPos pos1 = pos.offset(facing);
@@ -156,9 +156,11 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
                 }
                 FluidStack copy = stack.copy();
                 copy.amount = count;
-                entry.getKey().fill(copy, entry.getValue().getPos());
+                entry.getKey().fill(copy, entry.getValue().getPos(), true);
             }
         }
+        net.invalidateNetCapacity();
+        nets.keySet().forEach(FluidPipeNet::invalidateNetCapacity);
     }
 
     @Override
