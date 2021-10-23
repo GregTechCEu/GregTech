@@ -119,7 +119,7 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     public int getCapacityPerTank() {
-        return getNodeData().throughput * 2 * FREQUENCY;
+        return getNodeData().getThroughput() * 2 * FREQUENCY;
     }
 
     public void checkNeighbours() {
@@ -151,8 +151,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     private void createTanksList() {
-        fluidTanks = new FluidTank[getNodeData().tanks];
-        for (int i = 0; i < getNodeData().tanks; i++) {
+        fluidTanks = new FluidTank[getNodeData().getTanks()];
+        for (int i = 0; i < getNodeData().getTanks(); i++) {
             fluidTanks[i] = new FluidTank(getCapacityPerTank());
         }
         for (EnumFacing facing : EnumFacing.values()) {
@@ -214,8 +214,8 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
     }
 
     public void checkAndDestroy(FluidStack stack) {
-        boolean burning = getNodeData().maxFluidTemperature < stack.getFluid().getTemperature(stack);
-        boolean leaking = !getNodeData().gasProof && stack.getFluid().isGaseous(stack);
+        boolean burning = getNodeData().getMaxFluidTemperature() < stack.getFluid().getTemperature(stack);
+        boolean leaking = !getNodeData().isGasProof() && stack.getFluid().isGaseous(stack);
         if (burning || leaking) {
             destroyPipe(burning, leaking);
         }
