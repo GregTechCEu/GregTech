@@ -51,10 +51,22 @@ public class PipeTankList implements IFluidHandler {
 
     @Override
     public int fill(FluidStack resource, boolean doFill) {
-        if (resource == null || resource.amount <= 0 || findChannel(resource) < 0)
+        int channel;
+        if (resource == null || resource.amount <= 0 || (channel = findChannel(resource)) < 0)
             return 0;
+        FluidTank tank = tanks[channel];
+        int space = tank.getCapacity() - (tank.getFluid() == null ? 0 : tank.getFluid().amount);
+        int max = Math.min(resource.amount, space);
+        if(max < tank.getCapacity() / 2) {
+            max = FluidNetWalker.getSpaceFor(pipe.getWorld(), pipe.getPos(), resource, resource.amount);
+            if(max <= 0)
+                return 0;
+        }
+
+        FluidStack copy = resource.copy();
+        copy.amount = max;
         pipe.didInsertFrom(facing);
-        return pipe.getFluidPipeNet().fill(resource, pipe.getPos(), doFill);
+        return pipe.getFluidPipeNet().fill(copy, pipe.getPos(), doFill);
     }
 
     @Nullable

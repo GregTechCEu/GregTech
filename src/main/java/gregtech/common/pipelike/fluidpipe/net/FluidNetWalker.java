@@ -38,10 +38,18 @@ public class FluidNetWalker extends PipeNetWalker {
         return walker.count;
     }
 
+    public static int getSpaceFor(World world, BlockPos pos, FluidStack stack, int min) {
+        FluidNetWalker walker = new FluidNetWalker(Mode.SPACE, world, pos, 1, stack);
+        walker.min = min;
+        walker.traversePipeNet();
+        return Math.min(walker.count, min);
+    }
+
     private final Mode mode;
     private List<TileEntityFluidPipe> pipes = new ArrayList<>();
     private final FluidStack fluid;
     private int count;
+    private int min;
     private boolean ignoreFilter = false;
 
     protected FluidNetWalker(Mode mode, World world, BlockPos sourcePipe, int walkedBlocks, FluidStack fluid) {
@@ -55,6 +63,7 @@ public class FluidNetWalker extends PipeNetWalker {
         FluidNetWalker walker = new FluidNetWalker(mode, world, nextPos, walkedBlocks, fluid);
         walker.pipes = pipes;
         walker.ignoreFilter = ignoreFilter;
+        walker.min = min;
         return walker;
     }
 
@@ -66,15 +75,29 @@ public class FluidNetWalker extends PipeNetWalker {
     @Override
     protected void checkPipe(IPipeTile<?, ?> pipeTile, BlockPos pos) {
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) pipeTile;
-        if (mode == Mode.COUNT_CAPACITY) {
-            count += pipe.getCapacityPerTank();
-        } else if (mode == Mode.GET_PIPES)
-            pipes.add(pipe);
-        else {
-            FluidStack stack = pipe.findFluid(fluid);
-            if (stack != null && stack.amount > 0) {
-                count += stack.amount;
+        switch (mode) {
+            case SPACE: {
+                FluidStack stack = pipe.getContainedFluid(pipe.findChannel(fluid));
+                count += pipe.getCapacityPerTank();
+                if (stack != null)
+                    count -= stack.amount;
+                if (count >= min)
+                    stop();
+                break;
+            }
+            case COUNT_CAPACITY:
+                count += pipe.getCapacityPerTank();
+                break;
+            case GET_PIPES:
                 pipes.add(pipe);
+                break;
+            default: { // Mode.COUNT
+                FluidStack stack = pipe.findFluid(fluid);
+                if (stack != null && stack.amount > 0) {
+                    count += stack.amount;
+                    pipes.add(pipe);
+                }
+                break;
             }
         }
     }
@@ -112,6 +135,6 @@ public class FluidNetWalker extends PipeNetWalker {
     }
 
     enum Mode {
-        COUNT, GET_PIPES, COUNT_CAPACITY
+        COUNT, GET_PIPES, COUNT_CAPACITY, SPACE
     }
 }
