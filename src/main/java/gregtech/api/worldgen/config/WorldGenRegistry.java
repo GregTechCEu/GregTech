@@ -55,8 +55,6 @@ public class WorldGenRegistry {
     private final List<BedrockFluidDepositDefinition> registeredBedrockVeinDefinitions = new ArrayList<>();
     private final Map<WorldProvider, WorldOreVeinCache> oreVeinCache = new WeakHashMap<>();
 
-    private final Map<WorldProvider, WorldFluidVeinCache> fluidVeinCache = new WeakHashMap<>();
-
     private class WorldOreVeinCache {
         private final List<OreDepositDefinition> worldVeins;
         private final Map<Biome, List<Entry<Integer, OreDepositDefinition>>> biomeVeins = new HashMap<>();
@@ -171,7 +169,9 @@ public class WorldGenRegistry {
         }
 
         //attempt extraction if file extraction lock is absent or worldgen root directory is empty
-        if (!Files.exists(jarFileExtractLock) || !Files.list(worldgenRootPath).findFirst().isPresent()) {
+        if (!Files.exists(jarFileExtractLock) || !Files.list(worldgenRootPath).findFirst().isPresent()
+                || !Files.list(worldgenRootPath.resolve(veinPath)).findFirst().isPresent()
+                || !Files.list(worldgenRootPath.resolve(bedrockVeinPath)).findFirst().isPresent()) {
             if (!Files.exists(jarFileExtractLock)) {
                 //create extraction lock only if it doesn't exist
                 Files.createFile(jarFileExtractLock);
