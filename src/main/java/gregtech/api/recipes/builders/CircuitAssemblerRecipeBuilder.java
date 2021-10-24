@@ -4,7 +4,6 @@ import gregtech.api.GTValues;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.util.EnumValidationResult;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
@@ -43,24 +42,14 @@ public class CircuitAssemblerRecipeBuilder extends RecipeBuilder<CircuitAssemble
         return this;
     }
 
+    public int getSolderMultiplier() {
+        return this.solderMultiplier;
+    }
+
     @Override
     @Nonnull
     public ValidationResult<Recipe> build() {
         return ValidationResult.newResult(finalizeAndValidate(),
                 new Recipe(inputs, outputs, chancedOutputs, fluidInputs, fluidOutputs, duration, EUt, hidden));
-    }
-
-    @Override
-    public void buildAndRegister() {
-        if (fluidInputs.isEmpty()) {
-            recipeMap.addRecipe(this.copy()
-                    .fluidInputs(Materials.SolderingAlloy.getFluid(Math.max(1, (GTValues.L / 2) * solderMultiplier)))
-                    .build());
-            recipeMap.addRecipe(this.copy()
-                    .fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L * solderMultiplier)))
-                    .build());
-        } else {
-            recipeMap.addRecipe(build());
-        }
     }
 }

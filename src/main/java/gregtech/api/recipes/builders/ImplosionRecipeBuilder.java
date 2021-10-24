@@ -71,6 +71,10 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
         return this;
     }
 
+    public ItemStack getExplosivesType() {
+        return this.explosivesType;
+    }
+
     public ValidationResult<Recipe> build() {
 
         //Adjust the explosive type and the explosive amount. This is done here because it was null otherwise, for some reason

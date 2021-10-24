@@ -20,6 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * @see Recipe
@@ -39,6 +40,9 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     protected int duration, EUt;
     protected boolean hidden = false;
+
+    protected Function<RecipeBuilder<?>, Boolean> onBuildFunction = null;
+    protected RecipeMap<?> additionalRecipeMap = null;
 
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
 
@@ -353,7 +357,14 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return recipeStatus;
     }
 
+    protected R onBuild(Function<RecipeBuilder<?>, Boolean> function) {
+        this.onBuildFunction = function;
+        return (R) this;
+    }
+
     public void buildAndRegister() {
+        if (onBuildFunction != null)
+            onBuildFunction.apply(this);
         ValidationResult<Recipe> validationResult = build();
         recipeMap.addRecipe(validationResult);
     }

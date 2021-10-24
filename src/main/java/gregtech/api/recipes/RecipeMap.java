@@ -36,6 +36,7 @@ import stanhebben.zenscript.annotations.*;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.DoubleSupplier;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ZenClass("mods.gregtech.recipe.RecipeMap")
@@ -68,6 +69,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     .thenComparingInt(Recipe::getEUt);
 
     private final Set<Recipe> recipeSet = new HashSet<>();
+
+    private Function<RecipeBuilder<?>, Boolean> onRecipeBuildFunction;
 
     public RecipeMap(String unlocalizedName,
                      int minInputs, int maxInputs, int minOutputs, int maxOutputs,
@@ -140,6 +143,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
+    public RecipeMap<R> onRecipeBuild(Function<RecipeBuilder<?>, Boolean> function) {
+        onRecipeBuildFunction = function;
+        return this;
+    }
+
     /**
      * This is alternative case when machine can input given fluid
      * If this method returns true, machine will receive given fluid even if getRecipesForFluid doesn't have
@@ -205,7 +213,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return false;
     }
 
-    protected ValidationResult<Recipe> postValidateRecipe(ValidationResult<Recipe> validationResult) {
+    public ValidationResult<Recipe> postValidateRecipe(ValidationResult<Recipe> validationResult) {
         EnumValidationResult recipeStatus = validationResult.getType();
         Recipe recipe = validationResult.getResult();
         if (!GTUtility.isBetweenInclusive(getMinInputs(), getMaxInputs(), recipe.getInputs().size())) {
@@ -523,7 +531,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public R recipeBuilder() {
-        return recipeBuilderSample.copy();
+        return recipeBuilderSample.copy().onBuild(onRecipeBuildFunction);
     }
 
     @ZenMethod("recipeBuilder")
