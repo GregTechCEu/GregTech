@@ -25,6 +25,8 @@ import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 
+import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
+
 public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController {
 
     private boolean isActive;
@@ -45,7 +47,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
             if (isStructureFormed()) {
                 replaceFireboxAsActive(active);
             }
-            writeCustomData(100, buf -> buf.writeBoolean(isActive));
+            writeCustomData(IS_WORKING, buf -> buf.writeBoolean(isActive));
             markDirty();
         }
     }
@@ -163,7 +165,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 100) {
+        if (dataId == IS_WORKING) {
             this.isActive = buf.readBoolean();
         }
     }

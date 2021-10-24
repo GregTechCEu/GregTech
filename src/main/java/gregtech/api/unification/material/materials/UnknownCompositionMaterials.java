@@ -55,7 +55,7 @@ public class UnknownCompositionMaterials {
                 .fluid().color(0x0E2950).build();
 
         SeedOil = new Material.Builder(1514, "seed_oil")
-                .fluid().color(0xC4FF00).build();
+                .fluid().color(0xFFFFFF).build();
 
         DrillingFluid = new Material.Builder(1515, "drilling_fluid")
                 .fluid().color(0xFFFFAA).build();

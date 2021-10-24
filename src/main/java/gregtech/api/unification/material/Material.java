@@ -75,10 +75,12 @@ public class Material implements Comparable<Material> {
         return chemicalFormula;
     }
 
+    @ZenMethod
     public Material setFormula(String formula) {
         return setFormula(formula, false);
     }
 
+    @ZenMethod
     public Material setFormula(String formula, boolean withFormatting) {
         this.chemicalFormula = withFormatting ? SmallDigits.toSmallDownNumbers(formula) : formula;
         return this;

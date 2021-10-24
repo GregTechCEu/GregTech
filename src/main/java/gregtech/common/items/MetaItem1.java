@@ -511,12 +511,12 @@ public class MetaItem1 extends StandardMetaItem {
         CRYSTAL_PROCESSOR_IV = addItem(640, "circuit.crystal_processor").setUnificationData(OrePrefix.circuit, Tier.Elite);
         CRYSTAL_ASSEMBLY_LUV = addItem(641, "circuit.crystal_assembly").setUnificationData(OrePrefix.circuit, Tier.Master);
         CRYSTAL_COMPUTER_ZPM = addItem(642, "circuit.crystal_computer").setUnificationData(OrePrefix.circuit, Tier.Ultimate);
-        CRYSTAL_MAINFRAME_UV = addItem(643, "circuit.crystal_mainframe").setUnificationData(OrePrefix.circuit, Tier.Superconductor);
+        CRYSTAL_MAINFRAME_UV = addItem(643, "circuit.crystal_mainframe").setUnificationData(OrePrefix.circuit, Tier.Super);
 
         // T7: Wetware
         WETWARE_PROCESSOR_LUV = addItem(644, "circuit.wetware_processor").setUnificationData(OrePrefix.circuit, Tier.Master);
         WETWARE_PROCESSOR_ASSEMBLY_ZPM = addItem(645, "circuit.wetware_assembly").setUnificationData(OrePrefix.circuit, Tier.Ultimate);
-        WETWARE_SUPER_COMPUTER_UV = addItem(646, "circuit.wetware_computer").setUnificationData(OrePrefix.circuit, Tier.Superconductor);
+        WETWARE_SUPER_COMPUTER_UV = addItem(646, "circuit.wetware_computer").setUnificationData(OrePrefix.circuit, Tier.Super);
         WETWARE_MAINFRAME_UHV = addItem(647, "circuit.wetware_mainframe").setUnificationData(OrePrefix.circuit, Tier.Infinite);
 
         // T8: Bioware
@@ -579,13 +579,13 @@ public class MetaItem1 extends StandardMetaItem {
         BATTERY_LUV_VANADIUM = addItem(745, "battery.luv.vanadium").addComponents(ElectricStats.createRechargeableBattery(163840000L, GTValues.LuV)).setUnificationData(OrePrefix.battery, Tier.Master).setModelAmount(8);
 
         BATTERY_ZPM_NAQUADRIA = addItem(746, "battery.zpm.naquadria").addComponents(ElectricStats.createRechargeableBattery(655360000L, GTValues.ZPM)).setUnificationData(OrePrefix.battery, Tier.Ultimate).setModelAmount(8);
-        BATTERY_UV_NAQUADRIA = addItem(747, "battery.uv.naquadria").addComponents(ElectricStats.createRechargeableBattery(2621440000L, GTValues.UV)).setUnificationData(OrePrefix.battery, Tier.Superconductor).setModelAmount(8);
+        BATTERY_UV_NAQUADRIA = addItem(747, "battery.uv.naquadria").addComponents(ElectricStats.createRechargeableBattery(2621440000L, GTValues.UV)).setUnificationData(OrePrefix.battery, Tier.Super).setModelAmount(8);
 
         ENERGY_LAPOTRONIC_ORB = addItem(748, "energy.lapotronicorb").addComponents(ElectricStats.createRechargeableBattery(100000000L, GTValues.IV)).setUnificationData(OrePrefix.battery, Tier.Elite).setModelAmount(8);
         ENERGY_LAPOTRONIC_ORB2 = addItem(749, "energy.lapotronicorb2").addComponents(ElectricStats.createRechargeableBattery(1000000000L, GTValues.LuV)).setUnificationData(OrePrefix.battery, Tier.Master).setModelAmount(8);
 
         ENERGY_LAPOTRONIC_MODULE = addItem(750, "energy.module").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(10000000000L, GTValues.ZPM)}).setUnificationData(OrePrefix.battery, Tier.Ultimate).setModelAmount(8);
-        ENERGY_LAPOTRONIC_CLUSTER = addItem(751, "energy.cluster").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(100000000000L, GTValues.UV)}).setUnificationData(OrePrefix.battery, Tier.Superconductor).setModelAmount(8);
+        ENERGY_LAPOTRONIC_CLUSTER = addItem(751, "energy.cluster").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(100000000000L, GTValues.UV)}).setUnificationData(OrePrefix.battery, Tier.Super).setModelAmount(8);
 
         ZERO_POINT_MODULE = addItem(752, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, false)).setModelAmount(8);
         ULTIMATE_BATTERY = addItem(753, "max.battery").addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.MAX)).setUnificationData(OrePrefix.battery, Tier.Maximum).setModelAmount(8);

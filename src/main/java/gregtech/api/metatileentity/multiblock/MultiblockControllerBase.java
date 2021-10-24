@@ -44,6 +44,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static gregtech.api.capability.GregtechDataCodes.STRUCTURE_FORMED;
+
 public abstract class MultiblockControllerBase extends MetaTileEntity implements IMultiblockController {
 
     public BlockPattern structurePattern;
@@ -226,11 +228,10 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
             }
             if (checkStructureComponents(parts, abilities)) {
                 parts.forEach(part -> part.addToMultiBlock(this));
-                parts.forEach(part -> part.setupNotifiableMetaTileEntity(this));
                 this.multiblockParts.addAll(parts);
                 this.multiblockAbilities.putAll(abilities);
                 this.structureFormed = true;
-                writeCustomData(400, buf -> buf.writeBoolean(true));
+                writeCustomData(STRUCTURE_FORMED, buf -> buf.writeBoolean(true));
                 formStructure(context);
             }
         } else if (context == null && structureFormed) {
@@ -246,7 +247,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         this.multiblockAbilities.clear();
         this.multiblockParts.clear();
         this.structureFormed = false;
-        writeCustomData(400, buf -> buf.writeBoolean(false));
+        writeCustomData(STRUCTURE_FORMED, buf -> buf.writeBoolean(false));
     }
 
     @Override
@@ -282,7 +283,7 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 400) {
+        if (dataId == STRUCTURE_FORMED) {
             this.structureFormed = buf.readBoolean();
         }
     }

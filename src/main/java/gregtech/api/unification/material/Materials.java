@@ -500,7 +500,6 @@ public class Materials {
     public static Material Acetone;
     public static Material Glycerol;
     public static Material Methanol;
-    public static Material SaltWater;
     public static Material Ethanol;
     public static Material Toluene;
     public static Material DiphenylIsophtalate;
@@ -618,7 +617,6 @@ public class Materials {
     public static Material Glass;
     public static Material Perlite;
     public static Material Borax;
-    public static Material Lignite;
     public static Material Olivine;
     public static Material Opal;
     public static Material Amethyst;
@@ -671,6 +669,7 @@ public class Materials {
     public static Material EnderAir;
     public static Material LiquidEnderAir;
     public static Material AquaRegia;
+    public static Material SaltWater;
 
     /**
      * Third Degree Materials

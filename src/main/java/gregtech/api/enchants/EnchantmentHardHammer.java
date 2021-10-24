@@ -18,8 +18,8 @@ public class EnchantmentHardHammer extends Enchantment {
     }
 
     public void register(RegistryEvent.Register<Enchantment> event) {
-        this.setRegistryName(new ResourceLocation(GTValues.MODID, "HardHammer"));
-        setName("hard.hammer");
+        this.setRegistryName(new ResourceLocation(GTValues.MODID, "hard_hammer"));
+        setName("hard_hammer");
         event.getRegistry().register(this);
     }
 

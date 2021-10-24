@@ -7,7 +7,6 @@ import gregtech.api.metatileentity.SimpleMachineMetaTileEntity;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
-import gregtech.api.render.Textures;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
@@ -50,10 +49,8 @@ public class AbstractRecipeLogicTest {
                         new SimpleMachineMetaTileEntity(
                                 new ResourceLocation(GTValues.MODID, "chemical_reactor.lv"),
                                 map,
-                                Textures.CHEMICAL_REACTOR_OVERLAY,
-                                1,
-                                true));
-
+                                null,
+                                1, false));
         MetaTileEntity atte = new MetaTileEntityHolder().setMetaTileEntity(at);
         atte.getHolder().setWorld(world);
         map.recipeBuilder()

@@ -12,7 +12,6 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.capability.impl.CombinedCapabilityProvider;
 import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.resources.RenderUtil;
 import gregtech.api.items.OreDictNames;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
@@ -168,15 +167,8 @@ public abstract class MetaItem<T extends MetaItem<?>.MetaValueItem> extends Item
     @SideOnly(Side.CLIENT)
     protected int getColorForItemStack(ItemStack stack, int tintIndex) {
         T metaValueItem = getItem(stack);
-        if (metaValueItem != null && metaValueItem.getColorProvider() != null) {
+        if (metaValueItem != null && metaValueItem.getColorProvider() != null)
             return metaValueItem.getColorProvider().getItemStackColor(stack, tintIndex);
-        }
-        IFluidHandlerItem fluidContainerItem = ItemHandlerHelper.copyStackWithSize(stack, 1)
-                .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
-        if (tintIndex == 0 && fluidContainerItem != null) {
-            FluidStack fluidStack = fluidContainerItem.drain(Integer.MAX_VALUE, false);
-            return fluidStack == null ? 0x666666 : RenderUtil.getFluidColor(fluidStack);
-        }
         return 0xFFFFFF;
     }
 

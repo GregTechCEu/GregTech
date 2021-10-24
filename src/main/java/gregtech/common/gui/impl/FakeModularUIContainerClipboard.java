@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_UI;
+
 
 // Note: when porting the central monitor, please make this more generic.
 public class FakeModularUIContainerClipboard implements WidgetUIAccess {
@@ -117,7 +119,7 @@ public class FakeModularUIContainerClipboard implements WidgetUIAccess {
 
     @Override
     public void writeUpdateInfo(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter) {
-        this.clipboard.writeCustomData(0, buf -> {
+        this.clipboard.writeCustomData(UPDATE_UI, buf -> {
             buf.writeVarInt(windowId);
             buf.writeVarInt(modularUI.guiWidgets.inverse().get(widget));
             buf.writeVarInt(updateId);

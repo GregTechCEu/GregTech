@@ -22,6 +22,8 @@ import net.minecraftforge.common.util.Constants.NBT;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static gregtech.api.capability.GregtechDataCodes.INITIALIZE_MTE;
+
 public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIHolder {
 
     private MetaTileEntity metaTileEntity;
@@ -47,7 +49,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
         this.metaTileEntity.onAttached();
         if (hasWorld() && !getWorld().isRemote) {
             updateBlockOpacity();
-            writeCustomData(-1, buffer -> {
+            writeCustomData(INITIALIZE_MTE, buffer -> {
                 buffer.writeVarInt(GregTechAPI.MTE_REGISTRY.getIdByObjectName(metaTileEntity.metaTileEntityId));
                 metaTileEntity.writeInitialSyncData(buffer);
             });
@@ -158,7 +160,7 @@ public class MetaTileEntityHolder extends TickableTileEntityBase implements IUIH
 
     @Override
     public void receiveCustomData(int discriminator, PacketBuffer buffer) {
-        if (discriminator == -1) {
+        if (discriminator == INITIALIZE_MTE) {
             int metaTileEntityId = buffer.readVarInt();
             setMetaTileEntity(GregTechAPI.MTE_REGISTRY.getObjectById(metaTileEntityId));
             this.metaTileEntity.receiveInitialSyncData(buffer);

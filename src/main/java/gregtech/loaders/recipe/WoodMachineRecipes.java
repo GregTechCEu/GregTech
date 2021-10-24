@@ -269,13 +269,6 @@ public class WoodMachineRecipes {
                 .buildAndRegister();
 
         PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
-                .input(gem, Lignite, 16)
-                .output(dustSmall, DarkAsh, 2)
-                .fluidOutputs(CoalTar.getFluid(2000))
-                .duration(640).EUt(64)
-                .buildAndRegister();
-
-        PYROLYSE_RECIPES.recipeBuilder().circuitMeta(8)
                 .inputs(new ItemStack(Items.COAL, 12))
                 .output(dustSmall, DarkAsh, 2)
                 .fluidOutputs(CoalTar.getFluid(3000))

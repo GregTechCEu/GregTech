@@ -3,25 +3,37 @@ package gregtech.api.capability.impl;
 import gregtech.api.capability.INotifiableHandler;
 import gregtech.api.metatileentity.MetaTileEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NotifiableFilteredFluidHandler extends FilteredFluidHandler implements INotifiableHandler {
 
-    MetaTileEntity notifiableEntity;
+    List<MetaTileEntity> notifiableEntities = new ArrayList<>();
     private final boolean isExport;
 
     public NotifiableFilteredFluidHandler(int capacity, MetaTileEntity entityToNotify, boolean isExport) {
         super(capacity);
-        this.notifiableEntity = entityToNotify;
+        this.notifiableEntities.add(entityToNotify);
         this.isExport = isExport;
     }
 
     @Override
     protected void onContentsChanged() {
         super.onContentsChanged();
-        addToNotifiedList(notifiableEntity, this, isExport);
+        for (MetaTileEntity metaTileEntity : notifiableEntities) {
+            if (metaTileEntity != null && metaTileEntity.isValid()) {
+                addToNotifiedList(metaTileEntity, this, isExport);
+            }
+        }
     }
 
     @Override
-    public void setNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-        this.notifiableEntity = metaTileEntity;
+    public void addNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+        this.notifiableEntities.add(metaTileEntity);
+    }
+
+    @Override
+    public void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+        this.notifiableEntities.remove(metaTileEntity);
     }
 }

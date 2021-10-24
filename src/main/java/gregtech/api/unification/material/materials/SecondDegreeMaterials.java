@@ -31,11 +31,11 @@ public class SecondDegreeMaterials {
                 .components(Sodium, 2, Boron, 4, Water, 10, Oxygen, 7)
                 .build();
 
-        Lignite = new Material.Builder(2003, "lignite")
-                .gem(0, 1200).ore() // 2/3 of burn time of coal
-                .color(0x644646).iconSet(LIGNITE)
-                .flags(FLAMMABLE, NO_SMELTING, NO_SMASHING, MORTAR_GRINDABLE)
-                .components(Carbon, 3, Water, 1)
+        SaltWater = new Material.Builder(2003, "salt_water")
+                .fluid()
+                .color(0x0000C8)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Salt, 1, Water, 1)
                 .build();
 
         Olivine = new Material.Builder(2004, "olivine")

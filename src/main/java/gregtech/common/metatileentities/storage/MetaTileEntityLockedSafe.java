@@ -51,6 +51,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.DoubleSupplier;
 
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_CONTENTS_SEED;
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_LOCKED_STATE;
+
 public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRenderMetaTileEntity {
 
     private static final int MAX_UNLOCK_PROGRESS = 100;
@@ -268,7 +271,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     public void setSafeUnlocked(boolean safeUnlocked) {
         this.isSafeUnlocked = safeUnlocked;
         if (getWorld() != null && !getWorld().isRemote) {
-            writeCustomData(8, buf -> buf.writeBoolean(safeUnlocked));
+            writeCustomData(UPDATE_LOCKED_STATE, buf -> buf.writeBoolean(safeUnlocked));
             getHolder().notifyBlockUpdate();
             markDirty();
         }
@@ -278,7 +281,7 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
         this.unlockComponentsSeed = unlockComponentsSeed;
         if (getWorld() != null && !getWorld().isRemote) {
             updateDisplayUnlockComponents();
-            writeCustomData(9, buf -> buf.writeVarLong(unlockComponentsSeed));
+            writeCustomData(UPDATE_CONTENTS_SEED, buf -> buf.writeVarLong(unlockComponentsSeed));
             markDirty();
         }
     }
@@ -305,9 +308,9 @@ public class MetaTileEntityLockedSafe extends MetaTileEntity implements IFastRen
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 8) {
+        if (dataId == UPDATE_LOCKED_STATE) {
             this.isSafeUnlocked = buf.readBoolean();
-        } else if (dataId == 9) {
+        } else if (dataId == UPDATE_CONTENTS_SEED) {
             this.unlockComponentsSeed = buf.readVarLong();
         }
     }

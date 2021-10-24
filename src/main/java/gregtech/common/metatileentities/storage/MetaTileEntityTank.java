@@ -61,6 +61,7 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
+import static gregtech.api.capability.GregtechDataCodes.*;
 import static gregtech.api.unification.material.info.MaterialFlags.FLAMMABLE;
 import static gregtech.api.util.GTUtility.convertOpaqueRGBA_CLtoRGB;
 
@@ -548,22 +549,22 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 1) {
+        if (dataId == UPDATE_CONTROLLER_POSITION) {
             this.controllerPos = buf.readBlockPos();
             this.controllerCache = new WeakReference<>(null);
             this.multiblockFluidTank.setFluid(null);
-        } else if (dataId == 2) {
+        } else if (dataId == DEFORM_TANK) {
             this.controllerPos = null;
             this.controllerCache = new WeakReference<>(null);
             this.multiblockFluidTank.setFluid(null);
             this.connectedTanks.clear();
             this.multiblockSize = new Vec3i(1, 1, 1);
-        } else if (dataId == 3) {
+        } else if (dataId == SYNC_FLUID_CHANGE) {
             if (controllerPos == null) {
                 FluidStack fluidStack = ByteBufUtils.readFluidStackDelta(buf, multiblockFluidTank.getFluid());
                 this.multiblockFluidTank.setFluid(fluidStack);
             }
-        } else if (dataId == 4) {
+        } else if (dataId == SYNC_TANK_SHAPE) {
             this.connectedTanks = ByteBufUtils.readRelativeBlockList(buf, getPos());
             this.multiblockSize = buf.readBlockPos();
             recomputeTankSizeNow(true);
@@ -745,18 +746,18 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
 
     private void handleTankSyncing() {
         if (networkStatus == NetworkStatus.ATTACHED_TO_MULTIBLOCK) {
-            writeCustomData(1, buf -> buf.writeBlockPos(controllerPos));
+            writeCustomData(UPDATE_CONTROLLER_POSITION, buf -> buf.writeBlockPos(controllerPos));
             this.needsFluidResync = false;
             this.networkStatus = null;
             this.needsShapeResync = false;
         }
         if (networkStatus == NetworkStatus.DETACHED_FROM_MULTIBLOCK) {
-            writeCustomData(2, buf -> {
+            writeCustomData(DEFORM_TANK, buf -> {
             });
             this.networkStatus = null;
         }
         if (isTankController() && needsShapeResync) {
-            writeCustomData(4, buf -> {
+            writeCustomData(SYNC_TANK_SHAPE, buf -> {
                 ByteBufUtils.writeRelativeBlockList(buf, getPos(), connectedTanks);
                 buf.writeBlockPos(new BlockPos(multiblockSize));
             });
@@ -765,7 +766,7 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
         if (isTankController() && needsFluidResync) {
             if (timeSinceLastFluidSync++ >= FLUID_SYNC_THROTTLE) {
                 FluidStack fluidStack = multiblockFluidTank.getFluid();
-                writeCustomData(3, buf -> ByteBufUtils.writeFluidStackDelta(buf, lastSentFluidStack, fluidStack));
+                writeCustomData(SYNC_FLUID_CHANGE, buf -> ByteBufUtils.writeFluidStackDelta(buf, lastSentFluidStack, fluidStack));
                 this.lastSentFluidStack = fluidStack == null ? null : fluidStack.copy();
                 this.timeSinceLastFluidSync = 0;
                 this.needsFluidResync = false;

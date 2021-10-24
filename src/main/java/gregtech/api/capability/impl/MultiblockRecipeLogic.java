@@ -1,12 +1,14 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
+import gregtech.common.ConfigHolder;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.ArrayList;
@@ -174,10 +176,18 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     @Override
     protected int[] calculateOverclock(int EUt, long voltage, int duration) {
         // apply maintenance penalties
-        int numMaintenanceProblems = (this.metaTileEntity instanceof MultiblockWithDisplayBase) ?
-                ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems() : 0;
+        MultiblockWithDisplayBase displayBase = this.metaTileEntity instanceof MultiblockWithDisplayBase ? (MultiblockWithDisplayBase) metaTileEntity : null;
+        int numMaintenanceProblems = displayBase == null ? 0 : displayBase.getNumMaintenanceProblems();
 
-        int[] overclock = super.calculateOverclock(EUt, voltage, duration);
+        int[] overclock = null;
+        if (displayBase != null && ConfigHolder.U.GT5u.enableMaintenance) {
+            IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
+            double durationMultiplier = hatch.getDurationMultiplier();
+            if (durationMultiplier != 1.0) {
+                overclock = super.calculateOverclock(EUt, voltage, (int) Math.round(duration * durationMultiplier));
+            }
+        }
+        if (overclock == null) overclock = super.calculateOverclock(EUt, voltage, duration);
         overclock[1] = (int) (overclock[1] * (1 + 0.1 * numMaintenanceProblems));
 
         return overclock;

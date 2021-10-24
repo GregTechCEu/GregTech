@@ -158,7 +158,7 @@ public class MaterialFlagAddition {
         prop.setOreByProducts(Redstone, Sulfur, Glowstone);
 
         prop = Coal.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Lignite, Thorium);
+        prop.setOreByProducts(Coal, Thorium);
 
         prop = Cobaltite.getProperty(PropertyKey.ORE);
         prop.setOreByProducts(Cobalt, Cobaltite);
@@ -357,9 +357,6 @@ public class MaterialFlagAddition {
         prop.setOreByProducts(Copper, BrownLimonite, Calcite, Copper);
         prop.setWashedIn(SodiumPersulfate);
         prop.setDirectSmeltResult(Copper);
-
-        prop = Lignite.getProperty(PropertyKey.ORE);
-        prop.setOreByProducts(Coal);
 
         prop = Olivine.getProperty(PropertyKey.ORE);
         prop.setOreByProducts(Pyrope, Magnesium, Manganese);

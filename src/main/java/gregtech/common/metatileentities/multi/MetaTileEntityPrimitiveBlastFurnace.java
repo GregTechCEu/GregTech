@@ -27,6 +27,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
+
 public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMultiblockController {
 
     public MetaTileEntityPrimitiveBlastFurnace(ResourceLocation metaTileEntityId) {
@@ -101,6 +103,7 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
         }
     }
 
+    @Nonnull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
         return Textures.PRIMITIVE_BLAST_FURNACE_OVERLAY;

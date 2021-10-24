@@ -18,6 +18,7 @@ import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.ItemPipeProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
@@ -50,6 +51,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +61,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
     public static final ItemPipeRenderer INSTANCE = new ItemPipeRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
     private static final ThreadLocal<BlockRenderer.BlockFace> blockFaces = ThreadLocal.withInitial(BlockRenderer.BlockFace::new);
-    private final Map<ItemPipeType, PipeTextureInfo> pipeTextures = new HashMap<>();
+    private final Map<MaterialIconSet, EnumMap<ItemPipeType, PipeTextureInfo>> pipeTextures = new HashMap<>();
     private TextureAtlasSprite restrictiveOverlay;
 
     private static class PipeTextureInfo {
@@ -81,13 +83,17 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
 
     public void registerIcons(TextureMap map) {
         restrictiveOverlay = map.registerSprite(new ResourceLocation(GTValues.MODID, "blocks/pipe/pipe_restrictive"));
-        for (ItemPipeType itemPipeType : ItemPipeType.values()) {
-            ResourceLocation inLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/pipe/pipe_%s_in", itemPipeType.getSizeForTexture()));
-            ResourceLocation sideLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/pipe/pipe_%s_side", itemPipeType.getSizeForTexture()));
+        for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
+            EnumMap<ItemPipeType, PipeTextureInfo> pipeTypeMap = new EnumMap<>(ItemPipeType.class);
+            ResourceLocation sideLocation = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_side");
+            for (ItemPipeType itemPipeType : ItemPipeType.values()) {
+                ResourceLocation inLocation = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_" + itemPipeType.name + "_in");
 
-            TextureAtlasSprite inTexture = map.registerSprite(inLocation);
-            TextureAtlasSprite sideTexture = map.registerSprite(sideLocation);
-            this.pipeTextures.put(itemPipeType, new PipeTextureInfo(inTexture, sideTexture));
+                TextureAtlasSprite inTexture = map.registerSprite(inLocation);
+                TextureAtlasSprite sideTexture = map.registerSprite(sideLocation);
+                pipeTypeMap.put(itemPipeType, new PipeTextureInfo(inTexture, sideTexture));
+            }
+            this.pipeTextures.put(iconSet, pipeTypeMap);
         }
     }
 
@@ -162,7 +168,7 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         float thickness = pipeType.getThickness();
         boolean restrictive = pipeType.isRestrictive();
         ColourMultiplier multiplier = new ColourMultiplier(pipeColor);
-        PipeTextureInfo textureInfo = this.pipeTextures.get(pipeType);
+        PipeTextureInfo textureInfo = this.pipeTextures.get(material.getMaterialIconSet()).get(pipeType);
         IVertexOperation[] pipeConnectSide = ArrayUtils.addAll(pipeline, new IconTransformation(textureInfo.inTexture), multiplier);
         IVertexOperation[] pipeSide = ArrayUtils.addAll(pipeline, new IconTransformation(textureInfo.sideTexture), multiplier);
         IVertexOperation[] pipeRestrictive = ArrayUtils.addAll(pipeline, new IconTransformation(restrictiveOverlay));
@@ -284,12 +290,12 @@ public class ItemPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         if (tileEntity == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
-        ItemPipeType fluidPipeType = tileEntity.getPipeType();
+        ItemPipeType itemPipeType = tileEntity.getPipeType();
         Material material = ((TileEntityItemPipe) tileEntity).getPipeMaterial();
-        if (fluidPipeType == null || material == null) {
+        if (itemPipeType == null || material == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
-        TextureAtlasSprite atlasSprite = pipeTextures.get(fluidPipeType).sideTexture;
+        TextureAtlasSprite atlasSprite = pipeTextures.get(material.getMaterialIconSet()).get(itemPipeType).sideTexture;
         int pipeColor = getPipeColor(material, tileEntity.getInsulationColor());
         return Pair.of(atlasSprite, pipeColor);
     }

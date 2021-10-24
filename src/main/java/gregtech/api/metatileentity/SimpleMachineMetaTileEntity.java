@@ -41,6 +41,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Function;
 
+import static gregtech.api.capability.GregtechDataCodes.*;
+
 public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity implements IActiveOutputSide {
 
     private final boolean hasFrontFacing;
@@ -254,14 +256,14 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 100) {
+        if (dataId == UPDATE_OUTPUT_FACING) {
             this.outputFacingItems = EnumFacing.VALUES[buf.readByte()];
             this.outputFacingFluids = EnumFacing.VALUES[buf.readByte()];
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == 101) {
+        } else if (dataId == UPDATE_AUTO_OUTPUT_ITEMS) {
             this.autoOutputItems = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
-        } else if (dataId == 102) {
+        } else if (dataId == UPDATE_AUTO_OUTPUT_FLUIDS) {
             this.autoOutputFluids = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
         }
@@ -280,7 +282,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         this.outputFacingFluids = outputFacing;
         if (!getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
-            writeCustomData(100, buf -> {
+            writeCustomData(UPDATE_OUTPUT_FACING, buf -> {
                 buf.writeByte(outputFacingItems.getIndex());
                 buf.writeByte(outputFacingFluids.getIndex());
             });
@@ -292,7 +294,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         this.outputFacingItems = outputFacing;
         if (!getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
-            writeCustomData(100, buf -> {
+            writeCustomData(UPDATE_OUTPUT_FACING, buf -> {
                 buf.writeByte(outputFacingItems.getIndex());
                 buf.writeByte(outputFacingFluids.getIndex());
             });
@@ -304,7 +306,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
         this.outputFacingFluids = outputFacing;
         if (!getWorld().isRemote) {
             getHolder().notifyBlockUpdate();
-            writeCustomData(100, buf -> {
+            writeCustomData(UPDATE_OUTPUT_FACING, buf -> {
                 buf.writeByte(outputFacingItems.getIndex());
                 buf.writeByte(outputFacingFluids.getIndex());
             });
@@ -315,7 +317,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void setAutoOutputItems(boolean autoOutputItems) {
         this.autoOutputItems = autoOutputItems;
         if (!getWorld().isRemote) {
-            writeCustomData(101, buf -> buf.writeBoolean(autoOutputItems));
+            writeCustomData(UPDATE_AUTO_OUTPUT_ITEMS, buf -> buf.writeBoolean(autoOutputItems));
             markDirty();
         }
     }
@@ -323,7 +325,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     public void setAutoOutputFluids(boolean autoOutputFluids) {
         this.autoOutputFluids = autoOutputFluids;
         if (!getWorld().isRemote) {
-            writeCustomData(102, buf -> buf.writeBoolean(autoOutputFluids));
+            writeCustomData(UPDATE_AUTO_OUTPUT_FLUIDS, buf -> buf.writeBoolean(autoOutputFluids));
             markDirty();
         }
     }

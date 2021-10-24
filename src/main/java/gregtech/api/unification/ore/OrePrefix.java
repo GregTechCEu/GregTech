@@ -1,6 +1,7 @@
 package gregtech.api.unification.ore;
 
 import com.google.common.base.Preconditions;
+import crafttweaker.annotations.ZenRegister;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -12,6 +13,8 @@ import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.function.TriConsumer;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.Validate;
+import stanhebben.zenscript.annotations.ZenClass;
+import stanhebben.zenscript.annotations.ZenMethod;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -24,6 +27,8 @@ import static gregtech.api.unification.ore.OrePrefix.Conditions.*;
 import static gregtech.api.unification.ore.OrePrefix.Flags.ENABLE_UNIFICATION;
 import static gregtech.api.unification.ore.OrePrefix.Flags.SELF_REFERENCING;
 
+@ZenClass("mods.gregtech.ore.OrePrefix")
+@ZenRegister
 public class OrePrefix {
 
     private final static Map<String, OrePrefix> PREFIXES = new HashMap<>();
@@ -187,7 +192,7 @@ public class OrePrefix {
     public static final OrePrefix pipeLargeFluid = new OrePrefix("pipeLargeFluid", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeHugeFluid = new OrePrefix("pipeHugeFluid", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeQuadrupleFluid = new OrePrefix("pipeQuadrupleFluid", M * 12, null, MaterialIconType.pipeQuadruple, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeNonupleFluid = new OrePrefix("pipeNonupleFluid", M * 12, null, MaterialIconType.pipeQuadruple, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeNonupleFluid = new OrePrefix("pipeNonupleFluid", M * 12, null, MaterialIconType.pipeNonuple, ENABLE_UNIFICATION, null);
 
     public static final OrePrefix pipeTinyItem = new OrePrefix("pipeTinyItem", M / 2, null, MaterialIconType.pipeTiny, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeSmallItem = new OrePrefix("pipeSmallItem", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null);
@@ -226,13 +231,6 @@ public class OrePrefix {
     // Introduced by Calclavia
     public static final OrePrefix circuit = new OrePrefix("circuit", -1, null, null, ENABLE_UNIFICATION, null);
     public static final OrePrefix component = new OrePrefix("component", -1, null, null, ENABLE_UNIFICATION, null);
-
-    // Used for Gregification Addon TODO Don't do these here post De-Enum
-
-    // Myst Ag Compat
-    public static final OrePrefix seed = new OrePrefix("seed", -1, null, MaterialIconType.seed, ENABLE_UNIFICATION, null);
-    public static final OrePrefix crop = new OrePrefix("crop", -1, null, MaterialIconType.crop, ENABLE_UNIFICATION, null);
-    public static final OrePrefix essence = new OrePrefix("essence", -1, null, MaterialIconType.essence, ENABLE_UNIFICATION, null);
 
     public static final String DUST_REGULAR = "dustRegular";
 
@@ -462,6 +460,7 @@ public class OrePrefix {
         return materialAmount;
     }
 
+    @ZenMethod
     public static OrePrefix getPrefix(String prefixName) {
         return getPrefix(prefixName, null);
     }
@@ -554,6 +553,7 @@ public class OrePrefix {
         return ignoredMaterials.contains(material);
     }
 
+    @ZenMethod
     public void setIgnored(Material material) {
         ignoredMaterials.add(material);
     }

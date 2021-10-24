@@ -12,6 +12,7 @@ import gregtech.api.unification.stack.MaterialStack;
 import net.minecraft.enchantment.Enchantment;
 import stanhebben.zenscript.annotations.Optional;
 import stanhebben.zenscript.annotations.ZenClass;
+import stanhebben.zenscript.annotations.ZenConstructor;
 import stanhebben.zenscript.annotations.ZenMethod;
 
 import static gregtech.api.unification.crafttweaker.CTMaterialHelpers.*;
@@ -25,10 +26,12 @@ public class CTMaterialBuilder {
 
     private final Material.Builder backingBuilder;
 
+    @ZenConstructor
     public CTMaterialBuilder(int id, String name) {
         this.backingBuilder = new Material.Builder(id, name);
     }
 
+    @ZenConstructor
     public CTMaterialBuilder(String name) {
         this(baseID++, name);
     }

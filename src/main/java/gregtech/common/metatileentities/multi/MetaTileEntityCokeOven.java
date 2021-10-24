@@ -28,6 +28,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
+
 public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockController {
 
     public MetaTileEntityCokeOven(ResourceLocation metaTileEntityId) {
@@ -72,6 +74,7 @@ public class MetaTileEntityCokeOven extends RecipeMapPrimitiveMultiblockControll
         getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive());
     }
 
+    @Nonnull
     @Override
     protected OrientedOverlayRenderer getFrontOverlay() {
         return Textures.COKE_OVEN_OVERLAY;

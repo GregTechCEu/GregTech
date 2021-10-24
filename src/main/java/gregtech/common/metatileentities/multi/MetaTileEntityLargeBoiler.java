@@ -55,6 +55,7 @@ import net.minecraftforge.fluids.IFluidTank;
 import javax.annotation.Nonnull;
 import java.util.*;
 
+import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withButton;
 import static gregtech.api.gui.widgets.AdvancedTextWidget.withHoverTextTranslate;
 
@@ -344,7 +345,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
             if (isStructureFormed()) {
                 replaceFireboxAsActive(active);
             }
-            writeCustomData(100, buf -> buf.writeBoolean(isActive));
+            writeCustomData(IS_WORKING, buf -> buf.writeBoolean(isActive));
             markDirty();
         }
     }
@@ -391,7 +392,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 100) {
+        if (dataId == IS_WORKING) {
             this.isActive = buf.readBoolean();
         }
     }

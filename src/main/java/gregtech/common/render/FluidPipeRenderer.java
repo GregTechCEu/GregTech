@@ -19,6 +19,7 @@ import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ModCompatibility;
@@ -51,6 +52,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,7 +62,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
     public static final FluidPipeRenderer INSTANCE = new FluidPipeRenderer();
     public static EnumBlockRenderType BLOCK_RENDER_TYPE;
     private static final ThreadLocal<BlockFace> blockFaces = ThreadLocal.withInitial(BlockFace::new);
-    private final Map<FluidPipeType, PipeTextureInfo> pipeTextures = new HashMap<>();
+    private final Map<MaterialIconSet, EnumMap<FluidPipeType, PipeTextureInfo>> pipeTextures = new HashMap<>();
 
     private static class PipeTextureInfo {
         public final TextureAtlasSprite inTexture;
@@ -80,13 +82,17 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
     }
 
     public void registerIcons(TextureMap map) {
-        for (FluidPipeType fluidPipeType : FluidPipeType.values()) {
-            ResourceLocation inLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/pipe/pipe_%s_in", fluidPipeType.name));
-            ResourceLocation sideLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/pipe/pipe_%s_side", fluidPipeType.name));
+        for (MaterialIconSet iconSet : MaterialIconSet.ICON_SETS.values()) {
+            EnumMap<FluidPipeType, PipeTextureInfo> pipeTypeMap = new EnumMap<>(FluidPipeType.class);
+            ResourceLocation sideLocation = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_side");
+            for (FluidPipeType fluidPipeType : FluidPipeType.values()) {
+                ResourceLocation inLocation = new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + iconSet.name + "/pipe_" + fluidPipeType.name + "_in");
 
-            TextureAtlasSprite inTexture = map.registerSprite(inLocation);
-            TextureAtlasSprite sideTexture = map.registerSprite(sideLocation);
-            this.pipeTextures.put(fluidPipeType, new PipeTextureInfo(inTexture, sideTexture));
+                TextureAtlasSprite inTexture = map.registerSprite(inLocation);
+                TextureAtlasSprite sideTexture = map.registerSprite(sideLocation);
+                pipeTypeMap.put(fluidPipeType, new PipeTextureInfo(inTexture, sideTexture));
+            }
+            this.pipeTextures.put(iconSet, pipeTypeMap);
         }
     }
 
@@ -160,7 +166,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         int pipeColor = GTUtility.convertRGBtoOpaqueRGBA_CL(getPipeColor(material, insulationColor));
         float thickness = pipeType.getThickness();
         ColourMultiplier multiplier = new ColourMultiplier(pipeColor);
-        PipeTextureInfo textureInfo = this.pipeTextures.get(pipeType);
+        PipeTextureInfo textureInfo = this.pipeTextures.get(material.getMaterialIconSet()).get(pipeType);
         IVertexOperation[] pipeConnectSide = ArrayUtils.addAll(pipeline, new IconTransformation(textureInfo.inTexture), multiplier);
         IVertexOperation[] pipeSide = ArrayUtils.addAll(pipeline, new IconTransformation(textureInfo.sideTexture), multiplier);
 
@@ -276,7 +282,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
         if (fluidPipeType == null || material == null) {
             return Pair.of(TextureUtils.getMissingSprite(), 0xFFFFFF);
         }
-        TextureAtlasSprite atlasSprite = pipeTextures.get(fluidPipeType).sideTexture;
+        TextureAtlasSprite atlasSprite = pipeTextures.get(material.getMaterialIconSet()).get(fluidPipeType).sideTexture;
         int pipeColor = getPipeColor(material, tileEntity.getInsulationColor());
         return Pair.of(atlasSprite, pipeColor);
     }

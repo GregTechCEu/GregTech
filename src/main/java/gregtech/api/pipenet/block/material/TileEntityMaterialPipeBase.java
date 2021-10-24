@@ -10,6 +10,8 @@ import gregtech.api.unification.material.Materials;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
+import static gregtech.api.capability.GregtechDataCodes.UPDATE_PIPE_MATERIAL;
+
 public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType> extends TileEntityPipeBase<PipeType, NodeDataType> implements IMaterialPipeTile<PipeType, NodeDataType> {
 
     private Material pipeMaterial = Materials.Aluminium;
@@ -23,7 +25,7 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
         super.setPipeData(pipeBlock, pipeType);
         this.pipeMaterial = pipeMaterial;
         if (!getWorld().isRemote) {
-            writeCustomData(-5, this::writePipeMaterial);
+            writeCustomData(UPDATE_PIPE_MATERIAL, this::writePipeMaterial);
         }
     }
 
@@ -74,7 +76,7 @@ public abstract class TileEntityMaterialPipeBase<PipeType extends Enum<PipeType>
     @Override
     public void receiveCustomData(int discriminator, PacketBuffer buf) {
         super.receiveCustomData(discriminator, buf);
-        if (discriminator == -5) {
+        if (discriminator == UPDATE_PIPE_MATERIAL) {
             readPipeMaterial(buf);
             scheduleChunkForRenderUpdate();
         }

@@ -451,7 +451,7 @@ public class ComponentRecipes {
         }
 
         Material[] circuitTiers = new Material[]{MarkerMaterials.Tier.Basic, MarkerMaterials.Tier.Good, MarkerMaterials.Tier.Advanced, MarkerMaterials.Tier.Extreme,
-                MarkerMaterials.Tier.Elite, MarkerMaterials.Tier.Master, MarkerMaterials.Tier.Ultimate, MarkerMaterials.Tier.Superconductor};
+                MarkerMaterials.Tier.Elite, MarkerMaterials.Tier.Master, MarkerMaterials.Tier.Ultimate, MarkerMaterials.Tier.Super};
 
         for (int i = 0; i < FLUID_REGULATORS.length; i++) {
             RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().circuitMeta(1)

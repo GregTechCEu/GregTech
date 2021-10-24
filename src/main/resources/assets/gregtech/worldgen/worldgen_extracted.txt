@@ -1,0 +1,4 @@
+This File exists to prevent custom oregen configurations from being overridden.
+If this file is deleted, the oregen files will be regenerated from their defaults.
+
+Modpack authors make sure this file is included in your modpack if you have customized ore generation

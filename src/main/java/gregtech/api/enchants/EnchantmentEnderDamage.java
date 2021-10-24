@@ -47,11 +47,11 @@ public class EnchantmentEnderDamage extends Enchantment {
     }
 
     @Override
-    public void onEntityDamaged(@Nonnull EntityLivingBase hurtEntity, @Nonnull Entity damagingEntity, int level) {
-        String entityName = EntityList.getEntityString(hurtEntity);
-        if (hurtEntity instanceof EntityEnderman || hurtEntity instanceof EntityDragon || hurtEntity instanceof EntityEndermite || (entityName != null && entityName.toLowerCase().contains("ender"))) {
-            hurtEntity.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, level * 200, Math.max(1, (5 * level) / 7)));
-            hurtEntity.addPotionEffect(new PotionEffect(MobEffects.POISON, level * 200, Math.max(1, (5 * level) / 7)));
+    public void onEntityDamaged(@Nonnull EntityLivingBase user, @Nonnull Entity target, int level) {
+        String entityName = EntityList.getEntityString(target);
+        if (target instanceof EntityLivingBase && (target instanceof EntityEnderman || target instanceof EntityDragon || target instanceof EntityEndermite || (entityName != null && entityName.toLowerCase().contains("ender")))) {
+            ((EntityLivingBase) target).addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, level * 200, Math.max(1, (5 * level) / 7)));
+            ((EntityLivingBase) target).addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, level * 200, Math.max(1, (5 * level) / 7)));
         }
     }
 }

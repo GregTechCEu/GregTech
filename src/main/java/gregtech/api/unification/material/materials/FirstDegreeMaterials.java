@@ -1053,7 +1053,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT2_METAL, MORTAR_GRINDABLE)
                 .components(Iron, 1)
                 .ingotSmeltInto(Iron)
-                .arcSmeltInto(Iron)
+                .arcSmeltInto(WroughtIron)
                 .macerateInto(Iron)
                 .build();
         Iron.getProperty(PropertyKey.INGOT).setMagneticMaterial(IronMagnetic);

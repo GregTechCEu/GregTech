@@ -9,6 +9,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 public class HardwareSlotWidget extends WidgetGroup {
@@ -77,9 +78,9 @@ public class HardwareSlotWidget extends WidgetGroup {
             } else {
                 String info = hardware.addInformation();
                 if (info == null) {
-                    drawHoveringText(null, Collections.singletonList(hardware.getLocalizedName()), 300, mouseX, mouseY);
+                    drawHoveringText(null, Arrays.asList(hardware.getLocalizedName(), I18n.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
                 } else {
-                    drawHoveringText(null, Collections.singletonList(String.format("%s (%s)", hardware.getLocalizedName(), info)), 300, mouseX, mouseY);
+                    drawHoveringText(null, Arrays.asList(String.format("%s (%s)", hardware.getLocalizedName(), info), I18n.format("terminal.hardware.tip.remove")), 300, mouseX, mouseY);
                 }
             }
         }

@@ -1,6 +1,7 @@
 package gregtech.common.metatileentities.multi.electric;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -209,6 +210,17 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
             //apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
             EUt *= Math.min(1, Math.pow(0.95, amountEUDiscount));
 
+            // Apply Configurable Maintenance effects
+            double resultDuration = duration;
+            MultiblockWithDisplayBase displayBase = (MultiblockWithDisplayBase) metaTileEntity;
+            int numMaintenanceProblems = ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems();
+            if (ConfigHolder.U.GT5u.enableMaintenance) {
+                IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
+                if (hatch.getDurationMultiplier() != 1.0) {
+                    resultDuration *= hatch.getDurationMultiplier();
+                }
+            }
+
             int tier = getOverclockingTier(voltage);
             if (GTValues.V[tier] <= EUt || tier == 0)
                 return new int[]{EUt, duration};
@@ -216,7 +228,6 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
                 EUt = -EUt;
 
             int resultEUt = EUt;
-            double resultDuration = duration;
 
             //do not overclock further if duration is already too small
             //perfect overclock for every 1800k over recipe temperature
@@ -234,7 +245,6 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
             }
 
             // apply maintenance slowdown
-            int numMaintenanceProblems = ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems();
             resultDuration = (int) (resultDuration * (1 + 0.1 * numMaintenanceProblems));
 
             return new int[]{negativeEU ? -resultEUt : resultEUt, (int) Math.ceil(resultDuration)};
