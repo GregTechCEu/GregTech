@@ -296,7 +296,7 @@ public class ConfigHolder {
 
             @Config.Comment("Bloom Algorithm: 0-Simple Gaussian Blur Bloom(Fast). 1-Unity Bloom. 2-Unreal Bloom")
             @Config.RangeInt(min = 0, max = 2)
-            public int bloomStyle = 1;
+            public int bloomStyle = 2;
 
             @Config.Comment("Mipmap Size. (2-5)=>(fast-slow)=>(low quality-high quality)")
             @Config.RangeInt(min = 2, max = 5)
