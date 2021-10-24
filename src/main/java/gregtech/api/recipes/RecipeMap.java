@@ -213,7 +213,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return false;
     }
 
-    public ValidationResult<Recipe> postValidateRecipe(ValidationResult<Recipe> validationResult) {
+    protected ValidationResult<Recipe> postValidateRecipe(ValidationResult<Recipe> validationResult) {
         EnumValidationResult recipeStatus = validationResult.getType();
         Recipe recipe = validationResult.getResult();
         if (!GTUtility.isBetweenInclusive(getMinInputs(), getMaxInputs(), recipe.getInputs().size())) {
