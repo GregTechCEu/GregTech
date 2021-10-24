@@ -13,14 +13,11 @@ import gregtech.api.terminal.gui.widgets.ColorWidget;
 import gregtech.api.terminal.gui.widgets.TreeListWidget;
 import gregtech.api.terminal.util.FileTree;
 import gregtech.api.util.Size;
-import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import java.awt.*;
 import java.io.File;
@@ -61,13 +58,17 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         if (iNativeWidgets != null) {
             iNativeWidgets.forEach(this::addWidget);
         }
-        os.desktop.setBlockApp(true);
+        if (isRemote()) {
+            os.desktop.addTopWidget(this);
+        }
         return this;
     }
 
     public void close() {
         os.closeDialog(this);
-        os.desktop.setBlockApp(false);
+        if (isRemote()) {
+            os.desktop.removeTopWidget(this);
+        }
     }
 
     /**
@@ -265,7 +266,9 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 .setHoverText("terminal.dialog.folder")
                 .setIcon(GuiTextures.ICON_LOAD));
         dialog.addWidget(new LabelWidget(x + WIDTH / 2, y + 11, title, -1).setXCentered(true));
-        os.menu.hideMenu();
+        if (os.isRemote()) {
+            os.menu.hideMenu();
+        }
         return dialog.setClientSide();
     }
 

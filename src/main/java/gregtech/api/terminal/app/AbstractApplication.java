@@ -230,7 +230,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
                     CompressedStreamTools.safeWrite(nbt, new File(TerminalRegistry.TERMINAL_PATH, String.format("config/%S.nbt", getRegistryName())));
                 }
             } catch (IOException e) {
-                GTLog.logger.error("error while writing local nbt for {}", getRegistryName(), e);
+                GTLog.logger.error("error while saving local nbt for {}", getRegistryName(), e);
             }
         }
     }

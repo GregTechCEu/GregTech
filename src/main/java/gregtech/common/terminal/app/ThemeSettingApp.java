@@ -56,7 +56,7 @@ public class ThemeSettingApp extends AbstractApplication {
                     .setIsUp(true)
                     .setOnChanged(type->onModifyTextureChanged(type, this))
                     .setColors(TerminalTheme.COLOR_B_2.getColor(), TerminalTheme.COLOR_F_1.getColor(), TerminalTheme.COLOR_B_2.getColor())
-                    .setBackground(TerminalTheme.COLOR_B_1));
+                    .setBackground(TerminalTheme.COLOR_6));
             textureGroup = new WidgetGroup((int) (x + 170), 132, (int) (x * 11 - 170), 65);
             this.addWidget(textureGroup);
         }

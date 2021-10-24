@@ -14,6 +14,8 @@ import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Tuple;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import java.util.List;
 
 
 public class TerminalMenuWidget extends WidgetGroup {
+    @SideOnly(Side.CLIENT)
     private Interpolator interpolator;
     private IGuiTexture background;
     private final TerminalOSWidget os;
@@ -118,6 +121,7 @@ public class TerminalMenuWidget extends WidgetGroup {
         components.clear();
     }
 
+    @SideOnly(Side.CLIENT)
     public void hideMenu() {
         if (!isHide && interpolator == null) {
             int y = getSelfPosition().y;
@@ -129,10 +133,11 @@ public class TerminalMenuWidget extends WidgetGroup {
                         isHide = true;
                     });
             interpolator.start();
-            os.desktop.setBlockApp(false);
+            os.desktop.removeTopWidget(this);
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public void showMenu() {
         if (isHide && interpolator == null) {
             setVisible(true);
@@ -144,7 +149,7 @@ public class TerminalMenuWidget extends WidgetGroup {
                         isHide = false;
                     });
             interpolator.start();
-            os.desktop.setBlockApp(true);
+            os.desktop.addTopWidget(this);
         }
     }
 
@@ -171,7 +176,6 @@ public class TerminalMenuWidget extends WidgetGroup {
         if (!super.mouseClicked(mouseX, mouseY, button)) {
             if (!isMouseOverElement(mouseX, mouseY) && !isHide) {
                 hideMenu();
-                return true;
             }
             return false;
         }

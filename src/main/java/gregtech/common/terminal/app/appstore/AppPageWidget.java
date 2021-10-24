@@ -3,8 +3,6 @@ package gregtech.common.terminal.app.appstore;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.ResourceHelper;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.terminal.TerminalRegistry;
@@ -198,7 +196,7 @@ public class AppPageWidget extends TerminalDialogWidget {
 
         GlStateManager.disableDepth();
 
-        drawSolidRect(x, y, width, height, store.darkMode ? 0xcf000000 : 0xcfdddddd);
+        drawSolidRect(x, y, width, height, store.darkMode ? 0xcf000000 : 0xdfdddddd);
         super.hookDrawInBackground(mouseX, mouseY, partialTicks, context);
         int stage;
         TerminalOSWidget os = store.getOs();
