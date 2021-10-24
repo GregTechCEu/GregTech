@@ -94,5 +94,10 @@ public class BlockWireCoil2 extends VariantActiveBlock<BlockWireCoil2.CoilType2>
         public Material getMaterial() {
             return material;
         }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
     }
 }

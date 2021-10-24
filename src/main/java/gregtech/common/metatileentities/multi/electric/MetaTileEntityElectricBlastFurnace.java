@@ -106,13 +106,13 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
             if ((blockState.getBlock() instanceof BlockWireCoil)) {
                 BlockWireCoil blockWireCoil = (BlockWireCoil) blockState.getBlock();
                 CoilType coilType = blockWireCoil.getState(blockState);
-                CoilType currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
-                return currentCoilType.getName().equals(coilType.getName());
+                Object currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
+                return currentCoilType.toString().equals(coilType.getName());
             } else if ((blockState.getBlock() instanceof BlockWireCoil2)) {
                 BlockWireCoil2 blockWireCoil = (BlockWireCoil2) blockState.getBlock();
                 CoilType2 coilType = blockWireCoil.getState(blockState);
-                CoilType2 currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
-                return currentCoilType.getName().equals(coilType.getName());
+                Object currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
+                return currentCoilType.toString().equals(coilType.getName());
             }
             return false;
         };
