@@ -77,28 +77,6 @@ public class WorldGenRegistry {
         }
     }
 
-    private class WorldFluidVeinCache {
-        private final List<BedrockFluidDepositDefinition> worldVeins;
-        private final Map<Biome, List<Entry<Integer, BedrockFluidDepositDefinition>>> biomeVeins = new HashMap<>();
-
-        public WorldFluidVeinCache(WorldProvider worldProvider) {
-            this.worldVeins = registeredBedrockVeinDefinitions.stream()
-                    .filter(definition -> definition.getDimensionFilter().test(worldProvider))
-                    .collect(Collectors.toList());
-        }
-
-        private List<Entry<Integer, BedrockFluidDepositDefinition>> getBiomeEntry(Biome biome) {
-            if (biomeVeins.containsKey(biome))
-                return biomeVeins.get(biome);
-            List<Entry<Integer, BedrockFluidDepositDefinition>> result = worldVeins.stream()
-                    .map(vein -> new SimpleEntry<>(vein.getWeight() + vein.getBiomeWeightModifier().apply(biome), vein))
-                    .filter(entry -> entry.getKey() > 0)
-                    .collect(Collectors.toList());
-            biomeVeins.put(biome, result);
-            return result;
-        }
-    }
-
     public List<Entry<Integer, OreDepositDefinition>> getCachedBiomeVeins(WorldProvider provider, Biome biome) {
         if (oreVeinCache.containsKey(provider))
             return oreVeinCache.get(provider).getBiomeEntry(biome);
