@@ -45,12 +45,13 @@ public class AppStoreApp extends AbstractApplication {
         group.addWidget(new ImageWidget(0, 0, 333, 30, GuiTextures.UI_FRAME_SIDE_UP));
         group.addWidget(new LabelWidget(333 / 2, 10, getUnlocalizedName(), -1).setShadow(true).setYCentered(true).setXCentered(true));
         for (AbstractApplication app : TerminalRegistry.getAllApps()) {
-            group.addWidget(new AppCardWidget(5 + 110 * (index % 3),  yOffset + 110 * (index / 3), app, this));
+            group.addWidget(new AppCardWidget(5 + 110 * (index % 3), yOffset + 110 * (index / 3), app, this));
             index++;
         }
         int y = yOffset + 110 * ((index + 2) / 3);
         group.addWidget(new ImageWidget(0, y, 333, 30, new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor())));
         group.addWidget(new ImageWidget(0, y, 333, 30, new TextTexture("Copyright @2021-xxxx Gregicality Team XD", -1)));
+        readLocalConfig(nbt -> this.darkMode = nbt.getBoolean("dark"));
         return this;
     }
 
@@ -61,6 +62,7 @@ public class AppStoreApp extends AbstractApplication {
                 ((AppPageWidget) widget).close();
             }
         }
+        writeLocalConfig(nbt -> nbt.setBoolean("dark", this.darkMode));
         return super.closeApp();
     }
 
@@ -76,7 +78,7 @@ public class AppStoreApp extends AbstractApplication {
 
     @Override
     public List<IMenuComponent> getMenuComponents() {
-        ClickComponent darkMode = new ClickComponent().setIcon(GuiTextures.ICON_VISIBLE).setHoverText("terminal.prospector.vis_mode").setClickConsumer(cd->{
+        ClickComponent darkMode = new ClickComponent().setIcon(GuiTextures.ICON_VISIBLE).setHoverText("terminal.prospector.vis_mode").setClickConsumer(cd -> {
             if (cd.isClient) {
                 this.darkMode = !this.darkMode;
             }

@@ -3,6 +3,7 @@ package gregtech.api.terminal.app;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.IMenuComponent;
@@ -12,11 +13,14 @@ import gregtech.api.util.Size;
 import gregtech.common.items.behaviors.TerminalBehaviour;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -195,6 +199,39 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
         if (!isClientSideApp()) {
             super.writeClientAction(id, packetBufferWriter);
+        }
+    }
+
+    /**
+     * read NBT from the local config folder.
+     */
+    protected void readLocalConfig(Consumer<NBTTagCompound> reader) {
+        if (isClient && reader != null) {
+            NBTTagCompound nbt;
+            try {
+                nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, String.format("config/%S.nbt", getRegistryName())));
+            } catch (IOException e) {
+                GTLog.logger.error("error while loading local nbt for {}", getRegistryName(), e);
+                nbt = new NBTTagCompound();
+            }
+            reader.accept(nbt);
+        }
+    }
+
+    /**
+     * Write NBT to the local config folder.
+     */
+    protected void writeLocalConfig(Consumer<NBTTagCompound> writer) {
+        if (isClient && writer != null) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            try {
+                writer.accept(nbt);
+                if (!nbt.isEmpty()) {
+                    CompressedStreamTools.safeWrite(nbt, new File(TerminalRegistry.TERMINAL_PATH, String.format("config/%S.nbt", getRegistryName())));
+                }
+            } catch (IOException e) {
+                GTLog.logger.error("error while writing local nbt for {}", getRegistryName(), e);
+            }
         }
     }
 }
