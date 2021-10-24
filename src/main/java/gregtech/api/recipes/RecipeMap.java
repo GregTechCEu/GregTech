@@ -35,8 +35,8 @@ import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ZenClass("mods.gregtech.recipe.RecipeMap")
@@ -70,7 +70,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     private final Set<Recipe> recipeSet = new HashSet<>();
 
-    private Function<RecipeBuilder<?>, Boolean> onRecipeBuildFunction;
+    private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
 
     public RecipeMap(String unlocalizedName,
                      int minInputs, int maxInputs, int minOutputs, int maxOutputs,
@@ -143,8 +143,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return this;
     }
 
-    public RecipeMap<R> onRecipeBuild(Function<RecipeBuilder<?>, Boolean> function) {
-        onRecipeBuildFunction = function;
+    public RecipeMap<R> onRecipeBuild(Consumer<RecipeBuilder<?>> consumer) {
+        onRecipeBuildAction = consumer;
         return this;
     }
 
@@ -531,7 +531,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public R recipeBuilder() {
-        return recipeBuilderSample.copy().onBuild(onRecipeBuildFunction);
+        return recipeBuilderSample.copy().onBuild(onRecipeBuildAction);
     }
 
     @ZenMethod("recipeBuilder")

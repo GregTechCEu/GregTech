@@ -84,7 +84,6 @@ public class RecipeMaps {
                                 .buildAndRegister();
                     }
                 }
-                return true;
             });
 
     /**
@@ -455,8 +454,6 @@ public class RecipeMaps {
                         .duration(recipeBuilder.duration)
                         .EUt(recipeBuilder.EUt)
                         .buildAndRegister();
-
-                return true;
             });
 
     /**
@@ -651,7 +648,6 @@ public class RecipeMaps {
                             .duration(Math.max(1, recipeBuilder.duration))
                             .buildAndRegister();
                 }
-                return true;
             });
 
     /**
@@ -722,7 +718,6 @@ public class RecipeMaps {
                     recipeBuilder.fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
                             .buildAndRegister();
                 }
-                return true;
             });
 
     @ZenProperty
