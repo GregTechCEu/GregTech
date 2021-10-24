@@ -491,7 +491,7 @@ public class MachineRecipeLoader {
                 .input(ELECTRIC_PUMP_LUV)
                 .fluidInputs(Chrome.getFluid(L * 2))
                 .output(COVER_ENDER_FLUID_LINK)
-                .EUt(32720).duration(320)
+                .EUt(30720).duration(320)
                 .buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder().EUt(16).input(OrePrefix.plate, Materials.WroughtIron, 8).outputs(MetaBlocks.MACHINE_CASING.getItemVariant(MachineCasingType.ULV)).circuitMeta(8).duration(25).buildAndRegister();
