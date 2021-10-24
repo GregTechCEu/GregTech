@@ -199,7 +199,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
             double resultDuration = duration;
             MultiblockWithDisplayBase displayBase = (MultiblockWithDisplayBase) metaTileEntity;
             int numMaintenanceProblems = ((MultiblockWithDisplayBase) metaTileEntity).getNumMaintenanceProblems();
-            if (ConfigHolder.U.GT5u.enableMaintenance) {
+            if (((MetaTileEntityElectricBlastFurnace) metaTileEntity).hasMaintenanceMechanics()) {
                 IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
                 if (hatch.getDurationMultiplier() != 1.0) {
                     resultDuration *= hatch.getDurationMultiplier();
