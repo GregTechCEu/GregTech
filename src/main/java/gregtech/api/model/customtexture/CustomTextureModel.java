@@ -15,6 +15,8 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.animation.IClip;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -24,6 +26,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.function.Function;
 
+@SideOnly(Side.CLIENT)
 public class CustomTextureModel implements IModel {
     private final ModelBlock modelInfo;
     private final IModel vanillaModel;

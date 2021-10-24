@@ -161,4 +161,8 @@ public class DepthTextureHook {
             }
         }
     }
+
+    public static boolean isLastBind() {
+        return framebufferObject != 0;
+    }
 }

@@ -19,6 +19,8 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,6 +33,7 @@ import java.util.Set;
 /**
  * Copyright CTM.
  */
+@SideOnly(Side.CLIENT)
 public enum CustomTextureModelHandler implements IResourceManagerReloadListener {
     INSTANCE;
 

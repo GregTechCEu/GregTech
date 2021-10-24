@@ -112,7 +112,7 @@ public class Shaders {
 
     public static Framebuffer renderFullImageInFBO(Framebuffer fbo, ShaderObject frag, Consumer<ShaderProgram.UniformCache> uniformCache) {
         if (fbo == null || frag == null || !allowedShader()) return fbo;
-        int lastID = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
+//        int lastID = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
 
         fbo.bindFramebuffer(true);
 
@@ -142,9 +142,9 @@ public class Shaders {
         tessellator.draw();
 
         program.releaseShader();
-        GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
+//        GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
 
-        OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
+//        OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
         return fbo;
     }
 

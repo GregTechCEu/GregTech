@@ -1,14 +1,16 @@
 package gregtech.common.asm.hooks;
 
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import gregtech.api.render.DepthTextureHook;
+import gregtech.api.render.ICustomRenderFast;
 import gregtech.api.render.shader.Shaders;
 import gregtech.api.render.shader.postprocessing.BloomEffect;
 import gregtech.api.util.RenderUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
@@ -16,10 +18,13 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL11;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.glGetInteger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,9 +37,13 @@ import static org.lwjgl.opengl.GL11.glGetInteger;
 public class BloomRenderLayerHooks {
     public static BlockRenderLayer BLOOM;
     private static Framebuffer BLOOM_FBO;
+    private static List<Runnable> RENDER_DYNAMICS;
+    private static Map<ICustomRenderFast, List<Consumer<BufferBuilder>>> RENDER_FAST;
 
     public static void preInit() {
         BLOOM = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
+        RENDER_FAST = Maps.newHashMap();
+        RENDER_DYNAMICS = Lists.newLinkedList();
     }
 
     public static void initBloomRenderLayer(BufferBuilder[] worldRenderers) {
@@ -44,17 +53,18 @@ public class BloomRenderLayerHooks {
     public static int renderBloomBlockLayer(RenderGlobal renderglobal, BlockRenderLayer blockRenderLayer, double partialTicks, int pass, Entity entity) {
         Minecraft mc = Minecraft.getMinecraft();
         mc.profiler.endStartSection("BTLayer");
-        if (!ConfigHolder.U.clientConfig.shader.bloom.emissiveTexturesBloom) {
+        if (!ConfigHolder.U.clientConfig.shader.bloom.emissiveTexturesBloom || DepthTextureHook.isLastBind()) {
             GlStateManager.depthMask(true);
             renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
             GlStateManager.depthMask(false);
             int result =  renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
+            RENDER_DYNAMICS.clear();
+            RENDER_FAST.clear();
             mc.profiler.endStartSection("bloom");
             return result;
         }
 
-        int lastID = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
-        Framebuffer fbo = Minecraft.getMinecraft().getFramebuffer();
+        Framebuffer fbo = mc.getFramebuffer();
 
         if (BLOOM_FBO == null || BLOOM_FBO.framebufferWidth != fbo.framebufferWidth || BLOOM_FBO.framebufferHeight != fbo.framebufferHeight) {
             if (BLOOM_FBO == null) {
@@ -63,8 +73,8 @@ public class BloomRenderLayerHooks {
             } else {
                 BLOOM_FBO.createBindFramebuffer(fbo.framebufferWidth, fbo.framebufferHeight);
             }
-            RenderUtil.hookDepthBuffer(BLOOM_FBO, fbo);
             BLOOM_FBO.setFramebufferFilter(GL_LINEAR);
+            RenderUtil.hookDepthBuffer(BLOOM_FBO, fbo);
         }
 
         BLOOM_FBO.framebufferClear();
@@ -73,6 +83,23 @@ public class BloomRenderLayerHooks {
         // render to BLOOM BUFFER
         GlStateManager.depthMask(true);
         renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
+
+        // render dynamics
+        if (!RENDER_DYNAMICS.isEmpty()) {
+            RENDER_DYNAMICS.forEach(Runnable::run);
+            RENDER_DYNAMICS.clear();
+        }
+
+        // render fast
+        if (!RENDER_FAST.isEmpty()) {
+            BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+            RENDER_FAST.forEach((handler, list)->{
+                handler.preDraw(buffer);
+                list.forEach(consumer->consumer.accept(buffer));
+                handler.postDraw(buffer);
+            });
+            RENDER_FAST.clear();
+        }
         GlStateManager.depthMask(false);
 
         // fast render bloom layer to main fbo
@@ -80,14 +107,20 @@ public class BloomRenderLayerHooks {
         Shaders.renderFullImageInFBO(fbo, Shaders.IMAGE_F, null);
 
         // reset next layer's render state and render
-        OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
+        OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, fbo.framebufferObject);
         GlStateManager.enableBlend();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         GlStateManager.shadeModel(7425);
 
         int result = renderglobal.renderBlockLayer(blockRenderLayer, partialTicks, pass, entity);
 
         mc.profiler.endStartSection("bloom");
+
+        // blend bloom + transparent
+        fbo.bindFramebufferTexture();
+        GlStateManager.blendFunc(GL11.GL_DST_ALPHA, GL11.GL_ZERO);
+        Shaders.renderFullImageInFBO(BLOOM_FBO, Shaders.IMAGE_F, null);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         // render bloom effect to fbo
         switch (ConfigHolder.U.clientConfig.shader.bloom.bloomStyle) {
@@ -98,7 +131,7 @@ public class BloomRenderLayerHooks {
                 BloomEffect.renderUnity(BLOOM_FBO, fbo, (float) ConfigHolder.U.clientConfig.shader.bloom.strength);
                 break;
             case 2:
-                BloomEffect.renderUnReal(BLOOM_FBO, fbo, (float) ConfigHolder.U.clientConfig.shader.bloom.strength);
+                BloomEffect.renderUnreal(BLOOM_FBO, fbo, (float) ConfigHolder.U.clientConfig.shader.bloom.strength);
                 break;
             default:
                 GlStateManager.depthMask(false);
@@ -114,4 +147,24 @@ public class BloomRenderLayerHooks {
 
         return result;
     }
+
+    public static Framebuffer getBloomFBO() {
+        return BLOOM_FBO;
+    }
+
+    public static void requestRenderDynamic(Runnable render) {
+        if (render != null) {
+            RENDER_DYNAMICS.add(render);
+        }
+    }
+
+    public static void requestRenderFast(ICustomRenderFast handler, Consumer<BufferBuilder> render) {
+        if (render != null && handler != null) {
+            if (!RENDER_FAST.containsKey(handler)) {
+                RENDER_FAST.put(handler, Lists.newLinkedList());
+            }
+            RENDER_FAST.get(handler).add(render);
+        }
+    }
+
 }

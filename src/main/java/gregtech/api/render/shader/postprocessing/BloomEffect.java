@@ -20,7 +20,7 @@ public class BloomEffect {
         PingPongBuffer.updateSize(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
         BlurEffect.updateSize(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
         highLightFBO.bindFramebufferTexture();
-        blend(BlurEffect.renderBlur1((float) 1), backgroundFBO, strength);
+        blend(BlurEffect.renderBlur1((float) ConfigHolder.U.clientConfig.shader.bloom.step), backgroundFBO, strength);
     }
 
     private static void blend(Framebuffer bloom, Framebuffer backgroundFBO, float strength) {
@@ -134,25 +134,26 @@ public class BloomEffect {
         });
     }
 
-    public static void renderUnReal(Framebuffer highLightFBO, Framebuffer backgroundFBO, float strength) {
+    public static void renderUnreal(Framebuffer highLightFBO, Framebuffer backgroundFBO, float strength) {
         cleanUP(backgroundFBO.framebufferWidth, backgroundFBO.framebufferHeight);
 
         // blur all mips
         int[] kernelSizeArray = new int[]{3, 5, 7, 9, 11};
         highLightFBO.bindFramebufferTexture();
+        final float step = (float) ConfigHolder.U.clientConfig.shader.bloom.step;
         for (int i = 0; i < BUFFERS_D.length; i++) {
             Framebuffer buffer_h = BUFFERS_D[i];
             int kernel = kernelSizeArray[i];
             Shaders.renderFullImageInFBO(buffer_h, Shaders.S_BLUR, uniformCache -> {
                 uniformCache.glUniform2F("texSize", buffer_h.framebufferWidth, buffer_h.framebufferHeight);
-                uniformCache.glUniform2F("blurDir", 1, 0);
+                uniformCache.glUniform2F("blurDir", step, 0);
                 uniformCache.glUniform1I("kernel_radius", kernel);
             }).bindFramebufferTexture();
 
             Framebuffer buffer_v = BUFFERS_U[i];
             Shaders.renderFullImageInFBO(buffer_v, Shaders.S_BLUR, uniformCache -> {
                 uniformCache.glUniform2F("texSize", buffer_v.framebufferWidth, buffer_v.framebufferHeight);
-                uniformCache.glUniform2F("blurDir", 0, 1);
+                uniformCache.glUniform2F("blurDir", 0, step);
                 uniformCache.glUniform1I("kernel_radius", kernel);
             }).bindFramebufferTexture();
         }

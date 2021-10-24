@@ -4,11 +4,14 @@ import com.google.gson.*;
 import net.minecraft.client.resources.data.IMetadataSection;
 import net.minecraft.client.resources.data.IMetadataSectionSerializer;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 
+@SideOnly(Side.CLIENT)
 public class MetadataSectionCTM implements IMetadataSection {
     public static final String SECTION_NAME = "ctm";
 

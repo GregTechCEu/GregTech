@@ -94,8 +94,6 @@ public class CommonProxy {
         registry.register(GRANITE);
         registry.register(MINERAL);
         registry.register(CONCRETE);
-        registry.register(BLOOM_BLOCK);
-        registry.register(BLOOM_BLOCK_LIGHT);
         registry.register(LOG);
         registry.register(LEAVES);
         registry.register(SAPLING);
@@ -146,8 +144,6 @@ public class CommonProxy {
         registry.register(createItemBlock(GRANITE, StoneItemBlock::new));
         registry.register(createItemBlock(MINERAL, StoneItemBlock::new));
         registry.register(createItemBlock(CONCRETE, StoneItemBlock::new));
-        registry.register(createItemBlock(BLOOM_BLOCK, ItemCloth::new));
-        registry.register(createItemBlock(BLOOM_BLOCK_LIGHT, ItemCloth::new));
         registry.register(createMultiTexItemBlock(LOG, state -> state.getValue(BlockGregLog.VARIANT).getName()));
         registry.register(createMultiTexItemBlock(LEAVES, state -> state.getValue(BlockGregLeaves.VARIANT).getName()));
         registry.register(createMultiTexItemBlock(SAPLING, state -> state.getValue(BlockGregSapling.VARIANT).getName()));

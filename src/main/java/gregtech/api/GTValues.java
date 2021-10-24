@@ -102,6 +102,13 @@ public class GTValues {
             return isModLoadedCache.get(modid);
         }
         boolean isLoaded = Loader.instance().getIndexedModList().containsKey(modid);
+        if (!isLoaded) {
+            try {
+                Class.forName(modid);
+                isLoaded = true;
+            } catch (ClassNotFoundException ignored) {
+            }
+        }
         isModLoadedCache.put(modid, isLoaded);
         return isLoaded;
     }

@@ -58,7 +58,6 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     public FakeModularUIContainerClipboard guiContainerCache;
     private static final Cuboid6 pageBox = new Cuboid6(3 / 16.0, 0.25 / 16.0, 0.25 / 16.0, 13 / 16.0, 14.25 / 16.0, 0.3 / 16.0);
 
-    private static final int RENDER_PASS_NORMAL = 0;
     private static final NBTBase NO_CLIPBOARD_SIG = new NBTTagInt(0);
 
 
@@ -89,22 +88,16 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     @Override
     public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
         CLIPBOARD_RENDERER.renderBoard(renderState, translation.copy(), new IVertexOperation[]{}, getFrontFacing(), this, partialTicks);
+    }
+
+    @Override
+    public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         if (this.getClipboard() != null)
-            CLIPBOARD_RENDERER.renderGUI(translation.m03, translation.m13, translation.m23, this.getFrontFacing(), this, partialTicks);
+            CLIPBOARD_RENDERER.renderGUI(x, y, z, this.getFrontFacing(), this, partialTicks);
     }
 
     public AxisAlignedBB getRenderBoundingBox() {
         return new AxisAlignedBB(getPos().add(-1, 0, -1), getPos().add(2, 2, 2));
-    }
-
-    @Override
-    public boolean shouldRenderInPass(int pass) {
-        return pass == RENDER_PASS_NORMAL;
-    }
-
-    @Override
-    public boolean isGlobalRenderer() {
-        return true;
     }
 
     @Override

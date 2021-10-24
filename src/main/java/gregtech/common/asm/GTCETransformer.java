@@ -1,5 +1,6 @@
 package gregtech.common.asm;
 
+import gregtech.api.GTValues;
 import gregtech.common.ConfigHolder;
 import gregtech.common.asm.util.TargetClassVisitor;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -60,12 +61,14 @@ public class GTCETransformer implements IClassTransformer, Opcodes {
                 return classWriter.toByteArray();
             }
             case BlockVisitor.TARGET_CLASS_NAME:{
-                ClassReader classReader = new ClassReader(basicClass);
-                ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-                ClassNode classNode = new ClassNode();
-                classReader.accept(classNode, 0);
-                BlockVisitor.handleClassNode(classNode).accept(classWriter);
-                return classWriter.toByteArray();
+                if (!GTValues.isModLoaded("team.chisel.ctm.CTM")) {
+                    ClassReader classReader = new ClassReader(basicClass);
+                    ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+                    ClassNode classNode = new ClassNode();
+                    classReader.accept(classNode, 0);
+                    BlockVisitor.handleClassNode(classNode).accept(classWriter);
+                    return classWriter.toByteArray();
+                }
             }
         }
         return basicClass;

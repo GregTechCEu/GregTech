@@ -19,9 +19,9 @@ float lerpBloomFactor(const in float factor) {
     return mix(factor, mirrorFactor, bloomRadius);
 }
 void main() {
-    out_colour = bloomStrength * ( lerpBloomFactor(1.) * vec4(1., 1., 1., 1.0) * texture(blurTexture1, textureCoords) +
-    lerpBloomFactor(0.8) * vec4(1., 1., 1., 1.0) * texture(blurTexture2, textureCoords) +
-    lerpBloomFactor(0.6) * vec4(1., 1., 1., 1.0) * texture(blurTexture3, textureCoords) +
-    lerpBloomFactor(0.4) * vec4(1., 1., 1., 1.0) * texture(blurTexture4, textureCoords) +
-    lerpBloomFactor(0.2) * vec4(1., 1., 1., 1.0) * texture(blurTexture5, textureCoords) );
+    out_colour = bloomStrength * ( lerpBloomFactor(1.) * texture(blurTexture1, textureCoords) +
+    lerpBloomFactor(0.8) * texture(blurTexture2, textureCoords) +
+    lerpBloomFactor(0.6) * texture(blurTexture3, textureCoords) +
+    lerpBloomFactor(0.4) * texture(blurTexture4, textureCoords) +
+    lerpBloomFactor(0.2) * texture(blurTexture5, textureCoords) );
 }

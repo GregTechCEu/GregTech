@@ -98,8 +98,6 @@ public class MetaBlocks {
     public static BlockGranite GRANITE;
     public static BlockMineral MINERAL;
     public static BlockConcrete CONCRETE;
-    public static BlockBloom BLOOM_BLOCK;
-    public static BlockBloom BLOOM_BLOCK_LIGHT;
 
     public static BlockFoam FOAM;
     public static BlockFoam REINFORCED_FOAM;
@@ -168,10 +166,6 @@ public class MetaBlocks {
 
         CONCRETE = new BlockConcrete();
         CONCRETE.setRegistryName("concrete");
-        BLOOM_BLOCK = new BlockBloom(false);
-        BLOOM_BLOCK.setRegistryName("bloom_block");
-        BLOOM_BLOCK_LIGHT = new BlockBloom(true);
-        BLOOM_BLOCK_LIGHT.setRegistryName("bloom_block_light");
 
         FOAM = new BlockFoam(false);
         FOAM.setRegistryName("foam");
@@ -347,8 +341,6 @@ public class MetaBlocks {
         registerItemModel(GRANITE);
         registerItemModel(MINERAL);
         registerItemModel(CONCRETE);
-        registerItemModel(BLOOM_BLOCK);
-        registerItemModel(BLOOM_BLOCK_LIGHT);
         registerItemModelWithOverride(LOG, ImmutableMap.of(BlockGregLog.LOG_AXIS, EnumAxis.Y));
         registerItemModel(LEAVES);
         registerItemModel(SAPLING);

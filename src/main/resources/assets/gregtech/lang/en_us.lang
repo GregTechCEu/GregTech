@@ -2298,41 +2298,6 @@ tile.concrete.dark_bricks.cracked.name=Cracked Dark Concrete Bricks
 tile.concrete.dark_bricks.mossy.name=Mossy Dark Concrete Bricks
 tile.concrete.dark_bricks.chiseled.name=Chiseled Dark Concrete Bricks
 
-# Bloom Block
-tile.bloom_block.white.name=White Bloom Block
-tile.bloom_block.orange.name=Orange Bloom Block
-tile.bloom_block.magenta.name=Bloom Block
-tile.bloom_block.lightBlue.name=LightBlue Bloom Block
-tile.bloom_block.yellow.name=Yellow Bloom Block
-tile.bloom_block.lime.name=Lime Bloom Block
-tile.bloom_block.pink.name=Pink Bloom Block
-tile.bloom_block.gray.name=Gray Bloom Block
-tile.bloom_block.silver.name=Silver Bloom Block
-tile.bloom_block.cyan.name=Cyan Bloom Block
-tile.bloom_block.purple.name=Purple Bloom Block
-tile.bloom_block.blue.name=Blue Bloom Block
-tile.bloom_block.brown.name=Brown Bloom Block
-tile.bloom_block.green.name=Green Bloom Block
-tile.bloom_block.red.name=Red Bloom Block
-tile.bloom_block.black.name=Black Bloom Block
-
-tile.bloom_block_light.white.name=White Bloom Block (lighting)
-tile.bloom_block_light.orange.name=Orange Bloom Block (lighting)
-tile.bloom_block_light.magenta.name=Bloom Block (lighting)
-tile.bloom_block_light.lightBlue.name=LightBlue Bloom Block (lighting)
-tile.bloom_block_light.yellow.name=Yellow Bloom Block (lighting)
-tile.bloom_block_light.lime.name=Lime Bloom Block (lighting)
-tile.bloom_block_light.pink.name=Pink Bloom Block (lighting)
-tile.bloom_block_light.gray.name=Gray Bloom Block (lighting)
-tile.bloom_block_light.silver.name=Silver Bloom Block (lighting)
-tile.bloom_block_light.cyan.name=Cyan Bloom Block (lighting)
-tile.bloom_block_light.purple.name=Purple Bloom Block (lighting)
-tile.bloom_block_light.blue.name=Blue Bloom Block (lighting)
-tile.bloom_block_light.brown.name=Brown Bloom Block (lighting)
-tile.bloom_block_light.green.name=Green Bloom Block (lighting)
-tile.bloom_block_light.red.name=Red Bloom Block (lighting)
-tile.bloom_block_light.black.name=Black Bloom Block (lighting)
-
 # Steam machines
 gregtech.machine.steam_boiler.tooltip_produces=Produces %,dL of Steam per second
 
