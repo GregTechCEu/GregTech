@@ -40,7 +40,7 @@ public class BloomRenderLayerHooks {
     private static List<Runnable> RENDER_DYNAMICS;
     private static Map<ICustomRenderFast, List<Consumer<BufferBuilder>>> RENDER_FAST;
 
-    public static void preInit() {
+    public static void init() {
         BLOOM = EnumHelper.addEnum(BlockRenderLayer.class, "BLOOM", new Class[]{String.class}, "Bloom");
         RENDER_FAST = Maps.newHashMap();
         RENDER_DYNAMICS = Lists.newLinkedList();

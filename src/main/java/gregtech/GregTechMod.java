@@ -19,6 +19,7 @@ import gregtech.api.util.NBTUtil;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.*;
+import gregtech.common.asm.hooks.BloomRenderLayerHooks;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.modelfactories.BlockCompressedFactory;
 import gregtech.common.blocks.modelfactories.BlockFrameFactory;
@@ -55,6 +56,7 @@ public class GregTechMod {
     static {
         FluidRegistry.enableUniversalBucket();
         if (FMLCommonHandler.instance().getSide().isClient()) {
+            BloomRenderLayerHooks.init();
             ResourcePackHook.init();
             BlockOreFactory.init();
             BlockCompressedFactory.init();

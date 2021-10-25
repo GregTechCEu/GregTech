@@ -1,6 +1,5 @@
 package gregtech.api.model.customtexture;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonParseException;
 import net.minecraft.client.Minecraft;
@@ -70,7 +69,7 @@ public enum CustomTextureModelHandler implements IResourceManagerReloadListener 
         return new CustomTextureBakedModel(ctm, object);
     }
 
-    private static final Map<ResourceLocation, MetadataSectionCTM> metadataCache = new HashMap<>();
+    private static final Map<ResourceLocation, MetadataSectionCTM> METADATA_CACHE = new HashMap<>();
 
     public static ResourceLocation spriteToAbsolute(ResourceLocation sprite) {
         if (!sprite.getPath().startsWith("textures/")) {
@@ -84,8 +83,8 @@ public enum CustomTextureModelHandler implements IResourceManagerReloadListener 
 
     @Nullable
     public static MetadataSectionCTM getMetadata(ResourceLocation res) throws IOException {
-        if (metadataCache.containsKey(res)) {
-            return metadataCache.get(res);
+        if (METADATA_CACHE.containsKey(res)) {
+            return METADATA_CACHE.get(res);
         }
         MetadataSectionCTM ret;
         try (IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(res)) {
@@ -95,7 +94,7 @@ public enum CustomTextureModelHandler implements IResourceManagerReloadListener 
         } catch (JsonParseException e) {
             throw new IOException("Error loading metadata for location " + res, e);
         }
-        metadataCache.put(res, ret);
+        METADATA_CACHE.put(res, ret);
         return ret;
     }
 
@@ -104,18 +103,9 @@ public enum CustomTextureModelHandler implements IResourceManagerReloadListener 
         return getMetadata(spriteToAbsolute(new ResourceLocation(sprite.getIconName())));
     }
 
-    @Nullable
-    public static MetadataSectionCTM getMetadataUnsafe(TextureAtlasSprite sprite) {
-        try {
-            return getMetadata(sprite);
-        } catch (IOException e) {
-            throw Throwables.propagate(e);
-        }
-    }
-
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
-        metadataCache.clear();
+        METADATA_CACHE.clear();
         CustomTextureBakedModel.MODEL_CACHE.cleanUp();
         wrappedModels.clear();
     }

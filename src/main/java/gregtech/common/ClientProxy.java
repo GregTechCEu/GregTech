@@ -118,7 +118,6 @@ public class ClientProxy extends CommonProxy {
             ((SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(CustomTextureModelHandler.INSTANCE);
         }
 
-        BloomRenderLayerHooks.preInit();
         KeyBinds.initBinds();
         MetaTileEntityRenderer.preInit();
         CableRenderer.preInit();
