@@ -69,7 +69,7 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
         if (!hasHW()) {
             return super.getIcon();
         }
-        return new ItemStackTexture(MetaItems.BATTERY_HV_SODIUM.getStackForm());
+        return new ItemStackTexture(getItem());
     }
 
     @Override

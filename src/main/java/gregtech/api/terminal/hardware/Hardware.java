@@ -46,6 +46,10 @@ public abstract class Hardware  {
         return provider != null && provider.hasHardware(getRegistryName());
     }
 
+    public final ItemStack getItem() {
+        return provider.getHardwareItem(getRegistryName());
+    }
+
     /**
      * Returns the NBT of the this hardware.
      */
