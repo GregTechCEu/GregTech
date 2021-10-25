@@ -12,10 +12,10 @@ import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
-import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -237,25 +237,25 @@ public class RenderUtil {
         return false;
     }
 
-    public static void hookDepthBuffer(Framebuffer fbo, Framebuffer shared) {
+    public static void hookDepthBuffer(Framebuffer fbo, int depthBuffer) {
         //Hook DepthBuffer
-        GlStateManager.bindTexture(fbo.framebufferTexture);
-        GlStateManager.glTexImage2D(3553, 0, 32856, fbo.framebufferTextureWidth, fbo.framebufferTextureHeight, 0, 6408, 5121, null);
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, fbo.framebufferObject);
-        OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_COLOR_ATTACHMENT0, 3553, fbo.framebufferTexture, 0);
-        OpenGlHelper.glBindRenderbuffer(OpenGlHelper.GL_RENDERBUFFER, shared.depthBuffer);
-        if (!fbo.isStencilEnabled())
-        {
-//            OpenGlHelper.glRenderbufferStorage(OpenGlHelper.GL_RENDERBUFFER, 33190, fbo.framebufferTextureWidth, fbo.framebufferTextureHeight);
-            OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, shared.depthBuffer);
+        if (fbo.isStencilEnabled()) {
+            OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER, depthBuffer);
+            OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER, depthBuffer);
         }
-        else
-        {
-//            OpenGlHelper.glRenderbufferStorage(OpenGlHelper.GL_RENDERBUFFER, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, fbo.framebufferTextureWidth, fbo.framebufferTextureHeight);
-            OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER, shared.depthBuffer);
-            OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.GL_RENDERBUFFER, shared.depthBuffer);
+        else {
+            OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, depthBuffer);
         }
-        fbo.framebufferClear();
-        fbo.unbindFramebufferTexture();
+    }
+
+    public static void hookDepthTexture(Framebuffer fbo, int depthTexture) {
+        //Hook DepthTexture
+        OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, fbo.framebufferObject);
+        if (fbo.isStencilEnabled()) {
+            OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL11.GL_TEXTURE_2D, depthTexture, 0);
+        } else {
+            OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, depthTexture, 0);
+        }
     }
 }

@@ -19,6 +19,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class BloomRenderLayerHooks {
     public static int renderBloomBlockLayer(RenderGlobal renderglobal, BlockRenderLayer blockRenderLayer, double partialTicks, int pass, Entity entity) {
         Minecraft mc = Minecraft.getMinecraft();
         mc.profiler.endStartSection("BTLayer");
-        if (!ConfigHolder.U.clientConfig.shader.bloom.emissiveTexturesBloom || DepthTextureHook.isLastBind()) {
+        if (!ConfigHolder.U.clientConfig.shader.bloom.emissiveTexturesBloom) {
             GlStateManager.depthMask(true);
             renderglobal.renderBlockLayer(BloomRenderLayerHooks.BLOOM, partialTicks, pass, entity);
             GlStateManager.depthMask(false);
@@ -66,15 +67,22 @@ public class BloomRenderLayerHooks {
 
         Framebuffer fbo = mc.getFramebuffer();
 
-        if (BLOOM_FBO == null || BLOOM_FBO.framebufferWidth != fbo.framebufferWidth || BLOOM_FBO.framebufferHeight != fbo.framebufferHeight) {
+        if (BLOOM_FBO == null || BLOOM_FBO.framebufferWidth != fbo.framebufferWidth || BLOOM_FBO.framebufferHeight != fbo.framebufferHeight || (fbo.isStencilEnabled() && !BLOOM_FBO.isStencilEnabled())) {
             if (BLOOM_FBO == null) {
                 BLOOM_FBO = new Framebuffer(fbo.framebufferWidth, fbo.framebufferHeight, false);
                 BLOOM_FBO.setFramebufferColor(0, 0, 0, 0);
             } else {
                 BLOOM_FBO.createBindFramebuffer(fbo.framebufferWidth, fbo.framebufferHeight);
             }
+            if (fbo.isStencilEnabled() && !BLOOM_FBO.isStencilEnabled()) {
+                BLOOM_FBO.enableStencil();
+            }
+            if (DepthTextureHook.isLastBind() && DepthTextureHook.isUseDefaultFBO()) {
+                RenderUtil.hookDepthTexture(BLOOM_FBO, DepthTextureHook.framebufferDepthTexture);
+            } else {
+                RenderUtil.hookDepthBuffer(BLOOM_FBO, fbo.depthBuffer);
+            }
             BLOOM_FBO.setFramebufferFilter(GL_LINEAR);
-            RenderUtil.hookDepthBuffer(BLOOM_FBO, fbo);
         }
 
         BLOOM_FBO.framebufferClear();
