@@ -50,9 +50,9 @@ public class BedrockFluidVeinHandler {
             if (totalWeight != 0) {
                 int weight = Math.abs(query % totalWeight);
                 for (Map.Entry<BedrockFluidDepositDefinition, Integer> entry : veinList.entrySet()) {
-                    int totalVeinWeight = entry.getValue() + entry.getKey().getBiomeWeightModifier().apply(biome);
-                    if (totalVeinWeight != 0 && entry.getKey().getDimensionFilter().test(world.provider)) {
-                        weight -= totalVeinWeight;
+                    totalWeight = entry.getValue() + entry.getKey().getBiomeWeightModifier().apply(biome);
+                    if (totalWeight != 0 && entry.getKey().getDimensionFilter().test(world.provider)) {
+                        weight -= totalWeight;
                         if (weight < 0) {
                             definition = entry.getKey();
                             break;
@@ -187,7 +187,7 @@ public class BedrockFluidVeinHandler {
 
         // make sure the vein can generate if no biome weighting is added
         if (totalWeight == 0)
-            GTLog.logger.error("Bedrock Fluid Vein weight was 0");
+            GTLog.logger.error(String.format("Bedrock Fluid Vein weight was 0 in biome %s", biome.getBiomeName()));
 
         dimMap.put(biomeID, totalWeight);
         return totalWeight;
