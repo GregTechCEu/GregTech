@@ -12,8 +12,8 @@ uniform vec2 u_resolution2;
 vec4 four_k(vec3 textel, vec2 uv) {
     return (texture(upTexture, uv + textel.xx) //1 1
     + texture(upTexture, uv + textel.xy) // 1 -1
-    + texture(upTexture, uv - textel.yx) // -1 1
-    + texture(upTexture, uv - textel.yy)) * 0.25; // -1 -1
+    + texture(upTexture, uv + textel.yx) // -1 1
+    + texture(upTexture, uv + textel.yy)) * 0.25; // -1 -1
 }
 
 vec4 up_sampling(vec3 textel, vec2 uv) {

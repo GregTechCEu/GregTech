@@ -120,7 +120,6 @@ public class ClientProxy extends CommonProxy {
 
         BloomRenderLayerHooks.preInit();
         KeyBinds.initBinds();
-//        CCLBlockRenderer.preInit();
         MetaTileEntityRenderer.preInit();
         CableRenderer.preInit();
         FluidPipeRenderer.preInit();
