@@ -55,7 +55,7 @@ public class BedrockFluidDepositDefinition {
         if (fluid != null) {
             this.storedFluid = fluid;
         } else {
-            GTLog.logger.error(String.format("Bedrock Fluid Vein %s cannot have a null fluid!", this.depositName));
+            GTLog.logger.error("Bedrock Fluid Vein {} cannot have a null fluid!", this.depositName);
         }
         if (configRoot.has("name")) {
             this.assignedName = configRoot.get("name").getAsString();

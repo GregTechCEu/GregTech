@@ -187,7 +187,7 @@ public class BedrockFluidVeinHandler {
 
         // make sure the vein can generate if no biome weighting is added
         if (totalWeight == 0)
-            GTLog.logger.error(String.format("Bedrock Fluid Vein weight was 0 in biome %s", biome.getBiomeName()));
+            GTLog.logger.error("Bedrock Fluid Vein weight was 0 in biome {}", biome.getBiomeName());
 
         dimMap.put(biomeID, totalWeight);
         return totalWeight;
