@@ -52,11 +52,11 @@ public class BedrockFluidDepositDefinition {
         this.depletionChance = configRoot.get("depletion").getAsJsonObject().get("chance").getAsInt();
 
         Fluid fluid = FluidRegistry.getFluid(configRoot.get("fluid").getAsString());
-        if (fluid != null)
+        if (fluid != null) {
             this.storedFluid = fluid;
-        else
-            GTLog.logger.error("Bedrock Fluid Vein fluids cannot be null!");
-
+        } else {
+            GTLog.logger.error(String.format("Bedrock Fluid Vein %s cannot have a null fluid!", this.depositName));
+        }
         if (configRoot.has("name")) {
             this.assignedName = configRoot.get("name").getAsString();
         }
