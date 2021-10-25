@@ -1,6 +1,7 @@
 package gregtech.api.worldgen.bedrockFluids;
 
 import gregtech.api.net.NetworkHandler;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.GTUtility;
 import gregtech.api.worldgen.config.BedrockFluidDepositDefinition;
 import net.minecraft.nbt.NBTTagCompound;
@@ -49,9 +50,9 @@ public class BedrockFluidVeinHandler {
             if (totalWeight != 0) {
                 int weight = Math.abs(query % totalWeight);
                 for (Map.Entry<BedrockFluidDepositDefinition, Integer> entry : veinList.entrySet()) {
-                    int veinWeight = entry.getValue() + entry.getKey().getBiomeWeightModifier().apply(biome);
-                    if (veinWeight != 0 && entry.getKey().getDimensionFilter().test(world.provider)) {
-                        weight -= veinWeight;
+                    int totalVeinWeight = entry.getValue() + entry.getKey().getBiomeWeightModifier().apply(biome);
+                    if (totalVeinWeight != 0 && entry.getKey().getDimensionFilter().test(world.provider)) {
+                        weight -= totalVeinWeight;
                         if (weight < 0) {
                             definition = entry.getKey();
                             break;
@@ -61,15 +62,11 @@ public class BedrockFluidVeinHandler {
             }
 
             int capacity = 0;
+            if (definition != null) //todo scale capacity to be not 100% random
+                capacity = Math.min(definition.getMaximumProductionRate(),
+                        GTUtility.getRandomIntXSTR(definition.getMaximumProductionRate()) + definition.getMinimumProductionRate());
 
-            if (definition != null) { //todo scale capacity to be not 100% random
-                capacity = GTUtility.getRandomIntXSTR(definition.getMaximumProductionRate()) + definition.getMinimumProductionRate();
-            }
-
-            worldEntry = new FluidVeinWorldEntry();
-            worldEntry.capacity = capacity;
-            worldEntry.current = capacity;
-            worldEntry.vein = definition;
+            worldEntry = new FluidVeinWorldEntry(definition, capacity, capacity);
             veinCache.put(coords, worldEntry);
         }
         return worldEntry;
@@ -90,7 +87,7 @@ public class BedrockFluidVeinHandler {
         FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
         if (info == null)
             return 0;
-        return info.current;
+        return info.currentFluidAmount;
     }
 
     /**
@@ -155,7 +152,7 @@ public class BedrockFluidVeinHandler {
 
         // alternative depletion algorithm: 1 in vein's chance to deplete by vein's depletion amount
         if (GTUtility.getRandomIntXSTR(definition.getDepletionChance()) == 1)
-            info.current = Math.max(0, info.current - definition.getDepletionAmount());
+            info.currentFluidAmount = Math.max(0, info.currentFluidAmount - definition.getDepletionAmount());
 
         BedrockFluidVeinSaveData.setDirty();
     }
@@ -182,14 +179,15 @@ public class BedrockFluidVeinHandler {
 
         int totalWeight = 0;
         for (Map.Entry<BedrockFluidDepositDefinition, Integer> entry : veinList.entrySet()) {
-            if (entry.getKey().getDimensionFilter().test(provider))
+            if (entry.getKey().getDimensionFilter().test(provider)) {
                 totalWeight += entry.getKey().getBiomeWeightModifier().apply(biome);
-            totalWeight += entry.getKey().getWeight();
+                totalWeight += entry.getKey().getWeight();
+            }
         }
 
         // make sure the vein can generate if no biome weighting is added
         if (totalWeight == 0)
-            totalWeight = 1;
+            GTLog.logger.error("Bedrock Fluid Vein weight was 0");
 
         dimMap.put(biomeID, totalWeight);
         return totalWeight;
@@ -217,55 +215,48 @@ public class BedrockFluidVeinHandler {
     }
 
     public static class FluidVeinWorldEntry {
-        public BedrockFluidDepositDefinition vein;
-        public BedrockFluidDepositDefinition defaultVein;
-        public int capacity;
-        public int current;
+        private BedrockFluidDepositDefinition vein;
+        private int maximumCapacity;
+        private int currentFluidAmount;
+
+        public FluidVeinWorldEntry(BedrockFluidDepositDefinition vein, int maximumCapacity, int currentFluidAmount) {
+            this.vein = vein;
+            this.maximumCapacity = maximumCapacity;
+            this.currentFluidAmount = currentFluidAmount;
+        }
+
+        private FluidVeinWorldEntry() {
+
+        }
 
         public BedrockFluidDepositDefinition getVein() {
-            return (defaultVein == null) ? vein : defaultVein;
+            return this.vein;
+        }
+
+        public int getCurrentFluidAmount() {
+            return this.currentFluidAmount;
         }
 
         public NBTTagCompound writeToNBT() {
             NBTTagCompound tag = new NBTTagCompound();
-            tag.setInteger("capacity", capacity);
-            tag.setInteger("fluid", current);
+            tag.setInteger("maximumCapacity", maximumCapacity);
+            tag.setInteger("currentFluidAmount", currentFluidAmount);
             if (vein != null) {
-                tag.setString("vein", vein.getStoredFluid().getName());
-            }
-            if (defaultVein != null) {
-                tag.setString("defaultVein", defaultVein.getStoredFluid().getName());
+                tag.setString("vein", vein.getDepositName());
             }
             return tag;
         }
 
         public static FluidVeinWorldEntry readFromNBT(NBTTagCompound tag) {
             FluidVeinWorldEntry info = new FluidVeinWorldEntry();
-            info.capacity = tag.getInteger("capacity");
-            info.current = tag.getInteger("fluid");
+            info.maximumCapacity = tag.getInteger("maximumCapacity");
+            info.currentFluidAmount = tag.getInteger("currentFluidAmount");
 
             if (tag.hasKey("vein")) {
                 String s = tag.getString("vein");
                 for (BedrockFluidDepositDefinition definition : veinList.keySet()) {
                     if (s.equalsIgnoreCase(definition.getStoredFluid().getName()))
                         info.vein = definition;
-                }
-            } else if (info.current > 0) {
-                for (BedrockFluidDepositDefinition definition : veinList.keySet()) {
-                    if (definition.getStoredFluid().getName().equalsIgnoreCase("fluid"))
-                        info.vein = definition;
-                }
-
-                if (info.vein == null) {
-                    return null;
-                }
-            }
-
-            if (tag.hasKey("defaultVein")) {
-                String s = tag.getString("defaultVein");
-                for (BedrockFluidDepositDefinition definition : veinList.keySet()) {
-                    if (s.equalsIgnoreCase(definition.getStoredFluid().getName()))
-                        info.defaultVein = definition;
                 }
             }
 

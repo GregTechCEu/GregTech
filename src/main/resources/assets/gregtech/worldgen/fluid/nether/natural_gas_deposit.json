@@ -1,11 +1,15 @@
 {
   "weight": 35,
   "name": "Nether Natural Gas Deposit",
-  "min_rate": 100,
-  "max_rate": 600,
-  "depletion_amount": 1,
-  "depletion_chance": 5,
-  "depleted_production_rate": 80,
+  "rate": {
+    "min": 100,
+    "max": 600
+  },
+  "depletion": {
+    "amount": 1,
+    "chance": 5,
+    "production": 80
+  },
   "fluid": "natural_gas",
   "dimension_filter": [
     "name:the_nether"

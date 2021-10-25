@@ -1,11 +1,15 @@
 {
   "weight": 20,
   "name": "Overworld Oil Deposit",
-  "min_rate": 100,
-  "max_rate": 625,
-  "depletion_amount": 1,
-  "depletion_chance": 5,
-  "depleted_production_rate": 45,
+  "rate": {
+    "min": 100,
+    "max": 625
+  },
+  "depletion": {
+    "amount": 1,
+    "chance": 5,
+    "production": 45
+  },
   "fluid": "oil",
   "biome_modifier": {
     "type": "biome_dictionary",

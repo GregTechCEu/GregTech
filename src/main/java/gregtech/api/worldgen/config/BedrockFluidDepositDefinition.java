@@ -5,6 +5,7 @@ import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.minecraft.CraftTweakerMC;
 import crafttweaker.api.world.IBiome;
 import gregtech.api.GTValues;
+import gregtech.api.util.GTLog;
 import gregtech.api.worldgen.bedrockFluids.BedrockFluidVeinHandler;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
@@ -29,7 +30,7 @@ public class BedrockFluidDepositDefinition {
     private int weight; // Weight the vein will appear
     private String assignedName; // Name for JEI display
     private String description; // Description for JEI display
-    private final int[] productionRates = new int[]{0, Integer.MAX_VALUE}; // the [minimum, maximum) production rate
+    private final int[] productionRates = new int[2]; // the [minimum, maximum) production rate
     private int depletionAmount; // amount of fluid the vein gets drained by
     private int depletionChance; // the chance [0, 100] that the vein will deplete by 1
     private int depletedProductionRate; // production rate after the vein is depleted
@@ -39,28 +40,31 @@ public class BedrockFluidDepositDefinition {
     private Function<Biome, Integer> biomeWeightModifier = OreDepositDefinition.NO_BIOME_INFLUENCE; // weighting of biomes
     private Predicate<WorldProvider> dimensionFilter = OreDepositDefinition.PREDICATE_SURFACE_WORLD; // filtering of dimensions
 
-    private static final Fluid DEFAULT_VEIN_FLUID = FluidRegistry.WATER;
-
     public BedrockFluidDepositDefinition(String depositName) {
         this.depositName = depositName;
     }
 
     public void initializeFromConfig(JsonObject configRoot) {
         this.weight = configRoot.get("weight").getAsInt();
-        this.productionRates[0] = configRoot.get("min_rate").getAsInt();
-        this.productionRates[1] = configRoot.get("max_rate").getAsInt();
-        this.depletionAmount = configRoot.get("depletion_amount").getAsInt();
-        this.depletionChance = configRoot.get("depletion_chance").getAsInt();
+        this.productionRates[0] = configRoot.get("rate").getAsJsonObject().get("min").getAsInt();
+        this.productionRates[1] = configRoot.get("rate").getAsJsonObject().get("max").getAsInt();
+        this.depletionAmount = configRoot.get("depletion").getAsJsonObject().get("amount").getAsInt();
+        this.depletionChance = configRoot.get("depletion").getAsJsonObject().get("chance").getAsInt();
+
         Fluid fluid = FluidRegistry.getFluid(configRoot.get("fluid").getAsString());
-        this.storedFluid = fluid != null ? fluid : DEFAULT_VEIN_FLUID;
+        if (fluid != null)
+            this.storedFluid = fluid;
+        else
+            GTLog.logger.error("Bedrock Fluid Vein fluids cannot be null!");
+
         if (configRoot.has("name")) {
             this.assignedName = configRoot.get("name").getAsString();
         }
         if (configRoot.has("description")) {
             this.description = configRoot.get("description").getAsString();
         }
-        if (configRoot.has("depleted_production_rate")) {
-            this.depletedProductionRate = configRoot.get("depleted_production_rate").getAsInt();
+        if (configRoot.get("depletion").getAsJsonObject().has("production")) {
+            this.depletedProductionRate = configRoot.get("depletion").getAsJsonObject().get("production").getAsInt();
         }
         if (configRoot.has("biome_modifier")) {
             this.biomeWeightModifier = WorldConfigUtils.createBiomeWeightModifier(configRoot.get("biome_modifier"));

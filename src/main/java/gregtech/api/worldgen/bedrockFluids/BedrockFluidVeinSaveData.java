@@ -1,5 +1,6 @@
 package gregtech.api.worldgen.bedrockFluids;
 
+import gregtech.api.GTValues;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.storage.WorldSavedData;
@@ -12,7 +13,7 @@ import java.util.Map;
 public class BedrockFluidVeinSaveData extends WorldSavedData {
 
     private static BedrockFluidVeinSaveData INSTANCE;
-    public static final String dataName = "gregtech-SaveData";
+    public static final String dataName = GTValues.MODID + ".bedrockFluidVeinData";
 
     public BedrockFluidVeinSaveData(String s) {
         super(s);
