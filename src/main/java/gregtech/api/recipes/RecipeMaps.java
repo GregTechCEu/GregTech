@@ -70,7 +70,7 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> ARC_FURNACE_RECIPES = new RecipeMap<>("arc_furnace", 1, 1, 1, 4, 1, 1, 0, 1, new SimpleRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, MoveType.HORIZONTAL)
             .onRecipeBuild(recipeBuilder -> {
-                if (recipeBuilder.getFluidInputs() != null && recipeBuilder.getFluidInputs().isEmpty()) {
+                if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.duration));
                     for (Material material : new Material[]{Materials.Argon, Materials.Nitrogen}) {
                         int plasmaAmount = (int) Math.max(1L, recipeBuilder.duration / (material.getAverageMass() * 16L));
@@ -633,7 +633,7 @@ public class RecipeMaps {
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_SLICE, MoveType.HORIZONTAL)
             .onRecipeBuild(recipeBuilder -> {
-                if (recipeBuilder.getFluidInputs() != null && recipeBuilder.getFluidInputs().isEmpty()) {
+                if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.copy()
                             .fluidInputs(Materials.Water.getFluid(Math.max(4, Math.min(1000, recipeBuilder.duration * recipeBuilder.EUt / 320))))
                             .duration(recipeBuilder.duration * 2)
@@ -710,7 +710,7 @@ public class RecipeMaps {
             .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT_ASSEMBLER, ProgressWidget.MoveType.HORIZONTAL)
             .onRecipeBuild(recipeBuilder -> {
-                if (recipeBuilder.getFluidInputs() != null && recipeBuilder.getFluidInputs().isEmpty()) {
+                if (recipeBuilder.getFluidInputs().isEmpty()) {
                     recipeBuilder.copy()
                             .fluidInputs(Materials.SolderingAlloy.getFluid(Math.max(1, (GTValues.L / 2) * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
                             .buildAndRegister();

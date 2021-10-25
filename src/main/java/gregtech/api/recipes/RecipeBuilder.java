@@ -42,7 +42,6 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected boolean hidden = false;
 
     protected Consumer<RecipeBuilder<?>> onBuildAction = null;
-    protected RecipeMap<?> additionalRecipeMap = null;
 
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
 
