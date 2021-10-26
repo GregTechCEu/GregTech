@@ -26,12 +26,11 @@ public class MessageBedrockFluidVeinListSync implements IMessage {
         int size = buf.readInt();
         for (int i = 0; i < size; i++) {
             NBTTagCompound tag = ByteBufUtils.readTag(buf);
-            if (tag == null)
+            if (tag == null || tag.isEmpty())
                 continue;
 
             BedrockFluidVeinHandler.FluidVeinWorldEntry entry = BedrockFluidVeinHandler.FluidVeinWorldEntry.readFromNBT(tag);
-            if (entry != null)
-                map.put(entry, tag.getInteger("weight"));
+            map.put(entry, tag.getInteger("weight"));
         }
 
     }

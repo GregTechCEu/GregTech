@@ -211,9 +211,10 @@ public class WorldGenRegistry {
             try {
                 // Creates the deposit definition and initializes various components based on the json entries in the file
                 BedrockFluidDepositDefinition deposit = new BedrockFluidDepositDefinition(depositName);
-                deposit.initializeFromConfig(element);
                 // Adds the registered definition to the list of all registered definitions
-                registeredBedrockVeinDefinitions.add(deposit);
+                if (deposit.initializeFromConfig(element)) {
+                    registeredBedrockVeinDefinitions.add(deposit);
+                }
             } catch (RuntimeException exception) {
                 GTLog.logger.error("Failed to parse worldgen definition {} on path {}", depositName, worldgenDefinition, exception);
             }

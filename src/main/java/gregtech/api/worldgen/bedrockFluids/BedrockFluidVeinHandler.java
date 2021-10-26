@@ -50,9 +50,9 @@ public class BedrockFluidVeinHandler {
             if (totalWeight != 0) {
                 int weight = Math.abs(query % totalWeight);
                 for (Map.Entry<BedrockFluidDepositDefinition, Integer> entry : veinList.entrySet()) {
-                    totalWeight = entry.getValue() + entry.getKey().getBiomeWeightModifier().apply(biome);
-                    if (totalWeight != 0 && entry.getKey().getDimensionFilter().test(world.provider)) {
-                        weight -= totalWeight;
+                    int veinWeight = entry.getValue() + entry.getKey().getBiomeWeightModifier().apply(biome);
+                    if (veinWeight > 0 && entry.getKey().getDimensionFilter().test(world.provider)) {
+                        weight -= veinWeight;
                         if (weight < 0) {
                             definition = entry.getKey();
                             break;
@@ -73,7 +73,7 @@ public class BedrockFluidVeinHandler {
     }
 
     /**
-     * Gets production rate of fluid in a specific chunk's vein
+     * Gets the current production rate of fluid in a specific chunk's vein
      *
      * @param world  The world to test
      * @param chunkX X coordinate of desired chunk
@@ -109,7 +109,7 @@ public class BedrockFluidVeinHandler {
     }
 
     /**
-     * Gets the rate of fluid that in the chunk after depletion
+     * Gets the rate of fluid in the chunk after the vein is completely depleted
      *
      * @param world  The world to test
      * @param chunkX X coordinate of desired chunk
@@ -138,7 +138,7 @@ public class BedrockFluidVeinHandler {
             return;
 
         FluidVeinWorldEntry info = getFluidVeinWorldEntry(world, chunkX, chunkZ);
-        if (info == null)
+        if (info == null || info.currentFluidAmount == 0)
             return;
 
         BedrockFluidDepositDefinition definition = info.getVein();
@@ -255,7 +255,7 @@ public class BedrockFluidVeinHandler {
             if (tag.hasKey("vein")) {
                 String s = tag.getString("vein");
                 for (BedrockFluidDepositDefinition definition : veinList.keySet()) {
-                    if (s.equalsIgnoreCase(definition.getStoredFluid().getName()))
+                    if (s.equalsIgnoreCase(definition.getDepositName()))
                         info.vein = definition;
                 }
             }

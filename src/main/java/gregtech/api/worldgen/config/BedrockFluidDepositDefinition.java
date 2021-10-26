@@ -27,9 +27,9 @@ public class BedrockFluidDepositDefinition { //todo re-balance depletion rates o
 
     private final String depositName;
 
-    private int weight; // Weight the vein will appear
-    private String assignedName; // Name for JEI display
-    private String description; // Description for JEI display
+    private int weight; // weight value for determining which vein will appear
+    private String assignedName; // vein name for JEI display
+    private String description; // vein description for JEI display
     private final int[] productionRates = new int[2]; // the [minimum, maximum) production rate
     private int depletionAmount; // amount of fluid the vein gets drained by
     private int depletionChance; // the chance [0, 100] that the vein will deplete by 1
@@ -44,35 +44,47 @@ public class BedrockFluidDepositDefinition { //todo re-balance depletion rates o
         this.depositName = depositName;
     }
 
-    public void initializeFromConfig(JsonObject configRoot) {
+    public boolean initializeFromConfig(JsonObject configRoot) {
+        // the weight value for determining which vein will appear
         this.weight = configRoot.get("weight").getAsInt();
+        // the [minimum, maximum) production rate of the vein
         this.productionRates[0] = configRoot.get("rate").getAsJsonObject().get("min").getAsInt();
         this.productionRates[1] = configRoot.get("rate").getAsJsonObject().get("max").getAsInt();
+        // amount of fluid the vein gets depleted by
         this.depletionAmount = configRoot.get("depletion").getAsJsonObject().get("amount").getAsInt();
+        // the chance [0, 100] that the vein will deplete by depletionAmount
         this.depletionChance = configRoot.get("depletion").getAsJsonObject().get("chance").getAsInt();
 
+        // the fluid which the vein contains
         Fluid fluid = FluidRegistry.getFluid(configRoot.get("fluid").getAsString());
         if (fluid != null) {
             this.storedFluid = fluid;
         } else {
-            GTLog.logger.error("Bedrock Fluid Vein {} cannot have a null fluid!", this.depositName);
+            GTLog.logger.error("Bedrock Fluid Vein {} cannot have a null fluid!", this.depositName, new RuntimeException());
+            return false;
         }
+        // vein name for JEI display
         if (configRoot.has("name")) {
             this.assignedName = configRoot.get("name").getAsString();
         }
+        // vein description for JEI display
         if (configRoot.has("description")) {
             this.description = configRoot.get("description").getAsString();
         }
+        // production rate after the vein is depleted
         if (configRoot.get("depletion").getAsJsonObject().has("depleted_production_rate")) {
             this.depletedProductionRate = configRoot.get("depletion").getAsJsonObject().get("depleted_production_rate").getAsInt();
         }
+        // additional weighting changes determined by biomes
         if (configRoot.has("biome_modifier")) {
             this.biomeWeightModifier = WorldConfigUtils.createBiomeWeightModifier(configRoot.get("biome_modifier"));
         }
+        // filtering of dimensions to determine where the vein can generate
         if (configRoot.has("dimension_filter")) {
             this.dimensionFilter = WorldConfigUtils.createWorldPredicate(configRoot.get("dimension_filter"));
         }
         BedrockFluidVeinHandler.addFluidDeposit(this);
+        return true;
     }
 
     //This is the file name
