@@ -5,10 +5,11 @@ import gregtech.api.capability.IElectricItem;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.common.terminal.hardware.BatteryHardware;
+import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.menu.TerminalMenuWidget;
@@ -16,6 +17,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.common.items.behaviors.TerminalBehaviour;
+import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -34,6 +36,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class TerminalOSWidget extends AbstractWidgetGroup {
+    public static final TextureArea TERMINAL_FRAME = TextureArea.fullImage("textures/gui/terminal/terminal_frame.png");
+    public static final int DEFAULT_WIDTH = 333;
+    public static final int DEFAULT_HEIGHT = 232;
+
     private IGuiTexture background;
     private AbstractApplication focusApp;
     public final NBTTagCompound tabletNBT;
@@ -41,19 +47,24 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public final List<AbstractApplication> installedApps;
     public final TerminalMenuWidget menu;
     public final TerminalDesktopWidget desktop;
+    public final CircleButtonWidget home;
     public final BlockPos clickPos;
     public final ItemStack itemStack;
     public final HardwareProvider hardwareProvider;
     private int tickCounter;
+    private boolean maximize;
 
-    public TerminalOSWidget(int xPosition, int yPosition, int width, int height, ItemStack itemStack) {
-        super(new Position(xPosition, yPosition), new Size(width, height));
+    public TerminalOSWidget(int xPosition, int yPosition, ItemStack itemStack) {
+        super(new Position(xPosition, yPosition), new Size(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        this.background = TerminalTheme.WALL_PAPER;
         this.openedApps = new ArrayList<>();
         this.installedApps = new ArrayList<>();
-        this.desktop = new TerminalDesktopWidget(Position.ORIGIN, new Size(333, 232), this);
-        this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, 232), this).setBackground(TerminalTheme.COLOR_B_2);
+        this.desktop = new TerminalDesktopWidget(Position.ORIGIN, new Size(DEFAULT_WIDTH, DEFAULT_HEIGHT), this);
+        this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, DEFAULT_HEIGHT), this).setBackground(TerminalTheme.COLOR_B_2);
+        this.home= new CircleButtonWidget(351, 115, 11, 2, 0).setColors(0, TerminalTheme.COLOR_F_1.getColor(), 0).setClickListener(clickData -> this.homeTrigger(clickData.isClient));
         this.addWidget(desktop);
         this.addWidget(menu);
+        this.addWidget(home);
         this.itemStack = itemStack;
         this.tabletNBT = itemStack.getOrCreateSubCompound("terminal");
         this.tabletNBT.removeTag("_ar");
@@ -141,6 +152,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
         for (AbstractApplication app : openedApps) {
             if (app.getClass() == application.getClass()) {
+                app.onOSSizeUpdate(this.getSize().width, this.getSize().height);
                 maximizeApplication(app, isClient);
                 return;
             }
@@ -149,6 +161,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         if (app != null) {
             desktop.addWidget(app);
             app.setOs(this).initApp();
+            app.onOSSizeUpdate(this.getSize().width, this.getSize().height);
             openedApps.add(app);
             maximizeApplication(app, isClient);
         }
@@ -371,9 +384,21 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         } else {
             drawGradientRect(position.x, position.y, size.width, size.height, -1, -1);
         }
-        RenderUtil.useScissor(position.x, position.y, size.width, size.height, ()->{
-            super.drawInBackground(mouseX, mouseY, partialTicks, context);
-        });
+        if (maximize) {
+            desktop.drawInBackground(mouseX, mouseY, partialTicks, context);
+            if (menu.isVisible()) {
+                menu.drawInBackground(mouseX, mouseY, partialTicks, context);
+            }
+        } else {
+            RenderUtil.useScissor(position.x, position.y, size.width, size.height, ()-> {
+                desktop.drawInBackground(mouseX, mouseY, partialTicks, context);
+                if (menu.isVisible()) {
+                    menu.drawInBackground(mouseX, mouseY, partialTicks, context);
+                }
+            });
+            TERMINAL_FRAME.draw(position.x-12, position.y-11, 380, 256);
+        }
+        home.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
 
     boolean waitShutdown;
@@ -399,5 +424,50 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
         waitShutdown = false;
         return false;
+    }
+
+    public boolean isMaximize() {
+        return maximize;
+    }
+
+    private void updateOSSize() {
+        int osWidth = getSize().width;
+        int osHeight = getSize().height;
+        if (this.maximize && (osWidth != gui.getScreenWidth() || osHeight != gui.getScreenHeight())) {
+            osWidth = gui.getScreenWidth();
+            osHeight = gui.getScreenHeight();
+        } else if (!this.maximize && (osWidth != DEFAULT_WIDTH || osHeight != DEFAULT_HEIGHT)){
+            osWidth = DEFAULT_WIDTH;
+            osHeight = DEFAULT_HEIGHT;
+        } else {
+            return;
+        }
+        this.setSize(new Size(osWidth, osHeight));
+        this.desktop.setSize(new Size(osWidth, osHeight));
+        this.menu.setSize(new Size(31, osHeight));
+        this.home.setSelfPosition(this.maximize ? new Position(osWidth - this.home.getSize().width, osHeight - this.home.getSize().height) : new Position(340, 104));
+        gui.setSize(this.maximize ? osWidth : 380, this.maximize ? osHeight : 256);
+        if (this.focusApp != null) {
+            this.focusApp.onOSSizeUpdate(osWidth, osHeight);
+        }
+    }
+
+    public void maximize() {
+        if (isRemote()) {
+            this.maximize = !this.maximize;
+            updateOSSize();
+        }
+    }
+
+    @Override
+    public void setParentPosition(Position parentPosition) {
+        if (this.maximize) {
+            super.setParentPosition(parentPosition.subtract(this.getSelfPosition()));
+            if (isRemote()) {
+                updateOSSize();
+            }
+        } else {
+            super.setParentPosition(parentPosition);
+        }
     }
 }

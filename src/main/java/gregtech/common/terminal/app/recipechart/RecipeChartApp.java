@@ -14,6 +14,7 @@ import gregtech.api.terminal.gui.CustomTabListRenderer;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.terminal.os.menu.IMenuComponent;
+import gregtech.api.util.Size;
 import gregtech.common.terminal.app.recipechart.widget.RGContainer;
 import gregtech.common.terminal.app.recipechart.widget.RGNode;
 import gregtech.common.terminal.component.ClickComponent;
@@ -48,7 +49,7 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
             this.tabGroup = new TabGroup<>(0, 10, new CustomTabListRenderer(TerminalTheme.COLOR_F_2, TerminalTheme.COLOR_B_3, 333 / getMaxPages(), 10));
             this.tabGroup.setOnTabChanged(this::onPagesChanged);
             this.addWidget(this.tabGroup);
-            readLocalConfig(nbt -> {
+            loadLocalConfig(nbt -> {
                 if (nbt == null || nbt.isEmpty()) {
                     this.addTab("default");
                 } else {
@@ -157,7 +158,7 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
 
     @Override
     public NBTTagCompound closeApp() { //synced data to server side.
-        writeLocalConfig(nbt -> {
+        saveLocalConfig(nbt -> {
             NBTTagList list = new NBTTagList();
             for (int i = 0; i < tabGroup.getAllTag().size(); i++) {
                 IGuiTextureTabInfo tabInfo = (IGuiTextureTabInfo) tabGroup.getTabInfo(i);
@@ -190,5 +191,17 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
     @Override
     public int getMaxTier() {
         return 3;
+    }
+
+    @Override
+    public void onOSSizeUpdate(int width, int height) {
+        this.setSize(new Size(width, height));
+        Size size = new Size(width, height - 10);
+        for (Widget widget : tabGroup.widgets) {
+            if (widget instanceof RGContainer) {
+                widget.setSize(size);
+            }
+        }
+        tabGroup.setSize(size);
     }
 }

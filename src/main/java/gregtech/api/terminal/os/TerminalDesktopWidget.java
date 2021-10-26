@@ -17,6 +17,7 @@ public class TerminalDesktopWidget extends WidgetGroup {
     private final WidgetGroup appDiv;
     @SideOnly(Side.CLIENT)
     private final List<Widget> topWidgets;
+    private int rowCount = 7;
 
     public TerminalDesktopWidget(Position position, Size size, TerminalOSWidget os) {
         super(position, size);
@@ -29,8 +30,8 @@ public class TerminalDesktopWidget extends WidgetGroup {
     public void installApplication(AbstractApplication application){
         int r = 12;
         int index = appDiv.widgets.size();
-        int x = this.getSize().width / 2 + (3 * r) * (index % 7 - 3);
-        int y = (index / 7) * (3 * r) + 40;
+        int x = this.getSize().width / 2 + (3 * r) * (index % rowCount - rowCount / 2);
+        int y = (index / rowCount) * (3 * r) + 40;
         CircleButtonWidget button = new CircleButtonWidget(x,y)
                 .setColors(TerminalTheme.COLOR_B_2.getColor(),
                         application.getThemeColor(),
@@ -90,5 +91,18 @@ public class TerminalDesktopWidget extends WidgetGroup {
     public void hideDesktop() {
         appDiv.setActive(false);
         appDiv.setVisible(false);
+    }
+
+    @Override
+    public void setSize(Size size) {
+        super.setSize(size);
+        this.rowCount = (size.width - 81) / 36;
+        int r = 12;
+        for (int i = appDiv.widgets.size() - 1; i >= 0; i--) {
+            Widget widget = appDiv.widgets.get(i);
+            int x = this.getSize().width / 2 + (3 * r) * (i % rowCount - rowCount / 2);
+            int y = (i / rowCount) * (3 * r) + 40;
+            widget.setSelfPosition(new Position(x - r, y - r));
+        }
     }
 }

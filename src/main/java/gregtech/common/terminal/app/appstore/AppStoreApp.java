@@ -14,6 +14,8 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.terminal.os.menu.IMenuComponent;
+import gregtech.api.util.Position;
+import gregtech.api.util.Size;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.component.ClickComponent;
 import net.minecraft.nbt.NBTTagCompound;
@@ -51,7 +53,7 @@ public class AppStoreApp extends AbstractApplication {
         int y = yOffset + 110 * ((index + 2) / 3);
         group.addWidget(new ImageWidget(0, y, 333, 30, new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor())));
         group.addWidget(new ImageWidget(0, y, 333, 30, new TextTexture("Copyright @2021-xxxx Gregicality Team XD", -1)));
-        readLocalConfig(nbt -> this.darkMode = nbt.getBoolean("dark"));
+        loadLocalConfig(nbt -> this.darkMode = nbt.getBoolean("dark"));
         return this;
     }
 
@@ -62,7 +64,7 @@ public class AppStoreApp extends AbstractApplication {
                 ((AppPageWidget) widget).close();
             }
         }
-        writeLocalConfig(nbt -> nbt.setBoolean("dark", this.darkMode));
+        saveLocalConfig(nbt -> nbt.setBoolean("dark", this.darkMode));
         return super.closeApp();
     }
 
@@ -84,5 +86,25 @@ public class AppStoreApp extends AbstractApplication {
             }
         });
         return Collections.singletonList(darkMode);
+    }
+
+    @Override
+    public void onOSSizeUpdate(int width, int height) {
+        this.setSize(new Size(width, height));
+        for (Widget dragWidget : this.widgets) {
+            if (dragWidget instanceof DraggableScrollableWidgetGroup) {
+                int lastWidth = dragWidget.getSize().width;
+                dragWidget.setSize(new Size(width, height));
+                for (Widget widget : ((DraggableScrollableWidgetGroup) dragWidget).widgets) {
+                    if (widget instanceof AppCardWidget) {
+                        widget.addSelfPosition((width - lastWidth) / 2, 0);
+                    } else if (widget instanceof ImageWidget) {
+                        widget.setSize(new Size(width, 30));
+                    } else {
+                        widget.setSelfPosition(new Position(width / 2, 10));
+                    }
+                }
+            }
+        }
     }
 }

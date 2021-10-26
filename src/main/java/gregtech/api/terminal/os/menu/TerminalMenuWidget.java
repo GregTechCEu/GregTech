@@ -71,7 +71,9 @@ public class TerminalMenuWidget extends WidgetGroup {
         os.minimizeApplication(os.getFocusApp(), clickData.isClient);
     }
 
-    public void maximize(ClickData clickData) { }
+    public void maximize(ClickData clickData) {
+        os.maximize();
+    }
 
     public void addComponent(IMenuComponent component) {
         WidgetGroup group = new WidgetGroup();
@@ -174,7 +176,9 @@ public class TerminalMenuWidget extends WidgetGroup {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (!super.mouseClicked(mouseX, mouseY, button)) {
-            if (!isMouseOverElement(mouseX, mouseY) && !isHide) {
+            if (isMouseOverElement(mouseX, mouseY)) {
+                return true;
+            } else if (!isHide) {
                 hideMenu();
             }
             return false;

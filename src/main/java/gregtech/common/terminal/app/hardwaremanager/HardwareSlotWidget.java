@@ -57,7 +57,7 @@ public class HardwareSlotWidget extends WidgetGroup {
                         if (result) {
                             NBTTagCompound tag = os.hardwareProvider.getOrCreateHardwareCompound().getCompoundTag(hardware.getRegistryName());
                             if (!tag.isEmpty() && tag.hasKey("item")) {
-                                gui.entityPlayer.inventory.storeItemStack(new ItemStack(tag.getCompoundTag("item")));
+                                gui.entityPlayer.inventory.addItemStackToInventory(new ItemStack(tag.getCompoundTag("item")));
                             }
                             os.hardwareProvider.getOrCreateHardwareCompound().removeTag(hardware.getRegistryName());
                         }

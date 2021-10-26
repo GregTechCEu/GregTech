@@ -69,7 +69,7 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
         if (!hasHW()) {
             return super.getIcon();
         }
-        return new ItemStackTexture(getItem());
+        return new ItemStackTexture(isCreative() ? MetaItems.ULTIMATE_BATTERY.getInfiniteChargedStack() : getItem());
     }
 
     @Override

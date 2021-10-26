@@ -2,22 +2,16 @@ package gregtech.common.items.behaviors;
 
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.gui.ModularUI;
-import gregtech.api.gui.resources.EmptyTextureArea;
-import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
-import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.TerminalOSWidget;
-import gregtech.api.terminal.os.TerminalTheme;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTUtil;
@@ -28,7 +22,6 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubItemHandler {
-    public static final TextureArea TERMINAL_FRAME = TextureArea.fullImage("textures/gui/terminal/terminal_frame.png");
 
     @Override
     public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
@@ -78,15 +71,8 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
 
     @Override
     public ModularUI createUI(PlayerInventoryHolder holder, EntityPlayer entityPlayer) {
-        TerminalOSWidget os = new TerminalOSWidget(12, 11, 333, 232, holder.getCurrentItem())
-                .setBackground(TerminalTheme.WALL_PAPER);
-        CircleButtonWidget home = new CircleButtonWidget(363, 126, 11, 2, 0)
-                .setColors(0, TerminalTheme.COLOR_F_1.getColor(), 0)
-                .setClickListener(clickData -> os.homeTrigger(clickData.isClient));
-        return ModularUI.builder(new EmptyTextureArea(380, 256), 380, 256)
-                .widget(os)
-                .widget(new ImageWidget(0, 0, 380, 256, TERMINAL_FRAME))
-                .widget(home)
+        return ModularUI.builder(IGuiTexture.EMPTY, 380, 256)
+                .widget(new TerminalOSWidget(12, 11, holder.getCurrentItem()))
                 .build(holder, entityPlayer);
     }
 

@@ -3982,6 +3982,7 @@ gregtech.terminal.app_name.world_prospector=World Prospector
 
 terminal.app_name.description=No description.
 terminal.app_name.tier=Tier %d
+terminal.app_name.maximize.unsupported=This App does not support maximize.
 terminal.items.description=A guide book about items.
 terminal.machines.description=A guide book about gt machines.
 terminal.multiblocks.description=A guide book about multi-blocks.

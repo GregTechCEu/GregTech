@@ -44,13 +44,13 @@ public class OreProspectorApp extends AbstractApplication implements
         }
         this.widgetProspectingMap = new WidgetProspectingMap((7 - chunkRadius) * 16, offset + (7 - chunkRadius) * 16, chunkRadius, this.widgetOreList, 0, 1);
         this.addWidget(1, this.widgetProspectingMap);
-        readLocalConfig(nbt -> this.widgetProspectingMap.setDarkMode(nbt.getBoolean("dark")));
+        loadLocalConfig(nbt -> this.widgetProspectingMap.setDarkMode(nbt.getBoolean("dark")));
         return this;
     }
 
     @Override
     public NBTTagCompound closeApp() {
-        writeLocalConfig(nbt -> nbt.setBoolean("dark", this.widgetProspectingMap.getDarkMode()));
+        saveLocalConfig(nbt -> nbt.setBoolean("dark", this.widgetProspectingMap.getDarkMode()));
         return super.closeApp();
     }
 

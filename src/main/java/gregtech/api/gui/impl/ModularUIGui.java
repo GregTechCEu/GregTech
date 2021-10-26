@@ -36,6 +36,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     public ModularUIGui(ModularUI modularUI) {
         super(new ModularUIContainer(modularUI));
         this.modularUI = modularUI;
+        modularUI.setModularUIGui(this);
     }
 
     @Override

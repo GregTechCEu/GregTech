@@ -32,7 +32,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     protected NBTTagCompound nbt;
 
     public AbstractApplication(String name) {
-        super(Position.ORIGIN, new Size(333, 232));
+        super(Position.ORIGIN, new Size(TerminalOSWidget.DEFAULT_WIDTH, TerminalOSWidget.DEFAULT_HEIGHT));
         this.name = name;
     }
 
@@ -205,13 +205,15 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     /**
      * read NBT from the local config folder.
      */
-    protected void readLocalConfig(Consumer<NBTTagCompound> reader) {
+    protected void loadLocalConfig(Consumer<NBTTagCompound> reader) {
         if (isClient && reader != null) {
-            NBTTagCompound nbt;
+            NBTTagCompound nbt = null;
             try {
                 nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, String.format("config/%S.nbt", getRegistryName())));
             } catch (IOException e) {
                 GTLog.logger.error("error while loading local nbt for {}", getRegistryName(), e);
+            }
+            if (nbt == null) {
                 nbt = new NBTTagCompound();
             }
             reader.accept(nbt);
@@ -221,7 +223,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     /**
      * Write NBT to the local config folder.
      */
-    protected void writeLocalConfig(Consumer<NBTTagCompound> writer) {
+    protected void saveLocalConfig(Consumer<NBTTagCompound> writer) {
         if (isClient && writer != null) {
             NBTTagCompound nbt = new NBTTagCompound();
             try {
@@ -233,5 +235,12 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
                 GTLog.logger.error("error while saving local nbt for {}", getRegistryName(), e);
             }
         }
+    }
+
+    /**
+     * Fired when you open this app or terminal's size updated. (maximize)
+     */
+    public void onOSSizeUpdate(int width, int height) {
+        setSelfPosition(Position.ORIGIN.add(new Position((width - getSize().width) / 2, (height - getSize().height) / 2)));
     }
 }
