@@ -4,12 +4,12 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.menu.TerminalMenuWidget;
@@ -25,8 +25,6 @@ import net.minecraft.nbt.*;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,6 +35,7 @@ import java.util.stream.Collectors;
 
 public class TerminalOSWidget extends AbstractWidgetGroup {
     public static final TextureArea TERMINAL_FRAME = TextureArea.fullImage("textures/gui/terminal/terminal_frame.png");
+    public static final TextureArea TERMINAL_HOME = TextureArea.fullImage("textures/gui/terminal/terminal_home.png");
     public static final int DEFAULT_WIDTH = 333;
     public static final int DEFAULT_HEIGHT = 232;
 
@@ -47,7 +46,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public final List<AbstractApplication> installedApps;
     public final TerminalMenuWidget menu;
     public final TerminalDesktopWidget desktop;
-    public final CircleButtonWidget home;
+    public final TerminalHomeButtonWidget home;
     public final BlockPos clickPos;
     public final ItemStack itemStack;
     public final HardwareProvider hardwareProvider;
@@ -61,7 +60,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         this.installedApps = new ArrayList<>();
         this.desktop = new TerminalDesktopWidget(Position.ORIGIN, new Size(DEFAULT_WIDTH, DEFAULT_HEIGHT), this);
         this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, DEFAULT_HEIGHT), this).setBackground(TerminalTheme.COLOR_B_2);
-        this.home= new CircleButtonWidget(351, 115, 11, 2, 0).setColors(0, TerminalTheme.COLOR_F_1.getColor(), 0).setClickListener(clickData -> this.homeTrigger(clickData.isClient));
+        this.home = new TerminalHomeButtonWidget(this);
         this.addWidget(desktop);
         this.addWidget(menu);
         this.addWidget(home);
@@ -181,17 +180,17 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public void minimizeApplication(AbstractApplication application, boolean isClient) {
-        if (application != null) {
-            if (isClient && focusApp == application) {
-                application.minimizeWidget(app->{
-                    if (!application.isBackgroundApp()) {
-                        application.setActive(false);
-                    }
-                });
-            } else if (!application.isBackgroundApp()) {
-                application.setActive(false);
-            }
-            if(focusApp == application) {
+        if (application != null ) {
+            if (focusApp == application) {
+                if (isClient) {
+                    application.minimizeWidget(app->{
+                        if (!application.isBackgroundApp()) {
+                            application.setActive(false);
+                        }
+                    });
+                } else if (!application.isBackgroundApp()) {
+                    application.setActive(false);
+                }
                 focusApp = null;
             }
             menu.removeComponents();
@@ -228,7 +227,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
     }
 
-    public void homeTrigger(boolean isClient) {
+    public void callMenu(boolean isClient) {
         if(isClient) {
             if (menu.isHide) {
                 menu.showMenu();
@@ -238,39 +237,41 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public void shutdown() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        for (AbstractApplication openedApp : openedApps) {
-            String appName = openedApp.getRegistryName();
-            NBTTagCompound synced = openedApp.closeApp();
-            if (synced != null && !synced.isEmpty()) {
-                tabletNBT.setTag(appName, synced);
-                if (openedApp.isClientSideApp()) {//if its a clientSideApp and the nbt not null, meaning this nbt should be synced to the server side.
-                    nbt.setTag(appName, synced);
+    public void shutdown(boolean isClient) {
+        if (isClient) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            for (AbstractApplication openedApp : openedApps) {
+                String appName = openedApp.getRegistryName();
+                NBTTagCompound synced = openedApp.closeApp();
+                if (synced != null && !synced.isEmpty()) {
+                    tabletNBT.setTag(appName, synced);
+                    if (openedApp.isClientSideApp()) {//if its a clientSideApp and the nbt not null, meaning this nbt should be synced to the server side.
+                        nbt.setTag(appName, synced);
+                    }
                 }
             }
+            writeClientAction(-1, buffer -> buffer.writeCompoundTag(nbt));
+        } else { //request shutdown from the server side
+            writeUpdateInfo(-2, packetBuffer -> {});
         }
-        writeClientAction(-1, buffer -> buffer.writeCompoundTag(nbt));
     }
 
-    protected TerminalDialogWidget openDialog(TerminalDialogWidget widget) {
+    protected void openDialog(TerminalDialogWidget widget) {
         if (isRemote()) {
+            widget.onOSSizeUpdate(getSize().width, getSize().height);
             widget.maximizeWidget(null);
         } else if(widget.isClient()) {
-            return widget;
+            return;
         }
         desktop.addWidget(widget);
-        return widget;
     }
 
-    protected TerminalDialogWidget closeDialog(TerminalDialogWidget widget) {
+    protected void closeDialog(TerminalDialogWidget widget) {
         if (isRemote()) {
             widget.minimizeWidget(desktop::waitToRemoved);
         } else if(!widget.isClient()) {
             desktop.waitToRemoved(widget);
         }
-        return widget;
     }
 
     @Override
@@ -323,6 +324,8 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                             .ifPresent(x -> this.closeApplication(openedApp, true));
                 }
             }
+        } else if(id == -2) { // shutdown
+            shutdown(true);
         } else {
             super.readUpdateInfo(id, buffer);
         }
@@ -405,7 +408,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     @Override
     public boolean keyTyped(char charTyped, int keyCode) {
         if (waitShutdown) {
-            shutdown();
+            shutdown(true);
             return true;
         }
         if (super.keyTyped(charTyped, keyCode)) {
@@ -415,7 +418,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             waitShutdown = true;
             TerminalDialogWidget.showConfirmDialog(this, "terminal.component.warning", "terminal.os.shutdown_confirm", result->{
                 if (result) {
-                    shutdown();
+                    shutdown(true);
                 } else {
                     waitShutdown = false;
                 }
@@ -445,15 +448,21 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         this.setSize(new Size(osWidth, osHeight));
         this.desktop.setSize(new Size(osWidth, osHeight));
         this.menu.setSize(new Size(31, osHeight));
-        this.home.setSelfPosition(this.maximize ? new Position(osWidth - this.home.getSize().width, osHeight - this.home.getSize().height) : new Position(340, 104));
+        this.home.setSelfPosition(this.maximize ? new Position((osWidth - this.home.getSize().width) / 2, osHeight - this.home.getSize().height - 10) : new Position(340, 104));
+        this.home.setIcon(this.maximize ? TERMINAL_HOME : null);
         gui.setSize(this.maximize ? osWidth : 380, this.maximize ? osHeight : 256);
         if (this.focusApp != null) {
             this.focusApp.onOSSizeUpdate(osWidth, osHeight);
         }
+        for (Widget widget : desktop.widgets) {
+            if (widget instanceof TerminalDialogWidget) {
+                ((TerminalDialogWidget) widget).onOSSizeUpdate(osWidth, osHeight);
+            }
+        }
     }
 
-    public void maximize() {
-        if (isRemote()) {
+    public void maximize(boolean isClient) {
+        if (isClient) {
             this.maximize = !this.maximize;
             updateOSSize();
         }

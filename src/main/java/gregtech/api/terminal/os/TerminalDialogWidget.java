@@ -12,6 +12,7 @@ import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.ColorWidget;
 import gregtech.api.terminal.gui.widgets.TreeListWidget;
 import gregtech.api.terminal.util.FileTree;
+import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -382,5 +383,9 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
             return true;
         }
         return super.keyTyped(charTyped, keyCode);
+    }
+
+    public void onOSSizeUpdate(int width, int height) {
+        setSelfPosition(Position.ORIGIN.add(new Position((width - getSize().width) / 2, (height - getSize().height) / 2)));
     }
 }

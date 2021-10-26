@@ -137,7 +137,7 @@ public class WidgetProspectingMap extends Widget {
             SProspectingPacket packet = SProspectingPacket.readPacketData(buffer);
             if (packet != null) {
                 if (texture == null) {
-                    texture = new ProspectingTexture(packet.mode, chunkRadius);
+                    texture = new ProspectingTexture(packet.mode, chunkRadius, darkMode);
                 }
                 texture.updateTexture(packet);
                 if (oreList != null) {

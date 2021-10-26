@@ -15,7 +15,6 @@ import java.util.List;
 public class TerminalDesktopWidget extends WidgetGroup {
     private final TerminalOSWidget os;
     private final WidgetGroup appDiv;
-    @SideOnly(Side.CLIENT)
     private final List<Widget> topWidgets;
     private int rowCount = 7;
 

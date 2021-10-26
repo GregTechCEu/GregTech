@@ -6,6 +6,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
+import gregtech.api.terminal.os.SystemCall;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Position;
@@ -64,15 +65,15 @@ public class TerminalMenuWidget extends WidgetGroup {
     }
 
     public void close(ClickData clickData) {
-        os.closeApplication(os.getFocusApp(), clickData.isClient);
+        SystemCall.CLOSE_FOCUS_APP.call(os, clickData.isClient);
     }
 
     public void minimize(ClickData clickData) {
-        os.minimizeApplication(os.getFocusApp(), clickData.isClient);
+        SystemCall.MINIMIZE_FOCUS_APP.call(os, clickData.isClient);
     }
 
     public void maximize(ClickData clickData) {
-        os.maximize();
+        SystemCall.FULL_SCREEN.call(os, clickData.isClient);
     }
 
     public void addComponent(IMenuComponent component) {

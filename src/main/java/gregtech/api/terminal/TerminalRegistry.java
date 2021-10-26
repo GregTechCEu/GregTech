@@ -9,7 +9,6 @@ import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import gregtech.common.terminal.app.ThemeSettingApp;
 import gregtech.common.terminal.app.game.maze.MazeApp;
 import gregtech.common.terminal.app.game.minesweeper.MinesweeperApp;
 import gregtech.common.terminal.app.game.pong.PongApp;
@@ -25,6 +24,7 @@ import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
 import gregtech.common.terminal.app.prospector.OreProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
+import gregtech.common.terminal.app.settings.SettingsApp;
 import gregtech.common.terminal.app.worldprospector.WorldProspectorARApp;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
@@ -68,7 +68,7 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new ItemGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new TutorialGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new GuideEditorApp()).defaultApp().build();
-        AppRegistryBuilder.create(new ThemeSettingApp()).defaultApp().build();
+        AppRegistryBuilder.create(new SettingsApp()).defaultApp().build();
 
         AppRegistryBuilder.create(new PongApp())
                 .battery(GTValues.LV, 75)

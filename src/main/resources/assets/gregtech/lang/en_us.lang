@@ -3964,7 +3964,7 @@ gregtech.terminal.app_name.items=Item Guides
 gregtech.terminal.app_name.machines=Machine Guides
 gregtech.terminal.app_name.multiblocks=Multiblock Guides
 gregtech.terminal.app_name.tutorials=Tutorials
-gregtech.terminal.app_name.theme_settings=Theme Settings
+gregtech.terminal.app_name.settings=System Settings
 gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
 gregtech.terminal.app_name.ore_prospector=Ore Prospector
@@ -4034,7 +4034,7 @@ terminal.guide_editor.page_config=Page Config
 terminal.guide_editor.widgets_box=Widgets Box
 terminal.guide_editor.widget_config=Widget Config
 
-terminal.theme_settings.description=Set theme colors and wallpaper of the GTOS here.
+terminal.settings.description=The system settings for GTOS.
 terminal.theme_settings.color=Theme Color Settings
 terminal.theme_settings.wallpaper=Wallpaper Settings
 terminal.theme_settings.select=Select

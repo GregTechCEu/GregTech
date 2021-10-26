@@ -94,16 +94,16 @@ public class AppStoreApp extends AbstractApplication {
         for (Widget dragWidget : this.widgets) {
             if (dragWidget instanceof DraggableScrollableWidgetGroup) {
                 int lastWidth = dragWidget.getSize().width;
-                dragWidget.setSize(new Size(width, height));
                 for (Widget widget : ((DraggableScrollableWidgetGroup) dragWidget).widgets) {
                     if (widget instanceof AppCardWidget) {
                         widget.addSelfPosition((width - lastWidth) / 2, 0);
                     } else if (widget instanceof ImageWidget) {
                         widget.setSize(new Size(width, 30));
                     } else {
-                        widget.setSelfPosition(new Position(width / 2, 10));
+                        widget.addSelfPosition((width - lastWidth) / 2, 0);
                     }
                 }
+                dragWidget.setSize(new Size(width, height));
             }
         }
     }

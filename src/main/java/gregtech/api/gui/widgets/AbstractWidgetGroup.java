@@ -262,6 +262,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
                 widget.drawInForeground(mouseX, mouseY);
             }
         }
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     @Override
@@ -271,7 +272,7 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
                 widget.drawInBackground(mouseX, mouseY, partialTicks, context);
             }
         }
-        GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
+        GlStateManager.color(1, 1, 1, 1);
     }
 
     @Override

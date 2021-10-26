@@ -196,12 +196,14 @@ public class RecipeChartApp extends AbstractApplication implements IRecipeTransf
     @Override
     public void onOSSizeUpdate(int width, int height) {
         this.setSize(new Size(width, height));
-        Size size = new Size(width, height - 10);
-        for (Widget widget : tabGroup.widgets) {
-            if (widget instanceof RGContainer) {
-                widget.setSize(size);
+        if (tabGroup != null) {
+            Size size = new Size(width, height - 10);
+            for (Widget widget : tabGroup.widgets) {
+                if (widget instanceof RGContainer) {
+                    widget.setSize(size);
+                }
             }
+            tabGroup.setSize(size);
         }
-        tabGroup.setSize(size);
     }
 }
