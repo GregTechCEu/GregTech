@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 
 @ZenClass("mods.gregtech.ore.BedrockFluidDepositDefinition")
 @ZenRegister
-public class BedrockFluidDepositDefinition {
+public class BedrockFluidDepositDefinition { //todo re-balance depletion rates of default veins
 
     private final String depositName;
 
@@ -63,8 +63,8 @@ public class BedrockFluidDepositDefinition {
         if (configRoot.has("description")) {
             this.description = configRoot.get("description").getAsString();
         }
-        if (configRoot.get("depletion").getAsJsonObject().has("production")) {
-            this.depletedProductionRate = configRoot.get("depletion").getAsJsonObject().get("production").getAsInt();
+        if (configRoot.get("depletion").getAsJsonObject().has("depleted_production_rate")) {
+            this.depletedProductionRate = configRoot.get("depletion").getAsJsonObject().get("depleted_production_rate").getAsInt();
         }
         if (configRoot.has("biome_modifier")) {
             this.biomeWeightModifier = WorldConfigUtils.createBiomeWeightModifier(configRoot.get("biome_modifier"));

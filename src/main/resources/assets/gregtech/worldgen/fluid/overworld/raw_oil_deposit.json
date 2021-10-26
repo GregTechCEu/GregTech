@@ -8,7 +8,7 @@
   "depletion": {
     "amount": 1,
     "chance": 5,
-    "production": 50
+    "depleted_production_rate": 50
   },
   "fluid": "oil_medium"
 }

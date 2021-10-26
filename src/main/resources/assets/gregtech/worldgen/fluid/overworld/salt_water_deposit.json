@@ -8,7 +8,7 @@
   "depletion": {
     "amount": 1,
     "chance": 5,
-    "production": 25
+    "depleted_production_rate": 25
   },
   "fluid": "salt_water",
   "biome_modifier": {
