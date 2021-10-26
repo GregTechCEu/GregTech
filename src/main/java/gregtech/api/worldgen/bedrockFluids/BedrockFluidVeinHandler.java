@@ -47,7 +47,7 @@ public class BedrockFluidVeinHandler {
 
             Biome biome = world.getBiomeForCoordsBody(new BlockPos(chunkX << 4, 64, chunkZ << 4));
             int totalWeight = getTotalWeight(world.provider, biome);
-            if (totalWeight != 0) {
+            if (totalWeight > 0) {
                 int weight = Math.abs(query % totalWeight);
                 for (Map.Entry<BedrockFluidDepositDefinition, Integer> entry : veinList.entrySet()) {
                     int veinWeight = entry.getValue() + entry.getKey().getBiomeWeightModifier().apply(biome);
