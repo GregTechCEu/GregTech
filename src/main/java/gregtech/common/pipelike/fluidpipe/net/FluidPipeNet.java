@@ -13,6 +13,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 
 import java.util.*;
 
@@ -36,16 +37,11 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
     }
 
     public void markDirty(BlockPos pos) {
+        GTLog.logger.info("Marking dirty");
         invalidateNetCapacity();
         for (FluidStack fluid : fluids) {
             dirtyStacks.put(fluid, pos);
         }
-    }
-
-    @Override
-    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
-        super.updateBlockedConnections(nodePos, facing, isBlocked);
-        markDirty(nodePos);
     }
 
     public int drain(FluidStack stack, BlockPos pos, boolean silent, boolean doDrain) {
@@ -94,20 +90,17 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
     }
 
     private void recountFluids() {
-        Iterator<FluidStack> iterator = fluids.iterator();
-        while (iterator.hasNext()) {
-            FluidStack fluid = iterator.next();
-            fluid.amount = FluidNetWalker.countFluid(getWorldData(), getAllNodes().keySet().iterator().next(), fluid, true).getCount();
-            if (fluid.amount <= 0)
-                iterator.remove();
-        }
+        fluids.clear();
+        if(getAllNodes().size() == 0)
+            return;
+        GTLog.logger.info("Recounting fluids in net");
+        fluids.addAll(FluidNetWalker.countFluid(getWorldData(), getAllNodes().keySet().iterator().next()));
     }
 
     @Override
     protected void transferNodeData(Map<BlockPos, Node<FluidPipeProperties>> transferredNodes, PipeNet<FluidPipeProperties> parentNet1) {
         super.transferNodeData(transferredNodes, parentNet1);
         FluidPipeNet parentNet = (FluidPipeNet) parentNet1;
-        fluids.addAll(parentNet.fluids);
         invalidateNetCapacity();
         parentNet.invalidateNetCapacity();
         recountFluids();

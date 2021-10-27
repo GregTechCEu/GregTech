@@ -11,18 +11,22 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FluidNetWalker extends PipeNetWalker {
 
-    public static FluidNetWalker countFluid(World world, BlockPos pos, FluidStack fluid, boolean ignoreFilter) {
-        FluidNetWalker walker = new FluidNetWalker(Mode.COUNT, world, pos, 1, fluid);
-        walker.ignoreFilter = ignoreFilter;
+    public static Set<FluidStack> countFluid(World world, BlockPos pos) {
+        FluidNetWalker walker = new FluidNetWalker(Mode.COUNT, world, pos, 1, null);
+        walker.ignoreFilter = true;
+        walker.fluids = new HashSet<>();
         walker.traversePipeNet();
-        return walker;
+        return walker.fluids;
     }
 
     public static List<TileEntityFluidPipe> getPipesForFluid(World world, BlockPos pos, FluidStack fluid) {
@@ -48,6 +52,7 @@ public class FluidNetWalker extends PipeNetWalker {
     private final Mode mode;
     private List<TileEntityFluidPipe> pipes = new ArrayList<>();
     private final FluidStack fluid;
+    private Set<FluidStack> fluids;
     private int count;
     private int min;
     private boolean ignoreFilter = false;
@@ -64,6 +69,7 @@ public class FluidNetWalker extends PipeNetWalker {
         walker.pipes = pipes;
         walker.ignoreFilter = ignoreFilter;
         walker.min = min;
+        walker.fluids = fluids;
         return walker;
     }
 
@@ -92,10 +98,18 @@ public class FluidNetWalker extends PipeNetWalker {
                 pipes.add(pipe);
                 break;
             default: { // Mode.COUNT
-                FluidStack stack = pipe.findFluid(fluid);
-                if (stack != null && stack.amount > 0) {
-                    count += stack.amount;
-                    pipes.add(pipe);
+                main:
+                for(FluidTank tank : pipe.getFluidTanks()) {
+                    FluidStack stack = tank.getFluid();
+                    if(stack != null && stack.amount > 0) {
+                        for(FluidStack stack1 : fluids) {
+                            if(stack1.isFluidEqual(stack)) {
+                                stack1.amount += stack.amount;
+                                continue main;
+                            }
+                        }
+                        fluids.add(stack.copy());
+                    }
                 }
                 break;
             }

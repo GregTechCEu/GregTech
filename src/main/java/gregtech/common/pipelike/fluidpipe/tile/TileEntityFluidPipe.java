@@ -4,6 +4,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.block.material.TileEntityMaterialPipeBase;
+import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
 import gregtech.common.covers.CoverFluidFilter;
 import gregtech.common.covers.CoverPump;
@@ -141,6 +142,15 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         }
     }
 
+    @Override
+    public void transferDataFrom(IPipeTile<FluidPipeType, FluidPipeProperties> tileEntity) {
+        super.transferDataFrom(tileEntity);
+        this.fluidTanks = ((TileEntityFluidPipe) tileEntity).fluidTanks;
+        for (EnumFacing facing : EnumFacing.values()) {
+            tanks.put(facing, new PipeTankList(this, facing, fluidTanks));
+        }
+    }
+
     public FluidStack getContainedFluid(int channel) {
         if (channel < 0) return null;
         return getFluidTanks()[channel].getFluid();
@@ -219,11 +229,6 @@ public class TileEntityFluidPipe extends TileEntityMaterialPipeBase<FluidPipeTyp
         if (burning || leaking) {
             destroyPipe(burning, leaking);
         }
-    }
-
-    private void emptyTank(int channel) {
-        if (channel < 0) return;
-        this.getContainedFluids()[channel] = null;
     }
 
     public boolean areTanksEmpty() {
