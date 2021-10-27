@@ -11,4 +11,6 @@ public interface IMaintenance {
     void setMaintenanceFixed(int index);
 
     void storeTaped(boolean isTaped);
+
+    boolean hasMaintenanceMechanics();
 }

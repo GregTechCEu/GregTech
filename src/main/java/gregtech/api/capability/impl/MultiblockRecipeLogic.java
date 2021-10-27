@@ -180,7 +180,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         int numMaintenanceProblems = displayBase == null ? 0 : displayBase.getNumMaintenanceProblems();
 
         int[] overclock = null;
-        if (displayBase != null && ConfigHolder.U.GT5u.enableMaintenance) {
+        if (displayBase != null && displayBase.hasMaintenanceMechanics()) {
             IMaintenanceHatch hatch = displayBase.getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
             double durationMultiplier = hatch.getDurationMultiplier();
             if (durationMultiplier != 1.0) {
