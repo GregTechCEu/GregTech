@@ -30,6 +30,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.List;
 
 public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
@@ -41,6 +42,8 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
     private final IDrawable backgroundDrawable;
 
     private final int FONT_HEIGHT = 9;
+    private static final HashMap<RecipeMap<?>, RecipeMapCategory> categoryMap = new HashMap<>();
+    private double timer = 0;
 
     public RecipeMapCategory(RecipeMap<?> recipeMap, IGuiHelper guiHelper) {
         this.recipeMap = recipeMap;
@@ -50,7 +53,8 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         FluidTank[] exportFluidTanks = new FluidTank[recipeMap.getMaxFluidOutputs()];
         for (int i = 0; i < exportFluidTanks.length; i++)
             exportFluidTanks[i] = new FluidTank(16000);
-        this.modularUI = recipeMap.createJeiUITemplate(
+        this.modularUI = recipeMap.createUITemplate(
+                () -> timer > 1.0 ? timer += 0.005 : (timer = 0), // simulate recipe progress in JEI
                 (importItems = new ItemStackHandler(recipeMap.getMaxInputs())),
                 (exportItems = new ItemStackHandler(recipeMap.getMaxOutputs())),
                 (importFluids = new FluidTankList(false, importFluidTanks)),
@@ -60,6 +64,7 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
         ).build(new BlankUIHolder(), Minecraft.getMinecraft().player);
         this.modularUI.initWidgets();
         this.backgroundDrawable = guiHelper.createBlankDrawable(modularUI.getWidth(), modularUI.getHeight() * 2 / 3);
+        categoryMap.put(recipeMap, this);
     }
 
     @Override
@@ -170,5 +175,9 @@ public class RecipeMapCategory implements IRecipeCategory<GTRecipeWrapper> {
             });
             widget.drawInForeground(0, 0);
         }
+    }
+
+    public static HashMap<RecipeMap<?>, RecipeMapCategory> getCategoryMap() {
+        return categoryMap;
     }
 }
