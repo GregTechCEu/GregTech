@@ -1,5 +1,6 @@
 package gregtech.api.gui.widgets;
 
+import gregtech.api.GTValues;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.integration.jei.GTJeiPlugin;
@@ -11,7 +12,7 @@ import java.util.Collections;
 import java.util.function.DoubleSupplier;
 
 public class RecipeProgressWidget extends ProgressWidget {
-    private RecipeMap<?> recipeMap;
+    private final RecipeMap<?> recipeMap;
     private final static int HOVER_TEXT_WIDTH = 200;
 
     public RecipeProgressWidget(DoubleSupplier progressSupplier, int x, int y, int width, int height, RecipeMap<?> recipeMap) {
@@ -38,7 +39,7 @@ public class RecipeProgressWidget extends ProgressWidget {
     @Override
     public void drawInForeground(int mouseX, int mouseY) {
         super.drawInForeground(mouseX, mouseY);
-        if (isMouseOverElement(mouseX, mouseY)) {
+        if (isMouseOverElement(mouseX, mouseY) && GTValues.isModLoaded(GTValues.MODID_JEI)) {
             Minecraft mc = Minecraft.getMinecraft();
             GuiUtils.drawHoveringText(Collections.singletonList("Show Recipes"), mouseX, mouseY,
                     sizes.getScreenWidth(),
