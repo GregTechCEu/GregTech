@@ -27,14 +27,12 @@ public class RecipeProgressWidget extends ProgressWidget {
 
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
-        try {
-            Class.forName("gregtech.integration.jei.recipe.RecipeMapCategory");
-            if (isMouseOverElement(mouseX, mouseY) && RecipeMapCategory.getCategoryMap().containsKey(recipeMap)) {
-                // Since categories were even registered at all, we know JEI is active.
-                GTJeiPlugin.jeiRuntime.getRecipesGui().showCategories(Collections.singletonList(RecipeMapCategory.getCategoryMap().get(recipeMap).getUid()));
-                return true;
-            }
-        } catch (ClassNotFoundException ignored) {
+        if (!GTValues.isModLoaded(GTValues.MODID_JEI))
+            return false;
+        if (isMouseOverElement(mouseX, mouseY) && RecipeMapCategory.getCategoryMap().containsKey(recipeMap)) {
+            // Since categories were even registered at all, we know JEI is active.
+            GTJeiPlugin.jeiRuntime.getRecipesGui().showCategories(Collections.singletonList(RecipeMapCategory.getCategoryMap().get(recipeMap).getUid()));
+            return true;
         }
         return false;
     }
