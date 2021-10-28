@@ -102,19 +102,23 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         if (metaTileEntity == null) {
             return false;
         }
-        Textures.setSideMask(world, pos, state);
         CCRenderState renderState = CCRenderState.instance();
         renderState.reset();
         renderState.bind(buffer);
         Matrix4 translation = new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ());
         BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
+        boolean[] sideMask = new boolean[EnumFacing.VALUES.length];
+        for (EnumFacing side : EnumFacing.VALUES) {
+            sideMask[side.getIndex()] = state.shouldSideBeRendered(world, pos, side);
+        }
+        GTBlockOperation mteOp = new GTBlockOperation(renderLayer, sideMask);
         if (metaTileEntity.canRenderInLayer(renderLayer)) {
             renderState.lightMatrix.locate(world, pos);
-            IVertexOperation[] pipeline = new IVertexOperation[]{renderState.lightMatrix};
+            IVertexOperation[] pipeline = new IVertexOperation[]{mteOp, renderState.lightMatrix};
             metaTileEntity.renderMetaTileEntity(renderState, translation.copy(), pipeline);
         }
 
-        metaTileEntity.renderCovers(renderState, translation.copy(), renderLayer);
+        metaTileEntity.renderCovers(renderState, translation.copy(), mteOp);
 
         if (metaTileEntity.isFragile() && renderLayer == BlockRenderLayer.CUTOUT) {
             TextureMap textureMap = Minecraft.getMinecraft().getTextureMapBlocks();
@@ -125,7 +129,6 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
                 Textures.renderFace(renderState, translation, new IVertexOperation[0], face, Cuboid6.full, atlasSprite);
             }
         }
-        Textures.resetSideMask();
         return true;
     }
 

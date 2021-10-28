@@ -213,17 +213,10 @@ public class Textures {
     public static final SimpleOverlayRenderer MAINTENANCE_OVERLAY_CONFIGURABLE = new SimpleOverlayRenderer("overlay/machine/overlay_maintenance_configurable");
     public static final SimpleOverlayRenderer MUFFLER_OVERLAY = new SimpleOverlayRenderer("overlay/machine/overlay_muffler");
 
-    @SideOnly(Side.CLIENT)
-    public static boolean[] SIDE_MASK;
-
     static {
         for (int i = 0; i < VOLTAGE_CASINGS.length; i++) {
             String voltageName = GTValues.VN[i].toLowerCase();
             VOLTAGE_CASINGS[i] = new SimpleSidedCubeRenderer("casings/voltage/" + voltageName);
-        }
-        if (FMLCommonHandler.instance().getSide().isClient()) {
-            SIDE_MASK = new boolean[EnumFacing.VALUES.length];
-            resetSideMask();
         }
     }
 
@@ -236,53 +229,14 @@ public class Textures {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void setSideMask(IBlockAccess world, BlockPos pos, IBlockState state) {
-        // side mask to avoid unnecessary side be rendered
-        for (EnumFacing side : EnumFacing.VALUES) {
-            Textures.SIDE_MASK[side.ordinal()] = state.shouldSideBeRendered(world, pos, side);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static void resetSideMask() {
-        Arrays.fill(SIDE_MASK, true);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static boolean shouldSideBeRendered(EnumFacing face, Cuboid6 bounds) {
-        if (!SIDE_MASK[face.ordinal()]) { // check if the side is unnecessary be rendered
-            if (bounds == Cuboid6.full) {
-                return false;
-            }
-            switch (face) {
-                case DOWN:
-                    if (bounds.min.y <= 0) return false;
-                    break;
-                case UP:
-                    if (bounds.max.y >= 1) return false;
-                    break;
-                case NORTH:
-                    if (bounds.min.z <= 0) return false;
-                    break;
-                case SOUTH:
-                    if (bounds.max.z >= 1) return false;
-                    break;
-                case WEST:
-                    if (bounds.min.x <= 0) return false;
-                    break;
-                case EAST:
-                    if (bounds.max.x >= 1) return false;
-                    break;
-            }
-        }
-        return true;
-    }
-
-    @SideOnly(Side.CLIENT)
     public static void renderFace(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
-        if (MinecraftForgeClient.getRenderLayer() != BloomRenderLayerHooks.BLOOM && shouldSideBeRendered(face, bounds)) {
-            renderFaceRaw(renderState, translation, ops, face, bounds, sprite);
+        if (ops.length > 0 && ops[0] instanceof GTBlockOperation) {
+            GTBlockOperation op = (GTBlockOperation) ops[0];
+            if (op.layer == BloomRenderLayerHooks.BLOOM || !op.shouldSideBeRendered(face, bounds)) {
+                return;
+            }
         }
+        renderFaceRaw(renderState, translation, ops, face, bounds, sprite);
     }
 
     @SideOnly(Side.CLIENT)
@@ -300,8 +254,12 @@ public class Textures {
 
     @SideOnly(Side.CLIENT)
     public static void renderFaceBloom(CCRenderState renderState, Matrix4 translation, IVertexOperation[] ops, EnumFacing face, Cuboid6 bounds, TextureAtlasSprite sprite) {
-        if ((MinecraftForgeClient.getRenderLayer() == null || MinecraftForgeClient.getRenderLayer() == BloomRenderLayerHooks.BLOOM) && shouldSideBeRendered(face, bounds)) {
-            renderFaceRaw(renderState, translation, ops, face, bounds, sprite);
+        if (ops.length > 0 && ops[0] instanceof GTBlockOperation) {
+            GTBlockOperation op = (GTBlockOperation) ops[0];
+            if (op.layer != BloomRenderLayerHooks.BLOOM || !op.shouldSideBeRendered(face, bounds)) {
+                return;
+            }
         }
+        renderFaceRaw(renderState, translation, ops, face, bounds, sprite);
     }
 }

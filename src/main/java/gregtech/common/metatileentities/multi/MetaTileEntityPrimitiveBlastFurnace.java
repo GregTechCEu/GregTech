@@ -16,9 +16,7 @@ import gregtech.api.metatileentity.multiblock.RecipeMapPrimitiveMultiblockContro
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
-import gregtech.api.render.ICubeRenderer;
-import gregtech.api.render.OrientedOverlayRenderer;
-import gregtech.api.render.Textures;
+import gregtech.api.render.*;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -26,6 +24,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.annotation.Nonnull;
 
@@ -96,10 +95,9 @@ public class MetaTileEntityPrimitiveBlastFurnace extends RecipeMapPrimitiveMulti
         if (recipeMapWorkable.isActive() && isStructureFormed()) {
             EnumFacing back = getFrontFacing().getOpposite();
             Matrix4 offset = translation.copy().translate(back.getXOffset(), -0.3, back.getZOffset());
-            TextureAtlasSprite sprite = TextureUtils.getBlockTexture("lava_still");
-            renderState.brightness = 0xF000F0;
-            renderState.colour = 0xFFFFFFFF;
-            Textures.renderFace(renderState, offset, new IVertexOperation[0], EnumFacing.UP, Cuboid6.full, sprite);
+            Textures.renderFace(renderState, offset,
+                    ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), new ColourOperation(0xFFFFFFFF)),
+                    EnumFacing.UP, Cuboid6.full, TextureUtils.getBlockTexture("lava_still"));
         }
     }
 

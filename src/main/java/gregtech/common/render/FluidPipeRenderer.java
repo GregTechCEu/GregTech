@@ -18,6 +18,7 @@ import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.render.GTBlockOperation;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.info.MaterialIconSet;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
@@ -151,7 +152,7 @@ public class FluidPipeRenderer implements ICCBlockRenderer, IItemRenderer {
                 renderPipeBlock(pipeMaterial, fluidPipeType, paintingColor, renderState, pipeline, connectedSidesMap);
 
             ICoverable coverable = tileEntityPipe.getCoverableImplementation();
-            coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), renderLayer);
+            coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), new GTBlockOperation(renderLayer, GTBlockOperation.PASS_MASK));
         }
         return true;
     }
