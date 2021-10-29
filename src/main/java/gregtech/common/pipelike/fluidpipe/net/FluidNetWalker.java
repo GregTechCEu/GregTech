@@ -35,14 +35,14 @@ public class FluidNetWalker extends PipeNetWalker {
         return walker.pipes;
     }
 
-    public static int getTotalCapacity(World world, BlockPos pos) {
+    public static long getTotalCapacity(World world, BlockPos pos) {
         FluidNetWalker walker = new FluidNetWalker(Mode.COUNT_CAPACITY, world, pos, 1, null);
         walker.ignoreFilter = true;
         walker.traversePipeNet();
         return walker.count;
     }
 
-    public static int getSpaceFor(World world, BlockPos pos, FluidStack stack, int min) {
+    public static long getSpaceFor(World world, BlockPos pos, FluidStack stack, int min) {
         FluidNetWalker walker = new FluidNetWalker(Mode.SPACE, world, pos, 1, stack);
         walker.min = min;
         walker.traversePipeNet();
@@ -53,7 +53,7 @@ public class FluidNetWalker extends PipeNetWalker {
     private List<TileEntityFluidPipe> pipes = new ArrayList<>();
     private final FluidStack fluid;
     private Set<FluidStack> fluids;
-    private int count;
+    private long count;
     private int min;
     private boolean ignoreFilter = false;
 
@@ -99,11 +99,11 @@ public class FluidNetWalker extends PipeNetWalker {
                 break;
             default: { // Mode.COUNT
                 main:
-                for(FluidTank tank : pipe.getFluidTanks()) {
+                for (FluidTank tank : pipe.getFluidTanks()) {
                     FluidStack stack = tank.getFluid();
-                    if(stack != null && stack.amount > 0) {
-                        for(FluidStack stack1 : fluids) {
-                            if(stack1.isFluidEqual(stack)) {
+                    if (stack != null && stack.amount > 0) {
+                        for (FluidStack stack1 : fluids) {
+                            if (stack1.isFluidEqual(stack)) {
                                 stack1.amount += stack.amount;
                                 continue main;
                             }
@@ -140,7 +140,7 @@ public class FluidNetWalker extends PipeNetWalker {
         return true;
     }
 
-    public int getCount() {
+    public long getCount() {
         return count;
     }
 

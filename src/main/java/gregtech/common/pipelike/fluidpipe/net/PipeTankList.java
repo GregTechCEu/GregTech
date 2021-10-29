@@ -57,9 +57,9 @@ public class PipeTankList implements IFluidHandler {
         FluidTank tank = tanks[channel];
         int space = tank.getCapacity() - (tank.getFluid() == null ? 0 : tank.getFluid().amount);
         int max = Math.min(resource.amount, space);
-        if(max < tank.getCapacity() / 2) {
-            max = FluidNetWalker.getSpaceFor(pipe.getWorld(), pipe.getPos(), resource, resource.amount);
-            if(max <= 0)
+        if (max < tank.getCapacity() / 2) {
+            max = (int) FluidNetWalker.getSpaceFor(pipe.getWorld(), pipe.getPos(), resource, resource.amount);
+            if (max <= 0)
                 return 0;
         }
 
