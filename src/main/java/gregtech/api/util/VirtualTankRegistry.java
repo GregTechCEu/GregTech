@@ -100,6 +100,25 @@ public class VirtualTankRegistry extends WorldSavedData {
     }
 
     /**
+     * Removes a tank from the registry. Use with caution!
+     * @param key The name of the tank
+     * @param uuid The uuid of the player the tank is private to, or null if the tank is public
+     * @param removeFluid Whether to remove the tank if it has fluid in it
+     */
+    public static void delTank(String key, UUID uuid, boolean removeFluid) {
+        if (tankMap.containsKey(uuid) && tankMap.get(uuid).containsKey(key)) {
+            if (removeFluid || tankMap.get(uuid).get(key).getFluidAmount() <= 0) {
+                tankMap.get(uuid).remove(key);
+                if (tankMap.get(uuid).size() <= 0) {
+                    tankMap.remove(uuid);
+                }
+            }
+        } else {
+            GTLog.logger.warn("Attempted to delete tank " + key + "/" + (uuid == null ? "null" :uuid.toString()) + ", which does not exist!");
+        }
+    }
+
+    /**
      * To be called on server stopped event
      */
     public static void clearMaps() {
