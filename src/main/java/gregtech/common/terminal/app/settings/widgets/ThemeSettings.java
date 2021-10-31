@@ -26,7 +26,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
         this.os = os;
         float x = 323 * 1.0f / 13;
         int y = 40;
-        this.addWidget(new LabelWidget(323 / 2, 10, "terminal.theme_settings.color", -1).setXCentered(true));
+        this.addWidget(new LabelWidget(323 / 2, 10, "terminal.settings.theme.color", -1).setXCentered(true));
         this.addColorButton(TerminalTheme.COLOR_1, "COLOR_1", (int) x, y);
         this.addColorButton(TerminalTheme.COLOR_2, "COLOR_2", (int) (x * 2), y);
         this.addColorButton(TerminalTheme.COLOR_3, "COLOR_3", (int) (x * 3), y);
@@ -39,7 +39,7 @@ public class ThemeSettings extends AbstractWidgetGroup {
         this.addColorButton(TerminalTheme.COLOR_B_1, "COLOR_B_1", (int) (x * 10), y);
         this.addColorButton(TerminalTheme.COLOR_B_2, "COLOR_B_2", (int) (x * 11), y);
         this.addColorButton(TerminalTheme.COLOR_B_3, "COLOR_B_3", (int) (x * 12), y);
-        this.addWidget(new LabelWidget(323 / 2, 75, "terminal.theme_settings.wallpaper", -1).setXCentered(true));
+        this.addWidget(new LabelWidget(323 / 2, 75, "terminal.settings.theme.wallpaper", -1).setXCentered(true));
         this.addWidget(new ImageWidget((int) x, 95, 150, 105, TerminalTheme.WALL_PAPER).setBorder(2, -1));
         this.addWidget(new SelectorWidget((int) (x + 170), 95, 116, 20, Arrays.asList("resource", "url", "color", "file"), -1, TerminalTheme.WALL_PAPER::getTypeName, true)
                 .setIsUp(true)
@@ -110,13 +110,13 @@ public class ThemeSettings extends AbstractWidgetGroup {
                         .setColors(TerminalTheme.COLOR_B_1.getColor(),
                                 TerminalTheme.COLOR_1.getColor(),
                                 TerminalTheme.COLOR_B_1.getColor())
-                        .setClickListener(cd-> TerminalDialogWidget.showFileDialog(os, "terminal.theme_settings.image", TerminalRegistry.TERMINAL_PATH, true, file->{
+                        .setClickListener(cd-> TerminalDialogWidget.showFileDialog(os, "terminal.settings.theme.image", TerminalRegistry.TERMINAL_PATH, true, file->{
                             if (file != null && file.isFile()) {
                                 TerminalTheme.WALL_PAPER.setTexture(new FileTexture(file));
                                 TerminalTheme.saveConfig();
                             }
                         }).setClientSide().open())
-                        .setIcon(new TextTexture("terminal.theme_settings.select", -1)));
+                        .setIcon(new TextTexture("terminal.settings.theme.select", -1)));
                 break;
         }
     }

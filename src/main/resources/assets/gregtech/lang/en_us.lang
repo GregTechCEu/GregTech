@@ -4000,6 +4000,14 @@ terminal.hw.device=Device
 terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
 terminal.os.hw_demand=Missing mounting hardware:
 
+terminal.system_call.null=NULL
+terminal.system_call.call_menu=Call menu
+terminal.system_call.full_screen=Full screen
+terminal.system_call.minimize_focus_app=Back to desktop
+terminal.system_call.close_focus_app=Close app
+terminal.system_call.shutdown=Shutdown
+terminal.system_call.open_app=Open app
+
 terminal.menu.close=Close
 terminal.menu.minimize=Minimize
 terminal.menu.maximize=Maximize
@@ -4035,10 +4043,21 @@ terminal.guide_editor.widgets_box=Widgets Box
 terminal.guide_editor.widget_config=Widget Config
 
 terminal.settings.description=The system settings for GTOS.
-terminal.theme_settings.color=Theme Color Settings
-terminal.theme_settings.wallpaper=Wallpaper Settings
-terminal.theme_settings.select=Select
-terminal.theme_settings.image=Image File
+terminal.settings.theme=Theme
+terminal.settings.theme.color=Theme Color Settings
+terminal.settings.theme.wallpaper=Wallpaper Settings
+terminal.settings.theme.select=Select
+terminal.settings.theme.image=Image File
+terminal.settings.home=Home Button
+terminal.settings.home.double=Double
+terminal.settings.home.action=Click Action
+terminal.settings.home.args=Args
+terminal.settings.home.click=click
+terminal.settings.home.double_click=double Click
+terminal.settings.os=Os settings
+terminal.settings.os.double_check=Double Check
+terminal.settings.os.double_check.desc=Should Double Check when shutdown.
+
 
 terminal.recipe_chart.description=A tool for analyzing recipe chains, with which you can easily build a recipe graph and even calculate the ingredients needed like JEC.
 terminal.recipe_chart.limit=Page limit.

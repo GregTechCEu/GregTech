@@ -53,8 +53,8 @@ public class GuidePageEditorWidget extends GuidePageWidget {
                 .setHoverText("terminal.guide_editor.down")
                 .setClickListener(this::moveDown));
         toolButtons.addWidget(new CircleButtonWidget(20, -4, 8, 1, 12)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
-                        TerminalTheme.COLOR_B_2.getColor(),
+                .setColors(0,
+                        TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_3.getColor())
                 .setIcon(GuiTextures.ICON_REMOVE)
                 .setHoverText("terminal.guide_editor.remove")

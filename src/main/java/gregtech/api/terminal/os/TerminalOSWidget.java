@@ -17,6 +17,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.common.items.behaviors.TerminalBehaviour;
+import gregtech.common.terminal.app.settings.widgets.OsSettings;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
 import net.minecraft.client.resources.I18n;
@@ -416,6 +417,10 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
         if (keyCode == 1) { // hook esc
             waitShutdown = true;
+            if (!OsSettings.DOUBLE_CHECK) {
+                shutdown(true);
+                return true;
+            }
             TerminalDialogWidget.showConfirmDialog(this, "terminal.component.warning", "terminal.os.shutdown_confirm", result->{
                 if (result) {
                     shutdown(true);

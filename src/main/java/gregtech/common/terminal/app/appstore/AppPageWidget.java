@@ -1,5 +1,6 @@
 package gregtech.common.terminal.app.appstore;
 
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
@@ -10,6 +11,7 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
@@ -24,6 +26,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,6 +54,13 @@ public class AppPageWidget extends TerminalDialogWidget {
                     .setClickListener(cd->buttonClicked(tier));
             this.addWidget(buttons[i]);
         }
+        this.addWidget(new CircleButtonWidget(310, 10, 8, 1, 12)
+                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                        TerminalTheme.COLOR_B_2.getColor(),
+                        TerminalTheme.COLOR_3.getColor())
+                .setIcon(GuiTextures.ICON_REMOVE)
+                .setHoverText("terminal.guide_editor.remove")
+                .setClickListener(cd->close()));
         if (store.getOs().isRemote()) {
             // profile
             int color = application.getThemeColor();
@@ -264,7 +274,9 @@ public class AppPageWidget extends TerminalDialogWidget {
         FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
         List<String> description = fr.listFormattedStringToWidth(application.getDescription(), 210);
         int fColor = store.darkMode ? -1 : 0xff333333;
-        drawStringSized(I18n.format(application.getUnlocalizedName()), x + 100, y + 14, fColor, store.darkMode, 2, false);
+        String localizedName = I18n.format(application.getUnlocalizedName());
+        drawStringSized("("+application.getRegistryName()+")", x + 104 + fr.getStringWidth(localizedName) * 2, y + 19, fColor, store.darkMode, 1, false);
+        drawStringSized(localizedName, x + 100, y + 14, fColor, store.darkMode, 2, false);
         for (int i = 0; i < description.size(); i++) {
             fr.drawString(description.get(i), x + 100, y + 35 + i * fr.FONT_HEIGHT, fColor, store.darkMode);
         }
