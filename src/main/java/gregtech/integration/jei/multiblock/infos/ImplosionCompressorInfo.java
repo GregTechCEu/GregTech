@@ -28,15 +28,15 @@ public class ImplosionCompressorInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         return Lists.newArrayList(MultiblockShapeInfo.builder()
-                .aisle("XXX", "XBX", "XXX")
-                .aisle("MXX", "C#E", "XHX")
-                .aisle("XXX", "XIX", "XXX")
-                .where('C', MetaTileEntities.IMPLOSION_COMPRESSOR, EnumFacing.WEST)
+                .aisle("XXX", "XEX", "XXX")
+                .aisle("XXX", "X#X", "XHX")
+                .aisle("XMX", "ISB", "XXX")
+                .where('S', MetaTileEntities.IMPLOSION_COMPRESSOR, EnumFacing.WEST)
                 .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.STEEL_SOLID))
                 .where('#', Blocks.AIR.getDefaultState())
-                .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.HV], EnumFacing.SOUTH)
+                .where('I', MetaTileEntities.ITEM_IMPORT_BUS[GTValues.HV], EnumFacing.WEST)
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.EAST)
-                .where('B', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.HV], EnumFacing.NORTH)
+                .where('B', MetaTileEntities.ITEM_EXPORT_BUS[GTValues.HV], EnumFacing.WEST)
                 .where('H', MetaTileEntities.MUFFLER_HATCH[GTValues.LV], EnumFacing.UP)
                 .where('M', maintenanceIfEnabled(MetaBlocks.METAL_CASING.getState(MetalCasingType.STEEL_SOLID)), EnumFacing.WEST)
                 .build());

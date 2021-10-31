@@ -15,6 +15,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
+import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
@@ -367,7 +368,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     //this DOES NOT include machine control widgets or binds player inventory
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
-        builder.widget(new ProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType));
+        builder.widget(new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType, this));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
         if (this.specialTexture != null && this.specialTexturePosition != null)

@@ -529,7 +529,7 @@ public class MetaTileEntities {
         ENERGY_OUTPUT_HATCH_ADJUSTABLE[ENERGY_OUTPUT_HATCH_ADJUSTABLE.length - 1] = new MetaTileEntityAdjustableEnergyHatch(gregtechId("energy_hatch.adjustable.output.max"), ENERGY_OUTPUT_HATCH_ADJUSTABLE.length - 1, true);
 
         registerMetaTileEntity(1210 + ENERGY_INPUT_HATCH.length - 1, ENERGY_INPUT_HATCH[ENERGY_INPUT_HATCH.length - 1]);
-        registerMetaTileEntity(1225 + ENERGY_INPUT_HATCH.length - 1, ENERGY_INPUT_HATCH[ENERGY_INPUT_HATCH.length - 1]);
+        registerMetaTileEntity(1225 + ENERGY_OUTPUT_HATCH.length - 1, ENERGY_OUTPUT_HATCH[ENERGY_OUTPUT_HATCH.length - 1]);
         registerMetaTileEntity(1240 + ENERGY_INPUT_HATCH_ADJUSTABLE.length - 1, ENERGY_INPUT_HATCH_ADJUSTABLE[ENERGY_INPUT_HATCH_ADJUSTABLE.length - 1]);
         registerMetaTileEntity(1255 + ENERGY_OUTPUT_HATCH_ADJUSTABLE.length - 1, ENERGY_OUTPUT_HATCH_ADJUSTABLE[ENERGY_OUTPUT_HATCH_ADJUSTABLE.length - 1]);
 

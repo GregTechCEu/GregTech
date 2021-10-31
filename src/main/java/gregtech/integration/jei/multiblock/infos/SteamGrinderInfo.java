@@ -28,9 +28,9 @@ public class SteamGrinderInfo extends MultiblockInfoPage {
 
         if (ConfigHolder.U.steelSteamMultiblocks) {
             shapeInfo.add(MultiblockShapeInfo.builder()
-                    .aisle("XXX", "IXX", "XXX")
-                    .aisle("HXX", "S#X", "XXX")
-                    .aisle("XXX", "OXX", "XXX")
+                    .aisle("XXX", "XXX", "XXX")
+                    .aisle("XXX", "X#X", "XXX")
+                    .aisle("XHX", "ISO", "XXX")
                     .where('S', MetaTileEntities.STEAM_GRINDER, EnumFacing.WEST)
                     .where('X', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID))
                     .where('I', MetaTileEntities.STEAM_IMPORT_BUS, EnumFacing.WEST)
@@ -40,9 +40,9 @@ public class SteamGrinderInfo extends MultiblockInfoPage {
                     .build());
         } else {
             shapeInfo.add(MultiblockShapeInfo.builder()
-                    .aisle("XXX", "IXX", "XXX")
-                    .aisle("HXX", "S#X", "XXX")
-                    .aisle("XXX", "OXX", "XXX")
+                    .aisle("XXX", "XXX", "XXX")
+                    .aisle("XXX", "X#X", "XXX")
+                    .aisle("XHX", "ISO", "XXX")
                     .where('S', MetaTileEntities.STEAM_GRINDER, EnumFacing.WEST)
                     .where('X', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.BRONZE_BRICKS))
                     .where('I', MetaTileEntities.STEAM_IMPORT_BUS, EnumFacing.WEST)
