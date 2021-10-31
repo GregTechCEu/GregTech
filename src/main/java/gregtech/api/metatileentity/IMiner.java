@@ -38,7 +38,7 @@ public interface IMiner {
 
     int getTick();
 
-    int getaRadius();
+    int getRadius();
 
     int getFortune();
 

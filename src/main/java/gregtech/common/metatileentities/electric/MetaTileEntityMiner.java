@@ -6,8 +6,10 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
@@ -35,7 +37,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.LinkedList;
@@ -61,9 +62,9 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     private static final Cuboid6 PIPE_CUBOID = new Cuboid6(4 / 16.0, 0.0, 4 / 16.0, 12 / 16.0, 1.0, 12 / 16.0);
 
     private final LinkedList<BlockPos> blockPos = new LinkedList<>();
-    private int aRadius;
+    private int radius;
     private final int oRadius;
-    private int pipeY = 0;
+    private int pipeLength = 0;
     private final int tick;
     private boolean isActive = true;
     private final int fortune;
@@ -73,7 +74,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         this.inventorySize = (tier + 1) * (tier + 1);
         this.energyPerTick = GTValues.V[tier - 1];
         this.oRadius = radius;
-        this.aRadius = radius;
+        this.radius = radius;
         this.tick = tick;
         this.fortune = fortune;
         initializeInventory();
@@ -85,12 +86,12 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(0);
+        return new NotifiableItemStackHandler(0, this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(inventorySize);
+        return new NotifiableItemStackHandler(inventorySize, this, true);
     }
 
     @Override
@@ -108,7 +109,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
                 Textures.CHUNK_MINER_OVERLAY.renderSided(renderSide, renderState, translation, pipeline);
         }
         Textures.PIPE_IN_OVERLAY.renderSided(EnumFacing.DOWN, renderState, translation, pipeline);
-        for (int i = 0; i < pipeY; i++) {
+        for (int i = 0; i < pipeLength; i++) {
             translation.translate(0.0, -1.0, 0.0);
             Textures.SOLID_STEEL_CASING.render(renderState, translation, pipeline, PIPE_CUBOID);
         }
@@ -179,24 +180,25 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             if (!isActive)
                 return;
 
-            if (!drainEnergy(false)) {
+            if (!drainEnergy(true)) {
                 if (!done && testForMax())
                     initPos();
                 resetInv();
                 return;
             }
+            drainEnergy(false);
 
             WorldServer world = (WorldServer) this.getWorld();
             if (mineY.get() < tempY.get()) {
                 world.destroyBlock(new BlockPos(getPos().getX(), tempY.get(), getPos().getZ()), false);
                 tempY.decrementAndGet();
-                this.pipeY++;
-                writeCustomData(-200, b -> b.writeInt(pipeY));
+                this.pipeLength++;
+                writeCustomData(GregtechDataCodes.PUMP_HEAD_LEVEL, b -> b.writeInt(pipeLength));
                 markDirty();
             }
 
             if(y.get() > 0) {
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getMeanTickTime(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, radius, IMiner.getMeanTickTime(world)));
             }
 
             if (getOffsetTimer() % this.tick == 0 && !blockPos.isEmpty()) {
@@ -227,7 +229,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
                 x.set(mineX.get());
                 y.set(mineY.get());
                 z.set(mineZ.get());
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getMeanTickTime(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, radius, IMiner.getMeanTickTime(world)));
                 if (blockPos.isEmpty()) {
                     done = true;
                 }
@@ -253,9 +255,9 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         data.setTag("syPos", new NBTTagInt(startY.get()));
         data.setTag("szPos", new NBTTagInt(startZ.get()));
         data.setTag("tempY", new NBTTagInt(tempY.get()));
-        data.setTag("pipeY", new NBTTagInt(pipeY));
+        data.setTag("pipeLength", new NBTTagInt(pipeLength));
         data.setTag("isActive", new NBTTagInt(isActive ? 1 : 0));
-        data.setTag("radius", new NBTTagInt(aRadius));
+        data.setTag("radius", new NBTTagInt(radius));
         data.setTag("done", new NBTTagInt(done ? 1 : 0));
         return data;
     }
@@ -273,8 +275,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         startY.set(data.getInteger("syPos"));
         startZ.set(data.getInteger("szPos"));
         tempY.set(data.getInteger("tempY"));
-        pipeY = data.getInteger("pipeY");
-        aRadius = data.getInteger("radius");
+        pipeLength = data.getInteger("pipeLength");
+        radius = data.getInteger("radius");
         isActive = data.getInteger("isActive") != 0;
         done = data.getInteger("done") != 0;
     }
@@ -283,7 +285,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         textList.add(new TextComponentString(String.format("sX: %d", x.get())));
         textList.add(new TextComponentString(String.format("sY: %d", y.get())));
         textList.add(new TextComponentString(String.format("sZ: %d", z.get())));
-        textList.add(new TextComponentString(String.format("Radius: %d", aRadius)));
+        textList.add(new TextComponentString(String.format("Radius: %d", radius)));
         if (done)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (isActive)
@@ -303,38 +305,38 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     public void initPos() {
-        x.set(getPos().getX() - aRadius);
-        z.set(getPos().getZ() - aRadius);
+        x.set(getPos().getX() - radius);
+        z.set(getPos().getZ() - radius);
         y.set(getPos().getY() - 1);
-        startX.set(getPos().getX() - aRadius);
-        startZ.set(getPos().getZ() - aRadius);
+        startX.set(getPos().getX() - radius);
+        startZ.set(getPos().getZ() - radius);
         startY.set(getPos().getY());
         tempY.set(getPos().getY() - 1);
-        mineX.set(getPos().getX() - aRadius);
-        mineZ.set(getPos().getZ() - aRadius);
+        mineX.set(getPos().getX() - radius);
+        mineZ.set(getPos().getZ() - radius);
         mineY.set(getPos().getY() - 1);
     }
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!drainEnergy(true)) {
-            if (aRadius == getoRadius() / 4) {
-                aRadius = getoRadius();
+            if (radius == getoRadius() / 4) {
+                radius = getoRadius();
             } else {
                 if (!playerIn.isSneaking()) {
-                    aRadius--;
+                    radius--;
                 } else {
-                    if (aRadius - 5 < getoRadius() / 4) {
-                        aRadius = getoRadius();
+                    if (radius - 5 < getoRadius() / 4) {
+                        radius = getoRadius();
                     } else
-                        aRadius -= 5;
+                        radius -= 5;
                 }
             }
             x.set(Integer.MAX_VALUE);
             y.set(Integer.MAX_VALUE);
             z.set(Integer.MAX_VALUE);
             if (!getWorld().isRemote)
-                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", aRadius), false);
+                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", radius), false);
         } else {
             playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.errorradius"), false);
         }
@@ -345,14 +347,14 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
-        buf.writeInt(pipeY);
+        buf.writeInt(pipeLength);
         buf.writeBoolean(isActive);
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
-        this.pipeY = buf.readInt();
+        this.pipeLength = buf.readInt();
         this.isActive = buf.readBoolean();
     }
 
@@ -372,31 +374,27 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         this.isActive = active;
         markDirty();
         if (!getWorld().isRemote) {
-            writeCustomData(1, buf -> buf.writeBoolean(active));
+            writeCustomData(GregtechDataCodes.IS_WORKING, buf -> buf.writeBoolean(active));
         }
     }
 
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == -200) {
-            this.pipeY = buf.readInt();
+        if (dataId == GregtechDataCodes.PUMP_HEAD_LEVEL) {
+            this.pipeLength = buf.readInt();
             getHolder().scheduleChunkForRenderUpdate();
         }
-        if (dataId == 1) {
+        if (dataId == GregtechDataCodes.IS_WORKING) {
             this.isActive = buf.readBoolean();
             getHolder().scheduleChunkForRenderUpdate();
         }
     }
 
     void resetInv() {
-        if (invFull && getOffsetTimer() % 20 == 0) {
-            pushItemsIntoNearbyHandlers(getFrontFacing());
-            NonNullList<ItemStack> testSpace = NonNullList.create();
-            testSpace.add(new ItemStack(Blocks.STONE));
-            if (addItemsToItemHandler(exportItems, true, testSpace)) {
-                invFull = false;
-            }
+        if (notifiedItemOutputList.size() > 0) {
+            invFull = false;
+            notifiedItemOutputList.clear();
         }
     }
 
@@ -416,8 +414,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         return this.oRadius * 2 + 1;
     }
 
-    public int getaRadius() {
-        return this.aRadius;
+    public int getRadius() {
+        return this.radius;
     }
 
     public int getFortune() {

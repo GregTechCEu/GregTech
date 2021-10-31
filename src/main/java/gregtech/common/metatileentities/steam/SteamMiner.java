@@ -100,7 +100,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SteamMiner(metaTileEntityId, getTick(), getaRadius(), getSteam(), getFortune());
+        return new SteamMiner(metaTileEntityId, getTick(), getRadius(), getSteam(), getFortune());
     }
 
     @Override
@@ -443,7 +443,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
         return this.oRadius * 2 + 1;
     }
 
-    public int getaRadius() {
+    public int getRadius() {
         return this.aRadius;
     }
 
