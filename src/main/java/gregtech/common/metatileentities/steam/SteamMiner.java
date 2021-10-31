@@ -210,7 +210,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
             }
 
             if(y.get() > 0) {
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getTPS(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getMeanTickTime(world)));
             }
 
             if (getOffsetTimer() % tick == 0 && !blockPos.isEmpty()) {
@@ -242,7 +242,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
                 x.set(mineX.get());
                 y.set(mineY.get());
                 z.set(mineZ.get());
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getTPS(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getMeanTickTime(world)));
                 if (blockPos.isEmpty()) {
                     done = true;
                 }

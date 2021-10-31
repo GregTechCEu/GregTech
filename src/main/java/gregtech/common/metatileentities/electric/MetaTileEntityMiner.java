@@ -196,7 +196,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             }
 
             if(y.get() > 0) {
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getTPS(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getMeanTickTime(world)));
             }
 
             if (getOffsetTimer() % this.tick == 0 && !blockPos.isEmpty()) {
@@ -227,7 +227,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
                 x.set(mineX.get());
                 y.set(mineY.get());
                 z.set(mineZ.get());
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getTPS(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getMeanTickTime(world)));
                 if (blockPos.isEmpty()) {
                     done = true;
                 }

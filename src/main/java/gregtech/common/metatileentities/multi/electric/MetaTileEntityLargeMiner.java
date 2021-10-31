@@ -12,8 +12,6 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.EnergyContainerList;
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
@@ -62,7 +60,10 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gregtech.api.unification.material.Materials.DrillingFluid;
@@ -133,10 +134,10 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     private void initializeAbilities() {
-        this.importFluidHandler = new FluidTankList(true, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
-        this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));
+        this.importFluidHandler = getImportFluids();
+        this.outputInventory = getExportItems();
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
-        this.overclockAmount = (int) Math.pow(2, getVoltageTier() - this.tier);
+        this.overclockAmount = Math.max(1, GTUtility.getTierByVoltage(this.energyContainer.getInputVoltage()) - this.tier);
     }
 
     public boolean drainEnergy(boolean simulate) {
@@ -165,12 +166,15 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             if (!isActive())
                 return;
 
-            if (done || !drainEnergy(false) || !drainFluid(false)) {
+            if (done || !drainEnergy(true) || !drainFluid(true)) {
                 if (!done && testForMax())
                     initPos();
                 resetInv();
                 return;
             }
+
+            drainEnergy(false);
+            drainFluid(false);
 
             WorldServer world = (WorldServer) this.getWorld();
             if (mineY.get() < tempY.get()) {
@@ -182,7 +186,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             }
 
             if (y.get() > 0)
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getTPS(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getMeanTickTime(world)));
 
             if (getOffsetTimer() % getTick() == 0 && !blockPos.isEmpty()) {
                 int a = 0;
@@ -222,7 +226,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 x.set(mineX.get());
                 y.set(mineY.get());
                 z.set(mineZ.get());
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getTPS(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getMeanTickTime(world)));
                 if (blockPos.isEmpty()) {
                     done = true;
                 }

@@ -55,7 +55,7 @@ public interface IMiner {
                     if (x.get() <= startX.get() + aRadius * 2) {
                         BlockPos blockPos = new BlockPos(x.get(), y.get(), z.get());
                         Block block = miner.getWorld().getBlockState(blockPos).getBlock();
-                        if (miner.getWorld().getTileEntity(blockPos) == null && GTUtility.isOre(block)) {
+                        if (block.blockHardness >= 0 && miner.getWorld().getTileEntity(blockPos) == null && GTUtility.isOre(block)) {
                             blocks.addLast(blockPos);
                         }
                         x.incrementAndGet();
@@ -82,7 +82,7 @@ public interface IMiner {
         return sum / values.length;
     }
 
-    static double getTPS(World world) {
+    static double getMeanTickTime(World world) {
         return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
     }
 
