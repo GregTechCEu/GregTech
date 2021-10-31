@@ -119,22 +119,61 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         FluidPipeNet net = getWorldPipeNet(worldIn).getNetFromPos(pos);
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+        List<FluidStack> stacks = new ArrayList<>();
         for (FluidTank tank : pipe.getFluidTanks()) {
             FluidStack stack = tank.getFluid();
             if (stack != null && stack.amount > 0) {
-                net.drain(stack, pos, true, true);
+                stack.amount = net.drain(stack, pos, true, true);
+                stacks.add(stack);
             }
         }
+
+        EnumSet<EnumFacing> openConnections = EnumSet.noneOf(EnumFacing.class);
+        for (EnumFacing facing : EnumFacing.values()) {
+            if (pipe.isConnectionOpenAny(facing))
+                openConnections.add(facing);
+        }
+
         super.breakBlock(worldIn, pos, state);
         Set<FluidPipeNet> nets = new HashSet<>();
-        nets.add(net);
-        for (EnumFacing facing : EnumFacing.values()) {
+        List<Pair<FluidPipeNet, TileEntityFluidPipe>> pairs = new ArrayList<>();
+        for (EnumFacing facing : openConnections) {
             BlockPos pos1 = pos.offset(facing);
             TileEntity tile = worldIn.getTileEntity(pos1);
             if (tile instanceof TileEntityFluidPipe) {
-                nets.add(((TileEntityFluidPipe) tile).getFluidPipeNet());
+                FluidPipeNet fluidNet = ((TileEntityFluidPipe) tile).getFluidPipeNet();
+                if (nets.add(fluidNet)) {
+                    pairs.add(Pair.of(fluidNet, (TileEntityFluidPipe) tile));
+                }
             }
         }
+        if (stacks.size() > 0) {
+            for (FluidStack stack : stacks) {
+                List<Pair<FluidPipeNet, TileEntityFluidPipe>> pairs2 = new ArrayList<>(pairs);
+                FluidStack copy = stack.copy();
+                while (copy.amount > 0 && pairs2.size() > 0) {
+                    int c = copy.amount / pairs2.size();
+                    int m = copy.amount / pairs2.size();
+                    Iterator<Pair<FluidPipeNet, TileEntityFluidPipe>> iterator = pairs2.iterator();
+                    while (iterator.hasNext()) {
+                        Pair<FluidPipeNet, TileEntityFluidPipe> pair = iterator.next();
+                        int count = c;
+                        if (m > 0) {
+                            count++;
+                            m--;
+                        }
+                        FluidStack toFill = stack.copy();
+                        toFill.amount = count;
+
+                        int f = pair.getKey().fill(toFill, pair.getValue().getPos(), true);
+                        copy.amount -= f;
+                        if (count != f)
+                            iterator.remove();
+                    }
+                }
+            }
+        }
+        net.invalidateNetCapacity();
         nets.forEach(FluidPipeNet::invalidateNetCapacity);
     }
 

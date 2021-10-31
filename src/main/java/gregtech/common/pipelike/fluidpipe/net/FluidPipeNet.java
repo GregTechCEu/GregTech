@@ -41,8 +41,18 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
         }
     }
 
+    private void checkDirty() {
+        if (isDirty() && getAllNodes().size() > 0) {
+            netCapacity = FluidNetWalker.getTotalCapacity(getWorldData(), getAllNodes().keySet().iterator().next());
+            for (FluidStack stack : fluids) {
+                stack.amount = (int) Math.min(stack.amount, netCapacity);
+            }
+        }
+    }
+
     public int drain(FluidStack stack, BlockPos pos, boolean silent, boolean doDrain) {
-        if (isDirty() || stack == null || stack.amount <= 0) return 0;
+        checkDirty();
+        if (stack == null || stack.amount <= 0) return 0;
         Iterator<FluidStack> iterator = fluids.iterator();
         while (iterator.hasNext()) {
             FluidStack stack1 = iterator.next();
@@ -64,7 +74,8 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
     }
 
     public int fill(FluidStack stack, BlockPos pos, boolean doFill) {
-        if (isDirty() || stack == null || stack.amount <= 0) return 0;
+        checkDirty();
+        if (stack == null || stack.amount <= 0) return 0;
         for (FluidStack stack1 : fluids) {
             if (stack1.isFluidEqual(stack)) {
                 int amount = (int) Math.min(stack.amount, netCapacity - stack1.amount);
@@ -103,12 +114,7 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITicka
     @Override
     public void update() {
         if (getWorldData() != null && getAllNodes().size() > 0) {
-            if (isDirty()) {
-                netCapacity = FluidNetWalker.getTotalCapacity(getWorldData(), getAllNodes().keySet().iterator().next());
-                for (FluidStack stack : fluids) {
-                    stack.amount = (int) Math.min(stack.amount, netCapacity);
-                }
-            }
+            checkDirty();
             if (fluidsToRemove.size() > 0) {
                 for (Map.Entry<FluidStack, BlockPos> entry : fluidsToRemove.entrySet()) {
                     List<TileEntityFluidPipe> pipes = FluidNetWalker.getPipesForFluid(getWorldData(), entry.getValue(), entry.getKey());
