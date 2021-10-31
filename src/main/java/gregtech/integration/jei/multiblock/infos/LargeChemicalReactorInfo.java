@@ -44,37 +44,37 @@ public class LargeChemicalReactorInfo extends MultiblockInfoPage {
 
         shapeInfo.add(
                 baseBuilder.shallowCopy()
-                        .aisle("IXX", "FXX", "XXX")
-                        .aisle("MXE", "SPC", "XXX")
-                        .aisle("OXX", "HXX", "XXX")
+                        .aisle("XEX", "XCX", "XXX")
+                        .aisle("XXX", "XPX", "XXX")
+                        .aisle("IMO", "FSH", "XXX")
                         .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
-                        .aisle("IXX", "FXX", "XXX")
-                        .aisle("MXE", "SPX", "XCX")
-                        .aisle("OXX", "HXX", "XXX")
+                        .aisle("XEX", "XXX", "XXX")
+                        .aisle("XXX", "XPX", "XCX")
+                        .aisle("IMO", "FSH", "XXX")
                         .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
-                        .aisle("IXX", "FXX", "XXX")
-                        .aisle("MCE", "SPX", "XXX")
-                        .aisle("OXX", "HXX", "XXX")
+                        .aisle("XEX", "XXX", "XXX")
+                        .aisle("XCX", "XPX", "XXX")
+                        .aisle("IMO", "FSH", "XXX")
                         .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
-                        .aisle("IXX", "FCX", "XXX")
-                        .aisle("MXE", "SPX", "XXX")
-                        .aisle("OXX", "HXX", "XXX")
+                        .aisle("XEX", "XXX", "XXX")
+                        .aisle("XXX", "CPX", "XXX")
+                        .aisle("IMO", "FSH", "XXX")
                         .build()
         );
         shapeInfo.add(
                 baseBuilder.shallowCopy()
-                        .aisle("IXX", "FXX", "XXX")
-                        .aisle("MXE", "SPX", "XXX")
-                        .aisle("OXX", "HCX", "XXX")
+                        .aisle("XEX", "XXX", "XXX")
+                        .aisle("XXX", "XPC", "XXX")
+                        .aisle("IMO", "FSH", "XXX")
                         .build()
         );
 
