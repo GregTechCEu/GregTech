@@ -167,7 +167,7 @@ public class OrganicChemistryMaterials {
                 .fluid(Material.FluidType.GAS)
                 .color(0x7D7D7D)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Carbon, 2, Hydrogen, 4)
+                .components(Carbon, 2, Fluorine, 4)
                 .build();
 
         Chloromethane = new Material.Builder(1024, "chloromethane")
