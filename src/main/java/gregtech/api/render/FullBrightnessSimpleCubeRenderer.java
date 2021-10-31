@@ -14,6 +14,6 @@ public class FullBrightnessSimpleCubeRenderer extends SimpleCubeRenderer {
 
     @Override
     public void renderSided(EnumFacing side, Matrix4 translation, Cuboid6 bounds, CCRenderState renderState, IVertexOperation[] pipeline) {
-        super.renderSided(side, translation, bounds, renderState, ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), new ColourOperation(0xffffffff)));
+        super.renderSided(side, translation, bounds, renderState, ArrayUtils.addAll(pipeline, new LightMapOperation(0b10100000, 0b10100000), new ColourOperation(0xffffffff)));
     }
 }

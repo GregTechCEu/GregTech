@@ -698,8 +698,18 @@ public class Material implements Comparable<Material> {
             return this;
         }
 
+        public Builder ore(boolean emissive) {
+            properties.setProperty(PropertyKey.ORE, new OreProperty(1, 1, emissive));
+            return this;
+        }
+
         public Builder ore(int oreMultiplier, int byproductMultiplier) {
             properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier));
+            return this;
+        }
+
+        public Builder ore(int oreMultiplier, int byproductMultiplier, boolean emissive) {
+            properties.setProperty(PropertyKey.ORE, new OreProperty(oreMultiplier, byproductMultiplier, emissive));
             return this;
         }
 
