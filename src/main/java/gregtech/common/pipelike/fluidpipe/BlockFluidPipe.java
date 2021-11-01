@@ -119,6 +119,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         FluidPipeNet net = getWorldPipeNet(worldIn).getNetFromPos(pos);
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+        // get and remove all fluids of the pipe from the net
         List<FluidStack> stacks = new ArrayList<>();
         for (FluidTank tank : pipe.getFluidTanks()) {
             FluidStack stack = tank.getFluid();
@@ -128,13 +129,17 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             }
         }
 
+        // get open connections
         EnumSet<EnumFacing> openConnections = EnumSet.noneOf(EnumFacing.class);
         for (EnumFacing facing : EnumFacing.values()) {
             if (pipe.isConnectionOpenAny(facing))
                 openConnections.add(facing);
         }
 
+        // destroy pipe
         super.breakBlock(worldIn, pos, state);
+
+        // get neighbour fluid nets
         Set<FluidPipeNet> nets = new HashSet<>();
         List<Pair<FluidPipeNet, TileEntityFluidPipe>> pairs = new ArrayList<>();
         for (EnumFacing facing : openConnections) {
@@ -148,6 +153,7 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
             }
         }
         if (stacks.size() > 0) {
+            // for each fluid try to insert equally into neighbour fluid nets
             for (FluidStack stack : stacks) {
                 List<Pair<FluidPipeNet, TileEntityFluidPipe>> pairs2 = new ArrayList<>(pairs);
                 FluidStack copy = stack.copy();
@@ -190,7 +196,26 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     @Override
     public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
         if (selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe) {
-            return ((TileEntityFluidPipe) selfTile).areTanksEmpty() || ((TileEntityFluidPipe) sideTile).areTanksEmpty();
+            TileEntityFluidPipe selfPipe = (TileEntityFluidPipe) selfTile, sidePipe = (TileEntityFluidPipe) selfTile;
+            // yes if one pipe is empty
+            if(selfPipe.areTanksEmpty() || sidePipe.areTanksEmpty())
+                return true;
+            // get content of one pipe
+            Set<FluidStack> fluids = new HashSet<>();
+            for(FluidTank tank : selfPipe.getFluidTanks()) {
+                FluidStack fluid = tank.getFluid();
+                if(fluid != null && fluid.amount > 0) {
+                    fluids.add(fluid);
+                }
+            }
+            // if a fluid of the side pipe is not in this pipe return false
+            for(FluidTank tank : sidePipe.getFluidTanks()) {
+                FluidStack fluid = tank.getFluid();
+                if(fluid != null && fluid.amount > 0 && !fluids.contains(fluid)) {
+                    return false;
+                }
+            }
+            return true;
         }
         return false;
     }
