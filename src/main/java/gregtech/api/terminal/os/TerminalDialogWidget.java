@@ -274,7 +274,8 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     }
 
     public static TerminalDialogWidget showItemSelector(TerminalOSWidget os, String title, boolean cost, Predicate<ItemStack> filter, Consumer<ItemStack> result) {
-        TerminalDialogWidget dialog = createEmptyTemplate(os).addTitle(title);
+        TerminalDialogWidget dialog = createEmptyTemplate(os);
+        dialog.addWidget(new LabelWidget(WIDTH / 2, -7, title, -1).setShadow(true).setXCentered(true));
         IInventory inventoryPlayer = os.getModularUI().entityPlayer.inventory;
         if (dialog.iNativeWidgets == null) {
             dialog.iNativeWidgets = new ArrayList<>();
@@ -282,10 +283,10 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         int x = 11;
         int y = 30;
         final SlotWidget[] selected = {null};
-        for (int row = 0; row < 3; row++) {
+        for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 9; col++) {
-                boolean pass = filter == null || filter.test(inventoryPlayer.getStackInSlot(col + (row + 1) * 9));
-                SlotWidget slotWidget = new SlotWidget(inventoryPlayer, col + (row + 1) * 9, x + col * 18, y + row * 18, false, false) {
+                boolean pass = filter == null || filter.test(inventoryPlayer.getStackInSlot(col + row * 9));
+                SlotWidget slotWidget = new SlotWidget(inventoryPlayer, col + row * 9, x + col * 18, (int) (y + (row == 0 ? -1.2 : (row - 1)) * 18), false, false) {
                     @Override
                     public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
                         super.drawInBackground(mouseX, mouseY, context);
@@ -329,6 +330,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 if (cost) {
                     selected[0].getHandle().getStack().setCount(stack.getCount() - 1);
                 }
+                stack.setCount(1);
                 result.accept(stack);
             }
         });

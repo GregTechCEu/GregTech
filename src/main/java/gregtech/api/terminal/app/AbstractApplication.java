@@ -72,7 +72,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     @SideOnly(Side.CLIENT)
     public String getDescription() {
         if (I18n.hasKey("terminal." + getRegistryName() + ".description")) {
-            return I18n.format("terminal." + getRegistryName() + ".description");
+            return I18n.format("terminal." + getRegistryName() + ".description").replaceAll("\\\\n", "\n");
         }
         return I18n.format("terminal.app_name.description");
     }

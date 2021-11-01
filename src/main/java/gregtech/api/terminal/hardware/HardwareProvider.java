@@ -25,12 +25,25 @@ import java.util.stream.Collectors;
  */
 public class HardwareProvider implements ICapabilityProvider, IItemCapabilityProvider {
     private Map<String, Hardware> providers;
+    private Map<String, ItemStack> itemCache;
+    private Boolean isCreative;
     private ItemStack itemStack;
     private NBTTagCompound tag;
 
 
     public HardwareProvider() {
 
+    }
+
+    public void cleanCache(String name) {
+        itemCache.remove(name);
+    }
+
+    public boolean isCreative() {
+        if (isCreative == null) {
+            isCreative = TerminalBehaviour.isCreative(getItemStack());
+        }
+        return isCreative;
     }
 
     public Map<String, Hardware> getProviders() {
@@ -68,17 +81,22 @@ public class HardwareProvider implements ICapabilityProvider, IItemCapabilityPro
     }
 
     public ItemStack getHardwareItem(String name) {
-        NBTTagCompound tag = getHardwareNBT(name);
-        if (tag.hasKey("item")) {
-            return new ItemStack(tag.getCompoundTag("item"));
+        if (!itemCache.containsKey(name)) {
+            NBTTagCompound tag = getHardwareNBT(name);
+            if (tag.hasKey("item")) {
+                itemCache.put(name, new ItemStack(tag.getCompoundTag("item")));
+            } else {
+                itemCache.put(name, ItemStack.EMPTY);
+            }
         }
-        return ItemStack.EMPTY;
+        return itemCache.get(name);
     }
 
     @Override
     public ICapabilityProvider createProvider(ItemStack itemStack) {
         HardwareProvider provider = new HardwareProvider();
         provider.providers = new LinkedHashMap<>();
+        provider.itemCache = new HashMap<>();
         provider.itemStack = itemStack;
         for (Hardware hardware : TerminalRegistry.getAllHardware()) {
             Hardware instance = hardware.createHardware(itemStack);

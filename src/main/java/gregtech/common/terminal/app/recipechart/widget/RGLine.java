@@ -189,16 +189,14 @@ public class RGLine extends WidgetGroup {
 
     @Override
     public void drawInBackground(int mouseX, int mouseY, float partialTicks, IRenderContext context) {
-        if (parent.isVisible() || child.isVisible()) {
-            if (isSelected) {
-                drawSolidRect(getPosition().x, getPosition().y, getSize().width, getSize().height, 0x2fffffff);
-                drawLines(points, 0x2fff0000, 0xffff0000, 2);
-            } else {
-                drawLines(points, 0x2fffff00, 0xff00ff00, 2);
-            }
-            Vec2f point = points.get(points.size() - 1);
-            drawSolidRect((int)(point.x - 1.5), (int)(point.y - 1.5), 3, 3, 0XFF00FF00);
+        if (isSelected) {
+            drawSolidRect(getPosition().x, getPosition().y, getSize().width, getSize().height, 0x2fffffff);
+            drawLines(points, 0x2fff0000, 0xffff0000, 2);
+        } else {
+            drawLines(points, 0x2fffff00, 0xff00ff00, 2);
         }
+        Vec2f point = points.get(points.size() - 1);
+        drawSolidRect((int)(point.x - 1.5), (int)(point.y - 1.5), 3, 3, 0XFF00FF00);
         super.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
 

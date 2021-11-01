@@ -4001,12 +4001,12 @@ terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
 terminal.os.hw_demand=Missing mounting hardware:
 
 terminal.system_call.null=NULL
-terminal.system_call.call_menu=Call menu
-terminal.system_call.full_screen=Full screen
-terminal.system_call.minimize_focus_app=Back to desktop
-terminal.system_call.close_focus_app=Close app
+terminal.system_call.call_menu=Call Menu
+terminal.system_call.full_screen=Full Screen
+terminal.system_call.minimize_focus_app=Back to Desktop
+terminal.system_call.close_focus_app=Close App
 terminal.system_call.shutdown=Shutdown
-terminal.system_call.open_app=Open app
+terminal.system_call.open_app=Open App
 
 terminal.menu.close=Close
 terminal.menu.minimize=Minimize
@@ -4065,6 +4065,7 @@ terminal.recipe_chart.delete=Delete Page
 terminal.recipe_chart.add_slot=Add Root Slot
 terminal.recipe_chart.demand=Demand
 terminal.recipe_chart.calculator=Calculator
+terminal.recipe_chart.add=Set the item from inventory
 terminal.recipe_chart.drag=Drag ingredients here.
 terminal.recipe_chart.visible=Visible
 terminal.recipe_chart.jei=JEI Focus
@@ -4075,7 +4076,7 @@ terminal.recipe_chart.tier.1=cache of 6 pages
 terminal.recipe_chart.tier.2=cache of 7 pages
 terminal.recipe_chart.tier.3=cache of 8 pages
 
-terminal.prospector.vis_mode=dark mode
+terminal.prospector.vis_mode=switching color mode
 terminal.prospector.list=All Resources
 terminal.prospector.ore=Ore statistics
 terminal.prospector.fluid=Fluid statistics
@@ -4110,6 +4111,7 @@ terminal.hardware.remove.full=There are no empty slots in inventory
 terminal.hardware.tip.remove=§4right-click remove the hardware
 
 terminal.battery.description=Battery manager, visually analyzing your app's energy consumption.
+terminal.battery.hover=%s: Usage %d eu/s
 
 terminal.store.description=App store, check out what you got? Install and upgrade the app.
 terminal.store.match=Detect that inventory meets demand, whether to (install)upgrade?

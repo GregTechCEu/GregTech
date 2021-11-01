@@ -55,7 +55,10 @@ public class OsSettings extends AbstractWidgetGroup {
         this.os = os;
         this.addWidget(new LabelWidget(25, 15, "terminal.settings.os.double_check", -1).setYCentered(true));
         this.addWidget(new RectButtonWidget(10, 10, 10, 10, 2)
-                .setToggleButton(new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor()), (c, p)->DOUBLE_CHECK=!p)
+                .setToggleButton(new ColorRectTexture(TerminalTheme.COLOR_B_2.getColor()), (c, p)->{
+                    DOUBLE_CHECK=!p;
+                    saveConfig();
+                })
                 .setValueSupplier(true, ()->!DOUBLE_CHECK)
                 .setColors(TerminalTheme.COLOR_B_3.getColor(),
                         TerminalTheme.COLOR_1.getColor(),

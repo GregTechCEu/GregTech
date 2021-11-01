@@ -92,6 +92,14 @@ public class TerminalDesktopWidget extends WidgetGroup {
         appDiv.setVisible(false);
     }
 
+    public void removeAllDialogs() {
+        for (Widget widget : widgets) {
+            if (widget instanceof TerminalDialogWidget) {
+                ((TerminalDialogWidget) widget).close();
+            }
+        }
+    }
+
     @Override
     public void setSize(Size size) {
         super.setSize(size);

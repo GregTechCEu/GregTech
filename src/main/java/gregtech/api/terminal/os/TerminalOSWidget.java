@@ -20,6 +20,7 @@ import gregtech.common.items.behaviors.TerminalBehaviour;
 import gregtech.common.terminal.app.settings.widgets.OsSettings;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
@@ -52,6 +53,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public final ItemStack itemStack;
     public final HardwareProvider hardwareProvider;
     private int tickCounter;
+    private long lastCharge;
     private boolean maximize;
 
     public TerminalOSWidget(int xPosition, int yPosition, ItemStack itemStack) {
@@ -120,6 +122,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public void openApplication(AbstractApplication application, boolean isClient) {
+        desktop.removeAllDialogs();
         NBTTagCompound nbt = tabletNBT.getCompoundTag(application.getRegistryName());
         if (!TerminalBehaviour.isCreative(itemStack)) {
             List<Hardware> hwDemand = TerminalRegistry.getAppHardwareDemand(application.getRegistryName(), Math.min(nbt.getInteger("_tier"), application.getMaxTier()));
@@ -132,6 +135,8 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                         String name = match.getLocalizedName();
                         if (info == null) {
                             tooltips.append(name);
+                        } else if (match instanceof BatteryHardware) {
+                            tooltips.append(String.format("%s (%s+)", name, info));
                         } else {
                             tooltips.append(String.format("%s (%s)", name, info));
                         }
@@ -181,6 +186,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public void minimizeApplication(AbstractApplication application, boolean isClient) {
+        desktop.removeAllDialogs();
         if (application != null ) {
             if (focusApp == application) {
                 if (isClient) {
@@ -200,6 +206,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public void closeApplication(AbstractApplication application, boolean isClient) {
+        desktop.removeAllDialogs();
         if (application != null) {
             String appName = application.getRegistryName();
             NBTTagCompound synced = application.closeApp();
@@ -346,11 +353,15 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         super.detectAndSendChanges();
         tickCounter++;
         if (tickCounter % 20 == 0) {
-            disCharge();
+            long energyStore = disCharge();
+            if (lastCharge != energyStore) {
+                lastCharge = energyStore;
+                writeUpdateInfo(-1, packetBuffer -> packetBuffer.writeLong(lastCharge));
+            }
         }
     }
 
-    private void disCharge() {
+    private long disCharge() {
         IElectricItem electricItem = hardwareProvider.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null && !TerminalBehaviour.isCreative(itemStack)) {
             AtomicLong costs = new AtomicLong(0);
@@ -371,12 +382,11 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             if (costs.get() > 0 && electricItem.discharge(costs.get(), 999, true, false, false) != costs.get()) {
                 charged.forEach(app->closeApplication(app, false));
             } else if (costs.get() < 0) {
-                costs.set(electricItem.charge(-costs.get(), 999, true, false));
+                electricItem.charge(-costs.get(), 999, true, false);
             }
-            if (costs.get() != 0) {
-                writeUpdateInfo(-1, buf->buf.writeLong(electricItem.getCharge()));
-            }
+            return electricItem.getCharge();
         }
+        return lastCharge;
     }
 
     @Override
@@ -408,14 +418,14 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     boolean waitShutdown;
     @Override
     public boolean keyTyped(char charTyped, int keyCode) {
-        if (waitShutdown) {
+        if (waitShutdown && (keyCode == 1 || Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode))) {
             shutdown(true);
             return true;
         }
         if (super.keyTyped(charTyped, keyCode)) {
             return true;
         }
-        if (keyCode == 1) { // hook esc
+        if (keyCode == 1 || Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode)) { // hook esc and e
             waitShutdown = true;
             if (!OsSettings.DOUBLE_CHECK) {
                 shutdown(true);

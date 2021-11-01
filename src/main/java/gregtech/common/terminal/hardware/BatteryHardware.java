@@ -3,6 +3,7 @@ package gregtech.common.terminal.hardware;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.terminal.hardware.Hardware;
@@ -158,6 +159,15 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability) {
         return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM ? GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM.cast(this) : null;
+    }
+
+    @Override
+    public ItemStack onHardwareRemoved(ItemStack itemStack) {
+        IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (item instanceof ElectricItem) {
+            ((ElectricItem) item).setCharge(getCharge());
+        }
+        return itemStack;
     }
 
     public static class BatteryDemand extends BatteryHardware {

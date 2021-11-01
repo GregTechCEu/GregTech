@@ -5,8 +5,10 @@ import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.ingredient.IGhostIngredientTarget;
 import gregtech.api.gui.ingredient.IIngredientSlot;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
+import gregtech.common.ConfigHolder;
 import mezz.jei.api.gui.IGhostIngredientHandler.Target;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
@@ -147,7 +149,10 @@ public class AbstractWidgetGroup extends Widget implements IGhostIngredientTarge
 
     protected void removeWidget(Widget widget) {
         if (!widgets.contains(widget)) {
-            throw new IllegalArgumentException("Not added");
+            if (ConfigHolder.debug) {
+                GTLog.logger.warn("widget not added");
+            }
+            return;
         }
         this.widgets.remove(widget);
         widget.setUiAccess(null);

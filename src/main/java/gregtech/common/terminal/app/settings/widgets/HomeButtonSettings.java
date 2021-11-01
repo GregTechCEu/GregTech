@@ -1,6 +1,7 @@
 package gregtech.common.terminal.app.settings.widgets;
 
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
@@ -95,5 +96,17 @@ public class HomeButtonSettings extends AbstractWidgetGroup {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean mouseClicked(int mouseX, int mouseY, int button) {
+        for (int i = widgets.size() - 1; i >= 0; i--) {
+            Widget widget = widgets.get(i);
+            if(widget.isVisible() && widget.isActive() && widget.mouseClicked(mouseX, mouseY, button)) {
+                mouseX = -10000;
+                mouseY = -10000;
+            }
+        }
+        return mouseX == -10000;
     }
 }

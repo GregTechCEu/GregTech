@@ -40,6 +40,7 @@ public class HardwareSlotWidget extends WidgetGroup {
                             if (tag != null) {
                                 tag.setTag("item", itemStack.serializeNBT());
                                 os.hardwareProvider.getOrCreateHardwareCompound().setTag(hardware.getRegistryName(), tag);
+                                os.hardwareProvider.cleanCache(hardware.getRegistryName());
                             }
                         }).open();
             }
@@ -57,9 +58,10 @@ public class HardwareSlotWidget extends WidgetGroup {
                         if (result) {
                             NBTTagCompound tag = os.hardwareProvider.getOrCreateHardwareCompound().getCompoundTag(hardware.getRegistryName());
                             if (!tag.isEmpty() && tag.hasKey("item")) {
-                                gui.entityPlayer.inventory.addItemStackToInventory(new ItemStack(tag.getCompoundTag("item")));
+                                gui.entityPlayer.inventory.addItemStackToInventory(hardware.onHardwareRemoved(new ItemStack(tag.getCompoundTag("item"))));
                             }
                             os.hardwareProvider.getOrCreateHardwareCompound().removeTag(hardware.getRegistryName());
+                            os.hardwareProvider.cleanCache(hardware.getRegistryName());
                         }
                     }).open();
                 } else {

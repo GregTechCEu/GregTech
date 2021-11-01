@@ -142,6 +142,10 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         GlStateManager.enableBlend();
     }
 
+    public ItemStack getDraggedStack() {
+        return this.draggedStack;
+    }
+
     private void renderItemStackOnMouse(int mouseX, int mouseY) {
         InventoryPlayer inventory = this.mc.player.inventory;
         ItemStack itemStack = this.draggedStack.isEmpty() ? inventory.getItemStack() : this.draggedStack;

@@ -14,7 +14,6 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.terminal.os.menu.IMenuComponent;
-import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.component.ClickComponent;
@@ -74,7 +73,7 @@ public class AppStoreApp extends AbstractApplication {
         int y = getPosition().y;
         int width = getSize().width;
         int height = getSize().height;
-        drawSolidRect(x, y, width, height, darkMode ? TerminalTheme.COLOR_B_2.getColor() : -1);
+        drawSolidRect(x, y, width, height, darkMode ? TerminalTheme.COLOR_B_2.getColor() : 0x9fffffff);
         super.hookDrawInBackground(mouseX, mouseY, partialTicks, context);
     }
 
