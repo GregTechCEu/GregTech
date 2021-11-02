@@ -451,8 +451,19 @@ public class RGNode extends WidgetGroup implements IDraggable {
         }
         NBTTagList itemsList = nodeTag.getTagList("items", Constants.NBT.TAG_COMPOUND);
         NBTTagList fluidsList = nodeTag.getTagList("fluids", Constants.NBT.TAG_COMPOUND);
-        node.setRecipe(itemsList.tagList.stream().map(it->new ItemStack((NBTTagCompound) it)).collect(Collectors.toList()),
-                fluidsList.tagList.stream().map(it->FluidStack.loadFluidStackFromNBT((NBTTagCompound) it)).collect(Collectors.toList()),
+        List<ItemStack> itemInputs = new LinkedList<>();
+        itemsList.forEach(base->{
+            if (base instanceof NBTTagCompound) {
+                itemInputs.add(new ItemStack((NBTTagCompound) base));
+            }
+        });
+        List<FluidStack> fluidsInputs = new LinkedList<>();
+        fluidsList.forEach(base->{
+            if (base instanceof NBTTagCompound) {
+                fluidsInputs.add(FluidStack.loadFluidStackFromNBT((NBTTagCompound) base));
+            }
+        });
+        node.setRecipe(itemInputs, fluidsInputs,
                 nodeTag.hasKey("catalyst") ? new ItemStack(nodeTag.getCompoundTag("catalyst")) : null,
                 nodeTag.getInteger("per"));
         boolean visible = nodeTag.getBoolean("visible");

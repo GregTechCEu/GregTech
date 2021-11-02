@@ -234,7 +234,9 @@ public class TerminalRegistry {
 
         public AppRegistryBuilder hardware(int tier, Hardware... hardware) {
             if (tier < this.hardware.length) {
-                this.hardware[tier] = ImmutableList.builder();
+                if (this.hardware[tier] == null) {
+                    this.hardware[tier] = ImmutableList.builder();
+                }
                 this.hardware[tier].add(hardware);
             }
             return this;
@@ -250,7 +252,9 @@ public class TerminalRegistry {
 
         public AppRegistryBuilder upgrade(int tier, ItemStack... upgrade) {
             if (tier < this.upgrade.length) {
-                this.upgrade[tier] = ImmutableList.builder();
+                if (this.upgrade[tier] == null) {
+                    this.upgrade[tier] = ImmutableList.builder();
+                }
                 this.upgrade[tier].add(upgrade);
             }
             return this;

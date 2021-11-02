@@ -44,6 +44,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     private IGuiTexture background;
     private boolean isClient;
     private List<Widget> iNativeWidgets;
+    boolean isClosed;
 
     public TerminalDialogWidget(TerminalOSWidget os, int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -66,6 +67,8 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     }
 
     public void close() {
+        if (isClosed) return;
+        isClosed = true;
         os.closeDialog(this);
         if (isRemote()) {
             os.desktop.removeTopWidget(this);

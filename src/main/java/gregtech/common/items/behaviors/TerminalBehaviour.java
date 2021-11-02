@@ -1,19 +1,24 @@
 package gregtech.common.items.behaviors;
 
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.IElectricItem;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.items.metaitem.stats.ISubItemHandler;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.TerminalOSWidget;
+import gregtech.common.terminal.hardware.BatteryHardware;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -47,6 +52,36 @@ public class TerminalBehaviour implements IItemBehaviour, ItemUIFactory, ISubIte
             holder.openUI();
         }
         return ActionResult.newResult(EnumActionResult.SUCCESS, itemStack);
+    }
+
+    @Override
+    public void onUpdate(ItemStack itemStack, Entity entity) {
+        NBTTagCompound tabletNBT = itemStack.getOrCreateSubCompound("terminal");
+        if (tabletNBT.hasKey("_ar")) {
+            String appName = tabletNBT.getString("_ar");
+            int tier = TerminalRegistry.getApplication(appName).getMaxTier();
+            if (!TerminalBehaviour.isCreative(itemStack)) {
+                tier = Math.min(tabletNBT.getCompoundTag(appName).getInteger("_tier"), tier);
+            }
+            long cost = 0;
+            for (Hardware hardware : TerminalRegistry.getAppHardwareDemand(appName, tier)) {
+                if (hardware instanceof BatteryHardware) {
+                    cost = ((BatteryHardware) hardware).getCharge();
+                    break;
+                }
+            }
+            if (cost > 0) {
+                IElectricItem electricItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                if (electricItem != null) {
+                    long back = electricItem.discharge(cost, 999, true, false, false);
+                    if (back != cost) {
+                        tabletNBT.removeTag("_ar");
+                    }
+                } else {
+                    tabletNBT.removeTag("_ar");
+                }
+            }
+        }
     }
 
     @Override
