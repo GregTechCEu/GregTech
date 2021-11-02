@@ -587,7 +587,7 @@ public class MetaItem1 extends StandardMetaItem {
         ENERGY_LAPOTRONIC_MODULE = addItem(750, "energy.module").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(10000000000L, GTValues.ZPM)}).setUnificationData(OrePrefix.battery, Tier.Ultimate).setModelAmount(8);
         ENERGY_LAPOTRONIC_CLUSTER = addItem(751, "energy.cluster").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(100000000000L, GTValues.UV)}).setUnificationData(OrePrefix.battery, Tier.Super).setModelAmount(8);
 
-        ZERO_POINT_MODULE = addItem(752, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, false)).setModelAmount(8);
+        ZERO_POINT_MODULE = addItem(752, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, true)).setModelAmount(8);
         ULTIMATE_BATTERY = addItem(753, "max.battery").addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.MAX)).setUnificationData(OrePrefix.battery, Tier.Maximum).setModelAmount(8);
 
         IMPELLER_MV = addItem(776, "impeller.mv").setRarity(EnumRarity.UNCOMMON);

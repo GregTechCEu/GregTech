@@ -322,7 +322,6 @@ metaitem.energy.lapotronicorb.tooltip=Reusable Battery
 metaitem.energy.lapotronicorb2.name=Lapotronic Energy Orb Cluster
 metaitem.energy.lapotronicorb2.tooltip=Reusable Battery
 metaitem.zpm.name=Zero Point Module
-metaitem.zpm.tooltip=Single Use Battery
 metaitem.energy.module.name=Energy Module
 metaitem.energy.module.tooltip=Reusable Battery
 metaitem.energy.cluster.name=Energy Cluster
