@@ -73,6 +73,7 @@ public class MachineRecipeLoader {
         registerFluidRecipes();
         registerMixingCrystallizationRecipes();
         registerPrimitiveBlastFurnaceRecipes();
+        registerSteamBlastFurnaceRecipes();
         registerRecyclingRecipes();
         registerStoneBricksRecipes();
         registerOrganicRecyclingRecipes();
@@ -199,6 +200,24 @@ public class MachineRecipeLoader {
     }
 
     // todo this should be done better but will work for now
+    private static void registerSteamBlastFurnaceRecipes() {
+        STEAM_BLAST_FURNACE_RECIPES.recipeBuilder()
+                .input(ingot, Iron)
+                .output(ingot, Steel)
+                .duration(750).EUt(16).buildAndRegister();
+        STEAM_BLAST_FURNACE_RECIPES.recipeBuilder()
+                .input(ingot, WroughtIron)
+                .output(ingot, Steel)
+                .duration(300).EUt(16).buildAndRegister();
+        STEAM_BLAST_FURNACE_RECIPES.recipeBuilder()
+                .input(block, Iron)
+                .output(block, Steel)
+                .duration(6750).EUt(16).buildAndRegister();
+        STEAM_BLAST_FURNACE_RECIPES.recipeBuilder()
+                .input(block, WroughtIron)
+                .output(block, Steel)
+                .duration(2800).EUt(16).buildAndRegister();
+    }
     private static void registerPrimitiveBlastFurnaceRecipes() {
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(gem, Coal, 2).output(ingot, Steel).duration(1500).buildAndRegister();
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder().input(ingot, Iron).input(dust, Coal, 2).output(ingot, Steel).duration(1500).buildAndRegister();

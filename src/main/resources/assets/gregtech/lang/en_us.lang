@@ -9,6 +9,9 @@ death.attack.heat.player=%s was boiled alive by %s.
 
 enchantment.disjunction=Disjunction
 
+gregtech.machine.steam_blast_furnace.name=Steam Blast Furnace
+gregtech.machine.steam_blast_furnace.tooltip=Processes up to 4 Iron per craft. Requires §eSteam Hatches and Buses
+gregtech.multiblock.steam_blast_furnace.description=A upgrade to the Primitive Blast Furnace. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
 gregtech.machine.steam_grinder.name=Steam Grinder
 gregtech.machine.steam_grinder.tooltip=Macerates up to 8 items per craft. Takes 1.5x base duration to process, not affected by number of items. Requires §eSteam Hatches and Buses
 gregtech.multiblock.steam_grinder.description=A Multiblock Macerator at the Steam Age. Requires at least 14 Bronze Casings to form. Cannot use normal Input/Output busses, nor Fluid Hatches other than the Steam Hatch.
@@ -2033,6 +2036,7 @@ recipemap.materialtree.name=Material Tree
 recipemap.gas_collector.name=Gas Collector
 recipemap.rock_breaker.name=Rock Breaker
 recipemap.primitive_blast_furnace.name=Primitive Blast Furnace
+recipemap.steam_blast_furnace.name=Steam Blast Furnace
 recipemap.coke_oven.name=Coke Oven
 
 behaviour.hoe=Can till dirt

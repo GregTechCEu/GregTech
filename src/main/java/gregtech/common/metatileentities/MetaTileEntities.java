@@ -21,6 +21,7 @@ import gregtech.common.metatileentities.multi.electric.*;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeCombustionEngine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine;
 import gregtech.common.metatileentities.multi.electric.generator.MetaTileEntityLargeTurbine.TurbineType;
+import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamBlastFurnace;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamGrinder;
 import gregtech.common.metatileentities.multi.steam.MetaTileEntitySteamOven;
 import gregtech.common.metatileentities.steam.*;
@@ -169,6 +170,7 @@ public class MetaTileEntities {
 
     public static MetaTileEntitySteamOven STEAM_OVEN;
     public static MetaTileEntitySteamGrinder STEAM_GRINDER;
+    public static MetaTileEntitySteamBlastFurnace STEAM_BLAST_FURNACE;
 
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
@@ -474,6 +476,7 @@ public class MetaTileEntities {
 
         STEAM_OVEN = registerMetaTileEntity(1023, new MetaTileEntitySteamOven(gregtechId("steam_oven")));
         STEAM_GRINDER = registerMetaTileEntity(1024, new MetaTileEntitySteamGrinder(gregtechId("steam_grinder")));
+        STEAM_BLAST_FURNACE = registerMetaTileEntity(1025, new MetaTileEntitySteamBlastFurnace(gregtechId("steam_blast_furnace")));
 
         // MISC MTE's START: IDs 1150-2000
 
