@@ -4008,9 +4008,9 @@ terminal.system_call.close_focus_app=Close App
 terminal.system_call.shutdown=Shutdown
 terminal.system_call.open_app=Open App
 
-terminal.menu.close=Close
-terminal.menu.minimize=Minimize
-terminal.menu.maximize=Maximize
+terminal.menu.close=Close App
+terminal.menu.minimize=Minimize App
+terminal.menu.maximize=Full Screen/Recover
 
 terminal.component.new_page=New Page
 terminal.component.page_name=Page Name

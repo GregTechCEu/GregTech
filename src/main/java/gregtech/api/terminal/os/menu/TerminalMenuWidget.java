@@ -40,19 +40,19 @@ public class TerminalMenuWidget extends WidgetGroup {
         this.os = os;
         components = new ArrayList<>();
         this.addWidget(new CircleButtonWidget(5, 10, 4, 1, 0)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                .setColors(0,
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_3.getColor())
                 .setHoverText("terminal.menu.close")
                 .setClickListener(this::close));
         this.addWidget(new CircleButtonWidget(15, 10, 4, 1, 0)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                .setColors(0,
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_2.getColor())
                 .setHoverText("terminal.menu.minimize")
                 .setClickListener(this::minimize));
         this.addWidget(new CircleButtonWidget(25, 10, 4, 1, 0)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                .setColors(0,
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_1.getColor())
                 .setHoverText("terminal.menu.maximize")
