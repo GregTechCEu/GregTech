@@ -74,11 +74,10 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
     public ValidationResult<Recipe> build() {
 
         //Adjust the explosive type and the explosive amount. This is done here because it was null otherwise, for some reason
-        int amount = Math.max(1, explosivesAmount / 2);
         if (explosivesType == null) {
-            this.explosivesType = new ItemStack(Blocks.TNT, amount);
+            this.explosivesType = new ItemStack(Blocks.TNT, explosivesAmount);
         } else {
-            this.explosivesType = new ItemStack(explosivesType.getItem(), amount, explosivesType.getMetadata());
+            this.explosivesType = new ItemStack(explosivesType.getItem(), explosivesAmount, explosivesType.getMetadata());
         }
         inputs.add(CountableIngredient.from(explosivesType));
 

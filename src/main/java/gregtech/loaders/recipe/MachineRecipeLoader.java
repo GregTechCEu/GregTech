@@ -390,7 +390,7 @@ public class MachineRecipeLoader {
         COMPRESSOR_RECIPES.recipeBuilder().inputs(MetaItems.INGOT_MIXED_METAL.getStackForm()).outputs(MetaItems.ADVANCED_ALLOY_PLATE.getStackForm()).duration(300).EUt(2).buildAndRegister();
         BENDER_RECIPES.recipeBuilder().inputs(MetaItems.INGOT_MIXED_METAL.getStackForm()).circuitMeta(1).outputs(MetaItems.ADVANCED_ALLOY_PLATE.getStackForm()).duration(100).EUt(8).buildAndRegister();
         FORMING_PRESS_RECIPES.recipeBuilder().inputs(ADVANCED_ALLOY_PLATE.getStackForm(4)).input(OrePrefix.plate, Materials.Diamond).input(OrePrefix.plate, Materials.Iridium, 4).outputs(MetaItems.INGOT_IRIDIUM_ALLOY.getStackForm()).duration(100).EUt(256).buildAndRegister();
-        IMPLOSION_RECIPES.recipeBuilder().inputs(MetaItems.INGOT_IRIDIUM_ALLOY.getStackForm()).outputs(MetaItems.PLATE_IRIDIUM_ALLOY.getStackForm()).output(OrePrefix.dustTiny, Materials.DarkAsh, 4).explosivesAmount(8).buildAndRegister();
+        IMPLOSION_RECIPES.recipeBuilder().inputs(MetaItems.INGOT_IRIDIUM_ALLOY.getStackForm()).outputs(MetaItems.PLATE_IRIDIUM_ALLOY.getStackForm()).output(OrePrefix.dustTiny, Materials.DarkAsh, 4).explosivesAmount(4).buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder().inputs(MetaItems.CARBON_FIBERS.getStackForm(2)).outputs(MetaItems.CARBON_MESH.getStackForm()).buildAndRegister();
         COMPRESSOR_RECIPES.recipeBuilder().inputs(MetaItems.CARBON_MESH.getStackForm()).outputs(MetaItems.CARBON_PLATE.getStackForm()).buildAndRegister();
 
