@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ItemNetWalker extends PipeNetWalker {
 
-    public static List<ItemPipeNet.Inventory> createNetData(World world, BlockPos sourcePipe) {
+    public static List<ItemPipeNet.Inventory> createNetData(World world, BlockPos sourcePipe, EnumFacing faceToSourceHandler) {
         ItemNetWalker walker = new ItemNetWalker(world, sourcePipe, 1, new ArrayList<>(), null);
         walker.sourcePipe = sourcePipe;
         walker.facingToHandler = faceToSourceHandler;
