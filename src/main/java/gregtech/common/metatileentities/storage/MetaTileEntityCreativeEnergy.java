@@ -102,7 +102,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     @Override
     public void update() {
         super.update();
-        if (!active || voltage <= 0 || amps <= 0) return;
+        if (getWorld().isRemote || !active || voltage <= 0 || amps <= 0) return;
         int ampsUsed = 0;
         for (EnumFacing facing : EnumFacing.values()) {
             EnumFacing opposite = facing.getOpposite();
