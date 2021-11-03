@@ -19,7 +19,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTFluidUtils;
-import gregtech.api.util.GTLog;
 import gregtech.common.covers.filter.FluidFilterContainer;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
 import net.minecraft.block.Block;
@@ -92,17 +91,7 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         return pumpMode;
     }
 
-    public DistributionMode getDistributionMode() {
-        return distributionMode;
-    }
-
-    public void setDistributionMode(DistributionMode distributionMode) {
-        this.distributionMode = distributionMode;
-        coverHolder.markDirty();
-    }
-
     public void setBucketMode(BucketMode bucketMode) {
-        GTLog.logger.info("set bucket mode {}", bucketMode.name());
         this.bucketMode = bucketMode;
         if (this.bucketMode == BucketMode.BUCKET)
             setTransferRate(transferRate / 1000 * 1000);
@@ -217,15 +206,6 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
                 .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
         primaryGroup.addWidget(new ToggleButtonWidget(130, 160, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
-
-        TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
-        TileEntity otherTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
-        if (!(this instanceof CoverFluidRegulator) && coverTile instanceof TileEntityFluidPipe ^ otherTile instanceof TileEntityFluidPipe) {
-            primaryGroup.addWidget(new ToggleButtonWidget(149, 160, 20, 20, GuiTextures.DISTRIBUTION_MODE,
-                    () -> distributionMode == DistributionMode.INSERT_FIRST,
-                    val -> distributionMode = val ? DistributionMode.INSERT_FIRST : DistributionMode.ROUND_ROBIN_PRIO)
-                    .setTooltipText("cover.conveyor.distribution"));
-        }
 
         this.fluidFilter.initUI(88, primaryGroup::addWidget);
 

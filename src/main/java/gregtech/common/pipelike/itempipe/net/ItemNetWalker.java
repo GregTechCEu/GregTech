@@ -19,8 +19,8 @@ import java.util.List;
 
 public class ItemNetWalker extends PipeNetWalker {
 
-    public static List<ItemPipeNet.Inventory> createNetData(ItemPipeNet net, World world, BlockPos sourcePipe, EnumFacing faceToSourceHandler) {
-        ItemNetWalker walker = new ItemNetWalker(net, world, sourcePipe, 1, new ArrayList<>(), null);
+    public static List<ItemPipeNet.Inventory> createNetData(World world, BlockPos sourcePipe) {
+        ItemNetWalker walker = new ItemNetWalker(world, sourcePipe, 1, new ArrayList<>(), null);
         walker.sourcePipe = sourcePipe;
         walker.facingToHandler = faceToSourceHandler;
         walker.traversePipeNet();
@@ -32,15 +32,15 @@ public class ItemNetWalker extends PipeNetWalker {
     private BlockPos sourcePipe;
     private EnumFacing facingToHandler;
 
-    protected ItemNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int distance, List<ItemPipeNet.Inventory> inventories, ItemPipeProperties properties) {
-        super(net, world, sourcePipe, distance);
+    protected ItemNetWalker(World world, BlockPos sourcePipe, int distance, List<ItemPipeNet.Inventory> inventories, ItemPipeProperties properties) {
+        super(world, sourcePipe, distance);
         this.inventories = inventories;
         this.minProperties = properties;
     }
 
     @Override
-    protected PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks) {
-        ItemNetWalker walker = new ItemNetWalker(net, world, nextPos, walkedBlocks, inventories, minProperties);
+    protected PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks) {
+        ItemNetWalker walker = new ItemNetWalker(world, nextPos, walkedBlocks, inventories, minProperties);
         walker.facingToHandler = facingToHandler;
         walker.sourcePipe = sourcePipe;
         return walker;

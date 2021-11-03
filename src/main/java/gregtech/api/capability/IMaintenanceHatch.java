@@ -37,4 +37,6 @@ public interface IMaintenanceHatch {
     double getDurationMultiplier();
 
     double getTimeMultiplier();
+
+    boolean startWithoutProblems();
 }

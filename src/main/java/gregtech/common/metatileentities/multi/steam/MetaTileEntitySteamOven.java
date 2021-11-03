@@ -63,7 +63,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
                 .where('S', selfPredicate())
                 .where('L', statePredicate(getCasingState()))
                 .where('H', abilityPartPredicate(MultiblockAbility.STEAM))
-                .where('X', state -> statePredicate(GTUtility.getAllPropertyValues(getFireboxState(), BlockFireboxCasing.ACTIVE))
+                .where('X', state -> statePredicate(getFireboxState())
                         .or(abilityPartPredicate(MultiblockAbility.STEAM)).test(state))
                 .where('C', statePredicate(getCasingState()).or(abilityPartPredicate(
                         MultiblockAbility.STEAM_IMPORT_ITEMS, MultiblockAbility.STEAM_EXPORT_ITEMS)))

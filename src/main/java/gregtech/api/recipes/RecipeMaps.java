@@ -1,11 +1,14 @@
 package gregtech.api.recipes;
 
 import crafttweaker.annotations.ZenRegister;
+import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.machines.*;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenProperty;
 
@@ -64,8 +67,24 @@ public class RecipeMaps {
 
 
     @ZenProperty
-    public static final RecipeMap<ArcFurnaceRecipeBuilder> ARC_FURNACE_RECIPES = new RecipeMap<>("arc_furnace", 1, 1, 1, 4, 1, 1, 0, 1, new ArcFurnaceRecipeBuilder(), false)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, MoveType.HORIZONTAL);
+    public static final RecipeMap<SimpleRecipeBuilder> ARC_FURNACE_RECIPES = new RecipeMap<>("arc_furnace", 1, 1, 1, 4, 1, 1, 0, 1, new SimpleRecipeBuilder(), false)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARC_FURNACE, MoveType.HORIZONTAL)
+            .onRecipeBuild(recipeBuilder -> {
+                if (recipeBuilder.getFluidInputs().isEmpty()) {
+                    recipeBuilder.fluidInputs(Materials.Oxygen.getFluid(recipeBuilder.duration));
+                    for (Material material : new Material[]{Materials.Argon, Materials.Nitrogen}) {
+                        int plasmaAmount = (int) Math.max(1L, recipeBuilder.duration / (material.getAverageMass() * 16L));
+                        RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
+                                .inputsIngredients(recipeBuilder.getInputs())
+                                .outputs(recipeBuilder.getOutputs())
+                                .duration(Math.max(1, recipeBuilder.duration / 16))
+                                .EUt(recipeBuilder.EUt / 3)
+                                .fluidInputs(material.getPlasma(plasmaAmount))
+                                .fluidOutputs(material.getFluid(plasmaAmount))
+                                .buildAndRegister();
+                    }
+                }
+            });
 
     /**
      * Example:
@@ -417,14 +436,25 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<ChemicalReactorRecipeBuilder> CHEMICAL_RECIPES = new RecipeMap<>("chemical_reactor", 0, 2, 0, 2, 0, 3, 0, 2, new ChemicalReactorRecipeBuilder().EUt(30), false)
+    public static final RecipeMap<SimpleRecipeBuilder> CHEMICAL_RECIPES = new RecipeMap<>("chemical_reactor", 0, 2, 0, 2, 0, 3, 0, 2, new SimpleRecipeBuilder().EUt(30), false)
             .setSlotOverlay(false, false, false, GuiTextures.MOLECULAR_OVERLAY_1)
             .setSlotOverlay(false, false, true, GuiTextures.MOLECULAR_OVERLAY_2)
             .setSlotOverlay(false, true, false, GuiTextures.MOLECULAR_OVERLAY_3)
             .setSlotOverlay(false, true, true, GuiTextures.MOLECULAR_OVERLAY_4)
             .setSlotOverlay(true, false, GuiTextures.VIAL_OVERLAY_1)
             .setSlotOverlay(true, true, GuiTextures.VIAL_OVERLAY_2)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, MoveType.HORIZONTAL)
+            .onRecipeBuild(recipeBuilder -> {
+                RecipeMaps.LARGE_CHEMICAL_RECIPES.recipeBuilder()
+                        .inputs(recipeBuilder.getInputs().toArray(new CountableIngredient[0]))
+                        .fluidInputs(recipeBuilder.getFluidInputs())
+                        .outputs(recipeBuilder.getOutputs())
+                        .chancedOutputs(recipeBuilder.getChancedOutputs())
+                        .fluidOutputs(recipeBuilder.getFluidOutputs())
+                        .duration(recipeBuilder.duration)
+                        .EUt(recipeBuilder.EUt)
+                        .buildAndRegister();
+            });
 
     /**
      * Example:
@@ -597,11 +627,28 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<CutterRecipeBuilder> CUTTER_RECIPES = new RecipeMap<>("cutter", 1, 1, 1, 2, 0, 1, 0, 0, new CutterRecipeBuilder(), false)
+    public static final RecipeMap<SimpleRecipeBuilder> CUTTER_RECIPES = new RecipeMap<>("cutter", 1, 1, 1, 2, 0, 1, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.SAWBLADE_OVERLAY)
             .setSlotOverlay(true, false, false, GuiTextures.CUTTER_OVERLAY)
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_SLICE, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_SLICE, MoveType.HORIZONTAL)
+            .onRecipeBuild(recipeBuilder -> {
+                if (recipeBuilder.getFluidInputs().isEmpty()) {
+                    recipeBuilder.copy()
+                            .fluidInputs(Materials.Water.getFluid(Math.max(4, Math.min(1000, recipeBuilder.duration * recipeBuilder.EUt / 320))))
+                            .duration(recipeBuilder.duration * 2)
+                            .buildAndRegister();
+
+                    recipeBuilder.copy()
+                            .fluidInputs(Materials.DistilledWater.getFluid(Math.max(3, Math.min(750, recipeBuilder.duration * recipeBuilder.EUt / 426))))
+                            .duration((int) (recipeBuilder.duration * 1.5))
+                            .buildAndRegister();
+
+                    recipeBuilder.fluidInputs(Materials.Lubricant.getFluid(Math.max(1, Math.min(250, recipeBuilder.duration * recipeBuilder.EUt / 1280))))
+                            .duration(Math.max(1, recipeBuilder.duration))
+                            .buildAndRegister();
+                }
+            });
 
     /**
      * Example:
@@ -661,7 +708,17 @@ public class RecipeMaps {
     public static final RecipeMap<CircuitAssemblerRecipeBuilder> CIRCUIT_ASSEMBLER_RECIPES = new RecipeMap<>("circuit_assembler",
             1, 6, 1, 1, 0, 1, 0, 0, new CircuitAssemblerRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.CIRCUIT_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT_ASSEMBLER, ProgressWidget.MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_CIRCUIT_ASSEMBLER, ProgressWidget.MoveType.HORIZONTAL)
+            .onRecipeBuild(recipeBuilder -> {
+                if (recipeBuilder.getFluidInputs().isEmpty()) {
+                    recipeBuilder.copy()
+                            .fluidInputs(Materials.SolderingAlloy.getFluid(Math.max(1, (GTValues.L / 2) * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
+                            .buildAndRegister();
+
+                    recipeBuilder.fluidInputs(Materials.Tin.getFluid(Math.max(1, GTValues.L * ((CircuitAssemblerRecipeBuilder) recipeBuilder).getSolderMultiplier())))
+                            .buildAndRegister();
+                }
+            });
 
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> MASS_FABRICATOR_RECIPES = new RecipeMap<>("mass_fabricator", 0, 1, 0, 0, 0, 1, 1, 2, new SimpleRecipeBuilder(), false)

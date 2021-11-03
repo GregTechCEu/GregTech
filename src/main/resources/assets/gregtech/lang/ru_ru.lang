@@ -285,7 +285,6 @@ metaitem.energy.lapotronicorb.name=Лапотронная энергетичес
 metaitem.energy.lapotronicorb2.name=Кластер лапотронных энергетических сфер
 metaitem.zpm.name=Модуль нулевой точки
 # TODO
-metaitem.zpm.tooltip=Single Use Battery
 metaitem.zpm2.name=Предельная батарея
 metaitem.zpm2.tooltip=Заполни это, чтобы пройти Minecraft
 # TODO

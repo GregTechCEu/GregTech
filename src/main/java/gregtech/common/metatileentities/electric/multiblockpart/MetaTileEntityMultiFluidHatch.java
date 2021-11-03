@@ -5,7 +5,6 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.NotifiableFluidTank;
 import gregtech.api.capability.impl.NotifiableFluidTankFromList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -30,16 +29,14 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IFluidTank> {
+public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockNotifiablePart implements IMultiblockAbilityPart<IFluidTank> {
 
     private static final int TANK_SIZE = 16000;
 
     protected FluidTankList fluidTanks;
-    private final boolean isExportHatch;
 
     public MetaTileEntityMultiFluidHatch(ResourceLocation metaTileEntityId, int tier, boolean isExportHatch) {
-        super(metaTileEntityId, tier);
-        this.isExportHatch = isExportHatch;
+        super(metaTileEntityId, tier, isExportHatch);
         initializeInventory();
     }
 
@@ -128,25 +125,6 @@ public class MetaTileEntityMultiFluidHatch extends MetaTileEntityMultiblockPart 
     @Override
     public void registerAbilities(List<IFluidTank> abilityList) {
         abilityList.addAll(isExportHatch ? this.exportFluids.getFluidTanks() : this.importFluids.getFluidTanks());
-    }
-
-    @Override
-    public void setupNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
-        FluidTankList handlers;
-        if (isExportHatch) {
-            handlers = getExportFluids();
-        } else {
-            handlers = getImportFluids();
-        }
-        if (handlers != null) {
-            for (IFluidTank fluidTank : handlers) {
-                if (fluidTank instanceof NotifiableFluidTank) {
-                    NotifiableFluidTank handler = (NotifiableFluidTank) fluidTank;
-                    handler.setNotifiableMetaTileEntity(metaTileEntity);
-                    handler.addToNotifiedList(this, handler, isExportHatch);
-                }
-            }
-        }
     }
 
     @Override

@@ -19,6 +19,7 @@ import gregtech.api.util.NBTUtil;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.*;
+import gregtech.common.asm.hooks.BloomRenderLayerHooks;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.modelfactories.BlockCompressedFactory;
 import gregtech.common.blocks.modelfactories.BlockFrameFactory;
@@ -49,12 +50,13 @@ import static gregtech.api.GregTechAPI.*;
 @Mod(modid = GTValues.MODID,
         name = "GregTech",
         acceptedMinecraftVersions = "[1.12,1.13)",
-        dependencies = "required:forge@[14.23.5.2847,);" + CodeChickenLib.MOD_VERSION_DEP + "after:forestry;after:jei@[4.15.0,);after:crafttweaker;")
+        dependencies = "required:forge@[14.23.5.2847,);" + CodeChickenLib.MOD_VERSION_DEP + "after:forestry;after:jei@[4.15.0,);after:crafttweaker;before:ctm")
 public class GregTechMod {
 
     static {
         FluidRegistry.enableUniversalBucket();
         if (FMLCommonHandler.instance().getSide().isClient()) {
+            BloomRenderLayerHooks.init();
             ResourcePackHook.init();
             BlockOreFactory.init();
             BlockCompressedFactory.init();

@@ -25,6 +25,7 @@ import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
+import gregtech.common.asm.hooks.BloomRenderLayerHooks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -198,7 +199,7 @@ public abstract class MetaTileEntity implements ICoverable {
 
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(BlockRenderLayer renderLayer) {
-        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED;
+        return renderLayer == BlockRenderLayer.CUTOUT_MIPPED || renderLayer == BloomRenderLayerHooks.BLOOM;
     }
 
     @SideOnly(Side.CLIENT)

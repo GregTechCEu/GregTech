@@ -6,6 +6,8 @@ import codechicken.lib.util.ResourceUtils;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.GTValues;
+import gregtech.api.model.customtexture.CustomTextureModelHandler;
+import gregtech.api.model.customtexture.MetadataSectionCTM;
 import gregtech.api.render.MetaTileEntityRenderer;
 import gregtech.api.render.ToolRenderHandler;
 import gregtech.api.render.shader.Shaders;
@@ -32,6 +34,7 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerPlayer;
@@ -106,6 +109,13 @@ public class ClientProxy extends CommonProxy {
 
     public void onPreLoad() {
         super.onPreLoad();
+
+        if (!GTValues.isModLoaded(GTValues.MODID_CTM)) {
+            Minecraft.getMinecraft().metadataSerializer.registerMetadataSectionType(new MetadataSectionCTM.Serializer(), MetadataSectionCTM.class);
+            MinecraftForge.EVENT_BUS.register(CustomTextureModelHandler.INSTANCE);
+            ((SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(CustomTextureModelHandler.INSTANCE);
+        }
+
         KeyBinds.initBinds();
         MetaTileEntityRenderer.preInit();
         CableRenderer.preInit();

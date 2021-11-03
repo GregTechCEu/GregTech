@@ -11,8 +11,9 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
-import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.render.Textures;
+import gregtech.common.ConfigHolder;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,38 +28,47 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.function.Supplier;
 
 import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 import static gregtech.api.capability.GregtechDataCodes.SYNC_TILE_MODE;
 
 public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity implements IControllable {
 
-    private static Class<?> clazz;
+    private static Class<?> cofhTileClass;
 
-    static {
-        try {
-            clazz = Class.forName("cofh.core.block.TileCore");
-        } catch (Exception ignored) {}
+    private static boolean considerTile(TileEntity tile) {
+        if (!ConfigHolder.U.GT5u.accelerateGTMachines && tile instanceof MetaTileEntityHolder) {
+            return false;
+        }
+        if (cofhTileClass == null) {
+            try {
+                cofhTileClass = Class.forName("cofh.thermalexpansion.block.device.TileDeviceBase");
+            } catch (Exception ignored) {}
+        }
+        return cofhTileClass == null || !cofhTileClass.isInstance(tile);
     }
 
     private final long energyPerTick;
+    private final int speed;
+
     private boolean tileMode = false;
     private boolean isActive = false;
     private boolean isPaused = false;
     private int lastTick;
+    private Supplier<Iterable<BlockPos.MutableBlockPos>> range;
 
     public MetaTileEntityWorldAccelerator(ResourceLocation metaTileEntityId, int tier) {
         super(metaTileEntityId, tier);
         //consume 8 amps
         this.energyPerTick = GTValues.V[tier] * getMaxInputOutputAmperage();
         this.lastTick = 0;
+        this.speed = (int) Math.pow(2, tier);
         initializeInventory();
     }
 
@@ -73,7 +83,8 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
         tooltip.add(I18n.format("gregtech.universal.tooltip.amperage_in", getMaxInputOutputAmperage()));
         tooltip.add(I18n.format("gregtech.universal.tooltip.energy_storage_capacity", energyContainer.getEnergyCapacity()));
         tooltip.add(I18n.format("gregtech.machine.world_accelerator.description"));
-        tooltip.add(I18n.format("gregtech.machine.world_accelerator.area", getArea(), getArea()));
+        int area = getTier() * 2;
+        tooltip.add(I18n.format("gregtech.machine.world_accelerator.area", area, area));
     }
 
     @Override
@@ -81,75 +92,79 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
         return 8L;
     }
 
-    // TODO This could use a re-write
     @Override
     public void update() {
         super.update();
-        if (!getWorld().isRemote && lastTick != FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter()) {
-            lastTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+        if (!getWorld().isRemote) {
             if (isPaused) {
-                if (isActive)
+                if (isActive) {
                     setActive(false);
+                }
                 return;
             }
             if (energyContainer.getEnergyStored() < energyPerTick) {
-                if (isActive)
+                if (isActive) {
                     setActive(false);
+                }
                 return;
             }
-            if (!isActive)
+            if (!isActive) {
                 setActive(true);
-            energyContainer.removeEnergy(energyPerTick);
-            WorldServer world = (WorldServer) this.getWorld();
-            BlockPos worldAcceleratorPos = getPos();
-            if (isTEMode()) {
-                BlockPos[] neighbours = new BlockPos[]{worldAcceleratorPos.down(), worldAcceleratorPos.up(), worldAcceleratorPos.north(), worldAcceleratorPos.south(), worldAcceleratorPos.east(), worldAcceleratorPos.west()};
-                for (BlockPos neighbour : neighbours) {
-                    TileEntity targetTE = world.getTileEntity(neighbour);
-                    if (targetTE == null || targetTE instanceof TileEntityPipeBase || targetTE instanceof MetaTileEntityHolder) {
-                        continue;
+            }
+            int currentTick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+            if (currentTick != lastTick) { // Prevent other tick accelerators from accelerating us
+                World world = getWorld();
+                BlockPos currentPos = getPos();
+                lastTick = currentTick;
+                if (isTEMode()) {
+                    energyContainer.removeEnergy(energyPerTick);
+                    for (EnumFacing neighbourFace : EnumFacing.VALUES) {
+                        TileEntity neighbourTile = world.getTileEntity(currentPos.offset(neighbourFace));
+                        if (neighbourTile instanceof ITickable && !neighbourTile.isInvalid() && considerTile(neighbourTile)) {
+                            ITickable neighbourTickTile = (ITickable) neighbourTile;
+                            for (int i = 0; i < speed; i++) {
+                                neighbourTickTile.update();
+                            }
+                        }
                     }
-                    boolean horror = false;
-                    if (clazz != null && targetTE instanceof ITickable) {
-                        horror = clazz.isInstance(targetTE);
+                } else {
+                    energyContainer.removeEnergy(energyPerTick / 2);
+                    if (range == null) {
+                        int area = getTier() * 2;
+                        range = () -> BlockPos.getAllInBoxMutable(currentPos.add(-area, -area, -area), currentPos.add(area, area, area));
                     }
-                    if (targetTE instanceof ITickable && (!horror || !world.isRemote)) {
-                        IntStream.range(0, (int) Math.pow(2, getTier())).forEach(value -> ((ITickable) targetTE).update());
-                    }
-                }
-            } else {
-                BlockPos upperConner = worldAcceleratorPos.north(getTier()).east(getTier());
-                for (int x = 0; x < getArea(); x++) {
-                    BlockPos row = upperConner.south(x);
-                    for (int y = 0; y < getArea(); y++) {
-                        BlockPos cell = row.west(y);
-
-                        IBlockState targetBlock = world.getBlockState(cell);
-                        IntStream.range(0, (int) Math.pow(2, getTier())).forEach(value -> {
-                            if (GTValues.RNG.nextInt(100) == 0) {
-                                if (targetBlock.getBlock().getTickRandomly()) {
-                                    targetBlock.getBlock().randomTick(world, cell, targetBlock, world.rand);
+                    for (BlockPos.MutableBlockPos pos : range.get()) {
+                        if (pos.getY() > 256 || pos.getY() < 0) { // Early termination
+                            continue;
+                        }
+                        if (world.isBlockLoaded(pos)) {
+                            for (int i = 0; i < speed; i++) {
+                                if (GTValues.RNG.nextInt(getTier() / 100) == 0) {
+                                    // Rongmario:
+                                    // randomTick instead of updateTick since some modders can mistake where to put their code.
+                                    // Fresh IBlockState before every randomTick, this could easily change after every randomTick call
+                                    IBlockState state = world.getBlockState(pos);
+                                    Block block = state.getBlock();
+                                    if (block.getTickRandomly()) {
+                                        block.randomTick(world, pos.toImmutable(), state, world.rand);
+                                    }
                                 }
                             }
-                        });
+                        }
                     }
                 }
             }
         }
-
-    }
-
-    public int getArea() {
-        return (getTier() * 2) + 1;
     }
 
     @Override
     public void renderMetaTileEntity(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline) {
         super.renderMetaTileEntity(renderState, translation, pipeline);
-        if (isTEMode())
+        if (isTEMode()) {
             Textures.WORLD_ACCELERATOR_TE_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
-        else
+        } else {
             Textures.WORLD_ACCELERATOR_OVERLAY.render(renderState, translation, pipeline, getFrontFacing(), isActive);
+        }
     }
 
     @Override
@@ -179,7 +194,6 @@ public class MetaTileEntityWorldAccelerator extends TieredMetaTileEntity impleme
     public void setTEMode(boolean inverted) {
         tileMode = inverted;
         if (!getWorld().isRemote) {
-            reinitializeEnergyContainer();
             writeCustomData(SYNC_TILE_MODE, b -> b.writeBoolean(tileMode));
             getHolder().notifyBlockUpdate();
             markDirty();

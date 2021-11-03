@@ -26,7 +26,7 @@ public class ItemPipeNet extends PipeNet<ItemPipeProperties> {
     public List<Inventory> getNetData(BlockPos pipePos, EnumFacing facing) {
         List<Inventory> data = NET_DATA.get(pipePos);
         if (data == null) {
-            data = ItemNetWalker.createNetData(this, getWorldData(), pipePos, facing);
+            data = ItemNetWalker.createNetData(getWorldData(), pipePos, facing);
             data.sort(Comparator.comparingInt(inv -> inv.properties.priority));
             NET_DATA.put(pipePos, data);
         }

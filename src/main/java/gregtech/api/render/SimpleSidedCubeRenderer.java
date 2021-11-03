@@ -6,6 +6,7 @@ import codechicken.lib.texture.TextureUtils.IIconRegister;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
+import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.common.ConfigHolder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -15,8 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 
-import javax.annotation.Nullable;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class SimpleSidedCubeRenderer implements ICubeRenderer, IIconRegister {
@@ -34,36 +34,29 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer, IIconRegister {
     }
 
     protected final String basePath;
-    protected final boolean hasEmissive;
 
     @SideOnly(Side.CLIENT)
     protected Map<RenderSide, TextureAtlasSprite> sprites;
 
-    @Nullable
     @SideOnly(Side.CLIENT)
     protected Map<RenderSide, TextureAtlasSprite> spritesEmissive;
 
     public SimpleSidedCubeRenderer(String basePath) {
-        this(basePath, false);
-    }
-
-    public SimpleSidedCubeRenderer(String basePath, boolean hasEmissive) {
         this.basePath = basePath;
-        this.hasEmissive = hasEmissive;
         Textures.iconRegisters.add(this);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(TextureMap textureMap) {
-        this.sprites = new HashMap<>();
-        if (hasEmissive) this.spritesEmissive = new HashMap<>();
+        this.sprites = new EnumMap<>(RenderSide.class);
+        this.spritesEmissive = new EnumMap<>(RenderSide.class);
         for (RenderSide overlayFace : RenderSide.values()) {
             String faceName = overlayFace.name().toLowerCase();
             ResourceLocation resourceLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/%s", basePath, faceName));
             sprites.put(overlayFace, textureMap.registerSprite(resourceLocation));
-            if (hasEmissive) {
-                ResourceLocation emissiveLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/%s_emissive", basePath, faceName));
+            ResourceLocation emissiveLocation = new ResourceLocation(GTValues.MODID, String.format("blocks/%s/%s_emissive", basePath, faceName));
+            if (ResourceHelper.isTextureExist(emissiveLocation)) {
                 spritesEmissive.put(overlayFace, textureMap.registerSprite(emissiveLocation));
             }
         }
@@ -87,11 +80,11 @@ public class SimpleSidedCubeRenderer implements ICubeRenderer, IIconRegister {
             RenderSide overlayFace = RenderSide.bySide(renderSide);
             TextureAtlasSprite renderSprite = sprites.get(overlayFace);
             Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, renderSprite);
-            if (spritesEmissive != null) {
-                TextureAtlasSprite spriteEmissive = spritesEmissive.get(overlayFace);
-                if (ConfigHolder.U.clientConfig.emissiveTextures) {
+            TextureAtlasSprite spriteEmissive = spritesEmissive.get(overlayFace);
+            if (spriteEmissive != null) {
+                if (ConfigHolder.U.clientConfig.machinesEemissiveTextures) {
                     IVertexOperation[] lightPipeline = ArrayUtils.add(pipeline, new LightMapOperation(240, 240));
-                    Textures.renderFace(renderState, translation, lightPipeline, renderSide, bounds, spriteEmissive);
+                    Textures.renderFaceBloom(renderState, translation, lightPipeline, renderSide, bounds, spriteEmissive);
                 } else Textures.renderFace(renderState, translation, pipeline, renderSide, bounds, spriteEmissive);
             }
         }

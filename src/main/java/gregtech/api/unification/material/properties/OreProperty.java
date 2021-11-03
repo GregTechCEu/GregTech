@@ -35,6 +35,14 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
     private int byProductMultiplier;
 
     /**
+     * Should ore block use the emissive texture.
+     * <p>
+     * Default: false.
+     */
+    //@ZenProperty
+    private boolean emissive;
+
+    /**
      * Material to which smelting of this Ore will result.
      * <p>
      * Material will have a Dust Property.
@@ -76,6 +84,13 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
     public OreProperty(int oreMultiplier, int byProductMultiplier) {
         this.oreMultiplier = oreMultiplier;
         this.byProductMultiplier = byProductMultiplier;
+        this.emissive = false;
+    }
+
+    public OreProperty(int oreMultiplier, int byProductMultiplier, boolean emissive) {
+        this.oreMultiplier = oreMultiplier;
+        this.byProductMultiplier = byProductMultiplier;
+        this.emissive = emissive;
     }
 
     /**
@@ -99,6 +114,14 @@ public class OreProperty implements IMaterialProperty<OreProperty> {
 
     public int getByProductMultiplier() {
         return this.byProductMultiplier;
+    }
+
+    public boolean isEmissive() {
+        return emissive;
+    }
+
+    public void setEmissive(boolean emissive) {
+        this.emissive = emissive;
     }
 
     public void setDirectSmeltResult(@Nullable Material m) {
