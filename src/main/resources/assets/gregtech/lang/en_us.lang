@@ -4123,7 +4123,6 @@ terminal.world_prospector.radius=Radius %sm
 terminal.world_prospector.reference=Select a reference
 terminal.world_prospector.color=Select box color
 
-terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that exists in your world.
+terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
 terminal.vtank_viewer.title=Virtual Tank Viewer
 terminal.vtank_viewer.refresh=Refresh tank index
-terminal.vtank_viewer.refs=References: %,d

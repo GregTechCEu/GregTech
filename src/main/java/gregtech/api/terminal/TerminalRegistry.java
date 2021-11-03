@@ -115,7 +115,10 @@ public class TerminalRegistry {
                 .battery(GTValues.LV, 233)
                 .device(DeviceHardware.DEVICE.CAMERA)
                 .build();
-        AppRegistryBuilder.create(new VirtualTankApp()).defaultApp().build();
+        AppRegistryBuilder.create(new VirtualTankApp())
+                .battery(GTValues.MV, 500)
+                .device(DeviceHardware.DEVICE.WIRELESS)
+                .build();
     }
 
     @SideOnly(Side.CLIENT)
