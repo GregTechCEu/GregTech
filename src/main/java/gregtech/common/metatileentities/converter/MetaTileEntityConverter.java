@@ -132,9 +132,9 @@ public class MetaTileEntityConverter extends MetaTileEntity implements ITieredMe
         if (converterTrait.isFeToEu()) {
             for (EnumFacing facing : EnumFacing.values()) {
                 if (facing == frontFacing)
-                    Textures.CONVERTER_FE_IN.renderSided(facing, renderState, translation, pipeline);
-                else
                     Textures.ENERGY_OUT.renderSided(facing, renderState, translation, PipelineUtil.color(pipeline, GTValues.VC[getTier()]));
+                else
+                    Textures.CONVERTER_FE_IN.renderSided(facing, renderState, translation, pipeline);
             }
         } else {
             for (EnumFacing facing : EnumFacing.values()) {
