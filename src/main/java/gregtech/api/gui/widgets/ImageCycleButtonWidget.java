@@ -26,7 +26,7 @@ public class ImageCycleButtonWidget extends Widget {
     private final int optionCount;
     private static final int RIGHT_MOUSE = 1;
     protected int currentOption;
-    protected Supplier<String> tooltipHoverString;
+    protected Function<Integer, String> tooltipHoverString;
     protected long hoverStartTime = -1L;
     protected boolean isMouseHovered;
 
@@ -36,6 +36,7 @@ public class ImageCycleButtonWidget extends Widget {
         this.currentOptionSupplier = currentOptionSupplier;
         this.setOptionExecutor = setOptionExecutor;
         this.optionCount = optionCount;
+        this.currentOption = currentOptionSupplier.getAsInt();
     }
 
 
@@ -45,14 +46,15 @@ public class ImageCycleButtonWidget extends Widget {
         this.currentOptionSupplier = () -> supplier.getAsBoolean() ? 1 : 0;
         this.setOptionExecutor = (value) -> updater.apply(value >= 1);
         this.optionCount = 2;
+        this.currentOption = currentOptionSupplier.getAsInt();
     }
 
     public ImageCycleButtonWidget setTooltipHoverString(String hoverString) {
-        this.tooltipHoverString = () -> hoverString;
+        this.tooltipHoverString = val -> hoverString;
         return this;
     }
 
-    public ImageCycleButtonWidget setTooltipHoverString(Supplier<String> hoverString) {
+    public ImageCycleButtonWidget setTooltipHoverString(Function<Integer, String> hoverString) {
         this.tooltipHoverString = hoverString;
         return this;
     }
@@ -87,7 +89,7 @@ public class ImageCycleButtonWidget extends Widget {
         } else if (isHovered) {
             long timeSinceHover = System.currentTimeMillis() - hoverStartTime;
             if (timeSinceHover > 1000L && tooltipHoverString != null) {
-                List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString.get()).split("/n"));
+                List<String> hoverList = Arrays.asList(I18n.format(tooltipHoverString.apply(currentOption)).split("/n"));
                 drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
             }
         }
@@ -107,6 +109,7 @@ public class ImageCycleButtonWidget extends Widget {
         super.readUpdateInfo(id, buffer);
         if (id == 1) {
             this.currentOption = buffer.readVarInt();
+            setOptionExecutor.accept(currentOption);
         }
     }
 
@@ -122,7 +125,9 @@ public class ImageCycleButtonWidget extends Widget {
             } else {
                 this.currentOption = (currentOption + 1) % optionCount;
             }
+            setOptionExecutor.accept(currentOption);
             writeClientAction(1, buf -> buf.writeVarInt(currentOption));
+            //writeUpdateInfo(1, buf -> buf.writeVarInt(currentOption));
             playButtonClickSound();
             return true;
         }

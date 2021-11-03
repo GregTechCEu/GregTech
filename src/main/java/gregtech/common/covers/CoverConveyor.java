@@ -472,8 +472,8 @@ public class CoverConveyor extends CoverBehavior implements CoverWithUI, ITickab
         if (coverTile instanceof TileEntityItemPipe ^ otherTile instanceof TileEntityItemPipe) {
             final ImageCycleButtonWidget distributionModeButton = new ImageCycleButtonWidget(149, 166, 20, 20, GuiTextures.DISTRIBUTION_MODE, 3,
                     () -> distributionMode.ordinal(),
-                    val -> distributionMode = DistributionMode.values()[val])
-                    .setTooltipHoverString(getDistributionMode()::getName);
+                    val -> setDistributionMode(DistributionMode.values()[val]))
+                    .setTooltipHoverString(val -> DistributionMode.values()[val].getName());
             primaryGroup.addWidget(distributionModeButton);
         }
 
