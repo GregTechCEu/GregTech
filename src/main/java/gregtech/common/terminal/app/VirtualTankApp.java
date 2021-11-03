@@ -1,12 +1,14 @@
 package gregtech.common.terminal.app;
 
 import gregtech.api.gui.GuiTextures;
+import gregtech.api.gui.resources.TextTexture;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
+import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.api.util.GTLog;
@@ -42,6 +44,14 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
     public AbstractApplication initApp() {
         this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
         this.addWidget(new LabelWidget(10, 10, "terminal.vtank_viewer.title", -1));
+        this.addWidget(new RectButtonWidget(216, 7, 110, 18)
+                .setClickListener(cd->{
+                    if (cd.isClient) {
+                        reloadWidgets(cacheClient);
+                    }
+                })
+                .setIcon(new TextTexture("terminal.vtank_viewer.refresh", -1))
+                .setFill(TerminalTheme.COLOR_B_2.getColor()));
         widgetGroup = new DraggableScrollableWidgetGroup(10, 30, 313, 195)
                 .setDraggable(true)
                 .setYScrollBarWidth(3)
@@ -161,7 +171,7 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
             } catch (Exception e) {
                 GTLog.logger.error("error sync fluid", e);
             }
-            reloadWidgets();
+            reloadWidgets(cacheClient);
         } else if (id == -2) {
             int size = buffer.readVarInt();
             try {
@@ -192,10 +202,10 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
         }
     }
 
-    private void reloadWidgets() {
+    private void reloadWidgets(Map<Pair<UUID, String>, IFluidTank> map) {
         widgetGroup.clearAllWidgets();
         AtomicInteger cy = new AtomicInteger();
-        cacheClient.forEach((key, fluidTank) -> {
+        map.forEach((key, fluidTank) -> {
             if (key.getKey() != null) {
                 widgetGroup.addWidget(new ImageWidget(0, cy.get() + 4, 8, 8, GuiTextures.LOCK_WHITE));
             }
@@ -221,7 +231,9 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
 
     @Override
     public void selectResult(Pair<UUID, String> result) {
-        System.out.println(result);
+        Map<Pair<UUID, String>, IFluidTank> map = new HashMap<>();
+        map.put(result, cacheClient.get(result));
+        reloadWidgets(map);
     }
 
     @Override
