@@ -155,7 +155,7 @@ public class GTParticleManager {
                 ArrayDeque<GTParticle> particles = renderQueue.get(handler)[layer];
                 if (particles.isEmpty()) continue;
                 BufferBuilder buffer = tessellator.getBuffer();
-                handler.preDraw(layer, buffer, entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+                handler.preDraw(buffer);
                 for (final Particle particle : particles) {
                     try {
                         particle.renderParticle(buffer, entityIn, partialTicks, rotationX, rotationXZ, rotationZ, rotationYZ, rotationXY);
@@ -171,7 +171,7 @@ public class GTParticleManager {
                         throw new ReportedException(crashreport);
                     }
                 }
-                handler.postDraw(layer, buffer, tessellator);
+                handler.postDraw(buffer);
             }
         }
     }

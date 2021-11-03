@@ -500,7 +500,6 @@ public class Materials {
     public static Material Acetone;
     public static Material Glycerol;
     public static Material Methanol;
-    public static Material SaltWater;
     public static Material Ethanol;
     public static Material Toluene;
     public static Material DiphenylIsophtalate;
@@ -514,6 +513,7 @@ public class Materials {
     public static Material EthylTertButylEther;
     public static Material Ethylbenzene;
     public static Material Naphthalene;
+    public static Material Nitrobenzene;
 
     /**
      * Not possible to determine exact Components
@@ -581,7 +581,6 @@ public class Materials {
     public static Material RawGasoline;
     public static Material Gasoline;
     public static Material HighOctaneGasoline;
-    public static Material Nitrobenzene;
     public static Material CoalGas;
     public static Material CoalTar;
     public static Material Gunpowder;
@@ -670,6 +669,7 @@ public class Materials {
     public static Material EnderAir;
     public static Material LiquidEnderAir;
     public static Material AquaRegia;
+    public static Material SaltWater;
 
     /**
      * Third Degree Materials

@@ -31,7 +31,12 @@ public class SecondDegreeMaterials {
                 .components(Sodium, 2, Boron, 4, Water, 10, Oxygen, 7)
                 .build();
 
-        // Free ID 2003
+        SaltWater = new Material.Builder(2003, "salt_water")
+                .fluid()
+                .color(0x0000C8)
+                .flags(DECOMPOSITION_BY_CENTRIFUGING)
+                .components(Salt, 1, Water, 1)
+                .build();
 
         Olivine = new Material.Builder(2004, "olivine")
                 .gem().ore(2, 1)

@@ -29,10 +29,9 @@ public class PrimitivePumpInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         return Lists.newArrayList(MultiblockShapeInfo.builder()
-                .aisle("SXX", "#F#", "#F#")
-                .aisle("XXX", "###", "#F#")
-                .aisle("XHX", "F#F", "FFF")
-                .aisle("XXX", "#F#", "#F#")
+                .aisle("XXXX", "##F#", "##F#")
+                .aisle("XXHX", "F##F", "FFFF")
+                .aisle("SXXX", "##F#", "##F#")
                 .where('S', MetaTileEntities.PRIMITIVE_WATER_PUMP, EnumFacing.WEST)
                 .where('X', MetaBlocks.STEAM_CASING.getState(SteamCasingType.PUMP_DECK))
                 .where('H', MetaTileEntities.PUMP_OUTPUT_HATCH, EnumFacing.UP)

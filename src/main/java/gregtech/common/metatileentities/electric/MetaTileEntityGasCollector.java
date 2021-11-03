@@ -18,40 +18,40 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
 
-    private int currentDimension;
-
-    public MetaTileEntityGasCollector(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier, boolean hasFrontFacing) {
-        super(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing);
+    public MetaTileEntityGasCollector(ResourceLocation metaTileEntityId, RecipeMap<?> recipeMap, OrientedOverlayRenderer renderer, int tier, boolean hasFrontFacing,
+                                      Function<Integer, Integer> tankScalingFunction) {
+        super(metaTileEntityId, recipeMap, renderer, tier, hasFrontFacing, tankScalingFunction);
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityGasCollector(this.metaTileEntityId, RecipeMaps.GAS_COLLECTOR_RECIPES, Textures.GAS_COLLECTOR_OVERLAY, this.getTier(), hasFrontFacing());
-    }
-
-    @Override
-    public void update() {
-        super.update();
-        if (getOffsetTimer() % 20 == 0)
-            this.currentDimension = this.getWorld().provider.getDimension();
+        return new MetaTileEntityGasCollector(this.metaTileEntityId, RecipeMaps.GAS_COLLECTOR_RECIPES,
+                Textures.GAS_COLLECTOR_OVERLAY, this.getTier(), this.hasFrontFacing(), this.getTankScalingFunction());
     }
 
     @Override
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {
-        final RecipeLogicEnergy result = new GasCollectorRecipeLogic(this, RecipeMaps.GAS_COLLECTOR_RECIPES, () -> energyContainer);
+        final RecipeLogicEnergy result = new GasCollectorRecipeLogic(this, recipeMap, () -> energyContainer);
         result.enableOverclockVoltage();
         return result;
     }
 
-    protected int getCurrentDimension() {
-        return this.currentDimension;
+    protected boolean checkRecipe(Recipe recipe) {
+        List<Integer> recipeDimensions = recipe.getProperty(GasCollectorDimensionProperty.getInstance(), new ArrayList<>());
+        for (Integer dimension : recipeDimensions) {
+            if (dimension == this.getWorld().provider.getDimension()) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private class GasCollectorRecipeLogic extends RecipeLogicEnergy {
+    private static class GasCollectorRecipeLogic extends RecipeLogicEnergy {
 
         public GasCollectorRecipeLogic(MetaTileEntity metaTileEntity, RecipeMap<?> recipeMap, Supplier<IEnergyContainer> energyContainer) {
             super(metaTileEntity, recipeMap, energyContainer);
@@ -65,29 +65,19 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
             IMultipleTankHandler importFluids = getInputTank();
 
             // see if the last recipe we used still works
-            if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids, MatchingMode.IGNORE_FLUIDS))
+            if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids))
                 currentRecipe = this.previousRecipe;
                 // If there is no active recipe, then we need to find one.
             else {
                 currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.IGNORE_FLUIDS);
-                if (currentRecipe != null) {
-                    List<Integer> recipeDimensions = currentRecipe.getProperty(GasCollectorDimensionProperty.getInstance(), new ArrayList<>());
-                    boolean isDimensionValid = false;
-                    for (Integer dimension : recipeDimensions) {
-                        if (dimension == getCurrentDimension()) {
-                            this.previousRecipe = currentRecipe;
-                            isDimensionValid = true;
-                            break;
-                        }
-                    }
-                    if (!isDimensionValid)
-                        currentRecipe = null;
-                }
+            }
+            // If a recipe was found, then inputs were valid. Cache found recipe.
+            if (currentRecipe != null) {
+                this.previousRecipe = currentRecipe;
             }
             this.invalidInputsForRecipes = (currentRecipe == null);
-
             // proceed if we have a usable recipe.
-            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory))
+            if (currentRecipe != null && ((MetaTileEntityGasCollector) metaTileEntity).checkRecipe(currentRecipe) && setupAndConsumeRecipeInputs(currentRecipe, importInventory))
                 setupRecipe(currentRecipe);
             // Inputs have been inspected.
             metaTileEntity.getNotifiedItemInputList().clear();

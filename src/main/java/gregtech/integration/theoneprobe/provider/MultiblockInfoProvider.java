@@ -19,8 +19,14 @@ public class MultiblockInfoProvider extends CapabilityInfoProvider<IMultiblockCo
     @Override
     protected void addProbeInfo(IMultiblockController capability, IProbeInfo probeInfo, TileEntity tileEntity, EnumFacing sideHit) {
         IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
-        if (capability.isStructureFormed())
+        if (capability.isStructureFormed()) {
             horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.valid_structure*}");
+            if(capability.isStructureObstructed()) {
+                IProbeInfo horizontalPaneObstructed = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
+                horizontalPaneObstructed.text(TextStyleClass.INFO + "{*gregtech.top.obstructed_structure*}");
+            }
+
+        }
         else
             horizontalPane.text(TextStyleClass.INFO + "{*gregtech.top.invalid_structure*}");
     }

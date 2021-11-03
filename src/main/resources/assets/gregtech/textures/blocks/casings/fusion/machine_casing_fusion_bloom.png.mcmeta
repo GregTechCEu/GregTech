@@ -1,0 +1,15 @@
+{
+    "ctm": {
+        "ctm_version": 1,
+        "type": "CTM",
+        "layer": "BLOOM",
+        "gregtech": true,
+        "textures": [
+            "gregtech:blocks/casings/fusion/machine_casing_fusion_bloom_ctm"
+        ],
+        "extra": {
+            "connect_inside": true,
+            "light": 15
+        }
+    }
+}

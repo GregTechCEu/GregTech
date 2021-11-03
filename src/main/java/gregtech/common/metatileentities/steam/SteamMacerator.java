@@ -4,6 +4,7 @@ import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.capability.impl.RecipeLogicSteam;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ProgressWidget;
+import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -42,7 +43,7 @@ public class SteamMacerator extends SteamMetaTileEntity {
         return createUITemplate(player)
                 .widget(new SlotWidget(this.importItems, 0, 53, 25)
                         .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, getFullGuiTexture("slot_%s_macerator_background")))
-                .widget(new ProgressWidget(workableHandler::getProgressPercent, 79, 26, 21, 18)
+                .widget(new RecipeProgressWidget(workableHandler::getProgressPercent, 79, 26, 21, 18, workableHandler.recipeMap)
                         .setProgressBar(getFullGuiTexture("progress_bar_%s_macerator"),
                                 getFullGuiTexture("progress_bar_%s_macerator_filled"),
                                 ProgressWidget.MoveType.HORIZONTAL))

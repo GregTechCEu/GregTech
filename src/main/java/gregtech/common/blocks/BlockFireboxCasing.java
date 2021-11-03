@@ -3,8 +3,6 @@ package gregtech.common.blocks;
 import gregtech.common.blocks.BlockFireboxCasing.FireboxCasingType;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
 import net.minecraft.util.IStringSerializable;
@@ -13,9 +11,7 @@ import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
 
-public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
-
-    public static final PropertyBool ACTIVE = PropertyBool.create("active");
+public class BlockFireboxCasing extends VariantActiveBlock<FireboxCasingType> {
 
     public BlockFireboxCasing() {
         super(Material.IRON);
@@ -24,7 +20,7 @@ public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
         setHarvestLevel("wrench", 2);
-        setDefaultState(getState(FireboxCasingType.BRONZE_FIREBOX).withProperty(ACTIVE, false));
+        setDefaultState(getState(FireboxCasingType.BRONZE_FIREBOX));
     }
 
     @Override
@@ -32,27 +28,9 @@ public class BlockFireboxCasing extends VariantBlock<FireboxCasingType> {
         return state.getValue(ACTIVE) ? 15 : 0;
     }
 
-    @Nonnull
     @Override
-    protected BlockStateContainer createBlockState() {
-        super.createBlockState();
-        return new BlockStateContainer(this, VARIANT, ACTIVE);
-    }
-
-    @Nonnull
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return super.getStateFromMeta(meta % 8).withProperty(ACTIVE, meta / 8 >= 1);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return super.getMetaFromState(state) + (state.getValue(ACTIVE) ? 8 : 0);
-    }
-
-    @Override
-    public int damageDropped(@Nonnull IBlockState state) {
-        return super.getMetaFromState(state);
+    public int getPackedLightmapCoords(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return state.getValue(ACTIVE) ? 0b10100000 << 16 | 0b10100000 : super.getPackedLightmapCoords(state, source, pos);
     }
 
     @Override

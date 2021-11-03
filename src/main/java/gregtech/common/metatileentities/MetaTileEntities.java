@@ -110,7 +110,7 @@ public class MetaTileEntities {
     public static final SimpleMachineMetaTileEntity[] MASS_FABRICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] REPLICATOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
-    public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
+    public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length - 1];
     public static final MetaTileEntityRockBreaker[] ROCK_BREAKER = new MetaTileEntityRockBreaker[GTValues.V.length - 1];
     public static MetaTileEntitySimpleOreWasher SIMPLE_ORE_WASHER;
 
@@ -137,6 +137,7 @@ public class MetaTileEntities {
     public static MetaTileEntitySteamHatch STEAM_HATCH;
     public static final MetaTileEntityRotorHolder[] ROTOR_HOLDER = new MetaTileEntityRotorHolder[3]; //HV, LuV, MAX
     public static MetaTileEntityMaintenanceHatch MAINTENANCE_HATCH;
+    public static MetaTileEntityMaintenanceHatch CONFIGURABLE_MAINTENANCE_HATCH;
     public static MetaTileEntityAutoMaintenanceHatch AUTO_MAINTENANCE_HATCH;
     public static final MetaTileEntityMufflerHatch[] MUFFLER_HATCH = new MetaTileEntityMufflerHatch[GTValues.UV]; // LV-UV
 
@@ -360,8 +361,14 @@ public class MetaTileEntities {
         registerSimpleMetaTileEntity(UNPACKER, 530, "unpacker", RecipeMaps.UNPACKER_RECIPES, Textures.UNPACKER_OVERLAY, true);
 
         // Gas Collectors, IDs 545-559
-        registerSimpleMetaTileEntity(GAS_COLLECTOR, 545, "gas_collector", RecipeMaps.GAS_COLLECTOR_RECIPES, Textures.GAS_COLLECTOR_OVERLAY, false);
+        for (int i = 0; i < GAS_COLLECTOR.length - 1; i++) {
+            if (i > 4 && !getMidTier("gas_collector")) continue;
+            if (i > 7 && !getHighTier("gas_collector")) break;
 
+            String voltageName = GTValues.VN[i + 1].toLowerCase();
+            GAS_COLLECTOR[i] = registerMetaTileEntity(545 + i,
+                    new MetaTileEntityGasCollector(gregtechId(String.format("%s.%s", "gas_collector", voltageName)), RecipeMaps.GAS_COLLECTOR_RECIPES, Textures.GAS_COLLECTOR_OVERLAY, i + 1, false, GTUtility.largeTankSizeFunction));
+        }
         // Polarizer, IDs 560-574
         registerSimpleMetaTileEntity(POLARIZER, 560, "polarizer", RecipeMaps.POLARIZER_RECIPES, Textures.POLARIZER_OVERLAY, true);
 
@@ -522,7 +529,7 @@ public class MetaTileEntities {
         ENERGY_OUTPUT_HATCH_ADJUSTABLE[ENERGY_OUTPUT_HATCH_ADJUSTABLE.length - 1] = new MetaTileEntityAdjustableEnergyHatch(gregtechId("energy_hatch.adjustable.output.max"), ENERGY_OUTPUT_HATCH_ADJUSTABLE.length - 1, true);
 
         registerMetaTileEntity(1210 + ENERGY_INPUT_HATCH.length - 1, ENERGY_INPUT_HATCH[ENERGY_INPUT_HATCH.length - 1]);
-        registerMetaTileEntity(1225 + ENERGY_INPUT_HATCH.length - 1, ENERGY_INPUT_HATCH[ENERGY_INPUT_HATCH.length - 1]);
+        registerMetaTileEntity(1225 + ENERGY_OUTPUT_HATCH.length - 1, ENERGY_OUTPUT_HATCH[ENERGY_OUTPUT_HATCH.length - 1]);
         registerMetaTileEntity(1240 + ENERGY_INPUT_HATCH_ADJUSTABLE.length - 1, ENERGY_INPUT_HATCH_ADJUSTABLE[ENERGY_INPUT_HATCH_ADJUSTABLE.length - 1]);
         registerMetaTileEntity(1255 + ENERGY_OUTPUT_HATCH_ADJUSTABLE.length - 1, ENERGY_OUTPUT_HATCH_ADJUSTABLE[ENERGY_OUTPUT_HATCH_ADJUSTABLE.length - 1]);
 
@@ -688,16 +695,17 @@ public class MetaTileEntities {
         STEAM_HATCH = registerMetaTileEntity(1652, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
         SIMPLE_ORE_WASHER = registerMetaTileEntity(1653, new MetaTileEntitySimpleOreWasher(gregtechId("ore_washer.simple"), RecipeMaps.SIMPLE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY, 0));
 
-        // Maintenance Hatches, IDs 1654-1655
-        MAINTENANCE_HATCH = registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch")));
-        AUTO_MAINTENANCE_HATCH = registerMetaTileEntity(1655, new MetaTileEntityAutoMaintenanceHatch(gregtechId("maintenance_hatch_full_auto")));
+       // Maintenance Hatches, IDs 1654-1656
+        MAINTENANCE_HATCH = registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), false));
+        CONFIGURABLE_MAINTENANCE_HATCH = registerMetaTileEntity(1655, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_configurable"), true));
+        AUTO_MAINTENANCE_HATCH = registerMetaTileEntity(1656, new MetaTileEntityAutoMaintenanceHatch(gregtechId("maintenance_hatch_full_auto")));
 
-        // Muffler Hatches, IDs 1656-
+        // Muffler Hatches, IDs 1657-
         for (int i = 0; i < MUFFLER_HATCH.length; i++) {
             String voltageName = GTValues.VN[i + 1].toLowerCase();
             MUFFLER_HATCH[i] = new MetaTileEntityMufflerHatch(gregtechId("muffler_hatch." + voltageName), i + 1);
 
-            registerMetaTileEntity(1656 + i, MUFFLER_HATCH[i]);
+            registerMetaTileEntity(1657 + i, MUFFLER_HATCH[i]);
         }
 
         CLIPBOARD_TILE = registerMetaTileEntity(1666, new MetaTileEntityClipboard(gregtechId("clipboard")));

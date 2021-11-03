@@ -18,6 +18,7 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
+import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
@@ -96,6 +97,13 @@ public class MetaTileEntityLoader {
             for (CoilType coilType : CoilType.values()) {
                 if (coilType.getMaterial() != null) {
                     ItemStack outputStack = MetaBlocks.WIRE_COIL.getItemVariant(coilType);
+                    ModHandler.addShapedRecipe(String.format("heating_coil_%s", coilType.getName()), outputStack, "XXX", "XwX", "XXX", 'X',
+                            new UnificationEntry(OrePrefix.wireGtDouble, coilType.getMaterial()));
+                }
+            }
+            for (CoilType2 coilType : CoilType2.values()) {
+                if (coilType.getMaterial() != null) {
+                    ItemStack outputStack = MetaBlocks.WIRE_COIL2.getItemVariant(coilType);
                     ModHandler.addShapedRecipe(String.format("heating_coil_%s", coilType.getName()), outputStack, "XXX", "XwX", "XXX", 'X',
                             new UnificationEntry(OrePrefix.wireGtDouble, coilType.getMaterial()));
                 }
@@ -297,6 +305,7 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("rotor_holder_max", MetaTileEntities.ROTOR_HOLDER[2].getStackForm(), "WHW", "WRW", "WWW", 'H', MetaTileEntities.HULL[GTValues.MAX].getStackForm(), 'W', new UnificationEntry(OrePrefix.wireGtHex, Materials.RutheniumTriniumAmericiumNeutronate), 'R', new UnificationEntry(OrePrefix.gear, Materials.HSSS));
 
         ModHandler.addShapedRecipe("maintenance_hatch", MetaTileEntities.MAINTENANCE_HATCH.getStackForm(), "dwx", "hHc", "fsr", 'H', MetaTileEntities.HULL[GTValues.LV].getStackForm());
+        ModHandler.addShapedRecipe("maintenance_hatch_configurable", MetaTileEntities.CONFIGURABLE_MAINTENANCE_HATCH.getStackForm(), "   ", "CMC", "VHV", 'C', CIRCUIT.getIngredient(GTValues.HV), 'M', MetaTileEntities.MAINTENANCE_HATCH.getStackForm(), 'V', CONVEYOR.getIngredient(GTValues.HV), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm());
         ModHandler.addShapedRecipe("maintenance_hatch_automatic", MetaTileEntities.AUTO_MAINTENANCE_HATCH.getStackForm(), "CMC", "RHR", "CMC", 'C', CIRCUIT.getIngredient(GTValues.HV), 'M', MetaTileEntities.MAINTENANCE_HATCH.getStackForm(), 'R', ROBOT_ARM.getIngredient(GTValues.HV), 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm());
 
         // STEAM MACHINES

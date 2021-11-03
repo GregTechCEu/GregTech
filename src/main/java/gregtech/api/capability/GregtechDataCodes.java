@@ -62,6 +62,7 @@ public class GregtechDataCodes {
     public static final int STORE_TAPED = 552;
     public static final int RECIPE_MAP_INDEX = 553;
     public static final int IS_FRONT_FACE_FREE = 554;
+    public static final int MAINTENANCE_MULTIPLIER = 555;
 
     // Multiblock Fluid Tank implementation update codes
     public static final int UPDATE_CONTROLLER_POSITION = 1;

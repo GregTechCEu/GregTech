@@ -108,6 +108,7 @@ public class MetaTileEntityRotorHolder extends MetaTileEntityMultiblockPart impl
 
     private boolean checkTurbineFaceFree() {
         EnumFacing facing = getFrontFacing();
+        //TODO, this also needs to check Y for freedom wrench implementation
         boolean permuteXZ = facing.getAxis() == Axis.Z;
         BlockPos centerPos = getPos().offset(facing);
         for (int x = -1; x < 2; x++) {

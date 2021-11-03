@@ -129,6 +129,12 @@ public class MaterialIconType {
         return new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + materialIconSet.name + "/" + this.name);
     }
 
+    public ResourceLocation getBlockPath(MaterialIconSet materialIconSet, boolean emissive) {
+        if (emissive) {
+            return new ResourceLocation(GTValues.MODID, "blocks/material_sets/" + materialIconSet.name + "/" + this.name + "_emissive");
+        } else return getBlockPath(materialIconSet);
+    }
+
     public ResourceLocation getItemModelPath(MaterialIconSet materialIconSet) {
         return new ResourceLocation(GTValues.MODID, "material_sets/" + materialIconSet.name + "/" + this.name);
     }

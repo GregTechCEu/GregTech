@@ -30,9 +30,9 @@ public class LargeBoilerInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         return Lists.newArrayList(MultiblockShapeInfo.builder()
-                .aisle("FXX", "CCC", "CCC", "CCC")
-                .aisle("XXH", "SPC", "MPC", "CCC")
-                .aisle("IXX", "COC", "CCC", "CCC")
+                .aisle("XHX", "CCC", "CCC", "CCC")
+                .aisle("XXX", "CPO", "CPC", "CCC")
+                .aisle("FXI", "CSC", "CMC", "CCC")
                 .where('S', boiler, EnumFacing.WEST)
                 .where('P', boiler.boilerType.pipeState)
                 .where('X', boiler.boilerType.fireboxState)

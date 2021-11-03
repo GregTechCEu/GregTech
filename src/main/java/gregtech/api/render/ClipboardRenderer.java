@@ -9,6 +9,7 @@ import codechicken.lib.vec.Rotation;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -18,6 +19,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,6 +76,9 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
     @SideOnly(Side.CLIENT)
     public void renderGUI(double x, double y, double z, EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
         GlStateManager.pushMatrix();
+        float lastBrightnessX = OpenGlHelper.lastBrightnessX;
+        float lastBrightnessY = OpenGlHelper.lastBrightnessY;
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
         RenderHelper.disableStandardItemLighting();
 
         // All of these are done in reverse order, by the way, if you're reviewing this :P
@@ -94,6 +99,7 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
             }
         }
 
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
         RenderHelper.enableStandardItemLighting();
         GlStateManager.popMatrix();
     }

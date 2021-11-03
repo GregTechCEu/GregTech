@@ -45,13 +45,22 @@ public class ResourceHelper {
 
     public static boolean isResourceExist(String rs) {
         if (!cachedResources.containsKey(rs)) {
-            InputStream inputstream = ResourceHelper.class.getResourceAsStream("/assets/" + GTValues.MODID + "/" + rs);
+            InputStream inputstream = ResourceHelper.class.getResourceAsStream(String.format("/assets/%s/%s", GTValues.MODID, rs));
             if(inputstream == null) {
                 return false;
             }
             IOUtils.closeQuietly(inputstream);
             cachedResources.put(rs, new ResourceLocation(GTValues.MODID, rs));
         }
+        return true;
+    }
+
+    public static boolean isTextureExist(ResourceLocation textureResource) {
+        InputStream inputstream = ResourceHelper.class.getResourceAsStream(String.format("/assets/%s/textures/%s.png", GTValues.MODID, textureResource.getPath()));
+        if(inputstream == null) {
+            return false;
+        }
+        IOUtils.closeQuietly(inputstream);
         return true;
     }
 

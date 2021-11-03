@@ -40,6 +40,7 @@ gregtech.top.fuel_none=No fuel
 
 gregtech.top.invalid_structure=§cInvalid Structure
 gregtech.top.valid_structure=§aStructure Formed
+gregtech.top.obstructed_structure=§cStructure Obstructed
 
 gregtech.multiblock.title=Multiblock Pattern
 gregtech.multiblock.primitive_blast_furnace.description=The Primitive Blast Furnace (PBF) is a multiblock structure used for cooking steel in the early game. Although not very fast, it will provide you with steel for your first setups.
@@ -321,7 +322,6 @@ metaitem.energy.lapotronicorb.tooltip=Reusable Battery
 metaitem.energy.lapotronicorb2.name=Lapotronic Energy Orb Cluster
 metaitem.energy.lapotronicorb2.tooltip=Reusable Battery
 metaitem.zpm.name=Zero Point Module
-metaitem.zpm.tooltip=Single Use Battery
 metaitem.energy.module.name=Energy Module
 metaitem.energy.module.tooltip=Reusable Battery
 metaitem.energy.cluster.name=Energy Cluster
@@ -3114,12 +3114,12 @@ gregtech.machine.battery_buffer.max.16.name=MAX Voltage Battery Buffer
 
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
-gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dV (%d)§7 -> §a%dA %dV (%d)
-gregtech.machine.transformer.message_transform_down=Transforming Down, In: %dV %dA, Out: %dV %dA
-gregtech.machine.transformer.tooltip_transform_up=Transform Up: §a%dA %dV (%d)§7 -> §a%dA %dV (%d)
-gregtech.machine.transformer.message_transform_up=Transforming Up, In: %dV %dA, Out: %dV %dA
+gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dEU (%d)§7 -> §a%dA %dEU (%d)
+gregtech.machine.transformer.message_transform_down=Transforming Down, In: %dEU %dA, Out: %dEU %dA
+gregtech.machine.transformer.tooltip_transform_up=Transform Up: §a%dA %dEU (%d)§7 -> §a%dA %dEU (%d)
+gregtech.machine.transformer.message_transform_up=Transforming Up, In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer_adjustable.tooltip_tool_usage=Use Screwdriver to cycle amperage (Starts as 4 Amps)
-gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %dV %dA, Lo-Amp to %dV %dA
+gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %dEU %dA, Lo-Amp to %dEU %dA
 
 gregtech.machine.transformer.ulv.name=Ultra Low Voltage Transformer
 gregtech.machine.transformer.lv.name=Low Voltage Transformer
@@ -3726,8 +3726,18 @@ gregtech.machine.rotor_holder.uhv.name=UHV Rotor Holder
 
 gregtech.machine.maintenance_hatch.name=Maintenance Hatch
 gregtech.machine.maintenance_hatch.tooltip=For maintaining Multiblocks
+gregtech.machine.maintenance_hatch_configurable.name=Configurable Maintenance Hatch
+gregtech.machine.maintenance_hatch_configurable.tooltip=For finer control over Multiblocks/nStarts with no Maintenance problems!
 gregtech.machine.maintenance_hatch_full_auto.name=Automatic Maintenance Hatch
 gregtech.machine.maintenance_hatch_full_auto.tooltip=For automatically maintaining Multiblocks
+
+gregtech.maintenance.configurable_duration=Duration: %fx
+gregtech.maintenance.configurable_duration.unchanged_description=Recipes will run at normal speed. Change configuration to update.
+gregtech.maintenance.configurable_duration.changed_description=Recipes will run with %fx duration, applied before overclocking.
+
+gregtech.maintenance.configurable_time=Time: %fx
+gregtech.maintenance.configurable_time.unchanged_description=Maintenance problems will occur at normal rate. Change configuration to update.
+gregtech.maintenance.configurable_time.changed_description=Maintenance problems will occur at %fx the normal rate.
 
 gregtech.machine.muffler_hatch.tooltip=DO NOT OBSTRUCT THE OUTPUT!
 

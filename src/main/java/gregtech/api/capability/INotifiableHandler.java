@@ -27,7 +27,8 @@ public interface INotifiableHandler {
     /**
      * @param metaTileEntity MetaTileEntity to be notified
      */
-    default void setNotifiableMetaTileEntity(MetaTileEntity metaTileEntity) {
+    void addNotifiableMetaTileEntity(MetaTileEntity metaTileEntity);
 
-    }
+    void removeNotifiableMetaTileEntity(MetaTileEntity metaTileEntity);
+
 }

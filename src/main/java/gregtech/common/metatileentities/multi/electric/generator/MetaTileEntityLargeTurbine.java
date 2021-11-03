@@ -190,4 +190,9 @@ public class MetaTileEntityLargeTurbine extends RotorHolderMultiblockController 
     public boolean hasMufflerMechanics() {
         return turbineType.hasMufflerHatch;
     }
+
+    @Override
+    public boolean isStructureObstructed() {
+        return !isRotorFaceFree();
+    }
 }

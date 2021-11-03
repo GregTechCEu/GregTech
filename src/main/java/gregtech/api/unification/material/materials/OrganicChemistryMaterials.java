@@ -18,7 +18,11 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1, Silicon, 1)
                 .build();
 
-        // Free ID 1001
+        Nitrobenzene = new Material.Builder(1001, "nitrobenzene")
+                .fluid(Material.FluidType.GAS)
+                .color(0x704936)
+                .components(Carbon, 6, Hydrogen, 5, Nitrogen, 1, Oxygen, 2)
+                .build();
 
         RawRubber = new Material.Builder(1002, "raw_rubber")
                 .dust()
@@ -167,7 +171,7 @@ public class OrganicChemistryMaterials {
                 .fluid(Material.FluidType.GAS)
                 .color(0x7D7D7D)
                 .flags(DISABLE_DECOMPOSITION)
-                .components(Carbon, 2, Hydrogen, 4)
+                .components(Carbon, 2, Fluorine, 4)
                 .build();
 
         Chloromethane = new Material.Builder(1024, "chloromethane")
@@ -366,12 +370,7 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 1, Hydrogen, 4, Oxygen, 1)
                 .build();
 
-        SaltWater = new Material.Builder(1053, "salt_water")
-                .fluid()
-                .color(0x0000C8)
-                .flags(DECOMPOSITION_BY_CENTRIFUGING)
-                .components(Salt, 1, Water, 1)
-                .build();
+        // FREE ID 1053
 
         Ethanol = new Material.Builder(1054, "ethanol")
                 .fluid()

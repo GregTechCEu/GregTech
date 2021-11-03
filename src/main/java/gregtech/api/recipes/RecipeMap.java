@@ -15,6 +15,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
+import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
@@ -35,6 +36,7 @@ import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.stream.Collectors;
 
@@ -68,6 +70,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     .thenComparingInt(Recipe::getEUt);
 
     private final Set<Recipe> recipeSet = new HashSet<>();
+
+    private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
 
     public RecipeMap(String unlocalizedName,
                      int minInputs, int maxInputs, int minOutputs, int maxOutputs,
@@ -137,6 +141,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, boolean isLast, TextureArea slotOverlay) {
         this.slotOverlays.put((byte) ((isOutput ? 2 : 0) + (isFluid ? 1 : 0) + (isLast ? 4 : 0)), slotOverlay);
+        return this;
+    }
+
+    public RecipeMap<R> onRecipeBuild(Consumer<RecipeBuilder<?>> consumer) {
+        onRecipeBuildAction = consumer;
         return this;
     }
 
@@ -367,7 +376,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     //this DOES NOT include machine control widgets or binds player inventory
     public ModularUI.Builder createUITemplate(DoubleSupplier progressSupplier, IItemHandlerModifiable importItems, IItemHandlerModifiable exportItems, FluidTankList importFluids, FluidTankList exportFluids, int yOffset) {
         ModularUI.Builder builder = ModularUI.defaultBuilder(yOffset);
-        builder.widget(new ProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType));
+        builder.widget(new RecipeProgressWidget(progressSupplier, 78, 23 + yOffset, 20, 20, progressBarTexture, moveType, this));
         addInventorySlotGroup(builder, importItems, importFluids, false, yOffset);
         addInventorySlotGroup(builder, exportItems, exportFluids, true, yOffset);
         if (this.specialTexture != null && this.specialTexturePosition != null)
@@ -396,6 +405,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         for (int i = 0; i < itemSlotsToDown; i++) {
             for (int j = 0; j < itemSlotsToLeft; j++) {
                 int slotIndex = i * itemSlotsToLeft + j;
+                if (slotIndex >= itemInputsCount) break;
                 int x = startInputsX + 18 * j;
                 int y = startInputsY + 18 * i;
                 addSlot(builder, x, y, slotIndex, itemHandler, fluidHandler, invertFluids, isOutputs);
@@ -446,20 +456,27 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     protected static int[] determineSlotsGrid(int itemInputsCount) {
-        int itemSlotsToLeft = 0;
-        int itemSlotsToDown = 0;
+        int itemSlotsToLeft;
+        int itemSlotsToDown;
         double sqrt = Math.sqrt(itemInputsCount);
-        if (sqrt % 1 == 0) { //check if square root is integer
-            //case for 1, 4, 9 slots - it's square inputs (the most common case)
+        //if the number of input has an integer root
+        //return it.
+        if (sqrt % 1 == 0) {
             itemSlotsToLeft = itemSlotsToDown = (int) sqrt;
-        } else if (itemInputsCount % 3 == 0) {
-            //case for 3 and 6 slots - 3 by horizontal and i / 3 by vertical (common case too)
-            itemSlotsToDown = itemInputsCount / 3;
+        } else if (itemInputsCount == 3) {
             itemSlotsToLeft = 3;
-        } else if (itemInputsCount % 2 == 0) {
-            //case for 2 inputs - 2 by horizontal and i / 3 by vertical (for 2 slots)
-            itemSlotsToDown = itemInputsCount / 2;
-            itemSlotsToLeft = 2;
+            itemSlotsToDown = 1;
+        }
+        else {
+            //if we couldn't fit all into a perfect square,
+            //increase the amount of slots to the left
+            itemSlotsToLeft = (int) Math.ceil(sqrt);
+            itemSlotsToDown = itemSlotsToLeft - 1;
+            //if we still can't fit all the slots in a grid,
+            //increase the amount of slots on the bottom
+            if (itemInputsCount > itemSlotsToLeft * itemSlotsToDown) {
+                itemSlotsToDown = itemSlotsToLeft;
+            }
         }
         return new int[]{itemSlotsToLeft, itemSlotsToDown};
     }
@@ -515,7 +532,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public R recipeBuilder() {
-        return recipeBuilderSample.copy();
+        return recipeBuilderSample.copy().onBuild(onRecipeBuildAction);
     }
 
     @ZenMethod("recipeBuilder")
