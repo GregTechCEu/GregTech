@@ -77,6 +77,8 @@
             - Items will be evenly distributed to each destination
             - Unlike EnderIO, a single "group" of items extracted will be split across destinations
             - If an uneven amount of items to destinations, priority will break the tie
+        - Enhanced Round Robin
+            - will exactly split items equally to all destinations, similar to EnderIO's Round Robin
 - Many more materials now have Fluid Pipes and Item Pipes
 - Multiblocks can now share ALL hatches (energy, item in/out, fluid in/out) excluding Rotor Holders
 - Mixer now has 2 more Item Input slots
@@ -121,10 +123,8 @@
     - Is much faster than an Ore Washer, but grants no byproducts
     - Can do: crushed -> crushedPurified, impureDust -> dust, pureDust -> dust
     - Effectively an Electric Cauldron
-- Fluid Pipe Algorithm fully reworked:
-    - Pipes will behave similar to GT5, but without sloshing
-    - Fluids will be evenly split across all directions at a pipe "junction"
-    - Can also be set to Round Robin (with Pump cover)
+- Fluid Pipe Algorithm fully reworked (still not perfect):
+    - Pipes will behave similar to GT5, but without sloshing and more performant
 - Added Quadruple (4) and Nonuple (9) Pipes, which can move multiple fluid types through them at once
 - Distillation Tower Fluid Input Hatch can be placed on any block on the bottom layer. Energy Input Hatch can be placed on any block in the structure
 - Added Buffers, which can hold both a small amount of a few types of each Items and Fluids, meant for use in machine automation
@@ -189,6 +189,7 @@
 - Forge Hammer recipes across the board are now 2x faster
 - Bricks/Coke Bricks/Fireclay Bricks reworked
 - Foil, Small Gear, Long Rod, and Rotor Extruder Shapes added
+- Text fields in (some) GUI's (like Conveyor, Robot Arm, Pump, etc...) are now editable 
 
 ### Bug Fixes
 - Electric Tools now properly use power over durability
