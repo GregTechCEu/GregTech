@@ -4112,6 +4112,7 @@ terminal.hardware.tip.remove=§4right-click remove the hardware
 
 terminal.battery.description=Battery manager, visually analyzing your app's energy consumption.
 terminal.battery.hover=%s: Usage %d eu/s
+terminal.battery.low_energy=Low power! Plz recharge the terminal.
 
 terminal.store.description=App store, check out what you got? Install and upgrade the app.
 terminal.store.match=Detect that inventory meets demand, whether to (install)upgrade?

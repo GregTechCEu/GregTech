@@ -365,7 +365,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
 
     @Override
     protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
-        if (isClient) return;
+        if (isClient || isClosed) return;
         super.writeClientAction(id, packetBufferWriter);
     }
 

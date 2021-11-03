@@ -34,7 +34,7 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
 
     @Override
     public boolean isHardwareAdequate(Hardware demand) {
-        return demand instanceof BatteryHardware && ((BatteryHardware) demand).getTier() <= this.getTier();
+        return demand instanceof BatteryHardware && ((BatteryHardware) demand).getTier() <= this.getTier() && this.getCharge() > 0;
     }
 
     @Override

@@ -31,6 +31,7 @@ import net.minecraftforge.common.util.Constants;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -136,7 +137,12 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                         if (info == null) {
                             tooltips.append(name);
                         } else if (match instanceof BatteryHardware) {
-                            tooltips.append(String.format("%s (%s+)", name, info));
+                            IElectricItem energyItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                            if (energyItem != null && energyItem.getCharge() <= 0) {
+                                tooltips.append(I18n.format("terminal.battery.low_energy"));
+                            } else {
+                                tooltips.append(String.format("%s (%s+)", name, info));
+                            }
                         } else {
                             tooltips.append(String.format("%s (%s)", name, info));
                         }
@@ -326,11 +332,16 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 ((BatteryHardware) electricItem).setCharge(charge);
             }
             if (charge <= 0) {
+                List<AbstractApplication> toClosed = new LinkedList<>();
                 for (AbstractApplication openedApp : openedApps) {
                     TerminalRegistry.getAppHardwareDemand(openedApp.getRegistryName(), openedApp.getAppTier()).stream()
                             .filter(i->i instanceof BatteryHardware).findFirst()
-                            .ifPresent(x -> this.closeApplication(openedApp, true));
+                            .ifPresent(x -> toClosed.add(openedApp));
                 }
+                for (AbstractApplication close : toClosed) {
+                    this.closeApplication(close, true);
+                }
+                TerminalDialogWidget.showInfoDialog(this, "terminal.component.warning", "terminal.battery.low_energy").setClientSide().open();
             }
         } else if(id == -2) { // shutdown
             shutdown(true);
