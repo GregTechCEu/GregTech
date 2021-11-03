@@ -58,10 +58,10 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
-    private static final int MAX_PARTS = 20;
+    private static final int MAX_PARTS = 18;
     private static final int PARTS_HEIGHT = 36;
     private final int SLOT_SIZE = 18;
-    private final int SLOTS_PER_ROW = 10;
+    private final int SLOTS_PER_ROW = 9;
     private final int ICON_SIZE = 20;
     private final int RIGHT_PADDING = 5;
 
@@ -216,7 +216,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
 
         for (int i = 0; i < MAX_PARTS; ++i)
-            itemStackGroup.init(i, true, SLOT_SIZE * i - (SLOT_SIZE * SLOTS_PER_ROW) * (i / SLOTS_PER_ROW), recipeHeight - PARTS_HEIGHT + SLOT_SIZE * (i / SLOTS_PER_ROW));
+            itemStackGroup.init(i, true, SLOT_SIZE * i - (SLOT_SIZE * SLOTS_PER_ROW) * (i / SLOTS_PER_ROW) + (SLOT_SIZE/ 2) - 2, recipeHeight - PARTS_HEIGHT + SLOT_SIZE * (i / SLOTS_PER_ROW));
     }
 
     private void updateParts() {
@@ -243,7 +243,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         this.infoIcon.draw(minecraft, recipeWidth - (ICON_SIZE + RIGHT_PADDING), 49);
 
         for (int i = 0; i < MAX_PARTS; ++i) {
-            this.slot.draw(minecraft, SLOT_SIZE * i - (SLOTS_PER_ROW * SLOT_SIZE) * (i / SLOTS_PER_ROW), sceneHeight + SLOT_SIZE * (i / SLOTS_PER_ROW));
+            this.slot.draw(minecraft, SLOT_SIZE * i - (SLOTS_PER_ROW * SLOT_SIZE) * (i / SLOTS_PER_ROW) + (SLOT_SIZE / 2) - 2, sceneHeight + SLOT_SIZE * (i / SLOTS_PER_ROW));
         }
 
         // Hmmm, the buttons need to be last otherwise sometimes highlighting 
@@ -428,7 +428,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             for (int y = 0; y < aisle.length; y++) {
                 BlockInfo[] column = aisle[y];
                 for (int x = 0; x < column.length; x++) {
-                    BlockPos blockPos = new BlockPos(x, y, z);
+                    // fill XYZ instead of ZYX
+                    BlockPos blockPos = new BlockPos(blocks.length - 1 - z, y, x);
                     BlockInfo blockInfo = column[x];
                     blockMap.put(blockPos, blockInfo);
                 }

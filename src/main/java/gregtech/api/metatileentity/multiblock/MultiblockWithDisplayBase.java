@@ -129,7 +129,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             return;
         }
 
-        timeActive += duration;
+        timeActive += duration * maintenanceHatch.getTimeMultiplier();
         if (minimumMaintenanceTime - timeActive <= 0)
             if (GTValues.RNG.nextFloat() - 0.75f >= 0) {
                 causeMaintenanceProblems();
@@ -145,6 +145,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             if (getAbilities(MultiblockAbility.MAINTENANCE_HATCH).isEmpty())
                 return;
             IMaintenanceHatch maintenanceHatch = getAbilities(MultiblockAbility.MAINTENANCE_HATCH).get(0);
+            if (maintenanceHatch.startWithoutProblems()) {
+                this.maintenance_problems = (byte) 0b111111;
+                this.timeActive = 0;
+            }
             readMaintenanceData(maintenanceHatch);
             if (storedTaped) {
                 maintenanceHatch.setTaped(true);

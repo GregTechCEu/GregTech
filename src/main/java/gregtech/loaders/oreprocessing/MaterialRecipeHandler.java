@@ -81,7 +81,7 @@ public class MaterialRecipeHandler {
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
                         .input(dustPrefix, mat, 4)
                         .outputs(GTUtility.copyAmount(3, gemStack), GTUtility.copyAmount(2, tinyDarkAshStack))
-                        .explosivesAmount(4)
+                        .explosivesAmount(2)
                         .buildAndRegister();
             }
 

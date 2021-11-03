@@ -286,6 +286,7 @@ public abstract class Widget {
         GuiUtils.drawHoveringText(itemStack, tooltip, mouseX, mouseY,
                 sizes.getScreenWidth(),
                 sizes.getScreenHeight(), maxTextWidth, mc.fontRenderer);
+        GlStateManager.disableLighting();
     }
 
     @SideOnly(Side.CLIENT)
@@ -305,6 +306,23 @@ public abstract class Widget {
         double scaledWidth = fontRenderer.getStringWidth(text) * scale;
         double scaledHeight = fontRenderer.FONT_HEIGHT * scale;
         drawStringSized(text, x - scaledWidth, y - scaledHeight, color, dropShadow, scale, false);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawText(String text, float x, float y, float scale, int color) {
+        drawText(text, x, y, scale, color, false);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawText(String text, float x, float y, float scale, int color, boolean shadow) {
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        GlStateManager.disableBlend();
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(scale, scale, 0f);
+        float sf = 1 / scale;
+        fontRenderer.drawString(text, x * sf, y * sf, color, shadow);
+        GlStateManager.popMatrix();
+        GlStateManager.enableBlend();
     }
 
     @SideOnly(Side.CLIENT)

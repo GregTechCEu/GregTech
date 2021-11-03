@@ -513,6 +513,7 @@ public class Materials {
     public static Material EthylTertButylEther;
     public static Material Ethylbenzene;
     public static Material Naphthalene;
+    public static Material Nitrobenzene;
 
     /**
      * Not possible to determine exact Components
@@ -580,7 +581,6 @@ public class Materials {
     public static Material RawGasoline;
     public static Material Gasoline;
     public static Material HighOctaneGasoline;
-    public static Material Nitrobenzene;
     public static Material CoalGas;
     public static Material CoalTar;
     public static Material Gunpowder;

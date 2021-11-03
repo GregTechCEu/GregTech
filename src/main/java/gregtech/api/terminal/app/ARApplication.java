@@ -1,5 +1,6 @@
 package gregtech.api.terminal.app;
 
+import gregtech.api.terminal.os.SystemCall;
 import gregtech.common.items.behaviors.TerminalBehaviour;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -12,7 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  *
  * @Author: KilaBash
  * @Date: 2021/09/13
- * @Description: Application for AP.
+ * @Description: Application for AR.
  * When AR is running, {@link #tickAR(EntityPlayer)} and {@link #drawARScreen(RenderWorldLastEvent)} will be called when you hold the terminal in one of your hands.
  * Therefore, at most one AR app is active on the terminal at any one time. And when you open the terminal GUI it automatically closes the currently running AR.
  * You have access to the app's NBT of the handheld terminal when the AR is active, to load configs, init and so on.
@@ -60,7 +61,7 @@ public abstract class ARApplication extends AbstractApplication{
     protected final void openAR() {
         os.tabletNBT.setString("_ar", getRegistryName());
         if (isClient) {
-            getOs().shutdown();
+            SystemCall.SHUT_DOWN.call(getOs(), true);
         }
     }
 

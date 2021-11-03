@@ -69,6 +69,11 @@ public class MetaTileEntityAutoMaintenanceHatch extends MetaTileEntityMultiblock
     }
 
     @Override
+    public boolean startWithoutProblems() {
+        return true;
+    }
+
+    @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
         return null;
     }

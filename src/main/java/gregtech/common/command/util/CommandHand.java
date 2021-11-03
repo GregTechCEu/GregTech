@@ -87,7 +87,7 @@ public class CommandHand extends CommandBase {
                         Material material = ((MetaPrefixItem) metaItem).getMaterial(stackInHand);
                         OrePrefix orePrefix = ((MetaPrefixItem) metaItem).getOrePrefix();
                         String oreDictName = new UnificationEntry(orePrefix, material).toString();
-                        player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.material_meta_item", orePrefix, material)
+                        player.sendMessage(new TextComponentTranslation("gregtech.command.util.hand.material_meta_item", orePrefix.name(), material)
                                 .setStyle(new Style().setClickEvent(new ClickEvent(Action.OPEN_URL, oreDictName))));
                     }
                 } else {

@@ -5,6 +5,7 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gregtech.api.util.IntRange;
 import gregtech.api.util.RelativeDirection;
+import gregtech.common.blocks.VariantActiveBlock;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -13,6 +14,7 @@ import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -138,8 +140,13 @@ public class BlockPattern {
                                 z++;//continue searching for the first aisle
                             }
                             continue loop;
-                        } else if (validPos != null && worldState.getBlockState().getBlock() != Blocks.AIR) {
-                            validPos.add(new BlockPos(worldState.getPos()));
+                        } else {
+                            if (worldState.getBlockState().getBlock() instanceof VariantActiveBlock) {
+                                matchContext.getOrPut("VABlock", new LinkedList<>()).add(worldState.getPos());
+                            }
+                            if (validPos != null && worldState.getBlockState().getBlock() != Blocks.AIR) {
+                                validPos.add(new BlockPos(worldState.getPos()));
+                            }
                         }
                         for (int i = 0; i < countMatchesCache.length; i++) {
                             if (countMatches[i].getLeft().test(worldState)) {

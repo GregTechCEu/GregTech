@@ -192,7 +192,7 @@ public class OrePrefix {
     public static final OrePrefix pipeLargeFluid = new OrePrefix("pipeLargeFluid", M * 6, null, MaterialIconType.pipeLarge, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeHugeFluid = new OrePrefix("pipeHugeFluid", M * 12, null, MaterialIconType.pipeHuge, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeQuadrupleFluid = new OrePrefix("pipeQuadrupleFluid", M * 12, null, MaterialIconType.pipeQuadruple, ENABLE_UNIFICATION, null);
-    public static final OrePrefix pipeNonupleFluid = new OrePrefix("pipeNonupleFluid", M * 12, null, MaterialIconType.pipeQuadruple, ENABLE_UNIFICATION, null);
+    public static final OrePrefix pipeNonupleFluid = new OrePrefix("pipeNonupleFluid", M * 12, null, MaterialIconType.pipeNonuple, ENABLE_UNIFICATION, null);
 
     public static final OrePrefix pipeTinyItem = new OrePrefix("pipeTinyItem", M / 2, null, MaterialIconType.pipeTiny, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeSmallItem = new OrePrefix("pipeSmallItem", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null);

@@ -34,7 +34,7 @@ public class CoverBehaviorUIFactory extends UIFactory<CoverBehavior> {
         BlockPos blockPos = syncData.readBlockPos();
         EnumFacing attachedSide = EnumFacing.VALUES[syncData.readByte()];
         TileEntity tileEntity = Minecraft.getMinecraft().world.getTileEntity(blockPos);
-        ICoverable coverable = tileEntity == null ? null : tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, null);
+        ICoverable coverable = tileEntity == null ? null : tileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_COVERABLE, attachedSide);
         if (coverable != null) {
             return coverable.getCoverAtSide(attachedSide);
         }

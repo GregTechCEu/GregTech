@@ -10,6 +10,7 @@ import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import gregtech.common.terminal.app.prospector.widget.WidgetProspectingMap;
 import gregtech.common.terminal.component.ClickComponent;
 import gregtech.common.terminal.component.SearchComponent;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,12 +39,19 @@ public class OreProspectorApp extends AbstractApplication implements
         if (isClient) {
             this.addWidget(new ImageWidget(0, 0, 333, offset, GuiTextures.UI_FRAME_SIDE_UP));
             this.addWidget(new ImageWidget(0, 232 - offset, 333, offset, GuiTextures.UI_FRAME_SIDE_DOWN));
-            this.widgetOreList = new WidgetOreList(32 * chunkRadius - 16, offset, 333 - 32 * chunkRadius  + 16, 232 - 2 * offset);
+            this.widgetOreList = new WidgetOreList(32 * chunkRadius - 16, offset, 333 - 32 * chunkRadius + 16, 232 - 2 * offset);
             this.addWidget(this.widgetOreList);
         }
         this.widgetProspectingMap = new WidgetProspectingMap((7 - chunkRadius) * 16, offset + (7 - chunkRadius) * 16, chunkRadius, this.widgetOreList, 0, 1);
         this.addWidget(1, this.widgetProspectingMap);
+        loadLocalConfig(nbt -> this.widgetProspectingMap.setDarkMode(nbt.getBoolean("dark")));
         return this;
+    }
+
+    @Override
+    public NBTTagCompound closeApp() {
+        saveLocalConfig(nbt -> nbt.setBoolean("dark", this.widgetProspectingMap.getDarkMode()));
+        return super.closeApp();
     }
 
     @Override
@@ -53,7 +61,7 @@ public class OreProspectorApp extends AbstractApplication implements
 
     @Override
     public List<IMenuComponent> getMenuComponents() {
-        ClickComponent darkMode = new ClickComponent().setIcon(GuiTextures.ICON_VISIBLE).setHoverText("terminal.prospector.vis_mode").setClickConsumer(cd->{
+        ClickComponent darkMode = new ClickComponent().setIcon(GuiTextures.ICON_VISIBLE).setHoverText("terminal.prospector.vis_mode").setClickConsumer(cd -> {
             if (cd.isClient) {
                 widgetProspectingMap.setDarkMode(!widgetProspectingMap.getDarkMode());
             }

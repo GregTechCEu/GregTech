@@ -143,6 +143,7 @@ public class CycleButtonWidget extends Widget {
             } else {
                 this.currentOption = (currentOption + 1) % optionNames.length;
             }
+            setOptionExecutor.accept(currentOption);
             writeClientAction(1, buf -> buf.writeVarInt(currentOption));
             playButtonClickSound();
             return true;

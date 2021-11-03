@@ -2,10 +2,7 @@ package gregtech.integration.jei.multiblock.infos;
 
 import com.google.common.collect.Lists;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.common.blocks.BlockFusionCoil;
-import gregtech.common.blocks.BlockMachineCasing;
-import gregtech.common.blocks.BlockMultiblockCasing;
-import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.*;
 import gregtech.common.metatileentities.MetaTileEntities;
 import gregtech.integration.jei.multiblock.MultiblockInfoPage;
 import gregtech.integration.jei.multiblock.MultiblockShapeInfo;
@@ -32,31 +29,32 @@ public class FusionReactorInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
-                .aisle("###############", "######NCN######", "###############")
-                .aisle("######DCD######", "####CCcccCC####", "######UCU######")
-                .aisle("####CC###CC####", "###sccNMNccs###", "####CC###CC####")
-                .aisle("###C#######C###", "##wcnC###Cnce##", "###C#######C###")
-                .aisle("##C#########C##", "#Cce#######wcC#", "##C#########C##")
-                .aisle("##C#########C##", "#CcC#######CcC#", "##C#########C##")
-                .aisle("#D###########D#", "WcE#########WcE", "#U###########U#")
-                .aisle("#C###########C#", "CcC#########CcC", "#C###########C#")
-                .aisle("#D###########D#", "WcE#########WcE", "#U###########U#")
-                .aisle("##C#########C##", "#CcC#######CcC#", "##C#########C##")
-                .aisle("##C#########C##", "#Cce#######wcC#", "##C#########C##")
-                .aisle("###C#######C###", "##wcsC###Csce##", "###C#######C###")
-                .aisle("####CC###CC####", "###nccSCSccn###", "####CC###CC####")
-                .aisle("######DCD######", "####CCcccCC####", "######UCU######")
-                .aisle("###############", "######NCN######", "###############")
-                .where('M', MetaTileEntities.FUSION_REACTOR[tier], EnumFacing.SOUTH)
+                .aisle("###############", "######SGS######", "###############")
+                .aisle("######DCD######", "####GG###GG####", "######UCU######")
+                .aisle("####CC###CC####", "###n##NMN##e###", "####CC###CC####")
+                .aisle("###C#######C###", "##scwC###Cwcs##", "###C#######C###")
+                .aisle("##C#########C##", "#G#e#######n#G#", "##C#########C##")
+                .aisle("##C#########C##", "#G#C#######C#G#", "##C#########C##")
+                .aisle("#D###########D#", "W#E#########W#E", "#U###########U#")
+                .aisle("#C###########C#", "G#C#########C#G", "#C###########C#")
+                .aisle("#D###########D#", "W#E#########W#E", "#U###########U#")
+                .aisle("##C#########C##", "#G#C#######C#G#", "##C#########C##")
+                .aisle("##C#########C##", "#G#e#######n#G#", "##C#########C##")
+                .aisle("###C#######C###", "##wcsC###Cscw##", "###C#######C###")
+                .aisle("####CC###CC####", "###n##SCS##e###", "####CC###CC####")
+                .aisle("######DCD######", "####GG###GG####", "######UCU######")
+                .aisle("###############", "######NGN######", "###############")
+                .where('M', MetaTileEntities.FUSION_REACTOR[tier], EnumFacing.WEST)
                 .where('C', getCasing(tier))
+                .where('G', MetaBlocks.TRANSPARENT_CASING.getState(BlockTransparentCasing.CasingType.REINFORCED_GLASS))
                 .where('c', getCoil(tier))
-                .where('W', MetaTileEntities.FLUID_EXPORT_HATCH[6 + tier], EnumFacing.WEST)
-                .where('E', MetaTileEntities.FLUID_EXPORT_HATCH[6 + tier], EnumFacing.EAST)
-                .where('S', MetaTileEntities.FLUID_EXPORT_HATCH[6 + tier], EnumFacing.SOUTH)
-                .where('N', MetaTileEntities.FLUID_EXPORT_HATCH[6 + tier], EnumFacing.NORTH)
+                .where('W', MetaTileEntities.FLUID_EXPORT_HATCH[6 + tier], EnumFacing.NORTH)
+                .where('E', MetaTileEntities.FLUID_EXPORT_HATCH[6 + tier], EnumFacing.SOUTH)
+                .where('S', MetaTileEntities.FLUID_EXPORT_HATCH[6 + tier], EnumFacing.EAST)
+                .where('N', MetaTileEntities.FLUID_EXPORT_HATCH[6 + tier], EnumFacing.WEST)
                 .where('w', MetaTileEntities.ENERGY_INPUT_HATCH[6 + tier], EnumFacing.WEST)
-                .where('e', MetaTileEntities.ENERGY_INPUT_HATCH[6 + tier], EnumFacing.EAST)
-                .where('s', MetaTileEntities.ENERGY_INPUT_HATCH[6 + tier], EnumFacing.SOUTH)
+                .where('e', MetaTileEntities.ENERGY_INPUT_HATCH[6 + tier], EnumFacing.SOUTH)
+                .where('s', MetaTileEntities.ENERGY_INPUT_HATCH[6 + tier], EnumFacing.EAST)
                 .where('n', MetaTileEntities.ENERGY_INPUT_HATCH[6 + tier], EnumFacing.NORTH)
                 .where('U', MetaTileEntities.FLUID_IMPORT_HATCH[6 + tier], EnumFacing.UP)
                 .where('D', MetaTileEntities.FLUID_IMPORT_HATCH[6 + tier], EnumFacing.DOWN)

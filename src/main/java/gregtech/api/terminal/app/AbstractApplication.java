@@ -3,6 +3,7 @@ package gregtech.api.terminal.app;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ResourceHelper;
 import gregtech.api.gui.resources.TextureArea;
+import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.gui.widgets.AnimaWidgetGroup;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.menu.IMenuComponent;
@@ -12,11 +13,14 @@ import gregtech.api.util.Size;
 import gregtech.common.items.behaviors.TerminalBehaviour;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
@@ -28,7 +32,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     protected NBTTagCompound nbt;
 
     public AbstractApplication(String name) {
-        super(Position.ORIGIN, new Size(333, 232));
+        super(Position.ORIGIN, new Size(TerminalOSWidget.DEFAULT_WIDTH, TerminalOSWidget.DEFAULT_HEIGHT));
         this.name = name;
     }
 
@@ -68,7 +72,7 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
     @SideOnly(Side.CLIENT)
     public String getDescription() {
         if (I18n.hasKey("terminal." + getRegistryName() + ".description")) {
-            return I18n.format("terminal." + getRegistryName() + ".description");
+            return I18n.format("terminal." + getRegistryName() + ".description").replaceAll("\\\\n", "\n");
         }
         return I18n.format("terminal.app_name.description");
     }
@@ -196,5 +200,47 @@ public abstract class AbstractApplication extends AnimaWidgetGroup {
         if (!isClientSideApp()) {
             super.writeClientAction(id, packetBufferWriter);
         }
+    }
+
+    /**
+     * read NBT from the local config folder.
+     */
+    protected void loadLocalConfig(Consumer<NBTTagCompound> reader) {
+        if (isClient && reader != null) {
+            NBTTagCompound nbt = null;
+            try {
+                nbt = CompressedStreamTools.read(new File(TerminalRegistry.TERMINAL_PATH, String.format("config/%S.nbt", getRegistryName())));
+            } catch (IOException e) {
+                GTLog.logger.error("error while loading local nbt for {}", getRegistryName(), e);
+            }
+            if (nbt == null) {
+                nbt = new NBTTagCompound();
+            }
+            reader.accept(nbt);
+        }
+    }
+
+    /**
+     * Write NBT to the local config folder.
+     */
+    protected void saveLocalConfig(Consumer<NBTTagCompound> writer) {
+        if (isClient && writer != null) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            try {
+                writer.accept(nbt);
+                if (!nbt.isEmpty()) {
+                    CompressedStreamTools.safeWrite(nbt, new File(TerminalRegistry.TERMINAL_PATH, String.format("config/%S.nbt", getRegistryName())));
+                }
+            } catch (IOException e) {
+                GTLog.logger.error("error while saving local nbt for {}", getRegistryName(), e);
+            }
+        }
+    }
+
+    /**
+     * Fired when you open this app or terminal's size updated. (maximize)
+     */
+    public void onOSSizeUpdate(int width, int height) {
+        setSelfPosition(Position.ORIGIN.add(new Position((width - getSize().width) / 2, (height - getSize().height) / 2)));
     }
 }

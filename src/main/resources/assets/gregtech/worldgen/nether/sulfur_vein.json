@@ -1,6 +1,6 @@
 {
-  "weight": 130,
-  "density": 0.3,
+  "weight": 120,
+  "density": 0.5,
   "max_height": 70,
   "min_height": 10,
   "dimension_filter": [
@@ -31,11 +31,11 @@
           "value": "ore:pyrite"
         },
         {
-          "weight": 20,
+          "weight": 30,
           "value": "ore:sphalerite"
         },
         {
-          "weight": 30,
+          "weight": 10,
           "value": "ore:tennantite"
         }
       ]

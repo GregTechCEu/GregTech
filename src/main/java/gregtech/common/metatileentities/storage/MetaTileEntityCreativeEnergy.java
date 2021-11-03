@@ -5,14 +5,15 @@ import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
-import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.CycleButtonWidget;
-import gregtech.api.gui.widgets.TextFieldWidget;
+import gregtech.api.gui.widgets.ImageWidget;
+import gregtech.api.gui.widgets.TextFieldWidget2;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.render.Textures;
@@ -27,7 +28,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.List;
+import java.util.function.Function;
 
 public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEnergyContainer {
 
@@ -36,8 +37,6 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
 
     private int setTier = 0;
     private boolean active = false;
-
-    private final List<Character> ALLOWED_CHARS = Lists.newArrayList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
 
     public MetaTileEntityCreativeEnergy() {
         super(new ResourceLocation(GTValues.MODID, "infinite_energy"));
@@ -74,39 +73,25 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
         ModularUI.Builder builder = ModularUI.defaultBuilder()
                 .widget(new CycleButtonWidget(7, 7, 30, 20, GTValues.VN, () -> setTier, tier -> {
                     setTier = tier;
-                    if (tier > 0)
-                        voltage = GTValues.V[setTier - 1];
-                    else
-                        voltage = 0;
+                    voltage = GTValues.V[setTier];
                 }));
         builder.label(7, 32, "Voltage");
-        builder.widget(new TextFieldWidget(7, 44, 156, 20, true, () -> String.valueOf(voltage), value -> {
-            if(!value.isEmpty()) {
+        builder.widget(new ImageWidget(7, 44, 156, 20, GuiTextures.DISPLAY));
+        builder.widget(new TextFieldWidget2(9, 50, 152, 16, () -> String.valueOf(voltage), value -> {
+            if (!value.isEmpty()) {
                 voltage = Long.parseLong(value);
                 setTier = 0;
             }
-        }).setValidator(value -> {
-            for (int i = 0; i < value.length(); i++) {
-                char c = value.charAt(i);
-                if (!ALLOWED_CHARS.contains(c))
-                    return false;
-            }
-            return true;
-        }));
+        }).setAllowedChars("0123456789").setMaxLength(19).setValidator(getTextFieldValidator()));
+
         builder.label(7, 74, "Amperage");
         builder.widget(new ClickButtonWidget(7, 87, 20, 20, "-", data -> amps = amps-- == -1 ? 0 : amps--));
-        builder.widget(new TextFieldWidget(29, 87, 118, 20, true, () -> String.valueOf(amps), value -> {
-            if(!value.isEmpty()) {
+        builder.widget(new ImageWidget(29, 87, 118, 20, GuiTextures.DISPLAY));
+        builder.widget(new TextFieldWidget2(31, 93, 114, 16, () -> String.valueOf(amps), value -> {
+            if (!value.isEmpty()) {
                 amps = Integer.parseInt(value);
             }
-        }).setValidator(value -> {
-            for (int i = 0; i < value.length(); i++) {
-                char c = value.charAt(i);
-                if (!ALLOWED_CHARS.contains(c))
-                    return false;
-            }
-            return true;
-        }));
+        }).setMaxLength(10).setNumbersOnly(0, Integer.MAX_VALUE));
         builder.widget(new ClickButtonWidget(149, 87, 20, 20, "+", data -> amps++));
 
         builder.widget(new CycleButtonWidget(7, 139, 162, 20, () -> active, value -> active = value, "Not active", "Active"));
@@ -199,6 +184,24 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     @Override
     public long getOutputAmperage() {
         return amps;
+    }
+
+    public Function<String, String> getTextFieldValidator() {
+        return val -> {
+            if (val.isEmpty()) {
+                return "0";
+            }
+            long num;
+            try {
+                num = Long.parseLong(val);
+            } catch (NumberFormatException ignored) {
+                return "0";
+            }
+            if (num < 0) {
+                return "0";
+            }
+            return val;
+        };
     }
 
 }

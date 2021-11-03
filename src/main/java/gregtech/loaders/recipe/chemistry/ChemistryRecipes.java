@@ -98,13 +98,13 @@ public class ChemistryRecipes {
                 .duration(200).EUt(16).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(2))
                 .fluidOutputs(NetherAir.getFluid(10000))
                 .dimension(-1)
                 .duration(200).EUt(64).buildAndRegister();
 
         GAS_COLLECTOR_RECIPES.recipeBuilder()
-                .notConsumable(new IntCircuitIngredient(1))
+                .notConsumable(new IntCircuitIngredient(3))
                 .fluidOutputs(EnderAir.getFluid(10000))
                 .dimension(1)
                 .duration(200).EUt(256).buildAndRegister();
