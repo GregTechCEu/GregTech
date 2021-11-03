@@ -130,10 +130,10 @@ public class CTMaterialBuilder {
     }
 
     @ZenMethod
-    public CTMaterialBuilder ore(@Optional int oreMultiplier, @Optional int byproductMultiplier) {
+    public CTMaterialBuilder ore(@Optional int oreMultiplier, @Optional int byproductMultiplier, @Optional boolean emissive) {
         if (oreMultiplier == 0) oreMultiplier = 1;
         if (byproductMultiplier == 0) byproductMultiplier = 1;
-        backingBuilder.ore(oreMultiplier, byproductMultiplier);
+        backingBuilder.ore(oreMultiplier, byproductMultiplier, emissive);
         return this;
     }
 

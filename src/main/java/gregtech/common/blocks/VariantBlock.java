@@ -52,7 +52,7 @@ public class VariantBlock<T extends Enum<T> & IStringSerializable> extends Block
     }
 
     public ItemStack getItemVariant(T variant) {
-        return new ItemStack(this, 1, variant.ordinal());
+        return getItemVariant(variant, 1);
     }
 
     public ItemStack getItemVariant(T variant, int amount) {

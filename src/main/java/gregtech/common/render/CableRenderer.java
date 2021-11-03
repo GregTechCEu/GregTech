@@ -18,6 +18,7 @@ import codechicken.lib.vec.uv.IconTransformation;
 import gregtech.api.GTValues;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.pipenet.tile.IPipeTile;
+import gregtech.api.render.GTBlockOperation;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.properties.WireProperties;
 import gregtech.api.util.GTLog;
@@ -129,7 +130,7 @@ public class CableRenderer implements ICCBlockRenderer, IItemRenderer {
                 renderCableBlock(material, insulation, paintingColor, renderState, pipeline, connectedSidesMask);
             }
             ICoverable coverable = tileEntityCable.getCoverableImplementation();
-            coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), renderLayer);
+            coverable.renderCovers(renderState, new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ()), new GTBlockOperation(renderLayer, GTBlockOperation.PASS_MASK));
         }
         return true;
     }

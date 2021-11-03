@@ -99,7 +99,7 @@ public class FoodStats implements IFoodBehavior {
             for (int i = 0; i < potionEffects.length; i++) {
                 effects[i] = potionEffects[i].effect;
             }
-//            GTUtility.addPotionTooltip(Iterables.cycle(effects), lines);
+//            GTUtility.addPotionTooltip(Iterables.cycle(effects), lines); todo implement this
         }
     }
 

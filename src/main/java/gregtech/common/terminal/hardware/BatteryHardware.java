@@ -3,6 +3,7 @@ package gregtech.common.terminal.hardware;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
+import gregtech.api.capability.impl.ElectricItem;
 import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.ItemStackTexture;
 import gregtech.api.terminal.hardware.Hardware;
@@ -33,7 +34,7 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
 
     @Override
     public boolean isHardwareAdequate(Hardware demand) {
-        return demand instanceof BatteryHardware && ((BatteryHardware) demand).getTier() < this.getTier();
+        return demand instanceof BatteryHardware && ((BatteryHardware) demand).getTier() <= this.getTier() && this.getCharge() > 0;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
         }
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setLong("maxCharge", electricItem.getMaxCharge());
-        nbt.setLong("charge", electricItem.getCharge() / 2);
+        nbt.setLong("charge", electricItem.getCharge());
         nbt.setInteger("tier", electricItem.getTier());
         return nbt;
     }
@@ -69,7 +70,7 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
         if (!hasHW()) {
             return super.getIcon();
         }
-        return new ItemStackTexture(MetaItems.BATTERY_HV_SODIUM.getStackForm());
+        return new ItemStackTexture(isCreative() ? MetaItems.ULTIMATE_BATTERY.getInfiniteChargedStack() : getItem());
     }
 
     @Override
@@ -158,6 +159,15 @@ public class BatteryHardware extends Hardware implements IElectricItem, IHardwar
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability) {
         return capability == GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM ? GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM.cast(this) : null;
+    }
+
+    @Override
+    public ItemStack onHardwareRemoved(ItemStack itemStack) {
+        IElectricItem item = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+        if (item instanceof ElectricItem) {
+            ((ElectricItem) item).setCharge(getCharge());
+        }
+        return itemStack;
     }
 
     public static class BatteryDemand extends BatteryHardware {

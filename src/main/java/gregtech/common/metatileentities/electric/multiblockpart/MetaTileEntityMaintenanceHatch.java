@@ -4,10 +4,13 @@ import codechicken.lib.raytracer.CuboidRayTraceResult;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.GTValues;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.impl.ItemHandlerProxy;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
+import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.items.toolitem.ToolMetaItem;
@@ -19,40 +22,65 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.multiblock.IMaintenance;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTToolTypes;
+import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;
+import gregtech.common.inventory.handlers.TapeItemStackHandler;
 import gregtech.common.items.MetaItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
-import static gregtech.api.capability.GregtechDataCodes.IS_TAPED;
-import static gregtech.api.capability.GregtechDataCodes.STORE_MAINTENANCE;
+import static gregtech.api.capability.GregtechDataCodes.*;
 
 public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart implements IMultiblockAbilityPart<IMaintenanceHatch>, IMaintenanceHatch {
 
+    private final boolean isConfigurable;
     private boolean isTaped;
 
     // Used to store state temporarily if the Controller is broken
     private byte maintenanceProblems = -1;
     private int timeActive = -1;
 
-    private double durationMultiplier = 1.0;
-    private double timeMultiplier = 1.0;
+    private BigDecimal durationMultiplier = BigDecimal.ONE;
 
-    public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId) {
-        super(metaTileEntityId, 1);
+    // Some stats used for the Configurable Maintenance Hatch
+    private static final BigDecimal MAX_DURATION_MULTIPLIER = BigDecimal.valueOf(1.1);
+    private static final BigDecimal MIN_DURATION_MULTIPLIER = BigDecimal.valueOf(0.9);
+    private static final BigDecimal DURATION_ACTION_AMOUNT = BigDecimal.valueOf(0.01);
+    private static final Function<Double, Double> TIME_ACTION = (d) -> {
+        if (d < 1.0)
+            return -20.0 * d + 21;
+        else
+            return -8.0 * d + 9;
+    };
+
+    public MetaTileEntityMaintenanceHatch(ResourceLocation metaTileEntityId, boolean isConfigurable) {
+        super(metaTileEntityId, isConfigurable ? 3 : 1);
+        this.isConfigurable = isConfigurable;
     }
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder metaTileEntityHolder) {
-        return new MetaTileEntityMaintenanceHatch(metaTileEntityId);
+        return new MetaTileEntityMaintenanceHatch(metaTileEntityId, isConfigurable);
     }
 
     @Override
@@ -60,14 +88,14 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         super.renderMetaTileEntity(renderState, translation, pipeline);
 
         if (shouldRenderOverlay()) {
-            (isTaped ? Textures.MAINTENANCE_OVERLAY_TAPED : Textures.MAINTENANCE_OVERLAY)
+            (isConfigurable ? Textures.MAINTENANCE_OVERLAY_CONFIGURABLE : isTaped ? Textures.MAINTENANCE_OVERLAY_TAPED : Textures.MAINTENANCE_OVERLAY)
                     .renderSided(getFrontFacing(), renderState, translation, pipeline);
         }
     }
 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(1);
+        return new TapeItemStackHandler(1);
     }
 
     @Override
@@ -124,6 +152,11 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         Tuple<Byte, Integer> data = new Tuple<>(this.maintenanceProblems, this.timeActive);
         storeMaintenanceData((byte) -1, -1);
         return data;
+    }
+
+    @Override
+    public boolean startWithoutProblems() {
+        return isConfigurable;
     }
 
     @Override
@@ -260,12 +293,26 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     public double getDurationMultiplier() {
-        return durationMultiplier;
+        return durationMultiplier.doubleValue();
     }
 
     @Override
     public double getTimeMultiplier() {
-        return timeMultiplier;
+        return BigDecimal.valueOf(TIME_ACTION.apply(durationMultiplier.doubleValue()))
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
+    }
+
+    private void incInternalMultiplier(Widget.ClickData data) {
+        if (durationMultiplier.compareTo(MAX_DURATION_MULTIPLIER) == 0) return;
+        durationMultiplier = durationMultiplier.add(DURATION_ACTION_AMOUNT);
+        writeCustomData(MAINTENANCE_MULTIPLIER, b -> b.writeDouble(durationMultiplier.doubleValue()));
+    }
+
+    private void decInternalMultiplier(Widget.ClickData data) {
+        if (durationMultiplier.compareTo(MIN_DURATION_MULTIPLIER) == 0) return;
+        durationMultiplier = durationMultiplier.subtract(DURATION_ACTION_AMOUNT);
+        writeCustomData(MAINTENANCE_MULTIPLIER, b -> b.writeDouble(durationMultiplier.doubleValue()));
     }
 
     @Override
@@ -292,20 +339,47 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
 
     @Override
     protected ModularUI createUI(EntityPlayer entityPlayer) {
-        return ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 * 3 + 98)
-                .label(10, 5, this.getMetaFullName())
-                .widget(new SlotWidget(this.importItems, 0, 89 - 9, 18 - 1)
-                        .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY))
-                .widget(new ClickButtonWidget(89 - 9 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
-                        .setButtonTexture(GuiTextures.MAINTENANCE_ICON))
-                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16)
-                .build(this.getHolder(), entityPlayer);
+        ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 18 * 3 + 98)
+                .label(5, 5, getMetaFullName())
+                .bindPlayerInventory(entityPlayer.inventory, GuiTextures.SLOT, 7, 18 * 3 + 16);
+
+        if (!isConfigurable && GTValues.FOOLS.get()) {
+            builder.widget(new FixWiringTaskWidget(48, 15, 80, 50)
+                    .setOnFinished(this::fixAllMaintenanceProblems)
+                    .setCanInteractPredicate(this::isAttachedToMultiBlock));
+        } else {
+            builder.widget(new SlotWidget(importItems, 0, 89 - 10, 18 - 1)
+                    .setBackgroundTexture(GuiTextures.SLOT, GuiTextures.DUCT_TAPE_OVERLAY))
+                    .widget(new ClickButtonWidget(89 - 10 - 1, 18 * 2 + 3, 20, 20, "", data -> fixMaintenanceProblems(entityPlayer))
+                            .setButtonTexture(GuiTextures.MAINTENANCE_ICON));
+        }
+        if (isConfigurable) {
+            builder.widget(new AdvancedTextWidget(5, 25, getTextWidgetText("duration", this::getDurationMultiplier), 0x404040))
+                    .widget(new AdvancedTextWidget(5, 39, getTextWidgetText("time", this::getTimeMultiplier), 0x404040))
+                    .widget(new ClickButtonWidget(9, 18 * 3 + 16 - 18, 12, 12, "-", this::decInternalMultiplier))
+                    .widget(new ClickButtonWidget(9 + 18 * 2, 18 * 3 + 16 - 18, 12, 12, "+", this::incInternalMultiplier));
+        }
+        return builder.build(getHolder(), entityPlayer);
+    }
+
+    private Consumer<List<ITextComponent>> getTextWidgetText(String type, Supplier<Double> multiplier) {
+        return (list) -> {
+            ITextComponent tooltip;
+            if (multiplier.get() == 1.0) {
+                tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".unchanged_description");
+            } else {
+                tooltip = new TextComponentTranslation("gregtech.maintenance.configurable_" + type + ".changed_description", multiplier.get());
+            }
+            list.add(new TextComponentTranslation("gregtech.maintenance.configurable_" + type, multiplier.get())
+                    .setStyle(new Style().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
+        };
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         super.writeToNBT(data);
         data.setBoolean("IsTaped", isTaped);
+        if (isConfigurable) data.setDouble("DurationMultiplier", durationMultiplier.doubleValue());
         return data;
     }
 
@@ -313,18 +387,21 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
         isTaped = data.getBoolean("IsTaped");
+        if (isConfigurable) durationMultiplier = BigDecimal.valueOf(data.getDouble("DurationMultiplier"));
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         buf.writeBoolean(isTaped);
+        if (isConfigurable) buf.writeDouble(durationMultiplier.doubleValue());
     }
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
         super.receiveInitialSyncData(buf);
         isTaped = buf.readBoolean();
+        if (isConfigurable) durationMultiplier = BigDecimal.valueOf(buf.readDouble());
     }
 
     @Override
@@ -337,6 +414,9 @@ public class MetaTileEntityMaintenanceHatch extends MetaTileEntityMultiblockPart
         } else if (dataId == IS_TAPED) {
             this.isTaped = buf.readBoolean();
             scheduleRenderUpdate();
+            markDirty();
+        } else if (dataId == MAINTENANCE_MULTIPLIER) {
+            this.durationMultiplier = BigDecimal.valueOf(buf.readDouble());
             markDirty();
         }
     }

@@ -12,15 +12,13 @@ import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.gui.widgets.ColorWidget;
 import gregtech.api.terminal.gui.widgets.TreeListWidget;
 import gregtech.api.terminal.util.FileTree;
+import gregtech.api.util.Position;
 import gregtech.api.util.Size;
-import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
 
 import java.awt.*;
 import java.io.File;
@@ -46,6 +44,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
     private IGuiTexture background;
     private boolean isClient;
     private List<Widget> iNativeWidgets;
+    boolean isClosed;
 
     public TerminalDialogWidget(TerminalOSWidget os, int x, int y, int width, int height) {
         super(x, y, width, height);
@@ -61,13 +60,19 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         if (iNativeWidgets != null) {
             iNativeWidgets.forEach(this::addWidget);
         }
-        os.desktop.setBlockApp(true);
+        if (isRemote()) {
+            os.desktop.addTopWidget(this);
+        }
         return this;
     }
 
     public void close() {
+        if (isClosed) return;
+        isClosed = true;
         os.closeDialog(this);
-        os.desktop.setBlockApp(false);
+        if (isRemote()) {
+            os.desktop.removeTopWidget(this);
+        }
     }
 
     /**
@@ -265,12 +270,15 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 .setHoverText("terminal.dialog.folder")
                 .setIcon(GuiTextures.ICON_LOAD));
         dialog.addWidget(new LabelWidget(x + WIDTH / 2, y + 11, title, -1).setXCentered(true));
-        os.menu.hideMenu();
+        if (os.isRemote()) {
+            os.menu.hideMenu();
+        }
         return dialog.setClientSide();
     }
 
     public static TerminalDialogWidget showItemSelector(TerminalOSWidget os, String title, boolean cost, Predicate<ItemStack> filter, Consumer<ItemStack> result) {
-        TerminalDialogWidget dialog = createEmptyTemplate(os).addTitle(title);
+        TerminalDialogWidget dialog = createEmptyTemplate(os);
+        dialog.addWidget(new LabelWidget(WIDTH / 2, -7, title, -1).setShadow(true).setXCentered(true));
         IInventory inventoryPlayer = os.getModularUI().entityPlayer.inventory;
         if (dialog.iNativeWidgets == null) {
             dialog.iNativeWidgets = new ArrayList<>();
@@ -278,10 +286,10 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
         int x = 11;
         int y = 30;
         final SlotWidget[] selected = {null};
-        for (int row = 0; row < 3; row++) {
+        for (int row = 0; row < 4; row++) {
             for (int col = 0; col < 9; col++) {
-                boolean pass = filter == null || filter.test(inventoryPlayer.getStackInSlot(col + (row + 1) * 9));
-                SlotWidget slotWidget = new SlotWidget(inventoryPlayer, col + (row + 1) * 9, x + col * 18, y + row * 18, false, false) {
+                boolean pass = filter == null || filter.test(inventoryPlayer.getStackInSlot(col + row * 9));
+                SlotWidget slotWidget = new SlotWidget(inventoryPlayer, col + row * 9, x + col * 18, (int) (y + (row == 0 ? -1.2 : (row - 1)) * 18), false, false) {
                     @Override
                     public void drawInBackground(int mouseX, int mouseY, IRenderContext context) {
                         super.drawInBackground(mouseX, mouseY, context);
@@ -325,6 +333,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
                 if (cost) {
                     selected[0].getHandle().getStack().setCount(stack.getCount() - 1);
                 }
+                stack.setCount(1);
                 result.accept(stack);
             }
         });
@@ -356,7 +365,7 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
 
     @Override
     protected void writeClientAction(int id, Consumer<PacketBuffer> packetBufferWriter) {
-        if (isClient) return;
+        if (isClient || isClosed) return;
         super.writeClientAction(id, packetBufferWriter);
     }
 
@@ -379,5 +388,9 @@ public class TerminalDialogWidget extends AnimaWidgetGroup {
             return true;
         }
         return super.keyTyped(charTyped, keyCode);
+    }
+
+    public void onOSSizeUpdate(int width, int height) {
+        setSelfPosition(Position.ORIGIN.add(new Position((width - getSize().width) / 2, (height - getSize().height) / 2)));
     }
 }

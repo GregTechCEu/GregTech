@@ -79,7 +79,7 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
     @Override
     protected boolean isReadyForRecipes() {
         MetaTileEntityRotorHolder rotorHolder = largeTurbine.getAbilities(MultiblockAbility.ABILITY_ROTOR_HOLDER).get(0);
-        return rotorHolder.isHasRotor();
+        return rotorHolder.isHasRotor() && super.isReadyForRecipes();
     }
 
     @Override
@@ -144,5 +144,10 @@ public class LargeTurbineWorkableHandler extends FuelRecipeLogic {
     @Override
     protected boolean shouldVoidExcessiveEnergy() {
         return true;
+    }
+
+    @Override
+    protected boolean isObstructed() {
+        return !largeTurbine.isRotorFaceFree();
     }
 }

@@ -3,12 +3,16 @@ package gregtech.api.gui;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
+import gregtech.api.gui.impl.ModularUIGui;
+import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.util.Position;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.ArrayList;
@@ -28,11 +32,13 @@ public final class ModularUI implements ISizeProvider {
 
     public final ImmutableBiMap<Integer, Widget> guiWidgets;
 
-    public final TextureArea backgroundPath;
+    public final IGuiTexture backgroundPath;
     private int screenWidth, screenHeight;
-    private final int width, height;
+    private int width, height;
     private final ImmutableList<Runnable> uiOpenCallback;
     private final ImmutableList<Runnable> uiCloseCallback;
+    @SideOnly(Side.CLIENT)
+    private ModularUIGui modularUIGui;
 
     public boolean isJEIHandled;
     public boolean needNativeClick;
@@ -43,7 +49,7 @@ public final class ModularUI implements ISizeProvider {
     public final IUIHolder holder;
     public final EntityPlayer entityPlayer;
 
-    public ModularUI(ImmutableBiMap<Integer, Widget> guiWidgets, ImmutableList<Runnable> openListeners, ImmutableList<Runnable> closeListeners, TextureArea backgroundPath, int width, int height, IUIHolder holder, EntityPlayer entityPlayer) {
+    public ModularUI(ImmutableBiMap<Integer, Widget> guiWidgets, ImmutableList<Runnable> openListeners, ImmutableList<Runnable> closeListeners, IGuiTexture backgroundPath, int width, int height, IUIHolder holder, EntityPlayer entityPlayer) {
         this.guiWidgets = guiWidgets;
         this.uiOpenCallback = openListeners;
         this.uiCloseCallback = closeListeners;
@@ -52,6 +58,16 @@ public final class ModularUI implements ISizeProvider {
         this.height = height;
         this.holder = holder;
         this.entityPlayer = entityPlayer;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public ModularUIGui getModularUIGui() {
+        return modularUIGui;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void setModularUIGui(ModularUIGui modularUIGui) {
+        this.modularUIGui = modularUIGui;
     }
 
     public List<Widget> getFlatVisibleWidgetCollection() {
@@ -68,6 +84,15 @@ public final class ModularUI implements ISizeProvider {
         return widgetList;
     }
 
+    @SideOnly(Side.CLIENT)
+    public void setSize(int width, int height) {
+        if (this.width != width || this.height != height) {
+            this.width = width;
+            this.height = height;
+            getModularUIGui().initGui();
+        }
+    }
+    
     public void updateScreenSize(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
@@ -107,7 +132,7 @@ public final class ModularUI implements ISizeProvider {
         return new Builder(GuiTextures.BACKGROUND, 176, 216);
     }
 
-    public static Builder builder(TextureArea background, int width, int height) {
+    public static Builder builder(IGuiTexture background, int width, int height) {
         return new Builder(background, width, height);
     }
 
@@ -139,12 +164,12 @@ public final class ModularUI implements ISizeProvider {
         private final ImmutableBiMap.Builder<Integer, Widget> widgets = ImmutableBiMap.builder();
         private final ImmutableList.Builder<Runnable> openListeners = ImmutableList.builder();
         private final ImmutableList.Builder<Runnable> closeListeners = ImmutableList.builder();
-        private final TextureArea background;
+        private final IGuiTexture background;
         private final int width;
         private final int height;
         private int nextFreeWidgetId = 0;
 
-        public Builder(TextureArea background, int width, int height) {
+        public Builder(IGuiTexture background, int width, int height) {
             Preconditions.checkNotNull(background);
             this.background = background;
             this.width = width;
@@ -165,7 +190,7 @@ public final class ModularUI implements ISizeProvider {
             return widget(new LabelWidget(x, y, localizationKey, color, new Object[0]));
         }
 
-        public Builder image(int x, int y, int width, int height, TextureArea area) {
+        public Builder image(int x, int y, int width, int height, IGuiTexture area) {
             return widget(new ImageWidget(x, y, width, height, area));
         }
 
@@ -173,7 +198,7 @@ public final class ModularUI implements ISizeProvider {
             return widget(new DynamicLabelWidget(x, y, text, color));
         }
 
-        public Builder slot(IItemHandlerModifiable itemHandler, int slotIndex, int x, int y, TextureArea... overlays) {
+        public Builder slot(IItemHandlerModifiable itemHandler, int slotIndex, int x, int y, IGuiTexture... overlays) {
             return widget(new SlotWidget(itemHandler, slotIndex, x, y).setBackgroundTexture(overlays));
         }
 
@@ -191,11 +216,11 @@ public final class ModularUI implements ISizeProvider {
             return this;
         }
 
-        public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer, TextureArea imageLocation, int yOffset) {
+        public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer, IGuiTexture imageLocation, int yOffset) {
             return bindPlayerInventory(inventoryPlayer, imageLocation, 7, 84 + yOffset);
         }
 
-        public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer, TextureArea imageLocation, int x, int y) {
+        public Builder bindPlayerInventory(InventoryPlayer inventoryPlayer, IGuiTexture imageLocation, int x, int y) {
             for (int row = 0; row < 3; row++) {
                 for (int col = 0; col < 9; col++) {
                     this.widget(new SlotWidget(inventoryPlayer, col + (row + 1) * 9, x + col * 18, y + row * 18)
@@ -206,7 +231,7 @@ public final class ModularUI implements ISizeProvider {
             return bindPlayerHotbar(inventoryPlayer, imageLocation, x, y + 58);
         }
 
-        public Builder bindPlayerHotbar(InventoryPlayer inventoryPlayer, TextureArea imageLocation, int x, int y) {
+        public Builder bindPlayerHotbar(InventoryPlayer inventoryPlayer, IGuiTexture imageLocation, int x, int y) {
             for (int slot = 0; slot < 9; slot++) {
                 this.widget(new SlotWidget(inventoryPlayer, slot, x + slot * 18, y)
                         .setBackgroundTexture(imageLocation)

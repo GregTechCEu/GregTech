@@ -1,10 +1,9 @@
 package gregtech.common.terminal.app.appstore;
 
+import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.resources.ColorRectTexture;
 import gregtech.api.gui.resources.IGuiTexture;
-import gregtech.api.gui.resources.ResourceHelper;
-import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ImageWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.terminal.TerminalRegistry;
@@ -12,6 +11,7 @@ import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
+import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
 import gregtech.common.inventory.handlers.SingleItemStackHandler;
@@ -27,18 +27,21 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AppPageWidget extends TerminalDialogWidget {
     private final AbstractApplication application;
+    private final AppCardWidget appCardWidget;
     private final AppStoreApp store;
     private final CircleButtonWidget[] buttons;
     private int lineWidth;
     private boolean back;
 
-    public AppPageWidget(AbstractApplication application, AppStoreApp store) { // 323 222
+    public AppPageWidget(AbstractApplication application, AppStoreApp store, AppCardWidget appCardWidget) { // 323 222
         super(store.getOs(), 5, 5, 333 - 10, 232 - 10);
+        this.appCardWidget = appCardWidget;
         this.application = application;
         this.store = store;
         String name = this.application.getRegistryName();
@@ -53,6 +56,13 @@ public class AppPageWidget extends TerminalDialogWidget {
                     .setClickListener(cd->buttonClicked(tier));
             this.addWidget(buttons[i]);
         }
+        this.addWidget(new CircleButtonWidget(310, 10, 6, 1, 8)
+                .setColors(0,
+                        TerminalTheme.COLOR_7.getColor(),
+                        TerminalTheme.COLOR_3.getColor())
+                .setIcon(GuiTextures.ICON_REMOVE)
+                .setHoverText("terminal.guide_editor.remove")
+                .setClickListener(cd->close()));
         if (store.getOs().isRemote()) {
             // profile
             int color = application.getThemeColor();
@@ -138,6 +148,9 @@ public class AppPageWidget extends TerminalDialogWidget {
 
 
             if (match) {
+                if (os.isRemote()) {
+                    appCardWidget.updateState(tier == application.getMaxTier() ? 0 : 1);
+                }
                 if (!gui.entityPlayer.isCreative()) { // cost
                     TerminalDialogWidget.showConfirmDialog(store.getOs(), "terminal.dialog.notice", "terminal.store.match", res->{
                         if (res) {
@@ -198,7 +211,7 @@ public class AppPageWidget extends TerminalDialogWidget {
 
         GlStateManager.disableDepth();
 
-        drawSolidRect(x, y, width, height, store.darkMode ? 0xcf000000 : 0xcfdddddd);
+        drawSolidRect(x, y, width, height, store.darkMode ? 0xcf000000 : 0xdfdddddd);
         super.hookDrawInBackground(mouseX, mouseY, partialTicks, context);
         int stage;
         TerminalOSWidget os = store.getOs();
@@ -266,7 +279,11 @@ public class AppPageWidget extends TerminalDialogWidget {
         FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
         List<String> description = fr.listFormattedStringToWidth(application.getDescription(), 210);
         int fColor = store.darkMode ? -1 : 0xff333333;
-        drawStringSized(I18n.format(application.getUnlocalizedName()), x + 100, y + 14, fColor, store.darkMode, 2, false);
+        String localizedName = I18n.format(application.getUnlocalizedName());
+        drawStringSized(localizedName, x + 100, y + 14, fColor, store.darkMode, 2, false);
+        if (isMouseOver(x + 100, y + 14, fr.getStringWidth(localizedName) * 2, fr.FONT_HEIGHT * 2, mouseX, mouseY)) {
+            drawHoveringText(null, Collections.singletonList("("+application.getRegistryName()+")"), 200, mouseX, mouseY);
+        }
         for (int i = 0; i < description.size(); i++) {
             fr.drawString(description.get(i), x + 100, y + 35 + i * fr.FONT_HEIGHT, fColor, store.darkMode);
         }

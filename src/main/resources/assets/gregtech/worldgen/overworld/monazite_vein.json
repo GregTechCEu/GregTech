@@ -1,5 +1,5 @@
 {
-  "weight": 30,
+  "weight": 40,
   "density": 0.4,
   "max_height": 40,
   "min_height": 20,
@@ -11,7 +11,7 @@
     "type": "ellipsoid",
     "radius": [
       13,
-      13
+      16
     ]
   },
   "filler": {

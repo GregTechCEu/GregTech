@@ -939,4 +939,18 @@ public class GTUtility {
         // HV+
         return 16000;
     };
+
+    /**
+     * Alternative function for tank sizes, takes a tier input and returns the corresponding size
+     *
+     * This function is meant for use with machine that need very large tanks, it stops scaling past HV
+     */
+    public static final Function<Integer, Integer> largeTankSizeFunction = tier -> {
+        if (tier <= GTValues.LV)
+            return 32000;
+        if (tier == GTValues.MV)
+            return 48000;
+        // HV+
+        return 64000;
+    };
 }

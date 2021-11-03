@@ -1,6 +1,7 @@
 package gregtech.integration.jei.multiblock;
 
 import gregtech.api.GTValues;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.ItemStackHashStrategy;
 import gregtech.common.ConfigHolder;
@@ -73,10 +74,11 @@ public abstract class MultiblockInfoPage {
             addBlockTooltip(MetaTileEntities.FLUID_EXPORT_HATCH[i].getStackForm(), defaultText);
             addBlockTooltip(MetaTileEntities.FLUID_IMPORT_HATCH[i].getStackForm(), defaultText);
         }
-        for (MetaTileEntityMufflerHatch mufflerHatch : MetaTileEntities.MUFFLER_HATCH) {
+        for (MetaTileEntity mufflerHatch : MetaTileEntities.MUFFLER_HATCH) {
             addBlockTooltip(mufflerHatch.getStackForm(), defaultText);
         }
         addBlockTooltip(MetaTileEntities.MAINTENANCE_HATCH.getStackForm(), maintenanceText);
+        addBlockTooltip(MetaTileEntities.CONFIGURABLE_MAINTENANCE_HATCH.getStackForm(), maintenanceText);
         addBlockTooltip(MetaTileEntities.AUTO_MAINTENANCE_HATCH.getStackForm(), maintenanceText);
     }
 
@@ -108,10 +110,12 @@ public abstract class MultiblockInfoPage {
     }
 
     public static Supplier<?> maintenanceIfEnabled(int type, IBlockState alternative) {
-        return ConfigHolder.U.GT5u.enableMaintenance ?
-                () -> type == 0 ?
-                        MetaTileEntities.MAINTENANCE_HATCH :
-                        MetaTileEntities.AUTO_MAINTENANCE_HATCH :
-                () -> alternative;
+        if (ConfigHolder.U.GT5u.enableMaintenance) {
+            switch (type) {
+                case 1:  return () -> MetaTileEntities.CONFIGURABLE_MAINTENANCE_HATCH;
+                case 2:  return () -> MetaTileEntities.AUTO_MAINTENANCE_HATCH;
+                default: return () -> MetaTileEntities.MAINTENANCE_HATCH;
+            }
+        } else return () -> alternative;
     }
 }

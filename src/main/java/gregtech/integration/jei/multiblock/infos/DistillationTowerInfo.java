@@ -29,9 +29,9 @@ public class DistillationTowerInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         return Lists.newArrayList(MultiblockShapeInfo.builder()
-                .aisle("EXX", "XXX", "XXX", "XXX", "XXX", "XXX")
-                .aisle("SFX", "M#X", "X#X", "X#X", "X#X", "XXX")
-                .aisle("IXX", "HXX", "HXX", "HXX", "HXX", "HXX")
+                .aisle("XXX", "XXX", "XXX", "XXX", "XXX", "XXX")
+                .aisle("XFX", "X#X", "X#X", "X#X", "X#X", "XXX")
+                .aisle("ESI", "XMH", "XXH", "XXH", "XXH", "XXH")
                 .where('#', Blocks.AIR.getDefaultState())
                 .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.STAINLESS_CLEAN))
                 .where('S', MetaTileEntities.DISTILLATION_TOWER, EnumFacing.WEST)

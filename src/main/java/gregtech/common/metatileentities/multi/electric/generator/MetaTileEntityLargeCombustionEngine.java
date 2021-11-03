@@ -7,7 +7,6 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.BlockWorldState;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
@@ -21,12 +20,13 @@ import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockController {
 
@@ -64,18 +64,13 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.fuel_amount", fuelAmount, fuelName));
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_combustion_engine.oxygen_amount", oxygenAmount));
             textList.add(new TextComponentTranslation(oxygenAmount >= 2 ? "gregtech.multiblock.large_combustion_engine.oxygen_boosted" : "gregtech.multiblock.large_combustion_engine.supply_oxygen_to_boost"));
+
+            if(isStructureObstructed()) {
+                textList.add(new TextComponentTranslation("gregtech.multiblock.turbine.obstructed")
+                        .setStyle(new Style().setColor(TextFormatting.RED)));
+            }
         }
         super.addDisplayText(textList);
-    }
-
-    protected Predicate<BlockWorldState> intakeCasingPredicate() {
-        IBlockState blockState = MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING);
-        return blockWorldState -> {
-            if (blockWorldState.getBlockState() != blockState)
-                return false;
-            IBlockState offsetState = blockWorldState.getOffsetState(getFrontFacing());
-            return offsetState.getBlock().isAir(offsetState, blockWorldState.getWorld(), blockWorldState.getPos());
-        };
     }
 
     @Override
@@ -89,7 +84,7 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
                 .where('G', statePredicate(MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX)))
                 .where('C', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
                 .where('D', abilityPartPredicate(MultiblockAbility.OUTPUT_ENERGY))
-                .where('A', intakeCasingPredicate())
+                .where('A', statePredicate(MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING)))
                 .where('Y', selfPredicate())
                 .build();
     }
@@ -112,5 +107,10 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
     @Override
     public boolean hasMufflerMechanics() {
         return true;
+    }
+
+    @Override
+    public boolean isStructureObstructed() {
+        return ((LargeCombustionEngineWorkableHandler) workableHandler).isObstructed();
     }
 }

@@ -54,7 +54,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     private boolean autoOutputItems;
     private boolean autoOutputFluids;
     private boolean allowInputFromOutputSideItems = true;
-    private boolean allowInputFromOutputSideFluids = true;
+    private boolean allowInputFromOutputSideFluids = false;
 
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;

@@ -25,9 +25,9 @@ import java.io.IOException;
 public class ModularUIGui extends GuiContainer implements IRenderContext {
 
     private final ModularUI modularUI;
-    public static final float rColorForOverlay = ((ConfigHolder.U.GT5u.defaultPaintingColor >> 16) & 0xff) / 255.0F;
-    public static final float gColorForOverlay = ((ConfigHolder.U.GT5u.defaultPaintingColor >> 8) & 0xff) / 255.0F;
-    public static final float bColorForOverlay = (ConfigHolder.U.GT5u.defaultPaintingColor & 0xff) / 255.0F;
+    public static final float rColorForOverlay = 1;
+    public static final float gColorForOverlay = 1;
+    public static final float bColorForOverlay = 1;
 
     public ModularUI getModularUI() {
         return modularUI;
@@ -36,6 +36,7 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
     public ModularUIGui(ModularUI modularUI) {
         super(new ModularUIContainer(modularUI));
         this.modularUI = modularUI;
+        modularUI.setModularUIGui(this);
     }
 
     @Override
@@ -139,6 +140,10 @@ public class ModularUIGui extends GuiContainer implements IRenderContext {
         GlStateManager.colorMask(true, true, true, true);
         GlStateManager.enableDepth();
         GlStateManager.enableBlend();
+    }
+
+    public ItemStack getDraggedStack() {
+        return this.draggedStack;
     }
 
     private void renderItemStackOnMouse(int mouseX, int mouseY) {

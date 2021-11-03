@@ -17,7 +17,6 @@ import gregtech.api.GTValues;
 import gregtech.api.block.machines.BlockMachine;
 import gregtech.api.block.machines.MachineItemBlock;
 import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
-import gregtech.api.metatileentity.IRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.ModCompatibility;
@@ -93,11 +92,9 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         }
         metaTileEntity.setRenderContextStack(null);
         renderState.draw();
-        if (metaTileEntity instanceof IRenderMetaTileEntity) {
-            ((IRenderMetaTileEntity) metaTileEntity).renderMetaTileEntityDynamic(0.0, 0.0, 0.0, 0.0f);
-        }
         GlStateManager.disableBlend();
     }
+
 
     @Override
     public boolean renderBlock(IBlockAccess world, BlockPos pos, IBlockState state, BufferBuilder buffer) {
@@ -110,13 +107,18 @@ public class MetaTileEntityRenderer implements ICCBlockRenderer, IItemRenderer {
         renderState.bind(buffer);
         Matrix4 translation = new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ());
         BlockRenderLayer renderLayer = MinecraftForgeClient.getRenderLayer();
+        boolean[] sideMask = new boolean[EnumFacing.VALUES.length];
+        for (EnumFacing side : EnumFacing.VALUES) {
+            sideMask[side.getIndex()] = state.shouldSideBeRendered(world, pos, side);
+        }
+        GTBlockOperation mteOp = new GTBlockOperation(renderLayer, sideMask);
         if (metaTileEntity.canRenderInLayer(renderLayer)) {
             renderState.lightMatrix.locate(world, pos);
-            IVertexOperation[] pipeline = new IVertexOperation[]{renderState.lightMatrix};
+            IVertexOperation[] pipeline = new IVertexOperation[]{mteOp, renderState.lightMatrix};
             metaTileEntity.renderMetaTileEntity(renderState, translation.copy(), pipeline);
         }
-        Matrix4 coverTranslation = new Matrix4().translate(pos.getX(), pos.getY(), pos.getZ());
-        metaTileEntity.renderCovers(renderState, coverTranslation, renderLayer);
+
+        metaTileEntity.renderCovers(renderState, translation.copy(), mteOp);
 
         if (metaTileEntity.isFragile() && renderLayer == BlockRenderLayer.CUTOUT) {
             TextureMap textureMap = Minecraft.getMinecraft().getTextureMapBlocks();

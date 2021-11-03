@@ -34,7 +34,7 @@ public abstract class AnimaWidgetGroup extends WidgetGroup {
     }
 
     @SideOnly(Side.CLIENT)
-    public void maximizeWidget(Consumer<AnimaWidgetGroup> callback) {
+    public final void maximizeWidget(Consumer<AnimaWidgetGroup> callback) {
         this.scale = 0;
         setVisible(true);
         interpolator = new Interpolator(0, 1, 10, Eases.EaseLinear,
@@ -49,7 +49,7 @@ public abstract class AnimaWidgetGroup extends WidgetGroup {
     }
 
     @SideOnly(Side.CLIENT)
-    public void minimizeWidget(Consumer<AnimaWidgetGroup> callback) {
+    public final void minimizeWidget(Consumer<AnimaWidgetGroup> callback) {
         this.scale = 1;
         interpolator = new Interpolator(1, 0, 10, Eases.EaseLinear,
                 value-> scale = value.floatValue(),

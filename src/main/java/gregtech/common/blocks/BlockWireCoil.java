@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class BlockWireCoil extends VariantBlock<BlockWireCoil.CoilType> {
+public class BlockWireCoil extends VariantActiveBlock<BlockWireCoil.CoilType> {
 
     public BlockWireCoil() {
         super(net.minecraft.block.material.Material.IRON);
@@ -62,8 +62,7 @@ public class BlockWireCoil extends VariantBlock<BlockWireCoil.CoilType> {
         HSS_G("hss_g", 5400, 4, 4, Materials.HSSG),
         NAQUADAH("naquadah", 7200, 8, 4, Materials.Naquadah),
         NAQUADAH_ALLOY("naquadah_alloy", 9001, 8, 8, Materials.NaquadahAlloy),
-        FLUXED_ELECTRUM("fluxed_electrum", 10800, 16, 8, Materials.FluxedElectrum),
-        DIAMERICIUM_TITANIUM("diamericium_titanium", 12600, 16, 16, Materials.DiamericiumTitanium);
+        FLUXED_ELECTRUM("fluxed_electrum", 10800, 16, 8, Materials.FluxedElectrum);
 
         private final String name;
         //electric blast furnace properties
@@ -101,6 +100,11 @@ public class BlockWireCoil extends VariantBlock<BlockWireCoil.CoilType> {
 
         public Material getMaterial() {
             return material;
+        }
+
+        @Override
+        public String toString() {
+            return getName();
         }
     }
 }

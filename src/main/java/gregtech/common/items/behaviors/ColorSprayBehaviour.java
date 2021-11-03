@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -29,16 +30,16 @@ public class ColorSprayBehaviour extends AbstractUsableBehaviour {
     }
 
     @Override
-    public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    public ActionResult<ItemStack> onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack stack = player.getHeldItem(hand);
-        if (!player.canPlayerEdit(pos, side, stack)) {
-            return EnumActionResult.FAIL;
+        if (!player.canPlayerEdit(pos, facing, stack)) {
+            return ActionResult.newResult(EnumActionResult.FAIL, player.getHeldItem(hand));
         }
-        if (!tryPaintBlock(world, pos, side)) {
-            return EnumActionResult.PASS;
+        if (!tryPaintBlock(world, pos, facing)) {
+            return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
         }
         useItemDurability(player, hand, stack, empty.copy());
-        return EnumActionResult.SUCCESS;
+        return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
     private boolean tryPaintBlock(World world, BlockPos pos, EnumFacing side) {

@@ -1,47 +1,91 @@
 {
   "forge_marker": 1,
-  "defaults": {
-    "model": "minecraft:cube_all",
-    "textures": {
-      "all": "gregtech:blocks/rendering_error"
-    }
-  },
   "variants": {
-    "variant": {
-      "bronze_bricks": {
-        "textures": {
-          "all": "gregtech:blocks/rendering_error"
-        }
-      },
-      "engine_intake": {
-        "textures": {
-          "all": "gregtech:blocks/casings/pipe/machine_casing_engine_intake"
-        }
-      },
-      "grate": {
-        "textures": {
-          "all": "gregtech:blocks/casings/pipe/machine_casing_grate"
-        }
-      },
-      "assembler": {
-        "textures": {
-          "all": "gregtech:blocks/casings/mechanic/machine_casing_assembler"
-        }
-      },
-      "assembly_line": {
-        "textures": {
-          "all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_line"
-        }
-      },
-      "fusion": {
-        "textures": {
-          "all": "gregtech:blocks/casings/fusion/machine_casing_fusion"
-        }
-      },
-      "fusion_mk2": {
-        "textures": {
-          "all": "gregtech:blocks/casings/fusion/machine_casing_fusion_2"
-        }
+    "active=false,variant=bronze_bricks": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/rendering_error"
+      }
+    },
+    "active=true,variant=bronze_bricks": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/rendering_error"
+      }
+    },
+    "active=false,variant=engine_intake": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/pipe/machine_casing_engine_intake"
+      }
+    },
+    "active=true,variant=engine_intake": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/pipe/machine_casing_engine_intake"
+      }
+    },
+    "active=false,variant=grate": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/pipe/machine_casing_grate"
+      }
+    },
+    "active=true,variant=grate": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/pipe/machine_casing_grate"
+      }
+    },
+    "active=false,variant=assembler": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/mechanic/machine_casing_assembler"
+      }
+    },
+    "active=true,variant=assembler": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/mechanic/machine_casing_assembler"
+      }
+    },
+    "active=false,variant=assembly_line": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_line"
+      }
+    },
+    "active=true,variant=assembly_line": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_line",
+        "top_all": "gregtech:blocks/casings/mechanic/machine_casing_assembly_line_bloom"
+      }
+    },
+    "active=false,variant=fusion": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/fusion/machine_casing_fusion"
+      }
+    },
+    "active=true,variant=fusion": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/casings/fusion/machine_casing_fusion",
+        "top_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_bloom"
+      }
+    },
+    "active=false,variant=fusion_mk2": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/fusion/machine_casing_fusion_2"
+      }
+    },
+    "active=true,variant=fusion_mk2": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_2",
+        "top_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_bloom"
       }
     }
   }

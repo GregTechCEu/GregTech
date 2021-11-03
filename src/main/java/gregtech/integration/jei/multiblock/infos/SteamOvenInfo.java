@@ -29,9 +29,9 @@ public class SteamOvenInfo extends MultiblockInfoPage {
 
         if (ConfigHolder.U.steelSteamMultiblocks) {
             shapeInfo.add(MultiblockShapeInfo.builder()
-                    .aisle("FFF", "IXX", "###")
-                    .aisle("HFF", "S#X", "XXX")
-                    .aisle("FFF", "OXX", "###")
+                    .aisle("FFF", "XXX", "#X#")
+                    .aisle("FFF", "X#X", "#X#")
+                    .aisle("FHF", "ISO", "#X#")
                     .where('S', MetaTileEntities.STEAM_OVEN, EnumFacing.WEST)
                     .where('X', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID))
                     .where('F', MetaBlocks.BOILER_FIREBOX_CASING.getState(BlockFireboxCasing.FireboxCasingType.STEEL_FIREBOX))
@@ -43,9 +43,9 @@ public class SteamOvenInfo extends MultiblockInfoPage {
 
         } else {
             shapeInfo.add(MultiblockShapeInfo.builder()
-                    .aisle("FFF", "IXX", "###")
-                    .aisle("HFF", "S#X", "XXX")
-                    .aisle("FFF", "OXX", "###")
+                    .aisle("FFF", "XXX", "#X#")
+                    .aisle("FFF", "X#X", "#X#")
+                    .aisle("FHF", "ISO", "#X#")
                     .where('S', MetaTileEntities.STEAM_OVEN, EnumFacing.WEST)
                     .where('X', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.BRONZE_BRICKS))
                     .where('F', MetaBlocks.BOILER_FIREBOX_CASING.getState(BlockFireboxCasing.FireboxCasingType.BRONZE_FIREBOX))

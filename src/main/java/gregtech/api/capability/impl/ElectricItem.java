@@ -41,7 +41,7 @@ public class ElectricItem implements IElectricItem, ICapabilityProvider {
         listeners.add(chargeListener);
     }
 
-    protected void setCharge(long change) {
+    public void setCharge(long change) {
         if (!itemStack.hasTagCompound()) {
             itemStack.setTagCompound(new NBTTagCompound());
         }

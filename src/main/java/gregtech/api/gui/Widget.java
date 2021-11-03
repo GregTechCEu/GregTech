@@ -286,6 +286,7 @@ public abstract class Widget {
         GuiUtils.drawHoveringText(itemStack, tooltip, mouseX, mouseY,
                 sizes.getScreenWidth(),
                 sizes.getScreenHeight(), maxTextWidth, mc.fontRenderer);
+        GlStateManager.disableLighting();
     }
 
     @SideOnly(Side.CLIENT)

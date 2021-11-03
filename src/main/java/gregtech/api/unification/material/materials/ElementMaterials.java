@@ -832,7 +832,7 @@ public class ElementMaterials {
                 .build();
 
         Uranium238 = new Material.Builder(116, "uranium")
-                .ingot(3).fluid().ore()
+                .ingot(3).fluid().ore(true)
                 .color(0x32F032).iconSet(METALLIC)
                 .flags(STD_METAL)
                 .element(Elements.U238)
@@ -840,7 +840,7 @@ public class ElementMaterials {
                 .build();
 
         Uranium235 = new Material.Builder(117, "uranium235")
-                .ingot(3).fluid().ore()
+                .ingot(3).fluid().ore(true)
                 .color(0x46FA46).iconSet(SHINY)
                 .flags(STD_METAL, GENERATE_ROD)
                 .element(Elements.U235)
