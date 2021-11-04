@@ -16,6 +16,7 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
+import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.*;
@@ -39,10 +40,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.Optional.Method;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static gregtech.api.GregTechAPI.*;
@@ -188,6 +186,11 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onServerLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new GregTechCommand());
+    }
+
+    @Mod.EventHandler
+    public static void onServerStopped(FMLServerStoppedEvent event) {
+        VirtualTankRegistry.clearMaps();
     }
 
 }

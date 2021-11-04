@@ -8,6 +8,7 @@ import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
+import gregtech.common.terminal.app.VirtualTankApp;
 import gregtech.common.terminal.app.appstore.AppStoreApp;
 import gregtech.common.terminal.app.batterymanager.BatteryManagerApp;
 import gregtech.common.terminal.app.console.ConsoleApp;
@@ -114,7 +115,10 @@ public class TerminalRegistry {
                 .battery(GTValues.LV, 233)
                 .device(DeviceHardware.DEVICE.CAMERA)
                 .build();
-
+        AppRegistryBuilder.create(new VirtualTankApp())
+                .battery(GTValues.MV, 500)
+                .device(DeviceHardware.DEVICE.WIRELESS)
+                .build();
         if (GTValues.isModLoaded(GTValues.MODID_CT)) { // handle CT register
             CTTerminalRegistry.register();
         }

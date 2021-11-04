@@ -760,6 +760,8 @@ metaitem.cover.solar.panel.uv.tooltip=Ultimate Voltage Solar Panel
 
 metaitem.cover.infinite_water.name=Infinite Water Cover
 metaitem.cover.infinite_water.tooltip=Creates 16 Buckets of Water every second (as Cover)
+metaitem.cover.ender_fluid_link.name=Ender Fluid Link Cover
+metaitem.cover.ender_fluid_link.tooltip=Link your fluid tanks to the Ender! (as Cover)
 
 metaitem.gelled_toluene.name=Gelled Toluene
 metaitem.gelled_toluene.tooltip=Raw Explosive
@@ -1042,6 +1044,13 @@ cover.machine_controller.mode.cover_south=Control Cover (South)
 cover.machine_controller.mode.cover_north=Control Cover (North)
 cover.machine_controller.mode.cover_east=Control Cover (East)
 cover.machine_controller.mode.cover_west=Control Cover (West)
+
+cover.ender_fluid_link.title=Ender Fluid Link
+cover.ender_fluid_link.iomode.enabled=I/O Enabled
+cover.ender_fluid_link.iomode.disabled=I/O Disabled
+cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPrivate mode uses the player who originally placed the cover
+cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
+cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore
@@ -3981,6 +3990,7 @@ gregtech.terminal.app_name.hardware=Hardware Manager
 gregtech.terminal.app_name.store=App Store
 gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
 gregtech.terminal.app_name.world_prospector=World Prospector
+gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 
 terminal.app_name.description=No description.
 terminal.app_name.tier=Tier %d
@@ -4138,3 +4148,7 @@ terminal.world_prospector.tier.2=Radius 60m (4 slot)
 terminal.world_prospector.radius=Radius %sm
 terminal.world_prospector.reference=Select a reference
 terminal.world_prospector.color=Select box color
+
+terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
+terminal.vtank_viewer.title=Virtual Tank Viewer
+terminal.vtank_viewer.refresh=Refresh tank index
