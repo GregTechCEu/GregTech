@@ -24,7 +24,7 @@ public class EnergyNet extends PipeNet<WireProperties> {
     public List<RoutePath> getNetData(BlockPos pipePos) {
         List<RoutePath> data = NET_DATA.get(pipePos);
         if (data == null) {
-            data = EnergyNetWalker.createNetData(this, getWorldData(), pipePos);
+            data = EnergyNetWalker.createNetData(getWorldData(), pipePos);
             data.sort(Comparator.comparingInt(RoutePath::getDistance));
             NET_DATA.put(pipePos, data);
         }

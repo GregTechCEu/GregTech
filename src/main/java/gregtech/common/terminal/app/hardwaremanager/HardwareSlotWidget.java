@@ -6,6 +6,7 @@ import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
@@ -37,17 +38,35 @@ public class HardwareSlotWidget extends WidgetGroup {
                         itemStack -> {
                             NBTTagCompound tag = hardware.acceptItemStack(itemStack);
                             if (tag != null) {
+                                tag.setTag("item", itemStack.serializeNBT());
                                 os.hardwareProvider.getOrCreateHardwareCompound().setTag(hardware.getRegistryName(), tag);
+                                os.hardwareProvider.cleanCache(hardware.getRegistryName());
                             }
                         }).open();
             }
         } else {
             if (hardware.hasHW()) {
-                TerminalDialogWidget.showConfirmDialog(os, "terminal.hardware.remove", "terminal.component.confirm", result -> {
-                    if (result) {
-                        os.hardwareProvider.getOrCreateHardwareCompound().removeTag(hardware.getRegistryName());
+                boolean emptySlot = false;
+                for (ItemStack itemStack : gui.entityPlayer.inventory.mainInventory) {
+                    if (itemStack.isEmpty()) {
+                        emptySlot = true;
+                        break;
                     }
-                }).open();
+                }
+                if (emptySlot) {
+                    TerminalDialogWidget.showConfirmDialog(os, "terminal.hardware.remove", "terminal.component.confirm", result -> {
+                        if (result) {
+                            NBTTagCompound tag = os.hardwareProvider.getOrCreateHardwareCompound().getCompoundTag(hardware.getRegistryName());
+                            if (!tag.isEmpty() && tag.hasKey("item")) {
+                                gui.entityPlayer.inventory.addItemStackToInventory(hardware.onHardwareRemoved(new ItemStack(tag.getCompoundTag("item"))));
+                            }
+                            os.hardwareProvider.getOrCreateHardwareCompound().removeTag(hardware.getRegistryName());
+                            os.hardwareProvider.cleanCache(hardware.getRegistryName());
+                        }
+                    }).open();
+                } else {
+                    TerminalDialogWidget.showInfoDialog(os, "terminal.component.warning", "terminal.hardware.remove.full").open();
+                }
             }
         }
 

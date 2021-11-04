@@ -4,11 +4,10 @@ import java.util.Objects;
 
 public class FluidPipeProperties implements IMaterialProperty<FluidPipeProperties> {
 
-    // TODO These need to be made private, and done through getters/setters
-    public int maxFluidTemperature;
-    public int throughput;
-    public boolean gasProof;
-    public final int tanks;
+    private int maxFluidTemperature;
+    private int throughput;
+    private boolean gasProof;
+    private final int tanks;
 
     public FluidPipeProperties(int maxFluidTemperature, int throughput, boolean gasProof) {
         this(maxFluidTemperature, throughput, gasProof, 1);
@@ -40,6 +39,34 @@ public class FluidPipeProperties implements IMaterialProperty<FluidPipePropertie
                     "Material " + properties.getMaterial() +
                             " has both Fluid and Item Pipe Property, which is not allowed!");
         }
+    }
+
+    public int getMaxFluidTemperature() {
+        return maxFluidTemperature;
+    }
+
+    public void setMaxFluidTemperature(int maxFluidTemperature) {
+        this.maxFluidTemperature = maxFluidTemperature;
+    }
+
+    public int getTanks() {
+        return tanks;
+    }
+
+    public int getThroughput() {
+        return throughput;
+    }
+
+    public void setThroughput(int throughput) {
+        this.throughput = throughput;
+    }
+
+    public boolean isGasProof() {
+        return gasProof;
+    }
+
+    public void setGasProof(boolean gasProof) {
+        this.gasProof = gasProof;
     }
 
     @Override

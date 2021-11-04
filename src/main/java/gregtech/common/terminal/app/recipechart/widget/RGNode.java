@@ -34,8 +34,12 @@ import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -60,7 +64,8 @@ public class RGNode extends WidgetGroup implements IDraggable {
         init(container);
         this.head = head;
         if (isPhantom) {
-            this.addWidget(new PhantomWidget(0, 0, head).setChangeListener(object -> RGNode.this.head = object));
+            PhantomWidget phantom = new PhantomWidget(0, 0, head).setChangeListener(object -> RGNode.this.head = object);
+            this.addWidget(phantom);
             toolGroup.addWidget(new CircleButtonWidget(-11, 49, 8, 1, 12)
                     .setColors(0, TerminalTheme.COLOR_7.getColor(), 0)
                     .setIcon(GuiTextures.ICON_CALCULATOR)
@@ -72,10 +77,28 @@ public class RGNode extends WidgetGroup implements IDraggable {
                             return false;
                         }
                     }, s -> {
-                        if (s != null) {
+                        if (s != null && !s.isEmpty()) {
                             updateDemand(Integer.parseInt(s));
                         }
                     }).setClientSide().open()));
+            toolGroup.addWidget(new CircleButtonWidget(9, 49, 8, 1, 12)
+                    .setColors(0, TerminalTheme.COLOR_7.getColor(), 0)
+                    .setIcon(GuiTextures.ICON_ADD)
+                    .setHoverText("terminal.recipe_chart.add")
+                    .setClickListener(cd -> TerminalDialogWidget.showItemSelector(container.os, "terminal.recipe_chart.demand", false, itemStack -> true,
+                        itemStack -> {
+                            if (itemStack != null && !itemStack.isEmpty()){
+                                IFluidHandler handlerItem = itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+                                if (handlerItem != null && handlerItem.getTankProperties().length > 0) {
+                                    FluidStack fluidStack = handlerItem.getTankProperties()[0].getContents();
+                                    if (fluidStack != null) {
+                                        phantom.setObject(fluidStack);
+                                        return;
+                                    }
+                                }
+                                phantom.setObject(itemStack);
+                            }
+                        }).setClientSide().open()));
         } else {
             if (head instanceof ItemStack) {
                 ItemStackHandler handler = new ItemStackHandler(1);
@@ -428,8 +451,19 @@ public class RGNode extends WidgetGroup implements IDraggable {
         }
         NBTTagList itemsList = nodeTag.getTagList("items", Constants.NBT.TAG_COMPOUND);
         NBTTagList fluidsList = nodeTag.getTagList("fluids", Constants.NBT.TAG_COMPOUND);
-        node.setRecipe(itemsList.tagList.stream().map(it->new ItemStack((NBTTagCompound) it)).collect(Collectors.toList()),
-                fluidsList.tagList.stream().map(it->FluidStack.loadFluidStackFromNBT((NBTTagCompound) it)).collect(Collectors.toList()),
+        List<ItemStack> itemInputs = new LinkedList<>();
+        itemsList.forEach(base->{
+            if (base instanceof NBTTagCompound) {
+                itemInputs.add(new ItemStack((NBTTagCompound) base));
+            }
+        });
+        List<FluidStack> fluidsInputs = new LinkedList<>();
+        fluidsList.forEach(base->{
+            if (base instanceof NBTTagCompound) {
+                fluidsInputs.add(FluidStack.loadFluidStackFromNBT((NBTTagCompound) base));
+            }
+        });
+        node.setRecipe(itemInputs, fluidsInputs,
                 nodeTag.hasKey("catalyst") ? new ItemStack(nodeTag.getCompoundTag("catalyst")) : null,
                 nodeTag.getInteger("per"));
         boolean visible = nodeTag.getBoolean("visible");
@@ -575,6 +609,7 @@ public class RGNode extends WidgetGroup implements IDraggable {
             if (!isSelected) {
                 container.setSelectedNode(this);
             }
+            super.mouseClicked(mouseX, mouseY, button);
             return false;
         } else if (super.mouseClicked(mouseX, mouseY, button)) {
             return true;

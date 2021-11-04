@@ -1,93 +1,199 @@
 package gregtech.common.pipelike.fluidpipe.net;
 
 import gregtech.api.pipenet.Node;
-import gregtech.api.pipenet.PipeGatherer;
 import gregtech.api.pipenet.PipeNet;
 import gregtech.api.pipenet.WorldPipeNet;
-import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.unification.material.properties.FluidPipeProperties;
+import gregtech.api.util.GTLog;
 import gregtech.common.pipelike.fluidpipe.tile.TileEntityFluidPipe;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import java.util.*;
 
-public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
+public class FluidPipeNet extends PipeNet<FluidPipeProperties> implements ITickable {
 
-    private final Map<BlockPos, List<Inventory>> NET_DATA = new HashMap<>();
+    private final Set<FluidStack> fluids = new HashSet<>();
+    private final Map<FluidStack, BlockPos> dirtyStacks = new HashMap<>();
+    private final Map<FluidStack, BlockPos> fluidsToRemove = new HashMap<>();
+    private long netCapacity = -1;
 
     public FluidPipeNet(WorldPipeNet<FluidPipeProperties, FluidPipeNet> world) {
         super(world);
     }
 
-    public List<Inventory> getNetData(BlockPos pipePos) {
-        return NET_DATA.computeIfAbsent(pipePos, pos -> {
-            List<Inventory> data = FluidNetWalker.createNetData(this, getWorldData(), pos);
-            data.sort(Comparator.comparingInt(inv -> inv.distance));
-            return data;
-        });
+    public boolean isDirty() {
+        return netCapacity < 0;
     }
 
-    public void nodeNeighbourChanged(BlockPos pos) {
-        NET_DATA.clear();
+    public void invalidateNetCapacity() {
+        netCapacity = -1;
     }
 
-    @Override
-    protected void updateBlockedConnections(BlockPos nodePos, EnumFacing facing, boolean isBlocked) {
-        super.updateBlockedConnections(nodePos, facing, isBlocked);
-        NET_DATA.clear();
+    public void markDirty(BlockPos pos) {
+        invalidateNetCapacity();
+        for (FluidStack fluid : fluids) {
+            dirtyStacks.put(fluid, pos);
+        }
     }
 
-    public void destroyNetwork(BlockPos source, boolean isLeaking, boolean isBurning, int temp) {
-        World world = getWorldData();
-        List<IPipeTile<?, ?>> pipes = PipeGatherer.gatherPipesInDistance(this, world, source, pipe -> {
-            if (pipe instanceof TileEntityFluidPipe) {
-                TileEntityFluidPipe fluidPipe = (TileEntityFluidPipe) pipe;
-                return (isBurning && fluidPipe.getNodeData().maxFluidTemperature < temp) || (isLeaking && !fluidPipe.getNodeData().gasProof);
-            }
-            return false;
-        }, 2 + world.rand.nextInt(4));
-        for (IPipeTile<?, ?> pipeTile : pipes) {
-            BlockPos pos = pipeTile.getPipePos();
-            Random random = world.rand;
-            if (isBurning) {
-                world.setBlockState(pos, Blocks.FIRE.getDefaultState());
-                TileEntityFluidPipe.spawnParticles(world, pos, EnumFacing.UP,
-                        EnumParticleTypes.FLAME, 3 + random.nextInt(2), random);
-                if (random.nextInt(4) == 0)
-                    TileEntityFluidPipe.setNeighboursToFire(world, pos);
-            } else
-                world.setBlockToAir(pos);
-            if (isLeaking && world.rand.nextInt(isBurning ? 3 : 7) == 0) {
-                world.createExplosion(null,
-                        pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                        1.0f + world.rand.nextFloat(), false);
+    private void checkDirty() {
+        if (isDirty() && getAllNodes().size() > 0) {
+            netCapacity = FluidNetWalker.getTotalCapacity(getWorldData(), getAllNodes().keySet().iterator().next());
+            for (FluidStack stack : fluids) {
+                stack.amount = (int) Math.min(stack.amount, netCapacity);
             }
         }
+    }
+
+    public int drain(FluidStack stack, BlockPos pos, boolean silent, boolean doDrain) {
+        checkDirty();
+        if (stack == null || stack.amount <= 0) return 0;
+        Iterator<FluidStack> iterator = fluids.iterator();
+        while (iterator.hasNext()) {
+            FluidStack stack1 = iterator.next();
+            if (stack1.isFluidEqual(stack)) {
+                int amount = Math.min(stack.amount, stack1.amount);
+                if (!doDrain || amount <= 0)
+                    return amount;
+                stack1.amount -= amount;
+                if (stack1.amount <= 0) {
+                    iterator.remove();
+                    fluidsToRemove.put(stack1, pos);
+                } else if (!silent)
+                    dirtyStacks.put(stack1, pos);
+                return amount;
+            }
+        }
+        GTLog.logger.error("Tried draining {} * {} but is not in the net", stack.getFluid().getName(), stack.amount);
+        return 0;
+    }
+
+    public int fill(FluidStack stack, BlockPos pos, boolean doFill) {
+        checkDirty();
+        if (stack == null || stack.amount <= 0) return 0;
+        for (FluidStack stack1 : fluids) {
+            if (stack1.isFluidEqual(stack)) {
+                int amount = (int) Math.min(stack.amount, netCapacity - stack1.amount);
+                if (!doFill || amount <= 0)
+                    return amount;
+                stack1.amount += amount;
+                dirtyStacks.put(stack1, pos);
+                return amount;
+            }
+        }
+        stack.amount = (int) Math.min(stack.amount, netCapacity - stack.amount);
+        if (!doFill)
+            return stack.amount;
+        fluids.add(stack);
+        dirtyStacks.put(stack, pos);
+        return stack.amount;
+    }
+
+    private void recountFluids() {
+        fluids.clear();
+        if (getAllNodes().size() == 0)
+            return;
+        fluids.addAll(FluidNetWalker.countFluid(getWorldData(), getAllNodes().keySet().iterator().next()));
     }
 
     @Override
     protected void transferNodeData(Map<BlockPos, Node<FluidPipeProperties>> transferredNodes, PipeNet<FluidPipeProperties> parentNet1) {
         super.transferNodeData(transferredNodes, parentNet1);
         FluidPipeNet parentNet = (FluidPipeNet) parentNet1;
-        NET_DATA.clear();
-        parentNet.NET_DATA.clear();
+        invalidateNetCapacity();
+        parentNet.invalidateNetCapacity();
+        recountFluids();
+        parentNet.recountFluids();
+    }
+
+    @Override
+    public void update() {
+        if (getWorldData() != null && getAllNodes().size() > 0) {
+            checkDirty();
+            if (fluidsToRemove.size() > 0) {
+                for (Map.Entry<FluidStack, BlockPos> entry : fluidsToRemove.entrySet()) {
+                    List<TileEntityFluidPipe> pipes = FluidNetWalker.getPipesForFluid(getWorldData(), entry.getValue(), entry.getKey());
+                    for (TileEntityFluidPipe pipe : pipes) {
+                        pipe.setContainingFluid(null, pipe.findChannel(entry.getKey()), false);
+                    }
+                }
+                fluidsToRemove.clear();
+            }
+            if (dirtyStacks.size() > 0) {
+                Iterator<FluidStack> iterator = dirtyStacks.keySet().iterator();
+                while (iterator.hasNext()) {
+                    FluidStack dirtyStack = iterator.next();
+                    if (dirtyStack.amount <= 0) {
+                        iterator.remove();
+                        continue;
+                    }
+                    List<TileEntityFluidPipe> pipes = FluidNetWalker.getPipesForFluid(getWorldData(), dirtyStacks.get(dirtyStack), dirtyStack);
+                    if (pipes.size() == 0) {
+                        iterator.remove();
+                        continue;
+                    }
+                    int amount = dirtyStack.amount;
+                    int round = 0;
+                    while (amount > 0 && pipes.size() > 0) {
+                        int c = amount / pipes.size();
+                        int m = amount % pipes.size();
+
+                        Iterator<TileEntityFluidPipe> pipeIterator = pipes.iterator();
+                        while (pipeIterator.hasNext()) {
+                            TileEntityFluidPipe pipe = pipeIterator.next();
+                            int count = c;
+                            if (m > 0) {
+                                count++;
+                                m--;
+                            }
+                            FluidStack stack = dirtyStack.copy();
+                            stack.amount = count;
+                            int set = pipe.setFluidAuto(stack, round > 0);
+                            if (count > set)
+                                pipeIterator.remove();
+                            amount -= set;
+                        }
+                        round++;
+                    }
+                    dirtyStack.amount -= amount;
+                    iterator.remove();
+                }
+                dirtyStacks.clear();
+            }
+        }
+    }
+
+    public FluidStack getFluidStack(FluidStack stack) {
+        for (FluidStack stack1 : this.fluids) {
+            if (stack1.isFluidEqual(stack)) {
+                return stack1;
+            }
+        }
+        return null;
+    }
+
+    public void markDirty(FluidStack stack, BlockPos pos) {
+        if (stack == null)
+            throw new NullPointerException("FluidStack can't be null");
+        for (FluidStack stack1 : this.fluids) {
+            if (stack1.isFluidEqual(stack)) {
+                dirtyStacks.put(stack1, pos);
+                return;
+            }
+        }
     }
 
     @Override
     protected void writeNodeData(FluidPipeProperties nodeData, NBTTagCompound tagCompound) {
-        tagCompound.setInteger("max_temperature", nodeData.maxFluidTemperature);
-        tagCompound.setInteger("throughput", nodeData.throughput);
-        tagCompound.setBoolean("gas_proof", nodeData.gasProof);
-        tagCompound.setInteger("channels", nodeData.tanks);
+        tagCompound.setInteger("max_temperature", nodeData.getMaxFluidTemperature());
+        tagCompound.setInteger("throughput", nodeData.getThroughput());
+        tagCompound.setBoolean("gas_proof", nodeData.isGasProof());
+        tagCompound.setInteger("channels", nodeData.getTanks());
     }
 
     @Override
@@ -99,66 +205,27 @@ public class FluidPipeNet extends PipeNet<FluidPipeProperties> {
         return new FluidPipeProperties(maxTemperature, throughput, gasProof, channels);
     }
 
-    public static class Inventory {
-        private final BlockPos pipePos;
-        private final EnumFacing faceToHandler;
-        private final int distance;
-        private final Set<Object> objectsInPath;
-        private final int minRate;
-        private FluidStack lastTransferredFluid;
-        private final List<TileEntityFluidPipe> holdingPipes;
-
-        public Inventory(BlockPos pipePos, EnumFacing facing, int distance, Set<Object> objectsInPath, int minRate, List<TileEntityFluidPipe> holdingPipes) {
-            this.pipePos = pipePos;
-            this.faceToHandler = facing;
-            this.distance = distance;
-            this.objectsInPath = objectsInPath;
-            this.minRate = minRate;
-            this.holdingPipes = holdingPipes;
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound nbt = super.serializeNBT();
+        NBTTagList fluids = new NBTTagList();
+        for (FluidStack fluid : this.fluids) {
+            if (fluid.amount > 0)
+                fluids.appendTag(fluid.writeToNBT(new NBTTagCompound()));
         }
-
-        public void setLastTransferredFluid(FluidStack lastTransferredFluid) {
-            this.lastTransferredFluid = lastTransferredFluid;
-        }
-
-        public FluidStack getLastTransferredFluid() {
-            return lastTransferredFluid;
-        }
-
-        public Set<Object> getObjectsInPath() {
-            return objectsInPath;
-        }
-
-        public int getMinThroughput() {
-            return minRate;
-        }
-
-        public List<TileEntityFluidPipe> getHoldingPipes() {
-            return holdingPipes;
-        }
-
-        public BlockPos getPipePos() {
-            return pipePos;
-        }
-
-        public EnumFacing getFaceToHandler() {
-            return faceToHandler;
-        }
-
-        public int getDistance() {
-            return distance;
-        }
-
-        public BlockPos getHandlerPos() {
-            return pipePos.offset(faceToHandler);
-        }
-
-        public IFluidHandler getHandler(World world) {
-            TileEntity tile = world.getTileEntity(getHandlerPos());
-            if (tile != null)
-                return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, faceToHandler.getOpposite());
-            return null;
-        }
+        nbt.setTag("Fluids", fluids);
+        nbt.setLong("Capacity", netCapacity);
+        return nbt;
     }
 
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        super.deserializeNBT(nbt);
+        this.netCapacity = nbt.getLong("Capacity");
+        this.fluids.clear();
+        NBTTagList fluids = nbt.getTagList("Fluids", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < fluids.tagCount(); i++) {
+            this.fluids.add(FluidStack.loadFluidStackFromNBT((NBTTagCompound) fluids.get(i)));
+        }
+    }
 }

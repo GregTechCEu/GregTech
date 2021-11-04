@@ -23,7 +23,7 @@ import java.util.HashMap;
 public class ProspectingTexture extends AbstractTexture {
 
     private String selected = "[all]";
-    private boolean darkMode = false;
+    private boolean darkMode;
     private int imageWidth = -1;
     private int imageHeight = -1;
     public final HashMap<Byte, String>[][] map;
@@ -33,7 +33,8 @@ public class ProspectingTexture extends AbstractTexture {
     private final int mode;
     private final int radius;
 
-    public ProspectingTexture(int mode, int radius) {
+    public ProspectingTexture(int mode, int radius, boolean darkMode) {
+        this.darkMode = darkMode;
         this.radius = radius;
         this.mode = mode;
         if (this.mode == 1)

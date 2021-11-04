@@ -12,6 +12,8 @@ import gregtech.api.terminal.os.menu.IMenuComponent;
 import gregtech.api.terminal.util.GuideJsonLoader;
 import gregtech.api.terminal.util.TreeNode;
 import gregtech.api.util.FileUtility;
+import gregtech.api.util.Position;
+import gregtech.api.util.Size;
 import gregtech.common.terminal.app.guide.widget.GuidePageWidget;
 import gregtech.common.terminal.component.ClickComponent;
 import gregtech.common.terminal.component.SearchComponent;
@@ -57,12 +59,7 @@ public abstract class GuideApp<T> extends AbstractApplication implements
     @Override
     public AbstractApplication initApp() {
         if (isClient && getTree() != null) {
-            this.tree = new TreeListWidget<>(0, 0, 133, 232, getTree(), this::loadPage).setContentIconSupplier(this::itemIcon)
-                    .setContentNameSupplier(this::itemName)
-                    .setKeyNameSupplier(key -> key)
-                    .setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
-                    .setLeafTexture(GuiTextures.SLOT_DARKENED);
-            this.addWidget(this.tree);
+            buildTree();
         }
         return this;
     }
@@ -74,7 +71,7 @@ public abstract class GuideApp<T> extends AbstractApplication implements
         if (this.pageWidget != null) {
             this.removeWidget(this.pageWidget);
         }
-        this.pageWidget = new GuidePageWidget(133, 0, 200, 232, 5);
+        this.pageWidget = new GuidePageWidget(getOs().getSize().width - 200, 0, 200, getOs().getSize().height, 5);
         if (leaf.isLeaf() && leaf.getContent() != null) {
             JsonObject page = jsonObjectMap.get(leaf.getContent());
             if (page != null) {
@@ -211,15 +208,31 @@ public abstract class GuideApp<T> extends AbstractApplication implements
                     this.jsonObjectMap = ((GuideApp<T>) app).jsonObjectMap;
                     this.clearAllWidgets();
                     this.pageWidget = null;
-                    this.tree = new TreeListWidget<>(0, 0, 133, 232, getTree(), this::loadPage).setContentIconSupplier(this::itemIcon)
-                            .setContentNameSupplier(this::itemName)
-                            .setKeyNameSupplier(key -> key)
-                            .setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
-                            .setLeafTexture(GuiTextures.SLOT_DARKENED);
-                    this.addWidget(this.tree);
+                    buildTree();
                 }
             }
         });
         return Arrays.asList(new SearchComponent<>(this), reloadResource);
+    }
+
+    private void buildTree() {
+        this.tree = new TreeListWidget<>(0, 0, getOs().getSize().width - 200, getOs().getSize().height, getTree(), this::loadPage).setContentIconSupplier(this::itemIcon)
+                .setContentNameSupplier(this::itemName)
+                .setKeyNameSupplier(key -> key)
+                .setNodeTexture(GuiTextures.BORDERED_BACKGROUND)
+                .setLeafTexture(GuiTextures.SLOT_DARKENED);
+        this.addWidget(this.tree);
+    }
+
+    @Override
+    public void onOSSizeUpdate(int width, int height) {
+        this.setSize(new Size(width, height));
+        if (this.tree != null) {
+            this.tree.setSize(new Size(getOs().getSize().width - 200, height));
+        }
+        if (this.pageWidget != null) {
+            this.pageWidget.setSize(new Size(200, height));
+            this.pageWidget.setSelfPosition(new Position(width - 200, 0));
+        }
     }
 }

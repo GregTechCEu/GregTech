@@ -7,15 +7,20 @@ import gregtech.common.pipelike.itempipe.net.ItemNetHandler;
 import gregtech.common.pipelike.itempipe.net.ItemPipeNet;
 import gregtech.common.pipelike.itempipe.net.WorldItemPipeNet;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType, ItemPipeProperties> {
 
     private WeakReference<ItemPipeNet> currentPipeNet = new WeakReference<>(null);
+
+    private final Map<String, String> transferred = new HashMap<>();
 
     @Override
     public Class<ItemPipeType> getPipeTypeClass() {
@@ -47,5 +52,17 @@ public class TileEntityItemPipe extends TileEntityMaterialPipeBase<ItemPipeType,
             this.currentPipeNet = new WeakReference<>(currentPipeNet);
         }
         return currentPipeNet;
+    }
+
+    public void transferTo(BlockPos pos, EnumFacing facing) {
+        ItemNetHandler.transferTo(transferred, pos, facing);
+    }
+
+    public boolean didTransferTo(BlockPos pos, EnumFacing facing) {
+        return ItemNetHandler.didTransferTo(transferred, pos, facing);
+    }
+
+    public void resetTransferred() {
+        transferred.clear();
     }
 }

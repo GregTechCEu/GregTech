@@ -3,8 +3,8 @@ package gregtech.api.render;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.ARApplication;
 import gregtech.api.terminal.app.AbstractApplication;
+import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.util.RenderUtil;
-import gregtech.common.items.behaviors.TerminalBehaviour;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,7 +47,7 @@ public class TerminalARRenderer {
             x = (sWidth - width) / 2;
             y = (sHeight - height) / 2;
             GlStateManager.enableBlend();
-            TerminalBehaviour.TERMINAL_FRAME.draw(x, y, width, height);
+            TerminalOSWidget.TERMINAL_FRAME.draw(x, y, width, height);
             GlStateManager.disableBlend();
         }
     }

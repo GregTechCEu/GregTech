@@ -28,6 +28,10 @@ public class AppCardWidget extends AnimaWidgetGroup {
     private final AbstractApplication application;
     private final AppStoreApp store;
     @SideOnly(Side.CLIENT)
+    private ImageWidget stateWidget;
+    @SideOnly(Side.CLIENT)
+    private ImageWidget bgWidget;
+    @SideOnly(Side.CLIENT)
     private IGuiTexture banner;
     @SideOnly(Side.CLIENT)
     private int offset;
@@ -39,39 +43,53 @@ public class AppCardWidget extends AnimaWidgetGroup {
         this.application = application;
         this.store = store;
         TerminalOSWidget os = store.getOs();
-        this.addWidget(new CircleButtonWidget(15,17)
-                .setColors(TerminalTheme.COLOR_B_2.getColor(),
-                        application.getThemeColor(),
-                        TerminalTheme.COLOR_B_2.getColor())
-                .setHoverText(application.getUnlocalizedName())
-                .setIcon(application.getIcon()));
-        this.addWidget(new ImageWidget(30, 0, 65, 34,
-                new TextTexture(application.getUnlocalizedName(), -1).setDropShadow(true)
-                        .setWidth(65)));
         if (os.isRemote()) {
+            this.addWidget(new CircleButtonWidget(15,17)
+                    .setColors(TerminalTheme.COLOR_B_2.getColor(),
+                            application.getThemeColor(),
+                            TerminalTheme.COLOR_B_2.getColor())
+                    .setHoverText(application.getUnlocalizedName())
+                    .setIcon(application.getIcon()));
+            this.addWidget(new ImageWidget(30, 0, 65, 34,
+                    new TextTexture(application.getUnlocalizedName(), -1).setDropShadow(true)
+                            .setWidth(65)));
             offset = Math.abs(GTValues.RNG.nextInt()) % 200;
             banner = application.getBanner();
-        }
-        String state;
-        int bg;
-        if (os.installedApps.contains(application)) {
-            if (TerminalBehaviour.isCreative(os.itemStack) || application.getMaxTier() == Math.min(os.tabletNBT.getCompoundTag(application.getRegistryName()).getInteger("_tier"), application.getMaxTier())) {
-                state = "Latest";
-                bg = 0xff4B4C4C;
+            if (os.installedApps.contains(application)) {
+                if (TerminalBehaviour.isCreative(os.itemStack) || application.getMaxTier() == Math.min(os.tabletNBT.getCompoundTag(application.getRegistryName()).getInteger("_tier"), application.getMaxTier())) {
+                    updateState(0);
+                } else {
+                    updateState(1);
+                }
             } else {
-                state = "Upgrade";
-                bg = 0xffF7911F;
+                updateState(2);
             }
-        } else {
-            state = "Install";
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void updateState(int state) {
+        String text = "Latest";
+        int bg = 0xff4B4C4C;
+        if (state == 1) {
+            text = "Upgrade";
+            bg = 0xffF7911F;
+        } else if (state == 2) {
+            text = "Install";
             bg = 0xff67F74B;
         }
-        this.addWidget(new ImageWidget(15, 85, 70, 13, new ColorRectTexture(bg)));
-        this.addWidget(new ImageWidget(15, 85, 70, 15, new TextTexture(state, -1).setWidth(70).setDropShadow(true).setType(TextTexture.TextType.HIDE)));
+        if (stateWidget != null) {
+            removeWidget(stateWidget);
+            removeWidget(bgWidget);
+        }
+        stateWidget = new ImageWidget(15, 85, 70, 15, new TextTexture(text, -1).setWidth(70).setDropShadow(true).setType(TextTexture.TextType.HIDE));
+        bgWidget = new ImageWidget(15, 85, 70, 13, new ColorRectTexture(bg));
+        this.addWidget(bgWidget);
+        this.addWidget(stateWidget);
     }
 
     private void openDialog() {
-        new AppPageWidget(application, store).open();
+        new AppPageWidget(application, store, this).open();
     }
 
     @Override
@@ -101,7 +119,7 @@ public class AppCardWidget extends AnimaWidgetGroup {
         int y = getPosition().y;
         int width = getSize().width;
         int height = getSize().height;
-        if (isMouseOverElement(mouseX, mouseY)) {
+        if (isMouseOverElement(mouseX, mouseY) && store.getOs().desktop.widgets.stream().noneMatch(app->app instanceof  TerminalDialogWidget)) {
             int dur = 7;
             int maxAlpha = 150; // 0-255!!!!!
             float partialTicks = Minecraft.getMinecraft().getRenderPartialTicks();

@@ -41,10 +41,10 @@ public class CoverRoboticArm extends CoverConveyor {
 
     @Override
     protected int doTransferItems(IItemHandler itemHandler, IItemHandler myItemHandler, int maxTransferAmount) {
-        if (conveyorMode == ConveyorMode.EXPORT && itemHandler instanceof ItemNetHandler) {
+        if (conveyorMode == ConveyorMode.EXPORT && itemHandler instanceof ItemNetHandler && transferMode == TransferMode.KEEP_EXACT) {
             return 0;
         }
-        if (conveyorMode == ConveyorMode.IMPORT && myItemHandler instanceof ItemNetHandler) {
+        if (conveyorMode == ConveyorMode.IMPORT && myItemHandler instanceof ItemNetHandler && transferMode == TransferMode.KEEP_EXACT) {
             return 0;
         }
         switch (transferMode) {

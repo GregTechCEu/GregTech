@@ -84,7 +84,7 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
         for (ControllerMode controllerMode : ControllerMode.values()) {
             IControllable controllable = null;
             if (controllerMode.side == null) {
-                controllable = coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+                controllable = coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, attachedSide);
             } else {
                 CoverBehavior coverBehavior = coverHolder.getCoverAtSide(controllerMode.side);
                 if (coverBehavior != null) {
@@ -171,7 +171,7 @@ public class CoverMachineController extends CoverBehavior implements CoverWithUI
     private IControllable getControllable() {
         EnumFacing side = controllerMode.side;
         if (side == null) {
-            return coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
+            return coverHolder.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, attachedSide);
         } else {
             CoverBehavior coverBehavior = coverHolder.getCoverAtSide(side);
             if (coverBehavior == null) {

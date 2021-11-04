@@ -1,5 +1,6 @@
 package gregtech.api.terminal.app;
 
+import gregtech.api.terminal.os.SystemCall;
 import gregtech.common.items.behaviors.TerminalBehaviour;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -60,7 +61,7 @@ public abstract class ARApplication extends AbstractApplication{
     protected final void openAR() {
         os.tabletNBT.setString("_ar", getRegistryName());
         if (isClient) {
-            getOs().shutdown();
+            SystemCall.SHUT_DOWN.call(getOs(), true);
         }
     }
 
