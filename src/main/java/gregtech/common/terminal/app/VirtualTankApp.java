@@ -68,7 +68,7 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
         return this;
     }
 
-    private List<Pair<UUID, String>> findAccessingCovers() {
+    private List<Pair<UUID, String>> findVirtualTanks() {
         List<Pair<UUID, String>> result = new LinkedList<>();
         Map<UUID, Map<String, IFluidTank>> tankMap = VirtualTankRegistry.getTankMap();
         for (UUID uuid : tankMap.keySet().stream().sorted(Comparator.nullsLast(UUID::compareTo)).collect(Collectors.toList())) {
@@ -92,9 +92,9 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
     private void refresh() {
         Map<UUID, Map<String, IFluidTank>> tankMap = VirtualTankRegistry.getTankMap();
         Map<Pair<UUID, String>, FluidStack> access = new HashMap<>();
-        for (Pair<UUID, String> accessingCover : findAccessingCovers()) {
-            UUID uuid = accessingCover.getKey();
-            String key = accessingCover.getValue();
+        for (Pair<UUID, String> virtualTankEntry : findVirtualTanks()) {
+            UUID uuid = virtualTankEntry.getKey();
+            String key = virtualTankEntry.getValue();
             FluidStack fluidStack = tankMap.get(uuid).get(key).getFluid();
             access.put(new ImmutablePair<>(uuid, key), fluidStack == null ? null : fluidStack.copy());
         }
@@ -238,6 +238,8 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
 
     @Override
     public void search(String word, Consumer<Pair<UUID, String>> find) {
+        if (cacheClient == null)
+            return;
         for (Map.Entry<Pair<UUID, String>, IFluidTank> access : cacheClient.entrySet()) {
             Pair<UUID, String> accessingCover = access.getKey();
             if (accessingCover.getValue() != null && accessingCover.getValue().toLowerCase().contains(word.toLowerCase())) {
