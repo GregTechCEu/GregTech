@@ -238,7 +238,7 @@ public class VirtualTankApp extends AbstractApplication implements SearchCompone
 
     @Override
     public void search(String word, Consumer<Pair<UUID, String>> find) {
-        if (cacheClient == null)
+        if (!isClient)
             return;
         for (Map.Entry<Pair<UUID, String>, IFluidTank> access : cacheClient.entrySet()) {
             Pair<UUID, String> accessingCover = access.getKey();
