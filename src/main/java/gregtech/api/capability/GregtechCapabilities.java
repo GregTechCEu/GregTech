@@ -1,12 +1,14 @@
 package gregtech.api.capability;
 
 import gregtech.api.GTValues;
+import gregtech.api.capability.impl.EUToFEItemProvider;
 import gregtech.api.capability.impl.EUToFEProvider;
 import gregtech.api.capability.tool.ICutterItem;
 import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.ISoftHammerItem;
 import gregtech.api.capability.tool.IWrenchItem;
 import gregtech.api.terminal.hardware.HardwareProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -50,5 +52,10 @@ public class GregtechCapabilities {
     @SubscribeEvent
     public static void attachTileCapability(AttachCapabilitiesEvent<TileEntity> event) {
         event.addCapability(CAPABILITY_EU_TO_FE, new EUToFEProvider(event.getObject()));
+    }
+
+    @SubscribeEvent
+    public static void attachItemCapability(AttachCapabilitiesEvent<ItemStack> event) {
+        event.addCapability(new ResourceLocation(GTValues.MODID, "fe_item_capability"), new EUToFEItemProvider(event.getObject()));
     }
 }

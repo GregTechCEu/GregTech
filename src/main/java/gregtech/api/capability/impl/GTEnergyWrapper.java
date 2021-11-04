@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.metatileentities.converter.ConverterTrait;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -42,17 +43,19 @@ public class GTEnergyWrapper implements IEnergyContainer {
      */
     protected boolean isValid(EnumFacing side) {
 
-        if (upvalue.hasCapability(CapabilityEnergy.ENERGY, side))
-            return true;
+        IEnergyStorage storage = upvalue.getCapability(CapabilityEnergy.ENERGY, side);
 
-        if (side == null) {
+        if (storage == null && side == null) {
             for (EnumFacing face2 : EnumFacing.VALUES) {
-                if (upvalue.hasCapability(CapabilityEnergy.ENERGY, face2)) {
-                    return true;
+                storage = upvalue.getCapability(CapabilityEnergy.ENERGY, face2);
+                if (storage != null) {
+                    break;
                 }
             }
         }
-        return false;
+
+        // prevent
+        return storage != null && !(storage instanceof ConverterTrait.FEContainer);
     }
 
     private IEnergyStorage getStorageCap() {
