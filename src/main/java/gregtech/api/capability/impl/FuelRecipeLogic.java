@@ -114,9 +114,13 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
         return metaTileEntity.getNotifiedFluidInputList().size() > 0;
     }
 
+    protected boolean hasNotifiableInputs() {
+        return metaTileEntity.getNotifiedFluidInputList().size() != 0;
+    }
+
     protected boolean canWorkWithInputs() {
         // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
-        if (this.invalidInputsForRecipes && !hasNotifiedInputs()) return false;
+        if (this.invalidInputsForRecipes && hasNotifiableInputs() && !hasNotifiedInputs()) return false;
         else {
             this.invalidInputsForRecipes = false;
         }
@@ -131,19 +135,18 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
 
         if (workingEnabled) {
             if (recipeDurationLeft > 0) {
-                //Check for if the full energy amount can be added to the output container, or if the energy should be voided
-                //In addition, checks if the recipe should be canceled for any reason (Once per second)
-                if ((energyContainer.get().getEnergyCanBeInserted() >= recipeOutputVoltage || shouldVoidExcessiveEnergy())
-                        && (metaTileEntity.getOffsetTimer() % 20 == 0 && !isObstructed())) {
+                //Checks if the recipe should be canceled for any reason (Once per second)
+                if (metaTileEntity.getOffsetTimer() % 20 == 0 && isObstructed()) {
+                    this.recipeDurationLeft = 0;
+                    this.wasActiveAndNeedsUpdate = true;
+                }
+                //Check if the full energy amount can be added to the output container, or if the energy should be voided
+                else if ((energyContainer.get().getEnergyCanBeInserted() >= recipeOutputVoltage || shouldVoidExcessiveEnergy())) {
                     energyContainer.get().addEnergy(recipeOutputVoltage);
                     //If the recipe has finished, mark the machine as needing to be updated
                     if (--this.recipeDurationLeft == 0) {
                         this.wasActiveAndNeedsUpdate = true;
                     }
-                }
-               else if(isObstructed()) {
-                    this.recipeDurationLeft = 0;
-                    this.wasActiveAndNeedsUpdate = true;
                 }
             }
             if (recipeDurationLeft == 0 && isReadyForRecipes() && canWorkWithInputs()) {
