@@ -22,7 +22,7 @@ import gregtech.common.terminal.app.guide.TutorialGuideApp;
 import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
 import gregtech.common.terminal.app.multiblockhelper.MultiBlockPreviewARApp;
-import gregtech.common.terminal.app.prospector.OreProspectorApp;
+import gregtech.common.terminal.app.prospector.ProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
 import gregtech.common.terminal.app.settings.SettingsApp;
 import gregtech.common.terminal.app.worldprospector.WorldProspectorARApp;
@@ -81,12 +81,19 @@ public class TerminalRegistry {
                 .battery(GTValues.LV, 150)
                 .build();
 
-        AppRegistryBuilder.create(new OreProspectorApp())
+        AppRegistryBuilder.create(new ProspectorApp(0))
                 .battery(GTValues.MV, 1000)
                 .upgrade(MetaItems.COIN_DOGE.getStackForm(10))
                 .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
                 .device(DeviceHardware.DEVICE.SCANNER)
                 .build();
+        AppRegistryBuilder.create(new ProspectorApp(1))
+                .battery(GTValues.MV, 1000)
+                .upgrade(MetaItems.COIN_DOGE.getStackForm(10))
+                .upgrade(6, MetaItems.COIN_GOLD_ANCIENT.getStackForm())
+                .device(DeviceHardware.DEVICE.SCANNER)
+                .build();
+
         if (GTValues.isModLoaded(GTValues.MODID_JEI)) {
             AppRegistryBuilder.create(new MultiBlockPreviewARApp())
                     .battery(GTValues.LV, 512)

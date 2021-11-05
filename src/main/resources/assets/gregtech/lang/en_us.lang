@@ -4132,6 +4132,7 @@ gregtech.terminal.app_name.settings=System Settings
 gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
 gregtech.terminal.app_name.ore_prospector=Ore Prospector
+gregtech.terminal.app_name.fluid_prospector=Fluid Prospector
 gregtech.terminal.app_name.pong=Pong
 gregtech.terminal.app_name.minesweeper=Minesweeper
 gregtech.terminal.app_name.maze=Theseus's Escape
@@ -4254,6 +4255,15 @@ terminal.ore_prospector.tier.3=radius size 4
 terminal.ore_prospector.tier.4=radius size 5
 terminal.ore_prospector.tier.5=radius size 6
 terminal.ore_prospector.tier.6=radius size 7
+
+terminal.fluid_prospector.description=You know, there's gold in bedrocks.
+terminal.fluid_prospector.tier.0=radius size 1
+terminal.fluid_prospector.tier.1=radius size 2
+terminal.fluid_prospector.tier.2=radius size 3
+terminal.fluid_prospector.tier.3=radius size 4
+terminal.fluid_prospector.tier.4=radius size 5
+terminal.fluid_prospector.tier.5=radius size 6
+terminal.fluid_prospector.tier.6=radius size 7
 
 terminal.console.description=A tool to help you free your inventory, it's time to say goodbye to wrench, screwdriver, hammer, and crowbar.
 terminal.console.notice=Please right click the machine when opening the terminal.
