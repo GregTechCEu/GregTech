@@ -294,33 +294,19 @@ public class MetaTileEntityLoader {
         for (int j = 0; j < 4; j++) {
             MetaTileEntityConverter converter = MetaTileEntities.ENERGY_CONVERTER[0][j];
             ModHandler.addShapedRecipe(converter.metaTileEntityId.getPath(), converter.getStackForm(), "WCW", " M ", "WTW", 'M', MetaTileEntities.HULL[1].getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic), 'W', new UnificationEntry(cableSizes[j], Materials.Tin), 'T', OreDictNames.chestWood);
-        }
-        for (int j = 0; j < 4; j++) {
-            MetaTileEntityConverter converter = MetaTileEntities.ENERGY_CONVERTER[1][j];
+            converter = MetaTileEntities.ENERGY_CONVERTER[1][j];
             ModHandler.addShapedRecipe(converter.metaTileEntityId.getPath(), converter.getStackForm(), "WCW", " M ", "WTW", 'M', MetaTileEntities.HULL[2].getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Good), 'W', new UnificationEntry(cableSizes[j], Materials.Copper), 'T', OreDictNames.chestWood);
-        }
-        for (int j = 0; j < 4; j++) {
-            MetaTileEntityConverter converter = MetaTileEntities.ENERGY_CONVERTER[2][j];
+            converter = MetaTileEntities.ENERGY_CONVERTER[2][j];
             ModHandler.addShapedRecipe(converter.metaTileEntityId.getPath(), converter.getStackForm(), "WCW", " M ", "WTW", 'M', MetaTileEntities.HULL[3].getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Advanced), 'W', new UnificationEntry(cableSizes[j], Materials.Gold), 'T', OreDictNames.chestWood);
-        }
-        for (int j = 0; j < 4; j++) {
-            MetaTileEntityConverter converter = MetaTileEntities.ENERGY_CONVERTER[3][j];
+            converter = MetaTileEntities.ENERGY_CONVERTER[3][j];
             ModHandler.addShapedRecipe(converter.metaTileEntityId.getPath(), converter.getStackForm(), "WCW", " M ", "WTW", 'M', MetaTileEntities.HULL[4].getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Extreme), 'W', new UnificationEntry(cableSizes[j], Materials.Aluminium), 'T', OreDictNames.chestWood);
-        }
-        for (int j = 0; j < 4; j++) {
-            MetaTileEntityConverter converter = MetaTileEntities.ENERGY_CONVERTER[4][j];
+            converter = MetaTileEntities.ENERGY_CONVERTER[4][j];
             ModHandler.addShapedRecipe(converter.metaTileEntityId.getPath(), converter.getStackForm(), "WCW", " M ", "WTW", 'M', MetaTileEntities.HULL[5].getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Elite), 'W', new UnificationEntry(cableSizes[j], Materials.Tungsten), 'T', OreDictNames.chestWood);
-        }
-        for (int j = 0; j < 4; j++) {
-            MetaTileEntityConverter converter = MetaTileEntities.ENERGY_CONVERTER[5][j];
+            converter = MetaTileEntities.ENERGY_CONVERTER[5][j];
             ModHandler.addShapedRecipe(converter.metaTileEntityId.getPath(), converter.getStackForm(), "WCW", " M ", "WTW", 'M', MetaTileEntities.HULL[6].getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Master), 'W', new UnificationEntry(cableSizes[j], Materials.VanadiumGallium), 'T', OreDictNames.chestWood);
-        }
-        for (int j = 0; j < 4; j++) {
-            MetaTileEntityConverter converter = MetaTileEntities.ENERGY_CONVERTER[6][j];
+            converter = MetaTileEntities.ENERGY_CONVERTER[6][j];
             ModHandler.addShapedRecipe(converter.metaTileEntityId.getPath(), converter.getStackForm(), "WCW", " M ", "WTW", 'M', MetaTileEntities.HULL[7].getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Ultimate), 'W', new UnificationEntry(cableSizes[j], Materials.Naquadah), 'T', OreDictNames.chestWood);
-        }
-        for (int j = 0; j < 4; j++) {
-            MetaTileEntityConverter converter = MetaTileEntities.ENERGY_CONVERTER[7][j];
+            converter = MetaTileEntities.ENERGY_CONVERTER[7][j];
             ModHandler.addShapedRecipe(converter.metaTileEntityId.getPath(), converter.getStackForm(), "WCW", " M ", "WTW", 'M', MetaTileEntities.HULL[8].getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, Tier.Super), 'W', new UnificationEntry(cableSizes[j], Materials.NaquadahAlloy), 'T', OreDictNames.chestWood);
         }
 

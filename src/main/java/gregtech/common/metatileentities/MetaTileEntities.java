@@ -717,10 +717,11 @@ public class MetaTileEntities {
         endPos = GTValues.HT ? ENERGY_CONVERTER.length - 1 : Math.min(ENERGY_CONVERTER.length - 1, GTValues.UV);
         for(int i = 0; i < endPos; i++) {
             String vn = GTValues.VN[i + 1].toLowerCase();
-            for(int j = 0; j < ENERGY_CONVERTER[i].length; j++) {
-                int amps = (j+1) * (j+1);
+            int tiers = ENERGY_CONVERTER[i].length;
+            for(int j = 0; j < tiers; j++) {
+                int amps = (int) Math.pow(j+1, 2);
                 String id = "energy_converter." + vn + "." + amps;
-                ENERGY_CONVERTER[i][j] = registerMetaTileEntity(1667 + j + i * 4, new MetaTileEntityConverter(gregtechId(id), i+1, amps));
+                ENERGY_CONVERTER[i][j] = registerMetaTileEntity(1667 + j + i * tiers, new MetaTileEntityConverter(gregtechId(id), i+1, amps));
             }
         }
 
