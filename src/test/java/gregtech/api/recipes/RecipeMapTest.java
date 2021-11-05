@@ -9,12 +9,15 @@ import gregtech.common.MetaFluids;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.logging.log4j.LogManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -29,7 +32,23 @@ public class RecipeMapTest {
         GTLog.init(LogManager.getLogger(GTValues.MODID)); // yes this was necessary
         Bootstrap.register();
         // Attempt to work around tests failing due to materials already being registered in previous tests
-        GregTechAPI.MATERIAL_REGISTRY.clear();
+        try {
+            // get the underlyingIntegerMap and make it not protected
+            Field integerMapField = GregTechAPI.MATERIAL_REGISTRY.getClass().getSuperclass().getDeclaredField("underlyingIntegerMap");
+            integerMapField.setAccessible(true);
+
+            // make the underlyingIntegerMap not final
+            Field modifiers = Field.class.getDeclaredField("modifiers");
+            modifiers.setAccessible(true);
+            modifiers.setInt(integerMapField, integerMapField.getModifiers() & ~Modifier.FINAL);
+
+            // Set the underlyingIntegerMap to an empty IntIdentityHashBiMap
+            integerMapField.set(GregTechAPI.MATERIAL_REGISTRY, new IntIdentityHashBiMap<>(256));
+            //replace item field instance
+        } catch (ReflectiveOperationException exception) {
+            //should be impossible, actually
+            throw new RuntimeException(exception);
+        }
         Materials.register();
         GregTechAPI.MATERIAL_REGISTRY.flush();
         MetaFluids.init();

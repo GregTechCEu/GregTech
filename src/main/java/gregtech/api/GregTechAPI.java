@@ -88,13 +88,6 @@ public class GregTechAPI {
             DEFERRED_REGISTRY.add(value);
         }
 
-        /**
-         * Intended for use with tests, use with caution!
-         */
-        public void clear() {
-            DEFERRED_REGISTRY = new ArrayList<>();
-        }
-
         public void flush() {
             DEFERRED_REGISTRY.forEach(Material::verifyMaterial);
             DEFERRED_REGISTRY.forEach(m -> {
