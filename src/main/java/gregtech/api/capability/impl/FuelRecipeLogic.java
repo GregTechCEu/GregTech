@@ -114,13 +114,9 @@ public class FuelRecipeLogic extends MTETrait implements IControllable, IFuelabl
         return metaTileEntity.getNotifiedFluidInputList().size() > 0;
     }
 
-    protected boolean hasNotifiableInputs() {
-        return metaTileEntity.getNotifiedFluidInputList().size() != 0;
-    }
-
     protected boolean canWorkWithInputs() {
         // if the inputs were bad last time, check if they've changed before trying to find a new recipe.
-        if (this.invalidInputsForRecipes && hasNotifiableInputs() && !hasNotifiedInputs()) return false;
+        if (this.invalidInputsForRecipes && !hasNotifiedInputs()) return false;
         else {
             this.invalidInputsForRecipes = false;
         }
