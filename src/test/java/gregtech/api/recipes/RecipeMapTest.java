@@ -9,15 +9,12 @@ import gregtech.common.MetaFluids;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import org.apache.logging.log4j.LogManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
 

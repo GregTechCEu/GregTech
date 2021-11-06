@@ -84,10 +84,6 @@ public class GregTechAPI {
             register(value); // id, key can be discarded since Material holds them
         }
 
-        public void cleanRegistry() {
-            DEFERRED_REGISTRY.clear();
-        }
-
         public void register(Material value) {
             DEFERRED_REGISTRY.add(value);
         }
