@@ -2,6 +2,7 @@ package gregtech.api.util;
 
 import codechicken.lib.texture.TextureUtils;
 import codechicken.lib.vec.Matrix4;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.TextureArea;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -274,7 +275,25 @@ public class RenderUtil {
     }
 
     public static void renderRect(float x, float y, float width, float height, float z, int color) {
-        renderGradientRect(x, y, width, height, z, color, color, false);
+        float f3 = (float)(color >> 24 & 255) / 255.0F;
+        float f = (float)(color >> 16 & 255) / 255.0F;
+        float f1 = (float)(color >> 8 & 255) / 255.0F;
+        float f2 = (float)(color & 255) / 255.0F;
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.color(f, f1, f2, f3);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+        buffer.pos(x + width, y, z).endVertex();
+        buffer.pos(x, y, z).endVertex();
+        buffer.pos(x, y + height, z).endVertex();
+        buffer.pos(x + width, y + height, z).endVertex();
+        tessellator.draw();
+        GlStateManager.disableBlend();
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1,1,1,1);
     }
 
     public static void renderGradientRect(float x, float y, float width, float height, float z, int startColor, int endColor, boolean horizontal) {
@@ -418,36 +437,6 @@ public class RenderUtil {
 
         GlStateManager.disableBlend();
         GlStateManager.enableTexture2D();
-    }
-
-    public static void renderHighLightedBlocksOutline(BufferBuilder buffer, float mx, float my, float mz, float r, float g, float b, float a) {
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my + 1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my + 1, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx, my + 1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my + 1, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my + 1, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx + 1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my, mz).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my + 1, mz).color(r, g, b, a).endVertex();
-
-        buffer.pos(mx, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx + 1, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my, mz + 1).color(r, g, b, a).endVertex();
-        buffer.pos(mx, my + 1, mz + 1).color(r, g, b, a).endVertex();
     }
 
     public static void renderLine(float x1, float y1, float x2, float y2, float lineWidth, int color) {

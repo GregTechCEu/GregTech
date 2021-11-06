@@ -37,6 +37,9 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     private int setTier = 0;
     private boolean active = false;
 
+    private long lastEnergyOutputPerSec = 0;
+    private long energyOutputPerSec = 0;
+
     private final List<Character> ALLOWED_CHARS = Lists.newArrayList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
 
     public MetaTileEntityCreativeEnergy() {
@@ -115,8 +118,17 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
     }
 
     @Override
+    public long getOutputPerSec() {
+        return lastEnergyOutputPerSec;
+    }
+
+    @Override
     public void update() {
         super.update();
+        if (getOffsetTimer() % 20 == 0) {
+            lastEnergyOutputPerSec = energyOutputPerSec;
+            energyOutputPerSec = 0;
+        }
         if (!active || voltage <= 0 || amps <= 0) return;
         int ampsUsed = 0;
         for (EnumFacing facing : EnumFacing.values()) {
@@ -131,6 +143,7 @@ public class MetaTileEntityCreativeEnergy extends MetaTileEntity implements IEne
                     break;
             }
         }
+        energyOutputPerSec += ampsUsed * voltage;
     }
 
     @Override

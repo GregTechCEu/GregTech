@@ -17,7 +17,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.*;
-import gregtech.api.metatileentity.IRenderMetaTileEntity;
+import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
@@ -26,10 +26,12 @@ import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.render.Textures;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
+import gregtech.common.ConfigHolder;
 import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -59,53 +61,17 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.ArrayUtils;
-import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaTileEntity, ITickable, CoverWithUI {
+public class CoverDigitalInterface extends CoverBehavior implements IFastRenderMetaTileEntity, ITickable, CoverWithUI {
 
     public static String path = "cover.digital";
-    public static IEnergyContainer proxyCapability = new IEnergyContainer() {
-        @Override
-        public long acceptEnergyFromNetwork(EnumFacing enumFacing, long l, long l1) {
-            return 0;
-        }
-
-        @Override
-        public boolean inputsEnergy(EnumFacing enumFacing) {
-            return false;
-        }
-
-        @Override
-        public long changeEnergy(long l) {
-            return 0;
-        }
-
-        @Override
-        public long getEnergyStored() {
-            return 0;
-        }
-
-        @Override
-        public long getEnergyCapacity() {
-            return 0;
-        }
-
-        @Override
-        public long getInputAmperage() {
-            return 0;
-        }
-
-        @Override
-        public long getInputVoltage() {
-            return 0;
-        }
-    };
 
     public enum MODE {
         FLUID,
@@ -128,8 +94,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
     private long energyCapability = 0;
     private long energyInputPerDur = 0;
     private long energyOutputPerDur = 0;
-    private final List<Long> inputEnergyList = new ArrayList<>();
-    private final List<Long> outputEnergyList = new ArrayList<>();
+    private final List<Long> inputEnergyList = new LinkedList<>();
+    private final List<Long> outputEnergyList = new LinkedList<>();
     private int progress = 0;
     private int maxProgress = 0;
     private boolean isActive = true;
@@ -196,16 +162,6 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
 
     public void setMode(MODE mode) {
         this.setMode(mode, this.slot, this.spin);
-    }
-
-    public void setEnergyChanged(long energyAdded) {
-        if (!isRemote() && (this.mode == MODE.ENERGY || (this.mode == MODE.PROXY && this.proxyMode[2] > 0))) {
-            if (energyAdded > 0) {
-                energyInputPerDur = energyInputPerDur + energyAdded;
-            } else if (energyAdded < 0) {
-                energyOutputPerDur = energyOutputPerDur - energyAdded;
-            }
-        }
     }
 
     public boolean subProxyMode(MODE mode) {
@@ -300,9 +256,11 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         packetBuffer.writeLong(energyStored);
         packetBuffer.writeLong(energyCapability);
         packetBuffer.writeInt(inputEnergyList.size());
-        for (int i = 0; i < inputEnergyList.size(); i++) {
-            packetBuffer.writeLong(inputEnergyList.get(i));
-            packetBuffer.writeLong(outputEnergyList.get(i));
+        for (Long aLong : inputEnergyList) {
+            packetBuffer.writeLong(aLong);
+        }
+        for (Long aLong : outputEnergyList) {
+            packetBuffer.writeLong(aLong);
         }
         packetBuffer.writeInt(progress);
         packetBuffer.writeInt(maxProgress);
@@ -326,6 +284,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         outputEnergyList.clear();
         for (int i = 0; i < size; i++) {
             inputEnergyList.add(packetBuffer.readLong());
+        }
+        for (int i = 0; i < size; i++) {
             outputEnergyList.add(packetBuffer.readLong());
         }
         progress = packetBuffer.readInt();
@@ -490,23 +450,18 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         buttons[0] = new ToggleButtonWidget(40, 20, 20, 20, Textures.BUTTON_FLUID, () -> this.mode == MODE.FLUID, (pressed) -> {
             if (pressed) setMode(MODE.FLUID);
         }).setTooltipText("metaitem.cover.digital.mode.fluid");
-        ;
         buttons[1] = new ToggleButtonWidget(60, 20, 20, 20, Textures.BUTTON_ITEM, () -> this.mode == MODE.ITEM, (pressed) -> {
             if (pressed) setMode(MODE.ITEM);
         }).setTooltipText("metaitem.cover.digital.mode.item");
-        ;
         buttons[2] = new ToggleButtonWidget(80, 20, 20, 20, Textures.BUTTON_ENERGY, () -> this.mode == MODE.ENERGY, (pressed) -> {
             if (pressed) setMode(MODE.ENERGY);
         }).setTooltipText("metaitem.cover.digital.mode.energy");
-        ;
         buttons[3] = new ToggleButtonWidget(100, 20, 20, 20, Textures.BUTTON_MACHINE, () -> this.mode == MODE.MACHINE, (pressed) -> {
             if (pressed) setMode(MODE.MACHINE);
         }).setTooltipText("metaitem.cover.digital.mode.machine");
-        ;
         buttons[4] = new ToggleButtonWidget(140, 20, 20, 20, Textures.BUTTON_INTERFACE, () -> this.mode == MODE.PROXY, (pressed) -> {
             if (pressed) setMode(MODE.PROXY);
         }).setTooltipText("metaitem.cover.digital.mode.proxy");
-        ;
         primaryGroup.addWidget(new LabelWidget(10, 25, "metaitem.cover.digital.title.mode", 0));
         primaryGroup.addWidget(buttons[0]);
         primaryGroup.addWidget(buttons[1]);
@@ -558,13 +513,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
                     packetBuffer.writeVarInt(fluids.length);
                     packetBuffer.writeVarInt(toUpdate.size());
                     for (Integer index : toUpdate) {
-                        packetBuffer.writeVarInt(index);
-                        NBTTagCompound nbt = new NBTTagCompound();
-                        nbt.setInteger("Capacity", fluids[index].getCapacity());
-                        if (fluids[index].getContents() != null) {
-                            fluids[index].getContents().writeToNBT(nbt);
-                        }
-                        packetBuffer.writeCompoundTag(nbt);
+                        writeFluid(packetBuffer, index);
                     }
                 });
             }
@@ -621,16 +570,14 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
                 }
                 if (this.coverHolder.getOffsetTimer() % 20 == 0) { //per second
                     writeUpdateData(5, packetBuffer -> {
-                        packetBuffer.writeLong(energyInputPerDur);
-                        packetBuffer.writeLong(energyOutputPerDur);
+                        packetBuffer.writeLong(energyContainer.getInputPerSec());
+                        packetBuffer.writeLong(energyContainer.getOutputPerSec());
                         inputEnergyList.add(energyInputPerDur);
                         outputEnergyList.add(energyOutputPerDur);
                         if (inputEnergyList.size() > 13) {
                             inputEnergyList.remove(0);
                             outputEnergyList.remove(0);
                         }
-                        energyInputPerDur = 0;
-                        energyOutputPerDur = 0;
                     });
                 }
             }
@@ -675,14 +622,19 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         packetBuffer.writeVarInt(fluids.length);
         packetBuffer.writeVarInt(fluids.length);
         for (int i = 0; i < fluids.length; i++) {
-            packetBuffer.writeVarInt(i);
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setInteger("Capacity", fluids[i].getCapacity());
-            if (fluids[i].getContents() != null) {
-                fluids[i].getContents().writeToNBT(nbt);
-            }
-            packetBuffer.writeCompoundTag(nbt);
+            writeFluid(packetBuffer, i);
         }
+    }
+
+    private void writeFluid(PacketBuffer packetBuffer, int i) {
+        packetBuffer.writeVarInt(i);
+        NBTTagCompound nbt = new NBTTagCompound();
+        nbt.setInteger("Capacity", fluids[i].getCapacity());
+        FluidStack fluidStack = fluids[i].getContents();
+        if (fluidStack != null) {
+            fluidStack.writeToNBT(nbt);
+        }
+        packetBuffer.writeCompoundTag(nbt);
     }
 
     private void readFluids(PacketBuffer packetBuffer) {
@@ -793,7 +745,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
                 list.addAll(output);
             }
             capability = new EnergyContainerList(list);
-        } else if (capability == null) {
+        } else if (capability == null && te != null) {
             IEnergyStorage fe = te.getCapability(CapabilityEnergy.ENERGY, getCoveredFacing());
             if(fe != null) {
                 return new IEnergyContainer() {
@@ -807,10 +759,10 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
                         return 0;
                     }
                     public long getEnergyStored() {
-                        return fe.getEnergyStored() / 4;
+                        return (long) (fe.getEnergyStored() / ConfigHolder.U.energyOptions.rfRatio);
                     }
                     public long getEnergyCapacity() {
-                        return fe.getMaxEnergyStored() / 4;
+                        return (long) (fe.getMaxEnergyStored() / ConfigHolder.U.energyOptions.rfRatio);
                     }
                     public long getInputAmperage() {
                         return 0;
@@ -886,7 +838,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
     public <T> T getCapability(Capability<T> capability, T defaultValue) {
         if (this.mode == MODE.PROXY) {
             if (capability == GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER && defaultValue == null) {
-                return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(proxyCapability);
+                return GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER.cast(IEnergyContainer.DEFAULT);
             }
         }
         return defaultValue;
@@ -894,6 +846,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
 
     @Override
     public void renderCoverPlate(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
+        super.renderCoverPlate(renderState, translation, pipeline, plateBox, layer);
     }
 
     @Override
@@ -930,17 +883,17 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         }
     }
 
+    @SideOnly(Side.CLIENT)
     @Override
-    public boolean shouldRenderInPass(int pass) {
-        return pass == 0 && this.mode != MODE.PROXY;
+    public void renderMetaTileEntityFast(CCRenderState renderState, Matrix4 translation, float partialTicks) {
+
     }
 
-    @Override
     @SideOnly(Side.CLIENT)
-    public void renderMetaTileEntityDynamic(double x, double y, double z, float partialTicks) {
+    @Override
+    public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
         GlStateManager.pushMatrix();
         /* hack the lightmap */
-        GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
         net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;
@@ -956,8 +909,12 @@ public class CoverDigitalInterface extends CoverBehavior implements IRenderMetaT
         /* restore the lightmap  */
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
         net.minecraft.client.renderer.RenderHelper.enableStandardItemLighting();
-        GL11.glPopAttrib();
         GlStateManager.popMatrix();
+    }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 0 && this.mode != MODE.PROXY;
     }
 
     @Override
