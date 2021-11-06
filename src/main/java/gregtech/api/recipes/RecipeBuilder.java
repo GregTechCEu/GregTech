@@ -519,6 +519,14 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return fluidOutputs;
     }
 
+    public int getEUt() {
+        return EUt;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
