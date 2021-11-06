@@ -31,9 +31,9 @@ public class LargeMinerInfo extends MultiblockInfoPage {
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         MultiblockShapeInfo shapeInfo = MultiblockShapeInfo.builder()
-                .aisle("EPO", "#F#", "#F#", "#F#", "###", "###", "###")
-                .aisle("SPP", "FPF", "FPF", "FPF", "#F#", "#F#", "#F#")
-                .aisle("IPP", "#F#", "#F#", "#F#", "###", "###", "###")
+                .aisle("OPP", "#F#", "#F#", "#F#", "###", "###", "###")
+                .aisle("PPP", "FPF", "FPF", "FPF", "#F#", "#F#", "#F#")
+                .aisle("ESI", "#F#", "#F#", "#F#", "###", "###", "###")
                 .where('S', largeMiner, EnumFacing.WEST)
                 .where('P', largeMiner.getCasingState())
                 .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[4], EnumFacing.WEST)
