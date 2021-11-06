@@ -1,5 +1,6 @@
 package gregtech.api.unification.material;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.materials.*;
 
@@ -32,6 +33,8 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
 public class Materials {
 
     public static void register() {
+        GregTechAPI.MATERIAL_REGISTRY.cleanRegistry();
+
         MarkerMaterials.register();
 
         /*

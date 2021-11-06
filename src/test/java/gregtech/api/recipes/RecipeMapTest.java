@@ -31,24 +31,6 @@ public class RecipeMapTest {
     public static void init() {
         GTLog.init(LogManager.getLogger(GTValues.MODID)); // yes this was necessary
         Bootstrap.register();
-        // Attempt to work around tests failing due to materials already being registered in previous tests
-        try {
-            // get the underlyingIntegerMap and make it not protected
-            Field integerMapField = GregTechAPI.MATERIAL_REGISTRY.getClass().getSuperclass().getDeclaredField("underlyingIntegerMap");
-            integerMapField.setAccessible(true);
-
-            // make the underlyingIntegerMap not final
-            Field modifiers = Field.class.getDeclaredField("modifiers");
-            modifiers.setAccessible(true);
-            modifiers.setInt(integerMapField, integerMapField.getModifiers() & ~Modifier.FINAL);
-
-            // Set the underlyingIntegerMap to an empty IntIdentityHashBiMap
-            integerMapField.set(GregTechAPI.MATERIAL_REGISTRY, new IntIdentityHashBiMap<>(256));
-            //replace item field instance
-        } catch (ReflectiveOperationException exception) {
-            //should be impossible, actually
-            throw new RuntimeException(exception);
-        }
         Materials.register();
         GregTechAPI.MATERIAL_REGISTRY.flush();
         MetaFluids.init();
