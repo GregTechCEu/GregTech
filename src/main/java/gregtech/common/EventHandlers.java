@@ -9,6 +9,7 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.net.KeysPacket;
 import gregtech.api.net.NetworkHandler;
+import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.common.items.MetaItems;
@@ -31,6 +32,7 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -161,5 +163,10 @@ public class EventHandlers {
                 }
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void onWorldLoadEvent(WorldEvent.Load event) {
+        VirtualTankRegistry.initializeStorage(event.getWorld());
     }
 }

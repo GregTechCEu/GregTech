@@ -22,33 +22,33 @@ import java.util.*;
  */
 public abstract class PipeNetWalker {
 
-    private final PipeNet<?> net;
+    private PipeNetWalker root;
     private final World world;
-    private final Set<IPipeTile<?, ?>> walked = new HashSet<>();
+    private final Set<Long> walked = new HashSet<>();
     private final List<EnumFacing> pipes = new ArrayList<>();
     private List<PipeNetWalker> walkers;
     private final BlockPos.MutableBlockPos currentPos;
     private int walkedBlocks;
     private boolean invalid;
+    private boolean running;
 
-    protected PipeNetWalker(PipeNet<?> net, World world, BlockPos sourcePipe, int walkedBlocks) {
+    protected PipeNetWalker(World world, BlockPos sourcePipe, int walkedBlocks) {
         this.world = Objects.requireNonNull(world);
-        this.net = Objects.requireNonNull(net);
         this.walkedBlocks = walkedBlocks;
         this.currentPos = new BlockPos.MutableBlockPos(Objects.requireNonNull(sourcePipe));
+        this.root = this;
     }
 
     /**
      * Creates a sub walker
      * Will be called when a pipe has multiple valid pipes
      *
-     * @param net          pipe net
      * @param world        world
      * @param nextPos      next pos to check
      * @param walkedBlocks distance from source in blocks
      * @return new sub walker
      */
-    protected abstract PipeNetWalker createSubWalker(PipeNet<?> net, World world, BlockPos nextPos, int walkedBlocks);
+    protected abstract PipeNetWalker createSubWalker(World world, BlockPos nextPos, int walkedBlocks);
 
     /**
      * You can increase walking stats here. for example
@@ -60,7 +60,6 @@ public abstract class PipeNetWalker {
 
     /**
      * Checks the neighbour of the current pos
-     * neighbourTile is NEVER an instance of {@link IPipeTile}
      *
      * @param pipePos         current pos
      * @param faceToNeighbour face to neighbour
@@ -79,8 +78,16 @@ public abstract class PipeNetWalker {
      */
     protected abstract boolean isValidPipe(IPipeTile<?, ?> currentPipe, IPipeTile<?, ?> neighbourPipe, BlockPos pipePos, EnumFacing faceToNeighbour);
 
+    /**
+     * Called when a sub walker is done walking
+     *
+     * @param subWalker the finished sub walker
+     */
+    protected void onRemoveSubWalker(PipeNetWalker subWalker) {
+    }
+
     public void traversePipeNet() {
-        traversePipeNet(Integer.MAX_VALUE);
+        traversePipeNet(32768);
     }
 
     /**
@@ -93,40 +100,44 @@ public abstract class PipeNetWalker {
         if (invalid)
             throw new IllegalStateException("This walker already walked. Create a new one if you want to walk again");
         int i = 0;
-        while (!walk() && i++ < maxWalks) ;
-        walked.forEach(IPipeTile::resetWalk);
+        running = true;
+        while (running && !walk() && i++ < maxWalks) ;
+        running = false;
+        root.walked.clear();
+        if (i >= maxWalks)
+            GTLog.logger.fatal("The walker reached the maximum amount of walks {}", i);
         invalid = true;
     }
 
     private boolean walk() {
-        if (walkers == null)
+        if (walkers == null) {
             checkPos();
 
-        if (pipes.size() == 0)
-            return true;
-        if (pipes.size() == 1) {
-            currentPos.move(pipes.get(0));
-            walkedBlocks++;
-            return false;
-        }
+            if (pipes.size() == 0)
+                return true;
+            if (pipes.size() == 1) {
+                currentPos.move(pipes.get(0));
+                walkedBlocks++;
+                return !isRunning();
+            }
 
-        if (walkers == null) {
             walkers = new ArrayList<>();
             for (EnumFacing side : pipes) {
-                walkers.add(Objects.requireNonNull(createSubWalker(net, world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null"));
+                PipeNetWalker walker = Objects.requireNonNull(createSubWalker(world, currentPos.offset(side), walkedBlocks + 1), "Walker can't be null");
+                walker.root = root;
+                walkers.add(walker);
             }
-        } else {
-            Iterator<PipeNetWalker> iterator = walkers.iterator();
-            while (iterator.hasNext()) {
-                PipeNetWalker walker = iterator.next();
-                if (walker.walk()) {
-                    walked.addAll(walker.walked);
-                    iterator.remove();
-                }
+        }
+        Iterator<PipeNetWalker> iterator = walkers.iterator();
+        while (iterator.hasNext()) {
+            PipeNetWalker walker = iterator.next();
+            if (walker.walk()) {
+                onRemoveSubWalker(walker);
+                iterator.remove();
             }
         }
 
-        return walkers.size() == 0;
+        return !isRunning() || walkers.size() == 0;
     }
 
     private void checkPos() {
@@ -142,8 +153,7 @@ public abstract class PipeNetWalker {
                 throw new IllegalStateException("PipeTile was not null last walk, but now is");
         }
         checkPipe(pipeTile, currentPos);
-        pipeTile.markWalked();
-        walked.add(pipeTile);
+        root.walked.add(pipeTile.getPipePos().toLong());
 
         BlockPos.PooledMutableBlockPos pos = BlockPos.PooledMutableBlockPos.retain();
         // check for surrounding pipes and item handlers
@@ -156,7 +166,7 @@ public abstract class PipeNetWalker {
             TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof IPipeTile) {
                 IPipeTile<?, ?> otherPipe = (IPipeTile<?, ?>) tile;
-                if (otherPipe.isWalked())
+                if (isWalked(otherPipe))
                     continue;
                 if (isValidPipe(pipeTile, otherPipe, currentPos, accessSide)) {
                     pipes.add(accessSide);
@@ -168,8 +178,19 @@ public abstract class PipeNetWalker {
         pos.release();
     }
 
-    public PipeNet<?> getNet() {
-        return net;
+    protected boolean isWalked(IPipeTile<?, ?> pipe) {
+        return root.walked.contains(pipe.getPipePos().toLong());
+    }
+
+    /**
+     * Will cause the root walker to stop after the next walk
+     */
+    public void stop() {
+        root.running = false;
+    }
+
+    public boolean isRunning() {
+        return root.running;
     }
 
     public World getWorld() {
@@ -182,5 +203,9 @@ public abstract class PipeNetWalker {
 
     public int getWalkedBlocks() {
         return walkedBlocks;
+    }
+
+    public boolean isRoot() {
+        return this.root == this;
     }
 }

@@ -322,7 +322,6 @@ metaitem.energy.lapotronicorb.tooltip=Reusable Battery
 metaitem.energy.lapotronicorb2.name=Lapotronic Energy Orb Cluster
 metaitem.energy.lapotronicorb2.tooltip=Reusable Battery
 metaitem.zpm.name=Zero Point Module
-metaitem.zpm.tooltip=Single Use Battery
 metaitem.energy.module.name=Energy Module
 metaitem.energy.module.tooltip=Reusable Battery
 metaitem.energy.cluster.name=Energy Cluster
@@ -761,6 +760,8 @@ metaitem.cover.solar.panel.uv.tooltip=Ultimate Voltage Solar Panel
 
 metaitem.cover.infinite_water.name=Infinite Water Cover
 metaitem.cover.infinite_water.tooltip=Creates 16 Buckets of Water every second (as Cover)
+metaitem.cover.ender_fluid_link.name=Ender Fluid Link Cover
+metaitem.cover.ender_fluid_link.tooltip=Link your fluid tanks to the Ender! (as Cover)
 
 metaitem.gelled_toluene.name=Gelled Toluene
 metaitem.gelled_toluene.tooltip=Raw Explosive
@@ -965,6 +966,7 @@ metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
 metaarmor.energy_share.tooltip.guide=To change mode shift-right click when holding item
 
+gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 
 cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
@@ -997,11 +999,12 @@ cover.smart_item_filter.matching_mode.ignore_fluid=Ignore Fluids
 cover.smart_item_filter.matching_mode.description=§eDefault§r - Will match recipes on both items/fluids criteria assuming you aren't providing any fluid. /n§eIgnore Fluids§r - Will match recipes only on items criteria.
 
 cover.conveyor.title=Conveyor Cover Settings (%s)
-cover.conveyor.transfer_rate=%s items/sec
+cover.conveyor.transfer_rate=§7items/sec
 cover.conveyor.mode.export=Mode: Export
 cover.conveyor.mode.import=Mode: Import
-cover.conveyor.distribution.enabled=Item distribution mode for item pipes/n§bInsert First
-cover.conveyor.distribution.disabled=Item distribution mode for item pipes/n§bRound Robin
+cover.conveyor.distribution.round_robin_enhanced=Distribution Mode/n§bEnhanced Round Robin§r/n§7Splits items equally to all inventories
+cover.conveyor.distribution.round_robin=Distribution Mode/n§bRound Robin§r with Priority/n§7Tries to split items equally to inventories
+cover.conveyor.distribution.first_insert=Distribution Mode/n§bFirst Insert§r/n§7Will insert into the first inventory it finds
 cover.conveyor.blocks_input.enabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§aEnabled
 cover.conveyor.blocks_input.disabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§cDisabled
 cover.universal.manual_import_export.mode.disabled=Manual I/O: Disabled
@@ -1041,6 +1044,13 @@ cover.machine_controller.mode.cover_south=Control Cover (South)
 cover.machine_controller.mode.cover_north=Control Cover (North)
 cover.machine_controller.mode.cover_east=Control Cover (East)
 cover.machine_controller.mode.cover_west=Control Cover (West)
+
+cover.ender_fluid_link.title=Ender Fluid Link
+cover.ender_fluid_link.iomode.enabled=I/O Enabled
+cover.ender_fluid_link.iomode.disabled=I/O Disabled
+cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPrivate mode uses the player who originally placed the cover
+cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
+cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore
@@ -3109,12 +3119,12 @@ gregtech.machine.battery_buffer.max.16.name=MAX Voltage Battery Buffer
 
 # Transformers
 gregtech.machine.transformer.tooltip_tool_usage=Use Soft Hammer to invert (Starts as Transform Down)
-gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dV (%d)§7 -> §a%dA %dV (%d)
-gregtech.machine.transformer.message_transform_down=Transforming Down, In: %dV %dA, Out: %dV %dA
-gregtech.machine.transformer.tooltip_transform_up=Transform Up: §a%dA %dV (%d)§7 -> §a%dA %dV (%d)
-gregtech.machine.transformer.message_transform_up=Transforming Up, In: %dV %dA, Out: %dV %dA
+gregtech.machine.transformer.tooltip_transform_down=Transform Down: §a%dA %dEU (%d)§7 -> §a%dA %dEU (%d)
+gregtech.machine.transformer.message_transform_down=Transforming Down, In: %dEU %dA, Out: %dEU %dA
+gregtech.machine.transformer.tooltip_transform_up=Transform Up: §a%dA %dEU (%d)§7 -> §a%dA %dEU (%d)
+gregtech.machine.transformer.message_transform_up=Transforming Up, In: %dEU %dA, Out: %dEU %dA
 gregtech.machine.transformer_adjustable.tooltip_tool_usage=Use Screwdriver to cycle amperage (Starts as 4 Amps)
-gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %dV %dA, Lo-Amp to %dV %dA
+gregtech.machine.transformer_adjustable.message_adjust=Adjusted Hi-Amp to %dEU %dA, Lo-Amp to %dEU %dA
 
 gregtech.machine.transformer.ulv.name=Ultra Low Voltage Transformer
 gregtech.machine.transformer.lv.name=Low Voltage Transformer
@@ -4000,7 +4010,7 @@ gregtech.terminal.app_name.items=Item Guides
 gregtech.terminal.app_name.machines=Machine Guides
 gregtech.terminal.app_name.multiblocks=Multiblock Guides
 gregtech.terminal.app_name.tutorials=Tutorials
-gregtech.terminal.app_name.theme_settings=Theme Settings
+gregtech.terminal.app_name.settings=System Settings
 gregtech.terminal.app_name.guide_editor=Guide Editor
 gregtech.terminal.app_name.recipe_chart=Recipe Chart
 gregtech.terminal.app_name.ore_prospector=Ore Prospector
@@ -4015,9 +4025,11 @@ gregtech.terminal.app_name.hardware=Hardware Manager
 gregtech.terminal.app_name.store=App Store
 gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
 gregtech.terminal.app_name.world_prospector=World Prospector
+gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 
 terminal.app_name.description=No description.
 terminal.app_name.tier=Tier %d
+terminal.app_name.maximize.unsupported=This App does not support maximize.
 terminal.items.description=A guide book about items.
 terminal.machines.description=A guide book about gt machines.
 terminal.multiblocks.description=A guide book about multi-blocks.
@@ -4035,9 +4047,17 @@ terminal.hw.device=Device
 terminal.os.shutdown_confirm=Confirm the shutdown? (Press ESC again to see ok)
 terminal.os.hw_demand=Missing mounting hardware:
 
-terminal.menu.close=Close
-terminal.menu.minimize=Minimize
-terminal.menu.maximize=Maximize
+terminal.system_call.null=NULL
+terminal.system_call.call_menu=Call Menu
+terminal.system_call.full_screen=Full Screen
+terminal.system_call.minimize_focus_app=Back to Desktop
+terminal.system_call.close_focus_app=Close App
+terminal.system_call.shutdown=Shutdown
+terminal.system_call.open_app=Open App
+
+terminal.menu.close=Close App
+terminal.menu.minimize=Minimize App
+terminal.menu.maximize=Full Screen/Recover
 
 terminal.component.new_page=New Page
 terminal.component.page_name=Page Name
@@ -4069,11 +4089,22 @@ terminal.guide_editor.page_config=Page Config
 terminal.guide_editor.widgets_box=Widgets Box
 terminal.guide_editor.widget_config=Widget Config
 
-terminal.theme_settings.description=Set theme colors and wallpaper of the GTOS here.
-terminal.theme_settings.color=Theme Color Settings
-terminal.theme_settings.wallpaper=Wallpaper Settings
-terminal.theme_settings.select=Select
-terminal.theme_settings.image=Image File
+terminal.settings.description=The system settings for GTOS.
+terminal.settings.theme=Theme
+terminal.settings.theme.color=Theme Color Settings
+terminal.settings.theme.wallpaper=Wallpaper Settings
+terminal.settings.theme.select=Select
+terminal.settings.theme.image=Image File
+terminal.settings.home=Home Button
+terminal.settings.home.double=Double
+terminal.settings.home.action=Click Action
+terminal.settings.home.args=Args
+terminal.settings.home.click=click
+terminal.settings.home.double_click=double Click
+terminal.settings.os=Os settings
+terminal.settings.os.double_check=Double Check
+terminal.settings.os.double_check.desc=Should Double Check when shutdown.
+
 
 terminal.recipe_chart.description=A tool for analyzing recipe chains, with which you can easily build a recipe graph and even calculate the ingredients needed like JEC.
 terminal.recipe_chart.limit=Page limit.
@@ -4081,6 +4112,7 @@ terminal.recipe_chart.delete=Delete Page
 terminal.recipe_chart.add_slot=Add Root Slot
 terminal.recipe_chart.demand=Demand
 terminal.recipe_chart.calculator=Calculator
+terminal.recipe_chart.add=Set the item from inventory
 terminal.recipe_chart.drag=Drag ingredients here.
 terminal.recipe_chart.visible=Visible
 terminal.recipe_chart.jei=JEI Focus
@@ -4091,7 +4123,7 @@ terminal.recipe_chart.tier.1=cache of 6 pages
 terminal.recipe_chart.tier.2=cache of 7 pages
 terminal.recipe_chart.tier.3=cache of 8 pages
 
-terminal.prospector.vis_mode=dark mode
+terminal.prospector.vis_mode=switching color mode
 terminal.prospector.list=All Resources
 terminal.prospector.ore=Ore statistics
 terminal.prospector.fluid=Fluid statistics
@@ -4122,9 +4154,12 @@ terminal.console.controllable=set working enable
 terminal.hardware.description=Hardware Manager, masterpieces of elegance and precision. How can a tablet be without hardware?
 terminal.hardware.select=Mounting hardware
 terminal.hardware.remove=Remove hardware
+terminal.hardware.remove.full=There are no empty slots in inventory
 terminal.hardware.tip.remove=§4right-click remove the hardware
 
 terminal.battery.description=Battery manager, visually analyzing your app's energy consumption.
+terminal.battery.hover=%s: Usage %d eu/s
+terminal.battery.low_energy=Low power! Plz recharge the terminal.
 
 terminal.store.description=App store, check out what you got? Install and upgrade the app.
 terminal.store.match=Detect that inventory meets demand, whether to (install)upgrade?
@@ -4148,3 +4183,7 @@ terminal.world_prospector.tier.2=Radius 60m (4 slot)
 terminal.world_prospector.radius=Radius %sm
 terminal.world_prospector.reference=Select a reference
 terminal.world_prospector.color=Select box color
+
+terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
+terminal.vtank_viewer.title=Virtual Tank Viewer
+terminal.vtank_viewer.refresh=Refresh tank index

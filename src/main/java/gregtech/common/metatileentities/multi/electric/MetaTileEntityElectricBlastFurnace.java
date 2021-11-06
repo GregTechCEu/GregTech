@@ -24,6 +24,8 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
+import gregtech.common.blocks.BlockWireCoil2;
+import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -73,7 +75,14 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     @Override
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
-        this.blastFurnaceTemperature = context.getOrDefault("CoilType", CoilType.CUPRONICKEL).getCoilTemperature();
+        Object type = context.get("CoilType");
+        if (type instanceof CoilType) {
+            this.blastFurnaceTemperature = ((CoilType) type).getCoilTemperature();
+        } else if(type instanceof CoilType2) {
+            this.blastFurnaceTemperature = ((CoilType2) type).getCoilTemperature();
+        } else {
+            this.blastFurnaceTemperature = CoilType.CUPRONICKEL.getCoilTemperature();
+        }
 
         if (ConfigHolder.U.GT5u.ebfTemperatureBonuses)
             this.blastFurnaceTemperature += 100 * Math.max(0, GTUtility.getTierByVoltage(getEnergyContainer().getInputVoltage()) - GTValues.MV);
@@ -94,12 +103,18 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     public static Predicate<BlockWorldState> heatingCoilPredicate() {
         return blockWorldState -> {
             IBlockState blockState = blockWorldState.getBlockState();
-            if (!(blockState.getBlock() instanceof BlockWireCoil))
-                return false;
-            BlockWireCoil blockWireCoil = (BlockWireCoil) blockState.getBlock();
-            CoilType coilType = blockWireCoil.getState(blockState);
-            CoilType currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
-            return currentCoilType.getName().equals(coilType.getName());
+            if ((blockState.getBlock() instanceof BlockWireCoil)) {
+                BlockWireCoil blockWireCoil = (BlockWireCoil) blockState.getBlock();
+                CoilType coilType = blockWireCoil.getState(blockState);
+                Object currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
+                return currentCoilType.toString().equals(coilType.getName());
+            } else if ((blockState.getBlock() instanceof BlockWireCoil2)) {
+                BlockWireCoil2 blockWireCoil = (BlockWireCoil2) blockState.getBlock();
+                CoilType2 coilType = blockWireCoil.getState(blockState);
+                Object currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
+                return currentCoilType.toString().equals(coilType.getName());
+            }
+            return false;
         };
     }
 

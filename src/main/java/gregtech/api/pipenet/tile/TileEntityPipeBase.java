@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -30,43 +31,22 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
 
     private TIntIntMap openConnectionsMap = new TIntIntHashMap();
     private int openConnections = 0;
-    private boolean walked = false;
 
     protected int insulationColor = DEFAULT_COVER_COLOR;
     protected final PipeCoverableImplementation coverableImplementation = new PipeCoverableImplementation(this);
     private NodeDataType cachedNodeData;
     private BlockPipe<PipeType, NodeDataType, ?> pipeBlock;
     private PipeType pipeType = getPipeTypeClass().getEnumConstants()[0];
-    private boolean detachedConversionMode;
-    private boolean wasInDetachedConversionMode;
+    private boolean detachedConversionMode = false;
+    private boolean wasInDetachedConversionMode = false;
 
     public TileEntityPipeBase() {
         openConnectionsMap.put(AttachmentType.PIPE.ordinal(), 0);
         recomputeBlockedConnections();
     }
 
-    public void setDetachedConversionMode(boolean detachedConversionMode) {
-        this.detachedConversionMode = detachedConversionMode;
-        this.wasInDetachedConversionMode = true;
-    }
-
     public boolean wasInDetachedConversionMode() {
         return wasInDetachedConversionMode;
-    }
-
-    @Override
-    public void markWalked() {
-        walked = true;
-    }
-
-    @Override
-    public boolean isWalked() {
-        return walked;
-    }
-
-    @Override
-    public void resetWalk() {
-        walked = false;
     }
 
     public void setPipeData(BlockPipe<PipeType, NodeDataType, ?> pipeBlock, PipeType pipeType) {
@@ -92,7 +72,9 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
     public abstract Class<PipeType> getPipeTypeClass();
 
     @Override
-    public abstract boolean supportsTicking();
+    public boolean supportsTicking() {
+        return this instanceof ITickable;
+    }
 
     @Override
     public World getPipeWorld() {
@@ -288,7 +270,6 @@ public abstract class TileEntityPipeBase<PipeType extends Enum<PipeType> & IPipe
             return defaultValue;
         }
         if (coverBehavior == null && facing != null) {
-            //boolean isBlocked = (getBlockedConnections() & 1 << facing.getIndex()) > 0;
             return isConnectionOpenAny(facing) ? defaultValue : null;
         }
         if (coverBehavior != null) {

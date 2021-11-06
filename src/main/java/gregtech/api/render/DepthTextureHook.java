@@ -1,6 +1,8 @@
 package gregtech.api.render;
 
+import gregtech.api.util.RenderUtil;
 import gregtech.common.ConfigHolder;
+import gregtech.common.asm.hooks.BloomRenderLayerHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -113,6 +115,10 @@ public class DepthTextureHook {
                 GL11.GL_TEXTURE_2D,
                 framebufferDepthTexture, 0);
 
+        if (BloomRenderLayerHooks.getBloomFBO() != null && useDefaultFBO) {
+            RenderUtil.hookDepthTexture(BloomRenderLayerHooks.getBloomFBO(), framebufferDepthTexture);
+        }
+
         OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastFBO);
     }
 
@@ -120,14 +126,11 @@ public class DepthTextureHook {
         if (framebufferDepthTexture != 0 || framebufferObject != 0) {
             if (useDefaultFBO) {
                 Framebuffer framebuffer = Minecraft.getMinecraft().getFramebuffer();
-                if (framebuffer.isStencilEnabled()) {
-                    OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, framebufferObject);
-                    OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, framebuffer.depthBuffer);
-                    OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, framebuffer.depthBuffer);
-                } else {
-                    OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, framebufferObject);
-                    OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, framebuffer.depthBuffer);
+                Framebuffer bloomFBO = BloomRenderLayerHooks.getBloomFBO();
+                if (bloomFBO != null) {
+                    RenderUtil.hookDepthBuffer(bloomFBO, framebuffer.depthBuffer);
                 }
+                RenderUtil.hookDepthBuffer(framebuffer, framebuffer.depthBuffer);
             } else {
                 OpenGlHelper.glDeleteFramebuffers(framebufferObject);
             }
@@ -141,12 +144,7 @@ public class DepthTextureHook {
         lastBind = true;
         if (useDefaultFBO && framebufferDepthTexture != 0) {
             Framebuffer framebuffer = Minecraft.getMinecraft().getFramebuffer();
-            if (framebuffer.isStencilEnabled()) {
-                OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, framebuffer.depthBuffer);
-                OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, GL30.GL_STENCIL_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, framebuffer.depthBuffer);
-            } else {
-                OpenGlHelper.glFramebufferRenderbuffer(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, OpenGlHelper.GL_RENDERBUFFER, framebuffer.depthBuffer);
-            }
+            RenderUtil.hookDepthBuffer(framebuffer, framebuffer.depthBuffer);
         }
         GlStateManager.bindTexture(framebufferDepthTexture);
     }
@@ -154,11 +152,16 @@ public class DepthTextureHook {
     public static void unBindDepthTexture() {
         GlStateManager.bindTexture(0);
         if (useDefaultFBO) {
-            if (Minecraft.getMinecraft().getFramebuffer().isStencilEnabled()) {
-                OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, GL30.GL_DEPTH_STENCIL_ATTACHMENT, GL11.GL_TEXTURE_2D, framebufferDepthTexture, 0);
-            } else {
-                OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, framebufferDepthTexture, 0);
-            }
+            Framebuffer framebuffer = Minecraft.getMinecraft().getFramebuffer();
+            RenderUtil.hookDepthTexture(framebuffer, framebufferDepthTexture);
         }
+    }
+
+    public static boolean isUseDefaultFBO() {
+        return useDefaultFBO;
+    }
+
+    public static boolean isLastBind() {
+        return framebufferObject != 0;
     }
 }

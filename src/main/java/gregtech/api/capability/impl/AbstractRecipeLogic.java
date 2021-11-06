@@ -412,6 +412,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         return isActive;
     }
 
+    public boolean isWorking() {
+        return isActive && !hasNotEnoughEnergy && workingEnabled;
+    }
+
     public boolean isAllowOverclocking() {
         return allowOverclocking;
     }

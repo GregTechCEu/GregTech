@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.damagesources.DamageSources;
-import gregtech.api.pipenet.PipeGatherer;
 import gregtech.api.pipenet.block.material.BlockMaterialPipe;
+import gregtech.api.pipenet.tickable.TickableWorldPipeNetEventHandler;
 import gregtech.api.pipenet.tile.IPipeTile;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.unification.material.Material;
@@ -22,27 +22,31 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipeProperties, WorldFluidPipeNet> {
+
+    static {
+        TickableWorldPipeNetEventHandler.registerTickablePipeNet(WorldFluidPipeNet::getWorldPipeNet);
+    }
 
     private final SortedMap<Material, FluidPipeProperties> enabledMaterials = new TreeMap<>();
 
@@ -94,19 +98,126 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
+    public void updateTick(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand) {
+        super.updateTick(worldIn, pos, state, rand);
+        TileEntityFluidPipe pipeTile = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+        if (pipeTile != null && !worldIn.isRemote) {
+            pipeTile.getFluidPipeNet().markDirty(pos);
+        }
+    }
+
+    @Override
+    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityLivingBase placer, @Nonnull ItemStack stack) {
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        TileEntityFluidPipe pipeTile = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+        if (pipeTile != null && !worldIn.isRemote) {
+            pipeTile.checkNeighbours();
+        }
+    }
+
+    @Override
+    public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        FluidPipeNet net = getWorldPipeNet(worldIn).getNetFromPos(pos);
+        TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+        // get and remove all fluids of the pipe from the net
+        List<FluidStack> stacks = new ArrayList<>();
+        for (FluidTank tank : pipe.getFluidTanks()) {
+            FluidStack stack = tank.getFluid();
+            if (stack != null && stack.amount > 0) {
+                stack.amount = net.drain(stack, pos, true, true);
+                stacks.add(stack);
+            }
+        }
+
+        // get open connections
+        EnumSet<EnumFacing> openConnections = EnumSet.noneOf(EnumFacing.class);
+        for (EnumFacing facing : EnumFacing.values()) {
+            if (pipe.isConnectionOpenAny(facing))
+                openConnections.add(facing);
+        }
+
+        // destroy pipe
+        super.breakBlock(worldIn, pos, state);
+
+        // get neighbour fluid nets
+        Set<FluidPipeNet> nets = new HashSet<>();
+        List<Pair<FluidPipeNet, TileEntityFluidPipe>> pairs = new ArrayList<>();
+        for (EnumFacing facing : openConnections) {
+            BlockPos pos1 = pos.offset(facing);
+            TileEntity tile = worldIn.getTileEntity(pos1);
+            if (tile instanceof TileEntityFluidPipe) {
+                FluidPipeNet fluidNet = ((TileEntityFluidPipe) tile).getFluidPipeNet();
+                if (nets.add(fluidNet)) {
+                    pairs.add(Pair.of(fluidNet, (TileEntityFluidPipe) tile));
+                }
+            }
+        }
+        if (stacks.size() > 0) {
+            // for each fluid try to insert equally into neighbour fluid nets
+            for (FluidStack stack : stacks) {
+                List<Pair<FluidPipeNet, TileEntityFluidPipe>> pairs2 = new ArrayList<>(pairs);
+                FluidStack copy = stack.copy();
+                while (copy.amount > 0 && pairs2.size() > 0) {
+                    int c = copy.amount / pairs2.size();
+                    int m = copy.amount / pairs2.size();
+                    Iterator<Pair<FluidPipeNet, TileEntityFluidPipe>> iterator = pairs2.iterator();
+                    while (iterator.hasNext()) {
+                        Pair<FluidPipeNet, TileEntityFluidPipe> pair = iterator.next();
+                        int count = c;
+                        if (m > 0) {
+                            count++;
+                            m--;
+                        }
+                        FluidStack toFill = stack.copy();
+                        toFill.amount = count;
+
+                        int f = pair.getKey().fill(toFill, pair.getValue().getPos(), true);
+                        copy.amount -= f;
+                        if (count != f)
+                            iterator.remove();
+                    }
+                }
+            }
+        }
+        net.invalidateNetCapacity();
+        nets.forEach(FluidPipeNet::invalidateNetCapacity);
+    }
+
+    @Override
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
         if (!worldIn.isRemote) {
-            FluidPipeNet itemPipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (itemPipeNet != null) {
-                itemPipeNet.nodeNeighbourChanged(pos);
-            }
+            TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+            if (pipe != null)
+                pipe.checkNeighbours();
         }
     }
 
     @Override
     public boolean canPipesConnect(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile, EnumFacing side, IPipeTile<FluidPipeType, FluidPipeProperties> sideTile) {
-        return selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe;
+        if (selfTile instanceof TileEntityFluidPipe && sideTile instanceof TileEntityFluidPipe) {
+            TileEntityFluidPipe selfPipe = (TileEntityFluidPipe) selfTile, sidePipe = (TileEntityFluidPipe) selfTile;
+            // yes if one pipe is empty
+            if(selfPipe.areTanksEmpty() || sidePipe.areTanksEmpty())
+                return true;
+            // get content of one pipe
+            Set<FluidStack> fluids = new HashSet<>();
+            for(FluidTank tank : selfPipe.getFluidTanks()) {
+                FluidStack fluid = tank.getFluid();
+                if(fluid != null && fluid.amount > 0) {
+                    fluids.add(fluid);
+                }
+            }
+            // if a fluid of the side pipe is not in this pipe return false
+            for(FluidTank tank : sidePipe.getFluidTanks()) {
+                FluidStack fluid = tank.getFluid();
+                if(fluid != null && fluid.amount > 0 && !fluids.contains(fluid)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -119,14 +230,16 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
         if (worldIn.isRemote) return;
         if (entityIn instanceof EntityLivingBase && entityIn.world.getWorldTime() % 20 == 0L) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
-            FluidPipeNet pipeNet = getWorldPipeNet(worldIn).getNetFromPos(pos);
-            if (pipeNet == null) return;
-            TileEntityFluidPipeTickable pipeTile = (TileEntityFluidPipeTickable) PipeGatherer.findFirstMatching(pipeNet, worldIn, pos, pipe -> pipe instanceof TileEntityFluidPipeTickable);
-            if (pipeTile == null || pipeTile.getNodeData().tanks > 1) return;
-            FluidStack fluidStack = pipeTile.getContainedFluid(0);
-            if (fluidStack == null)
-                return; //pipe network is empty
-            int fluidTemperature = fluidStack.getFluid().getTemperature(fluidStack);
+            TileEntityFluidPipe pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+            List<Integer> temps = new ArrayList<>();
+            for (FluidTank tank : pipe.getFluidTanks()) {
+                if (tank.getFluid() != null && tank.getFluid().amount > 0) {
+                    temps.add(tank.getFluid().getFluid().getTemperature(tank.getFluid()));
+                }
+            }
+            if (temps.size() == 0)
+                return;
+            float fluidTemperature = (float) temps.stream().mapToInt(i -> i).average().getAsDouble();
             boolean wasDamaged = false;
             if (fluidTemperature >= 373) {
                 //100C, temperature of boiling water
@@ -147,12 +260,28 @@ public class BlockFluidPipe extends BlockMaterialPipe<FluidPipeType, FluidPipePr
     }
 
     @Override
+    public boolean onBlockActivated(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull EntityPlayer playerIn, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
+        TileEntityFluidPipe pipe = null;
+        int oldConnections = 0;
+        if (!worldIn.isRemote) {
+            pipe = (TileEntityFluidPipe) getPipeTileEntity(worldIn, pos);
+            oldConnections = pipe.getOpenConnections();
+        }
+        boolean r = super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+        if (!worldIn.isRemote && oldConnections != pipe.getOpenConnections()) {
+            FluidPipeNet net = getWorldPipeNet(worldIn).getNetFromPos(pos);
+            if (net != null)
+                net.markDirty(pos);
+        }
+        return r;
+    }
+
+    @Override
     public TileEntityPipeBase<FluidPipeType, FluidPipeProperties> createNewTileEntity(boolean supportsTicking) {
         return supportsTicking ? new TileEntityFluidPipeTickable() : new TileEntityFluidPipe();
     }
 
     @Nonnull
-    @SuppressWarnings("deprecation")
     @Override
     public int getVisualConnections(IPipeTile<FluidPipeType, FluidPipeProperties> selfTile) {
         int connections = selfTile.getOpenConnections();

@@ -215,8 +215,7 @@ public class UnknownCompositionMaterials {
         HighOctaneGasoline = new Material.Builder(1592, "gasoline_premium")
                 .fluid().color(0xFFA500).build();
 
-        Nitrobenzene = new Material.Builder(1593, "nitrobenzene")
-                .fluid(FluidType.GAS).color(0x704936).build();
+        // free id: 1593
 
         CoalGas = new Material.Builder(1594, "coal_gas")
                 .fluid(FluidType.GAS).color(0x333333).build();

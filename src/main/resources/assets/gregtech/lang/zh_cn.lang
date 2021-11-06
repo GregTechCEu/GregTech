@@ -2309,7 +2309,6 @@ metaitem.energy_crystal.tooltip=Reusable Battery
 metaitem.lapotron_crystal.tooltip=Reusable Battery
 metaitem.energy.lapotronicorb.tooltip=Reusable Battery
 metaitem.energy.lapotronicorb2.tooltip=Reusable Battery
-metaitem.zpm.tooltip=Single Use Battery
 metaitem.energy.module.name=Energy Module
 metaitem.energy.cluster.name=Energy Cluster
 metaitem.max.battery.name=MAX Battery

@@ -7,6 +7,7 @@ import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 
 import java.util.List;
@@ -34,6 +35,11 @@ public class SelectorWidget extends WidgetGroup {
 
     public SelectorWidget setIsUp(boolean isUp) {
         this.isUp = isUp;
+        return this;
+    }
+
+    public SelectorWidget setHoverText(String text) {
+        button.setHoverText(text);
         return this;
     }
 
@@ -72,7 +78,7 @@ public class SelectorWidget extends WidgetGroup {
                 } else {
                     drawSolidRect(x, y, width, height, 0xAA000000);
                 }
-                fontRenderer.drawString(candidate, x + 4, y + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, fontColor);
+                fontRenderer.drawString(I18n.format(candidate), x + 4, y + (height - fontRenderer.FONT_HEIGHT) / 2 + 1, fontColor);
                 y += height;
             }
             y = (isUp ? -candidates.size() : 1) * height + getPosition().y;

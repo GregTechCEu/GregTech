@@ -46,8 +46,23 @@ public class Shaders {
 
     public static ShaderObject IMAGE_V;
     public static ShaderObject IMAGE_F;
-    public static ShaderObject BLACK_HOLE;
+//    public static ShaderObject BLACK_HOLE;
     public static ShaderObject SCANNING;
+
+    public static ShaderObject BLOOM_COMBINE;
+
+    public static ShaderObject BLUR;
+
+    // Unity
+    public static ShaderObject DOWN_SAMPLING;
+    public static ShaderObject UP_SAMPLING;
+
+    // Unreal
+    public static ShaderObject S_BLUR;
+    public static ShaderObject COMPOSITE;
+
+
+
 
     static {
         mc = Minecraft.getMinecraft();
@@ -60,8 +75,14 @@ public class Shaders {
     public static void initShaders() {
         IMAGE_V = initShader(IMAGE_V, VERTEX, "image.vert");
         IMAGE_F = initShader(IMAGE_F, FRAGMENT, "image.frag");
-        BLACK_HOLE = initShader(BLACK_HOLE, FRAGMENT, "blackhole.frag");
+//        BLACK_HOLE = initShader(BLACK_HOLE, FRAGMENT, "blackhole.frag");
         SCANNING = initShader(SCANNING, FRAGMENT, "scanning.frag");
+        BLOOM_COMBINE = initShader(BLOOM_COMBINE, FRAGMENT, "bloom_combine.frag");
+        BLUR = initShader(BLUR, FRAGMENT, "blur.frag");
+        DOWN_SAMPLING = initShader(DOWN_SAMPLING, FRAGMENT, "down_sampling.frag");
+        UP_SAMPLING = initShader(UP_SAMPLING, FRAGMENT, "up_sampling.frag");
+        S_BLUR = initShader(S_BLUR, FRAGMENT, "seperable_blur.frag");
+        COMPOSITE = initShader(COMPOSITE, FRAGMENT, "composite.frag");
         FULL_IMAGE_PROGRAMS.clear();
     }
 
@@ -86,12 +107,12 @@ public class Shaders {
     }
 
     public static boolean allowedShader() {
-        return OpenGlHelper.shadersSupported && ConfigHolder.U.clientConfig.useShader;
+        return OpenGlHelper.shadersSupported && ConfigHolder.U.clientConfig.shader.useShader;
     }
 
     public static Framebuffer renderFullImageInFBO(Framebuffer fbo, ShaderObject frag, Consumer<ShaderProgram.UniformCache> uniformCache) {
-        if (fbo == null || frag == null) return fbo;
-        int lastID = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
+        if (fbo == null || frag == null || !allowedShader()) return fbo;
+//        int lastID = glGetInteger(GL30.GL_FRAMEBUFFER_BINDING);
 
         fbo.bindFramebuffer(true);
 
@@ -121,9 +142,9 @@ public class Shaders {
         tessellator.draw();
 
         program.releaseShader();
-        GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
+//        GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
 
-        OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
+//        OpenGlHelper.glBindFramebuffer(OpenGlHelper.GL_FRAMEBUFFER, lastID);
         return fbo;
     }
 

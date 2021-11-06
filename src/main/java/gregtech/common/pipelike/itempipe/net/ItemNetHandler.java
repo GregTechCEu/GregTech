@@ -3,7 +3,7 @@ package gregtech.common.pipelike.itempipe.net;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.GTLog;
 import gregtech.api.util.ItemStackKey;
 import gregtech.common.covers.*;
 import gregtech.common.pipelike.itempipe.tile.TileEntityItemPipe;
@@ -12,21 +12,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class ItemNetHandler implements IItemHandler {
 
     private final ItemPipeNet net;
     private final TileEntityItemPipeTickable pipe;
+    private final World world;
     private final EnumFacing facing;
     private int simulatedTransfers = 0;
+    private final Map<String, String> simulatedTransfersGlobalRoundRobin = new HashMap<>();
 
     public ItemNetHandler(ItemPipeNet net, TileEntityItemPipe pipe, EnumFacing facing) {
         this.net = net;
@@ -35,6 +35,7 @@ public class ItemNetHandler implements IItemHandler {
         else
             this.pipe = (TileEntityItemPipeTickable) pipe.setSupportsTicking();
         this.facing = facing;
+        this.world = pipe.getWorld();
     }
 
     @Nonnull
@@ -42,6 +43,7 @@ public class ItemNetHandler implements IItemHandler {
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (stack.isEmpty()) return stack;
         simulatedTransfers = 0;
+        simulatedTransfersGlobalRoundRobin.clear();
         CoverBehavior pipeCover = getCoverOnPipe(pipe.getPipePos(), facing);
         CoverBehavior tileCover = getCoverOnNeighbour(pipe.getPipePos(), facing);
 
@@ -56,9 +58,10 @@ public class ItemNetHandler implements IItemHandler {
             return insertFirst(stack, simulate);
 
         CoverConveyor conveyor = (CoverConveyor) (pipeConveyor ? pipeCover : tileCover);
-        if (conveyor.getConveyorMode() == (pipeConveyor ? CoverConveyor.ConveyorMode.IMPORT : CoverConveyor.ConveyorMode.EXPORT) &&
-                conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN) {
-            return insertRoundRobin(stack, simulate);
+        if (conveyor.getConveyorMode() == (pipeConveyor ? CoverConveyor.ConveyorMode.IMPORT : CoverConveyor.ConveyorMode.EXPORT)) {
+            boolean roundRobinGlobal = conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN_GLOBAL;
+            if (roundRobinGlobal || conveyor.getDistributionMode() == DistributionMode.ROUND_ROBIN_PRIO)
+                return insertRoundRobin(stack, simulate, roundRobinGlobal);
         }
 
         return insertFirst(stack, simulate);
@@ -76,54 +79,51 @@ public class ItemNetHandler implements IItemHandler {
     }
 
     public ItemStack insertFirst(ItemStack stack, boolean simulate) {
-        for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
-            if (GTUtility.arePosEqual(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
-                continue;
-            IItemHandler handler = inv.getHandler(pipe.getWorld());
-            if (handler == null) continue;
-            stack = insert(new Handler(handler, inv), stack, simulate);
+        for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos(), facing)) {
+            stack = insert(inv, stack, simulate);
             if (stack.isEmpty())
                 return ItemStack.EMPTY;
         }
         return stack;
     }
 
-    public ItemStack insertRoundRobin(ItemStack stack, boolean simulate) {
-        List<Handler> handlers = new ArrayList<>();
-        for (ItemPipeNet.Inventory inv : net.getNetData(pipe.getPipePos())) {
-            if (GTUtility.arePosEqual(pipe.getPipePos(), inv.getPipePos()) && (facing == null || facing == inv.getFaceToHandler()))
-                continue;
-            IItemHandler handler = inv.getHandler(pipe.getWorld());
-            if (handler != null)
-                handlers.add(new Handler(handler, inv));
-        }
+    public ItemStack insertRoundRobin(ItemStack stack, boolean simulate, boolean global) {
+        List<ItemPipeNet.Inventory> handlers = net.getNetData(pipe.getPipePos(), facing);
         if (handlers.size() == 0)
             return stack;
         if (handlers.size() == 1)
             return insert(handlers.get(0), stack, simulate);
-        ItemStack remaining = insertToHandlers(handlers, stack, simulate);
-        if (!remaining.isEmpty() && handlers.size() > 0)
-            remaining = insertToHandlers(handlers, remaining, simulate);
+        List<ItemPipeNet.Inventory> handlersCopy = new ArrayList<>(handlers);
+        ItemStack remaining = insertToHandlers(handlersCopy, handlers.size(), stack, simulate, global);
+        if (!remaining.isEmpty() && handlersCopy.size() > 0)
+            remaining = insertToHandlers(handlersCopy, handlers.size(), remaining, simulate, global);
         return remaining;
     }
-
     /**
      * Inserts items equally to all handlers
      * if it couldn't insert all items, the handler will be removed
      *
-     * @param handlers to insert to
+     * @param copy to insert to
      * @param stack    to insert
      * @param simulate simulate
      * @return remainder
      */
-    public ItemStack insertToHandlers(List<Handler> handlers, ItemStack stack, boolean simulate) {
-        Iterator<Handler> handlerIterator = handlers.iterator();
-        boolean didInsert = false;
-        int remaining = 0;
+    private ItemStack insertToHandlers(List<ItemPipeNet.Inventory> copy, int destinations, ItemStack stack, boolean simulate, boolean global) {
+        GTLog.logger.info("Inserting to {} handlers, simulate {}, global {}", destinations, simulate, global);
+        Iterator<ItemPipeNet.Inventory> handlerIterator = copy.listIterator();
+        int remaining = stack.getCount();
         int count = stack.getCount();
-        int c = count / handlers.size();
-        int m = count % handlers.size();
+        int c = count / destinations;
+        int m = c == 0 ? count % destinations : 0;
+        int i = -1;
         while (handlerIterator.hasNext()) {
+            i++;
+            ItemPipeNet.Inventory handler = handlerIterator.next();
+            boolean isMarked = didTransferTo(handler, simulate);
+            GTLog.logger.info(" - handler {} is marked: {}", i, isMarked);
+            if (global && isMarked) {
+                continue;
+            }
             int amount = c;
             if (m > 0) {
                 amount++;
@@ -132,26 +132,33 @@ public class ItemNetHandler implements IItemHandler {
             if (amount == 0) break;
             ItemStack toInsert = stack.copy();
             toInsert.setCount(amount);
-            Handler handler = handlerIterator.next();
             int r = insert(handler, toInsert, simulate).getCount();
-            if (r < amount)
-                didInsert = true;
-            if (r > 0) {
+            if (r < amount) {
+                remaining -= (amount - r);
+                boolean marked;
+                if (marked = global) {
+                    transferTo(handler, simulate);
+                }
+                GTLog.logger.info(" - inserted {} into handler {}, marked {}", amount - r, i, marked);
+            }
+
+            if(global || r > 0)
                 handlerIterator.remove();
-                remaining += r;
+
+            if (global && !handlerIterator.hasNext()) {
+                GTLog.logger.info(" - resetting marks");
+                resetTransferred(simulate);
             }
         }
         if (remaining == 0) {
-            if (didInsert)
-                return ItemStack.EMPTY;
-            return stack;
+            return ItemStack.EMPTY;
         }
         ItemStack result = stack.copy();
         result.setCount(remaining);
         return result;
     }
 
-    public ItemStack insert(Handler handler, ItemStack stack, boolean simulate) {
+    public ItemStack insert(ItemPipeNet.Inventory handler, ItemStack stack, boolean simulate) {
         int allowed = checkTransferable(pipe, handler.getProperties().transferRate, stack.getCount(), simulate);
         if (allowed == 0) return stack;
         CoverBehavior pipeCover = getCoverOnPipe(handler.getPipePos(), handler.getFaceToHandler());
@@ -162,11 +169,11 @@ public class ItemNetHandler implements IItemHandler {
             return stack;
 
         if (pipeCover instanceof CoverRoboticArm && ((CoverRoboticArm) pipeCover).getConveyorMode() == CoverConveyor.ConveyorMode.EXPORT)
-            return insertOverRobotArm(handler.handler, (CoverRoboticArm) pipeCover, stack, simulate, allowed);
+            return insertOverRobotArm(handler.getHandler(world), (CoverRoboticArm) pipeCover, stack, simulate, allowed);
         if (tileCover instanceof CoverRoboticArm && ((CoverRoboticArm) tileCover).getConveyorMode() == CoverConveyor.ConveyorMode.IMPORT)
-            return insertOverRobotArm(handler.handler, (CoverRoboticArm) tileCover, stack, simulate, allowed);
+            return insertOverRobotArm(handler.getHandler(world), (CoverRoboticArm) tileCover, stack, simulate, allowed);
 
-        return insert(handler.handler, stack, simulate, allowed);
+        return insert(handler.getHandler(world), stack, simulate, allowed);
     }
 
     public boolean checkExportCover(CoverBehavior cover, boolean onPipe, ItemStack stack) {
@@ -299,12 +306,59 @@ public class ItemNetHandler implements IItemHandler {
         return 64;
     }
 
-    private static class Handler extends ItemPipeNet.Inventory {
-        private final IItemHandler handler;
+    private void transferTo(ItemPipeNet.Inventory handler, boolean simulate) {
+        if(simulate)
+            transferTo(simulatedTransfersGlobalRoundRobin, handler.getPipePos(), handler.getFaceToHandler());
+        else
+            pipe.transferTo(handler.getPipePos(), handler.getFaceToHandler());
+    }
 
-        private Handler(IItemHandler handler, ItemPipeNet.Inventory inventory) {
-            super(inventory.getPipePos(), inventory.getFaceToHandler(), inventory.getDistance(), inventory.getProperties());
-            this.handler = handler;
+    private boolean didTransferTo(ItemPipeNet.Inventory handler, boolean simulate) {
+        boolean didPipeTransfer = pipe.didTransferTo(handler.getPipePos(), handler.getFaceToHandler());
+        if(simulate)
+            return didPipeTransfer || didTransferTo(simulatedTransfersGlobalRoundRobin, handler.getPipePos(), handler.getFaceToHandler());
+        return didPipeTransfer;
+    }
+
+    private void resetTransferred(boolean simulated) {
+        if(simulated)
+            simulatedTransfersGlobalRoundRobin.clear();
+        else
+            pipe.resetTransferred();
+    }
+
+    private static String createDestinationString(BlockPos pos) {
+        return pos.getX() + ";" +
+                pos.getY() + ";" +
+                pos.getZ();
+    }
+
+    public static void transferTo(Map<String, String> map, BlockPos pos, EnumFacing facing) {
+        String sPos = createDestinationString(pos);
+        String facings = map.get(sPos);
+        char c = facing.name().charAt(0);
+        if(facings == null) {
+            facings = Character.toString(c);
+        } else {
+            for(int i = 0; i < facings.length(); i++) {
+                if(c == facings.charAt(i))
+                    return;
+            }
+            facings += c;
         }
+        map.put(sPos, facings);
+    }
+
+    public static boolean didTransferTo(Map<String, String> map, BlockPos pos, EnumFacing facing) {
+        String sPos = createDestinationString(pos);
+        String facings = map.get(sPos);
+        if(facings == null)
+            return false;
+        char c = facing.name().charAt(0);
+        for(int i = 0, n = facings.length(); i < n; i++) {
+            if(c == facings.charAt(i))
+                return true;
+        }
+        return false;
     }
 }

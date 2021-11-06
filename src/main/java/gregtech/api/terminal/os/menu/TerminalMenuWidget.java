@@ -6,6 +6,7 @@ import gregtech.api.gui.resources.IGuiTexture;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.gui.widgets.CircleButtonWidget;
+import gregtech.api.terminal.os.SystemCall;
 import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.Position;
@@ -14,6 +15,8 @@ import gregtech.api.util.interpolate.Eases;
 import gregtech.api.util.interpolate.Interpolator;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Tuple;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -21,6 +24,7 @@ import java.util.List;
 
 
 public class TerminalMenuWidget extends WidgetGroup {
+    @SideOnly(Side.CLIENT)
     private Interpolator interpolator;
     private IGuiTexture background;
     private final TerminalOSWidget os;
@@ -36,19 +40,19 @@ public class TerminalMenuWidget extends WidgetGroup {
         this.os = os;
         components = new ArrayList<>();
         this.addWidget(new CircleButtonWidget(5, 10, 4, 1, 0)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                .setColors(0,
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_3.getColor())
                 .setHoverText("terminal.menu.close")
                 .setClickListener(this::close));
         this.addWidget(new CircleButtonWidget(15, 10, 4, 1, 0)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                .setColors(0,
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_2.getColor())
                 .setHoverText("terminal.menu.minimize")
                 .setClickListener(this::minimize));
         this.addWidget(new CircleButtonWidget(25, 10, 4, 1, 0)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                .setColors(0,
                         TerminalTheme.COLOR_7.getColor(),
                         TerminalTheme.COLOR_1.getColor())
                 .setHoverText("terminal.menu.maximize")
@@ -61,14 +65,16 @@ public class TerminalMenuWidget extends WidgetGroup {
     }
 
     public void close(ClickData clickData) {
-        os.closeApplication(os.getFocusApp(), clickData.isClient);
+        SystemCall.CLOSE_FOCUS_APP.call(os, clickData.isClient);
     }
 
     public void minimize(ClickData clickData) {
-        os.minimizeApplication(os.getFocusApp(), clickData.isClient);
+        SystemCall.MINIMIZE_FOCUS_APP.call(os, clickData.isClient);
     }
 
-    public void maximize(ClickData clickData) { }
+    public void maximize(ClickData clickData) {
+        SystemCall.FULL_SCREEN.call(os, clickData.isClient);
+    }
 
     public void addComponent(IMenuComponent component) {
         WidgetGroup group = new WidgetGroup();
@@ -118,10 +124,11 @@ public class TerminalMenuWidget extends WidgetGroup {
         components.clear();
     }
 
+    @SideOnly(Side.CLIENT)
     public void hideMenu() {
         if (!isHide && interpolator == null) {
             int y = getSelfPosition().y;
-            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x - getSize().width, 10, Eases.EaseLinear,
+            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x - getSize().width, 6, Eases.EaseLinear,
                     value-> setSelfPosition(new Position(value.intValue(), y)),
                     value-> {
                         setVisible(false);
@@ -129,22 +136,23 @@ public class TerminalMenuWidget extends WidgetGroup {
                         isHide = true;
                     });
             interpolator.start();
-            os.desktop.setBlockApp(false);
+            os.desktop.removeTopWidget(this);
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public void showMenu() {
         if (isHide && interpolator == null) {
             setVisible(true);
             int y = getSelfPosition().y;
-            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x + getSize().width, 10, Eases.EaseLinear,
+            interpolator = new Interpolator(getSelfPosition().x, getSelfPosition().x + getSize().width, 6, Eases.EaseLinear,
                     value-> setSelfPosition(new Position(value.intValue(), y)),
                     value-> {
                         interpolator = null;
                         isHide = false;
                     });
             interpolator.start();
-            os.desktop.setBlockApp(true);
+            os.desktop.addTopWidget(this);
         }
     }
 
@@ -169,9 +177,10 @@ public class TerminalMenuWidget extends WidgetGroup {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int button) {
         if (!super.mouseClicked(mouseX, mouseY, button)) {
-            if (!isMouseOverElement(mouseX, mouseY) && !isHide) {
-                hideMenu();
+            if (isMouseOverElement(mouseX, mouseY)) {
                 return true;
+            } else if (!isHide) {
+                hideMenu();
             }
             return false;
         }

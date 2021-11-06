@@ -269,9 +269,6 @@ public class ConfigHolder {
             @Config.Comment("Terminal root path. Default: (config/)gregtech/terminal")
             public String terminalRootPath = "gregtech/terminal";
 
-            @Config.Comment("Whether to use shader programs. Default: true")
-            public boolean useShader = true;
-
             @Config.Comment("Whether to hook depth texture. It has no effect on performance, But if there is a problem with rendering, try disabling it. Default: true")
             public boolean hookDepthTexture = true;
 
@@ -280,7 +277,42 @@ public class ConfigHolder {
             public double resolution = 2;
 
             @Config.Comment("Whether or not to enable Emissive Textures for GregTech Machines. Default: true")
-            public boolean emissiveTextures = true;
+            public boolean machinesEemissiveTextures = true;
+
+            @Config.Comment("Whether or not to enable Emissive Textures for GregTech Casings when the multi-block is working. Default: true")
+            public boolean casingsActiveEemissiveTextures = true;
+
+            @Config.Comment("Shader Settings")
+            public Shader shader = new Shader();
+        }
+
+        public static class Shader {
+            @Config.Comment("Whether to use shader programs. Default: true")
+            public boolean useShader = true;
+
+            @Config.Comment("Bloom Effect")
+            public Bloom bloom = new Bloom();
+        }
+
+        public static class Bloom {
+            @Config.Comment("Whether or not to enable Emissive Textures with bloom effect. Default: true")
+            public boolean emissiveTexturesBloom = true;
+
+            @Config.Comment("Bloom Algorithm: 0-Simple Gaussian Blur Bloom(Fast). 1-Unity Bloom. 2-Unreal Bloom")
+            @Config.RangeInt(min = 0, max = 2)
+            public int bloomStyle = 2;
+
+            @Config.Comment("Mipmap Size. (2-5)=>(fast-slow)=>(low quality-high quality)")
+            @Config.RangeInt(min = 2, max = 5)
+            public int nMips = 5;
+
+            @Config.Comment("Bloom Strength")
+            @Config.RangeDouble(min = 0)
+            public double strength = 2;
+
+            @Config.Comment("Blur Step (bloom range)")
+            @Config.RangeDouble(min = 0)
+            public double step = 1;
         }
 
         public static class Equipment {

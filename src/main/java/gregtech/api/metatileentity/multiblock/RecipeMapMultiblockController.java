@@ -18,10 +18,15 @@ import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
+import gregtech.common.blocks.BlockFireboxCasing;
+import gregtech.common.blocks.VariantActiveBlock;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -31,6 +36,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,6 +45,8 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
 
     public final RecipeMap<?> recipeMap;
     protected MultiblockRecipeLogic recipeMapWorkable;
+    protected List<BlockPos> variantActiveBlocks;
+    protected boolean lastActive;
 
     protected IItemHandlerModifiable inputInventory;
     protected IItemHandlerModifiable outputInventory;
@@ -87,6 +95,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     protected void formStructure(PatternMatchContext context) {
         super.formStructure(context);
         initializeAbilities();
+        variantActiveBlocks = context.getOrDefault("VABlock", new LinkedList<>());
     }
 
     @Override
@@ -94,6 +103,9 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         super.invalidateStructure();
         resetTileAbilities();
         this.recipeMapWorkable.invalidate();
+        this.replaceVariantBlocksActive(false);
+        variantActiveBlocks.clear();
+        lastActive = false;
     }
 
     public void outputRecoveryItems() {
@@ -101,10 +113,36 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
         muffler.recoverItemsTable(recoveryItems.stream().map(ItemStack::copy).collect(Collectors.toList()));
     }
 
+    protected void replaceVariantBlocksActive(boolean isActive) {
+        if (variantActiveBlocks != null) {
+            for (BlockPos blockPos : variantActiveBlocks) {
+                IBlockState blockState = getWorld().getBlockState(blockPos);
+                if (blockState.getBlock() instanceof VariantActiveBlock) {
+                    getWorld().setBlockState(blockPos, blockState.withProperty(BlockFireboxCasing.ACTIVE, isActive));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onRemoval() {
+        super.onRemoval();
+        if (!getWorld().isRemote && isStructureFormed()) {
+            replaceVariantBlocksActive(false);
+            variantActiveBlocks.clear();
+            lastActive = false;
+        }
+    }
+
     @Override
     protected void updateFormedValid() {
         if (!hasMufflerMechanics() || isMufflerFaceFree())
             this.recipeMapWorkable.updateWorkable();
+        boolean state = this.recipeMapWorkable.isWorking() && ConfigHolder.U.clientConfig.casingsActiveEemissiveTextures;
+        if (lastActive != state) {
+            lastActive = state;
+            replaceVariantBlocksActive(lastActive);
+        }
     }
 
     @Override

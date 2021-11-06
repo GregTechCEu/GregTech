@@ -49,7 +49,7 @@ public class BatteryManagerApp extends AbstractApplication {
                         this.addWidget(new RectButtonWidget(180 + (index.get() % 5) * 30, 15 + (index.get() / 5) * 30, 20, 20, 2)
                                 .setIcon(installed.getIcon())
                                 // warn unsafe call the I18n here.
-                                .setHoverText(String.format("%s: %d eu/s", I18n.format(installed.getUnlocalizedName()), charge))
+                                .setHoverText(I18n.format("terminal.battery.hover", I18n.format(installed.getUnlocalizedName()), charge))
                                 .setColors(0, TerminalTheme.COLOR_7.getColor(), 0));
                         index.getAndIncrement();
                     });

@@ -1,11 +1,13 @@
 package gregtech.api.unification.material;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.materials.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 
@@ -31,7 +33,13 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
  */
 public class Materials {
 
+    private static final AtomicBoolean INIT = new AtomicBoolean(false);
+
     public static void register() {
+        if (INIT.getAndSet(true)) {
+            return;
+        }
+
         MarkerMaterials.register();
 
         /*
@@ -513,6 +521,7 @@ public class Materials {
     public static Material EthylTertButylEther;
     public static Material Ethylbenzene;
     public static Material Naphthalene;
+    public static Material Nitrobenzene;
 
     /**
      * Not possible to determine exact Components
@@ -580,7 +589,6 @@ public class Materials {
     public static Material RawGasoline;
     public static Material Gasoline;
     public static Material HighOctaneGasoline;
-    public static Material Nitrobenzene;
     public static Material CoalGas;
     public static Material CoalTar;
     public static Material Gunpowder;

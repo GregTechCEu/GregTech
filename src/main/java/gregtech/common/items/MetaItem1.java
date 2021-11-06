@@ -311,6 +311,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_DRAIN = addItem(308, "cover.drain");
         COVER_SHUTTER = addItem(309, "cover.shutter");
         COVER_INFINITE_WATER = addItem(310, "cover.infinite_water");
+        COVER_ENDER_FLUID_LINK = addItem(311, "cover.ender_fluid_link");
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
         // Solar Panels: ID 331-346
@@ -587,7 +588,7 @@ public class MetaItem1 extends StandardMetaItem {
         ENERGY_LAPOTRONIC_MODULE = addItem(750, "energy.module").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(10000000000L, GTValues.ZPM)}).setUnificationData(OrePrefix.battery, Tier.Ultimate).setModelAmount(8);
         ENERGY_LAPOTRONIC_CLUSTER = addItem(751, "energy.cluster").addComponents(new IItemComponent[]{ElectricStats.createRechargeableBattery(100000000000L, GTValues.UV)}).setUnificationData(OrePrefix.battery, Tier.Super).setModelAmount(8);
 
-        ZERO_POINT_MODULE = addItem(752, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, false)).setModelAmount(8);
+        ZERO_POINT_MODULE = addItem(752, "zpm").addComponents(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, true)).setModelAmount(8);
         ULTIMATE_BATTERY = addItem(753, "max.battery").addComponents(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.MAX)).setUnificationData(OrePrefix.battery, Tier.Maximum).setModelAmount(8);
 
         IMPELLER_MV = addItem(776, "impeller.mv").setRarity(EnumRarity.UNCOMMON);

@@ -18,7 +18,11 @@ public class OrganicChemistryMaterials {
                 .components(Carbon, 2, Hydrogen, 6, Oxygen, 1, Silicon, 1)
                 .build();
 
-        // Free ID 1001
+        Nitrobenzene = new Material.Builder(1001, "nitrobenzene")
+                .fluid(Material.FluidType.GAS)
+                .color(0x704936)
+                .components(Carbon, 6, Hydrogen, 5, Nitrogen, 1, Oxygen, 2)
+                .build();
 
         RawRubber = new Material.Builder(1002, "raw_rubber")
                 .dust()

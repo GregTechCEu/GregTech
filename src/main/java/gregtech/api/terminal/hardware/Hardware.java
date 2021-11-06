@@ -46,6 +46,10 @@ public abstract class Hardware  {
         return provider != null && provider.hasHardware(getRegistryName());
     }
 
+    public final ItemStack getItem() {
+        return provider.getHardwareItem(getRegistryName());
+    }
+
     /**
      * Returns the NBT of the this hardware.
      */
@@ -57,7 +61,7 @@ public abstract class Hardware  {
      * Check whether the terminal is in creative mode.
      */
     public final boolean isCreative(){
-        return provider != null && TerminalBehaviour.isCreative(provider.getItemStack());
+        return provider != null && provider.isCreative();
     }
 
     /**
@@ -81,4 +85,13 @@ public abstract class Hardware  {
      * @return The NBT of the hardware is returned if the item is valid, otherwise NULL is returned
      */
     public abstract NBTTagCompound acceptItemStack(ItemStack itemStack);
+
+    /**
+     * Called when the hardware is removed and back to the player inventory.
+     * @param itemStack (original one)
+     * @return result
+     */
+    public ItemStack onHardwareRemoved(ItemStack itemStack) {
+        return itemStack;
+    }
 }

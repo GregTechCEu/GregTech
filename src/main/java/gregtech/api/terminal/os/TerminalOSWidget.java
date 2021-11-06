@@ -4,11 +4,12 @@ import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IElectricItem;
 import gregtech.api.gui.IRenderContext;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.gui.Widget;
 import gregtech.api.gui.resources.IGuiTexture;
+import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.AbstractWidgetGroup;
 import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.terminal.app.AbstractApplication;
-import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.api.terminal.hardware.Hardware;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.terminal.os.menu.TerminalMenuWidget;
@@ -16,24 +17,31 @@ import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
 import gregtech.api.util.Size;
 import gregtech.common.items.behaviors.TerminalBehaviour;
+import gregtech.common.terminal.app.settings.widgets.OsSettings;
+import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.*;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class TerminalOSWidget extends AbstractWidgetGroup {
+    public static final TextureArea TERMINAL_FRAME = TextureArea.fullImage("textures/gui/terminal/terminal_frame.png");
+    public static final TextureArea TERMINAL_HOME = TextureArea.fullImage("textures/gui/terminal/terminal_home.png");
+    public static final int DEFAULT_WIDTH = 333;
+    public static final int DEFAULT_HEIGHT = 232;
+
     private IGuiTexture background;
     private AbstractApplication focusApp;
     public final NBTTagCompound tabletNBT;
@@ -41,19 +49,25 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     public final List<AbstractApplication> installedApps;
     public final TerminalMenuWidget menu;
     public final TerminalDesktopWidget desktop;
+    public final TerminalHomeButtonWidget home;
     public final BlockPos clickPos;
     public final ItemStack itemStack;
     public final HardwareProvider hardwareProvider;
     private int tickCounter;
+    private long lastCharge;
+    private boolean maximize;
 
-    public TerminalOSWidget(int xPosition, int yPosition, int width, int height, ItemStack itemStack) {
-        super(new Position(xPosition, yPosition), new Size(width, height));
+    public TerminalOSWidget(int xPosition, int yPosition, ItemStack itemStack) {
+        super(new Position(xPosition, yPosition), new Size(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        this.background = TerminalTheme.WALL_PAPER;
         this.openedApps = new ArrayList<>();
         this.installedApps = new ArrayList<>();
-        this.desktop = new TerminalDesktopWidget(Position.ORIGIN, new Size(333, 232), this);
-        this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, 232), this).setBackground(TerminalTheme.COLOR_B_2);
+        this.desktop = new TerminalDesktopWidget(Position.ORIGIN, new Size(DEFAULT_WIDTH, DEFAULT_HEIGHT), this);
+        this.menu = new TerminalMenuWidget(Position.ORIGIN, new Size(31, DEFAULT_HEIGHT), this).setBackground(TerminalTheme.COLOR_B_2);
+        this.home = new TerminalHomeButtonWidget(this);
         this.addWidget(desktop);
         this.addWidget(menu);
+        this.addWidget(home);
         this.itemStack = itemStack;
         this.tabletNBT = itemStack.getOrCreateSubCompound("terminal");
         this.tabletNBT.removeTag("_ar");
@@ -109,6 +123,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public void openApplication(AbstractApplication application, boolean isClient) {
+        desktop.removeAllDialogs();
         NBTTagCompound nbt = tabletNBT.getCompoundTag(application.getRegistryName());
         if (!TerminalBehaviour.isCreative(itemStack)) {
             List<Hardware> hwDemand = TerminalRegistry.getAppHardwareDemand(application.getRegistryName(), Math.min(nbt.getInteger("_tier"), application.getMaxTier()));
@@ -121,6 +136,13 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                         String name = match.getLocalizedName();
                         if (info == null) {
                             tooltips.append(name);
+                        } else if (match instanceof BatteryHardware) {
+                            IElectricItem energyItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
+                            if (energyItem != null && energyItem.getCharge() <= 0) {
+                                tooltips.append(I18n.format("terminal.battery.low_energy"));
+                            } else {
+                                tooltips.append(String.format("%s (%s+)", name, info));
+                            }
                         } else {
                             tooltips.append(String.format("%s (%s)", name, info));
                         }
@@ -141,6 +163,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
         for (AbstractApplication app : openedApps) {
             if (app.getClass() == application.getClass()) {
+                app.onOSSizeUpdate(this.getSize().width, this.getSize().height);
                 maximizeApplication(app, isClient);
                 return;
             }
@@ -149,6 +172,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         if (app != null) {
             desktop.addWidget(app);
             app.setOs(this).initApp();
+            app.onOSSizeUpdate(this.getSize().width, this.getSize().height);
             openedApps.add(app);
             maximizeApplication(app, isClient);
         }
@@ -168,17 +192,18 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public void minimizeApplication(AbstractApplication application, boolean isClient) {
-        if (application != null) {
-            if (isClient && focusApp == application) {
-                application.minimizeWidget(app->{
-                    if (!application.isBackgroundApp()) {
-                        application.setActive(false);
-                    }
-                });
-            } else if (!application.isBackgroundApp()) {
-                application.setActive(false);
-            }
-            if(focusApp == application) {
+        desktop.removeAllDialogs();
+        if (application != null ) {
+            if (focusApp == application) {
+                if (isClient) {
+                    application.minimizeWidget(app->{
+                        if (!application.isBackgroundApp()) {
+                            application.setActive(false);
+                        }
+                    });
+                } else if (!application.isBackgroundApp()) {
+                    application.setActive(false);
+                }
                 focusApp = null;
             }
             menu.removeComponents();
@@ -187,6 +212,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
     }
 
     public void closeApplication(AbstractApplication application, boolean isClient) {
+        desktop.removeAllDialogs();
         if (application != null) {
             String appName = application.getRegistryName();
             NBTTagCompound synced = application.closeApp();
@@ -215,7 +241,7 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
     }
 
-    public void homeTrigger(boolean isClient) {
+    public void callMenu(boolean isClient) {
         if(isClient) {
             if (menu.isHide) {
                 menu.showMenu();
@@ -225,39 +251,41 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
     }
 
-    @SideOnly(Side.CLIENT)
-    public void shutdown() {
-        NBTTagCompound nbt = new NBTTagCompound();
-        for (AbstractApplication openedApp : openedApps) {
-            String appName = openedApp.getRegistryName();
-            NBTTagCompound synced = openedApp.closeApp();
-            if (synced != null && !synced.isEmpty()) {
-                tabletNBT.setTag(appName, synced);
-                if (openedApp.isClientSideApp()) {//if its a clientSideApp and the nbt not null, meaning this nbt should be synced to the server side.
-                    nbt.setTag(appName, synced);
+    public void shutdown(boolean isClient) {
+        if (isClient) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            for (AbstractApplication openedApp : openedApps) {
+                String appName = openedApp.getRegistryName();
+                NBTTagCompound synced = openedApp.closeApp();
+                if (synced != null && !synced.isEmpty()) {
+                    tabletNBT.setTag(appName, synced);
+                    if (openedApp.isClientSideApp()) {//if its a clientSideApp and the nbt not null, meaning this nbt should be synced to the server side.
+                        nbt.setTag(appName, synced);
+                    }
                 }
             }
+            writeClientAction(-1, buffer -> buffer.writeCompoundTag(nbt));
+        } else { //request shutdown from the server side
+            writeUpdateInfo(-2, packetBuffer -> {});
         }
-        writeClientAction(-1, buffer -> buffer.writeCompoundTag(nbt));
     }
 
-    protected TerminalDialogWidget openDialog(TerminalDialogWidget widget) {
+    protected void openDialog(TerminalDialogWidget widget) {
         if (isRemote()) {
+            widget.onOSSizeUpdate(getSize().width, getSize().height);
             widget.maximizeWidget(null);
         } else if(widget.isClient()) {
-            return widget;
+            return;
         }
         desktop.addWidget(widget);
-        return widget;
     }
 
-    protected TerminalDialogWidget closeDialog(TerminalDialogWidget widget) {
+    protected void closeDialog(TerminalDialogWidget widget) {
         if (isRemote()) {
             widget.minimizeWidget(desktop::waitToRemoved);
         } else if(!widget.isClient()) {
             desktop.waitToRemoved(widget);
         }
-        return widget;
     }
 
     @Override
@@ -304,12 +332,19 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
                 ((BatteryHardware) electricItem).setCharge(charge);
             }
             if (charge <= 0) {
+                List<AbstractApplication> toClosed = new LinkedList<>();
                 for (AbstractApplication openedApp : openedApps) {
                     TerminalRegistry.getAppHardwareDemand(openedApp.getRegistryName(), openedApp.getAppTier()).stream()
                             .filter(i->i instanceof BatteryHardware).findFirst()
-                            .ifPresent(x -> this.closeApplication(openedApp, true));
+                            .ifPresent(x -> toClosed.add(openedApp));
                 }
+                for (AbstractApplication close : toClosed) {
+                    this.closeApplication(close, true);
+                }
+                TerminalDialogWidget.showInfoDialog(this, "terminal.component.warning", "terminal.battery.low_energy").setClientSide().open();
             }
+        } else if(id == -2) { // shutdown
+            shutdown(true);
         } else {
             super.readUpdateInfo(id, buffer);
         }
@@ -329,11 +364,15 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         super.detectAndSendChanges();
         tickCounter++;
         if (tickCounter % 20 == 0) {
-            disCharge();
+            long energyStore = disCharge();
+            if (lastCharge != energyStore) {
+                lastCharge = energyStore;
+                writeUpdateInfo(-1, packetBuffer -> packetBuffer.writeLong(lastCharge));
+            }
         }
     }
 
-    private void disCharge() {
+    private long disCharge() {
         IElectricItem electricItem = hardwareProvider.getCapability(GregtechCapabilities.CAPABILITY_ELECTRIC_ITEM, null);
         if (electricItem != null && !TerminalBehaviour.isCreative(itemStack)) {
             AtomicLong costs = new AtomicLong(0);
@@ -354,12 +393,11 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
             if (costs.get() > 0 && electricItem.discharge(costs.get(), 999, true, false, false) != costs.get()) {
                 charged.forEach(app->closeApplication(app, false));
             } else if (costs.get() < 0) {
-                costs.set(electricItem.charge(-costs.get(), 999, true, false));
+                electricItem.charge(-costs.get(), 999, true, false);
             }
-            if (costs.get() != 0) {
-                writeUpdateInfo(-1, buf->buf.writeLong(electricItem.getCharge()));
-            }
+            return electricItem.getCharge();
         }
+        return lastCharge;
     }
 
     @Override
@@ -371,26 +409,42 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         } else {
             drawGradientRect(position.x, position.y, size.width, size.height, -1, -1);
         }
-        RenderUtil.useScissor(position.x, position.y, size.width, size.height, ()->{
-            super.drawInBackground(mouseX, mouseY, partialTicks, context);
-        });
+        if (maximize) {
+            desktop.drawInBackground(mouseX, mouseY, partialTicks, context);
+            if (menu.isVisible()) {
+                menu.drawInBackground(mouseX, mouseY, partialTicks, context);
+            }
+        } else {
+            RenderUtil.useScissor(position.x, position.y, size.width, size.height, ()-> {
+                desktop.drawInBackground(mouseX, mouseY, partialTicks, context);
+                if (menu.isVisible()) {
+                    menu.drawInBackground(mouseX, mouseY, partialTicks, context);
+                }
+            });
+            TERMINAL_FRAME.draw(position.x-12, position.y-11, 380, 256);
+        }
+        home.drawInBackground(mouseX, mouseY, partialTicks, context);
     }
 
     boolean waitShutdown;
     @Override
     public boolean keyTyped(char charTyped, int keyCode) {
-        if (waitShutdown) {
-            shutdown();
+        if (waitShutdown && (keyCode == 1 || Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode))) {
+            shutdown(true);
             return true;
         }
         if (super.keyTyped(charTyped, keyCode)) {
             return true;
         }
-        if (keyCode == 1) { // hook esc
+        if (keyCode == 1 || Minecraft.getMinecraft().gameSettings.keyBindInventory.isActiveAndMatches(keyCode)) { // hook esc and e
             waitShutdown = true;
+            if (!OsSettings.DOUBLE_CHECK) {
+                shutdown(true);
+                return true;
+            }
             TerminalDialogWidget.showConfirmDialog(this, "terminal.component.warning", "terminal.os.shutdown_confirm", result->{
                 if (result) {
-                    shutdown();
+                    shutdown(true);
                 } else {
                     waitShutdown = false;
                 }
@@ -399,5 +453,56 @@ public class TerminalOSWidget extends AbstractWidgetGroup {
         }
         waitShutdown = false;
         return false;
+    }
+
+    public boolean isMaximize() {
+        return maximize;
+    }
+
+    private void updateOSSize() {
+        int osWidth = getSize().width;
+        int osHeight = getSize().height;
+        if (this.maximize && (osWidth != gui.getScreenWidth() || osHeight != gui.getScreenHeight())) {
+            osWidth = gui.getScreenWidth();
+            osHeight = gui.getScreenHeight();
+        } else if (!this.maximize && (osWidth != DEFAULT_WIDTH || osHeight != DEFAULT_HEIGHT)){
+            osWidth = DEFAULT_WIDTH;
+            osHeight = DEFAULT_HEIGHT;
+        } else {
+            return;
+        }
+        this.setSize(new Size(osWidth, osHeight));
+        this.desktop.setSize(new Size(osWidth, osHeight));
+        this.menu.setSize(new Size(31, osHeight));
+        this.home.setSelfPosition(this.maximize ? new Position((osWidth - this.home.getSize().width) / 2, osHeight - this.home.getSize().height - 10) : new Position(340, 104));
+        this.home.setIcon(this.maximize ? TERMINAL_HOME : null);
+        gui.setSize(this.maximize ? osWidth : 380, this.maximize ? osHeight : 256);
+        if (this.focusApp != null) {
+            this.focusApp.onOSSizeUpdate(osWidth, osHeight);
+        }
+        for (Widget widget : desktop.widgets) {
+            if (widget instanceof TerminalDialogWidget) {
+                ((TerminalDialogWidget) widget).onOSSizeUpdate(osWidth, osHeight);
+            }
+        }
+    }
+
+    public void maximize(boolean isClient) {
+        if (isClient) {
+            this.maximize = !this.maximize;
+            updateOSSize();
+        }
+    }
+
+    @Override
+    public void setParentPosition(Position parentPosition) {
+        if (this.maximize) {
+            super.setParentPosition(parentPosition.subtract(this.getSelfPosition()));
+            if (isRemote()) {
+                updateOSSize();
+            }
+        } else {
+            super.setParentPosition(parentPosition);
+        }
     }
 }

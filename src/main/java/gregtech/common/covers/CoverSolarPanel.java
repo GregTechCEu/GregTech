@@ -11,6 +11,7 @@ import gregtech.api.cover.ICoverable;
 import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.common.pipelike.cable.net.EnergyNetHandler;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -32,7 +33,7 @@ public class CoverSolarPanel extends CoverBehavior implements ITickable {
 
     @Override
     public boolean canAttach() {
-        return coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null) != null && attachedSide == EnumFacing.UP;
+        return attachedSide == EnumFacing.UP && coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.UP) != null;
     }
 
     @Override
@@ -45,8 +46,10 @@ public class CoverSolarPanel extends CoverBehavior implements ITickable {
         World world = coverHolder.getWorld();
         BlockPos blockPos = coverHolder.getPos().up();
         if (canSeeSunClearly(world, blockPos)) {
-            IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, null);
-            if (energyContainer != null) {
+            IEnergyContainer energyContainer = coverHolder.getCapability(GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER, EnumFacing.UP);
+            if (energyContainer instanceof EnergyNetHandler) {
+                energyContainer.acceptEnergyFromNetwork(EnumFacing.UP, EUt, 1);
+            } else if (energyContainer != null) {
                 energyContainer.addEnergy(EUt);
             }
         }
