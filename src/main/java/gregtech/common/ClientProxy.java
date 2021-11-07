@@ -35,7 +35,6 @@ import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
-import net.minecraft.client.resources.data.MetadataSerializer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerPlayer;
@@ -112,8 +111,7 @@ public class ClientProxy extends CommonProxy {
         super.onPreLoad();
 
         if (!GTValues.isModLoaded(GTValues.MODID_CTM)) {
-            MetadataSerializer metadataSerializer = ObfuscationReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "field_110452_an");
-            metadataSerializer.registerMetadataSectionType(new MetadataSectionCTM.Serializer(), MetadataSectionCTM.class);
+            Minecraft.getMinecraft().metadataSerializer.registerMetadataSectionType(new MetadataSectionCTM.Serializer(), MetadataSectionCTM.class);
             MinecraftForge.EVENT_BUS.register(CustomTextureModelHandler.INSTANCE);
             ((SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(CustomTextureModelHandler.INSTANCE);
         }
