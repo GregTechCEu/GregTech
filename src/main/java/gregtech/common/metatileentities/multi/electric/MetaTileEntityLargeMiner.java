@@ -6,9 +6,12 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
+import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.capability.*;
 import gregtech.api.capability.impl.EnergyContainerList;
+import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
@@ -52,8 +55,8 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -81,7 +84,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private final AtomicInteger mineZ = new AtomicInteger(Integer.MAX_VALUE);
     private final AtomicInteger mineY = new AtomicInteger(Integer.MAX_VALUE);
     private IEnergyContainer energyContainer;
-    private IMultipleTankHandler importFluidHandler;
+    protected IMultipleTankHandler inputFluidInventory;
     protected IItemHandlerModifiable outputInventory;
     private boolean isActive = true;
     private boolean done = false;
@@ -120,6 +123,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public void invalidateStructure() {
         super.invalidateStructure();
+        resetTileAbilities();
         if (isActive)
             setActive(false);
     }
@@ -131,10 +135,16 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     private void initializeAbilities() {
-        this.importFluidHandler = getImportFluids();
-        this.outputInventory = getExportItems();
+        this.inputFluidInventory = new FluidTankList(false, getAbilities(MultiblockAbility.IMPORT_FLUIDS));
+        this.outputInventory = new ItemHandlerList(getAbilities(MultiblockAbility.EXPORT_ITEMS));
         this.energyContainer = new EnergyContainerList(getAbilities(MultiblockAbility.INPUT_ENERGY));
         this.overclockAmount = Math.max(1, GTUtility.getTierByVoltage(this.energyContainer.getInputVoltage()) - this.tier);
+    }
+
+    private void resetTileAbilities() {
+        this.inputFluidInventory = new FluidTankList(true);
+        this.outputInventory = new ItemStackHandler(0);
+        this.energyContainer = new EnergyContainerList(Lists.newArrayList());
     }
 
     public boolean drainEnergy(boolean simulate) {
@@ -148,10 +158,10 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     public boolean drainFluid(boolean simulate) {
         FluidStack drillingFluid = DrillingFluid.getFluid(this.drillingFluidConsumePerTick * overclockAmount);
-        FluidStack canDrain = importFluidHandler.drain(drillingFluid, false);
+        FluidStack canDrain = inputFluidInventory.drain(drillingFluid, false);
         if (canDrain != null && canDrain.amount == this.drillingFluidConsumePerTick) {
             if (!simulate)
-                importFluidHandler.drain(drillingFluid, true);
+                inputFluidInventory.drain(drillingFluid, true);
             return true;
         }
         return false;
@@ -249,12 +259,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        int itemOutputsCount = abilities.getOrDefault(MultiblockAbility.EXPORT_ITEMS, Collections.emptyList())
-                .stream().map(it -> (IItemHandler) it).mapToInt(IItemHandler::getSlots).sum();
+        int itemOutputsCount = abilities.getOrDefault(MultiblockAbility.EXPORT_ITEMS, Collections.emptyList()).size();
         int fluidInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
-        return itemOutputsCount >= 1 &&
-                fluidInputsCount >= 1 &&
-                abilities.containsKey(MultiblockAbility.INPUT_ENERGY);
+        return itemOutputsCount >= 1 && fluidInputsCount >= 1 && abilities.containsKey(MultiblockAbility.INPUT_ENERGY);
     }
 
     @Override
