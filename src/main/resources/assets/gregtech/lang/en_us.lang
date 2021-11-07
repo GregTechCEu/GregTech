@@ -3840,10 +3840,10 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
-gregtech.gui.silktouch.enabled=Silk Touch Enabled./nClick to Disable
-gregtech.gui.silktouch.disabled=Silk Touch Disabled./nClick to Enable
-gregtech.gui.chunkmode.enabled=Chunk Mode Enabled./nClick to Disable
-gregtech.gui.chunkmode.disabled=Chunk Mode Disabled./nClick to Enable
+gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switching requires an idle machine.
+gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
+gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.
+gregtech.gui.chunkmode.disabled=Chunk Mode Disabled: Click to Enable./n§7Switching requires an idle machine.
 
 gregtech.jei.ore_by_product_from_ore=Use %s for %s
 gregtech.jei.ore_by_product_from_machine=Produce by processing %s with %s
