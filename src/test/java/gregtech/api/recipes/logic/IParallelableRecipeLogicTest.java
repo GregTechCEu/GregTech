@@ -1,6 +1,7 @@
 package gregtech.api.recipes.logic;
 
 import gregtech.api.GTValues;
+import gregtech.api.GregTechAPI;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -46,6 +47,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
     public static void init() {
         Bootstrap.register();
         Materials.register();
+        GregTechAPI.MATERIAL_REGISTRY.flush();
         OrePrefix.runMaterialHandlers();
         MetaItems.init();
     }
