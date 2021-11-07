@@ -165,9 +165,10 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     public boolean drainEnergy(boolean simulate) {
-        if (energyContainer.getEnergyStored() >= energyPerTick && !done && !invFull && !testForMax()) {
+        long resultEnergy = energyContainer.getEnergyStored() - energyPerTick;
+        if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {
             if (!simulate)
-                energyContainer.removeEnergy(energyPerTick);
+                energyContainer.changeEnergy(-energyPerTick);
             return true;
         }
         return false;
@@ -180,13 +181,15 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             if (!isActive)
                 return;
 
-            if (!drainEnergy(true)) {
+            if (done || testForMax() || !drainEnergy(true)) {
                 if (!done && testForMax())
                     initPos();
                 resetInv();
                 return;
             }
-            drainEnergy(false);
+
+            if (!invFull)
+                drainEnergy(false);
 
             WorldServer world = (WorldServer) this.getWorld();
             if (mineY.get() < tempY.get()) {
@@ -220,11 +223,15 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
                         mineZ.set(tempPos.getZ());
                         mineY.set(tempPos.getY());
                         blockPos.removeFirst();
+
+                        if (invFull)
+                            invFull = false;
                     } else {
                         invFull = true;
                     }
-                } else
+                } else {
                     blockPos.removeFirst();
+                }
             } else if (blockPos.isEmpty()) {
                 x.set(mineX.get());
                 y.set(mineY.get());

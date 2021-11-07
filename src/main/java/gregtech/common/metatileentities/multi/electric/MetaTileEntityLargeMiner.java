@@ -148,9 +148,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     public boolean drainEnergy(boolean simulate) {
-        if (energyContainer.getEnergyStored() >= getMaxVoltage() && !invFull && !testForMax()) {
+        long energyToDrain = GTValues.VA[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())];
+        long resultEnergy = energyContainer.getEnergyStored() - energyToDrain;
+        if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {
             if (!simulate)
-                energyContainer.removeEnergy(GTValues.VA[GTUtility.getTierByVoltage(energyContainer.getInputVoltage())]);
+                energyContainer.changeEnergy(-energyToDrain);
             return true;
         }
         return false;
@@ -173,15 +175,17 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             if (!isActive())
                 return;
 
-            if (done || !drainEnergy(true) || !drainFluid(true)) {
+            if (done || testForMax() || !drainEnergy(true) || !drainFluid(true)) {
                 if (!done && testForMax())
                     initPos();
                 resetInv();
                 return;
             }
 
-            drainEnergy(false);
-            drainFluid(false);
+            if (!invFull) {
+                drainEnergy(false);
+                drainFluid(false);
+            }
 
             WorldServer world = (WorldServer) this.getWorld();
             if (mineY.get() < tempY.get()) {
@@ -220,6 +224,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                             mineY.set(tempPos.getY());
                             a++;
                             blockPos.removeFirst();
+
+                            if (invFull)
+                                invFull = false;
                         } else {
                             invFull = true;
                             break;

@@ -172,7 +172,8 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
     }
 
     public boolean drainEnergy(boolean simulate) {
-        if (importFluids.getTankAt(0).getFluidAmount() >= steam && !done && !invFull && !ventingStuck & !testForMax()) {
+        int resultSteam = importFluids.getTankAt(0).getFluidAmount() - steam;
+        if (!ventingStuck && resultSteam >= 0L && resultSteam <= importFluids.getTankAt(0).getCapacity()) {
             if (!simulate)
                 importFluids.getTankAt(0).drain(steam, true);
             return true;
@@ -187,7 +188,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
             if (!isActive)
                 return;
 
-            if (!drainEnergy(false)) {
+            if (done || testForMax() || !drainEnergy(true)) {
                 if (!done && testForMax())
                     initPos();
 
@@ -199,6 +200,9 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
                 }
                 return;
             }
+
+            if (!invFull)
+                drainEnergy(false);
 
             WorldServer world = (WorldServer) this.getWorld();
             if (mineY.get() < tempY.get()) {
