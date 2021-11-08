@@ -6,7 +6,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.locks.ReentrantLock;
@@ -31,7 +30,7 @@ public class EUToFEProvider implements ICapabilityProvider {
         if (!ConfigHolder.U.energyOptions.nativeEUToFE)
             return false;
 
-        if (lock.isLocked() || (capability != CapabilityEnergy.ENERGY && capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER))
+        if (lock.isLocked() || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
             return false;
 
         // Wrap FE Machines with a GTEU EnergyContainer
@@ -52,7 +51,7 @@ public class EUToFEProvider implements ICapabilityProvider {
         if (!ConfigHolder.U.energyOptions.nativeEUToFE)
             return null;
 
-        if (lock.isLocked() || !hasCapability(capability, facing))
+        if (lock.isLocked() || capability != GregtechCapabilities.CAPABILITY_ENERGY_CONTAINER)
             return null;
 
         if (wrapper == null) wrapper = new GTEnergyWrapper(tileEntity);
