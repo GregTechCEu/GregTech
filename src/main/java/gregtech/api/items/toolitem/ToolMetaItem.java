@@ -30,6 +30,7 @@ import gregtech.common.ConfigHolder;
 import gregtech.common.tools.DamageValues;
 import gregtech.common.tools.ToolWrench;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
@@ -381,8 +382,12 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             if (!simulate && !setInternalDamage(stack, newDamageValue)) {
                 GTUtility.setItem(stack, toolStats.getBrokenStack(stack));
             }
-            if(getItem(stack).getSound() != null && ConfigHolder.toolSounds)
-                ForgeHooks.getCraftingPlayer().playSound(getItem(stack).getSound(), 1, 1);
+            if (getItem(stack).getSound() != null && ConfigHolder.toolSounds) {
+                if (Minecraft.getMinecraft().player != null)
+                    Minecraft.getMinecraft().player.playSound(getItem(stack).getSound(), 1, 1);
+                if (ForgeHooks.getCraftingPlayer() != null)
+                    ForgeHooks.getCraftingPlayer().playSound(getItem(stack).getSound(), 1, 1);
+            }
             return Math.min(vanillaDamage, damageRemaining);
         }
         return 1;

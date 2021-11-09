@@ -29,6 +29,6 @@ public class PositionedSoundMTE extends PositionedSound implements ITickableSoun
 
     @Override
     public boolean isDonePlaying() {
-        return this.mte == null;
+        return !this.mte.isValid();
     }
 }

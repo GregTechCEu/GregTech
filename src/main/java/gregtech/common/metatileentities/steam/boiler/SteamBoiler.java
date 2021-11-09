@@ -82,7 +82,7 @@ public abstract class SteamBoiler extends MetaTileEntity implements ISoundCreato
 
     @Override
     public boolean canCreateSound() {
-        return currentTemperature >= 100;
+        return isBurning;
     }
 
     @SideOnly(Side.CLIENT)

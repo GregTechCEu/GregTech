@@ -9,6 +9,7 @@ public class GTSounds {
     public static SoundEvent FORGE_HAMMER;
     public static SoundEvent MACERATOR;
     public static SoundEvent CHEMICAL_REACTOR;
+    public static SoundEvent ARC;
     public static SoundEvent BOILER;
     public static SoundEvent SCIENCE;
     public static SoundEvent WRENCH_TOOL;
@@ -19,6 +20,7 @@ public class GTSounds {
         FORGE_HAMMER = registerSound("tick.forge_hammer");
         MACERATOR = registerSound("tick.macerator");
         CHEMICAL_REACTOR = registerSound("tick.chemical_reactor");
+        ARC = registerSound("tick.arc");
         BOILER = registerSound("tick.boiler");
         SCIENCE = registerSound("tick.science");
         WRENCH_TOOL = registerSound("use.wrench");
