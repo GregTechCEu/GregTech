@@ -176,7 +176,7 @@ public class MetaPrefixItem extends StandardMetaItem {
         int damage = itemStack.getItemDamage();
         Material material = GregTechAPI.MATERIAL_REGISTRY.getObjectById(damage);
         if (prefix == null || material == null) return;
-        addMaterialTooltip(lines);
+        addMaterialTooltip(lines, itemStack);
     }
 
     public Material getMaterial(ItemStack itemStack) {
@@ -240,9 +240,11 @@ public class MetaPrefixItem extends StandardMetaItem {
         return false;
     }
 
-    protected void addMaterialTooltip(List<String> lines) {
+    protected void addMaterialTooltip(List<String> lines, ItemStack itemStack) {
         if (this.prefix == OrePrefix.dustImpure || this.prefix == OrePrefix.dustPure) {
             lines.add(I18n.format("metaitem.dust.tooltip.purify"));
+        } else if (this.prefix.tooltipFunc != null) {
+            lines.addAll(this.prefix.tooltipFunc.apply(this.getMaterial(itemStack)));
         }
     }
 }

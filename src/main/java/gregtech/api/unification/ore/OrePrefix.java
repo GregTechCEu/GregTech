@@ -19,6 +19,7 @@ import stanhebben.zenscript.annotations.ZenMethod;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static gregtech.api.GTValues.M;
@@ -406,10 +407,15 @@ public class OrePrefix {
     public byte maxStackSize = 64;
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
     public float heatDamage = 0.0F; // Negative for Frost Damage
+    public Function<Material, List<String>> tooltipFunc;
 
     private String alternativeOreName = null;
 
     public OrePrefix(String name, long materialAmount, @Nullable Material material, @Nullable MaterialIconType materialIconType, long flags, @Nullable Predicate<Material> condition) {
+        this(name, materialAmount, material, materialIconType, flags, condition, null);
+    }
+
+    public OrePrefix(String name, long materialAmount, @Nullable Material material, @Nullable MaterialIconType materialIconType, long flags, @Nullable Predicate<Material> condition, @Nullable Function<Material, List<String>> tooltipFunc) {
         Preconditions.checkArgument(!PREFIXES.containsKey(name), "OrePrefix " + name + " already registered!");
         this.name = name;
         this.id = idCounter.getAndIncrement();
@@ -418,6 +424,7 @@ public class OrePrefix {
         this.isUnificationEnabled = (flags & ENABLE_UNIFICATION) != 0;
         this.materialIconType = materialIconType;
         this.generationCondition = condition;
+        this.tooltipFunc = tooltipFunc;
         if (isSelfReferencing) {
             Preconditions.checkNotNull(material, "Material is null for self-referencing OrePrefix");
             this.materialType = material;
