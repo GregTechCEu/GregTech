@@ -1,23 +1,16 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.GTValues;
+import gregtech.api.capability.FeCompat;
 import gregtech.api.capability.IElectricItem;
-import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.util.GTUtility;
-import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 
-import javax.annotation.Nullable;
 import java.util.function.BiConsumer;
 
 public class GTEnergyItemWrapper implements IElectricItem {
-
-    public static final double EU_TO_FE = ConfigHolder.U.energyOptions.euToFeRatio;
-    public static final double FE_TO_EU = ConfigHolder.U.energyOptions.feToEuRatio;
 
     /**
      * Capability Provider of the FE TileEntity for the EU-capability.
@@ -44,7 +37,7 @@ public class GTEnergyItemWrapper implements IElectricItem {
     }
 
     private IEnergyStorage getEnergyStorage() {
-        if(energyStorage == null) {
+        if (energyStorage == null) {
             energyStorage = upvalue.getCapability(CapabilityEnergy.ENERGY, null);
         }
         return energyStorage;
@@ -68,7 +61,7 @@ public class GTEnergyItemWrapper implements IElectricItem {
     @Override
     public boolean chargeable() {
         IEnergyStorage storage = getEnergyStorage();
-        if(storage != null)
+        if (storage != null)
             return storage.canReceive();
         return false;
     }
@@ -81,17 +74,17 @@ public class GTEnergyItemWrapper implements IElectricItem {
     @Override
     public long charge(long amount, int chargerTier, boolean ignoreTransferLimit, boolean simulate) {
         IEnergyStorage storage = getEnergyStorage();
-        if(storage == null) return 0;
-        int max = (int) Math.min(amount * EU_TO_FE, storage.getMaxEnergyStored() - storage.getEnergyStored());
-        return (long) (storage.receiveEnergy(max, simulate) * FE_TO_EU);
+        if (storage == null) return 0;
+        int max = Math.min(FeCompat.convertToFe(amount), storage.getMaxEnergyStored() - storage.getEnergyStored());
+        return FeCompat.convertToEu(storage.receiveEnergy(max, simulate));
     }
 
     @Override
     public long discharge(long amount, int dischargerTier, boolean ignoreTransferLimit, boolean externally, boolean simulate) {
         IEnergyStorage storage = getEnergyStorage();
-        if(storage == null) return 0;
-        int max = (int) Math.min(amount * EU_TO_FE, storage.getEnergyStored());
-        return (long) (storage.extractEnergy(max, simulate) * FE_TO_EU);
+        if (storage == null) return 0;
+        int max = Math.min(FeCompat.convertToFe(amount), storage.getEnergyStored());
+        return FeCompat.convertToEu(storage.extractEnergy(max, simulate));
     }
 
     @Override
@@ -102,16 +95,16 @@ public class GTEnergyItemWrapper implements IElectricItem {
     @Override
     public long getMaxCharge() {
         IEnergyStorage storage = getEnergyStorage();
-        if(storage != null)
-            return (long) (storage.getMaxEnergyStored() * FE_TO_EU);
+        if (storage != null)
+            return FeCompat.convertToEu(storage.getMaxEnergyStored());
         return 0;
     }
 
     @Override
     public long getCharge() {
         IEnergyStorage storage = getEnergyStorage();
-        if(storage != null)
-            return (long) (storage.getEnergyStored() * FE_TO_EU);
+        if (storage != null)
+            return FeCompat.convertToEu(storage.getEnergyStored());
         return 0;
     }
 
