@@ -1,6 +1,9 @@
 {
   "tick.forge_hammer": {"category": "block", "sounds": [{"name": "gregtech:forge_hammer", "stream": false}]},
   "tick.macerator": {"category": "block", "sounds": [{"name": "gregtech:macerator", "stream": false}]},
-  "use.wrench": {"category": "block", "sounds": [{"name": "gregtech:wrench", "stream": false}]}
-
+  "tick.chemical_reactor": {"category": "block", "sounds": [{"name": "gregtech:chemical", "stream": true}]},
+  "tick.boiler": {"category": "block", "sounds": [{"name": "gregtech:boiling", "stream": false}]},
+  "use.wrench": {"category": "block", "sounds": [{"name": "gregtech:wrench", "stream": false}]},
+  "use.soft_hammer": {"category": "block", "sounds": [{"name": "gregtech:soft_hammer", "stream": false}]},
+  "use.mortar": {"category": "block", "sounds": [{"name": "gregtech:mortar", "stream": false}]}
 }

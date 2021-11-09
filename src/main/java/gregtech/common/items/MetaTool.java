@@ -62,7 +62,8 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
         SOFT_HAMMER = addItem(7, "tool.soft_hammer").setToolStats(new ToolSoftHammer())
                 .setFullRepairCost(6)
                 .addOreDict(ToolDictNames.craftingToolSoftHammer)
-                .addComponents(new SoftMalletItemStat());
+                .addComponents(new SoftMalletItemStat())
+                .setSound(GTSounds.SOFT_HAMMER_TOOL);
 
         WRENCH = addItem(8, "tool.wrench").setToolStats(new ToolWrench())
                 .setFullRepairCost(6)
@@ -86,6 +87,8 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
         MORTAR = addItem(12, "tool.mortar").setToolStats(new ToolMortar())
                 .setFullRepairCost(2)
                 .addOreDict(ToolDictNames.craftingToolMortar);
+                .addOreDict(ToolDictNames.craftingToolMortar)
+                .setSound(GTSounds.MORTAR_TOOL);
 
         WIRE_CUTTER = addItem(13, "tool.wire_cutter").setToolStats(new ToolWireCutter())
                 .setFullRepairCost(4.125)
