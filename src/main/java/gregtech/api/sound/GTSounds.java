@@ -1,17 +1,19 @@
-package gregtech.api.metatileentity.sound;
+package gregtech.api.sound;
 
 import gregtech.api.GTValues;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-public class GTMTESounds {
+public class GTSounds {
     public static SoundEvent FORGE_HAMMER;
     public static SoundEvent MACERATOR;
+    public static SoundEvent WRENCH_TOOL;
 
     public static void registerSounds() {
         FORGE_HAMMER = registerSound("tick.forge_hammer");
         MACERATOR = registerSound("tick.macerator");
+        WRENCH_TOOL = registerSound("use.wrench");
     }
 
     private static SoundEvent registerSound(String soundNameIn) {

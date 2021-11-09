@@ -46,11 +46,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.Optional.Interface;
 import net.minecraftforge.fml.common.Optional.InterfaceList;
@@ -379,6 +381,8 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             if (!simulate && !setInternalDamage(stack, newDamageValue)) {
                 GTUtility.setItem(stack, toolStats.getBrokenStack(stack));
             }
+            if(getItem(stack).getSound() != null)
+                ForgeHooks.getCraftingPlayer().playSound(getItem(stack).getSound(), 1, 1);
             return Math.min(vanillaDamage, damageRemaining);
         }
         return 1;
@@ -700,6 +704,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
 
         protected IToolStats toolStats = new DummyToolStats();
         protected double amountOfMaterialToRepair = 0;
+        protected SoundEvent sound;
 
         protected MetaToolValueItem(int metaValue, String unlocalizedName) {
             super(metaValue, unlocalizedName);
@@ -710,6 +715,15 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         public MetaToolValueItem addComponents(IItemComponent... stats) {
             super.addComponents(stats);
             return this;
+        }
+
+        public MetaToolValueItem setSound(SoundEvent sound) {
+            this.sound = sound;
+            return this;
+        }
+
+        public SoundEvent getSound() {
+            return sound;
         }
 
         public MetaToolValueItem setFullRepairCost(double amountOfMaterialToRepair) {

@@ -5,7 +5,7 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
-import gregtech.api.metatileentity.sound.GTMTESounds;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.recipes.builders.*;
 import gregtech.api.recipes.machines.*;
 import gregtech.api.unification.material.Material;
@@ -34,7 +34,7 @@ public class RecipeMaps {
             .setSlotOverlay(false, false, GuiTextures.CRUSHED_ORE_OVERLAY)
             .setSlotOverlay(true, false, GuiTextures.DUST_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_MACERATE, MoveType.HORIZONTAL)
-            .setSound(GTMTESounds.MACERATOR);
+            .setSound(GTSounds.MACERATOR);
 
 
     @ZenProperty
@@ -687,7 +687,7 @@ public class RecipeMaps {
             .setSlotOverlay(false, false, GuiTextures.HAMMER_OVERLAY)
             .setSpecialTexture(78, 42, 20, 6, GuiTextures.PROGRESS_BAR_HAMMER_BASE)
             .setProgressBar(GuiTextures.PROGRESS_BAR_HAMMER, MoveType.VERTICAL)
-            .setSound(GTMTESounds.FORGE_HAMMER);
+            .setSound(GTSounds.FORGE_HAMMER);
 
 
     @ZenProperty

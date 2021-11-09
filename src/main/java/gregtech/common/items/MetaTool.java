@@ -4,9 +4,21 @@ import gregtech.api.GTValues;
 import gregtech.api.items.ToolDictNames;
 import gregtech.api.items.metaitem.ElectricStats;
 import gregtech.api.items.toolitem.*;
+import gregtech.api.recipes.ModHandler;
+import gregtech.api.sound.GTSounds;
+import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.Materials;
+import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
 import gregtech.common.tools.*;
 import gregtech.common.tools.largedrills.ToolDrills;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.ItemStack;
+
+import java.util.function.Function;
 
 import static gregtech.common.items.MetaItems.*;
 
@@ -44,7 +56,8 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
 
         HARD_HAMMER = addItem(6, "tool.hard_hammer").setToolStats(new ToolHardHammer())
                 .setFullRepairCost(6)
-                .addOreDict(ToolDictNames.craftingToolHardHammer);
+                .addOreDict(ToolDictNames.craftingToolHardHammer)
+                .setSound(SoundEvents.BLOCK_ANVIL_USE);
 
         SOFT_HAMMER = addItem(7, "tool.soft_hammer").setToolStats(new ToolSoftHammer())
                 .setFullRepairCost(6)
@@ -54,7 +67,8 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
         WRENCH = addItem(8, "tool.wrench").setToolStats(new ToolWrench())
                 .setFullRepairCost(6)
                 .addOreDict(ToolDictNames.craftingToolWrench)
-                .addComponents(new WrenchItemStat());
+                .addComponents(new WrenchItemStat())
+                .setSound(GTSounds.WRENCH_TOOL);
 
         FILE = addItem(9, "tool.file").setToolStats(new ToolFile())
                 .setFullRepairCost(2)
