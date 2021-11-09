@@ -241,9 +241,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     protected void addMaterialTooltip(List<String> lines, ItemStack itemStack) {
-        if (this.prefix == OrePrefix.dustImpure || this.prefix == OrePrefix.dustPure) {
-            lines.add(I18n.format("metaitem.dust.tooltip.purify"));
-        } else if (this.prefix.tooltipFunc != null) {
+        if (this.prefix.tooltipFunc != null) {
             lines.addAll(this.prefix.tooltipFunc.apply(this.getMaterial(itemStack)));
         }
     }
