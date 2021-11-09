@@ -304,9 +304,9 @@ public class MachineRecipeLoader {
 
         RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
                 .input(OrePrefix.dust, Materials.SiliconDioxide)
-                .fluidInputs(Materials.DistilledWater.getFluid(200))
+                .fluidInputs(Materials.DistilledWater.getFluid(250))
                 .chancedOutput(OreDictUnifier.get(OrePrefix.gem, Materials.Quartzite), 1000, 1000)
-                .duration(1500).EUt(24).buildAndRegister();
+                .duration(1200).EUt(24).buildAndRegister();
 
         //todo find UU-Matter replacement
 //        RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()

@@ -311,10 +311,11 @@ public class MaterialRecipeHandler {
         if (!prevStack.isEmpty()) {
             ModHandler.addShapelessRecipe(String.format("gem_to_gem_%s_%s", prevPrefix, material), prevStack,
                     "h", new UnificationEntry(gemPrefix, material));
-            RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
+            RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                     .input(gemPrefix, material)
                     .outputs(prevStack)
-                    .duration(20).EUt(16)
+                    .duration(20)
+                    .EUt(16)
                     .buildAndRegister();
         }
     }
@@ -345,7 +346,7 @@ public class MaterialRecipeHandler {
                         .inputs(GTUtility.copyAmount(2, flawlessStack))
                         .notConsumable(OrePrefix.craftingLens, MarkerMaterials.Color.White)
                         .outputs(exquisiteStack)
-                        .duration(4500)
+                        .duration(1200)
                         .EUt(240)
                         .buildAndRegister();
             }
