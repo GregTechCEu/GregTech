@@ -198,7 +198,7 @@ public class FirstDegreeMaterials {
         Diamond = new Material.Builder(276, "diamond")
                 .gem(3).ore()
                 .color(0xC8FFFF).iconSet(DIAMOND)
-                .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING, FLAMMABLE,
+                .flags(GENERATE_BOLT_SCREW, GENERATE_LENS, GENERATE_GEAR, NO_SMASHING, NO_SMELTING,
                         HIGH_SIFTER_OUTPUT, DISABLE_DECOMPOSITION, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES)
                 .components(Carbon, 1)
                 .toolStats(8.0f, 3.0f, 1280, 15)
