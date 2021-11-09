@@ -1,2 +1,5 @@
 {
+  "tick.forge_hammer": {"category": "block", "sounds": [{"name": "gregtech:forge_hammer", "stream": false}]},
+  "tick.macerator": {"category": "block", "sounds": [{"name": "gregtech:macerator", "stream": false}]}
+
 }

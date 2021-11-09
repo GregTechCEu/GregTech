@@ -9,6 +9,7 @@ import gregtech.api.cover.CoverDefinition;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.items.gui.PlayerInventoryUIFactory;
 import gregtech.api.metatileentity.MetaTileEntityUIFactory;
+import gregtech.api.metatileentity.sound.GTMTESounds;
 import gregtech.api.model.ResourcePackHook;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.recipes.RecipeMap;
@@ -116,6 +117,8 @@ public class GregTechMod {
         MetaBlocks.init();
         MetaItems.init();
         MetaFluids.init();
+
+        GTMTESounds.registerSounds();
 
         /* Start MetaTileEntity Registration */
         MTE_REGISTRY.unfreeze();

@@ -13,12 +13,12 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.TankWidget;
 import gregtech.api.recipes.builders.IntCircuitRecipeBuilder;
+import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.recipes.crafttweaker.CTRecipe;
 import gregtech.api.recipes.crafttweaker.CTRecipeBuilder;
 import gregtech.api.unification.material.Material;
@@ -27,6 +27,7 @@ import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Optional.Method;
@@ -72,6 +73,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     private final Set<Recipe> recipeSet = new HashSet<>();
 
     private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
+
+    protected SoundEvent sound;
 
     public RecipeMap(String unlocalizedName,
                      int minInputs, int maxInputs, int minOutputs, int maxOutputs,
@@ -141,6 +144,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, boolean isLast, TextureArea slotOverlay) {
         this.slotOverlays.put((byte) ((isOutput ? 2 : 0) + (isFluid ? 1 : 0) + (isLast ? 4 : 0)), slotOverlay);
+        return this;
+    }
+
+    public RecipeMap<R> setSound(SoundEvent sound) {
+        this.sound = sound;
         return this;
     }
 
@@ -495,6 +503,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public List<Recipe> getRecipeList() {
         return Collections.unmodifiableList(recipeSet.stream().sorted(RECIPE_DURATION_THEN_EU).collect(Collectors.toList()));
+    }
+
+    public SoundEvent getSound() {
+        return sound;
     }
 
     @ZenMethod("findRecipe")
