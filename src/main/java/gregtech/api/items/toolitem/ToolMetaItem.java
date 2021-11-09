@@ -381,7 +381,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             if (!simulate && !setInternalDamage(stack, newDamageValue)) {
                 GTUtility.setItem(stack, toolStats.getBrokenStack(stack));
             }
-            if(getItem(stack).getSound() != null)
+            if(getItem(stack).getSound() != null && ConfigHolder.toolSounds)
                 ForgeHooks.getCraftingPlayer().playSound(getItem(stack).getSound(), 1, 1);
             return Math.min(vanillaDamage, damageRemaining);
         }

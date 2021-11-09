@@ -20,6 +20,7 @@ import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.SimpleSidedCubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.Sound;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -136,8 +137,7 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
     @Override
     public void onAttached() {
         super.onAttached();
-
-        if (workableHandler.recipeMap.getSound() != null) {
+        if (workableHandler.recipeMap.getSound() != null && ConfigHolder.machineSounds) {
             PositionedSoundMTE machineSound = new PositionedSoundMTE(workableHandler.recipeMap.getSound().getSoundName(), SoundCategory.BLOCKS, this, this.getPos());
             Minecraft.getMinecraft().getSoundHandler().playSound(machineSound);
             Minecraft.getMinecraft().getSoundHandler().update();
