@@ -7,7 +7,6 @@ import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import gregtech.api.gui.IUIHolder;
-import gregtech.api.gui.PluginWorldSceneRenderer;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
@@ -16,6 +15,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.render.scene.FBOWorldSceneRenderer;
+import gregtech.api.render.scene.TrackedDummyWorld;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.BlockPatternChecker;
 import gregtech.api.util.RenderUtil;
@@ -38,7 +39,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
@@ -61,7 +61,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
 
     //run-time
     @SideOnly(Side.CLIENT)
-    private PluginWorldSceneRenderer worldSceneRenderer;
+    private FBOWorldSceneRenderer worldSceneRenderer;
     @SideOnly(Side.CLIENT)
     private Map<BlockPos, Pair<List<MetaTileEntityMonitorScreen>, Vector3f>> connections;
     @SideOnly(Side.CLIENT)
@@ -105,11 +105,13 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
             worldSceneRenderer = null;
             return;
         }
-        worldSceneRenderer = new PluginWorldSceneRenderer(renderedBlocks);
+        TrackedDummyWorld dummyWorld = new TrackedDummyWorld();
+        dummyWorld.addBlocks(renderedBlocks);
+        worldSceneRenderer = new FBOWorldSceneRenderer(dummyWorld,1080,1080);
         worldSceneRenderer.world.updateEntities();
-        worldSceneRenderer.setBeforeWorldRender(() -> {
-            Vector3f size = worldSceneRenderer.getSceneSize();
-            Vector3f minPos = worldSceneRenderer.world.getMinPos();
+        worldSceneRenderer.setBeforeWorldRender(renderer -> {
+            Vector3f size = dummyWorld.getSize();
+            Vector3f minPos = dummyWorld.getMinPos();
             minPos = new Vector3f(minPos);
             minPos.add(new Vector3f(0f, 0f, 0f));
 
@@ -124,10 +126,10 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
             GlStateManager.rotate(rY + (float) ((System.currentTimeMillis() / 20.0) * spin % 360.0f), 0.0f, 1.0f, 0.0f);
             GlStateManager.translate(-centerPosition.x, -centerPosition.y, -centerPosition.z);
         });
-        worldSceneRenderer.setAfterWorldRender(() -> {
+        worldSceneRenderer.setAfterWorldRender(renderer -> {
             if (connect && connections != null) {
                 for (BlockPos pos : connections.keySet()) {
-                    Vector3f winPos = worldSceneRenderer.project(pos, true);
+                    Vector3f winPos = worldSceneRenderer.project(pos);
                     connections.get(pos).setValue(winPos);
                     if (winPos != null) {
                         renderBlockOverLay(pos);
@@ -135,10 +137,14 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                 }
             }
         });
-        worldSceneRenderer.setOnLookingAt(this::renderBlockOverLay);
+        worldSceneRenderer.setOnLookingAt(rayTrace->renderBlockOverLay(rayTrace.getBlockPos()));
     }
 
     private void renderBlockOverLay(BlockPos pos) {
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
         Tessellator tessellator = Tessellator.getInstance();
         GlStateManager.disableTexture2D();
         CCRenderState renderState = CCRenderState.instance();
@@ -148,14 +154,15 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
         BlockRenderer.BlockFace blockFace = new BlockRenderer.BlockFace();
         renderState.setModel(blockFace);
         for (EnumFacing renderSide : EnumFacing.VALUES) {
-            float diffuse = LightUtil.diffuseLight(renderSide);
-            int color = (int) (255 * diffuse);
-            multiplier.colour = gregtech.api.util.RenderUtil.packColor(color, color, color, 100);
+            multiplier.colour = RenderUtil.packColor(100, 100, 100, 100);
             blockFace.loadCuboidFace(Cuboid6.full, renderSide.getIndex());
             renderState.render();
         }
         renderState.draw();
         GlStateManager.enableTexture2D();
+
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableDepth();
     }
 
     public void setConfig(float scale, int rY, int rX, int rZ, float spin, boolean connect) {
@@ -356,11 +363,9 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
     public boolean onClickLogic(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, boolean isRight, double x, double y) {
         if (this.screen.getWorld().isRemote) {
             if (this.worldSceneRenderer != null) {
-                BlockPos pos = this.worldSceneRenderer.screenPos2BlockPos(
-                        (int) (x * PluginWorldSceneRenderer.getWidth()),
-                        (int) ((1 - y) * PluginWorldSceneRenderer.getHeight()));
-                if (pos != null) {
-                    writePluginAction(1, buf -> buf.writeBlockPos(pos.add(minPos)));
+                RayTraceResult rayTrace = this.worldSceneRenderer.screenPos2BlockPosFace((int) (x * 1080), (int) ((1 - y) * 1080));
+                if (rayTrace != null) {
+                    writePluginAction(1, buf -> buf.writeBlockPos(rayTrace.getBlockPos().add(minPos)));
                 }
             }
         }
@@ -396,8 +401,8 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
 
             if (this.connect && connections != null) {
                 GlStateManager.scale(1 / this.screen.scale, 1 / this.screen.scale, 1);
-                int sW = PluginWorldSceneRenderer.getWidth();
-                int sH = PluginWorldSceneRenderer.getHeight();
+                int sW = 1080;
+                int sH = 1080;
                 for (Pair<List<MetaTileEntityMonitorScreen>, Vector3f> tuple : connections.values()) {
                     Vector3f origin = tuple.getRight();
                     List<MetaTileEntityMonitorScreen> screens = tuple.getLeft();
