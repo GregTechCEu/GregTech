@@ -14,11 +14,11 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.multiblock.PatternMatchContext;
-import gregtech.api.util.BlockPatternChecker;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.GregFakePlayer;
 import gregtech.common.gui.impl.FakeModularUIPluginContainer;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -76,7 +76,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
                     return null;
                 }
             }
-            PatternMatchContext context = BlockPatternChecker.checkPatternAt((MultiblockControllerBase) target);
+            PatternMatchContext context = ((MultiblockControllerBase) target).structurePattern.checkPatternAt(target.getWorld(), target.getPos(), target.getFrontFacing().getOpposite());
             if (context == null) {
                 return null;
             }
@@ -212,6 +212,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
     public void renderPlugin(float partialTicks, RayTraceResult rayTraceResult) {
         if (fakeModularGui != null) {
             Tuple<Double, Double> result = this.screen.checkLookingAt(rayTraceResult);
+            GlStateManager.translate(0, 0, 0.01);
             if (result == null)
                 fakeModularGui.drawScreen(0, 0, partialTicks);
             else

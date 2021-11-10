@@ -147,7 +147,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             this.buttonPreviousPattern.enabled = false;
             this.buttonNextPattern.enabled = patterns.length > 1;
 
-            this.zoom = 10 / infoPage.getDefaultZoom();
+            this.zoom = 8 / infoPage.getDefaultZoom();
             this.rotationYaw = 20.0f;
             this.rotationPitch = 135.0f;
             this.currentRendererPage = 0;
@@ -476,16 +476,17 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     @SideOnly(Side.CLIENT)
     private void renderBlockOverLay(RayTraceResult rayTraceResult) {
         BlockPos pos = rayTraceResult.getBlockPos();
-        GlStateManager.disableDepth();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        GlStateManager.translate((pos.getX() + 0.5), (pos.getY() + 0.5), (pos.getZ() + 0.5));
+        GlStateManager.scale(1.01, 1.01, 1.01);
 
         Tessellator tessellator = Tessellator.getInstance();
         GlStateManager.disableTexture2D();
         CCRenderState renderState = CCRenderState.instance();
         renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR, tessellator.getBuffer());
         ColourMultiplier multiplier = new ColourMultiplier(0);
-        renderState.setPipeline(new Translation(pos), multiplier);
+        renderState.setPipeline(new Translation(-0.5, -0.5, -0.5), multiplier);
         BlockRenderer.BlockFace blockFace = new BlockRenderer.BlockFace();
         renderState.setModel(blockFace);
         for (EnumFacing renderSide : EnumFacing.VALUES) {
@@ -494,11 +495,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             renderState.render();
         }
         renderState.draw();
+        GlStateManager.scale(1 / 1.01, 1 / 1.01, 1 / 1.01);
+        GlStateManager.translate(-(pos.getX() + 0.5), -(pos.getY() + 0.5), -(pos.getZ() + 0.5));
         GlStateManager.enableTexture2D();
 
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.enableDepth();
     }
 
 }

@@ -122,6 +122,9 @@ public class WidgetScrollBar extends Widget {
             } else {
                 this.xOffset = mouseX - this.getPosition().x;
             }
+            if (this.onChanged != null) {
+                onChanged.accept(getValue());
+            }
             return true;
         }
         return false;

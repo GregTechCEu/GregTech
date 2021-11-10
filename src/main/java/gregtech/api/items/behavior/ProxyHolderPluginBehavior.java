@@ -17,7 +17,7 @@ public abstract class ProxyHolderPluginBehavior extends MonitorPluginBaseBehavio
         if (pos != null && holder == null) {
             holder = this.screen.getHolderFromPos(pos);
             if (holder != null) {
-                onHolderChanged(holder);
+                onHolderChanged(null);
             }
         }
     }

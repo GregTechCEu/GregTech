@@ -5,7 +5,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
-import codechicken.lib.vec.Vector3;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
@@ -17,19 +16,19 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.render.scene.FBOWorldSceneRenderer;
 import gregtech.api.render.scene.TrackedDummyWorld;
-import gregtech.api.util.BlockInfo;
-import gregtech.api.util.BlockPatternChecker;
 import gregtech.api.util.RenderUtil;
-import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.gui.widget.WidgetScrollBar;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -38,24 +37,25 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector3f;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
+    @SideOnly(Side.CLIENT)
+    private static Framebuffer FBO;
+    private static final int RESOLUTION = 1080;
 
     private float scale;
     private int rY;
     private int rX;
-    private int rZ;
     private float spin;
     private boolean connect;
 
@@ -65,68 +65,68 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
     @SideOnly(Side.CLIENT)
     private Map<BlockPos, Pair<List<MetaTileEntityMonitorScreen>, Vector3f>> connections;
     @SideOnly(Side.CLIENT)
-    private BlockPos minPos;
+    private Vector3f center;
     @SideOnly(Side.CLIENT)
-    private int teCount;
+    private Tuple<Double, Double> mousePos;
     private boolean isValid;
-    List<BlockPos> validPos;
+    Set<BlockPos> validPos;
 
 
     private void createWorldScene() {
         if (this.screen == null || this.screen.getWorld() == null) return;
         isValid = true;
-        Map<BlockPos, BlockInfo> renderedBlocks = new HashMap<>();
         World world = this.screen.getWorld();
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;
         int minZ = Integer.MAX_VALUE;
+        int maxX = Integer.MIN_VALUE;
+        int maxY = Integer.MIN_VALUE;
+        int maxZ = Integer.MIN_VALUE;
         for (BlockPos pos : validPos) {
             minX = Math.min(minX, pos.getX());
             minY = Math.min(minY, pos.getY());
             minZ = Math.min(minZ, pos.getZ());
+            maxX = Math.max(maxX, pos.getX());
+            maxY = Math.max(maxY, pos.getY());
+            maxZ = Math.max(maxZ, pos.getZ());
         }
-        minPos = new BlockPos(minX, minY, minZ);
-        int rte = 0;
-        for (BlockPos pos : validPos) {
-            TileEntity tileEntity = world.getTileEntity(pos);
-            if (tileEntity != null) rte++;
-            if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() != null) {
-                MetaTileEntityHolder holder = (MetaTileEntityHolder) tileEntity;
-                MetaTileEntityHolder newHolder = new MetaTileEntityHolder();
-                newHolder.setMetaTileEntity(holder.getMetaTileEntity().createMetaTileEntity(newHolder));
-                newHolder.getMetaTileEntity().setFrontFacing(holder.getMetaTileEntity().getFrontFacing());
-                renderedBlocks.put(pos.subtract(minPos), new BlockInfo(MetaBlocks.MACHINE.getDefaultState(), newHolder));
-            } else {
-                renderedBlocks.put(pos.subtract(minPos), new BlockInfo(world.getBlockState(pos)));
-            }
+        if (FBO == null) {
+            FBO = new Framebuffer(RESOLUTION, RESOLUTION, true);
         }
-        if (rte != teCount) {
-            isValid = false;
-            worldSceneRenderer = null;
-            return;
-        }
-        TrackedDummyWorld dummyWorld = new TrackedDummyWorld();
-        dummyWorld.addBlocks(renderedBlocks);
-        worldSceneRenderer = new FBOWorldSceneRenderer(dummyWorld,1080,1080);
-        worldSceneRenderer.world.updateEntities();
-        worldSceneRenderer.setBeforeWorldRender(renderer -> {
-            Vector3f size = dummyWorld.getSize();
-            Vector3f minPos = dummyWorld.getMinPos();
-            minPos = new Vector3f(minPos);
-            minPos.add(new Vector3f(0f, 0f, 0f));
-
-            GlStateManager.translate(-minPos.x, -minPos.y, -minPos.z);
-            Vector3 centerPosition = new Vector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f);
-            GlStateManager.scale(scale, scale, scale);
-            GlStateManager.translate(-centerPosition.x, -centerPosition.y, -centerPosition.z);
-
-            GlStateManager.translate(centerPosition.x, centerPosition.y, centerPosition.z);
-            GlStateManager.rotate(rZ, 0, 0.0f, 1.0f);
-            GlStateManager.rotate(rX, 1.0f, 0.0f, 0);
-            GlStateManager.rotate(rY + (float) ((System.currentTimeMillis() / 20.0) * spin % 360.0f), 0.0f, 1.0f, 0.0f);
-            GlStateManager.translate(-centerPosition.x, -centerPosition.y, -centerPosition.z);
-        });
+        TrackedDummyWorld dummyWorld = new TrackedDummyWorld(world);
+        dummyWorld.setRenderFilter(pos->validPos.contains(pos));
+        worldSceneRenderer = new FBOWorldSceneRenderer(dummyWorld, FBO);
+        worldSceneRenderer.addRenderedBlocks(validPos, null);
+        center = new Vector3f((minX + maxX) / 2f, (minY + maxY) / 2f, (minZ + maxZ) / 2f);
+        worldSceneRenderer.setCameraLookAt(center, 10 / scale, Math.toRadians(rY), Math.toRadians(rX));
         worldSceneRenderer.setAfterWorldRender(renderer -> {
+            if (mousePos != null) {
+                int mouseX = (int) (RESOLUTION * mousePos.getFirst().floatValue());
+                int mouseY = (int) (RESOLUTION * (1 - (mousePos.getSecond().floatValue())));
+                Vector3f hitPos = renderer.unProject(mouseX, mouseY);
+                Vec3d eyePos = new Vec3d(renderer.getEyePos().x, renderer.getEyePos().y, renderer.getEyePos().z);
+                hitPos.scale(2); // Double view range to ensure pos can be seen.
+                Vec3d endPos = new Vec3d((hitPos.x - eyePos.x), (hitPos.y - eyePos.y), (hitPos.z - eyePos.z));
+                double min = Float.MAX_VALUE;
+                BlockPos pos = null;
+                for (BlockPos core : validPos) {
+                    IBlockState blockState = world.getBlockState(core);
+                    if (blockState.getBlock() == Blocks.AIR) {
+                        continue;
+                    }
+                    RayTraceResult hit = blockState.collisionRayTrace(world, core, eyePos, endPos);
+                    if (hit != null && hit.typeOfHit != RayTraceResult.Type.MISS) {
+                        double dist = eyePos.distanceTo(new Vec3d(hit.getBlockPos()));
+                        if (dist < min) {
+                            min = dist;
+                            pos = hit.getBlockPos();
+                        }
+                    }
+                }
+                if (pos != null) {
+                    renderBlockOverLay(pos);
+                }
+            }
             if (connect && connections != null) {
                 for (BlockPos pos : connections.keySet()) {
                     Vector3f winPos = worldSceneRenderer.project(pos);
@@ -141,50 +141,55 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
     }
 
     private void renderBlockOverLay(BlockPos pos) {
-        GlStateManager.disableDepth();
         GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        GlStateManager.translate((pos.getX() + 0.5), (pos.getY() + 0.5), (pos.getZ() + 0.5));
+        GlStateManager.scale(1.01, 1.01, 1.01);
         Tessellator tessellator = Tessellator.getInstance();
         GlStateManager.disableTexture2D();
         CCRenderState renderState = CCRenderState.instance();
         renderState.startDrawing(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR, tessellator.getBuffer());
         ColourMultiplier multiplier = new ColourMultiplier(0);
-        renderState.setPipeline(new Translation(pos), multiplier);
+        renderState.setPipeline(new Translation(-0.5, -0.5, -0.5), multiplier);
         BlockRenderer.BlockFace blockFace = new BlockRenderer.BlockFace();
         renderState.setModel(blockFace);
         for (EnumFacing renderSide : EnumFacing.VALUES) {
-            multiplier.colour = RenderUtil.packColor(100, 100, 100, 100);
+            multiplier.colour = RenderUtil.packColor(255, 255, 255, 100);
             blockFace.loadCuboidFace(Cuboid6.full, renderSide.getIndex());
             renderState.render();
         }
         renderState.draw();
+        GlStateManager.scale(1 / 1.01, 1 / 1.01, 1 / 1.01);
+        GlStateManager.translate(-(pos.getX() + 0.5), -(pos.getY() + 0.5), -(pos.getZ() + 0.5));
         GlStateManager.enableTexture2D();
 
         GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.enableDepth();
     }
 
-    public void setConfig(float scale, int rY, int rX, int rZ, float spin, boolean connect) {
-        if (this.scale == scale && this.rY == rY && this.rX == rX && this.rZ == rZ && this.spin == spin && this.connect == connect)
+    public void setConfig(float scale, int rY, int rX, float spin, boolean connect) {
+        if (this.scale == scale && this.rY == rY && this.rX == rX && this.spin == spin && this.connect == connect)
             return;
-        if (scale < 0.3 || scale > 2 || rY < 0 || rY > 360 || rX < 0 || rX > 360 || rZ < 0 || rZ > 360 || spin < 0 || spin > 2)
+        if (scale < 0.3 || scale > 2 || rY < 0 || rY > 360 || rX < -90 || rX > 90 || spin < 0 || spin > 2)
             return;
         this.scale = scale;
         this.rY = rY;
         this.rX = rX;
-        this.rZ = rZ;
         this.spin = spin;
         this.connect = connect;
-        writePluginData(1, buffer -> {
-            buffer.writeFloat(scale);
-            buffer.writeVarInt(rY);
-            buffer.writeVarInt(rX);
-            buffer.writeVarInt(rZ);
-            buffer.writeFloat(spin);
-            buffer.writeBoolean(connect);
-        });
-        markAsDirty();
+        if (holder.isRemote()) {
+            if (worldSceneRenderer != null) {
+                worldSceneRenderer.setCameraLookAt(center, 10 / scale, Math.toRadians(rY), Math.toRadians(rX));
+            }
+        } else {
+            writePluginData(1, buffer -> {
+                buffer.writeFloat(scale);
+                buffer.writeVarInt(rY);
+                buffer.writeVarInt(rX);
+                buffer.writeFloat(spin);
+                buffer.writeBoolean(connect);
+            });
+            markAsDirty();
+        }
     }
 
     @Override
@@ -203,8 +208,8 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                             if (screen != null && screen.plugin instanceof FakeGuiPluginBehavior && ((FakeGuiPluginBehavior) screen.plugin).getHolder() == this.holder) {
                                 MetaTileEntity met = ((FakeGuiPluginBehavior) screen.plugin).getRealMTE();
                                 if (met != null) {
-                                    BlockPos pos = met.getPos().subtract(minPos);
-                                    Pair<List<MetaTileEntityMonitorScreen>, Vector3f> tuple = connections.getOrDefault(pos, Pair.of(new ArrayList<>(), null));
+                                    BlockPos pos = met.getPos();
+                                    Pair<List<MetaTileEntityMonitorScreen>, Vector3f> tuple = connections.getOrDefault(pos, new MutablePair<>(new ArrayList<>(), null));
                                     tuple.getLeft().add(screen);
                                     connections.put(pos, tuple);
                                 }
@@ -217,18 +222,14 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                     MultiblockControllerBase entity = (MultiblockControllerBase) holder.getMetaTileEntity();
                     if (entity.isStructureFormed()) {
                         if (!isValid) {
-                            PatternMatchContext result = BlockPatternChecker.checkPatternAt(entity);
-                            if (result != null && result.get("validPos") != null) {
-                                validPos = result.get("validPos");
+                            validPos = new HashSet<>();
+                            PatternMatchContext result = entity.structurePattern.checkPatternAt(entity.getWorld(), entity.getPos(), entity.getFrontFacing().getOpposite(), validPos);
+                            if (result != null) {
                                 writePluginData(0, buf -> {
-                                    int te = 0;
                                     buf.writeVarInt(validPos.size());
                                     for (BlockPos pos : validPos) {
                                         buf.writeBlockPos(pos);
-                                        if (this.screen.getWorld().getTileEntity(pos) != null)
-                                            te++;
                                     }
-                                    buf.writeVarInt(te);
                                 });
                                 isValid = true;
                             } else {
@@ -236,9 +237,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                             }
                         }
                     } else if (isValid) {
-                        writePluginData(0, buf -> {
-                            buf.writeVarInt(0);
-                        });
+                        writePluginData(0, buf -> buf.writeVarInt(0));
                         isValid = false;
                     }
                 }
@@ -249,40 +248,22 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
     @Override
     public WidgetPluginConfig customUI(WidgetPluginConfig widgetGroup, IUIHolder holder, EntityPlayer entityPlayer) {
         return widgetGroup.setSize(260, 170)
-                .widget(new WidgetScrollBar(25, 20, 210, 0.3f, 2, 0.1f, value -> {
-                    setConfig(value, this.rY, this.rX, this.rZ, this.spin, this.connect);
-                }).setTitle("scale", 0XFFFFFFFF).setInitValue(this.scale))
-                .widget(new WidgetScrollBar(25, 40, 210, 0, 360, 1, value -> {
-                    setConfig(this.scale, value.intValue(), this.rX, this.rZ, this.spin, this.connect);
-                }).setTitle("rotationY", 0XFFFFFFFF).setInitValue(this.rY))
-                .widget(new WidgetScrollBar(25, 60, 210, 0, 360, 1, value -> {
-                    setConfig(this.scale, this.rY, value.intValue(), this.rZ, this.spin, this.connect);
-                }).setTitle("rotationX", 0XFFFFFFFF).setInitValue(this.rX))
-                .widget(new WidgetScrollBar(25, 80, 210, 0, 360, 1, value -> {
-                    setConfig(this.scale, this.rY, this.rX, value.intValue(), this.spin, this.connect);
-                }).setTitle("rotationZ", 0XFFFFFFFF).setInitValue(this.rZ))
-                .widget(new WidgetScrollBar(25, 100, 210, 0, 2, 0.1f, value -> {
-                    setConfig(this.scale, this.rY, this.rX, this.rZ, value, this.connect);
-                }).setTitle("spinDur", 0XFFFFFFFF).setInitValue(this.spin))
+                .widget(new WidgetScrollBar(25, 20, 210, 0.3f, 2, 0.1f, value -> setConfig(value, this.rY, this.rX, this.spin, this.connect)).setTitle("scale", 0XFFFFFFFF).setInitValue(this.scale))
+                .widget(new WidgetScrollBar(25, 40, 210, 0, 360, 1, value -> setConfig(this.scale, value.intValue(), this.rX, this.spin, this.connect)).setTitle("rotationPitch", 0XFFFFFFFF).setInitValue(this.rY))
+                .widget(new WidgetScrollBar(25, 60, 210, -90, 90, 1, value -> setConfig(this.scale, this.rY, value.intValue(), this.spin, this.connect)).setTitle("rotationYaw", 0XFFFFFFFF).setInitValue(this.rX))
+                .widget(new WidgetScrollBar(25, 100, 210, 0, 2, 0.1f, value -> setConfig(this.scale, this.rY, this.rX, value, this.connect)).setTitle("spinDur", 0XFFFFFFFF).setInitValue(this.spin))
                 .widget(new LabelWidget(25, 135, "Fake GUI:", 0XFFFFFFFF))
-                .widget(new ToggleButtonWidget(80, 130, 20, 20, () -> this.connect, state -> {
-                    setConfig(this.scale, this.rY, this.rX, this.rZ, this.spin, state);
-                }));
+                .widget(new ToggleButtonWidget(80, 130, 20, 20, () -> this.connect, state -> setConfig(this.scale, this.rY, this.rX, this.spin, state)));
     }
 
     @Override
     public void writeInitialSyncData(PacketBuffer buf) {
         super.writeInitialSyncData(buf);
         if (validPos != null && validPos.size() > 0) {
-            int te = 0;
             buf.writeVarInt(validPos.size());
             for (BlockPos pos : validPos) {
                 buf.writeBlockPos(pos);
-                if (this.screen.getWorld().getTileEntity(pos) != null) {
-                    te++;
-                }
             }
-            buf.writeVarInt(te);
         } else {
             buf.writeVarInt(0);
         }
@@ -290,7 +271,6 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
 
     @Override
     public void receiveInitialSyncData(PacketBuffer buf) {
-        super.receiveInitialSyncData(buf);
         loadValidPos(buf);
     }
 
@@ -300,7 +280,6 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
         data.setFloat("scale", this.scale);
         data.setInteger("rY", this.rY);
         data.setInteger("rX", this.rX);
-        data.setInteger("rZ", this.rZ);
         data.setFloat("spin", this.spin);
         data.setBoolean("connect", this.connect);
     }
@@ -311,7 +290,6 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
         this.scale = data.hasKey("scale") ? data.getFloat("scale") : 0.6f;
         this.rY = data.hasKey("rY") ? data.getInteger("rY") : 45;
         this.rX = data.hasKey("rX") ? data.getInteger("rX") : 0;
-        this.rZ = data.hasKey("rZ") ? data.getInteger("rZ") : 0;
         this.spin = data.hasKey("spin") ? data.getFloat("spin") : 0f;
         this.connect = data.hasKey("connect") && data.getBoolean("connect");
     }
@@ -325,20 +303,21 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
             this.scale = buf.readFloat();
             this.rY = buf.readVarInt();
             this.rX = buf.readVarInt();
-            this.rZ = buf.readVarInt();
             this.spin = buf.readFloat();
             this.connect = buf.readBoolean();
+            if (worldSceneRenderer != null) {
+                worldSceneRenderer.setCameraLookAt(center, 10 / scale, Math.toRadians(rY), Math.toRadians(rX));
+            }
         }
     }
 
     private void loadValidPos(PacketBuffer buf) {
         int size = buf.readVarInt();
         if (size > 0) {
-            validPos = new ArrayList<>();
+            validPos = new HashSet<>();
             for (int i = 0; i < size; i++) {
                 validPos.add(buf.readBlockPos());
             }
-            teCount = buf.readVarInt();
             createWorldScene();
         } else {
             validPos = null;
@@ -363,9 +342,9 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
     public boolean onClickLogic(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, boolean isRight, double x, double y) {
         if (this.screen.getWorld().isRemote) {
             if (this.worldSceneRenderer != null) {
-                RayTraceResult rayTrace = this.worldSceneRenderer.screenPos2BlockPosFace((int) (x * 1080), (int) ((1 - y) * 1080));
+                RayTraceResult rayTrace = this.worldSceneRenderer.screenPos2BlockPosFace((int) (x * RESOLUTION), (int) ((1 - y) * RESOLUTION));
                 if (rayTrace != null) {
-                    writePluginAction(1, buf -> buf.writeBlockPos(rayTrace.getBlockPos().add(minPos)));
+                    writePluginAction(1, buf -> buf.writeBlockPos(rayTrace.getBlockPos()));
                 }
             }
         }
@@ -374,12 +353,11 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
 
     @Override
     protected void onHolderChanged(MetaTileEntityHolder lastHolder) {
-        if (this.screen.getWorld().isRemote) {
-            teCount = 0;
-            worldSceneRenderer = null;
+        if (!this.screen.getWorld().isRemote) {
+            validPos = null;
+            isValid = false;
+            writePluginData(0, buf -> buf.writeVarInt(0));
         }
-        validPos = null;
-        isValid = false;
     }
 
     @Override
@@ -392,23 +370,21 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
         if (worldSceneRenderer != null && this.screen != null) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(-0.5, -0.5, 0.01);
-            Tuple<Double, Double> mousePos = this.screen.checkLookingAt(rayTraceResult);
+            mousePos = this.screen.checkLookingAt(rayTraceResult);
             if (mousePos != null) {
-                worldSceneRenderer.render(0, 0, 1, 1, (int) (mousePos.getFirst() * 1080), (int) (1080 - mousePos.getSecond() * 1080));
+                worldSceneRenderer.render(0, 0, 1, 1, mousePos.getFirst().floatValue(), mousePos.getSecond().floatValue());
             } else {
                 worldSceneRenderer.render(0, 0, 1, 1, 0, 0);
             }
 
             if (this.connect && connections != null) {
                 GlStateManager.scale(1 / this.screen.scale, 1 / this.screen.scale, 1);
-                int sW = 1080;
-                int sH = 1080;
                 for (Pair<List<MetaTileEntityMonitorScreen>, Vector3f> tuple : connections.values()) {
                     Vector3f origin = tuple.getRight();
                     List<MetaTileEntityMonitorScreen> screens = tuple.getLeft();
                     if (origin != null) {
-                        float oX = (origin.x / sW - 0.025f) * this.screen.scale;
-                        float oY = (1 - origin.y / sH) * this.screen.scale;
+                        float oX = (origin.x / RESOLUTION - 0.025f) * this.screen.scale;
+                        float oY = (1 - origin.y / RESOLUTION) * this.screen.scale;
                         RenderUtil.renderRect(oX, oY, 0.05f, 0.05f, 0.002f, 0XFFFFFF00);
                         for (MetaTileEntityMonitorScreen screen : screens) {
                             float dX = screen.getX() - this.screen.getX() - 0.025f;

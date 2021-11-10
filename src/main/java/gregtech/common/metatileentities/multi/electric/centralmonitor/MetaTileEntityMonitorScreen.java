@@ -637,12 +637,19 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     private double[] handleRayTraceResult(RayTraceResult rayTraceResult) {
-        double x = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.X
+        double x = 0;
+        double y = 0;
+        double dX = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.X
                 ? rayTraceResult.hitVec.z - rayTraceResult.getBlockPos().getZ()
                 : rayTraceResult.hitVec.x - rayTraceResult.getBlockPos().getX();
-        double y = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.Y
+        double dY = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.Y
                 ? rayTraceResult.hitVec.z - rayTraceResult.getBlockPos().getZ()
                 : rayTraceResult.hitVec.y - rayTraceResult.getBlockPos().getY();
+        x = 1 - dX;
+        y = 1 - dY;
+        if(rayTraceResult.sideHit.getYOffset() < 0) {
+            y = 1 - y;
+        }
         if (rayTraceResult.sideHit == EnumFacing.WEST || rayTraceResult.sideHit == EnumFacing.SOUTH) {
             x = 1 - x;
         } else if (rayTraceResult.sideHit == EnumFacing.UP) {
@@ -693,7 +700,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                             pos[0] = (pos[0] + i) / this.scale;
                             pos[1] = (pos[1] + j) / this.scale;
                             if (pos[0] >= 0 && pos[0] <= 1 && pos[1] >= 0 && pos[1] <= 1)
-                                return new Tuple<Double, Double>(pos[0], pos[1]);
+                                return new Tuple<>(pos[0], pos[1]);
                         }
                     }
                 }
