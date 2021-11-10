@@ -8,11 +8,15 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.SteamMultiblockRecipeLogic;
 import gregtech.api.metatileentity.MTETrait;
+import gregtech.api.metatileentity.sound.ISoundCreator;
+import gregtech.api.metatileentity.sound.PositionedSoundMTE;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.common.ConfigHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -26,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase {
+public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator {
 
     protected static final double CONVERSION_RATE = ConfigHolder.U.multiblockSteamToEU;
 
@@ -142,4 +146,19 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
         super.renderMetaTileEntity(renderState, translation, pipeline);
         this.getFrontOverlay().render(renderState, translation, pipeline, getFrontFacing(), recipeMapWorkable.isActive());
     }
+
+    @Override
+    public void onAttached() {
+        super.onAttached();
+        if (recipeMapWorkable.recipeMap.getSound() != null && ConfigHolder.machineSounds) {
+            PositionedSoundMTE machineSound = new PositionedSoundMTE(recipeMapWorkable.recipeMap.getSound().getSoundName(), SoundCategory.BLOCKS, this, this.getPos());
+            Minecraft.getMinecraft().getSoundHandler().playSound(machineSound);
+            Minecraft.getMinecraft().getSoundHandler().update();
+        }
+    }
+
+    public boolean canCreateSound() {
+        return recipeMapWorkable.isActive();
+    }
+
 }

@@ -55,7 +55,8 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> FURNACE_RECIPES = new RecipeMapFurnace("electric_furnace", 1, 1, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, GuiTextures.FURNACE_OVERLAY)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL);
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, MoveType.HORIZONTAL)
+            .setSound(GTSounds.FURNACE);
 
 
     @ZenProperty
@@ -396,7 +397,8 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<BlastRecipeBuilder> BLAST_RECIPES = new RecipeMap<>("electric_blast_furnace", 1, 3, 1, 2, 0, 1, 0, 1, new BlastRecipeBuilder(), false);
+    public static final RecipeMap<BlastRecipeBuilder> BLAST_RECIPES = new RecipeMap<>("electric_blast_furnace", 1, 3, 1, 2, 0, 1, 0, 1, new BlastRecipeBuilder(), false)
+            .setSound(GTSounds.FURNACE);
 
     /**
      * Example:
@@ -504,7 +506,8 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<UniversalDistillationRecipeBuilder> DISTILLATION_RECIPES = new RecipeMapDistillationTower("distillation_tower", 0, 0, 0, 1, 1, 1, 1, 12, new UniversalDistillationRecipeBuilder(), false);
+    public static final RecipeMap<UniversalDistillationRecipeBuilder> DISTILLATION_RECIPES = new RecipeMapDistillationTower("distillation_tower", 0, 0, 0, 1, 1, 1, 1, 12, new UniversalDistillationRecipeBuilder(), false)
+            .setSound(GTSounds.CHEMICAL_REACTOR);
 
     /**
      * Example:
@@ -540,7 +543,8 @@ public class RecipeMaps {
      */
 
     @ZenProperty
-    public static final RecipeMap<IntCircuitRecipeBuilder> PYROLYSE_RECIPES = new RecipeMap<>("pyrolyse_oven", 2, 2, 0, 1, 0, 1, 1, 1, new IntCircuitRecipeBuilder(), false);
+    public static final RecipeMap<IntCircuitRecipeBuilder> PYROLYSE_RECIPES = new RecipeMap<>("pyrolyse_oven", 2, 2, 0, 1, 0, 1, 1, 1, new IntCircuitRecipeBuilder(), false)
+            .setSound(GTSounds.FIRE);
 
     /**
      * Example:
@@ -774,7 +778,8 @@ public class RecipeMaps {
     public static final RecipeMap<PrimitiveRecipeBuilder> PRIMITIVE_BLAST_FURNACE_RECIPES = new RecipeMap<>("primitive_blast_furnace", 2, 3, 1, 3, 0, 0, 0, 0, new PrimitiveRecipeBuilder(), false);
 
     @ZenProperty
-    public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMap<>("coke_oven", 1, 1, 0, 1, 0, 0, 0, 1, new PrimitiveRecipeBuilder(), false);
+    public static final RecipeMap<PrimitiveRecipeBuilder> COKE_OVEN_RECIPES = new RecipeMap<>("coke_oven", 1, 1, 0, 1, 0, 0, 0, 1, new PrimitiveRecipeBuilder(), false)
+            .setSound(GTSounds.FIRE);
 
     //////////////////////////////////////
     //         Fuel Recipe Maps         //

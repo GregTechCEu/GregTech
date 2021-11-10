@@ -48,7 +48,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     }
 
     public boolean canCreateSound() {
-        return isActive();
+        return workable.isActive();
     }
 
     protected RecipeLogicEnergy createWorkable(RecipeMap<?> recipeMap) {

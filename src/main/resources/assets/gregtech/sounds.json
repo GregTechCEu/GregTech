@@ -4,6 +4,8 @@
   "tick.chemical_reactor": {"category": "block", "sounds": [{"name": "gregtech:chemical", "stream": false}]},
   "tick.arc": {"category": "block", "sounds": [{"name": "gregtech:hum", "stream": false}]},
   "tick.boiler": {"category": "block", "sounds": [{"name": "gregtech:boiling", "stream": false}]},
+  "tick.furnace": {"category": "block", "sounds": [{"name": "gregtech:heating", "stream": false}]},
+  "tick.fire": {"category": "block", "sounds": [{"name": "gregtech:fire", "stream": false}]},
   "tick.science": {"category": "block", "sounds": [{"name": "gregtech:science", "stream": false}]},
   "use.wrench": {"category": "block", "sounds": [{"name": "gregtech:wrench", "stream": false}]},
   "use.soft_hammer": {"category": "block", "sounds": [{"name": "gregtech:soft_hammer", "stream": false}]},

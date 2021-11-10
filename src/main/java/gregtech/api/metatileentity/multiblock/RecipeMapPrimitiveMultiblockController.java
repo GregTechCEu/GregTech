@@ -2,14 +2,19 @@ package gregtech.api.metatileentity.multiblock;
 
 import gregtech.api.capability.impl.*;
 import gregtech.api.metatileentity.MTETrait;
+import gregtech.api.metatileentity.sound.ISoundCreator;
+import gregtech.api.metatileentity.sound.PositionedSoundMTE;
 import gregtech.api.recipes.RecipeMap;
+import gregtech.common.ConfigHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fluids.FluidTank;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockWithDisplayBase {
+public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockWithDisplayBase implements ISoundCreator {
 
     protected PrimitiveRecipeLogic recipeMapWorkable;
 
@@ -53,4 +58,19 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
     protected boolean shouldUpdate(MTETrait trait) {
         return !(trait instanceof PrimitiveRecipeLogic);
     }
+
+    @Override
+    public void onAttached() {
+        super.onAttached();
+        if (recipeMapWorkable.recipeMap.getSound() != null && ConfigHolder.machineSounds) {
+            PositionedSoundMTE machineSound = new PositionedSoundMTE(recipeMapWorkable.recipeMap.getSound().getSoundName(), SoundCategory.BLOCKS, this, this.getPos());
+            Minecraft.getMinecraft().getSoundHandler().playSound(machineSound);
+            Minecraft.getMinecraft().getSoundHandler().update();
+        }
+    }
+
+    public boolean canCreateSound() {
+        return recipeMapWorkable.isActive();
+    }
+
 }
