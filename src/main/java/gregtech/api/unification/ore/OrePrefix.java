@@ -11,6 +11,7 @@ import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.util.LocalizationUtils;
 import gregtech.api.util.function.TriConsumer;
+import gregtech.common.ConfigHolder;
 import net.minecraft.client.resources.I18n;
 import org.apache.commons.lang3.Validate;
 import stanhebben.zenscript.annotations.ZenClass;
@@ -75,9 +76,9 @@ public class OrePrefix {
     // A regular Gem worth one Dust. Introduced by Eloraam
     public static final OrePrefix gem = new OrePrefix("gem", M, null, MaterialIconType.gem, ENABLE_UNIFICATION, hasGemProperty);
     // A regular Gem worth one small Dust. Introduced by TerraFirmaCraft
-    public static final OrePrefix gemChipped = new OrePrefix("gemChipped", M / 4, null, MaterialIconType.gemChipped, ENABLE_UNIFICATION, hasGemProperty);
+    public static final OrePrefix gemChipped = new OrePrefix("gemChipped", M / 4, null, MaterialIconType.gemChipped, ENABLE_UNIFICATION, hasGemProperty.and(unused -> ConfigHolder.U.generateLowQualityGems));
     // A regular Gem worth two small Dusts. Introduced by TerraFirmaCraft
-    public static final OrePrefix gemFlawed = new OrePrefix("gemFlawed", M / 2, null, MaterialIconType.gemFlawed, ENABLE_UNIFICATION, hasGemProperty);
+    public static final OrePrefix gemFlawed = new OrePrefix("gemFlawed", M / 2, null, MaterialIconType.gemFlawed, ENABLE_UNIFICATION, hasGemProperty.and(unused -> ConfigHolder.U.generateLowQualityGems));
     // A regular Gem worth two Dusts. Introduced by TerraFirmaCraft
     public static final OrePrefix gemFlawless = new OrePrefix("gemFlawless", M * 2, null, MaterialIconType.gemFlawless, ENABLE_UNIFICATION, hasGemProperty);
     // A regular Gem worth four Dusts. Introduced by TerraFirmaCraft

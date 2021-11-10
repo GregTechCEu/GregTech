@@ -22,14 +22,15 @@ import net.minecraft.item.ItemStack;
 
 import java.util.*;
 
-import static gregtech.api.GTValues.*;
+import static gregtech.api.GTValues.L;
+import static gregtech.api.GTValues.M;
 import static gregtech.api.recipes.RecipeMaps.ALLOY_SMELTER_RECIPES;
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class MaterialRecipeHandler {
 
-    private static final List<OrePrefix> GEM_ORDER = isModLoaded("terrafirmacraft") ? Arrays.asList(
+    private static final List<OrePrefix> GEM_ORDER = ConfigHolder.U.generateLowQualityGems ? Arrays.asList(
             OrePrefix.gemChipped, OrePrefix.gemFlawed, OrePrefix.gem, OrePrefix.gemFlawless, OrePrefix.gemExquisite) :
             Arrays.asList(OrePrefix.gem, OrePrefix.gemFlawless, OrePrefix.gemExquisite);
 
@@ -49,7 +50,6 @@ public class MaterialRecipeHandler {
         for (OrePrefix orePrefix : GEM_ORDER) {
             orePrefix.addProcessingHandler(PropertyKey.GEM, MaterialRecipeHandler::processGemConversion);
         }
-        OrePrefix.gem.addProcessingHandler(PropertyKey.GEM, MaterialRecipeHandler::processGem);
 
         setMaterialRequiresCircuit(Materials.Silicon);
     }
@@ -63,10 +63,6 @@ public class MaterialRecipeHandler {
         if (mat.hasProperty(PropertyKey.GEM)) {
             ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, mat);
             ItemStack smallDarkAshStack = OreDictUnifier.get(OrePrefix.dustSmall, Materials.DarkAsh);
-
-            ItemStack exquisiteStack = null;
-            if (!OrePrefix.gemExquisite.isIgnored(mat))
-                exquisiteStack = OreDictUnifier.get(OrePrefix.gemExquisite, mat);
 
             if (mat.hasFlag(CRYSTALLIZABLE)) {
                 RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
@@ -82,23 +78,9 @@ public class MaterialRecipeHandler {
                         .outputs(gemStack)
                         .duration(600).EUt(24)
                         .buildAndRegister();
+            }
 
-                if (!mat.hasFlag(EXPLOSIVE) && !mat.hasFlag(FLAMMABLE) && exquisiteStack != null) {
-                    RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
-                            .inputs(GTUtility.copyAmount(4, dustStack))
-                            .outputs(exquisiteStack, smallDarkAshStack)
-                            .explosivesAmount(4)
-                            .buildAndRegister();
-
-                    RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
-                            .inputs(GTUtility.copyAmount(4, dustStack))
-                            .outputs(exquisiteStack, smallDarkAshStack)
-                            .explosivesType(MetaItems.DYNAMITE.getStackForm(2))
-                            .buildAndRegister();
-                }
-
-            } else if (!mat.hasFlag(EXPLOSIVE) && !mat.hasFlag(FLAMMABLE)) {
-
+            if (!mat.hasFlag(EXPLOSIVE) && !mat.hasFlag(FLAMMABLE)) {
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
                         .inputs(GTUtility.copyAmount(4, dustStack))
                         .outputs(GTUtility.copyAmount(3, gemStack), smallDarkAshStack)
@@ -311,45 +293,21 @@ public class MaterialRecipeHandler {
         if (!prevStack.isEmpty()) {
             ModHandler.addShapelessRecipe(String.format("gem_to_gem_%s_%s", prevPrefix, material), prevStack,
                     "h", new UnificationEntry(gemPrefix, material));
+
             RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                     .input(gemPrefix, material)
                     .outputs(prevStack)
                     .duration(20)
                     .EUt(16)
                     .buildAndRegister();
-        }
-    }
 
-    public static void processGem(OrePrefix gemPrefix, Material material, GemProperty property) {
-        ItemStack gemStack = OreDictUnifier.get(gemPrefix, material);
-
-        ItemStack flawlessStack = null;
-        if (!OrePrefix.gemFlawless.isIgnored(material))
-            flawlessStack = OreDictUnifier.get(OrePrefix.gemFlawless, material);
-
-        ItemStack exquisiteStack = null;
-        if (!OrePrefix.gemExquisite.isIgnored(material))
-            exquisiteStack = OreDictUnifier.get(OrePrefix.gemExquisite, material);
-
-
-        if (flawlessStack != null) {
             RecipeMaps.LASER_ENGRAVER_RECIPES.recipeBuilder()
-                    .inputs(GTUtility.copyAmount(2, gemStack))
+                    .inputs(prevStack)
                     .notConsumable(OrePrefix.craftingLens, MarkerMaterials.Color.White)
-                    .outputs(flawlessStack)
+                    .output(gemPrefix, material)
                     .duration(300)
                     .EUt(240)
                     .buildAndRegister();
-
-            if (exquisiteStack != null) {
-                RecipeMaps.LASER_ENGRAVER_RECIPES.recipeBuilder()
-                        .inputs(GTUtility.copyAmount(2, flawlessStack))
-                        .notConsumable(OrePrefix.craftingLens, MarkerMaterials.Color.White)
-                        .outputs(exquisiteStack)
-                        .duration(1200)
-                        .EUt(240)
-                        .buildAndRegister();
-            }
         }
     }
 

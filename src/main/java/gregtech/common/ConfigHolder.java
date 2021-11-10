@@ -194,6 +194,9 @@ public class ConfigHolder {
         @Config.RequiresWorldRestart
         public double multiblockSteamToEU = 0.5;
 
+        @Config.Comment("Whether to generate flawed and chipped gems for materials and recipes involving them. Useful for Terrafirmacraft")
+        public boolean generateLowQualityGems = false;
+
         public static class GT5U {
 
             @Config.Comment("Require Wrench to break machines? Default: false")
