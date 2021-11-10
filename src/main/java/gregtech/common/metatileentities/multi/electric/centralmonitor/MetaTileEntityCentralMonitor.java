@@ -251,7 +251,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
             textList.add(buttonText);
         } else {
             textList.add(new TextComponentTranslation("gregtech.multiblock.central_monitor.width", this.width));
-            textList.add(new TextComponentTranslation("metaitem.tool.prospect.low_power"));
+            textList.add(new TextComponentTranslation("gregtech.multiblock.central_monitor.low_power"));
         }
     }
 

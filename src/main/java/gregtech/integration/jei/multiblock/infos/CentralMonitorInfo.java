@@ -56,6 +56,6 @@ public class CentralMonitorInfo extends MultiblockInfoPage {
 
     @Override
     public String[] getDescription() {
-        return new String[]{I18n.format("gtadditions.multiblock.central_monitor.tooltip.2", MetaTileEntityCentralMonitor.MAX_WIDTH, MetaTileEntityCentralMonitor.MAX_HEIGHT), I18n.format("gtadditions.multiblock.central_monitor.tooltip.3")};
+        return new String[]{I18n.format("gregtech.multiblock.central_monitor.tooltip.2", MetaTileEntityCentralMonitor.MAX_WIDTH, MetaTileEntityCentralMonitor.MAX_HEIGHT), I18n.format("gregtech.multiblock.central_monitor.tooltip.3")};
     }
 }

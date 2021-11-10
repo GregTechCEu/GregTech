@@ -3593,6 +3593,7 @@ gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
 gregtech.machine.central_monitor.name=Central Monitor
+gregtech.multiblock.central_monitor.low_power=Low Power
 gregtech.multiblock.central_monitor.height=Screen Height:
 gregtech.multiblock.central_monitor.width=Screen Width: %d
 gregtech.multiblock.central_monitor.height_modify=Modify Height: %d
