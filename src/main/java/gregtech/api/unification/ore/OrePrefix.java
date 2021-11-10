@@ -19,6 +19,7 @@ import stanhebben.zenscript.annotations.ZenMethod;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static gregtech.api.GTValues.M;
@@ -56,7 +57,7 @@ public class OrePrefix {
 
     public static final OrePrefix crushedCentrifuged = new OrePrefix("crushedCentrifuged", -1, null, MaterialIconType.crushedCentrifuged, ENABLE_UNIFICATION, hasOreProperty);
     public static final OrePrefix crushedPurified = new OrePrefix("crushedPurified", -1, null, MaterialIconType.crushedPurified, ENABLE_UNIFICATION, hasOreProperty);
-    public static final OrePrefix crushed = new OrePrefix("crushed", -1, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix crushed = new OrePrefix("crushed", -1, null, MaterialIconType.crushed, ENABLE_UNIFICATION, hasOreProperty, mat -> {return Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify"));});
 
     // Introduced by Mekanism
     public static final OrePrefix shard = new OrePrefix("shard", -1, null, null, ENABLE_UNIFICATION, null);
@@ -88,9 +89,9 @@ public class OrePrefix {
     // 1/9th of a Dust.
     public static final OrePrefix dustTiny = new OrePrefix("dustTiny", M / 9, null, MaterialIconType.dustTiny, ENABLE_UNIFICATION, hasDustProperty);
     // Dust with impurities. 1 Unit of Main Material and 1/9 - 1/4 Unit of secondary Material
-    public static final OrePrefix dustImpure = new OrePrefix("dustImpure", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix dustImpure = new OrePrefix("dustImpure", M, null, MaterialIconType.dustImpure, ENABLE_UNIFICATION, hasOreProperty, mat -> {return Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify"));});
     // Pure Dust worth of one Ingot or Gem. Introduced by Alblaka.
-    public static final OrePrefix dustPure = new OrePrefix("dustPure", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty);
+    public static final OrePrefix dustPure = new OrePrefix("dustPure", M, null, MaterialIconType.dustPure, ENABLE_UNIFICATION, hasOreProperty, mat -> {return Collections.singletonList(I18n.format("metaitem.dust.tooltip.purify"));});
     public static final OrePrefix dust = new OrePrefix("dust", M, null, MaterialIconType.dust, ENABLE_UNIFICATION, hasDustProperty);
 
     // A Nugget. Introduced by Eloraam
@@ -406,10 +407,15 @@ public class OrePrefix {
     public byte maxStackSize = 64;
     public final List<MaterialStack> secondaryMaterials = new ArrayList<>();
     public float heatDamage = 0.0F; // Negative for Frost Damage
+    public Function<Material, List<String>> tooltipFunc;
 
     private String alternativeOreName = null;
 
     public OrePrefix(String name, long materialAmount, @Nullable Material material, @Nullable MaterialIconType materialIconType, long flags, @Nullable Predicate<Material> condition) {
+        this(name, materialAmount, material, materialIconType, flags, condition, null);
+    }
+
+    public OrePrefix(String name, long materialAmount, @Nullable Material material, @Nullable MaterialIconType materialIconType, long flags, @Nullable Predicate<Material> condition, @Nullable Function<Material, List<String>> tooltipFunc) {
         Preconditions.checkArgument(!PREFIXES.containsKey(name), "OrePrefix " + name + " already registered!");
         this.name = name;
         this.id = idCounter.getAndIncrement();
@@ -418,6 +424,7 @@ public class OrePrefix {
         this.isUnificationEnabled = (flags & ENABLE_UNIFICATION) != 0;
         this.materialIconType = materialIconType;
         this.generationCondition = condition;
+        this.tooltipFunc = tooltipFunc;
         if (isSelfReferencing) {
             Preconditions.checkNotNull(material, "Material is null for self-referencing OrePrefix");
             this.materialType = material;

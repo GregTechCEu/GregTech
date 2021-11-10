@@ -7,10 +7,14 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.util.Position;
 import gregtech.api.util.Size;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import static gregtech.api.gui.impl.ModularUIGui.*;
@@ -23,6 +27,7 @@ public class ImageWidget extends Widget {
     private boolean isVisible = true;
     private int border;
     private int borderColor;
+    private String tooltipText;
 
     public ImageWidget(int xPosition, int yPosition, int width, int height) {
         super(new Position(xPosition, yPosition), new Size(width, height));
@@ -47,6 +52,11 @@ public class ImageWidget extends Widget {
     public ImageWidget setPredicate(BooleanSupplier predicate) {
         this.predicate = predicate;
         this.isVisible = false;
+        return this;
+    }
+
+    public ImageWidget setTooltip(String tooltipText) {
+        this.tooltipText = tooltipText;
         return this;
     }
 
@@ -87,5 +97,12 @@ public class ImageWidget extends Widget {
         GlStateManager.color(rColorForOverlay, gColorForOverlay, bColorForOverlay, 1.0F);
     }
 
+    @Override
+    public void drawInForeground(int mouseX, int mouseY) {
+        if (this.isVisible && tooltipText != null && area != null && isMouseOverElement(mouseX, mouseY)) {
+            List<String> hoverList = Arrays.asList(I18n.format(tooltipText).split("/n"));
+            drawHoveringText(ItemStack.EMPTY, hoverList, 300, mouseX, mouseY);
+        }
+    }
 }
 

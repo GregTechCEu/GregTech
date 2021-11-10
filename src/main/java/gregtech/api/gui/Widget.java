@@ -309,6 +309,23 @@ public abstract class Widget {
     }
 
     @SideOnly(Side.CLIENT)
+    public static void drawText(String text, float x, float y, float scale, int color) {
+        drawText(text, x, y, scale, color, false);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void drawText(String text, float x, float y, float scale, int color, boolean shadow) {
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        GlStateManager.disableBlend();
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(scale, scale, 0f);
+        float sf = 1 / scale;
+        fontRenderer.drawString(text, x * sf, y * sf, color, shadow);
+        GlStateManager.popMatrix();
+        GlStateManager.enableBlend();
+    }
+
+    @SideOnly(Side.CLIENT)
     public static void drawItemStack(ItemStack itemStack, int x, int y, @Nullable String altTxt) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0F, 0.0F, 32.0F);

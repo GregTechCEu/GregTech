@@ -19,7 +19,8 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static gregtech.api.unification.material.Materials.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class RecipeMapTest {
 

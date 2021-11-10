@@ -760,6 +760,8 @@ metaitem.cover.solar.panel.uv.tooltip=Ultimate Voltage Solar Panel
 
 metaitem.cover.infinite_water.name=Infinite Water Cover
 metaitem.cover.infinite_water.tooltip=Creates 16 Buckets of Water every second (as Cover)
+metaitem.cover.ender_fluid_link.name=Ender Fluid Link Cover
+metaitem.cover.ender_fluid_link.tooltip=Link your fluid tanks to the Ender! (as Cover)
 
 metaitem.cover.drain=Drain Cover
 
@@ -967,6 +969,7 @@ metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
 metaarmor.energy_share.tooltip.guide=To change mode shift-right click when holding item
 
+gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 
 cover.filter.blacklist.disabled=Whitelist
 cover.filter.blacklist.enabled=Blacklist
@@ -999,11 +1002,12 @@ cover.smart_item_filter.matching_mode.ignore_fluid=Ignore Fluids
 cover.smart_item_filter.matching_mode.description=§eDefault§r - Will match recipes on both items/fluids criteria assuming you aren't providing any fluid. /n§eIgnore Fluids§r - Will match recipes only on items criteria.
 
 cover.conveyor.title=Conveyor Cover Settings (%s)
-cover.conveyor.transfer_rate=%s items/sec
+cover.conveyor.transfer_rate=§7items/sec
 cover.conveyor.mode.export=Mode: Export
 cover.conveyor.mode.import=Mode: Import
-cover.conveyor.distribution.enabled=Item distribution mode for item pipes/n§bInsert First
-cover.conveyor.distribution.disabled=Item distribution mode for item pipes/n§bRound Robin
+cover.conveyor.distribution.round_robin_enhanced=Distribution Mode/n§bEnhanced Round Robin§r/n§7Splits items equally to all inventories
+cover.conveyor.distribution.round_robin=Distribution Mode/n§bRound Robin§r with Priority/n§7Tries to split items equally to inventories
+cover.conveyor.distribution.first_insert=Distribution Mode/n§bFirst Insert§r/n§7Will insert into the first inventory it finds
 cover.conveyor.blocks_input.enabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§aEnabled
 cover.conveyor.blocks_input.disabled=If enabled, items will not be inserted when cover is set to pull items from the inventory into pipe./n§cDisabled
 cover.universal.manual_import_export.mode.disabled=Manual I/O: Disabled
@@ -1043,6 +1047,13 @@ cover.machine_controller.mode.cover_south=Control Cover (South)
 cover.machine_controller.mode.cover_north=Control Cover (North)
 cover.machine_controller.mode.cover_east=Control Cover (East)
 cover.machine_controller.mode.cover_west=Control Cover (West)
+
+cover.ender_fluid_link.title=Ender Fluid Link
+cover.ender_fluid_link.iomode.enabled=I/O Enabled
+cover.ender_fluid_link.iomode.disabled=I/O Disabled
+cover.ender_fluid_link.private.tooltip.disabled=Switch to private tank mode/nPrivate mode uses the player who originally placed the cover
+cover.ender_fluid_link.private.tooltip.enabled=Switch to public tank mode
+cover.ender_fluid_link.incomplete_hex=Inputted color is incomplete!/nIt will be applied once complete (all 8 hex digits)/nClosing the gui will lose edits!
 
 # %s is a localized material name
 item.material.oreprefix.oreBlackgranite=Granite %s Ore
@@ -4008,6 +4019,7 @@ gregtech.terminal.app_name.hardware=Hardware Manager
 gregtech.terminal.app_name.store=App Store
 gregtech.terminal.app_name.multiblock_ar=Multiblock Helper
 gregtech.terminal.app_name.world_prospector=World Prospector
+gregtech.terminal.app_name.vtank_viewer=Virtual Tank Viewer
 
 terminal.app_name.description=No description.
 terminal.app_name.tier=Tier %d
@@ -4165,6 +4177,10 @@ terminal.world_prospector.tier.2=Radius 60m (4 slot)
 terminal.world_prospector.radius=Radius %sm
 terminal.world_prospector.reference=Select a reference
 terminal.world_prospector.color=Select box color
+
+terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
+terminal.vtank_viewer.title=Virtual Tank Viewer
+terminal.vtank_viewer.refresh=Refresh tank index
 
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:

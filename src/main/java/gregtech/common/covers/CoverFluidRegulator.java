@@ -57,9 +57,12 @@ public class CoverFluidRegulator extends CoverPump {
             return 0;
         }
         switch (transferMode) {
-            case TRANSFER_ANY: return GTFluidUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
-            case KEEP_EXACT: return doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
-            case TRANSFER_EXACT: return doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
+            case TRANSFER_ANY:
+                return GTFluidUtils.transferFluids(sourceHandler, destHandler, transferLimit, fluidFilter::testFluidStack);
+            case KEEP_EXACT:
+                return doKeepExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
+            case TRANSFER_EXACT:
+                return doTransferExact(transferLimit, sourceHandler, destHandler, fluidFilter::testFluidStack, this.transferAmount);
         }
         return 0;
     }
@@ -94,7 +97,6 @@ public class CoverFluidRegulator extends CoverPump {
                               final IFluidHandler destHandler,
                               final Predicate<FluidStack> fluidFilter,
                               final int keepAmount) {
-
         if(sourceHandler == null || destHandler == null || fluidFilter == null || keepAmount <= 0)
             return 0;
 
@@ -217,6 +219,10 @@ public class CoverFluidRegulator extends CoverPump {
         return this.transferMode == TransferMode.TRANSFER_EXACT || this.transferMode == TransferMode.KEEP_EXACT;
     }
 
+    public String getTransferAmountString() {
+        return Integer.toString(this.bucketMode == BucketMode.BUCKET ? transferAmount / 1000 : transferAmount);
+    }
+
     private String getTransferSizeString() {
         int val = transferAmount;
         if (this.bucketMode == BucketMode.BUCKET) {
@@ -236,18 +242,20 @@ public class CoverFluidRegulator extends CoverPump {
     public void setBucketMode(BucketMode bucketMode) {
         super.setBucketMode(bucketMode);
         if (this.bucketMode == BucketMode.BUCKET) {
-            setTransferAmount(transferRate / 1000 * 1000);
+            setTransferAmount(transferAmount / 1000 * 1000);
         }
     }
 
     private void adjustTransferSize(int amount) {
-        if(bucketMode == BucketMode.BUCKET)
+        if (bucketMode == BucketMode.BUCKET)
             amount *= 1000;
-        switch(this.transferMode) {
+        switch (this.transferMode) {
             case TRANSFER_EXACT:
-                setTransferAmount(MathHelper.clamp(this.transferAmount + amount, 0, this.transferRate));
+                setTransferAmount(MathHelper.clamp(this.transferAmount + amount, 0, this.maxFluidTransferRate));
+                break;
             case KEEP_EXACT:
                 setTransferAmount(MathHelper.clamp(this.transferAmount + amount, 0, Integer.MAX_VALUE));
+                break;
         }
     }
 
@@ -264,15 +272,39 @@ public class CoverFluidRegulator extends CoverPump {
     @Override
     protected ModularUI buildUI(ModularUI.Builder builder, EntityPlayer player) {
         WidgetGroup filterGroup = new WidgetGroup();
-        filterGroup.addWidget(new CycleButtonWidget(88, 63, 75, 18,
+        filterGroup.addWidget(new CycleButtonWidget(92, 43, 75, 18,
                 TransferMode.class, this::getTransferMode, this::setTransferMode)
                 .setTooltipHoverString("cover.fluid_regulator.transfer_mode.description"));
 
         ServerWidgetGroup stackSizeGroup = new ServerWidgetGroup(this::checkTransferMode);
-        stackSizeGroup.addWidget(new ClickButtonWidget(88, 84, 18, 18, "-1", data -> adjustTransferSize(data.isCtrlClick ? -100 : data.isShiftClick ? -10 : -1)));
-        stackSizeGroup.addWidget(new ClickButtonWidget(144, 84, 18, 18, "+1", data -> adjustTransferSize(data.isCtrlClick ? 100 : data.isShiftClick ? +10 : +1)));
-        stackSizeGroup.addWidget(new ImageWidget(108, 84, 34, 18, GuiTextures.DISPLAY));
-        stackSizeGroup.addWidget(new AdvancedTextWidget(114, 89, this::getHoverString, 0xFFFFFF));
+        stackSizeGroup.addWidget(new ImageWidget(110, 64, 38, 18, GuiTextures.DISPLAY));
+
+        stackSizeGroup.addWidget(new IncrementButtonWidget(148, 64, 18, 18, 1, 10, 100, 1000, this::adjustTransferSize)
+                .setDefaultTooltip()
+                .setTextScale(0.7f)
+                .setShouldClientCallback(false));
+        stackSizeGroup.addWidget(new IncrementButtonWidget(92, 64, 18, 18, -1, -10, -100, -1000, this::adjustTransferSize)
+                .setDefaultTooltip()
+                .setTextScale(0.7f)
+                .setShouldClientCallback(false));
+
+        stackSizeGroup.addWidget(new TextFieldWidget2(111, 70, 36, 11, this::getTransferAmountString, val -> {
+            if (val != null && !val.isEmpty()) {
+                int amount = Integer.parseInt(val);
+                if (this.bucketMode == BucketMode.BUCKET) {
+                    amount *= 1000;
+                }
+                setTransferAmount(amount);
+            }
+        })
+                .setCentered(true)
+                .setAllowedChars("0123456789")
+                .setMaxLength(10)
+                .setValidator(getTextFieldValidator(() -> transferMode == TransferMode.TRANSFER_EXACT ? maxFluidTransferRate : Integer.MAX_VALUE))
+                .setScale(0.6f));
+
+        stackSizeGroup.addWidget(new SimpleTextWidget(129, 78, "", 0xFFFFFF, () -> bucketMode.localeName).setScale(0.5f));
+
         return super.buildUI(builder.widget(filterGroup).widget(stackSizeGroup), player);
     }
 

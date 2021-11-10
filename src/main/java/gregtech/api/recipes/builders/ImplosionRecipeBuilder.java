@@ -68,6 +68,11 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
     @ZenMethod
     public ImplosionRecipeBuilder explosivesType(ItemStack explosivesType) {
         this.explosivesType = explosivesType;
+        if (!GTUtility.isBetweenInclusive(1, 64, explosivesType.getCount())) {
+            GTLog.logger.error("Amount of explosives should be from 1 to 64 inclusive", new IllegalArgumentException());
+            recipeStatus = EnumValidationResult.INVALID;
+        }
+        this.explosivesAmount = explosivesType.getCount();
         return this;
     }
 
