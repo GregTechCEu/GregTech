@@ -45,8 +45,8 @@ public class CentralMonitorInfo extends MultiblockInfoPage {
                 builder.aisle(slice);
             }
             builder.aisle(end)
-            .where('S', MetaTileEntities.CENTRAL_MONITOR, EnumFacing.WEST)
-            .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.WEST)
+            .where('S', MetaTileEntities.CENTRAL_MONITOR, EnumFacing.NORTH)
+            .where('E', MetaTileEntities.ENERGY_INPUT_HATCH[GTValues.HV], EnumFacing.NORTH)
             .where('A', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.STEEL_SOLID))
             .where('B', MetaTileEntities.MONITOR_SCREEN, EnumFacing.WEST);
             shapes.add(builder.build());

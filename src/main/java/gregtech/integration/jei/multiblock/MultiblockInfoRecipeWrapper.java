@@ -147,7 +147,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             this.buttonPreviousPattern.enabled = false;
             this.buttonNextPattern.enabled = patterns.length > 1;
 
-            this.zoom = infoPage.getDefaultZoom() * 15;
+            this.zoom = 10 / infoPage.getDefaultZoom();
             this.rotationYaw = 20.0f;
             this.rotationPitch = 135.0f;
             this.currentRendererPage = 0;
@@ -156,8 +156,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             zoom = (float) MathHelper.clamp(zoom + (Mouse.getEventDWheel() < 0 ? 0.5 : -0.5), 3, 999);
             setNextLayer(getLayerIndex());
         }
-        if (center != null) {
-            getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
+        if (getCurrentRenderer() != null) {
+            TrackedDummyWorld world = (TrackedDummyWorld) getCurrentRenderer().world;
+            resetCenter(world);
         }
         updateParts();
     }
@@ -187,6 +188,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         WorldSceneRenderer renderer = getCurrentRenderer();
         if (renderer != null) {
             TrackedDummyWorld world = ((TrackedDummyWorld)renderer.world);
+            resetCenter(world);
             renderer.renderedBlocksMap.clear();
             int minY = (int) world.getMinPos().getY();
             Collection<BlockPos> renderBlocks;
@@ -197,6 +199,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             }
             renderer.addRenderedBlocks(renderBlocks, null);
         }
+    }
+
+    private void resetCenter(TrackedDummyWorld world) {
+        Vector3f size = world.getSize();
+        Vector3f minPos = world.getMinPos();
+        center = new Vector3f(minPos.x + size.x / 2, minPos.y + size.y / 2, minPos.z + size.z / 2);
+        getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
     }
 
     private void switchRenderPage(int amount) {
