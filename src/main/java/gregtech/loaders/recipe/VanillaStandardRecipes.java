@@ -166,8 +166,9 @@ public class VanillaStandardRecipes {
 
         for (int i = 0; i < 16; i++) {
             // nerf glass panes
-            if (ConfigHolder.vanillaRecipes.hardGlassRecipes)
+            if (ConfigHolder.vanillaRecipes.hardGlassRecipes) {
                 ModHandler.removeRecipes(new ItemStack(Blocks.STAINED_GLASS_PANE, 16, i));
+            }
 
             ModHandler.addShapedRecipe("stained_glass_pane_" + i, new ItemStack(Blocks.STAINED_GLASS_PANE, 2, i), "sG", 'G', new ItemStack(Blocks.STAINED_GLASS, 1, i));
 
@@ -176,6 +177,11 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.STAINED_GLASS_PANE, 8, i))
                     .buildAndRegister();
         }
+
+        if (ConfigHolder.vanillaRecipes.hardGlassRecipes)
+            ModHandler.removeRecipes(new ItemStack(Blocks.GLASS_PANE, 16));
+
+        ModHandler.addShapedRecipe("glass_pane", new ItemStack(Blocks.GLASS_PANE, 2), "sG", 'G', new ItemStack(Blocks.GLASS));
 
         CUTTER_RECIPES.recipeBuilder().duration(50).EUt(8)
                 .inputs(new ItemStack(Blocks.GLASS, 3))
@@ -930,7 +936,7 @@ public class VanillaStandardRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(8).inputs(new ItemStack(Blocks.STONE_SLAB, 1, 0)).inputs(new ItemStack(Items.STICK, 6)).outputs(new ItemStack(Items.ARMOR_STAND)).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(64).inputs(new ItemStack(Blocks.GLASS, 7, GTValues.W)).inputs(new ItemStack(Items.GHAST_TEAR)).inputs(new ItemStack(Items.ENDER_EYE)).outputs(new ItemStack(Items.END_CRYSTAL)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(16).inputs(new ItemStack(Items.GHAST_TEAR)).inputs(new ItemStack(Items.ENDER_EYE)).outputs(new ItemStack(Items.END_CRYSTAL)).fluidInputs(Glass.getFluid(GTValues.L * 7)).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.stick, Materials.Iron, 12)
