@@ -141,7 +141,7 @@ public class OrePrefix {
     // made of 1 Ingots.
     public static final OrePrefix toolHeadShovel = new OrePrefix("toolHeadShovel", M, null, MaterialIconType.toolHeadShovel, ENABLE_UNIFICATION, hasToolProperty);
     // made of 1 Ingots.
-    public static final OrePrefix toolHeadUniversalSpade = new OrePrefix("toolHeadUniversalSpade", M, null, MaterialIconType.toolHeadUniversalSpade, ENABLE_UNIFICATION, hasToolProperty);
+    public static final OrePrefix toolHeadUniversalSpade = new OrePrefix("toolHeadUniversalSpade", M * 6, null, MaterialIconType.toolHeadUniversalSpade, ENABLE_UNIFICATION, hasToolProperty);
     // made of 3 Ingots.
     public static final OrePrefix toolHeadAxe = new OrePrefix("toolHeadAxe", M * 3, null, MaterialIconType.toolHeadAxe, ENABLE_UNIFICATION, hasToolProperty);
     // made of 2 Ingots.
