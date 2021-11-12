@@ -515,8 +515,8 @@ public class VanillaStandardRecipes {
                     .buildAndRegister();
 
             CUTTER_RECIPES.recipeBuilder().duration(20).EUt(7)
-                    .inputs(new ItemStack(Blocks.WOOL, 1, i))
-                    .outputs(new ItemStack(Blocks.CARPET, 1, i))
+                    .inputs(new ItemStack(Blocks.WOOL, 2, i))
+                    .outputs(new ItemStack(Blocks.CARPET, 3, i))
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(20).EUt(7)
@@ -945,13 +945,15 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.RAIL, 32))
                 .duration(200).EUt(30).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.stick, Materials.Gold, 12)
-                .input(OrePrefix.stick, Materials.Wood)
-                .input(dust, Redstone)
-                .circuitMeta(1)
-                .outputs(new ItemStack(Blocks.RAIL, 32))
-                .duration(200).EUt(30).buildAndRegister();
+        if (!ConfigHolder.vanillaRecipes.hardRedstoneRecipes) {
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.stick, Materials.Gold, 12)
+                    .input(OrePrefix.stick, Materials.Wood)
+                    .input(dust, Redstone)
+                    .circuitMeta(1)
+                    .outputs(new ItemStack(Blocks.GOLDEN_RAIL, 32))
+                    .duration(200).EUt(30).buildAndRegister();
+        }
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.Iron, 3)

@@ -389,7 +389,7 @@ public class MixerRecipes {
                 .input(dust, Magnesium)
                 .input(dust, Boron, 2)
                 .notConsumable(new IntCircuitIngredient(2))
-                .output(dust, MagnesiumDiboride, 2)
+                .output(dust, MagnesiumDiboride, 3)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(480)
