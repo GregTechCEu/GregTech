@@ -175,7 +175,11 @@ public class CommonProxy {
         // registers coiltypes for the BlastTemperatureProperty used in Blast Furnace Recipes
         for (BlockWireCoil.CoilType values : BlockWireCoil.CoilType.values()) {
             BlastTemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
-                    "tile.wire_coil." + values.getName() + ".name");
+                    String.format("tile.wire_coil.%s.name", values.getName()));
+        }
+        for (BlockWireCoil2.CoilType2 values : BlockWireCoil2.CoilType2.values()) {
+            BlastTemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
+                    String.format("tile.wire_coil2.%s.name", values.getName()));
         }
 
         //Registers Fusion tiers for the FusionEUToStartProperty
