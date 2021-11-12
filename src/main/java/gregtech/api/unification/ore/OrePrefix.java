@@ -185,7 +185,7 @@ public class OrePrefix {
     // Cobblestone Prefix for all Cobblestones.
     public static final OrePrefix stoneCobble = new OrePrefix("stoneCobble", -1, Materials.Stone, null, SELF_REFERENCING, null);
 
-    public static final OrePrefix frameGt = new OrePrefix("frameGt", (long) (M * 1.375), null, null, ENABLE_UNIFICATION, material -> material.hasFlag(GENERATE_FRAME));
+    public static final OrePrefix frameGt = new OrePrefix("frameGt", M * 2, null, null, ENABLE_UNIFICATION, material -> material.hasFlag(GENERATE_FRAME));
 
     public static final OrePrefix pipeTinyFluid = new OrePrefix("pipeTinyFluid", M / 2, null, MaterialIconType.pipeTiny, ENABLE_UNIFICATION, null);
     public static final OrePrefix pipeSmallFluid = new OrePrefix("pipeSmallFluid", M, null, MaterialIconType.pipeSmall, ENABLE_UNIFICATION, null);
