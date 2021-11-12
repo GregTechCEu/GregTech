@@ -198,6 +198,7 @@ public class ElementMaterials {
         Darmstadtium = new Material.Builder(27, "darmstadtium")
                 .ingot().fluid()
                 .color(0xAAAAAA)
+                .flags(GENERATE_PLATE)
                 .element(Elements.Ds)
                 .build();
 
