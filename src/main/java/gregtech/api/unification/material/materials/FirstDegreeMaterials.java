@@ -559,7 +559,7 @@ public class FirstDegreeMaterials {
                 .ingot().fluid()
                 .color(0xC8C8DC).iconSet(SHINY)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_FRAME, GENERATE_LONG_ROD, GENERATE_DENSE)
-                .components(Iron, 7, Chrome, 1, Manganese, 1, Nickel, 1)
+                .components(Iron, 6, Chrome, 1, Manganese, 1, Nickel, 1)
                 .toolStats(7.0f, 4.0f, 480, 33)
                 .fluidPipeProperties(2428, 60, true)
                 .blastTemp(1700)
