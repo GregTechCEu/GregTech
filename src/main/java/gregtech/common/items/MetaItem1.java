@@ -110,52 +110,30 @@ public class MetaItem1 extends StandardMetaItem {
         }
 
         // Fluid Cells: ID 78-88
-        FLUID_CELL = addItem(78, "fluid_cell").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, false))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tin, GTValues.M * 2)));
+        FLUID_CELL = addItem(78, "fluid_cell").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, false));
 
-        UNIVERSAL_FLUID_CELL = addItem(79, "fluid_cell.universal").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tin, GTValues.M * 2)));
+        FLUID_CELL_UNIVERSAL = addItem(79, "fluid_cell.universal").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, true));
 
-        LARGE_FLUID_CELL_STEEL = addItem(80, "large_fluid_cell.steel")
+        FLUID_CELL_LARGE_STEEL = addItem(80, "large_fluid_cell.steel")
                 .addComponents(new FluidStats(8000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, OrePrefix.ingot.materialAmount * 4L)));
 
-        LARGE_FLUID_CELL_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
+        FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
                 .addComponents(new FluidStats(32000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, OrePrefix.ingot.materialAmount * 4L)));
 
-        LARGE_FLUID_CELL_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
+        FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
                 .addComponents(new FluidStats(64000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, OrePrefix.ingot.materialAmount * 6L)));
 
-        LARGE_FLUID_CELL_TITANIUM = addItem(83, "large_fluid_cell.titanium")
+        FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
                 .addComponents(new FluidStats(128000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, OrePrefix.ingot.materialAmount * 6L)));
 
-        LARGE_FLUID_CELL_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
+        FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
                 .addComponents(new FluidStats(512000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
                 .setMaxStackSize(32)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
-
-        LARGE_FLUID_CELL_CHROME = addItem(85, "large_fluid_cell.chrome")
-                .addComponents(new FluidStats(2048000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaxStackSize(32)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Chrome, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
-
-        LARGE_FLUID_CELL_IRIDIUM = addItem(86, "large_fluid_cell.iridium")
-                .addComponents(new FluidStats(8192000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaxStackSize(2)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Iridium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
-
-        LARGE_FLUID_CELL_OSMIUM = addItem(87, "large_fluid_cell.osmium")
-                .addComponents(new FluidStats(32768000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaxStackSize(1)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
-
-        LARGE_FLUID_CELL_NEUTRONIUM = addItem(88, "large_fluid_cell.neutronium")
-                .addComponents(new FluidStats(131072000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaxStackSize(1)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Neutronium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, OrePrefix.ingot.materialAmount * 8L)));
 
         // Limited-Use Items: ID 89-95
 

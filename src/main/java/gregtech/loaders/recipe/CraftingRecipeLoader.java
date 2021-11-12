@@ -130,8 +130,8 @@ public class CraftingRecipeLoader {
 
         ModHandler.addShapedRecipe("plate_rubber", OreDictUnifier.get(OrePrefix.plate, Materials.Rubber), " h ", " I ", " I ", 'I', OreDictUnifier.get(OrePrefix.ingot, Materials.Rubber));
 
-        ModHandler.addShapedRecipe("universal_fluid_cell", MetaItems.UNIVERSAL_FLUID_CELL.getStackForm(), "C", 'C', MetaItems.FLUID_CELL);
-        ModHandler.addShapedRecipe("universal_fluid_cell_revert", MetaItems.FLUID_CELL.getStackForm(), "C", 'C', MetaItems.UNIVERSAL_FLUID_CELL);
+        ModHandler.addShapedRecipe("universal_fluid_cell", MetaItems.FLUID_CELL_UNIVERSAL.getStackForm(), "C", 'C', MetaItems.FLUID_CELL);
+        ModHandler.addShapedRecipe("universal_fluid_cell_revert", MetaItems.FLUID_CELL.getStackForm(), "C", 'C', MetaItems.FLUID_CELL_UNIVERSAL);
 
         ///////////////////////////////////////////////////
         //               Shapes and Molds                //

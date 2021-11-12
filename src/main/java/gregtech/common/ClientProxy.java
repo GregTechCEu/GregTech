@@ -202,6 +202,7 @@ public class ClientProxy extends CommonProxy {
             "super_tank",
             "drum.",
             "_tank",
+            "fluid_cell"
     };
 
     @SubscribeEvent
