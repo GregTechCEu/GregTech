@@ -37,14 +37,14 @@ public class MetaItem1 extends StandardMetaItem {
     @Override
     public void registerSubItems() {
         // Credits: ID 0-10
-        CREDIT_COPPER = addItem(0, "credit.copper").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Copper, GTValues.M / 4)));
-        CREDIT_CUPRONICKEL = addItem(1, "credit.cupronickel").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Cupronickel, GTValues.M / 4)));
-        CREDIT_SILVER = addItem(2, "credit.silver").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Silver, GTValues.M / 4))).setRarity(EnumRarity.UNCOMMON);
-        CREDIT_GOLD = addItem(3, "credit.gold").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4))).setRarity(EnumRarity.UNCOMMON);
-        CREDIT_PLATINUM = addItem(4, "credit.platinum").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, GTValues.M / 4))).setRarity(EnumRarity.RARE);
-        CREDIT_OSMIUM = addItem(5, "credit.osmium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmium, GTValues.M / 4))).setRarity(EnumRarity.RARE);
-        CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Naquadah, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
-        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Neutronium, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
+        CREDIT_COPPER = addItem(0, "credit.copper");
+        CREDIT_CUPRONICKEL = addItem(1, "credit.cupronickel");
+        CREDIT_SILVER = addItem(2, "credit.silver").setRarity(EnumRarity.UNCOMMON);
+        CREDIT_GOLD = addItem(3, "credit.gold").setRarity(EnumRarity.UNCOMMON);
+        CREDIT_PLATINUM = addItem(4, "credit.platinum").setRarity(EnumRarity.RARE);
+        CREDIT_OSMIUM = addItem(5, "credit.osmium").setRarity(EnumRarity.RARE);
+        CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setRarity(EnumRarity.EPIC);
+        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium") .setRarity(EnumRarity.EPIC);
 
         COIN_GOLD_ANCIENT = addItem(8, "coin.gold.ancient").
                 setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4))).setRarity(EnumRarity.RARE);
