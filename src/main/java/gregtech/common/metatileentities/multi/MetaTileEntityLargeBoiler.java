@@ -562,7 +562,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     @Override
     public void onAttached() {
         super.onAttached();
-        if (ConfigHolder.machineSounds) {
+        if (ConfigHolder.machineSounds && this.getWorld() != null) {
             PositionedSoundMTE machineSound = new PositionedSoundMTE(GTSounds.BOILER.getSoundName(), SoundCategory.BLOCKS, this, this.getPos());
             Minecraft.getMinecraft().getSoundHandler().playSound(machineSound);
             Minecraft.getMinecraft().getSoundHandler().update();
@@ -570,6 +570,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     }
 
     public boolean canCreateSound() {
-        return isActive();
+        return isActive;
     }
 }
