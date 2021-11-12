@@ -922,7 +922,7 @@ public class VanillaStandardRecipes {
         ASSEMBLER_RECIPES.recipeBuilder().duration(300).EUt(4).inputs(new ItemStack(Blocks.OBSIDIAN, 8)).inputs(new ItemStack(Items.ENDER_EYE)).outputs(new ItemStack(Blocks.ENDER_CHEST)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(8).circuitMeta(6).inputs(new ItemStack(Blocks.COBBLESTONE, 1, 0)).outputs(new ItemStack(Blocks.COBBLESTONE_WALL, 1, 0)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(8).circuitMeta(6).inputs(new ItemStack(Blocks.COBBLESTONE, 1, 1)).outputs(new ItemStack(Blocks.COBBLESTONE_WALL, 1, 1)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(8).circuitMeta(6).inputs(new ItemStack(Blocks.MOSSY_COBBLESTONE, 1, 0)).outputs(new ItemStack(Blocks.COBBLESTONE_WALL, 1, 1)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).inputs(new ItemStack(Items.CHORUS_FRUIT_POPPED)).inputs(new ItemStack(Items.BLAZE_ROD)).outputs(new ItemStack(Blocks.END_ROD, 4)).buildAndRegister();
 
