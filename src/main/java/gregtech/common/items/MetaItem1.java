@@ -281,9 +281,9 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Special Machine Components: ID 266-280
         COMPONENT_SAW_BLADE_DIAMOND = addItem(266, "component.sawblade.diamond").addOreDict(OreDictNames.craftingSawBlade)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.CobaltBrass, GTValues.M * 8), new MaterialStack(Materials.Diamond, GTValues.M)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.CobaltBrass, GTValues.M * 4), new MaterialStack(Materials.Diamond, GTValues.M)));
         COMPONENT_SAW_BLADE_TUNGSTEN = addItem(267, "component.sawblade.tungsten").addOreDict(OreDictNames.craftingSawBlade)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Ultimet, GTValues.M * 8), new MaterialStack(Materials.TungstenCarbide, GTValues.M * 4)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Ultimet, GTValues.M * 4), new MaterialStack(Materials.TungstenCarbide, GTValues.M * 4)));
         COMPONENT_GRINDER_DIAMOND = addItem(268, "component.grinder.diamond").addOreDict(OreDictNames.craftingGrinder)
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 8), new MaterialStack(Materials.Diamond, GTValues.M * 5)));
         COMPONENT_GRINDER_TUNGSTEN = addItem(269, "component.grinder.tungsten").addOreDict(OreDictNames.craftingGrinder)
