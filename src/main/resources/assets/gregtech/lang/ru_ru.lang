@@ -199,13 +199,8 @@ metaitem.large_fluid_cell.aluminium.name=%s Aluminium Cell
 metaitem.large_fluid_cell.stainless_steel.name=%s Stainless Steel Cell
 metaitem.large_fluid_cell.titanium.name=%s Titanium Cell
 metaitem.large_fluid_cell.tungstensteel.name=%s вольфрамовая капсула
-metaitem.large_fluid_cell.chrome.name=%s Chrome Cell
-metaitem.large_fluid_cell.iridium.name=%s Iridium Cell
-metaitem.large_fluid_cell.osmium.name=%s Osmium Cell
-metaitem.large_fluid_cell.neutronium.name=%s Neutronium Cell
 
 # TODO
-gregtech.item.fluid_cell.jei_description=The Extractor can be used to clear the inventory of any type of cell.
 
 metaitem.spray.can.dyes.white.name=Аэрозоль (Белый)
 metaitem.spray.can.dyes.orange.name=Аэрозоль (Оранжевый)
