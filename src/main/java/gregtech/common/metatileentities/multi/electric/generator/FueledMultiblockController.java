@@ -114,11 +114,7 @@ public abstract class FueledMultiblockController extends MultiblockWithDisplayBa
     @Override
     public void onAttached() {
         super.onAttached();
-        if (workableHandler.recipeMap.getSound() != null && ConfigHolder.machineSounds) {
-            PositionedSoundMTE machineSound = new PositionedSoundMTE(workableHandler.recipeMap.getSound().getSoundName(), SoundCategory.BLOCKS, this, this.getPos());
-            Minecraft.getMinecraft().getSoundHandler().playSound(machineSound);
-            Minecraft.getMinecraft().getSoundHandler().update();
-        }
+        this.setupSound(workableHandler.recipeMap.getSound(), this.getPos(), this.getWorld());
     }
 
     public boolean canCreateSound() {

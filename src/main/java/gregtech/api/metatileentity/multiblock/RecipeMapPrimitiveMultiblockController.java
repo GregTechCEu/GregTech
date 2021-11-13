@@ -63,11 +63,7 @@ public abstract class RecipeMapPrimitiveMultiblockController extends MultiblockW
     @Override
     public void onAttached() {
         super.onAttached();
-        if (recipeMapWorkable.recipeMap.getSound() != null && ConfigHolder.machineSounds && this.getWorld() != null) {
-            PositionedSoundMTE machineSound = new PositionedSoundMTE(recipeMapWorkable.recipeMap.getSound().getSoundName(), SoundCategory.BLOCKS, this, this.getPos());
-            Minecraft.getMinecraft().getSoundHandler().playSound(machineSound);
-            Minecraft.getMinecraft().getSoundHandler().update();
-        }
+        this.setupSound(recipeMapWorkable.recipeMap.getSound(), this.getPos(), this.getWorld());
     }
 
     public boolean canCreateSound() {

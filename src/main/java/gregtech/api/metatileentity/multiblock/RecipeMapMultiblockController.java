@@ -345,11 +345,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     @Override
     public void onAttached() {
         super.onAttached();
-        if (recipeMap.getSound() != null && ConfigHolder.machineSounds && this.getWorld() != null) {
-            PositionedSoundMTE machineSound = new PositionedSoundMTE(recipeMap.getSound().getSoundName(), SoundCategory.BLOCKS, this, this.getPos());
-            Minecraft.getMinecraft().getSoundHandler().playSound(machineSound);
-            Minecraft.getMinecraft().getSoundHandler().update();
-        }
+        this.setupSound(recipeMap.getSound(), this.getPos(), this.getWorld());
     }
 
     public boolean canCreateSound() {

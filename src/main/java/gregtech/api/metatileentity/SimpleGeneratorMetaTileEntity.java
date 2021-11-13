@@ -155,11 +155,7 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity implemen
     @Override
     public void onAttached() {
         super.onAttached();
-        if (workableHandler.recipeMap.getSound() != null && ConfigHolder.machineSounds) {
-            PositionedSoundMTE machineSound = new PositionedSoundMTE(workableHandler.recipeMap.getSound().getSoundName(), SoundCategory.BLOCKS, this, this.getPos());
-            Minecraft.getMinecraft().getSoundHandler().playSound(machineSound);
-            Minecraft.getMinecraft().getSoundHandler().update();
-        }
+        this.setupSound(recipeMap.getSound(), this.getPos());
     }
 
     public boolean canCreateSound() {
