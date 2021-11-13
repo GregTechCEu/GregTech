@@ -155,7 +155,7 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity implemen
     @Override
     public void onAttached() {
         super.onAttached();
-        this.setupSound(recipeMap.getSound(), this.getPos());
+        this.setupSound(recipeMap.getSound(), this.getPos(), this.getWorld());
     }
 
     public boolean canCreateSound() {

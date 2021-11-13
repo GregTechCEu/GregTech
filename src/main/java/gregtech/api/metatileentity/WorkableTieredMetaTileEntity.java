@@ -163,6 +163,6 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     public void onAttached() {
         super.onAttached();
-        this.setupSound(this.workable.recipeMap.getSound(), this.getPos());
+        this.setupSound(this.workable.recipeMap.getSound(), this.getPos(), this.getWorld());
     }
 }

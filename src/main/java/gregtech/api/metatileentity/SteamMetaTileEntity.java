@@ -138,6 +138,6 @@ public abstract class SteamMetaTileEntity extends MetaTileEntity implements ISou
     @Override
     public void onAttached() {
         super.onAttached();
-        this.setupSound(workableHandler.recipeMap.getSound(), this.getPos());
+        this.setupSound(workableHandler.recipeMap.getSound(), this.getPos(), this.getWorld());
     }
 }
