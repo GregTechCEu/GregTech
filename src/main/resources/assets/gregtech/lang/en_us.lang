@@ -56,9 +56,9 @@ gregtech.multiblock.multi_smelter.description=The Multi Smelter is a multiblock 
 gregtech.multiblock.large_boiler.description=Large Boilers are multiblocks that generate steam from an energy source and water. Said energy source is usually a solid fuel or some high-density fluid. Tiers differ only by amount of steam outputted.
 gregtech.multiblock.large_turbine.description=Large Turbines are multiblocks that generate power from steam, gases, and plasma by having them spin the turbine's rotor. Energy output is based on rotor efficiency and current speed of turbine. Gearbox casings are used in the center of the structure.
 gregtech.multiblock.assembly_line.description=The Assembly Line is a large multiblock structure consisting of 5 to 16 "slices". In theory, it's large Assembling Machine, used for creating advanced crafting components.
-gregtech.multiblock.fusion_reactor_mk1.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. The Mark 1 Fusion Reactor can use LuV, ZPM or UV Energy Hatches. For every Hatch it has its buffer increases by 10M EU.
-gregtech.multiblock.fusion_reactor_mk2.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. The Mark 2 Fusion Reactor can use ZPM or UV Energy Hatches. For every Hatch it has its buffer increases by 20M EU.
-gregtech.multiblock.fusion_reactor_mk3.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. The Mark 3 Fusion Reactor can only use UV Energy Hatches. For every Hatch it has its buffer increases by 40M EU.
+gregtech.multiblock.fusion_reactor_mk1.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. The Mark 1 Fusion Reactor can only use LuV Energy Hatches. For every Hatch it has its buffer increases by 10M EU, with a maximum of 160M.
+gregtech.multiblock.fusion_reactor_mk2.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. The Mark 2 Fusion Reactor can only use ZPM Energy Hatches. For every Hatch it has its buffer increases by 20M EU, with a maximum of 320M.
+gregtech.multiblock.fusion_reactor_mk3.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. The Mark 3 Fusion Reactor can only use UV Energy Hatches. For every Hatch it has its buffer increases by 40M EU, with a maximum of 640M.
 gregtech.multiblock.fusion_reactor.heat=Heat: %d
 gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reactor performs chemical reactions at 100% energy efficiency. Overclocks multiply both speed and energy by 4. The multiblock requires exactly 1 Cupronickel Coil Block, which must be placed adjacent to the PTFE Pipe casing located in the center.
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
@@ -2109,10 +2109,6 @@ tile.wire_coil.naquadah_alloy.name=Naquadah Alloy Coil Block
 tile.wire_coil.fluxed_electrum.name=Fluxed Electrum Coil Block
 tile.wire_coil.diamericium_titanium.name=Diamericium Titanium Coil Block
 
-# Fusion coil blocks
-tile.fusion_coil.superconductor.name=Superconducting Coil Block
-tile.fusion_coil.fusion_coil.name=Fusion Coil Block
-
 # General casing block tooltip
 tile.machine_casing.tooltip1=Mobs cannot Spawn on this Block
 tile.machine_casing.tooltip2=This is NOT a TileEntity!
@@ -2196,11 +2192,17 @@ tile.multiblock_casing.engine_intake.name=Engine Intake Casing
 tile.multiblock_casing.grate.name=Grate Machine Casing
 tile.multiblock_casing.assembler.name=Assembler Machine Casing
 tile.multiblock_casing.assembly_line.name=Assembly Line Casing
-tile.multiblock_casing.fusion.name=Fusion Machine Casing
-tile.multiblock_casing.fusion_mk2.name=Fusion Machine Casing MK II
+
+# Fusion casing blocks
+tile.fusion_casing.superconductor_coil.name=Superconducting Coil Block
+tile.fusion_casing.fusion_coil.name=Fusion Coil Block
+tile.fusion_casing.fusion_casing.name=Fusion Machine Casing
+tile.fusion_casing.fusion_casing_mk2.name=Fusion Machine Casing MK II
+tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 
 # Transparent casing blocks
 tile.transparent_casing.reinforced_glass.name=Reinforced Glass
+tile.transparent_casing.fusion_glass.name=Fusion Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech

@@ -13,10 +13,10 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.BlockFusionCoil;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
+import gregtech.common.blocks.BlockTransparentCasing;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
@@ -118,10 +118,7 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("casing_assembler_casing", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(ASSEMBLER_CASING, 2), "CCC", "CFC", "CMC", 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Elite), 'F', new UnificationEntry(OrePrefix.frameGt, Materials.TungstenSteel), 'M', MetaItems.ELECTRIC_MOTOR_IV);
         ModHandler.addShapedRecipe("casing_assembly_line", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(ASSEMBLY_LINE_CASING, 2), "PhP", "AFA", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'A', MetaItems.ROBOT_ARM_IV.getStackForm(), 'F', OreDictUnifier.get(OrePrefix.frameGt, Materials.TungstenSteel));
 
-        ModHandler.addShapedRecipe("casing_fusion_mk1", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(FUSION_CASING), "PhP", "PCP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel), 'C', MetaBlocks.MACHINE_CASING.getItemVariant(LuV));
-        ModHandler.addShapedRecipe("casing_fusion_mk2", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(FUSION_CASING_MK2), "PhP", "PCP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Americium), 'C', MetaBlocks.MULTIBLOCK_CASING.getItemVariant(FUSION_CASING));
-
-        ModHandler.addShapedRecipe("heating_coil_fusion", MetaBlocks.FUSION_COIL.getItemVariant(BlockFusionCoil.CoilType.FUSION_COIL), "CNC", "FKF", "CNC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.Master), 'N', MetaItems.NEUTRON_REFLECTOR, 'F', MetaItems.FIELD_GENERATOR_MV, 'K', MetaBlocks.FUSION_COIL.getItemVariant(BlockFusionCoil.CoilType.SUPERCONDUCTOR));
+        ModHandler.addShapedRecipe("fusion_glass", MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.FUSION_GLASS, 8), "GGG", "GNG", "GGG", 'G', MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS), 'N', MetaItems.NEUTRON_REFLECTOR.getStackForm());
 
         ModHandler.addShapedRecipe("warning_sign_yellow_stripes", MetaBlocks.WARNING_SIGN.getItemVariant(YELLOW_STRIPES), "Y  ", " M ", "  B", 'M', MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID), 'Y', "dyeYellow", 'B', "dyeBlack");
         ModHandler.addShapedRecipe("warning_sign_small_yellow_stripes", MetaBlocks.WARNING_SIGN.getItemVariant(SMALL_YELLOW_STRIPES), "  Y", " M ", "B  ", 'M', MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID), 'Y', "dyeYellow", 'B', "dyeBlack");

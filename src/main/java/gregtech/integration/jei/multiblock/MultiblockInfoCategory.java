@@ -52,9 +52,9 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("large_gas_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_GAS_TURBINE)));
         put("large_plasma_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_PLASMA_TURBINE)));
         put("assembly_line", new MultiblockInfoRecipeWrapper(new AssemblyLineInfo()));
-        put("fusion_reactor_mk1", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(0)));
-        put("fusion_reactor_mk2", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(1)));
-        put("fusion_reactor_mk3", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(2)));
+        put("fusion_reactor_mk1", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(GTValues.LuV)));
+        put("fusion_reactor_mk2", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(GTValues.ZPM)));
+        put("fusion_reactor_mk3", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(GTValues.UV)));
         put("primitive_water_pump", new MultiblockInfoRecipeWrapper(new PrimitivePumpInfo()));
         put("steam_grinder", new MultiblockInfoRecipeWrapper(new SteamGrinderInfo()));
         put("steam_oven", new MultiblockInfoRecipeWrapper(new SteamOvenInfo()));

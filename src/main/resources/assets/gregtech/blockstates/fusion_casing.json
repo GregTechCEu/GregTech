@@ -1,0 +1,68 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "active=false,variant=superconductor_coil": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/fusion/machine_coil_superconductor"
+      }
+    },
+    "active=true,variant=superconductor_coil": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/fusion/machine_coil_superconductor"
+      }
+    },
+    "active=false,variant=fusion_coil": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/fusion/machine_casing_fusion_coil"
+      }
+    },
+    "active=true,variant=fusion_coil": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/fusion/machine_casing_fusion_coil"
+      }
+    },
+    "active=false,variant=fusion_casing": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/fusion/machine_casing_fusion"
+      }
+    },
+    "active=true,variant=fusion_casing": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/casings/fusion/machine_casing_fusion",
+        "top_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_bloom"
+      }
+    },
+    "active=false,variant=fusion_casing_mk2": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/fusion/machine_casing_fusion_2"
+      }
+    },
+    "active=true,variant=fusion_casing_mk2": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_2",
+        "top_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_bloom"
+      }
+    },
+    "active=false,variant=fusion_casing_mk3": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/fusion/machine_casing_fusion_3"
+      }
+    },
+    "active=true,variant=fusion_casing_mk3": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_3",
+        "top_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_bloom"
+      }
+    }
+  }
+}
