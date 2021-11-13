@@ -1,5 +1,6 @@
 package gregtech.api.items.behavior;
 
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.net.CPacketPluginSynced;
 import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
 import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
@@ -80,9 +81,9 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
      * @param id PacketID
      * @param buf PacketBuffer
      */
-    public void writePluginData(int id, @Nonnull Consumer<PacketBuffer> buf) {
+    public final void writePluginData(int id, @Nonnull Consumer<PacketBuffer> buf) {
         if (screen != null && this.screen.getWorld() != null && !this.screen.getWorld().isRemote) {
-            screen.writeCustomData(2, packetBuffer->{
+            screen.writeCustomData(GregtechDataCodes.UPDATE_PLUGIN_DATA, packetBuffer->{
                 packetBuffer.writeVarInt(id);
                 buf.accept(packetBuffer);
             });
@@ -103,7 +104,7 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
      * @param id PacketID
      * @param buf PacketBuffer
      */
-    public void writePluginAction(int id, @Nonnull Consumer<PacketBuffer> buf) {
+    public final void writePluginAction(int id, @Nonnull Consumer<PacketBuffer> buf) {
         NetworkHandler.channel.sendToServer(new CPacketPluginSynced(this, id, buf).toFMLPacket());
     }
 
@@ -212,7 +213,7 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
     }
 
     @Override
-    public ModularUI createUI(PlayerInventoryHolder playerInventoryHolder, EntityPlayer entityPlayer) {
+    public final ModularUI createUI(PlayerInventoryHolder playerInventoryHolder, EntityPlayer entityPlayer) {
         ItemStack itemStack = playerInventoryHolder.getCurrentItem();
         MonitorPluginBaseBehavior behavior = MonitorPluginBaseBehavior.getBehavior(itemStack);
         if (behavior != null) {

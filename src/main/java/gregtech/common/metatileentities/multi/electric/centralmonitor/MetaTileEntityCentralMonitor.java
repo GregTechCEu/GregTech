@@ -4,6 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.cover.CoverBehavior;
@@ -205,15 +206,13 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         this.height = height;
         reinitializeStructurePattern();
         checkStructurePattern();
-        writeCustomData(3, buf->{
-            buf.writeInt(height);
-        });
+        writeCustomData(GregtechDataCodes.UPDATE_HEIGHT, buf-> buf.writeInt(height));
     }
 
     private void setActive(boolean isActive) {
         if(isActive == this.isActive) return;
         this.isActive = isActive;
-        writeCustomData(4, buf -> buf.writeBoolean(this.isActive));
+        writeCustomData(GregtechDataCodes.UPDATE_ACTIVE, buf -> buf.writeBoolean(this.isActive));
     }
 
     public boolean isActive() {
@@ -285,19 +284,19 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
     @Override
     public void receiveCustomData(int id, PacketBuffer buf) {
         super.receiveCustomData(id, buf);
-        if (id == 1) {
+        if (id == GregtechDataCodes.UPDATE_ALL) {
             this.width = buf.readInt();
             this.height = buf.readInt();
             readCovers(buf);
             readParts(buf);
-        } else if (id == 2) {
+        } else if (id == GregtechDataCodes.UPDATE_COVERS) {
             readCovers(buf);
-        } else if (id == 3) {
+        } else if (id == GregtechDataCodes.UPDATE_HEIGHT) {
             this.height = buf.readInt();
             this.reinitializeStructurePattern();
-        } else if (id == 4) {
+        } else if (id == GregtechDataCodes.UPDATE_ACTIVE) {
             this.isActive = buf.readBoolean();
-        } else if (id == 400) {
+        } else if (id == GregtechDataCodes.STRUCTURE_FORMED) {
             if (!this.isStructureFormed()) {
                 clearScreens();
             }
@@ -337,7 +336,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                         ((MetaTileEntityMonitorScreen) part).updateCoverValid(covers);
                     }
                 });
-                writeCustomData(2, this::writeCovers);
+                writeCustomData(GregtechDataCodes.UPDATE_COVERS, this::writeCovers);
             }
         }
     }
@@ -385,7 +384,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 screens[screen.getX()][screen.getY()] = screen;
             }
         }
-        writeCustomData(1, packetBuffer -> {
+        writeCustomData(GregtechDataCodes.UPDATE_ALL, packetBuffer -> {
             packetBuffer.writeInt(width);
             packetBuffer.writeInt(height);
             writeCovers(packetBuffer);

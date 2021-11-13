@@ -2,6 +2,7 @@ package gregtech.common.metatileentities.multi.electric.centralmonitor;
 
 import codechicken.lib.raytracer.CuboidRayTraceResult;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.GuiTextures;
@@ -91,7 +92,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         this.coverPos = cover;
         this.mode = mode;
         updateProxyPlugin();
-        writeCustomData(1, this::writeSync);
+        writeCustomData(GregtechDataCodes.UPDATE_ALL, this::writeSync);
         this.markDirty();
     }
 
@@ -109,7 +110,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         this.slot = slot;
         this.scale = scale;
         this.frameColor = color;
-        writeCustomData(1, this::writeSync);
+        writeCustomData(GregtechDataCodes.UPDATE_ALL, this::writeSync);
         markDirty();
     }
 
@@ -340,13 +341,13 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
-        if (dataId == 1) {
+        if (dataId == GregtechDataCodes.UPDATE_ALL) {
             readSync(buf);
-        } else if (dataId == 2) { //plugin
+        } else if (dataId == GregtechDataCodes.UPDATE_PLUGIN_DATA) { //plugin
             if (plugin != null) {
                 plugin.readPluginData(buf.readVarInt(), buf);
             }
-        } else if (dataId == 3) {
+        } else if (dataId == GregtechDataCodes.UPDATE_PLUGIN_ITEM) {
             try {
                 ItemStack itemStack = buf.readItemStack();
                 MonitorPluginBaseBehavior behavior = MonitorPluginBaseBehavior.getBehavior(itemStack);
@@ -419,7 +420,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             public ItemStack extractItem(int slot, int amount, boolean simulate) {
                 if (!getWorld().isRemote && !getStackInSlot(slot).isEmpty() && !simulate) {
                     unloadPlugin();
-                    writeCustomData(3, packetBuffer -> {
+                    writeCustomData(GregtechDataCodes.UPDATE_PLUGIN_ITEM, packetBuffer -> {
                         packetBuffer.writeItemStack(ItemStack.EMPTY);
                     });
                 }
@@ -518,9 +519,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                                     } else {
                                         loadPlugin(behavior);
                                     }
-                                    writeCustomData(3, packetBuffer -> {
-                                        packetBuffer.writeItemStack(inventory.getStackInSlot(0));
-                                    });
+                                    writeCustomData(GregtechDataCodes.UPDATE_PLUGIN_ITEM, packetBuffer -> packetBuffer.writeItemStack(inventory.getStackInSlot(0)));
                                 }
                             }))
                     .widget(new ClickButtonWidget(80, 130, 40, 20, "monitor.gui.title.config", (data) -> {
@@ -635,26 +634,24 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     private double[] handleRayTraceResult(RayTraceResult rayTraceResult) {
-        double x = 0;
-        double y = 0;
         double dX = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.X
                 ? rayTraceResult.hitVec.z - rayTraceResult.getBlockPos().getZ()
                 : rayTraceResult.hitVec.x - rayTraceResult.getBlockPos().getX();
         double dY = rayTraceResult.sideHit.getAxis() == EnumFacing.Axis.Y
                 ? rayTraceResult.hitVec.z - rayTraceResult.getBlockPos().getZ()
                 : rayTraceResult.hitVec.y - rayTraceResult.getBlockPos().getY();
-        x = 1 - dX;
-        y = 1 - dY;
+        dX = 1 - dX;
+        dY = 1 - dY;
         if(rayTraceResult.sideHit.getYOffset() < 0) {
-            y = 1 - y;
+            dY = 1 - dY;
         }
         if (rayTraceResult.sideHit == EnumFacing.WEST || rayTraceResult.sideHit == EnumFacing.SOUTH) {
-            x = 1 - x;
+            dX = 1 - dX;
         } else if (rayTraceResult.sideHit == EnumFacing.UP) {
-            x = 1 - x;
-            y = 1 - y;
+            dX = 1 - dX;
+            dY = 1 - dY;
         }
-        return new double[]{x, y};
+        return new double[]{dX, dY};
     }
 
     private boolean handleHitResultWithScale(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, boolean isRight, CuboidRayTraceResult rayTraceResult) {

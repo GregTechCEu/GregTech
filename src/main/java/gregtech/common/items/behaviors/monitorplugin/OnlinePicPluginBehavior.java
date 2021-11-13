@@ -1,5 +1,6 @@
 package gregtech.common.items.behaviors.monitorplugin;
 
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.resources.picturetexture.PictureTexture;
 import gregtech.api.gui.resources.utils.DownloadThread;
@@ -43,7 +44,7 @@ public class OnlinePicPluginBehavior extends MonitorPluginBaseBehavior {
         this.scaleY = scaleY;
         this.flippedX = flippedX;
         this.flippedY = flippedY;
-        writePluginData(1, packetBuffer -> {
+        writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CONFIG, packetBuffer -> {
             packetBuffer.writeString(url);
             packetBuffer.writeFloat(rotation);
             packetBuffer.writeFloat(scaleX);
@@ -56,7 +57,7 @@ public class OnlinePicPluginBehavior extends MonitorPluginBaseBehavior {
 
     @Override
     public void readPluginData(int id, PacketBuffer buf) {
-        if(id == 1){
+        if(id == GregtechDataCodes.UPDATE_PLUGIN_CONFIG){
             String _url = buf.readString(200);
             if (!this.url.equals(_url)) {
                 this.url = _url;

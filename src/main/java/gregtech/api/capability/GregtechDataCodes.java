@@ -70,4 +70,21 @@ public class GregtechDataCodes {
     public static final int DEFORM_TANK = 2;
     public static final int SYNC_FLUID_CHANGE = 3;
     public static final int SYNC_TANK_SHAPE = 4;
+
+    // Central Monitor
+    public static final int UPDATE_ALL = 1;
+    public static final int UPDATE_COVERS = 2;
+    public static final int UPDATE_HEIGHT = 3;
+    public static final int UPDATE_ACTIVE = 4;
+    public static final int UPDATE_PLUGIN_ITEM = 3;
+
+    // Central Monitor Plugin
+    public static final int UPDATE_PLUGIN_DATA = 2;
+    public static final int UPDATE_PLUGIN_CONFIG = 0;
+    public static final int ACTION_PLUGIN_CONFIG = 0;
+    public static final int UPDATE_PLUGIN_CLICK = -2;
+    public static final int UPDATE_ADVANCED_VALID_POS = 1;
+    public static final int UPDATE_FAKE_GUI = 1;
+    public static final int ACTION_FAKE_GUI = 1;
+    public static final int UPDATE_FAKE_GUI_DETECT = -1;
 }

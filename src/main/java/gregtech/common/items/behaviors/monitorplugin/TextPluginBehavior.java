@@ -1,5 +1,6 @@
 package gregtech.common.items.behaviors.monitorplugin;
 
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.widgets.TextFieldWidget;
 import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
@@ -23,7 +24,7 @@ public class TextPluginBehavior extends MonitorPluginBaseBehavior {
         if (line < 0 || line > texts.length || (texts[line].equals(text) && colors[line] == color)) return;
         this.texts[line] = text;
         this.colors[line] = color;
-        writePluginData(1, packetBuffer -> {
+        writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CONFIG, packetBuffer -> {
             packetBuffer.writeInt(texts.length);
             for (int i = 0; i < texts.length; i++) {
                 packetBuffer.writeString(texts[i]);
@@ -35,7 +36,7 @@ public class TextPluginBehavior extends MonitorPluginBaseBehavior {
 
     @Override
     public void readPluginData(int id, PacketBuffer buf) {
-        if(id == 1){
+        if(id == GregtechDataCodes.UPDATE_PLUGIN_CONFIG){
             texts = new String[buf.readInt()];
             colors = new int[texts.length];
             for (int i = 0; i < texts.length; i++) {
@@ -93,12 +94,8 @@ public class TextPluginBehavior extends MonitorPluginBaseBehavior {
         widgets.setSize(260, 210);
         for (int i = 0; i < texts.length; i++) {
             int finalI = i;
-            widgets.addWidget(new TextFieldWidget(25, 25 + i * 10, 100, 10, true, ()-> this.texts[finalI], (text)->{
-                setText(finalI, text, this.colors[finalI]);
-            }).setValidator((data)->true));
-            widgets.addWidget(new WidgetARGB(135, 25 + i * 10, 10, colors[i], color->{
-                setText(finalI, this.texts[finalI], color);
-            }));
+            widgets.addWidget(new TextFieldWidget(25, 25 + i * 10, 100, 10, true, ()-> this.texts[finalI], (text)-> setText(finalI, text, this.colors[finalI])).setValidator((data)->true));
+            widgets.addWidget(new WidgetARGB(135, 25 + i * 10, 10, colors[i], color-> setText(finalI, this.texts[finalI], color)));
         }
         return widgets;
     }

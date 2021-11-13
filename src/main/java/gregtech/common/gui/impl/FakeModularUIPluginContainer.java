@@ -1,5 +1,6 @@
 package gregtech.common.gui.impl;
 
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.impl.FakeModularGuiContainer;
@@ -46,7 +47,7 @@ public class FakeModularUIPluginContainer extends FakeModularGuiContainer {
             }
         }
         if (toUpdate.size() > 0 && this.behavior != null) {
-            behavior.writePluginData(-1, packetBuffer -> {
+            behavior.writePluginData(GregtechDataCodes.UPDATE_FAKE_GUI_DETECT, packetBuffer -> {
                 packetBuffer.writeVarInt(toUpdate.size());
                 for (Tuple<Integer, ItemStack> tuple : toUpdate) {
                     packetBuffer.writeVarInt(tuple.getFirst());
@@ -60,7 +61,7 @@ public class FakeModularUIPluginContainer extends FakeModularGuiContainer {
     @Override
     public void writeClientAction(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter) {
         if (behavior != null) {
-            behavior.writePluginAction(1, buffer -> {
+            behavior.writePluginAction(GregtechDataCodes.ACTION_FAKE_GUI, buffer -> {
                 buffer.writeVarInt(syncId);
                 buffer.writeVarInt(windowId);
                 buffer.writeVarInt(modularUI.guiWidgets.inverse().get(widget));
@@ -73,7 +74,7 @@ public class FakeModularUIPluginContainer extends FakeModularGuiContainer {
     @Override
     public void writeUpdateInfo(Widget widget, int updateId, Consumer<PacketBuffer> payloadWriter) {
         if(behavior != null) {
-            behavior.writePluginData(0, buf -> {
+            behavior.writePluginData(GregtechDataCodes.UPDATE_FAKE_GUI, buf -> {
                 buf.writeVarInt(windowId);
                 buf.writeVarInt(modularUI.guiWidgets.inverse().get(widget));
                 buf.writeVarInt(updateId);

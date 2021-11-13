@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.widgets.LabelWidget;
 import gregtech.api.gui.widgets.ToggleButtonWidget;
@@ -181,7 +182,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                 worldSceneRenderer.setCameraLookAt(center, 10 / scale, Math.toRadians(rY), Math.toRadians(rX));
             }
         } else {
-            writePluginData(1, buffer -> {
+            writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CONFIG, buffer -> {
                 buffer.writeFloat(scale);
                 buffer.writeVarInt(rY);
                 buffer.writeVarInt(rX);
@@ -225,7 +226,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                             validPos = new HashSet<>();
                             PatternMatchContext result = entity.structurePattern.checkPatternAt(entity.getWorld(), entity.getPos(), entity.getFrontFacing().getOpposite(), validPos);
                             if (result != null) {
-                                writePluginData(0, buf -> {
+                                writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> {
                                     buf.writeVarInt(validPos.size());
                                     for (BlockPos pos : validPos) {
                                         buf.writeBlockPos(pos);
@@ -237,7 +238,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
                             }
                         }
                     } else if (isValid) {
-                        writePluginData(0, buf -> buf.writeVarInt(0));
+                        writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> buf.writeVarInt(0));
                         isValid = false;
                     }
                 }
@@ -296,10 +297,9 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
 
     @Override
     public void readPluginData(int id, PacketBuffer buf) {
-        super.readPluginData(id, buf);
-        if (id == 0) {
+        if (id == GregtechDataCodes.UPDATE_ADVANCED_VALID_POS) {
             loadValidPos(buf);
-        } else if (id == 1) {
+        } else if (id == GregtechDataCodes.UPDATE_PLUGIN_CONFIG) {
             this.scale = buf.readFloat();
             this.rY = buf.readVarInt();
             this.rX = buf.readVarInt();
@@ -328,8 +328,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
 
     @Override
     public void readPluginAction(EntityPlayerMP player, int id, PacketBuffer buf) {
-        super.readPluginAction(player, id, buf);
-        if (id == 1) { //open GUI
+        if (id == GregtechDataCodes.ACTION_PLUGIN_CONFIG) { //open GUI
             BlockPos pos = buf.readBlockPos();
             TileEntity tileEntity = this.screen.getWorld().getTileEntity(pos);
             if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).isValid()) {
@@ -344,7 +343,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
             if (this.worldSceneRenderer != null) {
                 RayTraceResult rayTrace = this.worldSceneRenderer.screenPos2BlockPosFace((int) (x * RESOLUTION), (int) ((1 - y) * RESOLUTION));
                 if (rayTrace != null) {
-                    writePluginAction(1, buf -> buf.writeBlockPos(rayTrace.getBlockPos()));
+                    writePluginAction(GregtechDataCodes.ACTION_PLUGIN_CONFIG, buf -> buf.writeBlockPos(rayTrace.getBlockPos()));
                 }
             }
         }
@@ -356,7 +355,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
         if (!this.screen.getWorld().isRemote) {
             validPos = null;
             isValid = false;
-            writePluginData(0, buf -> buf.writeVarInt(0));
+            writePluginData(GregtechDataCodes.UPDATE_ADVANCED_VALID_POS, buf -> buf.writeVarInt(0));
         }
     }
 

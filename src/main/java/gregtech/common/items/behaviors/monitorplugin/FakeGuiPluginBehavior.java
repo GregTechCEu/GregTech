@@ -1,6 +1,7 @@
 package gregtech.common.items.behaviors.monitorplugin;
 
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.GregtechDataCodes;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
@@ -58,9 +59,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
         if(this.partIndex == partIndex || partIndex < 0) return;
         this.partIndex = partIndex;
         this.partPos = null;
-        writePluginData(1, buffer -> {
-            buffer.writeVarInt(this.partIndex);
-        });
+        writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CONFIG, buffer -> buffer.writeVarInt(this.partIndex));
         markAsDirty();
     }
 
@@ -133,7 +132,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
             fakeModularUIContainer = new FakeModularUIPluginContainer(ui, this);
             if (this.screen.getWorld().isRemote) {
                 fakeModularGui = new FakeModularGui(ui, fakeModularUIContainer);
-                writePluginAction(0, buffer -> {});
+                writePluginAction(GregtechDataCodes.ACTION_PLUGIN_CONFIG, buffer -> {});
             }
         } catch (Exception e) {
             GTLog.logger.error(e);
@@ -142,11 +141,10 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
 
     @Override
     public void readPluginAction(EntityPlayerMP player, int id, PacketBuffer buf) {
-        super.readPluginAction(player, id, buf);
-        if (id == 0) {
+        if (id == GregtechDataCodes.ACTION_PLUGIN_CONFIG) {
             createFakeGui();
         }
-        if (id == 1) {
+        if (id == GregtechDataCodes.ACTION_FAKE_GUI) {
             if (this.fakeModularUIContainer != null) {
                 fakeModularUIContainer.handleClientAction(buf);
             }
@@ -192,9 +190,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
         } else {
             if (partIndex > 0 && this.screen.getOffsetTimer() % 20 == 0) {
                 if (fakeModularUIContainer != null && getRealMTE() == null) {
-                    this.writePluginData(1, buf->{
-                        buf.writeVarInt(this.partIndex);
-                    });
+                    this.writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CONFIG, buf-> buf.writeVarInt(this.partIndex));
                     fakeModularUIContainer = null;
                 }
             }
@@ -234,7 +230,7 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
             MetaTileEntity mte = getRealMTE();
             if (mte != null && 0 <= mouseX && mouseX <= width && 0 <= mouseY&& mouseY <= height) {
                 if (playerIn.isSneaking()) {
-                    writePluginData(-2, buf->{
+                    writePluginData(GregtechDataCodes.UPDATE_PLUGIN_CLICK, buf->{
                         buf.writeVarInt(mouseX);
                         buf.writeVarInt(mouseY);
                         buf.writeVarInt(isRight?1:0);
@@ -250,21 +246,20 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
 
     @Override
     public void readPluginData(int id, PacketBuffer buf) {
-        super.readPluginData(id, buf);
-        if (id == 1) {
+        if (id == GregtechDataCodes.UPDATE_PLUGIN_CONFIG) {
             this.partIndex = buf.readVarInt();
             this.partPos = null;
             createFakeGui();
         }
-        else if (id == 0) {
+        else if (id == GregtechDataCodes.UPDATE_FAKE_GUI) {
             int windowID = buf.readVarInt();
             int widgetID = buf.readVarInt();
             if (fakeModularGui != null)
                 fakeModularGui.handleWidgetUpdate(windowID, widgetID, buf);
-        } else if (id == -1) {
+        } else if (id == GregtechDataCodes.UPDATE_FAKE_GUI_DETECT) {
             if (fakeModularUIContainer != null)
                 fakeModularUIContainer.handleSlotUpdate(buf);
-        } else if (id == -2) {
+        } else if (id == GregtechDataCodes.UPDATE_PLUGIN_CLICK) {
             int mouseX = buf.readVarInt();
             int mouseY = buf.readVarInt();
             int button = buf.readVarInt();
