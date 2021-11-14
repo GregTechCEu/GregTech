@@ -41,7 +41,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -82,7 +84,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .aisle("###############", "######OGO######", "###############")
                 .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
                 .aisle("####CC###CC####", "###EAAOGOAAE###", "####CC###CC####")
-                .aisle("###C#######C###", "##EAEG###GEAE##", "###C#######C###")
+                .aisle("###C#######C###", "##EKEG###GEKE##", "###C#######C###")
                 .aisle("##C#########C##", "#GAE#######EAG#", "##C#########C##")
                 .aisle("##C#########C##", "#GAG#######GAG#", "##C#########C##")
                 .aisle("#I###########I#", "OAO#########OAO", "#I###########I#")
@@ -90,7 +92,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .aisle("#I###########I#", "OAO#########OAO", "#I###########I#")
                 .aisle("##C#########C##", "#GAG#######GAG#", "##C#########C##")
                 .aisle("##C#########C##", "#GAE#######EAG#", "##C#########C##")
-                .aisle("###C#######C###", "##EAEG###GEAE##", "###C#######C###")
+                .aisle("###C#######C###", "##EKEG###GEKE##", "###C#######C###")
                 .aisle("####CC###CC####", "###EAAOGOAAE###", "####CC###CC####")
                 .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
                 .aisle("###############", "######OSO######", "###############")
@@ -98,8 +100,15 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .where('G', statePredicate(MetaBlocks.TRANSPARENT_CASING.getState(BlockTransparentCasing.CasingType.FUSION_GLASS)).or(statePredicate(getCasingState())))
                 .where('C', statePredicate(getCasingState()))
                 .where('O', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS)))
-                .where('E', statePredicate(getCasingState()).or(tilePredicate((state, tile) -> tile.metaTileEntityId.equals(MetaTileEntities.ENERGY_INPUT_HATCH[this.tier].metaTileEntityId))))
+                .where('E', statePredicate(getCasingState()).or(tilePredicate((state, tile) -> {
+                    for (int i = tier; i <= GTValues.UV; i++) {
+                        if (tile.metaTileEntityId.equals(MetaTileEntities.ENERGY_INPUT_HATCH[i].metaTileEntityId))
+                            return true;
+                    }
+                    return false;
+                })))
                 .where('I', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS)))
+                .where('K', statePredicate(getCoilState()))
                 .where('A', isAirPredicate())
                 .where('#', (tile) -> true)
                 .build();
@@ -115,14 +124,19 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
     }
 
     private IBlockState getCasingState() {
-        switch (tier) {
-            case GTValues.LuV:
-                return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CoilType.FUSION_CASING);
-            case GTValues.ZPM:
-                return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CoilType.FUSION_CASING_MK2);
-            default:
-                return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CoilType.FUSION_CASING_MK3);
-        }
+        if (tier == GTValues.LuV)
+            return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_CASING);
+        if (tier == GTValues.ZPM)
+            return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_CASING_MK2);
+
+        return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_CASING_MK3);
+    }
+
+    private IBlockState getCoilState() {
+        if (tier == GTValues.LuV)
+            return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL);
+
+        return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_COIL);
     }
 
     @Override
@@ -162,31 +176,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        if (!this.isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure").setStyle(new Style().setColor(TextFormatting.RED)));
-        }
-        if (this.isStructureFormed()) {
-            if (!this.recipeMapWorkable.isWorkingEnabled()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-            } else if (this.recipeMapWorkable.isActive()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-                int currentProgress;
-                if (energyContainer.getEnergyCapacity() > 0) {
-                    currentProgress = (int) (this.recipeMapWorkable.getProgressPercent() * 100.0D);
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
-                } else {
-                    currentProgress = -this.recipeMapWorkable.getRecipeEUt();
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.generation_eu", currentProgress));
-                }
-            } else {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-            }
-
-            if (this.recipeMapWorkable.isHasNotEnoughEnergy()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-        }
-
+        super.addDisplayText(textList);
         textList.add(new TextComponentString("EU: " + this.energyContainer.getEnergyStored() + " / " + this.energyContainer.getEnergyCapacity()));
         textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
     }

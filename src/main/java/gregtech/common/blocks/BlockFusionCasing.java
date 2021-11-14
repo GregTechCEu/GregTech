@@ -9,7 +9,7 @@ import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
 
-public class BlockFusionCasing extends VariantActiveBlock<BlockFusionCasing.CoilType> {
+public class BlockFusionCasing extends VariantActiveBlock<BlockFusionCasing.CasingType> {
 
     public BlockFusionCasing() {
         super(net.minecraft.block.material.Material.IRON);
@@ -18,7 +18,7 @@ public class BlockFusionCasing extends VariantActiveBlock<BlockFusionCasing.Coil
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
         setHarvestLevel("wrench", 2);
-        setDefaultState(getState(CoilType.SUPERCONDUCTOR_COIL));
+        setDefaultState(getState(CasingType.SUPERCONDUCTOR_COIL));
     }
 
     @Override
@@ -26,7 +26,7 @@ public class BlockFusionCasing extends VariantActiveBlock<BlockFusionCasing.Coil
         return false;
     }
 
-    public enum CoilType implements IStringSerializable {
+    public enum CasingType implements IStringSerializable {
 
         SUPERCONDUCTOR_COIL("superconductor_coil"),
         FUSION_COIL("fusion_coil"),
@@ -36,7 +36,7 @@ public class BlockFusionCasing extends VariantActiveBlock<BlockFusionCasing.Coil
 
         private final String name;
 
-        CoilType(String name) {
+        CasingType(String name) {
             this.name = name;
         }
 

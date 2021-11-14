@@ -45,7 +45,7 @@ public class AssemblyLineLoader {
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder().inputs(OreDictUnifier.get(OrePrefix.plate, Materials.Neutronium, 16), MetaItems.WETWARE_MAINFRAME_UHV.getStackForm(), MetaItems.WETWARE_MAINFRAME_UHV.getStackForm(), MetaItems.WETWARE_MAINFRAME_UHV.getStackForm(), MetaItems.WETWARE_MAINFRAME_UHV.getStackForm(), MetaItems.ENERGY_LAPOTRONIC_CLUSTER.getStackForm(8), MetaItems.FIELD_GENERATOR_UV.getStackForm(2), MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT_WAFER.getStackForm(64), MetaItems.HIGH_POWER_INTEGRATED_CIRCUIT_WAFER.getStackForm(64), MetaItems.SMD_DIODE.getStackForm(16), OreDictUnifier.get(OrePrefix.wireGtSingle, Materials.EnrichedNaquadahTriniumEuropiumDuranide, 32)).fluidInputs(Materials.SolderingAlloy.getFluid(2880), Materials.Polybenzimidazole.getFluid(1000), Materials.Naquadria.getFluid(1152)).outputs(MetaItems.ULTIMATE_BATTERY.getStackForm()).duration(2000).EUt(300000).buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CoilType.SUPERCONDUCTOR_COIL))
+                .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Ultimate)
@@ -63,7 +63,7 @@ public class AssemblyLineLoader {
                 .buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CoilType.SUPERCONDUCTOR_COIL))
+                .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Super)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Super)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Super)
@@ -81,7 +81,7 @@ public class AssemblyLineLoader {
                 .buildAndRegister();
 
         RecipeMaps.ASSEMBLY_LINE_RECIPES.recipeBuilder()
-                .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CoilType.SUPERCONDUCTOR_COIL))
+                .inputs(MetaBlocks.FUSION_CASING.getItemVariant(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL))
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Infinite)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Infinite)
                 .input(OrePrefix.circuit, MarkerMaterials.Tier.Infinite)
