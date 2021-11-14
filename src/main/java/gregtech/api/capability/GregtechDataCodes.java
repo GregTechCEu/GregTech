@@ -87,4 +87,13 @@ public class GregtechDataCodes {
     public static final int UPDATE_FAKE_GUI = 1;
     public static final int ACTION_FAKE_GUI = 1;
     public static final int UPDATE_FAKE_GUI_DETECT = -1;
+
+    // Digital Interface
+    public static final int UPDATE_MODE = 1;
+    public static final int UPDATE_FLUID = 2;
+    public static final int UPDATE_ITEM = 3;
+    public static final int UPDATE_ENERGY = 4;
+    public static final int UPDATE_ENERGY_PER = 5;
+    public static final int UPDATE_MACHINE = 6;
+
 }

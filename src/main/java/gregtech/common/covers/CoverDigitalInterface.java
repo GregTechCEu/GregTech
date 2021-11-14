@@ -6,10 +6,7 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Matrix4;
 import codechicken.lib.vec.Rotation;
-import gregtech.api.capability.GregtechCapabilities;
-import gregtech.api.capability.GregtechTileCapabilities;
-import gregtech.api.capability.IEnergyContainer;
-import gregtech.api.capability.IWorkable;
+import gregtech.api.capability.*;
 import gregtech.api.capability.impl.*;
 import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverWithUI;
@@ -31,7 +28,6 @@ import gregtech.common.terminal.app.prospector.widget.WidgetOreList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -71,8 +67,6 @@ import java.util.UUID;
 
 public class CoverDigitalInterface extends CoverBehavior implements IFastRenderMetaTileEntity, ITickable, CoverWithUI {
 
-    public static String path = "cover.digital";
-
     public enum MODE {
         FLUID,
         ITEM,
@@ -103,10 +97,10 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     private long lastClickTime;
     private UUID lastClickUUID;
     // persistent data
-    private int slot = 0;
-    private MODE mode = MODE.PROXY;
-    private EnumFacing spin = EnumFacing.NORTH;
-    private final int[] proxyMode = new int[]{0, 0, 0, 0}; // server-only
+    protected int slot = 0;
+    protected MODE mode = MODE.PROXY;
+    protected EnumFacing spin = EnumFacing.NORTH;
+    protected final int[] proxyMode = new int[]{0, 0, 0, 0}; // server-only
 
 
     public CoverDigitalInterface(ICoverable coverHolder, EnumFacing attachedSide) {
@@ -133,7 +127,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
             this.mode = mode;
             this.slot = slot;
             this.spin = spin;
-            writeUpdateData(1, packetBuffer -> {
+            writeUpdateData(GregtechDataCodes.UPDATE_MODE, packetBuffer -> {
                 packetBuffer.writeByte(mode.ordinal());
                 packetBuffer.writeInt(slot);
                 packetBuffer.writeByte(spin.getIndex());
@@ -227,7 +221,6 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
 
     @Override
     public void onAttached(ItemStack itemStack) { // called when cover placed.
-        super.onAttached(itemStack);
         if (this.coverHolder instanceof PipeCoverableImplementation) {
             this.mode = MODE.PROXY;
         } else if (getFluidCapability() != null) {
@@ -296,7 +289,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
 
     @Override
     public void update() {
-        if (!isRemote()) {
+        if (!isRemote() && coverHolder.getOffsetTimer() % 2 ==0) {
             syncAllInfo();
         }
     }
@@ -509,7 +502,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         toUpdate.add(i);
                     }
                 }
-                if (syncFlag) writeUpdateData(2, packetBuffer->{
+                if (syncFlag) writeUpdateData(GregtechDataCodes.UPDATE_FLUID, packetBuffer->{
                     packetBuffer.writeVarInt(fluids.length);
                     packetBuffer.writeVarInt(toUpdate.size());
                     for (Integer index : toUpdate) {
@@ -546,7 +539,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         toUpdate.add(i);
                     }
                 }
-                if (syncFlag) writeUpdateData(3, packetBuffer -> {
+                if (syncFlag) writeUpdateData(GregtechDataCodes.UPDATE_ITEM, packetBuffer -> {
                     packetBuffer.writeVarInt(maxItemCapability);
                     packetBuffer.writeVarInt(items.length);
                     packetBuffer.writeVarInt(toUpdate.size());
@@ -563,13 +556,13 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                 if (energyStored != energyContainer.getEnergyStored() || energyCapability != energyContainer.getEnergyCapacity()) {
                     energyStored = energyContainer.getEnergyStored();
                     energyCapability = energyContainer.getEnergyCapacity();
-                    writeUpdateData(4, packetBuffer -> {
+                    writeUpdateData(GregtechDataCodes.UPDATE_ENERGY, packetBuffer -> {
                         packetBuffer.writeLong(energyStored);
                         packetBuffer.writeLong(energyCapability);
                     });
                 }
                 if (this.coverHolder.getOffsetTimer() % 20 == 0) { //per second
-                    writeUpdateData(5, packetBuffer -> {
+                    writeUpdateData(GregtechDataCodes.UPDATE_ENERGY_PER, packetBuffer -> {
                         packetBuffer.writeLong(energyContainer.getInputPerSec());
                         packetBuffer.writeLong(energyContainer.getOutputPerSec());
                         inputEnergyList.add(energyInputPerDur);
@@ -594,7 +587,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                     this.maxProgress = maxProgress;
                     this.isWorkingEnabled = isWorkingEnable;
                     this.isActive = isActive;
-                    writeUpdateData(6, packetBuffer -> {
+                    writeUpdateData(GregtechDataCodes.UPDATE_MACHINE, packetBuffer -> {
                         packetBuffer.writeInt(progress);
                         packetBuffer.writeInt(maxProgress);
                         packetBuffer.writeBoolean(isActive);
@@ -607,7 +600,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                         if (energyStored != energyContainer.getEnergyStored() || energyCapability != energyContainer.getEnergyCapacity()) {
                             energyStored = energyContainer.getEnergyStored();
                             energyCapability = energyContainer.getEnergyCapacity();
-                            writeUpdateData(4, packetBuffer -> {
+                            writeUpdateData(GregtechDataCodes.UPDATE_ENERGY, packetBuffer -> {
                                 packetBuffer.writeLong(energyStored);
                                 packetBuffer.writeLong(energyCapability);
                             });
@@ -785,16 +778,16 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     @Override
     public void readUpdateData(int id, PacketBuffer packetBuffer) {
         super.readUpdateData(id, packetBuffer);
-        if (id == 1) { // set mode
+        if (id == GregtechDataCodes.UPDATE_MODE) { // set mode
             setMode(MODE.VALUES[packetBuffer.readByte()], packetBuffer.readInt(), EnumFacing.byIndex(packetBuffer.readByte()));
-        } else if (id == 2) { // sync fluids
+        } else if (id == GregtechDataCodes.UPDATE_FLUID) { // sync fluids
             readFluids(packetBuffer);
-        } else if (id == 3) {
+        } else if (id == GregtechDataCodes.UPDATE_ITEM) {
             readItems(packetBuffer);
-        } else if (id == 4) {
+        } else if (id == GregtechDataCodes.UPDATE_ENERGY) {
             energyStored = packetBuffer.readLong();
             energyCapability = packetBuffer.readLong();
-        } else if (id == 5) {
+        } else if (id == GregtechDataCodes.UPDATE_ENERGY_PER) {
             energyInputPerDur = packetBuffer.readLong();
             energyOutputPerDur = packetBuffer.readLong();
             inputEnergyList.add(energyInputPerDur);
@@ -803,7 +796,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
                 inputEnergyList.remove(0);
                 outputEnergyList.remove(0);
             }
-        } else if (id == 6) {
+        } else if (id == GregtechDataCodes.UPDATE_MACHINE) {
             this.progress = packetBuffer.readInt();
             this.maxProgress = packetBuffer.readInt();
             this.isActive = packetBuffer.readBoolean();
@@ -845,42 +838,8 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     @Override
-    public void renderCoverPlate(CCRenderState renderState, Matrix4 translation, IVertexOperation[] pipeline, Cuboid6 plateBox, BlockRenderLayer layer) {
-        super.renderCoverPlate(renderState, translation, pipeline, plateBox, layer);
-    }
-
-    @Override
     public void renderCover(CCRenderState ccRenderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 cuboid6, BlockRenderLayer blockRenderLayer) {
-        Rotation rotation = new Rotation(0, 0, 1, 0);
-        if (this.attachedSide == EnumFacing.UP || this.attachedSide == EnumFacing.DOWN) {
-            if (this.spin == EnumFacing.WEST) {
-                translation.translate(0, 0, 1);
-                rotation = new Rotation(Math.PI / 2, 0, 1, 0);
-            } else if (this.spin == EnumFacing.EAST) {
-                translation.translate(1, 0, 0);
-                rotation = new Rotation(-Math.PI / 2, 0, 1, 0);
-            } else if (this.spin == EnumFacing.SOUTH) {
-                translation.translate(1, 0, 1);
-                rotation = new Rotation(Math.PI, 0, 1, 0);
-            }
-            translation.apply(rotation);
-        }
-        if (mode == MODE.PROXY) {
-            Textures.COVER_INTERFACE_PROXY.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
-        } else if (mode == MODE.FLUID) {
-            Textures.COVER_INTERFACE_FLUID.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
-            Textures.COVER_INTERFACE_FLUID_GLASS.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 3));
-        } else if (mode == MODE.ITEM) {
-            Textures.COVER_INTERFACE_ITEM.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
-        } else if (mode == MODE.ENERGY) {
-            Textures.COVER_INTERFACE_ENERGY.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
-        } else if (mode == MODE.MACHINE) {
-            if (isWorkingEnabled) {
-                Textures.COVER_INTERFACE_MACHINE_ON.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
-            } else {
-                Textures.COVER_INTERFACE_MACHINE_OFF.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
-            }
-        }
+        Textures.COVER_INTERFACE_PROXY.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, RenderUtil.adjustTrans(translation, this.attachedSide, 1));
     }
 
     @SideOnly(Side.CLIENT)

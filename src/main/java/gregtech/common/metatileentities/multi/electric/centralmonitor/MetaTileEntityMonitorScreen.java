@@ -16,6 +16,7 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.render.Textures;
+import gregtech.api.util.BlockPosFace;
 import gregtech.api.util.RenderUtil;
 import gregtech.common.covers.CoverDigitalInterface;
 import gregtech.common.gui.widget.WidgetARGB;
@@ -46,15 +47,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
 
@@ -64,7 +61,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     private UUID lastClickUUID;
     public MonitorPluginBaseBehavior plugin;
     // persistent data
-    public Pair<BlockPos, EnumFacing> coverPos;
+    public BlockPosFace coverPos;
     public CoverDigitalInterface.MODE mode = CoverDigitalInterface.MODE.FLUID;
     public int slot = 0;
     public float scale = 1;
@@ -75,7 +72,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         super(metaTileEntityId, 1);
     }
 
-    public void setMode(Pair<BlockPos, EnumFacing> cover, CoverDigitalInterface.MODE mode) {
+    public void setMode(BlockPosFace cover, CoverDigitalInterface.MODE mode) {
         CoverDigitalInterface last_cover = this.getCoverFromPosSide(coverPos);
         CoverDigitalInterface now_cover = this.getCoverFromPosSide(cover);
         if (this.mode == mode) {
@@ -96,7 +93,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         this.markDirty();
     }
 
-    public void setMode(Pair<BlockPos, EnumFacing> cover) {
+    public void setMode(BlockPosFace cover) {
         setMode(cover, this.mode);
     }
 
@@ -114,12 +111,12 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         markDirty();
     }
 
-    public CoverDigitalInterface getCoverFromPosSide(Pair<BlockPos, EnumFacing> posFacing) {
+    public CoverDigitalInterface getCoverFromPosSide(BlockPosFace posFacing) {
         if (posFacing == null) return null;
         ICoverable mte = null;
-        MetaTileEntityHolder holder = getHolderFromPos(posFacing.getLeft());
+        MetaTileEntityHolder holder = getHolderFromPos(posFacing);
         if (holder == null) {
-            TileEntity te = this.getWorld() == null || posFacing.getLeft() == null ? null : this.getWorld().getTileEntity(posFacing.getLeft());
+            TileEntity te = this.getWorld() == null ? null : this.getWorld().getTileEntity(posFacing);
             if (te instanceof TileEntityPipeBase) {
                 mte = ((TileEntityPipeBase<?, ?>) te).getCoverableImplementation();
             }
@@ -127,7 +124,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
             mte = holder.getMetaTileEntity();
         }
         if (mte != null) {
-            CoverBehavior cover = mte.getCoverAtSide(posFacing.getRight());
+            CoverBehavior cover = mte.getCoverAtSide(posFacing.facing);
             if (cover instanceof CoverDigitalInterface) {
                 return (CoverDigitalInterface) cover;
             }
@@ -143,7 +140,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         return null;
     }
 
-    public void updateCoverValid(List<Pair<BlockPos, EnumFacing>> covers) {
+    public void updateCoverValid(Set<BlockPosFace> covers) {
         if (this.coverPos != null) {
             if (!covers.contains(this.coverPos)) {
                 setMode(null, CoverDigitalInterface.MODE.PROXY);
@@ -154,8 +151,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     private void writeSync(PacketBuffer buf) {
         buf.writeBoolean(this.coverPos != null);
         if (this.coverPos != null) {
-            buf.writeBlockPos(coverPos.getLeft());
-            buf.writeByte(coverPos.getRight().getIndex());
+            buf.writeBlockPos(coverPos);
+            buf.writeByte(coverPos.facing.getIndex());
         }
         buf.writeByte(this.mode.ordinal());
         buf.writeVarInt(this.slot);
@@ -167,7 +164,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         if (buf.readBoolean()) {
             BlockPos pos = buf.readBlockPos();
             EnumFacing side = EnumFacing.byIndex(buf.readByte());
-            Pair<BlockPos, EnumFacing> pair = Pair.of(pos, side);
+            BlockPosFace pair = new BlockPosFace(pos, side);
             if (!pair.equals(this.coverPos)) {
                 this.coverTMP = null;
                 this.coverPos = pair;
@@ -187,7 +184,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     private void updateProxyPlugin() {
         if (this.plugin instanceof ProxyHolderPluginBehavior) {
             if (this.mode == CoverDigitalInterface.MODE.PROXY && coverPos != null) {
-                ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(coverPos.getLeft());
+                ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(coverPos);
             } else {
                 ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(null);
             }
@@ -366,8 +363,8 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         if (this.coverPos != null) {
-            data.setTag("coverPos", NBTUtil.createPosTag(this.coverPos.getLeft()));
-            data.setByte("coverSide", (byte) this.coverPos.getRight().getIndex());
+            data.setTag("coverPos", NBTUtil.createPosTag(this.coverPos));
+            data.setByte("coverSide", (byte) this.coverPos.facing.getIndex());
         }
         data.setByte("mode", (byte) this.mode.ordinal());
         data.setFloat("scale", this.scale);
@@ -388,7 +385,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         if (data.hasKey("coverPos") && data.hasKey("coverSide")) {
             BlockPos pos = NBTUtil.getPosFromTag(data.getCompoundTag("coverPos"));
             EnumFacing side = EnumFacing.byIndex(data.getByte("coverSide"));
-            this.coverPos = Pair.of(pos, side);
+            this.coverPos = new BlockPosFace(pos, side);
         } else {
             this.coverPos = null;
         }
@@ -488,9 +485,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                 if (isPressed) setMode(CoverDigitalInterface.MODE.PROXY);
             }).setTooltipText("metaitem.cover.digital.mode.proxy");
             List<CoverDigitalInterface> covers = new ArrayList<>();
-            ((MetaTileEntityCentralMonitor) controller).covers.forEach(coverPos -> {
-                covers.add(getCoverFromPosSide(coverPos));
-            });
+            ((MetaTileEntityCentralMonitor) controller).getAllCovers().forEach(coverPos -> covers.add(getCoverFromPosSide(coverPos)));
             WidgetPluginConfig pluginWidget = new WidgetPluginConfig();
             WidgetPluginConfig mainGroup = new WidgetPluginConfig().setSize(width, height);
             mainGroup.widget(new LabelWidget(15, 55, "monitor.gui.title.scale", 0xFFFFFFFF))
@@ -542,7 +537,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                         if (coverPos == null) {
                             this.setMode(null, this.mode);
                         } else {
-                            this.setMode(Pair.of(coverPos.coverHolder.getPos(), coverPos.attachedSide));
+                            this.setMode(new BlockPosFace(coverPos.coverHolder.getPos(), coverPos.attachedSide));
                         }
                     }))
 

@@ -82,10 +82,10 @@ public class SlotWidget extends Widget implements INativeWidget {
             }
         }
         GlStateManager.disableRescaleNormal();
-        GlStateManager.disableLighting();
         RenderHelper.disableStandardItemLighting();
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.pushMatrix();
+        GlStateManager.scale(1, 1, 0);
         RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
         itemRender.renderItemAndEffectIntoGUI(slotReference.getStack(), pos.x + 1, pos.y + 1);
         itemRender.renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, slotReference.getStack(), pos.x + 1, pos.y + 1, null);

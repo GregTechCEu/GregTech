@@ -17,8 +17,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-import static gregtech.api.gui.impl.ModularUIGui.*;
-
 @SideOnly(Side.CLIENT)
 public class FakeModularGui implements IRenderContext {
     public final ModularUI modularUI;
@@ -68,7 +66,6 @@ public class FakeModularGui implements IRenderContext {
         for (int i = 0; i < this.container.inventorySlots.size(); ++i) {
             Slot slot = this.container.inventorySlots.get(i);
             if (!slot.getStack().isEmpty() && slot.xPos < mouseX && mouseX < slot.xPos + 18 && slot.yPos < mouseY && mouseY < slot.yPos + 18) {
-                Widget.drawSolidRect(slot.xPos, slot.yPos, 18, 18, 0X8fffffff);
                 renderToolTip(slot.getStack(), slot.xPos, slot.yPos);
             }
         }

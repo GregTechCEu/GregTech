@@ -355,20 +355,13 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                     tooltip.set(k, TextFormatting.GRAY + tooltip.get(k));
                 }
             }
-            Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
-            if (blockTooltipMap.containsKey(tooltipBlockStack)) {
-                List<ITextComponent> tooltips = blockTooltipMap.get(tooltipBlockStack);
-                for (int i = 0; i < tooltips.size(); i++) {
-                    //Start at i+1 due to ItemStack name
-                    tooltip.add(i + 1, tooltips.get(i).getFormattedText());
-                }
-            }
+            addBlockTooltips(tooltipBlockStack, tooltip);
             return tooltip;
         }
         return Collections.emptyList();
     }
 
-    public void addBlockTooltips(int slotIndex, boolean input, ItemStack itemStack, List<String> tooltip) {
+    public void addBlockTooltips(ItemStack itemStack, List<String> tooltip) {
         Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
         if (blockTooltipMap.containsKey(itemStack)) {
             List<ITextComponent> tooltips = blockTooltipMap.get(itemStack);

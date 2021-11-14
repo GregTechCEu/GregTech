@@ -12,6 +12,7 @@ import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.render.scene.FBOWorldSceneRenderer;
 import gregtech.api.render.scene.WorldSceneRenderer;
 import gregtech.api.terminal.os.TerminalTheme;
+import gregtech.api.util.BlockPosFace;
 import gregtech.api.util.RenderUtil;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
@@ -58,8 +59,8 @@ public class MachineSceneWidget extends WidgetGroup {
     private boolean blendColor = true;
     private Set<BlockPos> cores;
     private Set<BlockPos> around;
-    private WorldSceneRenderer.BlockPosFace hoverPosFace;
-    private WorldSceneRenderer.BlockPosFace selectedPosFace;
+    private BlockPosFace hoverPosFace;
+    private BlockPosFace selectedPosFace;
     private BiConsumer<BlockPos, EnumFacing> onSelected;
 
     protected MetaTileEntity mte;
@@ -136,7 +137,7 @@ public class MachineSceneWidget extends WidgetGroup {
                     double dist = eyePos.distanceTo(new Vec3d(hit.getBlockPos()));
                     if (dist < min) {
                         min = dist;
-                        hoverPosFace = new WorldSceneRenderer.BlockPosFace(hit.getBlockPos(), hit.sideHit);
+                        hoverPosFace = new BlockPosFace(hit.getBlockPos(), hit.sideHit);
                     }
                 }
             }
@@ -159,7 +160,7 @@ public class MachineSceneWidget extends WidgetGroup {
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
     }
 
-    private void drawFacingBorder(WorldSceneRenderer.BlockPosFace posFace, int color) {
+    private void drawFacingBorder(BlockPosFace posFace, int color) {
         GlStateManager.pushMatrix();
         RenderUtil.moveToFace(posFace.getX(), posFace.getY(), posFace.getZ(), posFace.facing);
         RenderUtil.rotateToFace(posFace.facing, null);

@@ -2098,6 +2098,7 @@ metaitem.plugin.online_pic.name=Online Picture Plugin
 metaitem.plugin.fake_gui.name=GUI Proxy Plugin
 metaitem.plugin.advanced_monitor.name=Advanced Monitor Proxy Plugin
 metaitem.cover.digital.name=Digital Interface Cover
+metaitem.cover.digital.wireless.name=Wireless Digital Interface Cover
 metaitem.coloured.leds.name=Coloured LEDs
 metaitem.display.name=Display
 
@@ -4185,6 +4186,9 @@ terminal.vtank_viewer.refresh=Refresh tank index
 
 metaitem.cover.digital.title.mode=Mode:
 metaitem.cover.digital.title.spin=Spin:
+metaitem.cover.digital.wireless.tooltip.1=§eRight click on the central monitor to bind remotely to it.
+metaitem.cover.digital.wireless.tooltip.2=§eShift Right click to remove the current binding.
+metaitem.cover.digital.wireless.tooltip.3=§cBinding: (%s)
 monitor.gui.title.back=Back
 monitor.gui.title.scale=Scale:
 monitor.gui.title.argb=ARGB:

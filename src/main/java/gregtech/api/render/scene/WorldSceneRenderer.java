@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -25,13 +24,14 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
-import javax.annotation.Nullable;
 import javax.vecmath.Vector3f;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -424,20 +424,4 @@ public abstract class WorldSceneRenderer {
         return winPos;
     }
 
-    public static class BlockPosFace extends BlockPos {
-        public final EnumFacing facing;
-
-        public BlockPosFace(BlockPos pos, EnumFacing facing) {
-            super(pos);
-            this.facing = facing;
-        }
-
-        @Override
-        public boolean equals(@Nullable Object bp) {
-            if (bp instanceof BlockPosFace) {
-                return super.equals(bp) && ((BlockPosFace) bp).facing == facing;
-            }
-            return false;
-        }
-    }
 }

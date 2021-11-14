@@ -98,6 +98,6 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         recipeWrapper.setRecipeLayout((RecipeLayout) recipeLayout, this.guiHelper);
 
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-        itemStackGroup.addTooltipCallback(recipeWrapper::addBlockTooltips);
+        itemStackGroup.addTooltipCallback((a,b,itemStack,list)->recipeWrapper.addBlockTooltips(itemStack,list));
     }
 }

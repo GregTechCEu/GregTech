@@ -39,21 +39,24 @@ public class WorldRenderEventRenderer {
 
             GlStateManager.pushMatrix();
             GlStateManager.color(1.0f, 0, 0);
-            GlStateManager.glLineWidth(3);
             GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
 
             GlStateManager.disableDepth();
             GlStateManager.disableTexture2D();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
 
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder buffer = tessellator.getBuffer();
 
-            buffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+            buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 
-            RenderBufferHelper.renderCubeFrame(buffer, posHighLight.getX(), posHighLight.getY(), posHighLight.getZ(), posHighLight.getX() + 1, posHighLight.getY() + 1, posHighLight.getZ() + 1, 1.0f, 0.0f, 0.0f, 1.0f);
+            RenderBufferHelper.renderCubeFace(buffer, posHighLight.getX(), posHighLight.getY(), posHighLight.getZ(), posHighLight.getX() + 1, posHighLight.getY() + 1, posHighLight.getZ() + 1, 1.0f, 0.0f, 0.0f, 0.8f);
 
             tessellator.draw();
 
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.disableBlend();
             GlStateManager.enableTexture2D();
             GlStateManager.enableDepth();
             GlStateManager.color(1, 1, 1);

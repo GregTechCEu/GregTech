@@ -317,6 +317,7 @@ public class MetaItem1 extends StandardMetaItem {
         COVER_INFINITE_WATER = addItem(310, "cover.infinite_water");
         COVER_ENDER_FLUID_LINK = addItem(311, "cover.ender_fluid_link");
         COVER_DIGITAL_INTERFACE = addItem(312, "cover.digital");
+        COVER_DIGITAL_INTERFACE_WIRELESS = addItem(313, "cover.digital.wireless");
 
         COVER_FACADE = addItem(330, "cover.facade").addComponents(new FacadeItem()).disableModelLoading();
 
