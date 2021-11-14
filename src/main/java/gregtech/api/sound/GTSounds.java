@@ -28,6 +28,7 @@ public class GTSounds {
     public static SoundEvent CUT;
     public static SoundEvent COOLING;
     public static SoundEvent MINER;
+    public static SoundEvent EXPLOSION;
     public static SoundEvent DRILL_TOOL;
     public static SoundEvent PLUNGER_TOOL;
     public static SoundEvent FILE_TOOL;
@@ -63,6 +64,7 @@ public class GTSounds {
         TURBINE = registerSound("tick.turbine");
         COMBUSTION = registerSound("tick.combustion");
         MINER = registerSound("tick.miner");
+        EXPLOSION = registerSound("tick.explosion");
         SCIENCE = registerSound("tick.science");
         WRENCH_TOOL = registerSound("use.wrench");
         SOFT_HAMMER_TOOL = registerSound("use.soft_hammer");

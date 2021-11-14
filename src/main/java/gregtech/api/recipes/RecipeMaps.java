@@ -116,7 +116,7 @@ public class RecipeMaps {
     @ZenProperty
     public static final RecipeMap<SimpleRecipeBuilder> SIFTER_RECIPES = new RecipeMap<>("sifter", 1, 1, 0, 6, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setProgressBar(GuiTextures.PROGRESS_BAR_SIFT, MoveType.VERTICAL_INVERTED)
-            .setSound(SoundEvents.BLOCK_SAND_STEP);
+            .setSound(SoundEvents.BLOCK_SAND_PLACE);
 
     /**
      * Example:
@@ -433,7 +433,7 @@ public class RecipeMaps {
             .setSlotOverlay(false, false, true, GuiTextures.IMPLOSION_OVERLAY_1)
             .setSlotOverlay(false, false, false, GuiTextures.IMPLOSION_OVERLAY_2)
             .setSlotOverlay(true, false, true, GuiTextures.DUST_OVERLAY)
-            .setSound(SoundEvents.ENTITY_GENERIC_EXPLODE);
+            .setSound(GTSounds.EXPLOSION);
 
     /**
      * Example:
@@ -707,7 +707,7 @@ public class RecipeMaps {
     public static final RecipeMap<SimpleRecipeBuilder> EXTRUDER_RECIPES = new RecipeMap<>("extruder", 2, 2, 1, 1, 0, 0, 0, 0, new SimpleRecipeBuilder(), false)
             .setSlotOverlay(false, false, true, GuiTextures.MOLD_OVERLAY)
             .setProgressBar(GuiTextures.PROGRESS_BAR_EXTRUDER, MoveType.HORIZONTAL)
-            .setSound(GTSounds.COMPRESSOR);
+            .setSound(GTSounds.ARC);
 
     /**
      * Example:

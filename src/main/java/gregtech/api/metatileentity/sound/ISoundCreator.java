@@ -1,7 +1,8 @@
 package gregtech.api.metatileentity.sound;
 
-import gregtech.common.sound.SoundHandler;
 import gregtech.common.ConfigHolder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -18,7 +19,9 @@ public interface ISoundCreator {
 
     default void setupSound(SoundEvent sound, BlockPos pos, World world) {
         if (sound != null && ConfigHolder.machineSounds && world != null && world.isRemote) {
-            SoundHandler.startTileSound(sound.getSoundName(), pos, this, 1, 0);
+            PositionedSoundMTE machineSound = new PositionedSoundMTE(sound.getSoundName(), SoundCategory.BLOCKS, this, pos);
+            Minecraft.getMinecraft().getSoundHandler().playSound(machineSound);
+            Minecraft.getMinecraft().getSoundHandler().update();
         }
     }
 
