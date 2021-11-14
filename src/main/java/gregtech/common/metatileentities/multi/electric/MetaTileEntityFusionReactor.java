@@ -36,7 +36,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -44,6 +46,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -51,6 +54,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController implements IFastRenderMetaTileEntity {
@@ -154,13 +158,17 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         this.outputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
         List<IEnergyContainer> energyInputs = getAbilities(MultiblockAbility.INPUT_ENERGY);
         this.inputEnergyContainers = new EnergyContainerList(energyInputs);
-        long euCapacity = energyInputs.size() * 10000000L * (long) Math.pow(2, tier - 6);
+        long euCapacity = calculateEnergyStorageFactor(energyInputs.size());
         this.energyContainer = new EnergyContainerHandler(this, euCapacity, GTValues.V[tier], 0, 0, 0) {
             @Override
             public String getName() {
                 return "EnergyContainerInternal";
             }
         };
+    }
+
+    private long calculateEnergyStorageFactor(int energyInputAmount) {
+        return energyInputAmount * (long) Math.pow(2, tier - 6) * 10000000L;
     }
 
     @Override
@@ -179,6 +187,12 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         super.addDisplayText(textList);
         textList.add(new TextComponentString("EU: " + this.energyContainer.getEnergyStored() + " / " + this.energyContainer.getEnergyCapacity()));
         textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.fusion_reactor.capacity", calculateEnergyStorageFactor(16) / 1000000L));
     }
 
     @Nonnull

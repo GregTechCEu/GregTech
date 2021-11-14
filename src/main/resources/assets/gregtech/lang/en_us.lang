@@ -3575,6 +3575,7 @@ gregtech.machine.assembly_line.name=Assembly Line
 gregtech.machine.fusion_reactor.luv.name=Fusion Reactor Computer Mark 1
 gregtech.machine.fusion_reactor.zpm.name=Fusion Reactor Computer Mark 2
 gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
+gregtech.machine.fusion_reactor.capacity=§7Maximum Energy Storage: §e%sM EU
 
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
