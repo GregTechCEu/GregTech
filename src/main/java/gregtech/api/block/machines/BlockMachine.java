@@ -338,18 +338,6 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             return false;
         }
 
-        if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null)) {
-            IWrenchItem wrenchItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
-            EnumFacing wrenchDirection = ICoverable.determineGridSideHit(rayTraceResult);
-
-            if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true) &&
-                    metaTileEntity.onWrenchClick(playerIn, hand, wrenchDirection, rayTraceResult)) {
-                wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
-                return true;
-            }
-            return false;
-        }
-
         return metaTileEntity.onCoverRightClick(playerIn, hand, rayTraceResult);
     }
 

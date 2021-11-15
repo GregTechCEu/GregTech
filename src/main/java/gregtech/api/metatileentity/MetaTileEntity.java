@@ -73,6 +73,7 @@ public abstract class MetaTileEntity implements ICoverable {
     public static final IndexedCuboid6 FULL_CUBE_COLLISION = new IndexedCuboid6(null, Cuboid6.full);
     public static final String TAG_KEY_PAINTING_COLOR = "PaintingColor";
     public static final String TAG_KEY_FRAGILE = "Fragile";
+    public static final String TAG_KEY_MUFFLED = "Muffled";
 
     public final ResourceLocation metaTileEntityId;
     MetaTileEntityHolder holder;
@@ -750,6 +751,7 @@ public abstract class MetaTileEntity implements ICoverable {
             }
         }
         buf.writeBoolean(isFragile);
+        buf.writeBoolean(muffled);
     }
 
     public void receiveInitialSyncData(PacketBuffer buf) {
@@ -771,6 +773,7 @@ public abstract class MetaTileEntity implements ICoverable {
             }
         }
         this.isFragile = buf.readBoolean();
+        this.muffled = buf.readBoolean();
     }
 
     public void writeTraitData(MTETrait trait, int internalId, Consumer<PacketBuffer> dataWriter) {
@@ -1183,6 +1186,7 @@ public abstract class MetaTileEntity implements ICoverable {
         }
         data.setTag("Covers", coversList);
         data.setBoolean(TAG_KEY_FRAGILE, isFragile);
+        data.setBoolean(TAG_KEY_MUFFLED, isFragile);
         return data;
     }
 
@@ -1218,6 +1222,7 @@ public abstract class MetaTileEntity implements ICoverable {
         }
 
         this.isFragile = data.getBoolean(TAG_KEY_FRAGILE);
+        this.muffled = data.getBoolean(TAG_KEY_MUFFLED);
     }
 
     @Override

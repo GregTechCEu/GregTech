@@ -28,6 +28,4 @@ public interface ISoundCreator {
             Minecraft.getMinecraft().getSoundHandler().update();
         }
     }
-
-    // TODO: When miners are released, please make them implement this and use the GTSounds.MINER sound effect.
 }

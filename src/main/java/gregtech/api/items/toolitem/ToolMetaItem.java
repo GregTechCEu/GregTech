@@ -188,6 +188,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             if (metaToolValueItem.toolStats != null) {
                 IToolStats toolStats = metaToolValueItem.toolStats;
                 int toolDamagePerCraft = toolStats.getToolDamagePerContainerCraft(stack);
+                toolStats.onCraftingUse(stack);
                 boolean canApplyDamage = damageItem(stack, toolDamagePerCraft, false);
                 if (!canApplyDamage) return stack;
             }
@@ -232,6 +233,7 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         if (metaToolValueItem != null) {
             IToolStats toolStats = metaToolValueItem.getToolStats();
             toolStats.onBlockDestroyed(stack, world, state, pos, entity);
+            toolStats.onBreakingUse(stack);
             damageItem(stack, toolStats.getToolDamagePerBlockBreak(stack), false);
         }
         return true;
@@ -365,8 +367,6 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
                 }
             }
             capability.discharge(energyAmount, capability.getTier(), true, false, simulate);
-            if(!simulate)
-                playSound(stack);
         }
         if (capability == null || (capability.getCharge() <= 0 || GTUtility.getRandomIntXSTR(100) <= 4)) {
             T toolMetaItem = getItem(stack);
@@ -384,8 +384,6 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
             if (!simulate && !setInternalDamage(stack, newDamageValue)) {
                 GTUtility.setItem(stack, toolStats.getBrokenStack(stack));
             }
-            if(!simulate)
-                playSound(stack);
             return Math.min(vanillaDamage, damageRemaining);
         }
         return 1;
@@ -400,15 +398,6 @@ public class ToolMetaItem<T extends ToolMetaItem<?>.MetaToolValueItem> extends M
         int durabilityRegained = Math.min(toolDamage, maxDurabilityRegain);
         setInternalDamage(itemStack, toolDamage - durabilityRegained);
         return durabilityRegained;
-    }
-
-    private void playSound(ItemStack stack) {
-        if (getItem(stack) != null && getItem(stack).getSound() != null && ConfigHolder.toolSounds) {
-            if (Minecraft.getMinecraft().player != null)
-                Minecraft.getMinecraft().player.playSound(getItem(stack).getSound(), 1, 1);
-            if (ForgeHooks.getCraftingPlayer() != null)
-                ForgeHooks.getCraftingPlayer().playSound(getItem(stack).getSound(), 1, 1);
-        }
     }
 
     private static int calculateToolDamage(ItemStack itemStack, Random random, int amount) {
