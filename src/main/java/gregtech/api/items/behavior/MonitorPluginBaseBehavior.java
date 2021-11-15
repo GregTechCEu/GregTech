@@ -145,7 +145,8 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
         }
     }
 
-    /** @param playerIn Player
+    /*** Server / Client. Called when player touch the screen.
+     * @param playerIn Player
      * @param hand Hand
      * @param facing Facing
      * @param isRight is Right Click

@@ -75,6 +75,7 @@ public class ClipboardRenderer implements TextureUtils.IIconRegister {
 
     @SideOnly(Side.CLIENT)
     public void renderGUI(double x, double y, double z, EnumFacing rotation, MetaTileEntityClipboard clipboard, float partialTicks) {
+        GlStateManager.color(1,1,1,1);
         GlStateManager.pushMatrix();
         float lastBrightnessX = OpenGlHelper.lastBrightnessX;
         float lastBrightnessY = OpenGlHelper.lastBrightnessY;

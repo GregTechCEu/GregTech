@@ -5,19 +5,25 @@ import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
 
-public class BlockPosFace extends BlockPos {
+public class BlockPosFace {
     public final EnumFacing facing;
+    public final BlockPos pos;
 
     public BlockPosFace(BlockPos pos, EnumFacing facing) {
-        super(pos);
+        this.pos = pos;
         this.facing = facing;
     }
 
     @Override
     public boolean equals(@Nullable Object bp) {
         if (bp instanceof BlockPosFace) {
-            return super.equals(bp) && ((BlockPosFace) bp).facing == facing;
+            return pos == ((BlockPosFace) bp).pos && ((BlockPosFace) bp).facing == facing;
         }
         return super.equals(bp);
+    }
+
+    @Override
+    public int hashCode() {
+        return pos.hashCode() + facing.hashCode();
     }
 }

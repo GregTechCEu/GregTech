@@ -162,7 +162,7 @@ public class MachineSceneWidget extends WidgetGroup {
 
     private void drawFacingBorder(BlockPosFace posFace, int color) {
         GlStateManager.pushMatrix();
-        RenderUtil.moveToFace(posFace.getX(), posFace.getY(), posFace.getZ(), posFace.facing);
+        RenderUtil.moveToFace(posFace.pos.getX(), posFace.pos.getY(), posFace.pos.getZ(), posFace.facing);
         RenderUtil.rotateToFace(posFace.facing, null);
         GlStateManager.scale(1f / 16, 1f / 16, 0);
         GlStateManager.translate(-8, -8, 0);
@@ -272,7 +272,7 @@ public class MachineSceneWidget extends WidgetGroup {
             if (hoverPosFace != null && !hoverPosFace.equals(selectedPosFace)) {
                 selectedPosFace = hoverPosFace;
                 if (onSelected != null) {
-                    onSelected.accept(selectedPosFace, selectedPosFace.facing);
+                    onSelected.accept(selectedPosFace.pos, selectedPosFace.facing);
                 }
             }
             return true;

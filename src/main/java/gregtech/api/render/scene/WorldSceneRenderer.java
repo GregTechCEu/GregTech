@@ -97,6 +97,9 @@ public abstract class WorldSceneRenderer {
     public void render(float x, float y, float width, float height, int mouseX, int mouseY) {
         // setupCamera
         PositionedRect positionedRect = getPositionedRect((int)x, (int)y, (int)width, (int)height);
+        PositionedRect mouse = getPositionedRect(mouseX, mouseY, 0, 0);
+        mouseX = mouse.position.x;
+        mouseY = mouse.position.y;
         setupCamera(positionedRect);
         // render TrackedDummyWorld
         drawWorld();

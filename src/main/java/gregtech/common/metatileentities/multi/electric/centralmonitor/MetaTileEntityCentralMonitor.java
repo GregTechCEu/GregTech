@@ -146,20 +146,15 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
                 continue;
             }
             for (EnumFacing facing : EnumFacing.VALUES) {
-                TileEntity tileEntity = world.getTileEntity(pos.offset(facing));
-                if (tileEntity instanceof MetaTileEntityHolder && ((TileEntityPipeBase<?,?>) tileEntityCable).isConnectionOpen(AttachmentType.PIPE, facing)) {
-                    MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
-                    if (metaTileEntity != null) {
-                        CoverBehavior cover = metaTileEntity.getCoverAtSide(facing.getOpposite());
-                        if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
-                            checkCovers.add(new BlockPosFace(metaTileEntity.getPos(), cover.attachedSide));
-                        }
-                    }
-                } else {
-                    CoverBehavior cover = ((TileEntityPipeBase<?,?>) tileEntityCable).getCoverableImplementation().getCoverAtSide(facing);
-                    if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
-                        if(((CoverDigitalInterface) cover).getCoveredTE() != null) {
-                            checkCovers.add(new BlockPosFace(tileEntityCable.getPos(), cover.attachedSide));
+                if (((TileEntityPipeBase<?,?>) tileEntityCable).isConnectionOpen(AttachmentType.PIPE, facing)) {
+                    TileEntity tileEntity = world.getTileEntity(pos.offset(facing));
+                    if (tileEntity instanceof MetaTileEntityHolder) {
+                        MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+                        if (metaTileEntity != null) {
+                            CoverBehavior cover = metaTileEntity.getCoverAtSide(facing.getOpposite());
+                            if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
+                                checkCovers.add(new BlockPosFace(metaTileEntity.getPos(), cover.attachedSide));
+                            }
                         }
                     }
                 }
@@ -167,11 +162,19 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         }
         Iterator<BlockPosFace> iterator = remoteCovers.iterator();
         while (iterator.hasNext()) {
-            TileEntity tileEntity = world.getTileEntity(iterator.next());
-            if (!(tileEntity instanceof MetaTileEntityHolder) && !(tileEntity instanceof TileEntityPipeBase)) {
-                iterator.remove();
-                dirty = true;
+            BlockPosFace blockPosFace = iterator.next();
+            TileEntity tileEntity = world.getTileEntity(blockPosFace.pos);
+            if (tileEntity instanceof MetaTileEntityHolder) {
+                MetaTileEntity metaTileEntity = ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
+                if (metaTileEntity != null) {
+                    CoverBehavior cover = metaTileEntity.getCoverAtSide(blockPosFace.facing);
+                    if (cover instanceof CoverDigitalInterface && ((CoverDigitalInterface) cover).isProxy()) {
+                        continue;
+                    }
+                }
             }
+            iterator.remove();
+            dirty = true;
         }
         if (checkCovers.size() != netCovers.size() || !netCovers.containsAll(checkCovers)) {
             netCovers = checkCovers;
@@ -186,7 +189,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         } else {
             buf.writeInt(netCovers.size());
             for (BlockPosFace cover : netCovers){
-                buf.writeBlockPos(cover);
+                buf.writeBlockPos(cover.pos);
                 buf.writeByte(cover.facing.getIndex());
             }
         }
@@ -195,7 +198,7 @@ public class MetaTileEntityCentralMonitor extends MultiblockWithDisplayBase impl
         } else {
             buf.writeInt(remoteCovers.size());
             for (BlockPosFace cover : remoteCovers){
-                buf.writeBlockPos(cover);
+                buf.writeBlockPos(cover.pos);
                 buf.writeByte(cover.facing.getIndex());
             }
         }

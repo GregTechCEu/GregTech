@@ -410,6 +410,12 @@ public class MiscRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(144))
                 .outputs(COVER_DIGITAL_INTERFACE.getStackForm())
                 .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(500)
+                .inputs(COVER_DIGITAL_INTERFACE.getStackForm())
+                .inputs(WIRELESS.getStackForm())
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(COVER_DIGITAL_INTERFACE_WIRELESS.getStackForm())
+                .buildAndRegister();
         ASSEMBLER_RECIPES.recipeBuilder().duration(80).EUt(400)
                 .inputs(DISPLAY.getStackForm())
                 .input(circuit, MarkerMaterials.Tier.Basic)
@@ -438,5 +444,25 @@ public class MiscRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(144))
                 .outputs(PLUGIN_ADVANCED_MONITOR.getStackForm())
                 .buildAndRegister();
+
+        // terminal
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(120)
+                .input(circuit, Good, 4)
+                .input(ELECTRIC_MOTOR_MV, 2)
+                .input(ELECTRIC_PISTON_MV, 2)
+                .input(ROBOT_ARM_MV, 2)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(WIRELESS.getStackForm())
+                .buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30)
+                .input(ELECTRIC_PISTON_MV, 2)
+                .input(ELECTRIC_PISTON_MV)
+                .input(lens, Glass)
+                .input(lens, Diamond)
+                .input(circuit, Basic, 4)
+                .fluidInputs(SolderingAlloy.getFluid(144))
+                .outputs(CAMERA.getStackForm())
+                .buildAndRegister();
+
     }
 }

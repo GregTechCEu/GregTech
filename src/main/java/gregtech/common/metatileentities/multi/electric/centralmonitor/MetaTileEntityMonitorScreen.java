@@ -28,6 +28,7 @@ import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityMu
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -47,6 +48,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -114,9 +116,9 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     public CoverDigitalInterface getCoverFromPosSide(BlockPosFace posFacing) {
         if (posFacing == null) return null;
         ICoverable mte = null;
-        MetaTileEntityHolder holder = getHolderFromPos(posFacing);
+        MetaTileEntityHolder holder = getHolderFromPos(posFacing.pos);
         if (holder == null) {
-            TileEntity te = this.getWorld() == null ? null : this.getWorld().getTileEntity(posFacing);
+            TileEntity te = this.getWorld() == null ? null : this.getWorld().getTileEntity(posFacing.pos);
             if (te instanceof TileEntityPipeBase) {
                 mte = ((TileEntityPipeBase<?, ?>) te).getCoverableImplementation();
             }
@@ -151,7 +153,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     private void writeSync(PacketBuffer buf) {
         buf.writeBoolean(this.coverPos != null);
         if (this.coverPos != null) {
-            buf.writeBlockPos(coverPos);
+            buf.writeBlockPos(coverPos.pos);
             buf.writeByte(coverPos.facing.getIndex());
         }
         buf.writeByte(this.mode.ordinal());
@@ -175,8 +177,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         }
         this.mode = CoverDigitalInterface.MODE.VALUES[buf.readByte()];
         this.slot = buf.readVarInt();
-        float scale = buf.readFloat();
-        this.scale = scale;
+        this.scale = buf.readFloat();
         this.frameColor = buf.readVarInt();
         updateProxyPlugin();
     }
@@ -184,7 +185,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     private void updateProxyPlugin() {
         if (this.plugin instanceof ProxyHolderPluginBehavior) {
             if (this.mode == CoverDigitalInterface.MODE.PROXY && coverPos != null) {
-                ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(coverPos);
+                ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(coverPos.pos);
             } else {
                 ((ProxyHolderPluginBehavior) this.plugin).onHolderPosUpdated(null);
             }
@@ -267,7 +268,6 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         if (coverTMP != null) {
             boolean flag = true;
             if (checkLookingAt(rayTraceResult) != null && plugin == null && this.mode != CoverDigitalInterface.MODE.PROXY) {
-                EntityPlayer player = Minecraft.getMinecraft().player;
                 if (coverTMP.renderSneakingLookAt(rayTraceResult.getBlockPos(), side, slot, partialTicks)) {
                     flag = false;
                 }
@@ -363,7 +363,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound data) {
         if (this.coverPos != null) {
-            data.setTag("coverPos", NBTUtil.createPosTag(this.coverPos));
+            data.setTag("coverPos", NBTUtil.createPosTag(this.coverPos.pos));
             data.setByte("coverSide", (byte) this.coverPos.facing.getIndex());
         }
         data.setByte("mode", (byte) this.mode.ordinal());
@@ -590,7 +590,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     public boolean onClickLogic(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, boolean isRight, double x, double y) {
         if (this.plugin != null) {
             boolean flag = this.plugin.onClickLogic(playerIn, hand, facing, isRight, x, y);
-            if (flag) return flag;
+            if (flag) return true;
         }
         if (this.getWorld().isRemote) return true;
         CoverDigitalInterface coverBehavior = getCoverFromPosSide(this.coverPos);
@@ -674,11 +674,11 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
     }
 
     @SideOnly(Side.CLIENT)
-    public Tuple<Double, Double> checkLookingAt(RayTraceResult rayTraceResult) {
+    public double[] checkLookingAt(RayTraceResult rayTraceResult) {
         if (this.getWorld() != null) {
             MultiblockControllerBase controller = this.getController();
             if (rayTraceResult != null && rayTraceResult.typeOfHit == RayTraceResult.Type.BLOCK && controller != null && rayTraceResult.sideHit == controller.getFrontFacing()) {
-                int i = -1, j = -1;
+                int i, j;
                 TileEntity tileEntity = this.getWorld().getTileEntity(rayTraceResult.getBlockPos());
                 if (tileEntity instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
                     MetaTileEntityMonitorScreen screenHit = (MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) tileEntity).getMetaTileEntity();
@@ -690,7 +690,7 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
                             pos[0] = (pos[0] + i) / this.scale;
                             pos[1] = (pos[1] + j) / this.scale;
                             if (pos[0] >= 0 && pos[0] <= 1 && pos[1] >= 0 && pos[1] <= 1)
-                                return new Tuple<>(pos[0], pos[1]);
+                                return new double[]{pos[0], pos[1]};
                         }
                     }
                 }
@@ -748,5 +748,10 @@ public class MetaTileEntityMonitorScreen extends MetaTileEntityMultiblockPart {
         tooltip.add(I18n.format("gregtech.multiblock.monitor_screen.tooltip.1"));
         tooltip.add(I18n.format("gregtech.multiblock.monitor_screen.tooltip.2"));
         tooltip.add(I18n.format("gregtech.multiblock.monitor_screen.tooltip.3"));
+    }
+
+    @Override
+    public Pair<TextureAtlasSprite, Integer> getParticleTexture() {
+        return Pair.of(null, -1);
     }
 }

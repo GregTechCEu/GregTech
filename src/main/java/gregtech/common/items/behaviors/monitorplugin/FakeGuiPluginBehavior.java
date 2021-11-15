@@ -29,7 +29,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -207,12 +206,12 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
     @Override
     public void renderPlugin(float partialTicks, RayTraceResult rayTraceResult) {
         if (fakeModularGui != null) {
-            Tuple<Double, Double> result = this.screen.checkLookingAt(rayTraceResult);
+            double[] result = this.screen.checkLookingAt(rayTraceResult);
             GlStateManager.translate(0, 0, 0.01);
             if (result == null)
                 fakeModularGui.drawScreen(0, 0, partialTicks);
             else
-                fakeModularGui.drawScreen(result.getFirst(), result.getSecond(), partialTicks);
+                fakeModularGui.drawScreen(result[0], result[1], partialTicks);
         }
     }
 
@@ -237,11 +236,11 @@ public class FakeGuiPluginBehavior extends ProxyHolderPluginBehavior {
                         buf.writeVarInt(fakeModularUIContainer.syncId);
                     });
                 } else {
-                    return isRight && mte.onRightClick(playerIn, hand, facing, null) || super.onClickLogic(playerIn, hand, facing, isRight, x, y);
+                    return isRight && mte.onRightClick(playerIn, hand, facing, null);
                 }
             }
         }
-        return super.onClickLogic(playerIn, hand, facing, isRight, x, y);
+        return false;
     }
 
     @Override

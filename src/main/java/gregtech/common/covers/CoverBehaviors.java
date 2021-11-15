@@ -78,7 +78,7 @@ public class CoverBehaviors {
         registerBehavior(56, new ResourceLocation(GTValues.MODID, "cover.digital"), MetaItems.COVER_DIGITAL_INTERFACE, CoverDigitalInterface::new);
 
         // Custom cover behaviour
-        MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS.addComponents(new CoverDigitalInterfaceWirelessPlaceBehaviour(registerCover(57, new ResourceLocation(GTValues.MODID, "cover.digital"), MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS, CoverDigitalInterfaceWireless::new)));
+        MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS.addComponents(new CoverDigitalInterfaceWirelessPlaceBehaviour(registerCover(57, new ResourceLocation(GTValues.MODID, "cover.digital.wireless"), MetaItems.COVER_DIGITAL_INTERFACE_WIRELESS, CoverDigitalInterfaceWireless::new)));
 
 
         for (int i = 0; i < COVERS_PER_ITEM; i++) {

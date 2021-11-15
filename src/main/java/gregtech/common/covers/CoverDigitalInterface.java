@@ -19,7 +19,6 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pipenet.tile.PipeCoverableImplementation;
 import gregtech.api.render.Textures;
 import gregtech.api.util.Position;
 import gregtech.api.util.RenderUtil;
@@ -116,7 +115,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     public void setMode(MODE mode, int slot, EnumFacing spin) {
-        if (this.coverHolder instanceof PipeCoverableImplementation || (this.mode == mode && (this.slot == slot || slot < 0) && this.spin == spin)) return;
+        if (this.mode == mode && (this.slot == slot || slot < 0) && this.spin == spin) return;
         if (!isRemote()) {
             if (this.mode != MODE.PROXY && mode == MODE.PROXY) {
                 proxyMode[0] = 0;
@@ -179,20 +178,14 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
     }
 
     public TileEntity getCoveredTE() {
-        if (this.coverHolder instanceof PipeCoverableImplementation) {
-            return this.coverHolder.getWorld().getTileEntity(this.coverHolder.getPos().offset(this.attachedSide));
-        } else if (this.coverHolder instanceof MetaTileEntity){
+        if (this.coverHolder instanceof MetaTileEntity){
             return ((MetaTileEntity) this.coverHolder).getHolder();
         }
         return null;
     }
 
     public EnumFacing getCoveredFacing() {
-        if (this.coverHolder instanceof PipeCoverableImplementation) {
-            return this.attachedSide.getOpposite();
-        } else {
-            return this.attachedSide;
-        }
+        return this.attachedSide;
     }
 
     @Override
@@ -221,9 +214,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
 
     @Override
     public void onAttached(ItemStack itemStack) { // called when cover placed.
-        if (this.coverHolder instanceof PipeCoverableImplementation) {
-            this.mode = MODE.PROXY;
-        } else if (getFluidCapability() != null) {
+        if (getFluidCapability() != null) {
             fluids = new FluidTankProperties[getFluidCapability().getTankProperties().length];
             this.mode = MODE.FLUID;
         } else if (getItemCapability() != null) {
@@ -816,8 +807,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
 
     @Override
     public boolean canAttach() {
-        return this.coverHolder instanceof PipeCoverableImplementation ||
-                canCapabilityAttach();
+        return canCapabilityAttach();
     }
 
     public boolean canCapabilityAttach() {
@@ -839,7 +829,36 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
 
     @Override
     public void renderCover(CCRenderState ccRenderState, Matrix4 translation, IVertexOperation[] ops, Cuboid6 cuboid6, BlockRenderLayer blockRenderLayer) {
-        Textures.COVER_INTERFACE_PROXY.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+        codechicken.lib.vec.Rotation rotation = new codechicken.lib.vec.Rotation(0, 0, 1, 0);
+        if (this.attachedSide == EnumFacing.UP || this.attachedSide == EnumFacing.DOWN) {
+            if (this.spin == EnumFacing.WEST) {
+                translation.translate(0, 0, 1);
+                rotation = new codechicken.lib.vec.Rotation(Math.PI / 2, 0, 1, 0);
+            } else if (this.spin == EnumFacing.EAST) {
+                translation.translate(1, 0, 0);
+                rotation = new codechicken.lib.vec.Rotation(-Math.PI / 2, 0, 1, 0);
+            } else if (this.spin == EnumFacing.SOUTH) {
+                translation.translate(1, 0, 1);
+                rotation = new Rotation(Math.PI, 0, 1, 0);
+            }
+            translation.apply(rotation);
+        }
+        if (mode == MODE.PROXY) {
+            Textures.COVER_INTERFACE_PROXY.renderSided(this.attachedSide, cuboid6, ccRenderState, ops, RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+        } else if (mode == MODE.FLUID) {
+            Textures.COVER_INTERFACE_FLUID.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            Textures.COVER_INTERFACE_FLUID_GLASS.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 3));
+        } else if (mode == MODE.ITEM) {
+            Textures.COVER_INTERFACE_ITEM.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+        } else if (mode == MODE.ENERGY) {
+            Textures.COVER_INTERFACE_ENERGY.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+        } else if (mode == MODE.MACHINE) {
+            if (isWorkingEnabled) {
+                Textures.COVER_INTERFACE_MACHINE_ON.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            } else {
+                Textures.COVER_INTERFACE_MACHINE_OFF.renderSided(this.attachedSide, cuboid6, ccRenderState, ArrayUtils.addAll(ops, rotation), RenderUtil.adjustTrans(translation, this.attachedSide, 1));
+            }
+        }
     }
 
     @SideOnly(Side.CLIENT)

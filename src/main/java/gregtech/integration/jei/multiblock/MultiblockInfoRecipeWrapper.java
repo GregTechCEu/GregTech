@@ -243,7 +243,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         WorldSceneRenderer renderer = getCurrentRenderer();
         int sceneHeight = recipeHeight - PARTS_HEIGHT;
 
-        renderer.render(recipeLayout.getPosX(), recipeLayout.getPosY(), recipeWidth, sceneHeight, Mouse.getX(), Mouse.getY());
+        renderer.render(recipeLayout.getPosX(), recipeLayout.getPosY(), recipeWidth, sceneHeight, mouseX + recipeLayout.getPosX(), mouseY + recipeLayout.getPosY());
         drawMultiblockName(recipeWidth);
 
         //reset colors (so any elements render after this point are not dark)
