@@ -58,6 +58,7 @@ public class MetaTool extends ToolMetaItem<ToolMetaItem<?>.MetaToolValueItem> {
         HARD_HAMMER = addItem(6, "tool.hard_hammer").setToolStats(new ToolHardHammer())
                 .setFullRepairCost(6)
                 .addOreDict(ToolDictNames.craftingToolHardHammer)
+                .addComponents(new HammerItemStat())
                 .setSound(SoundEvents.BLOCK_ANVIL_USE);
 
         SOFT_HAMMER = addItem(7, "tool.soft_hammer").setToolStats(new ToolSoftHammer())

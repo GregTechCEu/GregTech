@@ -12,6 +12,10 @@ public interface ISoundCreator {
 
     boolean isValid();
 
+    default boolean isMuffled() {
+        return false;
+    }
+
     /**
      * @param sound The sound that this creator emits when running.
      * @param pos The position of this creator in the world.

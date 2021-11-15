@@ -24,7 +24,7 @@ public class PositionedSoundMTE extends PositionedSound implements ITickableSoun
 
     @Override
     public void update() {
-        volume = mte.canCreateSound() ? 1 : 0;
+        volume = mte.canCreateSound() ? (mte.isMuffled() ? 0.4f : 1) : 0;
     }
 
     @Override

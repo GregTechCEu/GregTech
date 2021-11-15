@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import gregtech.api.GregTechAPI;
 import gregtech.api.block.BlockCustomParticle;
 import gregtech.api.capability.GregtechCapabilities;
+import gregtech.api.capability.tool.IHammerItem;
 import gregtech.api.capability.tool.IScrewdriverItem;
 import gregtech.api.capability.tool.IWrenchItem;
 import gregtech.api.cover.CoverBehavior;
@@ -320,6 +321,18 @@ public class BlockMachine extends BlockCustomParticle implements ITileEntityProv
             if (screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, true) &&
                     metaTileEntity.onCoverScrewdriverClick(playerIn, hand, rayTraceResult)) {
                 screwdriver.damageItem(DamageValues.DAMAGE_FOR_SCREWDRIVER, false);
+                return true;
+            }
+            return false;
+        }
+
+        if (itemStack.hasCapability(GregtechCapabilities.CAPABILITY_WRENCH, null)) {
+            IWrenchItem wrenchItem = itemStack.getCapability(GregtechCapabilities.CAPABILITY_WRENCH, null);
+            EnumFacing wrenchDirection = ICoverable.determineGridSideHit(rayTraceResult);
+
+            if (wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, true) &&
+                    metaTileEntity.onWrenchClick(playerIn, hand, wrenchDirection, rayTraceResult)) {
+                wrenchItem.damageItem(DamageValues.DAMAGE_FOR_WRENCH, false);
                 return true;
             }
             return false;

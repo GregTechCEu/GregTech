@@ -15,7 +15,7 @@
   "tick.fire": {"category": "block", "sounds": [{"name": "gregtech:fire", "stream": false}]},
   "tick.bath": {"category": "block", "sounds": [{"name": "gregtech:bath", "stream": false}]},
   "tick.motor": {"category": "block", "sounds": [{"name": "gregtech:motor", "stream": false}]},
-  "tick.cut": {"category": "block", "sounds": [{"name": "gregtech:cutting", "stream": false}]},
+  "tick.cut": {"category": "block", "sounds": [{"name": "gregtech:cut", "stream": false}]},
   "tick.turbine": {"category": "block", "sounds": [{"name": "gregtech:turbine", "stream": false}]},
   "tick.combustion": {"category": "block", "sounds": [{"name": "gregtech:combustion", "stream": false}]},
   "tick.miner": {"category": "block", "sounds": [{"name": "gregtech:miner", "stream": false}]},

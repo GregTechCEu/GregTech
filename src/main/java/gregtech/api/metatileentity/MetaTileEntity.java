@@ -41,6 +41,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.PooledMutableBlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -102,6 +103,8 @@ public abstract class MetaTileEntity implements ICoverable {
     protected List<IItemHandlerModifiable> notifiedItemInputList = new ArrayList<>();
     protected List<IFluidHandler> notifiedFluidInputList = new ArrayList<>();
     protected List<IFluidHandler> notifiedFluidOutputList = new ArrayList<>();
+
+    protected boolean muffled = false;
 
     public MetaTileEntity(ResourceLocation metaTileEntityId) {
         this.metaTileEntityId = metaTileEntityId;
@@ -1329,5 +1332,13 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
     public void preInit(Object... data) {
+    }
+
+    public final void toggleMuffled() {
+        muffled = !muffled;
+    }
+
+    public boolean isMuffled() {
+        return muffled;
     }
 }
