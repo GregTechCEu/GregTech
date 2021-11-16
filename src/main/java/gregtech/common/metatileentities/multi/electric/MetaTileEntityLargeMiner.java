@@ -92,7 +92,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     private boolean chunkMode = false;
 
     private final LinkedList<BlockPos> blockPos = new LinkedList<>();
-    private int radius;
+    private int currentRadius;
     private int pipeLength = 0;
     private boolean invFull = false;
     private final int tier;
@@ -112,7 +112,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.material = material;
         this.tier = tier;
         this.chunkRadius = chunkRadius;
-        this.radius = chunkRadius * 16;
+        this.currentRadius = chunkRadius * 16;
         this.drillingFluidConsumePerTick = drillingFluidConsumePerTick;
         this.fortune = fortune;
         this.romanNumeralString = GTUtility.romanNumeralString(fortune);
@@ -196,8 +196,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 markDirty();
             }
 
-            if (y.get() > 0)
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, radius, IMiner.getMeanTickTime(world)));
+            if (blockPos.isEmpty())
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, currentRadius, IMiner.getMeanTickTime(world)));
 
             if (getOffsetTimer() % getTick() == 0 && !blockPos.isEmpty()) {
                 int a = 0;
@@ -213,7 +213,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                                 current code...
                         */
                         if (!silkTouch)
-                            IMiner.applyTieredHammerNoRandomDrops(world.rand, blockState, itemStacks, 3, null, RecipeMaps.MACERATOR_RECIPES, getVoltageTier());
+                            IMiner.applyTieredHammerNoRandomDrops(world.rand, blockState, itemStacks, this.fortune, null, RecipeMaps.MACERATOR_RECIPES, getVoltageTier());
                         else
                             itemStacks.add(new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState)));
                         if (addItemsToItemHandler(outputInventory, true, itemStacks)) {
@@ -240,7 +240,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 x.set(mineX.get());
                 y.set(mineY.get());
                 z.set(mineZ.get());
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, radius, IMiner.getMeanTickTime(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, currentRadius, IMiner.getMeanTickTime(world)));
                 if (blockPos.isEmpty()) {
                     done = true;
                 }
@@ -275,7 +275,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
         tooltip.add(I18n.format("gregtech.machine.miner.multi.modes"));
         tooltip.add(I18n.format("gregtech.machine.miner.tooltip"));
-        tooltip.add(I18n.format("gregtech.machine.miner.multi.tooltip", getRadius() / 16, getRadius() / 16));
+        tooltip.add(I18n.format("gregtech.machine.miner.multi.tooltip", getCurrentRadius() / 16, getCurrentRadius() / 16));
         tooltip.add(I18n.format("gregtech.machine.miner.multi.production"));
         //small ore: tooltip.add(I18n.format("gregtech.machine.miner.multi.production", getRomanNumeralString()));
         tooltip.add(I18n.format("gregtech.machine.miner.fluid_usage", getDrillingFluidConsumePerTick(), I18n.format(DrillingFluid.getFluid().getUnlocalizedName())));
@@ -295,7 +295,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             textList.add(new TextComponentString(String.format("sX: %d      mX: %d", x.get() == Integer.MAX_VALUE ? 0 : x.get(), mineX.get())));
             textList.add(new TextComponentString(String.format("sY: %d      mY: %d", y.get() == Integer.MAX_VALUE ? 0 : y.get(), mineY.get())));
             textList.add(new TextComponentString(String.format("sZ: %d      mZ: %d", z.get() == Integer.MAX_VALUE ? 0 : z.get(), mineZ.get())));
-            textList.add(new TextComponentString(String.format("Chunk Radius: %d", radius / 16)));
+            textList.add(new TextComponentString(String.format("Chunk Radius: %d", currentRadius / 16)));
             if (done)
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
             else if (isActive)
@@ -339,7 +339,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityLargeMiner(metaTileEntityId, getTier(), getMaterial(), getTick(), getChunkRadius(), getDrillingFluidConsumePerTick(), getFortune());
+        return new MetaTileEntityLargeMiner(metaTileEntityId, getTier(), getMaterial(), getTick(), getMaxChunkRadius(), getDrillingFluidConsumePerTick(), getFortune());
     }
 
     @Override
@@ -356,7 +356,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         data.setTag("szPos", new NBTTagInt(startZ.get()));
         data.setTag("tempY", new NBTTagInt(tempY.get()));
         data.setTag("pipeLength", new NBTTagInt(pipeLength));
-        data.setTag("radius", new NBTTagInt(radius));
+        data.setTag("radius", new NBTTagInt(currentRadius));
         data.setTag("isActive", new NBTTagInt(isActive ? 1 : 0));
         data.setTag("done", new NBTTagInt(done ? 1 : 0));
         data.setTag("chunkMode", new NBTTagInt(chunkMode ? 1 : 0));
@@ -378,7 +378,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         startZ.set(data.getInteger("szPos"));
         tempY.set(data.getInteger("tempY"));
         pipeLength = data.getInteger("pipeLength");
-        radius = data.getInteger("radius");
+        currentRadius = data.getInteger("radius");
         done = data.getInteger("done") != 0;
         isActive = data.getInteger("isActive") != 0;
         chunkMode = data.getInteger("chunkMode") != 0;
@@ -451,7 +451,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     public int getVoltageTier() {
-        int voltageCap = getTier() == GTValues.EV ? GTValues.IV : getTier() == GTValues.IV ? GTValues.LuV : GTValues.ZPM;
+        int voltageCap = getTier() + 1;
         int inputVoltage = GTUtility.getTierByVoltage(energyContainer.getInputVoltage());
 
         if (inputVoltage < getTier())
@@ -515,18 +515,20 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!isActive) {
-            if (radius - 16 == 0)
-                radius = getChunkRadius() * 16;
+            if (currentRadius == 1)
+                currentRadius = getMaxChunkRadius() * 16;
+            else if (playerIn.isSneaking())
+                currentRadius = Math.max(1, Math.round(currentRadius / 2.0f));
             else
-                radius -= 16;
+                currentRadius = Math.max(1, currentRadius - 16);
 
-            x.set(Integer.MAX_VALUE);
-            y.set(Integer.MAX_VALUE);
-            z.set(Integer.MAX_VALUE);
             if (!getWorld().isRemote)
-                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", radius), false);
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, currentRadius, IMiner.getMeanTickTime(getWorld())));
+
+            if (getWorld().isRemote)
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", currentRadius));
         } else {
-            playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.errorradius"), false);
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.errorradius"));
         }
         return true;
     }
@@ -542,20 +544,20 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
 
     public void initPos() {
         if (!chunkMode) {
-            x.set(getPos().getX() - radius);
-            z.set(getPos().getZ() - radius);
+            x.set(getPos().getX() - currentRadius);
+            z.set(getPos().getZ() - currentRadius);
             y.set(getPos().getY() - 1);
-            startX.set(getPos().getX() - radius);
-            startZ.set(getPos().getZ() - radius);
+            startX.set(getPos().getX() - currentRadius);
+            startZ.set(getPos().getZ() - currentRadius);
             startY.set(getPos().getY());
             tempY.set(getPos().getY() - 1);
-            mineX.set(getPos().getX() - radius);
-            mineZ.set(getPos().getZ() - radius);
+            mineX.set(getPos().getX() - currentRadius);
+            mineZ.set(getPos().getZ() - currentRadius);
             mineY.set(getPos().getY() - 1);
         } else {
             WorldServer world = (WorldServer) this.getWorld();
             Chunk origin = world.getChunk(getPos());
-            ChunkPos startPos = (world.getChunk(origin.x - radius / 16, origin.z - radius / 16)).getPos();
+            ChunkPos startPos = (world.getChunk(origin.x - currentRadius / 16, origin.z - currentRadius / 16)).getPos();
             x.set(startPos.getXStart());
             z.set(startPos.getZStart());
             y.set(getPos().getY() - 1);
@@ -588,7 +590,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         return this.tick;
     }
 
-    public int getChunkRadius() {
+    public int getMaxChunkRadius() {
         return this.chunkRadius;
     }
 
@@ -600,8 +602,8 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         return this.fortune;
     }
 
-    public int getRadius() {
-        return this.radius;
+    public int getCurrentRadius() {
+        return this.currentRadius;
     }
 
     public String getRomanNumeralString() {

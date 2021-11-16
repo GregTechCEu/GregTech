@@ -38,7 +38,7 @@ public interface IMiner {
 
     int getTick();
 
-    int getRadius();
+    int getCurrentRadius();
 
     int getFortune();
 
@@ -89,7 +89,7 @@ public interface IMiner {
     @SuppressWarnings({"rawtypes", "unchecked"})
     static void applyTieredHammerNoRandomDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, EntityPlayer player, RecipeMap map, int tier) {
         ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
-        Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.DEFAULT);
+        Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();
             for (ItemStack outputStack : recipe.getResultItemOutputs(Integer.MAX_VALUE, random, tier)) {

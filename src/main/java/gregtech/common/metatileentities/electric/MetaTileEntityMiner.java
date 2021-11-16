@@ -62,8 +62,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     private static final Cuboid6 PIPE_CUBOID = new Cuboid6(4 / 16.0, 0.0, 4 / 16.0, 12 / 16.0, 1.0, 12 / 16.0);
 
     private final LinkedList<BlockPos> blockPos = new LinkedList<>();
-    private int radius;
-    private final int oRadius;
+    private int currentRadius;
+    private final int maximumRadius;
     private int pipeLength = 0;
     private final int tick;
     private boolean isActive = true;
@@ -73,8 +73,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         super(metaTileEntityId, tier);
         this.inventorySize = (tier + 1) * (tier + 1);
         this.energyPerTick = GTValues.V[tier - 1];
-        this.oRadius = radius;
-        this.radius = radius;
+        this.maximumRadius = radius;
+        this.currentRadius = radius;
         this.tick = tick;
         this.fortune = fortune;
         initializeInventory();
@@ -82,7 +82,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new MetaTileEntityMiner(metaTileEntityId, getTier(), getTick(), getoRadius(), getFortune());
+        return new MetaTileEntityMiner(metaTileEntityId, getTier(), getTick(), getMaximumRadius(), getFortune());
     }
 
     protected IItemHandlerModifiable createImportItemHandler() {
@@ -200,9 +200,8 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
                 markDirty();
             }
 
-            if(y.get() > 0) {
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, radius, IMiner.getMeanTickTime(world)));
-            }
+            if(blockPos.isEmpty())
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, currentRadius, IMiner.getMeanTickTime(world)));
 
             if (getOffsetTimer() % this.tick == 0 && !blockPos.isEmpty()) {
                 BlockPos tempPos = blockPos.getFirst();
@@ -215,7 +214,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
                         else
                             current code...
                     */
-                    blockState.getBlock().getDrops(itemStacks, world, tempPos, blockState, 0);
+                    blockState.getBlock().getDrops(itemStacks, world, tempPos, blockState, this.fortune);
                     if (addItemsToItemHandler(exportItems, true, itemStacks)) {
                         addItemsToItemHandler(exportItems, false, itemStacks);
                         world.setBlockState(tempPos, Blocks.COBBLESTONE.getDefaultState());
@@ -236,7 +235,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
                 x.set(mineX.get());
                 y.set(mineY.get());
                 z.set(mineZ.get());
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, radius, IMiner.getMeanTickTime(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, currentRadius, IMiner.getMeanTickTime(world)));
                 if (blockPos.isEmpty()) {
                     done = true;
                 }
@@ -264,7 +263,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         data.setTag("tempY", new NBTTagInt(tempY.get()));
         data.setTag("pipeLength", new NBTTagInt(pipeLength));
         data.setTag("isActive", new NBTTagInt(isActive ? 1 : 0));
-        data.setTag("radius", new NBTTagInt(radius));
+        data.setTag("radius", new NBTTagInt(currentRadius));
         data.setTag("done", new NBTTagInt(done ? 1 : 0));
         return data;
     }
@@ -283,7 +282,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         startZ.set(data.getInteger("szPos"));
         tempY.set(data.getInteger("tempY"));
         pipeLength = data.getInteger("pipeLength");
-        radius = data.getInteger("radius");
+        currentRadius = data.getInteger("radius");
         isActive = data.getInteger("isActive") != 0;
         done = data.getInteger("done") != 0;
     }
@@ -292,7 +291,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         textList.add(new TextComponentString(String.format("sX: %d", x.get())));
         textList.add(new TextComponentString(String.format("sY: %d", y.get())));
         textList.add(new TextComponentString(String.format("sZ: %d", z.get())));
-        textList.add(new TextComponentString(String.format("Radius: %d", radius)));
+        textList.add(new TextComponentString(String.format("Radius: %d", currentRadius)));
         if (done)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (isActive)
@@ -312,40 +311,35 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
     }
 
     public void initPos() {
-        x.set(getPos().getX() - radius);
-        z.set(getPos().getZ() - radius);
+        x.set(getPos().getX() - currentRadius);
+        z.set(getPos().getZ() - currentRadius);
         y.set(getPos().getY() - 1);
-        startX.set(getPos().getX() - radius);
-        startZ.set(getPos().getZ() - radius);
+        startX.set(getPos().getX() - currentRadius);
+        startZ.set(getPos().getZ() - currentRadius);
         startY.set(getPos().getY());
         tempY.set(getPos().getY() - 1);
-        mineX.set(getPos().getX() - radius);
-        mineZ.set(getPos().getZ() - radius);
+        mineX.set(getPos().getX() - currentRadius);
+        mineZ.set(getPos().getZ() - currentRadius);
         mineY.set(getPos().getY() - 1);
     }
 
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
-        if (!drainEnergy(true)) {
-            if (radius == getoRadius() / 4) {
-                radius = getoRadius();
-            } else {
-                if (!playerIn.isSneaking()) {
-                    radius--;
-                } else {
-                    if (radius - 5 < getoRadius() / 4) {
-                        radius = getoRadius();
-                    } else
-                        radius -= 5;
-                }
-            }
-            x.set(Integer.MAX_VALUE);
-            y.set(Integer.MAX_VALUE);
-            z.set(Integer.MAX_VALUE);
+        if (!isActive) {
+            if (currentRadius == 1)
+                currentRadius = getMaximumRadius();
+            else if (playerIn.isSneaking())
+                currentRadius = Math.max(1, Math.round(currentRadius / 2.0f));
+            else
+                currentRadius = Math.max(1, currentRadius - 1);
+
             if (!getWorld().isRemote)
-                playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", radius), false);
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, currentRadius, IMiner.getMeanTickTime(getWorld())));
+
+            if (getWorld().isRemote)
+                playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.radius", currentRadius));
         } else {
-            playerIn.sendStatusMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.errorradius"), false);
+            playerIn.sendMessage(new TextComponentTranslation("gregtech.multiblock.large_miner.errorradius"));
         }
         return true;
     }
@@ -413,16 +407,16 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         return this.tick;
     }
 
-    public int getoRadius() {
-        return this.oRadius;
+    public int getMaximumRadius() {
+        return this.maximumRadius;
     }
 
     public int getWorkingArea() {
-        return this.oRadius * 2 + 1;
+        return this.maximumRadius * 2 + 1;
     }
 
-    public int getRadius() {
-        return this.radius;
+    public int getCurrentRadius() {
+        return this.currentRadius;
     }
 
     public int getFortune() {

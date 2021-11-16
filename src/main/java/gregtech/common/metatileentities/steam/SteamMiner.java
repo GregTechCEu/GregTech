@@ -11,6 +11,7 @@ import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
 import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
+import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.damagesources.DamageSources;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
@@ -100,23 +101,22 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
 
     @Override
     public MetaTileEntity createMetaTileEntity(MetaTileEntityHolder holder) {
-        return new SteamMiner(metaTileEntityId, getTick(), getRadius(), getSteam(), getFortune());
+        return new SteamMiner(metaTileEntityId, getTick(), getCurrentRadius(), getSteam(), getFortune());
     }
 
     @Override
     public FluidTankList createImportFluidHandler() {
-        return new FluidTankList(true,
-                new FilteredFluidHandler(16000).setFillPredicate(ModHandler::isSteam)
-        );
+        return new FluidTankList(false, new FilteredFluidHandler(16000)
+                .setFillPredicate(ModHandler::isSteam));
     }
 
     protected IItemHandlerModifiable createImportItemHandler() {
-        return new ItemStackHandler(0);
+        return new NotifiableItemStackHandler(0, this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
-        return new ItemStackHandler(inventorySize);
+        return new NotifiableItemStackHandler(inventorySize, this, true);
     }
 
     @Override
@@ -447,7 +447,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
         return this.oRadius * 2 + 1;
     }
 
-    public int getRadius() {
+    public int getCurrentRadius() {
         return this.aRadius;
     }
 
