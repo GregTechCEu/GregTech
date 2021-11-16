@@ -515,12 +515,10 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     @Override
     public boolean onScrewdriverClick(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, CuboidRayTraceResult hitResult) {
         if (!isActive) {
-            if (currentRadius == 1)
+            if (currentRadius - 16 == 0)
                 currentRadius = getMaxChunkRadius() * 16;
-            else if (playerIn.isSneaking())
-                currentRadius = Math.max(1, Math.round(currentRadius / 2.0f));
             else
-                currentRadius = Math.max(1, currentRadius - 16);
+                currentRadius -= 16;
 
             if (!getWorld().isRemote)
                 blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, currentRadius, IMiner.getMeanTickTime(getWorld())));
