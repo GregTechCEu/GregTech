@@ -175,12 +175,12 @@ public interface IToolStats {
     }
 
     default void onCraftingUse(ItemStack stack) {
-        if (ForgeHooks.getCraftingPlayer() != null && ConfigHolder.toolCraftingSounds && stack.getItem() instanceof ToolMetaItem<?>)
+        if (ConfigHolder.toolCraftingSounds && ForgeHooks.getCraftingPlayer() != null && stack.getItem() instanceof ToolMetaItem<?>)
             ForgeHooks.getCraftingPlayer().playSound(((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), 1, 1);
     }
 
     default void onBreakingUse(ItemStack stack) {
-        if (Minecraft.getMinecraft().player != null && ConfigHolder.toolUseSounds && stack.getItem() instanceof ToolMetaItem<?>)
+        if (ConfigHolder.toolUseSounds && Minecraft.getMinecraft().player != null && stack.getItem() instanceof ToolMetaItem<?>)
             Minecraft.getMinecraft().player.playSound(((ToolMetaItem<?>) stack.getItem()).getItem(stack).getSound(), 1, 1);
     }
 }

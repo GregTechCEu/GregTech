@@ -3547,7 +3547,7 @@ gregtech.advancement.ultimate_voltage.80_diamericium_titanium_coil.desc=Craft a 
 
 
 behaviour.softhammer=Activates and Deactivates Machines
-behaviour.hammer=Turns on and off Muffling on Machines (by hitting them)
+behaviour.hammer=Turns on and off Muffling for Machines (by hitting them)
 behaviour.wrench=Rotates Blocks on Rightclick
 behaviour.boor.by=by %s
 behaviour.paintspray.white.tooltip=Can paint things in White

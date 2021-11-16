@@ -103,10 +103,10 @@ public class ConfigHolder {
     @Config.RequiresWorldRestart
     public static boolean machineSounds = true;
 
-    @Config.Comment("If true, sounds will be played while using tools outside of crafting. Default: true")
+    @Config.Comment("If true, sounds will be played when using tools outside of crafting. Default: true")
     public static boolean toolUseSounds = true;
 
-    @Config.Comment("If true, sounds will be played while crafting with tools. Default: true")
+    @Config.Comment("If true, sounds will be played when crafting with tools. Default: true")
     public static boolean toolCraftingSounds = true;
 
     @Config.Comment("The EU drain per tick for each screen.")
