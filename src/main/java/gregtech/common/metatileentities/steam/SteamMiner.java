@@ -78,8 +78,8 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
     private static final Cuboid6 PIPE_CUBOID = new Cuboid6(4 / 16.0, 0.0, 4 / 16.0, 12 / 16.0, 1.0, 12 / 16.0);
 
     private final LinkedList<BlockPos> blockPos = new LinkedList<>();
-    private int aRadius;
-    private final int oRadius;
+    private int currentRadius;
+    private final int maximumRadius;
     private int pipeY = 0;
     private final int tick;
     private final int steam;
@@ -92,8 +92,8 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
         this.fluidContainerInventory = new ItemStackHandler(1);
         this.needsVenting = false;
         this.tick = tick;
-        this.aRadius = radius;
-        this.oRadius = radius;
+        this.currentRadius = radius;
+        this.maximumRadius = radius;
         this.steam = steam;
         this.fortune = fortune;
         initializeInventory();
@@ -213,8 +213,8 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
                 markDirty();
             }
 
-            if(y.get() > 0) {
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getMeanTickTime(world)));
+            if(blockPos.isEmpty()) {
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, currentRadius, IMiner.getMeanTickTime(world)));
             }
 
             if (getOffsetTimer() % tick == 0 && !blockPos.isEmpty()) {
@@ -246,7 +246,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
                 x.set(mineX.get());
                 y.set(mineY.get());
                 z.set(mineZ.get());
-                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, aRadius, IMiner.getMeanTickTime(world)));
+                blockPos.addAll(IMiner.getBlocksToMine(this, x, y, z, startX, startZ, currentRadius, IMiner.getMeanTickTime(world)));
                 if (blockPos.isEmpty()) {
                     done = true;
                 }
@@ -273,7 +273,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
         data.setTag("szPos", new NBTTagInt(startZ.get()));
         data.setTag("tempY", new NBTTagInt(tempY.get()));
         data.setTag("pipeY", new NBTTagInt(pipeY));
-        data.setTag("radius", new NBTTagInt(aRadius));
+        data.setTag("radius", new NBTTagInt(currentRadius));
         data.setTag("done", new NBTTagInt(done ? 1 : 0));
         data.setTag("fluidContainer", fluidContainerInventory.serializeNBT());
         return data;
@@ -293,7 +293,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
         startZ.set(data.getInteger("szPos"));
         tempY.set(data.getInteger("tempY"));
         pipeY = data.getInteger("pipeY");
-        aRadius = data.getInteger("radius");
+        currentRadius = data.getInteger("radius");
         done = data.getInteger("done") != 0;
         fluidContainerInventory.deserializeNBT(data.getCompoundTag("fluidContainer"));
     }
@@ -302,7 +302,7 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
         textList.add(new TextComponentString(String.format("sX: %d", x.get())));
         textList.add(new TextComponentString(String.format("sY: %d", y.get())));
         textList.add(new TextComponentString(String.format("sZ: %d", z.get())));
-        textList.add(new TextComponentString(String.format("Radius: %d", aRadius)));
+        textList.add(new TextComponentString(String.format("Radius: %d", currentRadius)));
         if (done)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
         else if (isActive)
@@ -423,15 +423,15 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
     }
 
     public void initPos() {
-        x.set(getPos().getX() - aRadius);
-        z.set(getPos().getZ() - aRadius);
+        x.set(getPos().getX() - currentRadius);
+        z.set(getPos().getZ() - currentRadius);
         y.set(getPos().getY() - 1);
-        startX.set(getPos().getX() - aRadius);
-        startZ.set(getPos().getZ() - aRadius);
+        startX.set(getPos().getX() - currentRadius);
+        startZ.set(getPos().getZ() - currentRadius);
         startY.set(getPos().getY());
         tempY.set(getPos().getY() - 1);
-        mineX.set(getPos().getX() - aRadius);
-        mineZ.set(getPos().getZ() - aRadius);
+        mineX.set(getPos().getX() - currentRadius);
+        mineZ.set(getPos().getZ() - currentRadius);
         mineY.set(getPos().getY() - 1);
     }
 
@@ -439,16 +439,16 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable 
         return this.tick;
     }
 
-    public int getoRadius() {
-        return this.oRadius;
+    public int getMaximumRadius() {
+        return this.maximumRadius;
     }
 
     private int getWorkingArea() {
-        return this.oRadius * 2 + 1;
+        return this.maximumRadius * 2 + 1;
     }
 
     public int getCurrentRadius() {
-        return this.aRadius;
+        return this.currentRadius;
     }
 
     public int getSteam() {
