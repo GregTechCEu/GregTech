@@ -229,9 +229,11 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
     }
 
     private void addDisplayText2(List<ITextComponent> textList) {
-        textList.add(new TextComponentString(String.format("    mX: %d", this.minerLogic.getMineX().get())));
-        textList.add(new TextComponentString(String.format("    mY: %d", this.minerLogic.getMineY().get())));
-        textList.add(new TextComponentString(String.format("    mZ: %d", this.minerLogic.getMineZ().get())));
+        if (this.isStructureFormed()) {
+            textList.add(new TextComponentString(String.format("    mX: %d", this.minerLogic.getMineX().get())));
+            textList.add(new TextComponentString(String.format("    mY: %d", this.minerLogic.getMineY().get())));
+            textList.add(new TextComponentString(String.format("    mZ: %d", this.minerLogic.getMineZ().get())));
+        }
     }
 
     public IBlockState getCasingState() {
