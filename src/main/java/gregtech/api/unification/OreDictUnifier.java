@@ -190,7 +190,7 @@ public class OreDictUnifier {
             }
         }
         ItemMaterialInfo info = materialUnificationInfo.get(simpleItemStack);
-        return info == null ? null : info.material.copy();
+        return info == null ? null : info.getMaterial().copy();
     }
 
     @Nullable

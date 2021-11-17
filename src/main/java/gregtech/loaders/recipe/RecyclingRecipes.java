@@ -30,9 +30,7 @@ public class RecyclingRecipes {
         for (Entry<ItemStack, ItemMaterialInfo> entry : OreDictUnifier.getAllItemInfos()) {
             ItemStack itemStack = entry.getKey();
             ItemMaterialInfo materialInfo = entry.getValue();
-            ArrayList<MaterialStack> materialStacks = new ArrayList<>();
-            materialStacks.add(materialInfo.material);
-            materialStacks.addAll(materialInfo.additionalComponents);
+            ArrayList<MaterialStack> materialStacks = new ArrayList<>(materialInfo.getMaterials());
             registerArcRecyclingRecipe(b -> b.inputs(itemStack), materialStacks, false);
         }
     }
