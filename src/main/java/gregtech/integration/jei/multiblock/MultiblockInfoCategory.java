@@ -20,8 +20,6 @@ import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
-import static gregtech.common.metatileentities.MetaTileEntities.*;
-
 public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRecipeWrapper> {
 
     private final IDrawable background;
