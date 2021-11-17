@@ -10,11 +10,11 @@ import gregtech.api.capability.IControllable;
 import gregtech.api.capability.IMiner;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
+import gregtech.api.capability.impl.miner.MinerLogic;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.metatileentity.Logic.Miner.MinerLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.TieredMetaTileEntity;
@@ -279,7 +279,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
 
     @Override
     public boolean isWorkingEnabled() {
-        return this.minerLogic.isActive();
+        return !this.isInventoryFull;
     }
 
     @Override

@@ -9,6 +9,10 @@ public interface IMiner {
 
     boolean drainEnergy(boolean simulate);
 
+    default boolean drainFluid(boolean simulate) {
+        return true;
+    }
+
     void resetInventory();
 
     boolean isInventoryFull();

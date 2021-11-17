@@ -1,4 +1,4 @@
-package gregtech.api.metatileentity.Logic.Miner;
+package gregtech.api.capability.impl.miner;
 
 import gregtech.api.capability.IVentable;
 import gregtech.api.metatileentity.MetaTileEntity;

@@ -1,4 +1,4 @@
-package gregtech.api.metatileentity.Logic.Miner;
+package gregtech.api.capability.impl.miner;
 
 
 import codechicken.lib.render.CCRenderState;
@@ -10,7 +10,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.render.SimpleCubeRenderer;
+import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.ore.OrePrefix;
@@ -29,6 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,13 +42,15 @@ public class MinerLogic {
     private static final double DIVIDEND = MAX_SPEED * Math.pow(TICK_TOLERANCE, POWER);
 
     protected final MetaTileEntity metaTileEntity;
-    private final IMiner miner;
+    protected final IMiner miner;
 
     private final int fortune;
     private final int speed;
     private final int maximumRadius;
 
-    private final SimpleCubeRenderer PIPE_TEXTURE;
+    private final ICubeRenderer PIPE_TEXTURE;
+
+    private IItemHandlerModifiable outputInventory;
 
     private final LinkedList<BlockPos> blocksToMine = new LinkedList<>();
 
@@ -57,7 +60,7 @@ public class MinerLogic {
     private final AtomicInteger startX = new AtomicInteger(Integer.MAX_VALUE);
     private final AtomicInteger startZ = new AtomicInteger(Integer.MAX_VALUE);
     private final AtomicInteger startY = new AtomicInteger(Integer.MAX_VALUE);
-    private final AtomicInteger tempY = new AtomicInteger(Integer.MAX_VALUE);
+    private final AtomicInteger pipeY = new AtomicInteger(Integer.MAX_VALUE);
     private final AtomicInteger mineX = new AtomicInteger(Integer.MAX_VALUE);
     private final AtomicInteger mineZ = new AtomicInteger(Integer.MAX_VALUE);
     private final AtomicInteger mineY = new AtomicInteger(Integer.MAX_VALUE);
@@ -75,7 +78,7 @@ public class MinerLogic {
      * @param speed the speed in ticks per block mined
      * @param maximumRadius the maximum radius (square shaped) the miner can mine in
      */
-    public MinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, SimpleCubeRenderer pipeTexture) {
+    public MinerLogic(MetaTileEntity metaTileEntity, int fortune, int speed, int maximumRadius, ICubeRenderer pipeTexture) {
         this.metaTileEntity = metaTileEntity;
         this.miner = (IMiner) metaTileEntity;
         this.fortune = fortune;
@@ -84,6 +87,7 @@ public class MinerLogic {
         this.maximumRadius = maximumRadius;
         this.isDone = false;
         this.PIPE_TEXTURE = pipeTexture;
+        this.outputInventory = metaTileEntity.getExportItems();
     }
 
     /**
@@ -103,18 +107,18 @@ public class MinerLogic {
         if (!checkCanMine())
             return;
 
-        // do not mine anything if the inventory is full, preventing voiding
-        if (miner.isInventoryFull())
-            return;
+        // if the inventory is not full, drain from it
+        if (!miner.isInventoryFull()) {
 
-        // actually drain the energy
-        miner.drainEnergy(false);
+            // actually drain the energy
+            drainStorages();
+        }
 
         // drill a hole beneath the miner and extend the pipe downwards by one
         WorldServer world = (WorldServer) metaTileEntity.getWorld();
-        if (mineY.get() < tempY.get()) {
-            world.destroyBlock(new BlockPos(metaTileEntity.getPos().getX(), tempY.get(), metaTileEntity.getPos().getZ()), false);
-            tempY.decrementAndGet();
+        if (mineY.get() < pipeY.get()) {
+            world.destroyBlock(new BlockPos(metaTileEntity.getPos().getX(), pipeY.get(), metaTileEntity.getPos().getZ()), false);
+            pipeY.decrementAndGet();
             incrementPipeLength();
         }
 
@@ -128,37 +132,17 @@ public class MinerLogic {
 
             // if the block is not air, harvest it
             if (blockState != Blocks.AIR.getDefaultState()) {
-                    /*small ores
-                        if orePrefix of block in blockPos is small
-                            applyTieredHammerNoRandomDrops...
-                        else
-                            current code...
-                    */
-                // get the block's drops. If it can fit in the inventory, move the previously mined position to the block
-                // replace the ore block with cobblestone instead of breaking it to prevent mob spawning
-                // remove the ore block's position from the mining queue
-                blockState.getBlock().getDrops(blockDrops, world, blocksToMine.getFirst(), blockState, this.fortune);
-                if (MetaTileEntity.addItemsToItemHandler(metaTileEntity.getExportItems(), true, blockDrops)) {
-                    MetaTileEntity.addItemsToItemHandler(metaTileEntity.getExportItems(), false, blockDrops);
-                    world.setBlockState(blocksToMine.getFirst(), Blocks.COBBLESTONE.getDefaultState());
-                    mineX.set(blocksToMine.getFirst().getX());
-                    mineZ.set(blocksToMine.getFirst().getZ());
-                    mineY.set(blocksToMine.getFirst().getY());
-                    blocksToMine.removeFirst();
-                    onMineOperation();
-
-                    // if the inventory was previously considered full, mark it as not since an item was able to fit
-                    if (miner.isInventoryFull())
-                        miner.setInventoryFull(false);
-                } else {
-
-                    // the ore block was not able to fit, so the inventory is considered full
-                    miner.setInventoryFull(true);
-                }
+                // get the small ore drops, if a small ore
+                getSmallOreBlockDrops(blockDrops, world, blocksToMine.getFirst(), blockState);
+                // get the block's drops.
+                getRegularBlockDrops(blockDrops, world, blocksToMine.getFirst(), blockState);
+                // try to insert them
+                tryDoInsertBlocks(blockDrops, world);
             } else {
                 // the block attempted to mine was air, so remove it from the queue and move on
                 blocksToMine.removeFirst();
             }
+
         } else if (blocksToMine.isEmpty()) {
             // there were no blocks to mine, so the current position is the previous position
             x.set(mineX.get());
@@ -180,7 +164,7 @@ public class MinerLogic {
      */
     protected boolean checkCanMine() {
         // if the miner is finished, the target coordinates are invalid, or it cannot drain energy, stop
-        if (isDone || checkCoordinatesInvalid(x, y, z) || !miner.drainEnergy(true)) {
+        if (checkShouldStop()) {
             // if the miner is not finished and has invalid coordinates, get new and valid starting coordinates
             if (!isDone && checkCoordinatesInvalid(x, y, z))
                 initPos(metaTileEntity.getPos(), currentRadius);
@@ -192,11 +176,54 @@ public class MinerLogic {
         return true;
     }
 
+    protected boolean checkShouldStop() {
+        return isDone || checkCoordinatesInvalid(x, y, z) || !miner.drainEnergy(true);
+    }
+
     /**
      * Called after each block is mined, used to perform additional actions afterwards
      */
     protected void onMineOperation() {
 
+    }
+
+    protected void drainStorages() {
+        miner.drainEnergy(false);
+    }
+
+    protected void getSmallOreBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
+        /*small ores
+            if orePrefix of block in blockPos is small
+                applyTieredHammerNoRandomDrops...
+            else
+                current code...
+        */
+    }
+
+    protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
+        blockState.getBlock().getDrops(blockDrops, world, blockToMine, blockState, this.fortune);
+    }
+
+    protected void tryDoInsertBlocks(NonNullList<ItemStack> blockDrops, WorldServer world) {
+        // If the block's drops can fit in the inventory, move the previously mined position to the block
+        // replace the ore block with cobblestone instead of breaking it to prevent mob spawning
+        // remove the ore block's position from the mining queue
+        if (MetaTileEntity.addItemsToItemHandler(outputInventory, true, blockDrops)) {
+            MetaTileEntity.addItemsToItemHandler(outputInventory, false, blockDrops);
+            world.setBlockState(blocksToMine.getFirst(), Blocks.COBBLESTONE.getDefaultState());
+            mineX.set(blocksToMine.getFirst().getX());
+            mineZ.set(blocksToMine.getFirst().getZ());
+            mineY.set(blocksToMine.getFirst().getY());
+            blocksToMine.removeFirst();
+            onMineOperation();
+
+            // if the inventory was previously considered full, mark it as not since an item was able to fit
+            if (miner.isInventoryFull())
+                miner.setInventoryFull(false);
+        } else {
+            // the ore block was not able to fit, so the inventory is considered full
+            miner.setInventoryFull(true);
+        }
     }
 
     /**
@@ -205,14 +232,14 @@ public class MinerLogic {
      * @param pos the {@link BlockPos} of the miner itself
      * @param currentRadius the currently set mining radius
      */
-    private void initPos(BlockPos pos, int currentRadius) {
+    protected void initPos(BlockPos pos, int currentRadius) {
         x.set(pos.getX() - currentRadius);
         z.set(pos.getZ() - currentRadius);
         y.set(pos.getY() - 1);
         startX.set(pos.getX() - currentRadius);
         startZ.set(pos.getZ() - currentRadius);
         startY.set(pos.getY());
-        tempY.set(pos.getY() - 1);
+        pipeY.set(pos.getY() - 1);
         mineX.set(pos.getX() - currentRadius);
         mineZ.set(pos.getZ() - currentRadius);
         mineY.set(pos.getY() - 1);
@@ -323,7 +350,7 @@ public class MinerLogic {
      * @param map the recipemap from which to get the drops
      * @param tier the tier at which the operation is performed, used for calculating the chanced output boost
      */
-    private static void applyTieredHammerNoRandomDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, EntityPlayer player, RecipeMap<?> map, int tier) {
+    protected static void applyTieredHammerNoRandomDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, EntityPlayer player, RecipeMap<?> map, int tier) {
         ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
         Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
@@ -375,7 +402,7 @@ public class MinerLogic {
         data.setTag("sxPos", new NBTTagInt(startX.get()));
         data.setTag("syPos", new NBTTagInt(startY.get()));
         data.setTag("szPos", new NBTTagInt(startZ.get()));
-        data.setTag("tempY", new NBTTagInt(tempY.get()));
+        data.setTag("tempY", new NBTTagInt(pipeY.get()));
         data.setTag("isActive", new NBTTagInt(this.isActive ? 1 : 0));
         data.setTag("pipeLength", new NBTTagInt(pipeLength));
         data.setTag("currentRadius", new NBTTagInt(currentRadius));
@@ -397,7 +424,7 @@ public class MinerLogic {
         startX.set(data.getInteger("sxPos"));
         startY.set(data.getInteger("syPos"));
         startZ.set(data.getInteger("szPos"));
-        tempY.set(data.getInteger("tempY"));
+        pipeY.set(data.getInteger("tempY"));
         setActive(data.getInteger("isActive") != 0);
         pipeLength = data.getInteger("pipeLength");
         this.currentRadius = data.getInteger("currentRadius");
@@ -486,6 +513,38 @@ public class MinerLogic {
 
     /**
      *
+     * @return the starting x value
+     */
+    public AtomicInteger getStartX() {
+        return startX;
+    }
+
+    /**
+     *
+     * @return the starting y value
+     */
+    public AtomicInteger getStartY() {
+        return startY;
+    }
+
+    /**
+     *
+     * @return the starting z value
+     */
+    public AtomicInteger getStartZ() {
+        return startZ;
+    }
+
+    /**
+     *
+     * @return the pipe y value
+     */
+    public AtomicInteger getPipeY() {
+        return pipeY;
+    }
+
+    /**
+     *
      * @return the miner's maximum radius
      */
     public int getMaximumRadius() {
@@ -550,5 +609,12 @@ public class MinerLogic {
      */
     public int getSpeed() {
         return this.speed;
+    }
+
+    /**
+     * sets the output inventory to something else
+     */
+    public void setOutputInventory(IItemHandlerModifiable outputInventory) {
+        this.outputInventory = outputInventory;
     }
 }
