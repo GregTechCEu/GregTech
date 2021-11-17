@@ -1035,5 +1035,4 @@ public class GTUtility {
     public static double getMeanTickTime(@Nonnull World world) {
         return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
     }
-
 }

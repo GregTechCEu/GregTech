@@ -14,6 +14,10 @@ public class ItemMaterialInfo {
         this.materials.addAll(Arrays.asList(materials));
     }
 
+    public ItemMaterialInfo(List<MaterialStack> materials) {
+        this.materials.addAll(materials);
+    }
+
     /**
      * Returns the first MaterialStack in the "materials" list
      */

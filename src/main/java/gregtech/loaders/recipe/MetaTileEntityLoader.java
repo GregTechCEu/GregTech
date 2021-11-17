@@ -54,16 +54,16 @@ public class MetaTileEntityLoader {
             ModHandler.addShapedRecipe("steam_output_bus", MetaTileEntities.STEAM_EXPORT_BUS.getStackForm(), "H", "C", 'H', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), 'C', Blocks.CHEST);
         }
 
-        ModHandler.addShapedRecipe("casing_ulv", MetaBlocks.MACHINE_CASING.getItemVariant(ULV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron));
-        ModHandler.addShapedRecipe("casing_lv", MetaBlocks.MACHINE_CASING.getItemVariant(LV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel));
-        ModHandler.addShapedRecipe("casing_mv", MetaBlocks.MACHINE_CASING.getItemVariant(MV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium));
-        ModHandler.addShapedRecipe("casing_hv", MetaBlocks.MACHINE_CASING.getItemVariant(HV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel));
-        ModHandler.addShapedRecipe("casing_ev", MetaBlocks.MACHINE_CASING.getItemVariant(EV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Titanium));
-        ModHandler.addShapedRecipe("casing_iv", MetaBlocks.MACHINE_CASING.getItemVariant(IV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel));
-        ModHandler.addShapedRecipe("casing_luv", MetaBlocks.MACHINE_CASING.getItemVariant(LuV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium));
-        ModHandler.addShapedRecipe("casing_zpm", MetaBlocks.MACHINE_CASING.getItemVariant(ZPM), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.NaquadahAlloy));
-        ModHandler.addShapedRecipe("casing_uv", MetaBlocks.MACHINE_CASING.getItemVariant(UV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Livermorium));
-        ModHandler.addShapedRecipe("casing_max", MetaBlocks.MACHINE_CASING.getItemVariant(MAX), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Neutronium));
+        ModHandler.addShapedRecipe(true, "casing_ulv", MetaBlocks.MACHINE_CASING.getItemVariant(ULV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron));
+        ModHandler.addShapedRecipe(true, "casing_lv", MetaBlocks.MACHINE_CASING.getItemVariant(LV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel));
+        ModHandler.addShapedRecipe(true, "casing_mv", MetaBlocks.MACHINE_CASING.getItemVariant(MV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Aluminium));
+        ModHandler.addShapedRecipe(true, "casing_hv", MetaBlocks.MACHINE_CASING.getItemVariant(HV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel));
+        ModHandler.addShapedRecipe(true, "casing_ev", MetaBlocks.MACHINE_CASING.getItemVariant(EV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Titanium));
+        ModHandler.addShapedRecipe(true, "casing_iv", MetaBlocks.MACHINE_CASING.getItemVariant(IV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel));
+        ModHandler.addShapedRecipe(true, "casing_luv", MetaBlocks.MACHINE_CASING.getItemVariant(LuV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium));
+        ModHandler.addShapedRecipe(true, "casing_zpm", MetaBlocks.MACHINE_CASING.getItemVariant(ZPM), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.NaquadahAlloy));
+        ModHandler.addShapedRecipe(true, "casing_uv", MetaBlocks.MACHINE_CASING.getItemVariant(UV), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Livermorium));
+        ModHandler.addShapedRecipe(true, "casing_max", MetaBlocks.MACHINE_CASING.getItemVariant(MAX), "PPP", "PwP", "PPP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Neutronium));
 
         ModHandler.addShapedRecipe("casing_primitive_bricks", MetaBlocks.METAL_CASING.getItemVariant(PRIMITIVE_BRICKS, 1), "XX", "XX", 'X', MetaItems.FIRECLAY_BRICK);
         ModHandler.addShapedRecipe("casing_coke_bricks", MetaBlocks.METAL_CASING.getItemVariant(COKE_BRICKS, 1), "XX", "XX", 'X', MetaItems.COKE_OVEN_BRICK);
@@ -125,16 +125,16 @@ public class MetaTileEntityLoader {
         ModHandler.addShapelessRecipe("frost_hazard_to_steel_solid_casing", MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID), MetaBlocks.WARNING_SIGN.getItemVariant(FROST_HAZARD));
         ModHandler.addShapelessRecipe("noise_hazard_to_steel_solid_casing", MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID), MetaBlocks.WARNING_SIGN.getItemVariant(NOISE_HAZARD));
 
-        ModHandler.addShapedRecipe("hull_ulv", MetaTileEntities.HULL[GTValues.ULV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(ULV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.RedAlloy), 'H', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', new UnificationEntry(OrePrefix.plate, Materials.Wood));
-        ModHandler.addShapedRecipe("hull_lv", MetaTileEntities.HULL[GTValues.LV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(LV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin), 'H', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'P', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron));
-        ModHandler.addShapedRecipe("hull_mv", MetaTileEntities.HULL[GTValues.MV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(MV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper), 'H', new UnificationEntry(OrePrefix.plate, Materials.Aluminium), 'P', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron));
-        ModHandler.addShapedRecipe("hull_hv", MetaTileEntities.HULL[GTValues.HV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(HV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold), 'H', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polyethylene));
-        ModHandler.addShapedRecipe("hull_ev", MetaTileEntities.HULL[GTValues.EV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(EV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium), 'H', new UnificationEntry(OrePrefix.plate, Materials.Titanium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polyethylene));
-        ModHandler.addShapedRecipe("hull_iv", MetaTileEntities.HULL[GTValues.IV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(IV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tungsten), 'H', new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polytetrafluoroethylene));
-        ModHandler.addShapedRecipe("hull_luv", MetaTileEntities.HULL[GTValues.LuV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(LuV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.VanadiumGallium), 'H', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polytetrafluoroethylene));
-        ModHandler.addShapedRecipe("hull_zpm", MetaTileEntities.HULL[GTValues.ZPM].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(ZPM), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Naquadah), 'H', new UnificationEntry(OrePrefix.plate, Materials.NaquadahAlloy), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole));
-        ModHandler.addShapedRecipe("hull_uv", MetaTileEntities.HULL[GTValues.UV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(UV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.NaquadahAlloy), 'H', new UnificationEntry(OrePrefix.plate, Materials.Livermorium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole));
-        ModHandler.addShapedRecipe("hull_max", MetaTileEntities.HULL[GTValues.MAX].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(MAX), 'C', new UnificationEntry(OrePrefix.wireGtSingle, Materials.RutheniumTriniumAmericiumNeutronate), 'H', new UnificationEntry(OrePrefix.plate, Materials.Neutronium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole));
+        ModHandler.addShapedRecipe(true, "hull_ulv", MetaTileEntities.HULL[GTValues.ULV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(ULV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.RedAlloy), 'H', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', new UnificationEntry(OrePrefix.plate, Materials.Wood));
+        ModHandler.addShapedRecipe(true, "hull_lv", MetaTileEntities.HULL[GTValues.LV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(LV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin), 'H', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'P', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron));
+        ModHandler.addShapedRecipe(true, "hull_mv", MetaTileEntities.HULL[GTValues.MV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(MV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper), 'H', new UnificationEntry(OrePrefix.plate, Materials.Aluminium), 'P', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron));
+        ModHandler.addShapedRecipe(true, "hull_hv", MetaTileEntities.HULL[GTValues.HV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(HV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Gold), 'H', new UnificationEntry(OrePrefix.plate, Materials.StainlessSteel), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polyethylene));
+        ModHandler.addShapedRecipe(true, "hull_ev", MetaTileEntities.HULL[GTValues.EV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(EV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Aluminium), 'H', new UnificationEntry(OrePrefix.plate, Materials.Titanium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polyethylene));
+        ModHandler.addShapedRecipe(true, "hull_iv", MetaTileEntities.HULL[GTValues.IV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(IV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tungsten), 'H', new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polytetrafluoroethylene));
+        ModHandler.addShapedRecipe(true, "hull_luv", MetaTileEntities.HULL[GTValues.LuV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(LuV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.VanadiumGallium), 'H', new UnificationEntry(OrePrefix.plate, Materials.RhodiumPlatedPalladium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polytetrafluoroethylene));
+        ModHandler.addShapedRecipe(true, "hull_zpm", MetaTileEntities.HULL[GTValues.ZPM].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(ZPM), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Naquadah), 'H', new UnificationEntry(OrePrefix.plate, Materials.NaquadahAlloy), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole));
+        ModHandler.addShapedRecipe(true, "hull_uv", MetaTileEntities.HULL[GTValues.UV].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(UV), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.NaquadahAlloy), 'H', new UnificationEntry(OrePrefix.plate, Materials.Livermorium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole));
+        ModHandler.addShapedRecipe(true, "hull_max", MetaTileEntities.HULL[GTValues.MAX].getStackForm(), "PHP", "CMC", 'M', MetaBlocks.MACHINE_CASING.getItemVariant(MAX), 'C', new UnificationEntry(OrePrefix.wireGtSingle, Materials.RutheniumTriniumAmericiumNeutronate), 'H', new UnificationEntry(OrePrefix.plate, Materials.Neutronium), 'P', new UnificationEntry(OrePrefix.plate, Materials.Polybenzimidazole));
 
         ModHandler.addShapedRecipe("transformer_ulv", MetaTileEntities.TRANSFORMER[GTValues.ULV].getStackForm(), " BB", "CM ", " BB", 'M', MetaTileEntities.HULL[GTValues.ULV].getStackForm(), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin), 'B', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Lead));
         ModHandler.addShapedRecipe("transformer_lv", MetaTileEntities.TRANSFORMER[GTValues.LV].getStackForm(), " BB", "CM ", " BB", 'M', MetaTileEntities.HULL[GTValues.LV].getStackForm(), 'C', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Copper), 'B', new UnificationEntry(OrePrefix.cableGtSingle, Materials.Tin));
@@ -484,6 +484,14 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("buffer_hv", MetaTileEntities.BUFFER[2].getStackForm(), "HP", "CV", 'H', MetaTileEntities.HULL[GTValues.HV].getStackForm(), 'P', MetaItems.ELECTRIC_PUMP_HV.getStackForm(), 'V', MetaItems.CONVEYOR_MODULE_HV.getStackForm(), 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Basic));
     }
 
+    // Can only accept a subset of "Item" types:
+    // - ItemStack
+    // - Item
+    // - Block
+    // - MetaItem.MetaValueItem
+    // - CraftingComponent.Component
+    // - UnificationEntry
+    // - String (intended as an OreDictionary entry)
     public static <T extends MetaTileEntity & ITieredMetaTileEntity> void registerMachineRecipe(T[] metaTileEntities, Object... recipe) {
         for (T metaTileEntity : metaTileEntities) {
 
@@ -494,7 +502,7 @@ public class MetaTileEntityLoader {
                 if (prepRecipe == null) {
                     return;
                 }
-                ModHandler.addShapedRecipe(metaTileEntity.getMetaName(), metaTileEntity.getStackForm(), prepRecipe);
+                ModHandler.addShapedRecipe(true, metaTileEntity.getMetaName(), metaTileEntity.getStackForm(), prepRecipe);
             }
         }
     }

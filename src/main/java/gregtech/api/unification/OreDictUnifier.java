@@ -194,6 +194,13 @@ public class OreDictUnifier {
     }
 
     @Nullable
+    public static ItemMaterialInfo getMaterialInfo(ItemStack itemStack) {
+        if (itemStack.isEmpty()) return null;
+        ItemAndMetadata simpleItemStack = new ItemAndMetadata(itemStack);
+        return materialUnificationInfo.get(simpleItemStack);
+    }
+
+    @Nullable
     public static OrePrefix getPrefix(ItemStack itemStack) {
         if (itemStack.isEmpty()) return null;
         ItemAndMetadata simpleItemStack = new ItemAndMetadata(itemStack);
@@ -239,7 +246,8 @@ public class OreDictUnifier {
 
     public static ItemStack get(String oreDictName) {
         List<ItemStack> itemStacks = oreDictNameStacks.get(oreDictName);
-        return itemStacks.size() > 0 ? itemStacks.get(0).copy() : ItemStack.EMPTY;
+        if (itemStacks == null || itemStacks.size() == 0) return ItemStack.EMPTY;
+        return itemStacks.get(0).copy();
     }
 
     public static List<Entry<ItemStack, ItemMaterialInfo>> getAllItemInfos() {

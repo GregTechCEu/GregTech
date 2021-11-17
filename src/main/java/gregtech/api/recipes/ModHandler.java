@@ -8,13 +8,16 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.unification.stack.ItemMaterialInfo;
 import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTLog;
+import gregtech.api.util.GTUtility;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
+import gregtech.loaders.recipe.CraftingComponent;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.InventoryCrafting;
@@ -225,6 +228,10 @@ public class ModHandler {
      * </ul>
      */
     public static void addShapedRecipe(String regName, ItemStack result, Object... recipe) {
+        addShapedRecipe(false, regName, result, recipe);
+    }
+
+    public static void addShapedRecipe(boolean withUnificationData, String regName, ItemStack result, Object... recipe) {
         boolean skip = false;
         if (result.isEmpty()) {
             GTLog.logger.error("Result cannot be an empty ItemStack. Recipe: {}", regName);
@@ -241,6 +248,8 @@ public class ModHandler {
                 .setMirrored(false) //make all recipes not mirrored by default
                 .setRegistryName(regName);
         ForgeRegistries.RECIPES.register(shapedOreRecipe);
+
+        if (withUnificationData) OreDictUnifier.registerOre(result, getRecyclingIngredients(recipe));
     }
 
     public static void addShapedEnergyTransferRecipe(String regName, ItemStack result, Predicate<ItemStack> chargePredicate, boolean overrideCharge, boolean transferMaxCharge, Object... recipe) {
@@ -335,6 +344,40 @@ public class ModHandler {
             throw new IllegalArgumentException(ingredient.getClass().getSimpleName() + " type is not suitable for crafting input.");
         }
         return ingredient;
+    }
+
+    public static ItemMaterialInfo getRecyclingIngredients(Object... recipe) {
+        Map<Material, Long> materialStacksExploded = new HashMap<>();
+        for (Object ingredient : recipe) {
+            ItemStack stack;
+            if (ingredient instanceof MetaItem.MetaValueItem) {
+                stack = ((MetaItem<?>.MetaValueItem) ingredient).getStackForm();
+            } else if (ingredient instanceof UnificationEntry) {
+                stack = OreDictUnifier.get((UnificationEntry) ingredient);
+            } else if (ingredient instanceof ItemStack) {
+                stack = (ItemStack) ingredient;
+            } else if (ingredient instanceof Item) {
+                stack = new ItemStack((Item) ingredient, 1);
+            } else if (ingredient instanceof Block) {
+                stack = new ItemStack((Block) ingredient, 1);
+            } else if (ingredient instanceof String) {
+                stack = OreDictUnifier.get((String) ingredient);
+            } else continue; // throw out bad entries
+
+            ItemMaterialInfo info = OreDictUnifier.getMaterialInfo(stack);
+            if (info != null) { // throw out entries with no material data
+                for (MaterialStack ms : info.getMaterials()) {
+                    long amount = materialStacksExploded.containsKey(ms.material) ?
+                            materialStacksExploded.get(ms.material) : 0;
+                    materialStacksExploded.put(ms.material, ms.amount + amount);
+                }
+            }
+        }
+        return new ItemMaterialInfo(materialStacksExploded.entrySet().stream()
+                .map(e -> new MaterialStack(e.getKey(), e.getValue()))
+                .sorted(Comparator.comparingLong(m -> -m.amount)) // todo check that this is high->low
+                .collect(Collectors.toList())
+        );
     }
 
     /**
