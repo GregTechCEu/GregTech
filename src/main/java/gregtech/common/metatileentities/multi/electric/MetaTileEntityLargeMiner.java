@@ -209,9 +209,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 
-            textList.add(new TextComponentString(String.format("sX: %d      mX: %d", this.minerLogic.getX().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getX().get(), this.minerLogic.getMineX().get())));
-            textList.add(new TextComponentString(String.format("sY: %d      mY: %d", this.minerLogic.getY().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getY().get(), this.minerLogic.getMineY().get())));
-            textList.add(new TextComponentString(String.format("sZ: %d      mZ: %d", this.minerLogic.getZ().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getZ().get(), this.minerLogic.getMineZ().get())));
+            textList.add(new TextComponentString(String.format("sX: %d", this.minerLogic.getX().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getX().get())));
+            textList.add(new TextComponentString(String.format("sY: %d", this.minerLogic.getY().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getY().get())));
+            textList.add(new TextComponentString(String.format("sZ: %d", this.minerLogic.getZ().get() == Integer.MAX_VALUE ? 0 : this.minerLogic.getZ().get())));
             textList.add(new TextComponentString(String.format("Chunk Radius: %d", this.minerLogic.getCurrentRadius() / CHUNK_LENGTH)));
             if (this.minerLogic.isDone())
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.done").setStyle(new Style().setColor(TextFormatting.GREEN)));
@@ -226,6 +226,12 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
             if (!drainEnergy(true))
                 textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
         }
+    }
+
+    private void addDisplayText2(List<ITextComponent> textList) {
+        textList.add(new TextComponentString(String.format("    mX: %d", this.minerLogic.getMineX().get())));
+        textList.add(new TextComponentString(String.format("    mY: %d", this.minerLogic.getMineY().get())));
+        textList.add(new TextComponentString(String.format("    mZ: %d", this.minerLogic.getMineZ().get())));
     }
 
     public IBlockState getCasingState() {
@@ -305,7 +311,9 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         builder.image(7, 4, 145, 128, GuiTextures.DISPLAY);
         builder.label(11, 9, this.getMetaFullName(), 16777215);
         builder.widget((new AdvancedTextWidget(11, 19, this::addDisplayText,
-                16777215)).setMaxWidthLimit(139).setClickHandler(this::handleDisplayClick));
+                0xFFFFFF)).setMaxWidthLimit(139).setClickHandler(this::handleDisplayClick));
+        builder.widget((new AdvancedTextWidget(63, 30, this::addDisplayText2,
+                0xFFFFFF)).setMaxWidthLimit(68).setClickHandler(this::handleDisplayClick));
         builder.bindPlayerInventory(entityPlayer.inventory, 134);
 
         builder.widget(new ToggleButtonWidget(154, 4, 16, 16,

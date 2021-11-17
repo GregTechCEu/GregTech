@@ -201,7 +201,7 @@ public class MinerLogic {
     }
 
     protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
-        blockState.getBlock().getDrops(blockDrops, world, blockToMine, blockState, this.fortune);
+        blockState.getBlock().getDrops(blockDrops, world, blockToMine, blockState, 0); // regular ores do not get fortune applied
     }
 
     protected void tryDoInsertBlocks(NonNullList<ItemStack> blockDrops, WorldServer world) {
