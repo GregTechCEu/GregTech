@@ -61,7 +61,7 @@ public class MultiblockMinerLogic extends MinerLogic {
     @Override
     protected void tryDoInsertBlocks(NonNullList<ItemStack> blockDrops, WorldServer world) {
         // every overclock increases the output by 100%
-        if (overclockAmount != 0) {
+        if (!this.isSilkTouchMode && overclockAmount != 0) {
             for (ItemStack stack : blockDrops)
                 stack.setCount(stack.getCount() * (this.overclockAmount + 1));
         }
