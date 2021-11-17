@@ -5,6 +5,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.capability.GregtechDataCodes;
+import gregtech.api.capability.IMiner;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
@@ -39,7 +40,7 @@ public class MinerLogic {
     private static final byte TICK_TOLERANCE = 20;
     private static final double DIVIDEND = MAX_SPEED * Math.pow(TICK_TOLERANCE, POWER);
 
-    private final MetaTileEntity metaTileEntity;
+    protected final MetaTileEntity metaTileEntity;
     private final IMiner miner;
 
     private final int fortune;
@@ -67,7 +68,7 @@ public class MinerLogic {
     private boolean isActive = true;
 
     /**
-     * Creates the logic for all types of in-world ore block miners
+     * Creates the general logic for all in-world ore block miners
      *
      * @param metaTileEntity the {@link MetaTileEntity} this logic belongs to
      * @param fortune the fortune amount to apply when mining ores
@@ -98,16 +99,9 @@ public class MinerLogic {
         if (!this.isActive)
             return;
 
-        // if the miner is finished, the target coordinates are invalid, or it cannot drain energy, stop
-        if (isDone || checkCoordinatesInvalid(x, y, z) || !miner.drainEnergy(true)) {
-            // if the miner is not finished and has invalid coordinates, get new and valid starting coordinates
-            if (!isDone && checkCoordinatesInvalid(x, y, z))
-                initPos(metaTileEntity.getPos(), currentRadius);
-
-            // reset the miner's inventory and don't do anything else this time
-            miner.resetInventory();
+        // check if mining is possible
+        if (!checkCanMine())
             return;
-        }
 
         // do not mine anything if the inventory is full, preventing voiding
         if (miner.isInventoryFull())
@@ -151,6 +145,7 @@ public class MinerLogic {
                     mineZ.set(blocksToMine.getFirst().getZ());
                     mineY.set(blocksToMine.getFirst().getY());
                     blocksToMine.removeFirst();
+                    onMineOperation();
 
                     // if the inventory was previously considered full, mark it as not since an item was able to fit
                     if (miner.isInventoryFull())
@@ -177,6 +172,31 @@ public class MinerLogic {
                 this.setActive(false);
             }
         }
+    }
+
+    /**
+     *
+     * @return true if the miner is able to mine, else false
+     */
+    protected boolean checkCanMine() {
+        // if the miner is finished, the target coordinates are invalid, or it cannot drain energy, stop
+        if (isDone || checkCoordinatesInvalid(x, y, z) || !miner.drainEnergy(true)) {
+            // if the miner is not finished and has invalid coordinates, get new and valid starting coordinates
+            if (!isDone && checkCoordinatesInvalid(x, y, z))
+                initPos(metaTileEntity.getPos(), currentRadius);
+
+            // reset the miner's inventory and don't do anything else this time
+            miner.resetInventory();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Called after each block is mined, used to perform additional actions afterwards
+     */
+    protected void onMineOperation() {
+
     }
 
     /**

@@ -16,7 +16,7 @@
 //import gregtech.api.gui.ModularUI;
 //import gregtech.api.gui.widgets.AdvancedTextWidget;
 //import gregtech.api.gui.widgets.ToggleButtonWidget;
-//import gregtech.api.metatileentity.Logic.Miner.IMiner;
+//import gregtech.api.capability.IMiner;
 //import gregtech.api.metatileentity.MetaTileEntity;
 //import gregtech.api.metatileentity.MetaTileEntityHolder;
 //import gregtech.api.metatileentity.MetaTileEntityUIFactory;

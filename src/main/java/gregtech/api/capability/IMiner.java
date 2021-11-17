@@ -1,4 +1,4 @@
-package gregtech.api.metatileentity.Logic.Miner;
+package gregtech.api.capability;
 
 
 import codechicken.lib.vec.Cuboid6;

@@ -7,13 +7,13 @@ import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IControllable;
+import gregtech.api.capability.IMiner;
 import gregtech.api.capability.impl.EnergyContainerHandler;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.metatileentity.Logic.Miner.IMiner;
 import gregtech.api.metatileentity.Logic.Miner.MinerLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -148,7 +148,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.working").setStyle(new Style().setColor(TextFormatting.GOLD)));
         else
             textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-        if (isInventoryFull())
+        if (isInventoryFull)
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.invfull").setStyle(new Style().setColor(TextFormatting.RED)));
         if (!drainEnergy(true))
             textList.add(new TextComponentTranslation("gregtech.multiblock.large_miner.needspower").setStyle(new Style().setColor(TextFormatting.RED)));
