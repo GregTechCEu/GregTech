@@ -13,11 +13,9 @@ import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.api.util.DummyContainer;
 import gregtech.api.util.GTLog;
-import gregtech.api.util.GTUtility;
 import gregtech.api.util.ShapedOreEnergyTransferRecipe;
 import gregtech.api.util.world.DummyWorld;
 import gregtech.common.ConfigHolder;
-import gregtech.loaders.recipe.CraftingComponent;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.InventoryCrafting;
@@ -42,6 +40,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -347,8 +346,35 @@ public class ModHandler {
     }
 
     public static ItemMaterialInfo getRecyclingIngredients(Object... recipe) {
+        Map<Character, Integer> inputCountMap = new HashMap<>();
         Map<Material, Long> materialStacksExploded = new HashMap<>();
-        for (Object ingredient : recipe) {
+
+        int itr = 0;
+        while (recipe[itr] instanceof String) {
+            String s = (String) recipe[itr];
+            for (char c : s.toCharArray()) {
+                if (Character.isLowerCase(c)) continue; // skip tools
+                int count = inputCountMap.getOrDefault(c, 0);
+                inputCountMap.put(c, count + 1);
+            }
+            itr++;
+        }
+
+        char lastChar = ' ';
+        for (int i = itr; i < recipe.length; i++) {
+            Object ingredient = recipe[i];
+
+            // Track the current working ingredient symbol
+            if (ingredient instanceof Character) {
+                lastChar = (char) ingredient;
+                continue;
+            }
+
+            // Should never happen if recipe is formatted correctly
+            // In the case that it isn't, this error should be handled
+            // by an earlier method call parsing the recipe.
+            if (lastChar == ' ') return null;
+
             ItemStack stack;
             if (ingredient instanceof MetaItem.MetaValueItem) {
                 stack = ((MetaItem<?>.MetaValueItem) ingredient).getStackForm();
@@ -364,18 +390,26 @@ public class ModHandler {
                 stack = OreDictUnifier.get((String) ingredient);
             } else continue; // throw out bad entries
 
+            BiConsumer<MaterialStack, Character> func = (ms, c) -> {
+                long amount = materialStacksExploded.getOrDefault(ms.material, 0L);
+                materialStacksExploded.put(ms.material, (ms.amount * inputCountMap.get(c)) + amount);
+            };
+
+            // First try to get ItemMaterialInfo
             ItemMaterialInfo info = OreDictUnifier.getMaterialInfo(stack);
-            if (info != null) { // throw out entries with no material data
-                for (MaterialStack ms : info.getMaterials()) {
-                    long amount = materialStacksExploded.containsKey(ms.material) ?
-                            materialStacksExploded.get(ms.material) : 0;
-                    materialStacksExploded.put(ms.material, ms.amount + amount);
-                }
+            if (info != null) {
+                for (MaterialStack ms : info.getMaterials()) func.accept(ms, lastChar);
+                continue;
             }
+
+            // Then try to get a single Material (UnificationEntry needs this, for example)
+            MaterialStack materialStack = OreDictUnifier.getMaterial(stack);
+            if (materialStack != null) func.accept(materialStack, lastChar);
         }
+
         return new ItemMaterialInfo(materialStacksExploded.entrySet().stream()
                 .map(e -> new MaterialStack(e.getKey(), e.getValue()))
-                .sorted(Comparator.comparingLong(m -> -m.amount)) // todo check that this is high->low
+                .sorted(Comparator.comparingLong(m -> -m.amount))
                 .collect(Collectors.toList())
         );
     }
