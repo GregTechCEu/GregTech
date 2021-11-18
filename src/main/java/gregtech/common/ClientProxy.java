@@ -15,9 +15,7 @@ import gregtech.api.terminal.TerminalRegistry;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.api.util.FluidTooltipUtil;
-import gregtech.api.util.GTLog;
-import gregtech.api.util.ModCompatibility;
+import gregtech.api.util.*;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.common.blocks.*;
 import gregtech.common.covers.facade.FacadeRenderer;
@@ -26,6 +24,8 @@ import gregtech.common.render.CableRenderer;
 import gregtech.common.render.FluidPipeRenderer;
 import gregtech.common.render.ItemPipeRenderer;
 import gregtech.common.render.StoneRenderer;
+import net.minecraft.advancements.AdvancementManager;
+import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -67,16 +67,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
-
-    private static final ResourceLocation GREGTECH_CAPE_TEXTURE = new ResourceLocation(GTValues.MODID, "textures/gregtechcape.png");
 
     public static final IBlockColor COMPRESSED_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
             state.getValue(((BlockCompressed) state.getBlock()).variantProperty).getMaterialRGB();
@@ -113,7 +108,7 @@ public class ClientProxy extends CommonProxy {
         if (!GTValues.isModLoaded(GTValues.MODID_CTM)) {
             Minecraft.getMinecraft().metadataSerializer.registerMetadataSectionType(new MetadataSectionCTM.Serializer(), MetadataSectionCTM.class);
             MinecraftForge.EVENT_BUS.register(CustomTextureModelHandler.INSTANCE);
-            ((SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(CustomTextureModelHandler.INSTANCE);
+            ((SimpleReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(CustomTextureModelHandler.INSTANCE);
         }
 
         KeyBinds.initBinds();
@@ -172,7 +167,7 @@ public class ClientProxy extends CommonProxy {
         if (unificationEntry != null && unificationEntry.material != null) {
             chemicalFormula = unificationEntry.material.getChemicalFormula();
 
-        // Test for Fluids
+            // Test for Fluids
         } else if (ItemNBTUtils.hasTag(itemStack)) {
 
             // Vanilla bucket
@@ -186,7 +181,7 @@ public class ClientProxy extends CommonProxy {
                 }
             }
 
-        // Water buckets have a separate registry name from other buckets
+            // Water buckets have a separate registry name from other buckets
         } else if (itemStack.getItem().equals(Items.WATER_BUCKET)) {
             chemicalFormula = FluidTooltipUtil.getWaterTooltip();
         }
@@ -310,7 +305,7 @@ public class ClientProxy extends CommonProxy {
         if (capeHoldersUUIDs.contains(clientPlayer.getUniqueID()) && clientPlayer.hasPlayerInfo() && clientPlayer.getLocationCape() == null) {
             NetworkPlayerInfo playerInfo = ObfuscationReflectionHelper.getPrivateValue(AbstractClientPlayer.class, clientPlayer, 0);
             Map<Type, ResourceLocation> playerTextures = ObfuscationReflectionHelper.getPrivateValue(NetworkPlayerInfo.class, playerInfo, 1);
-            playerTextures.put(Type.CAPE, GREGTECH_CAPE_TEXTURE);
+            //playerTextures.put(Type.CAPE, GREGTECH_CAPE_TEXTURE);
         }
     }
 

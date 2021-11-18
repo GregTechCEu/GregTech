@@ -2,11 +2,13 @@ package gregtech.common.events.client;
 
 import gregtech.api.render.DepthTextureHook;
 import gregtech.api.render.TerminalARRenderer;
+import gregtech.api.util.UnlockedCapesRegistry;
 import gregtech.common.render.WrenchOverlayRenderer;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -56,5 +58,10 @@ public class ClientEventHandler {
     @SubscribeEvent
     public static void onRenderSpecificHand(RenderSpecificHandEvent event) {
         TerminalARRenderer.renderHandEvent(event);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerAdvancement(AdvancementEvent event) {
+        UnlockedCapesRegistry.unlockCape(event.getEntityPlayer(), event.getAdvancement());
     }
 }

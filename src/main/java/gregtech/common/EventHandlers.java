@@ -9,6 +9,8 @@ import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.net.KeysPacket;
 import gregtech.api.net.NetworkHandler;
+import gregtech.api.render.Textures;
+import gregtech.api.util.UnlockedCapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.KeyBinds;
@@ -16,6 +18,8 @@ import gregtech.common.items.MetaItems;
 import gregtech.common.items.armor.PowerlessJetpack;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.tools.ToolUtility;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,7 +30,10 @@ import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -40,6 +47,8 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.lang.reflect.Field;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class EventHandlers {
@@ -81,6 +90,7 @@ public class EventHandlers {
             }
         }
     }
+
     @SubscribeEvent
     public static void hammer(BlockEvent.HarvestDropsEvent event) {
         if (!event.getWorld().isRemote && event.getHarvester() != null && !event.isSilkTouching()) {
@@ -168,5 +178,15 @@ public class EventHandlers {
     @SubscribeEvent
     public static void onWorldLoadEvent(WorldEvent.Load event) {
         VirtualTankRegistry.initializeStorage(event.getWorld());
+        UnlockedCapesRegistry.initializeStorage(event.getWorld());
+        if(event.getWorld() instanceof WorldServer) {
+            try {
+                Field advManager = World.class.getDeclaredField("advancementManager");
+                Advancement adv = ((AdvancementManager) advManager.get(event.getWorld())).getAdvancement(new ResourceLocation(GTValues.MODID + "ultimate_voltage/74_wetware_mainframe"));
+                UnlockedCapesRegistry.linkAdvancement(adv, Textures.GREGTECH_CAPE_TEXTURE);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
