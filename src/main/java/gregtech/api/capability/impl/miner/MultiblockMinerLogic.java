@@ -51,22 +51,17 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     @Override
-    protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
-        if (!isSilkTouchMode) // 3x the ore compared to the single blocks
-            applyTieredHammerNoRandomDrops(world.rand, blockState, blockDrops, this.getFortune(), null, this.blockDropRecipeMap, 3);
-        else
-            super.getRegularBlockDrops(blockDrops, world, blockToMine, blockState);
+    protected void getSmallOreBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
+        // Small ores: use (fortune bonus + overclockAmount) value here for fortune, since every overclock increases the yield for small ores
+        super.getSmallOreBlockDrops(blockDrops, world, blockToMine, blockState);
     }
 
     @Override
-    protected void tryDoInsertBlocks(NonNullList<ItemStack> blockDrops, WorldServer world) {
-        // every overclock increases the output by 100%
-        if (!this.isSilkTouchMode && overclockAmount != 0) {
-            for (ItemStack stack : blockDrops)
-                stack.setCount(stack.getCount() * (this.overclockAmount + 1));
-        }
-
-        super.tryDoInsertBlocks(blockDrops, world);
+    protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
+        if (!isSilkTouchMode) // 3X the ore compared to the single blocks
+            applyTieredHammerNoRandomDrops(world.rand, blockState, blockDrops, 3, null, this.blockDropRecipeMap, this.voltageTier);
+        else
+            super.getRegularBlockDrops(blockDrops, world, blockToMine, blockState);
     }
 
     @Override

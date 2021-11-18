@@ -137,7 +137,7 @@ public class MinerLogic {
                 // get the block's drops.
                 getRegularBlockDrops(blockDrops, world, blocksToMine.getFirst(), blockState);
                 // try to insert them
-                tryDoInsertBlocks(blockDrops, world);
+                mineAndInsertItems(blockDrops, world);
             } else {
                 // the block attempted to mine was air, so remove it from the queue and move on
                 blocksToMine.removeFirst();
@@ -187,10 +187,21 @@ public class MinerLogic {
 
     }
 
+    /**
+     * called in order to drain anything the miner needs to drain in order to run
+     * only drains energy by default
+     */
     protected void drainStorages() {
         miner.drainEnergy(false);
     }
 
+    /**
+     * called to handle mining small ores
+     * @param blockDrops the List of items to fill after the operation
+     * @param world the {@link WorldServer} the miner is in
+     * @param blockToMine the {@link BlockPos} of the block being mined
+     * @param blockState the {@link IBlockState} of the block being mined
+     */
     protected void getSmallOreBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
         /*small ores
             if orePrefix of block in blockPos is small
@@ -200,11 +211,25 @@ public class MinerLogic {
         */
     }
 
+    /**
+     * called to handle mining regular ores and blocks
+     * @param blockDrops the List of items to fill after the operation
+     * @param world the {@link WorldServer} the miner is in
+     * @param blockToMine the {@link BlockPos} of the block being mined
+     * @param blockState the {@link IBlockState} of the block being mined
+     */
     protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
         blockState.getBlock().getDrops(blockDrops, world, blockToMine, blockState, 0); // regular ores do not get fortune applied
     }
 
-    protected void tryDoInsertBlocks(NonNullList<ItemStack> blockDrops, WorldServer world) {
+    /**
+     * called in order to insert the mined items into the inventory and actually remove the block in world
+     * marks the inventory as full if the items cannot fit, and not full if it previously was full and items could fit
+     *
+     * @param blockDrops the List of items to insert
+     * @param world the {@link WorldServer} the miner is in
+     */
+    private void mineAndInsertItems(NonNullList<ItemStack> blockDrops, WorldServer world) {
         // If the block's drops can fit in the inventory, move the previously mined position to the block
         // replace the ore block with cobblestone instead of breaking it to prevent mob spawning
         // remove the ore block's position from the mining queue
