@@ -71,6 +71,7 @@ public class MetaTileEntities {
     public static SteamAlloySmelter STEAM_ALLOY_SMELTER_STEEL;
     public static SteamRockBreaker STEAM_ROCK_BREAKER_BRONZE;
     public static SteamRockBreaker STEAM_ROCK_BREAKER_STEEL;
+    public static SteamMiner STEAM_MINER;
 
     public static MetaTileEntityPumpHatch PUMP_OUTPUT_HATCH;
     public static MetaTileEntityPrimitiveWaterPump PRIMITIVE_WATER_PUMP;
@@ -116,6 +117,7 @@ public class MetaTileEntities {
     public static final SimpleMachineMetaTileEntity[] SCANNER = new SimpleMachineMetaTileEntity[GTValues.V.length - 1];
     public static final SimpleMachineMetaTileEntity[] GAS_COLLECTOR = new MetaTileEntityGasCollector[GTValues.V.length - 1];
     public static final MetaTileEntityRockBreaker[] ROCK_BREAKER = new MetaTileEntityRockBreaker[GTValues.V.length - 1];
+    public static final MetaTileEntityMiner[] MINER = new MetaTileEntityMiner[GTValues.V.length - 1];
     public static MetaTileEntitySimpleOreWasher SIMPLE_ORE_WASHER;
 
     //GENERATORS SECTION
@@ -173,6 +175,11 @@ public class MetaTileEntities {
 
     public static MetaTileEntitySteamOven STEAM_OVEN;
     public static MetaTileEntitySteamGrinder STEAM_GRINDER;
+
+    public static MetaTileEntityLargeMiner BASIC_LARGE_MINER;
+    public static MetaTileEntityLargeMiner LARGE_MINER;
+    public static MetaTileEntityLargeMiner ADVANCED_LARGE_MINER;
+
 
     //STORAGE SECTION
     public static MetaTileEntityLockedSafe LOCKED_SAFE;
@@ -249,6 +256,8 @@ public class MetaTileEntities {
 
         STEAM_ROCK_BREAKER_BRONZE = registerMetaTileEntity(19, new SteamRockBreaker(gregtechId("steam_rock_breaker_bronze"), false));
         STEAM_ROCK_BREAKER_STEEL = registerMetaTileEntity(20, new SteamRockBreaker(gregtechId("steam_rock_breaker_steel"), true));
+
+        STEAM_MINER = registerMetaTileEntity(21, new SteamMiner(gregtechId("steam_miner"), 320, 4, 16, 0));
 
         // Electric Furnace, IDs 50-64
         registerSimpleMetaTileEntity(ELECTRIC_FURNACE, 50, "electric_furnace", RecipeMaps.FURNACE_RECIPES, Textures.ELECTRIC_FURNACE_OVERLAY, true);
@@ -413,6 +422,13 @@ public class MetaTileEntities {
         // Some space here for more SimpleMachines
 
         // Space left for these just in case
+
+        // Chunk Miner, IDs 920-934
+
+        MINER[0] = registerMetaTileEntity(920, new MetaTileEntityMiner(gregtechId("miner.lv"), 1, 160, 8, 2));
+        MINER[1] = registerMetaTileEntity(921, new MetaTileEntityMiner(gregtechId("miner.mv"), 2, 80, 16, 4));
+        MINER[2] = registerMetaTileEntity(922, new MetaTileEntityMiner(gregtechId("miner.hv"), 3, 40, 24, 6));
+
         // Diesel Generator, IDs 935-949
         COMBUSTION_GENERATOR[0] = registerMetaTileEntity(935, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.lv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 1));
         COMBUSTION_GENERATOR[1] = registerMetaTileEntity(936, new SimpleGeneratorMetaTileEntity(gregtechId("combustion_generator.mv"), RecipeMaps.COMBUSTION_GENERATOR_FUELS, Textures.COMBUSTION_GENERATOR_OVERLAY, 2));
@@ -470,14 +486,18 @@ public class MetaTileEntities {
         COKE_OVEN_HATCH = registerMetaTileEntity(1017, new MetaTileEntityCokeOvenHatch(gregtechId("coke_oven_hatch")));
 
         ASSEMBLY_LINE = registerMetaTileEntity(1018, new MetaTileEntityAssemblyLine(gregtechId("assembly_line")));
-        FUSION_REACTOR[0] = registerMetaTileEntity(1019, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.luv"), 6));
-        FUSION_REACTOR[1] = registerMetaTileEntity(1020, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.zpm"), 7));
-        FUSION_REACTOR[2] = registerMetaTileEntity(1021, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.uv"), 8));
+        FUSION_REACTOR[0] = registerMetaTileEntity(1019, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.luv"), GTValues.LuV));
+        FUSION_REACTOR[1] = registerMetaTileEntity(1020, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.zpm"), GTValues.ZPM));
+        FUSION_REACTOR[2] = registerMetaTileEntity(1021, new MetaTileEntityFusionReactor(gregtechId("fusion_reactor.uv"), GTValues.UV));
 
         LARGE_CHEMICAL_REACTOR = registerMetaTileEntity(1022, new MetaTileEntityLargeChemicalReactor(gregtechId("large_chemical_reactor")));
 
         STEAM_OVEN = registerMetaTileEntity(1023, new MetaTileEntitySteamOven(gregtechId("steam_oven")));
         STEAM_GRINDER = registerMetaTileEntity(1024, new MetaTileEntitySteamGrinder(gregtechId("steam_grinder")));
+
+        BASIC_LARGE_MINER = registerMetaTileEntity(1025, new MetaTileEntityLargeMiner(gregtechId("large_miner.ev"), 4, Materials.Steel, 16, 3, 8, 4));
+        LARGE_MINER = registerMetaTileEntity(1026, new MetaTileEntityLargeMiner(gregtechId("large_miner.iv"), 5, Materials.Titanium, 4, 5, 16, 5));
+        ADVANCED_LARGE_MINER = registerMetaTileEntity(1027, new MetaTileEntityLargeMiner(gregtechId("large_miner.luv"), 6, Materials.TungstenSteel, 1, 7, 32, 6));
 
         // MISC MTE's START: IDs 1150-2000
 

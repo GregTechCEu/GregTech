@@ -89,7 +89,7 @@ public class FirstDegreeMaterials {
         Bronze = new Material.Builder(260, "bronze")
                 .ingot().fluid()
                 .color(0xFF8000).iconSet(METALLIC)
-                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_FRAME)
+                .flags(EXT2_METAL, MORTAR_GRINDABLE, GENERATE_ROTOR, GENERATE_FRAME, GENERATE_SMALL_GEAR)
                 .components(Tin, 1, Copper, 3)
                 .toolStats(6.0f, 2.5f, 192, 21)
                 .fluidPipeProperties(1696, 20, true)
@@ -463,7 +463,7 @@ public class FirstDegreeMaterials {
         RuthenianIridium = new Material.Builder(310, "ruthenian_iridium")
                 .ingot(3)
                 .color(0xA4A4A4).iconSet(BRIGHT)
-                .flags(GENERATE_FINE_WIRE)
+                .flags(GENERATE_FINE_WIRE, GENERATE_GEAR)
                 .components(Ruthenium, 2, Iridium, 1)
                 .blastTemp(4500)
                 .build();

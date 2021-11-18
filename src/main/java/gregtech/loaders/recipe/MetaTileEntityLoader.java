@@ -13,10 +13,10 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.ConfigHolder;
-import gregtech.common.blocks.BlockFusionCoil;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockMultiblockCasing;
 import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
+import gregtech.common.blocks.BlockTransparentCasing;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
@@ -118,10 +118,7 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("casing_assembler_casing", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(ASSEMBLER_CASING, 2), "CCC", "CFC", "CMC", 'C', new UnificationEntry(OrePrefix.circuit, MarkerMaterials.Tier.Elite), 'F', new UnificationEntry(OrePrefix.frameGt, Materials.TungstenSteel), 'M', MetaItems.ELECTRIC_MOTOR_IV);
         ModHandler.addShapedRecipe("casing_assembly_line", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(ASSEMBLY_LINE_CASING, 2), "PhP", "AFA", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'A', MetaItems.ROBOT_ARM_IV.getStackForm(), 'F', OreDictUnifier.get(OrePrefix.frameGt, Materials.TungstenSteel));
 
-        ModHandler.addShapedRecipe("casing_fusion_mk1", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(FUSION_CASING), "PhP", "PCP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.TungstenSteel), 'C', MetaBlocks.MACHINE_CASING.getItemVariant(LuV));
-        ModHandler.addShapedRecipe("casing_fusion_mk2", MetaBlocks.MULTIBLOCK_CASING.getItemVariant(FUSION_CASING_MK2), "PhP", "PCP", "PwP", 'P', new UnificationEntry(OrePrefix.plate, Materials.Americium), 'C', MetaBlocks.MULTIBLOCK_CASING.getItemVariant(FUSION_CASING));
-
-        ModHandler.addShapedRecipe("heating_coil_fusion", MetaBlocks.FUSION_COIL.getItemVariant(BlockFusionCoil.CoilType.FUSION_COIL), "CNC", "FKF", "CNC", 'C', new UnificationEntry(OrePrefix.circuit, Tier.Master), 'N', MetaItems.NEUTRON_REFLECTOR, 'F', MetaItems.FIELD_GENERATOR_MV, 'K', MetaBlocks.FUSION_COIL.getItemVariant(BlockFusionCoil.CoilType.SUPERCONDUCTOR));
+        ModHandler.addShapedRecipe("fusion_glass", MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.FUSION_GLASS, 2), "PhP", "GFG", "NwN", 'P', new UnificationEntry(OrePrefix.plate, Materials.NiobiumNitride), 'G', MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS), 'F', new UnificationEntry(OrePrefix.frameGt, Materials.HSSE), 'N', MetaItems.NEUTRON_REFLECTOR.getStackForm());
 
         ModHandler.addShapedRecipe("warning_sign_yellow_stripes", MetaBlocks.WARNING_SIGN.getItemVariant(YELLOW_STRIPES), "Y  ", " M ", "  B", 'M', MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID), 'Y', "dyeYellow", 'B', "dyeBlack");
         ModHandler.addShapedRecipe("warning_sign_small_yellow_stripes", MetaBlocks.WARNING_SIGN.getItemVariant(SMALL_YELLOW_STRIPES), "  Y", " M ", "B  ", 'M', MetaBlocks.METAL_CASING.getItemVariant(STEEL_SOLID), 'Y', "dyeYellow", 'B', "dyeBlack");
@@ -335,6 +332,7 @@ public class MetaTileEntityLoader {
         ModHandler.addShapedRecipe("steam_alloy_smelter_steel", MetaTileEntities.STEAM_ALLOY_SMELTER_STEEL.getStackForm(), "WSW", "WMW", "WPW", 'M', MetaTileEntities.STEAM_ALLOY_SMELTER_BRONZE.getStackForm(), 'S', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'P', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron));
         ModHandler.addShapedRecipe("steam_rock_breaker_bronze", MetaTileEntities.STEAM_ROCK_BREAKER_BRONZE.getStackForm(), "PXP", "XMX", "DXD", 'M', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_BRICKS_HULL), 'X', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.Bronze), 'P', "craftingPiston", 'D', new UnificationEntry(OrePrefix.gem, Materials.Diamond));
         ModHandler.addShapedRecipe("steam_rock_breaker_steel", MetaTileEntities.STEAM_ROCK_BREAKER_STEEL.getStackForm(), "WSW", "PMP", "WWW", 'M', MetaTileEntities.STEAM_ROCK_BREAKER_BRONZE.getStackForm(), 'W', new UnificationEntry(OrePrefix.plate, Materials.WroughtIron), 'S', new UnificationEntry(OrePrefix.plate, Materials.Steel), 'P', new UnificationEntry(OrePrefix.pipeSmallFluid, Materials.WroughtIron));
+        ModHandler.addShapedRecipe("steam_miner", MetaTileEntities.STEAM_MINER.getStackForm(), "DSD", "SMS", "GSG", 'M', MetaBlocks.STEAM_CASING.getItemVariant(BRONZE_HULL), 'S', new UnificationEntry(OrePrefix.pipeNormalFluid, Materials.Bronze), 'D', new UnificationEntry(OrePrefix.gem, Materials.Diamond), 'G', new UnificationEntry(OrePrefix.gearSmall, Materials.Bronze));
 
         // MULTI BLOCK CONTROLLERS
         ModHandler.addShapedRecipe("bronze_primitive_blast_furnace", MetaTileEntities.PRIMITIVE_BLAST_FURNACE.getStackForm(), "hRS", "PBR", "dRS", 'R', new UnificationEntry(OrePrefix.stick, Materials.Iron), 'S', new UnificationEntry(OrePrefix.screw, Materials.Iron), 'P', new UnificationEntry(OrePrefix.plate, Materials.Iron), 'B', MetaBlocks.METAL_CASING.getItemVariant(PRIMITIVE_BRICKS));
@@ -432,6 +430,7 @@ public class MetaTileEntityLoader {
         registerMachineRecipe(MetaTileEntities.ITEM_COLLECTOR, "MRM", "RHR", "CWC", 'M', MOTOR, 'R', ROTOR, 'H', HULL, 'C', CIRCUIT, 'W', CABLE);
         registerMachineRecipe(MetaTileEntities.BLOCK_BREAKER, "MGM", "CHC", "WSW", 'M', MOTOR, 'H', HULL, 'C', CIRCUIT, 'W', CABLE, 'S', Blocks.CHEST, 'G', GRINDER);
         registerMachineRecipe(MetaTileEntities.WORLD_ACCELERATOR, "ABC", "DHE", "FGI", 'H', HULL, 'A', PISTON, 'B', ROBOT_ARM, 'C', PUMP, 'D', MOTOR, 'E', CONVEYOR, 'F', EMITTER, 'G', SENSOR, 'I', FIELD_GENERATOR);
+        registerMachineRecipe(MetaTileEntities.MINER, "MMM", "WHW", "CSC", 'M', MOTOR, 'W', CABLE, 'H', HULL, 'C', CIRCUIT, 'S', SENSOR);
 
         registerMachineRecipe(MetaTileEntities.MUFFLER_HATCH, "HM", "PR", 'H', HULL, 'M', MOTOR, 'P', PIPE_NORMAL, 'R', ROTOR);
 

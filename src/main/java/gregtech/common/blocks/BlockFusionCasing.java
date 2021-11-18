@@ -9,16 +9,16 @@ import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
 
-public class BlockFusionCoil extends VariantBlock<BlockFusionCoil.CoilType> {
+public class BlockFusionCasing extends VariantActiveBlock<BlockFusionCasing.CasingType> {
 
-    public BlockFusionCoil() {
+    public BlockFusionCasing() {
         super(net.minecraft.block.material.Material.IRON);
-        setTranslationKey("fusion_coil");
+        setTranslationKey("fusion_casing");
         setHardness(5.0f);
         setResistance(10.0f);
         setSoundType(SoundType.METAL);
         setHarvestLevel("wrench", 2);
-        setDefaultState(getState(CoilType.SUPERCONDUCTOR));
+        setDefaultState(getState(CasingType.SUPERCONDUCTOR_COIL));
     }
 
     @Override
@@ -26,14 +26,17 @@ public class BlockFusionCoil extends VariantBlock<BlockFusionCoil.CoilType> {
         return false;
     }
 
-    public enum CoilType implements IStringSerializable {
+    public enum CasingType implements IStringSerializable {
 
-        SUPERCONDUCTOR("superconductor"),
-        FUSION_COIL("fusion_coil");
+        SUPERCONDUCTOR_COIL("superconductor_coil"),
+        FUSION_COIL("fusion_coil"),
+        FUSION_CASING("fusion_casing"),
+        FUSION_CASING_MK2("fusion_casing_mk2"),
+        FUSION_CASING_MK3("fusion_casing_mk3");
 
         private final String name;
 
-        CoilType(String name) {
+        CasingType(String name) {
             this.name = name;
         }
 
