@@ -4,13 +4,15 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.ColourMultiplier;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
-import gregtech.api.GTValues;
 import gregtech.api.capability.GregtechCapabilities;
 import gregtech.api.capability.IMaintenanceHatch;
 import gregtech.api.capability.IMultiblockController;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
-import gregtech.api.pattern.*;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.BlockWorldState;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
@@ -19,7 +21,7 @@ import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.VariantActiveBlock;
 import gregtech.common.metatileentities.electric.multiblockpart.MetaTileEntityRotorHolder;
-import gregtech.integration.jei.multiblock.MultiblockShapeInfo;
+import gregtech.api.pattern.MultiblockShapeInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -32,7 +34,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.Optional.Method;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
@@ -327,8 +328,6 @@ public abstract class MultiblockControllerBase extends MetaTileEntity implements
         tooltip.add(I18n.format("gregtech.machine.multiblock.universal.controller_information", I18n.format(getMetaFullName())));
     }
 
-    @SideOnly(Side.CLIENT)
-    @Method(modid = GTValues.MODID_JEI)
     public List<MultiblockShapeInfo> getMatchingShapes() {
         if (this.structurePattern == null) {
             this.reinitializeStructurePattern();

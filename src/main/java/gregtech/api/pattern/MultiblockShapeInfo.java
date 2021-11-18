@@ -1,4 +1,4 @@
-package gregtech.integration.jei.multiblock;
+package gregtech.api.pattern;
 
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;

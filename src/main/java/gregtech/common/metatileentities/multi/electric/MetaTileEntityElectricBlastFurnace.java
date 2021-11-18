@@ -25,7 +25,7 @@ import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.integration.jei.multiblock.MultiblockShapeInfo;
+import gregtech.api.pattern.MultiblockShapeInfo;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
@@ -42,7 +42,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockController {
 
