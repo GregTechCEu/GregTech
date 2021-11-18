@@ -1,4 +1,4 @@
-package gregtech.api.multiblock;
+package gregtech.api.metatileentity.multiblock;
 
 public interface IMaintenance {
 

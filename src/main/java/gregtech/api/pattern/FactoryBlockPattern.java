@@ -1,13 +1,9 @@
-package gregtech.api.multiblock;
+package gregtech.api.pattern;
 
 import com.google.common.base.Joiner;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import gregtech.api.util.RelativeDirection;
-import gregtech.api.util.IntRange;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -15,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Predicate;
 
 import static gregtech.api.util.RelativeDirection.*;
 
@@ -24,10 +19,7 @@ public class FactoryBlockPattern {
     private static final Joiner COMMA_JOIN = Joiner.on(",");
     private final List<String[]> depth = new ArrayList<>();
     private final List<int[]> aisleRepetitions = new ArrayList<>();
-    private final Map<Character, IntRange> countLimits = new HashMap<>();
-    private final Map<Character, Predicate<BlockWorldState>> symbolMap = new HashMap<>();
-    private final TIntObjectMap<Predicate<PatternMatchContext>> layerValidators = new TIntObjectHashMap<>();
-    private final List<Predicate<PatternMatchContext>> contextValidators = new ArrayList<>();
+    private final Map<Character, TraceabilityPredicate> symbolMap = new HashMap<>();
     private int aisleHeight;
     private int rowWidth;
     private final RelativeDirection[] structureDir = new RelativeDirection[3];
@@ -54,7 +46,7 @@ public class FactoryBlockPattern {
             }
         }
         if (flags != 0x7) throw new IllegalArgumentException("Must have 3 different axes!");
-        this.symbolMap.put(' ', k -> true);
+        this.symbolMap.put(' ', TraceabilityPredicate.ANY);
     }
 
     /**
@@ -117,20 +109,6 @@ public class FactoryBlockPattern {
         return setRepeatable(repeatCount, repeatCount);
     }
 
-    public FactoryBlockPattern setAmountLimit(char symbol, int minAmount, int maxLimit) {
-        this.symbolMap.put(symbol, null);
-        this.countLimits.put(symbol, new IntRange(minAmount, maxLimit));
-        return this;
-    }
-
-    public FactoryBlockPattern setAmountAtLeast(char symbol, int minValue) {
-        return setAmountLimit(symbol, minValue, Integer.MAX_VALUE);
-    }
-
-    public FactoryBlockPattern setAmountAtMost(char symbol, int maxValue) {
-        return setAmountLimit(symbol, 0, maxValue);
-    }
-
     public static FactoryBlockPattern start() {
         return new FactoryBlockPattern(RIGHT, UP, BACK);
     }
@@ -139,39 +117,19 @@ public class FactoryBlockPattern {
         return new FactoryBlockPattern(charDir, stringDir, aisleDir);
     }
 
-    public FactoryBlockPattern where(char symbol, Predicate<BlockWorldState> blockMatcher) {
+    public FactoryBlockPattern where(char symbol, TraceabilityPredicate blockMatcher) {
         this.symbolMap.put(symbol, blockMatcher);
         return this;
     }
 
-    /**
-     * Adds predicate to be run after multiblock checking to validate
-     * pattern matching context before succeeding match sequence
-     */
-    public FactoryBlockPattern validateContext(Predicate<PatternMatchContext> validator) {
-        this.contextValidators.add(validator);
-        return this;
-    }
-
-    /**
-     * Adds predicate to validate given layer using given validator
-     * Given context is layer-local and can be accessed via {@link BlockWorldState#getLayerContext()}
-     */
-    public FactoryBlockPattern validateLayer(int layerIndex, Predicate<PatternMatchContext> layerValidator) {
-        this.layerValidators.put(layerIndex, layerValidator);
-        return this;
-    }
-
     public BlockPattern build() {
-        return new BlockPattern(makePredicateArray(), makeCountLimitsList(),
-                layerValidators, contextValidators,
-                structureDir, aisleRepetitions.toArray(new int[aisleRepetitions.size()][]));
+        return new BlockPattern(makePredicateArray(), structureDir, aisleRepetitions.toArray(new int[aisleRepetitions.size()][]));
     }
 
     @SuppressWarnings("unchecked")
-    private Predicate<BlockWorldState>[][][] makePredicateArray() {
+    private TraceabilityPredicate[][][] makePredicateArray() {
         this.checkMissingPredicates();
-        Predicate<BlockWorldState>[][][] predicate = (Predicate<BlockWorldState>[][][]) Array.newInstance(Predicate.class, this.depth.size(), this.aisleHeight, this.rowWidth);
+        TraceabilityPredicate[][][] predicate = (TraceabilityPredicate[][][]) Array.newInstance(TraceabilityPredicate.class, this.depth.size(), this.aisleHeight, this.rowWidth);
 
         for (int i = 0; i < this.depth.size(); ++i) {
             for (int j = 0; j < this.aisleHeight; ++j) {
@@ -184,19 +142,10 @@ public class FactoryBlockPattern {
         return predicate;
     }
 
-    private List<Pair<Predicate<BlockWorldState>, IntRange>> makeCountLimitsList() {
-        List<Pair<Predicate<BlockWorldState>, IntRange>> array = new ArrayList<>(countLimits.size());
-        for (Entry<Character, IntRange> entry : this.countLimits.entrySet()) {
-            Predicate<BlockWorldState> predicate = this.symbolMap.get(entry.getKey());
-            array.add(Pair.of(predicate, entry.getValue()));
-        }
-        return array;
-    }
-
     private void checkMissingPredicates() {
         List<Character> list = new ArrayList<>();
 
-        for (Entry<Character, Predicate<BlockWorldState>> entry : this.symbolMap.entrySet()) {
+        for (Entry<Character, TraceabilityPredicate> entry : this.symbolMap.entrySet()) {
             if (entry.getValue() == null) {
                 list.add(entry.getKey());
             }

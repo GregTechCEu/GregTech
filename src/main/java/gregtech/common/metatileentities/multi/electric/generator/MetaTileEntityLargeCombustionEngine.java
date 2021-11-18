@@ -6,8 +6,8 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
@@ -18,6 +18,7 @@ import gregtech.common.blocks.BlockMultiblockCasing.MultiblockCasingType;
 import gregtech.common.blocks.BlockTurbineCasing.TurbineCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -29,11 +30,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockController {
-
-    public static MultiblockAbility<?>[] ALLOWED_ABILITIES = {
-            MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH,
-            MultiblockAbility.MUFFLER_HATCH
-    };
 
     public MetaTileEntityLargeCombustionEngine(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.COMBUSTION_GENERATOR_FUELS, GTValues.V[GTValues.EV]);
@@ -80,11 +76,11 @@ public class MetaTileEntityLargeCombustionEngine extends FueledMultiblockControl
                 .aisle("XCX", "CGC", "XCX")
                 .aisle("XCX", "CGC", "XCX")
                 .aisle("AAA", "AYA", "AAA")
-                .where('X', statePredicate(getCasingState()))
-                .where('G', statePredicate(MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX)))
-                .where('C', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-                .where('D', abilityPartPredicate(MultiblockAbility.OUTPUT_ENERGY))
-                .where('A', statePredicate(MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING)))
+                .where('X', states(getCasingState()))
+                .where('G', states(MetaBlocks.TURBINE_CASING.getState(TurbineCasingType.TITANIUM_GEARBOX)))
+                .where('C', states(getCasingState()).or(autoAbilities()))
+                .where('D', abilities(MultiblockAbility.OUTPUT_ENERGY))
+                .where('A', states(MetaBlocks.MULTIBLOCK_CASING.getState(MultiblockCasingType.ENGINE_INTAKE_CASING)))
                 .where('Y', selfPredicate())
                 .build();
     }

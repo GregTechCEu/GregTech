@@ -13,7 +13,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.multiblock.BlockPattern;
+import gregtech.api.pattern.BlockPattern;
 import gregtech.api.render.scene.TrackedDummyWorld;
 import gregtech.api.render.scene.WorldSceneRenderer;
 import gregtech.api.terminal.gui.widgets.MachineSceneWidget;
@@ -233,7 +233,7 @@ public class MachineBuilderWidget extends WidgetGroup {
     private void debugButton(ClickData clickData) {
         if (clickData.isClient && controllerBase != null) {
             highLightBlocks.clear();
-            if (controllerBase.structurePattern.checkPatternAt(controllerBase.getWorld(), controllerBase.getPos(), controllerBase.getFrontFacing().getOpposite()) == null) {
+            if (controllerBase.structurePattern.checkPatternFastAt(controllerBase.getWorld(), controllerBase.getPos(), controllerBase.getFrontFacing().getOpposite()) == null) {
                 highLightBlocks.add(new BlockPos(controllerBase.structurePattern.blockPos));
             }
         }

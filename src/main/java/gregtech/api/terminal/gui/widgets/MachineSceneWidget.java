@@ -8,7 +8,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.render.scene.FBOWorldSceneRenderer;
 import gregtech.api.render.scene.WorldSceneRenderer;
 import gregtech.api.terminal.os.TerminalTheme;
@@ -20,6 +20,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -28,11 +29,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import javax.vecmath.Vector3f;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -197,10 +198,9 @@ public class MachineSceneWidget extends WidgetGroup {
         around = new HashSet<>();
         cores.add(pos);
         if (mte instanceof MultiblockControllerBase) {
-            List<BlockPos> validPos = new ArrayList<>();
-            PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern
-                    .checkPatternAt(world, pos, mte.getFrontFacing().getOpposite(), validPos);
+            PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern.checkPatternFastAt(world, pos, mte.getFrontFacing().getOpposite());
             if (context != null) {
+                List<BlockPos> validPos = ((MultiblockControllerBase) mte).structurePattern.cache.stream().map(Tuple::getFirst).collect(Collectors.toList());
                 Set<IMultiblockPart> parts = context.getOrCreate("MultiblockParts", HashSet::new);
                 for (IMultiblockPart part : parts) {
                     if (part instanceof MetaTileEntity) {

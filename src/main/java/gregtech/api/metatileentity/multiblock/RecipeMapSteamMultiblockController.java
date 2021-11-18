@@ -8,7 +8,8 @@ import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.SteamMultiblockRecipeLogic;
 import gregtech.api.metatileentity.MTETrait;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.common.ConfigHolder;
@@ -18,13 +19,10 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public abstract class RecipeMapSteamMultiblockController extends MultiblockWithDisplayBase {
 
@@ -121,12 +119,12 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
     }
 
     @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        //basically check minimal requirements for inputs count
-        int itemInputsCount = abilities.getOrDefault(MultiblockAbility.STEAM_IMPORT_ITEMS, Collections.emptyList())
-                .stream().map(it -> (IItemHandler) it).mapToInt(IItemHandler::getSlots).sum();
-        return itemInputsCount >= recipeMap.getMinInputs() &&
-                abilities.containsKey(MultiblockAbility.STEAM);
+    public TraceabilityPredicate autoAbilities() {
+        TraceabilityPredicate predicate =  abilities(MultiblockAbility.STEAM).setMinGlobalLimited(1).or(super.autoAbilities());
+        if (recipeMap.getMinInputs() > 0) {
+            predicate.or(abilities(MultiblockAbility.STEAM_IMPORT_ITEMS).setMinGlobalLimited(1));
+        }
+        return predicate;
     }
 
     @Override

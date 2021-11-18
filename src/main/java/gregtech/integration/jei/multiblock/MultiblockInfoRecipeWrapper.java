@@ -75,12 +75,11 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         }
     }
 
-    private final MultiblockInfoPage infoPage;
+    private final MultiblockControllerBase controller;
     private final MBPattern[] patterns;
     private final Map<GuiButton, Runnable> buttons = new HashMap<>();
     private RecipeLayout recipeLayout;
     private final List<ItemStack> allItemStackInputs = new ArrayList<>();
-    private final ItemStack controllerStack;
 
     private int layerIndex = -1;
     private int currentRendererPage = 0;
@@ -91,34 +90,40 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private float rotationPitch;
     private float zoom;
 
-    private GuiButton buttonPreviousPattern;
-    private GuiButton buttonNextPattern;
-    private GuiButton nextLayerButton;
+    private final GuiButton buttonPreviousPattern;
+    private final GuiButton buttonNextPattern;
+    private final GuiButton nextLayerButton;
 
     private IDrawable slot;
     private IDrawable infoIcon;
 
     private ItemStack tooltipBlockStack;
 
-    public MultiblockInfoRecipeWrapper(MultiblockInfoPage infoPage) {
-        this.infoPage = infoPage;
-        this.controllerStack = infoPage.getController().getStackForm();
+    public MultiblockInfoRecipeWrapper(MultiblockControllerBase controller) {
+        this.controller = controller;
         HashSet<ItemStackKey> drops = new HashSet<>();
-        drops.add(new ItemStackKey(controllerStack));
-        this.patterns = infoPage.getMatchingShapes().stream()
+        drops.add(new ItemStackKey(this.controller.getStackForm()));
+        this.patterns = controller.getMatchingShapes().stream()
                 .map(it -> initializePattern(it, drops))
                 .toArray(MBPattern[]::new);
         drops.forEach(it -> allItemStackInputs.add(it.getItemStack()));
+        this.nextLayerButton = new GuiButton(0, 176 - (ICON_SIZE + RIGHT_PADDING), 70, ICON_SIZE, ICON_SIZE, "");
+        this.buttonPreviousPattern = new GuiButton(0, 176 - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, "<");
+        this.buttonNextPattern = new GuiButton(0, 176 - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, ">");
+        this.buttons.put(nextLayerButton, this::toggleNextLayer);
+        this.buttons.put(buttonPreviousPattern, () -> switchRenderPage(-1));
+        this.buttons.put(buttonNextPattern, () -> switchRenderPage(1));
+        boolean isPagesDisabled = patterns.length == 1;
+        this.buttonPreviousPattern.visible = !isPagesDisabled;
+        this.buttonNextPattern.visible = !isPagesDisabled;
+        this.buttonPreviousPattern.enabled = false;
+        this.buttonNextPattern.enabled = patterns.length > 1;
     }
 
     @Override
     public void getIngredients(IIngredients ingredients) {
         ingredients.setInputs(VanillaTypes.ITEM, allItemStackInputs);
-        ingredients.setOutput(VanillaTypes.ITEM, controllerStack);
-    }
-
-    public MultiblockInfoPage getInfoPage() {
-        return infoPage;
+        ingredients.setOutput(VanillaTypes.ITEM, controller.getStackForm());
     }
 
     private static MultiblockInfoRecipeWrapper lastWrapper;
@@ -133,21 +138,12 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         preparePlaceForParts(border.getHeight());
         if (Mouse.getEventDWheel() == 0 || lastWrapper != this) {
             lastWrapper = this;
-            this.buttons.clear();
-            this.nextLayerButton = new GuiButton(0, border.getWidth() - (ICON_SIZE + RIGHT_PADDING), 70, ICON_SIZE, ICON_SIZE, "");
-            this.buttonPreviousPattern = new GuiButton(0, border.getWidth() - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, "<");
-            this.buttonNextPattern = new GuiButton(0, border.getWidth() - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, ">");
-            this.buttons.put(nextLayerButton, this::toggleNextLayer);
-            this.buttons.put(buttonPreviousPattern, () -> switchRenderPage(-1));
-            this.buttons.put(buttonNextPattern, () -> switchRenderPage(1));
-
-            boolean isPagesDisabled = patterns.length == 1;
-            this.buttonPreviousPattern.visible = !isPagesDisabled;
-            this.buttonNextPattern.visible = !isPagesDisabled;
-            this.buttonPreviousPattern.enabled = false;
-            this.buttonNextPattern.enabled = patterns.length > 1;
-
-            this.zoom = infoPage.getDefaultZoom() * 15;
+            this.nextLayerButton.x = border.getWidth() - (ICON_SIZE + RIGHT_PADDING);
+            this.buttonPreviousPattern.x = border.getWidth() - ((2 * ICON_SIZE) + RIGHT_PADDING + 1);
+            this.buttonNextPattern.x = border.getWidth() - (ICON_SIZE + RIGHT_PADDING);
+            Vector3f size = ((TrackedDummyWorld) getCurrentRenderer().world).getSize();
+            float max = Math.max(Math.max(Math.max(size.x, size.y), size.z), 1);
+            this.zoom = (float) (3.5 * Math.sqrt(max));
             this.rotationYaw = 20.0f;
             this.rotationPitch = 135.0f;
             this.currentRendererPage = 0;
@@ -280,7 +276,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             renderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
         }
 
-        if (!drawHoveringInformationText(minecraft, infoPage.informationText(), mouseX, mouseY) && !(leftClickHeld || rightClickHeld) && rayTraceResult != null && !renderer.world.isAirBlock(rayTraceResult.getBlockPos())) {
+        if (!(leftClickHeld || rightClickHeld) && rayTraceResult != null && !renderer.world.isAirBlock(rayTraceResult.getBlockPos())) {
             IBlockState blockState = renderer.world.getBlockState(rayTraceResult.getBlockPos());
             ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world, rayTraceResult.getBlockPos(), minecraft.player);
             if (itemStack != null && !itemStack.isEmpty()) {
@@ -316,7 +312,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     }
 
     private void drawMultiblockName(int recipeWidth) {
-        String localizedName = I18n.format(infoPage.getController().getMetaFullName());
+        String localizedName = I18n.format(controller.getMetaFullName());
         GTUtility.drawCenteredSizedText(recipeWidth / 2, 0, localizedName, 0x333333, 1.3);
     }
 
@@ -346,27 +342,9 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
                     tooltip.set(k, TextFormatting.GRAY + tooltip.get(k));
                 }
             }
-            Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
-            if (blockTooltipMap.containsKey(tooltipBlockStack)) {
-                List<ITextComponent> tooltips = blockTooltipMap.get(tooltipBlockStack);
-                for (int i = 0; i < tooltips.size(); i++) {
-                    //Start at i+1 due to ItemStack name
-                    tooltip.add(i + 1, tooltips.get(i).getFormattedText());
-                }
-            }
             return tooltip;
         }
         return Collections.emptyList();
-    }
-
-    public void addBlockTooltips(int slotIndex, boolean input, ItemStack itemStack, List<String> tooltip) {
-        Map<ItemStack, List<ITextComponent>> blockTooltipMap = infoPage.getBlockTooltipMap();
-        if (blockTooltipMap.containsKey(itemStack)) {
-            List<ITextComponent> tooltips = blockTooltipMap.get(itemStack);
-            for (int i = 0; i < tooltips.size(); i++) {
-                tooltip.add(i + 1, tooltips.get(i).getFormattedText());
-            }
-        }
     }
 
     private static class PartInfo {
@@ -423,14 +401,14 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
     private MBPattern initializePattern(MultiblockShapeInfo shapeInfo, Set<ItemStackKey> blockDrops) {
         Map<BlockPos, BlockInfo> blockMap = new HashMap<>();
         BlockInfo[][][] blocks = shapeInfo.getBlocks();
-        for (int z = 0; z < blocks.length; z++) {
-            BlockInfo[][] aisle = blocks[z];
+        for (int x = 0; x < blocks.length; x++) {
+            BlockInfo[][] aisle = blocks[x];
             for (int y = 0; y < aisle.length; y++) {
                 BlockInfo[] column = aisle[y];
-                for (int x = 0; x < column.length; x++) {
+                for (int z = 0; z < column.length; z++) {
                     // fill XYZ instead of ZYX
-                    BlockPos blockPos = new BlockPos(blocks.length - 1 - z, y, x);
-                    BlockInfo blockInfo = column[x];
+                    BlockPos blockPos = new BlockPos(x, y, z);
+                    BlockInfo blockInfo = column[z];
                     blockMap.put(blockPos, blockInfo);
                 }
             }

@@ -84,7 +84,7 @@ public class MultiblockRecipeLogicTest {
                             }
 
                             @Override
-                            protected void reinitializeStructurePattern() {
+                            public void reinitializeStructurePattern() {
 
                             }
 
@@ -331,7 +331,7 @@ public class MultiblockRecipeLogicTest {
 
 
                             @Override
-                            protected void reinitializeStructurePattern() {
+                            public void reinitializeStructurePattern() {
 
                             }
 

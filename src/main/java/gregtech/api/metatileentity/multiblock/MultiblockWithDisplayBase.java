@@ -7,15 +7,13 @@ import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.multiblock.BlockWorldState;
-import gregtech.api.multiblock.IMaintenance;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,7 +31,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
 
@@ -233,30 +230,12 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         super.invalidateStructure();
     }
 
-    @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        boolean canForm = super.checkStructureComponents(parts, abilities);
-        if (!canForm)
-            return false;
-
-        int mufflerCount = abilities.getOrDefault(MultiblockAbility.MUFFLER_HATCH, Collections.emptyList()).size();
-
-        // Only one muffler if it the multi requires one, otherwise allow none
-        if (hasMufflerMechanics()) {
-            if (mufflerCount != 1)
-                return false;
-        } else {
-            if (mufflerCount != 0)
-                return false;
+    public TraceabilityPredicate autoAbilities() {
+        TraceabilityPredicate predicate = null;
+        if (hasMaintenanceMechanics()) {
+            predicate = abilities(MultiblockAbility.MAINTENANCE_HATCH).setMinGlobalLimited(1).setMaxGlobalLimited(1);
         }
-
-        // Only one maintenance hatch if the multi requires one, otherwise allow any amount
-        if (!hasMaintenanceMechanics())
-            return true;
-
-        int maintenanceCount = abilities.getOrDefault(MultiblockAbility.MAINTENANCE_HATCH, Collections.emptyList()).size();
-
-        return maintenanceCount == 1;
+        return predicate;
     }
 
     /**
@@ -377,11 +356,5 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         if (dataId == STORE_TAPED) {
             storedTaped = buf.readBoolean();
         }
-    }
-
-    public static Predicate<BlockWorldState> maintenancePredicate(IBlockState... allowedAlternatives) {
-        if (ConfigHolder.U.GT5u.enableMaintenance) {
-            return abilityPartPredicate(MultiblockAbility.MAINTENANCE_HATCH).or(statePredicate(allowedAlternatives));
-        } else return statePredicate(allowedAlternatives);
     }
 }

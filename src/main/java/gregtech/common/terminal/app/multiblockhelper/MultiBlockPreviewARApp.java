@@ -12,7 +12,7 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.multiblock.BlockPattern;
+import gregtech.api.pattern.BlockPattern;
 import gregtech.api.render.scene.WorldSceneRenderer;
 import gregtech.api.render.shader.Shaders;
 import gregtech.api.terminal.app.ARApplication;

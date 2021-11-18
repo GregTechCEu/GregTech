@@ -19,7 +19,7 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.multiblock.IMaintenance;
+import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTToolTypes;
 import gregtech.common.gui.widget.among_us.FixWiringTaskWidget;

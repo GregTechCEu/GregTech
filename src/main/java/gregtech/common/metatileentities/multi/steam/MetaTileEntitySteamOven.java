@@ -7,18 +7,18 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
-import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -58,16 +58,11 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
                 .aisle("XXX", "CCC", "#C#")
                 .aisle("XXX", "C#C", "#C#")
                 .aisle("XXX", "CSC", "#C#")
-                .setAmountAtLeast('L', 6)
-                .setAmountAtMost('H', 1)
                 .where('S', selfPredicate())
-                .where('L', statePredicate(getCasingState()))
-                .where('H', abilityPartPredicate(MultiblockAbility.STEAM))
-                .where('X', state -> statePredicate(getFireboxState())
-                        .or(abilityPartPredicate(MultiblockAbility.STEAM)).test(state))
-                .where('C', statePredicate(getCasingState()).or(abilityPartPredicate(
-                        MultiblockAbility.STEAM_IMPORT_ITEMS, MultiblockAbility.STEAM_EXPORT_ITEMS)))
-                .where('#', (tile) -> true)
+                .where('X', states(getFireboxState()).or(abilities(MultiblockAbility.STEAM)).setMaxGlobalLimited(1))
+                .where('C', states(getCasingState()).setMinGlobalLimited(6).or(
+                        abilities(MultiblockAbility.STEAM_IMPORT_ITEMS, MultiblockAbility.STEAM_EXPORT_ITEMS)))
+                .where('#', any())
                 .build();
     }
 

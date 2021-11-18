@@ -16,9 +16,9 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipes.FuelRecipe;
@@ -27,7 +27,6 @@ import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.SimpleCubeRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.unification.material.Materials;
-import gregtech.api.util.GTUtility;
 import gregtech.common.blocks.BlockBoilerCasing.BoilerCasingType;
 import gregtech.common.blocks.BlockFireboxCasing;
 import gregtech.common.blocks.BlockFireboxCasing.FireboxCasingType;
@@ -35,6 +34,7 @@ import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.tools.DamageValues;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -138,7 +138,6 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
     public MetaTileEntityLargeBoiler(ResourceLocation metaTileEntityId, BoilerType boilerType) {
         super(metaTileEntityId);
         this.boilerType = boilerType;
-        reinitializeStructurePattern();
     }
 
     @Override
@@ -403,14 +402,17 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
                 .aisle("XXX", "CCC", "CCC", "CCC")
                 .aisle("XXX", "CPC", "CPC", "CCC")
                 .aisle("XXX", "CSC", "CCC", "CCC")
-                .setAmountAtLeast('X', 4)
-                .setAmountAtLeast('C', 20)
                 .where('S', selfPredicate())
-                .where('P', statePredicate(boilerType.pipeState))
-                .where('X', state -> statePredicate(boilerType.fireboxState)
-                        .or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.IMPORT_ITEMS, MultiblockAbility.MUFFLER_HATCH)).test(state))
-                .where('C', statePredicate(boilerType.casingState).or(abilityPartPredicate(
-                        MultiblockAbility.EXPORT_FLUIDS, MultiblockAbility.MAINTENANCE_HATCH)))
+                .where('P', states(boilerType.pipeState))
+                .where('X', states(boilerType.fireboxState)
+                        .or(states(boilerType.fireboxState).setMinGlobalLimited(4))
+                        .or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.MUFFLER_HATCH).setMinGlobalLimited(1)))
+                .where('C', states(boilerType.casingState)
+                        .or(states(boilerType.casingState).setMinGlobalLimited(20))
+                        .or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(1))
+                        .or(autoAbilities())) // maintainer
                 .build();
     }
 
@@ -426,15 +428,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         return boilerType.frontOverlay;
     }
 
-    @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        //noinspection SuspiciousMethodCalls
-        int importFluidsSize = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
-        //noinspection SuspiciousMethodCalls
-        return importFluidsSize >= 1 && (importFluidsSize >= 2 ||
-                abilities.containsKey(MultiblockAbility.IMPORT_ITEMS)) &&
-                abilities.containsKey(MultiblockAbility.EXPORT_FLUIDS);
-    }
+
 
     private boolean isFireboxPart(IMultiblockPart sourcePart) {
         return isStructureFormed() && (((MetaTileEntity) sourcePart).getPos().getY() < getPos().getY());

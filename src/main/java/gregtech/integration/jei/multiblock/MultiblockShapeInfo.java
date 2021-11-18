@@ -8,6 +8,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,28 +70,25 @@ public class MultiblockShapeInfo {
         }
 
         private BlockInfo[][][] bakeArray() {
-            BlockInfo[][][] blockInfos = new BlockInfo[shape.size()][][];
-            for (int i = 0; i < blockInfos.length; i++) {
-                String[] aisleEntry = shape.get(i);
-                BlockInfo[][] aisleData = new BlockInfo[aisleEntry.length][];
-                for (int j = 0; j < aisleData.length; j++) {
-                    String columnEntry = aisleEntry[j];
-                    BlockInfo[] columnData = new BlockInfo[columnEntry.length()];
-                    for (int k = 0; k < columnData.length; k++) {
-                        columnData[k] = symbolMap.getOrDefault(columnEntry.charAt(k), BlockInfo.EMPTY);
-                        TileEntity tileEntity = columnData[k].getTileEntity();
+            BlockInfo[][][] blockInfos = (BlockInfo[][][]) Array.newInstance(BlockInfo.class, shape.get(0)[0].length(), shape.get(0).length, shape.size());
+            for (int z = 0; z < blockInfos.length; z++) { //z
+                String[] aisleEntry = shape.get(z);
+                for (int y = 0; y < shape.get(0).length; y++) {
+                    String columnEntry = aisleEntry[y];
+                    for (int x = 0; x < columnEntry.length(); x++) {
+                        BlockInfo info = symbolMap.getOrDefault(columnEntry.charAt(x), BlockInfo.EMPTY);
+                        TileEntity tileEntity = info.getTileEntity();
                         if (tileEntity != null) {
                             MetaTileEntityHolder holder = (MetaTileEntityHolder) tileEntity;
                             final MetaTileEntity mte = holder.getMetaTileEntity();
                             holder = new MetaTileEntityHolder();
                             holder.setMetaTileEntity(mte);
                             holder.getMetaTileEntity().setFrontFacing(mte.getFrontFacing());
-                            columnData[k] = new BlockInfo(columnData[k].getBlockState(), holder);
+                            info = new BlockInfo(info.getBlockState(), holder);
                         }
+                        blockInfos[x][y][z] = info;
                     }
-                    aisleData[j] = columnData;
                 }
-                blockInfos[i] = aisleData;
             }
             return blockInfos;
         }

@@ -352,6 +352,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
 
     @Override
     public void preInit(Object... data) {
+        super.preInit(data);
         if (data.length != 0 && data[0] instanceof ItemStack)
             this.setClipboard((ItemStack) data[0]);
     }

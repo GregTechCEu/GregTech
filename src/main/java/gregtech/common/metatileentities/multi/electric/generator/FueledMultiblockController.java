@@ -9,17 +9,16 @@ import gregtech.api.capability.impl.EnergyContainerList;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.FuelRecipeLogic;
 import gregtech.api.metatileentity.MTETrait;
-import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.List;
-import java.util.Map;
 
 public abstract class FueledMultiblockController extends MultiblockWithDisplayBase {
 
@@ -93,10 +92,8 @@ public abstract class FueledMultiblockController extends MultiblockWithDisplayBa
     }
 
     @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        //noinspection SuspiciousMethodCalls
-        return abilities.containsKey(MultiblockAbility.IMPORT_FLUIDS) &&
-                abilities.containsKey(MultiblockAbility.OUTPUT_ENERGY);
+    public TraceabilityPredicate autoAbilities() {
+        return abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(1).or(abilities(MultiblockAbility.OUTPUT_ENERGY).setMinGlobalLimited(1)).or(super.autoAbilities());
     }
 
     @Override

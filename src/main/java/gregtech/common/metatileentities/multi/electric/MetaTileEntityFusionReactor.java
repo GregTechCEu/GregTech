@@ -10,9 +10,9 @@ import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
@@ -22,9 +22,9 @@ import gregtech.api.render.ICustomRenderFast;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.RenderBufferHelper;
-import gregtech.core.hooks.BloomRenderLayerHooks;
 import gregtech.common.blocks.*;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -32,6 +32,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -45,6 +46,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.List;
 
 import static gregtech.api.util.RelativeDirection.*;
@@ -59,7 +61,6 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
         super(metaTileEntityId, RecipeMaps.FUSION_RECIPES);
         this.recipeMapWorkable = new FusionRecipeLogic(this);
         this.tier = tier;
-        this.reinitializeStructurePattern();
         this.energyContainer = new EnergyContainerHandler(this, Integer.MAX_VALUE, 0, 0, 0, 0) {
             @Override
             public String getName() {
@@ -93,19 +94,16 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
                 .aisle("######ICI######", "####GG###GG####", "######ICI######")
                 .aisle("###############", "######OGO######", "###############")
                 .where('S', selfPredicate())
-                .where('G', statePredicate(MetaBlocks.TRANSPARENT_CASING.getState(BlockTransparentCasing.CasingType.REINFORCED_GLASS)).or(statePredicate(getCasingState())))
-                .where('C', statePredicate(getCasingState()))
-                .where('c', statePredicate(getCoilState()))
-                .where('O', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS)))
-                .where('E', statePredicate(getCasingState()).or(tilePredicate((state, tile) -> {
-                    for (int i = tier; i < GTValues.UV + 1; i++) {
-                        if (tile.metaTileEntityId.equals(MetaTileEntities.ENERGY_INPUT_HATCH[i].metaTileEntityId))
-                            return true;
-                    }
-                    return false;
-                })))
-                .where('I', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS)))
-                .where('#', (tile) -> true)
+                .where('G', states(MetaBlocks.TRANSPARENT_CASING.getState(BlockTransparentCasing.CasingType.REINFORCED_GLASS)).or(states(getCasingState())))
+                .where('C', states(getCasingState()))
+                .where('c', states(getCoilState()))
+                .where('O', states(getCasingState()).or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(recipeMap.getMinFluidOutputs())))
+                .where('E', states(getCasingState()).or(metaTileEntities(Arrays.stream(MetaTileEntities.ENERGY_INPUT_HATCH)
+                        .filter(mte-> mte != null && tier <= mte.getTier() &&  mte.getTier() <= GTValues.UV)
+                        .toArray(MetaTileEntity[]::new))
+                        .setMinGlobalLimited(1)))
+                .where('I', states(getCasingState()).or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(recipeMap.getMinFluidInputs())))
+                .where('#', any())
                 .build();
     }
 

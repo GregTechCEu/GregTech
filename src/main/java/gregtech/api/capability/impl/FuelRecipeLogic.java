@@ -5,7 +5,7 @@ import gregtech.api.capability.*;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.multiblock.IMaintenance;
+import gregtech.api.metatileentity.multiblock.IMaintenance;
 import gregtech.api.recipes.machines.FuelRecipeMap;
 import gregtech.api.recipes.recipes.FuelRecipe;
 import gregtech.api.util.GTUtility;

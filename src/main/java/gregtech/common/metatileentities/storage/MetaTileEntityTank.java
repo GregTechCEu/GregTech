@@ -162,8 +162,8 @@ public class MetaTileEntityTank extends MetaTileEntity implements IFastRenderMet
     }
 
     @Override
-    public void onAttached() {
-        super.onAttached();
+    public void preInit(Object... data) {
+        super.preInit(data);
         recomputeTankSizeNow(true);
     }
 

@@ -1,4 +1,4 @@
-package gregtech.api.multiblock;
+package gregtech.api.pattern;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
@@ -8,38 +8,42 @@ import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.function.Predicate;
+import java.util.Map;
 
 public class BlockWorldState {
 
-    private World world;
-    private BlockPos pos;
-    private IBlockState state;
-    private TileEntity tileEntity;
-    private boolean tileEntityInitialized;
-    private PatternMatchContext matchContext;
-    private PatternMatchContext layerContext;
+    protected World world;
+    protected BlockPos pos;
+    protected IBlockState state;
+    protected TileEntity tileEntity;
+    protected boolean tileEntityInitialized;
+    protected PatternMatchContext matchContext;
+    protected Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount;
+    protected Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount;
+    protected Object error;
 
-    public static IPatternCenterPredicate wrap(Predicate<BlockWorldState> predicate) {
-        return predicate::test;
-    }
-
-    public void update(World worldIn, BlockPos posIn, PatternMatchContext matchContext, PatternMatchContext layerContext) {
+    public void update(World worldIn, BlockPos posIn, PatternMatchContext matchContext, Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount, Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount) {
         this.world = worldIn;
         this.pos = posIn;
         this.state = null;
         this.tileEntity = null;
         this.tileEntityInitialized = false;
         this.matchContext = matchContext;
-        this.layerContext = layerContext;
+        this.globalCount = globalCount;
+        this.layerCount = layerCount;
+        this.error = null;
+    }
+
+    public boolean hasError() {
+        return error != null;
+    }
+
+    public void setError(Object error) {
+        this.error = error;
     }
 
     public PatternMatchContext getMatchContext() {
         return matchContext;
-    }
-
-    public PatternMatchContext getLayerContext() {
-        return layerContext;
     }
 
     public IBlockState getBlockState() {

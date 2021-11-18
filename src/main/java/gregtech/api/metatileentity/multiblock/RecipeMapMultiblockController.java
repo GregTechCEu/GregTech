@@ -14,7 +14,8 @@ import gregtech.api.capability.impl.ItemHandlerList;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.gui.Widget;
 import gregtech.api.gui.widgets.AdvancedTextWidget;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.PatternMatchContext;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.util.GTUtility;
@@ -31,14 +32,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class RecipeMapMultiblockController extends MultiblockWithDisplayBase {
@@ -216,18 +214,29 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
     }
 
     @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        boolean canForm = super.checkStructureComponents(parts, abilities);
-        if (!canForm)
-            return false;
-
-        //basically check minimal requirements for inputs count
-        int itemInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_ITEMS, Collections.emptyList())
-                .stream().map(it -> (IItemHandler) it).mapToInt(IItemHandler::getSlots).sum();
-        int fluidInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
-        return itemInputsCount >= recipeMap.getMinInputs() &&
-                fluidInputsCount >= recipeMap.getMinFluidInputs() &&
-                abilities.containsKey(MultiblockAbility.INPUT_ENERGY);
+    public TraceabilityPredicate autoAbilities() {
+        TraceabilityPredicate predicate = abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1).or(super.autoAbilities());
+        if (recipeMap.getMinInputs() > 0) {
+            predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS).setMinGlobalLimited(recipeMap.getMinInputs()));
+        } else {
+            predicate.or(abilities(MultiblockAbility.IMPORT_ITEMS));
+        }
+        if (recipeMap.getMinFluidInputs() > 0) {
+            predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS).setMinGlobalLimited(recipeMap.getMinInputs()));
+        } else {
+            predicate.or(abilities(MultiblockAbility.IMPORT_FLUIDS));
+        }
+        if (recipeMap.getMinOutputs() > 0) {
+            predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(recipeMap.getMinInputs()));
+        } else {
+            predicate.or(abilities(MultiblockAbility.EXPORT_ITEMS));
+        }
+        if (recipeMap.getMinFluidOutputs() > 0) {
+            predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS).setMinGlobalLimited(recipeMap.getMinInputs()));
+        } else {
+            predicate.or(abilities(MultiblockAbility.EXPORT_FLUIDS));
+        }
+        return predicate;
     }
 
     @Override

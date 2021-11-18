@@ -1,4 +1,4 @@
-package gregtech.api.multiblock;
+package gregtech.api.pattern;
 
 import java.util.HashMap;
 import java.util.Map;
