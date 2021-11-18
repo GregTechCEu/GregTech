@@ -194,6 +194,12 @@ public class OreDictUnifier {
     }
 
     @Nullable
+    public static MaterialStack getMaterialWithCount(ItemStack stack) {
+        MaterialStack ms = getMaterial(stack);
+        return ms == null ? null : new MaterialStack(ms.material, ms.amount * stack.getCount());
+    }
+
+    @Nullable
     public static ItemMaterialInfo getMaterialInfo(ItemStack itemStack) {
         if (itemStack.isEmpty()) return null;
         ItemAndMetadata simpleItemStack = new ItemAndMetadata(itemStack);
