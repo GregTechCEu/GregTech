@@ -23,9 +23,9 @@ import gregtech.api.metatileentity.MetaTileEntityUIFactory;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
-import gregtech.api.multiblock.BlockPattern;
-import gregtech.api.multiblock.FactoryBlockPattern;
-import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.pattern.BlockPattern;
+import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.PatternMatchContext;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
@@ -69,8 +69,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static gregtech.api.unification.material.Materials.DrillingFluid;
 
 public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implements IMiner, IControllable {
-
-    private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {MultiblockAbility.EXPORT_ITEMS, MultiblockAbility.IMPORT_FLUIDS, MultiblockAbility.INPUT_ENERGY};
 
     private final Material material;
     private final AtomicInteger x = new AtomicInteger(Integer.MAX_VALUE);
@@ -255,20 +253,15 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
                 .aisle("CCC", "#F#", "#F#", "#F#", "###", "###", "###")
                 .aisle("CCC", "FCF", "FCF", "FCF", "#F#", "#F#", "#F#")
                 .aisle("CSC", "#F#", "#F#", "#F#", "###", "###", "###")
-                .setAmountAtLeast('L', 3)
                 .where('S', selfPredicate())
-                .where('L', statePredicate(getCasingState()))
-                .where('C', statePredicate(getCasingState()).or(abilityPartPredicate(ALLOWED_ABILITIES)))
-                .where('F', statePredicate(MetaBlocks.FRAMES.get(getMaterial()).getDefaultState()))
-                .where('#', blockWorldState -> true)
+                .where('L', states(getCasingState()))
+                .where('C', states(getCasingState()).setMinGlobalLimited(3).or(states(getCasingState()))
+                        .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.EXPORT_ITEMS).setMinGlobalLimited(1))
+                        .or(abilities(MultiblockAbility.INPUT_ENERGY).setMinGlobalLimited(1)))
+                .where('F', states(MetaBlocks.FRAMES.get(getMaterial()).getDefaultState()))
+                .where('#', any())
                 .build();
-    }
-
-    @Override
-    protected boolean checkStructureComponents(List<IMultiblockPart> parts, Map<MultiblockAbility<Object>, List<Object>> abilities) {
-        int itemOutputsCount = abilities.getOrDefault(MultiblockAbility.EXPORT_ITEMS, Collections.emptyList()).size();
-        int fluidInputsCount = abilities.getOrDefault(MultiblockAbility.IMPORT_FLUIDS, Collections.emptyList()).size();
-        return itemOutputsCount >= 1 && fluidInputsCount >= 1 && abilities.containsKey(MultiblockAbility.INPUT_ENERGY);
     }
 
     @Override
