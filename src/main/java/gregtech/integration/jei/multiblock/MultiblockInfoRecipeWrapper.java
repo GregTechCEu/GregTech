@@ -406,10 +406,7 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             for (int y = 0; y < aisle.length; y++) {
                 BlockInfo[] column = aisle[y];
                 for (int z = 0; z < column.length; z++) {
-                    // fill XYZ instead of ZYX
-                    BlockPos blockPos = new BlockPos(x, y, z);
-                    BlockInfo blockInfo = column[z];
-                    blockMap.put(blockPos, blockInfo);
+                    blockMap.put(new BlockPos(x, y, z), column[z]);
                 }
             }
         }
