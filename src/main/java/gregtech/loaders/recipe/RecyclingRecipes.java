@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import static gregtech.api.GTValues.L;
@@ -41,11 +40,13 @@ public class RecyclingRecipes {
     public static void registerRecyclingRecipes(ItemStack input, List<MaterialStack> components, boolean ignoreArcSmelting) {
 
         // Gather the valid Materials for use in recycling recipes.
-        // Filters out any Material that does not have a Dust, and any
-        // Materials that do not equate to at least 1 Nugget worth of Material.
+        // - Filter out Materials that cannot create a Dust
+        // - Filter out Materials that do not equate to at least 1 Nugget worth of Material.
+        // - Sort Materials on a descending material amount
         List<MaterialStack> materials = components.stream()
                 .filter(stack -> stack.material.hasProperty(PropertyKey.DUST))
                 .filter(stack -> stack.amount >= M / 9)
+                .sorted(Comparator.comparingLong(ms -> -ms.amount))
                 .collect(Collectors.toList());
 
         // Exit if no Materials matching the above requirements exist.
@@ -84,8 +85,8 @@ public class RecyclingRecipes {
         // - Sum the Material amounts together
         // - Multiply by 30, and divide by M
         long duration = 0;
-        for (MaterialStack ms : materials) duration += ms.amount;
-        duration = Math.max(1L, duration * 30 / M);
+        for (MaterialStack ms : materials) duration += (ms.amount * ms.material.getAverageMass());
+        duration = Math.max(1L, duration / M);
 
         // Build the final Recipe.
         RecipeMaps.MACERATOR_RECIPES.recipeBuilder()
@@ -111,9 +112,9 @@ public class RecyclingRecipes {
         // Calculate the duration based off of those two possible outputs.
         // - Sum the two Material amounts together (if both exist)
         // - Multiply by 80 and divide by M
-        long duration = fluidMs.amount;
-        if (itemMs != null) duration += itemMs.amount;
-        duration = Math.max(1L, duration * 80 / M);
+        long duration = fluidMs.amount * fluidMs.material.getAverageMass();
+        if (itemMs != null) duration += (itemMs.amount * itemMs.material.getAverageMass());
+        duration = Math.max(1L, duration / M);
 
         // Build the final Recipe.
         RecipeBuilder<?> extractorBuilder = RecipeMaps.EXTRACTOR_RECIPES.recipeBuilder()
@@ -151,29 +152,33 @@ public class RecyclingRecipes {
             outputsExploded.put(item, stack.getCount() + amount);
         }
 
-        // Sort the outputs List, and calculate duration along the way.
-        AtomicLong tempDuration = new AtomicLong(0);
+        // Map and sort the output list.
         List<ItemStack> outputs = outputsExploded.entrySet().stream()
 
                 // Map <ItemAndMetadata, Integer> to ItemStack
                 .map(e -> e.getKey().toItemStack(e.getValue()))
 
-                // Sort based on MaterialStack.amount, and update duration along the way.
-                // Despite what syntax highlighting is saying, we know ms cannot be null.
-                .sorted(Comparator.comparingLong(is -> {
-                    MaterialStack ms = OreDictUnifier.getMaterialWithCount(is);
-                    tempDuration.addAndGet(ms.amount);
-                    return -ms.amount;
-                }))
+                // Sort based on MaterialStack.amount.
+                // We have to re-sort here since calling getArcSmeltingResult can
+                // change the material amounts of the list.
+                .sorted(Comparator.comparingLong(is -> -Objects.requireNonNull(OreDictUnifier.getMaterialWithCount(is)).amount))
 
                 // Limit to the maximum amount of outputs for the Arc Furnace
                 .limit(RecipeMaps.ARC_FURNACE_RECIPES.getMaxOutputs())
                 .collect(Collectors.toList());
 
         // Calculate the duration of the Recipe.
-        // - Sum the Material amounts together
-        // - Multiply by 60, and divide by M
-        long duration = Math.max(1L, tempDuration.get() * 60 / M);
+        // - Sum (materialStack.amount * material.getAverageMass()) together for the list, excluding
+        //   the arc-furnaced materials (Carbon, Dark Ash, Ash)
+        // - Divide by M
+        long duration = 0;
+        for (ItemStack is : outputs) {
+            MaterialStack ms = OreDictUnifier.getMaterialWithCount(is);
+            if (ms != null && ms.material != Materials.Carbon && ms.material != Materials.Ash && ms.material != Materials.DarkAsh) {
+                duration += (ms.amount * ms.material.getAverageMass());
+            }
+        }
+        duration = Math.max(1L, duration / M);
 
         // Build the final Recipe.
         RecipeMaps.ARC_FURNACE_RECIPES.recipeBuilder()
@@ -233,6 +238,8 @@ public class RecyclingRecipes {
     }
 
     private static int calculateVoltageMultiplier(List<MaterialStack> materials) {
+
+        // Gather the highest blast temperature of any material in the list
         int highestTemp = 0;
         for (MaterialStack ms : materials) {
             Material m = ms.material;
@@ -243,6 +250,14 @@ public class RecyclingRecipes {
                 }
             }
         }
-        return highestTemp == 0 ? 1 : highestTemp > 2000 ? 16 : 4;
+
+        // No blast temperature in the list means no multiplier
+        if (highestTemp == 0) return 1;
+
+        // If less then 2000K, multiplier of 4
+        if (highestTemp < 2000) return 4;
+
+        // If above 2000K, multiplier of 16
+        return 16;
     }
 }
