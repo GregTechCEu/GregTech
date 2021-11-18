@@ -242,7 +242,14 @@ public class BlockPattern {
                         }
                         if (!find) {
                             if (predicate.common.isEmpty()) {
-                                infos = null;
+                                for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
+                                    if (limit.maxGlobalCount == -1 && limit.maxLayerCount == -1) {
+                                        if (!cacheInfos.containsKey(limit)) {
+                                            cacheInfos.put(limit, limit.candidates == null ? null : limit.candidates.get());
+                                        }
+                                        infos = cacheInfos.get(limit);
+                                    }
+                                }
                             } else {
                                 TraceabilityPredicate.SimplePredicate common = predicate.common.getFirst();
                                 if (!cacheInfos.containsKey(common)) {

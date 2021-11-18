@@ -114,7 +114,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.drillingFluidConsumePerTick = drillingFluidConsumePerTick;
         this.fortune = fortune;
         this.romanNumeralString = GTUtility.romanNumeralString(fortune);
-        reinitializeStructurePattern();
     }
 
 

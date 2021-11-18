@@ -46,7 +46,7 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XCX", "XXX")
-                .aisle("XCX", "CPC", "XCX")
+                .aisle("XXX", "XPX", "XXX")
                 .aisle("XXX", "XSX", "XXX")
                 .where('S', selfPredicate())
                 .where('X', states(getCasingState()).setMinGlobalLimited(9).or(autoAbilities()))
