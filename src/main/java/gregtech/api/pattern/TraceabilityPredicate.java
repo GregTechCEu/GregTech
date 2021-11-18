@@ -5,10 +5,15 @@ import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.BlockWireCoil2;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -140,7 +145,7 @@ public class TraceabilityPredicate {
             count = (count == null ? 0 : count) + (base ? 1 : 0);
             blockWorldState.globalCount.put(this, count);
             if (maxGlobalCount == -1 || count <= maxGlobalCount) return base;
-            blockWorldState.setError(new SinglePredicateError(this, 0));
+            blockWorldState.setError(new SinglePredicateError(blockWorldState, this, 0));
             return false;
         }
 
@@ -151,18 +156,35 @@ public class TraceabilityPredicate {
             count = (count == null ? 0 : count) + (base ? 1 : 0);
             blockWorldState.layerCount.put(this, count);
             if (maxLayerCount == -1 || count <= maxLayerCount) return base;
-            blockWorldState.setError(new SinglePredicateError(this, 1));
+            blockWorldState.setError(new SinglePredicateError(blockWorldState, this, 2));
             return false;
         }
     }
 
-    public static class SinglePredicateError {
+    public static class SinglePredicateError extends PatternError {
         public final SimplePredicate predicate;
         public final int type;
 
-        public SinglePredicateError(SimplePredicate predicate, int type) {
+        public SinglePredicateError(BlockWorldState blockWorldState, SimplePredicate predicate, int type) {
+            super(blockWorldState);
             this.predicate = predicate;
             this.type = type;
+        }
+
+        @Override
+        public List<ItemStack> getCandidates() {
+            return getCandidates(predicate);
+        }
+
+        @SideOnly(Side.CLIENT)
+        @Override
+        public String getErrorInfo() {
+            int number = -1;
+            if (type == 0) number = predicate.maxGlobalCount;
+            if (type == 1) number = predicate.minGlobalCount;
+            if (type == 2) number = predicate.maxLayerCount;
+            if (type == 3) number = predicate.minLayerCount;
+            return I18n.format("gregtech.multiblock.pattern.error.limited." + type, String.join("|", getCandidates().stream().map(ItemStack::getDisplayName).toArray(String[]::new)), number);
         }
     }
 

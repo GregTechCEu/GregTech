@@ -20,9 +20,10 @@ public class BlockWorldState {
     protected PatternMatchContext matchContext;
     protected Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount;
     protected Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount;
-    protected Object error;
+    protected TraceabilityPredicate predicate;
+    protected PatternError error;
 
-    public void update(World worldIn, BlockPos posIn, PatternMatchContext matchContext, Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount, Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount) {
+    public void update(World worldIn, BlockPos posIn, PatternMatchContext matchContext, Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount, Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount, TraceabilityPredicate predicate) {
         this.world = worldIn;
         this.pos = posIn;
         this.state = null;
@@ -31,6 +32,7 @@ public class BlockWorldState {
         this.matchContext = matchContext;
         this.globalCount = globalCount;
         this.layerCount = layerCount;
+        this.predicate = predicate;
         this.error = null;
     }
 
@@ -38,7 +40,7 @@ public class BlockWorldState {
         return error != null;
     }
 
-    public void setError(Object error) {
+    public void setError(PatternError error) {
         this.error = error;
     }
 

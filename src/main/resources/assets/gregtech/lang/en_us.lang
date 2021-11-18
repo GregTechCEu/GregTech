@@ -65,6 +65,12 @@ gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is
 gregtech.multiblock.primitive_water_pump.extra1=Biome Coefficient:/n  Ocean, River: 1000 L/s/n  Swamp: 800 L/s/n  Jungle: 350 L/s/n  Snowy: 300 L/s/n  Plains, Forest: 250 L/s/n  Taiga: 175 L/s/n  Beach: 170 L/s/n  Other: 100 L/s
 gregtech.multiblock.primitive_water_pump.extra2=Hatch Multipliers:/n  Pump Hatch: 1x/n  ULV Output Hatch: 2x/n  LV Output Hatch: 4x
 
+gregtech.multiblock.pattern.error=Expect components (%s) at (%s).
+gregtech.multiblock.pattern.error.limited.0=The number of components (%s) should less than %d.
+gregtech.multiblock.pattern.error.limited.1=The number of components (%s) should more than %d.
+gregtech.multiblock.pattern.error.limited.2=The number of components (%s) should less than %d in each layer.
+gregtech.multiblock.pattern.error.limited.3=The number of components (%s) should more than %d in each layer.
+
 item.invalid.name=Invalid item
 fluid.empty=Empty
 

@@ -8,8 +8,11 @@ import gregtech.api.gui.widgets.SlotWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.PatternError;
 import gregtech.api.terminal.gui.widgets.MachineSceneWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
+import gregtech.api.terminal.os.TerminalDialogWidget;
+import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RenderBufferHelper;
@@ -45,6 +48,7 @@ public class MachineBuilderWidget extends WidgetGroup {
     private BlockPos pos;
     private EnumFacing facing;
     private SlotWidget[] slotWidgets;
+    TerminalOSWidget os;
     @SideOnly(Side.CLIENT)
     private MachineSceneWidget sceneWidget;
     @SideOnly(Side.CLIENT)
@@ -52,8 +56,9 @@ public class MachineBuilderWidget extends WidgetGroup {
     private final MultiblockControllerBase controllerBase;
     private int selected = -1;
 
-    public MachineBuilderWidget(int x, int y, int width, int height, MultiblockControllerBase controllerBase) {
+    public MachineBuilderWidget(int x, int y, int width, int height, MultiblockControllerBase controllerBase, TerminalOSWidget os) {
         super(x, y, width, height);
+        this.os = os;
         this.controllerBase = controllerBase;
         addWidget(new ImageWidget(0, 0, width, height, GuiTextures.BACKGROUND));
         addWidget(new RectButtonWidget(12, 125, width - 24, 20, 1)
@@ -210,7 +215,9 @@ public class MachineBuilderWidget extends WidgetGroup {
         if (clickData.isClient && controllerBase != null) {
             highLightBlocks.clear();
             if (controllerBase.structurePattern.checkPatternFastAt(controllerBase.getWorld(), controllerBase.getPos(), controllerBase.getFrontFacing().getOpposite()) == null) {
-                highLightBlocks.add(new BlockPos(controllerBase.structurePattern.blockPos));
+                PatternError error = controllerBase.structurePattern.getError();
+                highLightBlocks.add(new BlockPos(error.getPos()));
+                TerminalDialogWidget.showInfoDialog(os, "terminal.component.error", error.getErrorInfo()).setClientSide().open();
             }
         }
     }

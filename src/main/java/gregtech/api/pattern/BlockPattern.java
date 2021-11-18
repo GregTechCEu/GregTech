@@ -28,21 +28,21 @@ import java.util.stream.Collectors;
 
 public class BlockPattern {
 
-    public final TraceabilityPredicate[][][] blockMatches; //[z][y][x]
-    public final int fingerLength; //z size
-    public final int thumbLength; //y size
-    public final int palmLength; //x size
-    public final RelativeDirection[] structureDir;
+    protected final TraceabilityPredicate[][][] blockMatches; //[z][y][x]
+    protected final int fingerLength; //z size
+    protected final int thumbLength; //y size
+    protected final int palmLength; //x size
+    protected final RelativeDirection[] structureDir;
     public final int[][] aisleRepetitions;
 
     // x, y, z, minZ, maxZ
     private int[] centerOffset = null;
 
-    public final BlockWorldState worldState = new BlockWorldState();
-    public final MutableBlockPos blockPos = new MutableBlockPos();
-    public final PatternMatchContext matchContext = new PatternMatchContext();
-    public final Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount;
-    public final Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount;
+    protected final BlockWorldState worldState = new BlockWorldState();
+    protected final MutableBlockPos blockPos = new MutableBlockPos();
+    protected final PatternMatchContext matchContext = new PatternMatchContext();
+    protected final Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount;
+    protected final Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount;
 
     public List<Tuple<BlockPos, BlockInfo>> cache = new LinkedList<>();
 //    private Iterator<Tuple<BlockPos, BlockInfo>> iterator;
@@ -110,6 +110,10 @@ public class BlockPattern {
 //        return worldState.hasError() ? null : matchContext;
 //    }
 
+    public PatternError getError(){
+        return worldState.error;
+    }
+
     public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing facing) {
         if (!cache.isEmpty()) {
             boolean pass = true;
@@ -138,7 +142,6 @@ public class BlockPattern {
         this.globalCount.clear();
         this.layerCount.clear();
         cache.clear();
-
         //Checking aisles
         for (int c = 0, z = minZ++, r; c < this.fingerLength; c++) {
             //Checking repeatable slices
@@ -152,16 +155,14 @@ public class BlockPattern {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
                         setActualRelativeOffset(x, y, z, facing);
                         blockPos.setPos(blockPos.getX() + centerPos.getX(), blockPos.getY() + centerPos.getY(), blockPos.getZ() + centerPos.getZ());
-                        worldState.update(world, blockPos, matchContext, globalCount, layerCount);
+                        worldState.update(world, blockPos, matchContext, globalCount, layerCount, predicate);
                         cache.add(new Tuple<>(new BlockPos(worldState.pos), new BlockInfo(worldState.getBlockState(), worldState.getTileEntity())));
                         if (!predicate.test(worldState)) {
-                            worldState.setError(predicate);
                             if (findFirstAisle) {
                                 if (r < aisleRepetitions[c][0]) {//retreat to see if the first aisle can start later
                                     r = c = 0;
                                     z = minZ++;
                                     matchContext.reset();
-                                    cache.clear();
                                     findFirstAisle = false;
                                 }
                             } else {
@@ -177,7 +178,7 @@ public class BlockPattern {
                 //Check layer-local matcher predicate
                 for (Map.Entry<TraceabilityPredicate.SimplePredicate, Integer> entry : layerCount.entrySet()) {
                     if (entry.getValue() < entry.getKey().minLayerCount) {
-                        worldState.setError(new TraceabilityPredicate.SinglePredicateError(entry.getKey(), 2));
+                        worldState.setError(new TraceabilityPredicate.SinglePredicateError(worldState, entry.getKey(), 3));
                         return null;
                     }
                 }
@@ -185,7 +186,7 @@ public class BlockPattern {
             //Repetitions out of range
             if (r < aisleRepetitions[c][0]) {
                 if (!worldState.hasError()) {
-                    worldState.setError("unknown error");
+                    worldState.setError(new PatternError(worldState));
                 }
                 return null;
             }
@@ -194,7 +195,7 @@ public class BlockPattern {
         //Check count matches amount
         for (Map.Entry<TraceabilityPredicate.SimplePredicate, Integer> entry : globalCount.entrySet()) {
             if (entry.getValue() < entry.getKey().minGlobalCount) {
-                worldState.setError(new TraceabilityPredicate.SinglePredicateError(entry.getKey(), 3));
+                worldState.setError(new TraceabilityPredicate.SinglePredicateError(worldState, entry.getKey(), 1));
                 return null;
             }
         }
@@ -219,7 +220,7 @@ public class BlockPattern {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
                         setActualRelativeOffset(x, y, z, facing);
                         blockPos.setPos(blockPos.getX() + centerPos.getX(), blockPos.getY() + centerPos.getY(), blockPos.getZ() + centerPos.getZ());
-                        worldState.update(world, blockPos, matchContext, cacheGlobal, cacheLayer);
+                        worldState.update(world, blockPos, matchContext, cacheGlobal, cacheLayer, predicate);
                         if (world.getBlockState(blockPos).getBlock() != Blocks.AIR) {
                             for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
                                 limit.testLimited(worldState);
@@ -285,6 +286,7 @@ public class BlockPattern {
                                     return new ItemStack(Item.getItemFromBlock(blockState.getBlock()), 1, blockState.getBlock().damageDropped(blockState));
                                 }
                             }).collect(Collectors.toList());
+                            if (candidates.isEmpty()) continue;
                             // check inventory
                             ItemStack found = null;
                             if (!player.isCreative()) {
@@ -471,27 +473,5 @@ public class BlockPattern {
             }
         }
         blockPos.setPos(c1[0], c1[1], c1[2]);
-    }
-
-    public static BlockPos getActualPos(EnumFacing ref, EnumFacing facing, EnumFacing spin, int x, int y, int z) {
-        Vector3 vector3 = new Vector3(x, y, z);
-        double degree = Math.PI/2 * (spin == EnumFacing.EAST? 1: spin == EnumFacing.SOUTH? 2: spin == EnumFacing.WEST? -1:0);
-        if (ref != facing) {
-            if (facing.getAxis() != EnumFacing.Axis.Y) {
-                vector3.rotate(Math.PI/2 * ((4 + facing.getHorizontalIndex() - ref.getHorizontalIndex()) % 4), new Vector3(0, -1, 0));
-            } else {
-                vector3.rotate(-Math.PI/2 * facing.getYOffset(), new Vector3(-ref.rotateY().getXOffset(), 0, -ref.rotateY().getZOffset()));
-                degree = facing.getYOffset() * Math.PI/2 * ((4 + spin.getHorizontalIndex() - (facing.getYOffset() > 0 ? ref.getOpposite() : ref).getHorizontalIndex()) % 4);
-            }
-        }
-        vector3.rotate(degree, new Vector3(-facing.getXOffset(), -facing.getYOffset(), -facing.getZOffset()));
-        return new BlockPos(Math.round(vector3.x), Math.round(vector3.y), Math.round(vector3.z));
-    }
-
-    public static EnumFacing getActualFrontFacing(EnumFacing ref, EnumFacing facing, EnumFacing spin, EnumFacing frontFacing) {
-        BlockPos pos = getActualPos(ref, facing, spin, frontFacing.getXOffset(), frontFacing.getYOffset(), frontFacing.getZOffset());
-        return pos.getX() < 0 ? EnumFacing.WEST : pos.getX() > 0 ? EnumFacing.EAST
-                : pos.getY() < 0 ? EnumFacing.DOWN : pos.getY() > 0 ? EnumFacing.UP
-                : pos.getZ() < 0 ? EnumFacing.NORTH : EnumFacing.SOUTH;
     }
 }

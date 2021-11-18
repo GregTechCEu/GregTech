@@ -11,7 +11,6 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
-import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.render.scene.TrackedDummyWorld;
 import gregtech.api.render.shader.Shaders;
@@ -22,7 +21,6 @@ import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.BlockInfo;
-import gregtech.api.util.RelativeDirection;
 import gregtech.api.util.RenderUtil;
 import gregtech.common.ConfigHolder;
 import net.minecraft.block.state.IBlockState;
@@ -151,7 +149,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
         } else if (getController() != null){
             widgets.forEach(this::waitToRemoved);
             MultiblockControllerBase controllerBase = getController();
-            MachineBuilderWidget builderWidget = new MachineBuilderWidget(200, 16, 133, 200, controllerBase);
+            MachineBuilderWidget builderWidget = new MachineBuilderWidget(200, 16, 133, 200, controllerBase, getOs());
             this.addWidget(builderWidget);
             builderWidget.addPlayerInventory();
             if (isClient) {
@@ -300,12 +298,7 @@ public class MultiBlockPreviewARApp extends ARApplication {
 
         EnumFacing facing = controllerBase.getFrontFacing();
         EnumFacing spin = EnumFacing.NORTH;
-        BlockPattern pattern = controllerBase.structurePattern;
-        RelativeDirection[] structureDir = pattern.structureDir;
 
-        if (structureDir == null) {
-            return;
-        }
 
         // TODO SIDEWAYS ONE DAY
         //  spin = controllerBase.getSpin();
