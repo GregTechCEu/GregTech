@@ -232,7 +232,7 @@ public class BlockPattern {
                                 if (limit.minLayerCount > 0) {
                                     if (!cacheLayer.containsKey(limit)) {
                                         cacheLayer.put(limit, 1);
-                                    } else if(cacheLayer.get(limit) < limit.minLayerCount){
+                                    } else if(cacheLayer.get(limit) < limit.minLayerCount && (limit.maxLayerCount == -1 || cacheLayer.get(limit) < limit.maxLayerCount)){
                                         cacheLayer.put(limit, cacheLayer.get(limit) + 1);
                                     } else {
                                         continue;
@@ -241,7 +241,7 @@ public class BlockPattern {
                                 if (limit.minGlobalCount > 0) {
                                     if (!cacheGlobal.containsKey(limit)) {
                                         cacheGlobal.put(limit, 1);
-                                    } else if (cacheGlobal.get(limit) < limit.minGlobalCount){
+                                    } else if (cacheGlobal.get(limit) < limit.minGlobalCount && (limit.maxGlobalCount == -1 || cacheGlobal.get(limit) < limit.maxGlobalCount)){
                                         cacheGlobal.put(limit, cacheGlobal.get(limit) + 1);
                                     } else {
                                         continue;
@@ -256,8 +256,8 @@ public class BlockPattern {
                             }
                             if (!find) { // no limited
                                 for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
-                                    if (limit.maxLayerCount != -1 && cacheLayer.getOrDefault(limit, Integer.MAX_VALUE) < limit.maxLayerCount) continue;
-                                    if (limit.maxGlobalCount != -1 && cacheGlobal.getOrDefault(limit, Integer.MAX_VALUE) < limit.maxGlobalCount) continue;
+                                    if (limit.maxLayerCount != -1 && cacheLayer.getOrDefault(limit, Integer.MAX_VALUE) == limit.maxLayerCount) continue;
+                                    if (limit.maxGlobalCount != -1 && cacheGlobal.getOrDefault(limit, Integer.MAX_VALUE) == limit.maxGlobalCount) continue;
                                     if (!cacheInfos.containsKey(limit)) {
                                         cacheInfos.put(limit, limit.candidates == null ? null : limit.candidates.get());
                                     }
