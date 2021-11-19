@@ -5,7 +5,6 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -1085,7 +1084,7 @@ public class ReactorRecipes {
                     .input(dye, MarkerMaterials.Color.VALUES[16 - 1 - i])
                     .input(dust, Salt, 2)
                     .fluidInputs(SulfuricAcid.getFluid(250))
-                    .fluidOutputs(GTUtility.CHEMICAL_DYES[i].getFluid(288))
+                    .fluidOutputs(Materials.CHEMICAL_DYES[i].getFluid(288))
                     .duration(600).EUt(24).buildAndRegister();
         }
     }

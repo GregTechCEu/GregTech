@@ -10,7 +10,6 @@ import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.UnificationEntry;
-import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.init.Blocks;
@@ -505,7 +504,7 @@ public class VanillaStandardRecipes {
             MIXER_RECIPES.recipeBuilder().duration(200).EUt(7)
                     .inputs(new ItemStack(Blocks.SAND, 4))
                     .inputs(new ItemStack(Blocks.GRAVEL, 4))
-                    .fluidInputs(GTUtility.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L))
+                    .fluidInputs(Materials.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L))
                     .outputs(new ItemStack(Blocks.CONCRETE_POWDER, 8, i))
                     .buildAndRegister();
 
@@ -517,31 +516,31 @@ public class VanillaStandardRecipes {
 
             CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(7)
                     .inputs(new ItemStack(Blocks.CONCRETE))
-                    .fluidInputs(GTUtility.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L / 8))
+                    .fluidInputs(Materials.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L / 8))
                     .outputs(new ItemStack(Blocks.CONCRETE, 1, i))
                     .buildAndRegister();
 
             CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(7)
                     .inputs(new ItemStack(Blocks.HARDENED_CLAY))
-                    .fluidInputs(GTUtility.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L / 8))
+                    .fluidInputs(Materials.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L / 8))
                     .outputs(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, i))
                     .buildAndRegister();
 
             CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(7)
                     .inputs(new ItemStack(Blocks.GLASS))
-                    .fluidInputs(GTUtility.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L / 8))
+                    .fluidInputs(Materials.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L / 8))
                     .outputs(new ItemStack(Blocks.STAINED_GLASS, 1, i))
                     .buildAndRegister();
 
             CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(7)
                     .inputs(new ItemStack(Blocks.GLASS_PANE))
-                    .fluidInputs(GTUtility.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L / 8))
+                    .fluidInputs(Materials.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L / 8))
                     .outputs(new ItemStack(Blocks.STAINED_GLASS_PANE, 1, i))
                     .buildAndRegister();
 
             CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(7)
                     .inputs(new ItemStack(Blocks.WOOL))
-                    .fluidInputs(GTUtility.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L / 8))
+                    .fluidInputs(Materials.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L / 8))
                     .outputs(new ItemStack(Blocks.WOOL, 1, i))
                     .buildAndRegister();
 

@@ -34,6 +34,8 @@ public class Materials {
 
     private static final AtomicBoolean INIT = new AtomicBoolean(false);
 
+    public static Material[] CHEMICAL_DYES;
+
     public static void register() {
         if (INIT.getAndSet(true)) {
             return;
@@ -95,6 +97,17 @@ public class Materials {
          * - FREE RANGE 24000-31999
          * - Reserved for CraftTweaker: 32000-32767
          */
+
+       CHEMICAL_DYES = new Material[]{
+               Materials.DyeBlack, Materials.DyeRed,
+               Materials.DyeGreen, Materials.DyeBrown,
+               Materials.DyeBlue, Materials.DyePurple,
+               Materials.DyeCyan, Materials.DyeLightGray,
+               Materials.DyeGray, Materials.DyePink,
+               Materials.DyeLime, Materials.DyeYellow,
+               Materials.DyeLightBlue, Materials.DyeMagenta,
+               Materials.DyeOrange, Materials.DyeWhite
+       };
     }
 
     public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();

@@ -15,7 +15,6 @@ import gregtech.api.items.metaitem.stats.IItemBehaviour;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.behaviors.CoverPlaceBehavior;
@@ -77,17 +76,6 @@ public class GTUtility {
     private static final XSTR random = new XSTR();
 
     private static final TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
-
-    public static gregtech.api.unification.material.Material[] CHEMICAL_DYES = {
-            Materials.DyeBlack, Materials.DyeRed,
-            Materials.DyeGreen, Materials.DyeBrown,
-            Materials.DyeBlue, Materials.DyePurple,
-            Materials.DyeCyan, Materials.DyeLightGray,
-            Materials.DyeGray, Materials.DyePink,
-            Materials.DyeLime, Materials.DyeYellow,
-            Materials.DyeLightBlue, Materials.DyeMagenta,
-            Materials.DyeOrange, Materials.DyeWhite
-    };
 
     public static Runnable combine(Runnable... runnables) {
         return () -> {
