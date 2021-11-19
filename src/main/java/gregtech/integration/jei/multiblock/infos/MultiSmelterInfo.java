@@ -49,9 +49,9 @@ public class MultiSmelterInfo extends MultiblockInfoPage {
         }
         for (CoilType2 coilType : CoilType2.values()) {
             shapeInfo.add(MultiblockShapeInfo.builder()
-                    .aisle("IXX", "CCC", "XXX")
-                    .aisle("SXE", "C#C", "XHX")
-                    .aisle("OXM", "CCC", "XXX")
+                    .aisle("XEM", "CCC", "XXX")
+                    .aisle("XXX", "C#C", "XHX")
+                    .aisle("ISO", "CCC", "XXX")
                     .where('X', MetaBlocks.METAL_CASING.getState(MetalCasingType.INVAR_HEATPROOF))
                     .where('C', MetaBlocks.WIRE_COIL2.getState(coilType))
                     .where('S', MetaTileEntities.MULTI_FURNACE, EnumFacing.WEST)

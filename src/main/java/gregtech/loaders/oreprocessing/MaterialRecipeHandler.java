@@ -6,6 +6,7 @@ import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.DustProperty;
@@ -29,8 +30,9 @@ import static gregtech.api.unification.ore.OrePrefix.*;
 
 public class MaterialRecipeHandler {
 
-    private static final List<OrePrefix> GEM_ORDER = Arrays.asList(
-            OrePrefix.gemChipped, OrePrefix.gemFlawed, OrePrefix.gem, OrePrefix.gemFlawless, OrePrefix.gemExquisite);
+    private static final List<OrePrefix> GEM_ORDER = ConfigHolder.U.generateLowQualityGems ? Arrays.asList(
+            OrePrefix.gemChipped, OrePrefix.gemFlawed, OrePrefix.gem, OrePrefix.gemFlawless, OrePrefix.gemExquisite) :
+            Arrays.asList(OrePrefix.gem, OrePrefix.gemFlawless, OrePrefix.gemExquisite);
 
     private static final Set<Material> circuitRequiringMaterials = new HashSet<>();
 
@@ -46,7 +48,7 @@ public class MaterialRecipeHandler {
         OrePrefix.dustTiny.addProcessingHandler(PropertyKey.DUST, MaterialRecipeHandler::processTinyDust);
 
         for (OrePrefix orePrefix : GEM_ORDER) {
-            orePrefix.addProcessingHandler(PropertyKey.GEM, MaterialRecipeHandler::processGem);
+            orePrefix.addProcessingHandler(PropertyKey.GEM, MaterialRecipeHandler::processGemConversion);
         }
 
         setMaterialRequiresCircuit(Materials.Silicon);
@@ -57,31 +59,38 @@ public class MaterialRecipeHandler {
     }
 
     public static void processDust(OrePrefix dustPrefix, Material mat, DustProperty property) {
+        ItemStack dustStack = OreDictUnifier.get(dustPrefix, mat);
         if (mat.hasProperty(PropertyKey.GEM)) {
             ItemStack gemStack = OreDictUnifier.get(OrePrefix.gem, mat);
-            ItemStack tinyDarkAshStack = OreDictUnifier.get(OrePrefix.dustTiny, Materials.DarkAsh);
+            ItemStack smallDarkAshStack = OreDictUnifier.get(OrePrefix.dustSmall, Materials.DarkAsh);
 
             if (mat.hasFlag(CRYSTALLIZABLE)) {
-
                 RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
-                        .input(dustPrefix, mat)
-                        .fluidInputs(Materials.Water.getFluid(200))
+                        .inputs(dustStack)
+                        .fluidInputs(Materials.Water.getFluid(250))
                         .chancedOutput(gemStack, 7000, 1000)
-                        .duration(1500).EUt(24)
-                        .buildAndRegister();
-
-                RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
-                        .input(dustPrefix, mat)
-                        .fluidInputs(Materials.DistilledWater.getFluid(36))
-                        .chancedOutput(gemStack, 9000, 1000)
                         .duration(1200).EUt(24)
                         .buildAndRegister();
 
-            } else if (!mat.hasFlag(EXPLOSIVE) && !mat.hasFlag(FLAMMABLE)) {
+                RecipeMaps.AUTOCLAVE_RECIPES.recipeBuilder()
+                        .inputs(dustStack)
+                        .fluidInputs(Materials.DistilledWater.getFluid(50))
+                        .outputs(gemStack)
+                        .duration(600).EUt(24)
+                        .buildAndRegister();
+            }
+
+            if (!mat.hasFlag(EXPLOSIVE) && !mat.hasFlag(FLAMMABLE)) {
                 RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
-                        .input(dustPrefix, mat, 4)
-                        .outputs(GTUtility.copyAmount(3, gemStack), GTUtility.copyAmount(2, tinyDarkAshStack))
+                        .inputs(GTUtility.copyAmount(4, dustStack))
+                        .outputs(GTUtility.copyAmount(3, gemStack), smallDarkAshStack)
                         .explosivesAmount(2)
+                        .buildAndRegister();
+
+                RecipeMaps.IMPLOSION_RECIPES.recipeBuilder()
+                        .inputs(GTUtility.copyAmount(4, dustStack))
+                        .outputs(GTUtility.copyAmount(3, gemStack), smallDarkAshStack)
+                        .explosivesType(MetaItems.DYNAMITE.getStackForm())
                         .buildAndRegister();
             }
 
@@ -98,7 +107,7 @@ public class MaterialRecipeHandler {
                     int duration = Math.max(1, (int) (mat.getAverageMass() * blastTemp / 50L));
 
                     BlastRecipeBuilder ingotSmeltingBuilder = RecipeMaps.BLAST_RECIPES.recipeBuilder()
-                            .input(dustPrefix, mat)
+                            .inputs(dustStack)
                             .outputs(ingotStack)
                             .blastFurnaceTemp(blastTemp)
                             .duration(duration).EUt(120);
@@ -119,7 +128,7 @@ public class MaterialRecipeHandler {
         } else {
             if (mat.hasFlag(GENERATE_PLATE) && !mat.hasFlag(EXCLUDE_PLATE_COMPRESSOR_RECIPE)) {
                 RecipeMaps.COMPRESSOR_RECIPES.recipeBuilder()
-                        .input(dustPrefix, mat)
+                        .inputs(dustStack)
                         .outputs(OreDictUnifier.get(OrePrefix.plate, mat))
                         .buildAndRegister();
             }
@@ -270,7 +279,7 @@ public class MaterialRecipeHandler {
 
     }
 
-    public static void processGem(OrePrefix gemPrefix, Material material, GemProperty property) {
+    public static void processGemConversion(OrePrefix gemPrefix, Material material, GemProperty property) {
         long materialAmount = gemPrefix.materialAmount;
         ItemStack crushedStack = OreDictUnifier.getDust(material, materialAmount);
 
@@ -284,10 +293,20 @@ public class MaterialRecipeHandler {
         if (!prevStack.isEmpty()) {
             ModHandler.addShapelessRecipe(String.format("gem_to_gem_%s_%s", prevPrefix, material), prevStack,
                     "h", new UnificationEntry(gemPrefix, material));
-            RecipeMaps.FORGE_HAMMER_RECIPES.recipeBuilder()
+
+            RecipeMaps.CUTTER_RECIPES.recipeBuilder()
                     .input(gemPrefix, material)
                     .outputs(prevStack)
-                    .duration(20).EUt(16)
+                    .duration(20)
+                    .EUt(16)
+                    .buildAndRegister();
+
+            RecipeMaps.LASER_ENGRAVER_RECIPES.recipeBuilder()
+                    .inputs(prevStack)
+                    .notConsumable(OrePrefix.craftingLens, MarkerMaterials.Color.White)
+                    .output(gemPrefix, material)
+                    .duration(300)
+                    .EUt(240)
                     .buildAndRegister();
         }
     }

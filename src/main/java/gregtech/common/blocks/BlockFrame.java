@@ -23,13 +23,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
-import java.util.Stack;
 
 public final class BlockFrame extends Block {
 
     private static final AxisAlignedBB COLLISION_BOX = new AxisAlignedBB(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
-    private static final int SCAFFOLD_PILLAR_RADIUS_SQ = 10;
     public final Material frameMaterial;
 
     public BlockFrame(Material material) {
@@ -77,73 +74,6 @@ public final class BlockFrame extends Block {
         return false;
     }
 
-    protected boolean canBlockStay(World worldIn, BlockPos pos) {
-        MutableBlockPos currentPos = new MutableBlockPos(pos);
-        currentPos.move(EnumFacing.DOWN);
-        IBlockState downState = worldIn.getBlockState(currentPos);
-        if (downState.getBlock() instanceof BlockFrame) {
-            if (canFrameSupportVertical(worldIn, currentPos)) {
-                return true;
-            }
-        } else if (downState.getBlockFaceShape(worldIn, currentPos, EnumFacing.UP) == BlockFaceShape.SOLID) {
-            return true;
-        }
-        currentPos.move(EnumFacing.UP);
-        HashSet<BlockPos> observedSet = new HashSet<>();
-        Stack<EnumFacing> moveStack = new Stack<>();
-        main:
-        while (true) {
-            for (EnumFacing facing : EnumFacing.HORIZONTALS) {
-                currentPos.move(facing);
-                IBlockState blockStateHere = worldIn.getBlockState(currentPos);
-                //if there is node, and it can connect with previous node, add it to list, and set previous node as current
-                if (blockStateHere.getBlock() instanceof BlockFrame && currentPos.distanceSq(pos) <= SCAFFOLD_PILLAR_RADIUS_SQ && !observedSet.contains(currentPos)) {
-                    observedSet.add(currentPos.toImmutable());
-                    currentPos.move(EnumFacing.DOWN);
-                    downState = worldIn.getBlockState(currentPos);
-                    if (downState.getBlock() instanceof BlockFrame) {
-                        if (canFrameSupportVertical(worldIn, currentPos)) {
-                            return true;
-                        }
-                    } else if (downState.getBlockFaceShape(worldIn, currentPos, EnumFacing.UP) == BlockFaceShape.SOLID) {
-                        return true;
-                    }
-                    currentPos.move(EnumFacing.UP);
-                    moveStack.push(facing.getOpposite());
-                    continue main;
-                } else currentPos.move(facing.getOpposite());
-            }
-            if (!moveStack.isEmpty()) {
-                currentPos.move(moveStack.pop());
-            } else break;
-        }
-        return false;
-    }
-
-    private boolean canFrameSupportVertical(World worldIn, BlockPos framePos) {
-        MutableBlockPos blockPos = new MutableBlockPos(framePos);
-        do {
-            blockPos.move(EnumFacing.DOWN);
-            IBlockState blockState = worldIn.getBlockState(blockPos);
-            if (!(blockState.getBlock() instanceof BlockFrame)) {
-                return blockState.getBlockFaceShape(worldIn, blockPos, EnumFacing.UP) == BlockFaceShape.SOLID;
-            }
-        } while (true);
-    }
-
-    @Override
-    public boolean canPlaceBlockAt(@Nonnull World worldIn, @Nonnull BlockPos pos) {
-        return super.canPlaceBlockAt(worldIn, pos) && canBlockStay(worldIn, pos);
-    }
-
-    @Override
-    public void neighborChanged(@Nonnull IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull Block blockIn, @Nonnull BlockPos fromPos) {
-        if (!canBlockStay(worldIn, pos)) {
-            this.dropBlockAsItem(worldIn, pos, state, 0);
-            worldIn.setBlockToAir(pos);
-        }
-    }
-
     @Override
     public void onEntityCollision(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, Entity entityIn) {
         entityIn.motionX = MathHelper.clamp(entityIn.motionX, -0.15, 0.15);
@@ -156,7 +86,7 @@ public final class BlockFrame extends Block {
             entityIn.motionY = 0.0D;
         }
         if (entityIn.collidedHorizontally) {
-            entityIn.motionY = 0.2;
+            entityIn.motionY = 0.3;
         }
     }
 
@@ -182,19 +112,9 @@ public final class BlockFrame extends Block {
         return false;
     }
 
-    @Override
-    public boolean isFullBlock(@Nonnull IBlockState state) {
-        return false;
-    }
-
     @Nonnull
     @Override
     public BlockFaceShape getBlockFaceShape(@Nonnull IBlockAccess worldIn, @Nonnull IBlockState state, @Nonnull BlockPos pos, @Nonnull EnumFacing face) {
-        return face == EnumFacing.UP || face == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
-    }
-
-    @Override
-    public boolean isTopSolid(@Nonnull IBlockState state) {
-        return true;
+        return BlockFaceShape.UNDEFINED;
     }
 }

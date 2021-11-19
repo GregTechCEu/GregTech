@@ -906,10 +906,10 @@ public class ReactorRecipes {
                 .duration(60).EUt(30).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
-                .inputs(new ItemStack(Items.SUGAR))
-                .input(dustTiny, Polyethylene)
-                .fluidInputs(Toluene.getFluid(133))
-                .outputs(MetaItems.GELLED_TOLUENE.getStackForm(2))
+                .inputs(new ItemStack(Items.SUGAR, 9))
+                .input(dust, Polyethylene)
+                .fluidInputs(Toluene.getFluid(1000))
+                .outputs(MetaItems.GELLED_TOLUENE.getStackForm(20))
                 .duration(140).EUt(192).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
@@ -1058,11 +1058,11 @@ public class ReactorRecipes {
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(ingot, Plutonium239, 8)
-                .input(dustTiny, Uranium238)
-                .fluidInputs(Air.getFluid(1000))
+                .input(dust, Uranium238)
+                .fluidInputs(Air.getFluid(10000))
                 .output(dust, Plutonium239, 8)
-                .fluidOutputs(Radon.getFluid(100))
-                .duration(12000).EUt(8).buildAndRegister();
+                .fluidOutputs(Radon.getFluid(1000))
+                .duration(100000).EUt(8).buildAndRegister();
 
         CHEMICAL_RECIPES.recipeBuilder()
                 .input(Items.PAPER)

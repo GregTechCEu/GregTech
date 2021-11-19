@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMaps;
+import gregtech.api.recipes.builders.SimpleRecipeBuilder;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
@@ -258,27 +259,35 @@ public class OreRecipeHandler {
             ItemStack chippedStack = OreDictUnifier.get(OrePrefix.gemChipped, material);
 
             if (material.hasFlag(HIGH_SIFTER_OUTPUT)) {
-                RecipeMaps.SIFTER_RECIPES.recipeBuilder()
+                RecipeBuilder<SimpleRecipeBuilder> builder = RecipeMaps.SIFTER_RECIPES.recipeBuilder()
                         .input(purifiedPrefix, material)
-                        .chancedOutput(exquisiteStack, 300, 60)
-                        .chancedOutput(flawlessStack, 1200, 180)
-                        .chancedOutput(gemStack, 4500, 540)
-                        .chancedOutput(flawedStack, 1400, 240)
-                        .chancedOutput(chippedStack, 2800, 320)
-                        .chancedOutput(dustStack, 3500, 500)
-                        .duration(800).EUt(16)
-                        .buildAndRegister();
+                        .chancedOutput(exquisiteStack, 500, 150)
+                        .chancedOutput(flawlessStack, 1500, 200)
+                        .chancedOutput(gemStack, 5000, 1000)
+                        .chancedOutput(dustStack, 2500, 500)
+                        .duration(800).EUt(16);
+
+                if (!flawedStack.isEmpty())
+                    builder.chancedOutput(flawedStack, 2000, 500);
+                if (!chippedStack.isEmpty())
+                    builder.chancedOutput(chippedStack, 3000, 350);
+
+                builder.buildAndRegister();
             } else {
-                RecipeMaps.SIFTER_RECIPES.recipeBuilder()
+                RecipeBuilder<SimpleRecipeBuilder> builder = RecipeMaps.SIFTER_RECIPES.recipeBuilder()
                         .input(purifiedPrefix, material)
-                        .chancedOutput(exquisiteStack, 100, 30)
-                        .chancedOutput(flawlessStack, 400, 70)
-                        .chancedOutput(gemStack, 1500, 300)
-                        .chancedOutput(flawedStack, 2000, 240)
-                        .chancedOutput(chippedStack, 4000, 320)
-                        .chancedOutput(dustStack, 5000, 600)
-                        .duration(800).EUt(16)
-                        .buildAndRegister();
+                        .chancedOutput(exquisiteStack, 300, 100)
+                        .chancedOutput(flawlessStack, 1000, 150)
+                        .chancedOutput(gemStack, 3500, 500)
+                        .chancedOutput(dustStack, 5000, 750)
+                        .duration(800).EUt(16);
+
+                if (!flawedStack.isEmpty())
+                    builder.chancedOutput(flawedStack, 2500, 300);
+                if (!exquisiteStack.isEmpty())
+                    builder.chancedOutput(chippedStack, 3500, 400);
+
+                builder.buildAndRegister();
             }
         }
         processMetalSmelting(purifiedPrefix, material, property);

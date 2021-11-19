@@ -166,8 +166,9 @@ public class VanillaStandardRecipes {
 
         for (int i = 0; i < 16; i++) {
             // nerf glass panes
-            if (ConfigHolder.vanillaRecipes.hardGlassRecipes)
+            if (ConfigHolder.vanillaRecipes.hardGlassRecipes) {
                 ModHandler.removeRecipes(new ItemStack(Blocks.STAINED_GLASS_PANE, 16, i));
+            }
 
             ModHandler.addShapedRecipe("stained_glass_pane_" + i, new ItemStack(Blocks.STAINED_GLASS_PANE, 2, i), "sG", 'G', new ItemStack(Blocks.STAINED_GLASS, 1, i));
 
@@ -176,6 +177,11 @@ public class VanillaStandardRecipes {
                     .outputs(new ItemStack(Blocks.STAINED_GLASS_PANE, 8, i))
                     .buildAndRegister();
         }
+
+        if (ConfigHolder.vanillaRecipes.hardGlassRecipes)
+            ModHandler.removeRecipes(new ItemStack(Blocks.GLASS_PANE, 16));
+
+        ModHandler.addShapedRecipe("glass_pane", new ItemStack(Blocks.GLASS_PANE, 2), "sG", 'G', new ItemStack(Blocks.GLASS));
 
         CUTTER_RECIPES.recipeBuilder().duration(50).EUt(8)
                 .inputs(new ItemStack(Blocks.GLASS, 3))
@@ -509,8 +515,8 @@ public class VanillaStandardRecipes {
                     .buildAndRegister();
 
             CUTTER_RECIPES.recipeBuilder().duration(20).EUt(7)
-                    .inputs(new ItemStack(Blocks.WOOL, 1, i))
-                    .outputs(new ItemStack(Blocks.CARPET, 1, i))
+                    .inputs(new ItemStack(Blocks.WOOL, 2, i))
+                    .outputs(new ItemStack(Blocks.CARPET, 3, i))
                     .buildAndRegister();
 
             ASSEMBLER_RECIPES.recipeBuilder().duration(20).EUt(7)
@@ -905,7 +911,7 @@ public class VanillaStandardRecipes {
             ASSEMBLER_RECIPES.recipeBuilder().circuitMeta(8).input(OrePrefix.stoneCobble, Materials.Stone, 8).outputs(new ItemStack(Blocks.FURNACE)).duration(100).EUt(7).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().inputs(new ItemStack(Blocks.OBSIDIAN, 4)).input(gem, Diamond, 2).inputs(new ItemStack(Items.BOOK)).outputs(new ItemStack(Blocks.ENCHANTING_TABLE)).duration(100).EUt(7).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30).circuitMeta(1).inputs(new ItemStack(Blocks.COBBLESTONE, 7)).inputs(new ItemStack(Items.BOW)).input(dust, Redstone).outputs(new ItemStack(Blocks.DISPENSER)).buildAndRegister();
-            ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30).circuitMeta(2).inputs(new ItemStack(Blocks.COBBLESTONE, 7)).input(dust, Redstone).outputs(new ItemStack(Blocks.DISPENSER)).buildAndRegister();
+            ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30).circuitMeta(2).inputs(new ItemStack(Blocks.COBBLESTONE, 7)).input(dust, Redstone).outputs(new ItemStack(Blocks.DROPPER)).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30).inputs(new ItemStack(Blocks.COBBLESTONE, 6)).input(dust, Redstone, 2).input(plate, NetherQuartz).outputs(new ItemStack(Blocks.OBSERVER)).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30).inputs(new ItemStack(Blocks.COBBLESTONE, 6)).input(dust, Redstone, 2).input(plate, CertusQuartz).outputs(new ItemStack(Blocks.OBSERVER)).buildAndRegister();
             ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(30).inputs(new ItemStack(Blocks.COBBLESTONE, 6)).input(dust, Redstone, 2).input(plate, Quartzite).outputs(new ItemStack(Blocks.OBSERVER)).buildAndRegister();
@@ -916,7 +922,7 @@ public class VanillaStandardRecipes {
         ASSEMBLER_RECIPES.recipeBuilder().duration(300).EUt(4).inputs(new ItemStack(Blocks.OBSIDIAN, 8)).inputs(new ItemStack(Items.ENDER_EYE)).outputs(new ItemStack(Blocks.ENDER_CHEST)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(8).circuitMeta(6).inputs(new ItemStack(Blocks.COBBLESTONE, 1, 0)).outputs(new ItemStack(Blocks.COBBLESTONE_WALL, 1, 0)).buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(8).circuitMeta(6).inputs(new ItemStack(Blocks.COBBLESTONE, 1, 1)).outputs(new ItemStack(Blocks.COBBLESTONE_WALL, 1, 1)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(8).circuitMeta(6).inputs(new ItemStack(Blocks.MOSSY_COBBLESTONE, 1, 0)).outputs(new ItemStack(Blocks.COBBLESTONE_WALL, 1, 1)).buildAndRegister();
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(4).inputs(new ItemStack(Items.CHORUS_FRUIT_POPPED)).inputs(new ItemStack(Items.BLAZE_ROD)).outputs(new ItemStack(Blocks.END_ROD, 4)).buildAndRegister();
 
@@ -930,7 +936,7 @@ public class VanillaStandardRecipes {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(8).inputs(new ItemStack(Blocks.STONE_SLAB, 1, 0)).inputs(new ItemStack(Items.STICK, 6)).outputs(new ItemStack(Items.ARMOR_STAND)).buildAndRegister();
 
-        ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(64).inputs(new ItemStack(Blocks.GLASS, 7, GTValues.W)).inputs(new ItemStack(Items.GHAST_TEAR)).inputs(new ItemStack(Items.ENDER_EYE)).outputs(new ItemStack(Items.END_CRYSTAL)).buildAndRegister();
+        ASSEMBLER_RECIPES.recipeBuilder().duration(30).EUt(16).inputs(new ItemStack(Items.GHAST_TEAR)).inputs(new ItemStack(Items.ENDER_EYE)).outputs(new ItemStack(Items.END_CRYSTAL)).fluidInputs(Glass.getFluid(GTValues.L * 7)).buildAndRegister();
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.stick, Materials.Iron, 12)
@@ -939,13 +945,15 @@ public class VanillaStandardRecipes {
                 .outputs(new ItemStack(Blocks.RAIL, 32))
                 .duration(200).EUt(30).buildAndRegister();
 
-        RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
-                .input(OrePrefix.stick, Materials.Gold, 12)
-                .input(OrePrefix.stick, Materials.Wood)
-                .input(dust, Redstone)
-                .circuitMeta(1)
-                .outputs(new ItemStack(Blocks.RAIL, 32))
-                .duration(200).EUt(30).buildAndRegister();
+        if (!ConfigHolder.vanillaRecipes.hardRedstoneRecipes) {
+            RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
+                    .input(OrePrefix.stick, Materials.Gold, 12)
+                    .input(OrePrefix.stick, Materials.Wood)
+                    .input(dust, Redstone)
+                    .circuitMeta(1)
+                    .outputs(new ItemStack(Blocks.GOLDEN_RAIL, 32))
+                    .duration(200).EUt(30).buildAndRegister();
+        }
 
         RecipeMaps.ASSEMBLER_RECIPES.recipeBuilder()
                 .input(OrePrefix.plate, Materials.Iron, 3)

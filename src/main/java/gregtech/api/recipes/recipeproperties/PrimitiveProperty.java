@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft;
  */
 public class PrimitiveProperty extends RecipeProperty<Boolean> {
 
-    private static final String KEY = "primitive_property";
+    public static final String KEY = "primitive_property";
     private static PrimitiveProperty INSTANCE;
 
     private PrimitiveProperty() {

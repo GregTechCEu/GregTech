@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class BlockTransparentCasing extends VariantBlock<BlockTransparentCasing.CasingType> {
+public class BlockTransparentCasing extends VariantActiveBlock<BlockTransparentCasing.CasingType> {
 
     public BlockTransparentCasing() {
         super(Material.IRON);
@@ -57,7 +57,8 @@ public class BlockTransparentCasing extends VariantBlock<BlockTransparentCasing.
 
     public enum CasingType implements IStringSerializable {
 
-        REINFORCED_GLASS("reinforced_glass");
+        REINFORCED_GLASS("reinforced_glass"),
+        FUSION_GLASS("fusion_glass");
 
         private final String name;
 

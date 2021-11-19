@@ -96,7 +96,7 @@ public class GTRecipeWrapper implements IRecipeWrapper {
         }
     }
 
-    public void addTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
+    public void addItemTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
         boolean notConsumed = input && recipe.isNotConsumedInput(ingredient);
         ChanceEntry entry = input ? null : chanceOutput.get(slotIndex);
 
@@ -105,6 +105,14 @@ public class GTRecipeWrapper implements IRecipeWrapper {
             double boost = entry.getBoostPerTier() / 100.0;
             tooltip.add(I18n.format("gregtech.recipe.chance", chance, boost));
         } else if (notConsumed) {
+            tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
+        }
+    }
+
+    public void addFluidTooltip(int slotIndex, boolean input, Object ingredient, List<String> tooltip) {
+        boolean notConsumed = input && recipe.isNotConsumedInput(ingredient);
+
+        if (notConsumed) {
             tooltip.add(I18n.format("gregtech.recipe.not_consumed"));
         }
     }

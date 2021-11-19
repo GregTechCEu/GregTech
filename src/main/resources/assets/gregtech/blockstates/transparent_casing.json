@@ -1,17 +1,29 @@
 {
   "forge_marker": 1,
-  "defaults": {
-    "model": "minecraft:cube_all",
-    "textures": {
-      "all": "gregtech:blocks/rendering_error"
-    }
-  },
   "variants": {
-    "variant": {
-      "reinforced_glass": {
-        "textures": {
-          "all": "gregtech:blocks/casings/transparent/reinforced_glass"
-        }
+    "active=false,variant=reinforced_glass": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/transparent/reinforced_glass"
+      }
+    },
+    "active=true,variant=reinforced_glass": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/transparent/reinforced_glass"
+      }
+    },
+    "active=false,variant=fusion_glass": {
+      "model": "minecraft:cube_all",
+      "textures": {
+        "all": "gregtech:blocks/casings/transparent/fusion_glass"
+      }
+    },
+    "active=true,variant=fusion_glass": {
+      "model": "gregtech:cube_2_layer_all",
+      "textures": {
+        "bot_all": "gregtech:blocks/casings/transparent/fusion_glass",
+        "top_all": "gregtech:blocks/casings/fusion/machine_casing_fusion_bloom"
       }
     }
   }

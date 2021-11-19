@@ -162,13 +162,19 @@ public class VanillaOverrideRecipes {
     /**
      * + Adds Glass Handcrafting
      * - Removes Sand -> Glass Furnace Smelting
+     * - Removes Regular Glass Pane Crafting
+     * - Removes Glass Bottle Crafting
      */
     private static void glassRecipes() {
+        ModHandler.addShapedRecipe("quartz_sand", OreDictUnifier.get(OrePrefix.dust, Materials.QuartzSand), "S", "m",
+                'S', new ItemStack(Blocks.SAND));
+
         ModHandler.addShapedRecipe("glass_dust_flint", OreDictUnifier.get(OrePrefix.dust, Materials.Glass), "QF",
                 'Q', new UnificationEntry(OrePrefix.dust, Materials.QuartzSand),
                 'F', new UnificationEntry(OrePrefix.dustTiny, Materials.Flint));
 
         ModHandler.removeFurnaceSmelting(new ItemStack(Blocks.SAND, 1, GTValues.W));
+        ModHandler.removeRecipes(new ItemStack(Items.GLASS_BOTTLE, 3));
     }
 
     /**

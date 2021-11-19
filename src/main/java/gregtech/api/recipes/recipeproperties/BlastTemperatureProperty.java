@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class BlastTemperatureProperty extends RecipeProperty<Integer> {
-    private static final String KEY = "blast_furnace_temperature";
+    public static final String KEY = "temperature";
 
     private static final TreeMap<Integer, Object> registeredCoilTypes = new TreeMap<>((x, y) -> y - x);
 

@@ -87,7 +87,7 @@ public class MetaPrefixItem extends StandardMetaItem {
     }
 
     protected boolean canGenerate(OrePrefix orePrefix, Material material) {
-        return orePrefix.doGenerateItem(material);
+        return orePrefix.doGenerateItem(material) && !material.isHidden();
     }
 
     @Override

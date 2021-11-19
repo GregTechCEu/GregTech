@@ -22,6 +22,7 @@ import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.render.IBlockAppearance;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
+import gregtech.common.advancement.GTTriggers;
 import gregtech.common.tools.DamageValues;
 import gregtech.integration.ctm.IFacadeWrapper;
 import net.minecraft.block.Block;
@@ -34,6 +35,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -243,10 +245,10 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
         if (rayTraceResult == null || pipeTile == null) {
             return false;
         }
-        return onPipeActivated(playerIn, hand, rayTraceResult, pipeTile);
+        return onPipeActivated(worldIn, playerIn, hand, rayTraceResult, pipeTile);
     }
 
-    public boolean onPipeActivated(EntityPlayer entityPlayer, EnumHand hand, CuboidRayTraceResult hit, IPipeTile<PipeType, NodeDataType> pipeTile) {
+    public boolean onPipeActivated(World world, EntityPlayer entityPlayer, EnumHand hand, CuboidRayTraceResult hit, IPipeTile<PipeType, NodeDataType> pipeTile) {
         ItemStack itemStack = entityPlayer.getHeldItem(hand);
         EnumFacing coverSide = ICoverable.traceCoverSide(hit);
         if (coverSide == null)
@@ -274,7 +276,15 @@ public abstract class BlockPipe<PipeType extends Enum<PipeType> & IPipeType<Node
             }
             return false;
         }
-        return coverBehavior.onRightClick(entityPlayer, hand, hit) == EnumActionResult.SUCCESS;
+
+        EnumActionResult result = coverBehavior.onRightClick(entityPlayer, hand, hit);
+        if (result == EnumActionResult.PASS) {
+            return entityPlayer.isSneaking() && coverBehavior.onScrewdriverClick(entityPlayer, hand, hit) != EnumActionResult.PASS;
+        } else if (result == EnumActionResult.SUCCESS) {
+            if (!world.isRemote)
+                GTTriggers.FIRST_COVER_PLACE.trigger((EntityPlayerMP) entityPlayer);
+        }
+        return true;
     }
 
     /**

@@ -40,7 +40,10 @@ import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemMultiTexture;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config.Type;
@@ -89,7 +92,7 @@ public class CommonProxy {
         registry.register(TRANSPARENT_CASING);
         registry.register(WIRE_COIL);
         registry.register(WIRE_COIL2);
-        registry.register(FUSION_COIL);
+        registry.register(FUSION_CASING);
         registry.register(WARNING_SIGN);
         registry.register(GRANITE);
         registry.register(MINERAL);
@@ -139,7 +142,7 @@ public class CommonProxy {
         registry.register(createItemBlock(TRANSPARENT_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WIRE_COIL, VariantItemBlock::new));
         registry.register(createItemBlock(WIRE_COIL2, VariantItemBlock::new));
-        registry.register(createItemBlock(FUSION_COIL, VariantItemBlock::new));
+        registry.register(createItemBlock(FUSION_CASING, VariantItemBlock::new));
         registry.register(createItemBlock(WARNING_SIGN, VariantItemBlock::new));
         registry.register(createItemBlock(GRANITE, StoneItemBlock::new));
         registry.register(createItemBlock(MINERAL, StoneItemBlock::new));
@@ -175,7 +178,11 @@ public class CommonProxy {
         // registers coiltypes for the BlastTemperatureProperty used in Blast Furnace Recipes
         for (BlockWireCoil.CoilType values : BlockWireCoil.CoilType.values()) {
             BlastTemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
-                    "tile.wire_coil." + values.getName() + ".name");
+                    String.format("tile.wire_coil.%s.name", values.getName()));
+        }
+        for (BlockWireCoil2.CoilType2 values : BlockWireCoil2.CoilType2.values()) {
+            BlastTemperatureProperty.registerCoilType(values.getCoilTemperature(), values.getMaterial(),
+                    String.format("tile.wire_coil2.%s.name", values.getName()));
         }
 
         //Registers Fusion tiers for the FusionEUToStartProperty
