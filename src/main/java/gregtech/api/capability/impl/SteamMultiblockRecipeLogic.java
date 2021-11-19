@@ -81,6 +81,11 @@ public class SteamMultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
+    protected long getEnergyInputPerSecond() {
+        return 0;
+    }
+
+    @Override
     protected long getEnergyStored() {
         combineSteamTanks();
         return (long) Math.ceil(steamFluidTankCombined.getFluidAmount() * conversionRate);
