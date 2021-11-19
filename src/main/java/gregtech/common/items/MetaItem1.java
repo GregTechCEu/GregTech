@@ -387,12 +387,9 @@ public class MetaItem1 extends StandardMetaItem {
         CAMERA = addItem(469, "camera");
 
         // Misc Crafting Items: ID 491-515
+        //Free ID: 493, 494, 495, 496
         ENERGIUM_DUST = addItem(491, "energium_dust");
         ENGRAVED_LAPOTRON_CHIP = addItem(492, "engraved.lapotron_chip");
-        INGOT_MIXED_METAL = addItem(493, "ingot.mixed_metal");
-        ADVANCED_ALLOY_PLATE = addItem(494, "plate.advanced_alloy");
-        INGOT_IRIDIUM_ALLOY = addItem(495, "ingot.iridium_alloy");
-        PLATE_IRIDIUM_ALLOY = addItem(496, "plate.iridium_alloy");
         NEUTRON_REFLECTOR = addItem(497, "neutron_reflector");
         GELLED_TOLUENE = addItem(498, "gelled_toluene");
         CARBON_FIBERS = addItem(499, "carbon.fibers");

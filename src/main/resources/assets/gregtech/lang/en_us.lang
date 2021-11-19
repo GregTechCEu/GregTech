@@ -673,11 +673,6 @@ metaitem.bio_chaff.name=Bio Chaff
 metaitem.carbon.fibers.name=Raw Carbon Fibers
 metaitem.carbon.mesh.name=Carbon Fiber Mesh
 metaitem.carbon.plate.name=Carbon Fiber Plate
-metaitem.ingot.mixed_metal=Mixed Metal Ingot
-metaitem.plate.advanced_alloy=Advanced Alloy Plate
-metaitem.ingot.iridium_alloy=Iridium Alloy Ingot
-metaitem.ingot.iridium_alloy.tooltip=Used to make Iridium Alloy Plates
-metaitem.plate.iridium_alloy=Iridium Alloy Plate
 metaitem.neutron_reflector.name=Iridium Neutron Reflector
 metaitem.neutron_reflector.tooltip=Indestructible
 metaitem.duct_tape.name=BrainTech Aerospace Advanced Reinforced Duct Tape FAL-84
@@ -686,11 +681,6 @@ metaitem.component.sawblade.diamond.name=Diamond Saw Blade
 metaitem.component.sawblade.tungsten.name=Tungsten Saw Blade
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
 metaitem.component.grinder.tungsten.name=Tungsten Grinding Head
-
-metaitem.ingot.mixed_metal.name=Mixed Metal Ingot
-metaitem.plate.advanced_alloy.name=Advanced Alloy Plate
-metaitem.ingot.iridium_alloy.name=Iridium Alloy Ingot
-metaitem.plate.iridium_alloy.name=Reinforced Iridium Alloy
 
 metaitem.quantumeye.name=Quantum Eye
 metaitem.quantumeye.tooltip=Improved Ender Eye
@@ -2201,7 +2191,7 @@ tile.fusion_casing.fusion_casing_mk2.name=Fusion Machine Casing MK II
 tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 
 # Transparent casing blocks
-tile.transparent_casing.reinforced_glass.name=Reinforced Glass
+tile.transparent_casing.tempered_glass.name=Tempered Glass
 tile.transparent_casing.fusion_glass.name=Fusion Glass
 
 # Creative tabs
