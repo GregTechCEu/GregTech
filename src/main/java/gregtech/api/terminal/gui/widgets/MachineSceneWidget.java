@@ -20,8 +20,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -200,7 +202,7 @@ public class MachineSceneWidget extends WidgetGroup {
         if (mte instanceof MultiblockControllerBase) {
             PatternMatchContext context = ((MultiblockControllerBase) mte).structurePattern.checkPatternFastAt(world, pos, mte.getFrontFacing().getOpposite());
             if (context != null) {
-                List<BlockPos> validPos = ((MultiblockControllerBase) mte).structurePattern.cache.stream().map(Tuple::getFirst).collect(Collectors.toList());
+                List<BlockPos> validPos = ((MultiblockControllerBase) mte).structurePattern.cache.keySet().stream().map(BlockPos::fromLong).collect(Collectors.toList());
                 Set<IMultiblockPart> parts = context.getOrCreate("MultiblockParts", HashSet::new);
                 for (IMultiblockPart part : parts) {
                     if (part instanceof MetaTileEntity) {

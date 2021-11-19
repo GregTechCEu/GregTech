@@ -59,6 +59,14 @@ public class PatternError {
 
     @SideOnly(Side.CLIENT)
     public String getErrorInfo() {
-        return I18n.format("gregtech.multiblock.pattern.error", String.join("|", getCandidates().stream().map(ItemStack::getDisplayName).toArray(String[]::new)), worldState.pos);
+        List<ItemStack> candidates = getCandidates();
+        StringBuilder builder = new StringBuilder();
+        if (!candidates.isEmpty()) {
+            builder.append(candidates.get(0).getDisplayName());
+        }
+        if (candidates.size() > 1) {
+            builder.append("...");
+        }
+        return I18n.format("gregtech.multiblock.pattern.error", builder.toString(), worldState.pos);
     }
 }

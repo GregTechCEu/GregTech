@@ -9,6 +9,7 @@ import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.pattern.MultiblockShapeInfo;
 import gregtech.api.pattern.PatternError;
+import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.terminal.gui.widgets.MachineSceneWidget;
 import gregtech.api.terminal.gui.widgets.RectButtonWidget;
 import gregtech.api.terminal.os.TerminalDialogWidget;
@@ -32,9 +33,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemStackHandler;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -55,6 +58,8 @@ public class MachineBuilderWidget extends WidgetGroup {
     private Set<BlockPos> highLightBlocks;
     private final MultiblockControllerBase controllerBase;
     private int selected = -1;
+    @SideOnly(Side.CLIENT)
+    private DraggableScrollableWidgetGroup candidates;
 
     public MachineBuilderWidget(int x, int y, int width, int height, MultiblockControllerBase controllerBase, TerminalOSWidget os) {
         super(x, y, width, height);
@@ -73,6 +78,10 @@ public class MachineBuilderWidget extends WidgetGroup {
                 .setClickListener(this::debugButton)
                 .setColors(TerminalTheme.COLOR_B_1.getColor(), TerminalTheme.COLOR_7.getColor(), TerminalTheme.COLOR_B_2.getColor())
                 .setIcon(new TextTexture("terminal.multiblock_ar.builder.debug", -1)));
+        if (os.isRemote()) {
+            candidates = new DraggableScrollableWidgetGroup(-20, 0, 20, 180);
+            addWidget(candidates);
+        }
     }
 
     @Override
@@ -217,6 +226,15 @@ public class MachineBuilderWidget extends WidgetGroup {
             if (controllerBase.structurePattern.checkPatternFastAt(controllerBase.getWorld(), controllerBase.getPos(), controllerBase.getFrontFacing().getOpposite()) == null) {
                 PatternError error = controllerBase.structurePattern.getError();
                 highLightBlocks.add(new BlockPos(error.getPos()));
+                List<ItemStack> candidatesItemStack = error.getCandidates();
+                candidates.clearAllWidgets();
+                int y = 1;
+                for (ItemStack candidate : candidatesItemStack) {
+                    ItemStackHandler handler = new ItemStackHandler(1);
+                    handler.setStackInSlot(0, candidate);
+                    candidates.addWidget(new SlotWidget(handler, 0, 1, y, false, false).setBackgroundTexture(TerminalTheme.COLOR_B_2));
+                    y += 20;
+                }
                 TerminalDialogWidget.showInfoDialog(os, "terminal.component.error", error.getErrorInfo()).setClientSide().open();
             }
         }

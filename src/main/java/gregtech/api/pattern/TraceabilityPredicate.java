@@ -184,7 +184,15 @@ public class TraceabilityPredicate {
             if (type == 1) number = predicate.minGlobalCount;
             if (type == 2) number = predicate.maxLayerCount;
             if (type == 3) number = predicate.minLayerCount;
-            return I18n.format("gregtech.multiblock.pattern.error.limited." + type, String.join("|", getCandidates().stream().map(ItemStack::getDisplayName).toArray(String[]::new)), number);
+            List<ItemStack> candidates = getCandidates();
+            StringBuilder builder = new StringBuilder();
+            if (!candidates.isEmpty()) {
+                builder.append(candidates.get(0).getDisplayName());
+            }
+            if (candidates.size() > 1) {
+                builder.append("...");
+            }
+            return I18n.format("gregtech.multiblock.pattern.error.limited." + type, builder.toString(), number);
         }
     }
 

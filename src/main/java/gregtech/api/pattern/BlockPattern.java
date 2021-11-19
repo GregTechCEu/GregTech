@@ -1,6 +1,5 @@
 package gregtech.api.pattern;
 
-import codechicken.lib.vec.Vector3;
 import gregtech.api.GregTechAPI;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -8,6 +7,8 @@ import gregtech.api.metatileentity.multiblock.MultiblockControllerBase;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RelativeDirection;
 import gregtech.common.blocks.MetaBlocks;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -16,14 +17,15 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BlockPattern {
@@ -39,12 +41,11 @@ public class BlockPattern {
     private int[] centerOffset = null;
 
     protected final BlockWorldState worldState = new BlockWorldState();
-    protected final MutableBlockPos blockPos = new MutableBlockPos();
     protected final PatternMatchContext matchContext = new PatternMatchContext();
     protected final Map<TraceabilityPredicate.SimplePredicate, Integer> globalCount;
     protected final Map<TraceabilityPredicate.SimplePredicate, Integer> layerCount;
 
-    public List<Tuple<BlockPos, BlockInfo>> cache = new LinkedList<>();
+    public Long2ObjectMap<BlockInfo> cache = new Long2ObjectOpenHashMap<>();
 //    private Iterator<Tuple<BlockPos, BlockInfo>> iterator;
 
     public BlockPattern(TraceabilityPredicate[][][] predicatesIn, RelativeDirection[] structureDir, int[][] aisleRepetitions) {
@@ -117,14 +118,15 @@ public class BlockPattern {
     public PatternMatchContext checkPatternFastAt(World world, BlockPos centerPos, EnumFacing facing) {
         if (!cache.isEmpty()) {
             boolean pass = true;
-            for (Tuple<BlockPos, BlockInfo> tuple : cache) {
-                IBlockState blockState = world.getBlockState(tuple.getFirst());
-                if (blockState != tuple.getSecond().getBlockState()) {
+            for (Map.Entry<Long, BlockInfo> entry : cache.entrySet()) {
+                BlockPos pos = BlockPos.fromLong(entry.getKey());
+                IBlockState blockState = world.getBlockState(pos);
+                if (blockState != entry.getValue().getBlockState()) {
                    pass = false;
                    break;
                 }
-                TileEntity tileEntity = world.getTileEntity(tuple.getFirst());
-                if (tileEntity != tuple.getSecond().getTileEntity()) {
+                TileEntity tileEntity = world.getTileEntity(pos);
+                if (tileEntity != entry.getValue().getTileEntity()) {
                     pass = false;
                     break;
                 }
@@ -153,10 +155,9 @@ public class BlockPattern {
                 for (int b = 0, y = -centerOffset[1]; b < this.thumbLength; b++, y++) {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
-                        setActualRelativeOffset(x, y, z, facing);
-                        blockPos.setPos(blockPos.getX() + centerPos.getX(), blockPos.getY() + centerPos.getY(), blockPos.getZ() + centerPos.getZ());
-                        worldState.update(world, blockPos, matchContext, globalCount, layerCount, predicate);
-                        cache.add(new Tuple<>(new BlockPos(worldState.pos), new BlockInfo(worldState.getBlockState(), worldState.getTileEntity())));
+                        BlockPos pos = setActualRelativeOffset(x, y, z, facing).add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
+                        worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
+                        cache.put(pos.toLong(), new BlockInfo(worldState.getBlockState(), worldState.getTileEntity()));
                         if (!predicate.test(worldState)) {
                             if (findFirstAisle) {
                                 if (r < aisleRepetitions[c][0]) {//retreat to see if the first aisle can start later
@@ -218,10 +219,9 @@ public class BlockPattern {
                 for (int b = 0, y = -centerOffset[1]; b < this.thumbLength; b++, y++) {
                     for (int a = 0, x = -centerOffset[0]; a < this.palmLength; a++, x++) {
                         TraceabilityPredicate predicate = this.blockMatches[c][b][a];
-                        setActualRelativeOffset(x, y, z, facing);
-                        blockPos.setPos(blockPos.getX() + centerPos.getX(), blockPos.getY() + centerPos.getY(), blockPos.getZ() + centerPos.getZ());
-                        worldState.update(world, blockPos, matchContext, cacheGlobal, cacheLayer, predicate);
-                        if (world.getBlockState(blockPos).getBlock() != Blocks.AIR) {
+                        BlockPos pos = setActualRelativeOffset(x, y, z, facing).add(centerPos.getX(), centerPos.getY(), centerPos.getZ());
+                        worldState.update(world, pos, matchContext, globalCount, layerCount, predicate);
+                        if (world.getBlockState(pos).getBlock() != Blocks.AIR) {
                             for (TraceabilityPredicate.SimplePredicate limit : predicate.limited) {
                                 limit.testLimited(worldState);
                             }
@@ -303,7 +303,6 @@ public class BlockPattern {
                             }
                             ItemBlock itemBlock = (ItemBlock) found.getItem();
                             IBlockState state = itemBlock.getBlock().getStateFromMeta(itemBlock.getMetadata(found.getMetadata()));
-                            BlockPos pos = new BlockPos(blockPos);
                             world.setBlockState(pos, state);
                             TileEntity holder = world.getTileEntity(pos);
                             if (holder instanceof MetaTileEntityHolder) {
@@ -394,9 +393,8 @@ public class BlockPattern {
                                 infos = cacheInfos.get(common);
                             }
                         }
-                        setActualRelativeOffset(z, y, x, EnumFacing.NORTH);
                         BlockInfo info = infos == null || infos.length == 0 ? BlockInfo.EMPTY : infos[0];
-                        BlockPos pos = new BlockPos(blockPos);
+                        BlockPos pos = new BlockPos(setActualRelativeOffset(z, y, x, EnumFacing.NORTH));
                         if (info.getTileEntity() instanceof MetaTileEntityHolder) {
                             MetaTileEntityHolder holder = new MetaTileEntityHolder();
                             holder.setMetaTileEntity(((MetaTileEntityHolder) info.getTileEntity()).getMetaTileEntity());
@@ -448,7 +446,7 @@ public class BlockPattern {
 
     static EnumFacing[] FACINGS = {EnumFacing.SOUTH, EnumFacing.NORTH, EnumFacing.WEST, EnumFacing.EAST, EnumFacing.UP, EnumFacing.DOWN};
 
-    private void setActualRelativeOffset(int x, int y, int z, EnumFacing facing) {
+    private BlockPos setActualRelativeOffset(int x, int y, int z, EnumFacing facing) {
         int[] c0 = new int[]{x, y, z}, c1 = new int[3];
         for (int i = 0; i < 3; i++) {
             switch (structureDir[i].getActualFacing(facing)) {
@@ -472,6 +470,6 @@ public class BlockPattern {
                     break;
             }
         }
-        blockPos.setPos(c1[0], c1[1], c1[2]);
+        return new BlockPos(c1[0], c1[1], c1[2]);
     }
 }
