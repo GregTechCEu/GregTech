@@ -12,6 +12,7 @@ import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.material.properties.PropertyKey;
 import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.unification.stack.MaterialStack;
+import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.blocks.BlockConcrete.ConcreteVariant;
 import gregtech.common.blocks.BlockFusionCasing;
@@ -35,7 +36,6 @@ import gregtech.loaders.recipe.chemistry.AssemblerRecipeLoader;
 import gregtech.loaders.recipe.chemistry.ChemistryRecipes;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.fluids.FluidStack;
@@ -44,7 +44,6 @@ import static gregtech.api.GTValues.L;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.api.util.DyeUtil.getOredictColorName;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.WORKBENCH;
 
@@ -428,11 +427,11 @@ public class MachineRecipeLoader {
     }
 
     private static void registerAssemblerRecipes() {
-        for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
+        for (int i = 0; i < 16; i++) {
             CANNER_RECIPES.recipeBuilder()
                     .inputs(MetaItems.SPRAY_EMPTY.getStackForm())
-                    .input(getOredictColorName(dyeColor), 1)
-                    .outputs(MetaItems.SPRAY_CAN_DYES[dyeColor.getMetadata()].getStackForm())
+                    .fluidInputs(GTUtility.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L * 4))
+                    .outputs(MetaItems.SPRAY_CAN_DYES[i].getStackForm())
                     .EUt(8).duration(200)
                     .buildAndRegister();
         }
