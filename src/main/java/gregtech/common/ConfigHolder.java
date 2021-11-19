@@ -125,6 +125,9 @@ public class ConfigHolder {
         @Config.Comment("Whether to make miscellaneous recipes harder. Default: false")
         public boolean hardMiscRecipes = false;
 
+        @Config.Comment("Whether to make coloring blocks like concrete or glass harder. Default: false")
+        public boolean hardDyeRecipes = false;
+
         @Config.Comment("Whether to make flint and steel recipe require steel parts. Default: true.")
         public boolean flintAndSteelRequireSteel = true;
 

@@ -418,7 +418,6 @@ public final class MetaItems {
 
     public static MetaItem<?>.MetaValueItem BOTTLE_PURPLE_DRINK;
 
-    public static MetaItem<?>.MetaValueItem DYE_INDIGO;
     public static MetaItem<?>.MetaValueItem PLANT_BALL;
     public static MetaItem<?>.MetaValueItem RUBBER_DROP;
     public static MetaItem<?>.MetaValueItem ENERGIUM_DUST;

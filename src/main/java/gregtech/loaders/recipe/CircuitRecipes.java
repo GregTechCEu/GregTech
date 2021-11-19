@@ -72,10 +72,10 @@ public class CircuitRecipes {
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 8).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Red).output(INTEGRATED_LOGIC_CIRCUIT_WAFER, 16).buildAndRegister();
 
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120).input(SILICON_WAFER).notConsumable(craftingLens, Color.Silver).output(RANDOM_ACCESS_MEMORY_WAFER).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(480).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.Silver).output(RANDOM_ACCESS_MEMORY_WAFER, 4).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.Silver).output(RANDOM_ACCESS_MEMORY_WAFER, 8).buildAndRegister();
-        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.Silver).output(RANDOM_ACCESS_MEMORY_WAFER, 16).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(120).input(SILICON_WAFER).notConsumable(craftingLens, Color.LightGray).output(RANDOM_ACCESS_MEMORY_WAFER).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(480).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.LightGray).output(RANDOM_ACCESS_MEMORY_WAFER, 4).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(200).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.LightGray).output(RANDOM_ACCESS_MEMORY_WAFER, 8).buildAndRegister();
+        LASER_ENGRAVER_RECIPES.recipeBuilder().duration(50).EUt(7680).input(NEUTRONIUM_WAFER).notConsumable(craftingLens, Color.LightGray).output(RANDOM_ACCESS_MEMORY_WAFER, 16).buildAndRegister();
 
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(900).EUt(480).input(GLOWSTONE_WAFER).notConsumable(craftingLens, Color.LightBlue).output(NAND_MEMORY_CHIP_WAFER).buildAndRegister();
         LASER_ENGRAVER_RECIPES.recipeBuilder().duration(500).EUt(1920).input(NAQUADAH_WAFER).notConsumable(craftingLens, Color.LightBlue).output(NAND_MEMORY_CHIP_WAFER, 4).buildAndRegister();

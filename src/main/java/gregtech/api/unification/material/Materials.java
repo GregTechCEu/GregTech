@@ -1,6 +1,5 @@
 package gregtech.api.unification.material;
 
-import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.materials.*;
 
@@ -618,6 +617,22 @@ public class Materials {
     public static Material RubySlurry;
     public static Material SapphireSlurry;
     public static Material GreenSapphireSlurry;
+    public static Material DyeBlack;
+    public static Material DyeRed;
+    public static Material DyeGreen;
+    public static Material DyeBrown;
+    public static Material DyeBlue;
+    public static Material DyePurple;
+    public static Material DyeCyan;
+    public static Material DyeLightGray;
+    public static Material DyeGray;
+    public static Material DyePink;
+    public static Material DyeLime;
+    public static Material DyeYellow;
+    public static Material DyeLightBlue;
+    public static Material DyeMagenta;
+    public static Material DyeOrange;
+    public static Material DyeWhite;
 
     /**
      * Second Degree Compounds
