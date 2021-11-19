@@ -182,7 +182,8 @@ public class EventHandlers {
         if(event.getWorld() instanceof WorldServer) {
             try {
                 Field advManager = World.class.getDeclaredField("advancementManager");
-                Advancement adv = ((AdvancementManager) advManager.get(event.getWorld())).getAdvancement(new ResourceLocation(GTValues.MODID + "ultimate_voltage/74_wetware_mainframe"));
+                advManager.setAccessible(true);
+                Advancement adv = ((AdvancementManager) advManager.get(event.getWorld())).getAdvancement(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"));
                 UnlockedCapesRegistry.linkAdvancement(adv, Textures.GREGTECH_CAPE_TEXTURE);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();

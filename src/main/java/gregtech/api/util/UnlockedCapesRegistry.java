@@ -21,6 +21,7 @@ public class UnlockedCapesRegistry extends WorldSavedData {
     private static final String DATA_ID = GTValues.MODID + ".unlocked_capes";
     private static final Map<UUID, List<ResourceLocation>> unlockedCapes = new HashMap<>();
     private static final Map<Advancement, ResourceLocation> capeAdvancements = new HashMap<>();
+    private static UnlockedCapesRegistry instance;
 
     public UnlockedCapesRegistry() {
         super(DATA_ID);
@@ -75,11 +76,12 @@ public class UnlockedCapesRegistry extends WorldSavedData {
 
     public static void initializeStorage(World world) {
         MapStorage storage = world.getMapStorage();
-        UnlockedCapesRegistry instance = (UnlockedCapesRegistry) storage.getOrLoadData(UnlockedCapesRegistry.class, DATA_ID);
+        instance = (UnlockedCapesRegistry) storage.getOrLoadData(UnlockedCapesRegistry.class, DATA_ID);
 
         if (instance == null) {
             instance = new UnlockedCapesRegistry();
             storage.setData(DATA_ID, instance);
+            instance.markDirty();
         }
     }
 
@@ -97,10 +99,12 @@ public class UnlockedCapesRegistry extends WorldSavedData {
             List<ResourceLocation> capes = unlockedCapes.get(player.getPersistentID());
             if(capes == null) {
                 capes = new ArrayList<>();
-            }
+            } else if (capes.contains(capeAdvancements.get(advancement)))
+                return;
             capes.add(capeAdvancements.get(advancement));
             unlockedCapes.put(player.getPersistentID(), capes);
             player.sendMessage(new TextComponentTranslation("gregtech.chat.cape"));
+            instance.markDirty();
         }
     }
 }
