@@ -715,6 +715,7 @@ public class VanillaOverrideRecipes {
             ModHandler.removeRecipeByName(new ResourceLocation(String.format("minecraft:%s_concrete_powder", colorMaterial)));
             ModHandler.removeRecipeByName(new ResourceLocation(String.format("minecraft:%s_stained_hardened_clay", colorMaterial)));
             ModHandler.removeRecipeByName(new ResourceLocation(String.format("minecraft:%s_stained_glass", colorMaterial)));
+            ModHandler.removeRecipeByName(new ResourceLocation(String.format("minecraft:%s_wool", colorMaterial)));
         }
     }
 

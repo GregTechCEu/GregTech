@@ -540,7 +540,7 @@ public class VanillaStandardRecipes {
 
             CHEMICAL_BATH_RECIPES.recipeBuilder().duration(20).EUt(7)
                     .inputs(new ItemStack(Blocks.WOOL))
-                    .fluidInputs(Materials.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L / 8))
+                    .fluidInputs(Materials.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L))
                     .outputs(new ItemStack(Blocks.WOOL, 1, i))
                     .buildAndRegister();
 
