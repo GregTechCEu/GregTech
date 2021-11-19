@@ -495,12 +495,12 @@ public class MetaTileEntities {
 
         STEAM_OVEN = registerMetaTileEntity(1023, new MetaTileEntitySteamOven(gregtechId("steam_oven")));
         STEAM_GRINDER = registerMetaTileEntity(1024, new MetaTileEntitySteamGrinder(gregtechId("steam_grinder")));
-        CENTRAL_MONITOR = registerMetaTileEntity(1025, new MetaTileEntityCentralMonitor(gregtechId("central_monitor")));
-
 
         BASIC_LARGE_MINER = registerMetaTileEntity(1025, new MetaTileEntityLargeMiner(gregtechId("large_miner.ev"), 4, Materials.Steel, 16, 3, 8, 4));
         LARGE_MINER = registerMetaTileEntity(1026, new MetaTileEntityLargeMiner(gregtechId("large_miner.iv"), 5, Materials.Titanium, 4, 5, 16, 5));
         ADVANCED_LARGE_MINER = registerMetaTileEntity(1027, new MetaTileEntityLargeMiner(gregtechId("large_miner.luv"), 6, Materials.TungstenSteel, 1, 7, 32, 6));
+
+        CENTRAL_MONITOR = registerMetaTileEntity(1028, new MetaTileEntityCentralMonitor(gregtechId("central_monitor")));
 
         // MISC MTE's START: IDs 1150-2000
 

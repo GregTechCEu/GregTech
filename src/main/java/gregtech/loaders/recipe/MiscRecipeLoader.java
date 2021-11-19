@@ -402,10 +402,10 @@ public class MiscRecipeLoader {
                 .fluidInputs(SolderingAlloy.getFluid(432))
                 .outputs(MetaTileEntities.CENTRAL_MONITOR.getStackForm())
                 .buildAndRegister();
-        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(500)
+        ASSEMBLER_RECIPES.recipeBuilder().duration(100).EUt(120)
                 .inputs(DISPLAY.getStackForm())
-                .input(plate, StainlessSteel)
-                .input(circuit, MarkerMaterials.Tier.Advanced)
+                .input(plate, Aluminium)
+                .input(circuit, MarkerMaterials.Tier.Good)
                 .input(screw, StainlessSteel, 4)
                 .fluidInputs(SolderingAlloy.getFluid(144))
                 .outputs(COVER_DIGITAL_INTERFACE.getStackForm())

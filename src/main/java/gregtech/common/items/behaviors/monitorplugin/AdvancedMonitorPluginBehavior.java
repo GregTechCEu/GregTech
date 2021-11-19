@@ -391,12 +391,7 @@ public class AdvancedMonitorPluginBehavior extends ProxyHolderPluginBehavior {
             if (currentMouse != null) {
                 worldSceneRenderer.render(0, 0, 1, 1, (float)currentMouse[0], (float)currentMouse[1]);
                 if (lastMouse != null) {
-                    if (Minecraft.getMinecraft().player.isSneaking() && Mouse.isButtonDown(1)) {
-                        double mouseDeltaY = currentMouse[1] - lastMouse[1];
-                        if (Math.abs(mouseDeltaY) > 1) {
-                            this.scale = (float) MathHelper.clamp(scale + mouseDeltaY, 0.3, 2);
-                        }
-                    } else if (Mouse.isButtonDown(0)) {
+                    if (Mouse.isButtonDown(0)) {
                         rotationPitch += (currentMouse[0] - lastMouse[0]) * 300;
                         rotationPitch = rotationPitch % 360;
                         rotationYaw = (int) MathHelper.clamp(rotationYaw + (currentMouse[1] - lastMouse[1]) * 300, -89.9, 89.9);

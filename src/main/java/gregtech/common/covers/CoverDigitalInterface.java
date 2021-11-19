@@ -878,7 +878,7 @@ public class CoverDigitalInterface extends CoverBehavior implements IFastRenderM
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
 
         RenderUtil.moveToFace(x, y, z, this.attachedSide);
-        RenderUtil.rotateToFace(this.attachedSide, this.spin);
+        RenderUtil.rotateToFace(this.attachedSide, this.attachedSide.getAxis() == EnumFacing.Axis.Y ? this.spin : EnumFacing.NORTH);
 
         if (!renderSneakingLookAt(this.coverHolder.getPos(), this.attachedSide, this.slot, partialTicks)) {
             renderMode(this.mode, this.slot, partialTicks);
