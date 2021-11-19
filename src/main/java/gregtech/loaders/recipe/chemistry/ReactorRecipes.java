@@ -2,8 +2,10 @@ package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
+import gregtech.api.util.GTUtility;
 import gregtech.common.items.MetaItems;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -1078,118 +1080,13 @@ public class ReactorRecipes {
                 .duration(200).EUt(480).buildAndRegister();
 
         // Dyes
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeBlack", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeBlack.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeRed", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeRed.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeGreen", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeGreen.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeBrown", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeBrown.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeBlue", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeBlue.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyePurple", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyePurple.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeCyan", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeCyan.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeLightGray", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeLightGray.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeGray", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeGray.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyePink", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyePink.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeLime", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeLime.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeYellow", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeYellow.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeLightBlue", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeLightBlue.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeMagenta", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeMagenta.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeOrange", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeOrange.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-        CHEMICAL_RECIPES.recipeBuilder()
-                .input("dyeWhite", 1)
-                .input(dust, Salt, 2)
-                .fluidInputs(SulfuricAcid.getFluid(250))
-                .fluidOutputs(DyeWhite.getFluid(288))
-                .duration(600).EUt(24).buildAndRegister();
-
-
+        for (int i = 0; i < 16; i++) {
+            CHEMICAL_RECIPES.recipeBuilder()
+                    .input(dye, MarkerMaterials.Color.VALUES[16 - 1 - i])
+                    .input(dust, Salt, 2)
+                    .fluidInputs(SulfuricAcid.getFluid(250))
+                    .fluidOutputs(GTUtility.CHEMICAL_DYES[i].getFluid(288))
+                    .duration(600).EUt(24).buildAndRegister();
+        }
     }
 }

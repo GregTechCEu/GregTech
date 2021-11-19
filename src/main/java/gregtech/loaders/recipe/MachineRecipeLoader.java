@@ -867,101 +867,13 @@ public class MachineRecipeLoader {
                 .output(GELLED_TOLUENE)
                 .duration(100).EUt(16).buildAndRegister();
 
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeBlack.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[15].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeRed.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[14].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeGreen.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[13].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeBrown.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[12].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeBlue.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[11].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyePurple.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[10].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeCyan.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[9].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeLightGray.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[8].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeGray.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[7].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyePink.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[6].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeLime.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[5].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeYellow.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[4].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeLightBlue.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[3].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeMagenta.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[2].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeOrange.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[1].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
-
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
-                .fluidInputs(DyeWhite.getFluid(72))
-                .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                .outputs(MetaItems.DYE_ONLY_ITEMS[0].getStackForm())
-                .duration(100).EUt(16).buildAndRegister();
+        for (int i = 0; i < 16; i++) {
+            FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                    .fluidInputs(GTUtility.CHEMICAL_DYES[i].getFluid(GTValues.L / 2))
+                    .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
+                    .outputs(MetaItems.DYE_ONLY_ITEMS[16 - 1 - i].getStackForm())
+                    .duration(100).EUt(16).buildAndRegister();
+        }
 
         FLUID_HEATER_RECIPES.recipeBuilder().duration(30).EUt(32).fluidInputs(Water.getFluid(6)).circuitMeta(1).fluidOutputs(Steam.getFluid(960)).buildAndRegister();
         FLUID_HEATER_RECIPES.recipeBuilder().duration(30).EUt(32).fluidInputs(DistilledWater.getFluid(6)).circuitMeta(1).fluidOutputs(Steam.getFluid(960)).buildAndRegister();
