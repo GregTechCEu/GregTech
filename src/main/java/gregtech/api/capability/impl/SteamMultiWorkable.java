@@ -1,12 +1,11 @@
 package gregtech.api.capability.impl;
 
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.metatileentity.multiblock.IParallelAble;
+import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.logic.ParallelLogic;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 
@@ -16,7 +15,7 @@ import net.minecraftforge.items.IItemHandlerModifiable;
  * Not recommended to use this Handler if you do not
  * need multi-recipe logic for your Multi.
  */
-public class SteamMultiWorkable extends SteamMultiblockRecipeLogic implements IParallelAble {
+public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
 
     private final int MAX_PROCESSES;
 
@@ -26,11 +25,18 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic implements IP
     }
 
     @Override
+    public ParallelLogicType getParallelLogicType() {
+        return ParallelLogicType.APPEND;
+    }
+
+    @Override
     protected void trySearchNewRecipe() {
         long maxVoltage = getMaxVoltage(); // Will always be LV voltage
         Recipe currentRecipe = null;
         IItemHandlerModifiable importInventory = getInputInventory();
         IMultipleTankHandler importFluids = getInputTank();
+        IItemHandlerModifiable exportInventory = getOutputInventory();
+        IMultipleTankHandler exportFluids = getOutputTank();
 
         //inverse of logic in normal AbstractRecipeLogic
         //for MultiSmelter, we can reuse previous recipe if inputs didn't change
@@ -40,7 +46,14 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic implements IP
                 previousRecipe == null ||
                 !previousRecipe.matches(false, importInventory, importFluids, MatchingMode.IGNORE_FLUIDS)) {
             //Inputs changed, try searching new recipe for given inputs
-            currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
+            currentRecipe = findParallelRecipe(
+                    this,
+                    null,
+                    importInventory,
+                    importFluids,
+                    exportInventory,
+                    exportFluids,
+                    maxVoltage, MAX_PROCESSES);
         } else {
             //if previous recipe still matches inputs, try to use it
             currentRecipe = previousRecipe;
@@ -53,40 +66,6 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic implements IP
             setupRecipe(currentRecipe);
         // Inputs have been inspected.
         metaTileEntity.getNotifiedItemInputList().clear();
-    }
-
-    protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids) {
-        IItemHandlerModifiable exportInventory = getOutputInventory();
-        IMultipleTankHandler exportFluids = getOutputTank();
-
-        RecipeBuilder<?> builder = ParallelLogic.appendRecipes(recipeMap,
-                importInventory,
-                importFluids,
-                exportInventory,
-                exportFluids,
-                MAX_PROCESSES,
-                maxVoltage);
-        this.applyBuilderFeatures(builder);
-        if (builder != null) {
-            return builder.build().getResult();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void applyBuilderFeatures(RecipeBuilder<?> builder) {
-        if (builder == null) {
-            this.invalidInputsForRecipes = true;
-        } else {
-            if (builder.getParallel() == 0) {
-                this.isOutputsFull = true;
-            } else {
-                this.parallelRecipesPerformed = builder.getParallel();
-                //apply coil bonus
-                applyParallelBonus(builder);
-            }
-        }
     }
 
     @Override

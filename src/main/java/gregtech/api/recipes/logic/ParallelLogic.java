@@ -294,7 +294,7 @@ public class ParallelLogic {
         return minMultiplier;
     }
 
-    public static RecipeBuilder<?> doParallelRecipes(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount) {
+    public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount) {
         int multiplierByInputs = getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, parallelAmount);
         RecipeBuilder<?> recipeBuilder = null;
         if (multiplierByInputs > 1) {
@@ -365,11 +365,9 @@ public class ParallelLogic {
                 break;
             }
         }
-        if (engagedItems > 0) {
-            return recipeBuilder;
-        } else {
+        if (engagedItems == 0) {
             return null;
         }
+        return recipeBuilder;
     }
-
 }

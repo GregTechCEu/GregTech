@@ -6,12 +6,11 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
+import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
-import gregtech.api.recipes.logic.ParallelLogic;
+import gregtech.api.recipes.logic.IParallelableRecipeLogic;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import net.minecraft.item.ItemStack;
@@ -31,7 +30,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.LongSupplier;
 
-public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable {
+public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable, IParallelableRecipeLogic {
 
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
@@ -171,6 +170,18 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         return true;
     }
 
+    public void invalidateInputs() {
+        this.invalidInputsForRecipes = true;
+    }
+
+    public void invalidateOutputs() {
+        this.isOutputsFull = true;
+    }
+
+    public void setParallelRecipesPerformed(int amount) {
+        this.parallelRecipesPerformed = amount;
+    }
+
     protected void updateRecipeProgress() {
         boolean drawEnergy = drawEnergy(recipeEUt);
         if (drawEnergy || (recipeEUt < 0)) {
@@ -217,25 +228,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         // proceed if we have a usable recipe.
         if (currentRecipe != null) {
 
-            //Check if the recipe can be multiplied due to parallel logic
-            int parallelLimit = this.getParallel();
-            if (parallelLimit > 1) {
-                RecipeBuilder<?> parallelBuilder = ParallelLogic.doParallelRecipes(
-                        recipeMap,
-                        currentRecipe,
-                        importInventory,
-                        importFluids,
-                        exportInventory,
-                        exportFluids,
-                        parallelLimit);
-                if (parallelBuilder == null) {
-                    this.isOutputsFull = true;
-                    currentRecipe = null;
-                } else if (parallelBuilder.getParallel() > 0) {
-                    parallelRecipesPerformed = parallelBuilder.getParallel();
-                    currentRecipe = parallelBuilder.build().getResult();
-                }
-            }
+            currentRecipe = findParallelRecipe(
+                    this,
+                    currentRecipe,
+                    importInventory,
+                    importFluids,
+                    exportInventory,
+                    exportFluids,
+                    maxVoltage, metaTileEntity.getParallelLimit());
 
             if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory)) {
                 setupRecipe(currentRecipe);
@@ -246,12 +246,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         metaTileEntity.getNotifiedFluidInputList().clear();
     }
 
-    protected int getParallel() {
-        if (this.metaTileEntity instanceof MultiblockWithDisplayBase) {
-            return ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit();
-        } else {
-            return 1;
-        }
+    public ParallelLogicType getParallelLogicType() {
+        return ParallelLogicType.MULTIPLY;
     }
 
     protected int getMinTankCapacity(IMultipleTankHandler tanks) {

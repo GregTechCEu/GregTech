@@ -8,8 +8,6 @@ import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.recipes.logic.ParallelLogic;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.ArrayList;
@@ -147,25 +145,14 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (previousRecipe != null && previousRecipe.matches(false, importInventory.get(lastRecipeIndex), importFluids)) {
             currentRecipe = previousRecipe;
 
-            //Check if the recipe can be multiplied due to parallel logic
-            int parallelLimit = this.getParallel();
-            if (parallelLimit > 1) {
-                RecipeBuilder<?> parallelBuilder = ParallelLogic.doParallelRecipes(
-                        recipeMap,
-                        currentRecipe,
-                        importInventory.get(lastRecipeIndex),
-                        importFluids,
-                        exportInventory,
-                        exportFluids,
-                        parallelLimit);
-                if (parallelBuilder == null) {
-                    this.isOutputsFull = true;
-                    currentRecipe = null;
-                } else if (parallelBuilder.getParallel() > 0) {
-                    parallelRecipesPerformed = parallelBuilder.getParallel();
-                    currentRecipe = parallelBuilder.build().getResult();
-                }
-            }
+            currentRecipe = findParallelRecipe(
+                    this,
+                    currentRecipe,
+                    importInventory.get(lastRecipeIndex),
+                    importFluids,
+                    exportInventory,
+                    exportFluids,
+                    maxVoltage, metaTileEntity.getParallelLimit());
 
             // If a valid recipe is found, immediately attempt to return it to prevent inventory scanning
             if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(lastRecipeIndex))) {
@@ -194,25 +181,14 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             if (currentRecipe != null) {
                 this.previousRecipe = currentRecipe;
 
-                //Check if the recipe can be multiplied due to parallel logic
-                int parallelLimit = this.getParallel();
-                if (parallelLimit > 1) {
-                    RecipeBuilder<?> parallelBuilder = ParallelLogic.doParallelRecipes(
-                            recipeMap,
-                            currentRecipe,
-                            importInventory.get(i),
-                            importFluids,
-                            exportInventory,
-                            exportFluids,
-                            parallelLimit);
-                    if (parallelBuilder == null) {
-                        this.isOutputsFull = true;
-                        currentRecipe = null;
-                    } else if (parallelBuilder.getParallel() > 0) {
-                        parallelRecipesPerformed = parallelBuilder.getParallel();
-                        currentRecipe = parallelBuilder.build().getResult();
-                    }
-                }
+                currentRecipe = findParallelRecipe(
+                        this,
+                        currentRecipe,
+                        importInventory.get(lastRecipeIndex),
+                        importFluids,
+                        exportInventory,
+                        exportFluids,
+                        maxVoltage, metaTileEntity.getParallelLimit());
 
                 if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(i))) {
                     lastRecipeIndex = i;
@@ -227,6 +203,20 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
         //If no matching recipes are found, clear the notified inputs so we know when new items are given
         metaTileEntity.getNotifiedItemInputList().clear();
+    }
+
+    @Override
+    public void invalidateInputs() {
+        MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
+        if (controller instanceof RecipeMapMultiblockController) {
+            RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
+            if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
+                List<IItemHandlerModifiable> importInventory = getInputBuses();
+                invalidatedInputList.add(importInventory.get(lastRecipeIndex));
+            }
+        } else {
+            super.invalidateInputs();
+        }
     }
 
     @Override

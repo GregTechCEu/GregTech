@@ -5,14 +5,13 @@ import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
-import gregtech.api.metatileentity.multiblock.IParallelAble;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
+import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.*;
-import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
@@ -82,6 +81,11 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     @Override
+    public int getParallelLimit() {
+        return heatingCoilLevel * 32;
+    }
+
+    @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "CCC", "XXX")
@@ -113,19 +117,19 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     @Override
-    public int getParallelLimit() {
-        return this.heatingCoilLevel * 32;
-    }
-
-    @Override
     public boolean hasMufflerMechanics() {
         return true;
     }
 
-    protected class MultiSmelterWorkable extends MultiblockRecipeLogic implements IParallelAble {
+    protected class MultiSmelterWorkable extends MultiblockRecipeLogic {
 
         public MultiSmelterWorkable(RecipeMapMultiblockController tileEntity) {
             super(tileEntity);
+        }
+
+        @Override
+        public ParallelLogicType getParallelLogicType() {
+            return ParallelLogicType.APPEND;
         }
 
         @Override
@@ -134,6 +138,8 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             Recipe currentRecipe;
             IItemHandlerModifiable importInventory = getInputInventory();
             IMultipleTankHandler importFluids = getInputTank();
+            IItemHandlerModifiable exportInventory = getOutputInventory();
+            IMultipleTankHandler exportFluids = getOutputTank();
 
             //inverse of logic in normal AbstractRecipeLogic
             //for MultiSmelter, we can reuse previous recipe if inputs didn't change
@@ -143,7 +149,13 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                     previousRecipe == null ||
                     !previousRecipe.matches(false, importInventory, importFluids)) {
                 //Inputs changed, try searching new recipe for given inputs
-                currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
+                currentRecipe = findParallelRecipe(this,
+                        null,
+                        importInventory,
+                        importFluids,
+                        exportInventory,
+                        exportFluids,
+                        maxVoltage, metaTileEntity.getParallelLimit());
             } else {
                 //if previous recipe still matches inputs, try to use it
                 currentRecipe = previousRecipe;
@@ -158,41 +170,6 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
             // Inputs have been inspected.
             metaTileEntity.getNotifiedItemInputList().clear();
-        }
-
-        protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids) {
-            IItemHandlerModifiable exportInventory = getOutputInventory();
-            IMultipleTankHandler exportFluids = getOutputTank();
-
-            int parallelLimit = 32 * heatingCoilLevel;
-            RecipeBuilder<?> builder = ParallelLogic.appendRecipes(recipeMap,
-                    importInventory,
-                    importFluids,
-                    exportInventory,
-                    exportFluids,
-                    parallelLimit,
-                    maxVoltage);
-            this.applyBuilderFeatures(builder);
-            if (builder != null) {
-                return builder.build().getResult();
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        public void applyBuilderFeatures(RecipeBuilder<?> builder) {
-            if (builder == null) {
-                this.invalidInputsForRecipes = true;
-            } else {
-                if (builder.getParallel() == 0) {
-                    this.isOutputsFull = true;
-                } else {
-                    this.parallelRecipesPerformed = builder.getParallel();
-                    //apply coil bonus
-                    applyParallelBonus(builder);
-                }
-            }
         }
 
         @Override
