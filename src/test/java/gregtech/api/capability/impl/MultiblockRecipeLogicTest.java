@@ -105,6 +105,11 @@ public class MultiblockRecipeLogicTest {
                             public boolean hasMufflerMechanics() {
                                 return false;
                             }
+
+                            @Override
+                            public int getParallelLimit() {
+                                return 1;
+                            }
                         });
 
         //isValid() check in the dirtying logic requires both a metatileentity and a holder
@@ -339,6 +344,11 @@ public class MultiblockRecipeLogicTest {
                             @Override
                             public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
                                 return true;
+                            }
+
+                            @Override
+                            public int getParallelLimit() {
+                                return 1;
                             }
                         });
 
