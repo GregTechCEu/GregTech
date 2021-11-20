@@ -381,15 +381,41 @@ public class Recipe {
     public List<ItemStack> getResultItemOutputs(int maxOutputSlots, Random random, int tier) {
         ArrayList<ItemStack> outputs = new ArrayList<>(GTUtility.copyStackList(getOutputs()));
         List<ChanceEntry> chancedOutputsList = getChancedOutputs();
+        List<ItemStack> resultChanced = new ArrayList<>();
         int maxChancedSlots = maxOutputSlots - outputs.size();
-        if (chancedOutputsList.size() > maxChancedSlots) {
-            chancedOutputsList = chancedOutputsList.subList(0, Math.max(0, maxChancedSlots));
-        }
         for (ChanceEntry chancedOutput : chancedOutputsList) {
             int outputChance = RecipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
             if (random.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
-                outputs.add(chancedOutput.getItemStack().copy());
+                ItemStack stackToAdd = chancedOutput.getItemStack();
+                if (!resultChanced.isEmpty()) {
+                    for (ItemStack rc : resultChanced) {
+                        if (ItemStackHashStrategy.comparingAllButCount().equals(rc, stackToAdd)) {
+                            if (rc.getCount() < rc.getMaxStackSize()) {
+                                int insertable = rc.getMaxStackSize() - rc.getCount();
+                                if (insertable >= stackToAdd.getCount()) {
+                                    rc.grow(stackToAdd.getCount());
+                                    stackToAdd = ItemStack.EMPTY;
+                                } else {
+                                    rc.grow(insertable);
+                                    stackToAdd = stackToAdd.copy();
+                                    stackToAdd.setCount(stackToAdd.getCount() - insertable);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    if (!stackToAdd.isEmpty()) {
+                        resultChanced.add(stackToAdd);
+                    }
+                } else {
+                    resultChanced.add(stackToAdd.copy());
+                }
             }
+        }
+        if (resultChanced.size() > maxChancedSlots) {
+            outputs.addAll(resultChanced.subList(0, Math.max(0, maxChancedSlots)));
+        } else {
+            outputs.addAll(resultChanced);
         }
         return outputs;
     }

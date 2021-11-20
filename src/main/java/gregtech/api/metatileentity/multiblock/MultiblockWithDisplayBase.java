@@ -387,7 +387,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     @Override
     public int getParallelLimit() {
-        return 512;
+        return 16;
     }
 
 }

@@ -6,12 +6,11 @@ import gregtech.api.recipes.CountableIngredient;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
-import gregtech.api.util.InventoryUtils;
+import gregtech.api.recipes.logic.ParallelLogic;
+import gregtech.api.util.MirroredItemHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 /**
@@ -44,7 +43,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
                 previousRecipe == null ||
                 !previousRecipe.matches(false, importInventory, importFluids, MatchingMode.IGNORE_FLUIDS)) {
             //Inputs changed, try searching new recipe for given inputs
-            currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.IGNORE_FLUIDS);
+            currentRecipe = findAndAppendRecipes(maxVoltage, importInventory);
         } else {
             //if previous recipe still matches inputs, try to use it
             currentRecipe = previousRecipe;
@@ -59,11 +58,16 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
         metaTileEntity.getNotifiedItemInputList().clear();
     }
 
-    @Override
-    protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
-        int currentItemsEngaged = 0;
-        final ArrayList<CountableIngredient> recipeInputs = new ArrayList<>();
-        final ArrayList<ItemStack> recipeOutputs = new ArrayList<>();
+    protected Recipe findAndAppendRecipes(long maxVoltage,
+                                          IItemHandlerModifiable inputs) {
+        RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder();
+
+        boolean matchedRecipe = false;
+
+        // Iterate over the input items looking for more things to add until we run either out of input items
+        // or we have exceeded the number of items permissible from the smelting bonus
+        int itemsLeftUntilMax = MAX_PROCESSES;
+
         int recipeEUt = 0;
         int recipeDuration = 1;
         float speedBonusPercent = 0.0F; // Currently unused
@@ -71,114 +75,64 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
         /* Iterate over input items looking for more items to process until we
          * have touched every item, or are at maximum item capacity
          */
-        boolean matchedRecipe = false;
-        boolean canFitOutputs = true;
-
-        for (int index = 0; index < inputs.getSlots() && currentItemsEngaged < MAX_PROCESSES; index++) {
+        for (int index = 0; index < inputs.getSlots(); index++) {
+            // Skip this slot if it is empty.
             final ItemStack currentInputItem = inputs.getStackInSlot(index);
-
-            // Skip slot if empty
             if (currentInputItem.isEmpty())
                 continue;
 
-            // Check recipe for item in slot
-            Recipe matchingRecipe = recipeMap.findRecipe(maxVoltage,
-                    Collections.singletonList(currentInputItem),
-                    Collections.emptyList(), 0,
-                    MatchingMode.DEFAULT);
+            // Determine if there is a valid recipe for this item. If not, skip it.
+            Recipe matchingRecipe = findRecipe(maxVoltage, currentInputItem);
+
             CountableIngredient inputIngredient;
             if (matchingRecipe != null) {
-                matchedRecipe = true;
-                if (matchingRecipe.getOutputs().isEmpty())
-                    return doChancedOnlyRecipe(matchingRecipe, currentInputItem);
                 inputIngredient = matchingRecipe.getInputs().get(0);
-                recipeEUt = matchingRecipe.getEUt();
-                recipeDuration = matchingRecipe.getDuration();
+                matchedRecipe = true;
             } else
                 continue;
 
-            // Some error handling, probably unnecessary
+            // There's something not right with this recipe if the ingredient is null.
             if (inputIngredient == null)
                 throw new IllegalStateException(
-                        String.format("Recipe with null ingredient %s", matchingRecipe));
+                        String.format("Got recipe with null ingredient %s", matchingRecipe));
 
-            // Check to see if we have enough output slots
-            int itemsLeftUntilMax = (MAX_PROCESSES - currentItemsEngaged);
-            if (itemsLeftUntilMax >= inputIngredient.getCount()) {
+            //equivalent of getting the max ratio from the inputs from Parallel logic
+            int amountOfCurrentItem = Math.min(itemsLeftUntilMax, currentInputItem.getCount());
 
-                // Make sure we don't go over maximum of 8 items per craft
-                int recipeMultiplier = Math.min((currentInputItem.getCount() / inputIngredient.getCount()),
-                        (itemsLeftUntilMax / inputIngredient.getCount()));
+            //how much we can add to the output inventory
+            int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, new MirroredItemHandler(this.getOutputInventory()), amountOfCurrentItem);
 
-                // Process to see how many slots the output will take
-                ArrayList<ItemStack> temp = new ArrayList<>(recipeOutputs);
-                computeOutputItemStacks(temp, matchingRecipe.getOutputs().get(0), recipeMultiplier);
+            //amount to actually multiply the recipe by
+            int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);
 
-                // Check to see if we have output space available for the recipe
-                canFitOutputs = InventoryUtils.simulateItemStackMerge(temp, this.getOutputInventory());
-                if (!canFitOutputs)
-                    break;
+            if (multiplierRecipeAmount > 0) {
+                ParallelLogic.append(recipeBuilder, matchingRecipe, multiplierRecipeAmount);
+                itemsLeftUntilMax -= multiplierRecipeAmount;
+            }
 
-                // Create output ItemStack list
-                temp.removeAll(recipeOutputs);
-                recipeOutputs.addAll(temp);
-
-                // Add ingredients to list of items to process
-                recipeInputs.add(new CountableIngredient(inputIngredient.getIngredient(),
-                        inputIngredient.getCount() * recipeMultiplier));
-
-                currentItemsEngaged += inputIngredient.getCount() * recipeMultiplier;
+            if (itemsLeftUntilMax == 0) {
+                break;
             }
         }
 
         this.invalidInputsForRecipes = !matchedRecipe;
-        this.isOutputsFull = !canFitOutputs;
+        this.isOutputsFull = (matchedRecipe && itemsLeftUntilMax == MAX_PROCESSES);
 
-        if (recipeInputs.isEmpty()) {
+        if (recipeBuilder.getInputs().isEmpty()) {
             return null;
         }
 
-        return recipeMap.recipeBuilder()
-                .inputsIngredients(recipeInputs)
-                .outputs(recipeOutputs)
+        //this.parallelRecipesPerformed = MAX_PROCESSES - itemsLeftUntilMax;
+
+        return recipeBuilder
                 .EUt(Math.min(32, (int) Math.ceil(recipeEUt * 1.33)))
                 .duration(Math.max(recipeDuration, (int) (recipeDuration * (100.0F / (100.0F + speedBonusPercent)) * 1.5)))
                 .build().getResult();
     }
 
-    private void computeOutputItemStacks(Collection<ItemStack> recipeOutputs, ItemStack outputStack, int recipeAmount) {
-        if (!outputStack.isEmpty()) {
-            int finalAmount = outputStack.getCount() * recipeAmount;
-            int maxCount = outputStack.getMaxStackSize();
-            int numStacks = finalAmount / maxCount;
-            int remainder = finalAmount % maxCount;
-
-            for (int fullStacks = numStacks; fullStacks > 0; fullStacks--) {
-                ItemStack full = outputStack.copy();
-                full.setCount(maxCount);
-                recipeOutputs.add(full);
-            }
-
-            if (remainder > 0) {
-                ItemStack partial = outputStack.copy();
-                partial.setCount(remainder);
-                recipeOutputs.add(partial);
-            }
-        }
-    }
-
-    // This does no checking to see if outputs can fit, similar to other chanced output only recipes
-    private Recipe doChancedOnlyRecipe(Recipe matchingRecipe, ItemStack stack) {
-        RecipeBuilder<?> builder = recipeMap.recipeBuilder()
-                .inputs(new CountableIngredient(matchingRecipe.getInputs().get(0).getIngredient(), stack.getCount()))
-                .EUt(Math.min(32, (int) Math.ceil(matchingRecipe.getEUt() * 1.33)))
-                .duration((int) (matchingRecipe.getDuration() * 1.5));
-
-        Recipe.ChanceEntry entry = matchingRecipe.getChancedOutputs().get(0);
-        int maxProcesses = Math.min(MAX_PROCESSES, stack.getCount());
-        for (int i = 0; i < maxProcesses; i++)
-            builder.chancedOutput(entry.getItemStack(), entry.getChance(), entry.getBoostPerTier());
-
-        return builder.build().getResult();
+    protected Recipe findRecipe(long maxVoltage, ItemStack itemStack) {
+        return recipeMap.findRecipe(maxVoltage,
+                Collections.singletonList(itemStack),
+                Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
     }
 }

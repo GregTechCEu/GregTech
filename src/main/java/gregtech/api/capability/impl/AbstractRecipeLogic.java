@@ -45,7 +45,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected int progressTime;
     protected int maxProgressTime;
     protected int recipeEUt;
-    protected int parallelRecipesPerformed = 1;
     protected List<FluidStack> fluidOutputs;
     protected NonNullList<ItemStack> itemOutputs;
     protected final Random random = new Random();
@@ -226,10 +225,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
                 int parallelizable = Math.min(multiplierByInputs, limitByOutput);
 
                 if (parallelizable > 1) {
-                    multipliedRecipe = ParallelLogic.multiply(currentRecipe, this.recipeMap, parallelizable);
-                    currentRecipe = multipliedRecipe.build().getResult();
-                    this.parallelRecipesPerformed = parallelizable;
-                } else {
+                    currentRecipe = recipeMap.recipeBuilder()
+                            .append(currentRecipe, parallelizable)
+                            .build().getResult();
+                } else if (parallelizable == 0) {
                     this.isOutputsFull = true;
                     currentRecipe = null;
                 }
@@ -280,9 +279,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
 
         //Format: EU/t, Duration
-        // Multiply the duration by the number of parallel recipes performed pre overclock
-        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration() );//* this.parallelRecipesPerformed);
-        int totalEUt = resultOverclock[0] * resultOverclock[1]; //* this.parallelRecipesPerformed;
+        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration() );
+        int totalEUt = resultOverclock[0] * resultOverclock[1];
 
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler importFluids = getInputTank();
@@ -302,7 +300,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             enoughPower = getEnergyStored() >= capacity;
         }
         else {
-            int power = resultOverclock[0]; //* this.parallelRecipesPerformed;
+            int power = resultOverclock[0];
             enoughPower = getEnergyStored() - (long) power <= getEnergyCapacity();
         }
 
@@ -370,7 +368,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration());
         this.progressTime = 1;
         setMaxProgress(resultOverclock[1]);
-        this.recipeEUt = resultOverclock[0] * this.parallelRecipesPerformed;
+        this.recipeEUt = resultOverclock[0];
         this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
         int tier = getMachineTierForRecipe(recipe);
         this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, tier));
@@ -395,7 +393,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.itemOutputs = null;
         this.hasNotEnoughEnergy = false;
         this.wasActiveAndNeedsUpdate = true;
-        this.parallelRecipesPerformed = 1;
     }
 
     public double getProgressPercent() {

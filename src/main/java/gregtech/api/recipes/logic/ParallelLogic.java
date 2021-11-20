@@ -5,6 +5,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.*;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.MirroredItemHandler;
 import gregtech.api.util.StreamUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.item.ItemStack;
@@ -24,46 +25,6 @@ import java.util.stream.IntStream;
 import static gregtech.api.util.Predicates.not;
 
 public class ParallelLogic {
-    /**
-     *
-     * Multiplies the passed {@link Recipe} by the amount specified by multiplier
-     *
-     * @param recipe The Recipe to be multiplied
-     * @param recipeMap The Recipe Map that the provided recipe is from
-     * @param multiplier Amount to multiply the recipe by
-     * @return the builder holding the multiplied recipe
-     */
-
-    public static <R extends RecipeBuilder<R>> RecipeBuilder<R> multiply(Recipe recipe, RecipeMap<R> recipeMap, int multiplier) {
-
-        RecipeBuilder<R> newRecipeBuilder = recipeMap.recipeBuilder();
-
-        for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
-            newRecipeBuilder.applyProperty(property.getKey().getKey(), property.getValue());
-        }
-
-        // Create holders for the various parts of the new multiplied Recipe
-        List<CountableIngredient> newRecipeInputs = new ArrayList<>();
-        List<FluidStack> newFluidInputs = new ArrayList<>();
-        List<ItemStack> outputItems = new ArrayList<>();
-        List<FluidStack> outputFluids = new ArrayList<>();
-
-        // Populate the various holders of the multiplied Recipe
-        multiplyInputsAndOutputs(newRecipeInputs, newFluidInputs, outputItems, outputFluids, recipe, multiplier);
-
-        // Build the new Recipe with multiplied components
-        newRecipeBuilder.inputsIngredients(newRecipeInputs);
-        newRecipeBuilder.fluidInputs(newFluidInputs);
-        newRecipeBuilder.outputs(outputItems);
-        newRecipeBuilder.fluidOutputs(outputFluids);
-        newRecipeBuilder.EUt(recipe.getEUt());
-        newRecipeBuilder.duration(recipe.getDuration() * multiplier);
-
-        copyChancedItemOutputs(newRecipeBuilder, recipe, multiplier);
-
-        return newRecipeBuilder;
-    }
-
     public static <R extends RecipeBuilder<R>> RecipeBuilder<R> append(RecipeBuilder<R> recipeBuilder, Recipe recipe, int multiplier) {
 
         for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
@@ -125,9 +86,9 @@ public class ParallelLogic {
      * @return returns the amount of recipes that can be merged successfully into a given output inventory
      */
     public static int limitByOutputMerging(Recipe recipe, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelAmount){
-        int maxMultiplier = 0;
+        int maxMultiplier = parallelAmount;
         if (recipe.getOutputs().size() > 0) {
-            maxMultiplier = limitParallelByItems(recipe, outputs, parallelAmount);
+            maxMultiplier = limitParallelByItems(recipe, new MirroredItemHandler(outputs), parallelAmount);
             if (maxMultiplier == 0) {
                 return 0;
             }
@@ -149,82 +110,60 @@ public class ParallelLogic {
      *
      * uses a binary-search-like for the merge of recipes that have more than one kind of item
      */
-    public static int limitParallelByItems(Recipe recipe, IItemHandlerModifiable outputInventory, int multiplier) {
+    public static int limitParallelByItems(Recipe recipe, MirroredItemHandler mirroredItemHandler, int multiplier) {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
         //mirror the output slots status into a map. Keep the empty slots,
         //so we can simulate the merge without copying stacks.
 
-        Map<Integer, Triple<ItemStackKey, Integer, Integer>> outputInvMap = mapInvHandler(outputInventory);
         List<Pair<ItemStackKey, Integer>> recipeOutputs = stackList2stackKeyList(recipe.getOutputs());
 
         int amount = 0;
 
-        if (recipeOutputs.size() == 1) {
-            amount = MetaTileEntity.simulateAddHashedItemToInvMap(recipeOutputs.get(0).getLeft(), recipeOutputs.get(0).getRight(), outputInvMap);
-            if (amount > 0 ) {
-                multiplier -=  amount / recipe.getOutputs().get(0).getCount();
-                if (amount % recipe.getOutputs().get(0).getCount() != 0) {
-                    multiplier -= 1;
-                }
-            }
-        } else {
-            while (minMultiplier != maxMultiplier) {
-                Map<Integer, Triple<ItemStackKey, Integer, Integer>> invCopyMap = new LinkedHashMap<>(outputInvMap);
-                for (Pair<ItemStackKey, Integer> pair : recipeOutputs) {
-                    int amountToInsert = pair.getRight() * multiplier;
-                    amount = MetaTileEntity.simulateAddHashedItemToInvMap(pair.getLeft(), amountToInsert, invCopyMap);
+        while (minMultiplier != maxMultiplier) {
+            mirroredItemHandler.reset();
+            for (Pair<ItemStackKey, Integer> pair : recipeOutputs) {
+                int amountToInsert = pair.getRight() * multiplier;
+                for (int slot = 0; slot < mirroredItemHandler.getSlots(); slot++) {
+                    amount = mirroredItemHandler.insertItemStackKey(slot, pair.getLeft(), amountToInsert);
                     if (amount > 0) {
-                        break;
+                        amountToInsert = amount;
                     }
+                    if (amount == 0) break;
                 }
-
-                int[] bin = adjustMultiplier(amount == 0, minMultiplier, multiplier, maxMultiplier);
-                minMultiplier = bin[0];
-                multiplier = bin[1];
-                maxMultiplier = bin[2];
-
+                if (amount > 0) {
+                    break;
+                }
             }
+
+            int[] bin = adjustMultiplier(amount == 0, minMultiplier, multiplier, maxMultiplier);
+            minMultiplier = bin[0];
+            multiplier = bin[1];
+            maxMultiplier = bin[2];
+
         }
         return multiplier;
     }
 
     public static int[] adjustMultiplier(boolean mergedAll, int minMultiplier, int multiplier, int maxMultiplier) {
         if (mergedAll) {
-            if (maxMultiplier - minMultiplier <= 1) {
-                multiplier = maxMultiplier = minMultiplier;
-            } else {
-                minMultiplier = multiplier;
-                int remainder = (maxMultiplier - multiplier) % 2;
-                multiplier = multiplier + remainder + (maxMultiplier - multiplier) / 2;
-            }
+            minMultiplier = multiplier;
+            int remainder = (maxMultiplier - multiplier) % 2;
+            multiplier = multiplier + remainder + (maxMultiplier - multiplier) / 2;
         } else {
             maxMultiplier = multiplier;
-            multiplier /= 2;
-            if (multiplier < minMultiplier) {
-                multiplier += 1;
+            int halfMul = multiplier / 2;
+            if (halfMul < minMultiplier) {
+                multiplier = minMultiplier + 1;
+            } else {
+                multiplier = halfMul;
             }
+        }
+        if (maxMultiplier - minMultiplier <= 1) {
+            multiplier = maxMultiplier = minMultiplier;
         }
         return new int[]{minMultiplier, multiplier, maxMultiplier};
-    }
-
-    public static Map<Integer, Triple<ItemStackKey, Integer, Integer>> mapInvHandler(IItemHandler itemHandlerModifiable) {
-
-        Map<Integer, Triple<ItemStackKey, Integer, Integer>> handlerMap = new LinkedHashMap<>();
-        for (int slot = 0; slot < itemHandlerModifiable.getSlots(); slot++) {
-            ItemStack stack = itemHandlerModifiable.getStackInSlot(slot);
-            if (!stack.isEmpty()) {
-                handlerMap.put(slot,
-                        Triple.of(KeySharedStack.getRegisteredStack(stack),
-                                stack.getCount(), itemHandlerModifiable.getSlotLimit(slot)));
-            } else {
-                handlerMap.put(slot,
-                        Triple.of(null,
-                                0, itemHandlerModifiable.getSlotLimit(slot)));
-            }
-        }
-        return handlerMap;
     }
 
     public static List<Pair<ItemStackKey, Integer>> stackList2stackKeyList(List<ItemStack> stackList) {
@@ -254,33 +193,24 @@ public class ParallelLogic {
 
         int amount = 0;
 
-        if (fluidOutputs.getTanks() == 1) {
-            amount = MetaTileEntity.simulateAddHashedFluidToTankMap(outputFluidList.get(0).getLeft(), outputFluidList.get(0).getMiddle(), outputFluidList);
-            if (amount > 0) {
-                multiplier -= amount / recipe.getOutputs().get(0).getCount();
-                if (amount % recipe.getOutputs().get(0).getCount() != 0) {
-                    multiplier -= 1;
+
+        while (minMultiplier != maxMultiplier) {
+            Map<Integer, Triple<FluidKey, Integer, Integer>> outputFluidListCopy = new LinkedHashMap<>(outputFluidList);
+
+            for (int recipeTankSlot = 0; recipeTankSlot < recipe.getFluidOutputs().size(); recipeTankSlot++) {
+                FluidStack fluidStack = recipe.getFluidOutputs().get(recipeTankSlot);
+                int amountToInsert = fluidStack.amount * multiplier;
+                amount = MetaTileEntity.simulateAddHashedFluidToTankMap(new FluidKey(fluidStack), amountToInsert, outputFluidListCopy);
+                if (amount > 0) {
+                    break;
                 }
             }
-        } else {
-            while (minMultiplier != maxMultiplier) {
-                Map<Integer, Triple<FluidKey, Integer, Integer>> outputFluidListCopy = new LinkedHashMap<>(outputFluidList);
 
-                for (int recipeTankSlot = 0; recipeTankSlot < recipe.getFluidOutputs().size(); recipeTankSlot++) {
-                    FluidStack fluidStack = recipe.getFluidOutputs().get(recipeTankSlot);
-                    int amountToInsert = fluidStack.amount * multiplier;
-                    amount = MetaTileEntity.simulateAddHashedFluidToTankMap(new FluidKey(fluidStack), amountToInsert, outputFluidListCopy);
-                    if (amount > 0) {
-                        break;
-                    }
-                }
+            int[] bin = adjustMultiplier(amount > 0, minMultiplier, multiplier, maxMultiplier);
+            minMultiplier = bin[0];
+            multiplier = bin[1];
+            maxMultiplier = bin[2];
 
-                int[] bin = adjustMultiplier(amount > 0, minMultiplier, multiplier, maxMultiplier);
-                minMultiplier = bin[0];
-                multiplier = bin[1];
-                maxMultiplier = bin[2];
-
-            }
         }
         return multiplier;
     }

@@ -26,6 +26,7 @@ import gregtech.api.render.Textures;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.MirroredItemHandler;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
 import gregtech.core.hooks.BloomRenderLayerHooks;
@@ -1018,17 +1019,23 @@ public abstract class MetaTileEntity implements ICoverable {
         // determine if there is sufficient room to insert all items into the target inventory
 
         if (simulate) {
-            Map<Integer, Triple<ItemStackKey, Integer, Integer>> outputInvMap = ParallelLogic.mapInvHandler(handler);
+            MirroredItemHandler mirroredItemHandler = new MirroredItemHandler(handler);
             List<Pair<ItemStackKey, Integer>> stackKeyList = ParallelLogic.stackList2stackKeyList(items);
 
-            boolean canMerge = true;
             for (Pair<ItemStackKey, Integer> pair : stackKeyList) {
-                int amount = MetaTileEntity.simulateAddHashedItemToInvMap(pair.getLeft(), pair.getRight(), outputInvMap);
-                if (amount > 0) {
-                    canMerge = false;
+                int amountToInsert = pair.getRight();
+                for (int slot = 0; slot < mirroredItemHandler.getSlots(); slot++) {
+                    int amount = mirroredItemHandler.insertItemStackKey(slot, pair.getLeft(), amountToInsert);
+                    if (amount >= 0) {
+                        amountToInsert = amount;
+                    }
+                    if (amount == 0) break;
+                }
+                if (amountToInsert > 0) {
+                    return false;
                 }
             }
-            return canMerge;
+            return true;
         }
 
         // perform the merge.
@@ -1040,6 +1047,7 @@ public abstract class MetaTileEntity implements ICoverable {
      * @param stackKey   a ItemStackKey representing the item to be merged
      * @param amount     the amount of items to merge
      * @param invCopyMap a HashMap representing a copy of the inventory to be merged
+     *
      * @return the amount of items not inserted on the given inventory
      */
 

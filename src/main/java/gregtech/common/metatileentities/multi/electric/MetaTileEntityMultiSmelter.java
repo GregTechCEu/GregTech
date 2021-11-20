@@ -15,7 +15,8 @@ import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
-import gregtech.api.util.GTUtility;
+import gregtech.api.util.ItemStackKey;
+import gregtech.api.util.MirroredItemHandler;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.BlockWireCoil2.CoilType2;
@@ -26,6 +27,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemStackHandler;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -145,7 +149,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                     previousRecipe == null ||
                     !previousRecipe.matches(false, importInventory, importFluids)) {
                 //Inputs changed, try searching new recipe for given inputs
-                currentRecipe = findRecipe(maxVoltage, importInventory, importFluids, MatchingMode.IGNORE_FLUIDS);
+                currentRecipe = findAndAppendRecipes(maxVoltage, importInventory);
             } else {
                 //if previous recipe still matches inputs, try to use it
                 currentRecipe = previousRecipe;
@@ -162,34 +166,14 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             metaTileEntity.getNotifiedItemInputList().clear();
         }
 
-        @Override
-        protected void setupRecipe(Recipe recipe) {
-            int[] resultOverclock = calculateOverclock(recipe.getEUt(), getMaxVoltage(), recipe.getDuration());
-            this.progressTime = 1;
-            setMaxProgress(resultOverclock[1]);
-            //override the recipeEUt here, so that the parallel implementation does not mess with the Multismelter energy reduction
-            this.recipeEUt = resultOverclock[0];
-            this.fluidOutputs = GTUtility.copyFluidList(recipe.getFluidOutputs());
-            int tier = getMachineTierForRecipe(recipe);
-            this.itemOutputs = GTUtility.copyStackList(recipe.getResultItemOutputs(getOutputInventory().getSlots(), random, tier));
-            if (this.wasActiveAndNeedsUpdate) {
-                this.wasActiveAndNeedsUpdate = false;
-            } else {
-                this.setActive(true);
-            }
-        }
-
-        @Override
-        protected Recipe findRecipe(long maxVoltage,
-                                    IItemHandlerModifiable inputs,
-                                    IMultipleTankHandler fluidInputs, MatchingMode mode) {
-
+        protected Recipe findAndAppendRecipes(long maxVoltage,
+                                              IItemHandlerModifiable inputs) {
             final int maxItemsLimit = 32 * heatingCoilLevel;
-            final ArrayList<CountableIngredient> recipeInputs = new ArrayList<>();
-            final ArrayList<ItemStack> recipeOutputs = new ArrayList<>();
             RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder();
 
             boolean matchedRecipe = false;
+
+            MirroredItemHandler mirroredItemHandler = new MirroredItemHandler(outputInventory);
 
             // Iterate over the input items looking for more things to add until we run either out of input items
             // or we have exceeded the number of items permissible from the smelting bonus
@@ -202,9 +186,8 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                     continue;
 
                 // Determine if there is a valid recipe for this item. If not, skip it.
-                Recipe matchingRecipe = recipeMap.findRecipe(maxVoltage,
-                        Collections.singletonList(currentInputItem),
-                        Collections.emptyList(), 0, MatchingMode.DEFAULT);
+                Recipe matchingRecipe = findRecipe(maxVoltage, currentInputItem);
+
                 CountableIngredient inputIngredient;
                 if (matchingRecipe != null) {
                     inputIngredient = matchingRecipe.getInputs().get(0);
@@ -221,16 +204,18 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 int amountOfCurrentItem = Math.min(itemsLeftUntilMax, currentInputItem.getCount());
 
                 //how much we can add to the output inventory
-                int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, this.getOutputInventory(), amountOfCurrentItem);
+                int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, mirroredItemHandler, amountOfCurrentItem);
 
+                //amount to actually multiply the recipe by
                 int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);
 
                 if (multiplierRecipeAmount > 0) {
-                    ParallelLogic.append(recipeBuilder, matchingRecipe, multiplierRecipeAmount);
+                    recipeBuilder.append(matchingRecipe, multiplierRecipeAmount);
                     itemsLeftUntilMax -= multiplierRecipeAmount;
-                    if (itemsLeftUntilMax == 0) {
-                        break;
-                    }
+                }
+
+                if (itemsLeftUntilMax == 0) {
+                    break;
                 }
             }
 
@@ -241,12 +226,16 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 return null;
             }
 
-            this.parallelRecipesPerformed = maxItemsLimit - itemsLeftUntilMax;
-
             return recipeBuilder
                     .EUt(Math.max(1, 16 / heatingCoilDiscount))
                     .duration((int) Math.max(1.0, 256 * ((maxItemsLimit - itemsLeftUntilMax) / (maxItemsLimit * 1.0))))
                     .build().getResult();
+        }
+
+        protected Recipe findRecipe(long maxVoltage, ItemStack itemStack) {
+            return recipeMap.findRecipe(maxVoltage,
+                    Collections.singletonList(itemStack),
+                    Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
         }
     }
 }

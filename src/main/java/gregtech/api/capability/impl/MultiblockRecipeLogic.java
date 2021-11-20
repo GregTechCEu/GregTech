@@ -21,7 +21,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     // Used for distinct mode
     protected int lastRecipeIndex = 0;
     protected List<IItemHandlerModifiable> invalidatedInputList = new ArrayList<>();
-
+    protected int parallelRecipesPerformed;
 
     public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity, tileEntity.recipeMap);
@@ -50,7 +50,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         fluidOutputs = null;
         itemOutputs = null;
         lastRecipeIndex = 0;
-        parallelRecipesPerformed = 1;
         setActive(false); // this marks dirty for us
     }
 
@@ -155,9 +154,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 int parallelizable = Math.min(multiplierByInputs, limitByOutput);
 
                 if (parallelizable > 1) {
-                    multipliedRecipe = ParallelLogic.multiply(currentRecipe, this.recipeMap, parallelizable);
-                    currentRecipe = multipliedRecipe.build().getResult();
-                    this.parallelRecipesPerformed = parallelizable;
+                    currentRecipe = recipeMap.recipeBuilder()
+                            .append(currentRecipe, parallelizable)
+                            .build().getResult();
                 } else {
                     this.isOutputsFull = true;
                     currentRecipe = null;
@@ -199,8 +198,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     int parallelizable = Math.min(multiplierByInputs, limitByOutput);
 
                     if (parallelizable > 1) {
-                        multipliedRecipe = ParallelLogic.multiply(currentRecipe, this.recipeMap, parallelizable);
-                        currentRecipe = multipliedRecipe.build().getResult();
+                        currentRecipe = recipeMap.recipeBuilder()
+                                .append(currentRecipe, parallelizable)
+                                .build().getResult();
                         this.parallelRecipesPerformed = parallelizable;
                     } else {
                         this.isOutputsFull = true;
@@ -259,13 +259,17 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
 
             // output muffler items
-            if (controller.hasMufflerMechanics())
-                controller.outputRecoveryItems();
+            if (controller.hasMufflerMechanics()) {
+                for (int i = 0; i < this.parallelRecipesPerformed; i++) {
+                    controller.outputRecoveryItems();
+                }
+            }
 
             // increase total on time
             if (controller.hasMaintenanceMechanics())
                 controller.calculateMaintenance(this.progressTime);
         }
+        this.parallelRecipesPerformed = 1;
         super.completeRecipe();
     }
 
