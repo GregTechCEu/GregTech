@@ -3892,6 +3892,7 @@ gregtech.multiblock.universal.distinct=Distinct Buses:
 gregtech.multiblock.universal.distinct.no=No
 gregtech.multiblock.universal.distinct.yes=Yes
 gregtech.multiblock.universal.distinct.info=If enabled, each Item Input Bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
+gregtech.multiblock.parallel=Performing up to %d Recipes in Parallel
 
 gregtech.multiblock.preview.zoom=Use mousewheel or right-click+Drag to zoom
 gregtech.multiblock.preview.rotate=Click and drag to rotate
