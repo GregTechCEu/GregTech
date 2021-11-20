@@ -411,6 +411,23 @@ metaitem.circuit.integrated.gui=Конфигурация интегрально�
 # TODO
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
+metaitem.glass_lens.white=Стекло Линза (Белый)
+metaitem.glass_lens.orange=Стекло Линза (Оранжевый)
+metaitem.glass_lens.magenta=Стекло Линза (Пурпурный)
+metaitem.glass_lens.light_blue=Стекло Линза (Голубой)
+metaitem.glass_lens.yellow=Стекло Линза (Желтый)
+metaitem.glass_lens.lime=Стекло Линза (Лаймовый)
+metaitem.glass_lens.pink=Стекло Линза (Розовый)
+metaitem.glass_lens.gray=Стекло Линза (Серый)
+metaitem.glass_lens.light_gray=Стекло Линза (Cветло-Cерый)
+metaitem.glass_lens.cyan=Стекло Линза (Бирюзовый)
+metaitem.glass_lens.purple=Стекло Линза (Фиолетовый)
+metaitem.glass_lens.blue=Стекло Линза (Синий)
+metaitem.glass_lens.brown=Стекло Линза (Коричневый)
+metaitem.glass_lens.green=Стекло Линза (Зеленый)
+metaitem.glass_lens.red=Стекло Линза (Красный)
+metaitem.glass_lens.black=Стекло Линза (Черный)
+
 #CIRCUITS LOCALIZATION
 # TODO
 metaitem.boule.silicon.name=Кремниевый монокристалл

@@ -339,6 +339,23 @@ metaitem.circuit.integrated.name=编程电路
 metaitem.circuit.integrated.tooltip=右击打开配置界面
 metaitem.circuit.integrated.gui=编程电路配置
 
+metaitem.glass_lens.white=玻璃透镜 (白色的)
+metaitem.glass_lens.orange=玻璃透镜 (橘子)
+metaitem.glass_lens.magenta=玻璃透镜 (品紅)
+metaitem.glass_lens.light_blue=玻璃透镜 (淺藍)
+metaitem.glass_lens.yellow=玻璃透镜 (黃色)
+metaitem.glass_lens.lime=玻璃透镜 (酸橙)
+metaitem.glass_lens.pink=玻璃透镜 (粉色的)
+metaitem.glass_lens.gray=玻璃透镜 (灰色的)
+metaitem.glass_lens.light_gray=玻璃透镜 (淺灰)
+metaitem.glass_lens.cyan=玻璃透镜 (青色)
+metaitem.glass_lens.purple=玻璃透镜 (紫色的)
+metaitem.glass_lens.blue=玻璃透镜 (藍色)
+metaitem.glass_lens.brown=玻璃透镜 (棕色的)
+metaitem.glass_lens.green=玻璃透镜 (綠色)
+metaitem.glass_lens.red=玻璃透镜 (红色的)
+metaitem.glass_lens.black=玻璃透镜 (黑色的)
+
 #CIRCUITS LOCALIZATION
 metaitem.boule.silicon.name=单晶硅
 metaitem.boule.glowstone.name=萤石掺杂的单晶硅

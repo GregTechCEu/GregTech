@@ -445,6 +445,23 @@ metaitem.circuit.integrated.tooltip=Use to open configuration GUI
 metaitem.circuit.integrated.gui=Programmed Circuit Configuration
 metaitem.circuit.integrated.jei_description=JEI is only showing recipes for the given configuration.\n\nYou can select a configuration in the Programmed Circuit configuration tab.
 
+metaitem.glass_lens.white=Glass Lens (White)
+metaitem.glass_lens.orange=Glass Lens (Orange)
+metaitem.glass_lens.magenta=Glass Lens (Magenta)
+metaitem.glass_lens.light_blue=Glass Lens (Light Blue)
+metaitem.glass_lens.yellow=Glass Lens (Yellow)
+metaitem.glass_lens.lime=Glass Lens (Lime)
+metaitem.glass_lens.pink=Glass Lens (Pink)
+metaitem.glass_lens.gray=Glass Lens (Gray)
+metaitem.glass_lens.light_gray=Glass Lens (Light Gray)
+metaitem.glass_lens.cyan=Glass Lens (Cyan)
+metaitem.glass_lens.purple=Glass Lens (Purple)
+metaitem.glass_lens.blue=Glass Lens (Blue)
+metaitem.glass_lens.brown=Glass Lens (Brown)
+metaitem.glass_lens.green=Glass Lens (Green)
+metaitem.glass_lens.red=Glass Lens (Red)
+metaitem.glass_lens.black=Glass Lens (Black)
+
 #CIRCUITS LOCALIZATION
 metaitem.boule.silicon.name=Monocrystalline Silicon Boule
 metaitem.boule.silicon.tooltip=Raw Circuit
