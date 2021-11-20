@@ -60,6 +60,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static gregtech.api.capability.GregtechDataCodes.*;
+
 public abstract class MetaTileEntity implements ICoverable {
 
     public static final int DEFAULT_PAINTING_COLOR = ConfigHolder.U.GT5u.defaultPaintingColor;
