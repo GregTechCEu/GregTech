@@ -10,6 +10,7 @@ import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import gregtech.common.terminal.app.VirtualTankApp;
+import gregtech.common.terminal.app.capeselector.CapeSelectorApp;
 import gregtech.common.terminal.app.game.maze.MazeApp;
 import gregtech.common.terminal.app.game.minesweeper.MinesweeperApp;
 import gregtech.common.terminal.app.game.pong.PongApp;
@@ -118,6 +119,9 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new VirtualTankApp())
                 .battery(GTValues.MV, 500)
                 .device(DeviceHardware.DEVICE.WIRELESS)
+                .build();
+        AppRegistryBuilder.create(new CapeSelectorApp())
+                .battery(GTValues.ULV, 8)
                 .build();
     }
 
