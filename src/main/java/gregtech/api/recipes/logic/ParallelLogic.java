@@ -371,7 +371,7 @@ public class ParallelLogic {
             int amountOfCurrentItem = Math.min(parallelAmount - engagedItems, currentInputItem.getCount());
 
             //how much we can add to the output inventory
-            int limitByOutput = ParallelLogic.limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, amountOfCurrentItem);
+            int limitByOutput = limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, amountOfCurrentItem);
 
             //amount to actually multiply the recipe by
             int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);
