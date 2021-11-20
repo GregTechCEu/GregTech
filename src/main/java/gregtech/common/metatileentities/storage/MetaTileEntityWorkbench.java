@@ -11,16 +11,8 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
 import gregtech.api.gui.Widget.ClickData;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.AbstractWidgetGroup;
-import gregtech.api.gui.widgets.ClickButtonWidget;
-import gregtech.api.gui.widgets.CraftingStationInputWidgetGroup;
-import gregtech.api.gui.widgets.ImageWidget;
-import gregtech.api.gui.widgets.LabelWidget;
-import gregtech.api.gui.widgets.SimpleTextWidget;
-import gregtech.api.gui.widgets.SlotWidget;
-import gregtech.api.gui.widgets.TabGroup;
+import gregtech.api.gui.widgets.*;
 import gregtech.api.gui.widgets.TabGroup.TabLocation;
-import gregtech.api.gui.widgets.WidgetGroup;
 import gregtech.api.gui.widgets.tab.ItemTabInfo;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -67,7 +59,7 @@ public class MetaTileEntityWorkbench extends MetaTileEntity {
     }
 
     public static AbstractWidgetGroup createWorkbenchTab(CraftingRecipeResolver recipeResolver, ItemStackHandler craftingGrid, CraftingRecipeMemory recipeMemory,
-                                                         ItemStackHandler toolInventory, ItemStackHandler internalInventory) {
+                                                        ItemStackHandler toolInventory, ItemStackHandler internalInventory) {
         WidgetGroup widgetGroup = new WidgetGroup();
         widgetGroup.addWidget(new ImageWidget(88 - 13, 44 - 14, 26, 26, GuiTextures.SLOT));
         widgetGroup.addWidget(new CraftingSlotWidget(recipeResolver, 0, 88 - 9, 44 - 9));
