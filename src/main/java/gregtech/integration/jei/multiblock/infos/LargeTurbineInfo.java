@@ -44,7 +44,7 @@ public class LargeTurbineInfo extends MultiblockInfoPage {
         holder.getMetaTileEntity().setFrontFacing(EnumFacing.WEST);
         ItemStack rotorStack = MetaItems.TURBINE_ROTOR.getStackForm();
         //noinspection ConstantConditions
-        TurbineRotorBehavior.getInstanceFor(rotorStack).setPartMaterial(rotorStack, Materials.Darmstadtium);
+        TurbineRotorBehavior.getInstanceFor(rotorStack).setPartMaterial(rotorStack, Materials.Neutronium);
         ((MetaTileEntityRotorHolder) holder.getMetaTileEntity()).getRotorInventory().setStackInSlot(0, rotorStack);
         MultiblockShapeInfo.Builder shapeInfo = MultiblockShapeInfo.builder()
                 .aisle("CCCC", "CIOC", "CCCC")

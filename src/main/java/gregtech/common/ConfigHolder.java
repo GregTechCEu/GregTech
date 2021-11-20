@@ -119,7 +119,7 @@ public class ConfigHolder {
         @Config.Comment("Whether to make redstone related recipes harder. Default: false")
         public boolean hardRedstoneRecipes = false;
 
-        @Config.Comment("Recipes for items like iron doors, trapdoors, buckets, pressure plates, cauldrons, hoppers, and iron bars require iron plates, sticks, and more. Default: true")
+        @Config.Comment("Recipes for items like iron doors, trapdoors, buckets, cauldrons, hoppers, and iron bars require iron plates, sticks, and more. Default: true")
         public boolean hardIronRecipes = true;
 
         @Config.Comment("Whether to make miscellaneous recipes harder. Default: false")
@@ -193,6 +193,9 @@ public class ConfigHolder {
         @Config.Comment("Steam to EU multiplier for Steam Multiblocks. 1.0 means 1 Steam -> 1 EU. 0.5 means 2 Steam -> 1 EU. Default: 0.5")
         @Config.RequiresWorldRestart
         public double multiblockSteamToEU = 0.5;
+
+        @Config.Comment("Whether to generate flawed and chipped gems for materials and recipes involving them. Useful for mods like Terrafirmacraft. Default: false")
+        public boolean generateLowQualityGems = false;
 
         public static class GT5U {
 

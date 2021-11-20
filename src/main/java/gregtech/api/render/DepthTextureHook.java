@@ -2,7 +2,7 @@ package gregtech.api.render;
 
 import gregtech.api.util.RenderUtil;
 import gregtech.common.ConfigHolder;
-import gregtech.common.asm.hooks.BloomRenderLayerHooks;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;

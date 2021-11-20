@@ -91,7 +91,7 @@ public class MetaBlocks {
     public static BlockTransparentCasing TRANSPARENT_CASING;
     public static BlockWireCoil WIRE_COIL;
     public static BlockWireCoil2 WIRE_COIL2;
-    public static BlockFusionCoil FUSION_COIL;
+    public static BlockFusionCasing FUSION_CASING;
     public static BlockWarningSign WARNING_SIGN;
     public static HermeticCasings HERMETIC_CASING;
 
@@ -153,8 +153,8 @@ public class MetaBlocks {
         WIRE_COIL.setRegistryName("wire_coil");
         WIRE_COIL2 = new BlockWireCoil2();
         WIRE_COIL2.setRegistryName("wire_coil2");
-        FUSION_COIL = new BlockFusionCoil();
-        FUSION_COIL.setRegistryName("fusion_coil");
+        FUSION_CASING = new BlockFusionCasing();
+        FUSION_CASING.setRegistryName("fusion_casing");
         WARNING_SIGN = new BlockWarningSign();
         WARNING_SIGN.setRegistryName("warning_sign");
         HERMETIC_CASING = new HermeticCasings();
@@ -196,6 +196,7 @@ public class MetaBlocks {
                 MetaBlocks::createCompressedBlock);
 
         for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
+            if (material.isHidden()) continue;
 
             if (material.hasProperty(PropertyKey.ORE))
                 createOreBlock(material);
@@ -248,7 +249,8 @@ public class MetaBlocks {
 
         Map<Integer, Material[]> blocksToGenerate = new TreeMap<>();
 
-        for (Material material : GregTechAPI.MATERIAL_REGISTRY)
+        for (Material material : GregTechAPI.MATERIAL_REGISTRY) {
+            if (material.isHidden()) continue;
             if (materialPredicate.test(material)) {
                 int id = material.getId();
                 int metaBlockID = id / 16;
@@ -262,6 +264,7 @@ public class MetaBlocks {
 
                 blocksToGenerate.get(metaBlockID)[subBlockID] = material;
             }
+        }
 
         blocksToGenerate.forEach((key, value) -> blockGenerator.accept(value, key));
     }
@@ -335,7 +338,7 @@ public class MetaBlocks {
         registerItemModel(TRANSPARENT_CASING);
         registerItemModel(WIRE_COIL);
         registerItemModel(WIRE_COIL2);
-        registerItemModel(FUSION_COIL);
+        registerItemModel(FUSION_CASING);
         registerItemModel(WARNING_SIGN);
         registerItemModel(HERMETIC_CASING);
         registerItemModel(GRANITE);

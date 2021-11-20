@@ -300,10 +300,10 @@ public class ToolRecipeHandler {
         int voltageMultiplier = getVoltageMultiplier(material);
 
         RecipeMaps.EXTRUDER_RECIPES.recipeBuilder()
-                .input(OrePrefix.ingot, material, 3)
+                .input(OrePrefix.ingot, material, 2)
                 .notConsumable(MetaItems.SHAPE_EXTRUDER_HOE)
                 .outputs(OreDictUnifier.get(toolPrefix, material))
-                .duration((int) material.getAverageMass() * 3)
+                .duration((int) material.getAverageMass() * 2)
                 .EUt(8 * voltageMultiplier)
                 .buildAndRegister();
     }

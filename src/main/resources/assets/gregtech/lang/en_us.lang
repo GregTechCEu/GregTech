@@ -56,9 +56,9 @@ gregtech.multiblock.multi_smelter.description=The Multi Smelter is a multiblock 
 gregtech.multiblock.large_boiler.description=Large Boilers are multiblocks that generate steam from an energy source and water. Said energy source is usually a solid fuel or some high-density fluid. Tiers differ only by amount of steam outputted.
 gregtech.multiblock.large_turbine.description=Large Turbines are multiblocks that generate power from steam, gases, and plasma by having them spin the turbine's rotor. Energy output is based on rotor efficiency and current speed of turbine. Gearbox casings are used in the center of the structure.
 gregtech.multiblock.assembly_line.description=The Assembly Line is a large multiblock structure consisting of 5 to 16 "slices". In theory, it's large Assembling Machine, used for creating advanced crafting components.
-gregtech.multiblock.fusion_reactor_mk1.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. The Mark 1 Fusion Reactor can use LuV, ZPM or UV Energy Hatches. For every Hatch it has its buffer increases by 10M EU.
-gregtech.multiblock.fusion_reactor_mk2.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. The Mark 2 Fusion Reactor can use ZPM or UV Energy Hatches. For every Hatch it has its buffer increases by 20M EU.
-gregtech.multiblock.fusion_reactor_mk3.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. The Mark 3 Fusion Reactor can only use UV Energy Hatches. For every Hatch it has its buffer increases by 40M EU.
+gregtech.multiblock.fusion_reactor_mk1.description=The Fusion Reactor Mark 1 is a large multiblock structure used for fusing elements into heavier ones. It can only use LuV, ZPM, and UV Energy Hatches. For every Hatch it has, its buffer increases by 10M EU, and has a maximum of 160M.
+gregtech.multiblock.fusion_reactor_mk2.description=The Fusion Reactor Mark 2 is a large multiblock structure used for fusing elements into heavier ones. It can only use ZPM and UV Energy Hatches. For every Hatch it has, its buffer increases by 20M EU, and has a maximum of 320M.
+gregtech.multiblock.fusion_reactor_mk3.description=The Fusion Reactor Mark 3 is a large multiblock structure used for fusing elements into heavier ones. It can only use UV Energy Hatches. For every Hatch it has, its buffer increases by 40M EU, and has a maximum of 640M.
 gregtech.multiblock.fusion_reactor.heat=Heat: %d
 gregtech.multiblock.large_chemical_reactor.description=The Large Chemical Reactor performs chemical reactions at 100% energy efficiency. Overclocks multiply both speed and energy by 4. The multiblock requires exactly 1 Cupronickel Coil Block, which must be placed adjacent to the PTFE Pipe casing located in the center.
 gregtech.multiblock.primitive_water_pump.description=The Primitive Water Pump is a pre-Steam Era multiblock that collects water once per second, depending on the Biome it is in. It can use a Pump, ULV, or LV Output Hatch, increasing the amount of water per tier. Follows the formula: Biome Coefficient * Hatch Multiplier.
@@ -223,12 +223,6 @@ metaitem.large_fluid_cell.aluminium.name=%s Aluminium Cell
 metaitem.large_fluid_cell.stainless_steel.name=%s Stainless Steel Cell
 metaitem.large_fluid_cell.titanium.name=%s Titanium Cell
 metaitem.large_fluid_cell.tungstensteel.name=%s Tungstensteel Cell
-metaitem.large_fluid_cell.chrome.name=%s Chrome Cell
-metaitem.large_fluid_cell.iridium.name=%s Iridium Cell
-metaitem.large_fluid_cell.osmium.name=%s Osmium Cell
-metaitem.large_fluid_cell.neutronium.name=%s Neutronium Cell
-
-gregtech.item.fluid_cell.jei_description=The Extractor can be used to clear the inventory of any type of cell.
 
 metaitem.spray.can.dyes.white.name=Spray Can (White)
 metaitem.spray.can.dyes.orange.name=Spray Can (Orange)
@@ -679,11 +673,6 @@ metaitem.bio_chaff.name=Bio Chaff
 metaitem.carbon.fibers.name=Raw Carbon Fibers
 metaitem.carbon.mesh.name=Carbon Fiber Mesh
 metaitem.carbon.plate.name=Carbon Fiber Plate
-metaitem.ingot.mixed_metal=Mixed Metal Ingot
-metaitem.plate.advanced_alloy=Advanced Alloy Plate
-metaitem.ingot.iridium_alloy=Iridium Alloy Ingot
-metaitem.ingot.iridium_alloy.tooltip=Used to make Iridium Alloy Plates
-metaitem.plate.iridium_alloy=Iridium Alloy Plate
 metaitem.neutron_reflector.name=Iridium Neutron Reflector
 metaitem.neutron_reflector.tooltip=Indestructible
 metaitem.duct_tape.name=BrainTech Aerospace Advanced Reinforced Duct Tape FAL-84
@@ -692,11 +681,6 @@ metaitem.component.sawblade.diamond.name=Diamond Saw Blade
 metaitem.component.sawblade.tungsten.name=Tungsten Saw Blade
 metaitem.component.grinder.diamond.name=Diamond Grinding Head
 metaitem.component.grinder.tungsten.name=Tungsten Grinding Head
-
-metaitem.ingot.mixed_metal.name=Mixed Metal Ingot
-metaitem.plate.advanced_alloy.name=Advanced Alloy Plate
-metaitem.ingot.iridium_alloy.name=Iridium Alloy Ingot
-metaitem.plate.iridium_alloy.name=Reinforced Iridium Alloy
 
 metaitem.quantumeye.name=Quantum Eye
 metaitem.quantumeye.tooltip=Improved Ender Eye
@@ -726,6 +710,7 @@ metaitem.cover.energy.detector.name=Energy Detector
 metaitem.cover.energy.detector.tooltip=Gives out Energy Amount as Redstone (as Cover)
 metaitem.cover.player.detector.name=Player Detector
 metaitem.cover.player.detector.tooltip=Gives out close Players as Redstone (as Cover)
+metaitem.cover.drain.name=Drain Cover
 
 metaitem.cover.facade.name=%s Facade
 metaitem.cover.facade.tooltip=Decorative outfit
@@ -1976,6 +1961,8 @@ item.wheat.dust=Flour
 item.meat.dustTiny=Tiny Pile of Mince Meat
 item.meat.dustSmall=Small Pile of Mince Meat
 item.meat.dust=Mince Meat
+item.borosilicate_glass.ingot=Borosilicate Glass Bar
+item.borosilicate_glass.wireFine=Borosilicate Glass Fibers
 
 recipemap.ore_washer.name=Ore Washer
 recipemap.thermal_centrifuge.name=Thermal Centrifuge
@@ -2112,10 +2099,6 @@ tile.wire_coil.naquadah_alloy.name=Naquadah Alloy Coil Block
 tile.wire_coil.fluxed_electrum.name=Fluxed Electrum Coil Block
 tile.wire_coil.diamericium_titanium.name=Diamericium Titanium Coil Block
 
-# Fusion coil blocks
-tile.fusion_coil.superconductor.name=Superconducting Coil Block
-tile.fusion_coil.fusion_coil.name=Fusion Coil Block
-
 # General casing block tooltip
 tile.machine_casing.tooltip1=Mobs cannot Spawn on this Block
 tile.machine_casing.tooltip2=This is NOT a TileEntity!
@@ -2199,11 +2182,17 @@ tile.multiblock_casing.engine_intake.name=Engine Intake Casing
 tile.multiblock_casing.grate.name=Grate Machine Casing
 tile.multiblock_casing.assembler.name=Assembler Machine Casing
 tile.multiblock_casing.assembly_line.name=Assembly Line Casing
-tile.multiblock_casing.fusion.name=Fusion Machine Casing
-tile.multiblock_casing.fusion_mk2.name=Fusion Machine Casing MK II
+
+# Fusion casing blocks
+tile.fusion_casing.superconductor_coil.name=Superconducting Coil Block
+tile.fusion_casing.fusion_coil.name=Fusion Coil Block
+tile.fusion_casing.fusion_casing.name=Fusion Machine Casing
+tile.fusion_casing.fusion_casing_mk2.name=Fusion Machine Casing MK II
+tile.fusion_casing.fusion_casing_mk3.name=Fusion Machine Casing MK III
 
 # Transparent casing blocks
-tile.transparent_casing.reinforced_glass.name=Reinforced Glass
+tile.transparent_casing.tempered_glass.name=Tempered Glass
+tile.transparent_casing.fusion_glass.name=Fusion Glass
 
 # Creative tabs
 itemGroup.gregtech.main=GregTech
@@ -2359,6 +2348,9 @@ gregtech.machine.steam_rock_breaker_bronze.name=Steam Rock Breaker
 gregtech.machine.steam_rock_breaker_bronze.tooltip=Place Water and Lava adjancent
 gregtech.machine.steam_rock_breaker_steel.name=High Pressure Steam Rock Breaker
 gregtech.machine.steam_rock_breaker_steel.tooltip=Place Water and Lava adjancent
+gregtech.machine.steam_miner.name=Steam Miner
+gregtech.machine.steam_miner.tooltip=Mines ores below the miner ONLY!
+gregtech.machine.steam_miner.description=Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b16mB/t§7 of steam.
 
 # Generators
 gregtech.machine.combustion_generator.lv.name=Basic Combustion Generator
@@ -3562,6 +3554,8 @@ gregtech.machine.coke_oven.name=Coke Oven
 gregtech.machine.coke_oven_hatch.name=Coke Oven Hatch
 gregtech.machine.coke_oven_hatch.tooltip=Allows automation access to coke oven. Must be centered on coke oven side.
 
+
+
 gregtech.machine.large_combustion_engine.name=Large Combustion Engine
 gregtech.machine.large_turbine.steam.name=Large Steam Turbine
 gregtech.machine.large_turbine.gas.name=Large Gas Turbine
@@ -3576,6 +3570,23 @@ gregtech.machine.assembly_line.name=Assembly Line
 gregtech.machine.fusion_reactor.luv.name=Fusion Reactor Computer Mark 1
 gregtech.machine.fusion_reactor.zpm.name=Fusion Reactor Computer Mark 2
 gregtech.machine.fusion_reactor.uv.name=Fusion Reactor Computer Mark 3
+gregtech.machine.fusion_reactor.capacity=§7Maximum Energy Storage: §e%sM EU
+
+gregtech.machine.miner.lv.name=Basic Miner
+gregtech.machine.miner.mv.name=Advanced Miner
+gregtech.machine.miner.hv.name=Advanced Miner II
+gregtech.machine.miner.tooltip=Mines ores below the miner ONLY! Use screwdriver to configure radius.
+gregtech.machine.miner.usage=Max Working Area: §b%dx%d§7 blocks. §b%ds§7 per block. Uses §b%d§7 EU/t.
+
+gregtech.machine.large_miner.ev.name=Basic Large Miner
+gregtech.machine.large_miner.iv.name=Advanced Large Miner
+gregtech.machine.large_miner.luv.name=Advanced Large Miner II
+gregtech.machine.miner.multi.modes=Has Silk Touch and Chunk Boundary Modes.
+gregtech.machine.miner.multi.tooltip=Max Working Area: §b%dx%d§7 chunks.
+gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator.
+#Small ores lang: gregtech.machine.miner.multi.production=Produces 3x more crushed ore than a macerator. Small ore Fortune §b%d§7.
+gregtech.machine.miner.fluid_usage=Consumes §b%dmb§7 of §e%s§7 per tick. Each overclock doubles the fluid consumption.
+gregtech.machine.miner.overclock=Requires §e%s§7 power. Overclocks up to §e%s§7.
 
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
@@ -3725,6 +3736,7 @@ gregtech.machine.rotor_holder.tooltip2=Holds Rotor in place so it will not fly a
 gregtech.machine.rotor_holder.hv.name=HV Rotor Holder
 gregtech.machine.rotor_holder.luv.name=LuV Rotor Holder
 gregtech.machine.rotor_holder.uhv.name=UHV Rotor Holder
+gregtech.machine.rotor_holder.max.name=MAX Rotor Holder
 
 gregtech.machine.maintenance_hatch.name=Maintenance Hatch
 gregtech.machine.maintenance_hatch.tooltip=For maintaining Multiblocks
@@ -3819,6 +3831,10 @@ gregtech.gui.fluid_auto_output.tooltip.enabled=Fluid Auto-Output Enabled
 gregtech.gui.fluid_auto_output.tooltip.disabled=Fluid Auto-Output Disabled
 gregtech.gui.item_auto_output.tooltip.enabled=Item Auto-Output Enabled
 gregtech.gui.item_auto_output.tooltip.disabled=Item Auto-Output Disabled
+gregtech.gui.silktouch.enabled=Silk Touch Enabled: Click to Disable./n§7Switching requires an idle machine.
+gregtech.gui.silktouch.disabled=Silk Touch Disabled: Click to Enable./n§7Switching requires an idle machine.
+gregtech.gui.chunkmode.enabled=Chunk Mode Enabled: Click to Disable./n§7Switching requires an idle machine.
+gregtech.gui.chunkmode.disabled=Chunk Mode Disabled: Click to Enable./n§7Switching requires an idle machine.
 
 gregtech.jei.ore_by_product_from_ore=Use %s for %s
 gregtech.jei.ore_by_product_from_machine=Produce by processing %s with %s
@@ -3921,6 +3937,16 @@ gregtech.multiblock.large_boiler.heat_efficiency=Heat Efficiency: %d%%
 gregtech.multiblock.large_boiler.heat_efficiency.tooltip=The higher boiler temperature is, the higher it's fuel efficiency
 gregtech.multiblock.large_boiler.throttle.tooltip=Boiler can output less steam and consume less fuel, but it comes with price: the fuel efficiency is lower at higher throttle rates.
 gregtech.multiblock.large_boiler.throttle_modify=Modify Throttle:
+
+gregtech.multiblock.large_miner.done=Done!
+gregtech.multiblock.large_miner.working=Working...
+gregtech.multiblock.large_miner.invfull=Inventory Full!
+gregtech.multiblock.large_miner.needspower=Needs Power!
+gregtech.multiblock.large_miner.vent=Venting Blocked!
+gregtech.multiblock.large_miner.steam=Needs Steam!
+gregtech.multiblock.large_miner.radius=Radius: %d Blocks
+gregtech.multiblock.large_miner.errorradius=Cannot change radius while working!
+gregtech.multiblock.large_miner.needsfluid=Needs Drilling Fluid
 
 gregtech.command.usage=Usage: /gregtech <worldgen/util>
 gregtech.command.worldgen.usage=Usage: /gregtech worldgen <reload>

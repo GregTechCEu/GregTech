@@ -14,10 +14,13 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.gui.recipes.RecipeLayout;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+
+import static gregtech.common.metatileentities.MetaTileEntities.*;
 
 public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRecipeWrapper> {
 
@@ -51,15 +54,20 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("large_gas_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_GAS_TURBINE)));
         put("large_plasma_turbine", new MultiblockInfoRecipeWrapper(new LargeTurbineInfo(MetaTileEntities.LARGE_PLASMA_TURBINE)));
         put("assembly_line", new MultiblockInfoRecipeWrapper(new AssemblyLineInfo()));
-        put("fusion_reactor_mk1", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(0)));
-        put("fusion_reactor_mk2", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(1)));
-        put("fusion_reactor_mk3", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(2)));
+        put("fusion_reactor_mk1", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(GTValues.LuV)));
+        put("fusion_reactor_mk2", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(GTValues.ZPM)));
+        put("fusion_reactor_mk3", new MultiblockInfoRecipeWrapper(new FusionReactorInfo(GTValues.UV)));
         put("primitive_water_pump", new MultiblockInfoRecipeWrapper(new PrimitivePumpInfo()));
         put("steam_grinder", new MultiblockInfoRecipeWrapper(new SteamGrinderInfo()));
         put("steam_oven", new MultiblockInfoRecipeWrapper(new SteamOvenInfo()));
+        put("basic_large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(BASIC_LARGE_MINER)));
+        put("large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(LARGE_MINER)));
+        put("advanced_large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(ADVANCED_LARGE_MINER)));
+
     }};
 
     public static void registerRecipes(IModRegistry registry) {
+        MinecraftForge.EVENT_BUS.post(new MultiInfoPageEvent(multiblockRecipes));
         registry.addRecipes(multiblockRecipes.values(), "gregtech:multiblock_info");
     }
 

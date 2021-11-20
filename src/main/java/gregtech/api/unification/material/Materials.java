@@ -1,11 +1,13 @@
 package gregtech.api.unification.material;
 
+import gregtech.api.GregTechAPI;
 import gregtech.api.unification.material.info.MaterialFlag;
 import gregtech.api.unification.material.materials.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static gregtech.api.unification.material.info.MaterialFlags.*;
 
@@ -31,7 +33,13 @@ import static gregtech.api.unification.material.info.MaterialFlags.*;
  */
 public class Materials {
 
+    private static final AtomicBoolean INIT = new AtomicBoolean(false);
+
     public static void register() {
+        if (INIT.getAndSet(true)) {
+            return;
+        }
+
         MarkerMaterials.register();
 
         /*

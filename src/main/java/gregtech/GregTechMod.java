@@ -20,7 +20,7 @@ import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.*;
-import gregtech.common.asm.hooks.BloomRenderLayerHooks;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.modelfactories.BlockCompressedFactory;
 import gregtech.common.blocks.modelfactories.BlockFrameFactory;

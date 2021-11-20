@@ -37,14 +37,14 @@ public class MetaItem1 extends StandardMetaItem {
     @Override
     public void registerSubItems() {
         // Credits: ID 0-10
-        CREDIT_COPPER = addItem(0, "credit.copper").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Copper, GTValues.M / 4)));
-        CREDIT_CUPRONICKEL = addItem(1, "credit.cupronickel").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Cupronickel, GTValues.M / 4)));
-        CREDIT_SILVER = addItem(2, "credit.silver").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Silver, GTValues.M / 4))).setRarity(EnumRarity.UNCOMMON);
-        CREDIT_GOLD = addItem(3, "credit.gold").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4))).setRarity(EnumRarity.UNCOMMON);
-        CREDIT_PLATINUM = addItem(4, "credit.platinum").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Platinum, GTValues.M / 4))).setRarity(EnumRarity.RARE);
-        CREDIT_OSMIUM = addItem(5, "credit.osmium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmium, GTValues.M / 4))).setRarity(EnumRarity.RARE);
-        CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Naquadah, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
-        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium").setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Neutronium, GTValues.M / 4))).setRarity(EnumRarity.EPIC);
+        CREDIT_COPPER = addItem(0, "credit.copper");
+        CREDIT_CUPRONICKEL = addItem(1, "credit.cupronickel");
+        CREDIT_SILVER = addItem(2, "credit.silver").setRarity(EnumRarity.UNCOMMON);
+        CREDIT_GOLD = addItem(3, "credit.gold").setRarity(EnumRarity.UNCOMMON);
+        CREDIT_PLATINUM = addItem(4, "credit.platinum").setRarity(EnumRarity.RARE);
+        CREDIT_OSMIUM = addItem(5, "credit.osmium").setRarity(EnumRarity.RARE);
+        CREDIT_NAQUADAH = addItem(6, "credit.naquadah").setRarity(EnumRarity.EPIC);
+        CREDIT_NEUTRONIUM = addItem(7, "credit.neutronium") .setRarity(EnumRarity.EPIC);
 
         COIN_GOLD_ANCIENT = addItem(8, "coin.gold.ancient").
                 setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Gold, GTValues.M / 4))).setRarity(EnumRarity.RARE);
@@ -110,52 +110,30 @@ public class MetaItem1 extends StandardMetaItem {
         }
 
         // Fluid Cells: ID 78-88
-        FLUID_CELL = addItem(78, "fluid_cell").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, false))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tin, GTValues.M * 2)));
+        FLUID_CELL = addItem(78, "fluid_cell").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, false));
 
-        UNIVERSAL_FLUID_CELL = addItem(79, "fluid_cell.universal").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Tin, GTValues.M * 2)));
+        FLUID_CELL_UNIVERSAL = addItem(79, "fluid_cell.universal").addComponents(new FluidStats(1000, Integer.MIN_VALUE, Integer.MAX_VALUE, true));
 
-        LARGE_FLUID_CELL_STEEL = addItem(80, "large_fluid_cell.steel")
+        FLUID_CELL_LARGE_STEEL = addItem(80, "large_fluid_cell.steel")
                 .addComponents(new FluidStats(8000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, OrePrefix.ingot.materialAmount * 4L)));
 
-        LARGE_FLUID_CELL_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
+        FLUID_CELL_LARGE_ALUMINIUM = addItem(81, "large_fluid_cell.aluminium")
                 .addComponents(new FluidStats(32000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Aluminium, OrePrefix.ingot.materialAmount * 4L)));
 
-        LARGE_FLUID_CELL_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
+        FLUID_CELL_LARGE_STAINLESS_STEEL = addItem(82, "large_fluid_cell.stainless_steel")
                 .addComponents(new FluidStats(64000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, OrePrefix.ingot.materialAmount * 6L)));
 
-        LARGE_FLUID_CELL_TITANIUM = addItem(83, "large_fluid_cell.titanium")
+        FLUID_CELL_LARGE_TITANIUM = addItem(83, "large_fluid_cell.titanium")
                 .addComponents(new FluidStats(128000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.StainlessSteel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Titanium, OrePrefix.ingot.materialAmount * 6L)));
 
-        LARGE_FLUID_CELL_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
+        FLUID_CELL_LARGE_TUNGSTEN_STEEL = addItem(84, "large_fluid_cell.tungstensteel")
                 .addComponents(new FluidStats(512000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
                 .setMaxStackSize(32)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
-
-        LARGE_FLUID_CELL_CHROME = addItem(85, "large_fluid_cell.chrome")
-                .addComponents(new FluidStats(2048000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaxStackSize(32)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Chrome, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
-
-        LARGE_FLUID_CELL_IRIDIUM = addItem(86, "large_fluid_cell.iridium")
-                .addComponents(new FluidStats(8192000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaxStackSize(2)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Iridium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
-
-        LARGE_FLUID_CELL_OSMIUM = addItem(87, "large_fluid_cell.osmium")
-                .addComponents(new FluidStats(32768000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaxStackSize(1)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Osmium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
-
-        LARGE_FLUID_CELL_NEUTRONIUM = addItem(88, "large_fluid_cell.neutronium")
-                .addComponents(new FluidStats(131072000, Integer.MIN_VALUE, Integer.MAX_VALUE, true))
-                .setMaxStackSize(1)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Neutronium, OrePrefix.plate.materialAmount * 4L + OrePrefix.ring.materialAmount * 8L)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.TungstenSteel, OrePrefix.ingot.materialAmount * 8L)));
 
         // Limited-Use Items: ID 89-95
 
@@ -281,9 +259,9 @@ public class MetaItem1 extends StandardMetaItem {
 
         // Special Machine Components: ID 266-280
         COMPONENT_SAW_BLADE_DIAMOND = addItem(266, "component.sawblade.diamond").addOreDict(OreDictNames.craftingSawBlade)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.CobaltBrass, GTValues.M * 8), new MaterialStack(Materials.Diamond, GTValues.M)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.CobaltBrass, GTValues.M * 4), new MaterialStack(Materials.Diamond, GTValues.M)));
         COMPONENT_SAW_BLADE_TUNGSTEN = addItem(267, "component.sawblade.tungsten").addOreDict(OreDictNames.craftingSawBlade)
-                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Ultimet, GTValues.M * 8), new MaterialStack(Materials.TungstenCarbide, GTValues.M * 4)));
+                .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Ultimet, GTValues.M * 4), new MaterialStack(Materials.TungstenCarbide, GTValues.M * 4)));
         COMPONENT_GRINDER_DIAMOND = addItem(268, "component.grinder.diamond").addOreDict(OreDictNames.craftingGrinder)
                 .setMaterialInfo(new ItemMaterialInfo(new MaterialStack(Materials.Steel, GTValues.M * 8), new MaterialStack(Materials.Diamond, GTValues.M * 5)));
         COMPONENT_GRINDER_TUNGSTEN = addItem(269, "component.grinder.tungsten").addOreDict(OreDictNames.craftingGrinder)
@@ -409,12 +387,9 @@ public class MetaItem1 extends StandardMetaItem {
         CAMERA = addItem(469, "camera");
 
         // Misc Crafting Items: ID 491-515
+        //Free ID: 493, 494, 495, 496
         ENERGIUM_DUST = addItem(491, "energium_dust");
         ENGRAVED_LAPOTRON_CHIP = addItem(492, "engraved.lapotron_chip");
-        INGOT_MIXED_METAL = addItem(493, "ingot.mixed_metal");
-        ADVANCED_ALLOY_PLATE = addItem(494, "plate.advanced_alloy");
-        INGOT_IRIDIUM_ALLOY = addItem(495, "ingot.iridium_alloy");
-        PLATE_IRIDIUM_ALLOY = addItem(496, "plate.iridium_alloy");
         NEUTRON_REFLECTOR = addItem(497, "neutron_reflector");
         GELLED_TOLUENE = addItem(498, "gelled_toluene");
         CARBON_FIBERS = addItem(499, "carbon.fibers");

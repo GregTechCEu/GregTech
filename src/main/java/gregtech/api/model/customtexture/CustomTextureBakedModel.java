@@ -3,7 +3,7 @@ package gregtech.api.model.customtexture;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.*;
-import gregtech.common.asm.hooks.BlockHooks;
+import gregtech.core.hooks.BlockHooks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

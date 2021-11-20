@@ -11,7 +11,7 @@ import gregtech.api.GTValues;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.render.SimpleSidedCubeRenderer.RenderSide;
 import gregtech.api.render.Textures;
-import gregtech.common.asm.hooks.BloomRenderLayerHooks;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

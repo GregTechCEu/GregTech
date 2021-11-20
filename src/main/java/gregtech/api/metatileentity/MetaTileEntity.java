@@ -25,7 +25,7 @@ import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.GTUtility;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
-import gregtech.common.asm.hooks.BloomRenderLayerHooks;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

@@ -1,6 +1,5 @@
 package gregtech.api.recipes;
 
-import com.google.common.collect.Lists;
 import gregtech.api.GTValues;
 import gregtech.api.GregTechAPI;
 import gregtech.api.recipes.builders.SimpleRecipeBuilder;
@@ -20,7 +19,8 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static gregtech.api.unification.material.Materials.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class RecipeMapTest {
 
@@ -28,11 +28,8 @@ public class RecipeMapTest {
     public static void init() {
         GTLog.init(LogManager.getLogger(GTValues.MODID)); // yes this was necessary
         Bootstrap.register();
-        // Attempt to work around tests failing due to materials already being registered in previous tests
-        if(Lists.newArrayList(GregTechAPI.MATERIAL_REGISTRY).isEmpty()) {
-            Materials.register();
-            GregTechAPI.MATERIAL_REGISTRY.flush();
-        }
+        Materials.register();
+        GregTechAPI.MATERIAL_REGISTRY.flush();
         MetaFluids.init();
     }
 
