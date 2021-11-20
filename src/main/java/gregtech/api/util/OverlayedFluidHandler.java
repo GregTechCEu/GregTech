@@ -122,15 +122,19 @@ public class OverlayedFluidHandler {
                             }
                         }
                     }
-                    int canInsertUpTo = Math.min(overlayedTank.getCapacity(), amountToInsert);
-                    if (canInsertUpTo > 0) {
-                        insertedAmount += canInsertUpTo;
-                        overlayedTank.setFluidKey(toInsert);
-                        overlayedTank.setFluidAmount(canInsertUpTo);
-                        amountToInsert -= insertedAmount;
-                    }
-                    if (amountToInsert == 0) {
-                        return insertedAmount;
+                    //check if this tanks accepts the fluid we're simulating
+                    if (overlayed.getTankProperties()[i].canFillFluidType(new FluidStack(toInsert.getFluid(), amountToInsert)))
+                    {
+                        int canInsertUpTo = Math.min(overlayedTank.getCapacity(), amountToInsert);
+                        if (canInsertUpTo > 0) {
+                            insertedAmount += canInsertUpTo;
+                            overlayedTank.setFluidKey(toInsert);
+                            overlayedTank.setFluidAmount(canInsertUpTo);
+                            amountToInsert -= insertedAmount;
+                        }
+                        if (amountToInsert == 0) {
+                            return insertedAmount;
+                        }
                     }
                 }
             }
