@@ -6,7 +6,6 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
-import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
@@ -19,7 +18,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
@@ -199,7 +197,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         Recipe currentRecipe;
         IItemHandlerModifiable importInventory = getInputInventory();
         IMultipleTankHandler importFluids = getInputTank();
-        Tuple<RecipeBuilder<?>, Integer> multipliedRecipe;
+        IItemHandlerModifiable exportInventory = getOutputInventory();
+        IMultipleTankHandler exportFluids = getOutputTank();
+
+        RecipeBuilder<?> multipliedRecipe;
 
         // see if the last recipe we used still works
         if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids))
@@ -218,22 +219,25 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         if (currentRecipe != null) {
 
             //Check if the recipe can be multiplied due to parallel logic
-            if(this.metaTileEntity.getParallelLimit() > 1) {
-                multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory, importFluids, getOutputInventory(), getOutputTank(), this.metaTileEntity.getParallelLimit());
-                // Multiply the recipe if we can
-                if (multipliedRecipe.getSecond() == 0) {
+            if (this.metaTileEntity.getParallelLimit() > 1) {
+                int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, this.metaTileEntity.getParallelLimit());
+                int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
+
+                int parallelizable = Math.min(multiplierByInputs, limitByOutput);
+
+                if (parallelizable > 1) {
+                    multipliedRecipe = ParallelLogic.multiply(currentRecipe, this.recipeMap, parallelizable);
+                    currentRecipe = multipliedRecipe.build().getResult();
+                    this.parallelRecipesPerformed = parallelizable;
+                } else {
                     this.isOutputsFull = true;
                     currentRecipe = null;
-                } else {
-                    currentRecipe = multipliedRecipe.getFirst().build().getResult();
-                    this.parallelRecipesPerformed = multipliedRecipe.getSecond();
                 }
             }
 
-            if(currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory)) {
+            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory)) {
                 setupRecipe(currentRecipe);
             }
-
         }
         // Inputs have been inspected.
         metaTileEntity.getNotifiedItemInputList().clear();

@@ -16,7 +16,6 @@ import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.ItemStackKey;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.BlockWireCoil2.CoilType2;
@@ -27,8 +26,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -180,7 +177,6 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             } else {
                 this.setActive(true);
             }
-
         }
 
         @Override
@@ -188,11 +184,10 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                                     IItemHandlerModifiable inputs,
                                     IMultipleTankHandler fluidInputs, MatchingMode mode) {
 
-            Map<Integer, Triple<ItemStackKey, Integer, Integer>> outputInvMap = ParallelLogic.mapInvHandler(this.getOutputInventory());
-
             final int maxItemsLimit = 32 * heatingCoilLevel;
             final ArrayList<CountableIngredient> recipeInputs = new ArrayList<>();
             final ArrayList<ItemStack> recipeOutputs = new ArrayList<>();
+            RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder();
 
             boolean matchedRecipe = false;
 
@@ -201,11 +196,6 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             int itemsLeftUntilMax = maxItemsLimit;
 
             for (int index = 0; index < inputs.getSlots(); index++) {
-
-                if (itemsLeftUntilMax == 0) {
-                    break;
-                }
-
                 // Skip this slot if it is empty.
                 final ItemStack currentInputItem = inputs.getStackInSlot(index);
                 if (currentInputItem.isEmpty())
@@ -227,51 +217,33 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                     throw new IllegalStateException(
                             String.format("Got recipe with null ingredient %s", matchingRecipe));
 
-
+                //equivalent of getting the max ratio from the inputs from Parallel logic
                 int amountOfCurrentItem = Math.min(itemsLeftUntilMax, currentInputItem.getCount());
 
-                int amountToInsert = matchingRecipe.getOutputs().get(0).getCount() * amountOfCurrentItem;
+                //how much we can add to the output inventory
+                int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, this.getOutputInventory(), amountOfCurrentItem);
 
-                //smelting recipes are limited to one output
-                ItemStackKey stackKey = KeySharedStack.getRegisteredStack(matchingRecipe.getOutputs().get(0));
+                int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);
 
-                amountToInsert = simulateAddHashedItemToInvMap(stackKey, amountToInsert, outputInvMap);
-
-                //since we're adding sequentially to the recipe, if the last one cant fit all,
-                //subtract the result of the division of outputs per input.
-                //if it's a partial division, reduce the input stack by one.
-                if (amountToInsert > 0) {
-                    amountOfCurrentItem -= amountToInsert / matchingRecipe.getOutputs().get(0).getCount();
-                    if (amountToInsert % matchingRecipe.getOutputs().get(0).getCount() != 0) {
-                        amountOfCurrentItem -= 1;
+                if (multiplierRecipeAmount > 0) {
+                    ParallelLogic.append(recipeBuilder, matchingRecipe, multiplierRecipeAmount);
+                    itemsLeftUntilMax -= multiplierRecipeAmount;
+                    if (itemsLeftUntilMax == 0) {
+                        break;
                     }
-                }
-
-                //add the result of the simulation, if successfully merged.
-                if (amountOfCurrentItem > 0) {
-                    recipeInputs.add(new CountableIngredient(inputIngredient.getIngredient(),
-                            inputIngredient.getCount() * amountOfCurrentItem));
-
-                    ItemStack copyToAdd = matchingRecipe.getOutputs().get(0).copy();
-                    copyToAdd.setCount(matchingRecipe.getOutputs().get(0).getCount() * amountOfCurrentItem);
-                    recipeOutputs.add(copyToAdd);
-
-                    itemsLeftUntilMax -= amountOfCurrentItem;
                 }
             }
 
             this.invalidInputsForRecipes = !matchedRecipe;
             this.isOutputsFull = (matchedRecipe && itemsLeftUntilMax == maxItemsLimit);
 
-            if (recipeInputs.isEmpty()) {
+            if (recipeBuilder.getInputs().isEmpty()) {
                 return null;
             }
 
             this.parallelRecipesPerformed = maxItemsLimit - itemsLeftUntilMax;
 
-            return recipeMap.recipeBuilder()
-                    .inputsIngredients(recipeInputs)
-                    .outputs(recipeOutputs)
+            return recipeBuilder
                     .EUt(Math.max(1, 16 / heatingCoilDiscount))
                     .duration((int) Math.max(1.0, 256 * ((maxItemsLimit - itemsLeftUntilMax) / (maxItemsLimit * 1.0))))
                     .build().getResult();

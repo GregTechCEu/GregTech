@@ -20,6 +20,7 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTFluidUtils;
@@ -46,10 +47,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -64,9 +62,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import static gregtech.api.capability.GregtechDataCodes.*;
-import static gregtech.api.util.InventoryUtils.simulateItemStackMerge;
 
 public abstract class MetaTileEntity implements ICoverable {
 
@@ -852,7 +847,6 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
 
-
     public <T> T getCapability(Capability<T> capability, EnumFacing side) {
         if (capability == GregtechTileCapabilities.CAPABILITY_COVERABLE) {
             return GregtechTileCapabilities.CAPABILITY_COVERABLE.cast(this);
@@ -1038,15 +1032,20 @@ public abstract class MetaTileEntity implements ICoverable {
         }
 
         // perform the merge.
-        items.forEach(stack -> {
-            ItemHandlerHelper.insertItemStacked(handler, stack, false);
-        });
+        items.forEach(stack -> ItemHandlerHelper.insertItemStacked(handler, stack, false));
         return true;
     }
 
+    /**
+     * @param stackKey   a ItemStackKey representing the item to be merged
+     * @param amount     the amount of items to merge
+     * @param invCopyMap a HashMap representing a copy of the inventory to be merged
+     * @return the amount of items not inserted on the given inventory
+     */
+
     public static int simulateAddHashedItemToInvMap(final ItemStackKey stackKey,
-                                                int amount,
-                                                final Map<Integer, Triple<ItemStackKey, Integer, Integer>> invCopyMap) {
+                                                    int amount,
+                                                    final Map<Integer, Triple<ItemStackKey, Integer, Integer>> invCopyMap) {
 
         for (Map.Entry<Integer, Triple<ItemStackKey, Integer, Integer>> isEntry : invCopyMap.entrySet()) {
             if (amount == 0) {
@@ -1076,14 +1075,56 @@ public abstract class MetaTileEntity implements ICoverable {
         return amount;
     }
 
-    public static boolean addFluidsToFluidHandler(IFluidHandler handler, boolean simulate, List<FluidStack> items) {
-        boolean filledAll = true;
-        for (FluidStack stack : items) {
-            int filled = handler.fill(stack, !simulate);
-            filledAll &= filled == stack.amount;
-            if (!filledAll && simulate) return false;
+    public static int simulateAddHashedFluidToTankMap(final FluidKey fluidKey,
+                                                     int amount,
+                                                     final Map<Integer, Triple<FluidKey, Integer, Integer>> outputFluidListMap) {
+        for (Map.Entry<Integer, Triple<FluidKey, Integer, Integer>> targetTankEntry : outputFluidListMap.entrySet()) {
+            Triple<FluidKey, Integer, Integer> entryValue = targetTankEntry.getValue();
+            if (amount == 0) {
+                break;
+            }
+            if (entryValue.getLeft() == null) {
+                int insertable = Math.min(amount, entryValue.getRight());
+                targetTankEntry.setValue(Triple.of(fluidKey, insertable, entryValue.getRight()));
+                amount -= insertable;
+            } else if (entryValue.getLeft().equals(fluidKey)) {
+                if (entryValue.getMiddle() < entryValue.getRight()) {
+                    int insertable = entryValue.getRight() - entryValue.getMiddle();
+                    if (insertable == 0) {
+                        continue;
+                    }
+                    if (insertable >= amount) {
+                        targetTankEntry.setValue(Triple.of(entryValue.getLeft(),
+                                entryValue.getMiddle() + amount, entryValue.getRight()));
+                    } else {
+                        targetTankEntry.setValue(Triple.of(entryValue.getLeft(),
+                                entryValue.getMiddle() + insertable, entryValue.getRight()));
+                        amount -= insertable;
+                    }
+                }
+            }
         }
-        return filledAll;
+        return amount;
+    }
+
+
+
+    public static boolean addFluidsToFluidHandler(IFluidHandler handler, boolean simulate, List<FluidStack> fluidStacks) {
+        Map<Integer, Triple<FluidKey, Integer, Integer>> outputFluidList = ParallelLogic.mapFluidHandler(handler);
+
+        if (simulate) {
+            boolean canMerge = true;
+            for (FluidStack fluidStack : fluidStacks) {
+                int amount = MetaTileEntity.simulateAddHashedFluidToTankMap(new FluidKey(fluidStack), fluidStack.amount, outputFluidList);
+                if (amount > 0) {
+                    canMerge = false;
+                }
+            }
+            return canMerge;
+        }
+
+        fluidStacks.forEach(fluidStack -> handler.fill(fluidStack, true));
+        return true;
     }
 
     public final int getOutputRedstoneSignal(@Nullable EnumFacing side) {
