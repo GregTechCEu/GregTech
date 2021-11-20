@@ -1,17 +1,21 @@
 package gregtech.api.util;
 
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.FluidKey;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
+import java.util.HashSet;
 
 public class OverlayedFluidHandler {
 
     private final OverlayedTank[] overlayedTanks;
     private final OverlayedTank[] originalTanks;
     private final IFluidHandler overlayed;
+    private boolean allowSameFluidFill = true;
+    private HashSet<FluidKey> uniqueFluids = new HashSet<>();
 
     public OverlayedFluidHandler(IFluidHandler toOverlay) {
         this.overlayedTanks = new OverlayedTank[toOverlay.getTankProperties().length];
@@ -41,6 +45,11 @@ public class OverlayedFluidHandler {
             IFluidTankProperties fluidTankProperties = overlayed.getTankProperties()[tank];
             this.originalTanks[tank] = new OverlayedTank(fluidTankProperties);
             this.overlayedTanks[tank] = new OverlayedTank(fluidTankProperties);
+            if (overlayed instanceof IMultipleTankHandler) {
+                if (!((IMultipleTankHandler) overlayed).allowSameFluidFill()) {
+                    this.allowSameFluidFill = false;
+                }
+            }
         }
     }
 
@@ -51,6 +60,9 @@ public class OverlayedFluidHandler {
             initTank(i);
             // if the fluid key matches the tank, insert the fluid
             if (toInsert.equals(this.overlayedTanks[i].getFluidKey())) {
+                if (!this.allowSameFluidFill && !uniqueFluids.add(toInsert)){
+                    return 0;
+                }
                 int spaceInTank = this.overlayedTanks[i].getCapacity() - this.overlayedTanks[i].getFluidAmount();
                 int insertable = Math.min(spaceInTank, amountToInsert);
                 if (insertable > 0) {
@@ -70,6 +82,9 @@ public class OverlayedFluidHandler {
             for (OverlayedTank overlayedTank : this.overlayedTanks) {
                 // if the tank is empty
                 if (overlayedTank.getFluidKey() == null) {
+                    if (!this.allowSameFluidFill && !uniqueFluids.add(toInsert)){
+                        return 0;
+                    }
                     int insertable = Math.min(overlayedTank.getCapacity(), amountToInsert);
                     if (insertable > 0) {
                         insertedAmount += insertable;
