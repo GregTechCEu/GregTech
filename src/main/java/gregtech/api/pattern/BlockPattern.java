@@ -179,7 +179,7 @@ public class BlockPattern {
                 //Check layer-local matcher predicate
                 for (Map.Entry<TraceabilityPredicate.SimplePredicate, Integer> entry : layerCount.entrySet()) {
                     if (entry.getValue() < entry.getKey().minLayerCount) {
-                        worldState.setError(new TraceabilityPredicate.SinglePredicateError(worldState, entry.getKey(), 3));
+                        worldState.setError(new TraceabilityPredicate.SinglePredicateError(entry.getKey(), 3));
                         return null;
                     }
                 }
@@ -187,7 +187,7 @@ public class BlockPattern {
             //Repetitions out of range
             if (r < aisleRepetitions[c][0]) {
                 if (!worldState.hasError()) {
-                    worldState.setError(new PatternError(worldState));
+                    worldState.setError(new PatternError());
                 }
                 return null;
             }
@@ -196,7 +196,7 @@ public class BlockPattern {
         //Check count matches amount
         for (Map.Entry<TraceabilityPredicate.SimplePredicate, Integer> entry : globalCount.entrySet()) {
             if (entry.getValue() < entry.getKey().minGlobalCount) {
-                worldState.setError(new TraceabilityPredicate.SinglePredicateError(worldState, entry.getKey(), 1));
+                worldState.setError(new TraceabilityPredicate.SinglePredicateError(entry.getKey(), 1));
                 return null;
             }
         }

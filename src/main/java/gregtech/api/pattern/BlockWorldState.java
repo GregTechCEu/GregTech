@@ -42,6 +42,9 @@ public class BlockWorldState {
 
     public void setError(PatternError error) {
         this.error = error;
+        if (error != null) {
+            error.setWorldState(this);
+        }
     }
 
     public PatternMatchContext getMatchContext() {

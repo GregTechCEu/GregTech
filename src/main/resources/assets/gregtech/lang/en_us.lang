@@ -71,6 +71,8 @@ gregtech.multiblock.pattern.error.limited.1=The number of components (%s) should
 gregtech.multiblock.pattern.error.limited.2=The number of components (%s) should less than %d in each layer.
 gregtech.multiblock.pattern.error.limited.3=The number of components (%s) should more than %d in each layer.
 
+gregtech.multiblock.pattern.error.coils=All heating coils shall be of the same type.
+
 item.invalid.name=Invalid item
 fluid.empty=Empty
 

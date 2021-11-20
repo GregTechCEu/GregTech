@@ -27,12 +27,20 @@ public class TraceabilityPredicate {
             BlockWireCoil blockWireCoil = (BlockWireCoil) blockState.getBlock();
             BlockWireCoil.CoilType coilType = blockWireCoil.getState(blockState);
             Object currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
-            return currentCoilType.toString().equals(coilType.getName());
+            if (!currentCoilType.toString().equals(coilType.getName())) {
+                blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.coils"));
+                return false;
+            }
+            return true;
         } else if ((blockState.getBlock() instanceof BlockWireCoil2)) {
             BlockWireCoil2 blockWireCoil = (BlockWireCoil2) blockState.getBlock();
             BlockWireCoil2.CoilType2 coilType = blockWireCoil.getState(blockState);
             Object currentCoilType = blockWorldState.getMatchContext().getOrPut("CoilType", coilType);
-            return currentCoilType.toString().equals(coilType.getName());
+            if (!currentCoilType.toString().equals(coilType.getName())) {
+                blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.coils"));
+                return false;
+            }
+            return true;
         }
         return false;
     }, ()-> ArrayUtils.addAll(
@@ -126,10 +134,6 @@ public class TraceabilityPredicate {
             this.candidates = candidates;
         }
 
-        public boolean hasLimited() {
-            return minGlobalCount != -1 || maxGlobalCount != -1 || minLayerCount != -1;
-        }
-
         public boolean test(BlockWorldState blockWorldState) {
             return predicate.test(blockWorldState);
         }
@@ -145,7 +149,7 @@ public class TraceabilityPredicate {
             count = (count == null ? 0 : count) + (base ? 1 : 0);
             blockWorldState.globalCount.put(this, count);
             if (maxGlobalCount == -1 || count <= maxGlobalCount) return base;
-            blockWorldState.setError(new SinglePredicateError(blockWorldState, this, 0));
+            blockWorldState.setError(new SinglePredicateError(this, 0));
             return false;
         }
 
@@ -156,7 +160,7 @@ public class TraceabilityPredicate {
             count = (count == null ? 0 : count) + (base ? 1 : 0);
             blockWorldState.layerCount.put(this, count);
             if (maxLayerCount == -1 || count <= maxLayerCount) return base;
-            blockWorldState.setError(new SinglePredicateError(blockWorldState, this, 2));
+            blockWorldState.setError(new SinglePredicateError(this, 2));
             return false;
         }
     }
@@ -165,8 +169,7 @@ public class TraceabilityPredicate {
         public final SimplePredicate predicate;
         public final int type;
 
-        public SinglePredicateError(BlockWorldState blockWorldState, SimplePredicate predicate, int type) {
-            super(blockWorldState);
+        public SinglePredicateError(SimplePredicate predicate, int type) {
             this.predicate = predicate;
             this.type = type;
         }

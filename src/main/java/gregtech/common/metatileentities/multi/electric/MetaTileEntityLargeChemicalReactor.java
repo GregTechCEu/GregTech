@@ -7,6 +7,8 @@ import gregtech.api.metatileentity.multiblock.IMultiblockPart;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.pattern.BlockPattern;
 import gregtech.api.pattern.FactoryBlockPattern;
+import gregtech.api.pattern.MultiblockShapeInfo;
+import gregtech.api.pattern.TraceabilityPredicate;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
@@ -17,7 +19,6 @@ import gregtech.common.blocks.BlockMetalCasing;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
-import gregtech.api.pattern.MultiblockShapeInfo;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -44,24 +45,25 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
 
     @Override
     protected BlockPattern createStructurePattern() {
+        TraceabilityPredicate casing = states(getCasingState()).setMinGlobalLimited(10);
+        TraceabilityPredicate abilities = autoAbilities();
         return FactoryBlockPattern.start()
                 .aisle("XXX", "XCX", "XXX")
-                .aisle("XXX", "XPX", "XXX")
+                .aisle("XCX", "CPC", "XCX")
                 .aisle("XXX", "XSX", "XXX")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(9).or(autoAbilities()))
+                .where('X', casing.or(abilities))
                 .where('P', states(getPipeCasingState()))
-                .where('C', states(MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL)))
+                .where('C', states(MetaBlocks.WIRE_COIL.getState(BlockWireCoil.CoilType.CUPRONICKEL)).setMinGlobalLimited(1).setMaxGlobalLimited(1)
+                        .or(abilities)
+                        .or(casing))
                 .build();
     }
 
     @Override
     public List<MultiblockShapeInfo> getMatchingShapes() {
         ArrayList<MultiblockShapeInfo> shapeInfo = new ArrayList<>();
-        shapeInfo.add(MultiblockShapeInfo.builder()
-                .aisle("XEX", "XCX", "XXX")
-                .aisle("XXX", "XPX", "XXX")
-                .aisle("IMO", "FSH", "XXX")
+        MultiblockShapeInfo.Builder baseBuilder = MultiblockShapeInfo.builder()
                 .where('S', MetaTileEntities.LARGE_CHEMICAL_REACTOR, EnumFacing.SOUTH)
                 .where('X', MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING))
                 .where('P', MetaBlocks.BOILER_CASING.getState(BlockBoilerCasing.BoilerCasingType.POLYTETRAFLUOROETHYLENE_PIPE))
@@ -71,10 +73,37 @@ public class MetaTileEntityLargeChemicalReactor extends RecipeMapMultiblockContr
                 .where('O', MetaTileEntities.ITEM_EXPORT_BUS[3], EnumFacing.SOUTH)
                 .where('F', MetaTileEntities.FLUID_IMPORT_HATCH[3], EnumFacing.SOUTH)
                 .where('H', MetaTileEntities.FLUID_EXPORT_HATCH[3], EnumFacing.SOUTH)
-                .where('M', () -> ConfigHolder.U.GT5u.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING), EnumFacing.SOUTH)
+                .where('M', () -> ConfigHolder.U.GT5u.enableMaintenance ? MetaTileEntities.MAINTENANCE_HATCH : MetaBlocks.METAL_CASING.getState(BlockMetalCasing.MetalCasingType.PTFE_INERT_CASING), EnumFacing.SOUTH);
+        shapeInfo.add(baseBuilder.shallowCopy()
+                .aisle("XEX", "XCX", "XXX")
+                .aisle("XXX", "XPX", "XXX")
+                .aisle("IMO", "FSH", "XXX")
                 .build()
         );
-
+        shapeInfo.add(baseBuilder.shallowCopy()
+                .aisle("XEX", "XXX", "XXX")
+                .aisle("XXX", "XPX", "XCX")
+                .aisle("IMO", "FSH", "XXX")
+                .build()
+        );
+        shapeInfo.add(baseBuilder.shallowCopy()
+                .aisle("XEX", "XXX", "XXX")
+                .aisle("XCX", "XPX", "XXX")
+                .aisle("IMO", "FSH", "XXX")
+                .build()
+        );
+        shapeInfo.add(baseBuilder.shallowCopy()
+                .aisle("XEX", "XXX", "XXX")
+                .aisle("XXX", "CPX", "XXX")
+                .aisle("IMO", "FSH", "XXX")
+                .build()
+        );
+        shapeInfo.add(baseBuilder.shallowCopy()
+                .aisle("XEX", "XXX", "XXX")
+                .aisle("XXX", "XPC", "XXX")
+                .aisle("IMO", "FSH", "XXX")
+                .build()
+        );
         return shapeInfo;
     }
 

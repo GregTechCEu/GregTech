@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 
 public class PatternError {
 
-    protected final BlockWorldState worldState;
+    protected BlockWorldState worldState;
 
-    public PatternError(BlockWorldState worldState){
+    public void setWorldState(BlockWorldState worldState) {
         this.worldState = worldState;
     }
 

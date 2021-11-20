@@ -116,8 +116,6 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
         boolean isPagesDisabled = patterns.length == 1;
         this.buttonPreviousPattern.visible = !isPagesDisabled;
         this.buttonNextPattern.visible = !isPagesDisabled;
-        this.buttonPreviousPattern.enabled = false;
-        this.buttonNextPattern.enabled = patterns.length > 1;
     }
 
     @Override
@@ -141,6 +139,8 @@ public class MultiblockInfoRecipeWrapper implements IRecipeWrapper {
             this.nextLayerButton.x = border.getWidth() - (ICON_SIZE + RIGHT_PADDING);
             this.buttonPreviousPattern.x = border.getWidth() - ((2 * ICON_SIZE) + RIGHT_PADDING + 1);
             this.buttonNextPattern.x = border.getWidth() - (ICON_SIZE + RIGHT_PADDING);
+            this.buttonPreviousPattern.enabled = false;
+            this.buttonNextPattern.enabled = patterns.length > 1;
             Vector3f size = ((TrackedDummyWorld) getCurrentRenderer().world).getSize();
             float max = Math.max(Math.max(Math.max(size.x, size.y), size.z), 1);
             this.zoom = (float) (3.5 * Math.sqrt(max));
