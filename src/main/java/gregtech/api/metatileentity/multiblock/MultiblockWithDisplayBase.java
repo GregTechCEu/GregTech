@@ -34,6 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
 
@@ -183,6 +184,15 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      */
     public void outputRecoveryItems() {
         IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
+        muffler.recoverItemsTable(GTUtility.copyStackList(recoveryItems));
+    }
+
+    public void outputRecoveryItems(int parallel) {
+        IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
+        ArrayList<ItemStack> parallelRecover = new ArrayList<>();
+        IntStream.range(0, parallel).forEach(value -> recoveryItems.forEach(itemStack -> {
+            GTUtility.addStackToItemStackList(itemStack, parallelRecover);
+        }));
         muffler.recoverItemsTable(GTUtility.copyStackList(recoveryItems));
     }
 
