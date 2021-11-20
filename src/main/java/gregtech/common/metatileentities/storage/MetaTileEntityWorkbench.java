@@ -53,7 +53,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class MetaTileEntityWorkbench extends MetaTileEntity {
-
     private final ItemStackHandler internalInventory = new ItemStackHandler(18);
     private final ItemStackHandler craftingGrid = new SingleItemStackHandler(9);
     private final ItemStackHandler toolInventory = new ToolItemStackHandler(9);
