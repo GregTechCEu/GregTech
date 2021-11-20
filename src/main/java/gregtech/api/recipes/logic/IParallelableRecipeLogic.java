@@ -22,12 +22,13 @@ public interface IParallelableRecipeLogic {
     /**
      * Method which finds a recipe which can be parallelized, works by multiplying the recipe by the parallelization factor,
      * and shrinking the recipe till its outputs can fit
-     * @param recipeMap the recipe map
+     *
+     * @param recipeMap     the recipe map
      * @param currentRecipe recipe to be parallelized
-     * @param inputs input item handler
-     * @param fluidInputs input fluid handler
-     * @param outputs output item handler
-     * @param fluidOutputs output fluid handler
+     * @param inputs        input item handler
+     * @param fluidInputs   input fluid handler
+     * @param outputs       output item handler
+     * @param fluidOutputs  output fluid handler
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
@@ -45,9 +46,10 @@ public interface IParallelableRecipeLogic {
     /**
      * Method which finds a recipe then multiplies it, then appends it to the builds up to the parallelization factor,
      * or filling the output
-     * @param recipeMap the recipe map
-     * @param inputs input item handler
-     * @param outputs output item handler
+     *
+     * @param recipeMap     the recipe map
+     * @param inputs        input item handler
+     * @param outputs       output item handler
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */

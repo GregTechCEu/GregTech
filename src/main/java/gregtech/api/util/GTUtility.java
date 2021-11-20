@@ -261,7 +261,7 @@ public class GTUtility {
      * @return a list of stacks, with optimized stack sizes
      */
 
-    public static List<ItemStack> addStackToItemStackList(ItemStack stackToAdd, List<ItemStack> itemStackList){
+    public static List<ItemStack> addStackToItemStackList(ItemStack stackToAdd, List<ItemStack> itemStackList) {
         if (!itemStackList.isEmpty()) {
             for (ItemStack stackInList : itemStackList) {
                 if (ItemStackHashStrategy.comparingAllButCount().equals(stackInList, stackToAdd)) {
@@ -941,10 +941,10 @@ public class GTUtility {
     }
 
     public static AxisAlignedBB rotateAroundYAxis(AxisAlignedBB aabb, EnumFacing from, EnumFacing to) {
-        if(from == EnumFacing.UP || from == EnumFacing.DOWN || to == EnumFacing.UP || to == EnumFacing.DOWN)
+        if (from == EnumFacing.UP || from == EnumFacing.DOWN || to == EnumFacing.UP || to == EnumFacing.DOWN)
             throw new IllegalArgumentException("Either the second or third parameters were EnumFacing.DOWN or EnumFacing.UP.");
         AxisAlignedBB rotatedAABB = new AxisAlignedBB(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ);
-        while(from != to) {
+        while (from != to) {
             from = from.rotateY();
             rotatedAABB = new AxisAlignedBB(1 - rotatedAABB.maxZ, rotatedAABB.minY, rotatedAABB.minX, 1 - rotatedAABB.minZ, rotatedAABB.maxY, rotatedAABB.maxX);
         }
@@ -969,7 +969,7 @@ public class GTUtility {
 
     /**
      * Alternative function for tank sizes, takes a tier input and returns the corresponding size
-     *
+     * <p>
      * This function scales the same as the default function except it stops scaling past HV
      */
     public static final Function<Integer, Integer> hvCappedTankSizeFunction = tier -> {
@@ -983,7 +983,7 @@ public class GTUtility {
 
     /**
      * Alternative function for tank sizes, takes a tier input and returns the corresponding size
-     *
+     * <p>
      * This function is meant for use with machine that need very large tanks, it stops scaling past HV
      */
     public static final Function<Integer, Integer> largeTankSizeFunction = tier -> {
@@ -997,7 +997,7 @@ public class GTUtility {
 
     public static String romanNumeralString(int num) {
 
-        if(romanNumeralConversions.isEmpty()) { // Initialize on first run-through.
+        if (romanNumeralConversions.isEmpty()) { // Initialize on first run-through.
             romanNumeralConversions.put(1000, "M");
             romanNumeralConversions.put(900, "CM");
             romanNumeralConversions.put(500, "D");

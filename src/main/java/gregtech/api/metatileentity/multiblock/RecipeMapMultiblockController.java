@@ -173,7 +173,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
                 textList.add(new TextComponentTranslation("gregtech.multiblock.max_energy_per_tick", maxVoltage, voltageName));
             }
 
-            if(canBeDistinct()) {
+            if (canBeDistinct()) {
                 ITextComponent buttonText = new TextComponentTranslation("gregtech.multiblock.universal.distinct");
                 buttonText.appendText(" ");
                 ITextComponent button = AdvancedTextWidget.withButton(isDistinct() ?
@@ -190,7 +190,7 @@ public abstract class RecipeMapMultiblockController extends MultiblockWithDispla
             } else if (recipeMapWorkable.isActive()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
                 int currentProgress = (int) (recipeMapWorkable.getProgressPercent() * 100);
-                if(this.getParallelLimit() != 1) {
+                if (this.getParallelLimit() != 1) {
                     textList.add(new TextComponentTranslation("gregtech.multiblock.parallel", this.getParallelLimit()));
                 }
                 textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));

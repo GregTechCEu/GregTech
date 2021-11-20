@@ -66,32 +66,32 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                         // super function calls the world, which equal null in test
                         new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
 
-                            @Override
-                            public boolean canBeDistinct() {
-                                return false;
-                            }
+                    @Override
+                    public boolean canBeDistinct() {
+                        return false;
+                    }
 
-                            @Override
-                            protected void reinitializeStructurePattern() {
+                    @Override
+                    protected void reinitializeStructurePattern() {
 
-                            }
+                    }
 
-                            // function checks for the temperature of the recipe against the coils
-                            @Override
-                            public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
-                                return true;
-                            }
+                    // function checks for the temperature of the recipe against the coils
+                    @Override
+                    public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
+                        return true;
+                    }
 
-                            // ignore maintenance problems
-                            @Override
-                            public boolean hasMaintenanceMechanics() {
-                                return false;
-                            }
+                    // ignore maintenance problems
+                    @Override
+                    public boolean hasMaintenanceMechanics() {
+                        return false;
+                    }
 
-                            @Override
-                            public int getParallelLimit() {
-                                return 4;
-                            }
+                    @Override
+                    public int getParallelLimit() {
+                        return 4;
+                    }
                 });
 
         //isValid() check in the dirtying logic requires both a metatileentity and a holder
@@ -201,7 +201,6 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .build().getResult();
 
 
-
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
@@ -254,7 +253,6 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .blastFurnaceTemp(1000)
                 .EUt(30).duration(100)
                 .build().getResult();
-
 
 
         // Initially populate the input bus
@@ -311,7 +309,6 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .buildAndRegister();
 
 
-
         // Initially populate the input bus
         importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 16), false);
 
@@ -361,7 +358,6 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                 .blastFurnaceTemp(1000)
                 .EUt(30).duration(100)
                 .buildAndRegister();
-
 
 
         // Initially populate the input bus
@@ -659,7 +655,7 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
 
     @Override
     public void applyParallelBonus(RecipeBuilder<?> builder) {
-        if(enableBonusOverride) {
+        if (enableBonusOverride) {
             builder.EUt(1).duration(50);
         }
     }

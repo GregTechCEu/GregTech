@@ -64,7 +64,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         if (coilType instanceof CoilType) {
             this.heatingCoilLevel = ((CoilType) coilType).getLevel();
             this.heatingCoilDiscount = ((CoilType) coilType).getEnergyDiscount();
-        } else if(coilType instanceof CoilType2) {
+        } else if (coilType instanceof CoilType2) {
             this.heatingCoilLevel = ((CoilType2) coilType).getLevel();
             this.heatingCoilDiscount = ((CoilType2) coilType).getEnergyDiscount();
         } else {

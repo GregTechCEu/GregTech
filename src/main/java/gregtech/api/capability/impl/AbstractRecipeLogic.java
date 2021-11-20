@@ -274,10 +274,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     /**
      * Determines if the provided recipe is possible to run from the provided inventory, or if there is anything preventing
      * the Recipe from being completed.
-     *
+     * <p>
      * Will consume the inputs of the Recipe if it is possible to run.
      *
-     * @param recipe - The Recipe that will be consumed from the inputs and ran in the machine
+     * @param recipe          - The Recipe that will be consumed from the inputs and ran in the machine
      * @param importInventory - The inventory that the recipe should be consumed from.
      *                        Used mainly for Distinct bus implementation for multiblocks to specify
      *                        a specific bus
@@ -286,7 +286,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     protected boolean setupAndConsumeRecipeInputs(Recipe recipe, IItemHandlerModifiable importInventory) {
 
         //Format: EU/t, Duration
-        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration() );
+        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration());
         int totalEUt = resultOverclock[0] * resultOverclock[1];
 
         IItemHandlerModifiable exportInventory = getOutputInventory();
@@ -295,23 +295,21 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         boolean enoughPower;
         //RIP Ternary
-        if(totalEUt >= 0) {
+        if (totalEUt >= 0) {
             int capacity;
-            if(totalEUt > getEnergyCapacity() / 2) {
+            if (totalEUt > getEnergyCapacity() / 2) {
                 capacity = resultOverclock[0];
-            }
-            else {
+            } else {
                 capacity = totalEUt;
             }
 
             enoughPower = getEnergyStored() >= capacity;
-        }
-        else {
+        } else {
             int power = resultOverclock[0];
             enoughPower = getEnergyStored() - (long) power <= getEnergyCapacity();
         }
 
-        if(!enoughPower) {
+        if (!enoughPower) {
             return false;
         }
 

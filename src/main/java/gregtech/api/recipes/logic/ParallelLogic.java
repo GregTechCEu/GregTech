@@ -16,26 +16,26 @@ import java.util.*;
 
 public class ParallelLogic {
     /**
-     * @param recipe The recipe
-     * @param inputs The item inputs
-     * @param fluidInputs the fluid inputs
+     * @param recipe         The recipe
+     * @param inputs         The item inputs
+     * @param fluidInputs    the fluid inputs
      * @param parallelAmount hard cap on the amount returned
      * @return returns the amount of possible time a recipe can be made from a given input inventory
      */
 
     public static int getMaxRecipeMultiplier(Recipe recipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int parallelAmount) {
         // Find all the items in the combined Item Input inventories and create oversized ItemStacks
-        HashMap<ItemStackKey,Integer> ingredientStacks = GTHashMaps.fromItemHandler(inputs);
+        HashMap<ItemStackKey, Integer> ingredientStacks = GTHashMaps.fromItemHandler(inputs);
 
         // Find all the fluids in the combined Fluid Input inventories and create oversized FluidStacks
-        HashMap<FluidKey,Integer> fluidStacks = GTHashMaps.fromFluidHandler(fluidInputs);
+        HashMap<FluidKey, Integer> fluidStacks = GTHashMaps.fromFluidHandler(fluidInputs);
 
         // Find the maximum number of recipes that can be performed from the items in the item input inventories
         int itemMultiplier = getMaxRatioItem(ingredientStacks, recipe, parallelAmount);
         // Find the maximum number of recipes that can be performed from the fluids in the fluid input inventories
         int fluidMultiplier = getMaxRatioFluid(fluidStacks, recipe, parallelAmount);
         // If both fail to return a valid amount
-        if((itemMultiplier == Integer.MAX_VALUE && recipe.getInputs().size() > 0) || (fluidMultiplier == Integer.MAX_VALUE &&
+        if ((itemMultiplier == Integer.MAX_VALUE && recipe.getInputs().size() > 0) || (fluidMultiplier == Integer.MAX_VALUE &&
                 recipe.getFluidInputs().size() > 0)) {
             return 0;
         }
@@ -44,10 +44,9 @@ public class ParallelLogic {
     }
 
     /**
-     *
-     * @param recipe The recipe
-     * @param outputs the item output inventory
-     * @param fluidOutputs the fluid output tanks
+     * @param recipe         The recipe
+     * @param outputs        the item output inventory
+     * @param fluidOutputs   the fluid output tanks
      * @param parallelAmount the maximum expected amount
      * @return returns the amount of recipes that can be merged successfully into a given output inventory
      */
@@ -65,8 +64,7 @@ public class ParallelLogic {
     }
 
     /**
-     *
-     * @param recipe the recipe from which we get the input to product ratio
+     * @param recipe     the recipe from which we get the input to product ratio
      * @param multiplier the maximum possible multiplied we can get from the input inventory
      *                   see {@link ParallelLogic#getMaxRecipeMultiplier(Recipe, IItemHandlerModifiable, IMultipleTankHandler, int)}
      * @return the amount of times a {@link Recipe} outputs can be merged into an inventory without
@@ -104,9 +102,9 @@ public class ParallelLogic {
      * Used by the Multi Smelter and some parallellizable steam multiblocks
      *
      * @param recipeOutputList the recipe outputs from the recipe we are building up to its maximum parallel limit
-     * @param outputsToAppend the recipe outputs from the recipe we want to append to the recipe we are building
-     * @param multiplier the maximum possible multiplied we can get from the input inventory
-     *                   see {@link ParallelLogic#getMaxRecipeMultiplier(Recipe, IItemHandlerModifiable, IMultipleTankHandler, int)}
+     * @param outputsToAppend  the recipe outputs from the recipe we want to append to the recipe we are building
+     * @param multiplier       the maximum possible multiplied we can get from the input inventory
+     *                         see {@link ParallelLogic#getMaxRecipeMultiplier(Recipe, IItemHandlerModifiable, IMultipleTankHandler, int)}
      * @return the amount of times a {@link Recipe} outputs can be merged into an inventory without
      * voiding products.
      */
@@ -120,7 +118,7 @@ public class ParallelLogic {
         HashMap<ItemStackKey, Integer> recipeOutputsToAppend = GTHashMaps.fromItemStackCollection(outputsToAppend);
 
         HashMap<ItemStackKey, Integer> appendedResultMap = new HashMap<>(recipeOutputs);
-        recipeOutputsToAppend.forEach((stackKey, amt) -> appendedResultMap.merge(stackKey,amt * multiplier, Integer::sum));
+        recipeOutputsToAppend.forEach((stackKey, amt) -> appendedResultMap.merge(stackKey, amt * multiplier, Integer::sum));
 
         while (minMultiplier != maxMultiplier) {
             overlayedItemHandler.reset();
@@ -154,15 +152,16 @@ public class ParallelLogic {
 
     /**
      * Binary-search-like approach to find the maximum amount that can be inserted
-     * @param mergedAll if the merge was successful.
-     *                 If true sets {@code minMultiplier} to the as the current multiplier
-     *                  then sets {@code multiplier} to the sum of the mean difference between
-     *                  {@code multiplier} and {@code maxMultiplier} plus the remainder of the division, if any,
-     *                  and itself
-     *                  If false, sets {@code maxMultiplier} as the current multiplier, then sets @code multiplier}
-     *                  to half of its value limited it to no less or than the value of {@code minMultiplier}
+     *
+     * @param mergedAll     if the merge was successful.
+     *                      If true sets {@code minMultiplier} to the as the current multiplier
+     *                      then sets {@code multiplier} to the sum of the mean difference between
+     *                      {@code multiplier} and {@code maxMultiplier} plus the remainder of the division, if any,
+     *                      and itself
+     *                      If false, sets {@code maxMultiplier} as the current multiplier, then sets @code multiplier}
+     *                      to half of its value limited it to no less or than the value of {@code minMultiplier}
      * @param minMultiplier the last known multiplier what was fully merged
-     * @param multiplier the current multiplier
+     * @param multiplier    the current multiplier
      * @param maxMultiplier the last know multiplier that resulted in simulation failure
      * @return an array consisting of the last known multiplier, new multiplier to be attempted and
      * the last know multiplier that resulted in failure
@@ -184,8 +183,7 @@ public class ParallelLogic {
     }
 
     /**
-     *
-     * @param recipe the recipe from which we get the fluid input to product ratio
+     * @param recipe     the recipe from which we get the fluid input to product ratio
      * @param multiplier the maximum possible multiplied we can get from the input tanks
      *                   see {@link ParallelLogic#getMaxRecipeMultiplier(Recipe, IItemHandlerModifiable, IMultipleTankHandler, int)}
      * @return the amount of times a {@link Recipe} outputs can be merged into a fluid handler without
@@ -224,9 +222,10 @@ public class ParallelLogic {
 
     /**
      * Finds the maximum number of Recipes that can be performed at the same time based on the items in the item input inventory
+     *
      * @param countIngredients a {@link HashMap} of {@link ItemStackKey}s that is the result of calling {@link GTHashMaps#fromItemHandler(IItemHandler)}
-     * @param recipe The {@link Recipe} for which to find the maximum that can be ran simultaneously
-     * @param parallelAmount The limit on the amount of recipes that can be performed at one time
+     * @param recipe           The {@link Recipe} for which to find the maximum that can be ran simultaneously
+     * @param parallelAmount   The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Items
      */
     protected static int getMaxRatioItem(HashMap<ItemStackKey, Integer> countIngredients, Recipe recipe, int parallelAmount) {
@@ -296,8 +295,8 @@ public class ParallelLogic {
     /**
      * Finds the maximum number of a specific recipe that can be performed based upon the fluids in the fluid inputs
      *
-     * @param countFluid a {@link Set} of {@link FluidStack}s that is the result of calling {@link GTHashMaps#fromFluidHandler(IFluidHandler)}
-     * @param recipe The {@link Recipe} for which to find the maximum that can be ran simultaneously
+     * @param countFluid     a {@link Set} of {@link FluidStack}s that is the result of calling {@link GTHashMaps#fromFluidHandler(IFluidHandler)}
+     * @param recipe         The {@link Recipe} for which to find the maximum that can be ran simultaneously
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Fluids
      */
@@ -341,7 +340,7 @@ public class ParallelLogic {
                 return 0;
             }
         }
-        
+
         // Iterate through the fluid inputs in the recipe
         for (Map.Entry<FluidKey, Integer> fs : fluidCountMap.entrySet()) {
             int needed = fs.getValue();
@@ -385,11 +384,12 @@ public class ParallelLogic {
     /**
      * Constructs a {@link RecipeBuilder} containing the recipes from the ItemStacks available in the {@code importInventory}
      * Does NOT take fluids into account whatsoever
-     * @param recipeMap The {@link RecipeMap} to search for recipes
+     *
+     * @param recipeMap       The {@link RecipeMap} to search for recipes
      * @param importInventory The {@link IItemHandlerModifiable} that contains the items to be used as inputs
      * @param exportInventory The {@link IItemHandlerModifiable} that contains the items to be used as outputs
-     * @param parallelAmount The maximum amount of recipes that can be performed at one time
-     * @param maxVoltage The maximum voltage of the machine
+     * @param parallelAmount  The maximum amount of recipes that can be performed at one time
+     * @param maxVoltage      The maximum voltage of the machine
      * @return A {@link RecipeBuilder} containing the recipes that can be performed in parallel, limited by the ingredients available, and the output space available.
      */
     public static RecipeBuilder<?> appendItemRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage) {

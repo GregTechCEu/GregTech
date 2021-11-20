@@ -345,7 +345,8 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     /**
      * Copies the chanced outputs of a Recipe numberOfOperations times, so every chanced output
      * gets an individual roll, instead of an all or nothing situation
-     *  @param chancedOutputsFrom The original recipe before any parallel multiplication
+     *
+     * @param chancedOutputsFrom The original recipe before any parallel multiplication
      * @param numberOfOperations The number of parallel operations that have been performed
      */
 
@@ -363,11 +364,10 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     }
 
     /**
-     *
      * Appends the passed {@link Recipe} onto the inputs and outputs, multiplied by the amount specified by multiplier
      * The duration of the multiplied {@link Recipe} is also added to the current duration
      *
-     * @param recipe The Recipe to be multiplied
+     * @param recipe     The Recipe to be multiplied
      * @param multiplier Amount to multiply the recipe by
      * @return the builder holding the multiplied recipe
      */

@@ -78,11 +78,10 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
      * Used to cause a single random maintenance problem
      */
     protected void causeMaintenanceProblems() {
-        this.maintenance_problems &= ~(1 << ((int) (GTValues.RNG.nextFloat()*5)));
+        this.maintenance_problems &= ~(1 << ((int) (GTValues.RNG.nextFloat() * 5)));
     }
 
     /**
-     *
      * @return the byte value representing the maintenance problems
      */
     public byte getMaintenanceProblems() {
@@ -90,7 +89,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     /**
-     *
      * @return the amount of maintenance problems the multiblock has
      */
     public int getNumMaintenanceProblems() {
@@ -98,7 +96,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     /**
-     *
      * @return whether the multiblock has any maintenance problems
      */
     public boolean hasMaintenanceProblems() {
@@ -106,7 +103,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     /**
-     *
      * @return whether this multiblock has maintenance mechanics
      */
     public boolean hasMaintenanceMechanics() {
@@ -119,6 +115,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     /**
      * Used to calculate whether a maintenance problem should happen based on machine time active
+     *
      * @param duration in ticks to add to the counter of active time
      */
     public void calculateMaintenance(int duration) {
@@ -160,6 +157,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     /**
      * Stores the taped state of the maintenance hatch
+     *
      * @param isTaped is whether the maintenance hatch is taped or not
      */
     public void storeTaped(boolean isTaped) {
@@ -169,6 +167,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     /**
      * reads maintenance data from a maintenance hatch
+     *
      * @param hatch is the hatch to read the data from
      */
     private void readMaintenanceData(IMaintenanceHatch hatch) {
@@ -195,7 +194,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     /**
-     *
      * @return whether the muffler hatch's front face is free
      */
     public boolean isMufflerFaceFree() {
@@ -215,6 +213,7 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
 
     /**
      * Sets the recovery items of this multiblock
+     *
      * @param recoveryItems is the items to set
      */
     protected void setRecoveryItems(ItemStack... recoveryItems) {
@@ -223,7 +222,6 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     }
 
     /**
-     *
      * @return whether the current multiblock is active or not
      */
     public boolean isActive() {

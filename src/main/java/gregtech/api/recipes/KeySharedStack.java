@@ -9,7 +9,7 @@ import java.util.WeakHashMap;
 
 public class KeySharedStack {
 
-    private static final WeakHashMap<ItemStackKey,WeakReference<ItemStackKey>> registeredItemStackKeys = new WeakHashMap<>();
+    private static final WeakHashMap<ItemStackKey, WeakReference<ItemStackKey>> registeredItemStackKeys = new WeakHashMap<>();
     public static ItemStackKey EMPTY = new ItemStackKey(ItemStack.EMPTY);
 
     private KeySharedStack() {

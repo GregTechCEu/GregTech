@@ -13,9 +13,9 @@ public class IngredientHashStrategy implements Hash.Strategy<Ingredient> {
     @Override
     public int hashCode(Ingredient o) {
         int hash = 0;
-            for (ItemStack is : o.getMatchingStacks()) {
-                hash += ItemStackHashStrategy.comparingAllButCount().hashCode(is);
-            }
+        for (ItemStack is : o.getMatchingStacks()) {
+            hash += ItemStackHashStrategy.comparingAllButCount().hashCode(is);
+        }
         return hash;
     }
 

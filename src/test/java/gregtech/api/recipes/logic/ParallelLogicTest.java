@@ -29,7 +29,7 @@ public class ParallelLogicTest {
     MetaTileEntityFluidHatch importFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1, false);
     MetaTileEntityFluidHatch exportFluidBus = new MetaTileEntityFluidHatch(gregtechId("fluid_hatch.import.lv"), 1, true);
 
-        @BeforeClass
+    @BeforeClass
     public static void bootStrap() {
         Bootstrap.register();
         Materials.register();

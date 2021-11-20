@@ -21,7 +21,7 @@ public class GTHashMaps {
      * @param inputs The inventory handler of the inventory
      * @return a {@link HashMap} of {@link ItemStackKey} and {@link Integer} as amount on the inventory
      */
-    public static HashMap<ItemStackKey,Integer> fromItemHandler(IItemHandler inputs) {
+    public static HashMap<ItemStackKey, Integer> fromItemHandler(IItemHandler inputs) {
         final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item
@@ -41,7 +41,7 @@ public class GTHashMaps {
      * @param inputs The inventory handler of the inventory
      * @return a {@link HashMap} of {@link ItemStackKey} and {@link Integer} as amount on the inventory
      */
-    public static HashMap<ItemStackKey,Integer> fromItemStackCollection(Collection<ItemStack> inputs) {
+    public static HashMap<ItemStackKey, Integer> fromItemStackCollection(Collection<ItemStack> inputs) {
         final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item
@@ -61,7 +61,7 @@ public class GTHashMaps {
      * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
      * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
      */
-    public static HashMap<FluidKey,Integer> fromFluidHandler(IFluidHandler fluidInputs) {
+    public static HashMap<FluidKey, Integer> fromFluidHandler(IFluidHandler fluidInputs) {
         final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item
@@ -81,7 +81,7 @@ public class GTHashMaps {
      * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
      * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
      */
-    public static HashMap<FluidKey,Integer> fromFluidCollection(Collection<FluidStack> fluidInputs) {
+    public static HashMap<FluidKey, Integer> fromFluidCollection(Collection<FluidStack> fluidInputs) {
         final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item

@@ -103,10 +103,10 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         }
 
         // Distinct buses only apply to some of the multiblocks, so check the controller against a lower class
-        if(controller instanceof RecipeMapMultiblockController) {
+        if (controller instanceof RecipeMapMultiblockController) {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
 
-            if(distinctController.canBeDistinct() && distinctController.isDistinct()) {
+            if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
                 trySearchNewRecipeDistinct();
                 return;
             }
@@ -133,8 +133,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
         //if fluids changed, iterate all input busses again
         if (metaTileEntity.getNotifiedFluidInputList().size() > 0) {
-            for (IItemHandlerModifiable ihm : importInventory){
-                if (!metaTileEntity.getNotifiedItemInputList().contains(ihm)){
+            for (IItemHandlerModifiable ihm : importInventory) {
+                if (!metaTileEntity.getNotifiedItemInputList().contains(ihm)) {
                     metaTileEntity.getNotifiedItemInputList().add(ihm);
                 }
             }
@@ -255,7 +255,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             // output muffler items
             if (controller.hasMufflerMechanics()) {
                 if (parallelRecipesPerformed > 1)
-                controller.outputRecoveryItems(parallelRecipesPerformed);
+                    controller.outputRecoveryItems(parallelRecipesPerformed);
                 else controller.outputRecoveryItems();
             }
 

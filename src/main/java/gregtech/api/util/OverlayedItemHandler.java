@@ -34,6 +34,7 @@ public class OverlayedItemHandler {
 
     /**
      * Populates the {@code originalSlots} and {@code slots}arrays with the current state of the inventory.
+     *
      * @param slot the slot to populate
      */
 

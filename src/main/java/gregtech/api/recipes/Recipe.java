@@ -223,7 +223,7 @@ public class Recipe {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Recipe recipe = (Recipe) o;
-        return  this.EUt == recipe.EUt &&
+        return this.EUt == recipe.EUt &&
                 this.duration == recipe.duration &&
                 hasSameInputs(recipe) &&
                 hasSameOutputs(recipe) &&
@@ -275,9 +275,9 @@ public class Recipe {
 
     private int hashOutputs() {
         int hash = 0;
-            for (ItemStack is : this.outputs) {
-                hash += hashStrategy.hashCode(is);
-            }
+        for (ItemStack is : this.outputs) {
+            hash += hashStrategy.hashCode(is);
+        }
         return hash;
     }
 
