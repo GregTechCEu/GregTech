@@ -220,8 +220,9 @@ public class PartsRecipeHandler {
             OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.Red);
         } else if (material == Materials.Emerald) { // override Emerald Lens to be Green
             OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.Green);
-        } else if (material == Materials.Glass) { // override Glass Lens to be Colorless
+        } else if (material == Materials.Glass) { // override Glass Lens to be Colorless, and have "default" oredict
             OreDictUnifier.registerOre(stack, OrePrefix.craftingLens, MarkerMaterials.Color.Colorless);
+            OreDictUnifier.registerOre(stack, OrePrefix.craftingLens.name() + material.toCamelCaseString());
         } else if (material != Materials.NetherStar) { // override Nether Star Lens to not have a color
 
             // Default behavior for determining lens color, left for addons and CraftTweaker

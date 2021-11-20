@@ -8,6 +8,8 @@ import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
 import gregtech.api.sound.GTSounds;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.unification.OreDictUnifier;
+import gregtech.api.unification.material.MarkerMaterial;
+import gregtech.api.unification.material.MarkerMaterials;
 import gregtech.api.unification.material.MarkerMaterials.Component;
 import gregtech.api.unification.material.MarkerMaterials.Tier;
 import gregtech.api.unification.material.Materials;
@@ -586,4 +588,10 @@ public class MetaItem1 extends StandardMetaItem {
         SUS_RECORD = addItem(802, "record.sus").addComponents(new MusicDiscStats(GTSounds.RECORD_SOUND)).setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();
     }
 
+        // Dyed Glass Lenses: 800-820
+        for (int i = 0; i < MarkerMaterials.Color.VALUES.length; i++) {
+            MarkerMaterial color = MarkerMaterials.Color.VALUES[i];
+            GLASS_LENSES.put(color, addItem(800 + i, String.format("glass_lens.%s", color.toString())));
+        }
+    }
 }
