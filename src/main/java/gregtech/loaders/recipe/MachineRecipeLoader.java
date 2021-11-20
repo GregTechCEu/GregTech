@@ -426,7 +426,7 @@ public class MachineRecipeLoader {
     }
 
     private static void registerAssemblerRecipes() {
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < Materials.CHEMICAL_DYES.length; i++) {
             CANNER_RECIPES.recipeBuilder()
                     .inputs(MetaItems.SPRAY_EMPTY.getStackForm())
                     .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L * 4))
@@ -866,7 +866,7 @@ public class MachineRecipeLoader {
                 .output(GELLED_TOLUENE)
                 .duration(100).EUt(16).buildAndRegister();
 
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < Materials.CHEMICAL_DYES.length; i++) {
             FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 2))
                     .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())

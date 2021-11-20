@@ -1079,7 +1079,7 @@ public class ReactorRecipes {
                 .duration(200).EUt(480).buildAndRegister();
 
         // Dyes
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < Materials.CHEMICAL_DYES.length; i++) {
             CHEMICAL_RECIPES.recipeBuilder()
                     .input(dye, MarkerMaterials.Color.VALUES[i])
                     .input(dust, Salt, 2)

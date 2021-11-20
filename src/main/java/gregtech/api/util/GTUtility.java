@@ -75,7 +75,7 @@ public class GTUtility {
 
     private static final XSTR random = new XSTR();
 
-    private static final TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
+    private static TreeMap<Integer, String> romanNumeralConversions = new TreeMap<>();
 
     public static Runnable combine(Runnable... runnables) {
         return () -> {

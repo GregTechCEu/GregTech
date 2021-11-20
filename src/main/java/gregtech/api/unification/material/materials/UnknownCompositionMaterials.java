@@ -362,6 +362,7 @@ public class UnknownCompositionMaterials {
         GreenSapphireSlurry = new Material.Builder(1622, "green_sapphire_slurry")
                 .fluid().color(0x64c882).build();
 
+        // These colors are much nicer looking than those in MC's EnumDyeColor
         DyeBlack = new Material.Builder(1623, "dye_black")
                 .fluid().color(0x202020).build();
 
