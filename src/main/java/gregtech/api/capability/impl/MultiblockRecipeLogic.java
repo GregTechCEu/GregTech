@@ -128,7 +128,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         IMultipleTankHandler importFluids = getInputTank();
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler exportFluids = getOutputTank();
-        RecipeBuilder<?> multipliedRecipe;
 
         //if fluids changed, iterate all input busses again
         if (metaTileEntity.getNotifiedFluidInputList().size() > 0) {
@@ -148,18 +147,19 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             //Check if the recipe can be multiplied due to parallel logic
             int parallelLimit = this.getParallel();
             if (parallelLimit > 1) {
-                int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, importInventory.get(lastRecipeIndex), importFluids, parallelLimit);
-                int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
-
-                int parallelizable = Math.min(multiplierByInputs, limitByOutput);
-
-                if (parallelizable > 1) {
-                    currentRecipe = recipeMap.recipeBuilder()
-                            .append(currentRecipe, parallelizable)
-                            .build().getResult();
+                RecipeBuilder<?> parallelBuilder = recipeMap.recipeBuilder();
+                ParallelLogic.doParallelRecipes(
+                        parallelBuilder,
+                        currentRecipe,
+                        importInventory.get(lastRecipeIndex),
+                        importFluids,
+                        exportInventory,
+                        exportFluids,
+                        parallelLimit);
+                if (parallelBuilder.getParallel() > 0) {
+                    currentRecipe = parallelBuilder.build().getResult();
                 } else {
                     this.isOutputsFull = true;
-                    currentRecipe = null;
                 }
             }
 
@@ -193,22 +193,19 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 //Check if the recipe can be multiplied due to parallel logic
                 int parallelLimit = this.getParallel();
                 if (parallelLimit > 1) {
-                    int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, bus, importFluids, parallelLimit);
-                    if (multiplierByInputs > 1) {
-                        // Simulate the merging of the maximum amount of recipes
-                        // and limit by the amount we can successfully merge
-                        int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
-                        int parallelizable = Math.min(multiplierByInputs, limitByOutput);
-
-                        if (parallelizable > 1) {
-                            currentRecipe = recipeMap.recipeBuilder()
-                                    .append(currentRecipe, parallelizable)
-                                    .build().getResult();
-                            this.parallelRecipesPerformed = parallelizable;
-                        } else {
-                            this.isOutputsFull = true;
-                            currentRecipe = null;
-                        }
+                    RecipeBuilder<?> parallelBuilder = recipeMap.recipeBuilder();
+                    ParallelLogic.doParallelRecipes(
+                            parallelBuilder,
+                            currentRecipe,
+                            importInventory.get(i),
+                            importFluids,
+                            exportInventory,
+                            exportFluids,
+                            parallelLimit);
+                    if (parallelBuilder.getParallel() > 0) {
+                        currentRecipe = parallelBuilder.build().getResult();
+                    } else {
+                        this.isOutputsFull = true;
                     }
                 }
 
@@ -276,7 +273,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         super.completeRecipe();
     }
 
-    @Override
+        @Override
     protected long getEnergyStored() {
         return getEnergyContainer().getEnergyStored();
     }

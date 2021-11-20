@@ -43,6 +43,8 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
     protected int duration, EUt;
     protected boolean hidden = false;
 
+    protected int parallel = 0;
+
     protected Consumer<RecipeBuilder<?>> onBuildAction = null;
 
     protected EnumValidationResult recipeStatus = EnumValidationResult.VALID;
@@ -392,6 +394,7 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
         this.EUt(recipe.getEUt());
         this.duration(this.duration + recipe.getDuration() * multiplier);
+        this.parallel += multiplier;
 
         chancedOutputsMultiply(recipe, multiplier);
 
@@ -419,6 +422,10 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         recipe.getFluidOutputs().forEach(fluidStack ->
                 outputFluids.add(copyFluidStackWithAmount(fluidStack,
                         fluidStack.amount * numberOfOperations)));
+    }
+
+    public int getParallel() {
+        return parallel;
     }
 
     protected static ItemStack copyItemStackWithCount(ItemStack itemStack, int count) {

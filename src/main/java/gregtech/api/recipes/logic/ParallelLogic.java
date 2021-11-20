@@ -315,4 +315,78 @@ public class ParallelLogic {
 
         return minMultiplier;
     }
+
+    public static RecipeBuilder<?> doParallelRecipes(RecipeBuilder<?> recipeBuilder, Recipe currentRecipe, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount) {
+        int multiplierByInputs = getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, parallelAmount);
+        if (multiplierByInputs > 1) {
+            // Simulate the merging of the maximum amount of recipes
+            // and limit by the amount we can successfully merge
+            int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
+            int parallelizable = Math.min(multiplierByInputs, limitByOutput);
+
+            if (parallelizable > 1) {
+                recipeBuilder.append(currentRecipe, parallelizable);
+            } else if (parallelizable == 0) {
+                return null;
+            }
+        }
+        return recipeBuilder;
+    }
+
+    public static RecipeBuilder<?> appendRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount, long maxVoltage) {
+        RecipeBuilder<?> recipeBuilder = null;
+
+        OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(exportInventory);
+
+        // Iterate over the input items looking for more things to add until we run either out of input items
+        // or we have exceeded the number of items permissible from the smelting bonus
+        int engagedItems = 0;
+
+        for (int index = 0; index < importInventory.getSlots(); index++) {
+            // Skip this slot if it is empty.
+            final ItemStack currentInputItem = importInventory.getStackInSlot(index);
+            if (currentInputItem.isEmpty())
+                continue;
+
+            // Determine if there is a valid recipe for this item. If not, skip it.
+            Recipe matchingRecipe = recipeMap.findRecipe(maxVoltage,
+                    Collections.singletonList(currentInputItem),
+                    Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
+
+            CountableIngredient inputIngredient;
+            if (matchingRecipe != null) {
+                inputIngredient = matchingRecipe.getInputs().get(0);
+                if (recipeBuilder == null) {
+                    recipeBuilder = recipeMap.recipeBuilder();
+                }
+            } else
+                continue;
+
+            // There's something not right with this recipe if the ingredient is null.
+            if (inputIngredient == null)
+                throw new IllegalStateException(
+                        String.format("Got recipe with null ingredient %s", matchingRecipe));
+
+            //equivalent of getting the max ratio from the inputs from Parallel logic
+            int amountOfCurrentItem = Math.min(parallelAmount - engagedItems, currentInputItem.getCount());
+
+            //how much we can add to the output inventory
+            int limitByOutput = ParallelLogic.limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, amountOfCurrentItem);
+
+            //amount to actually multiply the recipe by
+            int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);
+
+            if (multiplierRecipeAmount > 0) {
+                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount);
+                engagedItems += multiplierRecipeAmount;
+            }
+
+            if (engagedItems == parallelAmount) {
+                break;
+            }
+        }
+
+        return recipeBuilder;
+    }
+
 }

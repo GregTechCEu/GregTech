@@ -5,6 +5,7 @@ import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
+import gregtech.api.metatileentity.multiblock.IParallelAble;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
@@ -15,13 +16,11 @@ import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
-import gregtech.api.util.OverlayedItemHandler;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.BlockWireCoil2.CoilType2;
 import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -123,7 +122,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         return true;
     }
 
-    protected class MultiSmelterWorkable extends MultiblockRecipeLogic {
+    protected class MultiSmelterWorkable extends MultiblockRecipeLogic implements IParallelAble {
 
         public MultiSmelterWorkable(RecipeMapMultiblockController tileEntity) {
             super(tileEntity);
@@ -131,7 +130,6 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
         @Override
         protected void trySearchNewRecipeCombined() {
-
             long maxVoltage = getMaxVoltage();
             Recipe currentRecipe;
             IItemHandlerModifiable importInventory = getInputInventory();
@@ -145,7 +143,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                     previousRecipe == null ||
                     !previousRecipe.matches(false, importInventory, importFluids)) {
                 //Inputs changed, try searching new recipe for given inputs
-                currentRecipe = findAndAppendRecipes(maxVoltage, importInventory);
+                currentRecipe = findRecipe(maxVoltage, importInventory, importFluids);
             } else {
                 //if previous recipe still matches inputs, try to use it
                 currentRecipe = previousRecipe;
@@ -162,78 +160,46 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             metaTileEntity.getNotifiedItemInputList().clear();
         }
 
-        protected Recipe findAndAppendRecipes(long maxVoltage,
-                                              IItemHandlerModifiable inputs) {
-            final int maxItemsLimit = 32 * heatingCoilLevel;
-            RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder();
+        protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids) {
+            IItemHandlerModifiable exportInventory = getOutputInventory();
+            IMultipleTankHandler exportFluids = getOutputTank();
 
-            boolean matchedRecipe = false;
-
-            OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(outputInventory);
-
-            // Iterate over the input items looking for more things to add until we run either out of input items
-            // or we have exceeded the number of items permissible from the smelting bonus
-            int engagedItems = 0;
-
-            for (int index = 0; index < inputs.getSlots(); index++) {
-                // Skip this slot if it is empty.
-                final ItemStack currentInputItem = inputs.getStackInSlot(index);
-                if (currentInputItem.isEmpty())
-                    continue;
-
-                // Determine if there is a valid recipe for this item. If not, skip it.
-                Recipe matchingRecipe = findRecipe(maxVoltage, currentInputItem);
-
-                CountableIngredient inputIngredient;
-                if (matchingRecipe != null) {
-                    inputIngredient = matchingRecipe.getInputs().get(0);
-                    matchedRecipe = true;
-                } else
-                    continue;
-
-                // There's something not right with this recipe if the ingredient is null.
-                if (inputIngredient == null)
-                    throw new IllegalStateException(
-                            String.format("Got recipe with null ingredient %s", matchingRecipe));
-
-                //equivalent of getting the max ratio from the inputs from Parallel logic
-                int amountOfCurrentItem = Math.min(maxItemsLimit - engagedItems, currentInputItem.getCount());
-
-                //how much we can add to the output inventory
-                int limitByOutput = ParallelLogic.limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, amountOfCurrentItem);
-
-                //amount to actually multiply the recipe by
-                int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);
-
-                if (multiplierRecipeAmount > 0) {
-                    recipeBuilder.append(matchingRecipe, multiplierRecipeAmount);
-                    engagedItems += multiplierRecipeAmount;
-                }
-
-                if (engagedItems == maxItemsLimit) {
-                    break;
-                }
-            }
-
-            this.invalidInputsForRecipes = !matchedRecipe;
-            this.isOutputsFull = (matchedRecipe && engagedItems == 0);
-
-            if (recipeBuilder.getInputs().isEmpty()) {
+            int parallelLimit = 32 * heatingCoilLevel;
+            RecipeBuilder<?> builder = ParallelLogic.appendRecipes(recipeMap,
+                    importInventory,
+                    importFluids,
+                    exportInventory,
+                    exportFluids,
+                    parallelLimit,
+                    maxVoltage);
+            this.applyBuilderFeatures(builder);
+            if (builder != null) {
+                return builder.build().getResult();
+            } else {
                 return null;
             }
-
-            this.parallelRecipesPerformed = engagedItems;
-
-            return recipeBuilder
-                    .EUt(Math.max(1, 16 / heatingCoilDiscount))
-                    .duration((int) Math.max(1.0, 256 * engagedItems / (maxItemsLimit * 1.0)))
-                    .build().getResult();
         }
 
-        protected Recipe findRecipe(long maxVoltage, ItemStack itemStack) {
-            return recipeMap.findRecipe(maxVoltage,
-                    Collections.singletonList(itemStack),
-                    Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
+        @Override
+        public void applyBuilderFeatures(RecipeBuilder<?> builder) {
+            if (builder == null) {
+                this.invalidInputsForRecipes = true;
+            } else {
+                if (builder.getParallel() == 0) {
+                    this.isOutputsFull = true;
+                } else {
+                    this.parallelRecipesPerformed = builder.getParallel();
+                    //apply coil bonus
+                    applyParallelBonus(builder);
+                }
+            }
+        }
+
+        @Override
+        public void applyParallelBonus(RecipeBuilder<?> builder) {
+            int parallelLimit = 32 * heatingCoilLevel;
+            builder.EUt(Math.max(1, 16 / heatingCoilDiscount))
+                    .duration((int) Math.max(1.0, 256 * builder.getParallel() / (parallelLimit * 1.0)));
         }
     }
 }

@@ -10,6 +10,7 @@ import gregtech.api.gui.widgets.AdvancedTextWidget;
 import gregtech.api.multiblock.BlockWorldState;
 import gregtech.api.multiblock.IMaintenance;
 import gregtech.api.multiblock.PatternMatchContext;
+import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
@@ -38,7 +39,7 @@ import java.util.stream.IntStream;
 
 import static gregtech.api.capability.GregtechDataCodes.STORE_TAPED;
 
-public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance {
+public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase implements IMaintenance, IParallelAble {
 
     /**
      * Items to recover in a muffler hatch
@@ -392,9 +393,4 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
             return abilityPartPredicate(MultiblockAbility.MAINTENANCE_HATCH).or(statePredicate(allowedAlternatives));
         } else return statePredicate(allowedAlternatives);
     }
-
-    public int getParallelLimit() {
-        return 1;
-    }
-
 }
