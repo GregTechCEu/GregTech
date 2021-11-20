@@ -715,7 +715,7 @@ public class MetaTileEntities {
         STEAM_HATCH = registerMetaTileEntity(1652, new MetaTileEntitySteamHatch(gregtechId("steam_hatch")));
         SIMPLE_ORE_WASHER = registerMetaTileEntity(1653, new MetaTileEntitySimpleOreWasher(gregtechId("ore_washer.simple"), RecipeMaps.SIMPLE_WASHER_RECIPES, Textures.ORE_WASHER_OVERLAY, 0));
 
-       // Maintenance Hatches, IDs 1654-1656
+        // Maintenance Hatches, IDs 1654-1656
         MAINTENANCE_HATCH = registerMetaTileEntity(1654, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch"), false));
         CONFIGURABLE_MAINTENANCE_HATCH = registerMetaTileEntity(1655, new MetaTileEntityMaintenanceHatch(gregtechId("maintenance_hatch_configurable"), true));
         AUTO_MAINTENANCE_HATCH = registerMetaTileEntity(1656, new MetaTileEntityAutoMaintenanceHatch(gregtechId("maintenance_hatch_full_auto")));
@@ -752,21 +752,21 @@ public class MetaTileEntities {
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,
-                                                     int startId,
-                                                     String name,
-                                                     RecipeMap<?> map,
-                                                     OrientedOverlayRenderer texture,
-                                                     boolean hasFrontFacing,
-                                                     Function<Integer, Integer> tankScalingFunction) {
+                                                    int startId,
+                                                    String name,
+                                                    RecipeMap<?> map,
+                                                    OrientedOverlayRenderer texture,
+                                                    boolean hasFrontFacing,
+                                                    Function<Integer, Integer> tankScalingFunction) {
         registerSimpleMetaTileEntity(machines, startId, name, map, texture, hasFrontFacing, MetaTileEntities::gregtechId, tankScalingFunction);
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,
-                                                     int startId,
-                                                     String name,
-                                                     RecipeMap<?> map,
-                                                     OrientedOverlayRenderer texture,
-                                                     boolean hasFrontFacing) {
+                                                    int startId,
+                                                    String name,
+                                                    RecipeMap<?> map,
+                                                    OrientedOverlayRenderer texture,
+                                                    boolean hasFrontFacing) {
         registerSimpleMetaTileEntity(machines, startId, name, map, texture, hasFrontFacing, GTUtility.defaultTankSizeFunction);
     }
 

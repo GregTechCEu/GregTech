@@ -26,7 +26,7 @@ public class BlockTransparentCasing extends VariantActiveBlock<BlockTransparentC
         setResistance(5000.0f);
         setSoundType(SoundType.GLASS);
         setHarvestLevel("wrench", 2);
-        setDefaultState(getState(CasingType.REINFORCED_GLASS));
+        setDefaultState(getState(CasingType.TEMPERED_GLASS));
     }
 
     @Override
@@ -57,7 +57,7 @@ public class BlockTransparentCasing extends VariantActiveBlock<BlockTransparentC
 
     public enum CasingType implements IStringSerializable {
 
-        REINFORCED_GLASS("reinforced_glass"),
+        TEMPERED_GLASS("tempered_glass"),
         FUSION_GLASS("fusion_glass");
 
         private final String name;

@@ -523,7 +523,7 @@ public class VanillaStandardRecipes {
                     .circuitMeta(6)
                     .inputs(new ItemStack(Items.STICK))
                     .inputs(new ItemStack(Blocks.WOOL, 6, i))
-                    .outputs(new ItemStack(Items.BANNER, 1, i))
+                    .outputs(new ItemStack(Items.BANNER, 1, 16 - 1 - i))
                     .buildAndRegister();
         }
 
