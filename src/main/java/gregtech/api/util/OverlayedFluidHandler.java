@@ -37,20 +37,25 @@ public class OverlayedFluidHandler {
     }
 
     private void initTank(int tank) {
-        FluidStack stackToMirror = overlayed.getTankProperties()[tank].getContents();
-        this.originalTanks[tank] = new OverlayedTank(stackToMirror);
-        this.overlayedTanks[tank] = new OverlayedTank(stackToMirror);
+        if (this.overlayedTanks[tank] == null) {
+            IFluidTankProperties fluidTankProperties = overlayed.getTankProperties()[tank];
+            this.originalTanks[tank] = new OverlayedTank(fluidTankProperties);
+            this.overlayedTanks[tank] = new OverlayedTank(fluidTankProperties);
+        }
     }
 
     public int insertFluidKey(int tank, @Nonnull FluidKey toInsert, int amount) {
         initTank(tank);
         if (this.overlayedTanks[tank].getFluidKey() == null || this.overlayedTanks[tank].getFluidKey().equals(toInsert)) {
-            int inserted;
-            inserted = overlayed.fill(new FluidStack(toInsert.getFluid(), amount), false);
-            if (inserted > 0) {
+            int insertable = 0;
+            //refer to the original tank for the possibility of the fluid tank being filtered
+            if (overlayed.getTankProperties()[tank].canFillFluidType(new FluidStack(toInsert.getFluid(), amount))){
+                insertable = Math.min(amount, this.overlayedTanks[tank].getCapacity() - this.overlayedTanks[tank].getCount());
+            }
+            if (insertable > 0) {
                 this.overlayedTanks[tank].setFluidKey(toInsert);
-                this.overlayedTanks[tank].setCount(inserted);
-                return inserted;
+                this.overlayedTanks[tank].setCount(insertable);
+                return insertable;
             }
         }
         return 0;
@@ -59,17 +64,25 @@ public class OverlayedFluidHandler {
     private static class OverlayedTank {
         private FluidKey fluidKey = null;
         private int count = 0;
+        private int capacity = 0;
 
-        OverlayedTank(FluidStack stackToMirror) {
+        OverlayedTank(IFluidTankProperties property) {
+            FluidStack stackToMirror = property.getContents();
             if (stackToMirror != null) {
                 this.fluidKey = new FluidKey(stackToMirror);
                 this.count = stackToMirror.amount;
             }
+            this.capacity = property.getCapacity();
         }
 
-        OverlayedTank(FluidKey fluidKey, int count) {
+        OverlayedTank(FluidKey fluidKey, int count, int capacity) {
             this.fluidKey = fluidKey;
             this.count = count;
+            this.capacity = capacity;
+        }
+
+        public int getCapacity() {
+            return capacity;
         }
 
         public int getCount() {
@@ -89,7 +102,7 @@ public class OverlayedFluidHandler {
         }
 
         public OverlayedTank copy() {
-            return new OverlayedTank(this.fluidKey, this.count);
+            return new OverlayedTank(this.fluidKey, this.count, this.capacity);
         }
     }
 }
