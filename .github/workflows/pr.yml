@@ -46,14 +46,8 @@ jobs:
         shell: bash
         run: |
           echo "::set-output name=sha_short::$(git rev-parse --short $GITHUB_SHA)"
-      - name: Set up JDK8
-        uses: actions/setup-java@v2
-        with:
-          java-version: '8'
-          distribution: 'adopt'
-      - name: Grand execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew clean build
       - name: Run Formatter
-        run: ./gradlew editorconfigCheck
+        uses: actions/setup-node@v2
+        run: |
+          npm install -g @htmlacademy/editorconfig-cli
+          editorconfig-cli ./src/**/*.java
