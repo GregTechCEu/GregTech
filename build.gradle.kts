@@ -29,6 +29,7 @@ buildscript {
 plugins {
     id("com.matthewprenger.cursegradle") version "1.1.0"
     id("maven-publish")
+    id("org.ec4j.editorconfig") version "0.0.3"
 }
 
 apply {
