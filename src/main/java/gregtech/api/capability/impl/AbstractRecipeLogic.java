@@ -217,18 +217,20 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         // proceed if we have a usable recipe.
         if (currentRecipe != null) {
 
-            //Check if the recipe needs to be multiplied due to parallel logic
-            if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
-                multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
-
+            //Check if the recipe can be multiplied due to parallel logic
+            if(this.metaTileEntity.getParallelLimit() > 1) {
+                multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory, importFluids, getOutputInventory(), getOutputTank(), this.metaTileEntity.getParallelLimit());
                 // Multiply the recipe if we can
-                if(multipliedRecipe != null) {
+                if (multipliedRecipe.getSecond() == 0) {
+                    this.isOutputsFull = true;
+                    currentRecipe = null;
+                } else {
                     currentRecipe = multipliedRecipe.getFirst().build().getResult();
                     this.parallelRecipesPerformed = multipliedRecipe.getSecond();
                 }
             }
 
-            if(setupAndConsumeRecipeInputs(currentRecipe, importInventory)) {
+            if(currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory)) {
                 setupRecipe(currentRecipe);
             }
 
@@ -275,7 +277,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
         //Format: EU/t, Duration
         // Multiply the duration by the number of parallel recipes performed pre overclock
-        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration() * this.parallelRecipesPerformed);
+        int[] resultOverclock = calculateOverclock(recipe.getEUt(), this.overclockPolicy.getAsLong(), recipe.getDuration() );//* this.parallelRecipesPerformed);
         int totalEUt = resultOverclock[0] * resultOverclock[1]; //* this.parallelRecipesPerformed;
 
         IItemHandlerModifiable exportInventory = getOutputInventory();

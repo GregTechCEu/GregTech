@@ -1,21 +1,22 @@
 package gregtech.api.recipes.logic;
 
 import gregtech.api.capability.IMultipleTankHandler;
+import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.*;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
-import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.ItemStackKey;
 import gregtech.api.util.StreamUtils;
-import it.unimi.dsi.fastutil.Hash;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -33,11 +34,13 @@ public class ParallelLogic {
      * @param recipeMap The Recipe Map that the provided recipe is from
      * @param fluidInputs The Fluid Input inventory handler
      * @param recipe The Recipe to be multiplied
+     * @param outputs The Item Output inventory handler
+     * @param fluidOutputs The Fluid Output inventory handler
      * @param parallelAmount The hard limit on the amount of parallel Recipes that can be performed
-     * @return A Recipe that has had all factors scaled by the number of parallel operations
+     * @return A Tuple consisting of a Recipe that has had all factors scaled by the number of parallel
+     * operations and the number of operations
      */
-    public static Tuple<RecipeBuilder<?>, Integer> multiplyRecipe(Recipe recipe, RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int parallelAmount) {
-
+    public static Tuple<RecipeBuilder<?>, Integer> multiplyRecipe(Recipe recipe, RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelAmount) {
 
         RecipeBuilder<?> newRecipe = recipeMap.recipeBuilder()
                 .inputsIngredients(recipe.getInputs())
@@ -59,10 +62,10 @@ public class ParallelLogic {
         }
 
         // Find all the items in the combined Item Input inventories and create oversized ItemStacks
-        Set<ItemStack> ingredientStacks = findAllItemsInInputs(inputs);
+        HashMap<ItemStackKey,Integer> ingredientStacks = findAllItemsInInputs(inputs);
 
         // Find all the fluids in the combined Fluid Input inventories and create oversized FluidStacks
-        Set<FluidStack> fluidStacks = findAllFluidsInInputs(fluidInputs);
+        HashMap<FluidKey,Integer> fluidStacks = findAllFluidsInInputs(fluidInputs);
 
         // Find the maximum number of recipes that can be performed from the items in the item input inventories
         int itemMultiplier = getMinRatioItem(ingredientStacks, recipe, parallelAmount);
@@ -72,9 +75,23 @@ public class ParallelLogic {
         // Find the maximum number of recipes that can be performed from all available inputs
         int minMultiplier = Math.min(itemMultiplier, fluidMultiplier);
 
-        // No fluids or items were found in the input inventories that match the recipe's inputs
-        if(minMultiplier == Integer.MAX_VALUE) {
-            return null;
+        boolean canFit = true;
+        int maxMultiplier = 0;
+        if (recipe.getOutputs().size() > 0) {
+            maxMultiplier = limitParallelByItems(recipe, outputs, Math.min(parallelAmount, minMultiplier));
+            if (maxMultiplier == 0) {
+                canFit = false;
+            }
+        }
+        if (canFit && recipe.getFluidOutputs().size() > 0) {
+            maxMultiplier = limitParallelByFluids(recipe, fluidOutputs, Math.min(parallelAmount, minMultiplier));
+            if (maxMultiplier == 0) {
+                canFit = false;
+            }
+        }
+
+        if (!canFit) {
+            return new Tuple<>(newRecipe, 0);
         }
 
         // Create holders for the various parts of the new multiplied Recipe
@@ -84,7 +101,7 @@ public class ParallelLogic {
         List<FluidStack> outputFluids = new ArrayList<>();
 
         // Populate the various holders of the multiplied Recipe
-        multiplyInputsAndOutputs(newRecipeInputs, newFluidInputs, outputItems, outputFluids, recipe, minMultiplier);
+        multiplyInputsAndOutputs(newRecipeInputs, newFluidInputs, outputItems, outputFluids, recipe, maxMultiplier);
 
         // Build the new Recipe with multiplied components
         newRecipe.clearInputs();
@@ -100,19 +117,177 @@ public class ParallelLogic {
 
         // Add the chanced outputs to the multiplied recipe
         newRecipe.clearChancedOutput();
-        copyChancedItemOutputs(newRecipe, recipe, minMultiplier);
+        copyChancedItemOutputs(newRecipe, recipe, maxMultiplier);
 
         // Return the multiplied Recipe
-        return new Tuple<>(newRecipe, minMultiplier);
+        return new Tuple<>(newRecipe, maxMultiplier);
     }
 
-    /**
-     * Copies the chanced outputs of a Recipe and expands them for the number of parallel recipes performed
-     *
-     * @param newRecipe An instance of the recipe after the inputs and outputs have been multiplied from the number of parallels
-     * @param oldRecipe The original recipe before any parallel multiplication
-     * @param numberOfOperations The number of parallel operations that have been performed
-     */
+    public static int limitParallelByItems(Recipe recipe, IItemHandlerModifiable outputs, int multiplier) {
+        int minMultiplier = 0;
+        int maxMultiplier = multiplier;
+
+        //mirror the output slots status into a map. Keep the empty slots,
+        //so we can simulate the merge without copying stacks.
+
+        Map<Integer, Triple<ItemStackKey, Integer, Integer>> outputInvMap = mapInvHandler(outputs);
+        List<Pair<ItemStackKey, Integer>> recipeOutputs = stackList2stackKeyList(recipe.getOutputs());
+
+        int amount = 0;
+        while (minMultiplier != maxMultiplier) {
+            Map<Integer, Triple<ItemStackKey, Integer, Integer>> invCopyMap = new LinkedHashMap<>(outputInvMap);
+            for (Pair<ItemStackKey, Integer> tuple : recipeOutputs) {
+                int amountToInsert = tuple.getRight() * multiplier;
+                amount = MetaTileEntity.simulateAddHashedItemToInvMap(tuple.getLeft(), amountToInsert, invCopyMap);
+                if (amount > 0) {
+                    break;
+                }
+            }
+
+            int[] bin = adjustMultiplier(amount == 0, minMultiplier, multiplier, maxMultiplier);
+            minMultiplier = bin[0];
+            multiplier = bin[1];
+            maxMultiplier = bin[2];
+
+        }
+        return multiplier;
+    }
+
+    public static int[] adjustMultiplier(boolean mergedAll, int minMultiplier, int multiplier, int maxMultiplier) {
+        if (mergedAll) {
+            if (maxMultiplier - minMultiplier <= 1) {
+                multiplier = maxMultiplier = minMultiplier;
+            } else {
+                minMultiplier = multiplier;
+                int remainder = (maxMultiplier - multiplier) % 2;
+                multiplier = multiplier + remainder + (maxMultiplier - multiplier) / 2;
+            }
+        } else {
+            maxMultiplier = multiplier;
+            multiplier /= 2;
+            if (multiplier < minMultiplier) {
+                multiplier += 1;
+            }
+        }
+        return new int[]{minMultiplier, multiplier, maxMultiplier};
+    }
+
+    public static Map<Integer, Triple<ItemStackKey, Integer, Integer>> mapInvHandler(IItemHandler itemHandlerModifiable) {
+
+        Map<Integer, Triple<ItemStackKey, Integer, Integer>> handlerMap = new LinkedHashMap<>();
+        for (int slot = 0; slot < itemHandlerModifiable.getSlots(); slot++) {
+            ItemStack stack = itemHandlerModifiable.getStackInSlot(slot);
+            if (!stack.isEmpty()) {
+                handlerMap.put(slot,
+                        Triple.of(KeySharedStack.getRegisteredStack(stack),
+                                stack.getCount(), itemHandlerModifiable.getSlotLimit(slot)));
+            } else {
+                handlerMap.put(slot,
+                        Triple.of(null,
+                                0, itemHandlerModifiable.getSlotLimit(slot)));
+            }
+        }
+        return handlerMap;
+    }
+
+    public static List<Pair<ItemStackKey, Integer>> stackList2stackKeyList(List<ItemStack> stackList) {
+        List<Pair<ItemStackKey, Integer>> stackKeyList = new LinkedList<>();
+        for (ItemStack stack : stackList) {
+            if (!stack.isEmpty()) {
+                stackKeyList.add(
+                        Pair.of(KeySharedStack.getRegisteredStack(stack),
+                                stack.getCount()));
+            } else {
+                stackKeyList.add(
+                        Pair.of(null,
+                                stack.getCount()));
+            }
+        }
+        return stackKeyList;
+    }
+
+    public static int limitParallelByFluids(Recipe recipe, IMultipleTankHandler fluidOutputs, int multiplier) {
+        int minMultiplier = 0;
+        int maxMultiplier = multiplier;
+
+        //mirror the output slots status into a map. Keep the empty slots,
+        //so we can simulate the merge without copying stacks.
+
+        Map<Integer, Pair<FluidKey, Integer>> outputFluidList = mapMultipleTankHandler(fluidOutputs);
+
+        int amount = 0;
+        while (minMultiplier != maxMultiplier) {
+            Map<Integer, Pair<FluidKey, Integer>> outputFluidListCopy = new LinkedHashMap<>(outputFluidList);
+
+            for (int tank = 0; tank < recipe.getFluidOutputs().size(); tank++) {
+                FluidStack fluidStack = recipe.getFluidOutputs().get(tank);
+                amount = fluidStack.amount * multiplier;
+                for (Map.Entry<Integer, Pair<FluidKey, Integer>> fsEntry : outputFluidListCopy.entrySet()) {
+                    Pair<FluidKey, Integer> p = fsEntry.getValue();
+                    IFluidTank t = fluidOutputs.getTankAt(fsEntry.getKey());
+                    if (amount == 0) {
+                        break;
+                    }
+                    if (p.getLeft() == null) {
+                        int insertable = Math.min(amount, t.getCapacity());
+                        fsEntry.setValue(Pair.of(new FluidKey(fluidStack), insertable));
+                        amount -= insertable;
+                    } else if (p.getLeft().equals(new FluidKey(fluidStack))) {
+                        if (p.getRight() < t.getCapacity()) {
+                            int insertable = t.getCapacity() - p.getRight();
+                            if (insertable == 0) {
+                                continue;
+                            }
+                            if (insertable >= amount) {
+                                fsEntry.setValue(Pair.of(p.getLeft(),
+                                        p.getRight() + amount));
+                            } else {
+                                fsEntry.setValue(Pair.of(p.getLeft(),
+                                        p.getRight() + insertable));
+                                amount -= insertable;
+                            }
+                        }
+                    }
+                }
+                if (amount > 0) {
+                    break;
+                }
+            }
+
+            int[] bin = adjustMultiplier(amount > 0, minMultiplier, multiplier, maxMultiplier);
+            minMultiplier = bin[0];
+            multiplier = bin[1];
+            maxMultiplier = bin[2];
+
+        }
+        return multiplier;
+
+    }
+
+    public static Map<Integer, Pair<FluidKey, Integer>> mapMultipleTankHandler(IMultipleTankHandler iMultipleTankHandler) {
+        Map<Integer, Pair<FluidKey, Integer>> handlerMap = new LinkedHashMap<>();
+
+        for (int tank = 0; tank < iMultipleTankHandler.getTanks(); tank++) {
+            FluidStack fluidStack = iMultipleTankHandler.getTankAt(tank).getFluid();
+            if (fluidStack != null) {
+                handlerMap.put(tank,
+                        Pair.of(new FluidKey(fluidStack),
+                                fluidStack.amount));
+            } else {
+                handlerMap.put(tank,
+                        Pair.of(null, 0));
+            }
+        }
+        return handlerMap;
+    }
+
+        /**
+         * Copies the chanced outputs of a Recipe and expands them for the number of parallel recipes performed
+         *
+         * @param newRecipe An instance of the recipe after the inputs and outputs have been multiplied from the number of parallels
+         * @param oldRecipe The original recipe before any parallel multiplication
+         * @param numberOfOperations The number of parallel operations that have been performed
+         */
     protected static void copyChancedItemOutputs(RecipeBuilder<?> newRecipe, Recipe oldRecipe, int numberOfOperations) {
 
         // Iterate through the chanced outputs
@@ -135,42 +310,30 @@ public class ParallelLogic {
      * Skips Empty slots
      *
      * @param inputs The inventory handler for the input inventory
-     * @return a {@link Set} of {@link ItemStack}s comprising of oversized stacks for each unique item in the input inventory
+     * @return a {@link HashMap} of {@link ItemStackKey}s comprising of oversized stacks for each unique item in the input inventory
      */
-    protected static Set<ItemStack> findAllItemsInInputs(IItemHandlerModifiable inputs) {
-        Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.comparingAllButCount();
-        final Supplier<Map<ItemStack, Integer>> mapSupplier =
-                () -> new Object2IntOpenCustomHashMap<>(strategy);
+    protected static HashMap<ItemStackKey,Integer> findAllItemsInInputs(IItemHandlerModifiable inputs) {
+        final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntOpenHashMap::new;
 
-        final Set<ItemStack> result = new ObjectOpenCustomHashSet<>(strategy);
-
-        StreamUtils.streamFrom(inputs)
+        // Create a single stack of the combined count for each item
+        return new HashMap<>(StreamUtils.streamFrom(inputs)
                 // keep only non-empty item stacks
                 .filter(not(ItemStack::isEmpty))
                 // Track the number of identical items
-                .collect(Collectors.toMap(Function.identity(),
+                .collect(Collectors.toMap(KeySharedStack::getRegisteredStack,
                         ItemStack::getCount,
                         Math::addExact,
-                        mapSupplier))
-                // Create a single stack of the combined count for each item
-                .entrySet().stream()
-                .map(entry -> {
-                    ItemStack combined = entry.getKey().copy();
-                    combined.setCount(entry.getValue());
-                    return combined;
-                })
-                .forEach(result::add);
-        return result;
+                        mapSupplier)));
     }
 
     /**
      * Finds the maximum number of Recipes that can be performed at the same time based on the items in the item input inventory
-     * @param countIngredients a {@link Set} of {@link ItemStack}s that is the result of calling {@link ParallelLogic#findAllItemsInInputs(IItemHandlerModifiable)}
+     * @param countIngredients a {@link HashMap} of {@link ItemStackKey}s that is the result of calling {@link ParallelLogic#findAllItemsInInputs(IItemHandlerModifiable)}
      * @param recipe The {@link Recipe} for which to find the maximum that can be ran simultaneously
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Items
      */
-    protected static int getMinRatioItem(Set<ItemStack> countIngredients, Recipe recipe, int parallelAmount) {
+    protected static int getMinRatioItem(HashMap<ItemStackKey, Integer> countIngredients, Recipe recipe, int parallelAmount) {
 
         int minMultiplier = Integer.MAX_VALUE;
 
@@ -183,11 +346,10 @@ public class ParallelLogic {
             }
 
             // For every stack in the ingredients gathered from the input bus. This is most likely going to be oversized stacks
-            for(ItemStack wholeItemStack : countIngredients) {
-
-                if(recipeInputs.getIngredient().apply(wholeItemStack)) {
+            for(Map.Entry<ItemStackKey, Integer> wholeItemStack : countIngredients.entrySet()) {
+                if(recipeInputs.getIngredient().apply(wholeItemStack.getKey().getItemStackRaw())) {
                     //The ratio will either be set by the parallel limit, or the oversized stack divided by the amount of inputs the recipe takes
-                    int ratio = Math.min(parallelAmount, wholeItemStack.getCount() / recipeInputs.getCount());
+                    int ratio = Math.min(parallelAmount, wholeItemStack.getValue() / recipeInputs.getCount());
                     //Find the maximum number of recipes that can be performed by decrementing the ratio, which is limited
                     //by the number of machines (as absolute max), or the amount of ingredients in the input bus
                     if(ratio < minMultiplier) {
@@ -202,51 +364,24 @@ public class ParallelLogic {
     }
 
     /**
-     * Finds all unique Fluids in the combined Fluid Input inventory, and combines them into a {@link Set} of oversized {@link FluidStack}s
+     * Finds all unique Fluids in the combined Fluid Input inventory, and combines them into a {@link HashMap} of oversized {@link FluidKey}s
      * Skips Empty Fluid Tanks
      *
      * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IMultipleTankHandler}
-     * @return a {@link Set} of unique {@link FluidStack}s for each fluid in the handler. Will be oversized stacks if required
+     * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
      */
-    protected static Set<FluidStack> findAllFluidsInInputs(IMultipleTankHandler fluidInputs) {
+    protected static HashMap<FluidKey,Integer> findAllFluidsInInputs(IMultipleTankHandler fluidInputs) {
+        final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntOpenHashMap::new;
 
-        Set<FluidStack> combinedFluids = new HashSet<>();
-
-        // Iterate through the different tanks that make up the structure
-        for(IFluidTank tank : fluidInputs) {
-
-            // Check if the tank contains a Fluid
-            if(tank.getFluid() != null) {
-
-                // Populate the set with an initial value on the first passthrough
-                if(combinedFluids.isEmpty()) {
-                    combinedFluids.add(new FluidStack(tank.getFluid(), tank.getFluidAmount()));
-                }
-                else {
-
-                    // Create a FluidStack from the information provided from the tank
-                    FluidStack tankFluid = new FluidStack(tank.getFluid(), tank.getFluidAmount());
-
-                    boolean found = false;
-
-                    // Iterate through the Set of FluidStacks, checking if the created FluidStack already exists
-                    for(FluidStack fs : combinedFluids) {
-                        if(fs.isFluidEqual(tankFluid)) {
-                            // Increment the count of the existing FluidStack to create oversized stacks
-                            fs.amount = fs.amount + tank.getFluidAmount();
-                            found = true;
-                            break;
-                        }
-                    }
-                    // If a matching FluidStack was not found in the Set, add a new entry
-                    if(!found) {
-                        combinedFluids.add(tankFluid.copy());
-                    }
-                }
-            }
-        }
-
-        return combinedFluids;
+        // Create a single stack of the combined count for each item
+        return new HashMap<>(StreamUtils.streamFrom(fluidInputs)
+                // keep only non-empty item stacks
+                .filter(Objects::nonNull)
+                // Track the number of identical items
+                .collect(Collectors.toMap(FluidKey::new,
+                        (fluidStack -> fluidStack.amount),
+                        Math::addExact,
+                        mapSupplier)));
     }
 
     /**
@@ -257,7 +392,7 @@ public class ParallelLogic {
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Fluids
      */
-    protected static int getMinRatioFluid(Set<FluidStack> countFluid, Recipe recipe, int parallelAmount) {
+    protected static int getMinRatioFluid(HashMap<FluidKey, Integer> countFluid, Recipe recipe, int parallelAmount) {
 
         int minMultiplier = Integer.MAX_VALUE;
 
@@ -270,11 +405,11 @@ public class ParallelLogic {
             }
 
             // Iterate through the fluids in the input hatches. This will likely be oversized stacks
-            for(FluidStack inputStack : countFluid) {
+            for(Map.Entry<FluidKey, Integer> inputStack : countFluid.entrySet()) {
 
-                if(fs.isFluidEqual(inputStack)) {
+                if(new FluidKey(fs).equals(inputStack.getKey())) {
                     //The ratio will either be set by the parallel limit, or the oversized stack divided by the amount of inputs the recipe takes
-                    int ratio = Math.min(parallelAmount, inputStack.amount / fs.amount);
+                    int ratio = Math.min(parallelAmount, inputStack.getValue() / fs.amount);
 
                     //Find the maximum number of recipes that can be performed by decrementing the ratio, which is limited
                     //by the number of machines (as absolute max), or the amount of ingredients in the input bus

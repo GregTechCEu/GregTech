@@ -20,9 +20,11 @@ import gregtech.api.cover.CoverBehavior;
 import gregtech.api.cover.CoverDefinition;
 import gregtech.api.cover.ICoverable;
 import gregtech.api.gui.ModularUI;
+import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTFluidUtils;
 import gregtech.api.util.GTUtility;
+import gregtech.api.util.ItemStackKey;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
 import gregtech.core.hooks.BloomRenderLayerHooks;
@@ -55,10 +57,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static gregtech.api.capability.GregtechDataCodes.*;
@@ -1018,18 +1022,61 @@ public abstract class MetaTileEntity implements ICoverable {
                                                 final boolean simulate,
                                                 final List<ItemStack> items) {
         // determine if there is sufficient room to insert all items into the target inventory
-        final boolean canMerge = simulateItemStackMerge(items, handler);
+
+        if (simulate) {
+            Map<Integer, Triple<ItemStackKey, Integer, Integer>> outputInvMap = ParallelLogic.mapInvHandler(handler);
+            List<Pair<ItemStackKey, Integer>> stackKeyList = ParallelLogic.stackList2stackKeyList(items);
+
+            boolean canMerge = true;
+            for (Pair<ItemStackKey, Integer> pair : stackKeyList) {
+                int amount = MetaTileEntity.simulateAddHashedItemToInvMap(pair.getLeft(), pair.getRight(), outputInvMap);
+                if (amount > 0) {
+                    canMerge = false;
+                }
+            }
+            return canMerge;
+        }
 
         // if we're not simulating and the merge should succeed, perform the merge.
-        if (!simulate && canMerge)
-            items.forEach(stack -> {
-                ItemStack rest = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
-                if (!rest.isEmpty())
-                    throw new IllegalStateException(
-                            String.format("Insertion failed, remaining stack contained %d items.", rest.getCount()));
-            });
+        items.forEach(stack -> {
+            ItemStack rest = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
+            if (!rest.isEmpty())
+                throw new IllegalStateException(
+                        String.format("Insertion failed, remaining stack contained %d items.", rest.getCount()));
+        });
+        return true;
+    }
 
-        return canMerge;
+    public static int simulateAddHashedItemToInvMap(final ItemStackKey stackKey,
+                                                int amount,
+                                                final Map<Integer, Triple<ItemStackKey, Integer, Integer>> invCopyMap) {
+
+        for (Map.Entry<Integer, Triple<ItemStackKey, Integer, Integer>> isEntry : invCopyMap.entrySet()) {
+            if (amount == 0) {
+                break;
+            }
+            Triple<ItemStackKey, Integer, Integer> triple = isEntry.getValue();
+            int maxStackableSize = Math.min(stackKey.getMaxStackSize(), triple.getRight());
+            if (triple.getLeft() == null) {
+                int insertable = Math.min(amount, maxStackableSize);
+                isEntry.setValue(Triple.of(stackKey, insertable, triple.getRight()));
+                amount -= insertable;
+            } else if (triple.getLeft().hashCode() == stackKey.hashCode()) {
+                if (triple.getMiddle() < maxStackableSize) {
+                    int insertable = maxStackableSize - triple.getMiddle();
+                    if (insertable >= amount) {
+                        isEntry.setValue(Triple.of(triple.getLeft(),
+                                triple.getMiddle() + amount, triple.getRight()));
+                        amount = 0;
+                    } else {
+                        isEntry.setValue(Triple.of(triple.getLeft(),
+                                triple.getMiddle() + insertable, triple.getRight()));
+                        amount -= insertable;
+                    }
+                }
+            }
+        }
+        return amount;
     }
 
     public static boolean addFluidsToFluidHandler(IFluidHandler handler, boolean simulate, List<FluidStack> items) {
@@ -1272,6 +1319,10 @@ public abstract class MetaTileEntity implements ICoverable {
 
     public List<IFluidHandler> getNotifiedFluidOutputList() {
         return notifiedFluidOutputList;
+    }
+
+    public int getParallelLimit(){
+        return 1;
     }
 
     public boolean isFragile() {

@@ -147,15 +147,13 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (previousRecipe != null && previousRecipe.matches(false, importInventory.get(lastRecipeIndex), importFluids)) {
             currentRecipe = previousRecipe;
 
-            // Perform Parallel Logic
-            if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
-                multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory.get(lastRecipeIndex), importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+            //Check if the recipe can be multiplied due to parallel logic
+            if(this.metaTileEntity.getParallelLimit() > 1) {
+                multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory.get(lastRecipeIndex), importFluids, getOutputInventory(), getOutputTank(), this.metaTileEntity.getParallelLimit());
 
                 // Multiply the recipe if we can
-                if(multipliedRecipe != null) {
-                    currentRecipe = multipliedRecipe.getFirst().build().getResult();
-                    this.parallelRecipesPerformed = multipliedRecipe.getSecond();
-                }
+                currentRecipe = multipliedRecipe.getFirst().build().getResult();
+                this.parallelRecipesPerformed = multipliedRecipe.getSecond();
             }
 
             // If a valid recipe is found, immediately attempt to return it to prevent inventory scanning
@@ -185,15 +183,13 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             if (currentRecipe != null) {
                 this.previousRecipe = currentRecipe;
 
-                // Perform Parallel Logic
-                if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
-                    multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, bus, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
+                //Check if the recipe can be multiplied due to parallel logic
+                if(this.metaTileEntity.getParallelLimit() > 1) {
+                    multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, bus, importFluids, getOutputInventory(), getOutputTank(), this.metaTileEntity.getParallelLimit());
 
                     // Multiply the recipe if we can
-                    if(multipliedRecipe != null) {
-                        currentRecipe = multipliedRecipe.getFirst().build().getResult();
-                        this.parallelRecipesPerformed = multipliedRecipe.getSecond();
-                    }
+                    currentRecipe = multipliedRecipe.getFirst().build().getResult();
+                    this.parallelRecipesPerformed = multipliedRecipe.getSecond();
 
                 }
 

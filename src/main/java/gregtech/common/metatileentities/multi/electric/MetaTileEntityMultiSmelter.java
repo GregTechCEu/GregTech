@@ -11,11 +11,12 @@ import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
 import gregtech.api.recipes.*;
+import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import gregtech.api.util.GTUtility;
-import gregtech.api.util.InventoryUtils;
+import gregtech.api.util.ItemStackKey;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.BlockWireCoil2.CoilType2;
@@ -23,16 +24,14 @@ import gregtech.common.blocks.MetaBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
@@ -118,6 +117,11 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     @Override
+    public int getParallelLimit() {
+        return this.heatingCoilLevel * 32;
+    }
+
+    @Override
     public boolean hasMufflerMechanics() {
         return true;
     }
@@ -183,18 +187,24 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         protected Recipe findRecipe(long maxVoltage,
                                     IItemHandlerModifiable inputs,
                                     IMultipleTankHandler fluidInputs, MatchingMode mode) {
-            int currentItemsEngaged = 0;
+
+            Map<Integer, Triple<ItemStackKey, Integer, Integer>> outputInvMap = ParallelLogic.mapInvHandler(this.getOutputInventory());
+
             final int maxItemsLimit = 32 * heatingCoilLevel;
             final ArrayList<CountableIngredient> recipeInputs = new ArrayList<>();
             final ArrayList<ItemStack> recipeOutputs = new ArrayList<>();
 
+            boolean matchedRecipe = false;
+
             // Iterate over the input items looking for more things to add until we run either out of input items
             // or we have exceeded the number of items permissible from the smelting bonus
+            int itemsLeftUntilMax = maxItemsLimit;
 
-            boolean matchedRecipe = false;
-            boolean canFitOutputs = true;
+            for (int index = 0; index < inputs.getSlots(); index++) {
 
-            for(int index = 0; index < inputs.getSlots() && currentItemsEngaged < maxItemsLimit; index++) {
+                if (itemsLeftUntilMax == 0) {
+                    break;
+                }
 
                 // Skip this slot if it is empty.
                 final ItemStack currentInputItem = inputs.getStackInSlot(index);
@@ -206,11 +216,10 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                         Collections.singletonList(currentInputItem),
                         Collections.emptyList(), 0, MatchingMode.DEFAULT);
                 CountableIngredient inputIngredient;
-                if(matchingRecipe != null) {
+                if (matchingRecipe != null) {
                     inputIngredient = matchingRecipe.getInputs().get(0);
                     matchedRecipe = true;
-                }
-                else
+                } else
                     continue;
 
                 // There's something not right with this recipe if the ingredient is null.
@@ -218,98 +227,54 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                     throw new IllegalStateException(
                             String.format("Got recipe with null ingredient %s", matchingRecipe));
 
-                // If there are enough slots left to smelt this item stack
-                int itemsLeftUntilMax = (maxItemsLimit - currentItemsEngaged);
-                if (itemsLeftUntilMax >= inputIngredient.getCount()) {
 
-                    /* Choose the lesser of the number of possible crafts in this ingredient's stack, or the number of
-                       items remaining to reach the coil bonus's max smelted items.
-                     */
-                    int craftsPossible = currentInputItem.getCount() / inputIngredient.getCount();
-                    int craftsUntilMax = itemsLeftUntilMax / inputIngredient.getCount();
-                    int recipeMultiplier = Math.min(craftsPossible, craftsUntilMax);
+                int amountOfCurrentItem = Math.min(itemsLeftUntilMax, currentInputItem.getCount());
 
-                    // copy the outputs list so we don't mutate it yet
-                    ArrayList<ItemStack> temp = new ArrayList<>(recipeOutputs);
+                int amountToInsert = matchingRecipe.getOutputs().get(0).getCount() * amountOfCurrentItem;
 
-                    // Process the stacks to see how many items this makes
-                    computeOutputItemStacks(temp, matchingRecipe.getOutputs().get(0), recipeMultiplier);
+                //smelting recipes are limited to one output
+                ItemStackKey stackKey = KeySharedStack.getRegisteredStack(matchingRecipe.getOutputs().get(0));
 
-                    // determine if there is enough room in the output to fit all of this
-                    canFitOutputs = InventoryUtils.simulateItemStackMerge(temp, this.getOutputInventory());
+                amountToInsert = simulateAddHashedItemToInvMap(stackKey, amountToInsert, outputInvMap);
 
-                    // if there isn't, we can't process this recipe.
-                    if (!canFitOutputs)
-                        break;
+                //since we're adding sequentially to the recipe, if the last one cant fit all,
+                //subtract the result of the division of outputs per input.
+                //if it's a partial division, reduce the input stack by one.
+                if (amountToInsert > 0) {
+                    amountOfCurrentItem -= amountToInsert / matchingRecipe.getOutputs().get(0).getCount();
+                    if (amountToInsert % matchingRecipe.getOutputs().get(0).getCount() != 0) {
+                        amountOfCurrentItem -= 1;
+                    }
+                }
 
-                    // otherwise, let's add the new output items and keep going
-                    temp.removeAll(recipeOutputs);
-                    recipeOutputs.addAll(temp);
-
-                    // Add the ingredients to the list of things to smelt.
+                //add the result of the simulation, if successfully merged.
+                if (amountOfCurrentItem > 0) {
                     recipeInputs.add(new CountableIngredient(inputIngredient.getIngredient(),
-                            inputIngredient.getCount() * recipeMultiplier));
+                            inputIngredient.getCount() * amountOfCurrentItem));
 
-                    currentItemsEngaged += inputIngredient.getCount() * recipeMultiplier;
+                    ItemStack copyToAdd = matchingRecipe.getOutputs().get(0).copy();
+                    copyToAdd.setCount(matchingRecipe.getOutputs().get(0).getCount() * amountOfCurrentItem);
+                    recipeOutputs.add(copyToAdd);
+
+                    itemsLeftUntilMax -= amountOfCurrentItem;
                 }
             }
 
             this.invalidInputsForRecipes = !matchedRecipe;
-            this.isOutputsFull = !canFitOutputs;
+            this.isOutputsFull = (matchedRecipe && itemsLeftUntilMax == maxItemsLimit);
 
             if (recipeInputs.isEmpty()) {
                 return null;
             }
 
+            this.parallelRecipesPerformed = maxItemsLimit - itemsLeftUntilMax;
+
             return recipeMap.recipeBuilder()
                     .inputsIngredients(recipeInputs)
                     .outputs(recipeOutputs)
                     .EUt(Math.max(1, 16 / heatingCoilDiscount))
-                    .duration((int) Math.max(1.0, 256 * (currentItemsEngaged / (maxItemsLimit * 1.0))))
+                    .duration((int) Math.max(1.0, 256 * ((maxItemsLimit - itemsLeftUntilMax) / (maxItemsLimit * 1.0))))
                     .build().getResult();
         }
-
-        /**
-         * Computes the minimal number of ItemStacks necessary to store a multiplied recipe output, then
-         * generates the stacks. The result is then stored in {@code recipeOutputs}.
-         *
-         * @param recipeOutputs   a collection of outputs to store the resulting output ItemStacks
-         * @param outputStack     an ItemStack representing the output item of a recipe
-         * @param overclockAmount the number of times that {@code outputStack}'s quantity should
-         *                        be multiplied by for the desired total
-         */
-        private void computeOutputItemStacks(Collection<ItemStack> recipeOutputs,
-                                             ItemStack outputStack,
-                                             int overclockAmount) {
-            if (!outputStack.isEmpty()) {
-                // number of output items we're generating
-                int finalAmount = outputStack.getCount() * overclockAmount;
-
-                // max items allowed in a stack
-                int maxCount = outputStack.getMaxStackSize();
-
-                // number of whole stacks of output this will make
-                int numStacks = finalAmount / maxCount;
-
-                // number of items left (partial stack)
-                int remainder = finalAmount % maxCount;
-
-                // Add full stacks of the output item
-                for (int fullStacks = numStacks; fullStacks > 0; fullStacks--) {
-                    ItemStack full = outputStack.copy();
-                    full.setCount(maxCount);
-                    recipeOutputs.add(full);
-                }
-
-                // if there is a partial stack, add it too
-                if (remainder > 0) {
-                    ItemStack partial = outputStack.copy();
-                    partial.setCount(remainder);
-                    recipeOutputs.add(partial);
-                }
-            }
-        }
-
     }
-
 }
