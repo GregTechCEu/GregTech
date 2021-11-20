@@ -275,7 +275,7 @@ public class ConfigHolder {
         }
 
         public static class ClientConfig {
-			
+
             @Config.Comment("Terminal root path. Default: (config/)gregtech/terminal")
             public String terminalRootPath = "gregtech/terminal";
 

@@ -1,9 +1,6 @@
 package gregtech.api.items.behavior;
 
 import gregtech.api.capability.GregtechDataCodes;
-import gregtech.api.net.CPacketPluginSynced;
-import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
-import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IUIHolder;
 import gregtech.api.gui.ModularUI;
@@ -11,8 +8,11 @@ import gregtech.api.items.gui.ItemUIFactory;
 import gregtech.api.items.gui.PlayerInventoryHolder;
 import gregtech.api.items.metaitem.MetaItem;
 import gregtech.api.items.metaitem.stats.IItemBehaviour;
+import gregtech.api.net.CPacketPluginSynced;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.util.IDirtyNotifiable;
+import gregtech.common.gui.widget.monitor.WidgetPluginConfig;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,6 +36,18 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
     protected MetaTileEntityMonitorScreen screen;
     private NBTTagCompound nbtTagCompound;
 
+    public static MonitorPluginBaseBehavior getBehavior(ItemStack itemStack) {
+        if (itemStack.getItem() instanceof MetaItem<?>) {
+            MetaItem<?> item = (MetaItem<?>) itemStack.getItem();
+            for (IItemBehaviour behaviour : item.getBehaviours(itemStack)) {
+                if (behaviour instanceof MonitorPluginBaseBehavior) {
+                    return (MonitorPluginBaseBehavior) behaviour;
+                }
+            }
+        }
+        return null;
+    }
+
     public MetaTileEntityMonitorScreen getScreen() {
         return screen;
     }
@@ -51,7 +63,6 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
     public WidgetPluginConfig customUI(WidgetPluginConfig widgetGroup, IUIHolder holder, EntityPlayer entityPlayer) {
         return widgetGroup;
     }
-
 
     /***
      * Can player using item (right-click) to open the customUI.
@@ -83,7 +94,7 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
      */
     public final void writePluginData(int id, @Nonnull Consumer<PacketBuffer> buf) {
         if (screen != null && this.screen.getWorld() != null && !this.screen.getWorld().isRemote) {
-            screen.writeCustomData(GregtechDataCodes.UPDATE_PLUGIN_DATA, packetBuffer->{
+            screen.writeCustomData(GregtechDataCodes.UPDATE_PLUGIN_DATA, packetBuffer -> {
                 packetBuffer.writeVarInt(id);
                 buf.accept(packetBuffer);
             });
@@ -140,7 +151,7 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
     public void markAsDirty() {
         if (screen != null) {
             screen.pluginDirty();
-        } else if (nbtTagCompound != null){
+        } else if (nbtTagCompound != null) {
             writeToNBT(nbtTagCompound);
         }
     }
@@ -154,7 +165,7 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
      * @param y yPos of the screen (0 ~ 1.0)
      * @return trigger result
      */
-    public boolean onClickLogic(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, boolean isRight, double x, double y){
+    public boolean onClickLogic(EntityPlayer playerIn, EnumHand hand, EnumFacing facing, boolean isRight, double x, double y) {
         return false;
     }
 
@@ -169,20 +180,8 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
      * Client. Write rendering here
      */
     @SideOnly(Side.CLIENT)
-    public void renderPlugin(float partialTicks, RayTraceResult rayTraceResult){
+    public void renderPlugin(float partialTicks, RayTraceResult rayTraceResult) {
 
-    }
-
-    public static MonitorPluginBaseBehavior getBehavior(ItemStack itemStack) {
-        if (itemStack.getItem() instanceof MetaItem<?>){
-           MetaItem<?> item = (MetaItem<?>) itemStack.getItem();
-            for (IItemBehaviour behaviour : item.getBehaviours(itemStack)) {
-                if (behaviour instanceof MonitorPluginBaseBehavior) {
-                    return (MonitorPluginBaseBehavior) behaviour;
-                }
-            }
-        }
-        return null;
     }
 
     /***
@@ -192,7 +191,7 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
      */
     public void onMonitorValid(MetaTileEntityMonitorScreen screen, boolean valid) {
         if (valid) {
-           this.screen = screen;
+            this.screen = screen;
         } else {
             this.screen = null;
         }
@@ -200,8 +199,9 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        if(!world.isRemote) {
-            if(hand != EnumHand.MAIN_HAND) return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
+        if (!world.isRemote) {
+            if (hand != EnumHand.MAIN_HAND)
+                return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
             ItemStack itemStack = player.getHeldItem(hand);
             MonitorPluginBaseBehavior behavior = getBehavior(itemStack);
             if (behavior != null && behavior.hasUI()) {
@@ -220,10 +220,10 @@ public abstract class MonitorPluginBaseBehavior implements IItemBehaviour, ItemU
         if (behavior != null) {
             behavior = behavior.createPlugin();
             behavior.readFromNBT(itemStack.getOrCreateSubCompound("monitor_plugin"));
-           return ModularUI.builder(GuiTextures.BOXED_BACKGROUND, 260, 210)
-                   .widget(behavior.customUI(new WidgetPluginConfig().setBackGround(GuiTextures.BACKGROUND), playerInventoryHolder, entityPlayer))
-                   .bindCloseListener(this::markAsDirty)
-                   .build(playerInventoryHolder, entityPlayer);
+            return ModularUI.builder(GuiTextures.BOXED_BACKGROUND, 260, 210)
+                    .widget(behavior.customUI(new WidgetPluginConfig().setBackGround(GuiTextures.BACKGROUND), playerInventoryHolder, entityPlayer))
+                    .bindCloseListener(this::markAsDirty)
+                    .build(playerInventoryHolder, entityPlayer);
         }
         return null;
     }
