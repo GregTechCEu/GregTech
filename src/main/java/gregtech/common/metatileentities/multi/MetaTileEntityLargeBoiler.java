@@ -112,7 +112,7 @@ public class MetaTileEntityLargeBoiler extends MultiblockWithDisplayBase impleme
         public final OrientedOverlayRenderer frontOverlay;
 
         BoilerType(int baseSteamOutput, float fuelConsumptionMultiplier, int temperatureEffBuff, int maxTemperature, IBlockState casingState, IBlockState fireboxState, IBlockState pipeState,
-                   ICubeRenderer solidCasingRenderer, SimpleCubeRenderer fireboxIdleRenderer, SimpleCubeRenderer firefoxActiveRenderer, OrientedOverlayRenderer frontOverlay) {
+                    ICubeRenderer solidCasingRenderer, SimpleCubeRenderer fireboxIdleRenderer, SimpleCubeRenderer firefoxActiveRenderer, OrientedOverlayRenderer frontOverlay) {
             this.baseSteamOutput = baseSteamOutput;
             this.fuelConsumptionMultiplier = fuelConsumptionMultiplier;
             this.temperatureEffBuff = temperatureEffBuff;

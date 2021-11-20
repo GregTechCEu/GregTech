@@ -338,10 +338,10 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                 }
             }
         }
-        return prioritizedRecipe(priorityRecipeMap,iteratedRecipes,inputs,fluidInputs,matchingMode);
+        return prioritizedRecipe(priorityRecipeMap, iteratedRecipes, inputs, fluidInputs, matchingMode);
     }
 
-    private Recipe prioritizedRecipe(Map<Integer, LinkedList<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes,List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
+    private Recipe prioritizedRecipe(Map<Integer, LinkedList<Recipe>> priorityRecipeMap, HashSet<Recipe> iteratedRecipes, List<ItemStack> inputs, List<FluidStack> fluidInputs, MatchingMode matchingMode) {
         for (int i = priorityRecipeMap.size(); i >= 0; i--) {
             if (priorityRecipeMap.containsKey(i)) {
                 for (Recipe tmpRecipe : priorityRecipeMap.get(i)) {
@@ -357,7 +357,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         return null;
     }
 
-    private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, Map<Integer, LinkedList<Recipe>> priorityRecipeMap ) {
+    private void calculateRecipePriority(Recipe recipe, HashMap<Recipe, Integer> promotedTimes, Map<Integer, LinkedList<Recipe>> priorityRecipeMap) {
         Integer p = promotedTimes.get(recipe);
         if (p == null) {
             p = 0;
@@ -474,8 +474,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
         } else if (itemInputsCount == 3) {
             itemSlotsToLeft = 3;
             itemSlotsToDown = 1;
-        }
-        else {
+        } else {
             //if we couldn't fit all into a perfect square,
             //increase the amount of slots to the left
             itemSlotsToLeft = (int) Math.ceil(sqrt);
@@ -518,9 +517,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                         .map(CraftTweakerMC::getItemStack)
                         .collect(Collectors.toList());
         List<FluidStack> mcFluidInputs = fluidInputs == null ? Collections.emptyList() :
-            Arrays.stream(fluidInputs)
-                .map(CraftTweakerMC::getLiquidStack)
-                .collect(Collectors.toList());
+                Arrays.stream(fluidInputs)
+                        .map(CraftTweakerMC::getLiquidStack)
+                        .collect(Collectors.toList());
         Recipe backingRecipe = findRecipe(maxVoltage, mcItemInputs, mcFluidInputs, outputFluidTankCapacity, MatchingMode.DEFAULT, true);
         return backingRecipe == null ? null : new CTRecipe(this, backingRecipe);
     }
