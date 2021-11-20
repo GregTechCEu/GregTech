@@ -129,8 +129,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         Recipe currentRecipe;
         List<IItemHandlerModifiable> importInventory = getInputBuses();
         IMultipleTankHandler importFluids = getInputTank();
-        IItemHandlerModifiable exportInventory = getOutputInventory();
-        IMultipleTankHandler exportFluids = getOutputTank();
         Tuple<RecipeBuilder<?>, Integer> multipliedRecipe;
 
 
@@ -151,12 +149,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
             // Perform Parallel Logic
             if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
-                if(((MultiblockWithDisplayBase) this.metaTileEntity).getLenientParallel()) {
-                    multipliedRecipe = ParallelLogic.multiplyRecipeLenient(currentRecipe, this.recipeMap, importInventory.get(lastRecipeIndex), importFluids, exportInventory, exportFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
-                }
-                else {
-                    multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory.get(lastRecipeIndex), importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
-                }
+                multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, importInventory.get(lastRecipeIndex), importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
 
                 // Multiply the recipe if we can
                 if(multipliedRecipe != null) {
@@ -194,12 +187,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
                 // Perform Parallel Logic
                 if(this.metaTileEntity instanceof MultiblockWithDisplayBase) {
-                    if(((MultiblockWithDisplayBase) this.metaTileEntity).getLenientParallel()) {
-                        multipliedRecipe = ParallelLogic.multiplyRecipeLenient(currentRecipe, this.recipeMap, bus, importFluids, exportInventory, exportFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
-                    }
-                    else {
-                        multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, bus, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
-                    }
+                    multipliedRecipe = ParallelLogic.multiplyRecipe(currentRecipe, this.recipeMap, bus, importFluids, ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit());
 
                     // Multiply the recipe if we can
                     if(multipliedRecipe != null) {

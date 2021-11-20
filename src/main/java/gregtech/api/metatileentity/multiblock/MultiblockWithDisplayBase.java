@@ -389,7 +389,4 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
         return 1;
     }
 
-    public boolean getLenientParallel() {
-        return false;
-    }
 }
