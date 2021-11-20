@@ -10,7 +10,6 @@ import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.logic.ParallelLogic;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.ArrayList;
@@ -50,6 +49,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         itemOutputs = null;
         lastRecipeIndex = 0;
         parallelRecipesPerformed = 0;
+        isOutputsFull = false;
+        invalidInputsForRecipes = false;
+        invalidatedInputList.clear();
         setActive(false); // this marks dirty for us
     }
 

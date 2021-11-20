@@ -363,8 +363,11 @@ public class ParallelLogic {
                 break;
             }
         }
-
-        return recipeBuilder;
+        if (engagedItems > 0) {
+            return recipeBuilder;
+        } else {
+            return null;
+        }
     }
 
 }
