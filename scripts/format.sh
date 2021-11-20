@@ -1,7 +1,7 @@
 #!/bin/bash
 
 npm install -g @htmlacademy/editorconfig-cli
-IFS=$'\n' read -rd '' -a FILES <<< "$(git --no-pager diff --name-only FETCH_HEAD "$(git merge-base FETCH_HEAD master)")"
+IFS=$'\n' read -rd '' -a FILES <<< "$(git --no-pager diff --name-only HEAD "$(git merge-base HEAD master)")"
 ERROR=""
 for i in "${FILES[@]}"
 do
