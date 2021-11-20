@@ -157,9 +157,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected Recipe findRecipe(long maxVoltage,
-                                    IItemHandlerModifiable inputs,
-                                    IMultipleTankHandler fluidInputs, MatchingMode mode) {
+        protected Recipe findRecipe(long maxVoltage, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, MatchingMode mode) {
             int currentItemsEngaged = 0;
             final int maxItemsLimit = 32 * heatingCoilLevel;
             final ArrayList<CountableIngredient> recipeInputs = new ArrayList<>();
@@ -255,9 +253,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
          * @param overclockAmount the number of times that {@code outputStack}'s quantity should
          *                        be multiplied by for the desired total
          */
-        private void computeOutputItemStacks(Collection<ItemStack> recipeOutputs,
-                                             ItemStack outputStack,
-                                             int overclockAmount) {
+        private void computeOutputItemStacks(Collection<ItemStack> recipeOutputs, ItemStack outputStack, int overclockAmount) {
             if (!outputStack.isEmpty()) {
                 // number of output items we're generating
                 int finalAmount = outputStack.getCount() * overclockAmount;
