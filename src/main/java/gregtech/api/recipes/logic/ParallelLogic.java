@@ -68,9 +68,9 @@ public class ParallelLogic {
         HashMap<FluidKey,Integer> fluidStacks = findAllFluidsInInputs(fluidInputs);
 
         // Find the maximum number of recipes that can be performed from the items in the item input inventories
-        int itemMultiplier = getMinRatioItem(ingredientStacks, recipe, parallelAmount);
-        // Find the maximum number of recipes that be be performed from the items in the fluid input inventories
-        int fluidMultiplier = getMinRatioFluid(fluidStacks, recipe, parallelAmount);
+        int itemMultiplier = getMaxRatioItem(ingredientStacks, recipe, parallelAmount);
+        // Find the maximum number of recipes that can be performed from the fluids in the fluid input inventories
+        int fluidMultiplier = getMaxRatioFluid(fluidStacks, recipe, parallelAmount);
 
         // Find the maximum number of recipes that can be performed from all available inputs
         int minMultiplier = Math.min(itemMultiplier, fluidMultiplier);
@@ -136,9 +136,9 @@ public class ParallelLogic {
         int amount = 0;
         while (minMultiplier != maxMultiplier) {
             Map<Integer, Triple<ItemStackKey, Integer, Integer>> invCopyMap = new LinkedHashMap<>(outputInvMap);
-            for (Pair<ItemStackKey, Integer> tuple : recipeOutputs) {
-                int amountToInsert = tuple.getRight() * multiplier;
-                amount = MetaTileEntity.simulateAddHashedItemToInvMap(tuple.getLeft(), amountToInsert, invCopyMap);
+            for (Pair<ItemStackKey, Integer> pair : recipeOutputs) {
+                int amountToInsert = pair.getRight() * multiplier;
+                amount = MetaTileEntity.simulateAddHashedItemToInvMap(pair.getLeft(), amountToInsert, invCopyMap);
                 if (amount > 0) {
                     break;
                 }
@@ -223,27 +223,27 @@ public class ParallelLogic {
                 FluidStack fluidStack = recipe.getFluidOutputs().get(tank);
                 amount = fluidStack.amount * multiplier;
                 for (Map.Entry<Integer, Pair<FluidKey, Integer>> fsEntry : outputFluidListCopy.entrySet()) {
-                    Pair<FluidKey, Integer> p = fsEntry.getValue();
+                    Pair<FluidKey, Integer> pair = fsEntry.getValue();
                     IFluidTank t = fluidOutputs.getTankAt(fsEntry.getKey());
                     if (amount == 0) {
                         break;
                     }
-                    if (p.getLeft() == null) {
+                    if (pair.getLeft() == null) {
                         int insertable = Math.min(amount, t.getCapacity());
                         fsEntry.setValue(Pair.of(new FluidKey(fluidStack), insertable));
                         amount -= insertable;
-                    } else if (p.getLeft().equals(new FluidKey(fluidStack))) {
-                        if (p.getRight() < t.getCapacity()) {
-                            int insertable = t.getCapacity() - p.getRight();
+                    } else if (pair.getLeft().equals(new FluidKey(fluidStack))) {
+                        if (pair.getRight() < t.getCapacity()) {
+                            int insertable = t.getCapacity() - pair.getRight();
                             if (insertable == 0) {
                                 continue;
                             }
                             if (insertable >= amount) {
-                                fsEntry.setValue(Pair.of(p.getLeft(),
-                                        p.getRight() + amount));
+                                fsEntry.setValue(Pair.of(pair.getLeft(),
+                                        pair.getRight() + amount));
                             } else {
-                                fsEntry.setValue(Pair.of(p.getLeft(),
-                                        p.getRight() + insertable));
+                                fsEntry.setValue(Pair.of(pair.getLeft(),
+                                        pair.getRight() + insertable));
                                 amount -= insertable;
                             }
                         }
@@ -333,7 +333,7 @@ public class ParallelLogic {
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Items
      */
-    protected static int getMinRatioItem(HashMap<ItemStackKey, Integer> countIngredients, Recipe recipe, int parallelAmount) {
+    protected static int getMaxRatioItem(HashMap<ItemStackKey, Integer> countIngredients, Recipe recipe, int parallelAmount) {
 
         int minMultiplier = Integer.MAX_VALUE;
 
@@ -392,7 +392,7 @@ public class ParallelLogic {
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Fluids
      */
-    protected static int getMinRatioFluid(HashMap<FluidKey, Integer> countFluid, Recipe recipe, int parallelAmount) {
+    protected static int getMaxRatioFluid(HashMap<FluidKey, Integer> countFluid, Recipe recipe, int parallelAmount) {
 
         int minMultiplier = Integer.MAX_VALUE;
 
