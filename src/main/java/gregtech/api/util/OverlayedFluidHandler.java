@@ -130,7 +130,7 @@ public class OverlayedFluidHandler {
                             insertedAmount += canInsertUpTo;
                             overlayedTank.setFluidKey(toInsert);
                             overlayedTank.setFluidAmount(canInsertUpTo);
-                            amountToInsert -= insertedAmount;
+                            amountToInsert -= canInsertUpTo;
                         }
                         if (amountToInsert == 0) {
                             return insertedAmount;
