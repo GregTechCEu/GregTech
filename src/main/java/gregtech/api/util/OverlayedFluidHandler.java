@@ -4,7 +4,6 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.NotifiableFluidTankFromList;
 import gregtech.api.recipes.FluidKey;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 import javax.annotation.Nonnull;
@@ -75,14 +74,13 @@ public class OverlayedFluidHandler {
             OverlayedTank overlayedTank = this.overlayedTanks[i];
             if (toInsert.equals(overlayedTank.getFluidKey())) {
                 if ((tankDeniesSameFluidFill.contains(overlayed.getTankProperties()[i]) || !this.allowSameFluidFill) ) {
-                    IMultipleTankHandler mth = (IMultipleTankHandler) overlayed;
-                    if (mth.getTankAt(i) instanceof NotifiableFluidTankFromList) {
-                        NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) mth.getTankAt(i);
+                    if (overlayed.getTankAt(i) instanceof NotifiableFluidTankFromList) {
+                        NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) overlayed.getTankAt(i);
                         if (!(uniqueFluidMap.get(nftfl.getFluidTankList().get()).add(toInsert))) {
                             continue;
                         }
                     } else {
-                        if (!(uniqueFluidMap.get(mth).add(toInsert))) {
+                        if (!(uniqueFluidMap.get(overlayed).add(toInsert))) {
                             continue;
                         }
                     }
