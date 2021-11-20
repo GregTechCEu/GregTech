@@ -39,6 +39,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
 
     protected Recipe previousRecipe;
     protected boolean allowOverclocking = true;
+    protected int parallelRecipesPerformed;
     private long overclockVoltage = 0;
     private LongSupplier overclockPolicy = this::getMaxVoltage;
 

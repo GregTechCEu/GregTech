@@ -66,7 +66,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
 
         // Iterate over the input items looking for more things to add until we run either out of input items
         // or we have exceeded the number of items permissible from the smelting bonus
-        int itemsLeftUntilMax = MAX_PROCESSES;
+        int engagedItems = 0;
 
         int recipeEUt = 0;
         int recipeDuration = 1;
@@ -97,7 +97,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
                         String.format("Got recipe with null ingredient %s", matchingRecipe));
 
             //equivalent of getting the max ratio from the inputs from Parallel logic
-            int amountOfCurrentItem = Math.min(itemsLeftUntilMax, currentInputItem.getCount());
+            int amountOfCurrentItem = Math.min(MAX_PROCESSES - engagedItems, currentInputItem.getCount());
 
             //how much we can add to the output inventory
             int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, new OverlayedItemHandler(this.getOutputInventory()), amountOfCurrentItem);
@@ -106,23 +106,23 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
             int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);
 
             if (multiplierRecipeAmount > 0) {
-                ParallelLogic.append(recipeBuilder, matchingRecipe, multiplierRecipeAmount);
-                itemsLeftUntilMax -= multiplierRecipeAmount;
+                recipeBuilder.append(matchingRecipe, multiplierRecipeAmount);
+                engagedItems += multiplierRecipeAmount;
             }
 
-            if (itemsLeftUntilMax == 0) {
+            if (engagedItems == MAX_PROCESSES) {
                 break;
             }
         }
 
         this.invalidInputsForRecipes = !matchedRecipe;
-        this.isOutputsFull = (matchedRecipe && itemsLeftUntilMax == MAX_PROCESSES);
+        this.isOutputsFull = (matchedRecipe && engagedItems == MAX_PROCESSES);
 
         if (recipeBuilder.getInputs().isEmpty()) {
             return null;
         }
 
-        //this.parallelRecipesPerformed = MAX_PROCESSES - itemsLeftUntilMax;
+        this.parallelRecipesPerformed = engagedItems;
 
         return recipeBuilder
                 .EUt(Math.min(32, (int) Math.ceil(recipeEUt * 1.33)))

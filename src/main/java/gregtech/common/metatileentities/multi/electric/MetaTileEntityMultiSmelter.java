@@ -173,7 +173,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
             // Iterate over the input items looking for more things to add until we run either out of input items
             // or we have exceeded the number of items permissible from the smelting bonus
-            int itemsLeftUntilMax = maxItemsLimit;
+            int engagedItems = 0;
 
             for (int index = 0; index < inputs.getSlots(); index++) {
                 // Skip this slot if it is empty.
@@ -197,7 +197,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                             String.format("Got recipe with null ingredient %s", matchingRecipe));
 
                 //equivalent of getting the max ratio from the inputs from Parallel logic
-                int amountOfCurrentItem = Math.min(itemsLeftUntilMax, currentInputItem.getCount());
+                int amountOfCurrentItem = Math.min(maxItemsLimit - engagedItems, currentInputItem.getCount());
 
                 //how much we can add to the output inventory
                 int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, overlayedItemHandler, amountOfCurrentItem);
@@ -207,24 +207,26 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
                 if (multiplierRecipeAmount > 0) {
                     recipeBuilder.append(matchingRecipe, multiplierRecipeAmount);
-                    itemsLeftUntilMax -= multiplierRecipeAmount;
+                    engagedItems += multiplierRecipeAmount;
                 }
 
-                if (itemsLeftUntilMax == 0) {
+                if (engagedItems == maxItemsLimit) {
                     break;
                 }
             }
 
             this.invalidInputsForRecipes = !matchedRecipe;
-            this.isOutputsFull = (matchedRecipe && itemsLeftUntilMax == maxItemsLimit);
+            this.isOutputsFull = (matchedRecipe && engagedItems == maxItemsLimit);
 
             if (recipeBuilder.getInputs().isEmpty()) {
                 return null;
             }
 
+            this.parallelRecipesPerformed = engagedItems;
+
             return recipeBuilder
                     .EUt(Math.max(1, 16 / heatingCoilDiscount))
-                    .duration((int) Math.max(1.0, 256 * ((maxItemsLimit - itemsLeftUntilMax) / (maxItemsLimit * 1.0))))
+                    .duration((int) Math.max(1.0, 256 * engagedItems / (maxItemsLimit * 1.0)))
                     .build().getResult();
         }
 
