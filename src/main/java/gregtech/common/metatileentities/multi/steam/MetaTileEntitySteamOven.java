@@ -30,11 +30,10 @@ import static gregtech.api.capability.GregtechDataCodes.IS_WORKING;
 public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController {
 
     private boolean isActive;
-    private final int MAX_PROCESSES = 8;
 
     public MetaTileEntitySteamOven(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.FURNACE_RECIPES, CONVERSION_RATE);
-        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE, MAX_PROCESSES);
+        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
     }
 
     @Override
@@ -173,7 +172,7 @@ public class MetaTileEntitySteamOven extends RecipeMapSteamMultiblockController 
 
     @Override
     public int getParallelLimit() {
-        return MAX_PROCESSES;
+        return 8;
     }
 
     @Nonnull

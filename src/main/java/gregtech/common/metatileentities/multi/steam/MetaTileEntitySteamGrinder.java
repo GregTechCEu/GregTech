@@ -28,11 +28,10 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
             MultiblockAbility.STEAM_IMPORT_ITEMS, MultiblockAbility.STEAM_EXPORT_ITEMS, MultiblockAbility.STEAM
     };
-    private final int MAX_PROCESSES = 8;
 
     public MetaTileEntitySteamGrinder(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.MACERATOR_RECIPES, CONVERSION_RATE);
-        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE, MAX_PROCESSES);
+        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
 
     @Override
     public int getParallelLimit() {
-        return MAX_PROCESSES;
+        return 8;
     }
 
     @Nonnull
@@ -78,4 +77,5 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
     public boolean hasMaintenanceMechanics() {
         return false;
     }
+
 }
