@@ -259,10 +259,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
 
             // output muffler items
+            //TODO: take in cosideration the amount of parallel recipes performed
             if (controller.hasMufflerMechanics()) {
-                for (int i = 0; i < this.parallelRecipesPerformed; i++) {
-                    controller.outputRecoveryItems();
-                }
+                controller.outputRecoveryItems();
             }
 
             // increase total on time
