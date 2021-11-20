@@ -71,29 +71,12 @@ public class OverlayedItemHandler {
             } else {
                 this.slots[slot].setItemStackKey(toInsert);
                 this.slots[slot].setCount(amount);
+                cachedStack = null;
             }
             cachedStackKey = toInsert;
             return remainingCount;
         } else {
             return amount;
-        }
-    }
-
-    public OverlayedItemHandler copy() {
-        OverlayedItemHandler copy = new OverlayedItemHandler(this.overlayedHandler);
-        for (int i = 0; i < this.originalSlots.length; i++) {
-            if (this.originalSlots[i] != null) {
-                copy.originalSlots[i] = this.originalSlots[i].copy();
-                copy.slots[i] = this.originalSlots[i].copy();
-            }
-        }
-        return copy;
-    }
-
-    public void apply(OverlayedItemHandler toApply) {
-        for (int i = 0; i < this.originalSlots.length; i++) {
-            this.originalSlots[i] = toApply.originalSlots[i];
-            this.slots[i] = toApply.originalSlots[i];
         }
     }
 

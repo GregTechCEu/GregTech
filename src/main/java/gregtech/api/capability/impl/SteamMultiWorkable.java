@@ -64,6 +64,8 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
 
         boolean matchedRecipe = false;
 
+        OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(this.getOutputInventory());
+
         // Iterate over the input items looking for more things to add until we run either out of input items
         // or we have exceeded the number of items permissible from the smelting bonus
         int engagedItems = 0;
@@ -100,7 +102,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
             int amountOfCurrentItem = Math.min(MAX_PROCESSES - engagedItems, currentInputItem.getCount());
 
             //how much we can add to the output inventory
-            int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, new OverlayedItemHandler(this.getOutputInventory()), amountOfCurrentItem, true);
+            int limitByOutput = ParallelLogic.limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, amountOfCurrentItem);
 
             //amount to actually multiply the recipe by
             int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);

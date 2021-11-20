@@ -200,7 +200,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 int amountOfCurrentItem = Math.min(maxItemsLimit - engagedItems, currentInputItem.getCount());
 
                 //how much we can add to the output inventory
-                int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, overlayedItemHandler, amountOfCurrentItem, true);
+                int limitByOutput = ParallelLogic.limitParallelByItemsIncremental(recipeBuilder.getOutputs(), matchingRecipe.getOutputs(), overlayedItemHandler, amountOfCurrentItem);
 
                 //amount to actually multiply the recipe by
                 int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);
