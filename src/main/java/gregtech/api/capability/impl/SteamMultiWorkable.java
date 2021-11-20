@@ -24,6 +24,8 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
 
     @Override
     public void applyParallelBonus(RecipeBuilder<?> builder) {
-        builder.EUt(5).duration(192);
+        int currentRecipeEU = builder.getEUt();
+        int currentRecipeDuration = builder.getDuration();
+        builder.EUt((int) Math.min(32.0, Math.ceil(currentRecipeEU) * 1.33)).duration((int) (currentRecipeDuration * 1.5));
     }
 }
