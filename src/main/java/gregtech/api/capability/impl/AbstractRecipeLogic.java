@@ -229,9 +229,12 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
                         exportInventory,
                         exportFluids,
                         parallelLimit);
-                currentRecipe = parallelBuilder.build().getResult();
-                if (currentRecipe == null) {
+                if (parallelBuilder == null) {
                     this.isOutputsFull = true;
+                    currentRecipe = null;
+                } else if (parallelBuilder.getParallel() > 0) {
+                    parallelRecipesPerformed = parallelBuilder.getParallel();
+                    currentRecipe = parallelBuilder.build().getResult();
                 }
             }
 
@@ -402,6 +405,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         this.itemOutputs = null;
         this.hasNotEnoughEnergy = false;
         this.wasActiveAndNeedsUpdate = true;
+        this.parallelRecipesPerformed = 0;
     }
 
     public double getProgressPercent() {

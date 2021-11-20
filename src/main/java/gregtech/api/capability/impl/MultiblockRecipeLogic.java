@@ -49,6 +49,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         fluidOutputs = null;
         itemOutputs = null;
         lastRecipeIndex = 0;
+        parallelRecipesPerformed = 0;
         setActive(false); // this marks dirty for us
     }
 
@@ -156,10 +157,12 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                         exportInventory,
                         exportFluids,
                         parallelLimit);
-                if (parallelBuilder.getParallel() > 0) {
-                    currentRecipe = parallelBuilder.build().getResult();
-                } else {
+                if (parallelBuilder == null) {
                     this.isOutputsFull = true;
+                    currentRecipe = null;
+                } else if (parallelBuilder.getParallel() > 0) {
+                    parallelRecipesPerformed = parallelBuilder.getParallel();
+                    currentRecipe = parallelBuilder.build().getResult();
                 }
             }
 
@@ -202,10 +205,12 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                             exportInventory,
                             exportFluids,
                             parallelLimit);
-                    if (parallelBuilder.getParallel() > 0) {
-                        currentRecipe = parallelBuilder.build().getResult();
-                    } else {
+                    if (parallelBuilder == null) {
                         this.isOutputsFull = true;
+                        currentRecipe = null;
+                    } else if (parallelBuilder.getParallel() > 0) {
+                        parallelRecipesPerformed = parallelBuilder.getParallel();
+                        currentRecipe = parallelBuilder.build().getResult();
                     }
                 }
 
@@ -264,6 +269,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 if (parallelRecipesPerformed > 1)
                 controller.outputRecoveryItems(parallelRecipesPerformed);
                 else controller.outputRecoveryItems();
+                parallelRecipesPerformed = 0;
             }
 
             // increase total on time
