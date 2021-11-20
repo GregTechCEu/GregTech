@@ -246,7 +246,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         metaTileEntity.getNotifiedFluidInputList().clear();
     }
 
-    public ParallelLogicType getParallelLogicType() {
+    public Enum<ParallelLogicType> getParallelLogicType() {
         return ParallelLogicType.MULTIPLY;
     }
 
