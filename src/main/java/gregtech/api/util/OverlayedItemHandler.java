@@ -8,22 +8,15 @@ import javax.annotation.Nonnull;
 
 public class OverlayedItemHandler {
     private final OverlayedItemHandlerSlot[] originalSlots;
-    private OverlayedItemHandlerSlot[] slots;
-    private final IItemHandler mirrored;
-    private ItemStackKey lastISK;
-    private ItemStack lastStack;
+    private final OverlayedItemHandlerSlot[] slots;
+    private final IItemHandler overlayedHandler;
+    private ItemStackKey cachedStackKey;
+    private ItemStack cachedStack;
 
-    public OverlayedItemHandler(IItemHandler toMirror) {
-        this.slots = new OverlayedItemHandlerSlot[toMirror.getSlots()];
-        this.originalSlots = new OverlayedItemHandlerSlot[toMirror.getSlots()];
-        this.mirrored = toMirror;
-        for (int slot = 0; slot < toMirror.getSlots(); slot++) {
-            ItemStack stackToMirror = toMirror.getStackInSlot(slot);
-            if (!stackToMirror.isEmpty()) {
-                this.originalSlots[slot] = new OverlayedItemHandlerSlot(stackToMirror);
-                this.slots[slot] = new OverlayedItemHandlerSlot(stackToMirror);
-            }
-        }
+    public OverlayedItemHandler(IItemHandler toOverlay) {
+        this.slots = new OverlayedItemHandlerSlot[toOverlay.getSlots()];
+        this.originalSlots = new OverlayedItemHandlerSlot[toOverlay.getSlots()];
+        this.overlayedHandler = toOverlay;
     }
 
     /**
@@ -32,51 +25,69 @@ public class OverlayedItemHandler {
      */
 
     public void reset() {
-        this.slots = originalSlots.clone();
+        for (int i = 0; i < this.originalSlots.length; i++) {
+            if (this.originalSlots[i] != null) {
+                this.slots[i] = this.originalSlots[i].copy();
+            }
+        }
     }
 
     public int getSlots() {
-        return mirrored.getSlots();
+        return overlayedHandler.getSlots();
+    }
+
+    private void initSlot(int slot) {
+        if (this.originalSlots[slot] == null) {
+            ItemStack stackToMirror = overlayedHandler.getStackInSlot(slot);
+            this.originalSlots[slot] = new OverlayedItemHandlerSlot(stackToMirror);
+            this.slots[slot] = new OverlayedItemHandlerSlot(stackToMirror);
+        }
     }
 
     public int insertItemStackKey(int slot, @Nonnull ItemStackKey toInsert, int amount) {
+        initSlot(slot);
+
         ItemStack stack = null;
-        if (toInsert == lastISK) {
-            if (lastStack != null) {
-                stack = lastStack;
+        if (toInsert == cachedStackKey) {
+            if (cachedStack != null) {
+                stack = cachedStack;
             }
         }
 
         ItemStack remainder;
-        if (this.slots[slot] == null || this.slots[slot].getItemStackKey() == toInsert) {
+        if (this.slots[slot].getItemStackKey() == null || this.slots[slot].getItemStackKey() == toInsert) {
             if (stack == null) {
                 stack = toInsert.getItemStack();
             }
             stack.setCount(amount);
-            remainder = mirrored.insertItem(slot, stack, true);
+            remainder = overlayedHandler.insertItem(slot, stack, true);
             int remainingCount = remainder.getCount();
-            if (!remainder.isEmpty()) {
-                this.slots[slot] = new OverlayedItemHandlerSlot(toInsert, remainingCount);
-                lastStack = remainder;
+            if (remainder != stack && !remainder.isEmpty()) {
+                this.slots[slot].setItemStackKey(toInsert);
+                this.slots[slot].setCount(remainingCount);
+                cachedStack = remainder;
             } else {
-                this.slots[slot] = new OverlayedItemHandlerSlot(stack);
-                lastStack = null;
+                this.slots[slot].setItemStackKey(toInsert);
+                this.slots[slot].setCount(amount);
+                cachedStack = null;
             }
-            lastISK = toInsert;
+            cachedStackKey = toInsert;
             return remainingCount;
         } else {
-            lastISK = null;
+            cachedStackKey = null;
             return amount;
         }
     }
 
     private static class OverlayedItemHandlerSlot {
-        private final ItemStackKey itemStackKey;
-        private final int count;
+        private ItemStackKey itemStackKey = null;
+        private int count = 0;
 
         OverlayedItemHandlerSlot(ItemStack stackToMirror) {
-            this.itemStackKey = KeySharedStack.getRegisteredStack(stackToMirror);
-            this.count = stackToMirror.getCount();
+            if (!stackToMirror.isEmpty()) {
+                this.itemStackKey = KeySharedStack.getRegisteredStack(stackToMirror);
+                this.count = stackToMirror.getCount();
+            }
         }
 
         OverlayedItemHandlerSlot(ItemStackKey itemStackKey, int count) {
@@ -90,6 +101,18 @@ public class OverlayedItemHandler {
 
         public ItemStackKey getItemStackKey() {
             return itemStackKey;
+        }
+
+        public void setItemStackKey(ItemStackKey itemStackKey) {
+            this.itemStackKey = itemStackKey;
+        }
+
+        public void setCount(int count) {
+            this.count = count;
+        }
+
+        OverlayedItemHandlerSlot copy() {
+            return new OverlayedItemHandlerSlot(this.itemStackKey, this.count);
         }
     }
 }
