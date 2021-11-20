@@ -355,7 +355,7 @@ public class MetaItem1 extends StandardMetaItem {
         ELITE_CIRCUIT_BOARD = addItem(406, "circuit_board.elite");
         WETWARE_CIRCUIT_BOARD = addItem(407, "circuit_board.wetware");
 
-        // Dyes: ID 421-435
+        // Dyes: ID 421-436
         for (int i = 0; i < EnumDyeColor.values().length; i++) {
             EnumDyeColor dyeColor = EnumDyeColor.values()[i];
             DYE_ONLY_ITEMS[i] = addItem(421 + i, "dye." + dyeColor.getName()).addOreDict(getOredictColorName(dyeColor));

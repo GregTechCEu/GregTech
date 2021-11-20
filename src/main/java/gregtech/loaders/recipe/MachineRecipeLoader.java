@@ -429,7 +429,7 @@ public class MachineRecipeLoader {
         for (int i = 0; i < 16; i++) {
             CANNER_RECIPES.recipeBuilder()
                     .inputs(MetaItems.SPRAY_EMPTY.getStackForm())
-                    .fluidInputs(Materials.CHEMICAL_DYES[16 - 1 - i].getFluid(GTValues.L * 4))
+                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L * 4))
                     .outputs(MetaItems.SPRAY_CAN_DYES[i].getStackForm())
                     .EUt(8).duration(200)
                     .buildAndRegister();
@@ -870,7 +870,7 @@ public class MachineRecipeLoader {
             FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
                     .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 2))
                     .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
-                    .outputs(MetaItems.DYE_ONLY_ITEMS[16 - 1 - i].getStackForm())
+                    .outputs(MetaItems.DYE_ONLY_ITEMS[i].getStackForm())
                     .duration(100).EUt(16).buildAndRegister();
         }
 

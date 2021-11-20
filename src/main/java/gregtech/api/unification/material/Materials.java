@@ -99,14 +99,14 @@ public class Materials {
          */
 
        CHEMICAL_DYES = new Material[]{
-               Materials.DyeBlack, Materials.DyeRed,
-               Materials.DyeGreen, Materials.DyeBrown,
-               Materials.DyeBlue, Materials.DyePurple,
-               Materials.DyeCyan, Materials.DyeLightGray,
-               Materials.DyeGray, Materials.DyePink,
-               Materials.DyeLime, Materials.DyeYellow,
-               Materials.DyeLightBlue, Materials.DyeMagenta,
-               Materials.DyeOrange, Materials.DyeWhite
+               Materials.DyeWhite, Materials.DyeOrange,
+               Materials.DyeMagenta, Materials.DyeLightBlue,
+               Materials.DyeYellow, Materials.DyeLime,
+               Materials.DyePink, Materials.DyeGray,
+               Materials.DyeLightGray, Materials.DyeCyan,
+               Materials.DyePurple, Materials.DyeBlue,
+               Materials.DyeBrown, Materials.DyeGreen,
+               Materials.DyeRed, Materials.DyeBlack
        };
     }
 

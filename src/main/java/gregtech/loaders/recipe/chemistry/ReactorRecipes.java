@@ -1081,7 +1081,7 @@ public class ReactorRecipes {
         // Dyes
         for (int i = 0; i < 16; i++) {
             CHEMICAL_RECIPES.recipeBuilder()
-                    .input(dye, MarkerMaterials.Color.VALUES[16 - 1 - i])
+                    .input(dye, MarkerMaterials.Color.VALUES[i])
                     .input(dust, Salt, 2)
                     .fluidInputs(SulfuricAcid.getFluid(250))
                     .fluidOutputs(Materials.CHEMICAL_DYES[i].getFluid(288))
