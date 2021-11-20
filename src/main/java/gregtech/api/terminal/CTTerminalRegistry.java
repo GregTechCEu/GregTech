@@ -13,7 +13,11 @@ import net.minecraftforge.common.util.EnumHelper;
 import stanhebben.zenscript.annotations.ZenClass;
 import stanhebben.zenscript.annotations.ZenMethod;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 
 @ZenClass("mods.gregtech.TerminalRegistry")
@@ -60,7 +64,7 @@ public class CTTerminalRegistry {
                         list.addAll(builder.hardware.get(-1));
                     }
                     if (list.size() > 0) {
-                       hardware[i] = list;
+                        hardware[i] = list;
                     }
                 }
                 TerminalRegistry.APP_HW_DEMAND.put(builder.appName, hardware);
@@ -71,7 +75,7 @@ public class CTTerminalRegistry {
                 if (builder.upgrade.containsKey(-1)) { // register for all tier
                     Arrays.fill(upgrade, builder.upgrade.get(-1));
                 }
-                builder.upgrade.forEach((tier, listBuilder)->{ // register for specific tier
+                builder.upgrade.forEach((tier, listBuilder) -> { // register for specific tier
                     if (tier != -1 && tier < maxTier) {
                         upgrade[tier] = listBuilder;
                     }
@@ -125,14 +129,14 @@ public class CTTerminalRegistry {
 
         @ZenMethod
         public CTAppRegistryBuilder device(String... device) {
-            Hardware[] hw = Arrays.stream(device).map(DeviceHardware.DeviceDemand::new).filter(deviceDemand->deviceDemand.getDevice()!=null).toArray(Hardware[]::new);
+            Hardware[] hw = Arrays.stream(device).map(DeviceHardware.DeviceDemand::new).filter(deviceDemand -> deviceDemand.getDevice() != null).toArray(Hardware[]::new);
             hardware(hw);
             return this;
         }
 
         @ZenMethod
         public CTAppRegistryBuilder device(int tier, String... device) {
-            this.hardware(tier, Arrays.stream(device).map(DeviceHardware.DeviceDemand::new).filter(deviceDemand->deviceDemand.getDevice()!=null).toArray(Hardware[]::new));
+            this.hardware(tier, Arrays.stream(device).map(DeviceHardware.DeviceDemand::new).filter(deviceDemand -> deviceDemand.getDevice() != null).toArray(Hardware[]::new));
             return this;
         }
 
