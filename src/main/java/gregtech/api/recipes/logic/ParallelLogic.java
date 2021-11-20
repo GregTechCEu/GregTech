@@ -44,18 +44,19 @@ public class ParallelLogic {
      * @param parallelAmount the maximum expected amount
      * @return returns the amount of recipes that can be merged successfully into a given output inventory
      */
-    public static int limitByOutputMerging(Recipe recipe, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelAmount){
-        int maxMultiplier = parallelAmount;
+    public static int limitByOutputMerging(Recipe recipe, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelAmount) {
+        int maxMultiplierItems = parallelAmount;
+        int maxMultiplierFluids = parallelAmount;
         if (recipe.getOutputs().size() > 0) {
-            maxMultiplier = limitParallelByItems(recipe, new OverlayedItemHandler(outputs), parallelAmount);
-            if (maxMultiplier == 0) {
+            maxMultiplierItems = limitParallelByItems(recipe, new OverlayedItemHandler(outputs), parallelAmount);
+            if (maxMultiplierItems == 0) {
                 return 0;
             }
         }
         if (recipe.getFluidOutputs().size() > 0) {
-            maxMultiplier = limitParallelByFluids(recipe, new OverlayedFluidHandler(fluidOutputs), parallelAmount);
+            maxMultiplierFluids = limitParallelByFluids(recipe, new OverlayedFluidHandler(fluidOutputs), parallelAmount);
         }
-        return maxMultiplier;
+        return Math.min(maxMultiplierItems, maxMultiplierFluids);
     }
 
     /**
