@@ -21,7 +21,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     // Used for distinct mode
     protected int lastRecipeIndex = 0;
     protected List<IItemHandlerModifiable> invalidatedInputList = new ArrayList<>();
-    protected int parallelRecipesPerformed;
 
     public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity) {
         super(tileEntity, tileEntity.recipeMap);
