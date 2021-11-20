@@ -98,16 +98,16 @@ public class Materials {
          * - Reserved for CraftTweaker: 32000-32767
          */
 
-       CHEMICAL_DYES = new Material[]{
-               Materials.DyeWhite, Materials.DyeOrange,
-               Materials.DyeMagenta, Materials.DyeLightBlue,
-               Materials.DyeYellow, Materials.DyeLime,
-               Materials.DyePink, Materials.DyeGray,
-               Materials.DyeLightGray, Materials.DyeCyan,
-               Materials.DyePurple, Materials.DyeBlue,
-               Materials.DyeBrown, Materials.DyeGreen,
-               Materials.DyeRed, Materials.DyeBlack
-       };
+        CHEMICAL_DYES = new Material[]{
+                Materials.DyeWhite, Materials.DyeOrange,
+                Materials.DyeMagenta, Materials.DyeLightBlue,
+                Materials.DyeYellow, Materials.DyeLime,
+                Materials.DyePink, Materials.DyeGray,
+                Materials.DyeLightGray, Materials.DyeCyan,
+                Materials.DyePurple, Materials.DyeBlue,
+                Materials.DyeBrown, Materials.DyeGreen,
+                Materials.DyeRed, Materials.DyeBlack
+        };
     }
 
     public static final List<MaterialFlag> STD_SOLID = new ArrayList<>();
