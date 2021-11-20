@@ -127,13 +127,13 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
+    public void  writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
-        tagCompound.setTag("CraftingGridInventory", craftingGrid.serializeNBT());
+        tagCompound.setTag ("CraftingGridInventory", craftingGrid.serializeNBT());
         tagCompound.setTag("ToolInventory", toolInventory.serializeNBT());
-        tagCompound.setTag("InternalInventory", internalInventory.serializeNBT());
+        tagCompound .setTag("InternalInventory", internalInventory.serializeNBT());
         tagCompound.setInteger("ItemsCrafted", recipeResolver == null ? itemsCrafted : recipeResolver.getItemsCrafted());
-        tagCompound.setTag("RecipeMemory", recipeMemory.serializeNBT());
+          tagCompound.setTag("RecipeMemory", recipeMemory.serializeNBT());
     }
 
     @Override
