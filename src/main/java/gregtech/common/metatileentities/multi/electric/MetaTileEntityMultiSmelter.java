@@ -133,46 +133,6 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         }
 
         @Override
-        protected void trySearchNewRecipeCombined() {
-            long maxVoltage = getMaxVoltage();
-            Recipe currentRecipe;
-            IItemHandlerModifiable importInventory = getInputInventory();
-            IMultipleTankHandler importFluids = getInputTank();
-            IItemHandlerModifiable exportInventory = getOutputInventory();
-            IMultipleTankHandler exportFluids = getOutputTank();
-
-            //inverse of logic in normal AbstractRecipeLogic
-            //for MultiSmelter, we can reuse previous recipe if inputs didn't change
-            //otherwise, we need to recompute it for new ingredients
-            //but technically, it means we can cache multi smelter recipe, but changing inputs have more priority
-            if (hasNotifiedInputs() ||
-                    previousRecipe == null ||
-                    !previousRecipe.matches(false, importInventory, importFluids)) {
-                //Inputs changed, try searching new recipe for given inputs
-                currentRecipe = findParallelRecipe(this,
-                        null,
-                        importInventory,
-                        importFluids,
-                        exportInventory,
-                        exportFluids,
-                        maxVoltage, metaTileEntity.getParallelLimit());
-            } else {
-                //if previous recipe still matches inputs, try to use it
-                currentRecipe = previousRecipe;
-            }
-            if (currentRecipe != null)
-                // replace old recipe with new one
-                this.previousRecipe = currentRecipe;
-            // proceed if we have a usable recipe.
-            if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory)) {
-                setupRecipe(currentRecipe);
-            }
-
-            // Inputs have been inspected.
-            metaTileEntity.getNotifiedItemInputList().clear();
-        }
-
-        @Override
         public void applyParallelBonus(RecipeBuilder<?> builder) {
             int parallelLimit = 32 * heatingCoilLevel;
             builder.EUt(Math.max(1, 16 / heatingCoilDiscount))
