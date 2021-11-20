@@ -77,9 +77,9 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     protected SoundEvent sound;
 
     public RecipeMap(String unlocalizedName,
-                     int minInputs, int maxInputs, int minOutputs, int maxOutputs,
-                     int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
-                     R defaultRecipe, boolean isHidden) {
+                    int minInputs, int maxInputs, int minOutputs, int maxOutputs,
+                    int minFluidInputs, int maxFluidInputs, int minFluidOutputs, int maxFluidOutputs,
+                    R defaultRecipe, boolean isHidden) {
         this.unlocalizedName = unlocalizedName;
         this.slotOverlays = new TByteObjectHashMap<>();
         this.progressBarTexture = GuiTextures.PROGRESS_BAR_ARROW;
