@@ -91,8 +91,6 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic implements IP
 
     @Override
     public void applyParallelBonus(RecipeBuilder<?> builder) {
-        float speedBonusPercent = 0.0F;
-        builder.EUt(Math.min(32, (int) Math.ceil(4 * 1.33)))
-                .duration(Math.max(128, (int) (128 * builder.getParallel() * (100.0F / (100.0F + speedBonusPercent)) * 1.5)));
+        builder.EUt(5).duration(192);
     }
 }
