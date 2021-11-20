@@ -1,5 +1,5 @@
 package gregtech.api.metatileentity.multiblock;
 
 public enum ParallelLogicType {
-    MULTIPLY,APPEND;
+    MULTIPLY, APPEND_ITEMS;
 }

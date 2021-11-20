@@ -1,12 +1,8 @@
 package gregtech.api.capability.impl;
 
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.metatileentity.multiblock.ParallelLogicType;
 import gregtech.api.metatileentity.multiblock.RecipeMapSteamMultiblockController;
-import gregtech.api.recipes.MatchingMode;
-import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 
 /**
@@ -23,7 +19,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
 
     @Override
     public ParallelLogicType getParallelLogicType() {
-        return ParallelLogicType.APPEND;
+        return ParallelLogicType.APPEND_ITEMS;
     }
 
     @Override

@@ -308,7 +308,17 @@ public class ParallelLogic {
         return recipeBuilder;
     }
 
-    public static RecipeBuilder<?> appendRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount, long maxVoltage) {
+    /**
+     * Constructs a {@link RecipeBuilder} containing the recipes from the ItemStacks available in the {@code importInventory}
+     * Does NOT take fluids into account whatsoever
+     * @param recipeMap The {@link RecipeMap} to search for recipes
+     * @param importInventory The {@link IItemHandlerModifiable} that contains the items to be used as inputs
+     * @param exportInventory The {@link IItemHandlerModifiable} that contains the items to be used as outputs
+     * @param parallelAmount The maximum amount of recipes that can be performed at one time
+     * @param maxVoltage The maximum voltage of the machine
+     * @return A {@link RecipeBuilder} containing the recipes that can be performed in parallel, limited by the ingredients available, and the output space available.
+     */
+    public static RecipeBuilder<?> appendItemRecipes(RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IItemHandlerModifiable exportInventory, int parallelAmount, long maxVoltage) {
         RecipeBuilder<?> recipeBuilder = null;
 
         OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(exportInventory);

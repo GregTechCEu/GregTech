@@ -47,19 +47,15 @@ public interface IParallelableRecipeLogic {
      * or filling the output
      * @param recipeMap the recipe map
      * @param inputs input item handler
-     * @param fluidInputs input fluid handler
      * @param outputs output item handler
-     * @param fluidOutputs output fluid handler
      * @param parallelLimit the maximum number of parallel recipes to be performed
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
-    default RecipeBuilder<?> findAppendedParallelRecipe(RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit, long maxVoltage) {
-        return ParallelLogic.appendRecipes(
+    default RecipeBuilder<?> findAppendedParallelItemRecipe(RecipeMap<?> recipeMap, IItemHandlerModifiable inputs, IItemHandlerModifiable outputs, int parallelLimit, long maxVoltage) {
+        return ParallelLogic.appendItemRecipes(
                 recipeMap,
                 inputs,
-                fluidInputs,
                 outputs,
-                fluidOutputs,
                 parallelLimit,
                 maxVoltage);
     }
@@ -69,8 +65,8 @@ public interface IParallelableRecipeLogic {
             RecipeBuilder<?> parallelBuilder = null;
             if (logic.getParallelLogicType() == ParallelLogicType.MULTIPLY) {
                 parallelBuilder = findMultipliedParallelRecipe(logic.recipeMap, currentRecipe, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit);
-            } else if (logic.getParallelLogicType() == ParallelLogicType.APPEND) {
-                parallelBuilder = findAppendedParallelRecipe(logic.recipeMap, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage);
+            } else if (logic.getParallelLogicType() == ParallelLogicType.APPEND_ITEMS) {
+                parallelBuilder = findAppendedParallelItemRecipe(logic.recipeMap, inputs, outputs, parallelLimit, maxVoltage);
             }
             // if the builder returned is null, no recipe was found.
             if (parallelBuilder == null) {
