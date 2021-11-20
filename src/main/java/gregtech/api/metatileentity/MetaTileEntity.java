@@ -1037,12 +1037,9 @@ public abstract class MetaTileEntity implements ICoverable {
             return canMerge;
         }
 
-        // if we're not simulating and the merge should succeed, perform the merge.
+        // perform the merge.
         items.forEach(stack -> {
-            ItemStack rest = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
-            if (!rest.isEmpty())
-                throw new IllegalStateException(
-                        String.format("Insertion failed, remaining stack contained %d items.", rest.getCount()));
+            ItemHandlerHelper.insertItemStacked(handler, stack, false);
         });
         return true;
     }
