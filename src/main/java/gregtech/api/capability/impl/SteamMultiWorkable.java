@@ -116,7 +116,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
         }
 
         this.invalidInputsForRecipes = !matchedRecipe;
-        this.isOutputsFull = (matchedRecipe && engagedItems == MAX_PROCESSES);
+        this.isOutputsFull = (matchedRecipe && engagedItems == 0);
 
         if (recipeBuilder.getInputs().isEmpty()) {
             return null;

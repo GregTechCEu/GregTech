@@ -216,7 +216,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
             }
 
             this.invalidInputsForRecipes = !matchedRecipe;
-            this.isOutputsFull = (matchedRecipe && engagedItems == maxItemsLimit);
+            this.isOutputsFull = (matchedRecipe && engagedItems == 0);
 
             if (recipeBuilder.getInputs().isEmpty()) {
                 return null;
