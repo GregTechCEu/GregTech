@@ -90,7 +90,7 @@ public class ParallelLogic {
             }
         }
         if (recipe.getFluidOutputs().size() > 0) {
-            maxMultiplier = limitParallelByFluids(recipe, fluidOutputs, parallelAmount);
+            maxMultiplier = limitParallelByFluids(recipe, new OverlayedFluidHandler(fluidOutputs), parallelAmount);
         }
         return maxMultiplier;
     }
@@ -108,9 +108,6 @@ public class ParallelLogic {
     public static int limitParallelByItems(Recipe recipe, OverlayedItemHandler overlayedItemHandler, int multiplier) {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
-
-        //mirror the output slots status into a map. Keep the empty slots,
-        //so we can simulate the merge without copying stacks.
 
         HashMap<ItemStackKey, Integer> recipeOutputs = itemCollection2StackKeyMap(recipe.getOutputs());
 
@@ -162,18 +159,12 @@ public class ParallelLogic {
         return new int[]{minMultiplier, multiplier, maxMultiplier};
     }
 
-    public static int limitParallelByFluids(Recipe recipe, IMultipleTankHandler fluidOutputs, int multiplier) {
+    public static int limitParallelByFluids(Recipe recipe, OverlayedFluidHandler overlayedFluidHandler, int multiplier) {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
-        OverlayedFluidHandler overlayedFluidHandler = null;
-
         while (minMultiplier != maxMultiplier) {
-            if (overlayedFluidHandler != null) {
-                overlayedFluidHandler.reset();
-            } else {
-                overlayedFluidHandler = new OverlayedFluidHandler(fluidOutputs);
-            }
+            overlayedFluidHandler.reset();
 
             int amountLeft = 0;
 
@@ -217,11 +208,11 @@ public class ParallelLogic {
 
             int chance = entry.getChance();
             int boost = entry.getBoostPerTier();
+            ItemStack itemStack = entry.getItemStack();
 
             // Add individual chanced outputs per number of parallel operations performed, to mimic regular recipes.
             // This is done instead of simply batching the chanced outputs by the number of parallel operations performed
             IntStream.range(0, numberOfOperations).forEach(value -> {
-                ItemStack itemStack = entry.getItemStack().copy();
                 newRecipe.chancedOutput(itemStack, chance, boost);
             });
         }
@@ -320,7 +311,7 @@ public class ParallelLogic {
                         mapSupplier)));
     }
 
-    protected static HashMap<FluidKey,Integer> fluidCollection2FluidKeyMap(Collection<FluidStack> fluidInputs) {
+    public static HashMap<FluidKey,Integer> fluidCollection2FluidKeyMap(Collection<FluidStack> fluidInputs) {
         final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item

@@ -1005,16 +1005,11 @@ public abstract class MetaTileEntity implements ICoverable {
      * @param simulate whether to simulate ({@code true}) or actually perform the insertion ({@code false})
      * @param items    the items to insert into {@code handler}.
      * @return {@code true} if the insertion succeeded, {@code false} otherwise.
-     * @throws IllegalStateException if {@code handler} does not accept all items as expected while performing a
-     *                               real insertion. This should not be possible unless the handler is modified in
-     *                               another thread, or it does not behave in a manner conforming with the contract
-     *                               of {@link gregtech.api.util.InventoryUtils#simulateItemStackMerge simulateItemStackMerge}.
      */
     public static boolean addItemsToItemHandler(final IItemHandler handler,
                                                 final boolean simulate,
                                                 final List<ItemStack> items) {
         // determine if there is sufficient room to insert all items into the target inventory
-
         if (simulate) {
             OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
             HashMap<ItemStackKey, Integer> stackKeyMap = ParallelLogic.itemCollection2StackKeyMap(items);
@@ -1040,14 +1035,27 @@ public abstract class MetaTileEntity implements ICoverable {
         return true;
     }
 
-    public static boolean addFluidsToFluidHandler(IFluidHandler handler, boolean simulate, List<FluidStack> fluidStacks) {
-
+    /**
+     * Simulates the insertion of fluid into a target fluid handler, then optionally performs the insertion.
+     * <br /><br />
+     * Simulating will not modify any of the input parameters. Insertion will either succeed completely, or fail
+     * without modifying anything.
+     *
+     * @param fluidHandler  the target inventory
+     * @param simulate whether to simulate ({@code true}) or actually perform the insertion ({@code false})
+     * @param fluidStacks    the items to insert into {@code fluidHandler}.
+     * @return {@code true} if the insertion succeeded, {@code false} otherwise.
+     */
+    public static boolean addFluidsToFluidHandler(IFluidHandler fluidHandler,
+                                                  boolean simulate,
+                                                  List<FluidStack> fluidStacks) {
         if (simulate) {
-            OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(handler);
-            for (FluidStack fluidStack : fluidStacks) {
-                int amountLeft = fluidStack.amount;
+            OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(fluidHandler);
+            HashMap<FluidKey, Integer> fluidKeyMap = ParallelLogic.fluidCollection2FluidKeyMap(fluidStacks);
+            for (Map.Entry<FluidKey, Integer> entry : fluidKeyMap.entrySet()) {
+                int amountLeft = entry.getValue();
                 for (int tank = 0; tank < overlayedFluidHandler.getTankProperties().length; tank++) {
-                    int inserted = overlayedFluidHandler.insertFluidStack(tank, fluidStack);
+                    int inserted = overlayedFluidHandler.insertFluidKey(tank, entry.getKey(), entry.getValue());
                     if (inserted > 0) {
                         amountLeft -= inserted;
                         if (amountLeft == 0) {
@@ -1062,7 +1070,7 @@ public abstract class MetaTileEntity implements ICoverable {
             return true;
         }
 
-        fluidStacks.forEach(fluidStack -> handler.fill(fluidStack, true));
+        fluidStacks.forEach(fluidStack -> fluidHandler.fill(fluidStack, true));
         return true;
     }
 
