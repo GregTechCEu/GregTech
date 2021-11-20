@@ -82,8 +82,10 @@ public class OverlayedItemHandler {
     public OverlayedItemHandler copy() {
         OverlayedItemHandler copy = new OverlayedItemHandler(this.overlayedHandler);
         for (int i = 0; i < this.originalSlots.length; i++) {
-            copy.originalSlots[i] = this.originalSlots[i].copy();
-            copy.slots[i] = this.originalSlots[i].copy();
+            if (this.originalSlots[i] != null) {
+                copy.originalSlots[i] = this.originalSlots[i].copy();
+                copy.slots[i] = this.originalSlots[i].copy();
+            }
         }
         return copy;
     }

@@ -59,8 +59,10 @@ public class OverlayedFluidHandler {
     public OverlayedFluidHandler copy() {
         OverlayedFluidHandler copy = new OverlayedFluidHandler(this.overlayed);
         for (int i = 0; i < this.originalTanks.length; i++) {
-            copy.originalTanks[i] = this.originalTanks[i].copy();
-            copy.overlayedTanks[i] = this.originalTanks[i].copy();
+            if (this.originalTanks[i] != null) {
+                copy.originalTanks[i] = this.originalTanks[i].copy();
+                copy.overlayedTanks[i] = this.originalTanks[i].copy();
+            }
         }
         return copy;
     }
