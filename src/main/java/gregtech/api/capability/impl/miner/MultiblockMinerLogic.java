@@ -65,7 +65,7 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     @Override
-    protected void initPos(BlockPos pos, int currentRadius) {
+    public void initPos(BlockPos pos, int currentRadius) {
         if (!isChunkMode) {
             super.initPos(pos, currentRadius);
         } else {

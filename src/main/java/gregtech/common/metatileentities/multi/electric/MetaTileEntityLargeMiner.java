@@ -119,6 +119,7 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         this.minerLogic.setVoltageTier(GTUtility.getTierByVoltage(this.energyContainer.getInputVoltage()));
         this.minerLogic.setOverclockAmount(Math.max(1, GTUtility.getTierByVoltage(this.energyContainer.getInputVoltage()) - this.tier));
         this.minerLogic.setOutputInventory(this.outputInventory);
+        this.minerLogic.initPos(getPos(), this.minerLogic.getCurrentRadius());
     }
 
     private void resetTileAbilities() {

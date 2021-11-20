@@ -257,7 +257,7 @@ public class MinerLogic {
      * @param pos the {@link BlockPos} of the miner itself
      * @param currentRadius the currently set mining radius
      */
-    protected void initPos(BlockPos pos, int currentRadius) {
+    public void initPos(BlockPos pos, int currentRadius) {
         x.set(pos.getX() - currentRadius);
         z.set(pos.getZ() - currentRadius);
         y.set(pos.getY() - 1);
