@@ -1,8 +1,8 @@
 package gregtech.api.util;
 
-import gregtech.api.capability.IMultipleTankHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Iterator;
@@ -36,7 +36,7 @@ public final class StreamUtils {
      * @param fluidInventory the target multiple tank handler
      * @return a stream over the contents of the target inventory
      */
-    public static Stream<FluidStack> streamFrom(IMultipleTankHandler fluidInventory) {
+    public static Stream<FluidStack> streamFrom(IFluidHandler fluidInventory) {
         return StreamSupport.stream(iterableFrom(fluidInventory).spliterator(),
                 false);
     }
@@ -92,7 +92,7 @@ public final class StreamUtils {
      * @see Iterator
      * @see Iterable
      */
-    public static Iterable<FluidStack> iterableFrom(IMultipleTankHandler fluidInventory) {
+    public static Iterable<FluidStack> iterableFrom(IFluidHandler fluidInventory) {
         return new Iterable<FluidStack>() {
             @Override
             public Iterator<FluidStack> iterator() {
@@ -101,7 +101,7 @@ public final class StreamUtils {
 
                     @Override
                     public boolean hasNext() {
-                        return cursor < fluidInventory.getTanks();
+                        return cursor < fluidInventory.getTankProperties().length;
                     }
 
                     @Override
@@ -109,7 +109,7 @@ public final class StreamUtils {
                         if (!hasNext())
                             throw new NoSuchElementException();
 
-                        FluidStack next = fluidInventory.getTankAt(cursor).getFluid();
+                        FluidStack next = fluidInventory.getTankProperties()[cursor].getContents();
                         cursor++;
                         return next;
                     }
@@ -118,7 +118,7 @@ public final class StreamUtils {
 
             @Override
             public Spliterator<FluidStack> spliterator() {
-                return Spliterators.spliterator(iterator(), fluidInventory.getTanks(), 0);
+                return Spliterators.spliterator(iterator(), fluidInventory.getTankProperties().length, 0);
             }
         };
     }

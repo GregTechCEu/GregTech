@@ -43,13 +43,13 @@ public class OverlayedFluidHandler {
     public int insertFluidKey(int tank, @Nonnull FluidKey toInsert, int amount) {
         if (this.overlayedTanks[tank] == null || this.overlayedTanks[tank].getFluidKey().equals(toInsert)) {
             int inserted;
-            inserted = overlayed.fill(new FluidStack(FluidRegistry.getFluid(toInsert.fluid), amount), true);
+            inserted = overlayed.fill(new FluidStack(FluidRegistry.getFluid(toInsert.fluid), amount), false);
             if (inserted > 0) {
                 this.overlayedTanks[tank] = new OverlayedTank(toInsert, inserted);
-                return inserted - amount;
+                return inserted;
             }
         }
-        return amount;
+        return 0;
     }
 
     public int insertFluidStack(int tank, @Nonnull FluidStack toInsert) {
@@ -58,10 +58,10 @@ public class OverlayedFluidHandler {
             inserted = overlayed.fill(toInsert, false);
             if (inserted > 0) {
                 this.overlayedTanks[tank] = new OverlayedTank(new FluidKey(toInsert), inserted);
-                return inserted - toInsert.amount;
+                return inserted;
             }
         }
-        return toInsert.amount;
+        return 0;
     }
 
     private static class OverlayedTank {

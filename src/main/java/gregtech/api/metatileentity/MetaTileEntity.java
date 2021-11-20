@@ -53,10 +53,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -1017,12 +1017,12 @@ public abstract class MetaTileEntity implements ICoverable {
 
         if (simulate) {
             OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
-            List<Pair<ItemStackKey, Integer>> stackKeyList = ParallelLogic.stackList2stackKeyList(items);
+            HashMap<ItemStackKey, Integer> stackKeyMap = ParallelLogic.itemCollection2StackKeyMap(items);
 
-            for (Pair<ItemStackKey, Integer> pair : stackKeyList) {
-                int amountToInsert = pair.getRight();
+            for (Map.Entry<ItemStackKey, Integer> entry : stackKeyMap.entrySet()) {
+                int amountToInsert = entry.getValue();
                 for (int slot = 0; slot < overlayedItemHandler.getSlots(); slot++) {
-                    int amount = overlayedItemHandler.insertItemStackKey(slot, pair.getLeft(), amountToInsert);
+                    int amount = overlayedItemHandler.insertItemStackKey(slot, entry.getKey(), amountToInsert);
                     if (amount >= 0) {
                         amountToInsert = amount;
                     }
@@ -1045,16 +1045,18 @@ public abstract class MetaTileEntity implements ICoverable {
         if (simulate) {
             OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(handler);
             for (FluidStack fluidStack : fluidStacks) {
-                int amountToInsert = fluidStack.amount;
-                for (int slot = 0; slot < overlayedFluidHandler.getTankProperties().length; slot++) {
-                    int amount = overlayedFluidHandler.insertFluidStack(slot, fluidStack);
-                    if (amount >= 0) {
-                        amountToInsert = amount;
+                int amountLeft = fluidStack.amount;
+                for (int tank = 0; tank < overlayedFluidHandler.getTankProperties().length; tank++) {
+                    int inserted = overlayedFluidHandler.insertFluidStack(tank, fluidStack);
+                    if (inserted > 0) {
+                        amountLeft -= inserted;
+                        if (amountLeft == 0) {
+                            break;
+                        }
                     }
-                    if (amount == 0) break;
                 }
-                if (amountToInsert > 0) {
-                    return false;
+                if (amountLeft > 0) {
+                    break;
                 }
             }
             return true;
