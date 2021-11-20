@@ -752,21 +752,21 @@ public class MetaTileEntities {
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,
-                                                     int startId,
-                                                     String name,
-                                                     RecipeMap<?> map,
-                                                     OrientedOverlayRenderer texture,
-                                                     boolean hasFrontFacing,
-                                                     Function<Integer, Integer> tankScalingFunction) {
+                                                    int startId,
+                                                    String name,
+                                                    RecipeMap<?> map,
+                                                    OrientedOverlayRenderer texture,
+                                                    boolean hasFrontFacing,
+                                                    Function<Integer, Integer> tankScalingFunction) {
         registerSimpleMetaTileEntity(machines, startId, name, map, texture, hasFrontFacing, MetaTileEntities::gregtechId, tankScalingFunction);
     }
 
     private static void registerSimpleMetaTileEntity(SimpleMachineMetaTileEntity[] machines,
-                                                     int startId,
-                                                     String name,
-                                                     RecipeMap<?> map,
-                                                     OrientedOverlayRenderer texture,
-                                                     boolean hasFrontFacing) {
+                                                    int startId,
+                                                    String name,
+                                                    RecipeMap<?> map,
+                                                    OrientedOverlayRenderer texture,
+                                                    boolean hasFrontFacing) {
         registerSimpleMetaTileEntity(machines, startId, name, map, texture, hasFrontFacing, GTUtility.defaultTankSizeFunction);
     }
 
