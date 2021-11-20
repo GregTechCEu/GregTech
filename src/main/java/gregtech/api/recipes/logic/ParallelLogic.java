@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.*;
@@ -21,34 +22,6 @@ import java.util.stream.IntStream;
 import static gregtech.api.util.Predicates.not;
 
 public class ParallelLogic {
-    public static <R extends RecipeBuilder<R>> RecipeBuilder<R> append(RecipeBuilder<R> recipeBuilder, Recipe recipe, int multiplier) {
-
-        for (Map.Entry<RecipeProperty<?>, Object> property : recipe.getPropertyValues()) {
-            recipeBuilder.applyProperty(property.getKey().getKey(), property.getValue());
-        }
-
-        // Create holders for the various parts of the new multiplied Recipe
-        List<CountableIngredient> newRecipeInputs = new ArrayList<>();
-        List<FluidStack> newFluidInputs = new ArrayList<>();
-        List<ItemStack> outputItems = new ArrayList<>();
-        List<FluidStack> outputFluids = new ArrayList<>();
-
-        // Populate the various holders of the multiplied Recipe
-        multiplyInputsAndOutputs(newRecipeInputs, newFluidInputs, outputItems, outputFluids, recipe, multiplier);
-
-        // Build the new Recipe with multiplied components
-        recipeBuilder.inputsIngredients(newRecipeInputs);
-        recipeBuilder.fluidInputs(newFluidInputs);
-        recipeBuilder.outputs(outputItems);
-        recipeBuilder.fluidOutputs(outputFluids);
-        recipeBuilder.EUt(recipe.getEUt());
-        recipeBuilder.duration(recipe.getDuration());
-
-        copyChancedItemOutputs(recipeBuilder, recipe, multiplier);
-
-        return recipeBuilder;
-    }
-
     /**
      * @param recipe The recipe
      * @param inputs The item inputs
@@ -97,13 +70,11 @@ public class ParallelLogic {
 
     /**
      *
-     * @param recipe the recipe from which we get the input to product to ratio
+     * @param recipe the recipe from which we get the input to product ratio
      * @param multiplier the maximum possible multiplied we can get from the input inventory
      *                   see {@link ParallelLogic#getMaxRecipeMultiplier(Recipe, IItemHandlerModifiable, IMultipleTankHandler, int)}
      * @return the amount of times a {@link Recipe} outputs can be merged into an inventory without
      * voiding products.
-     *
-     * uses a binary-search-like for the merge of recipes that have more than one kind of item
      */
     public static int limitParallelByItems(Recipe recipe, OverlayedItemHandler overlayedItemHandler, int multiplier) {
         int minMultiplier = 0;
@@ -159,6 +130,14 @@ public class ParallelLogic {
         return new int[]{minMultiplier, multiplier, maxMultiplier};
     }
 
+    /**
+     *
+     * @param recipe the recipe from which we get the fluid input to product ratio
+     * @param multiplier the maximum possible multiplied we can get from the input tanks
+     *                   see {@link ParallelLogic#getMaxRecipeMultiplier(Recipe, IItemHandlerModifiable, IMultipleTankHandler, int)}
+     * @return the amount of times a {@link Recipe} outputs can be merged into a fluid handler without
+     * voiding products.
+     */
     public static int limitParallelByFluids(Recipe recipe, OverlayedFluidHandler overlayedFluidHandler, int multiplier) {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
@@ -194,38 +173,13 @@ public class ParallelLogic {
         return multiplier;
     }
 
-        /**
-         * Copies the chanced outputs of a Recipe and expands them for the number of parallel recipes performed
-         *
-         * @param newRecipe An instance of the recipe after the inputs and outputs have been multiplied from the number of parallels
-         * @param oldRecipe The original recipe before any parallel multiplication
-         * @param numberOfOperations The number of parallel operations that have been performed
-         */
-    protected static void copyChancedItemOutputs(RecipeBuilder<?> newRecipe, Recipe oldRecipe, int numberOfOperations) {
-
-        // Iterate through the chanced outputs
-        for(Recipe.ChanceEntry entry : oldRecipe.getChancedOutputs()) {
-
-            int chance = entry.getChance();
-            int boost = entry.getBoostPerTier();
-            ItemStack itemStack = entry.getItemStack();
-
-            // Add individual chanced outputs per number of parallel operations performed, to mimic regular recipes.
-            // This is done instead of simply batching the chanced outputs by the number of parallel operations performed
-            IntStream.range(0, numberOfOperations).forEach(value -> {
-                newRecipe.chancedOutput(itemStack, chance, boost);
-            });
-        }
-    }
-
     /**
-     * Copies all items in the input inventory into single oversized stacks per unique item.
-     * Skips Empty slots
+     * Maps all items in the {@link IItemHandler} into a {@link ItemStackKey}, {@link Integer} value as amount
      *
      * @param inputs The inventory handler of the inventory
      * @return a {@link HashMap} of {@link ItemStackKey}s comprising of oversized stacks for each unique item in the input inventory
      */
-    protected static HashMap<ItemStackKey,Integer> itemHandler2StackKeyMap(IItemHandlerModifiable inputs) {
+    public static HashMap<ItemStackKey,Integer> itemHandler2StackKeyMap(IItemHandler inputs) {
         final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item
@@ -239,6 +193,12 @@ public class ParallelLogic {
                         mapSupplier)));
     }
 
+    /**
+     * Maps all items in the {@link ItemStack} {@link Collection} into a {@link ItemStackKey}, {@link Integer} value as amount
+     *
+     * @param inputs The inventory handler of the inventory
+     * @return a {@link HashMap} of {@link ItemStackKey}s comprising of oversized stacks for each unique item in the input inventory
+     */
     public static HashMap<ItemStackKey,Integer> itemCollection2StackKeyMap(Collection<ItemStack> inputs) {
         final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
@@ -255,7 +215,7 @@ public class ParallelLogic {
 
     /**
      * Finds the maximum number of Recipes that can be performed at the same time based on the items in the item input inventory
-     * @param countIngredients a {@link HashMap} of {@link ItemStackKey}s that is the result of calling {@link ParallelLogic#itemHandler2StackKeyMap(IItemHandlerModifiable)}
+     * @param countIngredients a {@link HashMap} of {@link ItemStackKey}s that is the result of calling {@link ParallelLogic#itemHandler2StackKeyMap(IItemHandler)}
      * @param recipe The {@link Recipe} for which to find the maximum that can be ran simultaneously
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Items
@@ -291,13 +251,12 @@ public class ParallelLogic {
     }
 
     /**
-     * Finds all unique Fluids in the combined Fluid Input inventory, and combines them into a {@link HashMap} of oversized {@link FluidKey}s
-     * Skips Empty Fluid Tanks
+     * Maps all fluids in the {@link IFluidHandler} into a {@link FluidKey}, {@link Integer} value as amount
      *
-     * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IMultipleTankHandler}
+     * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
      * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
      */
-    protected static HashMap<FluidKey,Integer> fluidHandler2FluidKeyMap(IFluidHandler fluidInputs) {
+    public static HashMap<FluidKey,Integer> fluidHandler2FluidKeyMap(IFluidHandler fluidInputs) {
         final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item
@@ -311,6 +270,12 @@ public class ParallelLogic {
                         mapSupplier)));
     }
 
+    /**
+     * Maps all fluids in the {@link FluidStack} {@link Collection} into a {@link FluidKey}, {@link Integer} value as amount
+     *
+     * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
+     * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
+     */
     public static HashMap<FluidKey,Integer> fluidCollection2FluidKeyMap(Collection<FluidStack> fluidInputs) {
         final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
@@ -363,41 +328,5 @@ public class ParallelLogic {
         }
 
         return minMultiplier;
-    }
-
-    protected static ItemStack copyItemStackWithCount(ItemStack itemStack, int count) {
-        ItemStack itemCopy = itemStack.copy();
-        itemCopy.setCount(count);
-        return itemCopy;
-    }
-
-    protected static FluidStack copyFluidStackWithAmount(FluidStack fluidStack, int count) {
-        FluidStack fluidCopy = fluidStack.copy();
-        fluidCopy.amount = count;
-        return fluidCopy;
-    }
-
-    protected static void multiplyInputsAndOutputs(List<CountableIngredient> newRecipeInputs,
-                                            List<FluidStack> newFluidInputs,
-                                            List<ItemStack> outputItems,
-                                            List<FluidStack> outputFluids,
-                                            Recipe recipe,
-                                            int numberOfOperations) {
-
-        recipe.getInputs().forEach(ci ->
-                newRecipeInputs.add(new CountableIngredient(ci.getIngredient(),
-                        ci.getCount() * numberOfOperations)));
-
-        recipe.getFluidInputs().forEach(fluidStack ->
-                newFluidInputs.add(new FluidStack(fluidStack.getFluid(),
-                        fluidStack.amount * numberOfOperations)));
-
-        recipe.getOutputs().forEach(itemStack ->
-                outputItems.add(copyItemStackWithCount(itemStack,
-                        itemStack.getCount() * numberOfOperations)));
-
-        recipe.getFluidOutputs().forEach(fluidStack ->
-                outputFluids.add(copyFluidStackWithAmount(fluidStack,
-                        fluidStack.amount * numberOfOperations)));
     }
 }
