@@ -1,7 +1,6 @@
 package gregtech.api.util;
 
 import gregtech.api.capability.IMultipleTankHandler;
-import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.NotifiableFluidTankFromList;
 import gregtech.api.recipes.FluidKey;
 import net.minecraftforge.fluids.FluidStack;
@@ -127,11 +126,11 @@ public class OverlayedFluidHandler {
                             }
                         }
                     }
-                    int insertable = Math.min(overlayedTank.getCapacity(), amountToInsert);
-                    if (insertable > 0) {
-                        insertedAmount += insertable;
+                    int canInsertUpTo = Math.min(overlayedTank.getCapacity(), amountToInsert);
+                    if (canInsertUpTo > 0) {
+                        insertedAmount += canInsertUpTo;
                         overlayedTank.setFluidKey(toInsert);
-                        overlayedTank.setFluidAmount(overlayedTank.getFluidAmount() + insertable);
+                        overlayedTank.setFluidAmount(canInsertUpTo);
                         amountToInsert -= insertedAmount;
                     }
                     if (amountToInsert == 0) {

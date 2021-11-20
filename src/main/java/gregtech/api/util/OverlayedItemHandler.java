@@ -4,8 +4,6 @@ import gregtech.api.recipes.KeySharedStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
-import javax.annotation.Nonnull;
-
 public class OverlayedItemHandler {
     private final OverlayedItemHandlerSlot[] originalSlots;
     private final OverlayedItemHandlerSlot[] slots;
@@ -58,11 +56,12 @@ public class OverlayedItemHandler {
             //if its the same item
             if (this.slots[i].getItemStackKey() == key) {
                 //if the slot its not full
-                int insertable = this.slots[i].slotLimit - this.slots[i].count;
-                if (insertable > 0) {
+                int canInsertUpTo = this.slots[i].slotLimit - this.slots[i].count;
+                if (canInsertUpTo > 0) {
+                    int insertedAmount = Math.min(canInsertUpTo, amountToInsert);
                     this.slots[i].setItemStackKey(key);
-                    this.slots[i].setCount(Math.min(insertable, amountToInsert));
-                    amountToInsert -= insertable;
+                    this.slots[i].setCount(this.slots[i].getCount() + insertedAmount);
+                    amountToInsert -= insertedAmount;
                 }
             }
         }
@@ -72,11 +71,12 @@ public class OverlayedItemHandler {
             for (OverlayedItemHandlerSlot slot : this.slots) {
                 //if the slot is empty
                 if (slot.getItemStackKey() == null) {
-                    int insertable = Math.max(key.getMaxStackSize(), slot.slotLimit);
-                    if (insertable > 0) {
+                    int canInsertUpTo = Math.min(key.getMaxStackSize(), slot.slotLimit);
+                    if (canInsertUpTo > 0) {
+                        int insertedAmount = Math.min(canInsertUpTo, amountToInsert);
                         slot.setItemStackKey(key);
-                        slot.setCount(Math.min(insertable, amountToInsert));
-                        amountToInsert -= insertable;
+                        slot.setCount(insertedAmount);
+                        amountToInsert -= insertedAmount;
                     }
                     if (amountToInsert == 0) {
                         return 0;
