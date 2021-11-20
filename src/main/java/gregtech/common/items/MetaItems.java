@@ -115,12 +115,6 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem TOOL_LIGHTER_INVAR;
     public static MetaItem<?>.MetaValueItem TOOL_LIGHTER_PLATINUM;
 
-    public static MetaItem<?>.MetaValueItem INGOT_MIXED_METAL;
-    public static MetaItem<?>.MetaValueItem ADVANCED_ALLOY_PLATE;
-
-    public static MetaItem<?>.MetaValueItem INGOT_IRIDIUM_ALLOY;
-    public static MetaItem<?>.MetaValueItem PLATE_IRIDIUM_ALLOY;
-
     public static MetaItem<?>.MetaValueItem CARBON_FIBERS;
     public static MetaItem<?>.MetaValueItem CARBON_MESH;
     public static MetaItem<?>.MetaValueItem CARBON_PLATE;

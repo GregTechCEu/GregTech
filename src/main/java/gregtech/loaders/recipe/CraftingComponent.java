@@ -204,14 +204,23 @@ public class CraftingComponent {
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 
+
+        //TODO, Glass Tiers:
+        /*
+        Glass: Steam-MV
+        Tempered: HV, EV
+        Something new: IV, LuV
+        Fusion: ZPM, UV
+        Some gregicality thing: UHV+
+         */
         GLASS = new Component(Stream.of(new Object[][]{
 
                 {GTValues.FALLBACK, new ItemStack(Blocks.GLASS, 1, GTValues.W)},
-                {4, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS)},
-                {5, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS)},
-                {6, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS)},
-                {7, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS)},
-                {8, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS)}
+                {4, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
+                {5, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
+                {6, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
+                {7, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)},
+                {8, MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS)}
 
         }).collect(Collectors.toMap(data -> (Integer) data[0], data -> data[1])));
 

@@ -35,60 +35,6 @@ public class MiscRecipeLoader {
                 new UnificationEntry(dust, Bronze),
                 new UnificationEntry(dust, Tin));
 
-        // Mixed Metal Ingots
-        final MaterialStack[] firstMetal = {
-                new MaterialStack(Materials.Iron, 1),
-                new MaterialStack(Materials.Nickel, 1),
-                new MaterialStack(Materials.Invar, 2),
-                new MaterialStack(Materials.Steel, 2),
-                new MaterialStack(Materials.StainlessSteel, 3),
-                new MaterialStack(Materials.Titanium, 3),
-                new MaterialStack(Materials.Tungsten, 4),
-                new MaterialStack(Materials.TungstenSteel, 5)
-        };
-
-        final MaterialStack[] lastMetal = {
-                new MaterialStack(Materials.Tin, 0),
-                new MaterialStack(Materials.Zinc, 0),
-                new MaterialStack(Materials.Aluminium, 1)
-        };
-
-        int multiplier;
-        for (MaterialStack metal1 : firstMetal) {
-            Material material1 = metal1.material;
-            int multiplier1 = (int) metal1.amount;
-            for (MaterialStack metal2 : lastMetal) {
-                Material material2 = metal2.material;
-                if ((int) metal1.amount == 1) multiplier = 0;
-                else multiplier = (int) metal2.amount;
-                ModHandler.addShapedRecipe("mixed_metal_1_" + material1.toString() + "_" + material2.toString(), MetaItems.INGOT_MIXED_METAL.getStackForm(multiplier1 + multiplier),
-                        "F", "M", "L",
-                        'F', new UnificationEntry(OrePrefix.plate, material1),
-                        'M', new UnificationEntry(OrePrefix.plate, Bronze),
-                        'L', new UnificationEntry(OrePrefix.plate, material2));
-
-                ModHandler.addShapedRecipe("mixed_metal_2_" + material1.toString() + "_" + material2.toString(), MetaItems.INGOT_MIXED_METAL.getStackForm(multiplier1 + multiplier),
-                        "F", "M", "L",
-                        'F', new UnificationEntry(OrePrefix.plate, material1),
-                        'M', new UnificationEntry(OrePrefix.plate, Brass),
-                        'L', new UnificationEntry(OrePrefix.plate, material2));
-
-                FORMING_PRESS_RECIPES.recipeBuilder().duration(40 * multiplier1 + multiplier * 40).EUt(8)
-                        .input(OrePrefix.plate, material1)
-                        .input(OrePrefix.plank, Bronze)
-                        .input(OrePrefix.plate, material2)
-                        .outputs(MetaItems.INGOT_MIXED_METAL.getStackForm(multiplier1 + multiplier))
-                        .buildAndRegister();
-
-                FORMING_PRESS_RECIPES.recipeBuilder().duration(40 * multiplier1 + multiplier * 40).EUt(8)
-                        .input(OrePrefix.plate, material1)
-                        .input(OrePrefix.plate, Brass)
-                        .input(OrePrefix.plate, material2)
-                        .outputs(MetaItems.INGOT_MIXED_METAL.getStackForm(multiplier1 + multiplier))
-                        .buildAndRegister();
-            }
-        }
-
         RecipeMaps.MIXER_RECIPES.recipeBuilder().duration(100).EUt(8)
                 .input(dust, Sugar)
                 .inputs(new ItemStack(Blocks.BROWN_MUSHROOM))
@@ -161,7 +107,7 @@ public class MiscRecipeLoader {
         //armor
         // Nightvision Goggles
         ASSEMBLER_RECIPES.recipeBuilder().duration(400).EUt(128)
-                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS))
+                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS))
                 .inputs(EMITTER_MV.getStackForm(2))
                 .inputs(DUCT_TAPE.getStackForm(2))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
@@ -196,7 +142,7 @@ public class MiscRecipeLoader {
 
         ASSEMBLER_RECIPES.recipeBuilder().duration(1200).EUt(512)
                 .input(circuit, Advanced, 2)
-                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.REINFORCED_GLASS))
+                .inputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS))
                 .inputs(NIGHTVISION_GOGGLES.getStackForm())
                 .inputs(CARBON_PLATE.getStackForm(5))
                 .inputs(BATTERY_HV_LITHIUM.getStackForm())
@@ -289,7 +235,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 2)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .inputs(PLATE_IRIDIUM_ALLOY.getStackForm(4))
+                .input(plate, RuthenianIridium, 4)
                 .inputs(ELECTRIC_PISTON_EV.getStackForm(2))
                 .inputs(NANO_MUSCLE_SUITE_BOOTS.getStackForm())
                 .outputs(QUARK_TECH_SUITE_BOOTS.getStackForm())
@@ -299,7 +245,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 4)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .inputs(PLATE_IRIDIUM_ALLOY.getStackForm(6))
+                .input(plate, RuthenianIridium, 6)
                 .inputs(CONVEYOR_MODULE_EV.getStackForm(2))
                 .inputs(NANO_MUSCLE_SUITE_LEGGINGS.getStackForm())
                 .outputs(QUARK_TECH_SUITE_LEGGINGS.getStackForm())
@@ -309,7 +255,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 4)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .inputs(PLATE_IRIDIUM_ALLOY.getStackForm(8))
+                .input(plate, RuthenianIridium, 8)
                 .inputs(FIELD_GENERATOR_EV.getStackForm(2))
                 .inputs(NANO_MUSCLE_SUITE_CHESTPLATE.getStackForm())
                 .outputs(QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
@@ -319,7 +265,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 2)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .inputs(PLATE_IRIDIUM_ALLOY.getStackForm(4))
+                .input(plate, RuthenianIridium, 4)
                 .inputs(SENSOR_EV.getStackForm())
                 .inputs(EMITTER_EV.getStackForm())
                 .inputs(NANO_MUSCLE_SUITE_HELMET.getStackForm())
@@ -340,7 +286,7 @@ public class MiscRecipeLoader {
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(16))
                 .input(wireGtSingle, SamariumIronArsenicOxide, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
-                .inputs(PLATE_IRIDIUM_ALLOY.getStackForm(12))
+                .input(plate, RuthenianIridium, 12)
                 .input(circuit, Elite, 4)
                 .inputs(QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
@@ -351,11 +297,17 @@ public class MiscRecipeLoader {
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(8))
                 .input(wireGtSingle, SamariumIronArsenicOxide, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
-                .inputs(PLATE_IRIDIUM_ALLOY.getStackForm(16))
+                .input(plate, RuthenianIridium, 16)
                 .input(circuit, Elite, 2)
                 .inputs(ADVANCED_NANO_MUSCLE_CHESTPLATE.getStackForm())
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
                 .outputs(ADVANCED_QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
+                .buildAndRegister();
+
+        // Tempered Glass in Arc Furnace
+        ARC_FURNACE_RECIPES.recipeBuilder().duration(60).EUt(30)
+                .input(block, Glass)
+                .outputs(MetaBlocks.TRANSPARENT_CASING.getItemVariant(BlockTransparentCasing.CasingType.TEMPERED_GLASS))
                 .buildAndRegister();
 
     }
