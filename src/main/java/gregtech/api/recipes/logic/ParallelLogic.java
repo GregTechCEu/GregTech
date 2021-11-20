@@ -2,24 +2,13 @@ package gregtech.api.recipes.logic;
 
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.*;
-import gregtech.api.recipes.recipeproperties.RecipeProperty;
-import gregtech.api.util.ItemStackKey;
-import gregtech.api.util.OverlayedFluidHandler;
-import gregtech.api.util.OverlayedItemHandler;
-import gregtech.api.util.StreamUtils;
-import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
-import net.minecraft.item.ItemStack;
+import gregtech.api.util.*;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static gregtech.api.util.Predicates.not;
 
 public class ParallelLogic {
     /**
@@ -32,10 +21,10 @@ public class ParallelLogic {
 
     public static int getMaxRecipeMultiplier(Recipe recipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int parallelAmount) {
         // Find all the items in the combined Item Input inventories and create oversized ItemStacks
-        HashMap<ItemStackKey,Integer> ingredientStacks = itemHandler2StackKeyMap(inputs);
+        HashMap<ItemStackKey,Integer> ingredientStacks = GTHashMaps.fromItemHandler(inputs);
 
         // Find all the fluids in the combined Fluid Input inventories and create oversized FluidStacks
-        HashMap<FluidKey,Integer> fluidStacks = fluidHandler2FluidKeyMap(fluidInputs);
+        HashMap<FluidKey,Integer> fluidStacks = GTHashMaps.fromFluidHandler(fluidInputs);
 
         // Find the maximum number of recipes that can be performed from the items in the item input inventories
         int itemMultiplier = getMaxRatioItem(ingredientStacks, recipe, parallelAmount);
@@ -80,7 +69,7 @@ public class ParallelLogic {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
-        HashMap<ItemStackKey, Integer> recipeOutputs = itemCollection2StackKeyMap(recipe.getOutputs());
+        HashMap<ItemStackKey, Integer> recipeOutputs = GTHashMaps.fromItemStackCollection(recipe.getOutputs());
 
         while (minMultiplier != maxMultiplier) {
             overlayedItemHandler.reset();
@@ -174,48 +163,8 @@ public class ParallelLogic {
     }
 
     /**
-     * Maps all items in the {@link IItemHandler} into a {@link ItemStackKey}, {@link Integer} value as amount
-     *
-     * @param inputs The inventory handler of the inventory
-     * @return a {@link HashMap} of {@link ItemStackKey}s comprising of oversized stacks for each unique item in the input inventory
-     */
-    public static HashMap<ItemStackKey,Integer> itemHandler2StackKeyMap(IItemHandler inputs) {
-        final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
-
-        // Create a single stack of the combined count for each item
-        return new HashMap<>(StreamUtils.streamFrom(inputs)
-                // keep only non-empty item stacks
-                .filter(not(ItemStack::isEmpty))
-                // Track the number of identical items
-                .collect(Collectors.toMap(KeySharedStack::getRegisteredStack,
-                        ItemStack::getCount,
-                        Math::addExact,
-                        mapSupplier)));
-    }
-
-    /**
-     * Maps all items in the {@link ItemStack} {@link Collection} into a {@link ItemStackKey}, {@link Integer} value as amount
-     *
-     * @param inputs The inventory handler of the inventory
-     * @return a {@link HashMap} of {@link ItemStackKey}s comprising of oversized stacks for each unique item in the input inventory
-     */
-    public static HashMap<ItemStackKey,Integer> itemCollection2StackKeyMap(Collection<ItemStack> inputs) {
-        final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
-
-        // Create a single stack of the combined count for each item
-        return new HashMap<>(inputs.stream()
-                // keep only non-empty item stacks
-                .filter(not(ItemStack::isEmpty))
-                // Track the number of identical items
-                .collect(Collectors.toMap(KeySharedStack::getRegisteredStack,
-                        ItemStack::getCount,
-                        Math::addExact,
-                        mapSupplier)));
-    }
-
-    /**
      * Finds the maximum number of Recipes that can be performed at the same time based on the items in the item input inventory
-     * @param countIngredients a {@link HashMap} of {@link ItemStackKey}s that is the result of calling {@link ParallelLogic#itemHandler2StackKeyMap(IItemHandler)}
+     * @param countIngredients a {@link HashMap} of {@link ItemStackKey}s that is the result of calling {@link GTHashMaps#fromItemHandler(IItemHandler)}
      * @param recipe The {@link Recipe} for which to find the maximum that can be ran simultaneously
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Items
@@ -251,49 +200,9 @@ public class ParallelLogic {
     }
 
     /**
-     * Maps all fluids in the {@link IFluidHandler} into a {@link FluidKey}, {@link Integer} value as amount
-     *
-     * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
-     * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
-     */
-    public static HashMap<FluidKey,Integer> fluidHandler2FluidKeyMap(IFluidHandler fluidInputs) {
-        final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
-
-        // Create a single stack of the combined count for each item
-        return new HashMap<>(StreamUtils.streamFrom(fluidInputs)
-                // keep only non-empty item stacks
-                .filter(Objects::nonNull)
-                // Track the number of identical items
-                .collect(Collectors.toMap(FluidKey::new,
-                        (fluidStack -> fluidStack.amount),
-                        Math::addExact,
-                        mapSupplier)));
-    }
-
-    /**
-     * Maps all fluids in the {@link FluidStack} {@link Collection} into a {@link FluidKey}, {@link Integer} value as amount
-     *
-     * @param fluidInputs The combined fluid input inventory handler, in the form of an {@link IFluidHandler}
-     * @return a {@link Set} of unique {@link FluidKey}s for each fluid in the handler. Will be oversized stacks if required
-     */
-    public static HashMap<FluidKey,Integer> fluidCollection2FluidKeyMap(Collection<FluidStack> fluidInputs) {
-        final Supplier<Map<FluidKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
-
-        // Create a single stack of the combined count for each item
-        return new HashMap<>(fluidInputs.stream()
-                // keep only non-empty item stacks
-                .filter(Objects::nonNull)
-                // Track the number of identical items
-                .collect(Collectors.toMap(FluidKey::new,
-                        (fluidStack -> fluidStack.amount),
-                        Math::addExact,
-                        mapSupplier)));
-    }
-
-    /**
      * Finds the maximum number of a specific recipe that can be performed based upon the fluids in the fluid inputs
      *
-     * @param countFluid a {@link Set} of {@link FluidStack}s that is the result of calling {@link ParallelLogic#fluidHandler2FluidKeyMap(IFluidHandler)}
+     * @param countFluid a {@link Set} of {@link FluidStack}s that is the result of calling {@link GTHashMaps#fromFluidHandler(IFluidHandler)}
      * @param recipe The {@link Recipe} for which to find the maximum that can be ran simultaneously
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Fluids
