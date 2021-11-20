@@ -17,7 +17,7 @@ ij_wrap_on_typing = false
 [*.java]
 ij_java_align_consecutive_assignments = false
 ij_java_align_consecutive_variable_declarations = false
-ij_java_align_group_field_declarations = false
+ij_java_align_group_field_declarations = true
 ij_java_align_multiline_annotation_parameters = false
 ij_java_align_multiline_array_initializer_expression = false
 ij_java_align_multiline_assignment = false
@@ -28,7 +28,7 @@ ij_java_align_multiline_for = true
 ij_java_align_multiline_method_parentheses = false
 ij_java_align_multiline_parameters = true
 ij_java_align_multiline_parameters_in_calls = false
-ij_java_align_multiline_parenthesized_expression = true
+ij_java_align_multiline_parenthesized_expression = false
 ij_java_align_multiline_records = true
 ij_java_align_multiline_resources = true
 ij_java_align_multiline_ternary_operation = false
