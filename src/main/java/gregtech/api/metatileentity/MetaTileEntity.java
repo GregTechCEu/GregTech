@@ -1001,6 +1001,8 @@ public abstract class MetaTileEntity implements ICoverable {
      * <br /><br />
      * Simulating will not modify any of the input parameters. Insertion will either succeed completely, or fail
      * without modifying anything.
+     * This method should be called with {@code simulate} {@code true} first, then {@code simulate} {@code false},
+     * only if it returned {@code true}.
      *
      * @param handler  the target inventory
      * @param simulate whether to simulate ({@code true}) or actually perform the insertion ({@code false})
@@ -1035,6 +1037,8 @@ public abstract class MetaTileEntity implements ICoverable {
      * <br /><br />
      * Simulating will not modify any of the input parameters. Insertion will either succeed completely, or fail
      * without modifying anything.
+     * This method should be called with {@code simulate} {@code true} first, then {@code simulate} {@code false},
+     * only if it returned {@code true}.
      *
      * @param fluidHandler  the target inventory
      * @param simulate whether to simulate ({@code true}) or actually perform the insertion ({@code false})
@@ -1049,7 +1053,7 @@ public abstract class MetaTileEntity implements ICoverable {
             HashMap<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
             for (Map.Entry<FluidKey, Integer> entry : fluidKeyMap.entrySet()) {
                 int amountLeft = entry.getValue();
-                int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), entry.getValue());
+                int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountLeft);
                 if (inserted > 0) {
                     amountLeft -= inserted;
                 }
