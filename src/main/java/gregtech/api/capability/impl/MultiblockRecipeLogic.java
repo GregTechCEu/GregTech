@@ -193,18 +193,21 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 //Check if the recipe can be multiplied due to parallel logic
                 if (this.metaTileEntity.getParallelLimit() > 1) {
                     int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, bus, importFluids, this.metaTileEntity.getParallelLimit());
-                    int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
+                    if (multiplierByInputs > 1) {
+                        // Simulate the merging of the maximum amount of recipes
+                        // and limit by the amount we can successfully merge
+                        int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
+                        int parallelizable = Math.min(multiplierByInputs, limitByOutput);
 
-                    int parallelizable = Math.min(multiplierByInputs, limitByOutput);
-
-                    if (parallelizable > 1) {
-                        currentRecipe = recipeMap.recipeBuilder()
-                                .append(currentRecipe, parallelizable)
-                                .build().getResult();
-                        this.parallelRecipesPerformed = parallelizable;
-                    } else {
-                        this.isOutputsFull = true;
-                        currentRecipe = null;
+                        if (parallelizable > 1) {
+                            currentRecipe = recipeMap.recipeBuilder()
+                                    .append(currentRecipe, parallelizable)
+                                    .build().getResult();
+                            this.parallelRecipesPerformed = parallelizable;
+                        } else {
+                            this.isOutputsFull = true;
+                            currentRecipe = null;
+                        }
                     }
                 }
 

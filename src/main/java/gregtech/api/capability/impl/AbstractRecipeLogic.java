@@ -218,18 +218,20 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             //Check if the recipe can be multiplied due to parallel logic
             if (this.metaTileEntity.getParallelLimit() > 1) {
                 int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, this.metaTileEntity.getParallelLimit());
+                if (multiplierByInputs > 1) {
+                    // Simulate the merging of the maximum amount of recipes
+                    // and limit by the amount we can successfully merge
+                    int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
+                    int parallelizable = Math.min(multiplierByInputs, limitByOutput);
 
-                int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
-
-                int parallelizable = Math.min(multiplierByInputs, limitByOutput);
-
-                if (parallelizable > 1) {
-                    currentRecipe = recipeMap.recipeBuilder()
-                            .append(currentRecipe, parallelizable)
-                            .build().getResult();
-                } else if (parallelizable == 0) {
-                    this.isOutputsFull = true;
-                    currentRecipe = null;
+                    if (parallelizable > 1) {
+                        currentRecipe = recipeMap.recipeBuilder()
+                                .append(currentRecipe, parallelizable)
+                                .build().getResult();
+                    } else if (parallelizable == 0) {
+                        this.isOutputsFull = true;
+                        currentRecipe = null;
+                    }
                 }
             }
 
