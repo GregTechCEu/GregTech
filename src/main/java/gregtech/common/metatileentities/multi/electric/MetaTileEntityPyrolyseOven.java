@@ -39,7 +39,7 @@ public class MetaTileEntityPyrolyseOven extends RecipeMapMultiblockController {
                 .aisle("CCC", "C#C", "CCC")
                 .aisle("XXX", "XSX", "XXX")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).or(autoAbilities()).or(abilities(MultiblockAbility.MAINTENANCE_HATCH).setMinGlobalLimited(1)))
+                .where('X', states(getCasingState()).or(autoAbilities()))
                 .where('C', states(MetaBlocks.WIRE_COIL.getState(CoilType.CUPRONICKEL)))
                 .where('#', air())
                 .build();

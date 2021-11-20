@@ -47,8 +47,7 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
                 .aisle("XXX", "X#X", "XXX")
                 .aisle("XXX", "XSX", "XXX")
                 .where('S', selfPredicate())
-                .where('X', states(getCasingState()).setMinGlobalLimited(14).or(
-                        abilities(ALLOWED_ABILITIES)))
+                .where('X', states(getCasingState()).setMinGlobalLimited(14).or(abilities(ALLOWED_ABILITIES)))
                 .where('#', air())
                 .build();
     }
