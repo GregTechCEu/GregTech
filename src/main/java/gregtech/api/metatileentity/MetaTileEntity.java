@@ -1305,10 +1305,6 @@ public abstract class MetaTileEntity implements ICoverable {
         return notifiedFluidOutputList;
     }
 
-    public int getParallelLimit(){
-        return 1;
-    }
-
     public boolean isFragile() {
         return isFragile;
     }

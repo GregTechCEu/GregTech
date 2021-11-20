@@ -6,9 +6,9 @@ import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.IWorkable;
 import gregtech.api.metatileentity.MTETrait;
 import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
-import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.util.GTUtility;
@@ -217,8 +217,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         if (currentRecipe != null) {
 
             //Check if the recipe can be multiplied due to parallel logic
-            if (this.metaTileEntity.getParallelLimit() > 1) {
-                int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, this.metaTileEntity.getParallelLimit());
+            int parallelLimit = this.getParallel();
+            if (parallelLimit > 1) {
+                int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, parallelLimit);
                 if (multiplierByInputs > 1) {
                     // Simulate the merging of the maximum amount of recipes
                     // and limit by the amount we can successfully merge
@@ -243,6 +244,14 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         // Inputs have been inspected.
         metaTileEntity.getNotifiedItemInputList().clear();
         metaTileEntity.getNotifiedFluidInputList().clear();
+    }
+
+    protected int getParallel() {
+        if (this.metaTileEntity instanceof MultiblockWithDisplayBase) {
+            return ((MultiblockWithDisplayBase) this.metaTileEntity).getParallelLimit();
+        } else {
+            return 1;
+        }
     }
 
     protected int getMinTankCapacity(IMultipleTankHandler tanks) {

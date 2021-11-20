@@ -146,8 +146,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             currentRecipe = previousRecipe;
 
             //Check if the recipe can be multiplied due to parallel logic
-            if (this.metaTileEntity.getParallelLimit() > 1) {
-                int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, importInventory.get(lastRecipeIndex), importFluids, this.metaTileEntity.getParallelLimit());
+            int parallelLimit = this.getParallel();
+            if (parallelLimit > 1) {
+                int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, importInventory.get(lastRecipeIndex), importFluids, parallelLimit);
                 int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
 
                 int parallelizable = Math.min(multiplierByInputs, limitByOutput);
@@ -190,8 +191,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 this.previousRecipe = currentRecipe;
 
                 //Check if the recipe can be multiplied due to parallel logic
-                if (this.metaTileEntity.getParallelLimit() > 1) {
-                    int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, bus, importFluids, this.metaTileEntity.getParallelLimit());
+                int parallelLimit = this.getParallel();
+                if (parallelLimit > 1) {
+                    int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, bus, importFluids, parallelLimit);
                     if (multiplierByInputs > 1) {
                         // Simulate the merging of the maximum amount of recipes
                         // and limit by the amount we can successfully merge
