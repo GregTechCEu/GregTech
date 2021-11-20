@@ -31,11 +31,8 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew build
-      - name: Upload libs
-        uses: actions/upload-artifact@v2
-        with:
-          name: libs
-          path: build/libs/*.jar
+      - name: Run tests
+        run: ./gradlew check test
   format:
     name: check-fmt
     runs-on: ubuntu-latest
@@ -57,6 +54,6 @@ jobs:
       - name: Grand execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew clean build
       - name: Run Formatter
         run: ./gradlew editorconfigCheck
