@@ -59,9 +59,4 @@ public class ClientEventHandler {
     public static void onRenderSpecificHand(RenderSpecificHandEvent event) {
         TerminalARRenderer.renderHandEvent(event);
     }
-
-    @SubscribeEvent
-    public static void onPlayerAdvancement(AdvancementEvent event) {
-        UnlockedCapesRegistry.unlockCape(event.getEntityPlayer(), event.getAdvancement());
-    }
 }

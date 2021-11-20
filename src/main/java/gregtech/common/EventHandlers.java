@@ -37,6 +37,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -179,15 +180,18 @@ public class EventHandlers {
     public static void onWorldLoadEvent(WorldEvent.Load event) {
         VirtualTankRegistry.initializeStorage(event.getWorld());
         UnlockedCapesRegistry.initializeStorage(event.getWorld());
-        if(event.getWorld() instanceof WorldServer) {
-            try {
-                Field advManager = World.class.getDeclaredField("advancementManager");
-                advManager.setAccessible(true);
-                Advancement adv = ((AdvancementManager) advManager.get(event.getWorld())).getAdvancement(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"));
-                UnlockedCapesRegistry.linkAdvancement(adv, Textures.GREGTECH_CAPE_TEXTURE);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
+        UnlockedCapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"),
+                Textures.GREGTECH_CAPE_TEXTURE, event.getWorld());
+        UnlockedCapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "steam/12_electronic_circuit"),
+                Textures.RED_CAPE_TEXTURE, event.getWorld());
+        UnlockedCapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "high_voltage/82_large_chemical_reactor"),
+                Textures.YELLOW_CAPE_TEXTURE, event.getWorld());
+        UnlockedCapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "ludicrous_voltage/60_fusion"),
+                Textures.GREEN_CAPE_TEXTURE, event.getWorld());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerAdvancement(AdvancementEvent event) {
+        UnlockedCapesRegistry.unlockCape(event.getEntityPlayer(), event.getAdvancement());
     }
 }

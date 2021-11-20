@@ -5,6 +5,7 @@ import gregtech.api.gui.resources.TextureArea;
 import gregtech.api.gui.widgets.ClickButtonWidget;
 import gregtech.api.gui.widgets.ScrollableListWidget;
 import gregtech.api.gui.widgets.WidgetGroup;
+import gregtech.api.terminal.gui.widgets.DraggableScrollableWidgetGroup;
 import gregtech.api.util.UnlockedCapesRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -13,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CapeListWidget extends ScrollableListWidget {
+public class CapeListWidget extends DraggableScrollableWidgetGroup {
     public CapeListWidget(int xPosition, int yPosition, int width, int height, UUID uuid) {
-        super(xPosition, yPosition, width * 40, height * 56); // Cape banners are 28x44, expanded to 40x56
+        super(xPosition, yPosition, width * 40 + 40, height * 56 + 56); // Cape banners are 28x44, expanded to 40x56
 
         List<ResourceLocation> capes = UnlockedCapesRegistry.unlockedCapes(uuid);
 
-        if(capes.size() == 0)
+        if(capes == null || capes.size() == 0)
             return;
 
         int rowNumber = 0;
