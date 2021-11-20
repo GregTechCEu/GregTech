@@ -77,27 +77,25 @@ public class OverlayedFluidHandler {
             OverlayedTank overlayedTank = this.overlayedTanks[i];
             if (toInsert.equals(overlayedTank.getFluidKey())) {
                 if ((tankDeniesSameFluidFill.contains(overlayed.getTankProperties()[i]) || !this.allowSameFluidFill) ) {
-                    if (overlayed instanceof IMultipleTankHandler) {
-                        IMultipleTankHandler mth = (IMultipleTankHandler) overlayed;
-                        if (mth.getTankAt(i) instanceof NotifiableFluidTankFromList) {
-                            NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) mth.getTankAt(i);
-                                if (!(uniqueFluidMap.get(nftfl.getFluidTankList().get()).add(toInsert))) {
-                                    continue;
-                                }
-                        } else {
-                            if (!(uniqueFluidMap.get(mth).add(toInsert))) {
-                                continue;
-                            }
+                    IMultipleTankHandler mth = (IMultipleTankHandler) overlayed;
+                    if (mth.getTankAt(i) instanceof NotifiableFluidTankFromList) {
+                        NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) mth.getTankAt(i);
+                        if (!(uniqueFluidMap.get(nftfl.getFluidTankList().get()).add(toInsert))) {
+                            continue;
+                        }
+                    } else {
+                        if (!(uniqueFluidMap.get(mth).add(toInsert))) {
+                            continue;
                         }
                     }
                 }
                 int spaceInTank = overlayedTank.getCapacity() - overlayedTank.getFluidAmount();
-                int insertable = Math.min(spaceInTank, amountToInsert);
-                if (insertable > 0) {
-                    insertedAmount += insertable;
+                int canInsertUpTo = Math.min(spaceInTank, amountToInsert);
+                if (canInsertUpTo > 0) {
+                    insertedAmount += canInsertUpTo;
                     overlayedTank.setFluidKey(toInsert);
-                    overlayedTank.setFluidAmount(overlayedTank.getFluidAmount() + insertable);
-                    amountToInsert -= insertable;
+                    overlayedTank.setFluidAmount(overlayedTank.getFluidAmount() + canInsertUpTo);
+                    amountToInsert -= canInsertUpTo;
                 }
                 if (amountToInsert == 0) {
                     return insertedAmount;
@@ -112,17 +110,15 @@ public class OverlayedFluidHandler {
                 // if the tank is empty
                 if (overlayedTank.getFluidKey() == null) {
                     if ((tankDeniesSameFluidFill.contains(overlayed.getTankProperties()[i]) || !this.allowSameFluidFill) ) {
-                        if (overlayed instanceof IMultipleTankHandler) {
-                            IMultipleTankHandler mth = (IMultipleTankHandler) overlayed;
-                            if (mth.getTankAt(i) instanceof NotifiableFluidTankFromList) {
-                                NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) mth.getTankAt(i);
-                                    if (!(uniqueFluidMap.get(nftfl.getFluidTankList().get()).add(toInsert))) {
-                                        continue;
-                                    }
-                            } else {
-                                if (!(uniqueFluidMap.get(mth).add(toInsert))) {
-                                    continue;
-                                }
+                        IMultipleTankHandler mth = (IMultipleTankHandler) overlayed;
+                        if (mth.getTankAt(i) instanceof NotifiableFluidTankFromList) {
+                            NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) mth.getTankAt(i);
+                            if (!(uniqueFluidMap.get(nftfl.getFluidTankList().get()).add(toInsert))) {
+                                continue;
+                            }
+                        } else {
+                            if (!(uniqueFluidMap.get(mth).add(toInsert))) {
+                                continue;
                             }
                         }
                     }

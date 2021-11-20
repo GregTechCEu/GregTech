@@ -31,7 +31,8 @@ public class ParallelLogic {
         int itemMultiplier = getMaxRatioItem(ingredientStacks, recipe, parallelAmount);
         // Find the maximum number of recipes that can be performed from the fluids in the fluid input inventories
         int fluidMultiplier = getMaxRatioFluid(fluidStacks, recipe, parallelAmount);
-
+        // If both fail to return a valid amount
+        if (itemMultiplier == Integer.MAX_VALUE && fluidMultiplier == Integer.MAX_VALUE) return  0;
         // Find the maximum number of recipes that can be performed from all available inputs
         return Math.min(itemMultiplier, fluidMultiplier);
     }
@@ -240,7 +241,7 @@ public class ParallelLogic {
                     //The ratio will either be set by the parallel limit, or the oversized stack divided by the amount of inputs the recipe takes
                     int ratio = Math.min(parallelAmount, wholeItemStack.getValue() / recipeInputs.getCount());
                     //Find the maximum number of recipes that can be performed by decrementing the ratio, which is limited
-                    //by the number of machines (as absolute max), or the amount of ingredients in the input bus
+                    //by the parallel limit, or the amount of ingredients in the input bus
                     if(ratio < minMultiplier) {
                         minMultiplier = ratio;
                     }
@@ -272,15 +273,15 @@ public class ParallelLogic {
                 continue;
             }
 
-            // Iterate through the fluids in the input hatches. This will likely be oversized stacks
+            // Iterate through the fluids in the input hatches. This will likely be oversized fluids
             for(Map.Entry<FluidKey, Integer> inputStack : countFluid.entrySet()) {
 
                 if(new FluidKey(fs).equals(inputStack.getKey())) {
-                    //The ratio will either be set by the parallel limit, or the oversized stack divided by the amount of inputs the recipe takes
+                    //The ratio will either be set by the parallel limit, or the oversized stack divided by the amount of fluid inputs the recipe takes
                     int ratio = Math.min(parallelAmount, inputStack.getValue() / fs.amount);
 
                     //Find the maximum number of recipes that can be performed by decrementing the ratio, which is limited
-                    //by the number of machines (as absolute max), or the amount of ingredients in the input bus
+                    //by the parallel limit, or the amount of fluid in the fluid input bus
                     if(ratio < minMultiplier) {
                         minMultiplier = ratio;
                     }

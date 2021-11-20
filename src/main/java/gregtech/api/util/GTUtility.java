@@ -275,7 +275,9 @@ public class GTUtility {
                             stackToAdd = stackToAdd.copy();
                             stackToAdd.setCount(stackToAdd.getCount() - insertable);
                         }
-                        break;
+                        if (stackToAdd.isEmpty()) {
+                            break;
+                        }
                     }
                 }
             }
