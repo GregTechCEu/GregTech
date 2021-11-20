@@ -182,12 +182,7 @@ public class ParallelLogic {
             multiplier = multiplier + remainder + (maxMultiplier - multiplier) / 2;
         } else {
             maxMultiplier = multiplier;
-            int halfMul = multiplier / 2;
-            if (halfMul < minMultiplier) {
-                multiplier = minMultiplier + 1;
-            } else {
-                multiplier = halfMul;
-            }
+            multiplier = (multiplier + minMultiplier) / 2;
         }
         if (maxMultiplier - minMultiplier <= 1) {
             multiplier = maxMultiplier = minMultiplier;
