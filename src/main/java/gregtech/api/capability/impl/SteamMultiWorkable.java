@@ -88,6 +88,8 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
 
             CountableIngredient inputIngredient;
             if (matchingRecipe != null) {
+                recipeEUt = matchingRecipe.getEUt();
+                recipeDuration = matchingRecipe.getDuration();
                 inputIngredient = matchingRecipe.getInputs().get(0);
                 matchedRecipe = true;
             } else

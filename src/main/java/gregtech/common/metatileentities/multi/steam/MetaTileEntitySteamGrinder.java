@@ -28,10 +28,11 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
     private static final MultiblockAbility<?>[] ALLOWED_ABILITIES = {
             MultiblockAbility.STEAM_IMPORT_ITEMS, MultiblockAbility.STEAM_EXPORT_ITEMS, MultiblockAbility.STEAM
     };
+    private final int MAX_PROCESSES = 8;
 
     public MetaTileEntitySteamGrinder(ResourceLocation metaTileEntityId) {
         super(metaTileEntityId, RecipeMaps.MACERATOR_RECIPES, CONVERSION_RATE);
-        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE, 8);
+        this.recipeMapWorkable = new SteamMultiWorkable(this, CONVERSION_RATE, MAX_PROCESSES);
     }
 
     @Override
@@ -60,6 +61,11 @@ public class MetaTileEntitySteamGrinder extends RecipeMapSteamMultiblockControll
     @Override
     public ICubeRenderer getBaseTexture(IMultiblockPart sourcePart) {
         return ConfigHolder.U.steelSteamMultiblocks ? SOLID_STEEL_CASING : BRONZE_PLATED_BRICKS;
+    }
+
+    @Override
+    public int getParallelLimit() {
+        return MAX_PROCESSES;
     }
 
     @Nonnull
