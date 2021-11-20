@@ -1063,7 +1063,7 @@ public abstract class MetaTileEntity implements ICoverable {
                     }
                 }
                 if (amountLeft > 0) {
-                    break;
+                    return false;
                 }
             }
             return true;

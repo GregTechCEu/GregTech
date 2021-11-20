@@ -271,7 +271,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             if (controller.hasMaintenanceMechanics())
                 controller.calculateMaintenance(this.progressTime);
         }
-        this.parallelRecipesPerformed = 1;
         super.completeRecipe();
     }
 

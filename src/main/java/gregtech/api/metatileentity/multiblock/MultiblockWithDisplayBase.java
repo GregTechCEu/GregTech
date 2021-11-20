@@ -190,10 +190,8 @@ public abstract class MultiblockWithDisplayBase extends MultiblockControllerBase
     public void outputRecoveryItems(int parallel) {
         IMufflerHatch muffler = getAbilities(MultiblockAbility.MUFFLER_HATCH).get(0);
         ArrayList<ItemStack> parallelRecover = new ArrayList<>();
-        IntStream.range(0, parallel).forEach(value -> recoveryItems.forEach(itemStack -> {
-            GTUtility.addStackToItemStackList(itemStack, parallelRecover);
-        }));
-        muffler.recoverItemsTable(GTUtility.copyStackList(recoveryItems));
+        IntStream.range(0, parallel).forEach(value -> parallelRecover.addAll(recoveryItems));
+        muffler.recoverItemsTable(GTUtility.copyStackList(parallelRecover));
     }
 
     /**

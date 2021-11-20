@@ -15,6 +15,7 @@ import gregtech.api.metatileentity.multiblock.IMultiblockAbilityPart;
 import gregtech.api.metatileentity.multiblock.MultiblockAbility;
 import gregtech.api.metatileentity.multiblock.MultiblockWithDisplayBase;
 import gregtech.api.render.Textures;
+import gregtech.api.util.GTUtility;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -71,7 +72,7 @@ public class MetaTileEntityMufflerHatch extends MetaTileEntityMultiblockPart imp
         List<ItemStack> items = new ArrayList<>();
         IntStream.range(0, numRolls).forEach(slot -> {
             if (calculateChance())
-                items.add(recoveryItems.get(slot));
+                GTUtility.addStackToItemStackList(recoveryItems.get(slot), items);
         });
         addItemsToItemHandler(inventory, false, items);
     }
