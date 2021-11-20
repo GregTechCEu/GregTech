@@ -16,7 +16,7 @@ public class FirstDegreeMaterials {
         Almandine = new Material.Builder(250, "almandine")
                 .gem(1).ore(6, 1)
                 .color(0xFF0000)
-                .flags(STD_GEM, GENERATE_LENS)
+                .flags(STD_GEM)
                 .components(Aluminium, 2, Iron, 3, Silicon, 3, Oxygen, 12)
                 .build();
 
@@ -215,7 +215,7 @@ public class FirstDegreeMaterials {
         Emerald = new Material.Builder(278, "emerald")
                 .gem().ore()
                 .color(0x50FF50).iconSet(EMERALD)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_PLATE)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_PLATE, GENERATE_LENS)
                 .components(Beryllium, 3, Aluminium, 2, Silicon, 6, Oxygen, 18)
                 .toolStats(10.0f, 2.0f, 368, 15)
                 .build();
@@ -236,7 +236,7 @@ public class FirstDegreeMaterials {
         GreenSapphire = new Material.Builder(281, "green_sapphire")
                 .gem().ore()
                 .color(0x64C882).iconSet(GEM_HORIZONTAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(8.0f, 3.0f, 368, 15)
                 .build();
@@ -446,7 +446,6 @@ public class FirstDegreeMaterials {
         Pyrope = new Material.Builder(308, "pyrope")
                 .gem().ore(4, 1)
                 .color(0x783264).iconSet(RUBY)
-                .flags(GENERATE_LENS)
                 .components(Aluminium, 2, Magnesium, 3, Silicon, 3, Oxygen, 12)
                 .build();
 
@@ -468,7 +467,7 @@ public class FirstDegreeMaterials {
         Ruby = new Material.Builder(311, "ruby")
                 .gem().ore()
                 .color(0xFF6464).iconSet(RUBY)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
                 .components(Chrome, 1, Aluminium, 2, Oxygen, 3)
                 .toolStats(8.5f, 3.0f, 256, 33)
                 .build();
@@ -490,7 +489,7 @@ public class FirstDegreeMaterials {
         Sapphire = new Material.Builder(314, "sapphire")
                 .gem().ore()
                 .color(0x6464C8).iconSet(GEM_VERTICAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Oxygen, 3)
                 .toolStats(7.5f, 4.0f, 256, 15)
                 .build();
@@ -584,7 +583,7 @@ public class FirstDegreeMaterials {
         Tanzanite = new Material.Builder(326, "tanzanite")
                 .gem().ore(2, 1)
                 .color(0x4000C8).iconSet(GEM_VERTICAL)
-                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(EXT_METAL, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Calcium, 2, Aluminium, 3, Silicon, 3, Hydrogen, 1)
                 .toolStats(7.0f, 2.0f, 256, 15)
                 .build();
@@ -606,7 +605,7 @@ public class FirstDegreeMaterials {
         Topaz = new Material.Builder(329, "topaz")
                 .gem(3).ore(2, 1)
                 .color(0xFF8000).iconSet(GEM_HORIZONTAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(Aluminium, 2, Silicon, 1, Fluorine, 1, Hydrogen, 2)
                 .toolStats(7.0f, 2.0f, 256, 15)
                 .build();
@@ -1189,7 +1188,7 @@ public class FirstDegreeMaterials {
         EnderPearl = new Material.Builder(416, "ender_pearl")
                 .gem(1)
                 .color(0x6CDCC8)
-                .flags(GENERATE_LENS, NO_SMASHING, NO_SMELTING)
+                .flags(NO_SMASHING, NO_SMELTING)
                 .components(Beryllium, 1, Potassium, 4, Nitrogen, 5)
                 .build();
 

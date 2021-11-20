@@ -120,7 +120,6 @@ public class Materials {
         STD_SOLID.addAll(Arrays.asList(GENERATE_PLATE, GENERATE_ROD, GENERATE_BOLT_SCREW, GENERATE_LONG_ROD));
 
         STD_GEM.addAll(STD_SOLID);
-        STD_GEM.add(GENERATE_LENS);
 
         STD_METAL.add(GENERATE_PLATE);
 

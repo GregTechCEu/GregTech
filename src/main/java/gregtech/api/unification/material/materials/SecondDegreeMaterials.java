@@ -50,7 +50,7 @@ public class SecondDegreeMaterials {
         Opal = new Material.Builder(2005, "opal")
                 .gem().ore()
                 .color(0x0000FF).iconSet(OPAL)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING, GENERATE_LENS)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(SiliconDioxide, 1)
                 .toolStats(7.5f, 3.0f, 312, 15)
                 .build();
@@ -58,7 +58,7 @@ public class SecondDegreeMaterials {
         Amethyst = new Material.Builder(2006, "amethyst")
                 .gem(3).ore()
                 .color(0xD232D2).iconSet(RUBY)
-                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, GENERATE_LENS)
+                .flags(NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT)
                 .components(SiliconDioxide, 4, Iron, 1)
                 .toolStats(7.5f, 3.0f, 312, 33)
                 .build();
@@ -141,7 +141,7 @@ public class SecondDegreeMaterials {
         GarnetRed = new Material.Builder(2016, "garnet_red")
                 .gem().ore(4, 1)
                 .color(0xC85050).iconSet(RUBY)
-                .flags(STD_SOLID, GENERATE_LENS, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(STD_SOLID, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Pyrope, 3, Almandine, 5, Spessartine, 8)
                 .toolStats(7.5f, 3.0f, 156, 33)
                 .build();
@@ -149,7 +149,7 @@ public class SecondDegreeMaterials {
         GarnetYellow = new Material.Builder(2017, "garnet_yellow")
                 .gem().ore(4, 1)
                 .color(0xC8C850).iconSet(RUBY)
-                .flags(STD_SOLID, GENERATE_LENS, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
+                .flags(STD_SOLID, NO_SMASHING, NO_SMELTING, HIGH_SIFTER_OUTPUT, DECOMPOSITION_BY_CENTRIFUGING)
                 .components(Andradite, 5, Grossular, 8, Uvarovite, 3)
                 .toolStats(7.5f, 3.0f, 156, 33)
                 .build();
