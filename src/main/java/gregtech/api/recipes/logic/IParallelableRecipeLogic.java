@@ -32,9 +32,6 @@ public interface IParallelableRecipeLogic {
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
     default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit) {
-        if (currentRecipe == null) {
-            return null;
-        }
         return ParallelLogic.doParallelRecipes(
                 currentRecipe,
                 recipeMap,

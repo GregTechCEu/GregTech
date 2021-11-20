@@ -295,20 +295,16 @@ public class ParallelLogic {
 
     public static RecipeBuilder<?> doParallelRecipes(Recipe currentRecipe, RecipeMap<?> recipeMap, IItemHandlerModifiable importInventory, IMultipleTankHandler importFluids, IItemHandlerModifiable exportInventory, IMultipleTankHandler exportFluids, int parallelAmount) {
         int multiplierByInputs = getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, parallelAmount);
-        RecipeBuilder<?> recipeBuilder = null;
-        if (multiplierByInputs > 1) {
-            // Simulate the merging of the maximum amount of recipes
-            // and limit by the amount we can successfully merge
-            int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
-            int parallelizable = Math.min(multiplierByInputs, limitByOutput);
+        RecipeBuilder<?> recipeBuilder = recipeMap.recipeBuilder();
+        // Simulate the merging of the maximum amount of recipes
+        // and limit by the amount we can successfully merge
+        int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
+        int parallelizable = Math.min(multiplierByInputs, limitByOutput);
 
-            if (parallelizable > 1) {
-                recipeBuilder = recipeMap.recipeBuilder();
-                recipeBuilder.append(currentRecipe, parallelizable);
-            } else if (parallelizable == 0) {
-                return null;
-            }
+        if (parallelizable > 0) {
+            recipeBuilder.append(currentRecipe, parallelizable);
         }
+
         return recipeBuilder;
     }
 
@@ -363,9 +359,6 @@ public class ParallelLogic {
             if (engagedItems == parallelAmount) {
                 break;
             }
-        }
-        if (engagedItems == 0) {
-            return null;
         }
         return recipeBuilder;
     }

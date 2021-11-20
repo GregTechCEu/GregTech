@@ -209,11 +209,9 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     @Override
     public void invalidateInputs() {
         MultiblockWithDisplayBase controller = (MultiblockWithDisplayBase) metaTileEntity;
-        if (controller instanceof RecipeMapMultiblockController) {
-            RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
-            if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
-                invalidatedInputList.add(currentDistinctInputBus);
-            }
+        RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
+        if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
+            invalidatedInputList.add(currentDistinctInputBus);
         } else {
             super.invalidateInputs();
         }
