@@ -51,6 +51,7 @@ jobs:
         uses: actions/setup-node@v2
       - name: Run Formatter
         run: |
+          ls -lah
           cd ~/scripts
           chmod +x format.sh
           ./format.sh
