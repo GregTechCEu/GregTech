@@ -2,6 +2,11 @@ package gregtech.api.recipes.logic;
 
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.recipes.*;
+import gregtech.api.util.ItemStackHashStrategy;
+import gregtech.api.util.StreamUtils;
+import it.unimi.dsi.fastutil.Hash;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenCustomHashSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fluids.FluidStack;
@@ -9,7 +14,12 @@ import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static gregtech.api.util.Predicates.not;
 
 public class ParallelLogic {
 
@@ -107,39 +117,29 @@ public class ParallelLogic {
      * @return a {@link Set} of {@link ItemStack}s comprising of oversized stacks for each unique item in the input inventory
      */
     protected static Set<ItemStack> findAllItemsInInputs(IItemHandlerModifiable inputs) {
-        Set<ItemStack> countIngredients = new HashSet<>();
+        Hash.Strategy<ItemStack> strategy = ItemStackHashStrategy.comparingAllButCount();
+        final Supplier<Map<ItemStack, Integer>> mapSupplier =
+                () -> new Object2IntOpenCustomHashMap<>(strategy);
 
-        // Iterate through the entire input inventory
-        for(int slot = 0; slot < inputs.getSlots(); slot++) {
-            ItemStack wholeItemStack = inputs.getStackInSlot(slot);
+        final Set<ItemStack> result = new ObjectOpenCustomHashSet<>(strategy);
 
-            // Skip empty slots
-            if(wholeItemStack.isEmpty()) {
-                continue;
-            }
-
-            // Populate the initially empty Set with an initial value
-            if(countIngredients.isEmpty()) {
-                countIngredients.add(wholeItemStack.copy());
-            }
-            else {
-                // Iterate through the existing Set, attempting to match the item from the input inventory to an entry in the Set
-                boolean found = false;
-                for(ItemStack stack : countIngredients) {
-                    if(ItemStack.areItemsEqual(stack, wholeItemStack)) {
-                        // If a matching item was found, increment the count of the item in the Set
-                        stack.setCount(stack.getCount() + wholeItemStack.getCount());
-                        found = true;
-                        break;
-                    }
-                }
-                // If no matching ItemStack was found in the Set, add a new entry to the Set
-                if(!found) {
-                    countIngredients.add(wholeItemStack.copy());
-                }
-            }
-        }
-        return countIngredients;
+        StreamUtils.streamFrom(inputs)
+                // keep only non-empty item stacks
+                .filter(not(ItemStack::isEmpty))
+                // Track the number of identical items
+                .collect(Collectors.toMap(Function.identity(),
+                        ItemStack::getCount,
+                        Math::addExact,
+                        mapSupplier))
+                // Create a single stack of the combined count for each item
+                .entrySet().stream()
+                .map(entry -> {
+                    ItemStack combined = entry.getKey().copy();
+                    combined.setCount(entry.getValue());
+                    return combined;
+                })
+                .forEach(result::add);
+        return result;
     }
 
     /**
