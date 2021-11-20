@@ -59,7 +59,7 @@ public class ParallelLogic {
 
     public static int getMaxRecipeMultiplier(Recipe recipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, int parallelAmount) {
         // Find all the items in the combined Item Input inventories and create oversized ItemStacks
-        HashMap<ItemStackKey,Integer> ingredientStacks = itemCollection2StackKeyMap(inputs);
+        HashMap<ItemStackKey,Integer> ingredientStacks = itemHandler2StackKeyMap(inputs);
 
         // Find all the fluids in the combined Fluid Input inventories and create oversized FluidStacks
         HashMap<FluidKey,Integer> fluidStacks = fluidHandler2FluidKeyMap(fluidInputs);
@@ -225,7 +225,7 @@ public class ParallelLogic {
      * @param inputs The inventory handler of the inventory
      * @return a {@link HashMap} of {@link ItemStackKey}s comprising of oversized stacks for each unique item in the input inventory
      */
-    protected static HashMap<ItemStackKey,Integer> itemCollection2StackKeyMap(IItemHandlerModifiable inputs) {
+    protected static HashMap<ItemStackKey,Integer> itemHandler2StackKeyMap(IItemHandlerModifiable inputs) {
         final Supplier<Map<ItemStackKey, Integer>> mapSupplier = Object2IntLinkedOpenHashMap::new;
 
         // Create a single stack of the combined count for each item
@@ -255,7 +255,7 @@ public class ParallelLogic {
 
     /**
      * Finds the maximum number of Recipes that can be performed at the same time based on the items in the item input inventory
-     * @param countIngredients a {@link HashMap} of {@link ItemStackKey}s that is the result of calling {@link ParallelLogic#itemCollection2StackKeyMap(IItemHandlerModifiable)}
+     * @param countIngredients a {@link HashMap} of {@link ItemStackKey}s that is the result of calling {@link ParallelLogic#itemHandler2StackKeyMap(IItemHandlerModifiable)}
      * @param recipe The {@link Recipe} for which to find the maximum that can be ran simultaneously
      * @param parallelAmount The limit on the amount of recipes that can be performed at one time
      * @return The Maximum number of Recipes that can be performed at a single time based on the available Items
