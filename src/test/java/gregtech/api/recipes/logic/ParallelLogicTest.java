@@ -6,6 +6,7 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMap;
 import gregtech.api.recipes.builders.BlastRecipeBuilder;
 import gregtech.api.unification.material.Materials;
+import gregtech.api.util.GTHashMaps;
 import gregtech.api.util.OverlayedFluidHandler;
 import gregtech.api.util.OverlayedItemHandler;
 import gregtech.common.MetaFluids;
@@ -484,6 +485,78 @@ public class ParallelLogicTest {
         int itemRatio = ParallelLogic.limitParallelByFluids(recipe, new OverlayedFluidHandler(exportFluidBus.getExportFluids()), parallelLimit);
 
         assertEquals(0, itemRatio);
+
+    }
+
+    @Test
+    public void getMaxRatioItem_SameNonConsumedTest() {
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+                1,
+                3,
+                1,
+                2,
+                0,
+                1,
+                0,
+                1,
+                new BlastRecipeBuilder(),
+                false);
+
+        // Create a simple recipe to be used for testing
+        Recipe recipe = map.recipeBuilder()
+                .inputs(new ItemStack(Blocks.COBBLESTONE))
+                .notConsumable(new ItemStack(Blocks.COBBLESTONE))
+                .outputs(new ItemStack(Blocks.STONE))
+                .blastFurnaceTemp(1000)
+                .EUt(30).duration(100)
+                .build().getResult();
+
+        importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 5), false);
+
+        int itemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
+                recipe, parallelLimit);
+
+        assertEquals(4, itemRatio);
+
+    }
+
+    @Test
+    public void getMaxRatioItem_DifferentNonConsumedTest() {
+        int parallelLimit = 4;
+
+        // Create a recipe Map to be used for testing
+        RecipeMap<BlastRecipeBuilder> map = new RecipeMap<>("electric_blast_furnace",
+                1,
+                3,
+                1,
+                2,
+                0,
+                1,
+                0,
+                1,
+                new BlastRecipeBuilder(),
+                false);
+
+        // Create a simple recipe to be used for testing
+        Recipe recipe = map.recipeBuilder()
+                .inputs(new ItemStack(Blocks.COBBLESTONE))
+                .notConsumable(new ItemStack(Blocks.STONE))
+                .outputs(new ItemStack(Blocks.STONE))
+                .blastFurnaceTemp(1000)
+                .EUt(30).duration(100)
+                .build().getResult();
+
+        importItemBus.getImportItems().insertItem(0, new ItemStack(Blocks.COBBLESTONE, 4), false);
+        importItemBus.getImportItems().insertItem(1, new ItemStack(Blocks.STONE, 1), false);
+
+
+        int itemRatio = ParallelLogic.getMaxRatioItem(GTHashMaps.fromItemHandler(importItemBus.getImportItems()),
+                recipe, parallelLimit);
+
+        assertEquals(4, itemRatio);
 
     }
 }

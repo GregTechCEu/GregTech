@@ -231,38 +231,63 @@ public class ParallelLogic {
      */
     protected static int getMaxRatioItem(HashMap<ItemStackKey, Integer> countIngredients, Recipe recipe, int parallelAmount) {
         int minMultiplier = Integer.MAX_VALUE;
-        //map the recipe ingredients to account for duplicated ingredients,
-        //so their sum is counted against the total of items available
-        Object2IntOpenCustomHashMap<Ingredient> countableMap = new Object2IntOpenCustomHashMap<>(new IngredientHashStrategy());
-        for(CountableIngredient recipeInputs : recipe.getInputs()) {
-            //Configured circuits should not count toward the max multiplier ratio, or we will request
-            //one per parallel performed
-            if (recipeInputs.getIngredient() instanceof IntCircuitIngredient) {
-                continue;
-            }
-            int ingredientCount;
-            if (recipeInputs.getCount() == 0) {
-                ingredientCount = 1;
+        //map the recipe ingredients to account for duplicated and notConsumable ingredients.
+        //notConsumable ingredients are not counted towards the max ratio
+        IngredientHashStrategy hashStrategy = new IngredientHashStrategy();
+        Object2IntOpenCustomHashMap<Ingredient> notConsumableMap = new Object2IntOpenCustomHashMap<>(hashStrategy);
+        Object2IntOpenCustomHashMap<Ingredient> countableMap = new Object2IntOpenCustomHashMap<>(hashStrategy);
+        for (CountableIngredient recipeInputs : recipe.getInputs()) {
+            int ingredientCount = recipeInputs.getCount();
+            if (ingredientCount > 0) {
+                countableMap.computeIfPresent(recipeInputs.getIngredient(), (k, v) -> v + recipeInputs.getCount());
+                countableMap.putIfAbsent(recipeInputs.getIngredient(), recipeInputs.getCount());
             } else {
-                ingredientCount = recipeInputs.getCount();
+                notConsumableMap.computeIfPresent(recipeInputs.getIngredient(), (k, v) -> v + 1);
+                notConsumableMap.putIfAbsent(recipeInputs.getIngredient(), 1);
             }
-            countableMap.computeIfPresent(recipeInputs.getIngredient(), (k, v) -> v + ingredientCount);
-            countableMap.putIfAbsent(recipeInputs.getIngredient(), ingredientCount);
         }
-        // Iterate through the recipe inputs
-        for(Map.Entry<Ingredient, Integer> recipeInputEntry : countableMap.entrySet()) {
-            // For every stack in the ingredients gathered from the input bus. This is most likely going to be oversized stacks
-            for(Map.Entry<ItemStackKey, Integer> inventoryEntry : countIngredients.entrySet()) {
-                if(recipeInputEntry.getKey().apply(inventoryEntry.getKey().getItemStackRaw())) {
-                    //The ratio will either be set by the parallel limit, or the oversized stack divided by the amount of inputs the recipe takes
-                    int ratio = Math.min(parallelAmount, inventoryEntry.getValue() / recipeInputEntry.getValue());
-                    //Find the maximum number of recipes that can be performed by decrementing the ratio, which is limited
-                    //by the parallel limit, or the amount of ingredients in the input bus
-                    if(ratio < minMultiplier) {
-                        minMultiplier = ratio;
+
+        // Iterate through the recipe inputs, excluding the not consumable ingredients from the inventory map
+        for (Map.Entry<Ingredient, Integer> recipeInputEntry : notConsumableMap.entrySet()) {
+            int needed = recipeInputEntry.getValue();
+            int available = 0;
+            // For every stack in the ingredients gathered from the input bus.
+            for (Map.Entry<ItemStackKey, Integer> inventoryEntry : countIngredients.entrySet()) {
+                if (recipeInputEntry.getKey().apply(inventoryEntry.getKey().getItemStackRaw())) {
+                    available = inventoryEntry.getValue();
+                    if (available > needed) {
+                        inventoryEntry.setValue(available - needed);
+                        available -= needed;
+                        break;
+                    } else {
+                        inventoryEntry.setValue(0);
+                        recipeInputEntry.setValue(needed - available);
+                        needed -= available;
                     }
-                    break;
                 }
+            }
+            if (needed > available) {
+                return 0;
+            }
+        }
+
+        // Iterate through the recipe inputs
+        for (Map.Entry<Ingredient, Integer> recipeInputEntry : countableMap.entrySet()) {
+            int needed = recipeInputEntry.getValue();
+            int available = 0;
+            // For every stack in the ingredients gathered from the input bus.
+            for (Map.Entry<ItemStackKey, Integer> inventoryEntry : countIngredients.entrySet()) {
+                if (recipeInputEntry.getKey().apply(inventoryEntry.getKey().getItemStackRaw())) {
+                    available += inventoryEntry.getValue();
+                }
+            }
+            if (available > needed) {
+                int ratio = Math.min(parallelAmount, available / needed);
+                if (ratio < minMultiplier) {
+                    minMultiplier = ratio;
+                }
+            } else {
+                return 0;
             }
         }
         return minMultiplier;
@@ -281,31 +306,59 @@ public class ParallelLogic {
         //map the recipe input fluids to account for duplicated fluids,
         //so their sum is counted against the total of fluids available in the input
         HashMap<FluidKey, Integer> fluidCountMap = new HashMap<>();
-        for(FluidStack fluidStack : recipe.getFluidInputs()) {
-            int fluidAmount;
-            if (fluidStack.amount == 0) {
-                fluidAmount = 1;
+        HashMap<FluidKey, Integer> notConsumableMap = new HashMap<>();
+        for (FluidStack fluidStack : recipe.getFluidInputs()) {
+            int fluidAmount = fluidStack.amount;
+            if (fluidAmount == 0) {
+                notConsumableMap.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + 1);
+                notConsumableMap.putIfAbsent(new FluidKey(fluidStack), 1);
             } else {
-                fluidAmount = fluidStack.amount;
+                fluidCountMap.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidAmount);
+                fluidCountMap.putIfAbsent(new FluidKey(fluidStack), fluidAmount);
             }
-            fluidCountMap.computeIfPresent(new FluidKey(fluidStack), (k, v) -> v + fluidAmount);
-            fluidCountMap.putIfAbsent(new FluidKey(fluidStack), fluidAmount);
         }
-        // Iterate through the fluid inputs in the recipe
-        for(Map.Entry<FluidKey, Integer> fs : fluidCountMap.entrySet()) {
-            // Iterate through the fluids in the input hatches. This will likely be oversized fluids
-            for(Map.Entry<FluidKey, Integer> inputStack : countFluid.entrySet()) {
-                if(fs.getKey().equals(inputStack.getKey())) {
-                    //The ratio will either be set by the parallel limit, or the oversized stack divided by the amount of fluid inputs the recipe takes
-                    int ratio = Math.min(parallelAmount, inputStack.getValue() / fs.getValue());
 
-                    //Find the maximum number of recipes that can be performed by decrementing the ratio, which is limited
-                    //by the parallel limit, or the amount of fluid in the fluid input bus
-                    if(ratio < minMultiplier) {
-                        minMultiplier = ratio;
+        // Iterate through the recipe inputs, excluding the not consumable fluids from the fluid inventory map
+        for (Map.Entry<FluidKey, Integer> notConsumableFluid : notConsumableMap.entrySet()) {
+            int needed = notConsumableFluid.getValue();
+            int available = 0;
+            // For every fluid gathered from the fluid inputs.
+            for (Map.Entry<FluidKey, Integer> inputFluid : countFluid.entrySet()) {
+                if (notConsumableFluid.getKey().equals(inputFluid.getKey())) {
+                    available = inputFluid.getValue();
+                    if (available > needed) {
+                        inputFluid.setValue(available - needed);
+                        available -= needed;
+                        break;
+                    } else {
+                        inputFluid.setValue(0);
+                        notConsumableFluid.setValue(needed - available);
+                        needed -= available;
                     }
-                    break;
                 }
+            }
+            if (needed > available) {
+                return 0;
+            }
+        }
+        
+        // Iterate through the fluid inputs in the recipe
+        for (Map.Entry<FluidKey, Integer> fs : fluidCountMap.entrySet()) {
+            int needed = fs.getValue();
+            int available = 0;
+            // For every fluid gathered from the fluid inputs.
+            for (Map.Entry<FluidKey, Integer> inputFluid : countFluid.entrySet()) {
+                if (fs.getKey().equals(inputFluid.getKey())) {
+                    available += inputFluid.getValue();
+                }
+            }
+            if (available > needed) {
+                int ratio = Math.min(parallelAmount, available / needed);
+                if (ratio < minMultiplier) {
+                    minMultiplier = ratio;
+                }
+            } else {
+                return 0;
             }
         }
         return minMultiplier;
