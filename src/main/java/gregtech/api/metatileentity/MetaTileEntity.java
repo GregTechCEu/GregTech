@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import gregtech.api.GregTechAPI;
 import gregtech.api.capability.GregtechTileCapabilities;
 import gregtech.api.capability.IEnergyContainer;
+import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.FluidHandlerProxy;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.ItemHandlerProxy;
@@ -1045,7 +1046,7 @@ public abstract class MetaTileEntity implements ICoverable {
      * @param fluidStacks    the items to insert into {@code fluidHandler}.
      * @return {@code true} if the insertion succeeded, {@code false} otherwise.
      */
-    public static boolean addFluidsToFluidHandler(IFluidHandler fluidHandler,
+    public static boolean addFluidsToFluidHandler(IMultipleTankHandler fluidHandler,
                                                   boolean simulate,
                                                   List<FluidStack> fluidStacks) {
         if (simulate) {

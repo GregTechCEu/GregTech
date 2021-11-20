@@ -16,12 +16,12 @@ public class OverlayedFluidHandler {
 
     private final OverlayedTank[] overlayedTanks;
     private final OverlayedTank[] originalTanks;
-    private final IFluidHandler overlayed;
+    private final IMultipleTankHandler overlayed;
     private boolean allowSameFluidFill = true;
     private final HashSet<IFluidTankProperties> tankDeniesSameFluidFill = new HashSet<>();
     private final Map<IMultipleTankHandler, HashSet<FluidKey>> uniqueFluidMap= new HashMap<>();
 
-    public OverlayedFluidHandler(IFluidHandler toOverlay) {
+    public OverlayedFluidHandler(IMultipleTankHandler toOverlay) {
         this.overlayedTanks = new OverlayedTank[toOverlay.getTankProperties().length];
         this.originalTanks = new OverlayedTank[toOverlay.getTankProperties().length];
         this.overlayed = toOverlay;
@@ -51,20 +51,17 @@ public class OverlayedFluidHandler {
             this.originalTanks[tank] = new OverlayedTank(fluidTankProperties);
             this.overlayedTanks[tank] = new OverlayedTank(fluidTankProperties);
 
-            if (overlayed instanceof IMultipleTankHandler) {
-                IMultipleTankHandler mth = (IMultipleTankHandler) overlayed;
-                if (!mth.allowSameFluidFill()) {
-                    this.allowSameFluidFill = false;
+            if (!overlayed.allowSameFluidFill()) {
+                this.allowSameFluidFill = false;
+            }
+            if (overlayed.getTankAt(tank) instanceof NotifiableFluidTankFromList) {
+                NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) overlayed.getTankAt(tank);
+                if (!nftfl.getFluidTankList().get().allowSameFluidFill()) {
+                    this.tankDeniesSameFluidFill.add(overlayed.getTankProperties()[tank]);
+                    uniqueFluidMap.computeIfAbsent(nftfl.getFluidTankList().get(), list -> new HashSet<>());
                 }
-                if (mth.getTankAt(tank) instanceof NotifiableFluidTankFromList) {
-                    NotifiableFluidTankFromList nftfl = (NotifiableFluidTankFromList) mth.getTankAt(tank);
-                    if (!nftfl.getFluidTankList().get().allowSameFluidFill()) {
-                        this.tankDeniesSameFluidFill.add(overlayed.getTankProperties()[tank]);
-                        uniqueFluidMap.computeIfAbsent(nftfl.getFluidTankList().get(), list -> new HashSet<>());
-                    }
-                } else if (!this.allowSameFluidFill) {
-                    uniqueFluidMap.computeIfAbsent(mth, list -> new HashSet<>());
-                }
+            } else if (!this.allowSameFluidFill) {
+                uniqueFluidMap.computeIfAbsent(overlayed, list -> new HashSet<>());
             }
         }
     }
