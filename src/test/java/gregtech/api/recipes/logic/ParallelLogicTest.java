@@ -149,7 +149,6 @@ public class ParallelLogicTest {
     }
 
     @Test
-    @Ignore
     public void getMaxRecipeMultiplier_ItemFailureTest() {
 
         int parallelLimit = 4;
@@ -186,7 +185,6 @@ public class ParallelLogicTest {
     }
 
     @Test
-    @Ignore
     public void getMaxRecipeMultiplier_FluidFailureTest() {
 
         int parallelLimit = 4;
@@ -383,7 +381,6 @@ public class ParallelLogicTest {
     }
 
     @Test
-    @Ignore
     public void limitParallelByFluids_MaxParallelTest() {
 
         int parallelLimit = 4;
@@ -419,7 +416,6 @@ public class ParallelLogicTest {
     }
 
     @Test
-    @Ignore
     public void limitParallelByFluids_PartialParallelsTest() {
 
         int parallelLimit = 4;
@@ -456,7 +452,6 @@ public class ParallelLogicTest {
     }
 
     @Test
-    @Ignore
     public void limitParallelByFluids_FluidOutputFullTest() {
 
         int parallelLimit = 4;
@@ -491,7 +486,4 @@ public class ParallelLogicTest {
         assertEquals(0, itemRatio);
 
     }
-
-
-
 }

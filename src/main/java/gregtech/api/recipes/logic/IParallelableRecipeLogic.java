@@ -71,6 +71,7 @@ public interface IParallelableRecipeLogic {
             // if the builder returned is null, no recipe was found.
             if (parallelBuilder == null) {
                 logic.invalidateInputs();
+                return null;
             } else {
                 //if the builder returned does not parallel, its outputs are full
                 if (parallelBuilder.getParallel() == 0) {

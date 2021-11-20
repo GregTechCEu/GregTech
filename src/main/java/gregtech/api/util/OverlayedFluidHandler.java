@@ -62,9 +62,10 @@ public class OverlayedFluidHandler {
                         this.tankDeniesSameFluidFill.add(overlayed.getTankProperties()[tank]);
                         uniqueFluidMap.computeIfAbsent(nftfl.getFluidTankList().get(), list -> new HashSet<>());
                     }
+                } else if (!this.allowSameFluidFill) {
+                    uniqueFluidMap.computeIfAbsent(mth, list -> new HashSet<>());
                 }
             }
-
         }
     }
 
