@@ -428,19 +428,10 @@ metaitem.circuit.wetware_mainframe.name=湿件主机
 metaitem.carbon.fibers.name=粗制碳网
 metaitem.carbon.mesh.name=粗制碳板
 metaitem.carbon.plate.name=碳板
-metaitem.ingot.mixed_metal=合金锭
-metaitem.plate.advanced_alloy=高级合金
-metaitem.ingot.iridium_alloy=铱合金锭
-metaitem.plate.iridium_alloy=铱合金板
 
 metaitem.component.sawblade.diamond.name=钻石锯片
 metaitem.component.grinder.diamond.name=钻石研磨头
 metaitem.component.grinder.tungsten.name=钨研磨头
-
-metaitem.ingot.mixed_metal.name=合金锭
-metaitem.plate.advanced_alloy.name=高级合金
-metaitem.ingot.iridium_alloy.name=铱合金锭
-metaitem.plate.iridium_alloy.name=铱合金板
 
 metaitem.quantumeye.name=量子之眼
 metaitem.quantumeye.tooltip=改良的末影之眼
@@ -2449,7 +2440,6 @@ metaitem.processor.neuro.tooltip=Neuro CPU
 metaitem.petri_dish.name=Petri Dish
 metaitem.petri_dish.tooltip=For cultivating Cells
 metaitem.bio_chaff.name=Bio Chaff
-metaitem.ingot.iridium_alloy.tooltip=Used to make Iridium Alloy Plates
 metaitem.neutron_reflector.tooltip=Indestructible
 metaitem.smart_item_filter.name=Smart Item Filter
 metaitem.smart_item_filter.tooltip=Filters items basing on specific machine's recipes
@@ -2648,7 +2638,7 @@ tile.machine_casing.extended_mega_ultimate_voltage.name=UXV Machine Casing
 tile.steam_casing.bronze.tooltip=For your first Steam Machines
 tile.steam_casing.steel.tooltip=For improved Steam Machines
 tile.multiblock_casing.assembly_line.name=Assembly Line Casing
-tile.transparent_casing.reinforced_glass.name=Reinforced Glass
+tile.transparent_casing.tempered_glass.name=Tempered Glass
 gregtech.machine.small_wooden_chest.name=Small Wooden Chest
 gregtech.machine.drum.wood.name=Wooden Barrel
 gregtech.machine.drum.bronze.name=Bronze Drum
