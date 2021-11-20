@@ -17,6 +17,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
     // Used for distinct mode
     protected int lastRecipeIndex = 0;
+    protected IItemHandlerModifiable currentDistinctInputBus;
     protected List<IItemHandlerModifiable> invalidatedInputList = new ArrayList<>();
 
     public MultiblockRecipeLogic(RecipeMapMultiblockController tileEntity) {
@@ -144,7 +145,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         // This guarantees that if we get a recipe cache hit, our efficiency is no different from other machines
         if (previousRecipe != null && previousRecipe.matches(false, importInventory.get(lastRecipeIndex), importFluids)) {
             currentRecipe = previousRecipe;
-
+            currentDistinctInputBus = importInventory.get(lastRecipeIndex);
             currentRecipe = findParallelRecipe(
                     this,
                     currentRecipe,
@@ -180,11 +181,11 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             // Cache the current recipe, if one is found
             if (currentRecipe != null) {
                 this.previousRecipe = currentRecipe;
-
+                currentDistinctInputBus = bus;
                 currentRecipe = findParallelRecipe(
                         this,
                         currentRecipe,
-                        importInventory.get(lastRecipeIndex),
+                        importInventory.get(i),
                         importFluids,
                         exportInventory,
                         exportFluids,
@@ -211,8 +212,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         if (controller instanceof RecipeMapMultiblockController) {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
             if (distinctController.canBeDistinct() && distinctController.isDistinct()) {
-                List<IItemHandlerModifiable> importInventory = getInputBuses();
-                invalidatedInputList.add(importInventory.get(lastRecipeIndex));
+                invalidatedInputList.add(currentDistinctInputBus);
             }
         } else {
             super.invalidateInputs();

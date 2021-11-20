@@ -32,6 +32,9 @@ public interface IParallelableRecipeLogic {
      * @return the recipe builder with the parallelized recipe. returns null the recipe cant fit
      */
     default RecipeBuilder<?> findMultipliedParallelRecipe(RecipeMap<?> recipeMap, Recipe currentRecipe, IItemHandlerModifiable inputs, IMultipleTankHandler fluidInputs, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelLimit) {
+        if (currentRecipe == null) {
+            return null;
+        }
         return ParallelLogic.doParallelRecipes(
                 currentRecipe,
                 recipeMap,
@@ -72,16 +75,17 @@ public interface IParallelableRecipeLogic {
             } else if (logic.getParallelLogicType() == ParallelLogicType.APPEND) {
                 parallelBuilder = findAppendedParallelRecipe(logic.recipeMap, inputs, fluidInputs, outputs, fluidOutputs, parallelLimit, maxVoltage);
             }
-
+            // if the builder returned is null, no recipe was found.
             if (parallelBuilder == null) {
                 logic.invalidateInputs();
             } else {
+                //if the builder returned does not parallel, its outputs are full
                 if (parallelBuilder.getParallel() == 0) {
                     logic.invalidateOutputs();
                     return null;
                 } else {
                     logic.setParallelRecipesPerformed(parallelBuilder.getParallel());
-                    //apply coil bonus
+                    //apply any parallel bonus
                     applyParallelBonus(parallelBuilder);
                     return parallelBuilder.build().getResult();
                 }
