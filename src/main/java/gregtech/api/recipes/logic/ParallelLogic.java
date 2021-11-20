@@ -80,13 +80,7 @@ public class ParallelLogic {
 
             for (Map.Entry<ItemStackKey, Integer> entry : recipeOutputs.entrySet()) {
                 int amountToInsert = entry.getValue() * multiplier;
-                for (int slot = 0; slot < overlayedItemHandler.getSlots(); slot++) {
-                    returnedAmount = overlayedItemHandler.insertItemStackKey(slot, entry.getKey(), amountToInsert);
-                    if (returnedAmount > 0) {
-                        amountToInsert = returnedAmount;
-                    }
-                    if (returnedAmount == 0) break;
-                }
+                returnedAmount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
                 if (returnedAmount > 0) {
                     break;
                 }
@@ -138,13 +132,7 @@ public class ParallelLogic {
 
             for (Map.Entry<ItemStackKey, Integer> entry : appendedResultMap.entrySet()) {
                 int amountToInsert = entry.getValue();
-                for (int slot = 0; slot < overlayedItemHandler.getSlots(); slot++) {
-                    returnedAmount = overlayedItemHandler.insertItemStackKey(slot, entry.getKey(), amountToInsert);
-                    if (returnedAmount > 0) {
-                        amountToInsert = returnedAmount;
-                    }
-                    if (returnedAmount == 0) break;
-                }
+                returnedAmount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
                 if (returnedAmount > 0) {
                     break;
                 }
@@ -209,16 +197,11 @@ public class ParallelLogic {
 
             int amountLeft = 0;
 
-            for (Map.Entry<FluidKey, Integer> pair : recipeFluidOutputs.entrySet()) {
-                amountLeft = pair.getValue() * multiplier;
-                for (int tank = 0; tank < overlayedFluidHandler.getTankProperties().length; tank++) {
-                    int inserted = overlayedFluidHandler.insertFluidKey(tank, pair.getKey(), amountLeft);
-                    if (inserted > 0) {
-                        amountLeft -= inserted;
-                        if (amountLeft == 0) {
-                            break;
-                        }
-                    }
+            for (Map.Entry<FluidKey, Integer> entry : recipeFluidOutputs.entrySet()) {
+                amountLeft = entry.getValue() * multiplier;
+                int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), entry.getValue());
+                if (inserted > 0) {
+                    amountLeft -= inserted;
                 }
                 if (amountLeft > 0) {
                     break;

@@ -10,8 +10,6 @@ public class OverlayedItemHandler {
     private final OverlayedItemHandlerSlot[] originalSlots;
     private final OverlayedItemHandlerSlot[] slots;
     private final IItemHandler overlayedHandler;
-    private ItemStackKey cachedStackKey;
-    private ItemStack cachedStack;
 
     public OverlayedItemHandler(IItemHandler toOverlay) {
         this.slots = new OverlayedItemHandlerSlot[toOverlay.getSlots()];
@@ -36,64 +34,83 @@ public class OverlayedItemHandler {
         return overlayedHandler.getSlots();
     }
 
+    /**
+     * Populates the {@code originalSlots} and {@code slots}arrays with the current state of the inventory.
+     * @param slot the slot to populate
+     */
+
+
     private void initSlot(int slot) {
         if (this.originalSlots[slot] == null) {
             ItemStack stackToMirror = overlayedHandler.getStackInSlot(slot);
-            this.originalSlots[slot] = new OverlayedItemHandlerSlot(stackToMirror);
-            this.slots[slot] = new OverlayedItemHandlerSlot(stackToMirror);
+            int slotLimit = overlayedHandler.getSlotLimit(slot);
+            this.originalSlots[slot] = new OverlayedItemHandlerSlot(stackToMirror, slotLimit);
+            this.slots[slot] = new OverlayedItemHandlerSlot(stackToMirror, slotLimit);
         }
     }
 
-    public int insertItemStackKey(int slot, @Nonnull ItemStackKey toInsert, int amount) {
-        initSlot(slot);
 
-        ItemStack stack = null;
-        if (toInsert == cachedStackKey) {
-            if (cachedStack != null) {
-                stack = cachedStack;
+    public int insertStackedItemStackKey(ItemStackKey key, int amountToInsert) {
+        //loop through all slots, looking for ones matching the key
+        for (int i = 0; i < this.slots.length; i++) {
+            //populate the slot if it's not already populated
+            initSlot(i);
+            //if its the same item
+            if (this.slots[i].getItemStackKey() == key) {
+                //if the slot its not full
+                int insertable = this.slots[i].slotLimit - this.slots[i].count;
+                if (insertable > 0) {
+                    this.slots[i].setItemStackKey(key);
+                    this.slots[i].setCount(Math.min(insertable, amountToInsert));
+                    amountToInsert -= insertable;
+                }
             }
         }
-
-        ItemStack remainder;
-        if (this.slots[slot].getItemStackKey() == null || this.slots[slot].getItemStackKey() == toInsert) {
-            if (stack == null) {
-                stack = toInsert.getItemStack();
+        //if the amountToInsert is still greater than 0, we need to insert it into a new slot
+        if (amountToInsert > 0) {
+            //loop through all slots, again, looking for empty ones.
+            for (OverlayedItemHandlerSlot slot : this.slots) {
+                //if the slot is empty
+                if (slot.getItemStackKey() == null) {
+                    int insertable = Math.max(key.getMaxStackSize(), slot.slotLimit);
+                    if (insertable > 0) {
+                        slot.setItemStackKey(key);
+                        slot.setCount(Math.min(insertable, amountToInsert));
+                        amountToInsert -= insertable;
+                    }
+                    if (amountToInsert == 0) {
+                        return 0;
+                    }
+                }
             }
-            stack.setCount(amount);
-            remainder = overlayedHandler.insertItem(slot, stack, true);
-            int remainingCount = remainder.getCount();
-            if (remainder == stack) {
-                cachedStack = remainder;
-            } else if (!remainder.isEmpty()) {
-                this.slots[slot].setItemStackKey(toInsert);
-                this.slots[slot].setCount(amount - remainingCount);
-                cachedStack = remainder;
-            } else {
-                this.slots[slot].setItemStackKey(toInsert);
-                this.slots[slot].setCount(amount);
-                cachedStack = null;
-            }
-            cachedStackKey = toInsert;
-            return remainingCount;
-        } else {
-            return amount;
         }
+        //return the amount that wasn't inserted
+        return amountToInsert;
     }
 
     private static class OverlayedItemHandlerSlot {
         private ItemStackKey itemStackKey = null;
         private int count = 0;
+        private int slotLimit = 0;
 
-        OverlayedItemHandlerSlot(ItemStack stackToMirror) {
+        OverlayedItemHandlerSlot(ItemStack stackToMirror, int slotLimit) {
             if (!stackToMirror.isEmpty()) {
                 this.itemStackKey = KeySharedStack.getRegisteredStack(stackToMirror);
                 this.count = stackToMirror.getCount();
+                this.slotLimit = Math.min(itemStackKey.getMaxStackSize(), slotLimit);
+            } else {
+                this.slotLimit = slotLimit;
             }
         }
 
-        OverlayedItemHandlerSlot(ItemStackKey itemStackKey, int count) {
+        OverlayedItemHandlerSlot(ItemStackKey itemStackKey, int slotLimit, int count) {
             this.itemStackKey = itemStackKey;
             this.count = count;
+            this.slotLimit = slotLimit;
+        }
+
+        public int getSlotLimit() {
+            return slotLimit;
         }
 
         public int getCount() {
@@ -105,7 +122,10 @@ public class OverlayedItemHandler {
         }
 
         public void setItemStackKey(ItemStackKey itemStackKey) {
-            this.itemStackKey = itemStackKey;
+            if (this.itemStackKey != itemStackKey) {
+                this.itemStackKey = itemStackKey;
+                this.slotLimit = Math.min(itemStackKey.getMaxStackSize(), slotLimit);
+            }
         }
 
         public void setCount(int count) {
@@ -113,7 +133,7 @@ public class OverlayedItemHandler {
         }
 
         OverlayedItemHandlerSlot copy() {
-            return new OverlayedItemHandlerSlot(this.itemStackKey, this.count);
+            return new OverlayedItemHandlerSlot(this.itemStackKey, this.slotLimit, this.count);
         }
     }
 }

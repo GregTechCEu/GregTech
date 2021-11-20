@@ -1017,14 +1017,8 @@ public abstract class MetaTileEntity implements ICoverable {
 
             for (Map.Entry<ItemStackKey, Integer> entry : stackKeyMap.entrySet()) {
                 int amountToInsert = entry.getValue();
-                for (int slot = 0; slot < overlayedItemHandler.getSlots(); slot++) {
-                    int amount = overlayedItemHandler.insertItemStackKey(slot, entry.getKey(), amountToInsert);
-                    if (amount >= 0) {
-                        amountToInsert = amount;
-                    }
-                    if (amount == 0) break;
-                }
-                if (amountToInsert > 0) {
+                int amount = overlayedItemHandler.insertStackedItemStackKey(entry.getKey(), amountToInsert);
+                if (amount > 0) {
                     return false;
                 }
             }
@@ -1055,14 +1049,9 @@ public abstract class MetaTileEntity implements ICoverable {
             HashMap<FluidKey, Integer> fluidKeyMap = GTHashMaps.fromFluidCollection(fluidStacks);
             for (Map.Entry<FluidKey, Integer> entry : fluidKeyMap.entrySet()) {
                 int amountLeft = entry.getValue();
-                for (int tank = 0; tank < overlayedFluidHandler.getTankProperties().length; tank++) {
-                    int inserted = overlayedFluidHandler.insertFluidKey(tank, entry.getKey(), entry.getValue());
-                    if (inserted > 0) {
-                        amountLeft -= inserted;
-                        if (amountLeft == 0) {
-                            break;
-                        }
-                    }
+                int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), entry.getValue());
+                if (inserted > 0) {
+                    amountLeft -= inserted;
                 }
                 if (amountLeft > 0) {
                     return false;
