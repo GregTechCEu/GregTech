@@ -220,9 +220,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             //Check if the recipe can be multiplied due to parallel logic
             int parallelLimit = this.getParallel();
             if (parallelLimit > 1) {
-                RecipeBuilder<?> parallelBuilder = recipeMap.recipeBuilder();
-                ParallelLogic.doParallelRecipes(
-                        parallelBuilder,
+                RecipeBuilder<?> parallelBuilder = ParallelLogic.doParallelRecipes(
+                        recipeMap,
                         currentRecipe,
                         importInventory,
                         importFluids,

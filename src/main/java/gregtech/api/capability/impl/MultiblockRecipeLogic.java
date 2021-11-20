@@ -150,9 +150,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             //Check if the recipe can be multiplied due to parallel logic
             int parallelLimit = this.getParallel();
             if (parallelLimit > 1) {
-                RecipeBuilder<?> parallelBuilder = recipeMap.recipeBuilder();
-                ParallelLogic.doParallelRecipes(
-                        parallelBuilder,
+                RecipeBuilder<?> parallelBuilder = ParallelLogic.doParallelRecipes(
+                        recipeMap,
                         currentRecipe,
                         importInventory.get(lastRecipeIndex),
                         importFluids,
@@ -198,9 +197,8 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 //Check if the recipe can be multiplied due to parallel logic
                 int parallelLimit = this.getParallel();
                 if (parallelLimit > 1) {
-                    RecipeBuilder<?> parallelBuilder = recipeMap.recipeBuilder();
-                    ParallelLogic.doParallelRecipes(
-                            parallelBuilder,
+                    RecipeBuilder<?> parallelBuilder = ParallelLogic.doParallelRecipes(
+                            recipeMap,
                             currentRecipe,
                             importInventory.get(i),
                             importFluids,
@@ -271,7 +269,6 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                 if (parallelRecipesPerformed > 1)
                 controller.outputRecoveryItems(parallelRecipesPerformed);
                 else controller.outputRecoveryItems();
-                parallelRecipesPerformed = 0;
             }
 
             // increase total on time
@@ -281,7 +278,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
         super.completeRecipe();
     }
 
-        @Override
+    @Override
     protected long getEnergyStored() {
         return getEnergyContainer().getEnergyStored();
     }

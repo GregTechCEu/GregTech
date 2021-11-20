@@ -19,7 +19,6 @@ public class OverlayedFluidHandler {
     private final OverlayedTank[] originalTanks;
     private final IFluidHandler overlayed;
     private boolean allowSameFluidFill = true;
-    private final HashSet<FluidKey> uniqueFluids = new HashSet<>();
     private final HashSet<IFluidTankProperties> tankDeniesSameFluidFill = new HashSet<>();
     private final Map<IMultipleTankHandler, HashSet<FluidKey>> uniqueFluidMap= new HashMap<>();
 
@@ -40,7 +39,6 @@ public class OverlayedFluidHandler {
                 this.overlayedTanks[i] = this.originalTanks[i].copy();
             }
         }
-        uniqueFluids.clear();
         uniqueFluidMap.forEach((k,v) -> v.clear());
     }
 
