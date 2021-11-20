@@ -159,6 +159,22 @@ public class ParallelLogic {
         return currentMultiplier;
     }
 
+    /**
+     * Binary-search-like approach to find the maximum amount that can be inserted
+     * @param mergedAll if the merge was successful.
+     *                 If true sets {@code minMultiplier} to the as the current multiplier
+     *                  then sets {@code multiplier} to the sum of the mean difference between
+     *                  {@code multiplier} and {@code maxMultiplier} plus the remainder of the division, if any,
+     *                  and itself
+     *                  If false, sets {@code maxMultiplier} as the current multiplier, then sets @code multiplier}
+     *                  to half of its value limited it to no less or than the value of {@code minMultiplier}
+     * @param minMultiplier the last known multiplier what was fully merged
+     * @param multiplier the current multiplier
+     * @param maxMultiplier the last know multiplier that resulted in simulation failure
+     * @return an array consisting of the last known multiplier, new multiplier to be attempted and
+     * the last know multiplier that resulted in failure
+     */
+
     public static int[] adjustMultiplier(boolean mergedAll, int minMultiplier, int multiplier, int maxMultiplier) {
         if (mergedAll) {
             minMultiplier = multiplier;
