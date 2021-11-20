@@ -100,7 +100,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
             int amountOfCurrentItem = Math.min(MAX_PROCESSES - engagedItems, currentInputItem.getCount());
 
             //how much we can add to the output inventory
-            int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, new OverlayedItemHandler(this.getOutputInventory()), amountOfCurrentItem);
+            int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, new OverlayedItemHandler(this.getOutputInventory()), amountOfCurrentItem, true);
 
             //amount to actually multiply the recipe by
             int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);

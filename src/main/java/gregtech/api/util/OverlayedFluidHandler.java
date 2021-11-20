@@ -56,6 +56,22 @@ public class OverlayedFluidHandler {
         return 0;
     }
 
+    public OverlayedFluidHandler copy() {
+        OverlayedFluidHandler copy = new OverlayedFluidHandler(this.overlayed);
+        for (int i = 0; i < this.originalTanks.length; i++) {
+            copy.originalTanks[i] = this.originalTanks[i].copy();
+            copy.overlayedTanks[i] = this.originalTanks[i].copy();
+        }
+        return copy;
+    }
+
+    public void apply(OverlayedFluidHandler toApply) {
+        for (int i = 0; i < this.originalTanks.length; i++) {
+            this.originalTanks[i] = toApply.originalTanks[i];
+            this.overlayedTanks[i] = toApply.overlayedTanks[i];
+        }
+    }
+
     private static class OverlayedTank {
         private FluidKey fluidKey = null;
         private int count = 0;

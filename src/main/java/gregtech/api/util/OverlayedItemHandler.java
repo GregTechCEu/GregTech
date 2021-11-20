@@ -62,20 +62,36 @@ public class OverlayedItemHandler {
             stack.setCount(amount);
             remainder = overlayedHandler.insertItem(slot, stack, true);
             int remainingCount = remainder.getCount();
-            if (remainder != stack && !remainder.isEmpty()) {
+            if (remainder == stack) {
+                cachedStack = remainder;
+            } else if (!remainder.isEmpty()) {
                 this.slots[slot].setItemStackKey(toInsert);
-                this.slots[slot].setCount(remainingCount);
+                this.slots[slot].setCount(amount - remainingCount);
                 cachedStack = remainder;
             } else {
                 this.slots[slot].setItemStackKey(toInsert);
                 this.slots[slot].setCount(amount);
-                cachedStack = null;
             }
             cachedStackKey = toInsert;
             return remainingCount;
         } else {
-            cachedStackKey = null;
             return amount;
+        }
+    }
+
+    public OverlayedItemHandler copy() {
+        OverlayedItemHandler copy = new OverlayedItemHandler(this.overlayedHandler);
+        for (int i = 0; i < this.originalSlots.length; i++) {
+            copy.originalSlots[i] = this.originalSlots[i].copy();
+            copy.slots[i] = this.originalSlots[i].copy();
+        }
+        return copy;
+    }
+
+    public void apply(OverlayedItemHandler toApply) {
+        for (int i = 0; i < this.originalSlots.length; i++) {
+            this.originalSlots[i] = toApply.originalSlots[i];
+            this.slots[i] = toApply.originalSlots[i];
         }
     }
 

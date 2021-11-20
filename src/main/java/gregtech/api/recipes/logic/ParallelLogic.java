@@ -46,13 +46,13 @@ public class ParallelLogic {
     public static int limitByOutputMerging(Recipe recipe, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelAmount){
         int maxMultiplier = parallelAmount;
         if (recipe.getOutputs().size() > 0) {
-            maxMultiplier = limitParallelByItems(recipe, new OverlayedItemHandler(outputs), parallelAmount);
+            maxMultiplier = limitParallelByItems(recipe, new OverlayedItemHandler(outputs), parallelAmount, false);
             if (maxMultiplier == 0) {
                 return 0;
             }
         }
         if (recipe.getFluidOutputs().size() > 0) {
-            maxMultiplier = limitParallelByFluids(recipe, new OverlayedFluidHandler(fluidOutputs), parallelAmount);
+            maxMultiplier = limitParallelByFluids(recipe, new OverlayedFluidHandler(fluidOutputs), parallelAmount, false);
         }
         return maxMultiplier;
     }
@@ -62,14 +62,16 @@ public class ParallelLogic {
      * @param recipe the recipe from which we get the input to product ratio
      * @param multiplier the maximum possible multiplied we can get from the input inventory
      *                   see {@link ParallelLogic#getMaxRecipeMultiplier(Recipe, IItemHandlerModifiable, IMultipleTankHandler, int)}
+     * @param persist if the {@link OverlayedItemHandler} should have its simulated insertion recorded
      * @return the amount of times a {@link Recipe} outputs can be merged into an inventory without
      * voiding products.
      */
-    public static int limitParallelByItems(Recipe recipe, OverlayedItemHandler overlayedItemHandler, int multiplier) {
+    public static int limitParallelByItems(Recipe recipe, OverlayedItemHandler overlayedItemHandler, int multiplier, boolean persist) {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
         HashMap<ItemStackKey, Integer> recipeOutputs = GTHashMaps.fromItemStackCollection(recipe.getOutputs());
+        OverlayedItemHandler mergedOIH = null;
 
         while (minMultiplier != maxMultiplier) {
             overlayedItemHandler.reset();
@@ -90,11 +92,18 @@ public class ParallelLogic {
                 }
             }
 
+            if (persist && returnedAmount == 0) {
+                mergedOIH = overlayedItemHandler.copy();
+            }
+
             int[] bin = adjustMultiplier(returnedAmount == 0, minMultiplier, multiplier, maxMultiplier);
             minMultiplier = bin[0];
             multiplier = bin[1];
             maxMultiplier = bin[2];
 
+        }
+        if (persist && multiplier > 0) {
+            overlayedItemHandler.apply(mergedOIH);
         }
         return multiplier;
     }
@@ -124,23 +133,26 @@ public class ParallelLogic {
      * @param recipe the recipe from which we get the fluid input to product ratio
      * @param multiplier the maximum possible multiplied we can get from the input tanks
      *                   see {@link ParallelLogic#getMaxRecipeMultiplier(Recipe, IItemHandlerModifiable, IMultipleTankHandler, int)}
+     * @param persist if the {@link OverlayedFluidHandler} should have its simulated insertion recorded
      * @return the amount of times a {@link Recipe} outputs can be merged into a fluid handler without
      * voiding products.
      */
-    public static int limitParallelByFluids(Recipe recipe, OverlayedFluidHandler overlayedFluidHandler, int multiplier) {
+    public static int limitParallelByFluids(Recipe recipe, OverlayedFluidHandler overlayedFluidHandler, int multiplier, boolean persist) {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
+
+        HashMap<FluidKey, Integer> recipeFluidOutputs = GTHashMaps.fromFluidCollection(recipe.getFluidOutputs());
+        OverlayedFluidHandler mergedOFH = null;
 
         while (minMultiplier != maxMultiplier) {
             overlayedFluidHandler.reset();
 
             int amountLeft = 0;
 
-            for (int recipeTankSlot = 0; recipeTankSlot < recipe.getFluidOutputs().size(); recipeTankSlot++) {
-                FluidStack fluidStack = recipe.getFluidOutputs().get(recipeTankSlot);
-                amountLeft = fluidStack.amount * multiplier;
+            for (Map.Entry<FluidKey, Integer> pair : recipeFluidOutputs.entrySet()) {
+                amountLeft = pair.getValue() * multiplier;
                 for (int tank = 0; tank < overlayedFluidHandler.getTankProperties().length; tank++) {
-                    int inserted = overlayedFluidHandler.insertFluidKey(tank, new FluidKey(fluidStack), amountLeft);
+                    int inserted = overlayedFluidHandler.insertFluidKey(tank, pair.getKey(), amountLeft);
                     if (inserted > 0) {
                         amountLeft -= inserted;
                         if (amountLeft == 0) {
@@ -153,11 +165,18 @@ public class ParallelLogic {
                 }
             }
 
+            if (persist && amountLeft == 0) {
+                mergedOFH = overlayedFluidHandler.copy();
+            }
+
             int[] bin = adjustMultiplier(amountLeft == 0, minMultiplier, multiplier, maxMultiplier);
             minMultiplier = bin[0];
             multiplier = bin[1];
             maxMultiplier = bin[2];
 
+        }
+        if (persist && multiplier > 0) {
+            overlayedFluidHandler.apply(mergedOFH);
         }
         return multiplier;
     }
