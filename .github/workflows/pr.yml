@@ -27,12 +27,13 @@ jobs:
         with:
           java-version: '8'
           distribution: 'adopt'
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew build
+        run: |
+          chmod +x gradlew
+          ./gradlew build
       - name: Run tests
         run: ./gradlew check test
+
   format:
     name: check-fmt
     runs-on: ubuntu-latest
@@ -46,8 +47,10 @@ jobs:
         shell: bash
         run: |
           echo "::set-output name=sha_short::$(git rev-parse --short $GITHUB_SHA)"
-      - name: Run Formatter
+      - name: Install npm
         uses: actions/setup-node@v2
+      - name: Run Formatter
         run: |
-          npm install -g @htmlacademy/editorconfig-cli
-          editorconfig-cli ./src/**/*.java
+          cd scripts
+          chmod +x format.sh
+          ./format.sh
