@@ -56,5 +56,7 @@ jobs:
           distribution: 'adopt'
       - name: Grand execute permission for gradlew
         run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew build
       - name: Run Formatter
         run: ./gradlew editorconfigCheck
