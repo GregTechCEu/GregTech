@@ -74,7 +74,7 @@ public class MultiblockRecipeLogicTest {
                 .buildAndRegister();
 
         RecipeMapMultiblockController mbt =
-                MetaTileEntities.registerMetaTileEntity(511,
+                MetaTileEntities.registerMetaTileEntity(509,
                         new MetaTileEntityElectricBlastFurnace(
                                 // super function calls the world, which equal null in test
                                 new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
@@ -313,7 +313,7 @@ public class MultiblockRecipeLogicTest {
                 .buildAndRegister();
 
         RecipeMapMultiblockController mbt =
-                MetaTileEntities.registerMetaTileEntity(512,
+                MetaTileEntities.registerMetaTileEntity(510,
                         new MetaTileEntityElectricBlastFurnace(
                                 // super function calls the world, which equal null in test
                                 new ResourceLocation(GTValues.MODID, "electric_blast_furnace")) {
