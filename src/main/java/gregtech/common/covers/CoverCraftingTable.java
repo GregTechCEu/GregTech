@@ -146,3 +146,5 @@ public class CoverCraftingTable extends CoverBehavior implements CoverWithUI, IT
         this.recipeMemory.deserializeNBT(tagCompound.getCompoundTag("RecipeMemory"));
     }
 }
+
+
