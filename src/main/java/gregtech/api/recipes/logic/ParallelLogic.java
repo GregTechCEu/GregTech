@@ -199,7 +199,7 @@ public class ParallelLogic {
 
             for (Map.Entry<FluidKey, Integer> entry : recipeFluidOutputs.entrySet()) {
                 amountLeft = entry.getValue() * multiplier;
-                int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), entry.getValue());
+                int inserted = overlayedFluidHandler.insertStackedFluidKey(entry.getKey(), amountLeft);
                 if (inserted > 0) {
                     amountLeft -= inserted;
                 }
