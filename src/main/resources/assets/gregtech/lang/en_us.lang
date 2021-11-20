@@ -66,10 +66,10 @@ gregtech.multiblock.primitive_water_pump.extra1=Biome Coefficient:/n  Ocean, Riv
 gregtech.multiblock.primitive_water_pump.extra2=Hatch Multipliers:/n  Pump Hatch: 1x/n  ULV Output Hatch: 2x/n  LV Output Hatch: 4x
 
 gregtech.multiblock.pattern.error=Expect components (%s) at (%s).
-gregtech.multiblock.pattern.error.limited.0=The number of components (%s) should less than %d.
-gregtech.multiblock.pattern.error.limited.1=The number of components (%s) should more than %d.
-gregtech.multiblock.pattern.error.limited.2=The number of components (%s) should less than %d in each layer.
-gregtech.multiblock.pattern.error.limited.3=The number of components (%s) should more than %d in each layer.
+gregtech.multiblock.pattern.error.limited.0=The number of components (%s) should <= %d.
+gregtech.multiblock.pattern.error.limited.1=The number of components (%s) should >= %d.
+gregtech.multiblock.pattern.error.limited.2=The number of components (%s) should <= %d in each layer.
+gregtech.multiblock.pattern.error.limited.3=The number of components (%s) should >= %d in each layer.
 
 gregtech.multiblock.pattern.error.coils=All heating coils shall be of the same type.
 
