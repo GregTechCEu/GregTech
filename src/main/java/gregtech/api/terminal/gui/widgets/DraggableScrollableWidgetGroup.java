@@ -107,7 +107,14 @@ public class DraggableScrollableWidgetGroup extends WidgetGroup {
     @Override
     public void setSize(Size size) {
         super.setSize(size);
-        computeMax();
+        maxHeight = Math.max(size.height, maxHeight);
+        maxWidth = Math.max(size.width, maxWidth);
+//        computeMax();
+        for (Widget widget : widgets) {
+            Position newPos = widget.getSelfPosition();
+            widget.setVisible(newPos.x < getSize().width - yBarWidth && newPos.x + widget.getSize().width > 0);
+            widget.setVisible(newPos.y < getSize().height - xBarHeight && newPos.y + widget.getSize().height > 0);
+        }
     }
 
     protected void computeMax() {

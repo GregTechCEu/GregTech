@@ -103,27 +103,17 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem SPRAY_EMPTY;
 
     public static MetaItem<?>.MetaValueItem FLUID_CELL;
-    public static MetaItem<?>.MetaValueItem UNIVERSAL_FLUID_CELL;
-    public static MetaItem<?>.MetaValueItem LARGE_FLUID_CELL_STEEL;
-    public static MetaItem<?>.MetaValueItem LARGE_FLUID_CELL_ALUMINIUM;
-    public static MetaItem<?>.MetaValueItem LARGE_FLUID_CELL_STAINLESS_STEEL;
-    public static MetaItem<?>.MetaValueItem LARGE_FLUID_CELL_TITANIUM;
-    public static MetaItem<?>.MetaValueItem LARGE_FLUID_CELL_TUNGSTEN_STEEL;
-    public static MetaItem<?>.MetaValueItem LARGE_FLUID_CELL_CHROME;
-    public static MetaItem<?>.MetaValueItem LARGE_FLUID_CELL_IRIDIUM;
-    public static MetaItem<?>.MetaValueItem LARGE_FLUID_CELL_OSMIUM;
-    public static MetaItem<?>.MetaValueItem LARGE_FLUID_CELL_NEUTRONIUM;
+    public static MetaItem<?>.MetaValueItem FLUID_CELL_UNIVERSAL;
+    public static MetaItem<?>.MetaValueItem FLUID_CELL_LARGE_STEEL;
+    public static MetaItem<?>.MetaValueItem FLUID_CELL_LARGE_ALUMINIUM;
+    public static MetaItem<?>.MetaValueItem FLUID_CELL_LARGE_STAINLESS_STEEL;
+    public static MetaItem<?>.MetaValueItem FLUID_CELL_LARGE_TITANIUM;
+    public static MetaItem<?>.MetaValueItem FLUID_CELL_LARGE_TUNGSTEN_STEEL;
 
     public static MetaItem<?>.MetaValueItem TOOL_MATCHES;
     public static MetaItem<?>.MetaValueItem TOOL_MATCHBOX;
     public static MetaItem<?>.MetaValueItem TOOL_LIGHTER_INVAR;
     public static MetaItem<?>.MetaValueItem TOOL_LIGHTER_PLATINUM;
-
-    public static MetaItem<?>.MetaValueItem INGOT_MIXED_METAL;
-    public static MetaItem<?>.MetaValueItem ADVANCED_ALLOY_PLATE;
-
-    public static MetaItem<?>.MetaValueItem INGOT_IRIDIUM_ALLOY;
-    public static MetaItem<?>.MetaValueItem PLATE_IRIDIUM_ALLOY;
 
     public static MetaItem<?>.MetaValueItem CARBON_FIBERS;
     public static MetaItem<?>.MetaValueItem CARBON_MESH;
@@ -407,6 +397,7 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_CRAFTING;
     public static MetaItem<?>.MetaValueItem COVER_DRAIN;
     public static MetaItem<?>.MetaValueItem COVER_INFINITE_WATER;
+    public static MetaItem<?>.MetaValueItem COVER_ENDER_FLUID_LINK;
 
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ULV;

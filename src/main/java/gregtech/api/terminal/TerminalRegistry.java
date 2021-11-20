@@ -9,7 +9,7 @@ import gregtech.api.util.FileUtility;
 import gregtech.api.util.GTLog;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
-import gregtech.common.terminal.app.ThemeSettingApp;
+import gregtech.common.terminal.app.VirtualTankApp;
 import gregtech.common.terminal.app.game.maze.MazeApp;
 import gregtech.common.terminal.app.game.minesweeper.MinesweeperApp;
 import gregtech.common.terminal.app.game.pong.PongApp;
@@ -25,6 +25,7 @@ import gregtech.common.terminal.app.guideeditor.GuideEditorApp;
 import gregtech.common.terminal.app.hardwaremanager.HardwareManagerApp;
 import gregtech.common.terminal.app.prospector.OreProspectorApp;
 import gregtech.common.terminal.app.recipechart.RecipeChartApp;
+import gregtech.common.terminal.app.settings.SettingsApp;
 import gregtech.common.terminal.app.worldprospector.WorldProspectorARApp;
 import gregtech.common.terminal.hardware.BatteryHardware;
 import gregtech.common.terminal.hardware.DeviceHardware;
@@ -68,7 +69,7 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new ItemGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new TutorialGuideApp()).defaultApp().build();
         AppRegistryBuilder.create(new GuideEditorApp()).defaultApp().build();
-        AppRegistryBuilder.create(new ThemeSettingApp()).defaultApp().build();
+        AppRegistryBuilder.create(new SettingsApp()).defaultApp().build();
 
         AppRegistryBuilder.create(new PongApp())
                 .battery(GTValues.LV, 75)
@@ -113,6 +114,10 @@ public class TerminalRegistry {
         AppRegistryBuilder.create(new WorldProspectorARApp())
                 .battery(GTValues.LV, 233)
                 .device(DeviceHardware.DEVICE.CAMERA)
+                .build();
+        AppRegistryBuilder.create(new VirtualTankApp())
+                .battery(GTValues.MV, 500)
+                .device(DeviceHardware.DEVICE.WIRELESS)
                 .build();
     }
 
@@ -234,7 +239,9 @@ public class TerminalRegistry {
 
         public AppRegistryBuilder hardware(int tier, Hardware... hardware) {
             if (tier < this.hardware.length) {
-                this.hardware[tier] = ImmutableList.builder();
+                if (this.hardware[tier] == null) {
+                    this.hardware[tier] = ImmutableList.builder();
+                }
                 this.hardware[tier].add(hardware);
             }
             return this;
@@ -250,7 +257,9 @@ public class TerminalRegistry {
 
         public AppRegistryBuilder upgrade(int tier, ItemStack... upgrade) {
             if (tier < this.upgrade.length) {
-                this.upgrade[tier] = ImmutableList.builder();
+                if (this.upgrade[tier] == null) {
+                    this.upgrade[tier] = ImmutableList.builder();
+                }
                 this.upgrade[tier].add(upgrade);
             }
             return this;

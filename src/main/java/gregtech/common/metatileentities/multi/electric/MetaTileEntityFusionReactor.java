@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.api.capability.IEnergyContainer;
 import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.*;
+import gregtech.api.metatileentity.IFastRenderMetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.metatileentity.multiblock.IMultiblockPart;
@@ -17,25 +18,44 @@ import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.recipes.recipeproperties.FusionEUToStartProperty;
 import gregtech.api.render.ICubeRenderer;
+import gregtech.api.render.ICustomRenderFast;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
-import gregtech.common.blocks.BlockFusionCoil;
-import gregtech.common.blocks.BlockMachineCasing;
-import gregtech.common.blocks.BlockMultiblockCasing;
+import gregtech.api.util.RenderBufferHelper;
+import gregtech.common.blocks.BlockFusionCasing;
+import gregtech.common.blocks.BlockTransparentCasing;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.metatileentities.MetaTileEntities;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
-import static gregtech.api.util.RelativeDirection.*;
-
-public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
+public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController implements IFastRenderMetaTileEntity {
 
     private final int tier;
     private EnergyContainerList inputEnergyContainers;
@@ -62,34 +82,36 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
     @Override
     protected BlockPattern createStructurePattern() {
         FactoryBlockPattern.start();
-        return FactoryBlockPattern.start(LEFT, DOWN, BACK)
-                .aisle("###############", "######OCO######", "###############")
-                .aisle("######ICI######", "####CCcccCC####", "######ICI######")
-                .aisle("####CC###CC####", "###EccOSOccE###", "####CC###CC####")
-                .aisle("###C#######C###", "##EcEC###CEcE##", "###C#######C###")
-                .aisle("##C#########C##", "#CcE#######EcC#", "##C#########C##")
-                .aisle("##C#########C##", "#CcC#######CcC#", "##C#########C##")
-                .aisle("#I###########I#", "OcO#########OcO", "#I###########I#")
-                .aisle("#C###########C#", "CcC#########CcC", "#C###########C#")
-                .aisle("#I###########I#", "OcO#########OcO", "#I###########I#")
-                .aisle("##C#########C##", "#CcC#######CcC#", "##C#########C##")
-                .aisle("##C#########C##", "#CcE#######EcC#", "##C#########C##")
-                .aisle("###C#######C###", "##EcEC###CEcE##", "###C#######C###")
-                .aisle("####CC###CC####", "###EccOCOccE###", "####CC###CC####")
-                .aisle("######ICI######", "####CCcccCC####", "######ICI######")
-                .aisle("###############", "######OCO######", "###############")
+        return FactoryBlockPattern.start()
+                .aisle("###############", "######OGO######", "###############")
+                .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
+                .aisle("####CC###CC####", "###EAAOGOAAE###", "####CC###CC####")
+                .aisle("###C#######C###", "##EKEG###GEKE##", "###C#######C###")
+                .aisle("##C#########C##", "#GAE#######EAG#", "##C#########C##")
+                .aisle("##C#########C##", "#GAG#######GAG#", "##C#########C##")
+                .aisle("#I###########I#", "OAO#########OAO", "#I###########I#")
+                .aisle("#C###########C#", "GAG#########GAG", "#C###########C#")
+                .aisle("#I###########I#", "OAO#########OAO", "#I###########I#")
+                .aisle("##C#########C##", "#GAG#######GAG#", "##C#########C##")
+                .aisle("##C#########C##", "#GAE#######EAG#", "##C#########C##")
+                .aisle("###C#######C###", "##EKEG###GEKE##", "###C#######C###")
+                .aisle("####CC###CC####", "###EAAOGOAAE###", "####CC###CC####")
+                .aisle("######ICI######", "####GGAAAGG####", "######ICI######")
+                .aisle("###############", "######OSO######", "###############")
                 .where('S', selfPredicate())
+                .where('G', statePredicate(MetaBlocks.TRANSPARENT_CASING.getState(BlockTransparentCasing.CasingType.FUSION_GLASS)).or(statePredicate(getCasingState())))
                 .where('C', statePredicate(getCasingState()))
-                .where('c', statePredicate(getCoilState()))
                 .where('O', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.EXPORT_FLUIDS)))
                 .where('E', statePredicate(getCasingState()).or(tilePredicate((state, tile) -> {
-                    for (int i = tier; i < GTValues.UV + 1; i++) {
+                    for (int i = tier; i <= GTValues.UV; i++) {
                         if (tile.metaTileEntityId.equals(MetaTileEntities.ENERGY_INPUT_HATCH[i].metaTileEntityId))
                             return true;
                     }
                     return false;
                 })))
                 .where('I', statePredicate(getCasingState()).or(abilityPartPredicate(MultiblockAbility.IMPORT_FLUIDS)))
+                .where('K', statePredicate(getCoilState()))
+                .where('A', isAirPredicate())
                 .where('#', (tile) -> true)
                 .build();
     }
@@ -104,26 +126,19 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
     }
 
     private IBlockState getCasingState() {
-        switch (tier) {
-            case 6:
-                return MetaBlocks.MACHINE_CASING.getState(BlockMachineCasing.MachineCasingType.LuV);
-            case 7:
-                return MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.FUSION_CASING);
-            case 8:
-            default:
-                return MetaBlocks.MULTIBLOCK_CASING.getState(BlockMultiblockCasing.MultiblockCasingType.FUSION_CASING_MK2);
-        }
+        if (tier == GTValues.LuV)
+            return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_CASING);
+        if (tier == GTValues.ZPM)
+            return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_CASING_MK2);
+
+        return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_CASING_MK3);
     }
 
     private IBlockState getCoilState() {
-        switch (tier) {
-            case 6:
-                return MetaBlocks.FUSION_COIL.getState(BlockFusionCoil.CoilType.SUPERCONDUCTOR);
-            case 7:
-            case 8:
-            default:
-                return MetaBlocks.FUSION_COIL.getState(BlockFusionCoil.CoilType.FUSION_COIL);
-        }
+        if (tier == GTValues.LuV)
+            return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.SUPERCONDUCTOR_COIL);
+
+        return MetaBlocks.FUSION_CASING.getState(BlockFusionCasing.CasingType.FUSION_COIL);
     }
 
     @Override
@@ -141,13 +156,17 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
         this.outputFluidInventory = new FluidTankList(true, getAbilities(MultiblockAbility.EXPORT_FLUIDS));
         List<IEnergyContainer> energyInputs = getAbilities(MultiblockAbility.INPUT_ENERGY);
         this.inputEnergyContainers = new EnergyContainerList(energyInputs);
-        long euCapacity = energyInputs.size() * 10000000L * (long) Math.pow(2, tier - 6);
+        long euCapacity = calculateEnergyStorageFactor(energyInputs.size());
         this.energyContainer = new EnergyContainerHandler(this, euCapacity, GTValues.V[tier], 0, 0, 0) {
             @Override
             public String getName() {
                 return "EnergyContainerInternal";
             }
         };
+    }
+
+    private long calculateEnergyStorageFactor(int energyInputAmount) {
+        return energyInputAmount * (long) Math.pow(2, tier - 6) * 10000000L;
     }
 
     @Override
@@ -163,33 +182,15 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
 
     @Override
     protected void addDisplayText(List<ITextComponent> textList) {
-        if (!this.isStructureFormed()) {
-            textList.add(new TextComponentTranslation("gregtech.multiblock.invalid_structure").setStyle(new Style().setColor(TextFormatting.RED)));
-        }
-        if (this.isStructureFormed()) {
-            if (!this.recipeMapWorkable.isWorkingEnabled()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.work_paused"));
-            } else if (this.recipeMapWorkable.isActive()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
-                int currentProgress;
-                if (energyContainer.getEnergyCapacity() > 0) {
-                    currentProgress = (int) (this.recipeMapWorkable.getProgressPercent() * 100.0D);
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
-                } else {
-                    currentProgress = -this.recipeMapWorkable.getRecipeEUt();
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.generation_eu", currentProgress));
-                }
-            } else {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.idling"));
-            }
-
-            if (this.recipeMapWorkable.isHasNotEnoughEnergy()) {
-                textList.add(new TextComponentTranslation("gregtech.multiblock.not_enough_energy").setStyle(new Style().setColor(TextFormatting.RED)));
-            }
-        }
-
+        super.addDisplayText(textList);
         textList.add(new TextComponentString("EU: " + this.energyContainer.getEnergyStored() + " / " + this.energyContainer.getEnergyCapacity()));
         textList.add(new TextComponentTranslation("gregtech.multiblock.fusion_reactor.heat", heat));
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, boolean advanced) {
+        super.addInformation(stack, player, tooltip, advanced);
+        tooltip.add(I18n.format("gregtech.machine.fusion_reactor.capacity", calculateEnergyStorageFactor(16) / 1000000L));
     }
 
     @Nonnull
@@ -256,4 +257,64 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController {
             heat = compound.getLong("Heat");
         }
     }
+
+    @Override
+    public void renderMetaTileEntity(double x, double y, double z, float partialTicks) {
+        if (MinecraftForgeClient.getRenderPass() == 0 && recipeMapWorkable.isWorking()) {
+            BloomRenderLayerHooks.requestRenderFast(RENDER_HANDLER, (buffer)->{
+                final float r = 1;
+                final float g = .2f;
+                final float b = .2f;
+                Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+                if (entity != null) {
+                    buffer.begin(GL11.GL_QUAD_STRIP, DefaultVertexFormats.POSITION_COLOR);
+                    RenderBufferHelper.renderRing(buffer,
+                                x + getFrontFacing().getOpposite().getXOffset() * 7 + 0.5,
+                            y + 0.5,
+                            z + getFrontFacing().getOpposite().getZOffset() * 7 + 0.5,
+                            6, 0.2, 10, 20,
+                            r, g, b, 1, EnumFacing.Axis.Y);
+                    Tessellator.getInstance().draw();
+                }
+            });
+        }
+    }
+
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return new AxisAlignedBB(this.getPos().offset(getFrontFacing().getOpposite()).offset(getFrontFacing().rotateY(),6),
+                this.getPos().offset(getFrontFacing(), 12).offset(getFrontFacing().rotateY().getOpposite(),6));
+    }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 0;
+    }
+
+    @Override
+    public boolean isGlobalRenderer() {
+        return true;
+    }
+
+    static ICustomRenderFast RENDER_HANDLER = new ICustomRenderFast(){
+        float lastBrightnessX;
+        float lastBrightnessY;
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public void preDraw(BufferBuilder buffer) {
+            lastBrightnessX = OpenGlHelper.lastBrightnessX;
+            lastBrightnessY = OpenGlHelper.lastBrightnessY;
+            GlStateManager.color(1,1,1,1);
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
+            GlStateManager.disableTexture2D();
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public void postDraw(BufferBuilder buffer) {
+            GlStateManager.enableTexture2D();
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
+        }
+    };
 }

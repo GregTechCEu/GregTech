@@ -10,7 +10,7 @@ import java.util.TreeMap;
 
 public class FusionEUToStartProperty extends RecipeProperty<Long> {
 
-    private static final String KEY = "eu_to_start";
+    public static final String KEY = "eu_to_start";
 
     private static final TreeMap<Long, String> registeredFusionTiers = new TreeMap<>();
 

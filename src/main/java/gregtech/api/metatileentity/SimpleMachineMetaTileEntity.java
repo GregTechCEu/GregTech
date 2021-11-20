@@ -54,7 +54,7 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     private boolean autoOutputItems;
     private boolean autoOutputFluids;
     private boolean allowInputFromOutputSideItems = true;
-    private boolean allowInputFromOutputSideFluids = true;
+    private boolean allowInputFromOutputSideFluids = false;
 
     protected IItemHandler outputItemInventory;
     protected IFluidHandler outputFluidInventory;
@@ -107,8 +107,8 @@ public class SimpleMachineMetaTileEntity extends WorkableTieredMetaTileEntity im
     }
 
     @Override
-    public boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition) {
-        boolean coverPlaced = super.placeCoverOnSide(side, itemStack, coverDefinition);
+    public boolean placeCoverOnSide(EnumFacing side, ItemStack itemStack, CoverDefinition coverDefinition, EntityPlayer player) {
+        boolean coverPlaced = super.placeCoverOnSide(side, itemStack, coverDefinition, player);
         if (coverPlaced) {
             CoverBehavior cover = getCoverAtSide(side);
             if (cover != null && cover.shouldCoverInteractWithOutputside()) {

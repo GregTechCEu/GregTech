@@ -189,6 +189,12 @@ public class PartsRecipeHandler {
                         .duration((int) material.getAverageMass())
                         .EUt(material.getBlastTemperature() >= 2800 ? 256 : 64)
                         .buildAndRegister();
+
+                RecipeMaps.ALLOY_SMELTER_RECIPES.recipeBuilder().duration((int) material.getAverageMass()).EUt(30)
+                        .input(ingot, material, 2)
+                        .notConsumable(MetaItems.SHAPE_MOLD_GEAR_SMALL.getStackForm())
+                        .output(gearSmall, material)
+                        .buildAndRegister();
             } else {
                 ModHandler.addShapedRecipe(String.format("gear_%s", material), stack,
                         "RPR", "PwP", "RPR",
@@ -312,10 +318,10 @@ public class PartsRecipeHandler {
     public static void processRotor(OrePrefix rotorPrefix, Material material, IngotProperty property) {
         ItemStack stack = OreDictUnifier.get(rotorPrefix, material);
         ModHandler.addShapedRecipe(String.format("rotor_%s", material.toString()), stack,
-                "PdP", " R ", "PSP",
-                'P', new UnificationEntry(OrePrefix.plate, material),
-                'R', new UnificationEntry(OrePrefix.ring, material),
-                'S', new UnificationEntry(OrePrefix.screw, material));
+                "ChC", "SRf", "CdC",
+                'C', new UnificationEntry(plate, material),
+                'S', new UnificationEntry(screw, material),
+                'R', new UnificationEntry(ring, material));
 
         if (material.hasFluid()) {
             RecipeMaps.FLUID_SOLIDFICATION_RECIPES.recipeBuilder()

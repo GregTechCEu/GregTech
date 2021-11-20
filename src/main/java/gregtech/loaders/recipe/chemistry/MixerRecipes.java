@@ -1,7 +1,6 @@
 package gregtech.loaders.recipe.chemistry;
 
 import gregtech.api.recipes.ingredients.IntCircuitIngredient;
-import net.minecraft.init.Items;
 
 import static gregtech.api.recipes.RecipeMaps.MIXER_RECIPES;
 import static gregtech.api.unification.material.Materials.*;
@@ -33,20 +32,6 @@ public class MixerRecipes {
                 .fluidInputs(MethylAcetate.getFluid(1500))
                 .fluidOutputs(Glue.getFluid(2500))
                 .duration(50).EUt(8).buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder()
-                .input(dust, Wood, 4)
-                .fluidInputs(SulfuricAcid.getFluid(1000))
-                .output(Items.COAL, 1, 1)
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
-                .duration(1200).EUt(2).buildAndRegister();
-
-        MIXER_RECIPES.recipeBuilder()
-                .input(Items.SUGAR, 4)
-                .fluidInputs(SulfuricAcid.getFluid(1000))
-                .output(Items.COAL, 1, 1)
-                .fluidOutputs(DilutedSulfuricAcid.getFluid(1000))
-                .duration(1200).EUt(2).buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder()
                 .input(dust, Gallium)
@@ -404,7 +389,7 @@ public class MixerRecipes {
                 .input(dust, Magnesium)
                 .input(dust, Boron, 2)
                 .notConsumable(new IntCircuitIngredient(2))
-                .output(dust, MagnesiumDiboride, 2)
+                .output(dust, MagnesiumDiboride, 3)
                 .buildAndRegister();
 
         MIXER_RECIPES.recipeBuilder().duration(400).EUt(480)

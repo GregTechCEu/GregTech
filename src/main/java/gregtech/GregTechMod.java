@@ -16,9 +16,11 @@ import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.util.GTLog;
 import gregtech.api.util.NBTUtil;
+import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.KeyBinds;
 import gregtech.api.worldgen.config.WorldGenRegistry;
 import gregtech.common.*;
+import gregtech.core.hooks.BloomRenderLayerHooks;
 import gregtech.common.blocks.MetaBlocks;
 import gregtech.common.blocks.modelfactories.BlockCompressedFactory;
 import gregtech.common.blocks.modelfactories.BlockFrameFactory;
@@ -38,10 +40,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.*;
 import net.minecraftforge.fml.common.Optional.Method;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.*;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static gregtech.api.GregTechAPI.*;
@@ -49,12 +48,13 @@ import static gregtech.api.GregTechAPI.*;
 @Mod(modid = GTValues.MODID,
         name = "GregTech",
         acceptedMinecraftVersions = "[1.12,1.13)",
-        dependencies = "required:forge@[14.23.5.2847,);" + CodeChickenLib.MOD_VERSION_DEP + "after:forestry;after:jei@[4.15.0,);after:crafttweaker;")
+        dependencies = "required:forge@[14.23.5.2847,);" + CodeChickenLib.MOD_VERSION_DEP + "after:forestry;after:jei@[4.15.0,);after:crafttweaker;before:ctm")
 public class GregTechMod {
 
     static {
         FluidRegistry.enableUniversalBucket();
         if (FMLCommonHandler.instance().getSide().isClient()) {
+            BloomRenderLayerHooks.init();
             ResourcePackHook.init();
             BlockOreFactory.init();
             BlockCompressedFactory.init();
@@ -186,6 +186,11 @@ public class GregTechMod {
     @Mod.EventHandler
     public void onServerLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new GregTechCommand());
+    }
+
+    @Mod.EventHandler
+    public static void onServerStopped(FMLServerStoppedEvent event) {
+        VirtualTankRegistry.clearMaps();
     }
 
 }

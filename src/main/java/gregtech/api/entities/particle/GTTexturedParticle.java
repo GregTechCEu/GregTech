@@ -65,7 +65,7 @@ public class GTTexturedParticle extends GTParticle {
         }
 
         @Override
-        public void preDraw(int layer, BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        public void preDraw(BufferBuilder buffer) {
             if (depth) {
                 GlStateManager.depthMask(true);
             } else {
@@ -78,8 +78,8 @@ public class GTTexturedParticle extends GTParticle {
         }
 
         @Override
-        public void postDraw(int layer, BufferBuilder buffer, Tessellator tessellator) {
-            tessellator.draw();
+        public void postDraw(BufferBuilder buffer) {
+            Tessellator.getInstance().draw();
         }
     }
 

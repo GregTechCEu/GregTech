@@ -38,7 +38,7 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
 
     @Override
     public boolean applyProperty(String key, Object value) {
-        if (key.equals("explosives")) {
+        if (key.equals(ImplosionExplosiveProperty.KEY)) {
             explosivesAmount((int) value);
             return true;
         }
@@ -68,17 +68,25 @@ public class ImplosionRecipeBuilder extends RecipeBuilder<ImplosionRecipeBuilder
     @ZenMethod
     public ImplosionRecipeBuilder explosivesType(ItemStack explosivesType) {
         this.explosivesType = explosivesType;
+        if (!GTUtility.isBetweenInclusive(1, 64, explosivesType.getCount())) {
+            GTLog.logger.error("Amount of explosives should be from 1 to 64 inclusive", new IllegalArgumentException());
+            recipeStatus = EnumValidationResult.INVALID;
+        }
+        this.explosivesAmount = explosivesType.getCount();
         return this;
+    }
+
+    public ItemStack getExplosivesType() {
+        return this.explosivesType;
     }
 
     public ValidationResult<Recipe> build() {
 
         //Adjust the explosive type and the explosive amount. This is done here because it was null otherwise, for some reason
-        int amount = Math.max(1, explosivesAmount / 2);
         if (explosivesType == null) {
-            this.explosivesType = new ItemStack(Blocks.TNT, amount);
+            this.explosivesType = new ItemStack(Blocks.TNT, explosivesAmount);
         } else {
-            this.explosivesType = new ItemStack(explosivesType.getItem(), amount, explosivesType.getMetadata());
+            this.explosivesType = new ItemStack(explosivesType.getItem(), explosivesAmount, explosivesType.getMetadata());
         }
         inputs.add(CountableIngredient.from(explosivesType));
 

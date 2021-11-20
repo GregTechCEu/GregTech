@@ -59,9 +59,7 @@ public class LargeTurbineRenderer implements IIconRegister {
         }
         if (hasBase) {
             Textures.renderFace(renderState, cornerOffset, pipeline, side, Cuboid6.full, baseRingSprite);
-            renderState.brightness = 0xF000F0;
-            renderState.colour = 0xFFFFFFFF;
-            Textures.renderFace(renderState, cornerOffset, new IVertexOperation[0], side, Cuboid6.full, baseBackgroundSprite);
+            Textures.renderFace(renderState, cornerOffset, ArrayUtils.addAll(pipeline, new LightMapOperation(240, 240), new ColourOperation(0xFFFFFFFF)), side, Cuboid6.full, baseBackgroundSprite);
         }
         if (hasRotor) {
             TextureAtlasSprite sprite = isActive ? activeBladeSprite : idleBladeSprite;

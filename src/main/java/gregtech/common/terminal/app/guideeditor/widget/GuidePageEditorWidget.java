@@ -39,21 +39,21 @@ public class GuidePageEditorWidget extends GuidePageWidget {
         toolButtons = new WidgetGroup(Position.ORIGIN, Size.ZERO);
         toolButtons.setVisible(false);
         toolButtons.addWidget(new CircleButtonWidget(-20, -4, 8, 1, 12)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                .setColors(0,
                         TerminalTheme.COLOR_B_2.getColor(),
                         TerminalTheme.COLOR_1.getColor())
                 .setIcon(GuiTextures.ICON_UP)
                 .setHoverText("terminal.guide_editor.up")
                 .setClickListener(this::moveUp));
         toolButtons.addWidget(new CircleButtonWidget(0, -4, 8, 1, 12)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                .setColors(0,
                         TerminalTheme.COLOR_B_2.getColor(),
                         TerminalTheme.COLOR_2.getColor())
                 .setIcon(GuiTextures.ICON_DOWN)
                 .setHoverText("terminal.guide_editor.down")
                 .setClickListener(this::moveDown));
         toolButtons.addWidget(new CircleButtonWidget(20, -4, 8, 1, 12)
-                .setColors(new Color(255, 255, 255, 0).getRGB(),
+                .setColors(0,
                         TerminalTheme.COLOR_B_2.getColor(),
                         TerminalTheme.COLOR_3.getColor())
                 .setIcon(GuiTextures.ICON_REMOVE)

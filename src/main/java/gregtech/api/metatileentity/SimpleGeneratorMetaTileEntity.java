@@ -5,9 +5,9 @@ import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
 import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.capability.impl.FilteredFluidHandler;
 import gregtech.api.capability.impl.FluidTankList;
 import gregtech.api.capability.impl.FuelRecipeLogic;
+import gregtech.api.capability.impl.NotifiableFilteredFluidHandler;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -54,7 +54,7 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
 
     @Override
     protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, new FilteredFluidHandler(16000)
+        return new FluidTankList(false, new NotifiableFilteredFluidHandler(16000, this, false)
                 .setFillPredicate(this::canInputFluid));
     }
 

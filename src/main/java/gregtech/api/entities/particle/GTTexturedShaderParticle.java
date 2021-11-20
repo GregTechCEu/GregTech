@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.EXTFramebufferObject;
 
@@ -39,12 +38,12 @@ public abstract class GTTexturedShaderParticle extends GTParticle {
             fbo = new Framebuffer(1000, 1000, false);
         }
 
-        public void hookPreDraw(Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        public void hookPreDraw() {
             program.useShader();
         }
 
         @Override
-        public final void preDraw(int layer, BufferBuilder buffer, Entity entityIn, float partialTicks, float rotationX, float rotationZ, float rotationYZ, float rotationXY, float rotationXZ) {
+        public final void preDraw(BufferBuilder buffer) {
             if (program != null) {
                 int lastID = glGetInteger(EXTFramebufferObject.GL_FRAMEBUFFER_BINDING_EXT);
                 fbo.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
@@ -55,7 +54,7 @@ public abstract class GTTexturedShaderParticle extends GTParticle {
                 GlStateManager.viewport(0, 0, 1000, 1000);
                 Tessellator tessellator = Tessellator.getInstance();
 
-                hookPreDraw(entityIn, partialTicks, rotationX, rotationZ, rotationYZ, rotationXY, rotationXZ);
+                hookPreDraw();
 
                 buffer.begin(7, DefaultVertexFormats.POSITION_TEX);
                 buffer.pos(-1, 1, 0).tex(0, 0).endVertex();
@@ -81,8 +80,8 @@ public abstract class GTTexturedShaderParticle extends GTParticle {
         }
 
         @Override
-        public final void postDraw(int layer, BufferBuilder buffer, Tessellator tessellator) {
-            tessellator.draw();
+        public final void postDraw(BufferBuilder buffer) {
+            Tessellator.getInstance().draw();
         }
 
     }

@@ -40,6 +40,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.function.Function;
+import java.util.function.IntSupplier;
+import java.util.function.Predicate;
 
 public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, IControllable {
 
@@ -86,15 +89,6 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
 
     public PumpMode getPumpMode() {
         return pumpMode;
-    }
-
-    public DistributionMode getDistributionMode() {
-        return distributionMode;
-    }
-
-    public void setDistributionMode(DistributionMode distributionMode) {
-        this.distributionMode = distributionMode;
-        coverHolder.markDirty();
     }
 
     public void setBucketMode(BucketMode bucketMode) {
@@ -175,41 +169,73 @@ public class CoverPump extends CoverBehavior implements CoverWithUI, ITickable, 
         WidgetGroup primaryGroup = new WidgetGroup();
         primaryGroup.addWidget(new LabelWidget(10, 5, getUITitle(), GTValues.VN[tier]));
 
-        primaryGroup.addWidget(new ClickButtonWidget(10, 20, 34, 18, "-100", data -> adjustTransferRate(data.isShiftClick ? -500 : -100)));
-        primaryGroup.addWidget(new ClickButtonWidget(128, 20, 34, 18, "+100", data -> adjustTransferRate(data.isShiftClick ? +500 : +100)));
-        primaryGroup.addWidget(new ClickButtonWidget(45, 20, 23, 18, "-10", data -> adjustTransferRate(data.isShiftClick ? -50 : -10)));
-        primaryGroup.addWidget(new ClickButtonWidget(105, 20, 23, 18, "+10", data -> adjustTransferRate(data.isShiftClick ? +50 : +10)));
-        primaryGroup.addWidget(new ClickButtonWidget(68, 20, 18, 18, "-1", data -> adjustTransferRate(data.isShiftClick ? -5 : -1)));
-        primaryGroup.addWidget(new ClickButtonWidget(86, 20, 18, 18, "+1", data -> adjustTransferRate(data.isShiftClick ? +5 : +1)));
-        primaryGroup.addWidget(new ImageWidget(10, 40, 120, 18, GuiTextures.DISPLAY));
-        primaryGroup.addWidget(new SimpleTextWidget(70, 49, "cover.pump.transfer_rate", 0xFFFFFF, () -> bucketMode == BucketMode.BUCKET ? Integer.toString(transferRate / 1000) : Integer.toString(transferRate)));
-        primaryGroup.addWidget(new CycleButtonWidget(132, 40, 30, 18,
-                BucketMode.class, this::getBucketMode, this::setBucketMode));
+        primaryGroup.addWidget(new ImageWidget(44, 20, 62, 20, GuiTextures.DISPLAY));
 
-        primaryGroup.addWidget(new CycleButtonWidget(10, 63, 75, 18,
+        primaryGroup.addWidget(new IncrementButtonWidget(136, 20, 30, 20, 1, 10, 100, 1000, this::adjustTransferRate)
+                .setDefaultTooltip()
+                .setShouldClientCallback(false));
+        primaryGroup.addWidget(new IncrementButtonWidget(10, 20, 34, 20, -1, -10, -100, -1000, this::adjustTransferRate)
+                .setDefaultTooltip()
+                .setShouldClientCallback(false));
+
+        TextFieldWidget2 textField = new TextFieldWidget2(45, 26, 60, 20, () -> bucketMode == BucketMode.BUCKET ? Integer.toString(transferRate / 1000) : Integer.toString(transferRate), val -> {
+            if (val != null && !val.isEmpty()) {
+                int amount = Integer.parseInt(val);
+                amount *= this.bucketMode == BucketMode.BUCKET ? 1000 : 1;
+                setTransferRate(amount);
+            }
+        })
+                .setCentered(true)
+                .setAllowedChars("0123456789")
+                .setMaxLength(8)
+                .setValidator(getTextFieldValidator(() -> bucketMode == BucketMode.BUCKET ? maxFluidTransferRate / 1000 : maxFluidTransferRate));
+        primaryGroup.addWidget(textField);
+
+        primaryGroup.addWidget(new CycleButtonWidget(106, 20, 30, 20,
+                BucketMode.class, this::getBucketMode, mode -> {
+            if(mode != bucketMode) {
+                setBucketMode(mode);
+            }
+        }));
+
+        primaryGroup.addWidget(new CycleButtonWidget(10, 43, 75, 18,
                 PumpMode.class, this::getPumpMode, this::setPumpMode));
 
         primaryGroup.addWidget(new CycleButtonWidget(7, 160, 116, 20,
-           ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
-            .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
+                ManualImportExportMode.class, this::getManualImportExportMode, this::setManualImportExportMode)
+                .setTooltipHoverString("cover.universal.manual_import_export.mode.description"));
 
         primaryGroup.addWidget(new ToggleButtonWidget(130, 160, 20, 20, GuiTextures.BLOCKS_INPUT, () -> blocksInput, val -> blocksInput = val).setTooltipText("cover.conveyor.blocks_input"));
 
-        TileEntity coverTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos());
-        TileEntity otherTile = coverHolder.getWorld().getTileEntity(coverHolder.getPos().offset(attachedSide));
-        if(!(this instanceof CoverFluidRegulator) && coverTile instanceof TileEntityFluidPipe ^ otherTile instanceof TileEntityFluidPipe) {
-            primaryGroup.addWidget(new ToggleButtonWidget(149, 160, 20, 20, GuiTextures.DISTRIBUTION_MODE,
-                    () -> distributionMode == DistributionMode.INSERT_FIRST,
-                    val -> distributionMode = val ? DistributionMode.INSERT_FIRST : DistributionMode.ROUND_ROBIN)
-                    .setTooltipText("cover.conveyor.distribution"));
-        }
-              
         this.fluidFilter.initUI(88, primaryGroup::addWidget);
 
         ModularUI.Builder builder = ModularUI.builder(GuiTextures.BACKGROUND, 176, 184 + 82)
                 .widget(primaryGroup)
                 .bindPlayerInventory(player.inventory, GuiTextures.SLOT, 7, 184);
         return buildUI(builder, player);
+    }
+
+    public Function<String, String> getTextFieldValidator(IntSupplier maxSupplier) {
+        int min = 1;
+        return val -> {
+            if (val.isEmpty()) {
+                return String.valueOf(min);
+            }
+            int max = maxSupplier.getAsInt();
+            int num;
+            try {
+                num = Integer.parseInt(val);
+            } catch (NumberFormatException ignored) {
+                return String.valueOf(max);
+            }
+            if (num < min) {
+                return String.valueOf(min);
+            }
+            if (num > max) {
+                return String.valueOf(max);
+            }
+            return val;
+        };
     }
 
     @Override

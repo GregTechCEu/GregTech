@@ -7,7 +7,7 @@
       "translate": "gregtech.advancement.ludicrous_voltage.59_superconducting_coil.name"
     },
     "icon": {
-      "item": "gregtech:fusion_coil",
+      "item": "gregtech:fusion_casing",
       "data": 0
     },
     "frame": "goal"
@@ -18,7 +18,7 @@
       "conditions": {
         "items": [
           {
-            "item": "gregtech:fusion_coil",
+            "item": "gregtech:fusion_casing",
             "data": 0
           }
         ]

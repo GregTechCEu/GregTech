@@ -36,6 +36,7 @@ import stanhebben.zenscript.annotations.*;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.stream.Collectors;
 
@@ -69,6 +70,8 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
                     .thenComparingInt(Recipe::getEUt);
 
     private final Set<Recipe> recipeSet = new HashSet<>();
+
+    private Consumer<RecipeBuilder<?>> onRecipeBuildAction;
 
     public RecipeMap(String unlocalizedName,
                      int minInputs, int maxInputs, int minOutputs, int maxOutputs,
@@ -138,6 +141,11 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
 
     public RecipeMap<R> setSlotOverlay(boolean isOutput, boolean isFluid, boolean isLast, TextureArea slotOverlay) {
         this.slotOverlays.put((byte) ((isOutput ? 2 : 0) + (isFluid ? 1 : 0) + (isLast ? 4 : 0)), slotOverlay);
+        return this;
+    }
+
+    public RecipeMap<R> onRecipeBuild(Consumer<RecipeBuilder<?>> consumer) {
+        onRecipeBuildAction = consumer;
         return this;
     }
 
@@ -524,7 +532,7 @@ public class RecipeMap<R extends RecipeBuilder<R>> {
     }
 
     public R recipeBuilder() {
-        return recipeBuilderSample.copy();
+        return recipeBuilderSample.copy().onBuild(onRecipeBuildAction);
     }
 
     @ZenMethod("recipeBuilder")

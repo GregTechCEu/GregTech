@@ -35,6 +35,7 @@ public class GuiTextures {
     public static final TextureArea BUTTON_ITEM_OUTPUT = TextureArea.fullImage("textures/gui/widget/button_item_output.png");
     public static final TextureArea BUTTON_LEFT = TextureArea.fullImage("textures/gui/widget/left.png");
     public static final TextureArea BUTTON_OVERCLOCK = TextureArea.fullImage("textures/gui/widget/button_overclock.png");
+    public static final TextureArea BUTTON_PUBLIC_PRIVATE = TextureArea.fullImage("textures/gui/widget/button_public_private.png");
     public static final TextureArea BUTTON_RIGHT = TextureArea.fullImage("textures/gui/widget/right.png");
     public static final TextureArea BUTTON_SWITCH_VIEW = TextureArea.fullImage("textures/gui/widget/button_switch_view.png");
     public static final TextureArea BUTTON_WORKING_ENABLE = TextureArea.fullImage("textures/gui/widget/button_working_enable.png");
@@ -42,6 +43,7 @@ public class GuiTextures {
     public static final SizedTextureArea CLIPBOARD_TEXT_BOX = AdoptableTextureArea.fullImage("textures/gui/widget/clipboard_text_box.png", 9, 18, 1, 1);
     public static final TextureArea DISTRIBUTION_MODE = TextureArea.fullImage("textures/gui/widget/button_distribution_mode.png");
     public static final TextureArea LOCK = TextureArea.fullImage("textures/gui/widget/lock.png");
+    public static final TextureArea LOCK_WHITE = TextureArea.fullImage("textures/gui/widget/lock_white.png");
     public static final TextureArea SWITCH = TextureArea.fullImage("textures/gui/widget/switch.png");
     public static final TextureArea SWITCH_HORIZONTAL = TextureArea.fullImage("textures/gui/widget/switch_horizontal.png");
     public static final SizedTextureArea VANILLA_BUTTON = SizedTextureArea.fullImage("textures/gui/widget/vanilla_button.png", 200, 40);
@@ -66,6 +68,8 @@ public class GuiTextures {
     public static final TextureArea PRIMITIVE_BLAST_FURNACE_PROGRESS_BAR = TextureArea.fullImage("textures/gui/primitive/progress_bar_primitive_blast_furnace.png");
 
     //BRONZE
+    public static final TextureArea BRONZE_DISPLAY = TextureArea.fullImage("textures/gui/steam/bronze/bronze_display.png");
+
     public static final TextureArea BRONZE_BACKGROUND = TextureArea.fullImage("textures/gui/steam/bronze/bronze_gui.png");
     public static final TextureArea BRONZE_BLAST_FURNACE_PROGRESS_BAR = TextureArea.fullImage("textures/gui/steam/bronze/progress_bar_bronze_blast_furnace.png");
     public static final TextureArea BRONZE_COAL_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/overlay_bronze_coal.png");
@@ -73,6 +77,12 @@ public class GuiTextures {
     public static final TextureArea BRONZE_FURNACE_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/slot_bronze_furnace_background.png");
     public static final TextureArea BRONZE_INGOT_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/overlay_bronze_ingot.png");
     public static final TextureArea BRONZE_SLOT = TextureArea.fullImage("textures/gui/steam/bronze/slot_bronze.png");
+    public static final TextureArea BRONZE_IN_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/bronze_in_slot_overlay.png");
+    public static final TextureArea BRONZE_OUT_SLOT_OVERLAY = TextureArea.fullImage("textures/gui/steam/bronze/bronze_out_slot_overlay.png");
+    public static final TextureArea BRONZE_FLUID_SLOT = TextureArea.fullImage("textures/gui/steam/bronze/fluid_slot.png");
+    public static final TextureArea BRONZE_TANK_ICON = TextureArea.fullImage("textures/gui/steam/bronze/bronze_tank_icon.png");
+
+
 
     //STEEL
     public static final TextureArea STEEL_BACKGROUND = TextureArea.fullImage("textures/gui/steam/steel/steel_gui.png");

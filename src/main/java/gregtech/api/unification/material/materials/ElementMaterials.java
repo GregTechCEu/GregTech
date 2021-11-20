@@ -31,7 +31,7 @@ public class ElementMaterials {
 
         Americium = new Material.Builder(3, "americium")
                 .ingot(3).fluid()
-                .color(0xC8C8C8).iconSet(METALLIC)
+                .color(0x287869).iconSet(METALLIC)
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Am)
                 .itemPipeProperties(64, 64)
@@ -142,7 +142,7 @@ public class ElementMaterials {
 
         Cerium = new Material.Builder(20, "cerium")
                 .ingot().fluid()
-                .iconSet(METALLIC)
+                .color(0x87917D).iconSet(METALLIC)
                 .element(Elements.Ce)
                 .flags(GENERATE_FINE_WIRE)
                 .blastTemp(1068)
@@ -237,8 +237,8 @@ public class ElementMaterials {
 
         Europium = new Material.Builder(33, "europium")
                 .ingot().fluid()
-                .iconSet(METALLIC)
-                .flags(STD_METAL, GENERATE_LONG_ROD, GENERATE_FINE_WIRE, GENERATE_SPRING_SMALL)
+                .color(0x20FFFF).iconSet(METALLIC)
+                .flags(STD_METAL, GENERATE_LONG_ROD, GENERATE_FINE_WIRE, GENERATE_SPRING, GENERATE_SPRING_SMALL)
                 .element(Elements.Eu)
                 .cableProperties(GTValues.V[GTValues.UHV], 2, 32)
                 .fluidPipeProperties(7780, 1200, true)
@@ -294,7 +294,7 @@ public class ElementMaterials {
         Gold = new Material.Builder(41, "gold")
                 .ingot().fluid().ore()
                 .color(0xFFE650).iconSet(SHINY)
-                .flags(EXT2_METAL, GENERATE_RING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_SPRING)
+                .flags(EXT2_METAL, GENERATE_RING, MORTAR_GRINDABLE, EXCLUDE_BLOCK_CRAFTING_BY_HAND_RECIPES, GENERATE_SPRING, GENERATE_SPRING_SMALL)
                 .element(Elements.Au)
                 .cableProperties(GTValues.V[3], 2, 2)
                 .fluidPipeProperties(1671, 35, true)
@@ -410,7 +410,7 @@ public class ElementMaterials {
 
         Lutetium = new Material.Builder(58, "lutetium")
                 .ingot().fluid()
-                .iconSet(METALLIC)
+                .color(0x00AAFF).iconSet(METALLIC)
                 .element(Elements.Lu)
                 .blastTemp(1925)
                 .build();
@@ -430,7 +430,7 @@ public class ElementMaterials {
 
         Manganese = new Material.Builder(61, "manganese")
                 .ingot().fluid()
-                .color(0xFAFAFA)
+                .color(0xCDE1B9)
                 .flags(STD_METAL, GENERATE_FOIL, GENERATE_DENSE, GENERATE_BOLT_SCREW)
                 .element(Elements.Mn)
                 .toolStats(7.0f, 2.0f, 512, 21)
@@ -590,7 +590,7 @@ public class ElementMaterials {
 
         Potassium = new Material.Builder(83, "potassium")
                 .ingot(1).fluid()
-                .color(0xFAFAFA).iconSet(METALLIC)
+                .color(0xBEDCFF).iconSet(METALLIC)
                 .flags(EXT_METAL)
                 .element(Elements.K)
                 .build();
@@ -832,7 +832,7 @@ public class ElementMaterials {
                 .build();
 
         Uranium238 = new Material.Builder(116, "uranium")
-                .ingot(3).fluid().ore()
+                .ingot(3).fluid().ore(true)
                 .color(0x32F032).iconSet(METALLIC)
                 .flags(STD_METAL)
                 .element(Elements.U238)
@@ -840,7 +840,7 @@ public class ElementMaterials {
                 .build();
 
         Uranium235 = new Material.Builder(117, "uranium235")
-                .ingot(3).fluid().ore()
+                .ingot(3).fluid().ore(true)
                 .color(0x46FA46).iconSet(SHINY)
                 .flags(STD_METAL, GENERATE_ROD)
                 .element(Elements.U235)

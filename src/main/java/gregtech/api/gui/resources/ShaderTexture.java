@@ -52,7 +52,7 @@ public class ShaderTexture implements IGuiTexture{
     }
 
     public static ShaderTexture createShader(String location) {
-        if (FMLCommonHandler.instance().getSide().isClient()) {
+        if (FMLCommonHandler.instance().getSide().isClient() && Shaders.allowedShader()) {
             if (!PROGRAMS.containsKey(location)) {
                 ShaderObject object = Shaders.loadShader(ShaderObject.ShaderType.FRAGMENT, location);
                 if (object != null) {
@@ -70,7 +70,7 @@ public class ShaderTexture implements IGuiTexture{
     }
 
     public static ShaderTexture createRawShader(String rawShader) {
-        if (FMLCommonHandler.instance().getSide().isClient()) {
+        if (FMLCommonHandler.instance().getSide().isClient() && Shaders.allowedShader()) {
             ShaderProgram program = new ShaderProgram();
             ShaderObject object = new ShaderObject(ShaderObject.ShaderType.FRAGMENT, rawShader).compileShader();
             program.attachShader(object);
