@@ -181,6 +181,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R clearInputs() {
+        this.inputs.clear();
+        return (R) this;
+    }
+
     public R notConsumable(ItemStack itemStack) {
         return inputs(CountableIngredient.from(itemStack, 0));
     }
@@ -252,6 +257,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R clearOutputs() {
+        this.outputs.clear();
+        return (R) this;
+    }
+
     public R fluidInputs(FluidStack... inputs) {
         return fluidInputs(Arrays.asList(inputs));
     }
@@ -267,6 +277,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         return (R) this;
     }
 
+    public R clearFluidInputs() {
+        this.fluidInputs.clear();
+        return (R) this;
+    }
+
     public R fluidOutputs(FluidStack... outputs) {
         return fluidOutputs(Arrays.asList(outputs));
     }
@@ -275,6 +290,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
         outputs = new ArrayList<>(outputs);
         outputs.removeIf(Objects::isNull);
         this.fluidOutputs.addAll(outputs);
+        return (R) this;
+    }
+
+    public R clearFluidOutputs() {
+        this.fluidOutputs.clear();
         return (R) this;
     }
 
@@ -310,6 +330,11 @@ public abstract class RecipeBuilder<R extends RecipeBuilder<R>> {
 
     public R chancedOutputs(List<ChanceEntry> chancedOutputs) {
         chancedOutputs.stream().map(ChanceEntry::copy).forEach(this.chancedOutputs::add);
+        return (R) this;
+    }
+
+    public R clearChancedOutput() {
+        this.chancedOutputs.clear();
         return (R) this;
     }
 

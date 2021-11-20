@@ -1,9 +1,12 @@
 package gregtech.api.util;
 
+import gregtech.api.capability.IMultipleTankHandler;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.*;
@@ -26,6 +29,19 @@ public final class InventoryUtils {
                 streamFrom(inventory)
                         .filter(ItemStack::isEmpty)
                         .count();
+    }
+
+    public static int getNumberOfEmptyTanksInInventory(IMultipleTankHandler tanks) {
+
+        int numEmptyTanks = 0;
+
+        for(IFluidTank tank : tanks) {
+            if(tank.getFluid() == null) {
+                numEmptyTanks++;
+            }
+        }
+
+        return numEmptyTanks;
     }
 
     /**
@@ -83,6 +99,19 @@ public final class InventoryUtils {
 
         // Return whether there are now sufficient empty slots to fit the unmerged items.
         return itemStacks.size() <= emptySlots;
+    }
+
+    public static boolean simulateFluidStackMerge(List<FluidStack> inputFluids, IMultipleTankHandler fluidTanks) {
+
+        final int emptyTanks = getNumberOfEmptyTanksInInventory(fluidTanks);
+
+        if(inputFluids.size() <= emptyTanks) {
+            return true;
+        }
+
+        mergeFluidStacks(inputFluids, fluidTanks);
+
+        return inputFluids.size() <= emptyTanks;
     }
 
     /**
@@ -155,6 +184,40 @@ public final class InventoryUtils {
                     }
                 }
         }
+    }
+
+    static void mergeFluidStacks(Collection<FluidStack> source, IMultipleTankHandler destination) {
+
+        final Iterator<FluidStack> sourceFluidStacks = source.iterator();
+
+        while(sourceFluidStacks.hasNext()) {
+            final FluidStack sourceFluidStack = sourceFluidStacks.next().copy();
+
+            for(int i = 0; i< destination.getTanks(); i++) {
+                FluidStack destFluidStack = destination.getTankAt(i).getFluid();
+
+                if(destFluidStack != null) {
+                    destFluidStack = destFluidStack.copy();
+                }
+
+                if(destFluidStack != null && sourceFluidStack.isFluidEqual(destFluidStack)) {
+
+                    final int availableRoom = destination.getTankAt(i).getCapacity() - destFluidStack.amount;
+
+                    if(availableRoom > 0) {
+                        final int fluidCount = Math.min(availableRoom, sourceFluidStack.amount);
+                        destFluidStack.amount = destFluidStack.amount + fluidCount;
+                        sourceFluidStack.amount = sourceFluidStack.amount - fluidCount;
+
+                        if(sourceFluidStack.amount == 0) {
+                            sourceFluidStacks.remove();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     /**
