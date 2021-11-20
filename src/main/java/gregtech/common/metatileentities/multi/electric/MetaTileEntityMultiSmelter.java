@@ -15,8 +15,7 @@ import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
-import gregtech.api.util.ItemStackKey;
-import gregtech.api.util.MirroredItemHandler;
+import gregtech.api.util.OverlayedItemHandler;
 import gregtech.common.blocks.BlockMetalCasing.MetalCasingType;
 import gregtech.common.blocks.BlockWireCoil.CoilType;
 import gregtech.common.blocks.BlockWireCoil2.CoilType2;
@@ -27,9 +26,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.items.ItemStackHandler;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -173,7 +169,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
             boolean matchedRecipe = false;
 
-            MirroredItemHandler mirroredItemHandler = new MirroredItemHandler(outputInventory);
+            OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(outputInventory);
 
             // Iterate over the input items looking for more things to add until we run either out of input items
             // or we have exceeded the number of items permissible from the smelting bonus
@@ -204,7 +200,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
                 int amountOfCurrentItem = Math.min(itemsLeftUntilMax, currentInputItem.getCount());
 
                 //how much we can add to the output inventory
-                int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, mirroredItemHandler, amountOfCurrentItem);
+                int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, overlayedItemHandler, amountOfCurrentItem);
 
                 //amount to actually multiply the recipe by
                 int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);

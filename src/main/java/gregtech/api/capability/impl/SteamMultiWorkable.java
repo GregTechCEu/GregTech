@@ -7,7 +7,7 @@ import gregtech.api.recipes.MatchingMode;
 import gregtech.api.recipes.Recipe;
 import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.logic.ParallelLogic;
-import gregtech.api.util.MirroredItemHandler;
+import gregtech.api.util.OverlayedItemHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
@@ -100,7 +100,7 @@ public class SteamMultiWorkable extends SteamMultiblockRecipeLogic {
             int amountOfCurrentItem = Math.min(itemsLeftUntilMax, currentInputItem.getCount());
 
             //how much we can add to the output inventory
-            int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, new MirroredItemHandler(this.getOutputInventory()), amountOfCurrentItem);
+            int limitByOutput = ParallelLogic.limitParallelByItems(matchingRecipe, new OverlayedItemHandler(this.getOutputInventory()), amountOfCurrentItem);
 
             //amount to actually multiply the recipe by
             int multiplierRecipeAmount = Math.min(amountOfCurrentItem, limitByOutput);

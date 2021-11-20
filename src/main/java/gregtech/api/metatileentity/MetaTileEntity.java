@@ -23,10 +23,7 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.recipes.FluidKey;
 import gregtech.api.recipes.logic.ParallelLogic;
 import gregtech.api.render.Textures;
-import gregtech.api.util.GTFluidUtils;
-import gregtech.api.util.GTUtility;
-import gregtech.api.util.ItemStackKey;
-import gregtech.api.util.MirroredItemHandler;
+import gregtech.api.util.*;
 import gregtech.common.ConfigHolder;
 import gregtech.common.advancement.GTTriggers;
 import gregtech.core.hooks.BloomRenderLayerHooks;
@@ -1019,13 +1016,13 @@ public abstract class MetaTileEntity implements ICoverable {
         // determine if there is sufficient room to insert all items into the target inventory
 
         if (simulate) {
-            MirroredItemHandler mirroredItemHandler = new MirroredItemHandler(handler);
+            OverlayedItemHandler overlayedItemHandler = new OverlayedItemHandler(handler);
             List<Pair<ItemStackKey, Integer>> stackKeyList = ParallelLogic.stackList2stackKeyList(items);
 
             for (Pair<ItemStackKey, Integer> pair : stackKeyList) {
                 int amountToInsert = pair.getRight();
-                for (int slot = 0; slot < mirroredItemHandler.getSlots(); slot++) {
-                    int amount = mirroredItemHandler.insertItemStackKey(slot, pair.getLeft(), amountToInsert);
+                for (int slot = 0; slot < overlayedItemHandler.getSlots(); slot++) {
+                    int amount = overlayedItemHandler.insertItemStackKey(slot, pair.getLeft(), amountToInsert);
                     if (amount >= 0) {
                         amountToInsert = amount;
                     }
@@ -1043,92 +1040,24 @@ public abstract class MetaTileEntity implements ICoverable {
         return true;
     }
 
-    /**
-     * @param stackKey   a ItemStackKey representing the item to be merged
-     * @param amount     the amount of items to merge
-     * @param invCopyMap a HashMap representing a copy of the inventory to be merged
-     *
-     * @return the amount of items not inserted on the given inventory
-     */
-
-    public static int simulateAddHashedItemToInvMap(final ItemStackKey stackKey,
-                                                    int amount,
-                                                    final Map<Integer, Triple<ItemStackKey, Integer, Integer>> invCopyMap) {
-
-        for (Map.Entry<Integer, Triple<ItemStackKey, Integer, Integer>> isEntry : invCopyMap.entrySet()) {
-            if (amount == 0) {
-                break;
-            }
-            Triple<ItemStackKey, Integer, Integer> triple = isEntry.getValue();
-            int maxStackableSize = Math.min(stackKey.getMaxStackSize(), triple.getRight());
-            if (triple.getLeft() == null) {
-                int insertable = Math.min(amount, maxStackableSize);
-                isEntry.setValue(Triple.of(stackKey, insertable, triple.getRight()));
-                amount -= insertable;
-            } else if (triple.getLeft().hashCode() == stackKey.hashCode()) {
-                if (triple.getMiddle() < maxStackableSize) {
-                    int insertable = maxStackableSize - triple.getMiddle();
-                    if (insertable >= amount) {
-                        isEntry.setValue(Triple.of(triple.getLeft(),
-                                triple.getMiddle() + amount, triple.getRight()));
-                        amount = 0;
-                    } else {
-                        isEntry.setValue(Triple.of(triple.getLeft(),
-                                triple.getMiddle() + insertable, triple.getRight()));
-                        amount -= insertable;
-                    }
-                }
-            }
-        }
-        return amount;
-    }
-
-    public static int simulateAddHashedFluidToTankMap(final FluidKey fluidKey,
-                                                     int amount,
-                                                     final Map<Integer, Triple<FluidKey, Integer, Integer>> outputFluidListMap) {
-        for (Map.Entry<Integer, Triple<FluidKey, Integer, Integer>> targetTankEntry : outputFluidListMap.entrySet()) {
-            Triple<FluidKey, Integer, Integer> entryValue = targetTankEntry.getValue();
-            if (amount == 0) {
-                break;
-            }
-            if (entryValue.getLeft() == null) {
-                int insertable = Math.min(amount, entryValue.getRight());
-                targetTankEntry.setValue(Triple.of(fluidKey, insertable, entryValue.getRight()));
-                amount -= insertable;
-            } else if (entryValue.getLeft().equals(fluidKey)) {
-                if (entryValue.getMiddle() < entryValue.getRight()) {
-                    int insertable = entryValue.getRight() - entryValue.getMiddle();
-                    if (insertable == 0) {
-                        continue;
-                    }
-                    if (insertable >= amount) {
-                        targetTankEntry.setValue(Triple.of(entryValue.getLeft(),
-                                entryValue.getMiddle() + amount, entryValue.getRight()));
-                    } else {
-                        targetTankEntry.setValue(Triple.of(entryValue.getLeft(),
-                                entryValue.getMiddle() + insertable, entryValue.getRight()));
-                        amount -= insertable;
-                    }
-                }
-            }
-        }
-        return amount;
-    }
-
-
-
     public static boolean addFluidsToFluidHandler(IFluidHandler handler, boolean simulate, List<FluidStack> fluidStacks) {
-        Map<Integer, Triple<FluidKey, Integer, Integer>> outputFluidList = ParallelLogic.mapFluidHandler(handler);
 
         if (simulate) {
-            boolean canMerge = true;
+            OverlayedFluidHandler overlayedFluidHandler = new OverlayedFluidHandler(handler);
             for (FluidStack fluidStack : fluidStacks) {
-                int amount = MetaTileEntity.simulateAddHashedFluidToTankMap(new FluidKey(fluidStack), fluidStack.amount, outputFluidList);
-                if (amount > 0) {
-                    canMerge = false;
+                int amountToInsert = fluidStack.amount;
+                for (int slot = 0; slot < overlayedFluidHandler.getTankProperties().length; slot++) {
+                    int amount = overlayedFluidHandler.insertFluidStack(slot, fluidStack);
+                    if (amount >= 0) {
+                        amountToInsert = amount;
+                    }
+                    if (amount == 0) break;
+                }
+                if (amountToInsert > 0) {
+                    return false;
                 }
             }
-            return canMerge;
+            return true;
         }
 
         fluidStacks.forEach(fluidStack -> handler.fill(fluidStack, true));

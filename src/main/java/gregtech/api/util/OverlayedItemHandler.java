@@ -1,26 +1,27 @@
 package gregtech.api.util;
 
+import gregtech.api.recipes.KeySharedStack;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class MirroredItemHandler {
-    private final MirroredItemHandlerSlot[] originalSlots;
-    private MirroredItemHandlerSlot[] slots;
+public class OverlayedItemHandler {
+    private final OverlayedItemHandlerSlot[] originalSlots;
+    private OverlayedItemHandlerSlot[] slots;
     private final IItemHandler mirrored;
     private ItemStackKey lastISK;
     private ItemStack lastStack;
 
-    public MirroredItemHandler(IItemHandler toMirror) {
-        this.slots = new MirroredItemHandlerSlot[toMirror.getSlots()];
-        this.originalSlots = new MirroredItemHandlerSlot[toMirror.getSlots()];
+    public OverlayedItemHandler(IItemHandler toMirror) {
+        this.slots = new OverlayedItemHandlerSlot[toMirror.getSlots()];
+        this.originalSlots = new OverlayedItemHandlerSlot[toMirror.getSlots()];
         this.mirrored = toMirror;
         for (int slot = 0; slot < toMirror.getSlots(); slot++) {
             ItemStack stackToMirror = toMirror.getStackInSlot(slot);
             if (!stackToMirror.isEmpty()) {
-                this.originalSlots[slot] = new MirroredItemHandlerSlot(stackToMirror);
-                this.slots[slot] = new MirroredItemHandlerSlot(stackToMirror);
+                this.originalSlots[slot] = new OverlayedItemHandlerSlot(stackToMirror);
+                this.slots[slot] = new OverlayedItemHandlerSlot(stackToMirror);
             }
         }
     }
@@ -55,13 +56,10 @@ public class MirroredItemHandler {
             remainder = mirrored.insertItem(slot, stack, true);
             int remainingCount = remainder.getCount();
             if (!remainder.isEmpty()) {
-                this.slots[slot] = new MirroredItemHandlerSlot(toInsert, remainingCount);
-                if (remainingCount == amount){
-                    this.slots[slot].setFilled();
-                }
+                this.slots[slot] = new OverlayedItemHandlerSlot(toInsert, remainingCount);
                 lastStack = remainder;
             } else {
-                this.slots[slot] = new MirroredItemHandlerSlot(stack);
+                this.slots[slot] = new OverlayedItemHandlerSlot(stack);
                 lastStack = null;
             }
             lastISK = toInsert;
@@ -69,6 +67,29 @@ public class MirroredItemHandler {
         } else {
             lastISK = null;
             return amount;
+        }
+    }
+
+    private static class OverlayedItemHandlerSlot {
+        private final ItemStackKey itemStackKey;
+        private final int count;
+
+        OverlayedItemHandlerSlot(ItemStack stackToMirror) {
+            this.itemStackKey = KeySharedStack.getRegisteredStack(stackToMirror);
+            this.count = stackToMirror.getCount();
+        }
+
+        OverlayedItemHandlerSlot(ItemStackKey itemStackKey, int count) {
+            this.itemStackKey = itemStackKey;
+            this.count = count;
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public ItemStackKey getItemStackKey() {
+            return itemStackKey;
         }
     }
 }

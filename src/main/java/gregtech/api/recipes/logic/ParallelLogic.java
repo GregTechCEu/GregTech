@@ -5,14 +5,13 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.recipes.*;
 import gregtech.api.recipes.recipeproperties.RecipeProperty;
 import gregtech.api.util.ItemStackKey;
-import gregtech.api.util.MirroredItemHandler;
+import gregtech.api.util.OverlayedItemHandler;
 import gregtech.api.util.StreamUtils;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -88,7 +87,7 @@ public class ParallelLogic {
     public static int limitByOutputMerging(Recipe recipe, IItemHandlerModifiable outputs, IMultipleTankHandler fluidOutputs, int parallelAmount){
         int maxMultiplier = parallelAmount;
         if (recipe.getOutputs().size() > 0) {
-            maxMultiplier = limitParallelByItems(recipe, new MirroredItemHandler(outputs), parallelAmount);
+            maxMultiplier = limitParallelByItems(recipe, new OverlayedItemHandler(outputs), parallelAmount);
             if (maxMultiplier == 0) {
                 return 0;
             }
@@ -110,7 +109,7 @@ public class ParallelLogic {
      *
      * uses a binary-search-like for the merge of recipes that have more than one kind of item
      */
-    public static int limitParallelByItems(Recipe recipe, MirroredItemHandler mirroredItemHandler, int multiplier) {
+    public static int limitParallelByItems(Recipe recipe, OverlayedItemHandler overlayedItemHandler, int multiplier) {
         int minMultiplier = 0;
         int maxMultiplier = multiplier;
 
@@ -122,11 +121,11 @@ public class ParallelLogic {
         int amount = 0;
 
         while (minMultiplier != maxMultiplier) {
-            mirroredItemHandler.reset();
+            overlayedItemHandler.reset();
             for (Pair<ItemStackKey, Integer> pair : recipeOutputs) {
                 int amountToInsert = pair.getRight() * multiplier;
-                for (int slot = 0; slot < mirroredItemHandler.getSlots(); slot++) {
-                    amount = mirroredItemHandler.insertItemStackKey(slot, pair.getLeft(), amountToInsert);
+                for (int slot = 0; slot < overlayedItemHandler.getSlots(); slot++) {
+                    amount = overlayedItemHandler.insertItemStackKey(slot, pair.getLeft(), amountToInsert);
                     if (amount > 0) {
                         amountToInsert = amount;
                     }
