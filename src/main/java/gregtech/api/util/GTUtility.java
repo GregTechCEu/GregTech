@@ -253,6 +253,41 @@ public class GTUtility {
         return merged;
     }
 
+    /**
+     * Attempts to merge given ItemStack with ItemStacks in list supplied
+     * growing up to their max stack size
+     *
+     * @param stackToAdd item stack to merge.
+     * @return a list of stacks, with optimized stack sizes
+     */
+
+    public static List<ItemStack> addStackToItemStackList(ItemStack stackToAdd, List<ItemStack> itemStackList){
+        if (!itemStackList.isEmpty()) {
+            for (ItemStack stackInList : itemStackList) {
+                if (ItemStackHashStrategy.comparingAllButCount().equals(stackInList, stackToAdd)) {
+                    if (stackInList.getCount() < stackInList.getMaxStackSize()) {
+                        int insertable = stackInList.getMaxStackSize() - stackInList.getCount();
+                        if (insertable >= stackToAdd.getCount()) {
+                            stackInList.grow(stackToAdd.getCount());
+                            stackToAdd = ItemStack.EMPTY;
+                        } else {
+                            stackInList.grow(insertable);
+                            stackToAdd = stackToAdd.copy();
+                            stackToAdd.setCount(stackToAdd.getCount() - insertable);
+                        }
+                        break;
+                    }
+                }
+            }
+            if (!stackToAdd.isEmpty()) {
+                itemStackList.add(stackToAdd);
+            }
+        } else {
+            itemStackList.add(stackToAdd.copy());
+        }
+        return itemStackList;
+    }
+
     public static boolean harvestBlock(World world, BlockPos pos, EntityPlayer player) {
         IBlockState blockState = world.getBlockState(pos);
         TileEntity tileEntity = world.getTileEntity(pos);

@@ -199,8 +199,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
         IItemHandlerModifiable exportInventory = getOutputInventory();
         IMultipleTankHandler exportFluids = getOutputTank();
 
-        RecipeBuilder<?> multipliedRecipe;
-
         // see if the last recipe we used still works
         if (this.previousRecipe != null && this.previousRecipe.matches(false, importInventory, importFluids))
             currentRecipe = this.previousRecipe;
@@ -220,6 +218,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable 
             //Check if the recipe can be multiplied due to parallel logic
             if (this.metaTileEntity.getParallelLimit() > 1) {
                 int multiplierByInputs = ParallelLogic.getMaxRecipeMultiplier(currentRecipe, importInventory, importFluids, this.metaTileEntity.getParallelLimit());
+
                 int limitByOutput = ParallelLogic.limitByOutputMerging(currentRecipe, exportInventory, exportFluids, multiplierByInputs);
 
                 int parallelizable = Math.min(multiplierByInputs, limitByOutput);

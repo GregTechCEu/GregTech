@@ -387,29 +387,7 @@ public class Recipe {
             int outputChance = RecipeMap.getChanceFunction().chanceFor(chancedOutput.getChance(), chancedOutput.getBoostPerTier(), tier);
             if (random.nextInt(Recipe.getMaxChancedValue()) <= outputChance) {
                 ItemStack stackToAdd = chancedOutput.getItemStack();
-                if (!resultChanced.isEmpty()) {
-                    for (ItemStack rc : resultChanced) {
-                        if (ItemStackHashStrategy.comparingAllButCount().equals(rc, stackToAdd)) {
-                            if (rc.getCount() < rc.getMaxStackSize()) {
-                                int insertable = rc.getMaxStackSize() - rc.getCount();
-                                if (insertable >= stackToAdd.getCount()) {
-                                    rc.grow(stackToAdd.getCount());
-                                    stackToAdd = ItemStack.EMPTY;
-                                } else {
-                                    rc.grow(insertable);
-                                    stackToAdd = stackToAdd.copy();
-                                    stackToAdd.setCount(stackToAdd.getCount() - insertable);
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    if (!stackToAdd.isEmpty()) {
-                        resultChanced.add(stackToAdd);
-                    }
-                } else {
-                    resultChanced.add(stackToAdd.copy());
-                }
+                GTUtility.addStackToItemStackList(stackToAdd, resultChanced);
             }
         }
         if (resultChanced.size() > maxChancedSlots) {
