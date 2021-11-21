@@ -130,7 +130,7 @@ public class GTJeiPlugin implements IModPlugin {
                     if (metaTileEntity instanceof SteamMetaTileEntity) {
                         deferredCatalysts.add((SteamMetaTileEntity) metaTileEntity);
                     } else {
-                        RecipeMap<?> recipeMap = ((AbstractRecipeLogic) workableCapability).recipeMap;
+                        RecipeMap<?> recipeMap = ((AbstractRecipeLogic) workableCapability).getRecipeMap();
                         registry.addRecipeCatalyst(metaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
                         if (recipeMap instanceof RecipeMapFurnace) {
                             registry.addRecipeCatalyst(metaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);
@@ -144,7 +144,7 @@ public class GTJeiPlugin implements IModPlugin {
         }
         for (SteamMetaTileEntity steamMetaTileEntity : deferredCatalysts) {
             IControllable workableCapability = steamMetaTileEntity.getCapability(GregtechTileCapabilities.CAPABILITY_CONTROLLABLE, null);
-            RecipeMap<?> recipeMap = ((AbstractRecipeLogic) workableCapability).recipeMap;
+            RecipeMap<?> recipeMap = ((AbstractRecipeLogic) workableCapability).getRecipeMap();
             registry.addRecipeCatalyst(steamMetaTileEntity.getStackForm(), GTValues.MODID + ":" + recipeMap.unlocalizedName);
             if (recipeMap instanceof RecipeMapFurnace) {
                 registry.addRecipeCatalyst(steamMetaTileEntity.getStackForm(), VanillaRecipeCategoryUid.SMELTING);

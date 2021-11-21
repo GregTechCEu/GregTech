@@ -34,8 +34,8 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int[] calculateOverclock(int EUt, long voltage, int duration) {
-        return new int[]{1, duration};
+    protected int[] runOverclockingLogic(int recipeEUt, int recipeDuration, int maxOverclocks) {
+        return super.runOverclockingLogic(1, recipeDuration, maxOverclocks);
     }
 
     @Override

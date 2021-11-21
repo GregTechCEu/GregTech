@@ -3,7 +3,6 @@ package gregtech.common.metatileentities.steam;
 import gregtech.api.capability.impl.NotifiableItemStackHandler;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.resources.TextureArea;
-import gregtech.api.gui.widgets.ProgressWidget;
 import gregtech.api.gui.widgets.ProgressWidget.MoveType;
 import gregtech.api.gui.widgets.RecipeProgressWidget;
 import gregtech.api.gui.widgets.SlotWidget;
@@ -50,7 +49,7 @@ public class SteamAlloySmelter extends SteamMetaTileEntity {
                         .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, slotBackground))
                 .widget(new SlotWidget(this.importItems, 1, 35, 25)
                         .setBackgroundTexture(BRONZE_SLOT_BACKGROUND_TEXTURE, slotBackground))
-                .widget(new RecipeProgressWidget(workableHandler::getProgressPercent, 79, 26, 20, 16, workableHandler.recipeMap)
+                .widget(new RecipeProgressWidget(workableHandler::getProgressPercent, 79, 26, 20, 16, workableHandler.getRecipeMap())
                         .setProgressBar(getFullGuiTexture("progress_bar_%s_furnace"),
                                 getFullGuiTexture("progress_bar_%s_furnace_filled"),
                                 MoveType.HORIZONTAL))

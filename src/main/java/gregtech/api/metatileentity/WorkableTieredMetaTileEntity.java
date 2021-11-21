@@ -76,19 +76,19 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     protected IItemHandlerModifiable createImportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.recipeMap.getMaxInputs(), this, false);
+        return new NotifiableItemStackHandler(workable.getRecipeMap().getMaxInputs(), this, false);
     }
 
     @Override
     protected IItemHandlerModifiable createExportItemHandler() {
         if (workable == null) return new ItemStackHandler(0);
-        return new NotifiableItemStackHandler(workable.recipeMap.getMaxOutputs(), this, true);
+        return new NotifiableItemStackHandler(workable.getRecipeMap().getMaxOutputs(), this, true);
     }
 
     @Override
     protected FluidTankList createImportFluidHandler() {
         if (workable == null) return new FluidTankList(false);
-        FilteredFluidHandler[] fluidImports = new FilteredFluidHandler[workable.recipeMap.getMaxFluidInputs()];
+        FilteredFluidHandler[] fluidImports = new FilteredFluidHandler[workable.getRecipeMap().getMaxFluidInputs()];
         for (int i = 0; i < fluidImports.length; i++) {
             NotifiableFilteredFluidHandler filteredFluidHandler = new NotifiableFilteredFluidHandler(this.tankScalingFunction.apply(this.getTier()), this, false);
             filteredFluidHandler.setFillPredicate(this::canInputFluid);
@@ -100,7 +100,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     @Override
     protected FluidTankList createExportFluidHandler() {
         if (workable == null) return new FluidTankList(false);
-        FluidTank[] fluidExports = new FluidTank[workable.recipeMap.getMaxFluidOutputs()];
+        FluidTank[] fluidExports = new FluidTank[workable.getRecipeMap().getMaxFluidOutputs()];
         for (int i = 0; i < fluidExports.length; i++) {
             fluidExports[i] = new NotifiableFluidTank(this.tankScalingFunction.apply(this.getTier()), this, true);
         }
@@ -108,7 +108,7 @@ public abstract class WorkableTieredMetaTileEntity extends TieredMetaTileEntity 
     }
 
     protected boolean canInputFluid(FluidStack inputFluid) {
-        RecipeMap<?> recipeMap = workable.recipeMap;
+        RecipeMap<?> recipeMap = workable.getRecipeMap();
         if (recipeMap.canInputFluidForce(inputFluid.getFluid()))
             return true; //if recipe map forces input of given fluid, return true
         Set<Recipe> matchingRecipes = null;

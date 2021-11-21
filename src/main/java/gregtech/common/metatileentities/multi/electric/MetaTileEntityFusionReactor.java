@@ -212,7 +212,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
         public FusionRecipeLogic(MetaTileEntityFusionReactor tileEntity) {
             super(tileEntity);
-            this.allowOverclocking = false;
+            this.setAllowOverclocking(false);
         }
 
         @Override
