@@ -188,13 +188,6 @@ artifacts {
     add("archives", energyApiTask)
 }
 
-tasks.withType<Test>() {
-    testLogging {
-        events("failed")
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-    }
-}
-
 fun Project.idea(configure: org.gradle.plugins.ide.idea.model.IdeaModel.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("idea", configure)
 idea {
