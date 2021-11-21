@@ -30,6 +30,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static org.junit.Assert.*;
 
@@ -87,12 +89,20 @@ public class IParallelableRecipeLogicTest implements IParallelableRecipeLogic {
                     public boolean hasMaintenanceMechanics() {
                         return false;
                     }
-
-                    @Override
-                    public int getParallelLimit() {
-                        return 4;
-                    }
                 });
+
+        try {
+            Field field = MetaTileEntityElectricBlastFurnace.class.getSuperclass().getDeclaredField("recipeMapWorkable");
+            field.setAccessible(true);
+
+            Object recipeMapWorkableField = field.get(mbt);
+            Method setParallelLimitMethod = recipeMapWorkableField.getClass().getSuperclass().getSuperclass().getDeclaredMethod("setParallelLimit", int.class);
+            setParallelLimitMethod.setAccessible(true);
+
+            setParallelLimitMethod.invoke(recipeMapWorkableField, 4);
+        } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
 
         //isValid() check in the dirtying logic requires both a metatileentity and a holder
         try {
