@@ -35,6 +35,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     private static final String ALLOW_OVERCLOCKING = "AllowOverclocking";
     private static final String OVERCLOCK_VOLTAGE = "OverclockVoltage";
 
+    public static final double STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER = 4.0;
+    public static final double STANDARD_OVERCLOCK_DURATION_DIVISOR = ConfigHolder.U.overclockDivisor;
+    public static final double PERFECT_OVERCLOCK_DURATION_DIVISOR = 4.0;
+
     private final RecipeMap<?> recipeMap;
 
     protected Recipe previousRecipe;
@@ -376,8 +380,6 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         // invert EU for overclocking calculations (so it increases in the positive direction)
         boolean negativeEU = recipeEUt < 0;
-        if (negativeEU)
-            recipeEUt = -recipeEUt;
 
         // perform the actual overclocking
         int[] overclockResult = performOverclocking(recipe, negativeEU);
@@ -400,12 +402,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
         // check if the voltage to run at is higher than the recipe, and that it is not ULV tier
         int tier = getOverclockingTier(getMaxVoltage());
-        return GTValues.V[tier] > recipeEUt && tier != 0;
+        return  tier != 0 && tier > GTUtility.getTierByVoltage(recipeEUt);
     }
 
     /**
      * performs the actual overclocking of voltage and duration
-     * by default applies {@link AbstractRecipeLogic.standardOverclockingLogic()} logic
      *
      * @param recipe the recipe to overclock
      * @return an int array of {OverclockedEUt, OverclockedDuration}
@@ -442,7 +443,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return the divisor to use for reducing duration upon overclocking
      */
     protected double getOverclockingDurationDivisor() {
-        return hasPerfectOC ? 4.0 : ConfigHolder.U.overclockDivisor;
+        return hasPerfectOC ? PERFECT_OVERCLOCK_DURATION_DIVISOR : STANDARD_OVERCLOCK_DURATION_DIVISOR;
     }
 
     /**
@@ -450,7 +451,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @return the multiplier to use for increasing voltage upon overclocking
      */
     protected double getOverclockingVoltageMultiplier() {
-        return 4.0;
+        return STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER;
     }
 
     /**
@@ -468,7 +469,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         int overclockedEUt = recipeEUt;
         double overclockedDuration = recipeDuration;
 
-        while (overclockedEUt <= GTValues.V[GTUtility.getTierByVoltage(maximumVoltage)] && overclockedDuration > 0 && maxOverclocks > 0) {
+        while (overclockedEUt * voltageMultiplier <= GTValues.V[GTUtility.getTierByVoltage(maximumVoltage)] && overclockedDuration / durationDivisor > 0 && maxOverclocks > 0) {
             overclockedEUt *= voltageMultiplier;
             overclockedDuration /= durationDivisor;
             maxOverclocks--;

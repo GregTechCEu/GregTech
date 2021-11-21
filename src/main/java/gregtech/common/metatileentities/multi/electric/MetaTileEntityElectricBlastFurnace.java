@@ -177,26 +177,30 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
         }
 
         @Override
-        protected int[] runOverclockingLogic(Recipe recipe, boolean negativeEU, int maxOverclocks) {
+        protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
             return blastFurnaceOverclockingLogic(recipe.getEUt(), getMaxVoltage(), recipe.getDuration(), maxOverclocks,
                     ((MetaTileEntityElectricBlastFurnace) metaTileEntity).getBlastFurnaceTemperature(),
                     recipe.getProperty(BlastTemperatureProperty.getInstance(), 0));
         }
 
+        @Nonnull
         public static int[] blastFurnaceOverclockingLogic(int recipeEUt, long maximumVoltage, int recipeDuration, int maxOverclocks, int currentTemp, int recipeRequiredTemp) {
             int amountEUDiscount = Math.max(0, (currentTemp - recipeRequiredTemp) / 900);
             int amountPerfectOC = amountEUDiscount / 2;
 
-            //apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
+            // apply a multiplicative 95% energy multiplier for every 900k over recipe temperature
             recipeEUt *= Math.min(1, Math.pow(0.95, amountEUDiscount));
 
-            //perfect overclock for every 1800k ove{r recipe temperature
+            // perfect overclock for every 1800k over recipe temperature
             if (amountPerfectOC > 0) {
-                int[] overclock = standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, 4.0, 4.0, amountPerfectOC);
+                int[] overclock = standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, PERFECT_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, amountPerfectOC);
 
-                return standardOverclockingLogic(overclock[0], maximumVoltage, overclock[1], ConfigHolder.U.overclockDivisor, 4.0, maxOverclocks);
+                // overclock normally as much as possible after perfects are exhausted
+                return standardOverclockingLogic(overclock[0], maximumVoltage, overclock[1], STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, maxOverclocks);
             }
-            return standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, ConfigHolder.U.overclockDivisor, 4.0, maxOverclocks);
+
+            // no perfects are performed, do normal overclocking
+            return standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, STANDARD_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, maxOverclocks);
         }
     }
 }

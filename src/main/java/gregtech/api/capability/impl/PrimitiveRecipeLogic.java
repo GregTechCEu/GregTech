@@ -39,8 +39,8 @@ public class PrimitiveRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
-    protected int getOverclockingTier(long voltage) {
-        return GTValues.LV; // just return something reasonable
+    public long getOverclockVoltage() {
+        return GTValues.V[GTValues.LV];
     }
 
     /**
