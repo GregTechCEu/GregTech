@@ -22,7 +22,7 @@ public class CapeListWidget extends DraggableScrollableWidgetGroup {
         super(xPosition, yPosition, width * 70 + 42, height * 56 + 12); // Cape banners are 28x44, expanded to 70x56
 
         this.uuid = uuid;
-        capes = CapesRegistry.unlockedCapes(uuid);
+        capes = CapesRegistry.getUnlockedCapes(uuid);
 
         if (capes == null || capes.size() == 0)
             return;

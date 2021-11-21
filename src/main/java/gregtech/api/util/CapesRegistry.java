@@ -126,17 +126,30 @@ public class CapesRegistry extends WorldSavedData {
         return true; // Doesn't work too well otherwise.
     }
 
-    public static List<ResourceLocation> unlockedCapes(UUID uuid) {
+    /**
+     * Allows one to check what capes a specific player has unlocked through CapesRegistry.
+     * @param uuid The player data used to get what capes the player has through internal maps.
+     * @return A list of ResourceLocations containing the cape textures that the player has unlocked.
+     */
+    public static List<ResourceLocation> getUnlockedCapes(UUID uuid) {
         return unlockedCapes.get(uuid);
     }
 
-    public static void linkAdvancement(ResourceLocation advancement, ResourceLocation location, World world) {
+
+    /**
+     * Links an advancement with a cape, which allows a player to unlock it when they receive the advancement.
+     * This should only be called on world load.
+     * @param advancement A ResourceLocation pointing to the advancement that is to be used for getting a cape.
+     * @param cape The ResourceLocation that points to the cape that can be unlocked through the advancement.
+     * @param world The world that may contain the advancement used for getting a cape.
+     */
+    public static void linkAdvancement(ResourceLocation advancement, ResourceLocation cape, World world) {
         if (world instanceof WorldServer) {
             try {
                 Field advManager = World.class.getDeclaredField("advancementManager");
                 advManager.setAccessible(true);
                 Advancement advObject = ((AdvancementManager) advManager.get(world)).getAdvancement(advancement);
-                capeAdvancements.put(advObject, location);
+                capeAdvancements.put(advObject, cape);
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }
