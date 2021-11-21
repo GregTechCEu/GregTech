@@ -154,6 +154,7 @@ public class ClientProxy extends CommonProxy {
         CapesRegistry.unlockCapeEverywhere(UUID.fromString("56bd41d0-06ef-4ed7-ab48-926ce45651f9"), Textures.GREGTECH_CAPE_TEXTURE); // Zalgo239
         CapesRegistry.unlockCapeEverywhere(UUID.fromString("aaf70ec1-ac70-494f-9966-ea5933712750"), Textures.GREGTECH_CAPE_TEXTURE); // Bruberu
         CapesRegistry.unlockCapeEverywhere(UUID.fromString("a24a9108-23d2-43fc-8db7-43f809d017db"), Textures.GREGTECH_CAPE_TEXTURE); // ALongString
+        CapesRegistry.unlockCapeEverywhere(UUID.fromString("77e2129d-8f68-4025-9394-df946f1f3aee"), Textures.GREGTECH_CAPE_TEXTURE); // Brachy84
     }
 
     public void registerColors() {

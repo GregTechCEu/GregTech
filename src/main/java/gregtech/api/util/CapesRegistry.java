@@ -14,6 +14,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -144,14 +145,9 @@ public class CapesRegistry extends WorldSavedData {
      */
     public static void registerCape(ResourceLocation advancement, ResourceLocation cape, World world) {
         if (world instanceof WorldServer) {
-            try {
-                Field advManager = World.class.getDeclaredField("advancementManager");
-                advManager.setAccessible(true);
-                Advancement advObject = ((AdvancementManager) advManager.get(world)).getAdvancement(advancement);
-                capeAdvancements.put(advObject, cape);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            AdvancementManager advManager = ObfuscationReflectionHelper.getPrivateValue(World.class, world, "field_191951_C");
+            Advancement advObject = advManager.getAdvancement(advancement);
+            capeAdvancements.put(advObject, cape);
         }
     }
 
