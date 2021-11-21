@@ -57,8 +57,8 @@ public class CraftingComponent {
     public static final Map<BlastProperty.GasTier, FluidStack> EBF_GASES = new HashMap<BlastProperty.GasTier, FluidStack>() {{
         put(BlastProperty.GasTier.LOW, Materials.Nitrogen.getFluid(1000));
         put(BlastProperty.GasTier.MID, Materials.Helium.getFluid(100));
-        put(BlastProperty.GasTier.HIGH, Materials.Argon.getFluid(10));
-        put(BlastProperty.GasTier.HIGHER, Materials.Neon.getFluid(10));
+        put(BlastProperty.GasTier.HIGH, Materials.Argon.getFluid(50));
+        put(BlastProperty.GasTier.HIGHER, Materials.Neon.getFluid(25));
         put(BlastProperty.GasTier.HIGHEST, Materials.Krypton.getFluid(10));
     }};
 

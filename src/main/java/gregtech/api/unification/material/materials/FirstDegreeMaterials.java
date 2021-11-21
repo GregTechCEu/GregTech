@@ -569,7 +569,7 @@ public class FirstDegreeMaterials {
                 .toolStats(6.0f, 3.0f, 512, 21)
                 .fluidPipeProperties(2557, 40, true)
                 .cableProperties(GTValues.V[4], 2, 2)
-                .blastTemp(1000)
+                .blastTemp(1000) // no gas tier for steel
                 .build();
 
         Stibnite = new Material.Builder(325, "stibnite")
