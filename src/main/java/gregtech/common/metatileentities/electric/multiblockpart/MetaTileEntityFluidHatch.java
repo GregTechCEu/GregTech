@@ -58,6 +58,15 @@ public class MetaTileEntityFluidHatch extends MetaTileEntityMultiblockNotifiable
         //fluidTank.writeToNBT(data);
         return data;
     }
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        FluidTank fluidTank = new FluidTank(getInventorySize());
+        this.fluidInventory = fluidTank;
+        this.importFluids = new FluidTankList(false, fluidTank);
+        this.exportFluids = new FluidTankList(false, fluidTank);
+
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
