@@ -272,9 +272,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      *
      * if the above conditions are met, the recipe is engaged to be run
      *
-     * @param recipe
+     * @param recipe the recipe to prepare
+     *
+     * @return true if the recipe was successfully prepared, else false
      */
-    protected void prepareRecipe(Recipe recipe) {
+    protected boolean prepareRecipe(Recipe recipe) {
         recipe = findParallelRecipe(
                 this,
                 recipe,
@@ -284,9 +286,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 getOutputTank(),
                 getMaxVoltage(), getParallelLimit());
 
-        if (recipe != null && setupAndConsumeRecipeInputs(recipe, getInputInventory())) {
+        if (setupAndConsumeRecipeInputs(recipe, getInputInventory())) {
             setupRecipe(recipe);
+            return true;
         }
+        return false;
     }
 
     public int getParallelLimit() {

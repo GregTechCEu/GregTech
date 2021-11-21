@@ -103,7 +103,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             return;
         }
 
-        // Distinct buses only apply to some of the multiblocks, so check the controller against a lower class
+        // Distinct buses only apply to some multiblocks, so check the controller against a lower class
         if (controller instanceof RecipeMapMultiblockController) {
             RecipeMapMultiblockController distinctController = (RecipeMapMultiblockController) controller;
 
@@ -144,7 +144,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
 
         // Our caching implementation
         // This guarantees that if we get a recipe cache hit, our efficiency is no different from other machines
-        if (previousRecipe != null && previousRecipe.matches(false, importInventory.get(lastRecipeIndex), importFluids)) {
+        if (previousRecipe != null && previousRecipe.matches(false, importInventory.get(lastRecipeIndex), importFluids) && checkRecipe(previousRecipe)) {
             currentRecipe = previousRecipe;
             currentDistinctInputBus = importInventory.get(lastRecipeIndex);
             currentRecipe = findParallelRecipe(
@@ -180,7 +180,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             // Look for a new recipe after a cache miss
             currentRecipe = findRecipe(maxVoltage, bus, importFluids, MatchingMode.DEFAULT);
             // Cache the current recipe, if one is found
-            if (currentRecipe != null) {
+            if (currentRecipe != null && checkRecipe(currentRecipe)) {
                 this.previousRecipe = currentRecipe;
                 currentDistinctInputBus = bus;
                 currentRecipe = findParallelRecipe(
@@ -203,7 +203,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
             }
         }
 
-        //If no matching recipes are found, clear the notified inputs so we know when new items are given
+        //If no matching recipes are found, clear the notified inputs so that we know when new items are given
         metaTileEntity.getNotifiedItemInputList().clear();
     }
 
