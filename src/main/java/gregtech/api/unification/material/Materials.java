@@ -326,7 +326,6 @@ public class Materials {
     public static Material NiobiumTitanium;
     public static Material Obsidian;
     public static Material Phosphate;
-    public static Material PigIron;
     public static Material SterlingSilver;
     public static Material RoseGold;
     public static Material BlackBronze;
