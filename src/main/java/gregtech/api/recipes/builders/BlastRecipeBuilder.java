@@ -21,8 +21,9 @@ public class BlastRecipeBuilder extends RecipeBuilder<BlastRecipeBuilder> {
         this.blastFurnaceTemp = recipe.getProperty(BlastTemperatureProperty.getInstance(), 0);
     }
 
-    public BlastRecipeBuilder(RecipeBuilder<BlastRecipeBuilder> recipeBuilder) {
+    public BlastRecipeBuilder(BlastRecipeBuilder recipeBuilder) {
         super(recipeBuilder);
+        this.blastFurnaceTemp = recipeBuilder.blastFurnaceTemp;
     }
 
     @Override
