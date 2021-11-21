@@ -14,32 +14,31 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class UnlockedCapesRegistry extends WorldSavedData {
+public class CapesRegistry extends WorldSavedData {
 
-    private static final String DATA_ID = GTValues.MODID + ".unlocked_capes";
+    private static final String DATA_ID = GTValues.MODID + ".capes";
     private static final Map<UUID, List<ResourceLocation>> unlockedCapes = new HashMap<>();
-    private static final Map<Advancement, ResourceLocation> capeAdvancements = new HashMap<>();
-    private static UnlockedCapesRegistry instance;
+    public static final Map<UUID, ResourceLocation> wornCapes = new HashMap<>();
 
-    public UnlockedCapesRegistry() {
+    private static final Map<Advancement, ResourceLocation> capeAdvancements = new HashMap<>();
+    private static CapesRegistry instance;
+
+    public CapesRegistry() {
         super(DATA_ID);
     }
 
     @SuppressWarnings("unused")
-    public UnlockedCapesRegistry(String name) {
+    public CapesRegistry(String name) {
         super(name);
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound comp) {
         // Add resource locations
-        NBTTagList tagList = new NBTTagList();
-        int i = 0;
+        NBTTagList unlockedCapesTag = new NBTTagList();
         for (Map.Entry<UUID, List<ResourceLocation>> entry : unlockedCapes.entrySet()) {
             for (ResourceLocation cape : entry.getValue()) {
                 String capeLocation = cape.toString();
@@ -49,23 +48,36 @@ public class UnlockedCapesRegistry extends WorldSavedData {
                 tag.setString("Cape", capeLocation);
                 tag.setUniqueId("UUID", entry.getKey());
 
-                tagList.appendTag(tag);
+                unlockedCapesTag.appendTag(tag);
 
-                i++;
             }
         }
-        comp.setTag("CapeValList", tagList);
+        comp.setTag("UnlockedCapesValList", unlockedCapesTag);
 
+        NBTTagList wornCapesTag = new NBTTagList();
+        for (Map.Entry<UUID, ResourceLocation> entry : wornCapes.entrySet()) {
+            if(entry.getValue() == null)
+                continue;
+            String capeLocation = entry.getValue().toString();
+
+            NBTTagCompound tag = new NBTTagCompound();
+
+            tag.setString("Cape", capeLocation);
+            tag.setUniqueId("UUID", entry.getKey());
+
+            wornCapesTag.appendTag(tag);
+        }
+        comp.setTag("WornCapesValList", wornCapesTag);
         return comp;
     }
 
     public void readFromNBT(NBTTagCompound comp) {
         unlockedCapes.clear();
-        NBTTagList tagList = comp.getTagList("CapeValList", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < tagList.tagCount(); i++) {
-            NBTTagCompound tag = tagList.getCompoundTagAt(i);
+        NBTTagList unlockedCapesTag = comp.getTagList("UnlockedCapesValList", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < unlockedCapesTag.tagCount(); i++) {
+            NBTTagCompound tag = unlockedCapesTag.getCompoundTagAt(i);
             String capeLocation = tag.getString("Cape");
-            if(capeLocation.isEmpty())
+            if (capeLocation.isEmpty())
                 continue;
             UUID uuid = tag.getUniqueId("UUID");
 
@@ -76,14 +88,36 @@ public class UnlockedCapesRegistry extends WorldSavedData {
             capes.add(new ResourceLocation(capeLocation));
             unlockedCapes.put(uuid, capes);
         }
+
+        wornCapes.clear();
+        NBTTagList wornCapesTag = comp.getTagList("WornCapesValList", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < wornCapesTag.tagCount(); i++) {
+            NBTTagCompound tag = wornCapesTag.getCompoundTagAt(i);
+            String capeLocation = tag.getString("Cape");
+            if (capeLocation.isEmpty())
+                continue;
+            UUID uuid = tag.getUniqueId("UUID");
+            wornCapes.put(uuid, new ResourceLocation(capeLocation));
+        }
     }
 
     public static void initializeStorage(World world) {
         MapStorage storage = world.getMapStorage();
-        instance = (UnlockedCapesRegistry) storage.getOrLoadData(UnlockedCapesRegistry.class, DATA_ID);
+        instance = (CapesRegistry) storage.getOrLoadData(CapesRegistry.class, DATA_ID);
 
         if (instance == null) {
-            instance = new UnlockedCapesRegistry();
+            instance = new CapesRegistry();
+
+            List<ResourceLocation> devReward = new ArrayList<>();
+            devReward.add(Textures.GREGTECH_CAPE_TEXTURE);
+            unlockedCapes.put(UUID.fromString("2fa297a6-7803-4629-8360-7059155cf43e"), devReward); // KilaBash
+            unlockedCapes.put(UUID.fromString("a82fb558-64f9-4dd6-a87d-84040e84bb43"), devReward); // Dan
+            unlockedCapes.put(UUID.fromString("5c2933b3-5340-4356-81e7-783c53bd7845"), devReward); // Tech22
+            unlockedCapes.put(UUID.fromString("56bd41d0-06ef-4ed7-ab48-926ce45651f9"), devReward); // Zalgo239
+            unlockedCapes.put(UUID.fromString("aaf70ec1-ac70-494f-9966-ea5933712750"), devReward); // Bruberu
+            unlockedCapes.put(UUID.fromString("a24a9108-23d2-43fc-8db7-43f809d017db"), devReward); // ALongString
+
+
             storage.setData(DATA_ID, instance);
         }
     }

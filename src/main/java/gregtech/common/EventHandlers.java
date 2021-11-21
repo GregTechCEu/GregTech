@@ -10,7 +10,7 @@ import gregtech.api.items.armor.ArmorUtils;
 import gregtech.api.net.KeysPacket;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.render.Textures;
-import gregtech.api.util.UnlockedCapesRegistry;
+import gregtech.api.util.CapesRegistry;
 import gregtech.api.util.VirtualTankRegistry;
 import gregtech.api.util.input.Key;
 import gregtech.api.util.input.KeyBinds;
@@ -18,8 +18,6 @@ import gregtech.common.items.MetaItems;
 import gregtech.common.items.armor.PowerlessJetpack;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
 import gregtech.common.tools.ToolUtility;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -32,8 +30,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -48,8 +44,6 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.lang.reflect.Field;
 
 @Mod.EventBusSubscriber(modid = GTValues.MODID)
 public class EventHandlers {
@@ -179,19 +173,19 @@ public class EventHandlers {
     @SubscribeEvent
     public static void onWorldLoadEvent(WorldEvent.Load event) {
         VirtualTankRegistry.initializeStorage(event.getWorld());
-        UnlockedCapesRegistry.initializeStorage(event.getWorld());
-        UnlockedCapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"),
+        CapesRegistry.initializeStorage(event.getWorld());
+        CapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"),
                 Textures.GREGTECH_CAPE_TEXTURE, event.getWorld());
-        UnlockedCapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "steam/12_electronic_circuit"),
+        CapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "steam/12_electronic_circuit"),
                 Textures.RED_CAPE_TEXTURE, event.getWorld());
-        UnlockedCapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "high_voltage/82_large_chemical_reactor"),
+        CapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "high_voltage/82_large_chemical_reactor"),
                 Textures.YELLOW_CAPE_TEXTURE, event.getWorld());
-        UnlockedCapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "ludicrous_voltage/60_fusion"),
+        CapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "ludicrous_voltage/60_fusion"),
                 Textures.GREEN_CAPE_TEXTURE, event.getWorld());
     }
 
     @SubscribeEvent
     public static void onPlayerAdvancement(AdvancementEvent event) {
-        UnlockedCapesRegistry.unlockCape(event.getEntityPlayer(), event.getAdvancement());
+        CapesRegistry.unlockCape(event.getEntityPlayer(), event.getAdvancement());
     }
 }

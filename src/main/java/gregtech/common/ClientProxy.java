@@ -9,6 +9,7 @@ import gregtech.api.GTValues;
 import gregtech.api.model.customtexture.CustomTextureModelHandler;
 import gregtech.api.model.customtexture.MetadataSectionCTM;
 import gregtech.api.render.MetaTileEntityRenderer;
+import gregtech.api.render.Textures;
 import gregtech.api.render.ToolRenderHandler;
 import gregtech.api.render.shader.Shaders;
 import gregtech.api.terminal.TerminalRegistry;
@@ -24,6 +25,7 @@ import gregtech.common.render.CableRenderer;
 import gregtech.common.render.FluidPipeRenderer;
 import gregtech.common.render.ItemPipeRenderer;
 import gregtech.common.render.StoneRenderer;
+import gregtech.common.terminal.app.capeselector.CapeSelectorApp;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.block.BlockColored;
@@ -72,6 +74,8 @@ import java.util.*;
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
+
+    private static ResourceLocation defaultPlayerCape;
 
     public static final IBlockColor COMPRESSED_BLOCK_COLOR = (IBlockState state, IBlockAccess worldIn, BlockPos pos, int tintIndex) ->
             state.getValue(((BlockCompressed) state.getBlock()).variantProperty).getMaterialRGB();
@@ -140,7 +144,6 @@ public class ClientProxy extends CommonProxy {
         ResourceUtils.registerReloadListener(ToolRenderHandler.INSTANCE);
         ModCompatibility.initCompat();
         FacadeRenderer.init();
-        startCapeLoadingThread();
     }
 
     public void registerColors() {
@@ -244,69 +247,18 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    private static final Set<UUID> capeHoldersUUIDs = new HashSet<>();
-
-    private static void startCapeLoadingThread() {
-        Thread capeListLoadThread = new Thread(ClientProxy::loadCapesList, "GregTech Cape List Downloader");
-        capeListLoadThread.setDaemon(true);
-        capeListLoadThread.start();
-    }
-
-    private static void loadCapesList() {
-        capeHoldersUUIDs.add(UUID.fromString("4bdba267-1479-449a-8ae4-d1957dd39f29"));
-        capeHoldersUUIDs.add(UUID.fromString("6cb05251-cd1b-481e-bf59-07637add1c64"));
-        capeHoldersUUIDs.add(UUID.fromString("a82fb558-64f9-4dd6-a87d-84040e84bb43"));
-        capeHoldersUUIDs.add(UUID.fromString("5c2933b3-5340-4356-81e7-783c53bd7845"));
-        try {
-            URL connectURL = new URL("https://www.dropbox.com/s/zc07k4y1h4ftmz3/GregTechPatreonList.txt?dl=1");
-            HttpURLConnection connection = (HttpURLConnection) connectURL.openConnection(Minecraft.getMinecraft().getProxy());
-            try {
-                connection.setDoInput(true);
-                connection.setDoOutput(false);
-                connection.connect();
-                InputStream inputStream = connection.getInputStream();
-                capeHoldersUUIDs.addAll(retrieveCapeUUIDs(inputStream));
-            } finally {
-                connection.disconnect();
-            }
-        } catch (UnknownHostException |
-                SocketTimeoutException |
-                MalformedURLException ignored) {
-        } catch (IOException exception) {
-            GTLog.logger.warn("Failed to fetch cape list", exception);
-        }
-    }
-
-    private static Set<UUID> retrieveCapeUUIDs(InputStream inputStream) throws IOException {
-        InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-        BufferedReader reader = new BufferedReader(streamReader);
-        Set<UUID> result = new HashSet<>();
-        for (; ; ) {
-            String line = reader.readLine();
-            if (line == null)
-                break;
-            int firstCommentIndex = line.indexOf('#');
-            if (firstCommentIndex > -1) {
-                line = line.substring(0, firstCommentIndex);
-            }
-            try {
-                UUID playerUUID = UUID.fromString(line.trim());
-                result.add(playerUUID);
-            } catch (IllegalArgumentException exception) {
-                GTLog.logger.warn("Failed to parse cape player UUID {}", line.trim(), exception);
-            }
-        }
-        return result;
-    }
-
     @SubscribeEvent
     public static void onPlayerRender(RenderPlayerEvent.Pre event) {
         AbstractClientPlayer clientPlayer = (AbstractClientPlayer) event.getEntityPlayer();
-        if (capeHoldersUUIDs.contains(clientPlayer.getUniqueID()) && clientPlayer.hasPlayerInfo() && clientPlayer.getLocationCape() == null) {
+        if (clientPlayer.hasPlayerInfo()) {
             NetworkPlayerInfo playerInfo = ObfuscationReflectionHelper.getPrivateValue(AbstractClientPlayer.class, clientPlayer, 0);
             Map<Type, ResourceLocation> playerTextures = ObfuscationReflectionHelper.getPrivateValue(NetworkPlayerInfo.class, playerInfo, 1);
-            //playerTextures.put(Type.CAPE, GREGTECH_CAPE_TEXTURE);
+            if (defaultPlayerCape == null && playerTextures.get(Type.CAPE) != null)
+                defaultPlayerCape = playerTextures.get(Type.CAPE);
+            playerTextures.put(Type.CAPE, CapesRegistry.wornCapes.get(event.getEntityPlayer().getPersistentID()));
         }
     }
+
+
 
 }

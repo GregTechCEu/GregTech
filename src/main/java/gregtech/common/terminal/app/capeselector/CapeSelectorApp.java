@@ -8,10 +8,10 @@ import gregtech.api.render.Textures;
 import gregtech.api.terminal.app.AbstractApplication;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.common.terminal.app.capeselector.widget.CapeListWidget;
-import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 
 public class CapeSelectorApp extends AbstractApplication {
-    CapeListWidget capeListWidget;
+    protected CapeListWidget capeListWidget;
 
     public CapeSelectorApp() {
         super("cape_selector");
@@ -26,15 +26,29 @@ public class CapeSelectorApp extends AbstractApplication {
     public AbstractApplication initApp() {
         this.addWidget(new ImageWidget(5, 5, 333 - 10, 232 - 10, TerminalTheme.COLOR_B_2));
 
-        this.addWidget(new CapeListWidget(33, 33, 3, 4, Minecraft.getMinecraft().player.getUniqueID()));
+        this.setCapeList(new CapeListWidget(27, 33, 4, 2, this.gui.entityPlayer.getPersistentID()));
 
-        this.addWidget(new SimpleTextWidget(33, 33, "", 0xFFFFFF, () -> ""));
+        this.addWidget(new SimpleTextWidget(166, 33, "", 0xFFFFFF, () -> "Click on an unlocked cape to select it!"));
+
+        this.addWidget(new SimpleTextWidget(166, 33, "", 0xFFFFFF, () -> {
+            if(this.getCapeList().getCapes() == null || this.getCapeList().getCapes().isEmpty()) {
+                return "It looks like you haven't unlocked any capes yet!";
+            }
+            return "";
+        }));
+        this.addWidget(new SimpleTextWidget(166, 45, "", 0xFFFFFF, () -> {
+            if(this.getCapeList().getCapes() == null || this.getCapeList().getCapes().isEmpty()) {
+                return "You can get these from high-level advancements.";
+            }
+            return "";
+        }));
 
         return super.initApp();
     }
 
     protected void setCapeList(CapeListWidget widget) {
         this.capeListWidget = widget;
+        this.addWidget(capeListWidget);
     }
 
     public CapeListWidget getCapeList() {
@@ -43,6 +57,6 @@ public class CapeSelectorApp extends AbstractApplication {
 
     @Override
     public boolean isClientSideApp() {
-        return true;
+        return false;
     }
 }
