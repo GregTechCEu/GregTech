@@ -13,8 +13,6 @@ public interface IMiner {
         return true;
     }
 
-    void resetInventory();
-
     boolean isInventoryFull();
 
     void setInventoryFull(boolean isFull);

@@ -17,7 +17,6 @@ import gregtech.api.unification.ore.OrePrefix;
 import gregtech.api.util.GTUtility;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,12 +25,13 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MinerLogic {
@@ -107,11 +107,13 @@ public class MinerLogic {
         if (!checkCanMine())
             return;
 
-        // if the inventory is not full, drain from it
-        if (!miner.isInventoryFull()) {
+        // if the inventory is not full, drain energy etc. from the miner
+        if (!miner.isInventoryFull() && drainStorages(true)) {
 
             // actually drain the energy
-            drainStorages();
+            drainStorages(false);
+        } else {
+            return;
         }
 
         // drill a hole beneath the miner and extend the pipe downwards by one
@@ -140,6 +142,7 @@ public class MinerLogic {
                 mineAndInsertItems(blockDrops, world);
             } else {
                 // the block attempted to mine was air, so remove it from the queue and move on
+                // This can occur because of block destruction when lowering the pipe
                 blocksToMine.removeFirst();
             }
 
@@ -163,21 +166,20 @@ public class MinerLogic {
      * @return true if the miner is able to mine, else false
      */
     protected boolean checkCanMine() {
-        // if the miner is finished, the target coordinates are invalid, or it cannot drain energy, stop
+        // if the miner is finished, the target coordinates are invalid, or it cannot drain storages, stop
         if (checkShouldStop()) {
             // if the miner is not finished and has invalid coordinates, get new and valid starting coordinates
             if (!isDone && checkCoordinatesInvalid(x, y, z))
                 initPos(metaTileEntity.getPos(), currentRadius);
 
-            // reset the miner's inventory and don't do anything else this time
-            miner.resetInventory();
+            // don't do anything else this time
             return false;
         }
         return true;
     }
 
     protected boolean checkShouldStop() {
-        return isDone || checkCoordinatesInvalid(x, y, z) || !miner.drainEnergy(true);
+        return isDone || checkCoordinatesInvalid(x, y, z) || !drainStorages(true);
     }
 
     /**
@@ -191,8 +193,8 @@ public class MinerLogic {
      * called in order to drain anything the miner needs to drain in order to run
      * only drains energy by default
      */
-    protected void drainStorages() {
-        miner.drainEnergy(false);
+    protected boolean drainStorages(boolean simulate) {
+        return miner.drainEnergy(simulate);
     }
 
     /**
@@ -297,7 +299,7 @@ public class MinerLogic {
         LinkedList<BlockPos> blocks = new LinkedList<>();
 
         // determine how many blocks to retrieve this time
-        double quotient = getQuotient(getMeanTickTime(metaTileEntity.getWorld()));
+        double quotient = getQuotient(GTUtility.getMeanTickTime(metaTileEntity.getWorld()));
         int calcAmount = quotient < 1 ? 1 : (int) (Math.min(quotient, Short.MAX_VALUE));
         int calculated = 0;
 
@@ -346,46 +348,24 @@ public class MinerLogic {
     }
 
     /**
-     * @param values to find the mean of
-     * @return the mean
-     */
-    private static long mean(long[] values) {
-        long sum = 0L;
-        for (long v : values)
-            sum += v;
-        return sum / values.length;
-    }
-
-    /**
-     *
-     * @param world the {@link World} the miner is in
-     * @return the mean tick time
-     */
-    private static double getMeanTickTime(World world) {
-        return mean(Objects.requireNonNull(world.getMinecraftServer()).tickTimeArray) * 1.0E-6D;
-    }
-
-    /**
      * Applies a fortune hammer to block drops based on a tier value, intended for small ores
      * @param random the random chance component for recipe ChancedOutputs
      * @param blockState the block being mined
      * @param drops where the drops are stored to
      * @param fortuneLevel the level of fortune used
-     * @param player used to determine whether there is a fake player being used
      * @param map the recipemap from which to get the drops
      * @param tier the tier at which the operation is performed, used for calculating the chanced output boost
      */
-    protected static void applyTieredHammerNoRandomDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, EntityPlayer player, RecipeMap<?> map, int tier) {
+    protected static void applyTieredHammerNoRandomDrops(Random random, IBlockState blockState, List<ItemStack> drops, int fortuneLevel, RecipeMap<?> map, int tier) {
         ItemStack itemStack = new ItemStack(blockState.getBlock(), 1, blockState.getBlock().getMetaFromState(blockState));
         Recipe recipe = map.findRecipe(Long.MAX_VALUE, Collections.singletonList(itemStack), Collections.emptyList(), 0, MatchingMode.IGNORE_FLUIDS);
         if (recipe != null && !recipe.getOutputs().isEmpty()) {
             drops.clear();
             for (ItemStack outputStack : recipe.getResultItemOutputs(Integer.MAX_VALUE, random, tier)) {
                 outputStack = outputStack.copy();
-                if (!(player instanceof FakePlayer) && OreDictUnifier.getPrefix(outputStack) == OrePrefix.crushed) {
+                if (OreDictUnifier.getPrefix(outputStack) == OrePrefix.crushed) {
                     if (fortuneLevel > 0) {
-                        int i = Math.max(0, fortuneLevel - 1);
-                        outputStack.grow(outputStack.getCount() * i);
+                        outputStack.grow(outputStack.getCount() * fortuneLevel);
                     }
                 }
                 drops.add(outputStack);

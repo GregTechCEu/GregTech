@@ -365,10 +365,6 @@ public class MetaTileEntityLargeMiner extends MultiblockWithDisplayBase implemen
         return false;
     }
 
-    public void resetInventory() {
-        setInventoryFull(false);
-    }
-
     @Override
     public boolean isInventoryFull() {
         return this.isInventoryFull;

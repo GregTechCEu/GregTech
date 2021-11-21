@@ -40,14 +40,8 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     @Override
-    protected boolean checkShouldStop() {
-        return super.checkShouldStop() || !miner.drainFluid(true);
-    }
-
-    @Override
-    protected void drainStorages() {
-        super.drainStorages();
-        miner.drainFluid(false);
+    protected boolean drainStorages(boolean simulate) {
+        return super.drainStorages(simulate) &&  miner.drainFluid(simulate);
     }
 
     @Override
@@ -59,7 +53,7 @@ public class MultiblockMinerLogic extends MinerLogic {
     @Override
     protected void getRegularBlockDrops(NonNullList<ItemStack> blockDrops, WorldServer world, BlockPos blockToMine, IBlockState blockState) {
         if (!isSilkTouchMode) // 3X the ore compared to the single blocks
-            applyTieredHammerNoRandomDrops(world.rand, blockState, blockDrops, 3, null, this.blockDropRecipeMap, this.voltageTier);
+            applyTieredHammerNoRandomDrops(world.rand, blockState, blockDrops, 3, this.blockDropRecipeMap, this.voltageTier);
         else
             super.getRegularBlockDrops(blockDrops, world, blockToMine, blockState);
     }
@@ -76,11 +70,11 @@ public class MultiblockMinerLogic extends MinerLogic {
             getY().set(this.metaTileEntity.getPos().getY() - 1);
             getZ().set(startPos.getZStart());
             getStartX().set(startPos.getXStart());
+            getStartY().set(this.metaTileEntity.getPos().getY());
             getStartZ().set(startPos.getZStart());
             getMineX().set(startPos.getXStart());
             getMineY().set(this.metaTileEntity.getPos().getY() - 1);
             getMineZ().set(startPos.getZStart());
-            getStartY().set(this.metaTileEntity.getPos().getY());
             getPipeY().set(this.metaTileEntity.getPos().getY() - 1);
         }
     }
@@ -102,7 +96,7 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     public void setChunkMode(boolean isChunkMode) {
-        if (isActive()) {
+        if (!isActive()) {
             getX().set(Integer.MAX_VALUE);
             getY().set(Integer.MAX_VALUE);
             getZ().set(Integer.MAX_VALUE);
@@ -115,7 +109,8 @@ public class MultiblockMinerLogic extends MinerLogic {
     }
 
     public void setSilkTouchMode(boolean isSilkTouchMode) {
-        this.isSilkTouchMode = isSilkTouchMode;
+        if (!isActive())
+            this.isSilkTouchMode = isSilkTouchMode;
     }
 
     @Override

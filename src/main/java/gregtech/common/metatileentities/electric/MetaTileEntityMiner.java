@@ -173,7 +173,7 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
         long resultEnergy = energyContainer.getEnergyStored() - energyPerTick;
         if (resultEnergy >= 0L && resultEnergy <= energyContainer.getEnergyCapacity()) {
             if (!simulate)
-                energyContainer.changeEnergy(-energyPerTick);
+                energyContainer.removeEnergy(energyPerTick);
             return true;
         }
         return false;
@@ -252,13 +252,6 @@ public class MetaTileEntityMiner extends TieredMetaTileEntity implements IMiner,
             return GregtechTileCapabilities.CAPABILITY_CONTROLLABLE.cast(this);
         }
         return super.getCapability(capability, side);
-    }
-
-    public void resetInventory() {
-        if (notifiedItemOutputList.size() > 0) {
-            setInventoryFull(false);
-            notifiedItemOutputList.clear();
-        }
     }
 
     @Override

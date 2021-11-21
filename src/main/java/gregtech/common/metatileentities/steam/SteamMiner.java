@@ -264,15 +264,6 @@ public class SteamMiner extends MetaTileEntity implements IMiner, IControllable,
     public void setInventoryFull(boolean isFull) {
         this.isInventoryFull = isFull;
     }
-
-    @Override
-    public void resetInventory() {
-        if (notifiedItemOutputList.size() > 0) {
-            setInventoryFull(false);
-            notifiedItemOutputList.clear();
-        }
-    }
-
     @Override
     public boolean isWorkingEnabled() {
         return this.minerLogic.isActive();
