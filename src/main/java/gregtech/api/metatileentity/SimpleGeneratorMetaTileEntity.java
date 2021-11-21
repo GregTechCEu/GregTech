@@ -4,10 +4,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.pipeline.IVertexOperation;
 import codechicken.lib.vec.Matrix4;
 import gregtech.api.GTValues;
-import gregtech.api.capability.impl.EnergyContainerHandler;
-import gregtech.api.capability.impl.FluidTankList;
-import gregtech.api.capability.impl.FuelRecipeLogic;
-import gregtech.api.capability.impl.NotifiableFilteredFluidHandler;
+import gregtech.api.capability.impl.*;
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.ModularUI.Builder;
@@ -29,6 +26,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.items.ItemStackHandler;
 
+
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -38,6 +36,7 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
     private final ItemStackHandler containerInventory;
     private final OrientedOverlayRenderer overlayRenderer;
     private final FuelRecipeMap recipeMap;
+    private final int TANK_LIMIT = 16000;
 
     public SimpleGeneratorMetaTileEntity(ResourceLocation metaTileEntityId, FuelRecipeMap recipeMap, OrientedOverlayRenderer renderer, int tier) {
         super(metaTileEntityId, tier);
@@ -45,6 +44,7 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
         this.overlayRenderer = renderer;
         this.recipeMap = recipeMap;
         this.workableHandler = createWorkableHandler();
+
     }
 
     protected FuelRecipeLogic createWorkableHandler() {
@@ -54,13 +54,23 @@ public class SimpleGeneratorMetaTileEntity extends TieredMetaTileEntity {
 
     @Override
     protected FluidTankList createImportFluidHandler() {
-        return new FluidTankList(false, new NotifiableFilteredFluidHandler(16000, this, false)
+        return new FluidTankList(false, new NotifiableFilteredFluidHandler(TANK_LIMIT, this, false)
                 .setFillPredicate(this::canInputFluid));
     }
 
     @Override
     protected FluidTankList createExportFluidHandler() {
         return new FluidTankList(false, this.importFluids);
+    }
+
+    @Override
+    protected void initializeInventory() {
+        super.initializeInventory();
+        NotifiableFluidTank fluidTank = new NotifiableFluidTank(TANK_LIMIT,this,false);
+        this.fluidInventory = fluidTank;
+        this.importFluids = new FluidTankList(false, new NotifiableFilteredFluidHandler(TANK_LIMIT, this, false).setFillPredicate(this::canInputFluid));
+        this.exportFluids = new FluidTankList(false, fluidTank);
+
     }
 
     private boolean canInputFluid(FluidStack fluid) {
