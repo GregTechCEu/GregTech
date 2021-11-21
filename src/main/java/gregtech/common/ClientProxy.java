@@ -255,10 +255,11 @@ public class ClientProxy extends CommonProxy {
             Map<Type, ResourceLocation> playerTextures = ObfuscationReflectionHelper.getPrivateValue(NetworkPlayerInfo.class, playerInfo, 1);
             if (defaultPlayerCape == null && playerTextures.get(Type.CAPE) != null)
                 defaultPlayerCape = playerTextures.get(Type.CAPE);
-            playerTextures.put(Type.CAPE, CapesRegistry.wornCapes.get(event.getEntityPlayer().getPersistentID()));
+
+            if (CapesRegistry.wornCapes.get(event.getEntityPlayer().getPersistentID()) != null)
+                playerTextures.put(Type.CAPE, CapesRegistry.wornCapes.get(event.getEntityPlayer().getPersistentID()));
+            else
+                playerTextures.put(Type.CAPE, defaultPlayerCape);
         }
     }
-
-
-
 }
