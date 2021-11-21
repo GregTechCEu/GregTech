@@ -2,6 +2,7 @@ package gregtech.api.unification.material.materials;
 
 import gregtech.api.GTValues;
 import gregtech.api.unification.material.Material;
+import gregtech.api.unification.material.properties.BlastProperty.GasTier;
 import gregtech.api.unification.material.properties.PropertyKey;
 
 import static gregtech.api.unification.material.Materials.*;
@@ -118,7 +119,7 @@ public class SecondDegreeMaterials {
                 .toolStats(8.0f, 4.0f, 2560, 21)
                 .fluidPipeProperties(7568, 100, true)
                 .cableProperties(GTValues.V[5], 3, 2)
-                .blastTemp(3000)
+                .blastTemp(3000, GasTier.MID)
                 .build();
 
         CobaltBrass = new Material.Builder(2014, "cobalt_brass")
