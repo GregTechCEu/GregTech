@@ -25,6 +25,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -63,6 +64,10 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected boolean hasPerfectOC = false;
 
+    /**
+     * DO NOT use the parallelLimit field directly, EVER
+     * use {@link AbstractRecipeLogic#setParallelLimit(int)} instead
+     */
     private int parallelLimit = 1;
 
     public AbstractRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap) {
@@ -82,7 +87,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected abstract boolean drawEnergy(int recipeEUt);
 
-    protected abstract long getMaxVoltage();
+    protected long getMaxVoltage() {
+        return this.overclockPolicy.getAsLong();
+    }
 
     protected IItemHandlerModifiable getInputInventory() {
         return metaTileEntity.getImportItems();
@@ -293,6 +300,11 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return false;
     }
 
+
+    /**
+     * DO NOT use the parallelLimit field directly, EVER
+     * @return the current parallel limit of the logic
+     */
     public int getParallelLimit() {
         return parallelLimit;
     }
@@ -305,7 +317,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         return ParallelLogicType.MULTIPLY;
     }
 
-    protected int getMinTankCapacity(IMultipleTankHandler tanks) {
+    protected int getMinTankCapacity(@Nonnull IMultipleTankHandler tanks) {
         if (tanks.getTanks() == 0) {
             return 0;
         }
@@ -385,7 +397,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param recipe the recipe to run
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    protected int[] calculateOverclock(Recipe recipe) {
+    protected int[] calculateOverclock(@Nonnull Recipe recipe) {
         int recipeEUt = recipe.getEUt();
         int recipeDuration = recipe.getDuration();
         // Cannot overclock, keep recipe the same
@@ -437,7 +449,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
      * @param maxOverclocks the maximum amount of overclocks to perform
      * @return an int array of {OverclockedEUt, OverclockedDuration}
      */
-    protected int[] runOverclockingLogic(Recipe recipe, boolean negativeEU, int maxOverclocks) {
+    protected int[] runOverclockingLogic(@Nonnull Recipe recipe, boolean negativeEU, int maxOverclocks) {
         return runOverclockingLogic(recipe.getEUt() * (negativeEU ? -1 : 1), recipe.getDuration(), maxOverclocks);
     }
 
@@ -469,7 +481,7 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
     }
 
     /**
-     * applies standard logic for overclocking
+     * applies standard logic for overclocking, where each overclock modifies energy and duration
      *
      * @param recipeEUt the EU/t of the recipe to overclock
      * @param maximumVoltage the maximum voltage the recipe is allowed to be run at

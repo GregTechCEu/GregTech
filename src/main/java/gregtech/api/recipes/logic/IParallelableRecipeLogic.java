@@ -8,6 +8,8 @@ import gregtech.api.recipes.RecipeBuilder;
 import gregtech.api.recipes.RecipeMap;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
+
 public interface IParallelableRecipeLogic {
 
     /**
@@ -16,7 +18,7 @@ public interface IParallelableRecipeLogic {
      *
      * @param builder the recipe builder
      */
-    default void applyParallelBonus(RecipeBuilder<?> builder) {
+    default void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
     }
 
     /**

@@ -13,6 +13,7 @@ import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -38,7 +39,7 @@ public class MetaTileEntityGasCollector extends SimpleMachineMetaTileEntity {
         return result;
     }
 
-    protected boolean checkRecipe(Recipe recipe) {
+    protected boolean checkRecipe(@Nonnull Recipe recipe) {
         List<Integer> recipeDimensions = recipe.getProperty(GasCollectorDimensionProperty.getInstance(), new ArrayList<>());
         for (Integer dimension : recipeDimensions) {
             if (dimension == this.getWorld().provider.getDimension()) {

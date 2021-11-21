@@ -222,6 +222,7 @@ public class MetaTileEntityFusionReactor extends RecipeMapMultiblockController i
 
         @Override
         protected boolean checkRecipe(Recipe recipe) {
+            // if the reactor is not able to hold enough energy for it, do not run the recipe
             if (recipe.getProperty(FusionEUToStartProperty.getInstance(), 0L) > energyContainer.getEnergyCapacity())
                  return false;
 

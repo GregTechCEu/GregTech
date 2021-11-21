@@ -93,7 +93,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
     }
 
     @Override
-    public boolean checkRecipe(Recipe recipe, boolean consumeIfSuccess) {
+    public boolean checkRecipe(@Nonnull Recipe recipe, boolean consumeIfSuccess) {
         return this.blastFurnaceTemperature >= recipe.getProperty(BlastTemperatureProperty.getInstance(), 0);
     }
 
@@ -193,6 +193,7 @@ public class MetaTileEntityElectricBlastFurnace extends RecipeMapMultiblockContr
 
             // perfect overclock for every 1800k over recipe temperature
             if (amountPerfectOC > 0) {
+                // use the normal overclock logic to do perfect OCs up to as many times as calculated
                 int[] overclock = standardOverclockingLogic(recipeEUt, maximumVoltage, recipeDuration, PERFECT_OVERCLOCK_DURATION_DIVISOR, STANDARD_OVERCLOCK_VOLTAGE_MULTIPLIER, amountPerfectOC);
 
                 // overclock normally as much as possible after perfects are exhausted

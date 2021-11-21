@@ -127,7 +127,7 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
         }
 
         @Override
-        public void applyParallelBonus(RecipeBuilder<?> builder) {
+        public void applyParallelBonus(@Nonnull RecipeBuilder<?> builder) {
             builder.EUt(Math.max(1, 16 / heatingCoilDiscount))
                     .duration((int) Math.max(1.0, 256 * builder.getParallel() / (getParallelLimit() * 1.0)));
         }
