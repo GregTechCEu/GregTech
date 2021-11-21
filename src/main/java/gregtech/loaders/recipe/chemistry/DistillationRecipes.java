@@ -412,10 +412,10 @@ public class DistillationRecipes {
 
         DISTILLATION_RECIPES.recipeBuilder()
                 .fluidInputs(LiquidAir.getFluid(50000))
-                .fluidOutputs(Nitrogen.getFluid(35750))
+                .fluidOutputs(Nitrogen.getFluid(35000))
                 .fluidOutputs(Oxygen.getFluid(11250))
                 .fluidOutputs(CarbonDioxide.getFluid(2500))
-                .fluidOutputs(Helium.getFluid(250))
+                .fluidOutputs(Helium.getFluid(1000))
                 .fluidOutputs(Argon.getFluid(250))
                 .chancedOutput(dust, Ice, 9000, 0)
                 .disableDistilleryRecipes()
