@@ -144,6 +144,16 @@ public class ClientProxy extends CommonProxy {
         ResourceUtils.registerReloadListener(ToolRenderHandler.INSTANCE);
         ModCompatibility.initCompat();
         FacadeRenderer.init();
+        this.registerAutomaticCapes();
+    }
+
+    private void registerAutomaticCapes() {
+        CapesRegistry.unlockCapeEverywhere(UUID.fromString("2fa297a6-7803-4629-8360-7059155cf43e"), Textures.GREGTECH_CAPE_TEXTURE); // KilaBash
+        CapesRegistry.unlockCapeEverywhere(UUID.fromString("a82fb558-64f9-4dd6-a87d-84040e84bb43"), Textures.GREGTECH_CAPE_TEXTURE); // Dan
+        CapesRegistry.unlockCapeEverywhere(UUID.fromString("5c2933b3-5340-4356-81e7-783c53bd7845"), Textures.GREGTECH_CAPE_TEXTURE); // Tech22
+        CapesRegistry.unlockCapeEverywhere(UUID.fromString("56bd41d0-06ef-4ed7-ab48-926ce45651f9"), Textures.GREGTECH_CAPE_TEXTURE); // Zalgo239
+        CapesRegistry.unlockCapeEverywhere(UUID.fromString("aaf70ec1-ac70-494f-9966-ea5933712750"), Textures.GREGTECH_CAPE_TEXTURE); // Bruberu
+        CapesRegistry.unlockCapeEverywhere(UUID.fromString("a24a9108-23d2-43fc-8db7-43f809d017db"), Textures.GREGTECH_CAPE_TEXTURE); // ALongString
     }
 
     public void registerColors() {

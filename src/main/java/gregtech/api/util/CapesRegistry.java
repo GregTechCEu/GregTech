@@ -23,6 +23,7 @@ public class CapesRegistry extends WorldSavedData {
     private static final String DATA_ID = GTValues.MODID + ".capes";
     private static final Map<UUID, List<ResourceLocation>> unlockedCapes = new HashMap<>();
     public static final Map<UUID, ResourceLocation> wornCapes = new HashMap<>();
+    private static final Map<UUID, List<ResourceLocation>> givenCapes = new HashMap<>();
 
     private static final Map<Advancement, ResourceLocation> capeAdvancements = new HashMap<>();
     private static CapesRegistry instance;
@@ -108,14 +109,12 @@ public class CapesRegistry extends WorldSavedData {
         if (instance == null) {
             instance = new CapesRegistry();
 
+            for(Map.Entry<UUID, List<ResourceLocation>> givenCapeSet : givenCapes.entrySet()) {
+                unlockedCapes.put(givenCapeSet.getKey(), givenCapeSet.getValue());
+            }
+
             List<ResourceLocation> devReward = new ArrayList<>();
             devReward.add(Textures.GREGTECH_CAPE_TEXTURE);
-            unlockedCapes.put(UUID.fromString("2fa297a6-7803-4629-8360-7059155cf43e"), devReward); // KilaBash
-            unlockedCapes.put(UUID.fromString("a82fb558-64f9-4dd6-a87d-84040e84bb43"), devReward); // Dan
-            unlockedCapes.put(UUID.fromString("5c2933b3-5340-4356-81e7-783c53bd7845"), devReward); // Tech22
-            unlockedCapes.put(UUID.fromString("56bd41d0-06ef-4ed7-ab48-926ce45651f9"), devReward); // Zalgo239
-            unlockedCapes.put(UUID.fromString("aaf70ec1-ac70-494f-9966-ea5933712750"), devReward); // Bruberu
-            unlockedCapes.put(UUID.fromString("a24a9108-23d2-43fc-8db7-43f809d017db"), devReward); // ALongString
 
 
             storage.setData(DATA_ID, instance);
@@ -138,12 +137,12 @@ public class CapesRegistry extends WorldSavedData {
 
     /**
      * Links an advancement with a cape, which allows a player to unlock it when they receive the advancement.
-     * This should only be called on world load.
+     * This should only be called on world load, since advancements are only accessible then.
      * @param advancement A ResourceLocation pointing to the advancement that is to be used for getting a cape.
      * @param cape The ResourceLocation that points to the cape that can be unlocked through the advancement.
      * @param world The world that may contain the advancement used for getting a cape.
      */
-    public static void linkAdvancement(ResourceLocation advancement, ResourceLocation cape, World world) {
+    public static void registerCape(ResourceLocation advancement, ResourceLocation cape, World world) {
         if (world instanceof WorldServer) {
             try {
                 Field advManager = World.class.getDeclaredField("advancementManager");
@@ -156,16 +155,39 @@ public class CapesRegistry extends WorldSavedData {
         }
     }
 
-    public static void unlockCape(EntityPlayer player, Advancement advancement) {
+    /**
+     * Automatically gives a cape to a player, which may be used for a reward for something other than an advancement
+     * @param uuid The UUID of the player to be given the cape.
+     * @param cape The ResourceLocation that holds the cape used here.
+     */
+    public static void unlockCape(UUID uuid, ResourceLocation cape) {
+        List<ResourceLocation> capes = unlockedCapes.get(uuid);
+        if (capes == null) {
+            capes = new ArrayList<>();
+        } else if (capes.contains(cape))
+            return;
+        capes.add(cape);
+        unlockedCapes.put(uuid, capes);
+    }
+
+    /**
+     * Automatically gives a cape to a player to every world they join. Should be called on game load on server side.
+     * @param uuid The UUID of the player to be given the cape.
+     * @param cape The ResourceLocation that holds the cape used here.
+     */
+    public static void unlockCapeEverywhere(UUID uuid, ResourceLocation cape) {
+        List<ResourceLocation> capes = unlockedCapes.get(uuid);
+        if (capes == null) {
+            capes = new ArrayList<>();
+        } else if (capes.contains(cape))
+            return;
+        capes.add(cape);
+        unlockedCapes.put(uuid, capes);
+    }
+
+    public static void unlockCapeOnAdvancement(EntityPlayer player, Advancement advancement) {
         if (capeAdvancements.containsKey(advancement)) {
-            List<ResourceLocation> capes = unlockedCapes.get(player.getPersistentID());
-            if (capes == null) {
-                capes = new ArrayList<>();
-            } else if (capes.contains(capeAdvancements.get(advancement)))
-                return;
-            capes.add(capeAdvancements.get(advancement));
-            unlockedCapes.put(player.getPersistentID(), capes);
-            instance.markDirty();
+            unlockCape(player.getPersistentID(), capeAdvancements.get(advancement));
             player.sendMessage(new TextComponentTranslation("gregtech.chat.cape"));
         }
     }

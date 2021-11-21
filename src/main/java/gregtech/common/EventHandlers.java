@@ -174,18 +174,18 @@ public class EventHandlers {
     public static void onWorldLoadEvent(WorldEvent.Load event) {
         VirtualTankRegistry.initializeStorage(event.getWorld());
         CapesRegistry.initializeStorage(event.getWorld());
-        CapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"),
+        CapesRegistry.registerCape(new ResourceLocation(GTValues.MODID, "ultimate_voltage/74_wetware_mainframe"),
                 Textures.GREGTECH_CAPE_TEXTURE, event.getWorld());
-        CapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "steam/12_electronic_circuit"),
+        CapesRegistry.registerCape(new ResourceLocation(GTValues.MODID, "steam/12_electronic_circuit"),
                 Textures.RED_CAPE_TEXTURE, event.getWorld());
-        CapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "high_voltage/82_large_chemical_reactor"),
+        CapesRegistry.registerCape(new ResourceLocation(GTValues.MODID, "high_voltage/82_large_chemical_reactor"),
                 Textures.YELLOW_CAPE_TEXTURE, event.getWorld());
-        CapesRegistry.linkAdvancement(new ResourceLocation(GTValues.MODID, "ludicrous_voltage/60_fusion"),
+        CapesRegistry.registerCape(new ResourceLocation(GTValues.MODID, "ludicrous_voltage/60_fusion"),
                 Textures.GREEN_CAPE_TEXTURE, event.getWorld());
     }
 
     @SubscribeEvent
     public static void onPlayerAdvancement(AdvancementEvent event) {
-        CapesRegistry.unlockCape(event.getEntityPlayer(), event.getAdvancement());
+        CapesRegistry.unlockCapeOnAdvancement(event.getEntityPlayer(), event.getAdvancement());
     }
 }
