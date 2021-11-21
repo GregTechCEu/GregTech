@@ -1,6 +1,5 @@
 package gregtech.common.metatileentities.multi.electric;
 
-import gregtech.api.capability.IMultipleTankHandler;
 import gregtech.api.capability.impl.MultiblockRecipeLogic;
 import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
@@ -11,7 +10,8 @@ import gregtech.api.metatileentity.multiblock.RecipeMapMultiblockController;
 import gregtech.api.multiblock.BlockPattern;
 import gregtech.api.multiblock.FactoryBlockPattern;
 import gregtech.api.multiblock.PatternMatchContext;
-import gregtech.api.recipes.*;
+import gregtech.api.recipes.RecipeBuilder;
+import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.render.ICubeRenderer;
 import gregtech.api.render.OrientedOverlayRenderer;
 import gregtech.api.render.Textures;
@@ -23,10 +23,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.List;
 
 public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
@@ -81,11 +80,6 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
     }
 
     @Override
-    public int getParallelLimit() {
-        return heatingCoilLevel * 32;
-    }
-
-    @Override
     protected BlockPattern createStructurePattern() {
         return FactoryBlockPattern.start()
                 .aisle("XXX", "CCC", "XXX")
@@ -134,9 +128,13 @@ public class MetaTileEntityMultiSmelter extends RecipeMapMultiblockController {
 
         @Override
         public void applyParallelBonus(RecipeBuilder<?> builder) {
-            int parallelLimit = 32 * heatingCoilLevel;
             builder.EUt(Math.max(1, 16 / heatingCoilDiscount))
-                    .duration((int) Math.max(1.0, 256 * builder.getParallel() / (parallelLimit * 1.0)));
+                    .duration((int) Math.max(1.0, 256 * builder.getParallel() / (getParallelLimit() * 1.0)));
+        }
+
+        @Override
+        public int getParallelLimit() {
+            return 32 * heatingCoilLevel;
         }
     }
 }

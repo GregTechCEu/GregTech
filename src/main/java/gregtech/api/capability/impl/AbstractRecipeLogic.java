@@ -63,6 +63,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
 
     protected boolean hasPerfectOC = false;
 
+    private int parallelLimit = 1;
+
     public AbstractRecipeLogic(MetaTileEntity tileEntity, RecipeMap<?> recipeMap) {
         super(tileEntity);
         this.recipeMap = recipeMap;
@@ -280,11 +282,19 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
                 getInputTank(),
                 getOutputInventory(),
                 getOutputTank(),
-                getMaxVoltage(), metaTileEntity.getParallelLimit());
+                getMaxVoltage(), getParallelLimit());
 
         if (recipe != null && setupAndConsumeRecipeInputs(recipe, getInputInventory())) {
             setupRecipe(recipe);
         }
+    }
+
+    public int getParallelLimit() {
+        return parallelLimit;
+    }
+
+    public void setParallelLimit(int amount) {
+        parallelLimit = amount;
     }
 
     public Enum<ParallelLogicType> getParallelLogicType() {

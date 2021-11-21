@@ -109,8 +109,8 @@ public abstract class RecipeMapSteamMultiblockController extends MultiblockWithD
             } else if (recipeMapWorkable.isActive()) {
                 textList.add(new TextComponentTranslation("gregtech.multiblock.running"));
                 int currentProgress = (int) (recipeMapWorkable.getProgressPercent() * 100);
-                if (this.getParallelLimit() != 1) {
-                    textList.add(new TextComponentTranslation("gregtech.multiblock.parallel", this.getParallelLimit()));
+                if (this.recipeMapWorkable.getParallelLimit() != 1) {
+                    textList.add(new TextComponentTranslation("gregtech.multiblock.parallel", this.recipeMapWorkable.getParallelLimit()));
                 }
                 textList.add(new TextComponentTranslation("gregtech.multiblock.progress", currentProgress));
             } else {

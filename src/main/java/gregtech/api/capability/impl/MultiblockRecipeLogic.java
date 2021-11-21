@@ -154,7 +154,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                     importFluids,
                     exportInventory,
                     exportFluids,
-                    maxVoltage, metaTileEntity.getParallelLimit());
+                    maxVoltage, getParallelLimit());
 
             // If a valid recipe is found, immediately attempt to return it to prevent inventory scanning
             if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(lastRecipeIndex))) {
@@ -190,7 +190,7 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
                         importFluids,
                         exportInventory,
                         exportFluids,
-                        maxVoltage, metaTileEntity.getParallelLimit());
+                        maxVoltage,getParallelLimit());
 
                 if (currentRecipe != null && setupAndConsumeRecipeInputs(currentRecipe, importInventory.get(i))) {
                     lastRecipeIndex = i;
