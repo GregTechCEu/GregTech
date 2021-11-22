@@ -455,7 +455,7 @@ public class FirstDegreeMaterials {
                 .components(Potassium, 1, Chlorine, 1)
                 .build();
 
-        RuthenianIridium = new Material.Builder(310, "ruthenian_iridium")
+        Ruridit = new Material.Builder(310, "ruridit")
                 .ingot(3)
                 .color(0xA4A4A4).iconSet(BRIGHT)
                 .flags(GENERATE_FINE_WIRE, GENERATE_GEAR)

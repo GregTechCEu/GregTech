@@ -201,7 +201,7 @@ public class AssemblerRecipeLoader {
 
         // Neutron Reflector
         ASSEMBLER_RECIPES.recipeBuilder().duration(4000).EUt(120)
-                .input(plate, RuthenianIridium)
+                .input(plate, Ruridit)
                 .input(plateDouble, Beryllium, 4)
                 .input(plateDouble, TungstenCarbide, 2)
                 .fluidInputs(TinAlloy.getFluid(L * 32))

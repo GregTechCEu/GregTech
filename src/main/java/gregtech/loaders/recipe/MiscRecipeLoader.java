@@ -3,14 +3,11 @@ package gregtech.loaders.recipe;
 import gregtech.api.recipes.ModHandler;
 import gregtech.api.recipes.RecipeMaps;
 import gregtech.api.unification.OreDictUnifier;
-import gregtech.api.unification.material.Material;
 import gregtech.api.unification.material.Materials;
 import gregtech.api.unification.ore.OrePrefix;
-import gregtech.api.unification.stack.MaterialStack;
 import gregtech.api.unification.stack.UnificationEntry;
 import gregtech.common.blocks.BlockTransparentCasing;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.items.MetaItems;
 import gregtech.common.metatileentities.MetaTileEntities;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -235,7 +232,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 2)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, RuthenianIridium, 4)
+                .input(plate, Ruridit, 4)
                 .inputs(ELECTRIC_PISTON_EV.getStackForm(2))
                 .inputs(NANO_MUSCLE_SUITE_BOOTS.getStackForm())
                 .outputs(QUARK_TECH_SUITE_BOOTS.getStackForm())
@@ -245,7 +242,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 4)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, RuthenianIridium, 6)
+                .input(plate, Ruridit, 6)
                 .inputs(CONVEYOR_MODULE_EV.getStackForm(2))
                 .inputs(NANO_MUSCLE_SUITE_LEGGINGS.getStackForm())
                 .outputs(QUARK_TECH_SUITE_LEGGINGS.getStackForm())
@@ -255,7 +252,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 4)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, RuthenianIridium, 8)
+                .input(plate, Ruridit, 8)
                 .inputs(FIELD_GENERATOR_EV.getStackForm(2))
                 .inputs(NANO_MUSCLE_SUITE_CHESTPLATE.getStackForm())
                 .outputs(QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
@@ -265,7 +262,7 @@ public class MiscRecipeLoader {
                 .input(circuit, Extreme, 2)
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
                 .inputs(LAPOTRON_CRYSTAL.getStackForm())
-                .input(plate, RuthenianIridium, 4)
+                .input(plate, Ruridit, 4)
                 .inputs(SENSOR_EV.getStackForm())
                 .inputs(EMITTER_EV.getStackForm())
                 .inputs(NANO_MUSCLE_SUITE_HELMET.getStackForm())
@@ -286,7 +283,7 @@ public class MiscRecipeLoader {
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(16))
                 .input(wireGtSingle, SamariumIronArsenicOxide, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
-                .input(plate, RuthenianIridium, 12)
+                .input(plate, Ruridit, 12)
                 .input(circuit, Elite, 4)
                 .inputs(QUARK_TECH_SUITE_CHESTPLATE.getStackForm())
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
@@ -297,7 +294,7 @@ public class MiscRecipeLoader {
                 .inputs(HIGH_POWER_INTEGRATED_CIRCUIT.getStackForm(8))
                 .input(wireGtSingle, SamariumIronArsenicOxide, 8)
                 .inputs(GRAVITATION_ENGINE.getStackForm(2))
-                .input(plate, RuthenianIridium, 16)
+                .input(plate, Ruridit, 16)
                 .input(circuit, Elite, 2)
                 .inputs(ADVANCED_NANO_MUSCLE_CHESTPLATE.getStackForm())
                 .fluidInputs(SolderingAlloy.getFluid(L * 8))
