@@ -243,7 +243,7 @@ public class ElementMaterials {
                 .element(Elements.Eu)
                 .cableProperties(GTValues.V[GTValues.UHV], 2, 32)
                 .fluidPipeProperties(7780, 1200, true)
-                .blastTemp(1099, GasTier.MID)
+                .blastTemp(6000, GasTier.MID, 7680, 180)
                 .build();
 
         Fermium = new Material.Builder(34, "fermium")
@@ -355,7 +355,7 @@ public class ElementMaterials {
                 .element(Elements.Ir)
                 .toolStats(7.0f, 3.0f, 2560, 21)
                 .fluidPipeProperties(3398, 140, true)
-                .blastTemp(2719, GasTier.HIGH)
+                .blastTemp(4500, GasTier.HIGH, 7680, 1100)
                 .build();
 
         Iron = new Material.Builder(51, "iron")
@@ -469,7 +469,7 @@ public class ElementMaterials {
                 .flags(STD_METAL, GENERATE_ROD, GENERATE_BOLT_SCREW)
                 .element(Elements.Nd)
                 .toolStats(7.0f, 2.0f, 512, 21)
-                .blastTemp(1297, GasTier.MID)
+                .blastTemp(1289, GasTier.MID)
                 .build();
 
         Neon = new Material.Builder(67, "neon")
@@ -505,7 +505,7 @@ public class ElementMaterials {
                 .color(0xBEB4C8).iconSet(METALLIC)
                 .flags(STD_METAL)
                 .element(Elements.Nb)
-                .blastTemp(2750, GasTier.MID)
+                .blastTemp(2750, GasTier.MID, 480, 900)
                 .build();
 
         Nitrogen = new Material.Builder(72, "nitrogen")
@@ -535,7 +535,7 @@ public class ElementMaterials {
                 .toolStats(16.0f, 4.0f, 1280, 21)
                 .cableProperties(GTValues.V[6], 4, 2)
                 .itemPipeProperties(256, 8.0f)
-                .blastTemp(3306, GasTier.HIGH)
+                .blastTemp(4500, GasTier.HIGH, 30720, 1000)
                 .build();
 
         Oxygen = new Material.Builder(76, "oxygen")
@@ -550,7 +550,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL)
                 .element(Elements.Pd)
                 .toolStats(8.0f, 2.0f, 512, 33)
-                .blastTemp(1228, GasTier.LOW)
+                .blastTemp(1828, GasTier.LOW, 480, 900)
                 .build();
 
         Phosphorus = new Material.Builder(78, "phosphorus")
@@ -642,7 +642,7 @@ public class ElementMaterials {
                 .color(0xF4F4F4).iconSet(SHINY)
                 .flags(EXT2_METAL)
                 .element(Elements.Rh)
-                .blastTemp(2237, GasTier.MID)
+                .blastTemp(2237, GasTier.MID, 1920, 1200)
                 .build();
 
         Roentgenium = new Material.Builder(91, "roentgenium")
@@ -663,7 +663,7 @@ public class ElementMaterials {
                 .color(0x9B9B9B).iconSet(SHINY)
                 .flags(EXT2_METAL)
                 .element(Elements.Ru)
-                .blastTemp(2607, GasTier.MID)
+                .blastTemp(2607, GasTier.MID, 1920, 900)
                 .build();
 
         Rutherfordium = new Material.Builder(94, "rutherfordium")
@@ -678,7 +678,7 @@ public class ElementMaterials {
                 .color(0xFFFFCC).iconSet(METALLIC)
                 .flags(STD_METAL)
                 .element(Elements.Sm)
-                .blastTemp(1345, GasTier.HIGH)
+                .blastTemp(5400, GasTier.HIGH, 1920, 1500)
                 .build();
 
         Scandium = new Material.Builder(96, "scandium")
@@ -803,14 +803,14 @@ public class ElementMaterials {
                 .itemPipeProperties(4096, 0.5f)
                 .build();
 
-        Titanium = new Material.Builder(113, "titanium") // todo Ore?
+        Titanium = new Material.Builder(113, "titanium") // todo Ore? Look at EBF recipe here if we do Ti ores
                 .ingot(3).fluid()
                 .color(0xDCA0F0).iconSet(METALLIC)
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_SPRING, GENERATE_FRAME, GENERATE_DENSE)
                 .element(Elements.Ti)
                 .toolStats(7.0f, 3.0f, 1600, 21)
                 .fluidPipeProperties(2426, 80, true)
-                .blastTemp(1941, GasTier.MID)
+                .blastTemp(1941, GasTier.MID, 480, 1500)
                 .build();
 
         Tritium = new Material.Builder(114, "tritium")
@@ -827,7 +827,7 @@ public class ElementMaterials {
                 .toolStats(7.0f, 3.0f, 2560, 21)
                 .cableProperties(GTValues.V[5], 2, 2)
                 .fluidPipeProperties(4618, 90, true)
-                .blastTemp(3000, GasTier.MID)
+                .blastTemp(3600, GasTier.MID, 1920, 1800)
                 .build();
 
         Uranium238 = new Material.Builder(116, "uranium")
@@ -898,7 +898,7 @@ public class ElementMaterials {
                 .toolStats(6.0f, 4.0f, 1280, 21)
                 .cableProperties(GTValues.V[7], 2, 2)
                 .fluidPipeProperties(19200, 1500, true)
-                .blastTemp(5400, GasTier.HIGH)
+                .blastTemp(5000, GasTier.HIGH, 7680, 600)
                 .build();
 
         NaquadahEnriched = new Material.Builder(125, "naquadah_enriched")
@@ -907,7 +907,7 @@ public class ElementMaterials {
                 .flags(EXT_METAL, GENERATE_FOIL)
                 .element(Elements.Nq1)
                 .toolStats(6.0f, 4.0f, 1280, 21)
-                .blastTemp(4500, GasTier.HIGH)
+                .blastTemp(7000, GasTier.HIGH, 7680, 1000)
                 .build();
 
         Naquadria = new Material.Builder(126, "naquadria")
@@ -915,7 +915,7 @@ public class ElementMaterials {
                 .color(0x1E1E1E).iconSet(SHINY)
                 .flags(EXT_METAL, GENERATE_FOIL, GENERATE_GEAR, GENERATE_DENSE, GENERATE_FINE_WIRE)
                 .element(Elements.Nq2)
-                .blastTemp(9000, GasTier.HIGH)
+                .blastTemp(9000, GasTier.HIGH, 122880, 1200)
                 .build();
 
         Neutronium = new Material.Builder(127, "neutronium")
@@ -950,7 +950,7 @@ public class ElementMaterials {
                 .color(0xC8C8D2).iconSet(SHINY)
                 .flags(GENERATE_FOIL)
                 .element(Elements.Ke)
-                .blastTemp(8600, GasTier.HIGH)
+                .blastTemp(8600, GasTier.HIGH, 30720, 1500)
                 .build();
 
         Adamantium = new Material.Builder(131, "adamantium")
