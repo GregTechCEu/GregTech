@@ -7,6 +7,8 @@ import gregtech.api.enchants.EnchantmentHardHammer;
 import gregtech.api.items.armor.ArmorLogicSuite;
 import gregtech.api.items.armor.ArmorMetaItem;
 import gregtech.api.items.armor.ArmorUtils;
+import gregtech.api.metatileentity.MetaTileEntity;
+import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.net.KeysPacket;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.util.VirtualTankRegistry;
@@ -34,6 +36,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -68,6 +71,9 @@ public class EventHandlers {
 
     @SubscribeEvent
     public static void onPlayerInteraction(PlayerInteractEvent.RightClickBlock event) {
+        if (event.getWorld().getTileEntity(event.getPos()) instanceof MetaTileEntityHolder) {
+            event.setUseBlock(Event.Result.ALLOW);
+        }
         ItemStack stack = event.getItemStack();
         if (!stack.isEmpty() && stack.getItem() == Items.FLINT_AND_STEEL) {
             if (!event.getWorld().isRemote
