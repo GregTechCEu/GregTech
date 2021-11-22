@@ -17,6 +17,7 @@ import gregtech.api.util.input.KeyBinds;
 import gregtech.common.items.MetaItems;
 import gregtech.common.items.armor.PowerlessJetpack;
 import gregtech.common.items.behaviors.ToggleEnergyConsumerBehavior;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityCentralMonitor;
 import gregtech.common.tools.ToolUtility;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -28,6 +29,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -70,7 +72,7 @@ public class EventHandlers {
     }
 
     @SubscribeEvent
-    public static void onPlayerInteraction(PlayerInteractEvent.RightClickBlock event) {
+    public static void onPlayerInteractionRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (event.getWorld().getTileEntity(event.getPos()) instanceof MetaTileEntityHolder) {
             event.setUseBlock(Event.Result.ALLOW);
         }
@@ -87,6 +89,17 @@ public class EventHandlers {
             }
         }
     }
+
+    @SubscribeEvent
+    public static void onPlayerInteractionLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (event.getEntityPlayer().isCreative()) {
+            TileEntity holder = event.getWorld().getTileEntity(event.getPos());
+            if (holder instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) holder).getMetaTileEntity() instanceof MetaTileEntityCentralMonitor) {
+                ((MetaTileEntityCentralMonitor) ((MetaTileEntityHolder) holder).getMetaTileEntity()).invalidateStructure();
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void hammer(BlockEvent.HarvestDropsEvent event) {
         if (!event.getWorld().isRemote && event.getHarvester() != null && !event.isSilkTouching()) {
