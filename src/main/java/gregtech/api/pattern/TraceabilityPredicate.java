@@ -4,6 +4,7 @@ import gregtech.api.util.BlockInfo;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.BlockWireCoil2;
 import gregtech.common.blocks.MetaBlocks;
+import gregtech.common.blocks.VariantActiveBlock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -31,6 +32,7 @@ public class TraceabilityPredicate {
                 blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.coils"));
                 return false;
             }
+            blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
             return true;
         } else if ((blockState.getBlock() instanceof BlockWireCoil2)) {
             BlockWireCoil2 blockWireCoil = (BlockWireCoil2) blockState.getBlock();
@@ -40,6 +42,7 @@ public class TraceabilityPredicate {
                 blockWorldState.setError(new PatternStringError("gregtech.multiblock.pattern.error.coils"));
                 return false;
             }
+            blockWorldState.getMatchContext().getOrPut("VABlock", new LinkedList<>()).add(blockWorldState.getPos());
             return true;
         }
         return false;
