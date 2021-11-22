@@ -408,7 +408,7 @@ public class BlockPattern {
                                     }
                                 }
                             } else {
-                                TraceabilityPredicate.SimplePredicate common = predicate.common.getFirst();
+                                TraceabilityPredicate.SimplePredicate common = predicate.common.get(0);
                                 if (!cacheInfos.containsKey(common)) {
                                     cacheInfos.put(common, common.candidates == null ? null : common.candidates.get());
                                 }

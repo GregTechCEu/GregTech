@@ -33,14 +33,14 @@ public class PatternError {
         return worldState.getPos();
     }
 
-    public List<ItemStack> getCandidates() {
+    public List<List<ItemStack>> getCandidates() {
         TraceabilityPredicate predicate = worldState.predicate;
-        List<ItemStack> candidates = new LinkedList<>();
+        List<List<ItemStack>> candidates = new LinkedList<>();
         for (TraceabilityPredicate.SimplePredicate common : predicate.common) {
-            candidates.addAll(getCandidates(common));
+            candidates.add(getCandidates(common));
         }
         for (TraceabilityPredicate.SimplePredicate limited : predicate.limited) {
-            candidates.addAll(getCandidates(limited));
+            candidates.add(getCandidates(limited));
         }
         return candidates;
     }
@@ -59,14 +59,15 @@ public class PatternError {
 
     @SideOnly(Side.CLIENT)
     public String getErrorInfo() {
-        List<ItemStack> candidates = getCandidates();
+        List<List<ItemStack>> candidates = getCandidates();
         StringBuilder builder = new StringBuilder();
-        if (!candidates.isEmpty()) {
-            builder.append(candidates.get(0).getDisplayName());
+        for (List<ItemStack> candidate : candidates) {
+            if (!candidate.isEmpty()) {
+                builder.append(candidate.get(0).getDisplayName());
+                builder.append(", ");
+            }
         }
-        if (candidates.size() > 1) {
-            builder.append("...");
-        }
+        builder.append("...");
         return I18n.format("gregtech.multiblock.pattern.error", builder.toString(), worldState.pos);
     }
 }

@@ -17,6 +17,7 @@ import gregtech.api.terminal.os.TerminalOSWidget;
 import gregtech.api.terminal.os.TerminalTheme;
 import gregtech.api.util.BlockInfo;
 import gregtech.api.util.RenderBufferHelper;
+import gregtech.common.inventory.handlers.CycleItemStackHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -29,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -36,9 +38,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 import org.lwjgl.opengl.GL11;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -60,6 +60,8 @@ public class MachineBuilderWidget extends WidgetGroup {
     private int selected = -1;
     @SideOnly(Side.CLIENT)
     private DraggableScrollableWidgetGroup candidates;
+    @SideOnly(Side.CLIENT)
+    private List<CycleItemStackHandler> handlers;
 
     public MachineBuilderWidget(int x, int y, int width, int height, MultiblockControllerBase controllerBase, TerminalOSWidget os) {
         super(x, y, width, height);
@@ -82,6 +84,12 @@ public class MachineBuilderWidget extends WidgetGroup {
             candidates = new DraggableScrollableWidgetGroup(-20, 0, 20, 180);
             addWidget(candidates);
         }
+    }
+
+    @Override
+    public void updateScreen() {
+        super.updateScreen();
+        if (handlers != null && gui.entityPlayer.ticksExisted % 20 == 0) handlers.forEach(CycleItemStackHandler::update);
     }
 
     @Override
@@ -226,12 +234,13 @@ public class MachineBuilderWidget extends WidgetGroup {
             if (controllerBase.structurePattern.checkPatternFastAt(controllerBase.getWorld(), controllerBase.getPos(), controllerBase.getFrontFacing().getOpposite()) == null) {
                 PatternError error = controllerBase.structurePattern.getError();
                 highLightBlocks.add(new BlockPos(error.getPos()));
-                List<ItemStack> candidatesItemStack = error.getCandidates();
+                List<List<ItemStack>> candidatesItemStack = error.getCandidates();
                 candidates.clearAllWidgets();
                 int y = 1;
-                for (ItemStack candidate : candidatesItemStack) {
-                    ItemStackHandler handler = new ItemStackHandler(1);
-                    handler.setStackInSlot(0, candidate);
+                handlers = new ArrayList<>();
+                for (List<ItemStack> candidate : candidatesItemStack) {
+                    CycleItemStackHandler handler = new CycleItemStackHandler(NonNullList.from(ItemStack.EMPTY, candidate.toArray(new ItemStack[0])));
+                    handlers.add(handler);
                     candidates.addWidget(new SlotWidget(handler, 0, 1, y, false, false).setBackgroundTexture(TerminalTheme.COLOR_B_2));
                     y += 20;
                 }

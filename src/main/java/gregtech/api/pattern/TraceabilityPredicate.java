@@ -4,7 +4,6 @@ import gregtech.api.util.BlockInfo;
 import gregtech.common.blocks.BlockWireCoil;
 import gregtech.common.blocks.BlockWireCoil2;
 import gregtech.common.blocks.MetaBlocks;
-import gregtech.common.blocks.VariantActiveBlock;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -12,9 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -51,8 +48,8 @@ public class TraceabilityPredicate {
             Arrays.stream(BlockWireCoil2.CoilType2.values()).map(type->new BlockInfo(MetaBlocks.WIRE_COIL2.getState(type), null)).toArray(BlockInfo[]::new)));
 
 
-    protected final LinkedList<SimplePredicate> common = new LinkedList<>();
-    protected final LinkedList<SimplePredicate> limited = new LinkedList<>();
+    protected final List<SimplePredicate> common = new ArrayList<>();
+    protected final List<SimplePredicate> limited = new ArrayList<>();
     protected boolean isCenter;
 
     public TraceabilityPredicate(Predicate<BlockWorldState> predicate, Supplier<BlockInfo[]> candidates) {
@@ -178,8 +175,8 @@ public class TraceabilityPredicate {
         }
 
         @Override
-        public List<ItemStack> getCandidates() {
-            return getCandidates(predicate);
+        public List<List<ItemStack>> getCandidates() {
+            return Collections.singletonList(getCandidates(predicate));
         }
 
         @SideOnly(Side.CLIENT)
@@ -190,10 +187,10 @@ public class TraceabilityPredicate {
             if (type == 1) number = predicate.minGlobalCount;
             if (type == 2) number = predicate.maxLayerCount;
             if (type == 3) number = predicate.minLayerCount;
-            List<ItemStack> candidates = getCandidates();
+            List<List<ItemStack>> candidates = getCandidates();
             StringBuilder builder = new StringBuilder();
-            if (!candidates.isEmpty()) {
-                builder.append(candidates.get(0).getDisplayName());
+            if (!candidates.get(0).isEmpty()) {
+                builder.append(candidates.get(0).get(0).getDisplayName());
             }
             if (candidates.size() > 1) {
                 builder.append("...");
