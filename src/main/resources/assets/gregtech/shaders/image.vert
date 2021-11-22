@@ -1,8 +1,8 @@
-#version 140
+#version 120
 
-in vec2 position;
+attribute vec2 position;
 
-out vec2 textureCoords;
+varying  vec2 textureCoords;
 
 void main(void){
     gl_Position = vec4(position, 0.0, 1.0);

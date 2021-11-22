@@ -51,7 +51,6 @@ jobs:
         uses: actions/setup-node@v2
       - name: Run Formatter
         run: |
-          git checkout ${{ github.head_ref }}
           cd scripts
           chmod +x format.sh
           ./format.sh

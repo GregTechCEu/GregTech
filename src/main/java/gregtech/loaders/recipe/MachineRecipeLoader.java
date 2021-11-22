@@ -35,7 +35,6 @@ import gregtech.loaders.recipe.chemistry.AssemblerRecipeLoader;
 import gregtech.loaders.recipe.chemistry.ChemistryRecipes;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.fluids.FluidStack;
@@ -44,7 +43,6 @@ import static gregtech.api.GTValues.L;
 import static gregtech.api.recipes.RecipeMaps.*;
 import static gregtech.api.unification.material.Materials.*;
 import static gregtech.api.unification.ore.OrePrefix.*;
-import static gregtech.api.util.DyeUtil.getOredictColorName;
 import static gregtech.common.items.MetaItems.*;
 import static gregtech.common.metatileentities.MetaTileEntities.WORKBENCH;
 
@@ -428,11 +426,11 @@ public class MachineRecipeLoader {
     }
 
     private static void registerAssemblerRecipes() {
-        for (EnumDyeColor dyeColor : EnumDyeColor.values()) {
+        for (int i = 0; i < Materials.CHEMICAL_DYES.length; i++) {
             CANNER_RECIPES.recipeBuilder()
                     .inputs(MetaItems.SPRAY_EMPTY.getStackForm())
-                    .input(getOredictColorName(dyeColor), 1)
-                    .outputs(MetaItems.SPRAY_CAN_DYES[dyeColor.getMetadata()].getStackForm())
+                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L * 4))
+                    .outputs(MetaItems.SPRAY_CAN_DYES[i].getStackForm())
                     .EUt(8).duration(200)
                     .buildAndRegister();
         }
@@ -857,13 +855,24 @@ public class MachineRecipeLoader {
 
     private static void registerFluidRecipes() {
 
-
         FLUID_HEATER_RECIPES.recipeBuilder().duration(32).EUt(4)
                 .fluidInputs(Ice.getFluid(L))
                 .circuitMeta(1)
                 .fluidOutputs(Water.getFluid(L)).buildAndRegister();
 
-        FLUID_SOLIDFICATION_RECIPES.recipeBuilder().duration(100).EUt(16).notConsumable(SHAPE_MOLD_BALL).fluidInputs(Toluene.getFluid(100)).output(GELLED_TOLUENE).buildAndRegister();
+        FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                .fluidInputs(Toluene.getFluid(100))
+                .notConsumable(SHAPE_MOLD_BALL)
+                .output(GELLED_TOLUENE)
+                .duration(100).EUt(16).buildAndRegister();
+
+        for (int i = 0; i < Materials.CHEMICAL_DYES.length; i++) {
+            FLUID_SOLIDFICATION_RECIPES.recipeBuilder()
+                    .fluidInputs(Materials.CHEMICAL_DYES[i].getFluid(GTValues.L / 2))
+                    .notConsumable(MetaItems.SHAPE_MOLD_BALL.getStackForm())
+                    .outputs(MetaItems.DYE_ONLY_ITEMS[i].getStackForm())
+                    .duration(100).EUt(16).buildAndRegister();
+        }
 
         FLUID_HEATER_RECIPES.recipeBuilder().duration(30).EUt(32).fluidInputs(Water.getFluid(6)).circuitMeta(1).fluidOutputs(Steam.getFluid(960)).buildAndRegister();
         FLUID_HEATER_RECIPES.recipeBuilder().duration(30).EUt(32).fluidInputs(DistilledWater.getFluid(6)).circuitMeta(1).fluidOutputs(Steam.getFluid(960)).buildAndRegister();

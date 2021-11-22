@@ -55,7 +55,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     public FakeModularGui guiCache;
     public FakeModularUIContainerClipboard guiContainerCache;
     private static final Cuboid6 pageBox = new Cuboid6(3 / 16.0, 0.25 / 16.0, 0.25 / 16.0, 13 / 16.0, 14.25 / 16.0, 0.3 / 16.0);
-
+    private static boolean receivesData = false;
     private static final NBTBase NO_CLIPBOARD_SIG = new NBTTagInt(0);
 
 
@@ -66,12 +66,16 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     @Override
     public void update() {
         super.update();
+        if (guiCache == null || guiContainerCache == null) {
+            createFakeGui();
+            scheduleRenderUpdate();
+        }
         if (this.getWorld().isRemote) {
             if (guiCache != null)
                 guiCache.updateScreen();
         } else {
-            if (getOffsetTimer() % 20 == 0)
-                createFakeGui();
+            if(!receivesData)
+                this.writeCustomData(DETECT_UPDATE_RECEIVED, buffer -> { }); // Doesn't do anything, just helps start updates quickly
             if (guiContainerCache != null)
                 guiContainerCache.detectAndSendChanges();
         }
@@ -331,6 +335,7 @@ public class MetaTileEntityClipboard extends MetaTileEntity implements IFastRend
     @Override
     public void receiveCustomData(int dataId, PacketBuffer buf) {
         super.receiveCustomData(dataId, buf);
+        receivesData = true;
         if (dataId == UPDATE_UI) {
             int windowID = buf.readVarInt();
             int widgetID = buf.readVarInt();

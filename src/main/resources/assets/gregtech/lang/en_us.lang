@@ -756,31 +756,31 @@ metaitem.cover.infinite_water.tooltip=Creates 16 Buckets of Water every second (
 metaitem.cover.ender_fluid_link.name=Ender Fluid Link Cover
 metaitem.cover.ender_fluid_link.tooltip=Link your fluid tanks to the Ender! (as Cover)
 
+metaitem.cover.drain=Drain Cover
+
+
 metaitem.gelled_toluene.name=Gelled Toluene
 metaitem.gelled_toluene.tooltip=Raw Explosive
 
 metaitem.bottle.purple.drink.name=Purple Drink
 metaitem.bottle.purple.drink.tooltip=How about Lemonade. Or some Ice Tea? I got Purple Drink!
 
-metaitem.dye.indigo.name=Indigo Dye
-metaitem.dye.indigo.tooltip=Blue Dye
-
-metaitem.dye.white.name=White Dye
-metaitem.dye.orange.name=Orange Dye
-metaitem.dye.magenta.name=Magenta Dye
-metaitem.dye.light_blue.name=Light Blue Dye
-metaitem.dye.yellow.name=Yellow Dye
-metaitem.dye.lime.name=Lime Dye
-metaitem.dye.pink.name=Pink Dye
-metaitem.dye.gray.name=Gray Dye
-metaitem.dye.silver.name=Light Gray Dye
-metaitem.dye.cyan.name=Cyan Dye
-metaitem.dye.purple.name=Purple Dye
-metaitem.dye.blue.name=Blue Dye
-metaitem.dye.brown.name=Brown Dye
-metaitem.dye.green.name=Green Dye
-metaitem.dye.red.name=Red Dye
-metaitem.dye.black.name=Black Dye
+metaitem.dye.black.name=Chemical Black Dye
+metaitem.dye.red.name=Chemical Red Dye
+metaitem.dye.green.name=Chemical Green Dye
+metaitem.dye.brown.name=Chemical Brown Dye
+metaitem.dye.blue.name=Chemical Blue Dye
+metaitem.dye.purple.name=Chemical Purple Dye
+metaitem.dye.cyan.name=Chemical Cyan Dye
+metaitem.dye.light_gray.name=Chemical Light Gray Dye
+metaitem.dye.gray.name=Chemical Gray Dye
+metaitem.dye.pink.name=Chemical Pink Dye
+metaitem.dye.lime.name=Chemical Lime Dye
+metaitem.dye.yellow.name=Chemical Yellow Dye
+metaitem.dye.light_blue.name=Chemical Light Blue Dye
+metaitem.dye.magenta.name=Chemical Magenta Dye
+metaitem.dye.orange.name=Chemical Orange Dye
+metaitem.dye.white.name=Chemical White Dye
 
 metaitem.rubber_drop.name=Sticky Resin
 metaitem.plant_ball.name=Plant Ball
@@ -1766,6 +1766,23 @@ material.ruby_slurry=Ruby Slurry
 material.sapphire_slurry=Sapphire Slurry
 material.green_sapphire_slurry=Green Sapphire Slurry
 
+material.dye_black=Chemical Black Dye
+material.dye_red=Chemical Red Dye
+material.dye_green=Chemical Green Dye
+material.dye_brown=Chemical Brown Dye
+material.dye_blue=Chemical Blue Dye
+material.dye_purple=Chemical Purple Dye
+material.dye_cyan=Chemical Cyan Dye
+material.dye_light_gray=Chemical Light Gray Dye
+material.dye_gray=Chemical Gray Dye
+material.dye_pink=Chemical Pink Dye
+material.dye_lime=Chemical Lime Dye
+material.dye_yellow=Chemical Yellow Dye
+material.dye_light_blue=Chemical Light Blue Dye
+material.dye_magenta=Chemical Magenta Dye
+material.dye_orange=Chemical Orange Dye
+material.dye_white=Chemical White Dye
+
 item.nether_quartz.oreNetherrack=Nether Quartz Ore
 item.gunpowder.dustTiny=Tiny Pile of Gunpowder
 item.gunpowder.dustSmall=Small Pile of Gunpowder
@@ -2082,6 +2099,17 @@ metaitem.terminal.tooltip.hardware=§aHardware: %d
 
 metaitem.wireless.name=Wireless Transmitter
 metaitem.camera.name=Camera
+
+metaitem.plugin.tooltips.1=Plugins can be added to the screen for more functionality.
+metaitem.plugin.proxy.tooltips.1=(Please adjust to proxy mode in the screen)
+metaitem.plugin.text.name=Text Plugin
+metaitem.plugin.online_pic.name=Online Picture Plugin
+metaitem.plugin.fake_gui.name=GUI Proxy Plugin
+metaitem.plugin.advanced_monitor.name=Advanced Monitor Proxy Plugin
+metaitem.cover.digital.name=Digital Interface Cover
+metaitem.cover.digital.wireless.name=Wireless Digital Interface Cover
+metaitem.coloured.leds.name=Coloured LEDs
+metaitem.display.name=Display
 
 tile.casing.ulv=ULV Machine Casing
 tile.casing.lv=LV Machine Casing
@@ -3598,6 +3626,23 @@ gregtech.machine.miner.overclock=Requires §e%s§7 power. Overclocks up to §e%s
 
 gregtech.machine.large_chemical_reactor.name=Large Chemical Reactor
 
+gregtech.machine.central_monitor.name=Central Monitor
+gregtech.multiblock.central_monitor.low_power=Low Power
+gregtech.multiblock.central_monitor.height=Screen Height:
+gregtech.multiblock.central_monitor.width=Screen Width: %d
+gregtech.multiblock.central_monitor.height_modify=Modify Height: %d
+gregtech.multiblock.central_monitor.tooltip.1=This is a screen that monitors machines proxied by the Digital Interface Cover. You can easily monitor the Fluids, Items, Energy, and States of machines proxied in Energy Network.
+gregtech.multiblock.central_monitor.tooltip.2=You can build the central monitor screen from 3X2 to %dX%d (width X height).
+gregtech.multiblock.central_monitor.tooltip.3=The default height is 3. You can adjust the screen height in the GUI before the structure is formed.
+gregtech.multiblock.central_monitor.tooltip.4=Energy consumption: %d EU/s for each screen.
+gregtech.multiblock.monitor_screen.tooltip.1=The GUI can be opened with a right-click of a screwdriver.
+gregtech.multiblock.monitor_screen.tooltip.2=The proxy mode of Digital Interface Cover can delegate machines' capabilities and GUI. (Yes, you can connect pipes directly on the screen.)
+gregtech.multiblock.monitor_screen.tooltip.3=The screen also supports plugins.
+
+
+gregtech.machine.monitor_screen.name=Monitor Screen
+
+
 # Multiblock Tooltips
 gregtech.machine.primitive_blast_furnace.bronze.tooltip=Structure: 3x3x4 (WxLxH) The entire structure is made out of Primitive Bricks (32 in total)./nFirst Layer is a 3x3 square./nSecond, third, and fourth layers are hollow, without the middle block./nThis block goes on the middle of any side in the second layer./nThe sides of Blast Furnaces can be shared, if the side does not have a controller./n
 gregtech.machine.multiblock.universal.controller_information=Controller block for the §e%s§7.
@@ -3900,6 +3945,7 @@ gregtech.multiblock.universal.distinct=Distinct Buses:
 gregtech.multiblock.universal.distinct.no=No
 gregtech.multiblock.universal.distinct.yes=Yes
 gregtech.multiblock.universal.distinct.info=If enabled, each Item Input Bus will be treated as fully distinct from each other for recipe lookup. Useful for things like Programmed Circuits, Extruder Shapes, etc.
+gregtech.multiblock.parallel=Performing up to %d Recipes in Parallel
 
 gregtech.multiblock.preview.zoom=Use mousewheel or right-click+Drag to zoom
 gregtech.multiblock.preview.rotate=Click and drag to rotate
@@ -4186,3 +4232,15 @@ terminal.world_prospector.color=Select box color
 terminal.vtank_viewer.description=Never lose any fluids to changing ender link frequencies again! Here's a scrollable list of every virtual tank that you have access to in your world.
 terminal.vtank_viewer.title=Virtual Tank Viewer
 terminal.vtank_viewer.refresh=Refresh tank index
+
+metaitem.cover.digital.title.mode=Mode:
+metaitem.cover.digital.title.spin=Spin:
+metaitem.cover.digital.wireless.tooltip.1=§eRight click on the central monitor to bind remotely to it.
+metaitem.cover.digital.wireless.tooltip.2=§eShift Right click to remove the current binding.
+metaitem.cover.digital.wireless.tooltip.3=§cBinding: (%s)
+monitor.gui.title.back=Back
+monitor.gui.title.scale=Scale:
+monitor.gui.title.argb=ARGB:
+monitor.gui.title.slot=Slot:
+monitor.gui.title.plugin=Plugin:
+monitor.gui.title.config=Config

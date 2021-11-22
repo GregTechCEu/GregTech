@@ -489,7 +489,7 @@ public class ElementMaterials {
                 .color(0xC8C8FA).iconSet(METALLIC)
                 .flags(STD_METAL, MORTAR_GRINDABLE)
                 .element(Elements.Ni)
-                .cableProperties(GTValues.V[2], 3, 3)
+                .cableProperties(GTValues.V[GTValues.LV], 3, 3)
                 .itemPipeProperties(2048, 1.0f)
                 .build();
 
@@ -532,7 +532,7 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_DENSE)
                 .element(Elements.Os)
                 .toolStats(16.0f, 4.0f, 1280, 21)
-                .cableProperties(GTValues.V[5], 4, 2)
+                .cableProperties(GTValues.V[6], 4, 2)
                 .itemPipeProperties(256, 8.0f)
                 .blastTemp(3306)
                 .build();
@@ -549,7 +549,6 @@ public class ElementMaterials {
                 .flags(EXT2_METAL)
                 .element(Elements.Pd)
                 .toolStats(8.0f, 2.0f, 512, 33)
-                .cableProperties(GTValues.V[5], 2, 1)
                 .blastTemp(1228)
                 .build();
 
@@ -809,7 +808,6 @@ public class ElementMaterials {
                 .flags(EXT2_METAL, GENERATE_ROTOR, GENERATE_SMALL_GEAR, GENERATE_SPRING, GENERATE_FRAME, GENERATE_DENSE)
                 .element(Elements.Ti)
                 .toolStats(7.0f, 3.0f, 1600, 21)
-                .cableProperties(GTValues.V[4], 4, 2)
                 .fluidPipeProperties(2426, 80, true)
                 .blastTemp(1941)
                 .build();
@@ -882,7 +880,6 @@ public class ElementMaterials {
                 .color(0xFAF0F0).iconSet(METALLIC)
                 .flags(STD_METAL, MORTAR_GRINDABLE, GENERATE_FOIL, GENERATE_RING, GENERATE_FINE_WIRE)
                 .element(Elements.Zn)
-                .cableProperties(GTValues.V[1], 1, 1)
                 .build();
 
         Zirconium = new Material.Builder(123, "zirconium")

@@ -8,10 +8,12 @@ import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.UIFactory;
 import gregtech.api.gui.impl.ModularUIContainer;
 import gregtech.api.gui.impl.ModularUIGui;
+import gregtech.api.items.behavior.MonitorPluginBaseBehavior;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.util.ClipboardUtil;
 import gregtech.api.util.GTLog;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.state.IBlockState;
@@ -221,6 +223,29 @@ public class NetworkHandler {
                 }
         ));
 
+        registerPacket(7, CPacketPluginSynced.class, new NetworkHandler.PacketCodec<>(
+                (packet, buf) -> {
+                    MetaTileEntityMonitorScreen screen = packet.plugin.getScreen();
+                    buf.writeVarInt(screen.getWorld().provider.getDimension());
+                    buf.writeBlockPos(screen.getPos());
+                    buf.writeVarInt(packet.id);
+                    if(packet.payloadWriter != null) {
+                        packet.payloadWriter.accept(buf);
+                    }
+                },
+                (buf) -> {
+                    int dim = buf.readVarInt();
+                    BlockPos pos = buf.readBlockPos();
+                    TileEntity te = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(dim).getTileEntity(pos);
+                    if(te instanceof MetaTileEntityHolder && ((MetaTileEntityHolder) te).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+                        MonitorPluginBaseBehavior pluginBaseBehavior = ((MetaTileEntityMonitorScreen) ((MetaTileEntityHolder) te).getMetaTileEntity()).plugin;
+                        if (pluginBaseBehavior != null) {
+                            return new CPacketPluginSynced(pluginBaseBehavior, buf);
+                        }
+                    }
+                    return new CPacketPluginSynced(null, buf);
+                }
+        ));
 
         registerServerExecutor(PacketUIClientAction.class, (packet, handler) -> {
             Container openContainer = handler.player.openContainer;
@@ -232,9 +257,15 @@ public class NetworkHandler {
             }
         });
 
-        NetworkHandler.registerServerExecutor(PacketClipboardUIWidgetUpdate.class, (packet, handler) -> {
+        registerServerExecutor(PacketClipboardUIWidgetUpdate.class, (packet, handler) -> {
             if (packet.clipboard != null) {
                 packet.clipboard.readUIAction(handler.player, packet.id, packet.buf);
+            }
+        });
+
+        registerServerExecutor(CPacketPluginSynced.class, (packet, handler) -> {
+            if (packet.plugin != null) {
+                packet.plugin.readPluginAction(handler.player, packet.id, packet.buf);
             }
         });
 

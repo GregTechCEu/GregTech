@@ -39,6 +39,11 @@ public class FBOWorldSceneRenderer extends WorldSceneRenderer {
         setFBOSize(resolutionWidth, resolutionHeight);
     }
 
+    public FBOWorldSceneRenderer(World world, Framebuffer fbo) {
+        super(world);
+        this.fbo = fbo;
+    }
+
     public int getResolutionWidth() {
         return resolutionWidth;
     }
@@ -75,12 +80,10 @@ public class FBOWorldSceneRenderer extends WorldSceneRenderer {
         return winPos;
     }
 
-    public void render(float x, float y, float width, float height, int mouseX, int mouseY) {
-        mouseX = (int) (this.resolutionWidth * mouseX / width);
-        mouseY = (int) (this.resolutionHeight * (1 - mouseY / height));
+    public void render(float x, float y, float width, float height, float mouseX, float mouseY) {
         // bind to FBO
         int lastID = bindFBO();
-        super.render(0, 0, this.resolutionWidth, this.resolutionHeight, mouseX, mouseY);
+        super.render(0, 0, this.resolutionWidth, this.resolutionHeight, (int) (this.resolutionWidth * mouseX / width), (int) (this.resolutionHeight * (1 - mouseY / height)));
         // unbind FBO
         unbindFBO(lastID);
 
@@ -103,6 +106,10 @@ public class FBOWorldSceneRenderer extends WorldSceneRenderer {
         tessellator.draw();
 
         GlStateManager.bindTexture(lastID);
+    }
+
+    public void render(float x, float y, float width, float height, int mouseX, int mouseY) {
+        render(x, y, width, height, (float) mouseX, (float) mouseY);
     }
 
     private int bindFBO(){

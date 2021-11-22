@@ -17,7 +17,7 @@ public class LayerCustomHeadVisitor extends SafeMethodVisitor {
     private static final ObfMapping METHOD_MAPPING = new ObfMapping(METHOD_OWNER, METHOD_NAME, METHOD_SIGNATURE).toRuntime();
 
 
-    private static final String ARMOR_HOOKS_OWNER = "gregtech/api/items/armor/ArmorRenderHooks";
+    private static final String ARMOR_HOOKS_OWNER = "gregtech/core/hooks/ArmorRenderHooks";
     private static final String ARMOR_HOOKS_SIGNATURE = "(Lnet/minecraft/entity/EntityLivingBase;)Z";
     private static final String ARMOR_HOOKS_METHOD_NAME = "shouldNotRenderHeadItem";
 

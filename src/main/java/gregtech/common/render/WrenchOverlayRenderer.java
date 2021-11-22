@@ -9,6 +9,7 @@ import gregtech.api.metatileentity.MetaTileEntity;
 import gregtech.api.metatileentity.MetaTileEntityHolder;
 import gregtech.api.pipenet.tile.TileEntityPipeBase;
 import gregtech.api.util.GTUtility;
+import gregtech.common.metatileentities.multi.electric.centralmonitor.MetaTileEntityMonitorScreen;
 import gregtech.common.pipelike.cable.Insulation;
 import gregtech.common.pipelike.fluidpipe.FluidPipeType;
 import gregtech.common.pipelike.itempipe.ItemPipeType;
@@ -44,6 +45,13 @@ public class WrenchOverlayRenderer {
         IBlockState blockState = world.getBlockState(pos);
         TileEntity tileEntity = world.getTileEntity(pos);
         ItemStack heldItem = player.getHeldItem(EnumHand.MAIN_HAND);
+
+        if (tileEntity instanceof MetaTileEntityHolder) {
+            if (((MetaTileEntityHolder) tileEntity).getMetaTileEntity() instanceof MetaTileEntityMonitorScreen) {
+                event.setCanceled(true);
+                return;
+            }
+        }
 
         if (tileEntity != null && shouldDrawOverlayForItem(heldItem, tileEntity)) {
             EnumFacing facing = target.sideHit;

@@ -1,6 +1,8 @@
 package gregtech.api.recipes;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Objects;
@@ -35,5 +37,9 @@ public class FluidKey {
                 "fluid=" + fluid +
                 ", tag=" + tag +
                 '}';
+    }
+
+    public Fluid getFluid() {
+        return FluidRegistry.getFluid(this.fluid);
     }
 }

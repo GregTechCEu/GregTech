@@ -1,5 +1,6 @@
-package gregtech.api.items.armor;
+package gregtech.core.hooks;
 
+import gregtech.api.items.armor.IArmorItem;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,7 +16,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-@SuppressWarnings("unused")
 public class ArmorRenderHooks {
 
     public static boolean shouldNotRenderHeadItem(EntityLivingBase entityLivingBase) {

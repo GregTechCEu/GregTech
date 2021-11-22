@@ -1,14 +1,13 @@
 package gregtech.api.gui.resources.utils;
 
-import gregtech.GregTechMod;
 import gregtech.api.gui.resources.picturetexture.AnimatedPictureTexture;
 import gregtech.api.gui.resources.picturetexture.OrdinaryTexture;
 import gregtech.api.gui.resources.picturetexture.PictureTexture;
 import gregtech.api.gui.resources.picturetexture.VideoTexture;
+import gregtech.api.util.GTLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.compress.utils.IOUtils;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
@@ -20,11 +19,14 @@ import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 @SideOnly(Side.CLIENT)
 public class DownloadThread extends Thread {
-    public static final Logger LOGGER = LogManager.getLogger(GregTechMod.class);
+    public static final Logger LOGGER = GTLog.logger;
 
     public static final TextureCache TEXTURE_CACHE = new TextureCache();
     public static final DateFormat FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");

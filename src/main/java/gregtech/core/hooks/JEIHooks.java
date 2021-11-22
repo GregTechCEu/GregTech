@@ -1,4 +1,4 @@
-package gregtech.integration.jei.utils;
+package gregtech.core.hooks;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import gregtech.api.util.FluidTooltipUtil;
@@ -6,11 +6,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
 
-/**
- * Class used for code injection into JEI.
- * Not intended for normal use within GTCE.
- */
-@SuppressWarnings("unused")
 public class JEIHooks {
 
     /**

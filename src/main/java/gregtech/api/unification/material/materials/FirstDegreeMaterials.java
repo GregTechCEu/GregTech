@@ -185,7 +185,7 @@ public class FirstDegreeMaterials {
                 .flags(EXT_METAL, GENERATE_SPRING, GENERATE_FINE_WIRE)
                 .components(Copper, 1, Nickel, 1)
                 .itemPipeProperties(2048, 1)
-                .cableProperties(GTValues.V[1], 1, 1)
+                .cableProperties(GTValues.V[2], 1, 1)
                 .build();
 
         DarkAsh = new Material.Builder(275, "dark_ash")

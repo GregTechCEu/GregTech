@@ -1,8 +1,6 @@
-#version 140
+#version 120
 
-in vec2 textureCoords;
-
-out vec4 out_colour;
+varying vec2 textureCoords;
 
 uniform sampler2D blurTexture1;
 uniform sampler2D blurTexture2;
@@ -19,9 +17,9 @@ float lerpBloomFactor(const in float factor) {
     return mix(factor, mirrorFactor, bloomRadius);
 }
 void main() {
-    out_colour = bloomStrength * ( lerpBloomFactor(1.) * texture(blurTexture1, textureCoords) +
-    lerpBloomFactor(0.8) * texture(blurTexture2, textureCoords) +
-    lerpBloomFactor(0.6) * texture(blurTexture3, textureCoords) +
-    lerpBloomFactor(0.4) * texture(blurTexture4, textureCoords) +
-    lerpBloomFactor(0.2) * texture(blurTexture5, textureCoords) );
+    gl_FragColor = bloomStrength * ( lerpBloomFactor(1.) * texture2D(blurTexture1, textureCoords) +
+    lerpBloomFactor(0.8) * texture2D(blurTexture2, textureCoords) +
+    lerpBloomFactor(0.6) * texture2D(blurTexture3, textureCoords) +
+    lerpBloomFactor(0.4) * texture2D(blurTexture4, textureCoords) +
+    lerpBloomFactor(0.2) * texture2D(blurTexture5, textureCoords) );
 }
