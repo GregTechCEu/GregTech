@@ -70,6 +70,8 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
         this.hasPerfectOC = hasPerfectOC;
     }
 
+    protected abstract long getEnergyInputPerSecond();
+
     protected abstract long getEnergyStored();
 
     protected abstract long getEnergyCapacity();
@@ -188,6 +190,9 @@ public abstract class AbstractRecipeLogic extends MTETrait implements IWorkable,
             //as recipe starts with progress on 1 this has to be > only not => to compensate for it
             if (++progressTime > maxProgressTime) {
                 completeRecipe();
+            }
+            if (this.hasNotEnoughEnergy && getEnergyInputPerSecond() > 19 * recipeEUt) {
+                this.hasNotEnoughEnergy = false;
             }
         } else if (recipeEUt > 0) {
             //only set hasNotEnoughEnergy if this recipe is consuming recipe

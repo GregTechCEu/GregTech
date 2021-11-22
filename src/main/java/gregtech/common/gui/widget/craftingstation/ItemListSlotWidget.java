@@ -1,4 +1,4 @@
-package gregtech.common.gui.widget;
+package gregtech.common.gui.widget.craftingstation;
 
 import gregtech.api.gui.GuiTextures;
 import gregtech.api.gui.IRenderContext;

@@ -267,6 +267,11 @@ public class MultiblockRecipeLogic extends AbstractRecipeLogic {
     }
 
     @Override
+    protected long getEnergyInputPerSecond() {
+        return getEnergyContainer().getInputPerSec();
+    }
+
+    @Override
     protected long getEnergyStored() {
         return getEnergyContainer().getEnergyStored();
     }

@@ -60,6 +60,7 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         put("primitive_water_pump", new MultiblockInfoRecipeWrapper(new PrimitivePumpInfo()));
         put("steam_grinder", new MultiblockInfoRecipeWrapper(new SteamGrinderInfo()));
         put("steam_oven", new MultiblockInfoRecipeWrapper(new SteamOvenInfo()));
+        put("central_monitor", new MultiblockInfoRecipeWrapper(new CentralMonitorInfo()));
         put("basic_large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(BASIC_LARGE_MINER)));
         put("large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(LARGE_MINER)));
         put("advanced_large_miner", new MultiblockInfoRecipeWrapper(new LargeMinerInfo(ADVANCED_LARGE_MINER)));
@@ -105,6 +106,6 @@ public class MultiblockInfoCategory implements IRecipeCategory<MultiblockInfoRec
         recipeWrapper.setRecipeLayout((RecipeLayout) recipeLayout, this.guiHelper);
 
         IGuiItemStackGroup itemStackGroup = recipeLayout.getItemStacks();
-        itemStackGroup.addTooltipCallback(recipeWrapper::addBlockTooltips);
+        itemStackGroup.addTooltipCallback((a,b,itemStack,list)->recipeWrapper.addBlockTooltips(itemStack,list));
     }
 }

@@ -150,6 +150,17 @@ jar.apply {
     }
 }
 
+tasks.withType<Test>() {
+    testLogging {
+        events("failed")
+        showExceptions = true
+        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+        showStackTraces = true
+        showCauses = true
+        showStandardStreams = false
+    }
+}
+
 val sourceTask: Jar = tasks.create("source", Jar::class.java) {
     from(sourceSets["main"].allSource)
     classifier = "sources"

@@ -4,6 +4,7 @@ import gregtech.api.GTValues;
 import gregtech.common.ConfigHolder;
 import gregtech.common.items.MetaItems;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -21,7 +22,11 @@ public class PlayerEventHandler {
             NBTTagCompound data = playerData.hasKey(EntityPlayer.PERSISTED_NBT_TAG) ? playerData.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG) : new NBTTagCompound();
 
             if (!data.getBoolean(HAS_TERMINAL)) {
-                ItemHandlerHelper.giveItemToPlayer(event.player, MetaItems.TERMINAL.getStackForm());
+                ItemStack terminal = MetaItems.TERMINAL.getStackForm();
+                if (event.player.isCreative()) {
+                    terminal.getOrCreateSubCompound("terminal").setBoolean("_creative", true);
+                }
+                ItemHandlerHelper.giveItemToPlayer(event.player, terminal);
                 data.setBoolean(HAS_TERMINAL, true);
                 playerData.setTag(EntityPlayer.PERSISTED_NBT_TAG, data);
             }

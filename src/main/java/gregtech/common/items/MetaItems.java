@@ -398,6 +398,8 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_DRAIN;
     public static MetaItem<?>.MetaValueItem COVER_INFINITE_WATER;
     public static MetaItem<?>.MetaValueItem COVER_ENDER_FLUID_LINK;
+    public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE;
+    public static MetaItem<?>.MetaValueItem COVER_DIGITAL_INTERFACE_WIRELESS;
 
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ULV;
@@ -409,6 +411,15 @@ public final class MetaItems {
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_LUV;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_ZPM;
     public static MetaItem<?>.MetaValueItem COVER_SOLAR_PANEL_UV;
+
+
+    public static MetaItem<?>.MetaValueItem PLUGIN_TEXT;
+    public static MetaItem<?>.MetaValueItem PLUGIN_ONLINE_PIC;
+    public static MetaItem<?>.MetaValueItem PLUGIN_FAKE_GUI;
+    public static MetaItem<?>.MetaValueItem PLUGIN_ADVANCED_MONITOR;
+
+    public static MetaItem<?>.MetaValueItem COLOURED_LEDS;
+    public static MetaItem<?>.MetaValueItem DISPLAY;
 
     public static MetaItem<?>.MetaValueItem INTEGRATED_CIRCUIT;
 

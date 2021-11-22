@@ -1,10 +1,9 @@
 package gregtech.common.gui.impl;
 
 import com.google.common.collect.Lists;
-import gregtech.api.gui.INativeWidget;
 import gregtech.api.gui.ModularUI;
 import gregtech.api.gui.Widget;
-import gregtech.api.gui.widgets.WidgetUIAccess;
+import gregtech.api.gui.impl.FakeModularGuiContainer;
 import gregtech.api.net.NetworkHandler;
 import gregtech.api.net.PacketClipboardUIWidgetUpdate;
 import gregtech.common.metatileentities.MetaTileEntityClipboard;
@@ -22,20 +21,15 @@ import static gregtech.api.capability.GregtechDataCodes.UPDATE_UI;
 
 
 // Note: when porting the central monitor, please make this more generic.
-public class FakeModularUIContainerClipboard implements WidgetUIAccess {
+public class FakeModularUIContainerClipboard extends FakeModularGuiContainer {
     private final NonNullList<ItemStack> inventoryItemStacks = NonNullList.create();
     public final List<Slot> inventorySlots = Lists.newArrayList();
-    public final ModularUI modularUI;
     public int windowId;
     public MetaTileEntityClipboard clipboard;
 
     public FakeModularUIContainerClipboard(ModularUI modularUI, MetaTileEntityClipboard clipboard) {
-        this.modularUI = modularUI;
+        super(modularUI);
         this.clipboard = clipboard;
-        modularUI.initWidgets();
-        modularUI.guiWidgets.values().forEach(widget -> widget.setUiAccess(this));
-        modularUI.guiWidgets.values().stream().flatMap(widget -> widget.getNativeWidgets().stream()).forEach(nativeWidget -> addSlotToContainer(nativeWidget.getHandle()));
-        modularUI.triggerOpenListeners();
     }
 
     protected void addSlotToContainer(Slot slotIn) {
@@ -65,6 +59,11 @@ public class FakeModularUIContainerClipboard implements WidgetUIAccess {
         }
     }
 
+    @Override
+    public boolean detectSyncedPacket(PacketBuffer buffer) {
+        return this.windowId == buffer.readVarInt();
+    }
+
     public void detectAndSendChanges() {
         List<Tuple<Integer, ItemStack>> toUpdate = new ArrayList<>();
         for (int i = 0; i < this.inventorySlots.size(); ++i) {
@@ -82,29 +81,6 @@ public class FakeModularUIContainerClipboard implements WidgetUIAccess {
             }
         }
         modularUI.guiWidgets.values().forEach(Widget::detectAndSendChanges);
-    }
-
-    @Override
-    public void notifySizeChange() {
-
-    }
-
-    @Override
-    public void notifyWidgetChange() {
-
-    }
-
-    @Override
-    public boolean attemptMergeStack(ItemStack itemStack, boolean b, boolean b1) {
-        return false;
-    }
-
-    @Override
-    public void sendSlotUpdate(INativeWidget iNativeWidget) {
-    }
-
-    @Override
-    public void sendHeldItemUpdate() {
     }
 
     @Override

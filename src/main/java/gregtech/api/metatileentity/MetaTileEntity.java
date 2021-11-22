@@ -494,10 +494,6 @@ public abstract class MetaTileEntity implements ICoverable {
     }
 
     public boolean canPlaceCoverOnSide(EnumFacing side) {
-        if (hasFrontFacing() && side == getFrontFacing()) {
-            //covers cannot be placed on this side
-            return false;
-        }
         ArrayList<IndexedCuboid6> collisionList = new ArrayList<>();
         addCollisionBoundingBox(collisionList);
         //noinspection RedundantIfStatement

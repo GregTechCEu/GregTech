@@ -124,20 +124,7 @@ public class RenderBufferHelper {
             sinTheta = sinTheta1;
 
         }
-//        for (int i = 0; i < segments; i++) {
-//            double dx = r * MathHelper.cos((float) (2 * Math.PI * i / segments));
-//            double dy = r * MathHelper.sin((float) (2 * Math.PI * i / segments));
-//            switch (axis) {
-//                case Y:
-//                    buffer.pos(x + dx, y, z + dy).color(red, green, blue, alpha).endVertex();
-//                    break;
-//                case X:
-//                    buffer.pos(x, y + dx, z + dy).color(red, green, blue, alpha).endVertex();
-//                    break;
-//                case Z:
-//                    buffer.pos(x + dx, y + dy, z).color(red, green, blue, alpha).endVertex();
-//                    break;
-//            }
-//        }
     }
+
+
 }

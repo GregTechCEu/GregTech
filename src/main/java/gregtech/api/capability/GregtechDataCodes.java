@@ -32,6 +32,7 @@ public class GregtechDataCodes {
     public static final int UPDATE_UI = 0;
     public static final int CREATE_FAKE_UI = 1;
     public static final int MOUSE_POSITION = 2;
+    public static final int DETECT_UPDATE_RECEIVED = 3;
 
     // Pump
     public static final int PUMP_HEAD_LEVEL = 200;
@@ -69,4 +70,30 @@ public class GregtechDataCodes {
     public static final int DEFORM_TANK = 2;
     public static final int SYNC_FLUID_CHANGE = 3;
     public static final int SYNC_TANK_SHAPE = 4;
+
+    // Central Monitor
+    public static final int UPDATE_ALL = 1;
+    public static final int UPDATE_COVERS = 2;
+    public static final int UPDATE_HEIGHT = 3;
+    public static final int UPDATE_ACTIVE = 4;
+    public static final int UPDATE_PLUGIN_ITEM = 3;
+
+    // Central Monitor Plugin
+    public static final int UPDATE_PLUGIN_DATA = 2;
+    public static final int UPDATE_PLUGIN_CONFIG = 0;
+    public static final int ACTION_PLUGIN_CONFIG = 0;
+    public static final int UPDATE_PLUGIN_CLICK = -2;
+    public static final int UPDATE_ADVANCED_VALID_POS = 1;
+    public static final int UPDATE_FAKE_GUI = 1;
+    public static final int ACTION_FAKE_GUI = 1;
+    public static final int UPDATE_FAKE_GUI_DETECT = -1;
+
+    // Digital Interface
+    public static final int UPDATE_MODE = 1;
+    public static final int UPDATE_FLUID = 2;
+    public static final int UPDATE_ITEM = 3;
+    public static final int UPDATE_ENERGY = 4;
+    public static final int UPDATE_ENERGY_PER = 5;
+    public static final int UPDATE_MACHINE = 6;
+
 }

@@ -1,4 +1,4 @@
-package gregtech.common.gui.widget;
+package gregtech.common.gui.widget.craftingstation;
 
 import com.google.common.base.Preconditions;
 import gregtech.api.gui.impl.ModularUIContainer;
