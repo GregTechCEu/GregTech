@@ -950,6 +950,9 @@ metaarmor.energy_share.disable=Energy Supply: Gadgets charging disabled
 metaarmor.energy_share.tooltip=Supply mode: %s
 metaarmor.energy_share.tooltip.guide=To change mode shift-right click when holding item
 
+metaitem.record.sus.name=Music Disc
+metaitem.record.sus.tooltip=§7Leonz - Among Us Drip
+
 gui.widget.incrementButton.default_tooltip=Hold Shift, Ctrl or both to change the amount
 
 cover.filter.blacklist.disabled=Whitelist

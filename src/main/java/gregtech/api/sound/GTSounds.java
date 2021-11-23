@@ -42,6 +42,8 @@ public class GTSounds {
     public static SoundEvent MORTAR_TOOL;
     public static SoundEvent SOFT_HAMMER_TOOL;
 
+    public static SoundEvent RECORD_SOUND;
+
 
     public static void registerSounds() {
         FORGE_HAMMER = registerSound("tick.forge_hammer");
@@ -78,6 +80,7 @@ public class GTSounds {
         SPRAY_CAN_TOOL = registerSound("use.spray_can");
         TRICORDER_TOOL = registerSound("use.tricorder"); // TODO: use this when tricorders are put in-game
         MORTAR_TOOL = registerSound("use.mortar");
+        RECORD_SOUND = registerSound("record.sus");
     }
 
     private static SoundEvent registerSound(String soundNameIn) {

@@ -32,5 +32,6 @@
   "use.wirecutter": {"category": "block", "sounds": [{"name": "gregtech:wirecutter", "stream": false}]},
   "use.spray_can": {"category": "block", "sounds": [{"name": "gregtech:spray_can", "stream": false}]},
   "use.tricorder": {"category": "block", "sounds": [{"name": "gregtech:tricorder", "stream": false}]},
-  "use.mortar": {"category": "block", "sounds": [{"name": "gregtech:mortar", "stream": false}]}
+  "use.mortar": {"category": "block", "sounds": [{"name": "gregtech:mortar", "stream": false}]},
+  "record.sus": {"category": "block", "sounds": [{"name": "gregtech:sus", "stream": false}]}
 }

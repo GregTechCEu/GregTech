@@ -2,12 +2,10 @@ package gregtech.common.items;
 
 import gregtech.api.GTValues;
 import gregtech.api.items.OreDictNames;
-import gregtech.api.items.metaitem.ElectricStats;
-import gregtech.api.items.metaitem.FluidStats;
-import gregtech.api.items.metaitem.FoodStats;
-import gregtech.api.items.metaitem.StandardMetaItem;
+import gregtech.api.items.metaitem.*;
 import gregtech.api.items.metaitem.stats.IItemComponent;
 import gregtech.api.items.metaitem.stats.IItemContainerItemProvider;
+import gregtech.api.sound.GTSounds;
 import gregtech.api.terminal.hardware.HardwareProvider;
 import gregtech.api.unification.OreDictUnifier;
 import gregtech.api.unification.material.MarkerMaterials.Component;
@@ -585,6 +583,7 @@ public class MetaItem1 extends StandardMetaItem {
         COLOURED_LEDS = addItem(800, "coloured.leds");
         DISPLAY = addItem(801, "display");
 
+        SUS_RECORD = addItem(802, "record.sus").addComponents(new MusicDiscStats(GTSounds.RECORD_SOUND)).setRarity(EnumRarity.RARE).setMaxStackSize(1).setInvisible();
     }
 
 }
