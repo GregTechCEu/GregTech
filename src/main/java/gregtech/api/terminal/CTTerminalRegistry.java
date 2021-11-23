@@ -22,9 +22,9 @@ import java.util.Map;
 
 @ZenClass("mods.gregtech.TerminalRegistry")
 @ZenRegister
+@SuppressWarnings("unused")
 public class CTTerminalRegistry {
-    private static final List<CTAppRegistryBuilder> ctAppRegistryBuilders = new LinkedList<>();
-    private static boolean postInit; // is TerminalRegistry finish init;
+    private static List<CTAppRegistryBuilder> ctAppRegistryBuilders = new LinkedList<>();
 
     @ZenMethod
     public static CTAppRegistryBuilder createAppRegistryBuilder(String appName) {
@@ -89,8 +89,7 @@ public class CTTerminalRegistry {
 
     public static void register() {
         ctAppRegistryBuilders.forEach(CTTerminalRegistry::registerAPP);
-        ctAppRegistryBuilders.clear();
-        postInit = true;
+        ctAppRegistryBuilders = null;
     }
 
     @ZenClass("mods.gregtech.AppRegistryBuilder")
@@ -168,7 +167,7 @@ public class CTTerminalRegistry {
 
         @ZenMethod
         public void build() {
-            if (postInit) {
+            if (ctAppRegistryBuilders == null) {
                 registerAPP(this);
             } else {
                 ctAppRegistryBuilders.add(this);
